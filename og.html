@@ -1,0 +1,30 @@
+<!-- Render this at 1200x630 to generate og.png -->
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1200px;height:630px;background:#1c1410;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;position:relative}
+.grain{position:absolute;inset:0;opacity:.03;background-image:radial-gradient(circle,#fff 1px,transparent 1px);background-size:4px 4px}
+.content{text-align:center;z-index:1}
+h1{font-family:'Playfair Display',serif;color:#fef9ef;font-size:72px;line-height:1.15;margin-bottom:16px}
+h1 span{color:#e8b04a}
+p{color:#8b6844;font-size:26px;margin-bottom:32px}
+.badge{display:inline-block;padding:10px 28px;background:#d4920c;color:#fff;border-radius:50px;font-size:20px;font-weight:700}
+.wheat{position:absolute;opacity:.15}
+.wheat-l{left:40px;bottom:40px;transform:rotate(-15deg)}
+.wheat-r{right:40px;top:40px;transform:rotate(15deg) scaleX(-1)}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<svg class="wheat wheat-l" width="80" height="200" viewBox="0 0 60 180" fill="none"><path d="M30 180 C30 180 30 20 30 5" stroke="#e8b04a" stroke-width="2" stroke-linecap="round"/><ellipse cx="18" cy="40" rx="8" ry="18" transform="rotate(-20 18 40)" fill="#e8b04a"/><ellipse cx="42" cy="55" rx="8" ry="18" transform="rotate(20 42 55)" fill="#e8b04a"/><ellipse cx="16" cy="80" rx="7" ry="16" transform="rotate(-25 16 80)" fill="#e8b04a"/><ellipse cx="44" cy="95" rx="7" ry="16" transform="rotate(25 44 95)" fill="#e8b04a"/></svg>
+<svg class="wheat wheat-r" width="80" height="200" viewBox="0 0 60 180" fill="none"><path d="M30 180 C30 180 30 20 30 5" stroke="#e8b04a" stroke-width="2" stroke-linecap="round"/><ellipse cx="18" cy="40" rx="8" ry="18" transform="rotate(-20 18 40)" fill="#e8b04a"/><ellipse cx="42" cy="55" rx="8" ry="18" transform="rotate(20 42 55)" fill="#e8b04a"/><ellipse cx="16" cy="80" rx="7" ry="16" transform="rotate(-25 16 80)" fill="#e8b04a"/><ellipse cx="44" cy="95" rx="7" ry="16" transform="rotate(25 44 95)" fill="#e8b04a"/></svg>
+<div class="content">
+<h1>Your home bakery<br>deserves <span>real tools</span>.</h1>
+<p>Orders · Invoicing · Recipes · Finances · Storefronts</p>
+<div class="badge">getkneadit.app</div>
+</div>
+</body>
+</html>

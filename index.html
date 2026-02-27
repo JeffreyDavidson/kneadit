@@ -9,7 +9,9 @@
 <meta property="og:description" content="The business platform built for cottage food bakers. Orders, invoicing, recipes, storefronts — everything you need to run your home bakery.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://getkneadit.app">
-<meta property="og:image" content="https://getkneadit.app/og.png">
+<meta property="og:image" content="https://getkneadit.app/og.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -890,10 +892,29 @@ function handleWaitlist(e) {
   const emailInput = form.querySelector('input');
   const btn = form.querySelector('button');
   const email = emailInput.value;
-  btn.textContent = 'You\'re on the list! 🎉';
-  btn.style.background = 'var(--sage)';
-  emailInput.value = '';
-  setTimeout(() => { btn.textContent = 'Get Early Access'; btn.style.background = ''; }, 3000);
+  if (!email) return false;
+  btn.disabled = true;
+  btn.textContent = 'Joining...';
+  fetch('/waitlist.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.textContent = data.message === 'Already on the list!' ? 'You\'re already on the list! 👍' : 'You\'re on the list! 🎉';
+    btn.style.background = 'var(--sage)';
+    emailInput.value = '';
+    if (data.count) {
+      document.querySelectorAll('.waitlist-count').forEach(el => el.textContent = (200 + data.count) + '+');
+    }
+    setTimeout(() => { btn.textContent = 'Get Early Access'; btn.style.background = ''; btn.disabled = false; }, 3000);
+  })
+  .catch(() => {
+    btn.textContent = 'Something went wrong';
+    btn.style.background = 'var(--berry)';
+    setTimeout(() => { btn.textContent = 'Get Early Access'; btn.style.background = ''; btn.disabled = false; }, 3000);
+  });
   return false;
 }
 </script>
