@@ -98,7 +98,8 @@ a{color:inherit;text-decoration:none}
 @keyframes blink{50%{opacity:0}}
 
 /* Mini storefront preview — floating animation */
-.storefront-preview{background:var(--flour);border-radius:20px;padding:1.5rem;margin:3rem auto;max-width:580px;color:var(--warm-black);text-align:left;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:sfFloat 6s ease-in-out infinite}
+.sf-preview-label{text-align:center;font-size:var(--text-sm);color:var(--cinnamon);letter-spacing:.05em;margin-top:2.5rem;margin-bottom:-.5rem}
+.storefront-preview{background:var(--flour);border-radius:20px;padding:1.5rem;margin:1.5rem auto 0;max-width:580px;color:var(--warm-black);text-align:left;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:sfFloat 6s ease-in-out infinite}
 @keyframes sfFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 .sf-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--sourdough)}
 .sf-logo{width:40px;height:40px;border-radius:10px;background:var(--honey);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-weight:700;font-size:1.1rem;color:var(--white);flex-shrink:0}
@@ -369,6 +370,7 @@ Your bakery.<br>
 <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 14 L8 4 M4 8 L8 4 L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </div>
 
+<p class="sf-preview-label reveal reveal-d2">Here's what your customers will see</p>
 <div class="storefront-preview reveal reveal-d2" id="storefrontPreview">
 <div class="sf-header">
 <div class="sf-logo" id="sfLogo">K</div>
