@@ -227,14 +227,15 @@ a{color:inherit;text-decoration:none}
 .features{background:linear-gradient(180deg,var(--sourdough) 0%,var(--cream) 100%);padding:5rem 1.5rem}
 .features-header{text-align:center;margin-bottom:3rem}
 .features-header h2{font-family:var(--font-serif);font-size:var(--text-3xl)}
-.bento{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;max-width:1100px;margin:0 auto}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:1.5rem;max-width:1100px;margin:0 auto}
 .bento-card{background:var(--white);border-radius:20px;padding:2.5rem;box-shadow:0 4px 20px rgba(28,20,16,.08),0 1px 3px rgba(28,20,16,.04);transition:transform .3s ease,box-shadow .3s ease;overflow:hidden;display:flex;flex-direction:column;border:none;position:relative}
 .bento-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--honey),var(--golden));border-radius:20px 20px 0 0}
 .bento-card:hover,.bento-card:focus-visible{transform:translateY(-4px);box-shadow:0 12px 40px rgba(28,20,16,.12),0 2px 6px rgba(28,20,16,.06)}
-.bento-large{grid-column:span 2}
+.bento-large{grid-column:span 3}
+.bento-medium{grid-column:span 2}
 .bento-card h3{font-family:var(--font-serif);font-size:var(--text-xl);margin-bottom:.5rem;color:var(--warm-black)}
 .bento-card p{font-size:var(--text-sm);color:var(--walnut);margin-bottom:1.25rem;line-height:1.6}
-.bento-card:not(.bento-large) p{min-height:3.2em}
+.bento-card:not(.bento-large) p{min-height:2.6em}
 .bento-demo{background:linear-gradient(135deg,var(--flour),rgba(232,220,200,.3));border-radius:14px;padding:1.25rem;flex:1;font-size:var(--text-sm);overflow:hidden;position:relative;border:1px solid rgba(212,146,12,.08)}
 
 /* Storefront demo */
@@ -278,11 +279,12 @@ a{color:inherit;text-decoration:none}
 
 @media(max-width:767px){
 .bento{grid-template-columns:1fr}
-.bento-large{grid-column:span 1}
+.bento-large,.bento-medium{grid-column:span 1}
 .bento-card{padding:2rem}
 }
 @media(min-width:768px) and (max-width:1023px){
 .bento{grid-template-columns:repeat(2,1fr)}
+.bento-large,.bento-medium{grid-column:span 1}
 }
 
 /* ===== BUILT BY A BAKER ===== */
@@ -608,21 +610,29 @@ Your bakery.<br>
 </div>
 </div>
 
-<!-- Medium: Smart Invoicing -->
-<div class="bento-card reveal reveal-d2">
-<h3>Smart Invoicing</h3>
-<p>PayPal invoices with automatic reminders. No awkward follow-ups.</p>
-<div class="bento-demo" style="text-align:center;padding:1.5rem">
-<div style="background:var(--white);border-radius:10px;padding:1rem;margin-bottom:.5rem">
-<div style="font-size:var(--text-xs);color:var(--cinnamon);margin-bottom:.25rem">Invoice #1042</div>
-<div style="font-family:var(--font-serif);font-size:var(--text-lg);font-weight:700">$47.00</div>
+<!-- Medium: Pricing & Invoicing -->
+<div class="bento-card bento-medium reveal reveal-d2">
+<h3>Pricing &amp; Invoicing</h3>
+<p>Cost your recipes, set smart prices, and send PayPal invoices — all in one flow.</p>
+<div class="bento-demo">
+<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+<div style="text-align:center;flex:1">
+<div style="font-size:var(--text-xs);color:var(--cinnamon);margin-bottom:.25rem">Cost per loaf</div>
+<div style="font-family:var(--font-serif);font-size:var(--text-xl);font-weight:700;color:var(--honey)">$2.47</div>
+<div style="font-size:var(--text-xs);color:var(--sage);font-weight:700">68% margin</div>
 </div>
-<span class="day-ui-badge badge-paid" style="font-size:var(--text-sm)">✓ Paid</span>
+<div style="color:var(--cinnamon);font-size:var(--text-lg)">→</div>
+<div style="text-align:center;flex:1">
+<div style="font-size:var(--text-xs);color:var(--cinnamon);margin-bottom:.25rem">Invoice #1042</div>
+<div style="font-family:var(--font-serif);font-size:var(--text-xl);font-weight:700">$47.00</div>
+<div class="day-ui-badge badge-paid" style="font-size:var(--text-xs)">✓ Paid</div>
+</div>
+</div>
 </div>
 </div>
 
 <!-- Medium: Order Flow -->
-<div class="bento-card reveal reveal-d3">
+<div class="bento-card bento-medium reveal reveal-d3">
 <h3>Order Flow</h3>
 <p>From order to doorstep. Track every step along the way.</p>
 <div class="bento-demo">
@@ -639,26 +649,14 @@ Your bakery.<br>
 </div>
 </div>
 
-<!-- Small: Recipe Costing -->
-<div class="bento-card reveal reveal-d4">
-<h3>Recipe Costing</h3>
-<p>Know your true cost. Price with confidence.</p>
-<div class="bento-demo" style="display:flex;align-items:center;justify-content:center;padding:1.5rem">
-<div class="recipe-cost">
-<div class="recipe-cost-icon">🌾</div>
-<div><div class="recipe-cost-val">$2.47<span style="font-size:var(--text-sm);font-weight:400;color:var(--walnut)">/loaf</span></div><div class="recipe-margin">68% margin ↑</div></div>
-</div>
-</div>
-</div>
-
-<!-- Small: Customer Love -->
-<div class="bento-card reveal reveal-d5">
+<!-- Medium: Customer Love -->
+<div class="bento-card bento-medium reveal reveal-d4">
 <h3>Customer Love</h3>
 <p>Birthdays, reminders, and repeat orders. All automated.</p>
 <div class="bento-demo" style="display:flex;align-items:center;justify-content:center;padding:1.5rem">
-<div class="love-notif">
-<span class="love-heart">♥</span>
-<span style="font-size:var(--text-sm);font-weight:500">Birthday discount sent!</span>
+<div style="display:flex;flex-direction:column;gap:.75rem;width:100%">
+<div class="love-notif"><span class="love-heart">♥</span><span style="font-size:var(--text-sm);font-weight:500">Birthday discount sent!</span></div>
+<div class="love-notif" style="animation-delay:2s"><span style="font-size:1.25rem">🔁</span><span style="font-size:var(--text-sm);font-weight:500">Reorder reminder: Emma W.</span></div>
 </div>
 </div>
 </div>
