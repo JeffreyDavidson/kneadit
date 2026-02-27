@@ -803,7 +803,7 @@ function typeLoop() {
     updateStorefront(text);
     if (charIdx >= name.length) {
       deleting = true;
-      typeTimer = setTimeout(typeLoop, 3500);
+      typeTimer = setTimeout(typeLoop, 1500);
       return;
     }
     typeTimer = setTimeout(typeLoop, 90 + Math.random() * 70);
