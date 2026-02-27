@@ -282,20 +282,18 @@ a{color:inherit;text-decoration:none}
 }
 
 /* ===== BUILT BY A BAKER ===== */
-.story{background:linear-gradient(180deg,var(--sourdough) 0%,#efe5d4 100%);padding:6rem 1.5rem;position:relative}
-.story-inner{max-width:800px;margin:0 auto;display:flex;gap:2rem;align-items:flex-start}
-.story-quote{flex-shrink:0}
-.story-quote svg{width:72px;height:72px}
-.story-text{font-size:var(--text-xl);line-height:1.8;color:var(--walnut)}
-.story-text p{margin-bottom:1.25rem}
-.story-text p:last-of-type{margin-bottom:0}
-.story-text .story-kneadit{color:var(--honey);font-weight:700}
-.story-loaf{text-align:center;margin-top:3rem}
-.story-loaf svg{width:60px;height:auto;opacity:.4;margin:0 auto}
-@media(max-width:600px){
-.story-inner{flex-direction:column;gap:1rem}
-.story-quote svg{width:48px;height:48px}
-}
+.story{background:linear-gradient(180deg,var(--espresso) 0%,#2a1a0e 100%);padding:7rem 1.5rem;position:relative;overflow:hidden}
+.story::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 30% 50%,rgba(212,146,12,.08) 0%,transparent 60%);pointer-events:none}
+.story-inner{max-width:900px;margin:0 auto;text-align:center}
+.story-label{font-family:var(--font-display);font-size:var(--text-sm);letter-spacing:.15em;text-transform:uppercase;color:var(--honey);margin-bottom:2rem;opacity:.8}
+.story-pullquote{font-family:var(--font-display);font-size:clamp(1.75rem,4vw,2.75rem);line-height:1.4;color:var(--cream);margin-bottom:2.5rem;font-weight:400;font-style:italic;position:relative;max-width:750px;margin-left:auto;margin-right:auto}
+.story-pullquote::before,.story-pullquote::after{content:'"';font-size:3em;line-height:0;color:var(--honey);opacity:.3;vertical-align:-.25em;font-style:normal}
+.story-pullquote::after{content:'"'}
+.story-divider{width:60px;height:2px;background:var(--honey);margin:0 auto 2.5rem;opacity:.4}
+.story-body{max-width:680px;margin:0 auto}
+.story-body p{font-size:var(--text-lg);line-height:1.9;color:rgba(254,249,239,.75);margin-bottom:1.5rem}
+.story-body p:last-of-type{margin-bottom:0}
+.story-body .story-kneadit{color:var(--honey);font-weight:700;font-size:1.15em}
 
 /* ===== PRICING ===== */
 .pricing{background:var(--cream);padding:5rem 1.5rem}
@@ -333,8 +331,7 @@ a{color:inherit;text-decoration:none}
 footer{background:var(--warm-black);color:var(--cinnamon);padding:3rem 1.5rem;text-align:center;font-size:var(--text-sm);border-top:1px solid var(--walnut)}
 .footer-brand{font-family:var(--font-serif);font-size:var(--text-lg);font-weight:700;color:var(--cream);margin-bottom:.25rem}
 .footer-tagline{font-size:var(--text-xs);color:var(--cinnamon);margin-bottom:.75rem}
-.footer-social{display:flex;justify-content:center;gap:1.5rem;margin-bottom:.75rem}
-.footer-social a:hover,.footer-social a:focus-visible{color:var(--cream)}
+/* footer-social removed */
 .footer-links{display:flex;justify-content:center;gap:1.5rem;margin-bottom:.5rem}
 .footer-links a:hover,.footer-links a:focus-visible{color:var(--cream)}
 .footer-made{margin-top:.25rem}
@@ -427,13 +424,7 @@ Your bakery.<br>
 <!-- ===== 2. BAKER'S DAY ===== -->
 <section class="bakers-day" id="bakersDay">
 <div class="bakers-day-intro">
-<svg class="day-icon reveal" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="24" cy="24" r="20" stroke="#d4920c" stroke-width="2" fill="none" opacity=".5"/>
-<circle cx="24" cy="24" r="3" fill="#d4920c" opacity=".6"/>
-<line x1="24" y1="24" x2="24" y2="12" stroke="#d4920c" stroke-width="2" stroke-linecap="round"/>
-<line x1="24" y1="24" x2="32" y2="24" stroke="#d4920c" stroke-width="1.5" stroke-linecap="round"/>
-<path d="M24 4 L24 8 M24 40 L24 44 M4 24 L8 24 M40 24 L44 24" stroke="#e8b04a" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
-</svg>
+<!-- icon removed -->
 <h2 class="reveal">A day with KneadIt</h2>
 <p class="reveal reveal-d1">From the first light check to your evening profit smile — here's how KneadIt turns a busy day into a smooth one.</p>
 <p class="day-subtitle reveal reveal-d2">Follow along as KneadIt handles your entire day.</p>
@@ -659,29 +650,15 @@ Your bakery.<br>
 
 <!-- ===== 5. BUILT BY A BAKER ===== -->
 <section class="story" id="story">
-<div class="story-inner reveal">
-<div class="story-quote">
-<svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8 42 C8 30 14 20 26 14" stroke="#d4920c" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-<path d="M8 42 C4 42 2 38 3 34 C4 30 8 28 12 28 C16 28 18 32 17 36 C16 40 12 42 8 42Z" fill="#d4920c" opacity=".3"/>
-<path d="M34 42 C34 30 40 20 52 14" stroke="#d4920c" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-<path d="M34 42 C30 42 28 38 29 34 C30 30 34 28 38 28 C42 28 44 32 43 36 C42 40 38 42 34 42Z" fill="#d4920c" opacity=".3"/>
-</svg>
+<div class="story-inner">
+<div class="story-label reveal">Our Story</div>
+<div class="story-pullquote reveal reveal-d1">We didn't set out to build software. We set out to sell sourdough.</div>
+<div class="story-divider reveal reveal-d2"></div>
+<div class="story-body">
+<p class="reveal reveal-d2">Between taking orders through texts, tracking costs in a notebook, and hoping the math worked out — we realized we were spending more time managing the business than actually baking.</p>
+<p class="reveal reveal-d3">So we built the tool we wished existed. Not another generic business app — something made specifically for bakers like us, who work from home, who pour love into every recipe, and who deserve real tools to grow.</p>
+<p class="reveal reveal-d3"><span class="story-kneadit">That's KneadIt.</span></p>
 </div>
-<div class="story-text">
-<p>We didn't set out to build software. We set out to sell sourdough.</p>
-<p>But between taking orders through texts, tracking costs in a notebook, and hoping the math worked out — we realized we were spending more time managing the business than actually baking.</p>
-<p>So we built the tool we wished existed. Not another generic business app — something made specifically for bakers like us, who work from home, who pour love into every loaf, and who deserve real tools to grow.</p>
-<p><span class="story-kneadit">That's KneadIt.</span></p>
-</div>
-</div>
-<div class="story-loaf">
-<svg viewBox="0 0 80 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8 38 C8 38 6 28 10 22 C14 16 22 12 40 12 C58 12 66 16 70 22 C74 28 72 38 72 38" stroke="#d4920c" stroke-width="2" stroke-linecap="round" fill="none"/>
-<path d="M8 38 L72 38" stroke="#d4920c" stroke-width="2" stroke-linecap="round"/>
-<path d="M28 20 C32 14 36 14 40 18" stroke="#d4920c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".4"/>
-<path d="M40 18 C44 14 48 14 52 20" stroke="#d4920c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".4"/>
-</svg>
 </div>
 </section>
 
@@ -762,11 +739,7 @@ Your bakery.<br>
 <footer>
 <div class="footer-brand">KneadIt</div>
 <div class="footer-tagline">Business management for cottage food bakers</div>
-<div class="footer-social">
-<a href="#" aria-label="Twitter">Twitter</a>
-<a href="#" aria-label="Instagram">Instagram</a>
-<a href="#" aria-label="Facebook">Facebook</a>
-</div>
+<!-- social removed -->
 <div class="footer-links">
 <a href="#">Privacy</a>
 <a href="#">Terms</a>
