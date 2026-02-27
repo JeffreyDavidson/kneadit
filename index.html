@@ -86,10 +86,15 @@ a{color:inherit;text-decoration:none}
 .hero-content{position:relative;z-index:1;width:100%;max-width:900px}
 .hero-eyebrow{font-size:var(--text-sm);letter-spacing:.25em;text-transform:uppercase;color:var(--honey);margin-bottom:1.5rem;font-weight:500}
 .hero-headline{font-family:var(--font-serif);font-size:var(--text-hero);font-weight:700;line-height:1.1;margin-bottom:.25em}
-.hero-headline-input-wrap{display:block;position:relative;min-height:1.2em}
-.hero-name-input{background:none;border:none;outline:none;font-family:var(--font-serif);font-size:var(--text-hero);font-weight:700;color:var(--golden);text-align:center;width:100%;line-height:1.1;caret-color:var(--honey)}
+.hero-headline-input-wrap{display:block;position:relative;min-height:1.2em;margin-top:.15em}
+.hero-name-input{background:none;border:none;border-bottom:3px dashed var(--walnut);outline:none;font-family:var(--font-serif);font-size:var(--text-hero);font-weight:700;color:var(--golden);text-align:center;width:100%;line-height:1.1;caret-color:var(--honey);padding-bottom:.1em;transition:border-color .3s}
+.hero-name-input:focus{border-bottom-color:var(--honey);border-bottom-style:solid}
 .hero-name-input::placeholder{color:var(--cinnamon);opacity:.6}
 .typing-cursor{display:inline-block;width:3px;height:.85em;background:var(--honey);margin-left:4px;vertical-align:text-bottom;animation:blink 1s step-end infinite}
+.hero-type-hint{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:.75rem;font-size:var(--text-sm);color:var(--cinnamon);opacity:.8;transition:opacity .4s}
+.hero-type-hint.hidden{opacity:0;pointer-events:none}
+.hero-type-hint svg{animation:bounce-arrow 1.5s ease infinite}
+@keyframes bounce-arrow{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes blink{50%{opacity:0}}
 
 /* Mini storefront preview — floating animation */
@@ -358,10 +363,15 @@ footer{background:var(--warm-black);color:var(--cinnamon);padding:3rem 1.5rem;te
 <h1 class="hero-headline reveal reveal-d1">
 Your bakery.<br>
 <span class="hero-headline-input-wrap">
-<input type="text" class="hero-name-input" id="bakeryNameInput" autocomplete="off" spellcheck="false">
+<input type="text" class="hero-name-input" id="bakeryNameInput" autocomplete="off" spellcheck="false" placeholder="Type your bakery name...">
 <span class="typing-cursor" id="typingCursor"></span>
 </span>
 </h1>
+<div class="hero-type-hint" id="typeHint">
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2 L8 12 M4 8 L8 12 L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span>Type your bakery name and watch it come to life</span>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2 L8 12 M4 8 L8 12 L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
 
 <div class="storefront-preview reveal reveal-d2" id="storefrontPreview">
 <div class="sf-header">
@@ -817,8 +827,9 @@ function typeLoop() {
   const name = names[nameIdx];
   if (!deleting) {
     charIdx++;
-    input.placeholder = name.slice(0, charIdx);
-    updateStorefront(name.slice(0, charIdx));
+    const text = name.slice(0, charIdx);
+    input.value = text;
+    updateStorefront(text);
     if (charIdx >= name.length) {
       deleting = true;
       typeTimer = setTimeout(typeLoop, 2200);
@@ -827,8 +838,9 @@ function typeLoop() {
     typeTimer = setTimeout(typeLoop, 80 + Math.random() * 60);
   } else {
     charIdx--;
-    input.placeholder = name.slice(0, charIdx);
-    updateStorefront(name.slice(0, charIdx));
+    const text = name.slice(0, charIdx);
+    input.value = text;
+    updateStorefront(text);
     if (charIdx <= 0) {
       deleting = false;
       nameIdx = (nameIdx + 1) % names.length;
@@ -840,25 +852,41 @@ function typeLoop() {
 }
 typeTimer = setTimeout(typeLoop, 1200);
 
+const typeHint = document.getElementById('typeHint');
+
 input.addEventListener('input', function() {
   userTyping = this.value.length > 0;
   if (userTyping) {
     clearTimeout(typeTimer);
     cursor.style.display = 'none';
+    typeHint.classList.add('hidden');
     updateStorefront(this.value);
   } else {
     cursor.style.display = '';
     charIdx = 0; nameIdx = 0; deleting = false;
-    input.placeholder = '';
+    input.placeholder = 'Type your bakery name...';
+    typeHint.classList.remove('hidden');
     updateStorefront('');
     typeTimer = setTimeout(typeLoop, 600);
   }
 });
 input.addEventListener('focus', function() {
-  if (!this.value) { clearTimeout(typeTimer); input.placeholder = ''; cursor.style.display = 'none'; updateStorefront(''); }
+  clearTimeout(typeTimer);
+  // If the auto-typing was active, clear it so user starts fresh
+  if (!userTyping) {
+    this.value = '';
+    this.placeholder = 'Type your bakery name...';
+    cursor.style.display = 'none';
+    typeHint.classList.add('hidden');
+    updateStorefront('');
+  }
 });
 input.addEventListener('blur', function() {
-  if (!this.value) { cursor.style.display = ''; typeTimer = setTimeout(typeLoop, 800); }
+  if (!this.value) {
+    cursor.style.display = '';
+    typeHint.classList.remove('hidden');
+    typeTimer = setTimeout(typeLoop, 800);
+  }
 });
 
 /* === Timeline scroll reveal (Baker's Day) === */
