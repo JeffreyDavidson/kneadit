@@ -234,6 +234,7 @@ a{color:inherit;text-decoration:none}
 .bento-large{grid-column:span 2}
 .bento-card h3{font-family:var(--font-serif);font-size:var(--text-xl);margin-bottom:.5rem;color:var(--warm-black)}
 .bento-card p{font-size:var(--text-sm);color:var(--walnut);margin-bottom:1.25rem;line-height:1.6}
+.bento-card:not(.bento-large) p{min-height:3.2em}
 .bento-demo{background:linear-gradient(135deg,var(--flour),rgba(232,220,200,.3));border-radius:14px;padding:1.25rem;flex:1;font-size:var(--text-sm);overflow:hidden;position:relative;border:1px solid rgba(212,146,12,.08)}
 
 /* Storefront demo */
@@ -609,7 +610,8 @@ Your bakery.<br>
 
 <!-- Medium: Smart Invoicing -->
 <div class="bento-card reveal reveal-d2">
-<p>PayPal invoices. Automatic reminders. Get paid without the awkward follow-up.</p>
+<h3>Smart Invoicing</h3>
+<p>PayPal invoices with automatic reminders. No awkward follow-ups.</p>
 <div class="bento-demo" style="text-align:center;padding:1.5rem">
 <div style="background:var(--white);border-radius:10px;padding:1rem;margin-bottom:.5rem">
 <div style="font-size:var(--text-xs);color:var(--cinnamon);margin-bottom:.25rem">Invoice #1042</div>
@@ -621,7 +623,8 @@ Your bakery.<br>
 
 <!-- Medium: Order Flow -->
 <div class="bento-card reveal reveal-d3">
-<p>From order to doorstep. Never lose track.</p>
+<h3>Order Flow</h3>
+<p>From order to doorstep. Track every step along the way.</p>
 <div class="bento-demo">
 <div class="flow-pills">
 <span class="flow-pill pill-confirmed active">Confirmed</span>
@@ -638,6 +641,7 @@ Your bakery.<br>
 
 <!-- Small: Recipe Costing -->
 <div class="bento-card reveal reveal-d4">
+<h3>Recipe Costing</h3>
 <p>Know your true cost. Price with confidence.</p>
 <div class="bento-demo" style="display:flex;align-items:center;justify-content:center;padding:1.5rem">
 <div class="recipe-cost">
@@ -649,7 +653,8 @@ Your bakery.<br>
 
 <!-- Small: Customer Love -->
 <div class="bento-card reveal reveal-d5">
-<p>Birthdays, reminders, repeat orders. Automated.</p>
+<h3>Customer Love</h3>
+<p>Birthdays, reminders, and repeat orders. All automated.</p>
 <div class="bento-demo" style="display:flex;align-items:center;justify-content:center;padding:1.5rem">
 <div class="love-notif">
 <span class="love-heart">♥</span>
