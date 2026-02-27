@@ -361,14 +361,9 @@ footer{background:var(--warm-black);color:var(--cinnamon);padding:3rem 1.5rem;te
 Your bakery.<br>
 <span class="hero-headline-input-wrap">
 <input type="text" class="hero-name-input" id="bakeryNameInput" autocomplete="off" spellcheck="false" placeholder="Type your bakery name...">
-<span class="typing-cursor" id="typingCursor"></span>
 </span>
 </h1>
-<div class="hero-type-hint" id="typeHint">
-<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 14 L8 4 M4 8 L8 4 L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-<span>Type your bakery name above</span>
-<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 14 L8 4 M4 8 L8 4 L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-</div>
+<!-- type hint removed -->
 
 <div class="storefront-preview reveal reveal-d2" id="storefrontPreview">
 <div class="sf-header">
@@ -784,7 +779,6 @@ document.querySelectorAll('.nav-links a').forEach(a => {
 /* === Bakery name typing effect === */
 const names = ['Sweet Flour Studio', 'The Bread Basket', 'Honey & Wheat Co.', 'Rise & Shine Bakery', 'Golden Crust Kitchen'];
 const input = document.getElementById('bakeryNameInput');
-const cursor = document.getElementById('typingCursor');
 const sfName = document.getElementById('sfName');
 const sfLogo = document.getElementById('sfLogo');
 let nameIdx = 0, charIdx = 0, deleting = false, userTyping = false, typeTimer;
@@ -825,39 +819,28 @@ function typeLoop() {
 }
 typeTimer = setTimeout(typeLoop, 1200);
 
-const typeHint = document.getElementById('typeHint');
-
 input.addEventListener('input', function() {
   userTyping = this.value.length > 0;
   if (userTyping) {
     clearTimeout(typeTimer);
-    cursor.style.display = 'none';
-    typeHint.classList.add('hidden');
     updateStorefront(this.value);
   } else {
-    cursor.style.display = '';
     charIdx = 0; nameIdx = 0; deleting = false;
     input.placeholder = 'Type your bakery name...';
-    typeHint.classList.remove('hidden');
     updateStorefront('');
     typeTimer = setTimeout(typeLoop, 600);
   }
 });
 input.addEventListener('focus', function() {
   clearTimeout(typeTimer);
-  // If the auto-typing was active, clear it so user starts fresh
   if (!userTyping) {
     this.value = '';
     this.placeholder = 'Type your bakery name...';
-    cursor.style.display = 'none';
-    typeHint.classList.add('hidden');
     updateStorefront('');
   }
 });
 input.addEventListener('blur', function() {
   if (!this.value) {
-    cursor.style.display = '';
-    typeHint.classList.remove('hidden');
     typeTimer = setTimeout(typeLoop, 800);
   }
 });
