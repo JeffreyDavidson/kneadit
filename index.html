@@ -24,7 +24,7 @@
 --honey:#d4920c;--golden:#e8b04a;--butter:#f5d88e;--flour:#faf4e8;--cream:#fef9ef;
 --white:#fff;--sourdough:#e8dcc8;--crust:#c4956a;--berry:#a83248;--sage:#5a7a5a;
 --text-xs:0.75rem;--text-sm:0.875rem;--text-base:1rem;--text-lg:1.125rem;--text-xl:1.25rem;
---text-2xl:clamp(1.5rem,3vw,2rem);--text-3xl:clamp(2rem,4vw,3rem);--text-hero:clamp(2.25rem,5.5vw,4.25rem);
+--text-2xl:clamp(1.5rem,3vw,2rem);--text-3xl:clamp(2rem,4vw,3rem);--text-hero:clamp(2.25rem,5.5vw,4.5rem);
 --font-serif:'Playfair Display',Georgia,serif;--font-sans:'DM Sans',system-ui,sans-serif;
 --nav-height:64px;
 }
@@ -781,7 +781,7 @@ document.querySelectorAll('.nav-links a').forEach(a => {
 });
 
 /* === Bakery name typing effect === */
-const names = ['Sweet Flour Studio', 'The Bread Basket', 'Honey & Wheat Co.', 'Rise & Shine Bakery', 'Golden Crust Kitchen'];
+const names = ['Sweet Flour Studio', 'The Bread Basket', 'Honey & Wheat Co.', 'Rise & Shine Bakes', 'Golden Crust Co.'];
 const input = document.getElementById('bakeryNameInput');
 const sfName = document.getElementById('sfName');
 const sfLogo = document.getElementById('sfLogo');
@@ -803,10 +803,10 @@ function typeLoop() {
     updateStorefront(text);
     if (charIdx >= name.length) {
       deleting = true;
-      typeTimer = setTimeout(typeLoop, 2200);
+      typeTimer = setTimeout(typeLoop, 3500);
       return;
     }
-    typeTimer = setTimeout(typeLoop, 80 + Math.random() * 60);
+    typeTimer = setTimeout(typeLoop, 90 + Math.random() * 70);
   } else {
     charIdx--;
     const text = name.slice(0, charIdx);
