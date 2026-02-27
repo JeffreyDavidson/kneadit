@@ -3,800 +3,922 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KneadIt — Business Management for Home Bakers</title>
-<meta name="description" content="The all-in-one platform for cottage food bakers. Storefront, orders, invoicing, recipe costing, and more — built by bakers, for bakers.">
+<title>KneadIt — Run Your Home Bakery Like a Real Business</title>
+<meta name="description" content="KneadIt gives cottage food bakers the tools to manage orders, track finances, send invoices, and grow — all in one beautiful platform.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --primary: #d4920c;
-  --primary-light: #f0b942;
-  --dark: #1a1a2e;
-  --dark-soft: #2a2a3e;
-  --light: #fef9ef;
-  --cream: #fdf6e9;
-  --accent: #c4613a;
-  --accent-hover: #d6734c;
-  --text: #1c1917;
-  --text-muted: #78716c;
-  --white: #ffffff;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
-  --shadow-md: 0 4px 20px rgba(0,0,0,.08);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,.12);
-  --radius: 12px;
-  --radius-lg: 20px;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--dark:#1a1612;--dark-card:#2a2420;--dark-surface:#1f1a16;
+--cream:#fef9ef;--cream-dark:#f5efe0;
+--amber:#d4920c;--amber-light:#f0b848;--amber-glow:rgba(212,146,12,0.15);
+--gold:#c9a84c;--terracotta:#c75a3a;--terracotta-hover:#b84a2a;
+--text-dark:#1a1612;--text-light:#fef9ef;--text-muted:#8a7e72;
+--glass:rgba(255,255,255,0.08);--glass-border:rgba(255,255,255,0.12);
+--glass-light:rgba(255,255,255,0.7);--glass-light-border:rgba(0,0,0,0.08);
+--radius:16px;--radius-sm:10px;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body { font-family: 'Inter', system-ui, sans-serif; color: var(--text); background: var(--light); line-height: 1.6; overflow-x: hidden; }
-h1, h2, h3, h4 { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; line-height: 1.15; }
-img { max-width: 100%; display: block; }
-a { color: inherit; text-decoration: none; }
-.container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text-dark);line-height:1.7;overflow-x:hidden;background:var(--dark)}
+h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif;line-height:1.2;font-weight:600}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button{font-family:inherit;cursor:pointer;border:none}
+input{font-family:inherit}
 
-/* ── NAV ── */
-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 16px 0; transition: background .3s, box-shadow .3s; }
-nav.scrolled { background: rgba(254,249,239,.92); backdrop-filter: blur(12px); box-shadow: var(--shadow-sm); }
-nav .container { display: flex; align-items: center; justify-content: space-between; }
-.nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--dark); }
-.nav-logo span { color: var(--primary); }
-.nav-links { display: flex; gap: 32px; align-items: center; }
-.nav-links a { font-size: .9rem; font-weight: 500; color: var(--text-muted); transition: color .2s; }
-.nav-links a:hover { color: var(--text); }
-.nav-cta { background: var(--accent); color: var(--white) !important; padding: 10px 22px; border-radius: 100px; font-weight: 600 !important; transition: background .2s, transform .2s, box-shadow .2s; }
-.nav-cta:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(196,97,58,.3); }
-@media (max-width: 768px) {
-  .nav-links a:not(.nav-cta) { display: none; }
-}
+/* Grain overlay */
+.grain{position:relative}
+.grain::after{content:'';position:absolute;inset:0;opacity:.035;pointer-events:none;z-index:1;
+background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+background-size:128px 128px}
 
-/* ── HERO ── */
-.hero { min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; padding: 120px 0 80px; }
-.hero-bg { position: absolute; inset: 0; z-index: 0; }
-.hero-bg::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #fef9ef 0%, #fdf0d5 30%, #fce8c3 60%, #fef9ef 100%); background-size: 300% 300%; animation: heroGradient 12s ease infinite; }
-@keyframes heroGradient { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-.hero-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 70% 30%, rgba(212,146,12,.08) 0%, transparent 60%); }
-.hero .container { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.hero-content { max-width: 560px; }
-.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(212,146,12,.1); border: 1px solid rgba(212,146,12,.2); color: var(--primary); font-size: .85rem; font-weight: 600; padding: 8px 16px; border-radius: 100px; margin-bottom: 28px; }
-.hero-badge svg { width: 16px; height: 16px; }
-.hero h1 { font-size: clamp(2.8rem, 5.5vw, 4.2rem); color: var(--dark); margin-bottom: 20px; letter-spacing: -.02em; }
-.hero h1 em { font-style: normal; color: var(--primary); position: relative; }
-.hero-sub { font-size: clamp(1.05rem, 1.8vw, 1.2rem); color: var(--text-muted); max-width: 480px; margin-bottom: 36px; line-height: 1.7; }
-.hero-form { display: flex; gap: 10px; max-width: 440px; }
-.hero-form input { flex: 1; padding: 16px 20px; border: 2px solid #e7e0d5; border-radius: 100px; font-size: 1rem; font-family: inherit; background: var(--white); transition: border-color .2s; outline: none; }
-.hero-form input:focus { border-color: var(--primary); }
-.hero-form button { padding: 16px 32px; background: var(--accent); color: var(--white); border: none; border-radius: 100px; font-size: 1rem; font-weight: 600; font-family: inherit; cursor: pointer; white-space: nowrap; transition: background .2s, transform .2s, box-shadow .2s; }
-.hero-form button:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(196,97,58,.3); }
-.hero-trust { margin-top: 20px; font-size: .88rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
-.hero-trust .dots { display: flex; gap: -4px; }
-.hero-trust .dot { width: 28px; height: 28px; border-radius: 50%; background: var(--primary-light); border: 2px solid var(--light); display: flex; align-items: center; justify-content: center; font-size: .65rem; font-weight: 700; color: var(--dark); margin-left: -8px; }
-.hero-trust .dot:first-child { margin-left: 0; }
+/* Glass cards */
+.glass{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius)}
+.glass-light{background:var(--glass-light);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-light-border);border-radius:var(--radius)}
 
-/* Hero mockup */
-.hero-mockup { position: relative; }
-.mockup-window { background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0,0,0,.04); overflow: hidden; transform: perspective(1200px) rotateY(-4deg) rotateX(2deg); transition: transform .4s; }
-.mockup-window:hover { transform: perspective(1200px) rotateY(-1deg) rotateX(1deg); }
-.mockup-bar { display: flex; gap: 6px; padding: 14px 18px; background: #f8f5f0; border-bottom: 1px solid #ede8e0; }
-.mockup-bar span { width: 10px; height: 10px; border-radius: 50%; }
-.mockup-bar span:nth-child(1) { background: #f87171; }
-.mockup-bar span:nth-child(2) { background: #fbbf24; }
-.mockup-bar span:nth-child(3) { background: #34d399; }
-.mockup-body { padding: 24px; }
-.mockup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.mockup-logo { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--dark); }
-.mockup-nav-dots { display: flex; gap: 12px; }
-.mockup-nav-dots span { width: 40px; height: 6px; border-radius: 3px; background: #e7e0d5; }
-.mockup-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-.mockup-stat { background: var(--cream); border-radius: 10px; padding: 14px; }
-.mockup-stat-label { font-size: .65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
-.mockup-stat-value { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--dark); }
-.mockup-stat-value.green { color: #16a34a; }
-.mockup-orders { display: flex; flex-direction: column; gap: 8px; }
-.mockup-order { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--cream); border-radius: 8px; font-size: .8rem; }
-.mockup-order-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.mockup-order-dot.confirmed { background: var(--primary); }
-.mockup-order-dot.baking { background: var(--accent); }
-.mockup-order-dot.ready { background: #16a34a; }
-.mockup-order-name { font-weight: 600; color: var(--dark); }
-.mockup-order-item { color: var(--text-muted); flex: 1; }
-.mockup-order-price { font-weight: 600; color: var(--dark); }
-/* floating decorations */
-.hero-float { position: absolute; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow-md); padding: 12px 16px; font-size: .8rem; display: flex; align-items: center; gap: 8px; animation: float 4s ease-in-out infinite; }
-.hero-float.f1 { top: 10%; right: -20px; animation-delay: 0s; }
-.hero-float.f2 { bottom: 15%; left: -30px; animation-delay: 1.5s; }
-@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-.hero-float svg { width: 20px; height: 20px; color: var(--primary); flex-shrink: 0; }
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px var(--amber-glow)}50%{box-shadow:0 0 40px var(--amber-glow),0 0 60px rgba(212,146,12,0.08)}}
+@keyframes fillBar{from{width:0}to{width:var(--fill,100%)}}
+@keyframes drawLine{from{stroke-dashoffset:var(--dash-len,1000)}to{stroke-dashoffset:0}}
+@keyframes bobFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+@keyframes slideCardRight{0%{transform:translateX(0)}100%{transform:translateX(calc(100% + 12px))}}
+@keyframes growBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-@media (max-width: 900px) {
-  .hero .container { grid-template-columns: 1fr; text-align: center; }
-  .hero-content { max-width: 100%; }
-  .hero-sub { margin-left: auto; margin-right: auto; }
-  .hero-form { max-width: 100%; }
-  .hero-trust { justify-content: center; }
-  .hero-mockup { display: none; }
-}
-@media (max-width: 480px) {
-  .hero-form { flex-direction: column; }
-  .hero-form button { width: 100%; }
+.anim{opacity:0;transition:opacity .6s,transform .6s}
+.anim.visible{opacity:1;transform:none}
+.anim.fade-up{transform:translateY(30px)}
+.anim.slide-left{transform:translateX(60px)}
+.anim.slide-right{transform:translateX(-60px)}
+.stagger-1{transition-delay:.1s}.stagger-2{transition-delay:.2s}.stagger-3{transition-delay:.3s}
+.stagger-4{transition-delay:.4s}.stagger-5{transition-delay:.5s}.stagger-6{transition-delay:.6s}
+
+@media(prefers-reduced-motion:reduce){
+.anim{opacity:1!important;transform:none!important;transition:none!important}
+*{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
 }
 
-/* ── SECTION BASE ── */
-section { padding: 100px 0; }
-.section-label { text-transform: uppercase; font-size: .8rem; font-weight: 700; letter-spacing: .1em; color: var(--primary); margin-bottom: 12px; }
-.section-title { font-size: clamp(2rem, 4vw, 2.8rem); color: var(--dark); margin-bottom: 16px; }
-.section-sub { font-size: 1.1rem; color: var(--text-muted); max-width: 560px; line-height: 1.7; }
-.text-center { text-align: center; }
-.text-center .section-sub { margin: 0 auto; }
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:background .3s,backdrop-filter .3s}
+.nav.scrolled{background:rgba(26,22,18,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.nav-logo{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--cream);font-weight:700;display:flex;align-items:center;gap:.5rem}
+.nav-logo svg{width:28px;height:28px}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{color:var(--cream);opacity:.8;font-size:.9rem;transition:opacity .2s}
+.nav-links a:hover{opacity:1}
+.nav-cta{background:var(--terracotta);color:#fff;padding:.55rem 1.3rem;border-radius:50px;font-size:.85rem;font-weight:600;transition:background .2s,transform .2s}
+.nav-cta:hover{background:var(--terracotta-hover);transform:translateY(-1px)}
+@media(max-width:768px){.nav-links a:not(.nav-cta){display:none}.nav{padding:.8rem 1.2rem}}
 
-/* ── REVEAL ANIMATIONS ── */
-.reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
-.reveal.visible { opacity: 1; transform: translateY(0); }
-.reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity .7s ease, transform .7s ease; }
-.reveal-left.visible { opacity: 1; transform: translateX(0); }
-.reveal-right { opacity: 0; transform: translateX(40px); transition: opacity .7s ease, transform .7s ease; }
-.reveal-right.visible { opacity: 1; transform: translateX(0); }
+/* CONTAINER */
+.container{max-width:1200px;margin:0 auto;padding:0 1.5rem}
+section{position:relative;overflow:hidden}
 
-/* ── PROBLEMS ── */
-.problems { background: var(--white); }
-.problems-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 48px; }
-.problem-card { background: var(--light); border-radius: var(--radius-lg); padding: 32px 28px; border: 1px solid transparent; transition: transform .3s, box-shadow .3s, border-color .3s; }
-.problem-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: rgba(212,146,12,.15); }
-.problem-icon { width: 48px; height: 48px; background: rgba(212,146,12,.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
-.problem-icon svg { width: 24px; height: 24px; color: var(--primary); }
-.problem-card h3 { font-size: 1.15rem; margin-bottom: 10px; color: var(--dark); }
-.problem-card p { font-size: .95rem; color: var(--text-muted); line-height: 1.65; }
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;background:var(--dark);padding:6rem 0 4rem;position:relative}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);color:var(--cream);margin-bottom:1.2rem;font-weight:700}
+.hero h1 span{color:var(--amber-light)}
+.hero-sub{color:var(--text-muted);font-size:clamp(1rem,2vw,1.2rem);margin-bottom:2rem;max-width:520px;line-height:1.7}
+.hero-form{display:flex;gap:.6rem;max-width:440px;margin-bottom:1.2rem}
+.hero-form input{flex:1;padding:.85rem 1.2rem;border-radius:50px;border:2px solid rgba(212,146,12,0.3);background:rgba(255,255,255,0.06);color:var(--cream);font-size:1rem;outline:none;transition:border-color .3s,box-shadow .3s}
+.hero-form input:focus{border-color:var(--amber);box-shadow:0 0 20px var(--amber-glow)}
+.hero-form input::placeholder{color:var(--text-muted)}
+.hero-form button{padding:.85rem 1.8rem;border-radius:50px;background:var(--terracotta);color:#fff;font-weight:600;font-size:1rem;white-space:nowrap;transition:background .2s,transform .2s,box-shadow .2s}
+.hero-form button:hover{background:var(--terracotta-hover);transform:translateY(-1px);box-shadow:0 4px 20px rgba(199,90,58,0.3)}
+.hero-social-proof{display:flex;align-items:center;gap:.7rem;color:var(--text-muted);font-size:.9rem}
+.avatar-stack{display:flex}
+.avatar-stack span{width:32px;height:32px;border-radius:50%;border:2px solid var(--dark);margin-left:-8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff}
+.avatar-stack span:first-child{margin-left:0}
+.avatar-stack span:nth-child(1){background:#c75a3a}
+.avatar-stack span:nth-child(2){background:#d4920c}
+.avatar-stack span:nth-child(3){background:#6b8f71}
+.avatar-stack span:nth-child(4){background:#7c6ca8}
 
-/* ── SOLUTION TRANSITION ── */
-.solution-transition { padding: 80px 0; text-align: center; position: relative; }
-.solution-transition h2 { font-size: clamp(2.2rem, 4.5vw, 3.2rem); color: var(--dark); margin-bottom: 16px; }
-.solution-transition h2 span { color: var(--primary); }
-.solution-transition p { font-size: 1.15rem; color: var(--text-muted); max-width: 520px; margin: 0 auto; }
-.divider { width: 60px; height: 3px; background: var(--primary); border-radius: 2px; margin: 40px auto 0; }
+/* Hero dashboard card */
+.hero-dashboard{animation:bobFloat 6s ease-in-out infinite;position:relative}
+.dash-card{padding:1.5rem;max-width:380px;margin-left:auto}
+.dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
+.dash-title{color:var(--cream);font-size:.85rem;font-weight:500}
+.dash-badge{background:rgba(107,175,93,0.2);color:#6baf5d;font-size:.7rem;padding:.25rem .6rem;border-radius:20px}
+.dash-stats{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.2rem}
+.dash-stat{padding:.8rem;border-radius:var(--radius-sm);background:rgba(255,255,255,0.04)}
+.dash-stat-label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
+.dash-stat-val{font-size:1.4rem;font-weight:600;color:var(--cream);font-family:'Fraunces',serif}
+.dash-chart{display:flex;align-items:flex-end;gap:6px;height:60px;padding-top:.5rem}
+.dash-bar{flex:1;border-radius:4px 4px 0 0;transform-origin:bottom;background:var(--amber)}
+.dash-bar.active{background:var(--amber-light)}
 
-/* ── FEATURES ── */
-.features { background: var(--white); }
-.feature-row { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 80px; }
-.feature-row:last-child { margin-bottom: 0; }
-.feature-row.reverse .feature-text { order: 2; }
-.feature-row.reverse .feature-visual { order: 1; }
-.feature-tag { display: inline-block; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--primary); background: rgba(212,146,12,.1); padding: 6px 12px; border-radius: 6px; margin-bottom: 14px; }
-.feature-text h3 { font-size: clamp(1.5rem, 2.5vw, 1.9rem); color: var(--dark); margin-bottom: 14px; }
-.feature-text p { font-size: 1.02rem; color: var(--text-muted); line-height: 1.7; }
-/* feature mockups */
-.feature-mock { background: var(--light); border-radius: var(--radius-lg); padding: 28px; border: 1px solid #ede8e0; }
-/* storefront mock */
-.sf-mock-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-.sf-mock-logo { width: 36px; height: 36px; border-radius: 8px; background: var(--primary); display: flex; align-items: center; justify-content: center; color: var(--white); font-family: 'DM Serif Display', serif; font-size: .9rem; }
-.sf-mock-name { font-weight: 600; font-size: .95rem; color: var(--dark); }
-.sf-products { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.sf-product { background: var(--white); border-radius: 10px; padding: 14px; text-align: center; border: 1px solid #ede8e0; }
-.sf-product-img { width: 100%; aspect-ratio: 1; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
-.sf-product-img:nth-child(1) { background: #fef3c7; }
-.sf-product-name { font-size: .8rem; font-weight: 600; color: var(--dark); }
-.sf-product-price { font-size: .75rem; color: var(--primary); font-weight: 600; }
-.sf-p1 .sf-product-img { background: #fef3c7; }
-.sf-p2 .sf-product-img { background: #fce7f3; }
-.sf-p3 .sf-product-img { background: #dbeafe; }
-.sf-p4 .sf-product-img { background: #dcfce7; }
-/* kanban mock */
-.kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.kanban-col-title { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 8px; padding: 4px 8px; }
-.kanban-card { background: var(--white); border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; border-left: 3px solid; font-size: .78rem; box-shadow: var(--shadow-sm); }
-.kanban-card.kc-confirmed { border-color: var(--primary); }
-.kanban-card.kc-baking { border-color: var(--accent); }
-.kanban-card.kc-ready { border-color: #16a34a; }
-.kanban-card strong { display: block; color: var(--dark); font-size: .8rem; }
-.kanban-card span { color: var(--text-muted); }
-/* recipe calc mock */
-.calc-mock { }
-.calc-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ede8e0; font-size: .85rem; }
-.calc-row:last-child { border: none; }
-.calc-row .label { color: var(--text-muted); }
-.calc-row .val { font-weight: 600; color: var(--dark); }
-.calc-total { display: flex; justify-content: space-between; padding: 14px 16px; background: rgba(22,163,74,.08); border-radius: 10px; margin-top: 10px; font-weight: 600; }
-.calc-total .val { color: #16a34a; font-size: 1.1rem; }
-/* invoice mock */
-.inv-mock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-.inv-status { font-size: .75rem; padding: 4px 10px; border-radius: 100px; font-weight: 600; }
-.inv-status.paid { background: rgba(22,163,74,.1); color: #16a34a; }
-.inv-status.pending { background: rgba(212,146,12,.1); color: var(--primary); }
-.inv-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: .85rem; border-bottom: 1px solid #ede8e0; }
-.inv-row:last-child { border: none; }
-/* customer mock */
-.cust-card { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--white); border-radius: 10px; margin-bottom: 8px; border: 1px solid #ede8e0; }
-.cust-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem; color: var(--white); flex-shrink: 0; }
-.cust-info { flex: 1; }
-.cust-name { font-weight: 600; font-size: .9rem; color: var(--dark); }
-.cust-detail { font-size: .78rem; color: var(--text-muted); }
-.cust-tag { font-size: .7rem; padding: 3px 8px; border-radius: 100px; font-weight: 600; }
-.cust-tag.birthday { background: #fce7f3; color: #be185d; }
-.cust-tag.vip { background: rgba(212,146,12,.1); color: var(--primary); }
-/* dashboard mock */
-.dash-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; margin-bottom: 14px; padding: 0 4px; }
-.dash-bar { flex: 1; border-radius: 6px 6px 0 0; background: var(--primary); opacity: .7; transition: opacity .3s; position: relative; }
-.dash-bar:hover { opacity: 1; }
-.dash-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--text-muted); padding: 0 4px; }
-.dash-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
-.dash-summary-card { background: var(--white); border-radius: 8px; padding: 12px; border: 1px solid #ede8e0; }
-.dash-summary-card .label { font-size: .7rem; color: var(--text-muted); }
-.dash-summary-card .val { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--dark); }
+/* Floating wheat icons */
+.hero-decor{position:absolute;opacity:.07;color:var(--amber)}
+.hero-decor.d1{top:15%;right:8%;font-size:3rem;animation:float 7s ease-in-out infinite}
+.hero-decor.d2{bottom:20%;right:15%;font-size:2rem;animation:float 5s ease-in-out infinite 1s}
+.hero-decor.d3{top:25%;left:5%;font-size:2.5rem;animation:float 6s ease-in-out infinite 2s}
 
-@media (max-width: 768px) {
-  .feature-row { grid-template-columns: 1fr; gap: 32px; }
-  .feature-row.reverse .feature-text { order: 1; }
-  .feature-row.reverse .feature-visual { order: 2; }
+@media(max-width:900px){
+.hero-inner{grid-template-columns:1fr;text-align:center}
+.hero-sub{margin-left:auto;margin-right:auto}
+.hero-form{margin-left:auto;margin-right:auto}
+.hero-social-proof{justify-content:center}
+.dash-card{margin:2rem auto 0;max-width:340px}
+.hero-dashboard{animation:bobFloat 8s ease-in-out infinite}
 }
 
-/* ── BAKER STORY ── */
-.baker-story { background: var(--dark); color: var(--cream); position: relative; overflow: hidden; }
-.baker-story::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
-.baker-story .container { position: relative; z-index: 1; max-width: 720px; text-align: center; }
-.baker-story .section-label { color: var(--primary-light); }
-.baker-story h2 { color: var(--cream); margin-bottom: 24px; }
-.baker-story blockquote { font-size: clamp(1.05rem, 1.8vw, 1.2rem); line-height: 1.8; color: rgba(253,246,233,.8); font-style: italic; margin-bottom: 24px; }
-.baker-story .attribution { font-size: .9rem; color: var(--primary-light); font-weight: 600; }
+/* SECTION STYLES */
+.section-dark{background:var(--dark);color:var(--cream)}
+.section-light{background:var(--cream)}
+.section-cream{background:var(--cream-dark)}
+.section-pad{padding:5rem 0}
+@media(max-width:768px){.section-pad{padding:3.5rem 0}}
+.section-title{font-size:clamp(1.8rem,4vw,3rem);margin-bottom:1rem;text-align:center}
+.section-subtitle{text-align:center;color:var(--text-muted);max-width:600px;margin:0 auto 3rem;font-size:1.1rem}
 
-/* ── HOW IT WORKS ── */
-.how-it-works { background: var(--light); }
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 56px; position: relative; }
-.steps::before { content: ''; position: absolute; top: 44px; left: 16.6%; right: 16.6%; height: 2px; background: repeating-linear-gradient(to right, var(--primary) 0 8px, transparent 8px 16px); }
-.step { text-align: center; position: relative; }
-.step-num { width: 64px; height: 64px; border-radius: 50%; background: var(--primary); color: var(--white); font-family: 'DM Serif Display', serif; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; position: relative; z-index: 1; box-shadow: 0 4px 16px rgba(212,146,12,.25); }
-.step h3 { font-size: 1.2rem; color: var(--dark); margin-bottom: 8px; }
-.step p { font-size: .95rem; color: var(--text-muted); line-height: 1.6; max-width: 260px; margin: 0 auto; }
-@media (max-width: 600px) {
-  .steps { grid-template-columns: 1fr; gap: 48px; }
-  .steps::before { display: none; }
-}
+/* PAIN POINTS */
+.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem}
+.pain-card{padding:2rem;border-radius:var(--radius);background:var(--glass-light);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-light-border);transition:transform .3s,box-shadow .3s}
+.pain-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.08)}
+.pain-icon{width:48px;height:48px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:var(--amber-glow);border-radius:12px;color:var(--amber)}
+.pain-card h3{font-size:1.15rem;margin-bottom:.5rem}
+.pain-card p{color:var(--text-muted);font-size:.95rem}
+/* Animated pain icons */
+.pain-icon svg{width:24px;height:24px}
+.pain-card:nth-child(1) .pain-icon{animation:pulse 2s ease-in-out infinite}
+.pain-card:nth-child(2) .pain-icon{animation:float 3s ease-in-out infinite}
+.pain-card:nth-child(3) .pain-icon{animation:spin 4s linear infinite}
+.pain-card:nth-child(4) .pain-icon{animation:pulse 2.5s ease-in-out infinite .5s}
 
-/* ── TESTIMONIALS ── */
-.testimonials { background: var(--white); }
-.testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 48px; }
-.testimonial-card { background: var(--light); border-radius: var(--radius-lg); padding: 32px; transition: transform .3s, box-shadow .3s; }
-.testimonial-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.testimonial-stars { color: var(--primary); margin-bottom: 16px; font-size: 1rem; letter-spacing: 2px; }
-.testimonial-card p { font-size: 1rem; color: var(--text); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
-.testimonial-author { display: flex; align-items: center; gap: 12px; }
-.testimonial-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--white); font-size: .85rem; }
-.testimonial-name { font-weight: 600; font-size: .9rem; color: var(--dark); }
-.testimonial-role { font-size: .8rem; color: var(--text-muted); }
+/* TRANSITION SECTION */
+.transition-section{padding:4rem 0;text-align:center}
+.transition-section h2{font-size:clamp(2rem,5vw,3.5rem);color:var(--cream);text-shadow:0 0 40px rgba(212,146,12,0.3)}
+.transition-section p{color:var(--text-muted);margin-top:.8rem;font-size:1.1rem}
+.gold-line{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:2rem auto 0}
 
-/* ── PRICING ── */
-.pricing { background: var(--light); }
-.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 48px; }
-.pricing-card { background: var(--white); border-radius: var(--radius-lg); padding: 36px 30px; border: 2px solid #ede8e0; position: relative; overflow: hidden; transition: transform .3s, box-shadow .3s; }
-.pricing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.pricing-card.featured { border-color: var(--primary); }
-.pricing-card.featured::before { content: 'MOST POPULAR'; position: absolute; top: 16px; right: -32px; background: var(--primary); color: var(--white); font-size: .65rem; font-weight: 700; padding: 4px 40px; transform: rotate(45deg); letter-spacing: .06em; }
-.pricing-overlay { position: absolute; inset: 0; background: rgba(254,249,239,.6); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 2; border-radius: var(--radius-lg); }
-.pricing-overlay span { background: var(--dark); color: var(--cream); padding: 10px 24px; border-radius: 100px; font-weight: 700; font-size: .85rem; letter-spacing: .03em; }
-.pricing-name { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--dark); margin-bottom: 4px; }
-.pricing-desc { font-size: .9rem; color: var(--text-muted); margin-bottom: 20px; }
-.pricing-features { list-style: none; margin-bottom: 24px; }
-.pricing-features li { padding: 8px 0; font-size: .9rem; color: var(--text); display: flex; align-items: center; gap: 10px; }
-.pricing-features li::before { content: '✓'; color: var(--primary); font-weight: 700; }
-.pricing-founding { text-align: center; margin-top: 36px; padding: 20px; background: rgba(212,146,12,.06); border-radius: var(--radius); border: 1px dashed var(--primary); }
-.pricing-founding p { font-size: .95rem; color: var(--dark); }
-.pricing-founding strong { color: var(--primary); }
+/* FEATURES */
+.feature{padding:5rem 0}
+.feature-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.feature.reverse .feature-inner{direction:rtl}
+.feature.reverse .feature-inner>*{direction:ltr}
+.feature-text h3{font-size:clamp(1.5rem,3vw,2.2rem);margin-bottom:1rem}
+.feature-text p{color:var(--text-muted);font-size:1.05rem;line-height:1.7}
+@media(max-width:768px){.feature-inner{grid-template-columns:1fr;gap:2.5rem}.feature.reverse .feature-inner{direction:ltr}}
 
-/* ── FAQ ── */
-.faq { background: var(--white); }
-.faq-list { max-width: 720px; margin: 48px auto 0; }
-.faq-item { border-bottom: 1px solid #ede8e0; }
-.faq-question { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 22px 0; background: none; border: none; cursor: pointer; font-family: inherit; font-size: 1.05rem; font-weight: 600; color: var(--dark); text-align: left; }
-.faq-question::after { content: '+'; font-size: 1.4rem; font-weight: 300; color: var(--primary); transition: transform .3s; flex-shrink: 0; margin-left: 16px; }
-.faq-item.active .faq-question::after { content: '−'; }
-.faq-answer { max-height: 0; overflow: hidden; transition: max-height .4s ease, padding .3s ease; }
-.faq-answer p { padding: 0 0 22px; font-size: .95rem; color: var(--text-muted); line-height: 1.7; }
+/* Feature Demo Cards */
+.demo-card{padding:1.5rem;border-radius:var(--radius);position:relative;overflow:hidden}
+.demo-card.on-dark{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border)}
+.demo-card.on-light{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-light-border);box-shadow:0 8px 32px rgba(0,0,0,0.06)}
 
-/* ── FINAL CTA ── */
-.final-cta { background: var(--dark); color: var(--cream); text-align: center; padding: 100px 0; position: relative; overflow: hidden; }
-.final-cta::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(212,146,12,.08) 0%, transparent 60%); animation: ctaPulse 8s ease-in-out infinite; }
-@keyframes ctaPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
-.final-cta .container { position: relative; z-index: 1; }
-.final-cta h2 { font-size: clamp(2rem, 4vw, 2.8rem); color: var(--cream); margin-bottom: 16px; }
-.final-cta p { font-size: 1.05rem; color: rgba(253,246,233,.7); margin-bottom: 36px; }
-.final-cta .hero-form { margin: 0 auto; justify-content: center; }
-.final-cta .hero-form input { border-color: var(--dark-soft); background: var(--dark-soft); color: var(--cream); }
-.final-cta .hero-form input::placeholder { color: rgba(253,246,233,.4); }
-.final-cta .hero-form input:focus { border-color: var(--primary); }
-.final-cta .subtext { margin-top: 16px; font-size: .85rem; color: rgba(253,246,233,.5); }
+/* Demo: Storefront */
+.sf-products{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem}
+.sf-item{border-radius:var(--radius-sm);overflow:hidden;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.05)}
+.sf-img{height:60px;width:100%}
+.sf-item-info{padding:.5rem}
+.sf-item-name{font-size:.7rem;font-weight:600}
+.sf-item-price{font-size:.65rem;color:var(--text-muted)}
+.sf-btn{display:inline-block;background:var(--terracotta);color:#fff;font-size:.6rem;padding:.25rem .5rem;border-radius:20px;margin-top:.3rem}
+.sf-footer{display:flex;justify-content:space-between;align-items:center}
+.sf-cart{font-size:.75rem;color:var(--amber);font-weight:600}
+.sf-cap{font-size:.65rem;background:rgba(212,146,12,.12);color:var(--amber);padding:.2rem .5rem;border-radius:20px}
 
-/* ── FOOTER ── */
-footer { background: #141425; color: rgba(253,246,233,.5); padding: 48px 0; text-align: center; font-size: .85rem; }
-footer .container { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-footer .footer-links { display: flex; gap: 24px; }
-footer .footer-links a { color: rgba(253,246,233,.5); transition: color .2s; }
-footer .footer-links a:hover { color: var(--cream); }
-footer .tagline { font-size: .8rem; }
+/* Demo: Kanban */
+.kanban{display:flex;gap:.4rem}
+.kanban-col{flex:1;min-width:0}
+.kanban-col-title{font-size:.55rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:.4rem;text-align:center;font-weight:600}
+.kanban-card{background:rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:.4rem;margin-bottom:.3rem;font-size:.6rem}
+.kanban-card .name{font-weight:600;font-size:.6rem}
+.kanban-card .item{color:var(--text-muted);font-size:.55rem}
+.kanban-card.moving{animation:slideCardRight 2s ease-in-out infinite}
 
-/* ── UTILITIES ── */
-.btn-primary { display: inline-block; padding: 14px 32px; background: var(--accent); color: var(--white); border-radius: 100px; font-weight: 600; font-size: .95rem; transition: background .2s, transform .2s, box-shadow .2s; border: none; cursor: pointer; font-family: inherit; }
-.btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(196,97,58,.3); }
+/* Demo: Recipe Costing */
+.recipe-demo{font-size:.75rem}
+.recipe-list{margin-bottom:.8rem}
+.recipe-row{display:flex;justify-content:space-between;padding:.25rem 0;border-bottom:1px solid rgba(0,0,0,.05);opacity:0}
+.recipe-row.visible{animation:fadeIn .4s forwards}
+.recipe-total{display:flex;justify-content:space-between;font-weight:700;padding:.5rem 0;border-top:2px solid var(--amber);margin-bottom:.8rem}
+.margin-bar{height:10px;border-radius:5px;background:rgba(0,0,0,.06);overflow:hidden}
+.margin-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6baf5d,#4a9c3a);width:0;transition:width 1s ease}
+.margin-label{display:flex;justify-content:space-between;font-size:.65rem;margin-top:.3rem;color:var(--text-muted)}
+
+/* Demo: Invoice */
+.invoice-demo{text-align:center}
+.invoice-mini{background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);border-radius:10px;padding:1rem;margin:0 auto 1rem;max-width:200px;position:relative}
+.invoice-mini h4{font-size:.7rem;margin-bottom:.3rem}
+.invoice-mini .amt{font-size:1.3rem;font-weight:700;font-family:'Fraunces',serif;color:var(--amber)}
+.invoice-mini .to{font-size:.6rem;color:var(--text-muted)}
+.invoice-status{display:flex;justify-content:center;gap:.5rem;margin-top:.8rem}
+.inv-step{font-size:.6rem;padding:.25rem .6rem;border-radius:20px;background:rgba(0,0,0,.05);transition:all .5s}
+.inv-step.active{background:var(--amber-glow);color:var(--amber);font-weight:600}
+.inv-step.done{background:rgba(107,175,93,.15);color:#4a9c3a;font-weight:600}
+
+/* Demo: Customer */
+.cust-demo{text-align:center}
+.cust-avatar{width:48px;height:48px;border-radius:50%;background:var(--amber-glow);margin:0 auto .6rem;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.cust-name{font-weight:700;font-size:.85rem}
+.cust-meta{font-size:.65rem;color:var(--text-muted);margin-bottom:.6rem}
+.cust-stats{display:flex;justify-content:center;gap:1.2rem;margin-bottom:.8rem}
+.cust-stat{text-align:center}
+.cust-stat-val{font-size:1.1rem;font-weight:700;font-family:'Fraunces',serif;color:var(--amber)}
+.cust-stat-label{font-size:.55rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
+.cust-bday{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--terracotta);animation:pulse 2s ease-in-out infinite}
+.cust-btn{margin-top:.6rem;display:inline-block;background:var(--amber);color:#fff;font-size:.65rem;padding:.3rem .8rem;border-radius:20px}
+
+/* Demo: Financial Dashboard */
+.fin-demo{font-size:.75rem}
+.fin-chart{height:80px;display:flex;align-items:flex-end;gap:4px;margin-bottom:.8rem;position:relative}
+.fin-chart::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(0,0,0,.1)}
+.fin-bar{flex:1;border-radius:3px 3px 0 0;transform-origin:bottom;background:var(--amber)}
+.fin-bar.expense{background:var(--terracotta);opacity:.6}
+.fin-progress{margin-top:.6rem}
+.fin-progress-label{display:flex;justify-content:space-between;font-size:.65rem;margin-bottom:.3rem}
+.fin-progress-bar{height:8px;border-radius:4px;background:rgba(0,0,0,.06);overflow:hidden}
+.fin-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--amber),var(--terracotta));width:0;transition:width 1.5s ease}
+
+/* THEME SWITCHER */
+.theme-preview{max-width:360px;margin:0 auto;padding:1.5rem;transition:all .4s}
+.theme-btns{display:flex;justify-content:center;gap:.8rem;margin-bottom:2rem;flex-wrap:wrap}
+.theme-btn{padding:.6rem 1.2rem;border-radius:50px;font-size:.85rem;font-weight:500;border:2px solid var(--glass-border);color:var(--cream);background:rgba(255,255,255,.06);transition:all .3s}
+.theme-btn:hover,.theme-btn.active{border-color:var(--amber);background:var(--amber-glow)}
+.tp-header{font-size:.8rem;font-weight:600;margin-bottom:.8rem;padding-bottom:.5rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.tp-item{display:flex;gap:.6rem;margin-bottom:.6rem;align-items:center}
+.tp-swatch{width:40px;height:40px;border-radius:8px;flex-shrink:0;transition:background .4s}
+.tp-item-name{font-size:.75rem;font-weight:600;transition:color .4s}
+.tp-item-price{font-size:.65rem;opacity:.6}
+.tp-accent{transition:background .4s,color .4s}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative}
+.steps-line{position:absolute;top:40px;left:16%;right:16%;height:2px;z-index:0}
+.steps-line-bg{stroke:rgba(0,0,0,.1);stroke-width:2}
+.steps-line-fg{stroke:var(--amber);stroke-width:2;stroke-dasharray:8 4;stroke-dashoffset:500;transition:stroke-dashoffset 2s ease}
+.steps-line-fg.drawn{stroke-dashoffset:0}
+.step-card{text-align:center;position:relative;z-index:1}
+.step-num{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--amber);background:var(--amber-glow);border:2px solid rgba(212,146,12,.2);animation:glow 3s ease-in-out infinite}
+.step-card h3{font-size:1.1rem;margin-bottom:.4rem}
+.step-card p{font-size:.9rem;color:var(--text-muted)}
+.step-icon{font-size:1.5rem;margin-bottom:.5rem}
+@media(max-width:768px){.steps{grid-template-columns:1fr;gap:2.5rem}.steps-line{display:none}}
+
+/* BAKER STORY */
+.baker-section{position:relative}
+.baker-quote{font-size:5rem;color:var(--amber);opacity:.15;line-height:1;font-family:'Fraunces',serif;position:absolute;top:2rem;left:2rem}
+.baker-content{max-width:700px;margin:0 auto;text-align:center;position:relative;z-index:2}
+.baker-content h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:1.5rem;color:var(--text-dark)}
+.baker-content p{color:var(--text-muted);font-size:1.05rem;line-height:1.8}
+.baker-illus{margin:2rem auto 0;width:120px;height:120px;border-radius:50%;background:var(--amber-glow);display:flex;align-items:center;justify-content:center;font-size:3rem}
+
+/* TESTIMONIALS */
+.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:960px;margin:0 auto}
+.test-card{padding:1.8rem;position:relative}
+.test-card:nth-child(2){transform:translateY(1rem)}
+.test-stars{color:var(--amber-light);font-size:.9rem;margin-bottom:.8rem;letter-spacing:2px}
+.test-quote{color:rgba(254,249,239,.85);font-size:.95rem;line-height:1.7;margin-bottom:1.2rem;font-style:italic}
+.test-author{display:flex;align-items:center;gap:.8rem}
+.test-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#fff}
+.test-name{font-weight:600;font-size:.85rem;color:var(--cream)}
+.test-title{font-size:.7rem;color:var(--text-muted)}
+.test-badge{text-align:center;margin-bottom:2rem}
+.test-badge span{background:var(--amber-glow);color:var(--amber);font-size:.75rem;padding:.3rem .8rem;border-radius:20px}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:960px;margin:0 auto}
+.price-card{padding:2rem;border-radius:var(--radius);background:#fff;border:1px solid rgba(0,0,0,.06);transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden}
+.price-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 16px 48px rgba(0,0,0,0.08)}
+.price-card.popular{border-color:var(--amber);box-shadow:0 8px 32px var(--amber-glow)}
+.price-badge{position:absolute;top:1rem;right:-2rem;background:var(--amber);color:#fff;font-size:.65rem;font-weight:600;padding:.25rem 2.5rem;transform:rotate(35deg)}
+.price-tier{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.3rem}
+.price-name{font-family:'Fraunces',serif;font-size:1.5rem;margin-bottom:.5rem}
+.price-amt{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:700;color:var(--amber);margin-bottom:.2rem}
+.price-amt span{font-size:.9rem;font-weight:400;color:var(--text-muted)}
+.price-soon{display:inline-block;font-size:.65rem;background:var(--amber-glow);color:var(--amber);padding:.15rem .5rem;border-radius:10px;margin-bottom:.8rem}
+.price-features{list-style:none;margin-bottom:1.5rem}
+.price-features li{padding:.35rem 0;font-size:.9rem;color:var(--text-muted);display:flex;align-items:center;gap:.5rem}
+.price-features li::before{content:'✓';color:var(--amber);font-weight:700}
+.price-cta{display:block;text-align:center;padding:.75rem;border-radius:50px;font-weight:600;font-size:.9rem;transition:all .2s}
+.price-cta.primary{background:var(--terracotta);color:#fff}
+.price-cta.primary:hover{background:var(--terracotta-hover)}
+.price-cta.secondary{background:rgba(0,0,0,.04);color:var(--text-dark)}
+.price-cta.secondary:hover{background:rgba(0,0,0,.08)}
+.pricing-note{text-align:center;margin-top:2rem;color:var(--text-muted);font-size:.9rem}
+.pricing-note strong{color:var(--amber)}
+
+/* FAQ */
+.faq-list{max-width:700px;margin:0 auto}
+.faq-item{border-bottom:1px solid rgba(0,0,0,.08)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 0;cursor:pointer;font-weight:500;font-size:1.05rem;width:100%;background:none;color:var(--text-dark);text-align:left}
+.faq-q:hover{color:var(--amber)}
+.faq-icon{width:24px;height:24px;position:relative;flex-shrink:0;margin-left:1rem}
+.faq-icon::before,.faq-icon::after{content:'';position:absolute;background:currentColor;border-radius:2px;transition:transform .3s}
+.faq-icon::before{width:14px;height:2px;top:11px;left:5px}
+.faq-icon::after{width:2px;height:14px;top:5px;left:11px}
+.faq-item.open .faq-icon::after{transform:rotate(90deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .4s;padding:0 0}
+.faq-item.open .faq-a{max-height:300px;padding:0 0 1.2rem}
+.faq-a p{color:var(--text-muted);font-size:.95rem;line-height:1.7}
+
+/* FINAL CTA */
+.final-cta{padding:6rem 0;text-align:center;background:linear-gradient(135deg,var(--dark) 0%,#2a1f18 100%)}
+.final-cta h2{font-size:clamp(2rem,5vw,3.5rem);color:var(--cream);margin-bottom:1rem}
+.final-cta p{color:var(--text-muted);margin-bottom:2rem;font-size:1.1rem}
+.final-cta .hero-form{margin:0 auto 1rem;justify-content:center}
+.final-cta .note{color:var(--text-muted);font-size:.85rem}
+
+/* FOOTER */
+footer{background:var(--dark);padding:3rem 0;border-top:1px solid rgba(255,255,255,.05)}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-logo{font-family:'Fraunces',serif;color:var(--cream);font-size:1.2rem;font-weight:700}
+.footer-links{display:flex;gap:1.5rem}
+.footer-links a{color:var(--text-muted);font-size:.85rem;transition:color .2s}
+.footer-links a:hover{color:var(--cream)}
+.footer-tagline{color:var(--text-muted);font-size:.85rem;width:100%;text-align:center;margin-top:1rem}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav id="nav">
-  <div class="container">
-    <a href="#" class="nav-logo">Knead<span>It</span></a>
-    <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-      <a href="#waitlist" class="nav-cta">Join Waitlist</a>
-    </div>
-  </div>
+<nav class="nav" id="nav">
+<a href="#" class="nav-logo">
+<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#d4920c" stroke-width="2"/><path d="M10 20c2-4 4-8 6-8s4 4 6 8" stroke="#f0b848" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="12" r="2" fill="#d4920c"/></svg>
+KneadIt
+</a>
+<div class="nav-links">
+<a href="#features">Features</a>
+<a href="#pricing">Pricing</a>
+<a href="#faq">FAQ</a>
+<a href="#waitlist" class="nav-cta">Join Waitlist</a>
+</div>
 </nav>
 
 <!-- HERO -->
-<section class="hero" id="hero">
-  <div class="hero-bg"></div>
-  <div class="container">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        Now in Early Access
-      </div>
-      <h1>Your home bakery deserves more than a <em>spreadsheet.</em></h1>
-      <p class="hero-sub">Orders piling up in your DMs. Prices you're guessing on. Payments you're chasing. There's a better way — and it was built in a kitchen just like yours.</p>
-      <form class="hero-form" method="POST" action="#" id="waitlist">
-        <input type="email" placeholder="you@email.com" required aria-label="Email address">
-        <button type="submit">Join the Waitlist</button>
-      </form>
-      <p class="hero-trust">
-        <span class="dots">
-          <span class="dot">S</span>
-          <span class="dot">M</span>
-          <span class="dot">J</span>
-          <span class="dot">A</span>
-        </span>
-        Join 200+ bakers on the waitlist
-      </p>
-    </div>
-    <div class="hero-mockup">
-      <div class="mockup-window">
-        <div class="mockup-bar"><span></span><span></span><span></span></div>
-        <div class="mockup-body">
-          <div class="mockup-header">
-            <div class="mockup-logo">🍞 Sweet Crumb Bakery</div>
-            <div class="mockup-nav-dots"><span></span><span></span><span></span></div>
-          </div>
-          <div class="mockup-stats">
-            <div class="mockup-stat"><div class="mockup-stat-label">This Week</div><div class="mockup-stat-value">$1,240</div></div>
-            <div class="mockup-stat"><div class="mockup-stat-label">Orders</div><div class="mockup-stat-value">28</div></div>
-            <div class="mockup-stat"><div class="mockup-stat-label">Profit</div><div class="mockup-stat-value green">64%</div></div>
-          </div>
-          <div class="mockup-orders">
-            <div class="mockup-order"><span class="mockup-order-dot confirmed"></span><span class="mockup-order-name">Sarah M.</span><span class="mockup-order-item">Sourdough Loaf ×2</span><span class="mockup-order-price">$24</span></div>
-            <div class="mockup-order"><span class="mockup-order-dot baking"></span><span class="mockup-order-name">James K.</span><span class="mockup-order-item">Birthday Cake</span><span class="mockup-order-price">$65</span></div>
-            <div class="mockup-order"><span class="mockup-order-dot ready"></span><span class="mockup-order-name">Lisa T.</span><span class="mockup-order-item">Cookie Box ×3</span><span class="mockup-order-price">$42</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="hero-float f1">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-        <span>Payment received — <strong>$65</strong></span>
-      </div>
-      <div class="hero-float f2">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-        <span>New 5-star review!</span>
-      </div>
-    </div>
-  </div>
+<section class="hero grain" id="hero">
+<div class="container">
+<div class="hero-inner">
+<div>
+<h1 class="anim fade-up">Run your home bakery<br>like a <span>real business.</span></h1>
+<p class="hero-sub anim fade-up stagger-1">KneadIt gives cottage food bakers the tools to manage orders, track finances, send invoices, and grow — all in one beautiful platform.</p>
+<form class="hero-form anim fade-up stagger-2" id="hero-form" onsubmit="handleWaitlist(event,this)">
+<input type="email" placeholder="you@bakery.com" required aria-label="Email address">
+<button type="submit">Join the Waitlist</button>
+</form>
+<div class="hero-social-proof anim fade-up stagger-3">
+<div class="avatar-stack">
+<span>S</span><span>M</span><span>J</span><span>+</span>
+</div>
+Join 200+ bakers on the waitlist
+</div>
+</div>
+<div class="hero-dashboard anim slide-left stagger-2">
+<div class="dash-card glass">
+<div class="dash-header">
+<span class="dash-title">Dashboard</span>
+<span class="dash-badge">● Live</span>
+</div>
+<div class="dash-stats">
+<div class="dash-stat">
+<div class="dash-stat-label">Today's Orders</div>
+<div class="dash-stat-val" data-count="12">0</div>
+</div>
+<div class="dash-stat">
+<div class="dash-stat-label">Revenue (MTD)</div>
+<div class="dash-stat-val" data-count="2847" data-prefix="$">$0</div>
+</div>
+</div>
+<div class="dash-chart" id="dash-chart"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="hero-decor d1">🌾</div>
+<div class="hero-decor d2">🌾</div>
+<div class="hero-decor d3">✦</div>
 </section>
 
-<!-- PROBLEMS -->
-<section class="problems">
-  <div class="container text-center">
-    <p class="section-label reveal">We get it</p>
-    <h2 class="section-title reveal">Sound familiar?</h2>
-    <p class="section-sub reveal">You started baking because you love it. But running the business side? That's a different story.</p>
-    <div class="problems-grid">
-      <div class="problem-card reveal">
-        <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-        <h3>DMs everywhere, orders nowhere</h3>
-        <p>Instagram, texts, Facebook messages — orders come in from everywhere and slip through the cracks. You're scrolling back through chats trying to remember who ordered what.</p>
-      </div>
-      <div class="problem-card reveal">
-        <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-        <h3>Pricing by gut feeling</h3>
-        <p>You spent 4 hours on that cake but charged $30 because it "felt right." You know you should calculate costs, but who has time for spreadsheets between batches?</p>
-      </div>
-      <div class="problem-card reveal">
-        <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></div>
-        <h3>Chasing payments is awkward</h3>
-        <p>Sending that "hey, just checking if you got my Venmo request" text for the third time. You'd rather be baking than playing debt collector with friends and neighbors.</p>
-      </div>
-      <div class="problem-card reveal">
-        <div class="problem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></div>
-        <h3>"Am I even making money?"</h3>
-        <p>At the end of the month, you have no idea if your bakery is profitable or if you're subsidizing your customers' birthday cakes with your day job.</p>
-      </div>
-    </div>
-  </div>
+<!-- PAIN POINTS -->
+<section class="section-light section-pad grain" id="pain">
+<div class="container">
+<h2 class="section-title anim fade-up">Sound familiar?</h2>
+<p class="section-subtitle anim fade-up stagger-1">Every cottage food baker hits these walls. You're not alone.</p>
+<div class="pain-grid">
+<div class="pain-card anim fade-up stagger-1">
+<div class="pain-icon">💬</div>
+<h3>Taking orders through DMs</h3>
+<p>Instagram messages, text threads, Facebook comments — orders scattered everywhere, nothing tracked.</p>
+</div>
+<div class="pain-card anim fade-up stagger-2">
+<div class="pain-icon">❓</div>
+<h3>Pricing by gut feeling</h3>
+<p>You know your cinnamon rolls are worth more, but without knowing your true costs, you're guessing.</p>
+</div>
+<div class="pain-card anim fade-up stagger-3">
+<div class="pain-icon">⏰</div>
+<h3>Chasing payments manually</h3>
+<p>"Did Sarah pay yet?" "Was that Venmo or cash?" The mental load is exhausting.</p>
+</div>
+<div class="pain-card anim fade-up stagger-4">
+<div class="pain-icon">📊</div>
+<h3>No idea if you're profitable</h3>
+<p>You're busy, you're selling, but at the end of the month… where did the money go?</p>
+</div>
+</div>
+</div>
 </section>
 
-<!-- SOLUTION TRANSITION -->
-<section class="solution-transition">
-  <div class="container reveal">
-    <h2>Meet <span>KneadIt.</span></h2>
-    <p>Everything you need to run your home bakery like a real business — without losing what makes it special.</p>
-    <div class="divider"></div>
-  </div>
+<!-- TRANSITION -->
+<section class="section-dark transition-section grain">
+<div class="container">
+<h2 class="anim fade-up">There's a better way.</h2>
+<p class="anim fade-up stagger-1">Meet KneadIt — built by a baker who got tired of the chaos.</p>
+<div class="gold-line anim fade-up stagger-2"></div>
+</div>
 </section>
 
 <!-- FEATURES -->
-<section class="features" id="features">
-  <div class="container">
-    <div class="text-center" style="margin-bottom:64px">
-      <p class="section-label reveal">Everything you need</p>
-      <h2 class="section-title reveal">Built for how you actually work</h2>
-    </div>
+<div id="features">
 
-    <!-- Feature 1: Storefront -->
-    <div class="feature-row">
-      <div class="feature-text reveal-left">
-        <span class="feature-tag">Storefront</span>
-        <h3>A beautiful online menu your customers will love</h3>
-        <p>No more sending price lists over text. Get a gorgeous, mobile-friendly storefront with your branding, photos, and an order form that handles capacity limits automatically. Share one link — customers do the rest.</p>
-      </div>
-      <div class="feature-visual reveal-right">
-        <div class="feature-mock">
-          <div class="sf-mock-header">
-            <div class="sf-mock-logo">S</div>
-            <div class="sf-mock-name">Sweet Crumb Bakery</div>
-          </div>
-          <div class="sf-products">
-            <div class="sf-product sf-p1"><div class="sf-product-img">🍞</div><div class="sf-product-name">Sourdough Loaf</div><div class="sf-product-price">$12.00</div></div>
-            <div class="sf-product sf-p2"><div class="sf-product-img">🧁</div><div class="sf-product-name">Cupcake Dozen</div><div class="sf-product-price">$36.00</div></div>
-            <div class="sf-product sf-p3"><div class="sf-product-img">🍪</div><div class="sf-product-name">Cookie Box</div><div class="sf-product-price">$14.00</div></div>
-            <div class="sf-product sf-p4"><div class="sf-product-img">🎂</div><div class="sf-product-name">Custom Cake</div><div class="sf-product-price">From $45</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Feature 2: Order Management -->
-    <div class="feature-row reverse">
-      <div class="feature-text reveal-right">
-        <span class="feature-tag">Orders</span>
-        <h3>From order to doorstep, nothing falls through</h3>
-        <p>See every order in a clear workflow — confirmed, baking, ready, delivered. No more sticky notes or forgotten texts. Drag orders through stages and always know exactly where things stand.</p>
-      </div>
-      <div class="feature-visual reveal-left">
-        <div class="feature-mock">
-          <div class="kanban">
-            <div>
-              <div class="kanban-col-title">📋 Confirmed</div>
-              <div class="kanban-card kc-confirmed"><strong>Sarah M.</strong><span>Sourdough ×2 · Fri</span></div>
-              <div class="kanban-card kc-confirmed"><strong>Amy L.</strong><span>Cookies ×3 · Fri</span></div>
-            </div>
-            <div>
-              <div class="kanban-col-title">🔥 Baking</div>
-              <div class="kanban-card kc-baking"><strong>James K.</strong><span>Birthday Cake · Thu</span></div>
-            </div>
-            <div>
-              <div class="kanban-col-title">✅ Ready</div>
-              <div class="kanban-card kc-ready"><strong>Lisa T.</strong><span>Cookie Box ×3 · Wed</span></div>
-              <div class="kanban-card kc-ready"><strong>Mark D.</strong><span>Banana Bread · Wed</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Feature 3: Recipe Costing -->
-    <div class="feature-row">
-      <div class="feature-text reveal-left">
-        <span class="feature-tag">Recipe Costing</span>
-        <h3>Know your real costs. Price with confidence.</h3>
-        <p>Enter your ingredients once, and KneadIt calculates the true cost of every recipe. See your profit margins in real time and never underprice your work again. You deserve to be paid fairly.</p>
-      </div>
-      <div class="feature-visual reveal-right">
-        <div class="feature-mock calc-mock">
-          <div style="font-weight:600;font-size:.95rem;color:var(--dark);margin-bottom:16px">🧁 Vanilla Cupcakes (dozen)</div>
-          <div class="calc-row"><span class="label">Flour (2 cups)</span><span class="val">$0.82</span></div>
-          <div class="calc-row"><span class="label">Butter (1 cup)</span><span class="val">$2.40</span></div>
-          <div class="calc-row"><span class="label">Sugar (1.5 cups)</span><span class="val">$0.68</span></div>
-          <div class="calc-row"><span class="label">Eggs (3)</span><span class="val">$1.05</span></div>
-          <div class="calc-row"><span class="label">Vanilla + extras</span><span class="val">$1.15</span></div>
-          <div class="calc-row"><span class="label">Packaging</span><span class="val">$1.50</span></div>
-          <div class="calc-total"><span>Your Price: $36.00</span><span class="val">Profit: $28.40 (79%)</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Feature 4: Invoicing -->
-    <div class="feature-row reverse">
-      <div class="feature-text reveal-right">
-        <span class="feature-tag">Invoicing</span>
-        <h3>Get paid without the awkward follow-ups</h3>
-        <p>Automatically send professional PayPal invoices when an order is confirmed. Track who's paid, who hasn't, and send gentle reminders — all without composing a single awkward text message.</p>
-      </div>
-      <div class="feature-visual reveal-left">
-        <div class="feature-mock">
-          <div class="inv-mock-header"><span style="font-weight:600;color:var(--dark)">Recent Invoices</span></div>
-          <div class="inv-row"><span>Sarah M. — Sourdough ×2</span><span class="inv-status paid">Paid</span></div>
-          <div class="inv-row"><span>James K. — Birthday Cake</span><span class="inv-status paid">Paid</span></div>
-          <div class="inv-row"><span>Lisa T. — Cookie Box ×3</span><span class="inv-status pending">Pending</span></div>
-          <div style="margin-top:14px;padding:12px;background:rgba(212,146,12,.06);border-radius:8px;font-size:.82rem;color:var(--text-muted)">💡 Auto-reminder sent to Lisa T. 2 hours ago</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Feature 5: Customers -->
-    <div class="feature-row">
-      <div class="feature-text reveal-left">
-        <span class="feature-tag">Customers</span>
-        <h3>Remember every customer like they're family</h3>
-        <p>A complete directory with order history, favorite items, and birthdays. Send automatic birthday discounts and reorder reminders. Turn one-time buyers into regulars who rave about you.</p>
-      </div>
-      <div class="feature-visual reveal-right">
-        <div class="feature-mock">
-          <div class="cust-card"><div class="cust-avatar" style="background:#7c3aed">SM</div><div class="cust-info"><div class="cust-name">Sarah Martinez</div><div class="cust-detail">12 orders · Last: 3 days ago</div></div><span class="cust-tag vip">VIP</span></div>
-          <div class="cust-card"><div class="cust-avatar" style="background:#2563eb">JK</div><div class="cust-info"><div class="cust-name">James Kim</div><div class="cust-detail">5 orders · Last: 1 week ago</div></div><span class="cust-tag birthday">🎂 Birthday Mar 4</span></div>
-          <div class="cust-card"><div class="cust-avatar" style="background:#dc2626">LT</div><div class="cust-info"><div class="cust-name">Lisa Thompson</div><div class="cust-detail">8 orders · Last: 2 days ago</div></div><span class="cust-tag vip">VIP</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Feature 6: Dashboard -->
-    <div class="feature-row reverse">
-      <div class="feature-text reveal-right">
-        <span class="feature-tag">Analytics</span>
-        <h3>Finally know if you're actually making money</h3>
-        <p>A real financial dashboard — revenue, expenses, profit, and loss — updated in real time. Track your state cottage food compliance limits and never wonder "is this worth it?" again. (Spoiler: it is.)</p>
-      </div>
-      <div class="feature-visual reveal-left">
-        <div class="feature-mock">
-          <div class="dash-chart">
-            <div class="dash-bar" style="height:45%"></div>
-            <div class="dash-bar" style="height:60%"></div>
-            <div class="dash-bar" style="height:52%"></div>
-            <div class="dash-bar" style="height:75%"></div>
-            <div class="dash-bar" style="height:68%"></div>
-            <div class="dash-bar" style="height:85%"></div>
-            <div class="dash-bar" style="height:92%"></div>
-            <div class="dash-bar" style="height:80%"></div>
-          </div>
-          <div class="dash-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span></div>
-          <div class="dash-summary">
-            <div class="dash-summary-card"><div class="label">Revenue (YTD)</div><div class="val">$12,480</div></div>
-            <div class="dash-summary-card"><div class="label">Net Profit</div><div class="val" style="color:#16a34a">$8,230</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- Feature 1: Storefront -->
+<section class="feature section-light section-pad">
+<div class="container">
+<div class="feature-inner">
+<div class="feature-text anim fade-up">
+<h3>A storefront as beautiful as your bread.</h3>
+<p>Gorgeous menu page, built-in ordering, automatic capacity limits. Customers order directly — no more DM chaos.</p>
+</div>
+<div class="anim slide-left stagger-2">
+<div class="demo-card on-light" id="demo-storefront">
+<div class="sf-products">
+<div class="sf-item"><div class="sf-img" style="background:linear-gradient(135deg,#e8c97a,#d4920c)"></div><div class="sf-item-info"><div class="sf-item-name">Sourdough Loaf</div><div class="sf-item-price">$8.00</div><span class="sf-btn">Add to Order</span></div></div>
+<div class="sf-item"><div class="sf-img" style="background:linear-gradient(135deg,#c75a3a,#e87a5a)"></div><div class="sf-item-info"><div class="sf-item-name">Cinnamon Rolls (6)</div><div class="sf-item-price">$14.00</div><span class="sf-btn">Add to Order</span></div></div>
+<div class="sf-item"><div class="sf-img" style="background:linear-gradient(135deg,#6b8f71,#8fb896)"></div><div class="sf-item-info"><div class="sf-item-name">Focaccia</div><div class="sf-item-price">$10.00</div><span class="sf-btn">Add to Order</span></div></div>
+<div class="sf-item"><div class="sf-img" style="background:linear-gradient(135deg,#7c6ca8,#a897d4)"></div><div class="sf-item-info"><div class="sf-item-name">Blueberry Scones (4)</div><div class="sf-item-price">$12.00</div><span class="sf-btn">Add to Order</span></div></div>
+</div>
+<div class="sf-footer">
+<span class="sf-cart">🛒 Cart: <span id="sf-count">0</span> items</span>
+<span class="sf-cap">3 spots left today</span>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 
-<!-- BAKER STORY -->
-<section class="baker-story">
-  <div class="container reveal">
-    <p class="section-label">Our story</p>
-    <h2 class="section-title">Built in a real cottage food kitchen.</h2>
-    <blockquote>"KneadIt started because we needed it. We were running a sourdough bakery from our home kitchen — taking orders via text, tracking finances in a notebook, and hoping we were actually making money. We tried every app out there, but nothing was built for us. So we built the tool we wished existed. Every feature in KneadIt came from a real problem we faced, baking real orders, for real customers."</blockquote>
-    <p class="attribution">— The KneadIt Team 🍞</p>
-  </div>
+<!-- Feature 2: Order Management -->
+<section class="feature reverse section-cream section-pad">
+<div class="container">
+<div class="feature-inner">
+<div class="feature-text anim fade-up">
+<h3>Every order, from confirmed to delivered.</h3>
+<p>Visual order pipeline. See what's pending, what's baking, what's ready. Never lose track of an order again.</p>
+</div>
+<div class="anim slide-right stagger-2">
+<div class="demo-card on-light" id="demo-kanban">
+<div class="kanban">
+<div class="kanban-col"><div class="kanban-col-title">Confirmed</div><div class="kanban-card"><div class="name">Sarah M.</div><div class="item">2× Sourdough</div></div><div class="kanban-card"><div class="name">Jake T.</div><div class="item">1× Cinnamon Rolls</div></div></div>
+<div class="kanban-col"><div class="kanban-col-title">Baking</div><div class="kanban-card" style="border-left:2px solid var(--amber)"><div class="name">Lisa K.</div><div class="item">3× Focaccia</div></div></div>
+<div class="kanban-col"><div class="kanban-col-title">Ready</div><div class="kanban-card" style="border-left:2px solid #6baf5d"><div class="name">Amy R.</div><div class="item">1× Scones</div></div></div>
+<div class="kanban-col"><div class="kanban-col-title">Delivered</div><div class="kanban-card" style="opacity:.5"><div class="name">Tom B.</div><div class="item">2× Loaves</div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Feature 3: Recipe Costing -->
+<section class="feature section-light section-pad">
+<div class="container">
+<div class="feature-inner">
+<div class="feature-text anim fade-up">
+<h3>Know your numbers. Set profitable prices.</h3>
+<p>Calculate true cost per item. See your margins. Get pricing suggestions based on your costs and market.</p>
+</div>
+<div class="anim slide-left stagger-2">
+<div class="demo-card on-light" id="demo-recipe">
+<div class="recipe-demo">
+<div style="font-weight:600;margin-bottom:.6rem;font-size:.8rem">🧮 Sourdough Loaf — Cost Breakdown</div>
+<div class="recipe-list">
+<div class="recipe-row" data-delay="0">Bread Flour (500g)<span>$0.82</span></div>
+<div class="recipe-row" data-delay="200">Salt (10g)<span>$0.03</span></div>
+<div class="recipe-row" data-delay="400">Starter (100g)<span>$0.15</span></div>
+<div class="recipe-row" data-delay="600">Water<span>$0.00</span></div>
+<div class="recipe-row" data-delay="800">Packaging<span>$0.45</span></div>
+<div class="recipe-row" data-delay="1000">Labor (30 min)<span>$3.75</span></div>
+</div>
+<div class="recipe-total"><span>Total Cost</span><span>$5.20</span></div>
+<div style="font-size:.7rem;margin-bottom:.3rem;font-weight:600">Selling at $8.00 — Margin:</div>
+<div class="margin-bar"><div class="margin-fill" data-fill="35"></div></div>
+<div class="margin-label"><span>Cost $5.20</span><span style="color:#4a9c3a;font-weight:600">35% margin ✓</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Feature 4: Smart Invoicing -->
+<section class="feature reverse section-cream section-pad">
+<div class="container">
+<div class="feature-inner">
+<div class="feature-text anim fade-up">
+<h3>Get paid without the awkward follow-up.</h3>
+<p>Invoices sent automatically when orders are placed. Payment tracking, reminders, and overdue alerts — hands-free.</p>
+</div>
+<div class="anim slide-right stagger-2">
+<div class="demo-card on-light" id="demo-invoice">
+<div class="invoice-demo">
+<div class="invoice-mini">
+<h4>Invoice #1042</h4>
+<div class="amt">$28.00</div>
+<div class="to">Sarah Mitchell — 2× Sourdough, 1× Scones</div>
+</div>
+<div class="invoice-status">
+<span class="inv-step" data-step="1">📤 Sent</span>
+<span class="inv-step" data-step="2">👁 Viewed</span>
+<span class="inv-step" data-step="3">✅ Paid</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Feature 5: Customer Relationships -->
+<section class="feature section-light section-pad">
+<div class="container">
+<div class="feature-inner">
+<div class="feature-text anim fade-up">
+<h3>Remember every customer. Delight them automatically.</h3>
+<p>Order history, birthday discounts, repeat order reminders. Turn one-time buyers into lifelong fans.</p>
+</div>
+<div class="anim slide-left stagger-2">
+<div class="demo-card on-light" id="demo-customer">
+<div class="cust-demo">
+<div class="cust-avatar">👩</div>
+<div class="cust-name">Sarah Mitchell</div>
+<div class="cust-meta">Customer since March 2024</div>
+<div class="cust-stats">
+<div class="cust-stat"><div class="cust-stat-val" data-count="23">0</div><div class="cust-stat-label">Orders</div></div>
+<div class="cust-stat"><div class="cust-stat-val" data-count="412" data-prefix="$">$0</div><div class="cust-stat-label">Spent</div></div>
+<div class="cust-stat"><div class="cust-stat-val">★</div><div class="cust-stat-label">VIP</div></div>
+</div>
+<div class="cust-bday">🎂 Birthday in 3 days!</div><br>
+<span class="cust-btn">Send Birthday Discount</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Feature 6: Financial Dashboard -->
+<section class="feature reverse section-cream section-pad">
+<div class="container">
+<div class="feature-inner">
+<div class="feature-text anim fade-up">
+<h3>Finally know if you're making money.</h3>
+<p>Revenue tracking, expense management, profit & loss. Plus state compliance tracking so you never exceed your cottage food limits.</p>
+</div>
+<div class="anim slide-left stagger-2">
+<div class="demo-card on-light" id="demo-finance">
+<div class="fin-demo">
+<div style="font-weight:600;font-size:.8rem;margin-bottom:.5rem">📈 Monthly Revenue & Expenses</div>
+<div class="fin-chart" id="fin-chart"></div>
+<div style="display:flex;gap:1rem;font-size:.65rem;margin-bottom:.8rem;color:var(--text-muted)">
+<span>🟧 Revenue</span><span style="opacity:.6">🟥 Expenses</span>
+</div>
+<div class="fin-progress">
+<div class="fin-progress-label"><span>Annual Cottage Food Cap</span><span style="font-weight:600">$180K / $250K</span></div>
+<div class="fin-progress-bar"><div class="fin-progress-fill" data-fill="72"></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+</div><!-- /features -->
+
+<!-- THEME SWITCHER -->
+<section class="section-dark section-pad grain" id="themes">
+<div class="container" style="text-align:center">
+<h2 class="section-title anim fade-up" style="color:var(--cream)">Your store. Your brand. Your colors.</h2>
+<p class="section-subtitle anim fade-up stagger-1">Every pixel is customizable from your settings page.</p>
+<div class="theme-btns anim fade-up stagger-2">
+<button class="theme-btn active" data-theme="warm">Warm Bakery</button>
+<button class="theme-btn" data-theme="minimal">Modern Minimal</button>
+<button class="theme-btn" data-theme="garden">Garden Fresh</button>
+<button class="theme-btn" data-theme="night">Night Market</button>
+</div>
+<div class="anim fade-up stagger-3">
+<div class="theme-preview glass" id="theme-preview">
+<div class="tp-header tp-accent">🍞 Sarah's Sourdough</div>
+<div class="tp-item"><div class="tp-swatch" id="tp-sw1"></div><div><div class="tp-item-name">Classic Sourdough</div><div class="tp-item-price">$8.00</div></div></div>
+<div class="tp-item"><div class="tp-swatch" id="tp-sw2"></div><div><div class="tp-item-name">Cinnamon Rolls</div><div class="tp-item-price">$14.00</div></div></div>
+<div class="tp-item"><div class="tp-swatch" id="tp-sw3"></div><div><div class="tp-item-name">Rosemary Focaccia</div><div class="tp-item-price">$10.00</div></div></div>
+<div style="margin-top:1rem"><span class="sf-btn tp-accent" id="tp-btn" style="padding:.4rem 1rem;font-size:.75rem">Order Now</span></div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section class="how-it-works">
-  <div class="container text-center">
-    <p class="section-label reveal">Simple to start</p>
-    <h2 class="section-title reveal">Up and running in minutes</h2>
-    <div class="steps">
-      <div class="step reveal">
-        <div class="step-num">1</div>
-        <h3>Sign Up</h3>
-        <p>Create your account in 60 seconds. No credit card, no complicated setup, no tech skills needed.</p>
-      </div>
-      <div class="step reveal">
-        <div class="step-num">2</div>
-        <h3>Set Up Your Store</h3>
-        <p>Add your products, upload photos, pick your colors, and connect PayPal. Your brand, your way.</p>
-      </div>
-      <div class="step reveal">
-        <div class="step-num">3</div>
-        <h3>Share & Sell</h3>
-        <p>Share your unique link via text, Instagram, or Facebook. Orders start flowing in — organized and automatic.</p>
-      </div>
-    </div>
-  </div>
+<section class="section-light section-pad" id="how">
+<div class="container">
+<h2 class="section-title anim fade-up">Up and running in minutes.</h2>
+<p class="section-subtitle anim fade-up stagger-1">Three simple steps to transform your cottage food business.</p>
+<div class="steps">
+<svg class="steps-line" viewBox="0 0 800 4" preserveAspectRatio="none" style="width:66%;left:17%;position:absolute;top:28px"><line class="steps-line-bg" x1="0" y1="2" x2="800" y2="2"/><line class="steps-line-fg" id="steps-path" x1="0" y1="2" x2="800" y2="2" style="--dash-len:800;stroke-dasharray:8 4;stroke-dashoffset:800"/></svg>
+<div class="step-card anim fade-up stagger-1">
+<div class="step-num">1</div>
+<div class="step-icon">⚡</div>
+<h3>Create Your Account</h3>
+<p>60 seconds. Email, bakery name, and you're in. No credit card needed.</p>
+</div>
+<div class="step-card anim fade-up stagger-2">
+<div class="step-num">2</div>
+<div class="step-icon">🎨</div>
+<h3>Set Up Your Store</h3>
+<p>Add your products, set prices, customize your colors. We'll guide every step.</p>
+</div>
+<div class="step-card anim fade-up stagger-3">
+<div class="step-num">3</div>
+<div class="step-icon">🚀</div>
+<h3>Share & Start Selling</h3>
+<p>Share your link on social media. Orders start flowing in. You focus on baking.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- BUILT BY A BAKER -->
+<section class="section-cream section-pad grain baker-section">
+<div class="container">
+<div class="baker-quote">"</div>
+<div class="baker-content">
+<h2 class="anim fade-up">Built in a real cottage food kitchen.</h2>
+<p class="anim fade-up stagger-1">KneadIt wasn't born in a Silicon Valley office. It was born between batches of sourdough, in a real home kitchen, by a family that was tired of managing their bakery business across five different apps. We built the tool we wished existed — and now we're sharing it with bakers everywhere.</p>
+<div class="baker-illus anim fade-up stagger-2">🍞</div>
+</div>
+</div>
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="testimonials">
-  <div class="container text-center">
-    <p class="section-label reveal">Early feedback</p>
-    <h2 class="section-title reveal">Bakers are already loving it</h2>
-    <div class="testimonial-grid">
-      <div class="testimonial-card reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <p>"Finally, something built for US — not for big bakeries or restaurants. It's like someone read my mind about every frustration I've had running my cookie business."</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar" style="background:#7c3aed">MR</div>
-          <div><div class="testimonial-name">Maria R.</div><div class="testimonial-role">Cookie business, Texas</div></div>
-        </div>
-      </div>
-      <div class="testimonial-card reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <p>"The recipe costing tool alone is worth it. I found out I was undercharging on my most popular cake by $15. That's hundreds of dollars a month I was leaving on the table."</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar" style="background:#2563eb">JD</div>
-          <div><div class="testimonial-name">Jessica D.</div><div class="testimonial-role">Custom cakes, Ohio</div></div>
-        </div>
-      </div>
-      <div class="testimonial-card reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <p>"I used to spend Sunday nights sorting through DMs and texts to figure out my week's orders. Now it's all in one place and my customers can order themselves. Game changer."</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar" style="background:#dc2626">AP</div>
-          <div><div class="testimonial-name">Ashley P.</div><div class="testimonial-role">Sourdough baker, Georgia</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
+<section class="section-dark section-pad grain" id="testimonials">
+<div class="container">
+<h2 class="section-title anim fade-up" style="color:var(--cream)">What early bakers are saying</h2>
+<div class="test-badge anim fade-up stagger-1"><span>✨ Early Beta Feedback</span></div>
+<div class="test-grid">
+<div class="test-card glass anim fade-up stagger-1">
+<div class="test-stars">★★★★★</div>
+<div class="test-quote">"I was managing orders in a spreadsheet and payments through three different apps. KneadIt brought everything into one place. I literally cried when I saw my profit margins for the first time."</div>
+<div class="test-author"><div class="test-avatar" style="background:#c75a3a">M</div><div><div class="test-name">Maria G.</div><div class="test-title">Sourdough Baker, Austin TX</div></div></div>
+</div>
+<div class="test-card glass anim fade-up stagger-2">
+<div class="test-stars">★★★★★</div>
+<div class="test-quote">"The storefront alone is worth it. My customers love ordering directly instead of DMing me. And the automatic invoicing? Game changer. I got paid for every single order last month."</div>
+<div class="test-author"><div class="test-avatar" style="background:#d4920c">J</div><div><div class="test-name">Jessica T.</div><div class="test-title">Cookie Artist, Portland OR</div></div></div>
+</div>
+<div class="test-card glass anim fade-up stagger-3">
+<div class="test-stars">★★★★★</div>
+<div class="test-quote">"Finally, software that feels like it was made by someone who actually bakes. The recipe costing tool showed me I was undercharging on everything. I raised my prices and nobody blinked."</div>
+<div class="test-author"><div class="test-avatar" style="background:#6b8f71">R</div><div><div class="test-name">Rachel W.</div><div class="test-title">Bread Baker, Nashville TN</div></div></div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- PRICING -->
-<section class="pricing" id="pricing">
-  <div class="container text-center">
-    <p class="section-label reveal">Pricing</p>
-    <h2 class="section-title reveal">Simple pricing for every baker</h2>
-    <p class="section-sub reveal">Start free. Upgrade when you're ready. No surprises.</p>
-    <div class="pricing-grid">
-      <div class="pricing-card reveal">
-        <div class="pricing-overlay"><span>Coming Soon</span></div>
-        <div class="pricing-name">Free</div>
-        <div class="pricing-desc">Perfect to get started</div>
-        <ul class="pricing-features">
-          <li>Basic storefront</li>
-          <li>Up to 10 products</li>
-          <li>Order management</li>
-          <li>Mobile-friendly store</li>
-        </ul>
-      </div>
-      <div class="pricing-card featured reveal">
-        <div class="pricing-overlay"><span>Coming Soon</span></div>
-        <div class="pricing-name">Starter</div>
-        <div class="pricing-desc">For growing bakeries</div>
-        <ul class="pricing-features">
-          <li>Everything in Free</li>
-          <li>PayPal invoicing</li>
-          <li>Customer directory</li>
-          <li>Up to 50 products</li>
-          <li>Recipe costing</li>
-        </ul>
-      </div>
-      <div class="pricing-card reveal">
-        <div class="pricing-overlay"><span>Coming Soon</span></div>
-        <div class="pricing-name">Pro</div>
-        <div class="pricing-desc">For serious bakers</div>
-        <ul class="pricing-features">
-          <li>Everything in Starter</li>
-          <li>Financial dashboard</li>
-          <li>Delivery planner</li>
-          <li>Unlimited products</li>
-          <li>Custom domain</li>
-          <li>Priority support</li>
-        </ul>
-      </div>
-    </div>
-    <div class="pricing-founding reveal">
-      <p>🎉 <strong>Founding members get special rates</strong> — join the waitlist to lock in early pricing before we launch.</p>
-    </div>
-  </div>
+<section class="section-light section-pad" id="pricing">
+<div class="container">
+<h2 class="section-title anim fade-up">Simple pricing for every stage of your baking journey.</h2>
+<p class="section-subtitle anim fade-up stagger-1">Start free. Grow when you're ready. No surprises.</p>
+<div class="pricing-grid">
+<div class="price-card anim fade-up stagger-1">
+<div class="price-tier">Free</div>
+<div class="price-name">Getting Started</div>
+<div class="price-amt">$0<span>/mo</span></div>
+<ul class="price-features">
+<li>Up to 10 products</li>
+<li>Basic online ordering</li>
+<li>Order management</li>
+<li>Your own store link</li>
+</ul>
+<a href="#waitlist" class="price-cta secondary">Join Waitlist</a>
+</div>
+<div class="price-card popular anim fade-up stagger-2">
+<div class="price-badge">Popular</div>
+<div class="price-tier">Starter</div>
+<div class="price-name">Growing</div>
+<div class="price-amt">$19<span>/mo</span></div>
+<span class="price-soon">Coming Soon</span>
+<ul class="price-features">
+<li>Up to 50 products</li>
+<li>Automatic invoicing</li>
+<li>Customer directory</li>
+<li>Photo gallery</li>
+<li>Recipe costing</li>
+</ul>
+<a href="#waitlist" class="price-cta primary">Join Waitlist</a>
+</div>
+<div class="price-card anim fade-up stagger-3">
+<div class="price-tier">Pro</div>
+<div class="price-name">Thriving</div>
+<div class="price-amt">$39<span>/mo</span></div>
+<span class="price-soon">Coming Soon</span>
+<ul class="price-features">
+<li>Unlimited products</li>
+<li>Advanced analytics</li>
+<li>Delivery planner</li>
+<li>Custom domain</li>
+<li>Priority support</li>
+<li>Financial dashboard</li>
+</ul>
+<a href="#waitlist" class="price-cta secondary">Join Waitlist</a>
+</div>
+</div>
+<p class="pricing-note anim fade-up">💡 <strong>Founding member pricing</strong> available for early signups — lock in your rate forever.</p>
+</div>
 </section>
 
 <!-- FAQ -->
-<section class="faq" id="faq">
-  <div class="container">
-    <div class="text-center">
-      <p class="section-label reveal">FAQ</p>
-      <h2 class="section-title reveal">Questions? We've got answers.</h2>
-    </div>
-    <div class="faq-list">
-      <div class="faq-item reveal">
-        <button class="faq-question">What is cottage food?</button>
-        <div class="faq-answer"><p>Cottage food laws let you legally make and sell certain homemade food products from your home kitchen. Most states in the US have cottage food laws, though the rules vary — some have sales caps, product restrictions, or labeling requirements. KneadIt helps you stay within your state's limits.</p></div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-question">Do I need any license or certification?</button>
-        <div class="faq-answer"><p>It depends on your state! Some states require a food handler's permit or a simple registration, while others let you start selling right away. KneadIt includes state compliance tracking to help you understand and follow your local cottage food regulations.</p></div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-question">What states does KneadIt support?</button>
-        <div class="faq-answer"><p>KneadIt works for cottage food bakers in all 50 US states. Our compliance tracking feature includes state-specific sales limits and regulations, and we keep them updated as laws change.</p></div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-question">Can customers pay online?</button>
-        <div class="faq-answer"><p>Yes! KneadIt integrates with PayPal to automatically send professional invoices when orders are confirmed. Customers can pay directly through the invoice, and you can track payments and send reminders — all without any awkward follow-up texts.</p></div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-question">Can I use my own domain name?</button>
-        <div class="faq-answer"><p>Absolutely — custom domains are available on the Pro plan. On Free and Starter plans, you'll get a beautiful storefront at yourname.getkneadit.app, which you can share anywhere.</p></div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-question">Is my data secure?</button>
-        <div class="faq-answer"><p>100%. We use industry-standard encryption and security practices to protect your data and your customers' information. Your recipes, customer lists, and financial data are yours — we never sell or share them.</p></div>
-      </div>
-      <div class="faq-item reveal">
-        <button class="faq-question">When does KneadIt launch?</button>
-        <div class="faq-answer"><p>We're currently in early access with a select group of bakers. Join the waitlist to be first in line when we open up — founding members will get special pricing that won't be available later.</p></div>
-      </div>
-    </div>
-  </div>
+<section class="section-cream section-pad" id="faq">
+<div class="container">
+<h2 class="section-title anim fade-up">Frequently asked questions</h2>
+<p class="section-subtitle anim fade-up stagger-1">Everything you need to know about KneadIt.</p>
+<div class="faq-list anim fade-up stagger-2">
+<div class="faq-item">
+<button class="faq-q">What is cottage food?<span class="faq-icon"></span></button>
+<div class="faq-a"><p>Cottage food laws allow individuals to prepare and sell certain types of food from their home kitchens without a commercial license. The specific rules vary by state, including what foods are allowed and annual revenue limits. KneadIt helps you stay compliant with your state's regulations.</p></div>
+</div>
+<div class="faq-item">
+<button class="faq-q">Do I need a special license to use KneadIt?<span class="faq-icon"></span></button>
+<div class="faq-a"><p>KneadIt itself doesn't require any license. However, you should check your state's cottage food laws to ensure you're operating legally. Many states just require registration — no formal license. We'll help you understand your state's requirements.</p></div>
+</div>
+<div class="faq-item">
+<button class="faq-q">What states does KneadIt support?<span class="faq-icon"></span></button>
+<div class="faq-a"><p>KneadIt works for cottage food bakers in all 50 US states. Our compliance tracking feature knows each state's specific rules, revenue caps, and labeling requirements so you can focus on baking.</p></div>
+</div>
+<div class="faq-item">
+<button class="faq-q">How do online payments work?<span class="faq-icon"></span></button>
+<div class="faq-a"><p>KneadIt integrates with PayPal for automatic invoicing. When a customer places an order, they receive a professional invoice they can pay online. You can also track cash and Venmo payments manually. More payment options are coming soon.</p></div>
+</div>
+<div class="faq-item">
+<button class="faq-q">Can I use my own domain name?<span class="faq-icon"></span></button>
+<div class="faq-a"><p>Yes! On the Pro plan, you can connect your own custom domain (like orders.mybakery.com) for a fully branded experience. All plans include a free yourname.getkneadit.app subdomain.</p></div>
+</div>
+<div class="faq-item">
+<button class="faq-q">Is my data secure?<span class="faq-icon"></span></button>
+<div class="faq-a"><p>Absolutely. We use industry-standard encryption, secure cloud hosting, and never share your data with third parties. Your recipes, customer info, and financial data are yours and yours alone.</p></div>
+</div>
+<div class="faq-item">
+<button class="faq-q">When does KneadIt launch?<span class="faq-icon"></span></button>
+<div class="faq-a"><p>We're currently in beta with a small group of bakers. Public launch is planned for mid-2025. Join the waitlist to get early access and founding member pricing that locks in your rate forever.</p></div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- FINAL CTA -->
-<section class="final-cta">
-  <div class="container reveal">
-    <h2>Ready to run your bakery like a business?</h2>
-    <p>Join hundreds of home bakers who are done with spreadsheets, lost DMs, and guessing their prices.</p>
-    <form class="hero-form" method="POST" action="#">
-      <input type="email" placeholder="you@email.com" required aria-label="Email address">
-      <button type="submit">Join the Waitlist</button>
-    </form>
-    <p class="subtext">No credit card required. Be first in line.</p>
-  </div>
+<section class="final-cta grain" id="waitlist">
+<div class="container">
+<h2 class="anim fade-up">Your bakery deserves this.</h2>
+<p class="anim fade-up stagger-1">Join hundreds of bakers getting ready for launch day.</p>
+<form class="hero-form anim fade-up stagger-2" onsubmit="handleWaitlist(event,this)">
+<input type="email" placeholder="you@bakery.com" required aria-label="Email address">
+<button type="submit">Join the Waitlist</button>
+</form>
+<p class="note anim fade-up stagger-3">No credit card required. Ever for the free plan.</p>
+</div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="container">
-    <a href="#" class="nav-logo" style="font-size:1.3rem">Knead<span style="color:var(--primary)">It</span></a>
-    <div class="footer-links">
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
-      <a href="mailto:hello@getkneadit.app">Contact</a>
-    </div>
-    <p class="tagline">Made with 🍞 for bakers, by bakers.</p>
-    <p>© 2026 KneadIt. All rights reserved.</p>
-  </div>
+<div class="container">
+<div class="footer-inner">
+<span class="footer-logo">🍞 KneadIt</span>
+<div class="footer-links">
+<a href="#">Privacy</a>
+<a href="#">Terms</a>
+<a href="mailto:hello@getkneadit.app">Contact</a>
+</div>
+<div class="footer-tagline">Made with 🍞 for bakers, by bakers.</div>
+</div>
+</div>
 </footer>
 
 <script>
-// Nav scroll
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 50);
-}, { passive: true });
+// Nav scroll effect
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>50)},{passive:true});
 
-// Scroll reveal
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+// Intersection Observer for animations
+const io=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');
+// Trigger demo animations
+if(e.target.id)triggerDemo(e.target.id);
+}})},{threshold:0.15,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.anim').forEach(el=>io.observe(el));
+
+// Dashboard chart bars
+const chartEl=document.getElementById('dash-chart');
+if(chartEl){const heights=[40,55,35,65,50,80,70,90,60,75,85,95];
+heights.forEach((h,i)=>{const bar=document.createElement('div');bar.className='dash-bar'+(i===heights.length-1?' active':'');bar.style.height=h+'%';bar.style.animation=`growBar .6s ease ${i*80}ms both`;chartEl.appendChild(bar)})}
+
+// Finance chart
+const finEl=document.getElementById('fin-chart');
+if(finEl){const data=[[50,30],[60,35],[45,28],[70,40],[80,45],[65,38]];
+data.forEach(([r,e],i)=>{const b1=document.createElement('div');b1.className='fin-bar';b1.style.height=r+'%';b1.style.animation=`growBar .6s ease ${i*120}ms both`;
+const b2=document.createElement('div');b2.className='fin-bar expense';b2.style.height=e+'%';b2.style.animation=`growBar .6s ease ${i*120+60}ms both`;
+finEl.appendChild(b1);finEl.appendChild(b2)})}
+
+// Demo triggers
+function triggerDemo(id){
+if(id==='demo-storefront')animateStorefront();
+if(id==='demo-recipe')animateRecipe();
+if(id==='demo-invoice')animateInvoice();
+if(id==='demo-customer')animateCustomer();
+if(id==='demo-finance')animateFinance();
+}
+
+// Observe demo cards
+document.querySelectorAll('[id^="demo-"]').forEach(el=>io.observe(el));
+
+// Storefront cart animation
+function animateStorefront(){let count=0;const el=document.getElementById('sf-count');
+const iv=setInterval(()=>{if(count>=3){clearInterval(iv);return}count++;el.textContent=count},800)}
+
+// Recipe rows animation
+function animateRecipe(){document.querySelectorAll('#demo-recipe .recipe-row').forEach((r,i)=>{
+setTimeout(()=>r.classList.add('visible'),parseInt(r.dataset.delay)||i*200)});
+setTimeout(()=>{const fill=document.querySelector('#demo-recipe .margin-fill');if(fill)fill.style.width=fill.dataset.fill+'%'},1400)}
+
+// Invoice status animation
+function animateInvoice(){const steps=document.querySelectorAll('#demo-invoice .inv-step');
+[1000,2500,4000].forEach((t,i)=>{setTimeout(()=>{steps.forEach((s,j)=>{s.classList.remove('active','done');
+if(j<i)s.classList.add('done');if(j===i)s.classList.add('active')})},t)})}
+
+// Customer count animation
+function animateCustomer(){document.querySelectorAll('#demo-customer [data-count]').forEach(el=>{
+const target=parseInt(el.dataset.count);const prefix=el.dataset.prefix||'';let current=0;
+const step=Math.ceil(target/30);const iv=setInterval(()=>{current+=step;if(current>=target){current=target;clearInterval(iv)}
+el.textContent=prefix+current},40)})}
+
+// Finance progress animation
+function animateFinance(){setTimeout(()=>{const fill=document.querySelector('#demo-finance .fin-progress-fill');
+if(fill)fill.style.width=fill.dataset.fill+'%'},500)}
+
+// Count-up for hero stats
+const statObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){
+const target=parseInt(e.target.dataset.count);const prefix=e.target.dataset.prefix||'';let current=0;
+const step=Math.ceil(target/40);const iv=setInterval(()=>{current+=step;if(current>=target){current=target;clearInterval(iv)}
+e.target.textContent=prefix+current.toLocaleString()},30);statObs.unobserve(e.target)}})},{threshold:0.5});
+document.querySelectorAll('.dash-stat-val[data-count]').forEach(el=>statObs.observe(el));
+
+// Steps path animation
+const stepsObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){
+document.getElementById('steps-path')?.classList.add('drawn');stepsObs.unobserve(e.target)}})},{threshold:0.3});
+const stepsEl=document.querySelector('.steps');if(stepsEl)stepsObs.observe(stepsEl);
+
+// Theme switcher
+const themes={
+warm:{bg:'linear-gradient(135deg,#e8c97a,#d4920c)',bg2:'linear-gradient(135deg,#c75a3a,#e87a5a)',bg3:'linear-gradient(135deg,#8b6914,#c9a84c)',accent:'#c75a3a',header:'var(--cream)',headerBg:'rgba(212,146,12,0.15)'},
+minimal:{bg:'linear-gradient(135deg,#e0e0e0,#bbb)',bg2:'linear-gradient(135deg,#ccc,#999)',bg3:'linear-gradient(135deg,#ddd,#aaa)',accent:'#333',header:'#fff',headerBg:'rgba(0,0,0,0.06)'},
+garden:{bg:'linear-gradient(135deg,#6b8f71,#8fb896)',bg2:'linear-gradient(135deg,#a3c9a8,#6b8f71)',bg3:'linear-gradient(135deg,#4a7c50,#7bb882)',accent:'#4a7c50',header:'#fff',headerBg:'rgba(75,124,80,0.12)'},
+night:{bg:'linear-gradient(135deg,#2a2040,#4a3060)',bg2:'linear-gradient(135deg,#6a4080,#8a60a0)',bg3:'linear-gradient(135deg,#3a2850,#5a3870)',accent:'#c084fc',header:'#f0e6ff',headerBg:'rgba(192,132,252,0.12)'}
+};
+document.querySelectorAll('.theme-btn').forEach(btn=>{btn.addEventListener('click',()=>{
+document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+const t=themes[btn.dataset.theme];
+document.getElementById('tp-sw1').style.background=t.bg;
+document.getElementById('tp-sw2').style.background=t.bg2;
+document.getElementById('tp-sw3').style.background=t.bg3;
+const tpBtn=document.getElementById('tp-btn');tpBtn.style.background=t.accent;tpBtn.style.color='#fff';
+const header=document.querySelector('.tp-header');header.style.background=t.headerBg;header.style.color=t.header;
+})});
+// Init theme
+document.querySelector('.theme-btn.active')?.click();
 
 // FAQ accordion
-document.querySelectorAll('.faq-question').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const item = btn.parentElement;
-    const answer = item.querySelector('.faq-answer');
-    const isActive = item.classList.contains('active');
-    // close all
-    document.querySelectorAll('.faq-item.active').forEach(i => {
-      i.classList.remove('active');
-      i.querySelector('.faq-answer').style.maxHeight = null;
-    });
-    if (!isActive) {
-      item.classList.add('active');
-      answer.style.maxHeight = answer.scrollHeight + 'px';
-    }
-  });
-});
+document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{
+const item=q.parentElement;const wasOpen=item.classList.contains('open');
+document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+if(!wasOpen)item.classList.add('open')})});
+
+// Waitlist form
+function handleWaitlist(e,form){e.preventDefault();const email=form.querySelector('input').value;
+const btn=form.querySelector('button');btn.textContent='🎉 You\'re in!';btn.style.background='#4a9c3a';
+form.querySelector('input').value='';setTimeout(()=>{btn.textContent='Join the Waitlist';btn.style.background=''},3000)}
 
 // Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
-  });
-});
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();
+const target=document.querySelector(a.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth'})})});
 </script>
 </body>
 </html>
