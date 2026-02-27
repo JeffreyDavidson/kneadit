@@ -24,7 +24,7 @@
 --honey:#d4920c;--golden:#e8b04a;--butter:#f5d88e;--flour:#faf4e8;--cream:#fef9ef;
 --white:#fff;--sourdough:#e8dcc8;--crust:#c4956a;--berry:#a83248;--sage:#5a7a5a;
 --text-xs:0.75rem;--text-sm:0.875rem;--text-base:1rem;--text-lg:1.125rem;--text-xl:1.25rem;
---text-2xl:clamp(1.5rem,3vw,2rem);--text-3xl:clamp(2rem,4vw,3rem);--text-hero:clamp(2.5rem,7vw,5.5rem);
+--text-2xl:clamp(1.5rem,3vw,2rem);--text-3xl:clamp(2rem,4vw,3rem);--text-hero:clamp(2.25rem,5.5vw,4.25rem);
 --font-serif:'Playfair Display',Georgia,serif;--font-sans:'DM Sans',system-ui,sans-serif;
 --nav-height:64px;
 }
@@ -363,7 +363,11 @@ Your bakery.<br>
 <input type="text" class="hero-name-input" id="bakeryNameInput" autocomplete="off" spellcheck="false" placeholder="Type your bakery name...">
 </span>
 </h1>
-<!-- type hint removed -->
+<div class="hero-type-hint" id="typeHint">
+<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 14 L8 4 M4 8 L8 4 L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span>Type your bakery name above</span>
+<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 14 L8 4 M4 8 L8 4 L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
 
 <div class="storefront-preview reveal reveal-d2" id="storefrontPreview">
 <div class="sf-header">
@@ -819,14 +823,18 @@ function typeLoop() {
 }
 typeTimer = setTimeout(typeLoop, 1200);
 
+const typeHint = document.getElementById('typeHint');
+
 input.addEventListener('input', function() {
   userTyping = this.value.length > 0;
   if (userTyping) {
     clearTimeout(typeTimer);
+    typeHint.classList.add('hidden');
     updateStorefront(this.value);
   } else {
     charIdx = 0; nameIdx = 0; deleting = false;
     input.placeholder = 'Type your bakery name...';
+    typeHint.classList.remove('hidden');
     updateStorefront('');
     typeTimer = setTimeout(typeLoop, 600);
   }
@@ -836,11 +844,13 @@ input.addEventListener('focus', function() {
   if (!userTyping) {
     this.value = '';
     this.placeholder = 'Type your bakery name...';
+    typeHint.classList.add('hidden');
     updateStorefront('');
   }
 });
 input.addEventListener('blur', function() {
   if (!this.value) {
+    typeHint.classList.remove('hidden');
     typeTimer = setTimeout(typeLoop, 800);
   }
 });
