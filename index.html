@@ -815,7 +815,7 @@ function typeLoop() {
     if (charIdx <= 0) {
       deleting = false;
       nameIdx = (nameIdx + 1) % names.length;
-      typeTimer = setTimeout(typeLoop, 400);
+      typeTimer = setTimeout(typeLoop, 1000);
       return;
     }
     typeTimer = setTimeout(typeLoop, 40);
