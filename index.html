@@ -129,21 +129,32 @@ a{color:inherit;text-decoration:none}
 .hero-divider svg{display:block;margin:0 auto;width:min(280px,60vw);height:auto}
 
 /* ===== BAKER'S DAY ===== */
-.bakers-day{position:relative;background:var(--cream)}
+.bakers-day{position:relative;background:linear-gradient(180deg,var(--cream) 0%,#fdf5e9 50%,#fbf0e0 100%)}
 .bakers-day-intro{text-align:center;padding:5rem 1.5rem 3rem}
-.bakers-day-intro h2{font-family:var(--font-serif);font-size:var(--text-3xl);color:var(--warm-black)}
+.bakers-day-intro .day-icon{display:block;margin:0 auto 1rem;opacity:.7}
+.bakers-day-intro h2{font-family:var(--font-serif);font-size:clamp(2.5rem,5vw,3.5rem);color:var(--warm-black)}
 .bakers-day-intro p{color:var(--walnut);margin-top:.5rem;font-size:var(--text-lg)}
 .bakers-day-intro .day-subtitle{color:var(--cinnamon);margin-top:.35rem;font-size:var(--text-sm);max-width:600px;margin-left:auto;margin-right:auto}
-.day-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center}
-.day-track{display:flex;gap:2.5rem;padding:0 max(2rem,10vw);will-change:transform;transition:transform 50ms linear;position:relative}
-/* Connecting dashed line between cards on desktop */
-@media(min-width:768px){
-.day-track::before{content:'';position:absolute;top:50%;left:2rem;right:2rem;border-top:2px dashed var(--sourdough);z-index:0;pointer-events:none}
-}
-.day-card{flex:0 0 min(360px,80vw);background:var(--white);border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(28,20,16,.08);position:relative;z-index:1;border-top:3px solid transparent;border-image:linear-gradient(90deg,var(--honey),var(--golden)) 1}
-.day-time{font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--honey);margin-bottom:.25rem;font-size:clamp(1.5rem,3vw,2.25rem)}
+
+/* Timeline layout */
+.day-timeline{position:relative;max-width:1000px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.day-timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,transparent,var(--honey) 5%,var(--honey) 95%,transparent);transform:translateX(-50%)}
+.day-entry{display:flex;align-items:flex-start;gap:3rem;margin-bottom:3rem;position:relative}
+.day-entry:nth-child(odd){flex-direction:row}
+.day-entry:nth-child(even){flex-direction:row-reverse}
+.day-entry .day-card{flex:1;max-width:420px}
+.day-entry .day-spacer{flex:1;max-width:420px}
+
+/* Time badge on timeline */
+.day-time-badge{position:absolute;left:50%;top:1.5rem;transform:translateX(-50%);background:var(--honey);color:var(--white);font-family:var(--font-serif);font-style:italic;font-size:var(--text-sm);font-weight:700;padding:6px 16px;border-radius:20px;white-space:nowrap;z-index:2;box-shadow:0 2px 8px rgba(212,146,12,.3)}
+/* Dot on timeline */
+.day-entry::before{content:'';position:absolute;left:50%;top:1.75rem;width:12px;height:12px;background:var(--golden);border:3px solid var(--cream);border-radius:50%;transform:translateX(-50%);z-index:1;box-shadow:0 0 0 4px rgba(212,146,12,.15)}
+
+/* Card styling */
+.day-card{background:var(--white);border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(28,20,16,.08);position:relative;z-index:1;border-top:none;border-left:4px solid var(--sage)}
+.day-card-icon{font-size:1.75rem;margin-bottom:.5rem}
 .day-label{font-weight:700;font-size:var(--text-lg);margin-bottom:1rem;color:var(--warm-black)}
-.day-ui{background:var(--flour);border-radius:12px;padding:1rem;font-size:var(--text-sm);color:var(--walnut)}
+.day-ui{background:var(--flour);border-radius:12px;padding:1.25rem;font-size:var(--text-sm);color:var(--walnut)}
 .day-ui-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--sourdough)}
 .day-ui-row:last-child{border:none}
 .day-ui-pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:var(--text-xs);font-weight:500;color:var(--white)}
@@ -157,16 +168,42 @@ a{color:inherit;text-decoration:none}
 .day-ui-stat-label{font-size:var(--text-xs);color:var(--cinnamon)}
 .profit-green{color:var(--sage)}.profit-red{color:var(--berry)}
 
-/* Mobile: vertical stack */
+/* Per-card border colors */
+.day-entry:nth-child(1) .day-card{border-left-color:var(--sage)}
+.day-entry:nth-child(1) .day-ui{background:rgba(90,122,90,.04)}
+.day-entry:nth-child(2) .day-card{border-left-color:var(--honey)}
+.day-entry:nth-child(2) .day-ui{background:rgba(212,146,12,.04)}
+.day-entry:nth-child(3) .day-card{border-left-color:var(--crust)}
+.day-entry:nth-child(3) .day-ui{background:rgba(196,149,106,.06)}
+.day-entry:nth-child(4) .day-card{border-left-color:var(--sage)}
+.day-entry:nth-child(4) .day-ui{background:rgba(90,122,90,.04)}
+.day-entry:nth-child(5) .day-card{border-left-color:var(--golden)}
+.day-entry:nth-child(5) .day-ui{background:rgba(232,176,74,.05)}
+.day-entry:nth-child(6) .day-card{border-left-color:var(--sage)}
+.day-entry:nth-child(6) .day-ui{background:rgba(90,122,90,.04)}
+
+/* Scroll animations */
+.day-entry:nth-child(odd) .day-card{opacity:0;transform:translateX(-40px);transition:opacity .6s ease,transform .6s ease}
+.day-entry:nth-child(even) .day-card{opacity:0;transform:translateX(40px);transition:opacity .6s ease,transform .6s ease}
+.day-entry.visible .day-card{opacity:1;transform:translateX(0)}
+
+/* Mobile timeline */
 @media(max-width:767px){
-.day-sticky{position:relative;height:auto;flex-direction:column;padding:0 1.5rem 3rem;gap:2rem;align-items:stretch}
-.day-track{flex-direction:column;gap:2rem;padding:0;transform:none!important}
-.day-track::before{display:none}
-.day-card{flex:none;width:100%;position:relative;margin-left:1.5rem}
-.day-card::before{content:'';position:absolute;left:-1.25rem;top:0;bottom:-2rem;width:2px;border-left:2px dashed var(--sourdough)}
-.day-card:last-child::before{bottom:0}
+.day-timeline::before{left:20px}
+.day-entry{flex-direction:row!important;padding-left:50px;gap:0}
+.day-entry:nth-child(odd),.day-entry:nth-child(even){flex-direction:row!important}
+.day-spacer{display:none}
+.day-entry .day-card{max-width:100%}
+.day-time-badge{left:20px;transform:translateX(-50%)}
+.day-entry::before{left:20px}
+.day-entry:nth-child(odd) .day-card,.day-entry:nth-child(even) .day-card{transform:translateX(30px)}
+.day-entry.visible .day-card{transform:translateX(0)}
 .storefront-preview{padding:1rem;margin:2rem auto}
 .sf-products{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(prefers-reduced-motion:reduce){
+.day-entry:nth-child(odd) .day-card,.day-entry:nth-child(even) .day-card{opacity:1;transform:none;transition:none}
 }
 
 /* ===== NUMBERS ===== */
@@ -380,15 +417,22 @@ Your bakery.<br>
 <!-- ===== 2. BAKER'S DAY ===== -->
 <section class="bakers-day" id="bakersDay">
 <div class="bakers-day-intro">
+<svg class="day-icon reveal" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="24" cy="24" r="20" stroke="#d4920c" stroke-width="2" fill="none" opacity=".5"/>
+<circle cx="24" cy="24" r="3" fill="#d4920c" opacity=".6"/>
+<line x1="24" y1="24" x2="24" y2="12" stroke="#d4920c" stroke-width="2" stroke-linecap="round"/>
+<line x1="24" y1="24" x2="32" y2="24" stroke="#d4920c" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M24 4 L24 8 M24 40 L24 44 M4 24 L8 24 M40 24 L44 24" stroke="#e8b04a" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+</svg>
 <h2 class="reveal">A day with KneadIt</h2>
-<p class="reveal reveal-d1">From sunrise prep to evening profit — we've got every hour covered.</p>
-<p class="day-subtitle reveal reveal-d2">Follow along as KneadIt handles your entire day — from first order check to evening profit review.</p>
+<p class="reveal reveal-d1">From the first light check to your evening profit smile — here's how KneadIt turns a busy day into a smooth one.</p>
+<p class="day-subtitle reveal reveal-d2">Follow along as KneadIt handles your entire day.</p>
 </div>
-<div class="day-sticky" id="dayStickyWrap">
-<div class="day-track" id="dayTrack">
+<div class="day-timeline">
 
+<div class="day-entry">
 <div class="day-card">
-<div class="day-time">5:30 AM</div>
+<div class="day-card-icon">📋</div>
 <div class="day-label">Check today's orders</div>
 <div class="day-ui">
 <div class="day-ui-row"><span>Emma — Sourdough (2)</span><span style="font-size:var(--text-xs);color:var(--sage)">8:00 AM</span></div>
@@ -399,9 +443,13 @@ Your bakery.<br>
 <div class="day-ui-row"><span>Liu — Bagels (12)</span><span style="font-size:var(--text-xs);color:var(--sage)">3:30 PM</span></div>
 </div>
 </div>
+<div class="day-spacer"></div>
+<span class="day-time-badge">5:30 AM</span>
+</div>
 
+<div class="day-entry">
 <div class="day-card">
-<div class="day-time">6:00 AM</div>
+<div class="day-card-icon">📝</div>
 <div class="day-label">Auto-generated prep list</div>
 <div class="day-ui">
 <div class="day-ui-row"><span>🌾 All-purpose flour</span><strong>8 cups</strong></div>
@@ -412,9 +460,13 @@ Your bakery.<br>
 <div class="day-ui-row"><span>🥛 Milk</span><strong>4 cups</strong></div>
 </div>
 </div>
+<div class="day-spacer"></div>
+<span class="day-time-badge">6:00 AM</span>
+</div>
 
+<div class="day-entry">
 <div class="day-card">
-<div class="day-time">9:00 AM</div>
+<div class="day-card-icon">🔥</div>
 <div class="day-label">Mark orders as baking</div>
 <div class="day-ui">
 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">
@@ -427,9 +479,13 @@ Your bakery.<br>
 <div class="day-ui-row"><span>Priya's Focaccia</span><span class="day-ui-pill pill-confirmed" style="font-size:10px">Confirmed</span></div>
 </div>
 </div>
+<div class="day-spacer"></div>
+<span class="day-time-badge">9:00 AM</span>
+</div>
 
+<div class="day-entry">
 <div class="day-card">
-<div class="day-time">11:30 AM</div>
+<div class="day-card-icon">💰</div>
 <div class="day-label">Invoice sent automatically</div>
 <div class="day-ui" style="text-align:center;padding:1.5rem 1rem">
 <div style="font-size:2rem;margin-bottom:.5rem">📩</div>
@@ -438,9 +494,13 @@ Your bakery.<br>
 <div style="margin-top:.75rem;font-size:var(--text-xs);color:var(--cinnamon)">Invoice #1042 · Emma W.</div>
 </div>
 </div>
+<div class="day-spacer"></div>
+<span class="day-time-badge">11:30 AM</span>
+</div>
 
+<div class="day-entry">
 <div class="day-card">
-<div class="day-time">2:00 PM</div>
+<div class="day-card-icon">⭐</div>
 <div class="day-label">Customer picks up &amp; reviews</div>
 <div class="day-ui" style="text-align:center;padding:1.5rem 1rem">
 <div class="day-ui-stars">★★★★★</div>
@@ -448,9 +508,13 @@ Your bakery.<br>
 <div style="margin-top:.5rem;font-weight:600;font-size:var(--text-xs)">— Emma W.</div>
 </div>
 </div>
+<div class="day-spacer"></div>
+<span class="day-time-badge">2:00 PM</span>
+</div>
 
+<div class="day-entry">
 <div class="day-card">
-<div class="day-time">8:00 PM</div>
+<div class="day-card-icon">📊</div>
 <div class="day-label">Check today's profit</div>
 <div class="day-ui">
 <div class="day-ui-profit" style="justify-content:center;padding:.5rem 0">
@@ -460,8 +524,10 @@ Your bakery.<br>
 </div>
 </div>
 </div>
-
+<div class="day-spacer"></div>
+<span class="day-time-badge">8:00 PM</span>
 </div>
+
 </div>
 </section>
 
@@ -795,27 +861,20 @@ input.addEventListener('blur', function() {
   if (!this.value) { cursor.style.display = ''; typeTimer = setTimeout(typeLoop, 800); }
 });
 
-/* === Horizontal scroll (Baker's Day) === */
-function initHorizontalScroll() {
-  const section = document.getElementById('bakersDay');
-  const stickyWrap = document.getElementById('dayStickyWrap');
-  const track = document.getElementById('dayTrack');
-  if (!track || !section || window.innerWidth < 768) return;
-
-  function update() {
-    const trackW = track.scrollWidth;
-    const viewW = window.innerWidth;
-    const totalScroll = trackW - viewW + 100;
-    section.style.height = (totalScroll + window.innerHeight) + 'px';
-
-    const rect = section.getBoundingClientRect();
-    const progress = Math.max(0, Math.min(1, -rect.top / totalScroll));
-    track.style.transform = 'translateX(' + (-progress * totalScroll) + 'px)';
-    requestAnimationFrame(update);
-  }
-  update();
-}
-if (window.innerWidth >= 768) initHorizontalScroll();
+/* === Timeline scroll reveal (Baker's Day) === */
+(function() {
+  const entries = document.querySelectorAll('.day-entry');
+  if (!entries.length) return;
+  const observer = new IntersectionObserver(function(items) {
+    items.forEach(function(item) {
+      if (item.isIntersecting) {
+        item.target.classList.add('visible');
+        observer.unobserve(item.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  entries.forEach(function(entry) { observer.observe(entry); });
+})();
 
 /* === Count-up numbers === */
 function animateNumbers() {
