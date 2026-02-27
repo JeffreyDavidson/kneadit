@@ -303,7 +303,7 @@ a{color:inherit;text-decoration:none}
 .pricing-header h2{font-family:var(--font-serif);font-size:var(--text-3xl)}
 .pricing-header p{color:var(--walnut);margin-top:.5rem}
 .founding-callout{max-width:640px;margin:0 auto 2.5rem;background:var(--cream);border:2px solid var(--golden);border-radius:16px;padding:1.25rem 1.5rem;text-align:center;font-size:var(--text-base);color:var(--walnut)}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:960px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;max-width:700px;margin:0 auto}
 .price-card{background:var(--white);border-radius:20px;padding:2.5rem 2rem;box-shadow:0 2px 16px rgba(28,20,16,.06);transition:transform .3s,box-shadow .3s;display:flex;flex-direction:column;position:relative}
 .price-card:hover,.price-card:focus-visible{transform:translateY(-4px);box-shadow:0 8px 32px rgba(28,20,16,.12)}
 .price-card.popular{border:2px solid var(--honey);box-shadow:0 4px 24px rgba(212,146,12,.15);background:linear-gradient(180deg,rgba(212,146,12,.06) 0%,var(--white) 40%)}
@@ -320,7 +320,7 @@ a{color:inherit;text-decoration:none}
 .price-btn:hover,.price-btn:focus-visible{background:var(--honey);color:var(--white)}
 .price-card.popular .price-btn{background:var(--honey);color:var(--white)}
 .price-card.popular .price-btn:hover,.price-card.popular .price-btn:focus-visible{background:var(--golden)}
-@media(max-width:767px){.pricing-grid{grid-template-columns:1fr;max-width:400px}.price-card{width:100%}}
+@media(max-width:600px){.pricing-grid{grid-template-columns:1fr;max-width:400px}.price-card{width:100%}}
 
 /* ===== FAQ ===== */
 .faq{background:var(--flour);padding:5rem 1.5rem}
@@ -686,18 +686,7 @@ Your bakery.<br>
 </div>
 <div class="founding-callout reveal">🎉 Sign up during our launch window and lock in founding member rates forever.</div>
 <div class="pricing-grid">
-<div class="price-card reveal">
-<div class="price-tier">Free</div>
-<div class="price-desc">Just Getting Started</div>
-<ul class="price-features">
-<li>Up to 10 products</li>
-<li>Order management</li>
-<li>Basic storefront</li>
-</ul>
-<div class="price-amount">$0<span style="font-size:var(--text-sm);font-weight:400;color:var(--cinnamon)">/month</span></div>
-<div class="price-founding">30-day free trial</div>
-<a href="#cta" class="price-btn">Join Waitlist</a>
-</div>
+<!-- Free plan removed — 30-day trial only -->
 <div class="price-card popular reveal reveal-d1">
 <span class="price-badge">Most Popular</span>
 <div class="price-tier">Starter</div>
@@ -745,8 +734,8 @@ Your bakery.<br>
 <div class="faq-a"><div class="faq-a-inner">Nope! KneadIt runs entirely in your browser — phone, tablet, or laptop. No special hardware, no app to install. If you can check email, you can run KneadIt.</div></div>
 </div>
 <div class="faq-item reveal reveal-d2">
-<button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How does the free plan work?<span class="faq-icon">+</span></button>
-<div class="faq-a"><div class="faq-a-inner">Every plan starts with a 30-day free trial — no credit card required. Try out the full feature set for your tier, and only pay when you're ready to commit.</div></div>
+<button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How does the free trial work?<span class="faq-icon">+</span></button>
+<div class="faq-a"><div class="faq-a-inner">Every plan comes with a 30-day free trial — no credit card required. Pick Starter or Pro, try the full feature set, and only pay when you're ready to commit.</div></div>
 </div>
 <div class="faq-item reveal reveal-d3">
 <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I use my own domain name?<span class="faq-icon">+</span></button>
