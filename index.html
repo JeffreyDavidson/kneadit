@@ -3,922 +3,794 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KneadIt — Run Your Home Bakery Like a Real Business</title>
-<meta name="description" content="KneadIt gives cottage food bakers the tools to manage orders, track finances, send invoices, and grow — all in one beautiful platform.">
+<title>KneadIt — Business Management for Cottage Food Bakers</title>
+<meta name="description" content="Orders, invoicing, recipes, finances, storefronts — built specifically for home bakers who sell. Stop managing chaos, start baking.">
+<meta property="og:title" content="KneadIt — Your Bakery, Managed">
+<meta property="og:description" content="The business platform built for cottage food bakers. Orders, invoicing, recipes, storefronts — everything you need to run your home bakery.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://getkneadit.app">
+<meta property="og:image" content="https://getkneadit.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
---dark:#1a1612;--dark-card:#2a2420;--dark-surface:#1f1a16;
---cream:#fef9ef;--cream-dark:#f5efe0;
---amber:#d4920c;--amber-light:#f0b848;--amber-glow:rgba(212,146,12,0.15);
---gold:#c9a84c;--terracotta:#c75a3a;--terracotta-hover:#b84a2a;
---text-dark:#1a1612;--text-light:#fef9ef;--text-muted:#8a7e72;
---glass:rgba(255,255,255,0.08);--glass-border:rgba(255,255,255,0.12);
---glass-light:rgba(255,255,255,0.7);--glass-light-border:rgba(0,0,0,0.08);
---radius:16px;--radius-sm:10px;
+--warm-black:#1c1410;--espresso:#2a1f18;--walnut:#4a3728;--cinnamon:#8b6844;
+--honey:#d4920c;--golden:#e8b04a;--butter:#f5d88e;--flour:#faf4e8;--cream:#fef9ef;
+--white:#fff;--sourdough:#e8dcc8;--crust:#c4956a;--berry:#a83248;--sage:#5a7a5a;
+--text-xs:0.75rem;--text-sm:0.875rem;--text-base:1rem;--text-lg:1.125rem;--text-xl:1.25rem;
+--text-2xl:clamp(1.5rem,3vw,2rem);--text-3xl:clamp(2rem,4vw,3rem);--text-hero:clamp(2.5rem,7vw,5.5rem);
+--font-serif:'Playfair Display',Georgia,serif;--font-sans:'DM Sans',system-ui,sans-serif;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;color:var(--text-dark);line-height:1.7;overflow-x:hidden;background:var(--dark)}
-h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif;line-height:1.2;font-weight:600}
-a{color:inherit;text-decoration:none}
+body{font-family:var(--font-sans);color:var(--warm-black);background:var(--cream);line-height:1.6;overflow-x:hidden}
 img{max-width:100%;display:block}
-button{font-family:inherit;cursor:pointer;border:none}
-input{font-family:inherit}
+a{color:inherit;text-decoration:none}
 
-/* Grain overlay */
-.grain{position:relative}
-.grain::after{content:'';position:absolute;inset:0;opacity:.035;pointer-events:none;z-index:1;
-background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-background-size:128px 128px}
-
-/* Glass cards */
-.glass{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius)}
-.glass-light{background:var(--glass-light);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-light-border);border-radius:var(--radius)}
-
-/* Animations */
-@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideLeft{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
-@keyframes slideRight{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:translateX(0)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-@keyframes glow{0%,100%{box-shadow:0 0 20px var(--amber-glow)}50%{box-shadow:0 0 40px var(--amber-glow),0 0 60px rgba(212,146,12,0.08)}}
-@keyframes fillBar{from{width:0}to{width:var(--fill,100%)}}
-@keyframes drawLine{from{stroke-dashoffset:var(--dash-len,1000)}to{stroke-dashoffset:0}}
-@keyframes bobFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-@keyframes slideCardRight{0%{transform:translateX(0)}100%{transform:translateX(calc(100% + 12px))}}
-@keyframes growBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.anim{opacity:0;transition:opacity .6s,transform .6s}
-.anim.visible{opacity:1;transform:none}
-.anim.fade-up{transform:translateY(30px)}
-.anim.slide-left{transform:translateX(60px)}
-.anim.slide-right{transform:translateX(-60px)}
-.stagger-1{transition-delay:.1s}.stagger-2{transition-delay:.2s}.stagger-3{transition-delay:.3s}
-.stagger-4{transition-delay:.4s}.stagger-5{transition-delay:.5s}.stagger-6{transition-delay:.6s}
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}
+.reveal-d4{transition-delay:.4s}.reveal-d5{transition-delay:.5s}
 
 @media(prefers-reduced-motion:reduce){
-.anim{opacity:1!important;transform:none!important;transition:none!important}
-*{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+.reveal{opacity:1;transform:none;transition:none}
+.flour-particle{display:none!important}
+.typing-cursor{animation:none!important}
 }
 
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:background .3s,backdrop-filter .3s}
-.nav.scrolled{background:rgba(26,22,18,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-.nav-logo{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--cream);font-weight:700;display:flex;align-items:center;gap:.5rem}
-.nav-logo svg{width:28px;height:28px}
-.nav-links{display:flex;gap:2rem;align-items:center}
-.nav-links a{color:var(--cream);opacity:.8;font-size:.9rem;transition:opacity .2s}
-.nav-links a:hover{opacity:1}
-.nav-cta{background:var(--terracotta);color:#fff;padding:.55rem 1.3rem;border-radius:50px;font-size:.85rem;font-weight:600;transition:background .2s,transform .2s}
-.nav-cta:hover{background:var(--terracotta-hover);transform:translateY(-1px)}
-@media(max-width:768px){.nav-links a:not(.nav-cta){display:none}.nav{padding:.8rem 1.2rem}}
-
-/* CONTAINER */
-.container{max-width:1200px;margin:0 auto;padding:0 1.5rem}
-section{position:relative;overflow:hidden}
-
-/* HERO */
-.hero{min-height:100vh;display:flex;align-items:center;background:var(--dark);padding:6rem 0 4rem;position:relative}
-.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
-.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);color:var(--cream);margin-bottom:1.2rem;font-weight:700}
-.hero h1 span{color:var(--amber-light)}
-.hero-sub{color:var(--text-muted);font-size:clamp(1rem,2vw,1.2rem);margin-bottom:2rem;max-width:520px;line-height:1.7}
-.hero-form{display:flex;gap:.6rem;max-width:440px;margin-bottom:1.2rem}
-.hero-form input{flex:1;padding:.85rem 1.2rem;border-radius:50px;border:2px solid rgba(212,146,12,0.3);background:rgba(255,255,255,0.06);color:var(--cream);font-size:1rem;outline:none;transition:border-color .3s,box-shadow .3s}
-.hero-form input:focus{border-color:var(--amber);box-shadow:0 0 20px var(--amber-glow)}
-.hero-form input::placeholder{color:var(--text-muted)}
-.hero-form button{padding:.85rem 1.8rem;border-radius:50px;background:var(--terracotta);color:#fff;font-weight:600;font-size:1rem;white-space:nowrap;transition:background .2s,transform .2s,box-shadow .2s}
-.hero-form button:hover{background:var(--terracotta-hover);transform:translateY(-1px);box-shadow:0 4px 20px rgba(199,90,58,0.3)}
-.hero-social-proof{display:flex;align-items:center;gap:.7rem;color:var(--text-muted);font-size:.9rem}
-.avatar-stack{display:flex}
-.avatar-stack span{width:32px;height:32px;border-radius:50%;border:2px solid var(--dark);margin-left:-8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff}
-.avatar-stack span:first-child{margin-left:0}
-.avatar-stack span:nth-child(1){background:#c75a3a}
-.avatar-stack span:nth-child(2){background:#d4920c}
-.avatar-stack span:nth-child(3){background:#6b8f71}
-.avatar-stack span:nth-child(4){background:#7c6ca8}
-
-/* Hero dashboard card */
-.hero-dashboard{animation:bobFloat 6s ease-in-out infinite;position:relative}
-.dash-card{padding:1.5rem;max-width:380px;margin-left:auto}
-.dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
-.dash-title{color:var(--cream);font-size:.85rem;font-weight:500}
-.dash-badge{background:rgba(107,175,93,0.2);color:#6baf5d;font-size:.7rem;padding:.25rem .6rem;border-radius:20px}
-.dash-stats{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.2rem}
-.dash-stat{padding:.8rem;border-radius:var(--radius-sm);background:rgba(255,255,255,0.04)}
-.dash-stat-label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
-.dash-stat-val{font-size:1.4rem;font-weight:600;color:var(--cream);font-family:'Fraunces',serif}
-.dash-chart{display:flex;align-items:flex-end;gap:6px;height:60px;padding-top:.5rem}
-.dash-bar{flex:1;border-radius:4px 4px 0 0;transform-origin:bottom;background:var(--amber)}
-.dash-bar.active{background:var(--amber-light)}
-
-/* Floating wheat icons */
-.hero-decor{position:absolute;opacity:.07;color:var(--amber)}
-.hero-decor.d1{top:15%;right:8%;font-size:3rem;animation:float 7s ease-in-out infinite}
-.hero-decor.d2{bottom:20%;right:15%;font-size:2rem;animation:float 5s ease-in-out infinite 1s}
-.hero-decor.d3{top:25%;left:5%;font-size:2.5rem;animation:float 6s ease-in-out infinite 2s}
-
-@media(max-width:900px){
-.hero-inner{grid-template-columns:1fr;text-align:center}
-.hero-sub{margin-left:auto;margin-right:auto}
-.hero-form{margin-left:auto;margin-right:auto}
-.hero-social-proof{justify-content:center}
-.dash-card{margin:2rem auto 0;max-width:340px}
-.hero-dashboard{animation:bobFloat 8s ease-in-out infinite}
+/* ===== FLOUR PARTICLES ===== */
+.flour-wrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.flour-particle{position:absolute;border-radius:50%;background:var(--cream);opacity:.2;animation:flour-fall linear infinite}
+@keyframes flour-fall{
+0%{transform:translateY(-20px) translateX(0);opacity:0}
+10%{opacity:var(--p-opacity,.2)}
+90%{opacity:var(--p-opacity,.2)}
+100%{transform:translateY(calc(100vh + 20px)) translateX(var(--p-sway,30px));opacity:0}
 }
 
-/* SECTION STYLES */
-.section-dark{background:var(--dark);color:var(--cream)}
-.section-light{background:var(--cream)}
-.section-cream{background:var(--cream-dark)}
-.section-pad{padding:5rem 0}
-@media(max-width:768px){.section-pad{padding:3.5rem 0}}
-.section-title{font-size:clamp(1.8rem,4vw,3rem);margin-bottom:1rem;text-align:center}
-.section-subtitle{text-align:center;color:var(--text-muted);max-width:600px;margin:0 auto 3rem;font-size:1.1rem}
+/* ===== HERO ===== */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem 4rem;background:var(--warm-black);color:var(--cream);text-align:center;overflow:hidden}
+.hero-content{position:relative;z-index:1;width:100%;max-width:900px}
+.hero-eyebrow{font-size:var(--text-sm);letter-spacing:.25em;text-transform:uppercase;color:var(--honey);margin-bottom:1.5rem;font-weight:500}
+.hero-headline{font-family:var(--font-serif);font-size:var(--text-hero);font-weight:700;line-height:1.1;margin-bottom:.25em}
+.hero-headline-input-wrap{display:block;position:relative;min-height:1.2em}
+.hero-name-input{background:none;border:none;outline:none;font-family:var(--font-serif);font-size:var(--text-hero);font-weight:700;color:var(--golden);text-align:center;width:100%;line-height:1.1;caret-color:var(--honey)}
+.hero-name-input::placeholder{color:var(--cinnamon);opacity:.6}
+.typing-cursor{display:inline-block;width:3px;height:.85em;background:var(--honey);margin-left:4px;vertical-align:text-bottom;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
 
-/* PAIN POINTS */
-.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem}
-.pain-card{padding:2rem;border-radius:var(--radius);background:var(--glass-light);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-light-border);transition:transform .3s,box-shadow .3s}
-.pain-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.08)}
-.pain-icon{width:48px;height:48px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:var(--amber-glow);border-radius:12px;color:var(--amber)}
-.pain-card h3{font-size:1.15rem;margin-bottom:.5rem}
-.pain-card p{color:var(--text-muted);font-size:.95rem}
-/* Animated pain icons */
-.pain-icon svg{width:24px;height:24px}
-.pain-card:nth-child(1) .pain-icon{animation:pulse 2s ease-in-out infinite}
-.pain-card:nth-child(2) .pain-icon{animation:float 3s ease-in-out infinite}
-.pain-card:nth-child(3) .pain-icon{animation:spin 4s linear infinite}
-.pain-card:nth-child(4) .pain-icon{animation:pulse 2.5s ease-in-out infinite .5s}
+/* Mini storefront preview */
+.storefront-preview{background:var(--flour);border-radius:20px;padding:1.5rem;margin:2.5rem auto;max-width:580px;color:var(--warm-black);text-align:left;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.sf-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--sourdough)}
+.sf-logo{width:40px;height:40px;border-radius:10px;background:var(--honey);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-weight:700;font-size:1.1rem;color:var(--white);flex-shrink:0}
+.sf-bakery-name{font-family:var(--font-serif);font-weight:700;font-size:var(--text-lg);color:var(--warm-black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sf-badge{font-size:var(--text-xs);background:var(--sage);color:var(--white);padding:2px 8px;border-radius:20px;margin-left:auto;white-space:nowrap}
+.sf-products{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.sf-product{background:var(--white);border-radius:12px;padding:.75rem;text-align:center;transition:transform .2s}
+.sf-product:hover{transform:scale(1.03)}
+.sf-product-img{width:100%;aspect-ratio:1;border-radius:8px;margin-bottom:.5rem}
+.sf-product:nth-child(1) .sf-product-img{background:linear-gradient(135deg,var(--crust),var(--cinnamon))}
+.sf-product:nth-child(2) .sf-product-img{background:linear-gradient(135deg,var(--butter),var(--honey))}
+.sf-product:nth-child(3) .sf-product-img{background:linear-gradient(135deg,var(--sourdough),var(--walnut))}
+.sf-product-name{font-size:var(--text-xs);font-weight:500;margin-bottom:.2rem}
+.sf-product-price{font-size:var(--text-sm);font-weight:700;color:var(--honey)}
+.sf-order-btn{display:block;width:100%;margin-top:1rem;padding:.7rem;background:var(--honey);color:var(--white);border:none;border-radius:12px;font-family:var(--font-sans);font-size:var(--text-sm);font-weight:700;cursor:pointer;transition:background .2s}
+.sf-order-btn:hover{background:var(--golden)}
 
-/* TRANSITION SECTION */
-.transition-section{padding:4rem 0;text-align:center}
-.transition-section h2{font-size:clamp(2rem,5vw,3.5rem);color:var(--cream);text-shadow:0 0 40px rgba(212,146,12,0.3)}
-.transition-section p{color:var(--text-muted);margin-top:.8rem;font-size:1.1rem}
-.gold-line{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:2rem auto 0}
+/* Waitlist input */
+.waitlist{display:flex;gap:.5rem;max-width:460px;margin:2rem auto 0;flex-wrap:wrap;justify-content:center}
+.waitlist input{flex:1;min-width:200px;padding:.85rem 1.25rem;border-radius:14px;border:2px solid var(--walnut);background:var(--espresso);color:var(--cream);font-family:var(--font-sans);font-size:var(--text-base);outline:none;transition:border-color .2s}
+.waitlist input:focus{border-color:var(--honey)}
+.waitlist input::placeholder{color:var(--cinnamon)}
+.waitlist button,.cta-btn{padding:.85rem 2rem;border-radius:14px;border:none;background:var(--honey);color:var(--white);font-family:var(--font-sans);font-size:var(--text-base);font-weight:700;cursor:pointer;transition:background .2s,transform .2s}
+.waitlist button:hover,.cta-btn:hover{background:var(--golden);transform:translateY(-1px)}
 
-/* FEATURES */
-.feature{padding:5rem 0}
-.feature-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
-.feature.reverse .feature-inner{direction:rtl}
-.feature.reverse .feature-inner>*{direction:ltr}
-.feature-text h3{font-size:clamp(1.5rem,3vw,2.2rem);margin-bottom:1rem}
-.feature-text p{color:var(--text-muted);font-size:1.05rem;line-height:1.7}
-@media(max-width:768px){.feature-inner{grid-template-columns:1fr;gap:2.5rem}.feature.reverse .feature-inner{direction:ltr}}
+.hero-divider{position:relative;z-index:1;margin-top:3rem}
+.hero-divider svg{display:block;margin:0 auto;width:min(280px,60vw);height:auto}
 
-/* Feature Demo Cards */
-.demo-card{padding:1.5rem;border-radius:var(--radius);position:relative;overflow:hidden}
-.demo-card.on-dark{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border)}
-.demo-card.on-light{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-light-border);box-shadow:0 8px 32px rgba(0,0,0,0.06)}
+/* ===== BAKER'S DAY ===== */
+.bakers-day{position:relative;background:var(--cream)}
+.bakers-day-intro{text-align:center;padding:5rem 1.5rem 3rem}
+.bakers-day-intro h2{font-family:var(--font-serif);font-size:var(--text-3xl);color:var(--warm-black)}
+.bakers-day-intro p{color:var(--walnut);margin-top:.5rem;font-size:var(--text-lg)}
+.day-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center}
+.day-track{display:flex;gap:2.5rem;padding:0 max(2rem,10vw);will-change:transform;transition:transform 50ms linear}
+.day-card{flex:0 0 min(360px,80vw);background:var(--white);border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(28,20,16,.08);position:relative}
+.day-time{font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--honey);margin-bottom:.25rem}
+.day-label{font-weight:700;font-size:var(--text-lg);margin-bottom:1rem;color:var(--warm-black)}
+.day-ui{background:var(--flour);border-radius:12px;padding:1rem;font-size:var(--text-sm);color:var(--walnut)}
+.day-ui-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--sourdough)}
+.day-ui-row:last-child{border:none}
+.day-ui-pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:var(--text-xs);font-weight:500;color:var(--white)}
+.pill-confirmed{background:var(--sage)}.pill-baking{background:var(--honey)}.pill-ready{background:var(--crust)}.pill-delivered{background:var(--walnut)}
+.day-ui-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;font-weight:700;font-size:var(--text-sm)}
+.badge-paid{background:#e6f7e6;color:var(--sage)}
+.day-ui-stars{color:var(--honey);font-size:var(--text-lg);letter-spacing:2px}
+.day-ui-profit{display:flex;gap:1.5rem;flex-wrap:wrap}
+.day-ui-stat{text-align:center}
+.day-ui-stat-val{font-family:var(--font-serif);font-size:var(--text-2xl);font-weight:700}
+.day-ui-stat-label{font-size:var(--text-xs);color:var(--cinnamon)}
+.profit-green{color:var(--sage)}.profit-red{color:var(--berry)}
 
-/* Demo: Storefront */
-.sf-products{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem}
-.sf-item{border-radius:var(--radius-sm);overflow:hidden;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.05)}
-.sf-img{height:60px;width:100%}
-.sf-item-info{padding:.5rem}
-.sf-item-name{font-size:.7rem;font-weight:600}
-.sf-item-price{font-size:.65rem;color:var(--text-muted)}
-.sf-btn{display:inline-block;background:var(--terracotta);color:#fff;font-size:.6rem;padding:.25rem .5rem;border-radius:20px;margin-top:.3rem}
-.sf-footer{display:flex;justify-content:space-between;align-items:center}
-.sf-cart{font-size:.75rem;color:var(--amber);font-weight:600}
-.sf-cap{font-size:.65rem;background:rgba(212,146,12,.12);color:var(--amber);padding:.2rem .5rem;border-radius:20px}
+/* Mobile: vertical stack */
+@media(max-width:767px){
+.day-sticky{position:relative;height:auto;flex-direction:column;padding:0 1.5rem 3rem;gap:2rem;align-items:stretch}
+.day-track{flex-direction:column;gap:2rem;padding:0;transform:none!important}
+.day-card{flex:none;width:100%;position:relative;margin-left:1.5rem}
+.day-card::before{content:'';position:absolute;left:-1.25rem;top:0;bottom:-2rem;width:2px;border-left:2px dashed var(--sourdough)}
+.day-card:last-child::before{bottom:0}
+}
 
-/* Demo: Kanban */
-.kanban{display:flex;gap:.4rem}
-.kanban-col{flex:1;min-width:0}
-.kanban-col-title{font-size:.55rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:.4rem;text-align:center;font-weight:600}
-.kanban-card{background:rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:.4rem;margin-bottom:.3rem;font-size:.6rem}
-.kanban-card .name{font-weight:600;font-size:.6rem}
-.kanban-card .item{color:var(--text-muted);font-size:.55rem}
-.kanban-card.moving{animation:slideCardRight 2s ease-in-out infinite}
+/* ===== NUMBERS ===== */
+.numbers{background:var(--warm-black);color:var(--golden);padding:5rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+.numbers-grid{display:flex;justify-content:center;gap:clamp(2rem,6vw,5rem);flex-wrap:wrap;max-width:900px;margin:0 auto;position:relative;z-index:1}
+.number-item{flex:1;min-width:180px}
+.number-val{font-family:var(--font-serif);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;line-height:1.1}
+.number-sub{font-family:var(--font-sans);font-size:var(--text-sm);color:var(--cinnamon);margin-top:.5rem;font-weight:400}
+.numbers-wheat{position:absolute;top:50%;opacity:.12;pointer-events:none}
+.numbers-wheat-l{left:2%;transform:translateY(-50%) rotate(-15deg)}
+.numbers-wheat-r{right:2%;transform:translateY(-50%) rotate(15deg) scaleX(-1)}
 
-/* Demo: Recipe Costing */
-.recipe-demo{font-size:.75rem}
-.recipe-list{margin-bottom:.8rem}
-.recipe-row{display:flex;justify-content:space-between;padding:.25rem 0;border-bottom:1px solid rgba(0,0,0,.05);opacity:0}
-.recipe-row.visible{animation:fadeIn .4s forwards}
-.recipe-total{display:flex;justify-content:space-between;font-weight:700;padding:.5rem 0;border-top:2px solid var(--amber);margin-bottom:.8rem}
-.margin-bar{height:10px;border-radius:5px;background:rgba(0,0,0,.06);overflow:hidden}
-.margin-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6baf5d,#4a9c3a);width:0;transition:width 1s ease}
-.margin-label{display:flex;justify-content:space-between;font-size:.65rem;margin-top:.3rem;color:var(--text-muted)}
+/* ===== BENTO FEATURES ===== */
+.features{background:var(--cream);padding:5rem 1.5rem}
+.features-header{text-align:center;margin-bottom:3rem}
+.features-header h2{font-family:var(--font-serif);font-size:var(--text-3xl)}
+.bento{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;max-width:1100px;margin:0 auto}
+.bento-card{background:var(--white);border-radius:20px;padding:2rem;box-shadow:0 2px 16px rgba(28,20,16,.06);transition:transform .3s ease,box-shadow .3s ease;overflow:hidden;display:flex;flex-direction:column}
+.bento-card:hover{transform:scale(1.02);box-shadow:0 8px 32px rgba(28,20,16,.12)}
+.bento-large{grid-column:span 2}
+.bento-card h3{font-family:var(--font-serif);font-size:var(--text-xl);margin-bottom:.5rem;color:var(--warm-black)}
+.bento-card p{font-size:var(--text-sm);color:var(--walnut);margin-bottom:1rem;line-height:1.5}
+.bento-demo{background:var(--flour);border-radius:12px;padding:1rem;flex:1;font-size:var(--text-sm);overflow:hidden;position:relative}
 
-/* Demo: Invoice */
-.invoice-demo{text-align:center}
-.invoice-mini{background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);border-radius:10px;padding:1rem;margin:0 auto 1rem;max-width:200px;position:relative}
-.invoice-mini h4{font-size:.7rem;margin-bottom:.3rem}
-.invoice-mini .amt{font-size:1.3rem;font-weight:700;font-family:'Fraunces',serif;color:var(--amber)}
-.invoice-mini .to{font-size:.6rem;color:var(--text-muted)}
-.invoice-status{display:flex;justify-content:center;gap:.5rem;margin-top:.8rem}
-.inv-step{font-size:.6rem;padding:.25rem .6rem;border-radius:20px;background:rgba(0,0,0,.05);transition:all .5s}
-.inv-step.active{background:var(--amber-glow);color:var(--amber);font-weight:600}
-.inv-step.done{background:rgba(107,175,93,.15);color:#4a9c3a;font-weight:600}
+/* Storefront demo */
+.bento-sf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.bento-sf-item{background:var(--white);border-radius:8px;padding:.5rem;text-align:center}
+.bento-sf-swatch{width:100%;aspect-ratio:1;border-radius:6px;margin-bottom:.3rem}
+.bento-sf-item:nth-child(1) .bento-sf-swatch{background:linear-gradient(135deg,var(--crust),var(--cinnamon))}
+.bento-sf-item:nth-child(2) .bento-sf-swatch{background:linear-gradient(135deg,var(--butter),var(--honey))}
+.bento-sf-item:nth-child(3) .bento-sf-swatch{background:linear-gradient(135deg,var(--sourdough),var(--walnut))}
+.bento-sf-name{font-size:var(--text-xs);font-weight:500}.bento-sf-price{font-size:var(--text-xs);color:var(--honey);font-weight:700}
+.bento-cart-btn{display:inline-block;margin-top:.5rem;padding:3px 10px;background:var(--honey);color:var(--white);border-radius:6px;font-size:var(--text-xs);font-weight:700;animation:cartPulse 3s ease infinite}
+@keyframes cartPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 
-/* Demo: Customer */
-.cust-demo{text-align:center}
-.cust-avatar{width:48px;height:48px;border-radius:50%;background:var(--amber-glow);margin:0 auto .6rem;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
-.cust-name{font-weight:700;font-size:.85rem}
-.cust-meta{font-size:.65rem;color:var(--text-muted);margin-bottom:.6rem}
-.cust-stats{display:flex;justify-content:center;gap:1.2rem;margin-bottom:.8rem}
-.cust-stat{text-align:center}
-.cust-stat-val{font-size:1.1rem;font-weight:700;font-family:'Fraunces',serif;color:var(--amber)}
-.cust-stat-label{font-size:.55rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
-.cust-bday{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--terracotta);animation:pulse 2s ease-in-out infinite}
-.cust-btn{margin-top:.6rem;display:inline-block;background:var(--amber);color:#fff;font-size:.65rem;padding:.3rem .8rem;border-radius:20px}
+/* Chart demo */
+.bento-chart{display:flex;align-items:flex-end;gap:6px;height:80px;margin-bottom:.75rem}
+.bento-bar{flex:1;background:var(--honey);border-radius:4px 4px 0 0;transition:height .6s ease}
+.bento-chart-labels{display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--cinnamon)}
+.bento-cap{margin-top:.75rem;background:var(--sourdough);border-radius:6px;height:10px;overflow:hidden}
+.bento-cap-fill{height:100%;background:var(--honey);border-radius:6px;width:72%;transition:width 1s ease}
 
-/* Demo: Financial Dashboard */
-.fin-demo{font-size:.75rem}
-.fin-chart{height:80px;display:flex;align-items:flex-end;gap:4px;margin-bottom:.8rem;position:relative}
-.fin-chart::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(0,0,0,.1)}
-.fin-bar{flex:1;border-radius:3px 3px 0 0;transform-origin:bottom;background:var(--amber)}
-.fin-bar.expense{background:var(--terracotta);opacity:.6}
-.fin-progress{margin-top:.6rem}
-.fin-progress-label{display:flex;justify-content:space-between;font-size:.65rem;margin-bottom:.3rem}
-.fin-progress-bar{height:8px;border-radius:4px;background:rgba(0,0,0,.06);overflow:hidden}
-.fin-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--amber),var(--terracotta));width:0;transition:width 1.5s ease}
+/* Order flow */
+.flow-pills{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem}
+.flow-pill{padding:4px 10px;border-radius:20px;font-size:var(--text-xs);font-weight:600;color:var(--white);opacity:.5;transition:opacity .4s}
+.flow-pill.active{opacity:1;transform:scale(1.05)}
+.flow-arrow{color:var(--cinnamon);font-size:var(--text-xs)}
+.flow-anim{height:4px;background:var(--sourdough);border-radius:4px;overflow:hidden;margin-top:.5rem}
+.flow-anim-bar{height:100%;background:var(--honey);border-radius:4px;animation:flowMove 4s ease infinite;width:25%}
+@keyframes flowMove{0%{margin-left:0}33%{margin-left:25%}66%{margin-left:50%}100%{margin-left:75%}}
 
-/* THEME SWITCHER */
-.theme-preview{max-width:360px;margin:0 auto;padding:1.5rem;transition:all .4s}
-.theme-btns{display:flex;justify-content:center;gap:.8rem;margin-bottom:2rem;flex-wrap:wrap}
-.theme-btn{padding:.6rem 1.2rem;border-radius:50px;font-size:.85rem;font-weight:500;border:2px solid var(--glass-border);color:var(--cream);background:rgba(255,255,255,.06);transition:all .3s}
-.theme-btn:hover,.theme-btn.active{border-color:var(--amber);background:var(--amber-glow)}
-.tp-header{font-size:.8rem;font-weight:600;margin-bottom:.8rem;padding-bottom:.5rem;border-bottom:1px solid rgba(255,255,255,.1)}
-.tp-item{display:flex;gap:.6rem;margin-bottom:.6rem;align-items:center}
-.tp-swatch{width:40px;height:40px;border-radius:8px;flex-shrink:0;transition:background .4s}
-.tp-item-name{font-size:.75rem;font-weight:600;transition:color .4s}
-.tp-item-price{font-size:.65rem;opacity:.6}
-.tp-accent{transition:background .4s,color .4s}
+/* Recipe costing */
+.recipe-cost{display:flex;align-items:center;gap:.75rem}
+.recipe-cost-icon{font-size:1.5rem}
+.recipe-cost-val{font-family:var(--font-serif);font-size:var(--text-2xl);font-weight:700;color:var(--honey)}
+.recipe-margin{font-size:var(--text-xs);color:var(--sage);font-weight:700}
 
-/* HOW IT WORKS */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative}
-.steps-line{position:absolute;top:40px;left:16%;right:16%;height:2px;z-index:0}
-.steps-line-bg{stroke:rgba(0,0,0,.1);stroke-width:2}
-.steps-line-fg{stroke:var(--amber);stroke-width:2;stroke-dasharray:8 4;stroke-dashoffset:500;transition:stroke-dashoffset 2s ease}
-.steps-line-fg.drawn{stroke-dashoffset:0}
-.step-card{text-align:center;position:relative;z-index:1}
-.step-num{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--amber);background:var(--amber-glow);border:2px solid rgba(212,146,12,.2);animation:glow 3s ease-in-out infinite}
-.step-card h3{font-size:1.1rem;margin-bottom:.4rem}
-.step-card p{font-size:.9rem;color:var(--text-muted)}
-.step-icon{font-size:1.5rem;margin-bottom:.5rem}
-@media(max-width:768px){.steps{grid-template-columns:1fr;gap:2.5rem}.steps-line{display:none}}
+/* Customer love */
+.love-notif{display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;background:var(--white);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);animation:loveSlide 4s ease infinite}
+@keyframes loveSlide{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(-4px);opacity:.9}}
+.love-heart{color:var(--berry);font-size:1.25rem}
 
-/* BAKER STORY */
-.baker-section{position:relative}
-.baker-quote{font-size:5rem;color:var(--amber);opacity:.15;line-height:1;font-family:'Fraunces',serif;position:absolute;top:2rem;left:2rem}
-.baker-content{max-width:700px;margin:0 auto;text-align:center;position:relative;z-index:2}
-.baker-content h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:1.5rem;color:var(--text-dark)}
-.baker-content p{color:var(--text-muted);font-size:1.05rem;line-height:1.8}
-.baker-illus{margin:2rem auto 0;width:120px;height:120px;border-radius:50%;background:var(--amber-glow);display:flex;align-items:center;justify-content:center;font-size:3rem}
+@media(max-width:767px){
+.bento{grid-template-columns:1fr}
+.bento-large{grid-column:span 1}
+}
+@media(min-width:768px) and (max-width:1023px){
+.bento{grid-template-columns:repeat(2,1fr)}
+}
 
-/* TESTIMONIALS */
-.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:960px;margin:0 auto}
-.test-card{padding:1.8rem;position:relative}
-.test-card:nth-child(2){transform:translateY(1rem)}
-.test-stars{color:var(--amber-light);font-size:.9rem;margin-bottom:.8rem;letter-spacing:2px}
-.test-quote{color:rgba(254,249,239,.85);font-size:.95rem;line-height:1.7;margin-bottom:1.2rem;font-style:italic}
-.test-author{display:flex;align-items:center;gap:.8rem}
-.test-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#fff}
-.test-name{font-weight:600;font-size:.85rem;color:var(--cream)}
-.test-title{font-size:.7rem;color:var(--text-muted)}
-.test-badge{text-align:center;margin-bottom:2rem}
-.test-badge span{background:var(--amber-glow);color:var(--amber);font-size:.75rem;padding:.3rem .8rem;border-radius:20px}
+/* ===== BUILT BY A BAKER ===== */
+.story{background:var(--sourdough);padding:5rem 1.5rem;position:relative}
+.story-inner{max-width:800px;margin:0 auto;display:flex;gap:2rem;align-items:flex-start}
+.story-quote{flex-shrink:0}
+.story-quote svg{width:60px;height:60px}
+.story-text{font-size:var(--text-xl);line-height:1.8;color:var(--walnut)}
+.story-text p{margin-bottom:1.25rem}
+.story-text p:last-of-type{margin-bottom:0}
+.story-loaf{text-align:center;margin-top:3rem}
+.story-loaf svg{width:60px;height:auto;opacity:.4;margin:0 auto}
+@media(max-width:600px){
+.story-inner{flex-direction:column;gap:1rem}
+.story-quote svg{width:40px;height:40px}
+}
 
-/* PRICING */
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:960px;margin:0 auto}
-.price-card{padding:2rem;border-radius:var(--radius);background:#fff;border:1px solid rgba(0,0,0,.06);transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden}
-.price-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 16px 48px rgba(0,0,0,0.08)}
-.price-card.popular{border-color:var(--amber);box-shadow:0 8px 32px var(--amber-glow)}
-.price-badge{position:absolute;top:1rem;right:-2rem;background:var(--amber);color:#fff;font-size:.65rem;font-weight:600;padding:.25rem 2.5rem;transform:rotate(35deg)}
-.price-tier{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.3rem}
-.price-name{font-family:'Fraunces',serif;font-size:1.5rem;margin-bottom:.5rem}
-.price-amt{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:700;color:var(--amber);margin-bottom:.2rem}
-.price-amt span{font-size:.9rem;font-weight:400;color:var(--text-muted)}
-.price-soon{display:inline-block;font-size:.65rem;background:var(--amber-glow);color:var(--amber);padding:.15rem .5rem;border-radius:10px;margin-bottom:.8rem}
-.price-features{list-style:none;margin-bottom:1.5rem}
-.price-features li{padding:.35rem 0;font-size:.9rem;color:var(--text-muted);display:flex;align-items:center;gap:.5rem}
-.price-features li::before{content:'✓';color:var(--amber);font-weight:700}
-.price-cta{display:block;text-align:center;padding:.75rem;border-radius:50px;font-weight:600;font-size:.9rem;transition:all .2s}
-.price-cta.primary{background:var(--terracotta);color:#fff}
-.price-cta.primary:hover{background:var(--terracotta-hover)}
-.price-cta.secondary{background:rgba(0,0,0,.04);color:var(--text-dark)}
-.price-cta.secondary:hover{background:rgba(0,0,0,.08)}
-.pricing-note{text-align:center;margin-top:2rem;color:var(--text-muted);font-size:.9rem}
-.pricing-note strong{color:var(--amber)}
+/* ===== PRICING ===== */
+.pricing{background:var(--cream);padding:5rem 1.5rem}
+.pricing-header{text-align:center;margin-bottom:3rem}
+.pricing-header h2{font-family:var(--font-serif);font-size:var(--text-3xl)}
+.pricing-header p{color:var(--walnut);margin-top:.5rem}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:960px;margin:0 auto}
+.price-card{background:var(--white);border-radius:20px;padding:2.5rem 2rem;box-shadow:0 2px 16px rgba(28,20,16,.06);transition:transform .3s,box-shadow .3s;display:flex;flex-direction:column;position:relative}
+.price-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(28,20,16,.12)}
+.price-card.popular{border:2px solid var(--honey);box-shadow:0 4px 24px rgba(212,146,12,.15)}
+.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--honey);color:var(--white);font-size:var(--text-xs);font-weight:700;padding:4px 16px;border-radius:20px;white-space:nowrap}
+.price-tier{font-family:var(--font-serif);font-size:var(--text-2xl);font-weight:700;margin-bottom:.25rem}
+.price-desc{font-size:var(--text-sm);color:var(--cinnamon);margin-bottom:1.5rem}
+.price-features{list-style:none;flex:1;margin-bottom:1.5rem}
+.price-features li{padding:.4rem 0;font-size:var(--text-sm);color:var(--walnut);display:flex;align-items:center;gap:.5rem}
+.price-features li::before{content:'✓';color:var(--sage);font-weight:700}
+.price-amount{font-family:var(--font-serif);font-size:var(--text-2xl);font-weight:700;margin-bottom:.25rem}
+.price-founding{font-size:var(--text-sm);color:var(--cinnamon);margin-bottom:1rem}
+.price-founding s{opacity:.6}
+.price-btn{display:block;text-align:center;padding:.85rem;border-radius:14px;border:2px solid var(--honey);background:transparent;color:var(--honey);font-family:var(--font-sans);font-size:var(--text-base);font-weight:700;cursor:pointer;transition:all .2s}
+.price-btn:hover{background:var(--honey);color:var(--white)}
+.price-card.popular .price-btn{background:var(--honey);color:var(--white)}
+.price-card.popular .price-btn:hover{background:var(--golden)}
+@media(max-width:767px){.pricing-grid{grid-template-columns:1fr;max-width:400px}}
 
-/* FAQ */
-.faq-list{max-width:700px;margin:0 auto}
-.faq-item{border-bottom:1px solid rgba(0,0,0,.08)}
-.faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 0;cursor:pointer;font-weight:500;font-size:1.05rem;width:100%;background:none;color:var(--text-dark);text-align:left}
-.faq-q:hover{color:var(--amber)}
-.faq-icon{width:24px;height:24px;position:relative;flex-shrink:0;margin-left:1rem}
-.faq-icon::before,.faq-icon::after{content:'';position:absolute;background:currentColor;border-radius:2px;transition:transform .3s}
-.faq-icon::before{width:14px;height:2px;top:11px;left:5px}
-.faq-icon::after{width:2px;height:14px;top:5px;left:11px}
-.faq-item.open .faq-icon::after{transform:rotate(90deg)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .4s;padding:0 0}
-.faq-item.open .faq-a{max-height:300px;padding:0 0 1.2rem}
-.faq-a p{color:var(--text-muted);font-size:.95rem;line-height:1.7}
-
-/* FINAL CTA */
-.final-cta{padding:6rem 0;text-align:center;background:linear-gradient(135deg,var(--dark) 0%,#2a1f18 100%)}
-.final-cta h2{font-size:clamp(2rem,5vw,3.5rem);color:var(--cream);margin-bottom:1rem}
-.final-cta p{color:var(--text-muted);margin-bottom:2rem;font-size:1.1rem}
-.final-cta .hero-form{margin:0 auto 1rem;justify-content:center}
-.final-cta .note{color:var(--text-muted);font-size:.85rem}
-
-/* FOOTER */
-footer{background:var(--dark);padding:3rem 0;border-top:1px solid rgba(255,255,255,.05)}
-.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-.footer-logo{font-family:'Fraunces',serif;color:var(--cream);font-size:1.2rem;font-weight:700}
-.footer-links{display:flex;gap:1.5rem}
-.footer-links a{color:var(--text-muted);font-size:.85rem;transition:color .2s}
+/* ===== FINAL CTA + FOOTER ===== */
+.final-cta{background:var(--warm-black);color:var(--cream);padding:5rem 1.5rem 3rem;text-align:center;position:relative;overflow:hidden}
+.final-cta-content{position:relative;z-index:1}
+.final-cta h2{font-family:var(--font-serif);font-size:var(--text-3xl);margin:1.5rem 0}
+.final-cta .waitlist{margin-top:1.5rem}
+.final-cta .cta-note{font-size:var(--text-sm);color:var(--cinnamon);margin-top:1rem}
+footer{background:var(--warm-black);color:var(--cinnamon);padding:2rem 1.5rem;text-align:center;font-size:var(--text-sm);border-top:1px solid var(--walnut)}
+.footer-brand{font-family:var(--font-serif);font-size:var(--text-lg);font-weight:700;color:var(--cream);margin-bottom:.5rem}
+.footer-links{display:flex;justify-content:center;gap:1.5rem;margin-bottom:.5rem}
 .footer-links a:hover{color:var(--cream)}
-.footer-tagline{color:var(--text-muted);font-size:.85rem;width:100%;text-align:center;margin-top:1rem}
+.footer-made{margin-top:.25rem}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav" id="nav">
-<a href="#" class="nav-logo">
-<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#d4920c" stroke-width="2"/><path d="M10 20c2-4 4-8 6-8s4 4 6 8" stroke="#f0b848" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="12" r="2" fill="#d4920c"/></svg>
-KneadIt
-</a>
-<div class="nav-links">
-<a href="#features">Features</a>
-<a href="#pricing">Pricing</a>
-<a href="#faq">FAQ</a>
-<a href="#waitlist" class="nav-cta">Join Waitlist</a>
-</div>
-</nav>
+<!-- ===== 1. HERO ===== -->
+<section class="hero" id="hero">
+<div class="flour-wrap" id="hero-flour"></div>
+<div class="hero-content">
+<p class="hero-eyebrow reveal">for cottage food bakers</p>
+<h1 class="hero-headline reveal reveal-d1">
+Your bakery.<br>
+<span class="hero-headline-input-wrap">
+<input type="text" class="hero-name-input" id="bakeryNameInput" autocomplete="off" spellcheck="false">
+<span class="typing-cursor" id="typingCursor"></span>
+</span>
+</h1>
 
-<!-- HERO -->
-<section class="hero grain" id="hero">
-<div class="container">
-<div class="hero-inner">
-<div>
-<h1 class="anim fade-up">Run your home bakery<br>like a <span>real business.</span></h1>
-<p class="hero-sub anim fade-up stagger-1">KneadIt gives cottage food bakers the tools to manage orders, track finances, send invoices, and grow — all in one beautiful platform.</p>
-<form class="hero-form anim fade-up stagger-2" id="hero-form" onsubmit="handleWaitlist(event,this)">
-<input type="email" placeholder="you@bakery.com" required aria-label="Email address">
-<button type="submit">Join the Waitlist</button>
-</form>
-<div class="hero-social-proof anim fade-up stagger-3">
-<div class="avatar-stack">
-<span>S</span><span>M</span><span>J</span><span>+</span>
+<div class="storefront-preview reveal reveal-d2" id="storefrontPreview">
+<div class="sf-header">
+<div class="sf-logo" id="sfLogo">K</div>
+<div class="sf-bakery-name" id="sfName">Your Bakery</div>
+<span class="sf-badge">🟢 Open</span>
 </div>
-Join 200+ bakers on the waitlist
-</div>
-</div>
-<div class="hero-dashboard anim slide-left stagger-2">
-<div class="dash-card glass">
-<div class="dash-header">
-<span class="dash-title">Dashboard</span>
-<span class="dash-badge">● Live</span>
-</div>
-<div class="dash-stats">
-<div class="dash-stat">
-<div class="dash-stat-label">Today's Orders</div>
-<div class="dash-stat-val" data-count="12">0</div>
-</div>
-<div class="dash-stat">
-<div class="dash-stat-label">Revenue (MTD)</div>
-<div class="dash-stat-val" data-count="2847" data-prefix="$">$0</div>
-</div>
-</div>
-<div class="dash-chart" id="dash-chart"></div>
-</div>
-</div>
-</div>
-</div>
-<div class="hero-decor d1">🌾</div>
-<div class="hero-decor d2">🌾</div>
-<div class="hero-decor d3">✦</div>
-</section>
-
-<!-- PAIN POINTS -->
-<section class="section-light section-pad grain" id="pain">
-<div class="container">
-<h2 class="section-title anim fade-up">Sound familiar?</h2>
-<p class="section-subtitle anim fade-up stagger-1">Every cottage food baker hits these walls. You're not alone.</p>
-<div class="pain-grid">
-<div class="pain-card anim fade-up stagger-1">
-<div class="pain-icon">💬</div>
-<h3>Taking orders through DMs</h3>
-<p>Instagram messages, text threads, Facebook comments — orders scattered everywhere, nothing tracked.</p>
-</div>
-<div class="pain-card anim fade-up stagger-2">
-<div class="pain-icon">❓</div>
-<h3>Pricing by gut feeling</h3>
-<p>You know your cinnamon rolls are worth more, but without knowing your true costs, you're guessing.</p>
-</div>
-<div class="pain-card anim fade-up stagger-3">
-<div class="pain-icon">⏰</div>
-<h3>Chasing payments manually</h3>
-<p>"Did Sarah pay yet?" "Was that Venmo or cash?" The mental load is exhausting.</p>
-</div>
-<div class="pain-card anim fade-up stagger-4">
-<div class="pain-icon">📊</div>
-<h3>No idea if you're profitable</h3>
-<p>You're busy, you're selling, but at the end of the month… where did the money go?</p>
-</div>
-</div>
-</div>
-</section>
-
-<!-- TRANSITION -->
-<section class="section-dark transition-section grain">
-<div class="container">
-<h2 class="anim fade-up">There's a better way.</h2>
-<p class="anim fade-up stagger-1">Meet KneadIt — built by a baker who got tired of the chaos.</p>
-<div class="gold-line anim fade-up stagger-2"></div>
-</div>
-</section>
-
-<!-- FEATURES -->
-<div id="features">
-
-<!-- Feature 1: Storefront -->
-<section class="feature section-light section-pad">
-<div class="container">
-<div class="feature-inner">
-<div class="feature-text anim fade-up">
-<h3>A storefront as beautiful as your bread.</h3>
-<p>Gorgeous menu page, built-in ordering, automatic capacity limits. Customers order directly — no more DM chaos.</p>
-</div>
-<div class="anim slide-left stagger-2">
-<div class="demo-card on-light" id="demo-storefront">
 <div class="sf-products">
-<div class="sf-item"><div class="sf-img" style="background:linear-gradient(135deg,#e8c97a,#d4920c)"></div><div class="sf-item-info"><div class="sf-item-name">Sourdough Loaf</div><div class="sf-item-price">$8.00</div><span class="sf-btn">Add to Order</span></div></div>
-<div class="sf-item"><div class="sf-img" style="background:linear-gradient(135deg,#c75a3a,#e87a5a)"></div><div class="sf-item-info"><div class="sf-item-name">Cinnamon Rolls (6)</div><div class="sf-item-price">$14.00</div><span class="sf-btn">Add to Order</span></div></div>
-<div class="sf-item"><div class="sf-img" style="background:linear-gradient(135deg,#6b8f71,#8fb896)"></div><div class="sf-item-info"><div class="sf-item-name">Focaccia</div><div class="sf-item-price">$10.00</div><span class="sf-btn">Add to Order</span></div></div>
-<div class="sf-item"><div class="sf-img" style="background:linear-gradient(135deg,#7c6ca8,#a897d4)"></div><div class="sf-item-info"><div class="sf-item-name">Blueberry Scones (4)</div><div class="sf-item-price">$12.00</div><span class="sf-btn">Add to Order</span></div></div>
+<div class="sf-product"><div class="sf-product-img"></div><div class="sf-product-name">Sourdough Loaf</div><div class="sf-product-price">$8</div></div>
+<div class="sf-product"><div class="sf-product-img"></div><div class="sf-product-name">Cinnamon Rolls (6)</div><div class="sf-product-price">$18</div></div>
+<div class="sf-product"><div class="sf-product-img"></div><div class="sf-product-name">Focaccia</div><div class="sf-product-price">$12</div></div>
 </div>
-<div class="sf-footer">
-<span class="sf-cart">🛒 Cart: <span id="sf-count">0</span> items</span>
-<span class="sf-cap">3 spots left today</span>
+<button class="sf-order-btn">Order Now</button>
 </div>
+
+<form class="waitlist reveal reveal-d3" id="waitlistHero" onsubmit="return handleWaitlist(event)">
+<input type="email" placeholder="your@email.com" required>
+<button type="submit" class="cta-btn">Get Early Access</button>
+</form>
+
+<div class="hero-divider reveal reveal-d4">
+<!-- Hand-drawn wheat divider -->
+<svg viewBox="0 0 280 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M140 48 C140 48 140 8 140 4" stroke="#d4920c" stroke-width="2" stroke-linecap="round"/>
+<path d="M140 36 C130 30 122 22 118 14" stroke="#d4920c" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+<path d="M140 36 C150 30 158 22 162 14" stroke="#d4920c" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+<path d="M140 28 C128 22 120 14 117 6" stroke="#d4920c" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+<path d="M140 28 C152 22 160 14 163 6" stroke="#d4920c" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+<path d="M140 20 C132 16 126 10 124 4" stroke="#d4920c" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+<path d="M140 20 C148 16 154 10 156 4" stroke="#d4920c" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+<ellipse cx="118" cy="12" rx="5" ry="9" transform="rotate(-25 118 12)" fill="#e8b04a" opacity=".35"/>
+<ellipse cx="162" cy="12" rx="5" ry="9" transform="rotate(25 162 12)" fill="#e8b04a" opacity=".35"/>
+<ellipse cx="117" cy="5" rx="4" ry="8" transform="rotate(-30 117 5)" fill="#e8b04a" opacity=".3"/>
+<ellipse cx="163" cy="5" rx="4" ry="8" transform="rotate(30 163 5)" fill="#e8b04a" opacity=".3"/>
+<ellipse cx="124" cy="3" rx="4" ry="7" transform="rotate(-20 124 3)" fill="#e8b04a" opacity=".25"/>
+<ellipse cx="156" cy="3" rx="4" ry="7" transform="rotate(20 156 3)" fill="#e8b04a" opacity=".25"/>
+<!-- Extra side wheat -->
+<path d="M40 42 C48 32 52 20 50 10" stroke="#e8b04a" stroke-width="1.2" stroke-linecap="round" opacity=".25"/>
+<path d="M240 42 C232 32 228 20 230 10" stroke="#e8b04a" stroke-width="1.2" stroke-linecap="round" opacity=".25"/>
+</svg>
+</div>
+</div>
+</section>
+
+<!-- ===== 2. BAKER'S DAY ===== -->
+<section class="bakers-day" id="bakersDay">
+<div class="bakers-day-intro">
+<h2 class="reveal">A day with KneadIt</h2>
+<p class="reveal reveal-d1">From sunrise prep to evening profit — we've got every hour covered.</p>
+</div>
+<div class="day-sticky" id="dayStickyWrap">
+<div class="day-track" id="dayTrack">
+
+<div class="day-card">
+<div class="day-time">5:30 AM</div>
+<div class="day-label">Check today's orders</div>
+<div class="day-ui">
+<div class="day-ui-row"><span>Emma — Sourdough (2)</span><span style="font-size:var(--text-xs);color:var(--sage)">8:00 AM</span></div>
+<div class="day-ui-row"><span>Marcus — Cinnamon Rolls</span><span style="font-size:var(--text-xs);color:var(--sage)">9:30 AM</span></div>
+<div class="day-ui-row"><span>Priya — Focaccia + Loaf</span><span style="font-size:var(--text-xs);color:var(--sage)">10:00 AM</span></div>
+<div class="day-ui-row"><span>Jake — Birthday Cake</span><span style="font-size:var(--text-xs);color:var(--sage)">12:00 PM</span></div>
+<div class="day-ui-row"><span>Sarah — Dinner Rolls (24)</span><span style="font-size:var(--text-xs);color:var(--sage)">2:00 PM</span></div>
+<div class="day-ui-row"><span>Liu — Bagels (12)</span><span style="font-size:var(--text-xs);color:var(--sage)">3:30 PM</span></div>
+</div>
+</div>
+
+<div class="day-card">
+<div class="day-time">6:00 AM</div>
+<div class="day-label">Auto-generated prep list</div>
+<div class="day-ui">
+<div class="day-ui-row"><span>🌾 All-purpose flour</span><strong>8 cups</strong></div>
+<div class="day-ui-row"><span>🍬 Sugar</span><strong>3 cups</strong></div>
+<div class="day-ui-row"><span>🧈 Butter</span><strong>2.5 cups</strong></div>
+<div class="day-ui-row"><span>🥚 Eggs</span><strong>14</strong></div>
+<div class="day-ui-row"><span>🫙 Yeast</span><strong>6 tsp</strong></div>
+<div class="day-ui-row"><span>🥛 Milk</span><strong>4 cups</strong></div>
+</div>
+</div>
+
+<div class="day-card">
+<div class="day-time">9:00 AM</div>
+<div class="day-label">Mark orders as baking</div>
+<div class="day-ui">
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">
+<span class="day-ui-pill pill-confirmed">Confirmed</span>
+<span style="color:var(--cinnamon)">→</span>
+<span class="day-ui-pill pill-baking">Baking</span>
+</div>
+<div class="day-ui-row"><span>Emma's Sourdough</span><span class="day-ui-pill pill-baking" style="font-size:10px">Baking</span></div>
+<div class="day-ui-row"><span>Marcus's Cinnamon Rolls</span><span class="day-ui-pill pill-baking" style="font-size:10px">Baking</span></div>
+<div class="day-ui-row"><span>Priya's Focaccia</span><span class="day-ui-pill pill-confirmed" style="font-size:10px">Confirmed</span></div>
+</div>
+</div>
+
+<div class="day-card">
+<div class="day-time">11:30 AM</div>
+<div class="day-label">Invoice sent automatically</div>
+<div class="day-ui" style="text-align:center;padding:1.5rem 1rem">
+<div style="font-size:2rem;margin-bottom:.5rem">📩</div>
+<div style="font-weight:700;color:var(--warm-black);margin-bottom:.25rem">Payment received</div>
+<div class="day-ui-badge badge-paid">✓ $47.00 paid</div>
+<div style="margin-top:.75rem;font-size:var(--text-xs);color:var(--cinnamon)">Invoice #1042 · Emma W.</div>
+</div>
+</div>
+
+<div class="day-card">
+<div class="day-time">2:00 PM</div>
+<div class="day-label">Customer picks up &amp; reviews</div>
+<div class="day-ui" style="text-align:center;padding:1.5rem 1rem">
+<div class="day-ui-stars">★★★★★</div>
+<div style="margin-top:.5rem;font-style:italic;color:var(--walnut);font-size:var(--text-sm)">"Best sourdough I've ever had! The crust is perfection. Already ordering again."</div>
+<div style="margin-top:.5rem;font-weight:600;font-size:var(--text-xs)">— Emma W.</div>
+</div>
+</div>
+
+<div class="day-card">
+<div class="day-time">8:00 PM</div>
+<div class="day-label">Check today's profit</div>
+<div class="day-ui">
+<div class="day-ui-profit" style="justify-content:center;padding:.5rem 0">
+<div class="day-ui-stat"><div class="day-ui-stat-val" style="color:var(--warm-black)">$312</div><div class="day-ui-stat-label">Revenue</div></div>
+<div class="day-ui-stat"><div class="day-ui-stat-val profit-red">$89</div><div class="day-ui-stat-label">Costs</div></div>
+<div class="day-ui-stat"><div class="day-ui-stat-val profit-green">$223 ↑</div><div class="day-ui-stat-label">Profit</div></div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ===== 3. THE NUMBERS ===== -->
+<section class="numbers" id="numbers">
+<!-- Wheat accents -->
+<svg class="numbers-wheat numbers-wheat-l" width="60" height="180" viewBox="0 0 60 180" fill="none"><path d="M30 180 C30 180 30 20 30 5" stroke="#e8b04a" stroke-width="2" stroke-linecap="round"/><ellipse cx="18" cy="40" rx="8" ry="18" transform="rotate(-20 18 40)" fill="#e8b04a"/><ellipse cx="42" cy="55" rx="8" ry="18" transform="rotate(20 42 55)" fill="#e8b04a"/><ellipse cx="16" cy="80" rx="7" ry="16" transform="rotate(-25 16 80)" fill="#e8b04a"/><ellipse cx="44" cy="95" rx="7" ry="16" transform="rotate(25 44 95)" fill="#e8b04a"/><ellipse cx="20" cy="120" rx="6" ry="14" transform="rotate(-15 20 120)" fill="#e8b04a"/><ellipse cx="40" cy="135" rx="6" ry="14" transform="rotate(15 40 135)" fill="#e8b04a"/></svg>
+<svg class="numbers-wheat numbers-wheat-r" width="60" height="180" viewBox="0 0 60 180" fill="none"><path d="M30 180 C30 180 30 20 30 5" stroke="#e8b04a" stroke-width="2" stroke-linecap="round"/><ellipse cx="18" cy="40" rx="8" ry="18" transform="rotate(-20 18 40)" fill="#e8b04a"/><ellipse cx="42" cy="55" rx="8" ry="18" transform="rotate(20 42 55)" fill="#e8b04a"/><ellipse cx="16" cy="80" rx="7" ry="16" transform="rotate(-25 16 80)" fill="#e8b04a"/><ellipse cx="44" cy="95" rx="7" ry="16" transform="rotate(25 44 95)" fill="#e8b04a"/><ellipse cx="20" cy="120" rx="6" ry="14" transform="rotate(-15 20 120)" fill="#e8b04a"/><ellipse cx="40" cy="135" rx="6" ry="14" transform="rotate(15 40 135)" fill="#e8b04a"/></svg>
+<div class="numbers-grid">
+<div class="number-item reveal"><div class="number-val" data-target="47" data-suffix=" features">0</div><div class="number-sub">built for exactly one purpose</div></div>
+<div class="number-item reveal reveal-d1"><div class="number-val" data-target="6" data-suffix=" months">0</div><div class="number-sub">battle-tested in a real kitchen</div></div>
+<div class="number-item reveal reveal-d2"><div class="number-val" data-target="0" data-prefix="$" data-suffix=" to start">0</div><div class="number-sub">free plan, forever</div></div>
+</div>
+</section>
+
+<!-- ===== 4. FEATURES BENTO ===== -->
+<section class="features" id="features">
+<div class="features-header">
+<h2 class="reveal">Everything you need.<br>Nothing you don't.</h2>
+</div>
+<div class="bento">
+<!-- Large: Storefront -->
+<div class="bento-card bento-large reveal">
+<h3>Your Storefront</h3>
+<p>A beautiful menu your customers will love. Built-in ordering, capacity limits, no more DM chaos.</p>
+<div class="bento-demo">
+<div style="display:flex;gap:.35rem;margin-bottom:.75rem">
+<span style="padding:3px 10px;background:var(--honey);color:var(--white);border-radius:20px;font-size:var(--text-xs);font-weight:600">All</span>
+<span style="padding:3px 10px;background:var(--sourdough);border-radius:20px;font-size:var(--text-xs);color:var(--walnut)">Breads</span>
+<span style="padding:3px 10px;background:var(--sourdough);border-radius:20px;font-size:var(--text-xs);color:var(--walnut)">Pastries</span>
+</div>
+<div class="bento-sf-grid">
+<div class="bento-sf-item"><div class="bento-sf-swatch"></div><div class="bento-sf-name">Sourdough</div><div class="bento-sf-price">$8</div></div>
+<div class="bento-sf-item"><div class="bento-sf-swatch"></div><div class="bento-sf-name">Cinnamon Rolls</div><div class="bento-sf-price">$18</div></div>
+<div class="bento-sf-item"><div class="bento-sf-swatch"></div><div class="bento-sf-name">Focaccia</div><div class="bento-sf-price">$12</div></div>
+</div>
+<div style="text-align:right"><span class="bento-cart-btn">+ Add to Cart</span></div>
+</div>
+</div>
+
+<!-- Large: Financial Dashboard -->
+<div class="bento-card bento-large reveal reveal-d1">
+<h3>Financial Dashboard</h3>
+<p>Know exactly what you're making. Track every dollar in, every dollar out.</p>
+<div class="bento-demo">
+<div class="bento-chart" id="bentoChart">
+<div class="bento-bar" style="height:30%"></div>
+<div class="bento-bar" style="height:45%"></div>
+<div class="bento-bar" style="height:40%"></div>
+<div class="bento-bar" style="height:60%"></div>
+<div class="bento-bar" style="height:75%"></div>
+<div class="bento-bar" style="height:90%"></div>
+</div>
+<div class="bento-chart-labels"><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span></div>
+<div style="display:flex;justify-content:space-between;margin-top:.75rem;font-size:var(--text-xs)">
+<span style="color:var(--sage);font-weight:700">Revenue: $4,280</span>
+<span style="color:var(--berry);font-weight:600">Expenses: $1,520</span>
+</div>
+<div class="bento-cap"><div class="bento-cap-fill"></div></div>
+<div style="font-size:var(--text-xs);color:var(--cinnamon);margin-top:.25rem">Revenue cap: $180K / $250K</div>
+</div>
+</div>
+
+<!-- Medium: Smart Invoicing -->
+<div class="bento-card reveal reveal-d2">
+<h3>Smart Invoicing</h3>
+<p>PayPal invoices. Automatic reminders. Get paid without the awkward follow-up.</p>
+<div class="bento-demo" style="text-align:center;padding:1.25rem">
+<div style="background:var(--white);border-radius:10px;padding:1rem;margin-bottom:.5rem">
+<div style="font-size:var(--text-xs);color:var(--cinnamon);margin-bottom:.25rem">Invoice #1042</div>
+<div style="font-family:var(--font-serif);font-size:var(--text-lg);font-weight:700">$47.00</div>
+</div>
+<span class="day-ui-badge badge-paid" style="font-size:var(--text-sm)">✓ Paid</span>
+</div>
+</div>
+
+<!-- Medium: Order Flow -->
+<div class="bento-card reveal reveal-d3">
+<h3>Order Flow</h3>
+<p>From order to doorstep. Never lose track.</p>
+<div class="bento-demo">
+<div class="flow-pills">
+<span class="flow-pill pill-confirmed active">Confirmed</span>
+<span class="flow-arrow">→</span>
+<span class="flow-pill pill-baking">Baking</span>
+<span class="flow-arrow">→</span>
+<span class="flow-pill pill-ready">Ready</span>
+<span class="flow-arrow">→</span>
+<span class="flow-pill pill-delivered">Delivered</span>
+</div>
+<div class="flow-anim"><div class="flow-anim-bar"></div></div>
+</div>
+</div>
+
+<!-- Small: Recipe Costing -->
+<div class="bento-card reveal reveal-d4">
+<h3>Recipe Costing</h3>
+<p>Know your true cost. Price with confidence.</p>
+<div class="bento-demo" style="display:flex;align-items:center;justify-content:center;padding:1.25rem">
+<div class="recipe-cost">
+<div class="recipe-cost-icon">🌾</div>
+<div><div class="recipe-cost-val">$2.47<span style="font-size:var(--text-sm);font-weight:400;color:var(--walnut)">/loaf</span></div><div class="recipe-margin">68% margin ↑</div></div>
+</div>
+</div>
+</div>
+
+<!-- Small: Customer Love -->
+<div class="bento-card reveal reveal-d5">
+<h3>Customer Love</h3>
+<p>Birthdays, reminders, repeat orders. Automated.</p>
+<div class="bento-demo" style="display:flex;align-items:center;justify-content:center;padding:1.25rem">
+<div class="love-notif">
+<span class="love-heart">♥</span>
+<span style="font-size:var(--text-sm);font-weight:500">Birthday discount sent!</span>
 </div>
 </div>
 </div>
 </div>
 </section>
 
-<!-- Feature 2: Order Management -->
-<section class="feature reverse section-cream section-pad">
-<div class="container">
-<div class="feature-inner">
-<div class="feature-text anim fade-up">
-<h3>Every order, from confirmed to delivered.</h3>
-<p>Visual order pipeline. See what's pending, what's baking, what's ready. Never lose track of an order again.</p>
+<!-- ===== 5. BUILT BY A BAKER ===== -->
+<section class="story" id="story">
+<div class="story-inner reveal">
+<div class="story-quote">
+<!-- Hand-drawn open quote SVG -->
+<svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 42 C8 30 14 20 26 14" stroke="#d4920c" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+<path d="M8 42 C4 42 2 38 3 34 C4 30 8 28 12 28 C16 28 18 32 17 36 C16 40 12 42 8 42Z" fill="#d4920c" opacity=".3"/>
+<path d="M34 42 C34 30 40 20 52 14" stroke="#d4920c" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+<path d="M34 42 C30 42 28 38 29 34 C30 30 34 28 38 28 C42 28 44 32 43 36 C42 40 38 42 34 42Z" fill="#d4920c" opacity=".3"/>
+</svg>
 </div>
-<div class="anim slide-right stagger-2">
-<div class="demo-card on-light" id="demo-kanban">
-<div class="kanban">
-<div class="kanban-col"><div class="kanban-col-title">Confirmed</div><div class="kanban-card"><div class="name">Sarah M.</div><div class="item">2× Sourdough</div></div><div class="kanban-card"><div class="name">Jake T.</div><div class="item">1× Cinnamon Rolls</div></div></div>
-<div class="kanban-col"><div class="kanban-col-title">Baking</div><div class="kanban-card" style="border-left:2px solid var(--amber)"><div class="name">Lisa K.</div><div class="item">3× Focaccia</div></div></div>
-<div class="kanban-col"><div class="kanban-col-title">Ready</div><div class="kanban-card" style="border-left:2px solid #6baf5d"><div class="name">Amy R.</div><div class="item">1× Scones</div></div></div>
-<div class="kanban-col"><div class="kanban-col-title">Delivered</div><div class="kanban-card" style="opacity:.5"><div class="name">Tom B.</div><div class="item">2× Loaves</div></div></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- Feature 3: Recipe Costing -->
-<section class="feature section-light section-pad">
-<div class="container">
-<div class="feature-inner">
-<div class="feature-text anim fade-up">
-<h3>Know your numbers. Set profitable prices.</h3>
-<p>Calculate true cost per item. See your margins. Get pricing suggestions based on your costs and market.</p>
-</div>
-<div class="anim slide-left stagger-2">
-<div class="demo-card on-light" id="demo-recipe">
-<div class="recipe-demo">
-<div style="font-weight:600;margin-bottom:.6rem;font-size:.8rem">🧮 Sourdough Loaf — Cost Breakdown</div>
-<div class="recipe-list">
-<div class="recipe-row" data-delay="0">Bread Flour (500g)<span>$0.82</span></div>
-<div class="recipe-row" data-delay="200">Salt (10g)<span>$0.03</span></div>
-<div class="recipe-row" data-delay="400">Starter (100g)<span>$0.15</span></div>
-<div class="recipe-row" data-delay="600">Water<span>$0.00</span></div>
-<div class="recipe-row" data-delay="800">Packaging<span>$0.45</span></div>
-<div class="recipe-row" data-delay="1000">Labor (30 min)<span>$3.75</span></div>
-</div>
-<div class="recipe-total"><span>Total Cost</span><span>$5.20</span></div>
-<div style="font-size:.7rem;margin-bottom:.3rem;font-weight:600">Selling at $8.00 — Margin:</div>
-<div class="margin-bar"><div class="margin-fill" data-fill="35"></div></div>
-<div class="margin-label"><span>Cost $5.20</span><span style="color:#4a9c3a;font-weight:600">35% margin ✓</span></div>
+<div class="story-text">
+<p>We didn't set out to build software. We set out to sell sourdough.</p>
+<p>But between taking orders through texts, tracking costs in a notebook, and hoping the math worked out — we realized we were spending more time managing the business than actually baking.</p>
+<p>So we built the tool we wished existed. Not another generic business app — something made specifically for bakers like us, who work from home, who pour love into every loaf, and who deserve real tools to grow.</p>
+<p><strong>That's KneadIt.</strong></p>
 </div>
 </div>
-</div>
-</div>
+<div class="story-loaf">
+<!-- Hand-drawn bread loaf SVG -->
+<svg viewBox="0 0 80 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 38 C8 38 6 28 10 22 C14 16 22 12 40 12 C58 12 66 16 70 22 C74 28 72 38 72 38" stroke="#d4920c" stroke-width="2" stroke-linecap="round" fill="none"/>
+<path d="M8 38 L72 38" stroke="#d4920c" stroke-width="2" stroke-linecap="round"/>
+<path d="M28 20 C32 14 36 14 40 18" stroke="#d4920c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".4"/>
+<path d="M40 18 C44 14 48 14 52 20" stroke="#d4920c" stroke-width="1.2" stroke-linecap="round" fill="none" opacity=".4"/>
+</svg>
 </div>
 </section>
 
-<!-- Feature 4: Smart Invoicing -->
-<section class="feature reverse section-cream section-pad">
-<div class="container">
-<div class="feature-inner">
-<div class="feature-text anim fade-up">
-<h3>Get paid without the awkward follow-up.</h3>
-<p>Invoices sent automatically when orders are placed. Payment tracking, reminders, and overdue alerts — hands-free.</p>
+<!-- ===== 6. PRICING ===== -->
+<section class="pricing" id="pricing">
+<div class="pricing-header">
+<h2 class="reveal">Pricing that makes sense<br>for a home baker.</h2>
+<p class="reveal reveal-d1">Start free. Grow when you're ready.</p>
 </div>
-<div class="anim slide-right stagger-2">
-<div class="demo-card on-light" id="demo-invoice">
-<div class="invoice-demo">
-<div class="invoice-mini">
-<h4>Invoice #1042</h4>
-<div class="amt">$28.00</div>
-<div class="to">Sarah Mitchell — 2× Sourdough, 1× Scones</div>
-</div>
-<div class="invoice-status">
-<span class="inv-step" data-step="1">📤 Sent</span>
-<span class="inv-step" data-step="2">👁 Viewed</span>
-<span class="inv-step" data-step="3">✅ Paid</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- Feature 5: Customer Relationships -->
-<section class="feature section-light section-pad">
-<div class="container">
-<div class="feature-inner">
-<div class="feature-text anim fade-up">
-<h3>Remember every customer. Delight them automatically.</h3>
-<p>Order history, birthday discounts, repeat order reminders. Turn one-time buyers into lifelong fans.</p>
-</div>
-<div class="anim slide-left stagger-2">
-<div class="demo-card on-light" id="demo-customer">
-<div class="cust-demo">
-<div class="cust-avatar">👩</div>
-<div class="cust-name">Sarah Mitchell</div>
-<div class="cust-meta">Customer since March 2024</div>
-<div class="cust-stats">
-<div class="cust-stat"><div class="cust-stat-val" data-count="23">0</div><div class="cust-stat-label">Orders</div></div>
-<div class="cust-stat"><div class="cust-stat-val" data-count="412" data-prefix="$">$0</div><div class="cust-stat-label">Spent</div></div>
-<div class="cust-stat"><div class="cust-stat-val">★</div><div class="cust-stat-label">VIP</div></div>
-</div>
-<div class="cust-bday">🎂 Birthday in 3 days!</div><br>
-<span class="cust-btn">Send Birthday Discount</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- Feature 6: Financial Dashboard -->
-<section class="feature reverse section-cream section-pad">
-<div class="container">
-<div class="feature-inner">
-<div class="feature-text anim fade-up">
-<h3>Finally know if you're making money.</h3>
-<p>Revenue tracking, expense management, profit & loss. Plus state compliance tracking so you never exceed your cottage food limits.</p>
-</div>
-<div class="anim slide-left stagger-2">
-<div class="demo-card on-light" id="demo-finance">
-<div class="fin-demo">
-<div style="font-weight:600;font-size:.8rem;margin-bottom:.5rem">📈 Monthly Revenue & Expenses</div>
-<div class="fin-chart" id="fin-chart"></div>
-<div style="display:flex;gap:1rem;font-size:.65rem;margin-bottom:.8rem;color:var(--text-muted)">
-<span>🟧 Revenue</span><span style="opacity:.6">🟥 Expenses</span>
-</div>
-<div class="fin-progress">
-<div class="fin-progress-label"><span>Annual Cottage Food Cap</span><span style="font-weight:600">$180K / $250K</span></div>
-<div class="fin-progress-bar"><div class="fin-progress-fill" data-fill="72"></div></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-</div><!-- /features -->
-
-<!-- THEME SWITCHER -->
-<section class="section-dark section-pad grain" id="themes">
-<div class="container" style="text-align:center">
-<h2 class="section-title anim fade-up" style="color:var(--cream)">Your store. Your brand. Your colors.</h2>
-<p class="section-subtitle anim fade-up stagger-1">Every pixel is customizable from your settings page.</p>
-<div class="theme-btns anim fade-up stagger-2">
-<button class="theme-btn active" data-theme="warm">Warm Bakery</button>
-<button class="theme-btn" data-theme="minimal">Modern Minimal</button>
-<button class="theme-btn" data-theme="garden">Garden Fresh</button>
-<button class="theme-btn" data-theme="night">Night Market</button>
-</div>
-<div class="anim fade-up stagger-3">
-<div class="theme-preview glass" id="theme-preview">
-<div class="tp-header tp-accent">🍞 Sarah's Sourdough</div>
-<div class="tp-item"><div class="tp-swatch" id="tp-sw1"></div><div><div class="tp-item-name">Classic Sourdough</div><div class="tp-item-price">$8.00</div></div></div>
-<div class="tp-item"><div class="tp-swatch" id="tp-sw2"></div><div><div class="tp-item-name">Cinnamon Rolls</div><div class="tp-item-price">$14.00</div></div></div>
-<div class="tp-item"><div class="tp-swatch" id="tp-sw3"></div><div><div class="tp-item-name">Rosemary Focaccia</div><div class="tp-item-price">$10.00</div></div></div>
-<div style="margin-top:1rem"><span class="sf-btn tp-accent" id="tp-btn" style="padding:.4rem 1rem;font-size:.75rem">Order Now</span></div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="section-light section-pad" id="how">
-<div class="container">
-<h2 class="section-title anim fade-up">Up and running in minutes.</h2>
-<p class="section-subtitle anim fade-up stagger-1">Three simple steps to transform your cottage food business.</p>
-<div class="steps">
-<svg class="steps-line" viewBox="0 0 800 4" preserveAspectRatio="none" style="width:66%;left:17%;position:absolute;top:28px"><line class="steps-line-bg" x1="0" y1="2" x2="800" y2="2"/><line class="steps-line-fg" id="steps-path" x1="0" y1="2" x2="800" y2="2" style="--dash-len:800;stroke-dasharray:8 4;stroke-dashoffset:800"/></svg>
-<div class="step-card anim fade-up stagger-1">
-<div class="step-num">1</div>
-<div class="step-icon">⚡</div>
-<h3>Create Your Account</h3>
-<p>60 seconds. Email, bakery name, and you're in. No credit card needed.</p>
-</div>
-<div class="step-card anim fade-up stagger-2">
-<div class="step-num">2</div>
-<div class="step-icon">🎨</div>
-<h3>Set Up Your Store</h3>
-<p>Add your products, set prices, customize your colors. We'll guide every step.</p>
-</div>
-<div class="step-card anim fade-up stagger-3">
-<div class="step-num">3</div>
-<div class="step-icon">🚀</div>
-<h3>Share & Start Selling</h3>
-<p>Share your link on social media. Orders start flowing in. You focus on baking.</p>
-</div>
-</div>
-</div>
-</section>
-
-<!-- BUILT BY A BAKER -->
-<section class="section-cream section-pad grain baker-section">
-<div class="container">
-<div class="baker-quote">"</div>
-<div class="baker-content">
-<h2 class="anim fade-up">Built in a real cottage food kitchen.</h2>
-<p class="anim fade-up stagger-1">KneadIt wasn't born in a Silicon Valley office. It was born between batches of sourdough, in a real home kitchen, by a family that was tired of managing their bakery business across five different apps. We built the tool we wished existed — and now we're sharing it with bakers everywhere.</p>
-<div class="baker-illus anim fade-up stagger-2">🍞</div>
-</div>
-</div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="section-dark section-pad grain" id="testimonials">
-<div class="container">
-<h2 class="section-title anim fade-up" style="color:var(--cream)">What early bakers are saying</h2>
-<div class="test-badge anim fade-up stagger-1"><span>✨ Early Beta Feedback</span></div>
-<div class="test-grid">
-<div class="test-card glass anim fade-up stagger-1">
-<div class="test-stars">★★★★★</div>
-<div class="test-quote">"I was managing orders in a spreadsheet and payments through three different apps. KneadIt brought everything into one place. I literally cried when I saw my profit margins for the first time."</div>
-<div class="test-author"><div class="test-avatar" style="background:#c75a3a">M</div><div><div class="test-name">Maria G.</div><div class="test-title">Sourdough Baker, Austin TX</div></div></div>
-</div>
-<div class="test-card glass anim fade-up stagger-2">
-<div class="test-stars">★★★★★</div>
-<div class="test-quote">"The storefront alone is worth it. My customers love ordering directly instead of DMing me. And the automatic invoicing? Game changer. I got paid for every single order last month."</div>
-<div class="test-author"><div class="test-avatar" style="background:#d4920c">J</div><div><div class="test-name">Jessica T.</div><div class="test-title">Cookie Artist, Portland OR</div></div></div>
-</div>
-<div class="test-card glass anim fade-up stagger-3">
-<div class="test-stars">★★★★★</div>
-<div class="test-quote">"Finally, software that feels like it was made by someone who actually bakes. The recipe costing tool showed me I was undercharging on everything. I raised my prices and nobody blinked."</div>
-<div class="test-author"><div class="test-avatar" style="background:#6b8f71">R</div><div><div class="test-name">Rachel W.</div><div class="test-title">Bread Baker, Nashville TN</div></div></div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- PRICING -->
-<section class="section-light section-pad" id="pricing">
-<div class="container">
-<h2 class="section-title anim fade-up">Simple pricing for every stage of your baking journey.</h2>
-<p class="section-subtitle anim fade-up stagger-1">Start free. Grow when you're ready. No surprises.</p>
 <div class="pricing-grid">
-<div class="price-card anim fade-up stagger-1">
+<div class="price-card reveal">
 <div class="price-tier">Free</div>
-<div class="price-name">Getting Started</div>
-<div class="price-amt">$0<span>/mo</span></div>
+<div class="price-desc">Just Getting Started</div>
 <ul class="price-features">
 <li>Up to 10 products</li>
-<li>Basic online ordering</li>
 <li>Order management</li>
-<li>Your own store link</li>
+<li>Basic storefront</li>
 </ul>
-<a href="#waitlist" class="price-cta secondary">Join Waitlist</a>
+<div class="price-amount">$0<span style="font-size:var(--text-sm);font-weight:400;color:var(--cinnamon)">/month</span></div>
+<div class="price-founding">Free forever</div>
+<button class="price-btn" onclick="document.querySelector('#waitlistHero input').focus()">Join Waitlist</button>
 </div>
-<div class="price-card popular anim fade-up stagger-2">
-<div class="price-badge">Popular</div>
+<div class="price-card popular reveal reveal-d1">
+<span class="price-badge">Most Popular</span>
 <div class="price-tier">Starter</div>
-<div class="price-name">Growing</div>
-<div class="price-amt">$19<span>/mo</span></div>
-<span class="price-soon">Coming Soon</span>
+<div class="price-desc">Growing Your Business</div>
 <ul class="price-features">
-<li>Up to 50 products</li>
-<li>Automatic invoicing</li>
+<li>Everything in Free</li>
+<li>PayPal invoicing</li>
 <li>Customer directory</li>
-<li>Photo gallery</li>
 <li>Recipe costing</li>
+<li>Photo gallery</li>
 </ul>
-<a href="#waitlist" class="price-cta primary">Join Waitlist</a>
+<div class="price-amount">$12<span style="font-size:var(--text-sm);font-weight:400;color:var(--cinnamon)">/month</span></div>
+<div class="price-founding"><s>$19/mo</s> · Founding rate</div>
+<button class="price-btn" onclick="document.querySelector('#waitlistHero input').focus()">Join Waitlist</button>
 </div>
-<div class="price-card anim fade-up stagger-3">
+<div class="price-card reveal reveal-d2">
 <div class="price-tier">Pro</div>
-<div class="price-name">Thriving</div>
-<div class="price-amt">$39<span>/mo</span></div>
-<span class="price-soon">Coming Soon</span>
+<div class="price-desc">Running the Show</div>
 <ul class="price-features">
-<li>Unlimited products</li>
-<li>Advanced analytics</li>
+<li>Everything in Starter</li>
+<li>Financial dashboard</li>
 <li>Delivery planner</li>
 <li>Custom domain</li>
 <li>Priority support</li>
-<li>Financial dashboard</li>
 </ul>
-<a href="#waitlist" class="price-cta secondary">Join Waitlist</a>
-</div>
-</div>
-<p class="pricing-note anim fade-up">💡 <strong>Founding member pricing</strong> available for early signups — lock in your rate forever.</p>
-</div>
-</section>
-
-<!-- FAQ -->
-<section class="section-cream section-pad" id="faq">
-<div class="container">
-<h2 class="section-title anim fade-up">Frequently asked questions</h2>
-<p class="section-subtitle anim fade-up stagger-1">Everything you need to know about KneadIt.</p>
-<div class="faq-list anim fade-up stagger-2">
-<div class="faq-item">
-<button class="faq-q">What is cottage food?<span class="faq-icon"></span></button>
-<div class="faq-a"><p>Cottage food laws allow individuals to prepare and sell certain types of food from their home kitchens without a commercial license. The specific rules vary by state, including what foods are allowed and annual revenue limits. KneadIt helps you stay compliant with your state's regulations.</p></div>
-</div>
-<div class="faq-item">
-<button class="faq-q">Do I need a special license to use KneadIt?<span class="faq-icon"></span></button>
-<div class="faq-a"><p>KneadIt itself doesn't require any license. However, you should check your state's cottage food laws to ensure you're operating legally. Many states just require registration — no formal license. We'll help you understand your state's requirements.</p></div>
-</div>
-<div class="faq-item">
-<button class="faq-q">What states does KneadIt support?<span class="faq-icon"></span></button>
-<div class="faq-a"><p>KneadIt works for cottage food bakers in all 50 US states. Our compliance tracking feature knows each state's specific rules, revenue caps, and labeling requirements so you can focus on baking.</p></div>
-</div>
-<div class="faq-item">
-<button class="faq-q">How do online payments work?<span class="faq-icon"></span></button>
-<div class="faq-a"><p>KneadIt integrates with PayPal for automatic invoicing. When a customer places an order, they receive a professional invoice they can pay online. You can also track cash and Venmo payments manually. More payment options are coming soon.</p></div>
-</div>
-<div class="faq-item">
-<button class="faq-q">Can I use my own domain name?<span class="faq-icon"></span></button>
-<div class="faq-a"><p>Yes! On the Pro plan, you can connect your own custom domain (like orders.mybakery.com) for a fully branded experience. All plans include a free yourname.getkneadit.app subdomain.</p></div>
-</div>
-<div class="faq-item">
-<button class="faq-q">Is my data secure?<span class="faq-icon"></span></button>
-<div class="faq-a"><p>Absolutely. We use industry-standard encryption, secure cloud hosting, and never share your data with third parties. Your recipes, customer info, and financial data are yours and yours alone.</p></div>
-</div>
-<div class="faq-item">
-<button class="faq-q">When does KneadIt launch?<span class="faq-icon"></span></button>
-<div class="faq-a"><p>We're currently in beta with a small group of bakers. Public launch is planned for mid-2025. Join the waitlist to get early access and founding member pricing that locks in your rate forever.</p></div>
-</div>
+<div class="price-amount">$24<span style="font-size:var(--text-sm);font-weight:400;color:var(--cinnamon)">/month</span></div>
+<div class="price-founding"><s>$39/mo</s> · Founding rate</div>
+<button class="price-btn" onclick="document.querySelector('#waitlistHero input').focus()">Join Waitlist</button>
 </div>
 </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="final-cta grain" id="waitlist">
-<div class="container">
-<h2 class="anim fade-up">Your bakery deserves this.</h2>
-<p class="anim fade-up stagger-1">Join hundreds of bakers getting ready for launch day.</p>
-<form class="hero-form anim fade-up stagger-2" onsubmit="handleWaitlist(event,this)">
-<input type="email" placeholder="you@bakery.com" required aria-label="Email address">
-<button type="submit">Join the Waitlist</button>
+<!-- ===== 7. FINAL CTA + FOOTER ===== -->
+<section class="final-cta" id="cta">
+<div class="flour-wrap" id="footerFlour"></div>
+<div class="final-cta-content">
+<!-- Hand-drawn wheat -->
+<svg width="60" height="80" viewBox="0 0 60 80" fill="none" style="margin:0 auto;display:block;opacity:.6">
+<path d="M30 78 C30 78 30 15 30 5" stroke="#e8b04a" stroke-width="2" stroke-linecap="round"/>
+<ellipse cx="20" cy="25" rx="6" ry="14" transform="rotate(-20 20 25)" fill="#e8b04a" opacity=".4"/>
+<ellipse cx="40" cy="35" rx="6" ry="14" transform="rotate(20 40 35)" fill="#e8b04a" opacity=".4"/>
+<ellipse cx="18" cy="50" rx="5" ry="12" transform="rotate(-25 18 50)" fill="#e8b04a" opacity=".35"/>
+<ellipse cx="42" cy="58" rx="5" ry="12" transform="rotate(25 42 58)" fill="#e8b04a" opacity=".35"/>
+</svg>
+<h2 class="reveal">Your bakery deserves this.</h2>
+<form class="waitlist reveal reveal-d1" onsubmit="return handleWaitlist(event)">
+<input type="email" placeholder="your@email.com" required>
+<button type="submit" class="cta-btn">Get Early Access</button>
 </form>
-<p class="note anim fade-up stagger-3">No credit card required. Ever for the free plan.</p>
+<p class="cta-note reveal reveal-d2">No credit card required. Free plan available at launch.</p>
 </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
-<div class="container">
-<div class="footer-inner">
-<span class="footer-logo">🍞 KneadIt</span>
+<div class="footer-brand">KneadIt</div>
 <div class="footer-links">
 <a href="#">Privacy</a>
 <a href="#">Terms</a>
 <a href="mailto:hello@getkneadit.app">Contact</a>
 </div>
-<div class="footer-tagline">Made with 🍞 for bakers, by bakers.</div>
-</div>
-</div>
+<div>Made with 🍞 for bakers, by bakers</div>
+<div class="footer-made">© 2026 KneadIt</div>
 </footer>
 
 <script>
-// Nav scroll effect
-const nav=document.getElementById('nav');
-window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>50)},{passive:true});
+/* === Flour particles === */
+function createFlourParticles(containerId, count) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'flour-particle';
+    const size = 3 + Math.random() * 4;
+    const opacity = 0.12 + Math.random() * 0.25;
+    const duration = 12 + Math.random() * 20;
+    const delay = Math.random() * duration;
+    const left = Math.random() * 100;
+    const sway = -40 + Math.random() * 80;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${left}%;top:-10px;animation-duration:${duration}s;animation-delay:-${delay}s;--p-opacity:${opacity};--p-sway:${sway}px`;
+    wrap.appendChild(p);
+  }
+}
+createFlourParticles('hero-flour', 18);
+createFlourParticles('footerFlour', 12);
 
-// Intersection Observer for animations
-const io=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');
-// Trigger demo animations
-if(e.target.id)triggerDemo(e.target.id);
-}})},{threshold:0.15,rootMargin:'0px 0px -50px 0px'});
-document.querySelectorAll('.anim').forEach(el=>io.observe(el));
+/* === Bakery name typing effect === */
+const names = ['Sweet Flour Studio', 'The Bread Basket', 'Honey & Wheat Co.', 'Rise & Shine Bakery', 'Golden Crust Kitchen'];
+const input = document.getElementById('bakeryNameInput');
+const cursor = document.getElementById('typingCursor');
+const sfName = document.getElementById('sfName');
+const sfLogo = document.getElementById('sfLogo');
+let nameIdx = 0, charIdx = 0, deleting = false, userTyping = false, typeTimer;
 
-// Dashboard chart bars
-const chartEl=document.getElementById('dash-chart');
-if(chartEl){const heights=[40,55,35,65,50,80,70,90,60,75,85,95];
-heights.forEach((h,i)=>{const bar=document.createElement('div');bar.className='dash-bar'+(i===heights.length-1?' active':'');bar.style.height=h+'%';bar.style.animation=`growBar .6s ease ${i*80}ms both`;chartEl.appendChild(bar)})}
-
-// Finance chart
-const finEl=document.getElementById('fin-chart');
-if(finEl){const data=[[50,30],[60,35],[45,28],[70,40],[80,45],[65,38]];
-data.forEach(([r,e],i)=>{const b1=document.createElement('div');b1.className='fin-bar';b1.style.height=r+'%';b1.style.animation=`growBar .6s ease ${i*120}ms both`;
-const b2=document.createElement('div');b2.className='fin-bar expense';b2.style.height=e+'%';b2.style.animation=`growBar .6s ease ${i*120+60}ms both`;
-finEl.appendChild(b1);finEl.appendChild(b2)})}
-
-// Demo triggers
-function triggerDemo(id){
-if(id==='demo-storefront')animateStorefront();
-if(id==='demo-recipe')animateRecipe();
-if(id==='demo-invoice')animateInvoice();
-if(id==='demo-customer')animateCustomer();
-if(id==='demo-finance')animateFinance();
+function updateStorefront(name) {
+  const display = name || 'Your Bakery';
+  sfName.textContent = display;
+  sfLogo.textContent = display.charAt(0).toUpperCase();
 }
 
-// Observe demo cards
-document.querySelectorAll('[id^="demo-"]').forEach(el=>io.observe(el));
+function typeLoop() {
+  if (userTyping) return;
+  const name = names[nameIdx];
+  if (!deleting) {
+    charIdx++;
+    input.placeholder = name.slice(0, charIdx);
+    updateStorefront(name.slice(0, charIdx));
+    if (charIdx >= name.length) {
+      deleting = true;
+      typeTimer = setTimeout(typeLoop, 2200);
+      return;
+    }
+    typeTimer = setTimeout(typeLoop, 80 + Math.random() * 60);
+  } else {
+    charIdx--;
+    input.placeholder = name.slice(0, charIdx);
+    updateStorefront(name.slice(0, charIdx));
+    if (charIdx <= 0) {
+      deleting = false;
+      nameIdx = (nameIdx + 1) % names.length;
+      typeTimer = setTimeout(typeLoop, 400);
+      return;
+    }
+    typeTimer = setTimeout(typeLoop, 40);
+  }
+}
+typeTimer = setTimeout(typeLoop, 1200);
 
-// Storefront cart animation
-function animateStorefront(){let count=0;const el=document.getElementById('sf-count');
-const iv=setInterval(()=>{if(count>=3){clearInterval(iv);return}count++;el.textContent=count},800)}
+input.addEventListener('input', function() {
+  userTyping = this.value.length > 0;
+  if (userTyping) {
+    clearTimeout(typeTimer);
+    cursor.style.display = 'none';
+    updateStorefront(this.value);
+  } else {
+    cursor.style.display = '';
+    charIdx = 0; nameIdx = 0; deleting = false;
+    input.placeholder = '';
+    updateStorefront('');
+    typeTimer = setTimeout(typeLoop, 600);
+  }
+});
+input.addEventListener('focus', function() {
+  if (!this.value) { clearTimeout(typeTimer); input.placeholder = ''; cursor.style.display = 'none'; updateStorefront(''); }
+});
+input.addEventListener('blur', function() {
+  if (!this.value) { cursor.style.display = ''; typeTimer = setTimeout(typeLoop, 800); }
+});
 
-// Recipe rows animation
-function animateRecipe(){document.querySelectorAll('#demo-recipe .recipe-row').forEach((r,i)=>{
-setTimeout(()=>r.classList.add('visible'),parseInt(r.dataset.delay)||i*200)});
-setTimeout(()=>{const fill=document.querySelector('#demo-recipe .margin-fill');if(fill)fill.style.width=fill.dataset.fill+'%'},1400)}
+/* === Horizontal scroll (Baker's Day) === */
+function initHorizontalScroll() {
+  const section = document.getElementById('bakersDay');
+  const stickyWrap = document.getElementById('dayStickyWrap');
+  const track = document.getElementById('dayTrack');
+  if (!track || !section || window.innerWidth < 768) return;
 
-// Invoice status animation
-function animateInvoice(){const steps=document.querySelectorAll('#demo-invoice .inv-step');
-[1000,2500,4000].forEach((t,i)=>{setTimeout(()=>{steps.forEach((s,j)=>{s.classList.remove('active','done');
-if(j<i)s.classList.add('done');if(j===i)s.classList.add('active')})},t)})}
+  function update() {
+    const trackW = track.scrollWidth;
+    const viewW = window.innerWidth;
+    const totalScroll = trackW - viewW + 100;
+    section.style.height = (totalScroll + window.innerHeight) + 'px';
 
-// Customer count animation
-function animateCustomer(){document.querySelectorAll('#demo-customer [data-count]').forEach(el=>{
-const target=parseInt(el.dataset.count);const prefix=el.dataset.prefix||'';let current=0;
-const step=Math.ceil(target/30);const iv=setInterval(()=>{current+=step;if(current>=target){current=target;clearInterval(iv)}
-el.textContent=prefix+current},40)})}
+    const rect = section.getBoundingClientRect();
+    const progress = Math.max(0, Math.min(1, -rect.top / totalScroll));
+    track.style.transform = 'translateX(' + (-progress * totalScroll) + 'px)';
+    requestAnimationFrame(update);
+  }
+  update();
+}
+if (window.innerWidth >= 768) initHorizontalScroll();
 
-// Finance progress animation
-function animateFinance(){setTimeout(()=>{const fill=document.querySelector('#demo-finance .fin-progress-fill');
-if(fill)fill.style.width=fill.dataset.fill+'%'},500)}
+/* === Count-up numbers === */
+function animateNumbers() {
+  document.querySelectorAll('.number-val').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    if (el.dataset.animated) return;
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        el.dataset.animated = '1';
+        let start = 0;
+        const duration = 1500;
+        const startTime = performance.now();
+        function tick(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(eased * target);
+          el.textContent = prefix + current + suffix;
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        observer.disconnect();
+      }
+    }, { threshold: 0.5 });
+    observer.observe(el);
+  });
+}
+animateNumbers();
 
-// Count-up for hero stats
-const statObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){
-const target=parseInt(e.target.dataset.count);const prefix=e.target.dataset.prefix||'';let current=0;
-const step=Math.ceil(target/40);const iv=setInterval(()=>{current+=step;if(current>=target){current=target;clearInterval(iv)}
-e.target.textContent=prefix+current.toLocaleString()},30);statObs.unobserve(e.target)}})},{threshold:0.5});
-document.querySelectorAll('.dash-stat-val[data-count]').forEach(el=>statObs.observe(el));
+/* === Scroll reveal === */
+function initReveal() {
+  const els = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => observer.observe(el));
+}
+initReveal();
 
-// Steps path animation
-const stepsObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){
-document.getElementById('steps-path')?.classList.add('drawn');stepsObs.unobserve(e.target)}})},{threshold:0.3});
-const stepsEl=document.querySelector('.steps');if(stepsEl)stepsObs.observe(stepsEl);
+/* === Order flow animation === */
+(function() {
+  const pills = document.querySelectorAll('.flow-pill');
+  if (!pills.length) return;
+  let idx = 0;
+  setInterval(() => {
+    pills.forEach(p => p.classList.remove('active'));
+    pills[idx].classList.add('active');
+    idx = (idx + 1) % pills.length;
+  }, 1200);
+})();
 
-// Theme switcher
-const themes={
-warm:{bg:'linear-gradient(135deg,#e8c97a,#d4920c)',bg2:'linear-gradient(135deg,#c75a3a,#e87a5a)',bg3:'linear-gradient(135deg,#8b6914,#c9a84c)',accent:'#c75a3a',header:'var(--cream)',headerBg:'rgba(212,146,12,0.15)'},
-minimal:{bg:'linear-gradient(135deg,#e0e0e0,#bbb)',bg2:'linear-gradient(135deg,#ccc,#999)',bg3:'linear-gradient(135deg,#ddd,#aaa)',accent:'#333',header:'#fff',headerBg:'rgba(0,0,0,0.06)'},
-garden:{bg:'linear-gradient(135deg,#6b8f71,#8fb896)',bg2:'linear-gradient(135deg,#a3c9a8,#6b8f71)',bg3:'linear-gradient(135deg,#4a7c50,#7bb882)',accent:'#4a7c50',header:'#fff',headerBg:'rgba(75,124,80,0.12)'},
-night:{bg:'linear-gradient(135deg,#2a2040,#4a3060)',bg2:'linear-gradient(135deg,#6a4080,#8a60a0)',bg3:'linear-gradient(135deg,#3a2850,#5a3870)',accent:'#c084fc',header:'#f0e6ff',headerBg:'rgba(192,132,252,0.12)'}
-};
-document.querySelectorAll('.theme-btn').forEach(btn=>{btn.addEventListener('click',()=>{
-document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-const t=themes[btn.dataset.theme];
-document.getElementById('tp-sw1').style.background=t.bg;
-document.getElementById('tp-sw2').style.background=t.bg2;
-document.getElementById('tp-sw3').style.background=t.bg3;
-const tpBtn=document.getElementById('tp-btn');tpBtn.style.background=t.accent;tpBtn.style.color='#fff';
-const header=document.querySelector('.tp-header');header.style.background=t.headerBg;header.style.color=t.header;
-})});
-// Init theme
-document.querySelector('.theme-btn.active')?.click();
-
-// FAQ accordion
-document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{
-const item=q.parentElement;const wasOpen=item.classList.contains('open');
-document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
-if(!wasOpen)item.classList.add('open')})});
-
-// Waitlist form
-function handleWaitlist(e,form){e.preventDefault();const email=form.querySelector('input').value;
-const btn=form.querySelector('button');btn.textContent='🎉 You\'re in!';btn.style.background='#4a9c3a';
-form.querySelector('input').value='';setTimeout(()=>{btn.textContent='Join the Waitlist';btn.style.background=''},3000)}
-
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();
-const target=document.querySelector(a.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth'})})});
+/* === Waitlist handler === */
+function handleWaitlist(e) {
+  e.preventDefault();
+  const form = e.target;
+  const emailInput = form.querySelector('input');
+  const btn = form.querySelector('button');
+  const email = emailInput.value;
+  btn.textContent = 'You\'re on the list! 🎉';
+  btn.style.background = 'var(--sage)';
+  emailInput.value = '';
+  setTimeout(() => { btn.textContent = 'Get Early Access'; btn.style.background = ''; }, 3000);
+  return false;
+}
 </script>
 </body>
 </html>
