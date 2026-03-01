@@ -1,11 +1,12 @@
 <?php
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
+    http_response_code(204);
     exit;
 }
 
@@ -19,38 +20,81 @@ $input = json_decode(file_get_contents('php://input'), true);
 $email = filter_var($input['email'] ?? '', FILTER_VALIDATE_EMAIL);
 
 if (!$email) {
-    http_response_code(422);
+    http_response_code(400);
     echo json_encode(['error' => 'Invalid email']);
     exit;
 }
 
-$file = __DIR__ . '/storage/waitlist.json';
-$dir = dirname($file);
+$apiKey = 're_QE74YDW7_LDWWYLNCnisMVscoxLfwA9ZK';
 
-if (!is_dir($dir)) {
-    mkdir($dir, 0755, true);
+// Get audiences
+$ch = curl_init('https://api.resend.com/audiences');
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+        'Authorization: Bearer ' . $apiKey,
+        'Content-Type: application/json',
+    ],
+]);
+$response = json_decode(curl_exec($ch), true);
+curl_close($ch);
+
+$audienceId = null;
+if (!empty($response['data'])) {
+    // Use first audience (shared Waitlist audience)
+    $audienceId = $response['data'][0]['id'] ?? null;
 }
 
-$entries = [];
-if (file_exists($file)) {
-    $entries = json_decode(file_get_contents($file), true) ?: [];
+if (!$audienceId) {
+    $ch = curl_init('https://api.resend.com/audiences');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $apiKey,
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS => json_encode(['name' => 'Waitlist']),
+    ]);
+    $result = json_decode(curl_exec($ch), true);
+    curl_close($ch);
+    $audienceId = $result['id'] ?? null;
 }
 
-// Check for duplicate
-foreach ($entries as $entry) {
-    if ($entry['email'] === $email) {
+if (!$audienceId) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Could not find or create audience']);
+    exit;
+}
+
+// Add contact with product property
+$ch = curl_init("https://api.resend.com/audiences/{$audienceId}/contacts");
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_POST => true,
+    CURLOPT_HTTPHEADER => [
+        'Authorization: Bearer ' . $apiKey,
+        'Content-Type: application/json',
+    ],
+    CURLOPT_POSTFIELDS => json_encode([
+        'email' => $email,
+        'unsubscribed' => false,
+    ]),
+]);
+
+$result = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+if ($httpCode >= 200 && $httpCode < 300) {
+    echo json_encode(['success' => true, 'message' => 'Welcome to the waitlist!']);
+} else {
+    $decoded = json_decode($result, true);
+    // Resend returns 409 for duplicate contacts
+    if ($httpCode === 409) {
         echo json_encode(['success' => true, 'message' => 'Already on the list!']);
-        exit;
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to add contact', 'details' => $decoded]);
     }
 }
-
-$entries[] = [
-    'email' => $email,
-    'date' => date('Y-m-d H:i:s'),
-    'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-    'ua' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-];
-
-file_put_contents($file, json_encode($entries, JSON_PRETTY_PRINT));
-
-echo json_encode(['success' => true, 'message' => 'Welcome to the waitlist!', 'count' => count($entries)]);
