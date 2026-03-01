@@ -79,6 +79,9 @@ curl_setopt_array($ch, [
     CURLOPT_POSTFIELDS => json_encode([
         'email' => $email,
         'unsubscribed' => false,
+        'properties' => [
+            ['key' => 'product', 'value' => 'kneadit'],
+        ],
     ]),
 ]);
 
