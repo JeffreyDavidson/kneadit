@@ -1,113 +1,110 @@
 <x-filament-panels::page>
     <div class="space-y-6">
-        {{ $this->content }}
-        
-        @if(!empty($aggregatedItems))
-            <div class="bg-white rounded-lg shadow print:shadow-none">
-                {{-- Print Header --}}
-                <div class="p-6 border-b print:border-black">
-                    <div class="flex justify-between items-center mb-4">
-                        <h1 class="text-2xl font-bold">Baking Sheet</h1>
-                        <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 print:hidden">
-                            Print Sheet
-                        </button>
-                    </div>
-                    
-                    <div class="text-lg font-semibold text-gray-700">
-                        {{ $this->getFormattedDate() }}
+        <!-- Date Picker -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Baking Sheet</h2>
+                <div class="flex space-x-2">
+                    <input type="date" 
+                           wire:model.live="selectedDate" 
+                           class="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Baking Items List -->
+        <div class="bg-white rounded-lg shadow print:shadow-none print:rounded-none" id="baking-sheet">
+            <div class="p-6 print:p-4">
+                <div class="flex items-center justify-between mb-6 print:mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">
+                        Baking Sheet - {{ \Carbon\Carbon::parse($selectedDate)->format('F j, Y') }}
+                    </h3>
+                    <div class="text-sm text-gray-500 print:hidden">
+                        Total Items: {{ $bakingItems->count() }}
                     </div>
                 </div>
-                
-                {{-- Aggregated Summary --}}
-                <div class="p-6 border-b print:border-black">
-                    <h2 class="text-xl font-bold mb-4">Production Summary</h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @foreach($aggregatedItems as $item)
-                            <div class="border rounded-lg p-4 print:border-black">
-                                <div class="font-bold text-lg">{{ $item['product_name'] }}</div>
-                                <div class="text-2xl font-bold text-blue-600">{{ $item['total_quantity'] }} units</div>
-                                <div class="text-sm text-gray-600">
-                                    {{ count($item['orders']) }} order{{ count($item['orders']) !== 1 ? 's' : '' }}
+
+                @if($bakingItems->isEmpty())
+                    <div class="text-center py-8 text-gray-500">
+                        <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        <p class="text-lg">No orders for this date</p>
+                        <p class="text-sm">Try selecting a different date</p>
+                    </div>
+                @else
+                    <div class="space-y-4">
+                        @foreach($bakingItems as $item)
+                            <div class="border border-gray-200 rounded-lg p-4 print:border-gray-400">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-semibold text-lg text-gray-900">{{ $item->product_name }}</h4>
+                                    <span class="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        {{ $item->total_quantity }} {{ $item->total_quantity == 1 ? 'unit' : 'units' }}
+                                    </span>
+                                </div>
+                                
+                                <div class="text-gray-600">
+                                    <p class="text-sm">
+                                        <strong>Customers:</strong> 
+                                        {{ $item->customer_names }}
+                                    </p>
                                 </div>
                             </div>
                         @endforeach
                     </div>
-                </div>
-                
-                {{-- Detailed Breakdown --}}
-                <div class="p-6">
-                    <h2 class="text-xl font-bold mb-4">Order Details</h2>
-                    
-                    @foreach($aggregatedItems as $item)
-                        <div class="mb-6 border-b pb-4 last:border-b-0 print:border-black">
-                            <h3 class="text-lg font-bold mb-2">{{ $item['product_name'] }}</h3>
-                            
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full table-auto">
-                                    <thead>
-                                        <tr class="bg-gray-50 print:bg-gray-100">
-                                            <th class="px-4 py-2 text-left font-semibold">Order #</th>
-                                            <th class="px-4 py-2 text-left font-semibold">Customer</th>
-                                            <th class="px-4 py-2 text-center font-semibold">Qty</th>
-                                            <th class="px-4 py-2 text-left font-semibold">Notes</th>
-                                            <th class="px-4 py-2 text-center font-semibold print:hidden">✓</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($item['orders'] as $order)
-                                            <tr class="border-t print:border-black">
-                                                <td class="px-4 py-2 font-mono text-sm">{{ $order['order_number'] }}</td>
-                                                <td class="px-4 py-2">{{ $order['customer_name'] }}</td>
-                                                <td class="px-4 py-2 text-center font-bold">{{ $order['quantity'] }}</td>
-                                                <td class="px-4 py-2 text-sm">{{ $order['notes'] ?: '-' }}</td>
-                                                <td class="px-4 py-2 text-center print:hidden">
-                                                    <input type="checkbox" class="w-4 h-4">
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                
-                {{-- Footer for print --}}
-                <div class="p-6 border-t text-sm text-gray-600 print:border-black print:block hidden">
-                    <div class="flex justify-between">
-                        <span>Generated: {{ now()->format('M j, Y g:i A') }}</span>
-                        <span>KneadIt Bakery Management</span>
-                    </div>
-                </div>
+                @endif
             </div>
-        @else
-            <x-filament::card>
-                <div class="text-center py-8">
-                    <div class="text-gray-500 text-lg">No orders found for {{ $this->getFormattedDate() }}</div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        Select a different date or check if there are confirmed orders for this date.
-                    </div>
-                </div>
-            </x-filament::card>
-        @endif
+        </div>
     </div>
-    
+
+    <!-- Print Styles -->
     <style>
         @media print {
-            body { font-size: 12pt; }
-            .print\\:hidden { display: none !important; }
-            .print\\:block { display: block !important; }
-            .print\\:border-black { border-color: black !important; }
-            .print\\:bg-gray-100 { background-color: #f3f4f6 !important; }
-            .print\\:shadow-none { box-shadow: none !important; }
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
             
-            /* Ensure tables don't break across pages */
-            table { page-break-inside: avoid; }
-            tr { page-break-inside: avoid; }
+            .print\\:hidden {
+                display: none !important;
+            }
             
-            /* Add some margins for printing */
-            @page { margin: 1in; }
+            .print\\:shadow-none {
+                box-shadow: none !important;
+            }
+            
+            .print\\:rounded-none {
+                border-radius: 0 !important;
+            }
+            
+            .print\\:p-4 {
+                padding: 1rem !important;
+            }
+            
+            .print\\:mb-4 {
+                margin-bottom: 1rem !important;
+            }
+            
+            .print\\:border-gray-400 {
+                border-color: #9ca3af !important;
+            }
+
+            #baking-sheet {
+                page-break-inside: avoid;
+            }
+            
+            .space-y-4 > * + * {
+                page-break-inside: avoid;
+            }
         }
     </style>
+
+    <!-- Print JavaScript -->
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('print-page', () => {
+                window.print();
+            });
+        });
+    </script>
 </x-filament-panels::page>
