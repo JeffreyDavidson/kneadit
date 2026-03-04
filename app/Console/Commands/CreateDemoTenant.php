@@ -44,8 +44,12 @@ class CreateDemoTenant extends Command
             'is_active' => true,
         ]);
 
+        // Store both the full domain and just the subdomain for flexible resolution
         $tenant->domains()->create([
             'domain' => $domain,
+        ]);
+        $tenant->domains()->create([
+            'domain' => $subdomain,
         ]);
 
         $this->info('Running tenant migrations...');
