@@ -52,15 +52,12 @@ class CreateDemoTenant extends Command
             'domain' => $subdomain,
         ]);
 
-        $this->info('Running tenant migrations...');
+        $this->info('Setting up tenant data...');
+
+        // Database + migrations are auto-handled by TenancyServiceProvider events
+        // (CreateDatabase + MigrateDatabase jobs fire on TenantCreated)
 
         $tenant->run(function () {
-            // Run migrations
-            \Artisan::call('migrate', [
-                '--path' => 'database/migrations/tenant',
-                '--force' => true,
-            ]);
-
             // Create admin user
             \App\Models\User::create([
                 'name' => 'Demo Baker',
