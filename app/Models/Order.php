@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Order extends Model
+{
+    protected $fillable = [
+        'order_number',
+        'customer_id',
+        'status',
+        'payment_status',
+        'payment_method',
+        'subtotal',
+        'delivery_fee',
+        'discount',
+        'total',
+        'delivery_address',
+        'requested_date',
+        'requested_time',
+        'notes',
+        'user_id',
+    ];
+
+    protected $casts = [
+        'subtotal' => 'decimal:2',
+        'delivery_fee' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'total' => 'decimal:2',
+        'requested_date' => 'date',
+        'requested_time' => 'datetime:H:i',
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($order) {
+            if (!$order->order_number) {
+                $order->order_number = 'ORD-' . str_pad(static::count() + 1, 6, '0', STR_PAD_LEFT);
+            }
+        });
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+}
