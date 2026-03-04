@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Filament\Resources\Incomes\Schemas;
+
+use App\Models\Income;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\DatePicker;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+
+class IncomeForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('Income Details')
+                    ->components([
+                        TextInput::make('description')
+                            ->required()
+                            ->maxLength(255),
+
+                        Grid::make(2)
+                            ->components([
+                                TextInput::make('amount')
+                                    ->required()
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->step(0.01),
+
+                                Select::make('source')
+                                    ->options(Income::SOURCES)
+                                    ->required(),
+                            ]),
+
+                        DatePicker::make('date')
+                            ->required()
+                            ->default(now()),
+
+                        Textarea::make('notes')
+                            ->rows(3),
+                    ]),
+            ]);
+    }
+}
