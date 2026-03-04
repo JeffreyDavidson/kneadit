@@ -1,0 +1,186 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use Filament\Pages\Page;
+use App\Models\Order;
+use App\Models\Product;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
+
+class WeeklyPrepPlanner extends Page
+{
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
+    protected static ?string $navigationLabel = 'Weekly Prep Planner';
+    protected static string|\UnitEnum|null $navigationGroup = 'Kitchen';
+    protected string $view = 'filament.pages.weekly-prep-planner';
+
+    public ?string $selectedWeekStart = null;
+    public Collection $weeklyOrders;
+    public Collection $prepSchedule;
+    public array $weekDays = [];
+
+    public function mount()
+    {
+        $this->selectedWeekStart = now()->startOfWeek()->format('Y-m-d');
+        $this->loadWeeklyData();
+    }
+
+    public function updatedSelectedWeekStart()
+    {
+        $this->loadWeeklyData();
+    }
+
+    public function loadWeeklyData()
+    {
+        if (!$this->selectedWeekStart) {
+            $this->weeklyOrders = collect();
+            $this->prepSchedule = collect();
+            return;
+        }
+
+        $startDate = Carbon::parse($this->selectedWeekStart);
+        $endDate = $startDate->copy()->endOfWeek();
+
+        // Generate week days
+        $this->weekDays = [];
+        for ($i = 0; $i < 7; $i++) {
+            $this->weekDays[] = $startDate->copy()->addDays($i);
+        }
+
+        // Load orders for the week
+        $this->weeklyOrders = Order::with(['customer', 'orderItems.product.recipes'])
+            ->whereBetween('requested_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+            ->orderBy('requested_date')
+            ->orderBy('requested_time')
+            ->get()
+            ->groupBy(function ($order) {
+                return Carbon::parse($order->requested_date)->format('Y-m-d');
+            });
+
+        $this->generatePrepSchedule();
+    }
+
+    private function generatePrepSchedule()
+    {
+        $prepTasks = collect();
+
+        foreach ($this->weeklyOrders as $date => $orders) {
+            foreach ($orders as $order) {
+                foreach ($order->orderItems as $orderItem) {
+                    $product = $orderItem->product;
+                    
+                    if ($product && $product->recipes->isNotEmpty()) {
+                        $recipe = $product->recipes->first();
+                        $quantity = $orderItem->quantity;
+                        $prepTimeMinutes = $recipe->prep_time_minutes ?? 60; // Default 1 hour if not set
+                        
+                        // Calculate when to start prep
+                        $requestedDateTime = Carbon::parse($order->requested_date);
+                        if ($order->requested_time) {
+                            $requestedDateTime->setTimeFromTimeString($order->requested_time);
+                        }
+                        
+                        $prepStartTime = $requestedDateTime->copy()->subMinutes($prepTimeMinutes);
+                        
+                        $prepTasks->push([
+                            'date' => $date,
+                            'order_number' => $order->order_number,
+                            'customer_name' => $order->customer->name ?? 'Unknown Customer',
+                            'product_name' => $product->name,
+                            'recipe_name' => $recipe->name,
+                            'quantity' => $quantity,
+                            'prep_time_minutes' => $prepTimeMinutes,
+                            'requested_time' => $order->requested_time ? Carbon::parse($order->requested_time)->format('H:i') : 'Not specified',
+                            'prep_start_time' => $prepStartTime->format('H:i'),
+                            'prep_start_datetime' => $prepStartTime,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        $this->prepSchedule = $prepTasks->groupBy('date');
+    }
+
+    public function getProductSummary(): Collection
+    {
+        $productSummary = collect();
+
+        foreach ($this->weeklyOrders as $date => $orders) {
+            foreach ($orders as $order) {
+                foreach ($order->orderItems as $orderItem) {
+                    $productName = $orderItem->product->name ?? 'Unknown Product';
+                    $quantity = $orderItem->quantity;
+
+                    if ($productSummary->has($productName)) {
+                        $productSummary[$productName]['total_quantity'] += $quantity;
+                        $productSummary[$productName]['orders_count'] += 1;
+                    } else {
+                        $productSummary[$productName] = [
+                            'product_name' => $productName,
+                            'total_quantity' => $quantity,
+                            'orders_count' => 1,
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $productSummary->sortByDesc('total_quantity');
+    }
+
+    public function getTimelineView(): Collection
+    {
+        $timeline = collect();
+
+        foreach ($this->prepSchedule as $date => $prepTasks) {
+            $dayTimeline = $prepTasks->sortBy('prep_start_datetime')->map(function ($task) {
+                return [
+                    'time' => $task['prep_start_time'],
+                    'task' => "Start {$task['product_name']} (x{$task['quantity']}) for {$task['customer_name']}",
+                    'duration' => $task['prep_time_minutes'],
+                    'order' => $task['order_number'],
+                    'delivery_time' => $task['requested_time'],
+                ];
+            });
+
+            $timeline[$date] = $dayTimeline;
+        }
+
+        return $timeline;
+    }
+
+    public function getTotalPrepHours(): float
+    {
+        $totalMinutes = 0;
+
+        foreach ($this->prepSchedule as $date => $prepTasks) {
+            $totalMinutes += $prepTasks->sum('prep_time_minutes');
+        }
+
+        return round($totalMinutes / 60, 1);
+    }
+
+    public function getWeekSummary(): array
+    {
+        $totalOrders = 0;
+        $totalItems = 0;
+        $totalRevenue = 0;
+
+        foreach ($this->weeklyOrders as $date => $orders) {
+            $totalOrders += $orders->count();
+            foreach ($orders as $order) {
+                $totalItems += $order->orderItems->sum('quantity');
+                $totalRevenue += $order->total;
+            }
+        }
+
+        return [
+            'total_orders' => $totalOrders,
+            'total_items' => $totalItems,
+            'total_revenue' => $totalRevenue,
+            'total_prep_hours' => $this->getTotalPrepHours(),
+        ];
+    }
+}
