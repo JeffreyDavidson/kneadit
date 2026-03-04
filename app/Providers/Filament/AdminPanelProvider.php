@@ -17,6 +17,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -32,8 +33,24 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->spa()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::hex('#d4920c'),
             ])
+            ->brandLogo(view('filament.brand-logo'))
+            ->darkMode(false)
+            ->navigationGroups([
+                'Dashboard',
+                'Sales',
+                'Catalog',
+                'Kitchen',
+                'Finance',
+                'Marketing',
+                'Content',
+                'System',
+            ])
+            ->renderHook(
+                'panels::head.end',
+                fn() => new HtmlString('<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">')
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
