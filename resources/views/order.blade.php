@@ -497,7 +497,7 @@ function orderForm() {
             this.capacityError = '';
             
             try {
-                const response = await fetch(`{{ route('capacity.check', '') }}/${this.form.delivery_date}`);
+                const response = await fetch(`/capacity/check/${this.form.delivery_date}`);
                 const data = await response.json();
                 
                 if (!data.available) {
