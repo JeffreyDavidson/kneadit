@@ -1,15 +1,233 @@
-/* Warm Bakery Theme for KneadIt Admin Panel */
+:root {
+  --brand-900: #3d2314;    /* darkest brown - primary text, backgrounds */
+  --brand-800: #4a3225;    /* hover states */
+  --brand-700: #6b4c3b;    /* secondary brown */
+  --brand-600: #8b5e3c;    /* medium brown */
+  --brand-500: #a08060;    /* muted text */
+  --brand-400: #c4a882;    /* borders, lighter accents */
+  --brand-300: #d4a574;    /* accent/gold */
+  --brand-200: #e8d0b0;    /* light borders, dividers */
+  --brand-150: #f3ebe0;    /* subtle backgrounds */
+  --brand-100: #f5e6d0;    /* light fill */
+  --brand-50: #fdf8f2;     /* lightest background */
+  --brand-white: #FFFFFF;
+  --accent-gold: #d4a574;
+  --accent-gold-light: #f5e6d0;
+  --status-success: #16a34a;
+  --status-danger: #dc2626;
+  --status-warning: #d97706;
+  --status-warning-dark: #92400e;
+  --status-danger-dark: #991b1b;
+}
 
-/* ===== SIDEBAR ===== */
+/* Bakery on Biscotto - Filament Admin Theme */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap");
+
+/* ===== NOTIFICATION BELL BADGE ===== */
+.fi-topbar-database-notifications-btn {
+    position: relative !important;
+}
+/* Make bell icon bigger and more visible */
+.fi-topbar-database-notifications-btn .fi-icon {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+    color: var(--brand-700) !important;
+}
+.fi-topbar-database-notifications-btn:hover .fi-icon {
+    color: var(--brand-900) !important;
+}
+/* Badge — small, high-contrast */
+.fi-topbar-database-notifications-btn .fi-badge {
+    position: absolute !important;
+    top: 0px !important;
+    right: -4px !important;
+    min-width: 1.1rem !important;
+    height: 1.1rem !important;
+    padding: 0 0.3rem !important;
+    font-size: 0.6rem !important;
+    font-weight: 700 !important;
+    line-height: 1.1rem !important;
+    text-align: center !important;
+    border-radius: 9999px !important;
+    background: var(--brand-900) !important;
+    color: #FFFFFF !important;
+    border: 1.5px solid var(--brand-50) !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+    --tw-ring-shadow: none !important;
+}
+
+/* ===== NOTIFICATION PANEL ===== */
+/* Panel background */
+.fi-no-database-notifications-modal .fi-modal-window,
+.fi-modal[id*="database-notifications"] .fi-modal-window {
+    background: var(--brand-50) !important;
+}
+/* Panel header — dark brown gradient */
+.fi-no-database-notifications-modal .fi-modal-header,
+.fi-modal[id*="database-notifications"] .fi-modal-header {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    border-bottom: none !important;
+    padding: 1rem 1.25rem !important;
+}
+.fi-no-database-notifications-modal .fi-modal-heading,
+.fi-modal[id*="database-notifications"] .fi-modal-heading {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+/* Close button in header */
+.fi-no-database-notifications-modal .fi-modal-close-btn,
+.fi-modal[id*="database-notifications"] .fi-modal-close-btn {
+    color: rgba(255,255,255,0.7) !important;
+}
+.fi-no-database-notifications-modal .fi-modal-close-btn:hover,
+.fi-modal[id*="database-notifications"] .fi-modal-close-btn:hover {
+    color: #FFFFFF !important;
+}
+/* Mark all as read / Clear links */
+.fi-no-database-notifications-modal .fi-link,
+.fi-modal[id*="database-notifications"] .fi-link {
+    color: var(--accent-gold) !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+}
+.fi-no-database-notifications-modal .fi-link:hover,
+.fi-modal[id*="database-notifications"] .fi-link:hover {
+    color: var(--brand-200) !important;
+}
+/* Notification list — replace gray dividers with tan */
+.fi-no-database .fi-modal-content {
+    --tw-divide-color: var(--brand-200) !important;
+    border-color: var(--brand-200) !important;
+}
+/* Individual notification rows — ALL same color */
+.fi-no-database .fi-modal-content > * {
+    padding: 0.875rem 1.5rem !important;
+    background: #FFFFFF !important;
+}
+.fi-no-notification-unread-ctn,
+.fi-no-notification-read-ctn,
+.fi-no-database .fi-modal-content > div {
+    background: #FFFFFF !important;
+}
+/* Kill Filament's color-mix tinting on notification backgrounds */
+.fi-no-notification.fi-color {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+}
+/* Kill color-tinted ring */
+.fi-no-notification.fi-color {
+    --tw-ring-color: var(--brand-200) !important;
+}
+/* Unread indicator — bakery brown left bar */
+.fi-no-notification-unread-ctn::before {
+    background: var(--brand-600) !important;
+    width: 3px !important;
+}
+/* Notification icon — bakery brown */
+.fi-no-database .fi-no-notification-icon {
+    color: var(--brand-600) !important;
+}
+/* Notification title */
+.fi-no-database .fi-no-notification-title {
+    color: var(--brand-900) !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+}
+/* Notification body text */
+.fi-no-database .fi-no-notification-body {
+    color: var(--brand-700) !important;
+    font-size: 0.8125rem !important;
+}
+/* Notification date/time */
+.fi-no-database .fi-no-notification-date {
+    color: var(--brand-500) !important;
+    font-size: 0.75rem !important;
+}
+/* Dismiss button */
+.fi-no-database .fi-icon-btn {
+    color: var(--brand-400) !important;
+}
+.fi-no-database .fi-icon-btn:hover {
+    color: var(--brand-900) !important;
+}
+/* Badge in header */
+.fi-no-database-notifications-modal .fi-badge,
+.fi-modal[id*="database-notifications"] .fi-modal-header .fi-badge {
+    background: var(--accent-gold) !important;
+    color: var(--brand-900) !important;
+    font-weight: 700 !important;
+    --tw-ring-shadow: none !important;
+}
+
+/* ===== GLOBAL ACTION BUTTONS ===== */
+/* Primary action buttons — dark brown gradient */
+.fi-btn.fi-color-primary {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    box-shadow: none !important;
+}
+.fi-btn.fi-color-primary:hover {
+    background: linear-gradient(135deg, #4a2a1a, #7a5a49) !important;
+    box-shadow: 0 4px 12px rgba(61,35,20,0.2) !important;
+}
+/* Gray/secondary action buttons — white with tan border */
+.fi-btn.fi-color-gray {
+    border: 1px solid var(--brand-200) !important;
+    color: var(--brand-700) !important;
+    background: #FFFFFF !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    box-shadow: none !important;
+}
+.fi-btn.fi-color-gray:hover {
+    background: var(--brand-100) !important;
+    box-shadow: none !important;
+}
+
+/* ===== SHARED: Dark gradient header bar ===== */
+/* Used by: Filament tables (.fi-ta-header-ctn), x-admin.card, x-admin.card-header */
+[data-admin-gradient-header] {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700));
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--brand-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+[data-admin-gradient-header] > [data-header-title] {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+/* Login page */
+.fi-simple-layout {
+    background: var(--brand-50) !important;
+}
+.fi-simple-main {
+    border: 1px solid rgba(212,165,116,0.2) !important;
+    box-shadow: 0 20px 60px rgba(61,35,20,0.08) !important;
+    border-radius: 16px !important;
+}
+
+/* Main content area */
+.fi-main {
+    background: var(--brand-50) !important;
+}
+
+/* Sidebar */
 .fi-sidebar {
-    background: var(--brand-900, #1c1410) !important;
+    background: var(--brand-900) !important;
     border-right: 1px solid rgba(212,165,116,0.1) !important;
 }
 .fi-sidebar-header {
     border-bottom: 1px solid rgba(212,165,116,0.15) !important;
 }
 
-/* Sidebar text — Filament compiles text-gray-700 which is invisible on dark bg */
+/* ===== SIDEBAR TEXT FIX ===== */
+/* Label text: Filament compiles as text-gray-700 which is invisible on dark bg */
 .fi-sidebar-item-label {
     color: #FFFFFF !important;
 }
@@ -21,7 +239,7 @@
 /* Sidebar icons */
 .fi-sidebar-item-btn > .fi-icon,
 .fi-sidebar-item-icon {
-    color: var(--brand-300, #e8b04a) !important;
+    color: #F5D5A8 !important;
 }
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon {
     color: #FFFFFF !important;
@@ -37,204 +255,739 @@
 
 /* Sidebar badge */
 .fi-sidebar-item-badge-ctn .fi-badge {
-    background: var(--brand-300, #e8b04a) !important;
-    border-color: var(--brand-300, #e8b04a) !important;
+    background: #F5D5A8 !important;
+    border-color: #F5D5A8 !important;
 }
 .fi-sidebar-item-badge-ctn .fi-badge span {
-    color: var(--brand-900, #1c1410) !important;
+    color: var(--brand-900) !important;
     font-weight: 700 !important;
 }
 
 /* Sidebar group labels */
 .fi-sidebar-group-label {
-    color: var(--brand-300, #e8b04a) !important;
+    color: var(--accent-gold) !important;
 }
 
-/* Table headers - warm brown gradient */
-.fi-ta-header {
-    background: linear-gradient(135deg, #8b4513 0%, #a0522d 50%, #cd853f 100%) !important;
-    color: #f5f5dc !important;
-    font-weight: 600 !important;
+/* ===== TOPBAR ===== */
+.fi-topbar, .fi-topbar nav {
+    background: var(--brand-50) !important;
+    border-bottom: 1px solid rgba(212,165,116,0.15) !important;
 }
 
-.fi-ta-header-cell {
-    border-bottom: 2px solid #5d4037 !important;
+/* ===== PAGE HEADINGS ===== */
+.fi-header-heading {
+    font-family: "Playfair Display", serif !important;
+    color: var(--brand-900) !important;
 }
-
-/* Form focus rings - honey gold */
-.fi-input:focus,
-.fi-select-input:focus,
-.fi-textarea:focus {
-    border-color: #d4920c !important;
-    box-shadow: 0 0 0 3px rgba(212, 146, 12, 0.2) !important;
-}
-
-/* Primary buttons - honey gold */
-.fi-btn-primary {
-    background: linear-gradient(135deg, #d4920c 0%, #b8810b 100%) !important;
-    border-color: #d4920c !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-}
-
-.fi-btn-primary:hover {
-    background: linear-gradient(135deg, #b8810b 0%, #a0710a 100%) !important;
-    border-color: #b8810b !important;
-}
-
-/* Card borders - warm tan */
-.fi-section,
-.fi-card {
-    border: 1px solid #d2b48c !important;
-    background: #fefcf7 !important; /* Warm white background */
-}
-
-.fi-section-header {
-    border-bottom: 1px solid #d2b48c !important;
-    background: linear-gradient(135deg, #f5f5dc 0%, #f0e68c 100%) !important;
-}
-
-.fi-section-header-heading {
-    color: #654321 !important;
-    font-weight: 700 !important;
-}
-
-/* Empty states - bakery themed */
-.fi-ta-empty-state {
-    background: #fefcf7 !important;
-    border: 2px dashed #d2b48c !important;
-    border-radius: 12px !important;
-}
-
-.fi-ta-empty-state-icon {
-    color: #d4920c !important;
-}
-
-.fi-ta-empty-state-heading {
-    color: #654321 !important;
-    font-weight: 600 !important;
-}
-
-.fi-ta-empty-state-description {
-    color: #8b7355 !important;
-}
-
-/* Navigation breadcrumbs */
-.fi-breadcrumbs {
-    background: #f5f5dc !important;
-    border: 1px solid #d2b48c !important;
-    border-radius: 8px !important;
-    padding: 8px 16px !important;
-}
-
+.fi-breadcrumbs-item span,
 .fi-breadcrumbs-item a {
-    color: #654321 !important;
-    text-decoration: none !important;
+    color: var(--brand-600) !important;
 }
 
-.fi-breadcrumbs-item a:hover {
-    color: #d4920c !important;
+/* ===== TABLE ===== */
+/* Table container */
+.fi-ta-ctn {
+    border: 1px solid rgba(212,165,116,0.25) !important;
+    border-radius: 12px !important;
+    overflow: visible !important;
+    box-shadow: 0 4px 24px rgba(61,35,20,0.06) !important;
+    background: #FFFFFF !important;
 }
 
-/* Stats cards */
-.fi-stats-overview-stat {
-    background: linear-gradient(135deg, #fefcf7 0%, #f5f5dc 100%) !important;
-    border: 1px solid #d2b48c !important;
+/* Dark brown gradient — single row: title left, search+filters right */
+/* Matches x-admin.card gradient header: 1rem 1.5rem padding, same gradient */
+.fi-ta-header-ctn {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    border-radius: 11px 11px 0 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 1rem 1.5rem !important;
+    gap: 1rem !important;
+    border-bottom: 1px solid var(--brand-200) !important;
 }
-
-.fi-stats-overview-stat-value {
-    color: #654321 !important;
+.fi-ta-header {
+    background: transparent !important;
+    border-bottom: none !important;
+    padding: 0 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+    gap: 0.5rem !important;
+}
+.fi-ta-header .fi-ta-actions {
+    margin-left: auto !important;
+}
+.fi-ta-header-heading {
+    color: #FFFFFF !important;
     font-weight: 700 !important;
+    font-size: 1.125rem !important;
+    font-family: inherit !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+.fi-ta-header-description {
+    color: rgba(255,255,255,0.7) !important;
+}
+/* Header actions (buttons) on dark background */
+.fi-ta-header .fi-btn {
+    color: #FFFFFF !important;
+    border-color: rgba(255,255,255,0.3) !important;
+}
+.fi-ta-header .fi-btn:hover {
+    background: rgba(255,255,255,0.1) !important;
 }
 
-.fi-stats-overview-stat-label {
-    color: #8b7355 !important;
-    font-weight: 500 !important;
+/* Table header */
+.fi-ta-header-cell {
+    background: var(--brand-100) !important;
+    color: var(--brand-900) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: none !important;
+}
+/* Also target th directly */
+table thead th {
+    background: var(--brand-100) !important;
+    color: var(--brand-900) !important;
+}
+/* Full-width border under entire header row */
+table thead tr {
+    border-bottom: 2px solid var(--accent-gold) !important;
 }
 
-/* Notifications */
-.fi-no-content {
-    background: #fff8dc !important;
-    border: 1px solid #ddd6a3 !important;
-    color: #654321 !important;
+/* Table rows */
+.fi-ta-row {
+    border-bottom: 1px solid rgba(212,165,116,0.1) !important;
+    transition: background 0.15s ease !important;
+}
+.fi-ta-row:hover {
+    background: rgba(245,230,208,0.5) !important;
 }
 
-/* Action buttons */
-.fi-ac-btn-action {
+/* Table cell text */
+.fi-ta-text {
+    color: var(--brand-900) !important;
+}
+
+/* Status badges in table */
+.fi-ta-row .fi-badge {
+    font-weight: 600 !important;
+    border-radius: 9999px !important;
+    padding: 0.15rem 0.75rem !important;
+}
+
+/* Action links */
+.fi-ta-actions .fi-link {
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+}
+
+/* Toolbar (search + filters) — right side of dark header row */
+.fi-ta-header-toolbar {
+    background: transparent !important;
+    border-bottom: none !important;
+    padding: 0 !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+}
+
+/* Search input — white input on dark background */
+.fi-ta-search-field input {
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    border-radius: 8px !important;
+    background: rgba(255,255,255,0.95) !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: var(--brand-900) !important;
+}
+.fi-ta-search-field input:focus {
+    border-color: rgba(255,255,255,0.5) !important;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15) !important;
+    outline: none !important;
+}
+/* Search icon */
+.fi-ta-header-ctn .fi-ta-search-field .fi-icon {
+    color: var(--brand-600) !important;
+}
+/* Filter/column toggle icons — white on dark */
+.fi-ta-header-ctn .fi-icon-btn {
+    color: rgba(255,255,255,0.85) !important;
+}
+.fi-ta-header-ctn .fi-icon-btn:hover {
+    background: rgba(255,255,255,0.1) !important;
+}
+/* Filter count badge */
+.fi-ta-header-ctn .fi-badge {
+    background: var(--accent-gold) !important;
+    color: var(--brand-900) !important;
+}
+
+/* Pagination footer */
+.fi-ta-footer {
+    background: rgba(245,230,208,0.2) !important;
+    border-top: 1px solid rgba(212,165,116,0.1) !important;
+}
+
+/* Pagination layout: overview left, pages center, per-page right */
+.fi-pagination {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+}
+.fi-pagination-overview {
+    flex: 1 !important;
+    display: inline !important;
+}
+.fi-pagination-items {
+    display: flex !important;
+    order: 2 !important;
+}
+.fi-pagination-records-per-page-select-ctn {
+    order: 3 !important;
+    flex: 1 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+}
+/* Hide simple prev/next when page items are visible */
+.fi-pagination:has(.fi-pagination-items) .fi-pagination-previous-btn,
+.fi-pagination:has(.fi-pagination-items) .fi-pagination-next-btn {
+    display: none !important;
+}
+
+/* ===== FORMS ===== */
+.fi-fo-field-wrp label {
+    color: var(--brand-900) !important;
+    font-weight: 600 !important;
+}
+.fi-input {
+    border: 1px solid rgba(212,165,116,0.3) !important;
+    border-radius: 8px !important;
+}
+.fi-input:focus-within {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px rgba(212,165,116,0.15) !important;
+}
+
+/* Helper text */
+.fi-fo-field-wrp .fi-fo-field-wrp-helper-text {
+    color: var(--brand-500) !important;
+}
+
+/* Placeholder text */
+.fi-input input::placeholder,
+.fi-input textarea::placeholder {
+    color: var(--brand-400) !important;
+}
+
+/* ===== SECTIONS (Form Panels) ===== */
+.fi-section {
+    background: #FFFFFF !important;
+    overflow: hidden !important;
+    border-color: var(--brand-200) !important;
+    --tw-ring-color: rgba(232,208,176,1) !important;
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
+    --tw-shadow: none !important;
+}
+/* Global input ring/shadow cleanup — single tan border only */
+.fi-input-wrp {
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-color: transparent !important;
+    --tw-shadow: 0 0 #0000 !important;
+    box-shadow: 0 0 0 1px var(--brand-200) !important;
+    border: none !important;
+}
+.fi-input-wrp:focus-within {
+    box-shadow: 0 0 0 1px var(--accent-gold), 0 0 0 4px rgba(212,165,116,0.15) !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-color: transparent !important;
+}
+/* Tan divider between prefix icon and input */
+.fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
+    border-inline-end: 1px solid var(--brand-200) !important;
+    border-right: 1px solid var(--brand-200) !important;
+    padding-inline-end: 0.75rem !important;
+}
+.fi-input-wrp .fi-input-wrp-suffix {
+    border-inline-start: 1px solid var(--brand-200) !important;
+    border-left: 1px solid var(--brand-200) !important;
+}
+/* Input field inside wrapper — no border or rounding, wrapper handles it */
+.fi-input-wrp .fi-input {
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    outline: none !important;
+}
+.fi-section-content {
+    border-top: none !important;
+}
+.fi-section-content-ctn {
+    border-top: none !important;
+    border-color: transparent !important;
+}
+/* Section header — dark brown gradient matching table headers */
+.fi-section-header {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    border-bottom: none !important;
+    padding: 0.875rem 1.25rem !important;
+}
+.fi-section-header-heading {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+}
+.fi-section-header-description {
+    color: rgba(255,255,255,0.6) !important;
+}
+/* Section icon */
+.fi-section-header .fi-icon {
+    color: rgba(255,255,255,0.7) !important;
+}
+/* Collapsed section hover */
+.fi-section-header:hover {
+    background: linear-gradient(135deg, #4a2a1a, #7a5a49) !important;
+}
+/* Section collapse trigger */
+.fi-section-header button {
+    color: rgba(255,255,255,0.7) !important;
+}
+.fi-section-header button:hover {
+    color: #FFFFFF !important;
+}
+
+/* ===== TOGGLE ===== */
+/* Active toggle — bakery brown instead of blue */
+.fi-toggle-input:checked {
+    background-color: var(--brand-600) !important;
+    border-color: var(--brand-600) !important;
+}
+.fi-toggle-input:checked:hover {
+    background-color: var(--brand-700) !important;
+}
+.fi-toggle-input:focus {
+    box-shadow: 0 0 0 3px rgba(139, 94, 60, 0.2) !important;
+}
+/* Unchecked toggle */
+.fi-toggle-input {
+    border-color: var(--brand-200) !important;
+}
+
+/* ===== SELECT ===== */
+.fi-select-input {
+    border: 1px solid rgba(212,165,116,0.3) !important;
+    border-radius: 8px !important;
+}
+
+/* ===== TEXTAREA ===== */
+textarea.fi-textarea-input {
+    border: 1px solid rgba(212,165,116,0.3) !important;
+    border-radius: 8px !important;
+}
+textarea.fi-textarea-input:focus {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px rgba(212,165,116,0.15) !important;
+}
+
+/* ===== REPEATER ===== */
+.fi-fo-repeater {
+    border: 1px solid var(--brand-200) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+/* Remove gap between repeater items */
+.fi-fo-repeater-items {
+    gap: 0 !important;
+}
+/* Repeater items — flat rows, no individual card styling */
+.fi-fo-repeater-item,
+.fi-fo-repeater .fi-fo-repeater-item,
+li.fi-fo-repeater-item {
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+    border-bottom: 1px solid var(--brand-150) !important;
+}
+/* Kill Filament's ring on repeater items at every specificity level */
+.fi-fo-repeater-item {
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-offset-shadow: 0 0 0 0 transparent !important;
+    --tw-shadow: 0 0 0 0 transparent !important;
+    --tw-inset-shadow: 0 0 0 0 transparent !important;
+    --tw-inset-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-color: transparent !important;
+}
+.fi-fo-repeater-item:last-child {
+    border-bottom: none !important;
+}
+/* Match native date input placeholder color to Filament styled selects */
+input[type="date"]:not(:valid),
+input[type="date"][value=""] {
+    color: #9ca3af;
+}
+
+/* Match native select placeholder color to Filament styled selects */
+.fi-fo-repeater select option[value=""] {
+    color: #9ca3af;
+}
+.fi-fo-repeater select:has(option[value=""]:checked) {
+    color: #9ca3af;
+}
+.fi-fo-repeater select:not(:has(option[value=""]:checked)) {
+    color: var(--brand-900);
+}
+
+/* Hide default repeater item header (delete button is inline in schema) */
+.fi-fo-repeater-item-header {
+    display: none !important;
+}
+.fi-fo-repeater-item-has-header > .fi-fo-repeater-item-content {
+    border-top: none !important;
+}
+/* Clean up ALL input wrappers — single ring via box-shadow only */
+.fi-input-wrp {
+    box-shadow: 0 0 0 1px var(--brand-200) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    outline: none !important;
+}
+.fi-input-wrp:focus-within {
+    box-shadow: 0 0 0 2px var(--brand-600) !important;
+}
+/* Custom repeater grid: give trash column minimal width */
+.fi-fo-repeater-item-content > .fi-sc {
+    grid-template-columns: 3fr 1fr 1fr 1fr 3rem !important;
+    align-items: start !important;
+}
+/* Repeater item actions */
+.fi-fo-repeater-item-header .fi-icon-btn {
+    color: var(--brand-400) !important;
+}
+.fi-fo-repeater-item-header .fi-icon-btn:hover {
+    color: #fff !important;
+    background: #c0392b !important;
     border-radius: 6px !important;
 }
-
-.fi-ac-btn-action:hover {
-    background: rgba(212, 146, 12, 0.1) !important;
+/* Repeater add button */
+.fi-fo-repeater-add {
+    padding: 0.75rem 1rem !important;
+    background: var(--brand-50) !important;
+    border-top: 1px solid var(--brand-150) !important;
+    justify-content: flex-start !important;
+}
+.fi-fo-repeater-add .fi-btn {
+    color: #FFFFFF !important;
+    background: linear-gradient(135deg, var(--brand-600), var(--brand-700)) !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1.25rem !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-shadow: 0 0 0 0 transparent !important;
+    border: none !important;
+}
+.fi-fo-repeater-add .fi-btn:hover {
+    background: linear-gradient(135deg, var(--brand-700), var(--brand-900)) !important;
 }
 
-/* Modal styling */
-.fi-modal {
-    background: #fefcf7 !important;
+/* ===== FILE UPLOAD ===== */
+.fi-fo-file-upload .filepond--panel-root {
+    background: var(--brand-50) !important;
+    border: 2px dashed var(--brand-200) !important;
+    border-radius: 12px !important;
+}
+.fi-fo-file-upload .filepond--drop-label label {
+    color: var(--brand-600) !important;
+    font-weight: 500 !important;
+}
+.fi-fo-file-upload .filepond--label-action {
+    color: var(--brand-700) !important;
+    font-weight: 600 !important;
+    text-decoration-color: var(--accent-gold) !important;
 }
 
-.fi-modal-header {
-    border-bottom: 1px solid #d2b48c !important;
-    background: linear-gradient(135deg, #f5f5dc 0%, #f0e68c 100%) !important;
+/* ===== DATE PICKER ===== */
+.fi-date-time-picker-btn {
+    border: 1px solid rgba(212,165,116,0.3) !important;
+    border-radius: 8px !important;
+}
+.fi-date-time-picker-btn:focus {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px rgba(212,165,116,0.15) !important;
 }
 
-.fi-modal-heading {
-    color: #654321 !important;
+/* ===== FORM ACTIONS (Save/Cancel buttons) ===== */
+.fi-form-actions {
+    background: var(--brand-50) !important;
+    border-top: 1px solid var(--brand-200) !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 0 0 12px 12px !important;
+}
+
+/* ===== TABS (used in some forms) ===== */
+.fi-tabs-tab {
+    color: var(--brand-500) !important;
+    font-weight: 600 !important;
+}
+.fi-tabs-tab[aria-selected="true"],
+.fi-tabs-tab.fi-active {
+    color: var(--brand-900) !important;
+    border-color: var(--brand-600) !important;
+}
+
+/* ===== SLIDE-OVER ===== */
+.fi-modal-slide-over .fi-modal-window {
+    border-left: none !important;
+    background: var(--brand-50) !important;
+}
+.fi-modal-slide-over .fi-modal-window .fi-modal-header,
+.fi-modal-slide-over.fi-modal-has-sticky-header .fi-modal-window > .fi-modal-header,
+.fi-modal.fi-modal-slide-over .fi-modal-header {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    border-bottom: none !important;
+    padding: 1.25rem 1.5rem !important;
+    border-color: transparent !important;
+}
+.fi-modal-slide-over .fi-modal-heading,
+.fi-modal.fi-modal-slide-over .fi-modal-heading {
+    color: #FFFFFF !important;
+    font-family: "Playfair Display", serif !important;
+    font-size: 1.125rem !important;
     font-weight: 700 !important;
 }
-
-/* Tab styling */
-.fi-tabs-tab {
-    color: #8b7355 !important;
+.fi-modal-slide-over .fi-modal-header .fi-modal-close-btn,
+.fi-modal-slide-over .fi-modal-header .fi-icon-btn,
+.fi-modal.fi-modal-slide-over .fi-modal-close-btn {
+    color: rgba(255,255,255,0.7) !important;
+}
+.fi-modal-slide-over .fi-modal-header .fi-modal-close-btn:hover,
+.fi-modal-slide-over .fi-modal-header .fi-icon-btn:hover,
+.fi-modal.fi-modal-slide-over .fi-modal-close-btn:hover {
+    color: #FFFFFF !important;
+    background: rgba(255,255,255,0.1) !important;
+}
+/* Slide-over content area */
+.fi-modal-slide-over .fi-modal-content {
+    background: var(--brand-50) !important;
+    padding: 1.25rem !important;
+}
+/* Slide-over footer with save/cancel */
+.fi-modal-slide-over .fi-modal-footer-actions {
+    background: var(--brand-50) !important;
+    border-top: 1px solid var(--brand-200) !important;
+    padding: 1rem 1.5rem !important;
+}
+/* Footer wrapper — single border, no extra lines */
+.fi-modal-slide-over .fi-modal-footer {
+    padding: 0.75rem 1.25rem !important;
+    border-top: 1px solid var(--brand-200) !important;
+    border-bottom: none !important;
+    background: var(--brand-50) !important;
+}
+/* Footer actions container — no extra borders */
+.fi-modal-slide-over .fi-modal-footer-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    justify-content: flex-start !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+/* All buttons in slide-over footer — normal Filament size */
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn,
+.fi-modal-slide-over .fi-modal-footer .fi-btn {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding: 0.375rem 1rem !important;
+    font-size: 0.8125rem !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    line-height: 1.25rem !important;
+}
+/* Save button in slide-over */
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn:first-child {
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+}
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn:first-child:hover {
+    background: linear-gradient(135deg, #4a2a1a, #7a5a49) !important;
+    box-shadow: 0 4px 12px rgba(61,35,20,0.2) !important;
+}
+/* Cancel button in slide-over */
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn + .fi-btn,
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn.fi-color-gray {
+    border: 1px solid var(--brand-200) !important;
+    color: var(--brand-700) !important;
+    background: #FFFFFF !important;
+    --tw-ring-shadow: none !important;
+    --tw-shadow: none !important;
+    box-shadow: none !important;
+}
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn + .fi-btn:hover,
+.fi-modal-slide-over .fi-modal-footer-actions .fi-btn.fi-color-gray:hover {
+    background: var(--brand-100) !important;
+    box-shadow: none !important;
+}
+/* Form inputs inside slide-overs */
+.fi-modal-slide-over .fi-input-wrp {
+    border-color: var(--brand-200) !important;
+    border-radius: 8px !important;
+    background: #FFFFFF !important;
+    --tw-ring-shadow: none !important;
+    --tw-shadow: none !important;
+}
+.fi-modal-slide-over .fi-input-wrp:focus-within {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px rgba(212,165,116,0.15) !important;
+    --tw-ring-shadow: none !important;
+}
+/* Remove gray divider between prefix icon and input */
+.fi-modal-slide-over .fi-input-wrp-prefix {
+    border-right: none !important;
+    border-color: transparent !important;
+}
+/* Textarea inside slide-overs */
+.fi-modal-slide-over textarea {
+    border-color: var(--brand-200) !important;
+    border-radius: 8px !important;
+    background: #FFFFFF !important;
+}
+.fi-modal-slide-over textarea:focus {
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px rgba(212,165,116,0.15) !important;
+}
+/* Select dropdowns inside slide-overs */
+.fi-modal-slide-over .fi-select-wrp .fi-input-wrp {
+    border-color: var(--brand-200) !important;
+}
+/* Prefix icons inside slide-overs */
+.fi-modal-slide-over .fi-input-wrp .fi-input-wrp-prefix {
+    color: var(--brand-600) !important;
+}
+/* Helper text */
+.fi-modal-slide-over .fi-fo-field-wrp-helper-text {
+    color: var(--brand-500) !important;
+}
+/* Labels */
+.fi-modal-slide-over .fi-fo-field-wrp-label label {
+    color: var(--brand-800) !important;
+    font-weight: 600 !important;
+}
+/* Section inside slide-over — subtle card look */
+.fi-modal-slide-over .fi-section {
+    background: #FFFFFF !important;
+    border: 1px solid var(--brand-200) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+/* File upload drop zone */
+.fi-modal-slide-over .fi-fo-file-upload {
+    background: var(--brand-50) !important;
+    border-color: var(--brand-200) !important;
+    border-style: dashed !important;
+    border-radius: 8px !important;
+}
+.fi-modal-slide-over .fi-fo-file-upload:hover {
+    border-color: var(--accent-gold) !important;
+    background: var(--brand-100) !important;
 }
 
-.fi-tabs-tab.fi-active {
-    color: #d4920c !important;
-    border-bottom-color: #d4920c !important;
+/* ===== BUTTONS ===== */
+.fi-btn-primary {
+    background: var(--brand-600) !important;
+}
+.fi-btn-primary:hover {
+    background: #6B4A2E !important;
 }
 
-/* Badge styling */
-.fi-badge {
-    background: #f5deb3 !important;
-    color: #654321 !important;
-    border: 1px solid #d2b48c !important;
+/* ===== STAT WIDGETS ===== */
+.fi-wi-stats-overview-stat {
+    border: 1px solid rgba(212,165,116,0.2) !important;
+    border-radius: 12px !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 2px 12px rgba(61,35,20,0.04) !important;
+}
+.fi-wi-stats-overview-stat-label {
+    color: var(--brand-600) !important;
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.05em !important;
+}
+.fi-wi-stats-overview-stat-value {
+    color: var(--brand-900) !important;
+    font-family: "Playfair Display", serif !important;
 }
 
-.fi-badge-primary {
-    background: #d4920c !important;
-    color: #ffffff !important;
+/* ===== CARDS & SECTIONS ===== */
+.fi-section {
+    border: 1px solid rgba(212,165,116,0.15) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 12px rgba(61,35,20,0.04) !important;
 }
 
-/* Toggle styling */
-.fi-toggle-input:checked {
-    background-color: #d4920c !important;
-    border-color: #d4920c !important;
+/* ===== PAGINATION ===== */
+.fi-pagination-item-btn.fi-active {
+    background: var(--brand-600) !important;
+    color: #FFFFFF !important;
 }
 
-/* Overall warmth and professional feel */
-body {
-    background: #fafafa !important;
+/* ===== MODALS ===== */
+.fi-modal-window {
+    border-radius: 12px !important;
+    box-shadow: 0 25px 60px rgba(61,35,20,0.15) !important;
+}
+.fi-modal-heading {
+    color: var(--brand-900) !important;
+    font-weight: 700 !important;
+}
+.fi-modal-description {
+    color: #6B4A2E !important;
+}
+/* Cancel button */
+.fi-modal .fi-btn.fi-color-gray {
+    border: 1px solid rgba(212,165,116,0.3) !important;
+    color: var(--brand-900) !important;
+    border-radius: 8px !important;
+}
+.fi-modal .fi-btn.fi-color-gray:hover {
+    background: var(--brand-50) !important;
+}
+/* All modal action buttons */
+.fi-modal .fi-btn {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+}
+/* Modal backdrop */
+.fi-modal-close-overlay {
+    background: rgba(61,35,20,0.4) !important;
+    backdrop-filter: blur(2px) !important;
 }
 
-.fi-main {
-    background: #fafafa !important;
+/* ===== HIDE SELECT CLEAR/X BUTTON (Quick Order repeater) ===== */
+/* Hide clear X on all non-native selects (payment method, fulfillment type) */
+.fi-select-input-value-remove-btn {
+    display: none !important;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+.fi-fo-repeater .fi-select-input-value-remove-btn {
+    display: none !important;
 }
 
-::-webkit-scrollbar-track {
-    background: #f5f5dc;
+/* ===== EMPTY STATE ===== */
+.fi-ta-empty-state-heading {
+    color: var(--brand-900) !important;
 }
-
-::-webkit-scrollbar-thumb {
-    background: #d2b48c;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #d4920c;
+.fi-ta-empty-state-description {
+    color: var(--brand-600) !important;
 }
