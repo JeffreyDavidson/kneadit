@@ -1,0 +1,219 @@
+/* Warm Bakery Theme for KneadIt Admin Panel */
+
+/* Sidebar styling - dark brown background with cream text */
+.fi-sidebar {
+    background: #2a1f18 !important;
+    border-right: 1px solid #3d2f24 !important;
+}
+
+.fi-sidebar-nav {
+    background: transparent !important;
+}
+
+.fi-sidebar-nav-item {
+    color: #f5f5dc !important; /* Cream text */
+}
+
+.fi-sidebar-nav-item:hover {
+    background: rgba(212, 146, 12, 0.2) !important; /* Honey gold hover */
+    color: #f5f5dc !important;
+}
+
+.fi-sidebar-nav-item.fi-active {
+    background: rgba(212, 146, 12, 0.3) !important;
+    color: #ffffff !important;
+}
+
+.fi-sidebar-nav-group-label {
+    color: #d4af83 !important; /* Warm tan for group labels */
+    font-weight: 600 !important;
+}
+
+/* Table headers - warm brown gradient */
+.fi-ta-header {
+    background: linear-gradient(135deg, #8b4513 0%, #a0522d 50%, #cd853f 100%) !important;
+    color: #f5f5dc !important;
+    font-weight: 600 !important;
+}
+
+.fi-ta-header-cell {
+    border-bottom: 2px solid #5d4037 !important;
+}
+
+/* Form focus rings - honey gold */
+.fi-input:focus,
+.fi-select-input:focus,
+.fi-textarea:focus {
+    border-color: #d4920c !important;
+    box-shadow: 0 0 0 3px rgba(212, 146, 12, 0.2) !important;
+}
+
+/* Primary buttons - honey gold */
+.fi-btn-primary {
+    background: linear-gradient(135deg, #d4920c 0%, #b8810b 100%) !important;
+    border-color: #d4920c !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.fi-btn-primary:hover {
+    background: linear-gradient(135deg, #b8810b 0%, #a0710a 100%) !important;
+    border-color: #b8810b !important;
+}
+
+/* Card borders - warm tan */
+.fi-section,
+.fi-card {
+    border: 1px solid #d2b48c !important;
+    background: #fefcf7 !important; /* Warm white background */
+}
+
+.fi-section-header {
+    border-bottom: 1px solid #d2b48c !important;
+    background: linear-gradient(135deg, #f5f5dc 0%, #f0e68c 100%) !important;
+}
+
+.fi-section-header-heading {
+    color: #654321 !important;
+    font-weight: 700 !important;
+}
+
+/* Empty states - bakery themed */
+.fi-ta-empty-state {
+    background: #fefcf7 !important;
+    border: 2px dashed #d2b48c !important;
+    border-radius: 12px !important;
+}
+
+.fi-ta-empty-state-icon {
+    color: #d4920c !important;
+}
+
+.fi-ta-empty-state-heading {
+    color: #654321 !important;
+    font-weight: 600 !important;
+}
+
+.fi-ta-empty-state-description {
+    color: #8b7355 !important;
+}
+
+/* Navigation breadcrumbs */
+.fi-breadcrumbs {
+    background: #f5f5dc !important;
+    border: 1px solid #d2b48c !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+}
+
+.fi-breadcrumbs-item a {
+    color: #654321 !important;
+    text-decoration: none !important;
+}
+
+.fi-breadcrumbs-item a:hover {
+    color: #d4920c !important;
+}
+
+/* Stats cards */
+.fi-stats-overview-stat {
+    background: linear-gradient(135deg, #fefcf7 0%, #f5f5dc 100%) !important;
+    border: 1px solid #d2b48c !important;
+}
+
+.fi-stats-overview-stat-value {
+    color: #654321 !important;
+    font-weight: 700 !important;
+}
+
+.fi-stats-overview-stat-label {
+    color: #8b7355 !important;
+    font-weight: 500 !important;
+}
+
+/* Notifications */
+.fi-no-content {
+    background: #fff8dc !important;
+    border: 1px solid #ddd6a3 !important;
+    color: #654321 !important;
+}
+
+/* Action buttons */
+.fi-ac-btn-action {
+    border-radius: 6px !important;
+}
+
+.fi-ac-btn-action:hover {
+    background: rgba(212, 146, 12, 0.1) !important;
+}
+
+/* Modal styling */
+.fi-modal {
+    background: #fefcf7 !important;
+}
+
+.fi-modal-header {
+    border-bottom: 1px solid #d2b48c !important;
+    background: linear-gradient(135deg, #f5f5dc 0%, #f0e68c 100%) !important;
+}
+
+.fi-modal-heading {
+    color: #654321 !important;
+    font-weight: 700 !important;
+}
+
+/* Tab styling */
+.fi-tabs-tab {
+    color: #8b7355 !important;
+}
+
+.fi-tabs-tab.fi-active {
+    color: #d4920c !important;
+    border-bottom-color: #d4920c !important;
+}
+
+/* Badge styling */
+.fi-badge {
+    background: #f5deb3 !important;
+    color: #654321 !important;
+    border: 1px solid #d2b48c !important;
+}
+
+.fi-badge-primary {
+    background: #d4920c !important;
+    color: #ffffff !important;
+}
+
+/* Toggle styling */
+.fi-toggle-input:checked {
+    background-color: #d4920c !important;
+    border-color: #d4920c !important;
+}
+
+/* Overall warmth and professional feel */
+body {
+    background: #fafafa !important;
+}
+
+.fi-main {
+    background: #fafafa !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f5f5dc;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d2b48c;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #d4920c;
+}
