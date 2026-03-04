@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 class ShoppingListGenerator extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
-    protected static string $navigationLabel = 'Shopping List Generator';
+    protected static ?string $navigationLabel = 'Shopping List Generator';
     protected static string|\UnitEnum|null $navigationGroup = 'Kitchen';
     protected string $view = 'filament.pages.shopping-list-generator';
 
