@@ -20,6 +20,7 @@ class WaitlistEntryResource extends Resource
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationLabel = 'Waitlist';
 

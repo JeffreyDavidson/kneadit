@@ -22,6 +22,7 @@ class ProductResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCake;
 
     protected static string|UnitEnum|null $navigationGroup = 'Shop';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
