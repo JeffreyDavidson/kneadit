@@ -11,7 +11,7 @@ class HolidayPlanningCalendar extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-gift';
     protected static ?string $navigationLabel = 'Holiday Planning Calendar';
-    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+    protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected string $view = 'filament.pages.holiday-planning-calendar';
 
     public Collection $holidays;

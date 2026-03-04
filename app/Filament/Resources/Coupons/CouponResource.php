@@ -22,6 +22,7 @@ class CouponResource extends Resource
     protected static string $requiredPlan = 'growth';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-ticket';
+    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
     public static function shouldRegisterNavigation(): bool
     {
