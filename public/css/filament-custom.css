@@ -1,32 +1,53 @@
 /* Warm Bakery Theme for KneadIt Admin Panel */
 
-/* Sidebar styling - dark brown background with cream text */
+/* ===== SIDEBAR ===== */
 .fi-sidebar {
-    background: #2a1f18 !important;
-    border-right: 1px solid #3d2f24 !important;
+    background: var(--brand-900, #1c1410) !important;
+    border-right: 1px solid rgba(212,165,116,0.1) !important;
+}
+.fi-sidebar-header {
+    border-bottom: 1px solid rgba(212,165,116,0.15) !important;
 }
 
-.fi-sidebar-nav {
-    background: transparent !important;
+/* Sidebar text — Filament compiles text-gray-700 which is invisible on dark bg */
+.fi-sidebar-item-label {
+    color: #FFFFFF !important;
 }
-
-.fi-sidebar-nav-item {
-    color: #f5f5dc !important; /* Cream text */
-}
-
-.fi-sidebar-nav-item:hover {
-    background: rgba(212, 146, 12, 0.2) !important; /* Honey gold hover */
-    color: #f5f5dc !important;
-}
-
-.fi-sidebar-nav-item.fi-active {
-    background: rgba(212, 146, 12, 0.3) !important;
-    color: #ffffff !important;
-}
-
-.fi-sidebar-nav-group-label {
-    color: #d4af83 !important; /* Warm tan for group labels */
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label {
+    color: #FFFFFF !important;
     font-weight: 600 !important;
+}
+
+/* Sidebar icons */
+.fi-sidebar-item-btn > .fi-icon,
+.fi-sidebar-item-icon {
+    color: var(--brand-300, #e8b04a) !important;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon {
+    color: #FFFFFF !important;
+}
+
+/* Sidebar active/hover */
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background: rgba(245,213,168,0.2) !important;
+}
+.fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:hover {
+    background: rgba(245,213,168,0.12) !important;
+}
+
+/* Sidebar badge */
+.fi-sidebar-item-badge-ctn .fi-badge {
+    background: var(--brand-300, #e8b04a) !important;
+    border-color: var(--brand-300, #e8b04a) !important;
+}
+.fi-sidebar-item-badge-ctn .fi-badge span {
+    color: var(--brand-900, #1c1410) !important;
+    font-weight: 700 !important;
+}
+
+/* Sidebar group labels */
+.fi-sidebar-group-label {
+    color: var(--brand-300, #e8b04a) !important;
 }
 
 /* Table headers - warm brown gradient */
