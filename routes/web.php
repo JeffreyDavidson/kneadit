@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/billing.php';
+require __DIR__.'/admin.php';
 
 /*
 |--------------------------------------------------------------------------
