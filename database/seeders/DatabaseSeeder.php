@@ -15,11 +15,48 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Create the default user first (required for orders)
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'KneadIt Baker',
+            'email' => 'baker@kneaditbakery.com',
         ]);
+
+        // Seed all tables in dependency order
+        $this->call([
+            // Core data with no dependencies
+            CategorySeeder::class,
+            CustomerSeeder::class,
+            SettingSeeder::class,
+            ExpenseSeeder::class,
+            IncomeSeeder::class,
+            CouponSeeder::class,
+            CapacityLimitSeeder::class,
+            
+            // Data that depends on categories
+            ProductSeeder::class,
+            
+            // Data that depends on products and customers
+            OrderSeeder::class,
+            RecipeSeeder::class,
+            ReviewSeeder::class,
+            WaitlistEntrySeeder::class,
+        ]);
+
+        $this->command->info('Demo data seeded successfully!');
+        $this->command->info('');
+        $this->command->info('🥖 Categories: 9 bakery categories');
+        $this->command->info('🧁 Products: 35 artisan baked goods');
+        $this->command->info('👥 Customers: 20 Florida customers');
+        $this->command->info('📦 Orders: 65 orders with realistic data');
+        $this->command->info('📝 Recipes: 15 detailed recipes with costs');
+        $this->command->info('⭐ Reviews: 25 customer reviews');
+        $this->command->info('💰 Expenses: 30 business expenses');
+        $this->command->info('💵 Income: 15 income entries');
+        $this->command->info('🎟️  Coupons: 5 promotional coupons');
+        $this->command->info('⚙️  Settings: Configured store settings');
+        $this->command->info('⏰ Waitlist: 5 waitlist entries');
+        $this->command->info('📅 Capacity: Daily capacity limits set');
+        $this->command->info('');
+        $this->command->info('🎉 KneadIt Demo Bakery is ready to explore!');
     }
 }
