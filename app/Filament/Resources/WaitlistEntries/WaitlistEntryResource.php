@@ -17,9 +17,9 @@ class WaitlistEntryResource extends Resource
 {
     protected static ?string $model = WaitlistEntry::class;
 
-    protected static ?string $navigationIcon = Heroicon::OutlinedClock;
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
-    protected static ?string $navigationGroup = 'Sales';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
 
     protected static ?string $navigationLabel = 'Waitlist';
 

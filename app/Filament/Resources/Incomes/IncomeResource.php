@@ -17,9 +17,9 @@ class IncomeResource extends Resource
 {
     protected static ?string $model = Income::class;
 
-    protected static ?string $navigationIcon = Heroicon::OutlinedPlusCircle;
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedPlusCircle;
 
-    protected static ?string $navigationGroup = 'Finance';
+    protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
     public static function form(Schema $schema): Schema
     {
