@@ -8,6 +8,7 @@ use App\Filament\Resources\Reviews\Pages\ListReviews;
 use App\Filament\Resources\Reviews\Schemas\ReviewForm;
 use App\Filament\Resources\Reviews\Tables\ReviewsTable;
 use App\Models\Review;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use UnitEnum;
 use Filament\Resources\Resource;
@@ -17,11 +18,19 @@ use Filament\Tables\Table;
 
 class ReviewResource extends Resource
 {
+    use HasPlanGating;
+
     protected static ?string $model = Review::class;
+    protected static string $requiredPlan = 'pro';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
 
     protected static string|UnitEnum|null $navigationGroup = 'Content';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::checkMinimumPlan(static::$requiredPlan);
+    }
 
     public static function form(Schema $schema): Schema
     {

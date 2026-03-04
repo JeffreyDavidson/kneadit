@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Orders\Tables;
 
 use App\Models\Order;
+use App\Services\PayPalService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -179,6 +180,36 @@ class OrdersTable
                             ->send();
                     })
                     ->visible(fn (Order $record) => in_array($record->status, ['pending', 'confirmed', 'baking'])),
+
+                Action::make('send_paypal_invoice')
+                    ->label('Send PayPal Invoice')
+                    ->icon('heroicon-o-credit-card')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Send PayPal Invoice')
+                    ->modalDescription('This will create and send a PayPal invoice to the customer for payment.')
+                    ->action(function (Order $record) {
+                        $paypalService = app(PayPalService::class);
+                        $invoiceId = $paypalService->createAndSendInvoice($record);
+                        
+                        if ($invoiceId) {
+                            Notification::make()
+                                ->title('PayPal invoice sent successfully')
+                                ->success()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Failed to send PayPal invoice')
+                                ->body('Please check the logs for more details.')
+                                ->danger()
+                                ->send();
+                        }
+                    })
+                    ->visible(fn (Order $record) => 
+                        $record->payment_status === 'unpaid' && 
+                        !$record->paypal_invoice_id &&
+                        in_array($record->status, ['confirmed', 'baking', 'ready'])
+                    ),
 
                 EditAction::make(),
             ])

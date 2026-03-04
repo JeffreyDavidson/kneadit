@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Customer extends Model
 {
@@ -26,6 +27,11 @@ class Customer extends Model
     public function customerNotes(): HasMany
     {
         return $this->hasMany(CustomerNote::class);
+    }
+
+    public function customerProfile(): HasOne
+    {
+        return $this->hasOne(CustomerProfile::class);
     }
 
     public function getFullAddressAttribute(): string

@@ -8,6 +8,7 @@ use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Filament\Resources\Recipes\Schemas\RecipeForm;
 use App\Filament\Resources\Recipes\Tables\RecipesTable;
 use App\Models\Recipe;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use UnitEnum;
 use Filament\Resources\Resource;
@@ -17,11 +18,19 @@ use Filament\Tables\Table;
 
 class RecipeResource extends Resource
 {
+    use HasPlanGating;
+
     protected static ?string $model = Recipe::class;
+    protected static string $requiredPlan = 'growth';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
     protected static string|UnitEnum|null $navigationGroup = 'Kitchen';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::checkMinimumPlan(static::$requiredPlan);
+    }
 
     public static function form(Schema $schema): Schema
     {

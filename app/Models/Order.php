@@ -18,6 +18,7 @@ class Order extends Model
         'delivery_fee',
         'discount',
         'total',
+        'paypal_invoice_id',
         'delivery_address',
         'requested_date',
         'requested_time',
