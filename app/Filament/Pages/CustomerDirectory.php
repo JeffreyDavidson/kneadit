@@ -21,7 +21,7 @@ class CustomerDirectory extends Page implements HasForms
     use InteractsWithForms;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
-    protected static string|UnitEnum|null $navigationGroup = 'Sales';
+    protected static string|UnitEnum|null $navigationGroup = 'Shop';
     protected static ?string $navigationLabel = 'Customer Directory';
     protected static ?string $title = 'Customer Directory';
 

@@ -34,7 +34,7 @@ class QuickOrder extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPlus;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Sales';
+    protected static string|UnitEnum|null $navigationGroup = 'Shop';
 
     protected static ?string $title = 'Quick Order';
 

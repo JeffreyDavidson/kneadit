@@ -11,7 +11,7 @@ class PriceSuggestionTool extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
     protected static ?string $navigationLabel = 'Price Suggestion Tool';
-    protected static string|\UnitEnum|null $navigationGroup = 'Kitchen';
+    protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected string $view = 'filament.pages.price-suggestion-tool';
 
     public ?int $selectedRecipeId = null;

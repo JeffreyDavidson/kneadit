@@ -11,7 +11,7 @@ class RecipeCostCalculator extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
     protected static ?string $navigationLabel = 'Recipe Cost Calculator';
-    protected static string|\UnitEnum|null $navigationGroup = 'Kitchen';
+    protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected string $view = 'filament.pages.recipe-cost-calculator';
 
     public ?int $selectedRecipeId = null;
