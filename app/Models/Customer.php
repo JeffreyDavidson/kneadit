@@ -23,6 +23,11 @@ class Customer extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function customerNotes(): HasMany
+    {
+        return $this->hasMany(CustomerNote::class);
+    }
+
     public function getFullAddressAttribute(): string
     {
         $address = '';
