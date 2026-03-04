@@ -45,10 +45,31 @@ class AdminPanelProvider extends PanelProvider
                 \Filament\Navigation\NavigationGroup::make('Tools'),
                 \Filament\Navigation\NavigationGroup::make('Finance'),
             ])
-            ->renderHook(
-                'panels::head.end',
-                fn() => new HtmlString('<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">')
-            )
+            ->font('Inter')
+            ->renderHook('panels::head.end', fn () => new HtmlString(
+                '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">'
+                . '<style>'
+                . '.fi-fo-repeater .fi-fo-repeater-items .fi-fo-repeater-item{border-radius:0!important;box-shadow:none!important;background:transparent!important;outline:none!important;--tw-ring-shadow:0 0 0 0 transparent!important;--tw-shadow:0 0 0 0 transparent!important;--tw-inset-shadow:0 0 0 0 transparent!important;--tw-inset-ring-shadow:0 0 0 0 transparent!important;--tw-ring-offset-shadow:0 0 0 0 transparent!important;--tw-ring-color:transparent!important;border:none!important;border-bottom:1px solid #f3ebe0!important}'
+                . '.fi-fo-repeater .fi-fo-repeater-items .fi-fo-repeater-item:last-child{border-bottom:none!important}'
+                . '.fi-fo-repeater .fi-fo-repeater-items{gap:0!important}'
+                . '.fi-input-wrp{box-shadow:0 0 0 1px #e8d0b0!important;border:none!important;border-radius:8px!important;outline:none!important}'
+                . '.fi-input-wrp:focus-within{box-shadow:0 0 0 2px #8b5e3c!important}'
+                . '</style>'
+                . '<style>:root{'
+                . '--brand-900:' . \App\Models\Setting::get('brand_color_900', '#3d2314') . ';'
+                . '--brand-800:' . \App\Models\Setting::get('brand_color_800', '#4a3225') . ';'
+                . '--brand-700:' . \App\Models\Setting::get('brand_color_700', '#6b4c3b') . ';'
+                . '--brand-600:' . \App\Models\Setting::get('brand_color_600', '#8b5e3c') . ';'
+                . '--brand-500:' . \App\Models\Setting::get('brand_color_500', '#a08060') . ';'
+                . '--brand-400:' . \App\Models\Setting::get('brand_color_400', '#c4a882') . ';'
+                . '--brand-300:' . \App\Models\Setting::get('brand_color_300', '#d4a574') . ';'
+                . '--brand-200:' . \App\Models\Setting::get('brand_color_200', '#e8d0b0') . ';'
+                . '--brand-150:' . \App\Models\Setting::get('brand_color_150', '#f3ebe0') . ';'
+                . '--brand-100:' . \App\Models\Setting::get('brand_color_100', '#f5e6d0') . ';'
+                . '--brand-50:' . \App\Models\Setting::get('brand_color_50', '#fdf8f2') . ';'
+                . '--accent-gold:' . \App\Models\Setting::get('brand_color_300', '#d4a574') . ';'
+                . '}</style>'
+            ))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
