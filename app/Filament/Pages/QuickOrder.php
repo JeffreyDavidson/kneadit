@@ -32,7 +32,7 @@ class QuickOrder extends Page
 {
     protected string $view = 'filament-panels::pages.simple';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPlus;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-plus-circle';
 
     protected static string|UnitEnum|null $navigationGroup = 'Shop';
 
