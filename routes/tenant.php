@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\StorefrontController;
+use Illuminate\Support\Facades\Route;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+
+/*
+|--------------------------------------------------------------------------
+| Tenant Routes
+|--------------------------------------------------------------------------
+|
+| These routes are for individual tenant storefronts and admin panels.
+| Each baker gets their own subdomain: bakery-name.getkneadit.app
+|
+*/
+
+Route::middleware([
+    'web',
+    InitializeTenancyByDomainOrSubdomain::class,
+    PreventAccessFromCentralDomains::class,
+])->group(function () {
+    // Storefront (public)
+    Route::get('/', [StorefrontController::class, 'home'])->name('storefront.home');
+    Route::get('/menu', [StorefrontController::class, 'menu'])->name('storefront.menu');
+    Route::get('/order', [OrderController::class, 'create'])->name('order.create');
+    Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+    Route::get('/order/confirmation/{order}', [OrderController::class, 'confirmation'])->name('order.confirmation');
+    Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+    // Capacity check (AJAX)
+    Route::get('/capacity/check/{date}', [OrderController::class, 'checkCapacity'])->name('capacity.check');
+
+    // Coupon validation (AJAX)
+    Route::post('/coupon/apply', [OrderController::class, 'applyCoupon'])->name('coupon.apply');
+
+    // Customer favorites (AJAX)
+    Route::get('/favorites', [StorefrontController::class, 'getFavorites'])->name('favorites.get');
+    Route::post('/favorites/toggle', [StorefrontController::class, 'toggleFavorite'])->name('favorites.toggle');
+});
