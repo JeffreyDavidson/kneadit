@@ -9,9 +9,9 @@ use Illuminate\Support\Collection;
 
 class OrderCalendar extends Page
 {
-    protected static string $navigationIcon = 'heroicon-o-calendar-days';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
     protected static string $navigationLabel = 'Order Calendar';
-    protected static string $navigationGroup = 'Sales';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales';
     protected string $view = 'filament.pages.order-calendar';
 
     public int $currentYear;

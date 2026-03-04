@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class BakingSheet extends Page
 {
-    protected static string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static string $navigationLabel = 'Baking Sheet';
-    protected static string $navigationGroup = 'Kitchen';
+    protected static string|\UnitEnum|null $navigationGroup = 'Kitchen';
     protected string $view = 'filament.pages.baking-sheet';
 
     public string $selectedDate = '';
