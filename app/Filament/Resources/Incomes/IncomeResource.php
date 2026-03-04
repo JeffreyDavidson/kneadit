@@ -8,6 +8,7 @@ use App\Filament\Resources\Incomes\Pages\ListIncomes;
 use App\Filament\Resources\Incomes\Schemas\IncomeForm;
 use App\Filament\Resources\Incomes\Tables\IncomesTable;
 use App\Models\Income;
+use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -15,11 +16,19 @@ use Filament\Tables\Table;
 
 class IncomeResource extends Resource
 {
+    use HasPlanGating;
+
     protected static ?string $model = Income::class;
+    protected static string $requiredPlan = 'growth';
 
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedPlusCircle;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::checkMinimumPlan(static::$requiredPlan);
+    }
 
     public static function form(Schema $schema): Schema
     {

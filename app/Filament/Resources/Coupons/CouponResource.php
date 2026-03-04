@@ -8,6 +8,7 @@ use App\Filament\Resources\Coupons\Pages\ListCoupons;
 use App\Filament\Resources\Coupons\Schemas\CouponForm;
 use App\Filament\Resources\Coupons\Tables\CouponsTable;
 use App\Models\Coupon;
+use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -15,9 +16,17 @@ use Filament\Tables\Table;
 
 class CouponResource extends Resource
 {
+    use HasPlanGating;
+
     protected static ?string $model = Coupon::class;
+    protected static string $requiredPlan = 'growth';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-ticket';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::checkMinimumPlan(static::$requiredPlan);
+    }
 
     public static function form(Schema $schema): Schema
     {
