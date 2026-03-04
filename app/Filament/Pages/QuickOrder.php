@@ -40,7 +40,7 @@ class QuickOrder extends Page
 
     protected static ?string $navigationLabel = 'Quick Order';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 7;
 
     public ?array $data = [];
 
