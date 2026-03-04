@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 class HolidayPlanningCalendar extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-gift';
-    protected static string $navigationLabel = 'Holiday Planning Calendar';
+    protected static ?string $navigationLabel = 'Holiday Planning Calendar';
     protected static string|\UnitEnum|null $navigationGroup = 'Sales';
     protected string $view = 'filament.pages.holiday-planning-calendar';
 
