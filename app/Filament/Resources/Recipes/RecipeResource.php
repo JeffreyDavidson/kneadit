@@ -25,7 +25,7 @@ class RecipeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Kitchen';
+    protected static string|UnitEnum|null $navigationGroup = 'Tools';
 
     public static function shouldRegisterNavigation(): bool
     {

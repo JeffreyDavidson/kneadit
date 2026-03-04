@@ -38,14 +38,12 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(view('filament.brand-logo'))
             ->darkMode(false)
             ->navigationGroups([
-                'Dashboard',
-                'Sales',
-                'Catalog',
-                'Kitchen',
-                'Finance',
-                'Marketing',
-                'Content',
-                'System',
+                \Filament\Navigation\NavigationGroup::make('Shop'),
+                \Filament\Navigation\NavigationGroup::make('Settings'),
+                \Filament\Navigation\NavigationGroup::make('Content'),
+                \Filament\Navigation\NavigationGroup::make('Admin'),
+                \Filament\Navigation\NavigationGroup::make('Tools'),
+                \Filament\Navigation\NavigationGroup::make('Finance'),
             ])
             ->renderHook(
                 'panels::head.end',
