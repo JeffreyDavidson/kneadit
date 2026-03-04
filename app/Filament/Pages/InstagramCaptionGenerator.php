@@ -17,7 +17,7 @@ class InstagramCaptionGenerator extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlineCamera;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCamera;
     protected static string|UnitEnum|null $navigationGroup = 'Marketing';
     protected static ?string $navigationLabel = 'Instagram Captions';
     protected static ?string $title = 'Instagram Caption Generator';
@@ -72,7 +72,7 @@ class InstagramCaptionGenerator extends Page implements HasForms
             Action::make('generate')
                 ->label('Generate Captions')
                 ->action('generateCaptions')
-                ->icon(Heroicon::OutlineSparkles)
+                ->icon(Heroicon::OutlinedSparkles)
                 ->color('primary')
                 ->size('lg'),
         ];
