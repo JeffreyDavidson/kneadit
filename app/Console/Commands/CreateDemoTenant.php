@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\Tenant;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 class CreateDemoTenant extends Command
 {
@@ -15,23 +17,22 @@ class CreateDemoTenant extends Command
         $subdomain = 'demo';
         $domain = 'demo.kneadit.test';
 
-        // Check if demo tenant already exists
-        $existing = Tenant::find($subdomain);
-
-        if ($existing) {
-            if ($this->option('fresh')) {
+        if ($this->option('fresh')) {
+            $existing = Tenant::find($subdomain);
+            if ($existing) {
                 $this->info('Deleting existing demo tenant...');
                 $existing->delete();
-            } else {
-                $this->warn('Demo tenant already exists. Use --fresh to recreate.');
-                $this->info("Access it at: http://{$domain}");
-                $this->info("Admin panel: http://{$domain}/admin");
-                return self::SUCCESS;
             }
+        }
+
+        if (Tenant::find($subdomain)) {
+            $this->warn('Demo tenant already exists. Use --fresh to recreate.');
+            return self::SUCCESS;
         }
 
         $this->info('Creating demo tenant...');
 
+        // Create tenant (this triggers CreateDatabase + MigrateDatabase via events)
         $tenant = Tenant::create([
             'id' => $subdomain,
             'name' => 'Demo Baker',
@@ -44,18 +45,28 @@ class CreateDemoTenant extends Command
             'is_active' => true,
         ]);
 
-        // Store both the full domain and just the subdomain for flexible resolution
-        $tenant->domains()->create([
-            'domain' => $domain,
-        ]);
-        $tenant->domains()->create([
-            'domain' => $subdomain,
-        ]);
+        $tenant->domains()->create(['domain' => $domain]);
+        $tenant->domains()->create(['domain' => $subdomain]);
 
-        $this->info('Setting up tenant data...');
+        // Verify tenant database was created
+        $dbName = 'tenant' . $subdomain;
+        $dbPath = database_path($dbName);
 
-        // Database + migrations are auto-handled by TenancyServiceProvider events
-        // (CreateDatabase + MigrateDatabase jobs fire on TenantCreated)
+        if (! file_exists($dbPath)) {
+            $this->warn('Tenant database not auto-created. Creating manually...');
+            touch($dbPath);
+        }
+
+        $this->info('Running tenant migrations...');
+
+        // Manually run tenant migrations
+        Artisan::call('tenants:migrate', [
+            '--tenants' => [$subdomain],
+            '--force' => true,
+        ]);
+        $this->info(Artisan::output());
+
+        $this->info('Seeding tenant data...');
 
         $tenant->run(function () {
             // Create admin user
@@ -66,17 +77,15 @@ class CreateDemoTenant extends Command
                 'email_verified_at' => now(),
             ]);
 
-            // Seed default settings
+            // Seed settings
             \App\Models\Setting::set('store_name', 'Sweet Dreams Bakery');
             \App\Models\Setting::set('store_email', 'demo@getkneadit.app');
             \App\Models\Setting::set('store_phone', '(863) 555-0123');
             \App\Models\Setting::set('store_address', '123 Main Street, Davenport, FL 33837');
             \App\Models\Setting::set('default_daily_capacity', '15');
 
-            $this->info('Seeding demo data...');
-
-            // Run all seeders inside tenant context
-            \Artisan::call('db:seed', ['--force' => true]);
+            // Run seeders
+            Artisan::call('db:seed', ['--force' => true]);
         });
 
         $this->newLine();
