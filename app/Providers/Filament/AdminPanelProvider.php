@@ -41,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
                 \Filament\Navigation\NavigationGroup::make('Shop'),
                 \Filament\Navigation\NavigationGroup::make('Settings'),
                 \Filament\Navigation\NavigationGroup::make('Content'),
+                \Filament\Navigation\NavigationGroup::make('Communication'),
                 \Filament\Navigation\NavigationGroup::make('Admin'),
                 \Filament\Navigation\NavigationGroup::make('Tools'),
                 \Filament\Navigation\NavigationGroup::make('Finance'),

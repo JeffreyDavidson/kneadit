@@ -13,7 +13,7 @@ class ReviewAnalytics extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-star';
     protected static ?string $navigationLabel = 'Review Analytics';
-    protected static string|\UnitEnum|null $navigationGroup = 'Content';
+    protected static string|\UnitEnum|null $navigationGroup = 'Communication';
     protected string $view = 'filament.pages.review-analytics';
 
     public function getOverallStats(): array
