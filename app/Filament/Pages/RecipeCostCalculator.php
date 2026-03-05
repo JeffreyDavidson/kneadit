@@ -8,8 +8,8 @@ use App\Models\Product;
 use Illuminate\Support\Collection;
 
 class RecipeCostCalculator extends Page
-    protected static bool $shouldRegisterNavigation = false;
 {
+    protected static bool $shouldRegisterNavigation = false;
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
     protected static ?string $navigationLabel = 'Recipe Cost Calculator';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
