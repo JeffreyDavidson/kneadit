@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Tenant;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Process;
 
 class CreateDemoBakeries extends Command
 {
@@ -67,8 +67,6 @@ class CreateDemoBakeries extends Command
         }
 
         foreach ($bakeries as $bakery) {
-            $domain = $bakery['id'] . '.kneadit.test';
-
             if (Tenant::find($bakery['id'])) {
                 $this->warn("{$bakery['store_name']} already exists. Use --fresh to recreate.");
                 continue;
@@ -76,44 +74,28 @@ class CreateDemoBakeries extends Command
 
             $this->info("Creating {$bakery['store_name']}...");
 
-            // Create tenant record + domains
-            // TenantCreated event fires CreateDatabase + MigrateDatabase
-            $tenant = Tenant::create([
-                'id' => $bakery['id'],
-                'name' => $bakery['name'],
-                'email' => $bakery['email'],
-                'plan' => 'pro',
-                'trial_ends_at' => now()->addDays(30),
-                'store_name' => $bakery['store_name'],
-                'brand_color_primary' => $bakery['brand_primary'],
-                'brand_color_secondary' => $bakery['brand_secondary'],
-                'is_active' => true,
-            ]);
+            // Run each tenant creation in a separate PHP process
+            // This avoids Stancl's connection state leaking between tenants
+            $result = Process::run(sprintf(
+                'php artisan tenant:create-one %s %s %s %s %s %s',
+                escapeshellarg($bakery['id']),
+                escapeshellarg($bakery['name']),
+                escapeshellarg($bakery['email']),
+                escapeshellarg($bakery['store_name']),
+                escapeshellarg($bakery['brand_primary']),
+                escapeshellarg($bakery['brand_secondary']),
+            ));
 
-            $tenant->domains()->create(['domain' => $domain]);
-            $tenant->domains()->create(['domain' => $bakery['id']]);
-
-            // Explicitly migrate (in case event pipeline didn't)
-            $this->info("  Migrating...");
-            Artisan::call('tenants:migrate', [
-                '--tenants' => [$bakery['id']],
-                '--force' => true,
-            ]);
-
-            // Seed using Stancl's native tenants:seed command
-            // This handles all connection switching internally
-            $this->info("  Seeding...");
-            Artisan::call('tenants:seed', [
-                '--tenants' => [$bakery['id']],
-                '--class' => 'Database\\Seeders\\TenantSeeder',
-                '--force' => true,
-            ]);
-
-            $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
+            if ($result->successful()) {
+                $domain = $bakery['id'] . '.kneadit.test';
+                $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
+            } else {
+                $this->error("  ❌ Failed: " . trim($result->errorOutput() ?: $result->output()));
+            }
         }
 
         $this->newLine();
-        $this->info('All 5 bakeries created! Login: password');
+        $this->info('All bakeries created! Login: password');
         $this->newLine();
         $this->warn('Add these to /etc/hosts:');
         foreach ($bakeries as $bakery) {
