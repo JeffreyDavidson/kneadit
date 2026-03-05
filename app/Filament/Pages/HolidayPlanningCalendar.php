@@ -12,7 +12,7 @@ class HolidayPlanningCalendar extends Page
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-gift';
     protected static ?string $navigationLabel = 'Holiday Planning Calendar';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 5;
     protected string $view = 'filament.pages.holiday-planning-calendar';
 
     public Collection $holidays;

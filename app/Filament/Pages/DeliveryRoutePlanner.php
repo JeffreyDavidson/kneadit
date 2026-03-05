@@ -13,7 +13,7 @@ class DeliveryRoutePlanner extends Page
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-truck';
     protected static ?string $navigationLabel = 'Delivery Route Planner';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 11;
     protected string $view = 'filament.pages.delivery-route-planner';
 
     public ?string $selectedDate = null;
