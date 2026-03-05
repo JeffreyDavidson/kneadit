@@ -36,6 +36,15 @@ class StatsOverview extends BaseWidget
                 ->icon('heroicon-o-currency-dollar')
                 ->color('success'),
 
+            Stat::make('Avg Order Value', '$' . number_format(
+                (float) Order::where('status', '!=', 'cancelled')
+                    ->whereBetween('requested_date', [$weekStart, Carbon::now()->endOfWeek()])
+                    ->avg('total') ?? 0,
+                2
+            ))
+                ->icon('heroicon-o-receipt-percent')
+                ->color('info'),
+
             Stat::make('Total Customers', Order::distinct('customer_email')->count('customer_email'))
                 ->icon('heroicon-o-users')
                 ->color('info'),
