@@ -21,7 +21,6 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            GoalTrackerWidget::class,
             StatsOverview::class,
             MarginAlertWidget::class,
             UpcomingHolidayWidget::class,
@@ -29,6 +28,7 @@ class Dashboard extends BaseDashboard
             BakingSheetWidget::class,
             PopularProductsWidget::class,
             WeeklyRevenueChart::class,
+            GoalTrackerWidget::class,
         ];
     }
 }
