@@ -96,28 +96,14 @@ class CreateDemoBakeries extends Command
             $tenant->domains()->create(['domain' => $domain]);
             $tenant->domains()->create(['domain' => $bakery['id']]);
 
-            $dbPath = database_path('tenant' . $bakery['id']);
-            if (!file_exists($dbPath)) {
-                touch($dbPath);
-            }
-
+            // Run migrations for this tenant
             Artisan::call('tenants:migrate', [
                 '--tenants' => [$bakery['id']],
                 '--force' => true,
             ]);
 
-            // Manually configure and switch to tenant database
-            $tenantDbPath = database_path('tenant' . $bakery['id']);
-            
-            config(['database.connections.tenant' => [
-                'driver' => 'sqlite',
-                'database' => $tenantDbPath,
-                'prefix' => '',
-                'foreign_key_constraints' => true,
-            ]]);
-
-            \Illuminate\Support\Facades\DB::purge('tenant');
-            \Illuminate\Support\Facades\DB::setDefaultConnection('tenant');
+            // Initialize tenancy context (switches DB connection via Stancl bootstrappers)
+            tenancy()->initialize($tenant);
 
             \App\Models\User::updateOrCreate(
                 ['email' => $bakery['email']],
@@ -133,9 +119,8 @@ class CreateDemoBakeries extends Command
 
             (new \Database\Seeders\DatabaseSeeder())->run();
 
-            // Revert to central
-            \Illuminate\Support\Facades\DB::purge('tenant');
-            \Illuminate\Support\Facades\DB::setDefaultConnection('sqlite');
+            // End tenancy context (reverts to central connection)
+            tenancy()->end();
 
             $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
         }
