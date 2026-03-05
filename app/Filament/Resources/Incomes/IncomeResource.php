@@ -21,7 +21,7 @@ class IncomeResource extends Resource
     protected static ?string $model = Income::class;
     protected static string $requiredPlan = 'growth';
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedPlusCircle;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-up';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
