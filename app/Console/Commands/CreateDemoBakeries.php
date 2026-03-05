@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 class CreateDemoBakeries extends Command
 {
@@ -64,9 +65,6 @@ class CreateDemoBakeries extends Command
                     $existing->delete();
                 }
             }
-
-            // Clean any leftover data in central DB from previous broken runs
-            $this->cleanCentralDb();
         }
 
         foreach ($bakeries as $bakery) {
@@ -79,6 +77,7 @@ class CreateDemoBakeries extends Command
 
             $this->info("Creating {$bakery['store_name']}...");
 
+            // Tenant::create fires TenantCreated event which runs CreateDatabase + MigrateDatabase
             $tenant = Tenant::create([
                 'id' => $bakery['id'],
                 'name' => $bakery['name'],
@@ -94,33 +93,9 @@ class CreateDemoBakeries extends Command
             $tenant->domains()->create(['domain' => $domain]);
             $tenant->domains()->create(['domain' => $bakery['id']]);
 
-            // Run migrations in tenant context
-            Artisan::call('tenants:migrate', [
-                '--tenants' => [$bakery['id']],
-                '--force' => true,
-            ]);
-
-            // Use $tenant->run() for guaranteed tenant DB context
-            $tenant->run(function () use ($bakery) {
-                $conn = \Illuminate\Support\Facades\DB::getDefaultConnection();
-                $db = \Illuminate\Support\Facades\DB::connection()->getDatabaseName();
-                echo "  [DEBUG] Connection: {$conn}, DB: {$db}\n";
-
-                // Create admin user for this bakery
-                \App\Models\User::create([
-                    'name' => $bakery['name'],
-                    'email' => $bakery['email'],
-                    'password' => bcrypt('password'),
-                    'email_verified_at' => now(),
-                ]);
-
-                // Set store identity
-                \App\Models\Setting::set('store_name', $bakery['store_name']);
-                \App\Models\Setting::set('store_email', $bakery['email']);
-
-                // Run all seeders
-                (new \Database\Seeders\DatabaseSeeder())->run();
-            });
+            // Seed: use tenants:run to execute db:seed in tenant context
+            // This is how Stancl recommends running commands in tenant context
+            $this->seedTenant($tenant, $bakery);
 
             $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
         }
@@ -136,23 +111,72 @@ class CreateDemoBakeries extends Command
         return self::SUCCESS;
     }
 
-    /**
-     * Remove any data accidentally seeded into the central DB from previous broken runs.
-     */
-    private function cleanCentralDb(): void
+    private function seedTenant(Tenant $tenant, array $bakery): void
     {
-        $tables = ['categories', 'products', 'customers', 'orders', 'order_items',
-                    'recipes', 'reviews', 'expenses', 'incomes', 'coupons',
-                    'capacity_limits', 'waitlist_entries', 'settings'];
+        // Manually configure a direct connection to the tenant's SQLite database
+        $dbName = 'tenant' . $bakery['id'];
+        $dbPath = database_path($dbName);
 
-        $central = \Illuminate\Support\Facades\DB::connection('central');
-
-        foreach ($tables as $table) {
-            try {
-                $central->table($table)->truncate();
-            } catch (\Exception $e) {
-                // Table may not exist in central — that's fine
-            }
+        if (! file_exists($dbPath)) {
+            $this->error("  Tenant database not found: {$dbPath}");
+            return;
         }
+
+        // Register a temporary direct connection
+        config(["database.connections.tenant_direct" => [
+            'driver' => 'sqlite',
+            'database' => $dbPath,
+            'prefix' => '',
+            'foreign_key_constraints' => true,
+        ]]);
+
+        DB::purge('tenant_direct');
+
+        // Create admin user directly
+        DB::connection('tenant_direct')->table('users')->insert([
+            'name' => $bakery['name'],
+            'email' => $bakery['email'],
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Create default user for seeders
+        DB::connection('tenant_direct')->table('users')->insert([
+            'name' => 'KneadIt Baker',
+            'email' => 'baker@kneaditbakery.com',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Set store identity
+        DB::connection('tenant_direct')->table('settings')->insert([
+            ['key' => 'store_name', 'value' => $bakery['store_name'], 'created_at' => now(), 'updated_at' => now()],
+            ['key' => 'store_email', 'value' => $bakery['email'], 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
+        // Now switch default connection to this tenant DB so seeders work
+        $previousDefault = DB::getDefaultConnection();
+        config(['database.connections.sqlite.database' => $dbPath]);
+        DB::purge('sqlite');
+        DB::setDefaultConnection('sqlite');
+
+        // Run seeders (they use default connection via Eloquent)
+        try {
+            $seeder = new \Database\Seeders\DatabaseSeeder();
+            $seeder->run();
+            $this->info("  Seeded successfully");
+        } catch (\Exception $e) {
+            $this->error("  Seeding error: " . $e->getMessage());
+        }
+
+        // Restore default connection to central DB
+        config(['database.connections.sqlite.database' => database_path('database.sqlite')]);
+        DB::purge('sqlite');
+        DB::setDefaultConnection($previousDefault);
+        DB::purge('tenant_direct');
     }
 }
