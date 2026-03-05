@@ -27,7 +27,7 @@ Route::middleware([
     // Storefront (public)
     Route::get('/', [StorefrontController::class, 'home'])->name('storefront.home');
     Route::get('/menu', [StorefrontController::class, 'menu'])->name('storefront.menu');
-    Route::get('/order', [OrderController::class, 'create'])->name('order.create');
+    Route::get('/order', [OrderController::class, 'index'])->name('order.create');
     Route::post('/order', [OrderController::class, 'store'])->name('order.store');
     Route::get('/order/confirmation/{order}', [OrderController::class, 'confirmation'])->name('order.confirmation');
     Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
