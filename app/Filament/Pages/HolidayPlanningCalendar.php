@@ -9,8 +9,9 @@ use Illuminate\Support\Collection;
 
 class HolidayPlanningCalendar extends Page
 {
+    protected static bool $shouldRegisterNavigation = false;
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-gift';
-    protected static ?string $navigationLabel = 'Holiday Planning Calendar';
+    protected static ?string $navigationLabel = 'Holidays';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 9;
     protected string $view = 'filament.pages.holiday-planning-calendar';
