@@ -19,7 +19,7 @@ class BakingSheetWidget extends BaseWidget
 
     public function getTableRecordKey(\Illuminate\Database\Eloquent\Model|array $record): string
     {
-        return $record->product_name ?? '';
+        return (string) $record->product_id;
     }
 
     public function table(Table $table): Table
@@ -27,7 +27,8 @@ class BakingSheetWidget extends BaseWidget
         return $table
             ->query(
                 OrderItem::query()
-                    ->selectRaw('product_name, SUM(quantity) as total_quantity')
+                    ->join('products', 'order_items.product_id', '=', 'products.id')
+                    ->selectRaw('order_items.product_id, products.name as product_name, SUM(order_items.quantity) as total_quantity')
                     ->whereHas('order', function (Builder $query) {
                         $query->whereIn('status', ['pending', 'confirmed', 'baking'])
                             ->where(function (Builder $q) {
@@ -38,7 +39,7 @@ class BakingSheetWidget extends BaseWidget
                                     });
                             });
                     })
-                    ->groupBy('product_name')
+                    ->groupBy('order_items.product_id', 'products.name')
             )
             ->columns([
                 TextColumn::make('product_name')

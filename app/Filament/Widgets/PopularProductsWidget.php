@@ -19,7 +19,7 @@ class PopularProductsWidget extends BaseWidget
 
     public function getTableRecordKey(\Illuminate\Database\Eloquent\Model|array $record): string
     {
-        return $record->product_name;
+        return (string) $record->product_id;
     }
 
     public function table(Table $table): Table
@@ -28,14 +28,16 @@ class PopularProductsWidget extends BaseWidget
             ->query(
                 OrderItem::query()
                     ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                    ->join('products', 'products.id', '=', 'order_items.product_id')
                     ->where('orders.status', '!=', 'cancelled')
                     ->whereBetween('orders.requested_date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
                     ->select(
-                        'order_items.product_name',
+                        'order_items.product_id',
+                        'products.name as product_name',
                         DB::raw('SUM(order_items.quantity) as total_qty'),
-                        DB::raw('SUM(order_items.line_total) as total_revenue')
+                        DB::raw('SUM(order_items.quantity * order_items.unit_price) as total_revenue')
                     )
-                    ->groupBy('order_items.product_name')
+                    ->groupBy('order_items.product_id', 'products.name')
                     ->orderByDesc('total_qty')
                     ->limit(5)
             )
