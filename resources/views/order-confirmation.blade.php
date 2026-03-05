@@ -192,12 +192,12 @@
         <div class="mt-8 space-y-4">
             <p class="text-warm-700">
                 <strong>Questions about your order?</strong> Contact us at 
-                <a href="{{ route('contact') }}" class="text-warm-600 hover:underline">our contact page</a>
+                <a href="{{ route('contact.show') }}" class="text-warm-600 hover:underline">our contact page</a>
                 or reference your order number: <strong>{{ $order->order_number }}</strong>
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="{{ route('home') }}" class="btn-primary">
+                <a href="{{ route('storefront.home') }}" class="btn-primary">
                     Continue Shopping
                 </a>
                 <button onclick="window.print()" class="btn-secondary">
