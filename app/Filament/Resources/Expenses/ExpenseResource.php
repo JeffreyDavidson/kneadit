@@ -22,7 +22,7 @@ class ExpenseResource extends Resource
     protected static ?string $model = Expense::class;
     protected static string $requiredPlan = 'growth';
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedMinusCircle;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-down';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
