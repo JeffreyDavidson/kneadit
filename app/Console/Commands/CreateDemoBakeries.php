@@ -121,10 +121,7 @@ class CreateDemoBakeries extends Command
             \App\Models\Setting::set('store_name', $bakery['store_name']);
             \App\Models\Setting::set('store_email', $bakery['email']);
 
-            Artisan::call('db:seed', [
-                '--force' => true,
-                '--database' => 'tenant',
-            ]);
+            (new \Database\Seeders\DatabaseSeeder())->run();
 
             // End tenancy (revert to central)
             tenancy()->end();
