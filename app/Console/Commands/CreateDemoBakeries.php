@@ -102,6 +102,10 @@ class CreateDemoBakeries extends Command
 
             // Use $tenant->run() for guaranteed tenant DB context
             $tenant->run(function () use ($bakery) {
+                $conn = \Illuminate\Support\Facades\DB::getDefaultConnection();
+                $db = \Illuminate\Support\Facades\DB::connection()->getDatabaseName();
+                echo "  [DEBUG] Connection: {$conn}, DB: {$db}\n";
+
                 // Create admin user for this bakery
                 \App\Models\User::create([
                     'name' => $bakery['name'],
