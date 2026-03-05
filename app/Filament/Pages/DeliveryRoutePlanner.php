@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 class DeliveryRoutePlanner extends Page
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-truck';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';
     protected static ?string $navigationLabel = 'Delivery Planner';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 10;
