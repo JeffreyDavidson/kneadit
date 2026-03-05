@@ -12,7 +12,11 @@ class UpcomingHolidayWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        $holiday = Holiday::active()->upcoming()->first();
+        try {
+            $holiday = Holiday::active()->upcoming()->first();
+        } catch (\Exception $e) {
+            return [];
+        }
 
         if (!$holiday) {
             return [];
