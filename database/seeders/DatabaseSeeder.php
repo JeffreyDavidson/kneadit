@@ -15,13 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create the default user first (required for orders) — skip if already exists
-        if (!User::where('email', 'baker@kneaditbakery.com')->exists()) {
-            User::factory()->create([
+        // Create the default user first (required for orders)
+        User::updateOrCreate(
+            ['email' => 'baker@kneaditbakery.com'],
+            [
                 'name' => 'KneadIt Baker',
-                'email' => 'baker@kneaditbakery.com',
-            ]);
-        }
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+            ]
+        );
 
         // Seed all tables in dependency order
         $this->call([
