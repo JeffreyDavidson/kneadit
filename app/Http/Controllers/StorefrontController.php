@@ -19,7 +19,7 @@ class StorefrontController extends Controller
 
         $storeName = Setting::get('store_name', 'Our Bakery');
 
-        return view('storefront.home', compact('categories', 'storeName'));
+        return view('home', compact('categories', 'storeName'));
     }
 
     public function menu()
@@ -31,7 +31,7 @@ class StorefrontController extends Controller
 
         $storeName = Setting::get('store_name', 'Our Bakery');
 
-        return view('storefront.menu', compact('categories', 'storeName'));
+        return view('menu', compact('categories', 'storeName'));
     }
 
     public function getFavorites(Request $request)
