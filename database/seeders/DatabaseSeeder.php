@@ -16,12 +16,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Create the default user first (required for orders)
-        User::updateOrCreate(
+        // Use DB::table to avoid double-hashing (User model has 'password' => 'hashed' cast)
+        \Illuminate\Support\Facades\DB::table('users')->updateOrInsert(
             ['email' => 'baker@kneaditbakery.com'],
             [
                 'name' => 'KneadIt Baker',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         );
 
