@@ -23,9 +23,6 @@
     </style>
 
     <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background: linear-gradient(135deg, #e8d0b0, #d4a574);">
-            <x-heroicon-o-building-storefront class="w-8 h-8" style="color: #3d2314;" />
-        </div>
         <h2 class="text-2xl font-bold" style="color: #3d2314;">Let's set up your bakery</h2>
         <p class="mt-1" style="color: #6b4c3b;">Just a few steps and you'll be ready to go</p>
     </div>
