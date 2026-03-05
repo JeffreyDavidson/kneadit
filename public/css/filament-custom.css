@@ -991,3 +991,10 @@ input[type="date"][value=""] {
 .fi-ta-empty-state-description {
     color: var(--brand-600) !important;
 }
+
+/* ===== USER AVATAR ===== */
+.fi-topbar .fi-avatar {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    font-size: 0.85rem !important;
+}
