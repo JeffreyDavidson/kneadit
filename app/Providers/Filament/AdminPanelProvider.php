@@ -47,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
                 \Filament\Navigation\NavigationGroup::make('Finance'),
                 \Filament\Navigation\NavigationGroup::make('Communication'),
             ])
+            ->databaseNotifications()
             ->font('Inter')
             ->renderHook('panels::head.end', fn () => new HtmlString(
                 '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">'
