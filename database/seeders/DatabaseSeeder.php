@@ -46,21 +46,8 @@ class DatabaseSeeder extends Seeder
             WaitlistEntrySeeder::class,
         ]);
 
-        $this->command->info('Demo data seeded successfully!');
-        $this->command->info('');
-        $this->command->info('🥖 Categories: 9 bakery categories');
-        $this->command->info('🧁 Products: 35 artisan baked goods');
-        $this->command->info('👥 Customers: 20 Florida customers');
-        $this->command->info('📦 Orders: 65 orders with realistic data');
-        $this->command->info('📝 Recipes: 15 detailed recipes with costs');
-        $this->command->info('⭐ Reviews: 25 customer reviews');
-        $this->command->info('💰 Expenses: 30 business expenses');
-        $this->command->info('💵 Income: 15 income entries');
-        $this->command->info('🎟️  Coupons: 5 promotional coupons');
-        $this->command->info('⚙️  Settings: Configured store settings');
-        $this->command->info('⏰ Waitlist: 5 waitlist entries');
-        $this->command->info('📅 Capacity: Daily capacity limits set');
-        $this->command->info('');
-        $this->command->info('🎉 KneadIt Demo Bakery is ready to explore!');
+        if ($this->command) {
+            $this->command->info('Demo data seeded successfully!');
+        }
     }
 }
