@@ -13,6 +13,7 @@ class WeeklyPrepPlanner extends Page
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationLabel = 'Weekly Prep Planner';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+    protected static ?int $navigationSort = 4;
     protected string $view = 'filament.pages.weekly-prep-planner';
 
     public ?string $selectedWeekStart = null;

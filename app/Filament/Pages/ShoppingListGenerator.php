@@ -13,6 +13,7 @@ class ShoppingListGenerator extends Page
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
     protected static ?string $navigationLabel = 'Shopping List Generator';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+    protected static ?int $navigationSort = 3;
     protected string $view = 'filament.pages.shopping-list-generator';
 
     public string $startDate = '';
