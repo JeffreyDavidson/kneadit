@@ -17,7 +17,7 @@ class ReorderReminders extends Page
 
     protected static ?string $navigationLabel = 'Reorder Reminders';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationIcon(): string|BackedEnum|null
     {
