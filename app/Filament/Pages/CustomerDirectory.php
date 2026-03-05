@@ -22,7 +22,7 @@ class CustomerDirectory extends Page implements HasForms
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
     protected static string|UnitEnum|null $navigationGroup = 'Tools';
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 12;
     protected static ?string $navigationLabel = 'Customer Directory';
     protected static ?string $title = 'Customer Directory';
 
