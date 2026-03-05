@@ -106,16 +106,29 @@ class CreateDemoBakeries extends Command
                 '--force' => true,
             ]);
 
-            // Seed tenant data via tenants:seed (properly switches DB connection)
-            Artisan::call('tenants:seed', [
-                '--tenants' => [$bakery['id']],
-                '--force' => true,
-            ]);
-
-            // Set tenant-specific settings
             $tenant->run(function () use ($bakery) {
+                // Force default connection to tenant
+                \Illuminate\Support\Facades\DB::setDefaultConnection('tenant');
+
+                \App\Models\User::updateOrCreate(
+                    ['email' => $bakery['email']],
+                    [
+                        'name' => $bakery['name'],
+                        'password' => bcrypt('password'),
+                        'email_verified_at' => now(),
+                    ]
+                );
+
                 \App\Models\Setting::set('store_name', $bakery['store_name']);
                 \App\Models\Setting::set('store_email', $bakery['email']);
+
+                Artisan::call('db:seed', [
+                    '--force' => true,
+                    '--database' => 'tenant',
+                ]);
+
+                // Revert
+                \Illuminate\Support\Facades\DB::setDefaultConnection('sqlite');
             });
 
             $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
