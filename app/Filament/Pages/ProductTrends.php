@@ -17,7 +17,7 @@ class ProductTrends extends Page
 
     protected static ?string $navigationLabel = 'Product Trends';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 6;
 
     public static function getNavigationIcon(): string|BackedEnum|null
     {
