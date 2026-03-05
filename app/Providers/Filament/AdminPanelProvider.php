@@ -32,8 +32,25 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->spa()
+            ->maxContentWidth('full')
             ->colors([
-                'primary' => Color::hex('#d4920c'),
+                'primary' => [
+                    50 => '253, 248, 242',
+                    100 => '245, 230, 208',
+                    200 => '232, 208, 176',
+                    300 => '212, 165, 116',
+                    400 => '193, 127, 78',
+                    500 => '139, 94, 60',
+                    600 => '107, 76, 59',
+                    700 => '90, 61, 46',
+                    800 => '74, 50, 37',
+                    900 => '61, 35, 20',
+                    950 => '42, 26, 14',
+                ],
+                'danger' => Color::Rose,
+                'info' => Color::Sky,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
             ])
             ->brandLogo(view('filament.brand-logo'))
             ->brandLogoHeight('80px')
