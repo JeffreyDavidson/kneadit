@@ -48,11 +48,14 @@ class CreateOneTenant extends Command
 
         // Seed using $tenant->run() — works in a clean process
         $tenant->run(function () use ($tenant) {
-            \App\Models\User::create([
+            // Use DB::table to avoid double-hashing (User model has 'password' => 'hashed' cast)
+            \Illuminate\Support\Facades\DB::table('users')->insert([
                 'name' => $tenant->name,
                 'email' => $tenant->email,
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             \App\Models\Setting::set('store_name', $tenant->store_name);
