@@ -11,7 +11,8 @@ class ProfitAnalysis extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationLabel = 'Profit Analysis';
-    protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+    protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+    protected static ?int $navigationSort = 7;
     protected string $view = 'filament.pages.profit-analysis';
 
     public string $sortBy = 'margin_desc';

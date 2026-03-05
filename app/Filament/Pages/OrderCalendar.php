@@ -12,6 +12,7 @@ class OrderCalendar extends Page
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $navigationLabel = 'Order Calendar';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+    protected static ?int $navigationSort = 2;
     protected string $view = 'filament.pages.order-calendar';
 
     public int $currentYear;
