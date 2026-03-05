@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 class DeliveryRoutePlanner extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-truck';
-    protected static ?string $navigationLabel = 'Delivery Route Planner';
+    protected static ?string $navigationLabel = 'Delivery Planner';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 10;
     protected string $view = 'filament.pages.delivery-route-planner';
