@@ -102,7 +102,13 @@ class CreateDemoBakeries extends Command
                 '--force' => true,
             ]);
 
-            // Initialize tenancy context (switches DB connection via Stancl bootstrappers)
+            // Seed using tenants:seed (handles connection context properly)
+            Artisan::call('tenants:seed', [
+                '--tenants' => [$bakery['id']],
+                '--force' => true,
+            ]);
+
+            // Initialize tenancy to create the admin user + store settings
             tenancy()->initialize($tenant);
 
             \App\Models\User::updateOrCreate(
@@ -117,9 +123,6 @@ class CreateDemoBakeries extends Command
             \App\Models\Setting::set('store_name', $bakery['store_name']);
             \App\Models\Setting::set('store_email', $bakery['email']);
 
-            (new \Database\Seeders\DatabaseSeeder())->run();
-
-            // End tenancy context (reverts to central connection)
             tenancy()->end();
 
             $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
