@@ -66,13 +66,3 @@ Route::middleware([
         });
 });
 
-// TEMPORARY DEBUG - remove after testing
-Route::get('/debug-tenant', function () {
-    return response()->json([
-        'tenant' => tenant()?->id,
-        'db_connection' => \Illuminate\Support\Facades\DB::getDefaultConnection(),
-        'user_count' => \App\Models\User::count(),
-        'users' => \App\Models\User::pluck('email'),
-        'auth_attempt' => \Illuminate\Support\Facades\Auth::attempt(['email' => 'sarah@sweetdreamsbakery.com', 'password' => 'password']),
-    ]);
-})->middleware(['web', InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class]);
