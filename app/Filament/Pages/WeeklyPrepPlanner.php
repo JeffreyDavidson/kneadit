@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 class WeeklyPrepPlanner extends Page
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
     protected static ?string $navigationLabel = 'Prep Planner';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 4;

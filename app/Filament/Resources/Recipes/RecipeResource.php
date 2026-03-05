@@ -23,7 +23,7 @@ class RecipeResource extends Resource
     protected static ?string $model = Recipe::class;
     protected static string $requiredPlan = 'growth';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
 
     protected static string|UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 5;
