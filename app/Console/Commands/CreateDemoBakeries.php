@@ -76,7 +76,8 @@ class CreateDemoBakeries extends Command
 
             $this->info("Creating {$bakery['store_name']}...");
 
-            // Tenant::create fires TenantCreated → CreateDatabase + MigrateDatabase
+            // Create tenant record + domains
+            // TenantCreated event fires CreateDatabase + MigrateDatabase
             $tenant = Tenant::create([
                 'id' => $bakery['id'],
                 'name' => $bakery['name'],
@@ -92,31 +93,21 @@ class CreateDemoBakeries extends Command
             $tenant->domains()->create(['domain' => $domain]);
             $tenant->domains()->create(['domain' => $bakery['id']]);
 
-            // Explicitly run migrations (belt + suspenders)
+            // Explicitly migrate (in case event pipeline didn't)
+            $this->info("  Migrating...");
             Artisan::call('tenants:migrate', [
                 '--tenants' => [$bakery['id']],
                 '--force' => true,
             ]);
 
-            // Use $tenant->run() + Artisan::call('db:seed') — this exact pattern
-            // works in CreateDemoTenant command
-            $tenant->run(function () use ($bakery) {
-                // Create admin user
-                \App\Models\User::create([
-                    'name' => $bakery['name'],
-                    'email' => $bakery['email'],
-                    'password' => bcrypt('password'),
-                    'email_verified_at' => now(),
-                ]);
-
-                // Set store identity
-                \App\Models\Setting::set('store_name', $bakery['store_name']);
-                \App\Models\Setting::set('store_email', $bakery['email']);
-
-                // Seed via Artisan (not direct instantiation) — this is what
-                // the working CreateDemoTenant command does
-                Artisan::call('db:seed', ['--force' => true]);
-            });
+            // Seed using Stancl's native tenants:seed command
+            // This handles all connection switching internally
+            $this->info("  Seeding...");
+            Artisan::call('tenants:seed', [
+                '--tenants' => [$bakery['id']],
+                '--class' => 'Database\\Seeders\\TenantSeeder',
+                '--force' => true,
+            ]);
 
             $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
         }
