@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\StorefrontApiController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StorefrontController;
@@ -42,4 +43,25 @@ Route::middleware([
     // Customer favorites (AJAX)
     Route::get('/favorites', [StorefrontController::class, 'getFavorites'])->name('favorites.get');
     Route::post('/favorites/toggle', [StorefrontController::class, 'toggleFavorite'])->name('favorites.toggle');
+
+    // Tenant Storefront API (JSON, no CSRF)
+    Route::prefix('api')
+        ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+        ->group(function () {
+            Route::get('/store', [StorefrontApiController::class, 'store']);
+            Route::get('/categories', [StorefrontApiController::class, 'categories']);
+            Route::get('/products', [StorefrontApiController::class, 'products']);
+            Route::get('/menu', [StorefrontApiController::class, 'menu']);
+            Route::get('/capacity/{date}', [StorefrontApiController::class, 'capacity']);
+            Route::get('/reviews', [StorefrontApiController::class, 'reviews']);
+            Route::get('/gallery', [StorefrontApiController::class, 'gallery']);
+            Route::get('/favorites', [StorefrontApiController::class, 'favorites']);
+
+            Route::post('/orders', [StorefrontApiController::class, 'submitOrder']);
+            Route::post('/coupon/validate', [StorefrontApiController::class, 'validateCoupon']);
+            Route::post('/reviews', [StorefrontApiController::class, 'submitReview']);
+            Route::post('/contact', [StorefrontApiController::class, 'submitContact']);
+            Route::post('/favorites/toggle', [StorefrontApiController::class, 'toggleFavorite']);
+            Route::post('/waitlist', [StorefrontApiController::class, 'waitlist']);
+        });
 });
