@@ -57,22 +57,20 @@ class CreateDemoBakeries extends Command
         ];
 
         if ($this->option('fresh')) {
-            // Clean up central users from previous runs
             foreach ($bakeries as $b) {
-                \App\Models\User::where('email', $b['email'])->delete();
+                $existing = Tenant::find($b['id']);
+                if ($existing) {
+                    $this->info("Deleting {$b['store_name']}...");
+                    $existing->delete();
+                }
             }
+
+            // Clean any leftover data in central DB from previous broken runs
+            $this->cleanCentralDb();
         }
 
         foreach ($bakeries as $bakery) {
             $domain = $bakery['id'] . '.kneadit.test';
-
-            if ($this->option('fresh')) {
-                $existing = Tenant::find($bakery['id']);
-                if ($existing) {
-                    $this->info("Deleting {$bakery['store_name']}...");
-                    $existing->delete();
-                }
-            }
 
             if (Tenant::find($bakery['id'])) {
                 $this->warn("{$bakery['store_name']} already exists. Use --fresh to recreate.");
@@ -96,34 +94,29 @@ class CreateDemoBakeries extends Command
             $tenant->domains()->create(['domain' => $domain]);
             $tenant->domains()->create(['domain' => $bakery['id']]);
 
-            // Run migrations for this tenant
+            // Run migrations in tenant context
             Artisan::call('tenants:migrate', [
                 '--tenants' => [$bakery['id']],
                 '--force' => true,
             ]);
 
-            // Seed using tenants:seed (handles connection context properly)
-            Artisan::call('tenants:seed', [
-                '--tenants' => [$bakery['id']],
-                '--force' => true,
-            ]);
-
-            // Initialize tenancy to create the admin user + store settings
-            tenancy()->initialize($tenant);
-
-            \App\Models\User::updateOrCreate(
-                ['email' => $bakery['email']],
-                [
+            // Use $tenant->run() for guaranteed tenant DB context
+            $tenant->run(function () use ($bakery) {
+                // Create admin user for this bakery
+                \App\Models\User::create([
                     'name' => $bakery['name'],
+                    'email' => $bakery['email'],
                     'password' => bcrypt('password'),
                     'email_verified_at' => now(),
-                ]
-            );
+                ]);
 
-            \App\Models\Setting::set('store_name', $bakery['store_name']);
-            \App\Models\Setting::set('store_email', $bakery['email']);
+                // Set store identity
+                \App\Models\Setting::set('store_name', $bakery['store_name']);
+                \App\Models\Setting::set('store_email', $bakery['email']);
 
-            tenancy()->end();
+                // Run all seeders
+                (new \Database\Seeders\DatabaseSeeder())->run();
+            });
 
             $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
         }
@@ -137,5 +130,25 @@ class CreateDemoBakeries extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Remove any data accidentally seeded into the central DB from previous broken runs.
+     */
+    private function cleanCentralDb(): void
+    {
+        $tables = ['categories', 'products', 'customers', 'orders', 'order_items',
+                    'recipes', 'reviews', 'expenses', 'incomes', 'coupons',
+                    'capacity_limits', 'waitlist_entries', 'settings'];
+
+        $central = \Illuminate\Support\Facades\DB::connection('central');
+
+        foreach ($tables as $table) {
+            try {
+                $central->table($table)->truncate();
+            } catch (\Exception $e) {
+                // Table may not exist in central — that's fine
+            }
+        }
     }
 }
