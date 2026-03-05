@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         // Create the default user first (required for orders)
         // Use DB::table to avoid double-hashing (User model has 'password' => 'hashed' cast)
-        \Illuminate\Support\Facades\DB::table('users')->updateOrInsert(
+        $connection = tenant() ? 'tenant' : \Illuminate\Support\Facades\DB::getDefaultConnection();
+        \Illuminate\Support\Facades\DB::connection($connection)->table('users')->updateOrInsert(
             ['email' => 'baker@kneaditbakery.com'],
             [
                 'name' => 'KneadIt Baker',
