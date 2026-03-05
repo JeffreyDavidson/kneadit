@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex('#d4920c'),
             ])
             ->brandLogo(view('filament.brand-logo'))
+            ->brandLogoHeight('3.5rem')
             ->darkMode(false)
             ->navigationGroups([
                 \Filament\Navigation\NavigationGroup::make('Shop'),
