@@ -48,8 +48,9 @@ class CreateOneTenant extends Command
 
         // Seed using $tenant->run() — works in a clean process
         $tenant->run(function () use ($tenant) {
-            // Use DB::table to avoid double-hashing (User model has 'password' => 'hashed' cast)
-            \Illuminate\Support\Facades\DB::table('users')->insert([
+            // Use DB::connection('tenant') to ensure we hit the tenant DB
+            // and raw table insert to avoid User model's 'hashed' cast double-hashing
+            \Illuminate\Support\Facades\DB::connection('tenant')->table('users')->insert([
                 'name' => $tenant->name,
                 'email' => $tenant->email,
                 'password' => bcrypt('password'),
