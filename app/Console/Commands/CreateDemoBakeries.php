@@ -56,6 +56,13 @@ class CreateDemoBakeries extends Command
             ],
         ];
 
+        if ($this->option('fresh')) {
+            // Clean up central users from previous runs
+            foreach ($bakeries as $b) {
+                \App\Models\User::where('email', $b['email'])->delete();
+            }
+        }
+
         foreach ($bakeries as $bakery) {
             $domain = $bakery['id'] . '.kneadit.test';
 
@@ -100,12 +107,14 @@ class CreateDemoBakeries extends Command
             ]);
 
             $tenant->run(function () use ($bakery) {
-                \App\Models\User::create([
-                    'name' => $bakery['name'],
-                    'email' => $bakery['email'],
-                    'password' => bcrypt('password'),
-                    'email_verified_at' => now(),
-                ]);
+                \App\Models\User::updateOrCreate(
+                    ['email' => $bakery['email']],
+                    [
+                        'name' => $bakery['name'],
+                        'password' => bcrypt('password'),
+                        'email_verified_at' => now(),
+                    ]
+                );
 
                 \App\Models\Setting::set('store_name', $bakery['store_name']);
                 \App\Models\Setting::set('store_email', $bakery['email']);
