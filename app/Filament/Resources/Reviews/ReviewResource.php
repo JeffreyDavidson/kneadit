@@ -26,6 +26,7 @@ class ReviewResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
 
     protected static string|UnitEnum|null $navigationGroup = 'Communication';
+    protected static ?int $navigationSort = 1;
 
     public static function shouldRegisterNavigation(): bool
     {
