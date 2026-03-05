@@ -913,11 +913,23 @@ input[type="date"][value=""] {
 
 /* ===== STAT WIDGETS ===== */
 /* Remove the outer wrapper background */
-.fi-wi-stats-overview {
+.fi-wi-stats-overview,
+.fi-wi-stats-overview > div,
+section:has(.fi-wi-stats-overview-stat),
+.fi-section:has(.fi-wi-stats-overview-stat),
+.fi-widget:has(.fi-wi-stats-overview-stat) {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
+    --tw-ring-shadow: none !important;
+    --tw-shadow: none !important;
+}
+/* Also target the Filament card/section wrapper around widgets */
+.fi-wi-stats-overview-stat-ctn {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .fi-wi-stats-overview-stat {
