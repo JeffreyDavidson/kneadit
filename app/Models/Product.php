@@ -42,6 +42,11 @@ class Product extends Model
         return $this->hasMany(Recipe::class);
     }
 
+    public function recipe(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Recipe::class);
+    }
+
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
