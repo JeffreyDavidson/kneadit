@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class CustomerDirectory extends Page implements HasForms
+    protected static bool $shouldRegisterNavigation = false;
 {
     use InteractsWithForms;
 
