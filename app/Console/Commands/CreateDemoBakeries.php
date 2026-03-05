@@ -106,12 +106,18 @@ class CreateDemoBakeries extends Command
                 '--force' => true,
             ]);
 
-            // Initialize tenancy (creates dynamic 'tenant' connection)
-            tenancy()->initialize($tenant);
+            // Manually configure and switch to tenant database
+            $tenantDbPath = database_path('tenant' . $bakery['id']);
+            
+            config(['database.connections.tenant' => [
+                'driver' => 'sqlite',
+                'database' => $tenantDbPath,
+                'prefix' => '',
+                'foreign_key_constraints' => true,
+            ]]);
 
-            // Switch default connection so all models use tenant DB
+            \Illuminate\Support\Facades\DB::purge('tenant');
             \Illuminate\Support\Facades\DB::setDefaultConnection('tenant');
-            \Illuminate\Support\Facades\DB::purge('sqlite');
 
             \App\Models\User::updateOrCreate(
                 ['email' => $bakery['email']],
@@ -127,10 +133,9 @@ class CreateDemoBakeries extends Command
 
             (new \Database\Seeders\DatabaseSeeder())->run();
 
-            // End tenancy and revert connection
-            tenancy()->end();
-            \Illuminate\Support\Facades\DB::setDefaultConnection('sqlite');
+            // Revert to central
             \Illuminate\Support\Facades\DB::purge('tenant');
+            \Illuminate\Support\Facades\DB::setDefaultConnection('sqlite');
 
             $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
         }
