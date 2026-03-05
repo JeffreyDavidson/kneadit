@@ -159,7 +159,7 @@
         <div class="bg-warm-800 bg-opacity-90 backdrop-blur-sm rounded-full px-6 py-3 border border-warm-600 border-opacity-20">
             <div class="nav-desktop items-center space-x-2">
                 <a href="{{ route('home') }}" class="nav-link font-display {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
-                <a href="{{ route('order') }}" class="nav-link font-display {{ request()->routeIs('order') ? 'active' : '' }}">Order</a>
+                <a href="{{ route('order.create') }}" class="nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
                 <a href="{{ route('contact') }}" class="nav-link font-display {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
             </div>
             
@@ -170,7 +170,7 @@
                 </button>
                 <div x-show="open" x-collapse class="mt-4 space-y-2">
                     <a href="{{ route('home') }}" class="block nav-link font-display {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
-                    <a href="{{ route('order') }}" class="block nav-link font-display {{ request()->routeIs('order') ? 'active' : '' }}">Order</a>
+                    <a href="{{ route('order.create') }}" class="block nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
                     <a href="{{ route('contact') }}" class="block nav-link font-display {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
                 </div>
             </div>

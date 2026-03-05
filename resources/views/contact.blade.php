@@ -229,7 +229,7 @@
                 Browse our menu and place your order online. 
                 Experience the difference that artisan quality makes.
             </p>
-            <a href="{{ route('order') }}" class="btn-primary text-lg px-8 py-4 inline-block">
+            <a href="{{ route('order.create') }}" class="btn-primary text-lg px-8 py-4 inline-block">
                 View Menu & Order
             </a>
         </div>
