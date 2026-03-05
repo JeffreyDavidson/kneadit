@@ -14,7 +14,7 @@
             Discover our carefully crafted selection of artisan breads, pastries, and custom creations. 
             Each item is made with passion, premium ingredients, and time-honored techniques.
         </p>
-        <a href="{{ route('order') }}" class="btn-primary text-lg px-8 py-4 inline-block">
+        <a href="{{ route('order.create') }}" class="btn-primary text-lg px-8 py-4 inline-block">
             Place Your Order
         </a>
     </div>
@@ -135,7 +135,7 @@
                 Place your order today and taste the difference that passion and craftsmanship make. 
                 We require 48 hours notice for all orders to ensure the highest quality.
             </p>
-            <a href="{{ route('order') }}" class="btn-primary text-lg px-8 py-4 inline-block">
+            <a href="{{ route('order.create') }}" class="btn-primary text-lg px-8 py-4 inline-block">
                 Start Your Order
             </a>
         </div>
