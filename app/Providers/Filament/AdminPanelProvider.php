@@ -66,7 +66,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->databaseNotifications()
             ->font('Inter')
+            ->favicon(asset('favicon.ico'))
             ->renderHook('panels::head.end', fn () => new HtmlString(
+                '<link rel="icon" type="image/png" sizes="32x32" href="' . asset('images/favicon-32x32.png') . '">'
+                . '<link rel="icon" type="image/png" sizes="16x16" href="' . asset('images/favicon-16x16.png') . '">'
+                . '<link rel="apple-touch-icon" sizes="180x180" href="' . asset('images/favicon-180x180.png') . '">'
+                .
                 '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">'
                 . '<style>'
                 . '.fi-fo-repeater .fi-fo-repeater-items .fi-fo-repeater-item{border-radius:0!important;box-shadow:none!important;background:transparent!important;outline:none!important;--tw-ring-shadow:0 0 0 0 transparent!important;--tw-shadow:0 0 0 0 transparent!important;--tw-inset-shadow:0 0 0 0 transparent!important;--tw-inset-ring-shadow:0 0 0 0 transparent!important;--tw-ring-offset-shadow:0 0 0 0 transparent!important;--tw-ring-color:transparent!important;border:none!important;border-bottom:1px solid #f3ebe0!important}'
