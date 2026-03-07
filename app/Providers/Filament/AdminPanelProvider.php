@@ -105,8 +105,8 @@ class AdminPanelProvider extends PanelProvider
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
-                InitializeTenancyByDomainOrSubdomain::class,
                 PreventAccessFromCentralDomains::class,
+                InitializeTenancyByDomainOrSubdomain::class,
                 StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
