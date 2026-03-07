@@ -15,13 +15,18 @@ require __DIR__.'/admin.php';
 |
 */
 
-// Landing / Marketing
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Central-domain-only routes (landing, onboarding, billing, admin)
+foreach (config('tenancy.central_domains', []) as $domain) {
+    Route::domain($domain)->group(function () {
+        // Landing / Marketing
+        Route::get('/', function () {
+            return view('welcome');
+        })->name('home');
 
-// Tenant Registration (onboarding)
-Route::middleware(['web', 'auth'])->prefix('onboarding')->name('onboarding.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\OnboardingController::class, 'show'])->name('show');
-    Route::post('/', [\App\Http\Controllers\OnboardingController::class, 'store'])->name('store');
-});
+        // Tenant Registration (onboarding)
+        Route::middleware(['web', 'auth'])->prefix('onboarding')->name('onboarding.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\OnboardingController::class, 'show'])->name('show');
+            Route::post('/', [\App\Http\Controllers\OnboardingController::class, 'store'])->name('store');
+        });
+    });
+}
