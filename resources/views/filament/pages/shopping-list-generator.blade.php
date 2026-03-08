@@ -59,6 +59,17 @@
                                             {{ $ingredient['unit'] }}
                                         @endif
                                     </span>
+                                    @if(isset($ingredient['in_stock']) && $ingredient['in_stock'] !== null)
+                                        @if(!$ingredient['needs_purchase'])
+                                            <span class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                                ✓ In stock ({{ number_format($ingredient['in_stock'], 1) }} {{ $ingredient['stock_unit'] }})
+                                            </span>
+                                        @else
+                                            <span class="ml-2 inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                                                Need {{ number_format($ingredient['deficit'], 1) }} more ({{ number_format($ingredient['in_stock'], 1) }} in stock)
+                                            </span>
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
