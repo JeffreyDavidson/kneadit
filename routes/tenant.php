@@ -25,8 +25,8 @@ Route::middleware([
     InitializeTenancyByDomainOrSubdomain::class,
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
-    // Storefront (public)
-    Route::get('/', [StorefrontController::class, 'home'])->name('storefront.home');
+    // Note: The "/" route is handled by RootController in web.php
+    // to avoid overriding the central domain landing page.
     Route::get('/menu', [StorefrontController::class, 'menu'])->name('storefront.menu');
     Route::get('/order', [OrderController::class, 'index'])->name('order.create');
     Route::post('/order', [OrderController::class, 'store'])->name('order.store');
