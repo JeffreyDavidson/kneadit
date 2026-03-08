@@ -8,7 +8,7 @@
     $linkMap = [
         'order' => route('order.create'),
         'menu' => route('storefront.menu'),
-        'contact' => route('storefront.contact'),
+        'contact' => route('contact.show'),
     ];
     $href = $linkMap[$buttonLink] ?? route('order.create');
 @endphp
