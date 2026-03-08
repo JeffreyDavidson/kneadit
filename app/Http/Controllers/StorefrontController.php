@@ -65,7 +65,11 @@ class StorefrontController extends Controller
 
     public function rewards()
     {
-        $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
+        try {
+            $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
+        } catch (\Exception $e) {
+            $rewards = collect();
+        }
         $programName = Setting::get('loyalty_program_name', 'Rewards');
         $pointsPerDollar = Setting::get('loyalty_points_per_dollar', '10');
         $loyaltyEnabled = Setting::get('loyalty_enabled', '1') === '1';
@@ -78,7 +82,11 @@ class StorefrontController extends Controller
         $request->validate(['email' => 'required|email']);
 
         $customer = Customer::where('email', $request->email)->first();
-        $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
+        try {
+            $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
+        } catch (\Exception $e) {
+            $rewards = collect();
+        }
         $programName = Setting::get('loyalty_program_name', 'Rewards');
         $pointsPerDollar = Setting::get('loyalty_points_per_dollar', '10');
         $loyaltyEnabled = Setting::get('loyalty_enabled', '1') === '1';
