@@ -19,7 +19,15 @@ class Customer extends Model
         'state',
         'zip',
         'notes',
+        'birthday',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'birthday' => 'date',
+        ];
+    }
 
     public function orders(): HasMany
     {
@@ -82,6 +90,29 @@ class Customer extends Model
     public function getIsAtRiskAttribute(): bool
     {
         return $this->order_count > 0 && $this->days_since_last_order !== null && $this->days_since_last_order > 30;
+    }
+
+    public function hasBirthday(): bool
+    {
+        return $this->birthday !== null;
+    }
+
+    public function isBirthdayThisMonth(): bool
+    {
+        return $this->birthday?->month === now()->month;
+    }
+
+    public function isBirthdayToday(): bool
+    {
+        return $this->birthday?->format('m-d') === now()->format('m-d');
+    }
+
+    public function daysUntilBirthday(): ?int
+    {
+        if (!$this->birthday) return null;
+        $next = $this->birthday->copy()->year(now()->year);
+        if ($next->isPast()) $next->addYear();
+        return (int) now()->diffInDays($next, false);
     }
 
     public function getFullAddressAttribute(): string
