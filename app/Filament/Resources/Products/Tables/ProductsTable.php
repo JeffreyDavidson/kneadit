@@ -10,6 +10,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Columns\TextColumn as BadgeColumn;
 
 class ProductsTable
 {
@@ -58,6 +59,13 @@ class ProductsTable
 
                 ToggleColumn::make('is_featured')
                     ->label('Featured'),
+
+                TextColumn::make('waitlist_count')
+                    ->label('Waitlist')
+                    ->getStateUsing(fn ($record) => $record->waitlistEntries()->whereNull('notified_at')->count())
+                    ->badge()
+                    ->color(fn ($state) => $state > 0 ? 'warning' : 'gray')
+                    ->formatStateUsing(fn ($state) => $state > 0 ? "{$state} waiting" : '—'),
 
                 TextColumn::make('created_at')
                     ->dateTime()
