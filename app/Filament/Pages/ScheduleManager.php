@@ -22,10 +22,10 @@ class ScheduleManager extends Page
 
 
     protected static string $requiredPlan = 'pro';
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clock';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'Schedule Manager';
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 6;
     protected string $view = 'filament.pages.schedule-manager';
     protected static ?string $title = 'Business Schedule';
 

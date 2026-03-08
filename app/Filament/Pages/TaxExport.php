@@ -16,7 +16,6 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use App\Traits\HasPlanGating;
@@ -37,7 +36,7 @@ class TaxExport extends Page
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
     protected static ?string $title = 'Tax Export';
     protected static ?string $navigationLabel = 'Tax Export';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public ?int $selectedYear = null;
     public ?string $exportType = 'all';

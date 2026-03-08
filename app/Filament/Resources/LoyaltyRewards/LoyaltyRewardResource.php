@@ -38,7 +38,7 @@ class LoyaltyRewardResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 14;
 
     protected static ?string $navigationLabel = 'Loyalty Rewards';
 

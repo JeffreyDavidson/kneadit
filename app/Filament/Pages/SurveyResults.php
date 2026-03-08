@@ -4,11 +4,9 @@ namespace App\Filament\Pages;
 
 use App\Models\Survey;
 use BackedEnum;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
-use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SurveyResults extends Page implements HasForms
@@ -18,6 +16,7 @@ class SurveyResults extends Page implements HasForms
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
     protected static string | \UnitEnum | null $navigationGroup = 'Communication';
     protected static ?int $navigationSort = 12;
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $navigationLabel = 'Survey Results';
     protected static ?string $title = 'Survey Results';
     protected string $view = 'filament.pages.survey-results';

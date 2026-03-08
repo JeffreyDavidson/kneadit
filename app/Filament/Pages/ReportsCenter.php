@@ -12,8 +12,8 @@ class ReportsCenter extends Page
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-pie';
     protected static ?string $navigationLabel = 'Reports';
-    protected static string|\UnitEnum|null $navigationGroup = 'Finance';
-    protected static ?int $navigationSort = 4;
+    protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+    protected static ?int $navigationSort = 14;
     protected string $view = 'filament.pages.reports-center';
     protected static string $requiredPlan = 'growth';
 

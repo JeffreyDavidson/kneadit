@@ -19,9 +19,9 @@ class DescriptionGenerator extends Page
 
     protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-sparkles';
-    protected static ?string $navigationLabel = 'Description Generator';
+    protected static ?string $navigationLabel = 'Descriptions';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
-    protected static ?int $navigationSort = 14;
+    protected static ?int $navigationSort = 12;
     protected string $view = 'filament.pages.description-generator';
 
     public ?string $selectedProductId = null;

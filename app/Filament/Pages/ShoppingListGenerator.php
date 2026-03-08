@@ -7,7 +7,6 @@ use App\Filament\Traits\RequiresRole;
 use Filament\Actions\Action;
 use App\Models\Ingredient;
 use App\Models\Order;
-use App\Models\Recipe;
 use Illuminate\Support\Collection;
 
 use App\Traits\HasPlanGating;
@@ -20,12 +19,12 @@ class ShoppingListGenerator extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
     protected static ?string $navigationLabel = 'Shopping List';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 3;
+    protected static bool $shouldRegisterNavigation = false;
     protected string $view = 'filament.pages.shopping-list-generator';
 
     public string $startDate = '';

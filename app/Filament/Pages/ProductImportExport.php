@@ -37,7 +37,7 @@ class ProductImportExport extends Page
 
     protected static ?string $navigationLabel = 'Import / Export';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 15;
 
     public ?array $data = [];
 

@@ -19,9 +19,9 @@ class PricingEngine extends Page
 
     protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
-    protected static ?string $navigationLabel = 'Pricing Engine';
+    protected static ?string $navigationLabel = 'Pricing';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 8;
     protected string $view = 'filament.pages.pricing-engine';
 
     public ?string $selectedProductId = null;

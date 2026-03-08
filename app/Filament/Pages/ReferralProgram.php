@@ -5,8 +5,6 @@ namespace App\Filament\Pages;
 use App\Models\Referral;
 use BackedEnum;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 
@@ -18,7 +16,7 @@ class ReferralProgram extends Page
 
     protected static ?string $navigationLabel = 'Referral Program';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 3;
 
     protected string $view = 'filament.pages.referral-program';
 

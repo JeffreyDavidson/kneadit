@@ -20,6 +20,7 @@ class FinanceSummary extends Page
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'Finance Summary';
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+    protected static ?int $navigationSort = 3;
     protected string $view = 'filament.pages.finance-summary';
     protected static string $requiredPlan = 'growth';
     public int $selectedYear;
