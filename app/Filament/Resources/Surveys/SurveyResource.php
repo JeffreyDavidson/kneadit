@@ -8,11 +8,11 @@ use App\Filament\Resources\Surveys\Pages\ListSurveys;
 use App\Filament\Resources\Surveys\Pages\ViewSurvey;
 use App\Filament\Resources\Surveys\Schemas\SurveyForm;
 use App\Filament\Resources\Surveys\Tables\SurveysTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Survey;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
@@ -30,7 +30,9 @@ class SurveyResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
+
     protected static ?int $navigationSort = 5;
+
     protected static ?string $navigationLabel = 'Surveys';
 
     public static function form(Schema $schema): Schema

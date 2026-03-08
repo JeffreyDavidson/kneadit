@@ -43,7 +43,7 @@ class OnboardingTest extends TestCase
     public function onboarding_page_is_registered_in_filament(): void
     {
         // Verify the page class exists and has correct properties
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $this->assertEquals('Welcome to KneadIt', $page::$title ?? (new \ReflectionClass($page))->getStaticPropertyValue('title'));
         $this->assertFalse($page::$shouldRegisterNavigation ?? (new \ReflectionClass($page))->getStaticPropertyValue('shouldRegisterNavigation'));
     }
@@ -61,7 +61,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function welcome_step_saves_bakery_name_and_owner(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->bakery_name = 'Sweet Sunrise Bakery';
         $page->owner_name = 'Jane Baker';
 
@@ -74,7 +74,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function contact_step_saves_all_contact_info(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->contact_email = 'hello@sweetbakery.com';
         $page->contact_phone = '555-123-4567';
         $page->contact_address = '123 Baker St, Tampa, FL 33601';
@@ -90,7 +90,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function branding_step_saves_colors(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->brand_color_primary = '#ff5500';
         $page->brand_color_secondary = '#00aaff';
         $page->store_logo = [];
@@ -112,7 +112,7 @@ class OnboardingTest extends TestCase
             'sort_order' => 1,
         ]);
 
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->product_name = 'Sourdough Loaf';
         $page->product_description = 'A classic sourdough bread';
         $page->product_price = '12.50';
@@ -140,7 +140,7 @@ class OnboardingTest extends TestCase
             'sort_order' => 1,
         ]);
 
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->product_name = 'Double Chocolate Layer Cake';
         $page->product_description = '';
         $page->product_price = '35.00';
@@ -157,7 +157,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function business_hours_step_saves_open_days_only(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->hours_monday = true;
         $page->hours_monday_open = '08:00';
         $page->hours_monday_close = '17:00';
@@ -194,7 +194,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function business_hours_with_no_days_saves_empty_schedule(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->hours_monday = false;
         $page->hours_tuesday = false;
         $page->hours_wednesday = false;
@@ -213,7 +213,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function compliance_step_saves_state_and_details(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->cottage_food_state = 'FL';
         $page->revenue_cap = '250000';
         $page->license_number = 'CF-12345';
@@ -233,7 +233,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function compliance_step_without_license_saves_empty(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->cottage_food_state = 'TX';
         $page->revenue_cap = '50000';
         $page->license_number = '';
@@ -250,7 +250,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function delivery_step_saves_all_delivery_settings(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->delivery_enabled = true;
         $page->delivery_radius = '15';
         $page->delivery_fee = '5.00';
@@ -275,7 +275,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function delivery_disabled_still_saves_pickup_settings(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->delivery_enabled = false;
         $page->delivery_radius = '';
         $page->delivery_fee = '';
@@ -296,7 +296,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function free_delivery_threshold_cleared_when_disabled(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->delivery_enabled = true;
         $page->delivery_radius = '10';
         $page->delivery_fee = '7.00';
@@ -315,7 +315,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function paypal_step_saves_credentials(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->paypal_client_id = 'AaBbCcDdEeFf123456';
         $page->paypal_client_secret = 'secret_xyz_789';
         $page->paypal_sandbox = true;
@@ -331,7 +331,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function paypal_step_with_live_mode(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->paypal_client_id = 'LiveClientId';
         $page->paypal_client_secret = 'LiveSecret';
         $page->paypal_sandbox = false;
@@ -345,7 +345,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function paypal_step_with_empty_credentials(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->paypal_client_id = '';
         $page->paypal_client_secret = '';
         $page->paypal_sandbox = true;
@@ -362,7 +362,7 @@ class OnboardingTest extends TestCase
     {
         $this->assertNull(Setting::get('onboarding_completed_at'));
 
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->completeOnboarding();
 
         $this->assertNotNull(Setting::get('onboarding_completed_at'));
@@ -371,7 +371,7 @@ class OnboardingTest extends TestCase
     /** @test */
     public function complete_onboarding_timestamp_is_valid_iso_date(): void
     {
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
         $page->completeOnboarding();
 
         $timestamp = Setting::get('onboarding_completed_at');
@@ -394,7 +394,7 @@ class OnboardingTest extends TestCase
     public function full_onboarding_flow_saves_all_settings(): void
     {
         // Simulate walking through all steps
-        $page = new \App\Filament\Pages\Onboarding();
+        $page = new \App\Filament\Pages\Onboarding;
 
         // Step 1: Welcome
         $page->bakery_name = 'Sunrise Bakery';

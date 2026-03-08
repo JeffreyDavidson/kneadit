@@ -5,10 +5,11 @@ namespace App\Filament\Resources\CustomerPhotos;
 use App\Filament\Resources\CustomerPhotos\Pages\CreateCustomerPhoto;
 use App\Filament\Resources\CustomerPhotos\Pages\EditCustomerPhoto;
 use App\Filament\Resources\CustomerPhotos\Pages\ListCustomerPhotos;
+use App\Filament\Traits\RequiresRole;
 use App\Models\CustomerPhoto;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -18,19 +19,18 @@ use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Table;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 
-use App\Traits\HasPlanGating;
 class CustomerPhotoResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -40,8 +40,8 @@ class CustomerPhotoResource extends Resource
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static ?string $model = CustomerPhoto::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;

@@ -2,12 +2,13 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\BusinessSchedule;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -15,18 +16,22 @@ use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 
-use App\Traits\HasPlanGating;
 class ScheduleManager extends Page
 {
     use HasPlanGating, RequiresRole;
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
+
     protected static ?string $navigationLabel = 'Schedule Manager';
+
     protected static ?int $navigationSort = 6;
+
     protected string $view = 'filament.pages.schedule-manager';
+
     protected static ?string $title = 'Business Schedule';
 
     // Day properties

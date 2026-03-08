@@ -2,13 +2,13 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
+use App\Traits\HasPlanGating;
 use Carbon\Carbon;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
-use App\Traits\HasPlanGating;
 class OrderCalendar extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -18,18 +18,26 @@ class OrderCalendar extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'growth';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
+
     protected static ?string $navigationLabel = 'Order Calendar';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 2;
+
     protected string $view = 'filament.pages.order-calendar';
 
     public int $currentYear;
+
     public int $currentMonth;
+
     public Collection $orderCounts;
+
     public Collection $selectedDayOrders;
+
     public ?string $selectedDate = null;
 
     public function mount()
@@ -93,7 +101,7 @@ class OrderCalendar extends Page
         while ($current->lte($endOfCalendar)) {
             $dateString = $current->format('Y-m-d');
             $orderCount = $this->orderCounts->get($dateString, 0);
-            
+
             $days->push([
                 'date' => $current->copy(),
                 'dateString' => $dateString,
@@ -102,7 +110,7 @@ class OrderCalendar extends Page
                 'orderCount' => $orderCount,
                 'colorClass' => $this->getColorClass($orderCount),
             ]);
-            
+
             $current->addDay();
         }
 
@@ -111,9 +119,16 @@ class OrderCalendar extends Page
 
     private function getColorClass(int $count): string
     {
-        if ($count === 0) return 'bg-gray-100 hover:bg-gray-200';
-        if ($count <= 5) return 'bg-green-100 hover:bg-green-200 text-green-800';
-        if ($count <= 10) return 'bg-yellow-100 hover:bg-yellow-200 text-yellow-800';
+        if ($count === 0) {
+            return 'bg-gray-100 hover:bg-gray-200';
+        }
+        if ($count <= 5) {
+            return 'bg-green-100 hover:bg-green-200 text-green-800';
+        }
+        if ($count <= 10) {
+            return 'bg-yellow-100 hover:bg-yellow-200 text-yellow-800';
+        }
+
         return 'bg-red-100 hover:bg-red-200 text-red-800';
     }
 

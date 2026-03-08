@@ -2,15 +2,15 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
 
-use App\Traits\HasPlanGating;
 class ReorderReminders extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -20,8 +20,8 @@ class ReorderReminders extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'growth';
+
     protected string $view = 'filament.pages.reorder-reminders';
 
     protected static ?string $title = 'Reorder Reminders';
@@ -70,6 +70,7 @@ class ReorderReminders extends Page
             ->get()
             ->map(function ($customer) {
                 $customer->days_since = (int) floor(Carbon::parse($customer->last_order_date)->diffInDays(now()));
+
                 return $customer;
             });
     }

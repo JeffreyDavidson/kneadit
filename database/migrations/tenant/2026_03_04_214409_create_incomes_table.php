@@ -20,7 +20,7 @@ return new class extends Migration
                 'cash_sale',
                 'paypal_direct',
                 'catering',
-                'other'
+                'other',
             ]);
             $table->date('date');
             $table->text('notes')->nullable();

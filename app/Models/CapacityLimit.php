@@ -26,6 +26,7 @@ class CapacityLimit extends Model
     public static function forDate(Carbon|string $date): ?self
     {
         $date = Carbon::parse($date);
+
         return static::whereDate('date', $date)->first();
     }
 
@@ -35,7 +36,7 @@ class CapacityLimit extends Model
     public static function getMaxOrders(Carbon|string $date): int
     {
         $limit = static::forDate($date);
-        
+
         if ($limit && $limit->max_orders > 0) {
             return $limit->max_orders;
         }
@@ -50,7 +51,7 @@ class CapacityLimit extends Model
     {
         $maxOrders = static::getMaxOrders($date);
         $currentCount = static::ordersOnDate($date);
-        
+
         return $currentCount < $maxOrders;
     }
 
@@ -61,7 +62,7 @@ class CapacityLimit extends Model
     {
         $maxOrders = static::getMaxOrders($date);
         $currentCount = static::ordersOnDate($date);
-        
+
         return max(0, $maxOrders - $currentCount);
     }
 
@@ -84,8 +85,9 @@ class CapacityLimit extends Model
         if ($maxOrders <= 0) {
             return 0.0;
         }
-        
+
         $currentCount = static::ordersOnDate($date);
+
         return min(100, ($currentCount / $maxOrders) * 100);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use App\Models\Survey;
-use BackedEnum;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
@@ -14,11 +13,17 @@ class SurveyResults extends Page implements HasForms
     use InteractsWithForms;
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-    protected static string | \UnitEnum | null $navigationGroup = 'Communication';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Communication';
+
     protected static ?int $navigationSort = 12;
+
     protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationLabel = 'Survey Results';
+
     protected static ?string $title = 'Survey Results';
+
     protected string $view = 'filament.pages.survey-results';
 
     public ?int $surveyId = null;
@@ -36,7 +41,9 @@ class SurveyResults extends Page implements HasForms
     public function exportCsv(): ?StreamedResponse
     {
         $survey = $this->survey;
-        if (!$survey) return null;
+        if (! $survey) {
+            return null;
+        }
 
         return response()->streamDownload(function () use ($survey) {
             $handle = fopen('php://output', 'w');

@@ -16,8 +16,11 @@ class ReviewRequest extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public Order $order;
+
     public string $storeName;
+
     public string $reviewUrl;
+
     public $orderItems;
 
     public function __construct(Order $order)

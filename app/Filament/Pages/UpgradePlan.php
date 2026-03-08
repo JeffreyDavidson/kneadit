@@ -9,13 +9,19 @@ use Filament\Pages\Page;
 class UpgradePlan extends Page
 {
     use HasPlanGating, RequiresRole;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-circle';
+
     protected static ?string $navigationLabel = 'Upgrade Plan';
+
     protected static ?string $title = 'Upgrade Your Plan';
+
     protected static bool $shouldRegisterNavigation = false;
+
     protected string $view = 'filament.pages.upgrade-plan';
 
     public string $currentPlan = 'starter';
+
     public array $plans = [];
 
     public function mount(): void

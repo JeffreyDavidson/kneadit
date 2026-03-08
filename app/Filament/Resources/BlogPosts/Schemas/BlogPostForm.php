@@ -50,7 +50,7 @@ class BlogPostForm
                 ->label('Published')
                 ->live()
                 ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                    if ($state && !$get('published_at')) {
+                    if ($state && ! $get('published_at')) {
                         $set('published_at', now()->format('Y-m-d H:i:s'));
                     }
                 }),

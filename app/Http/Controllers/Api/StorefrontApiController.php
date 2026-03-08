@@ -174,7 +174,7 @@ class StorefrontApiController extends Controller
         }
 
         $discount = 0;
-        if (!empty($validated['coupon_code'])) {
+        if (! empty($validated['coupon_code'])) {
             $coupon = Coupon::where('code', strtoupper($validated['coupon_code']))->valid()->first();
             if ($coupon) {
                 $discount = $coupon->calculateDiscount($subtotal);
@@ -220,7 +220,7 @@ class StorefrontApiController extends Controller
 
         $coupon = Coupon::where('code', strtoupper($validated['code']))->valid()->first();
 
-        if (!$coupon) {
+        if (! $coupon) {
             return response()->json([
                 'data' => ['valid' => false, 'discount_amount' => 0, 'type' => null, 'value' => null],
                 'message' => 'Invalid or expired coupon.',

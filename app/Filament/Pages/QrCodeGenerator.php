@@ -2,17 +2,17 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\ColorPicker;
-use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\EmbeddedSchema;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Support\Facades\Response;
-
 use App\Traits\HasPlanGating;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Select;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Response;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 class QrCodeGenerator extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -23,14 +23,21 @@ class QrCodeGenerator extends Page
     }
 
     protected static string $requiredPlan = 'growth';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-qr-code';
+
     protected static ?string $navigationLabel = 'QR Code';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 15;
+
     protected string $view = 'filament.pages.qr-code-generator';
 
     public ?array $data = [];
+
     public string $qrCodeSvg = '';
+
     public string $currentUrl = '';
 
     public function mount(): void
@@ -99,13 +106,13 @@ class QrCodeGenerator extends Page
 
     public function generateQrCode(): void
     {
-        $baseUrl = 'http://' . tenant()->domains->first()->domain;
+        $baseUrl = 'http://'.tenant()->domains->first()->domain;
         $page = $this->data['page'] ?? '';
         $size = (int) ($this->data['size'] ?? 300);
         $color = $this->data['color'] ?? '#3E2723';
         $format = $this->data['format'] ?? 'svg';
 
-        $this->currentUrl = $baseUrl . ($page ? '/' . $page : '');
+        $this->currentUrl = $baseUrl.($page ? '/'.$page : '');
 
         // Parse hex color to RGB
         $hex = ltrim($color, '#');
@@ -125,13 +132,13 @@ class QrCodeGenerator extends Page
 
     public function downloadQrCode()
     {
-        $baseUrl = 'http://' . tenant()->domains->first()->domain;
+        $baseUrl = 'http://'.tenant()->domains->first()->domain;
         $page = $this->data['page'] ?? '';
         $size = (int) ($this->data['size'] ?? 300);
         $color = $this->data['color'] ?? '#3E2723';
         $format = $this->data['format'] ?? 'svg';
 
-        $url = $baseUrl . ($page ? '/' . $page : '');
+        $url = $baseUrl.($page ? '/'.$page : '');
 
         $hex = ltrim($color, '#');
         $r = hexdec(substr($hex, 0, 2));
@@ -142,14 +149,16 @@ class QrCodeGenerator extends Page
 
         if ($format === 'png') {
             $content = $qr->format('png')->generate($url);
-            $filename = 'qr-code.' . ($page ?: 'home') . '.png';
-            return Response::streamDownload(fn () => print($content), $filename, [
+            $filename = 'qr-code.'.($page ?: 'home').'.png';
+
+            return Response::streamDownload(fn () => print ($content), $filename, [
                 'Content-Type' => 'image/png',
             ]);
         } else {
             $content = $qr->generate($url);
-            $filename = 'qr-code.' . ($page ?: 'home') . '.svg';
-            return Response::streamDownload(fn () => print($content), $filename, [
+            $filename = 'qr-code.'.($page ?: 'home').'.svg';
+
+            return Response::streamDownload(fn () => print ($content), $filename, [
                 'Content-Type' => 'image/svg+xml',
             ]);
         }

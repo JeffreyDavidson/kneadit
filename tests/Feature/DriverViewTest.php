@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Http\Middleware\TrackPageView;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Setting;
@@ -40,7 +38,7 @@ class DriverViewTest extends TestCase
         $customer = Customer::create(['name' => 'Test Customer', 'email' => 'cust@test.com']);
 
         return Order::create(array_merge([
-            'order_number' => 'ORD-' . uniqid(),
+            'order_number' => 'ORD-'.uniqid(),
             'customer_id' => $customer->id,
             'user_id' => $user->id,
             'status' => 'confirmed',

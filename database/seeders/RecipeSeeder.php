@@ -30,7 +30,7 @@ class RecipeSeeder extends Seeder
             'Classic Vanilla Birthday Cake',
             'Bourbon Pecan Pie',
             'Fruit Tarts',
-            'Pumpkin Spice Cheesecake'
+            'Pumpkin Spice Cheesecake',
         ])->get();
 
         $recipes = [
@@ -263,10 +263,10 @@ class RecipeSeeder extends Seeder
 
         foreach ($recipes as $recipeData) {
             $product = $products->where('name', $recipeData['product_name'])->first();
-            
+
             if ($product) {
                 $totalCost = collect($recipeData['ingredients'])->sum('cost');
-                
+
                 Recipe::create([
                     'product_id' => $product->id,
                     'name' => $recipeData['name'],

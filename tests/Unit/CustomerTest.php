@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
-use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -78,7 +77,7 @@ class CustomerTest extends TestCase
     public function days_since_last_order_returns_correct_number(): void
     {
         $customer = Customer::create(['name' => 'Frank', 'email' => 'frank@test.com']);
-        $order = Order::create(['user_id' => $this->user->id, 
+        $order = Order::create(['user_id' => $this->user->id,
             'customer_id' => $customer->id,
             'status' => 'delivered',
             'total' => 10,
@@ -100,7 +99,7 @@ class CustomerTest extends TestCase
     public function is_at_risk_when_30_plus_days_inactive(): void
     {
         $customer = Customer::create(['name' => 'Hank', 'email' => 'hank@test.com']);
-        $order = Order::create(['user_id' => $this->user->id, 
+        $order = Order::create(['user_id' => $this->user->id,
             'customer_id' => $customer->id,
             'status' => 'delivered',
             'total' => 10,
@@ -115,7 +114,7 @@ class CustomerTest extends TestCase
     public function is_not_at_risk_for_recent_customers(): void
     {
         $customer = Customer::create(['name' => 'Ivy', 'email' => 'ivy@test.com']);
-        $order = Order::create(['user_id' => $this->user->id, 
+        $order = Order::create(['user_id' => $this->user->id,
             'customer_id' => $customer->id,
             'status' => 'delivered',
             'total' => 10,
@@ -137,14 +136,14 @@ class CustomerTest extends TestCase
     public function last_order_date_returns_most_recent(): void
     {
         $customer = Customer::create(['name' => 'Kate', 'email' => 'kate@test.com']);
-        $order1 = Order::create(['user_id' => $this->user->id, 
+        $order1 = Order::create(['user_id' => $this->user->id,
             'customer_id' => $customer->id,
             'status' => 'delivered',
             'total' => 10,
             'subtotal' => 10,
         ]);
         Order::where('id', $order1->id)->update(['created_at' => now()->subDays(10)]);
-        $order2 = Order::create(['user_id' => $this->user->id, 
+        $order2 = Order::create(['user_id' => $this->user->id,
             'customer_id' => $customer->id,
             'status' => 'delivered',
             'total' => 20,

@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\EnsureStorefrontEnabled;
+use App\Http\Middleware\TrackPageView;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Http\Middleware\TrackPageView;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;

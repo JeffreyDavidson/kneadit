@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Process;
 class CreateDemoBakeries extends Command
 {
     protected $signature = 'tenant:bakeries {--fresh : Drop and recreate all demo tenants}';
+
     protected $description = 'Create 5 demo bakery tenants for local testing';
 
     public function handle(): int
@@ -69,6 +70,7 @@ class CreateDemoBakeries extends Command
         foreach ($bakeries as $bakery) {
             if (Tenant::find($bakery['id'])) {
                 $this->warn("{$bakery['store_name']} already exists. Use --fresh to recreate.");
+
                 continue;
             }
 
@@ -87,10 +89,10 @@ class CreateDemoBakeries extends Command
             ));
 
             if ($result->successful()) {
-                $domain = $bakery['id'] . '.kneadit.test';
+                $domain = $bakery['id'].'.kneadit.test';
                 $this->info("  ✅ {$bakery['store_name']} → http://{$domain}/admin");
             } else {
-                $this->error("  ❌ Failed: " . trim($result->errorOutput() ?: $result->output()));
+                $this->error('  ❌ Failed: '.trim($result->errorOutput() ?: $result->output()));
             }
         }
 

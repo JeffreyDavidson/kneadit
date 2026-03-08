@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -39,7 +38,7 @@ class BlogPost extends Model
                 $original = $post->slug;
                 $count = 1;
                 while (static::where('slug', $post->slug)->where('id', '!=', $post->id)->exists()) {
-                    $post->slug = $original . '-' . $count++;
+                    $post->slug = $original.'-'.$count++;
                 }
             }
         });

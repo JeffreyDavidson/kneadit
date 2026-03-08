@@ -5,8 +5,8 @@ namespace App\Filament\Resources\EmailCampaigns\Schemas;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class EmailCampaignForm
 {

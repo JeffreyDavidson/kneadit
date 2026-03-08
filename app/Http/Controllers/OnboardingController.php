@@ -46,7 +46,7 @@ class OnboardingController extends Controller
 
         // Add the subdomain
         $tenant->domains()->create([
-            'domain' => $subdomain . '.' . config('tenancy.central_domains.0', 'getkneadit.app'),
+            'domain' => $subdomain.'.'.config('tenancy.central_domains.0', 'getkneadit.app'),
         ]);
 
         // Create the tenant's database and run migrations
@@ -64,13 +64,13 @@ class OnboardingController extends Controller
             \App\Models\Setting::set('store_email', $request->user()->email);
             \App\Models\Setting::set('storefront_enabled', $useKneadItStorefront ? '1' : '0');
 
-            if (!$useKneadItStorefront && isset($validated['external_website'])) {
+            if (! $useKneadItStorefront && isset($validated['external_website'])) {
                 \App\Models\Setting::set('external_website', $validated['external_website']);
             }
         });
 
         // Redirect to their new admin panel
-        $tenantUrl = 'http://' . $subdomain . '.' . config('tenancy.central_domains.0', 'getkneadit.app') . '/admin';
+        $tenantUrl = 'http://'.$subdomain.'.'.config('tenancy.central_domains.0', 'getkneadit.app').'/admin';
 
         return redirect()->away($tenantUrl);
     }

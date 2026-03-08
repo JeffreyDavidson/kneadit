@@ -12,7 +12,7 @@ class DescriptionGeneratorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new DescriptionGeneratorService();
+        $this->service = new DescriptionGeneratorService;
     }
 
     /** @test */

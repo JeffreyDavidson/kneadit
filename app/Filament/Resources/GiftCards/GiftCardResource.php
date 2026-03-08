@@ -8,10 +8,10 @@ use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
 use App\Filament\Resources\GiftCards\Pages\ViewGiftCard;
 use App\Filament\Resources\GiftCards\Schemas\GiftCardForm;
 use App\Filament\Resources\GiftCards\Tables\GiftCardsTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\GiftCard;
 use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
@@ -25,13 +25,19 @@ class GiftCardResource extends Resource
     }
 
     protected static ?string $model = GiftCard::class;
+
     protected static string $requiredPlan = 'growth';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-gift-top';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+
     protected static ?int $navigationSort = 11;
+
     protected static ?string $navigationLabel = 'Gift Cards';
+
     protected static ?string $pluralModelLabel = 'Gift Cards';
+
     public static function form(Schema $schema): Schema
     {
         return GiftCardForm::configure($schema);
@@ -54,13 +60,13 @@ class GiftCardResource extends Resource
 
     public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
     {
-        return 'Gift Card: ' . $record->code;
+        return 'Gift Card: '.$record->code;
     }
 
     public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
     {
         return [
-            'Balance' => '$' . number_format($record->current_balance, 2),
+            'Balance' => '$'.number_format($record->current_balance, 2),
             'Recipient' => $record->recipient_name ?? 'N/A',
             'Active' => $record->is_active ? 'Yes' : 'No',
         ];

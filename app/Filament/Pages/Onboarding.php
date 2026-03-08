@@ -2,9 +2,11 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\ColorPicker;
@@ -12,13 +14,12 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard;
@@ -26,7 +27,6 @@ use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
-use App\Traits\HasPlanGating;
 class Onboarding extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -43,67 +43,108 @@ class Onboarding extends Page
 
     // Step 1: Welcome
     public ?string $bakery_name = '';
+
     public ?string $owner_name = '';
 
     // Step 2: Contact Info
     public ?string $contact_email = '';
+
     public ?string $contact_phone = '';
+
     public ?string $contact_address = '';
 
     // Step 3: Branding
     public ?string $brand_color_primary = '#6b4c3b';
+
     public ?string $brand_color_secondary = '#d4a574';
+
     public ?array $store_logo = [];
 
     // Step 4: First Product
     public ?string $product_name = '';
+
     public ?string $product_description = '';
+
     public ?string $product_price = '';
+
     public ?string $product_category_id = '';
 
     // Step 5: Business Hours
     public bool $hours_monday = true;
+
     public ?string $hours_monday_open = '07:00';
+
     public ?string $hours_monday_close = '18:00';
+
     public bool $hours_tuesday = true;
+
     public ?string $hours_tuesday_open = '07:00';
+
     public ?string $hours_tuesday_close = '18:00';
+
     public bool $hours_wednesday = true;
+
     public ?string $hours_wednesday_open = '07:00';
+
     public ?string $hours_wednesday_close = '18:00';
+
     public bool $hours_thursday = true;
+
     public ?string $hours_thursday_open = '07:00';
+
     public ?string $hours_thursday_close = '18:00';
+
     public bool $hours_friday = true;
+
     public ?string $hours_friday_open = '07:00';
+
     public ?string $hours_friday_close = '18:00';
+
     public bool $hours_saturday = false;
+
     public ?string $hours_saturday_open = '08:00';
+
     public ?string $hours_saturday_close = '17:00';
+
     public bool $hours_sunday = false;
+
     public ?string $hours_sunday_open = '08:00';
+
     public ?string $hours_sunday_close = '17:00';
 
     // Step 6: Cottage Food Compliance
     public ?string $cottage_food_state = '';
+
     public ?string $revenue_cap = '250000';
+
     public ?string $license_number = '';
+
     public ?string $allergy_disclaimer = '';
+
     public bool $compliance_acknowledged = false;
 
     // Step 7: Delivery Settings
     public bool $delivery_enabled = false;
+
     public ?string $delivery_radius = '';
+
     public ?string $delivery_fee = '';
+
     public bool $free_delivery_over = false;
+
     public ?string $free_delivery_threshold = '';
+
     public ?string $delivery_minimum_order = '';
+
     public bool $pickup_enabled = true;
+
     public ?string $pickup_instructions = '';
 
     // Step 8: PayPal Connection
     public ?string $paypal_client_id = '';
+
     public ?string $paypal_client_secret = '';
+
     public bool $paypal_sandbox = true;
 
     public function mount(): void
@@ -111,6 +152,7 @@ class Onboarding extends Page
         // If onboarding is already complete, redirect to dashboard
         if (Setting::get('onboarding_completed_at')) {
             $this->redirect(url('/admin'));
+
             return;
         }
 
@@ -274,6 +316,7 @@ class Onboarding extends Page
                                                 'description' => $data['description'] ?? null,
                                                 'is_active' => true,
                                             ]);
+
                                             return $category->id;
                                         }),
                                 ]),
@@ -502,7 +545,7 @@ class Onboarding extends Page
             $tenant->save();
         }
 
-        if (!empty($this->store_logo)) {
+        if (! empty($this->store_logo)) {
             $logoPath = is_array($this->store_logo) ? collect($this->store_logo)->first() : $this->store_logo;
             if ($logoPath) {
                 Setting::set('store_logo', $logoPath);

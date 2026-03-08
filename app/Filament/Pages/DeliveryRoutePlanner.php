@@ -2,14 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
 use App\Models\Setting;
+use App\Traits\HasPlanGating;
 use Carbon\Carbon;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
-use App\Traits\HasPlanGating;
 class DeliveryRoutePlanner extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -19,16 +19,22 @@ class DeliveryRoutePlanner extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';
+
     protected static ?string $navigationLabel = 'Delivery Planner';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 10;
+
     protected string $view = 'filament.pages.delivery-route-planner';
 
     public ?string $selectedDate = null;
+
     public Collection $deliveryOrders;
+
     public ?string $storeAddress = null;
 
     public function mount()
@@ -45,8 +51,9 @@ class DeliveryRoutePlanner extends Page
 
     public function loadOrders()
     {
-        if (!$this->selectedDate) {
+        if (! $this->selectedDate) {
             $this->deliveryOrders = collect();
+
             return;
         }
 
@@ -74,15 +81,15 @@ class DeliveryRoutePlanner extends Page
         // Simple distance tier calculation without external API
         // Based on postal codes, street numbers, or keywords
         $address = strtolower($deliveryAddress);
-        
+
         // Simple tier system based on common patterns
-        if (str_contains($address, 'downtown') || 
-            str_contains($address, 'center') || 
+        if (str_contains($address, 'downtown') ||
+            str_contains($address, 'center') ||
             str_contains($address, 'main st')) {
             return ['tier' => 'Close', 'color' => 'green', 'estimated_minutes' => 10];
-        } elseif (str_contains($address, 'west') || 
-                  str_contains($address, 'east') || 
-                  str_contains($address, 'north') || 
+        } elseif (str_contains($address, 'west') ||
+                  str_contains($address, 'east') ||
+                  str_contains($address, 'north') ||
                   str_contains($address, 'south')) {
             return ['tier' => 'Medium', 'color' => 'yellow', 'estimated_minutes' => 20];
         } else {

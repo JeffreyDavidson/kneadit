@@ -27,7 +27,7 @@ class StatsOverview extends BaseWidget
                 ->icon('heroicon-o-clock')
                 ->color('warning'),
 
-            Stat::make("This Week's Revenue", '$' . number_format(
+            Stat::make("This Week's Revenue", '$'.number_format(
                 (float) Order::where('status', '!=', 'cancelled')
                     ->whereBetween('requested_date', [$weekStart, Carbon::now()->endOfWeek()])
                     ->sum('total'),
@@ -36,7 +36,7 @@ class StatsOverview extends BaseWidget
                 ->icon('heroicon-o-currency-dollar')
                 ->color('success'),
 
-            Stat::make('Avg Order Value', '$' . number_format(
+            Stat::make('Avg Order Value', '$'.number_format(
                 (float) Order::where('status', '!=', 'cancelled')
                     ->whereBetween('requested_date', [$weekStart, Carbon::now()->endOfWeek()])
                     ->avg('total') ?? 0,
@@ -51,7 +51,7 @@ class StatsOverview extends BaseWidget
 
             ...collect([WaitlistEntry::waiting()->where('requested_date', '>=', $today)->count()])
                 ->filter()
-                ->map(fn (int $count) => Stat::make('Waitlist', $count . ' ' . str('person')->plural($count))
+                ->map(fn (int $count) => Stat::make('Waitlist', $count.' '.str('person')->plural($count))
                     ->icon('heroicon-o-queue-list')
                     ->color('warning')
                     ->description('Waiting for upcoming dates')
@@ -61,7 +61,9 @@ class StatsOverview extends BaseWidget
             ...collect([$today, $today->copy()->addDay()])
                 ->map(function (Carbon $date) {
                     $usage = CapacityLimit::usagePercent($date);
-                    if ($usage === null || $usage < 80) return null;
+                    if ($usage === null || $usage < 80) {
+                        return null;
+                    }
                     $label = $date->isToday() ? 'Today' : 'Tomorrow';
                     $limit = CapacityLimit::forDate($date);
                     if ($limit?->is_blocked) {
@@ -71,10 +73,11 @@ class StatsOverview extends BaseWidget
                             ->description('Day is blocked for orders');
                     }
                     $remaining = CapacityLimit::remainingSlots($date);
-                    return Stat::make("$label Capacity", round($usage) . '% full')
+
+                    return Stat::make("$label Capacity", round($usage).'% full')
                         ->icon('heroicon-o-exclamation-triangle')
                         ->color($usage >= 100 ? 'danger' : 'warning')
-                        ->description($remaining . ' slots remaining');
+                        ->description($remaining.' slots remaining');
                 })
                 ->filter()
                 ->all(),

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 class CreateDemoTenant extends Command
 {
     protected $signature = 'tenant:demo {--fresh : Drop and recreate the demo tenant}';
+
     protected $description = 'Create a demo tenant for local testing';
 
     public function handle(): int
@@ -26,6 +27,7 @@ class CreateDemoTenant extends Command
 
         if (Tenant::find($subdomain)) {
             $this->warn('Demo tenant already exists. Use --fresh to recreate.');
+
             return self::SUCCESS;
         }
 
@@ -48,7 +50,7 @@ class CreateDemoTenant extends Command
         $tenant->domains()->create(['domain' => $subdomain]);
 
         // Verify tenant database was created
-        $dbName = 'tenant' . $subdomain;
+        $dbName = 'tenant'.$subdomain;
         $dbPath = database_path($dbName);
 
         if (! file_exists($dbPath)) {

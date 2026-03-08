@@ -16,18 +16,29 @@ class ActivityLogPage extends Page
     }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
+
     protected static ?string $navigationLabel = 'Activity Log';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Admin';
+
     protected static ?int $navigationSort = 2;
+
     protected string $view = 'filament.pages.activity-log';
 
     public ?string $filterAction = null;
+
     public ?string $filterModelType = null;
+
     public ?string $filterUser = null;
+
     public ?string $filterDateFrom = null;
+
     public ?string $filterDateTo = null;
+
     public int $page = 1;
+
     public int $perPage = 25;
+
     public ?int $expandedId = null;
 
     public function getActivitiesProperty()
@@ -51,7 +62,7 @@ class ActivityLogPage extends Page
         }
 
         if ($this->filterDateTo) {
-            $query->where('created_at', '<=', $this->filterDateTo . ' 23:59:59');
+            $query->where('created_at', '<=', $this->filterDateTo.' 23:59:59');
         }
 
         return $query->paginate($this->perPage, ['*'], 'page', $this->page);
@@ -95,9 +106,28 @@ class ActivityLogPage extends Page
         $this->page++;
     }
 
-    public function updatedFilterAction(): void { $this->page = 1; }
-    public function updatedFilterModelType(): void { $this->page = 1; }
-    public function updatedFilterUser(): void { $this->page = 1; }
-    public function updatedFilterDateFrom(): void { $this->page = 1; }
-    public function updatedFilterDateTo(): void { $this->page = 1; }
+    public function updatedFilterAction(): void
+    {
+        $this->page = 1;
+    }
+
+    public function updatedFilterModelType(): void
+    {
+        $this->page = 1;
+    }
+
+    public function updatedFilterUser(): void
+    {
+        $this->page = 1;
+    }
+
+    public function updatedFilterDateFrom(): void
+    {
+        $this->page = 1;
+    }
+
+    public function updatedFilterDateTo(): void
+    {
+        $this->page = 1;
+    }
 }

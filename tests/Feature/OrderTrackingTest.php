@@ -2,15 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\EnsureStorefrontEnabled;
+use App\Http\Middleware\TrackPageView;
+use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Http\Middleware\TrackPageView;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
@@ -93,7 +93,7 @@ class OrderTrackingTest extends TestCase
 
         foreach (['pending', 'confirmed', 'baking', 'ready', 'delivered'] as $status) {
             Order::create([
-                'order_number' => 'KN' . strtoupper($status),
+                'order_number' => 'KN'.strtoupper($status),
                 'customer_id' => $customer->id,
                 'status' => $status,
                 'subtotal' => 10.00,

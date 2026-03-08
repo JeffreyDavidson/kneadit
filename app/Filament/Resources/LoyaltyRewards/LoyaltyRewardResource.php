@@ -5,22 +5,22 @@ namespace App\Filament\Resources\LoyaltyRewards;
 use App\Filament\Resources\LoyaltyRewards\Pages\CreateLoyaltyReward;
 use App\Filament\Resources\LoyaltyRewards\Pages\EditLoyaltyReward;
 use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
+use App\Filament\Traits\RequiresRole;
 use App\Models\LoyaltyReward;
 use App\Models\Product;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class LoyaltyRewardResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -30,8 +30,8 @@ class LoyaltyRewardResource extends Resource
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static ?string $model = LoyaltyReward::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-gift';
@@ -107,8 +107,8 @@ class LoyaltyRewardResource extends Resource
                 TextColumn::make('reward_value')
                     ->formatStateUsing(function ($state, LoyaltyReward $record) {
                         return match ($record->reward_type) {
-                            'percentage_discount' => $state . '%',
-                            'fixed_discount' => '$' . number_format((float) $state, 2),
+                            'percentage_discount' => $state.'%',
+                            'fixed_discount' => '$'.number_format((float) $state, 2),
                             'free_product' => $record->product?->name ?? '-',
                             default => $state,
                         };

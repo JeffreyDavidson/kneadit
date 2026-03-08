@@ -21,6 +21,7 @@ class OrderMessageTest extends TestCase
     use RefreshDatabase;
 
     protected array $tenantMiddleware;
+
     protected Order $order;
 
     protected function setUp(): void

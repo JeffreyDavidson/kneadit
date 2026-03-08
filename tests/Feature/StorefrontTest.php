@@ -2,12 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\StorefrontController;
 use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Http\Middleware\TrackPageView;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Review;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;

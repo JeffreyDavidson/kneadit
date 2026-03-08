@@ -7,13 +7,13 @@ use App\Filament\Resources\ContactMessages\Pages\EditContactMessage;
 use App\Filament\Resources\ContactMessages\Pages\ListContactMessages;
 use App\Filament\Resources\ContactMessages\Schemas\ContactMessageForm;
 use App\Filament\Resources\ContactMessages\Tables\ContactMessagesTable;
-use App\Models\ContactMessage;
-use Filament\Resources\Resource;
 use App\Filament\Traits\RequiresRole;
+use App\Models\ContactMessage;
+use App\Traits\HasPlanGating;
+use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class ContactMessageResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -26,8 +26,11 @@ class ContactMessageResource extends Resource
     protected static ?string $model = ContactMessage::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-envelope';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
+
     protected static ?string $navigationLabel = 'Messages';
+
     protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
@@ -54,7 +57,7 @@ class ContactMessageResource extends Resource
 
     public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
     {
-        return $record->subject ?? 'Message from ' . $record->name;
+        return $record->subject ?? 'Message from '.$record->name;
     }
 
     public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array

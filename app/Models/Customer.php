@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -87,7 +86,10 @@ class Customer extends Model
 
     public function getDaysSinceLastOrderAttribute(): ?int
     {
-        if (!$this->last_order_date) return null;
+        if (! $this->last_order_date) {
+            return null;
+        }
+
         return (int) Carbon::parse($this->last_order_date)->diffInDays(now());
     }
 
@@ -113,19 +115,33 @@ class Customer extends Model
 
     public function daysUntilBirthday(): ?int
     {
-        if (!$this->birthday) return null;
+        if (! $this->birthday) {
+            return null;
+        }
         $next = $this->birthday->copy()->year(now()->year);
-        if ($next->isPast()) $next->addYear();
+        if ($next->isPast()) {
+            $next->addYear();
+        }
+
         return (int) now()->diffInDays($next, false);
     }
 
     public function getFullAddressAttribute(): string
     {
         $address = '';
-        if ($this->address) $address .= $this->address;
-        if ($this->city) $address .= ($address ? ', ' : '') . $this->city;
-        if ($this->state) $address .= ($address ? ', ' : '') . $this->state;
-        if ($this->zip) $address .= ($address ? ' ' : '') . $this->zip;
+        if ($this->address) {
+            $address .= $this->address;
+        }
+        if ($this->city) {
+            $address .= ($address ? ', ' : '').$this->city;
+        }
+        if ($this->state) {
+            $address .= ($address ? ', ' : '').$this->state;
+        }
+        if ($this->zip) {
+            $address .= ($address ? ' ' : '').$this->zip;
+        }
+
         return $address;
     }
 }

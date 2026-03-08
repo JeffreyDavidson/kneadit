@@ -36,6 +36,6 @@ class StaffInvitation extends Model
 
     public function isPending(): bool
     {
-        return is_null($this->accepted_at) && !$this->isExpired();
+        return is_null($this->accepted_at) && ! $this->isExpired();
     }
 }

@@ -12,7 +12,7 @@ class EnsureStorefrontEnabled
     {
         $tenant = tenant();
 
-        if ($tenant && !$tenant->storefront_enabled) {
+        if ($tenant && ! $tenant->storefront_enabled) {
             // Redirect to external website if set
             if ($tenant->external_website) {
                 return redirect()->away($tenant->external_website);

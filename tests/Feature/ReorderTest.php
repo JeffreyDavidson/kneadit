@@ -42,11 +42,11 @@ class ReorderTest extends TestCase
     {
         $user = User::create(['name' => 'Baker', 'email' => 'baker@test.com', 'password' => bcrypt('pass')]);
         $customer = Customer::create(['name' => 'Test', 'email' => 'test@example.com']);
-        $category = Category::create(['name' => $productName . ' Cat', 'slug' => 'cat-' . uniqid()]);
-        $product = Product::create(['name' => $productName, 'slug' => \Str::slug($productName) . '-' . uniqid(), 'price' => $price, 'category_id' => $category->id, 'is_active' => true]);
+        $category = Category::create(['name' => $productName.' Cat', 'slug' => 'cat-'.uniqid()]);
+        $product = Product::create(['name' => $productName, 'slug' => \Str::slug($productName).'-'.uniqid(), 'price' => $price, 'category_id' => $category->id, 'is_active' => true]);
 
         $order = Order::create([
-            'order_number' => 'ORD-RE-' . uniqid(),
+            'order_number' => 'ORD-RE-'.uniqid(),
             'customer_id' => $customer->id,
             'user_id' => $user->id,
             'status' => 'delivered',

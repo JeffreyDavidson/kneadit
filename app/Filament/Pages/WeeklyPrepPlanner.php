@@ -2,14 +2,13 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
-use App\Models\Product;
+use App\Traits\HasPlanGating;
 use Carbon\Carbon;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
-use App\Traits\HasPlanGating;
 class WeeklyPrepPlanner extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -19,17 +18,24 @@ class WeeklyPrepPlanner extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'growth';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
+
     protected static ?string $navigationLabel = 'Prep Planner';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 4;
+
     protected string $view = 'filament.pages.weekly-prep-planner';
 
     public ?string $selectedWeekStart = null;
+
     public Collection $weeklyOrders;
+
     public Collection $prepSchedule;
+
     public array $weekDays = [];
 
     public function mount()
@@ -45,9 +51,10 @@ class WeeklyPrepPlanner extends Page
 
     public function loadWeeklyData()
     {
-        if (!$this->selectedWeekStart) {
+        if (! $this->selectedWeekStart) {
             $this->weeklyOrders = collect();
             $this->prepSchedule = collect();
+
             return;
         }
 
@@ -81,20 +88,20 @@ class WeeklyPrepPlanner extends Page
             foreach ($orders as $order) {
                 foreach ($order->orderItems as $orderItem) {
                     $product = $orderItem->product;
-                    
+
                     if ($product && $product->recipes->isNotEmpty()) {
                         $recipe = $product->recipes->first();
                         $quantity = $orderItem->quantity;
                         $prepTimeMinutes = $recipe->prep_time_minutes ?? 60; // Default 1 hour if not set
-                        
+
                         // Calculate when to start prep
                         $requestedDateTime = Carbon::parse($order->requested_date);
                         if ($order->requested_time) {
                             $requestedDateTime->setTimeFromTimeString($order->requested_time);
                         }
-                        
+
                         $prepStartTime = $requestedDateTime->copy()->subMinutes($prepTimeMinutes);
-                        
+
                         $prepTasks->push([
                             'date' => $date,
                             'order_number' => $order->order_number,

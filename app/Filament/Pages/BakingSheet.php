@@ -2,14 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
-use Filament\Actions\Action;
 use App\Models\OrderItem;
+use App\Traits\HasPlanGating;
+use Filament\Actions\Action;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-use App\Traits\HasPlanGating;
 class BakingSheet extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -20,12 +20,17 @@ class BakingSheet extends Page
     }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-printer';
+
     protected static ?string $navigationLabel = 'Baking Sheet';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 1;
+
     protected string $view = 'filament.pages.baking-sheet';
 
     public string $selectedDate = '';
+
     public Collection $bakingItems;
 
     public function mount()
@@ -46,7 +51,7 @@ class BakingSheet extends Page
             ->select([
                 'products.name as product_name',
                 DB::raw('SUM(order_items.quantity) as total_quantity'),
-                DB::raw('GROUP_CONCAT(customers.name SEPARATOR ", ") as customer_names')
+                DB::raw('GROUP_CONCAT(customers.name SEPARATOR ", ") as customer_names'),
             ])
             ->groupBy('products.id', 'products.name')
             ->orderBy('products.name')

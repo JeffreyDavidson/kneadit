@@ -21,7 +21,7 @@ class ViewGiftCard extends ViewRecord
                 ->color(fn () => $this->record->is_active ? 'danger' : 'success')
                 ->requiresConfirmation()
                 ->action(function () {
-                    $this->record->update(['is_active' => !$this->record->is_active]);
+                    $this->record->update(['is_active' => ! $this->record->is_active]);
                 }),
 
             Action::make('add_credit')
@@ -39,7 +39,7 @@ class ViewGiftCard extends ViewRecord
                         ->placeholder('Reason for credit'),
                 ])
                 ->action(function (array $data) {
-                    $service = new GiftCardService();
+                    $service = new GiftCardService;
                     $service->addCredit(
                         $this->record,
                         (float) $data['amount'],

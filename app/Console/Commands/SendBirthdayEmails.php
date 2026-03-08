@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 class SendBirthdayEmails extends Command
 {
     protected $signature = 'birthday:send-emails';
+
     protected $description = 'Send happy birthday emails to customers with birthdays today';
 
     public function handle(): int
@@ -25,6 +26,7 @@ class SendBirthdayEmails extends Command
             try {
                 if (Setting::get('birthday_program_enabled', '1') !== '1') {
                     $this->info("Skipping {$tenant->id} — birthday program disabled");
+
                     continue;
                 }
 
@@ -50,22 +52,25 @@ class SendBirthdayEmails extends Command
 
         if ($birthdayCustomers->isEmpty()) {
             $this->info("[{$tenant->id}] No birthdays today.");
+
             return;
         }
 
         $sent = 0;
 
         foreach ($birthdayCustomers as $customer) {
-            if (!$customer->email) continue;
+            if (! $customer->email) {
+                continue;
+            }
 
             try {
                 $coupon = null;
 
                 if ($discountPercent > 0) {
-                    $couponCode = 'BDAY-' . $customer->id . '-' . $today->year;
+                    $couponCode = 'BDAY-'.$customer->id.'-'.$today->year;
                     $existing = Coupon::where('code', $couponCode)->first();
 
-                    if (!$existing) {
+                    if (! $existing) {
                         $coupon = Coupon::create([
                             'code' => $couponCode,
                             'type' => 'percentage',

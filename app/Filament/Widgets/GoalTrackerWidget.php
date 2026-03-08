@@ -11,13 +11,14 @@ class GoalTrackerWidget extends Widget
 {
     protected string $view = 'filament.widgets.goal-tracker';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public bool $showEditModal = false;
 
     public string $newGoal = '';
 
     public string $editingGoal = '';
+
     public string $editingType = '';
 
     public function mount(): void {}

@@ -5,8 +5,8 @@ namespace App\Filament\Resources\ContactMessages\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
@@ -19,15 +19,15 @@ class ContactMessagesTable
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('subject')
                     ->searchable()
                     ->limit(50),
-                    
+
                 TextColumn::make('message')
                     ->limit(100)
                     ->tooltip(function (TextColumn $column): ?string {
@@ -35,11 +35,12 @@ class ContactMessagesTable
                         if (strlen($state) <= 100) {
                             return null;
                         }
+
                         return $state;
                     }),
-                    
+
                 BooleanColumn::make('is_read'),
-                
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),

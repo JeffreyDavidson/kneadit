@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\GiftCard;
 use App\Models\GiftCardTransaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class GiftCardStorefrontTest extends TestCase
 {
@@ -27,7 +27,7 @@ class GiftCardStorefrontTest extends TestCase
         $counter++;
 
         return GiftCard::create(array_merge([
-            'code' => 'GIFT-TEST-' . str_pad($counter, 4, '0', STR_PAD_LEFT),
+            'code' => 'GIFT-TEST-'.str_pad($counter, 4, '0', STR_PAD_LEFT),
             'initial_balance' => 50.00,
             'current_balance' => 50.00,
             'purchaser_name' => 'John Doe',

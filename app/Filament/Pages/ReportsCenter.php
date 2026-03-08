@@ -11,16 +11,25 @@ class ReportsCenter extends Page
     use HasPlanGating;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-pie';
+
     protected static ?string $navigationLabel = 'Reports';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 14;
+
     protected string $view = 'filament.pages.reports-center';
+
     protected static string $requiredPlan = 'growth';
 
     public string $activeReport = '';
+
     public string $startDate = '';
+
     public string $endDate = '';
+
     public int $selectedYear;
+
     public array $reportData = [];
 
     public function mount(): void

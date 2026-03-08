@@ -7,15 +7,15 @@ use App\Filament\Resources\Customers\Pages\EditCustomer;
 use App\Filament\Resources\Customers\Pages\ListCustomers;
 use App\Filament\Resources\Customers\Schemas\CustomerForm;
 use App\Filament\Resources\Customers\Tables\CustomersTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Customer;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class CustomerResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -30,6 +30,7 @@ class CustomerResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+
     protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema

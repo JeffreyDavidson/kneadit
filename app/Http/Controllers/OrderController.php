@@ -7,11 +7,11 @@ use App\Models\BusinessSchedule;
 use App\Models\CapacityLimit;
 use App\Models\Category;
 use App\Models\Coupon;
+use App\Models\Customer;
+use App\Models\CustomerFavorite;
 use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Customer;
-use App\Models\CustomerFavorite;
 use App\Services\GiftCardService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -52,7 +52,7 @@ class OrderController extends Controller
     {
         $request->validate([
             'code' => 'required|string',
-            'subtotal' => 'required|numeric|min:0'
+            'subtotal' => 'required|numeric|min:0',
         ]);
 
         $code = strtoupper(trim($request->input('code')));
@@ -60,17 +60,17 @@ class OrderController extends Controller
 
         $coupon = Coupon::where('code', $code)->first();
 
-        if (!$coupon) {
+        if (! $coupon) {
             return response()->json(['error' => 'Coupon not found.'], 422);
         }
 
-        if (!$coupon->isValid()) {
+        if (! $coupon->isValid()) {
             return response()->json(['error' => 'This coupon is no longer valid.'], 422);
         }
 
         if ($coupon->min_order_amount && $subtotal < (float) $coupon->min_order_amount) {
             return response()->json([
-                'error' => 'Minimum order of $' . number_format($coupon->min_order_amount, 2) . ' required for this coupon.',
+                'error' => 'Minimum order of $'.number_format($coupon->min_order_amount, 2).' required for this coupon.',
             ], 422);
         }
 
@@ -82,8 +82,8 @@ class OrderController extends Controller
             'code' => $coupon->code,
             'discount' => $discount,
             'label' => $coupon->type === 'percentage'
-                ? number_format($coupon->value, 0) . '% off'
-                : '$' . number_format($coupon->value, 2) . ' off',
+                ? number_format($coupon->value, 0).'% off'
+                : '$'.number_format($coupon->value, 2).' off',
         ]);
     }
 
@@ -97,14 +97,14 @@ class OrderController extends Controller
             'subtotal' => 'required|numeric|min:0',
         ]);
 
-        $service = new GiftCardService();
+        $service = new GiftCardService;
         $card = $service->checkBalance($request->code);
 
-        if (!$card) {
+        if (! $card) {
             return response()->json(['error' => 'Gift card not found.'], 422);
         }
 
-        if (!$card->isUsable()) {
+        if (! $card->isUsable()) {
             return response()->json(['error' => 'This gift card is no longer valid.'], 422);
         }
 
@@ -132,7 +132,7 @@ class OrderController extends Controller
         }
 
         // Check capacity limits
-        if (!CapacityLimit::isAvailable($validated['delivery_date'])) {
+        if (! CapacityLimit::isAvailable($validated['delivery_date'])) {
             return back()->withErrors(['delivery_date' => 'Sorry, this date is fully booked. Please choose another date.']);
         }
 
@@ -177,7 +177,7 @@ class OrderController extends Controller
         ]);
 
         // Increment coupon usage
-        if (!empty($calculated['coupon_id'])) {
+        if (! empty($calculated['coupon_id'])) {
             Coupon::where('id', $calculated['coupon_id'])->increment('used_count');
         }
 
@@ -188,7 +188,7 @@ class OrderController extends Controller
             if ($giftCard && $giftCard->isUsable()) {
                 $gcAmount = min((float) $giftCard->current_balance, (float) $order->total);
                 if ($gcAmount > 0) {
-                    $service = new GiftCardService();
+                    $service = new GiftCardService;
                     $service->redeem($giftCard->code, $gcAmount, $order->id);
                     $order->update(['total' => max(0, (float) $order->total - $gcAmount)]);
                 }
@@ -233,16 +233,18 @@ class OrderController extends Controller
                     'reason' => $blocked->reason ?? 'Blocked',
                     'remaining_capacity' => 0,
                 ];
+
                 continue;
             }
 
-            if (!$isOpen) {
+            if (! $isOpen) {
                 $dates[] = [
                     'date' => $dateStr,
                     'available' => false,
                     'reason' => 'Closed',
                     'remaining_capacity' => 0,
                 ];
+
                 continue;
             }
 
@@ -301,7 +303,7 @@ class OrderController extends Controller
             'customer_birthday' => 'nullable|date',
             'delivery_type' => 'required|in:pickup,delivery',
             'delivery_address' => 'required_if:delivery_type,delivery|nullable|string|max:500',
-            'delivery_date' => 'required|date|after_or_equal:' . now()->addDays(2)->toDateString(),
+            'delivery_date' => 'required|date|after_or_equal:'.now()->addDays(2)->toDateString(),
             'delivery_time' => 'nullable|string|max:20',
             'delivery_tier' => 'required_if:delivery_type,delivery|nullable|in:under5,5to10,10to15,over15',
             'notes' => 'nullable|string|max:500',
@@ -318,7 +320,9 @@ class OrderController extends Controller
 
         foreach ($validated['items'] as $item) {
             $product = Product::findOrFail($item['product_id']);
-            if (!$product->is_available) continue;
+            if (! $product->is_available) {
+                continue;
+            }
 
             $lineTotal = $product->price * $item['quantity'];
             $subtotal += $lineTotal;
@@ -353,7 +357,7 @@ class OrderController extends Controller
     protected function generateOrderNumber(): string
     {
         do {
-            $number = 'KN' . date('ymd') . strtoupper(Str::random(4));
+            $number = 'KN'.date('ymd').strtoupper(Str::random(4));
         } while (Order::where('order_number', $number)->exists());
 
         return $number;
@@ -361,7 +365,7 @@ class OrderController extends Controller
 
     public function reorderData(Order $order)
     {
-        $items = $order->orderItems->map(fn($item) => [
+        $items = $order->orderItems->map(fn ($item) => [
             'product_id' => $item->product_id,
             'product_name' => $item->product?->name ?? 'Unknown',
             'price' => $item->unit_price,
@@ -381,8 +385,8 @@ class OrderController extends Controller
         $request->validate(['email' => 'required|email']);
 
         $orders = Order::whereHas('customer', function ($q) use ($request) {
-                $q->where('email', $request->email);
-            })
+            $q->where('email', $request->email);
+        })
             ->with(['orderItems.product', 'messages'])
             ->latest()
             ->get();
@@ -420,7 +424,7 @@ class OrderController extends Controller
     public function getFavorites(Request $request)
     {
         $email = $request->input('email');
-        if (!$email) {
+        if (! $email) {
             return response()->json(['favorites' => []]);
         }
 

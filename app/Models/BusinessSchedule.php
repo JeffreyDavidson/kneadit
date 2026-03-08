@@ -44,6 +44,7 @@ class BusinessSchedule extends Model
     public static function isOpenOn(int $dayOfWeek): bool
     {
         $schedule = static::forDay($dayOfWeek);
+
         return $schedule?->is_open ?? false;
     }
 }

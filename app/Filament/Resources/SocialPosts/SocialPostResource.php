@@ -7,13 +7,13 @@ use App\Filament\Resources\SocialPosts\Pages\EditSocialPost;
 use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
 use App\Filament\Resources\SocialPosts\Schemas\SocialPostForm;
 use App\Filament\Resources\SocialPosts\Tables\SocialPostsTable;
-use App\Models\SocialPost;
-use Filament\Resources\Resource;
 use App\Filament\Traits\RequiresRole;
+use App\Models\SocialPost;
+use App\Traits\HasPlanGating;
+use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class SocialPostResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -23,8 +23,8 @@ class SocialPostResource extends Resource
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static ?string $model = SocialPost::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-share';

@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Traits\HasPlanGating;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Stancl\Tenancy\Contracts\Tenant;
+use Tests\TestCase;
 
 class PlanGatingTest extends TestCase
 {
@@ -107,7 +107,8 @@ class PlanGatingTest extends TestCase
 
     private function setTenantPlan(string $plan): void
     {
-        $tenant = new class($plan) implements Tenant {
+        $tenant = new class($plan) implements Tenant
+        {
             public string $plan;
 
             public function __construct(string $plan)
@@ -115,11 +116,27 @@ class PlanGatingTest extends TestCase
                 $this->plan = $plan;
             }
 
-            public function getTenantKeyName(): string { return 'id'; }
-            public function getTenantKey() { return 'test'; }
-            public function getInternal(string $key) { return $key === 'plan' ? $this->plan : null; }
+            public function getTenantKeyName(): string
+            {
+                return 'id';
+            }
+
+            public function getTenantKey()
+            {
+                return 'test';
+            }
+
+            public function getInternal(string $key)
+            {
+                return $key === 'plan' ? $this->plan : null;
+            }
+
             public function setInternal(string $key, $value) {}
-            public function run(callable $callback) { return $callback($this); }
+
+            public function run(callable $callback)
+            {
+                return $callback($this);
+            }
         };
 
         app()->instance(Tenant::class, $tenant);
@@ -129,17 +146,20 @@ class PlanGatingTest extends TestCase
 class StarterGatedResource
 {
     use HasPlanGating;
+
     protected static string $requiredPlan = 'starter';
 }
 
 class GrowthGatedResource
 {
     use HasPlanGating;
+
     protected static string $requiredPlan = 'growth';
 }
 
 class ProGatedResource
 {
     use HasPlanGating;
+
     protected static string $requiredPlan = 'pro';
 }

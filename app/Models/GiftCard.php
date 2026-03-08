@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -48,7 +47,7 @@ class GiftCard extends Model
 
     public function getStatusAttribute(): string
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return 'inactive';
         }
         if ($this->expires_at && $this->expires_at->isPast()) {
@@ -57,6 +56,7 @@ class GiftCard extends Model
         if ((float) $this->current_balance <= 0) {
             return 'depleted';
         }
+
         return 'active';
     }
 }

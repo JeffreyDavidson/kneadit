@@ -2,18 +2,17 @@
 
 namespace App\Filament\Resources\CapacityLimits;
 
-use App\Filament\Resources\CapacityLimits\Pages;
+use App\Filament\Traits\RequiresRole;
 use App\Models\CapacityLimit;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class CapacityLimitResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -23,8 +22,8 @@ class CapacityLimitResource extends Resource
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static ?string $model = CapacityLimit::class;
 
     protected static ?string $navigationLabel = 'Capacity Limits';
@@ -65,7 +64,9 @@ class CapacityLimitResource extends Resource
                         ->required()
                         ->live()
                         ->afterStateHydrated(function ($component, $record) {
-                            if (!$record) return;
+                            if (! $record) {
+                                return;
+                            }
                             if ($record->specific_date) {
                                 $component->state('specific');
                             } else {
@@ -123,11 +124,12 @@ class CapacityLimitResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('day_label')
                     ->label('Day / Date')
-                    ->sortable(query: fn ($query, $direction) => $query->orderByRaw('COALESCE(specific_date, day_of_week) ' . $direction))
+                    ->sortable(query: fn ($query, $direction) => $query->orderByRaw('COALESCE(specific_date, day_of_week) '.$direction))
                     ->getStateUsing(function (CapacityLimit $record) use ($dayNames) {
                         if ($record->specific_date) {
                             return $record->specific_date->format('D, M j, Y');
                         }
+
                         return $dayNames[$record->day_of_week] ?? '—';
                     }),
 

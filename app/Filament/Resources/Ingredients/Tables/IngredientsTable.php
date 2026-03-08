@@ -3,16 +3,16 @@
 namespace App\Filament\Resources\Ingredients\Tables;
 
 use App\Models\Ingredient;
+use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 
 class IngredientsTable
@@ -27,7 +27,7 @@ class IngredientsTable
 
                 TextColumn::make('current_stock')
                     ->label('Stock')
-                    ->formatStateUsing(fn (Ingredient $record) => $record->current_stock . ' ' . $record->unit)
+                    ->formatStateUsing(fn (Ingredient $record) => $record->current_stock.' '.$record->unit)
                     ->sortable(),
 
                 TextColumn::make('stock_status')

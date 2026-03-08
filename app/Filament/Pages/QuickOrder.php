@@ -2,33 +2,33 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Traits\HasPlanGating;
+use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
-use BackedEnum;
 
-use App\Traits\HasPlanGating;
 class QuickOrder extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -61,7 +61,7 @@ class QuickOrder extends Page
     {
         return $schema->components([
             EmbeddedSchema::make('form')
-                ->schema($this->getFormSchema())
+                ->schema($this->getFormSchema()),
         ]);
     }
 
@@ -93,7 +93,7 @@ class QuickOrder extends Page
                                 ->limit(50)
                                 ->get()
                                 ->mapWithKeys(fn (Customer $customer): array => [
-                                    $customer->id => "{$customer->name} - {$customer->email}"
+                                    $customer->id => "{$customer->name} - {$customer->email}",
                                 ])->toArray())
                             ->getOptionLabelUsing(fn ($value): ?string => Customer::find($value)?->name)
                             ->live()
@@ -131,8 +131,8 @@ class QuickOrder extends Page
                     $items = $get('order_items') ?? [];
                     $totalItems = count($items);
                     $subtotal = collect($items)->sum(fn ($item) => ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0));
-                    
-                    return $totalItems . ' items · Subtotal: $' . number_format($subtotal, 2);
+
+                    return $totalItems.' items · Subtotal: $'.number_format($subtotal, 2);
                 })
                 ->schema([
                     Repeater::make('order_items')
@@ -147,7 +147,7 @@ class QuickOrder extends Page
                                         ->orderBy('name')
                                         ->get()
                                         ->mapWithKeys(fn (Product $product): array => [
-                                            $product->id => $product->name . ' - $' . number_format($product->price, 2)
+                                            $product->id => $product->name.' - $'.number_format($product->price, 2),
                                         ]))
                                     ->live()
                                     ->afterStateUpdated(function (Set $set, ?string $state) {
@@ -182,6 +182,7 @@ class QuickOrder extends Page
                                     ->formatStateUsing(function (Get $get) {
                                         $quantity = (float) $get('quantity');
                                         $price = (float) $get('unit_price');
+
                                         return number_format($quantity * $price, 2);
                                     }),
                             ]),
@@ -258,7 +259,7 @@ class QuickOrder extends Page
                     ->size('lg')
                     ->icon(Heroicon::OutlinedShoppingBag),
             ])
-            ->alignEnd(),
+                ->alignEnd(),
         ];
     }
 
@@ -270,12 +271,12 @@ class QuickOrder extends Page
             DB::transaction(function () use ($data) {
                 // Create or find customer
                 $customer = null;
-                
-                if (!empty($data['customer_email'])) {
+
+                if (! empty($data['customer_email'])) {
                     $customer = Customer::where('email', $data['customer_email'])->first();
                 }
-                
-                if (!$customer) {
+
+                if (! $customer) {
                     $customer = Customer::create([
                         'name' => $data['customer_name'],
                         'email' => $data['customer_email'] ?? null,

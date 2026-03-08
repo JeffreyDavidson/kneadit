@@ -21,12 +21,12 @@ class RootController extends Controller
             $tenant = tenant();
 
             // If storefront is disabled and they have an external website, redirect there
-            if ($tenant && !$tenant->storefront_enabled && $tenant->external_website) {
+            if ($tenant && ! $tenant->storefront_enabled && $tenant->external_website) {
                 return redirect()->away($tenant->external_website);
             }
 
             // If storefront is disabled but no external URL, show a minimal page
-            if ($tenant && !$tenant->storefront_enabled) {
+            if ($tenant && ! $tenant->storefront_enabled) {
                 return response()->view('storefront-disabled', [
                     'storeName' => \App\Models\Setting::get('store_name', $tenant->store_name ?? 'Our Bakery'),
                     'tenant' => $tenant,

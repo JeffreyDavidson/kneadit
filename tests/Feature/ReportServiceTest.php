@@ -5,11 +5,8 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Expense;
-use App\Models\Income;
 use App\Models\Ingredient;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
 use App\Models\User;
 use App\Services\ReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,8 +17,11 @@ class ReportServiceTest extends TestCase
     use RefreshDatabase;
 
     protected ReportService $service;
+
     protected Customer $customer;
+
     protected Category $category;
+
     protected User $user;
 
     protected function setUp(): void
@@ -33,7 +33,7 @@ class ReportServiceTest extends TestCase
             $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
         }
         $this->user = User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
-        $this->service = new ReportService();
+        $this->service = new ReportService;
         $this->customer = Customer::create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
         $this->category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
     }

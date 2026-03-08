@@ -19,7 +19,7 @@ class LowStockWidget extends BaseWidget
     {
         return Ingredient::where(function ($q) {
             $q->where('current_stock', '<=', 0)
-              ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
+                ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
         })->exists();
     }
 
@@ -30,7 +30,7 @@ class LowStockWidget extends BaseWidget
                 Ingredient::query()
                     ->where(function ($q) {
                         $q->where('current_stock', '<=', 0)
-                          ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
+                            ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
                     })
                     ->orderBy('current_stock')
             )
@@ -40,18 +40,18 @@ class LowStockWidget extends BaseWidget
 
                 TextColumn::make('current_stock')
                     ->label('In Stock')
-                    ->formatStateUsing(fn (Ingredient $record) => $record->current_stock . ' ' . $record->unit)
+                    ->formatStateUsing(fn (Ingredient $record) => $record->current_stock.' '.$record->unit)
                     ->badge()
                     ->color(fn (Ingredient $record) => $record->isOutOfStock() ? 'danger' : 'warning'),
 
                 TextColumn::make('low_stock_threshold')
                     ->label('Threshold')
-                    ->formatStateUsing(fn (Ingredient $record) => $record->low_stock_threshold . ' ' . $record->unit),
+                    ->formatStateUsing(fn (Ingredient $record) => $record->low_stock_threshold.' '.$record->unit),
 
                 TextColumn::make('reorder_qty')
                     ->label('Reorder')
                     ->getStateUsing(fn (Ingredient $record) => max(0, $record->low_stock_threshold - $record->current_stock))
-                    ->formatStateUsing(fn ($state, Ingredient $record) => $state . ' ' . $record->unit),
+                    ->formatStateUsing(fn ($state, Ingredient $record) => $state.' '.$record->unit),
 
                 TextColumn::make('supplier')
                     ->placeholder('—'),

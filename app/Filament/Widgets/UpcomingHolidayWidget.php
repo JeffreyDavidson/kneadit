@@ -18,7 +18,7 @@ class UpcomingHolidayWidget extends BaseWidget
             return [];
         }
 
-        if (!$holiday) {
+        if (! $holiday) {
             return [];
         }
 
@@ -28,7 +28,7 @@ class UpcomingHolidayWidget extends BaseWidget
             ? 'Deadline passed'
             : "Deadline in {$daysUntil}d";
 
-        $description = $orders . ' orders';
+        $description = $orders.' orders';
         if ($holiday->max_orders) {
             $description .= " / {$holiday->max_orders} max";
         }
@@ -37,7 +37,7 @@ class UpcomingHolidayWidget extends BaseWidget
         return [
             Stat::make("Next Holiday: {$holiday->name}", $holiday->date->format('M j'))
                 ->icon('heroicon-o-calendar-days')
-                ->color($daysUntil <= 3 && !$holiday->isDeadlinePassed() ? 'warning' : 'primary')
+                ->color($daysUntil <= 3 && ! $holiday->isDeadlinePassed() ? 'warning' : 'primary')
                 ->description($description),
         ];
     }

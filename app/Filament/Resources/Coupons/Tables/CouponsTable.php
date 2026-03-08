@@ -5,9 +5,9 @@ namespace App\Filament\Resources\Coupons\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -21,40 +21,42 @@ class CouponsTable
                 TextColumn::make('code')
                     ->searchable()
                     ->sortable(),
-                    
+
                 BadgeColumn::make('type')
                     ->colors([
                         'primary' => 'percentage',
                         'success' => 'fixed',
                     ])
                     ->formatStateUsing(fn (string $state): string => ucfirst($state)),
-                    
+
                 TextColumn::make('value')
                     ->money('USD')
                     ->formatStateUsing(function ($state, $record) {
                         if ($record->type === 'percentage') {
-                            return $state . '%';
+                            return $state.'%';
                         }
-                        return '$' . number_format($state, 2);
+
+                        return '$'.number_format($state, 2);
                     }),
-                    
+
                 TextColumn::make('min_order_amount')
                     ->money('USD')
                     ->placeholder('No minimum'),
-                    
+
                 TextColumn::make('usage')
                     ->formatStateUsing(function ($record) {
                         if ($record->max_uses) {
                             return "{$record->used_count} / {$record->max_uses}";
                         }
+
                         return "{$record->used_count} (unlimited)";
                     }),
-                    
+
                 TextColumn::make('expires_at')
                     ->dateTime()
                     ->sortable()
                     ->placeholder('Never'),
-                    
+
                 BooleanColumn::make('is_active'),
             ])
             ->filters([
@@ -63,9 +65,9 @@ class CouponsTable
                         'percentage' => 'Percentage',
                         'fixed' => 'Fixed Amount',
                     ]),
-                    
+
                 TernaryFilter::make('is_active'),
-                
+
                 SelectFilter::make('status')
                     ->options([
                         'valid' => 'Valid',

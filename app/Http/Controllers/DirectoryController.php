@@ -12,9 +12,9 @@ class DirectoryController extends Controller
             ->where('storefront_enabled', true)
             ->with('domains')
             ->get()
-            ->map(fn($t) => [
+            ->map(fn ($t) => [
                 'name' => $t->store_name ?? $t->name,
-                'url' => 'http://' . $t->domains->first()?->domain,
+                'url' => 'http://'.$t->domains->first()?->domain,
                 'color' => $t->brand_color_primary ?? '#d4920c',
             ]);
 

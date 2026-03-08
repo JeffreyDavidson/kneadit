@@ -33,7 +33,7 @@ class OrderObserver
     private function sendStatusEmail(Order $order): void
     {
         // Only send email if customer has an email address
-        if (!$order->customer || !$order->customer->email) {
+        if (! $order->customer || ! $order->customer->email) {
             return;
         }
 
@@ -55,7 +55,7 @@ class OrderObserver
             return;
         }
 
-        if (!$order->customer_id) {
+        if (! $order->customer_id) {
             return;
         }
 
@@ -86,7 +86,9 @@ class OrderObserver
 
         foreach ($order->orderItems as $orderItem) {
             $product = $orderItem->product;
-            if (!$product) continue;
+            if (! $product) {
+                continue;
+            }
 
             foreach ($product->recipes as $recipe) {
                 foreach ($recipe->inventoryIngredients as $ingredient) {

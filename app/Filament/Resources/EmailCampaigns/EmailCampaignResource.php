@@ -7,14 +7,14 @@ use App\Filament\Resources\EmailCampaigns\Pages\EditEmailCampaign;
 use App\Filament\Resources\EmailCampaigns\Pages\ListEmailCampaigns;
 use App\Filament\Resources\EmailCampaigns\Schemas\EmailCampaignForm;
 use App\Filament\Resources\EmailCampaigns\Tables\EmailCampaignsTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\EmailCampaign;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class EmailCampaignResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -24,8 +24,8 @@ class EmailCampaignResource extends Resource
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static ?string $model = EmailCampaign::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-megaphone';

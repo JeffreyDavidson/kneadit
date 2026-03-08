@@ -2,20 +2,20 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Services\ProductCsvService;
+use App\Traits\HasPlanGating;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use BackedEnum;
 
-use App\Traits\HasPlanGating;
 class ProductImportExport extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -25,8 +25,8 @@ class ProductImportExport extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected string $view = 'filament.pages.product-import-export';
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-tray';
@@ -82,9 +82,9 @@ class ProductImportExport extends Page
                             ->icon('heroicon-o-arrow-down-tray')
                             ->color('success')
                             ->action(function () {
-                                $service = new ProductCsvService();
+                                $service = new ProductCsvService;
                                 $csv = $service->export();
-                                $filename = 'products-' . now()->format('Y-m-d') . '.csv';
+                                $filename = 'products-'.now()->format('Y-m-d').'.csv';
 
                                 return response()->streamDownload(function () use ($csv) {
                                     echo $csv;
@@ -95,7 +95,7 @@ class ProductImportExport extends Page
                             ->icon('heroicon-o-document-arrow-down')
                             ->color('gray')
                             ->action(function () {
-                                $service = new ProductCsvService();
+                                $service = new ProductCsvService;
                                 $csv = $service->getTemplateContent();
 
                                 return response()->streamDownload(function () use ($csv) {
@@ -122,25 +122,27 @@ class ProductImportExport extends Page
                             ->action(function () {
                                 $filePath = $this->data['csv_file'] ?? null;
 
-                                if (!$filePath) {
+                                if (! $filePath) {
                                     Notification::make()->title('Please upload a CSV file first.')->danger()->send();
+
                                     return;
                                 }
 
-                                $fullPath = storage_path('app/private/' . $filePath);
+                                $fullPath = storage_path('app/private/'.$filePath);
 
-                                if (!file_exists($fullPath)) {
+                                if (! file_exists($fullPath)) {
                                     // Try public disk
-                                    $fullPath = storage_path('app/public/' . $filePath);
+                                    $fullPath = storage_path('app/public/'.$filePath);
                                 }
 
-                                if (!file_exists($fullPath)) {
+                                if (! file_exists($fullPath)) {
                                     Notification::make()->title('File not found. Please re-upload.')->danger()->send();
+
                                     return;
                                 }
 
                                 $file = new \Illuminate\Http\UploadedFile($fullPath, basename($fullPath));
-                                $service = new ProductCsvService();
+                                $service = new ProductCsvService;
                                 $result = $service->parseForPreview($file);
 
                                 $this->previewData = $result['rows'];
@@ -148,12 +150,12 @@ class ProductImportExport extends Page
 
                                 if (empty($result['errors'])) {
                                     Notification::make()
-                                        ->title('Preview ready: ' . count($result['rows']) . ' rows found.')
+                                        ->title('Preview ready: '.count($result['rows']).' rows found.')
                                         ->success()
                                         ->send();
                                 } else {
                                     Notification::make()
-                                        ->title('Preview has ' . count($result['errors']) . ' error(s). Fix before importing.')
+                                        ->title('Preview has '.count($result['errors']).' error(s). Fix before importing.')
                                         ->danger()
                                         ->send();
                                 }
@@ -168,24 +170,26 @@ class ProductImportExport extends Page
                             ->action(function () {
                                 $filePath = $this->data['csv_file'] ?? null;
 
-                                if (!$filePath) {
+                                if (! $filePath) {
                                     Notification::make()->title('Please upload a CSV file first.')->danger()->send();
+
                                     return;
                                 }
 
-                                $fullPath = storage_path('app/private/' . $filePath);
+                                $fullPath = storage_path('app/private/'.$filePath);
 
-                                if (!file_exists($fullPath)) {
-                                    $fullPath = storage_path('app/public/' . $filePath);
+                                if (! file_exists($fullPath)) {
+                                    $fullPath = storage_path('app/public/'.$filePath);
                                 }
 
-                                if (!file_exists($fullPath)) {
+                                if (! file_exists($fullPath)) {
                                     Notification::make()->title('File not found. Please re-upload.')->danger()->send();
+
                                     return;
                                 }
 
                                 $file = new \Illuminate\Http\UploadedFile($fullPath, basename($fullPath));
-                                $service = new ProductCsvService();
+                                $service = new ProductCsvService;
                                 $this->importResults = $service->import($file);
 
                                 if (empty($this->importResults['errors'])) {
@@ -197,7 +201,7 @@ class ProductImportExport extends Page
                                 } else {
                                     Notification::make()
                                         ->title('Import finished with errors')
-                                        ->body("{$this->importResults['created']} created, {$this->importResults['updated']} updated, " . count($this->importResults['errors']) . " errors.")
+                                        ->body("{$this->importResults['created']} created, {$this->importResults['updated']} updated, ".count($this->importResults['errors']).' errors.')
                                         ->warning()
                                         ->send();
                                 }

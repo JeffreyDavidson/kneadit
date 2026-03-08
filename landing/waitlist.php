@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 $email = filter_var($input['email'] ?? '', FILTER_VALIDATE_EMAIL);
 
-if (!$email) {
+if (! $email) {
     http_response_code(400);
     echo json_encode(['error' => 'Invalid email']);
     exit;
@@ -32,7 +32,7 @@ $ch = curl_init('https://api.resend.com/audiences');
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $apiKey,
+        'Authorization: Bearer '.$apiKey,
         'Content-Type: application/json',
     ],
 ]);
@@ -40,18 +40,18 @@ $response = json_decode(curl_exec($ch), true);
 curl_close($ch);
 
 $audienceId = null;
-if (!empty($response['data'])) {
+if (! empty($response['data'])) {
     // Use first audience (shared Waitlist audience)
     $audienceId = $response['data'][0]['id'] ?? null;
 }
 
-if (!$audienceId) {
+if (! $audienceId) {
     $ch = curl_init('https://api.resend.com/audiences');
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
         CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $apiKey,
+            'Authorization: Bearer '.$apiKey,
             'Content-Type: application/json',
         ],
         CURLOPT_POSTFIELDS => json_encode(['name' => 'Waitlist']),
@@ -61,7 +61,7 @@ if (!$audienceId) {
     $audienceId = $result['id'] ?? null;
 }
 
-if (!$audienceId) {
+if (! $audienceId) {
     http_response_code(500);
     echo json_encode(['error' => 'Could not find or create audience']);
     exit;
@@ -73,7 +73,7 @@ curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
     CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $apiKey,
+        'Authorization: Bearer '.$apiKey,
         'Content-Type: application/json',
     ],
     CURLOPT_POSTFIELDS => json_encode([

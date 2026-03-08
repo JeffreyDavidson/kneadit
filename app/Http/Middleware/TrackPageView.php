@@ -27,7 +27,7 @@ class TrackPageView
         $response = $next($request);
 
         // Only track GET requests that return HTML
-        if (!$request->isMethod('GET') || $request->ajax()) {
+        if (! $request->isMethod('GET') || $request->ajax()) {
             return $response;
         }
 
@@ -35,14 +35,14 @@ class TrackPageView
         $page = $this->routePageMap[$routeName] ?? null;
 
         // If no route name matched, try to detect from path
-        if (!$page) {
+        if (! $page) {
             $path = trim($request->path(), '/');
             if ($path === '' || $path === '/') {
                 $page = 'home';
             }
         }
 
-        if (!$page) {
+        if (! $page) {
             return $response;
         }
 
@@ -69,7 +69,7 @@ class TrackPageView
             $products = Product::where('is_active', true)->pluck('id');
             foreach ($products as $productId) {
                 $productCacheKey = "pv:{$sessionId}:product:{$productId}";
-                if (!Cache::has($productCacheKey)) {
+                if (! Cache::has($productCacheKey)) {
                     Cache::put($productCacheKey, true, now()->addHour());
                     PageView::create([
                         'page' => $page,

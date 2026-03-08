@@ -18,18 +18,29 @@ class LabelGenerator extends Page
     }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';
+
     protected static ?string $navigationLabel = 'Labels';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 13;
+
     protected string $view = 'filament.pages.label-generator';
 
     public array $selectedProducts = [];
+
     public string $labelSize = 'medium';
+
     public int $quantity = 1;
+
     public bool $includeQrCode = false;
+
     public bool $includeAllergyDisclaimer = true;
+
     public bool $includeBarcode = false;
+
     public ?string $bestByDate = null;
+
     public bool $showPreview = false;
 
     public function mount(): void
@@ -42,6 +53,7 @@ class LabelGenerator extends Page
     {
         if (empty($this->selectedProducts)) {
             $this->dispatch('notify', type: 'warning', message: 'Please select at least one product.');
+
             return;
         }
 

@@ -20,7 +20,7 @@ trait HasPlanGating
         // Check role access if RequiresRole trait methods are available
         if (method_exists(static::class, 'getRequiredRole')) {
             $user = Auth::user();
-            if (!$user || !$user->hasMinRole(static::getRequiredRole())) {
+            if (! $user || ! $user->hasMinRole(static::getRequiredRole())) {
                 return false;
             }
         }

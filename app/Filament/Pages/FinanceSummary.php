@@ -2,14 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
-use Filament\Actions\Action;
-use App\Models\Order;
 use App\Models\Expense;
 use App\Models\Income;
+use App\Models\Order;
 use App\Models\Setting;
 use App\Traits\HasPlanGating;
+use Filament\Actions\Action;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -18,20 +18,35 @@ class FinanceSummary extends Page
     use HasPlanGating, RequiresRole;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
+
     protected static ?string $navigationLabel = 'Finance Summary';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+
     protected static ?int $navigationSort = 3;
+
     protected string $view = 'filament.pages.finance-summary';
+
     protected static string $requiredPlan = 'growth';
+
     public int $selectedYear;
+
     public float $totalRevenue = 0;
+
     public float $totalExpenses = 0;
+
     public float $netProfit = 0;
+
     public float $revenueCap = 250000;
+
     public float $revenueCapProgress = 0;
+
     public Collection $monthlyBreakdown;
+
     public Collection $expenseBreakdown;
+
     public float $cogsAmount = 0;
+
     public float $cogsPercentage = 0;
 
     public function mount()
@@ -107,6 +122,7 @@ class FinanceSummary extends Page
 
         if ($totalExpenses == 0) {
             $this->expenseBreakdown = collect();
+
             return;
         }
 
@@ -116,6 +132,7 @@ class FinanceSummary extends Page
             ->get()
             ->map(function ($expense) use ($totalExpenses) {
                 $categoryName = Expense::CATEGORIES[$expense->category] ?? ucfirst($expense->category);
+
                 return [
                     'category' => $categoryName,
                     'amount' => $expense->total_amount,

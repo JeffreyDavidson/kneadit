@@ -2,13 +2,13 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Category;
 use App\Models\Setting;
+use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
-use App\Traits\HasPlanGating;
 class PrintableMenu extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -18,15 +18,20 @@ class PrintableMenu extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'growth';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
+
     protected static ?string $navigationLabel = 'Printable Menu';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 16;
+
     protected string $view = 'filament.pages.printable-menu';
 
     public string $activeView = 'menu';
+
     public string $menuLayout = 'elegant';
 
     public function getCategories()
@@ -53,7 +58,7 @@ class PrintableMenu extends Page
 
     public function getStorefrontUrl(): string
     {
-        return 'http://' . tenant()->domains->first()->domain;
+        return 'http://'.tenant()->domains->first()->domain;
     }
 
     public function getQrCode(): string

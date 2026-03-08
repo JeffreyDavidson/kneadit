@@ -2,23 +2,22 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Order;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-
-use App\Traits\HasPlanGating;
 
 class TaxExport extends Page
 {
@@ -30,17 +29,25 @@ class TaxExport extends Page
     }
 
     protected static string $requiredPlan = 'pro';
+
     protected string $view = 'filament.pages.tax-export';
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-arrow-down';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+
     protected static ?string $title = 'Tax Export';
+
     protected static ?string $navigationLabel = 'Tax Export';
+
     protected static ?int $navigationSort = 4;
 
     public ?int $selectedYear = null;
+
     public ?string $exportType = 'all';
+
     public ?string $dateFrom = null;
+
     public ?string $dateTo = null;
 
     public function mount(): void
@@ -114,6 +121,7 @@ class TaxExport extends Page
                             ->color('primary')
                             ->action(function () {
                                 $data = $this->form->getState();
+
                                 return $this->generateExport($data);
                             }),
                     ]),
@@ -148,22 +156,28 @@ class TaxExport extends Page
 
         $filename = "tax-export-{$year}-{$type}.csv";
 
-        return response()->streamDownload(function () use ($year, $type, $dateFrom, $dateTo) {
+        return response()->streamDownload(function () use ($type, $dateFrom, $dateTo) {
             $handle = fopen('php://output', 'w');
 
             if (in_array($type, ['all', 'orders'])) {
                 $this->writeOrdersCsv($handle, $dateFrom, $dateTo);
-                if ($type === 'all') fputcsv($handle, []);
+                if ($type === 'all') {
+                    fputcsv($handle, []);
+                }
             }
 
             if (in_array($type, ['all', 'expenses'])) {
                 $this->writeExpensesCsv($handle, $dateFrom, $dateTo);
-                if ($type === 'all') fputcsv($handle, []);
+                if ($type === 'all') {
+                    fputcsv($handle, []);
+                }
             }
 
             if (in_array($type, ['all', 'income'])) {
                 $this->writeIncomeCsv($handle, $dateFrom, $dateTo);
-                if ($type === 'all') fputcsv($handle, []);
+                if ($type === 'all') {
+                    fputcsv($handle, []);
+                }
             }
 
             if (in_array($type, ['all', 'summary'])) {
@@ -182,11 +196,11 @@ class TaxExport extends Page
         fputcsv($handle, ['Date', 'Order Number', 'Customer', 'Items', 'Subtotal', 'Delivery Fee', 'Discount', 'Total', 'Payment Status', 'Payment Method']);
 
         Order::with(['customer', 'orderItems.product'])
-            ->whereBetween('created_at', [$from, $to . ' 23:59:59'])
+            ->whereBetween('created_at', [$from, $to.' 23:59:59'])
             ->orderBy('created_at')
             ->chunk(100, function ($orders) use ($handle) {
                 foreach ($orders as $order) {
-                    $items = $order->orderItems->map(fn ($i) => ($i->product->name ?? 'Item') . ' x' . $i->quantity)->implode('; ');
+                    $items = $order->orderItems->map(fn ($i) => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
                     fputcsv($handle, [
                         $order->created_at->format('Y-m-d'),
                         $order->order_number,
@@ -260,7 +274,7 @@ class TaxExport extends Page
 
     protected function writeSummaryCsv($handle, string $from, string $to): void
     {
-        $totalOrderRevenue = Order::whereBetween('created_at', [$from, $to . ' 23:59:59'])
+        $totalOrderRevenue = Order::whereBetween('created_at', [$from, $to.' 23:59:59'])
             ->where('payment_status', 'paid')
             ->sum('total');
 

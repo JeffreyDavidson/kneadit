@@ -2,18 +2,18 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Mail\StaffInvitationMail;
 use App\Models\Setting;
 use App\Models\StaffInvitation;
 use App\Models\User;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use App\Filament\Traits\RequiresRole;
-use App\Traits\HasPlanGating;
 use UnitEnum;
 
 class StaffManagement extends Page
@@ -24,6 +24,7 @@ class StaffManagement extends Page
     {
         return 'owner';
     }
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
     protected static string|UnitEnum|null $navigationGroup = 'Admin';
@@ -74,6 +75,7 @@ class StaffManagement extends Page
                 ->title('This person is already a team member')
                 ->warning()
                 ->send();
+
             return;
         }
 
@@ -88,6 +90,7 @@ class StaffManagement extends Page
                 ->title('An invitation is already pending for this email')
                 ->warning()
                 ->send();
+
             return;
         }
 
@@ -127,7 +130,7 @@ class StaffManagement extends Page
 
     public function changeRole(int $userId, string $newRole): void
     {
-        if (!in_array($newRole, ['owner', 'manager', 'staff'])) {
+        if (! in_array($newRole, ['owner', 'manager', 'staff'])) {
             return;
         }
 
@@ -139,6 +142,7 @@ class StaffManagement extends Page
                 ->title("You can't change your own role")
                 ->warning()
                 ->send();
+
             return;
         }
 
@@ -159,6 +163,7 @@ class StaffManagement extends Page
                 ->title("You can't remove yourself")
                 ->warning()
                 ->send();
+
             return;
         }
 
@@ -168,6 +173,7 @@ class StaffManagement extends Page
                 ->title("Can't remove the last owner")
                 ->danger()
                 ->send();
+
             return;
         }
 

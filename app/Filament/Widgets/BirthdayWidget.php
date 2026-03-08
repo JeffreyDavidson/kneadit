@@ -24,6 +24,7 @@ class BirthdayWidget extends Widget
                     $next->addYear();
                 }
                 $daysUntil = (int) now()->startOfDay()->diffInDays($next, false);
+
                 return (object) [
                     'customer' => $customer,
                     'birthday_date' => $customer->birthday->format('M j'),

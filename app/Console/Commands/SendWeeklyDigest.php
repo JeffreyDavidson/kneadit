@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 class SendWeeklyDigest extends Command
 {
     protected $signature = 'digest:weekly';
+
     protected $description = 'Send weekly digest email to bakery owners';
 
     public function handle(): int
@@ -23,6 +24,7 @@ class SendWeeklyDigest extends Command
             try {
                 if (Setting::get('weekly_digest_enabled', '1') !== '1') {
                     $this->info("Skipping {$tenant->id} — digest disabled");
+
                     continue;
                 }
 
@@ -33,7 +35,7 @@ class SendWeeklyDigest extends Command
                 }
 
                 foreach ($users as $user) {
-                    Mail::to($user->email)->send(new WeeklyDigest());
+                    Mail::to($user->email)->send(new WeeklyDigest);
                 }
 
                 $this->info("Sent digest for {$tenant->id} to {$users->count()} user(s)");

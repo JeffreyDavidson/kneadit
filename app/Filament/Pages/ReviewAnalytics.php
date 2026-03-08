@@ -2,14 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
-use App\Models\Review;
 use App\Models\Product;
+use App\Models\Review;
+use App\Traits\HasPlanGating;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-use App\Traits\HasPlanGating;
 class ReviewAnalytics extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -20,16 +20,21 @@ class ReviewAnalytics extends Page
     }
 
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
+
     protected static ?string $navigationLabel = 'Review Analytics';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
+
     protected static ?int $navigationSort = 4;
+
     protected string $view = 'filament.pages.review-analytics';
 
     public function getOverallStats(): array
     {
         $reviews = Review::all();
-        
+
         if ($reviews->isEmpty()) {
             return [
                 'total_reviews' => 0,
@@ -66,7 +71,7 @@ class ReviewAnalytics extends Page
         for ($i = 5; $i >= 1; $i--) {
             $count = $distribution[$i] ?? 0;
             $percentage = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
-            
+
             $ratingStats[] = [
                 'rating' => $i,
                 'count' => $count,
@@ -80,10 +85,10 @@ class ReviewAnalytics extends Page
     public function getMonthlyTrend(): array
     {
         $monthlyData = Review::select(
-                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
-                DB::raw('COUNT(*) as count'),
-                DB::raw('AVG(rating) as avg_rating')
-            )
+            DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+            DB::raw('COUNT(*) as count'),
+            DB::raw('AVG(rating) as avg_rating')
+        )
             ->where('created_at', '>=', now()->subMonths(12))
             ->groupBy('month')
             ->orderBy('month')
@@ -96,9 +101,9 @@ class ReviewAnalytics extends Page
             $month = $startDate->copy()->addMonths($i);
             $monthKey = $month->format('Y-m');
             $monthName = $month->format('M Y');
-            
+
             $monthData = $monthlyData->firstWhere('month', $monthKey);
-            
+
             $trend[] = [
                 'month' => $monthName,
                 'month_key' => $monthKey,
@@ -113,8 +118,8 @@ class ReviewAnalytics extends Page
     public function getTopReviewedProducts(): Collection
     {
         return Product::withCount(['reviews' => function ($query) {
-                $query->where('is_approved', true);
-            }])
+            $query->where('is_approved', true);
+        }])
             ->with(['reviews' => function ($query) {
                 $query->where('is_approved', true);
             }])
@@ -124,6 +129,7 @@ class ReviewAnalytics extends Page
             ->get()
             ->map(function ($product) {
                 $averageRating = $product->reviews->avg('rating');
+
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
@@ -175,14 +181,14 @@ class ReviewAnalytics extends Page
             // Simple sentiment analysis based on rating and keywords
             $rating = $review->rating;
             $comment = strtolower($review->comment);
-            
+
             $positiveWords = ['amazing', 'excellent', 'perfect', 'love', 'best', 'wonderful', 'fantastic', 'delicious', 'great'];
             $negativeWords = ['terrible', 'awful', 'bad', 'hate', 'worst', 'disgusting', 'horrible', 'disappointing'];
-            
-            $hasPositive = collect($positiveWords)->some(fn($word) => str_contains($comment, $word));
-            $hasNegative = collect($negativeWords)->some(fn($word) => str_contains($comment, $word));
-            
-            if ($rating >= 4 && ($hasPositive || !$hasNegative)) {
+
+            $hasPositive = collect($positiveWords)->some(fn ($word) => str_contains($comment, $word));
+            $hasNegative = collect($negativeWords)->some(fn ($word) => str_contains($comment, $word));
+
+            if ($rating >= 4 && ($hasPositive || ! $hasNegative)) {
                 $positive++;
             } elseif ($rating <= 2 || $hasNegative) {
                 $negative++;
@@ -192,7 +198,7 @@ class ReviewAnalytics extends Page
         }
 
         $total = $positive + $neutral + $negative;
-        
+
         return [
             'positive' => $total > 0 ? round(($positive / $total) * 100, 1) : 0,
             'neutral' => $total > 0 ? round(($neutral / $total) * 100, 1) : 0,

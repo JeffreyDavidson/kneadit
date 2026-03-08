@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CustomerFavorite extends Model
 {
     protected $fillable = [
-        'customer_email', 
-        'product_id'
+        'customer_email',
+        'product_id',
     ];
 
     public function product(): BelongsTo
@@ -30,12 +30,14 @@ class CustomerFavorite extends Model
 
         if ($favorite) {
             $favorite->delete();
+
             return false; // removed
         } else {
             static::create([
                 'customer_email' => $email,
-                'product_id' => $productId
+                'product_id' => $productId,
             ]);
+
             return true; // added
         }
     }

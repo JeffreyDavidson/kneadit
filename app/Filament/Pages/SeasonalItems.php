@@ -2,13 +2,14 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Product;
 use App\Models\SeasonalItem;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -16,7 +17,6 @@ use Filament\Schemas\Components\Select;
 use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Schema;
 
-use App\Traits\HasPlanGating;
 class SeasonalItems extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -26,18 +26,26 @@ class SeasonalItems extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-sparkles';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+
     protected static ?string $navigationLabel = 'Seasonal Items';
+
     protected static ?int $navigationSort = 12;
+
     protected string $view = 'filament.pages.seasonal-items';
+
     protected static ?string $title = 'Seasonal Items';
 
     public ?int $product_id = null;
+
     public ?string $available_from = null;
+
     public ?string $available_until = null;
+
     public ?string $notes = null;
 
     public function content(Schema $schema): Schema

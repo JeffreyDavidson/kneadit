@@ -105,6 +105,7 @@ class ReportService
             ->get()
             ->map(function ($p) {
                 $margin = $p->price > 0 && $p->cost > 0 ? round((($p->price - $p->cost) / $p->price) * 100, 1) : null;
+
                 return [
                     'name' => $p->name,
                     'price' => (float) $p->price,

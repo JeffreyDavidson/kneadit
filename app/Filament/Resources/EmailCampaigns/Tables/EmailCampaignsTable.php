@@ -5,12 +5,12 @@ namespace App\Filament\Resources\EmailCampaigns\Tables;
 use App\Mail\CustomerBlast;
 use App\Models\Customer;
 use App\Models\EmailCampaign;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\Action;
-use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Mail;
 
 class EmailCampaignsTable

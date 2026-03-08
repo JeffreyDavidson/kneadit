@@ -25,15 +25,23 @@ class SmartShoppingList extends Page
     }
 
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
+
     protected static ?string $navigationLabel = 'Shopping List';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 3;
+
     protected string $view = 'filament.pages.smart-shopping-list';
 
     public string $startDate = '';
+
     public string $endDate = '';
+
     public bool $includeUpcoming = false;
+
     public Collection $supplierGroups;
 
     public function mount(): void
@@ -116,7 +124,7 @@ class SmartShoppingList extends Page
             }
         }
 
-        if (!empty($noSupplier)) {
+        if (! empty($noSupplier)) {
             $grouped['none'] = [
                 'supplier' => [
                     'id' => null,
@@ -134,7 +142,7 @@ class SmartShoppingList extends Page
 
     public function toggleUpcoming(): void
     {
-        $this->includeUpcoming = !$this->includeUpcoming;
+        $this->includeUpcoming = ! $this->includeUpcoming;
         $this->generateList();
     }
 
@@ -142,12 +150,13 @@ class SmartShoppingList extends Page
     {
         $group = $this->supplierGroups->get($supplierId);
 
-        if (!$group || !$group['supplier']['email']) {
+        if (! $group || ! $group['supplier']['email']) {
             Notification::make()
                 ->title('No email address')
                 ->body('This supplier does not have an email address configured.')
                 ->danger()
                 ->send();
+
             return;
         }
 

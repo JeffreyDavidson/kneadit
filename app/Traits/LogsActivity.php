@@ -27,8 +27,8 @@ trait LogsActivity
                 'action' => $action,
                 'model_type' => get_class($model),
                 'model_id' => $model->getKey(),
-                'description' => class_basename($model) . " #{$model->getKey()} was {$action}",
-                'properties' => !empty($changes) ? ['changes' => $changes] : null,
+                'description' => class_basename($model)." #{$model->getKey()} was {$action}",
+                'properties' => ! empty($changes) ? ['changes' => $changes] : null,
                 'ip_address' => request()?->ip(),
             ]);
         } catch (\Throwable) {

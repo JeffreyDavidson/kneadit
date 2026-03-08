@@ -2,26 +2,30 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
 use App\Models\PageView;
 use App\Models\Product;
+use App\Traits\HasPlanGating;
 use Carbon\Carbon;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-use App\Traits\HasPlanGating;
 class StorefrontAnalytics extends Page
 {
     use HasPlanGating, RequiresRole;
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
+
     protected static ?string $navigationLabel = 'Storefront Analytics';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
+
     protected static ?int $navigationSort = 10;
+
     protected string $view = 'filament.pages.storefront-analytics';
 
     public string $period = 'week';
@@ -49,6 +53,7 @@ class StorefrontAnalytics extends Page
         if ($start) {
             $query->where('created_at', '>=', $start);
         }
+
         return $query;
     }
 
@@ -77,7 +82,9 @@ class StorefrontAnalytics extends Page
     public function getConversionRate(): float
     {
         $orderPageViews = $this->baseQuery()->whereNull('product_id')->where('page', 'order')->count();
-        if ($orderPageViews === 0) return 0;
+        if ($orderPageViews === 0) {
+            return 0;
+        }
 
         $start = $this->getStartDate();
         $ordersQuery = Order::query();
@@ -135,14 +142,18 @@ class StorefrontAnalytics extends Page
     {
         $start = $this->getStartDate();
         $base = PageView::query()->whereNull('product_id');
-        if ($start) $base->where('created_at', '>=', $start);
+        if ($start) {
+            $base->where('created_at', '>=', $start);
+        }
 
         $homeViews = (clone $base)->where('page', 'home')->count();
         $menuViews = (clone $base)->where('page', 'menu')->count();
         $orderViews = (clone $base)->where('page', 'order')->count();
 
         $ordersQuery = Order::query();
-        if ($start) $ordersQuery->where('created_at', '>=', $start);
+        if ($start) {
+            $ordersQuery->where('created_at', '>=', $start);
+        }
         $completedOrders = $ordersQuery->count();
 
         $funnel = [

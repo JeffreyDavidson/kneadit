@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Http\Middleware\TrackPageView;
-use App\Models\BlockedDate;
 use App\Models\BusinessSchedule;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;

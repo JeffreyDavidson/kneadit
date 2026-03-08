@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\EmailCampaign;
 use App\Models\Customer;
+use App\Models\EmailCampaign;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class EmailCampaignTest extends TestCase
 {

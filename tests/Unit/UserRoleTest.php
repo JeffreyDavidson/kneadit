@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class UserRoleTest extends TestCase
 {
@@ -22,7 +22,7 @@ class UserRoleTest extends TestCase
 
     public function test_user_model_has_role_methods(): void
     {
-        $user = new User();
+        $user = new User;
         $this->assertTrue(method_exists($user, 'isOwner'));
         $this->assertTrue(method_exists($user, 'isManager'));
         $this->assertTrue(method_exists($user, 'isStaff'));

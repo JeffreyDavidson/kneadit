@@ -21,11 +21,11 @@ class OrderSeeder extends Seeder
         $customers = Customer::all();
         $products = Product::all();
         $user = User::first(); // Assuming we have at least one user
-        
+
         $statuses = ['pending', 'confirmed', 'baking', 'ready', 'delivered', 'cancelled'];
         $paymentStatuses = ['unpaid', 'paid'];
         $paymentMethods = ['cash', 'paypal'];
-        
+
         $deliveryAddresses = [
             '123 Main Street, Orlando, FL 32801',
             '456 Disney World Drive, Bay Lake, FL 32830',
@@ -37,7 +37,7 @@ class OrderSeeder extends Seeder
         for ($i = 0; $i < 65; $i++) {
             $customer = $customers->random();
             $requestedDate = Carbon::now()->subDays(rand(0, 60));
-            
+
             // Weight the status distribution - most delivered, fewer cancelled
             $statusWeights = [
                 'delivered' => 50,  // 50% delivered
@@ -47,19 +47,19 @@ class OrderSeeder extends Seeder
                 'ready' => 8,       // 8% ready
                 'cancelled' => 2,   // 2% cancelled
             ];
-            
+
             $status = $this->weightedRandomSelect($statusWeights);
-            
+
             // Payment status logic - most paid, some unpaid for recent orders
             $paymentStatus = 'paid';
             if ($requestedDate->isAfter(Carbon::now()->subDays(7)) && in_array($status, ['pending', 'confirmed'])) {
                 $paymentStatus = rand(0, 100) < 30 ? 'unpaid' : 'paid'; // 30% chance unpaid for recent pending/confirmed
             }
-            
+
             $isDelivery = rand(0, 100) < 40; // 40% delivery, 60% pickup
-            
+
             $order = Order::create([
-                'order_number' => 'ORD-' . str_pad($i + 1, 6, '0', STR_PAD_LEFT),
+                'order_number' => 'ORD-'.str_pad($i + 1, 6, '0', STR_PAD_LEFT),
                 'customer_id' => $customer->id,
                 'user_id' => $user->id,
                 'status' => $status,
@@ -78,12 +78,12 @@ class OrderSeeder extends Seeder
             // Add 1-5 items to each order
             $itemCount = rand(1, 5);
             $subtotal = 0;
-            
+
             for ($j = 0; $j < $itemCount; $j++) {
                 $product = $products->random();
                 $quantity = rand(1, 3);
                 $unitPrice = $product->price;
-                
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
@@ -91,10 +91,10 @@ class OrderSeeder extends Seeder
                     'unit_price' => $unitPrice,
                     'special_instructions' => $this->randomSpecialInstructions(),
                 ]);
-                
+
                 $subtotal += $quantity * $unitPrice;
             }
-            
+
             // Update order totals
             $total = $subtotal + $order->delivery_fee - $order->discount;
             $order->update([
@@ -109,14 +109,14 @@ class OrderSeeder extends Seeder
         $totalWeight = array_sum($weights);
         $random = rand(1, $totalWeight);
         $currentWeight = 0;
-        
+
         foreach ($weights as $item => $weight) {
             $currentWeight += $weight;
             if ($random <= $currentWeight) {
                 return $item;
             }
         }
-        
+
         return array_key_first($weights);
     }
 
@@ -124,10 +124,10 @@ class OrderSeeder extends Seeder
     {
         $hours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]; // 8 AM to 5 PM
         $minutes = [0, 15, 30, 45];
-        
+
         $hour = $hours[array_rand($hours)];
         $minute = $minutes[array_rand($minutes)];
-        
+
         return sprintf('%02d:%02d', $hour, $minute);
     }
 
@@ -145,7 +145,7 @@ class OrderSeeder extends Seeder
             'Delivery to back door please',
             'Cash payment on delivery',
         ];
-        
+
         return $notes[array_rand($notes)];
     }
 
@@ -163,7 +163,7 @@ class OrderSeeder extends Seeder
             'Add sprinkles',
             'Write "Happy Birthday Sarah" on top',
         ];
-        
+
         return $instructions[array_rand($instructions)];
     }
 }

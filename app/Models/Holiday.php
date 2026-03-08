@@ -61,7 +61,7 @@ class Holiday extends Model
 
     public function daysUntilDeadline(): int
     {
-        if (!$this->order_deadline) {
+        if (! $this->order_deadline) {
             return $this->days_away;
         }
 
@@ -70,7 +70,7 @@ class Holiday extends Model
 
     public function isDeadlinePassed(): bool
     {
-        if (!$this->order_deadline) {
+        if (! $this->order_deadline) {
             return $this->date->isPast();
         }
 

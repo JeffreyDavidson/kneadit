@@ -19,6 +19,7 @@ class MarginAlertWidget extends BaseWidget
     {
         return Product::whereHas('recipe')->get()->contains(function (Product $product) {
             $margin = $product->recipe?->profit_margin;
+
             return $margin !== null && $margin < 30;
         });
     }
@@ -30,6 +31,7 @@ class MarginAlertWidget extends BaseWidget
             ->get()
             ->filter(function (Product $product) {
                 $margin = $product->recipe?->profit_margin;
+
                 return $margin !== null && $margin < 30;
             })
             ->pluck('id')
@@ -49,7 +51,7 @@ class MarginAlertWidget extends BaseWidget
                     ->money('usd'),
                 TextColumn::make('recipe.profit_margin')
                     ->label('Margin')
-                    ->formatStateUsing(fn ($state) => $state !== null ? number_format($state, 1) . '%' : '—')
+                    ->formatStateUsing(fn ($state) => $state !== null ? number_format($state, 1).'%' : '—')
                     ->badge()
                     ->color('danger'),
             ])

@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\EnsureStorefrontEnabled;
+use App\Http\Middleware\TrackPageView;
 use App\Models\GiftCard;
 use App\Services\GiftCardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Http\Middleware\TrackPageView;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
@@ -55,7 +55,7 @@ class GiftCardTest extends TestCase
     /** @test */
     public function gift_card_balance_check_works(): void
     {
-        $service = new GiftCardService();
+        $service = new GiftCardService;
         $card = $service->create([
             'purchaser_name' => 'John',
             'purchaser_email' => 'john@example.com',
@@ -84,7 +84,7 @@ class GiftCardTest extends TestCase
     /** @test */
     public function gift_card_code_is_generated_in_correct_format(): void
     {
-        $service = new GiftCardService();
+        $service = new GiftCardService;
         $code = $service->generateCode();
 
         // Format: XXXX-XXXX-XXXX-XXXX
@@ -94,7 +94,7 @@ class GiftCardTest extends TestCase
     /** @test */
     public function gift_card_redemption_deducts_balance(): void
     {
-        $service = new GiftCardService();
+        $service = new GiftCardService;
         $card = $service->create([
             'purchaser_name' => 'John',
             'purchaser_email' => 'john@example.com',
@@ -111,7 +111,7 @@ class GiftCardTest extends TestCase
     /** @test */
     public function depleted_gift_card_cannot_be_redeemed(): void
     {
-        $service = new GiftCardService();
+        $service = new GiftCardService;
         $card = $service->create([
             'purchaser_name' => 'John',
             'purchaser_email' => 'john@example.com',
@@ -138,7 +138,7 @@ class GiftCardTest extends TestCase
             'expires_at' => now()->subDay(),
         ]);
 
-        $service = new GiftCardService();
+        $service = new GiftCardService;
         $result = $service->redeem($card->code, 10.00);
         $this->assertFalse($result['success']);
     }
