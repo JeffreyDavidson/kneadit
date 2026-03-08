@@ -42,6 +42,9 @@
                 <div class="p-6">
                 <h3 class="font-display text-xl font-semibold mb-2" style="color: var(--warm-900);">
                     {{ $product->name }}
+                    @if($product->seasonal_badge)
+                        <span class="inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 ml-2">{{ $product->seasonal_badge }}</span>
+                    @endif
                 </h3>
                 
                 @if($product->description)

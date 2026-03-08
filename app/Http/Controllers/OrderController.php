@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlockedDate;
+use App\Models\BusinessSchedule;
 use App\Models\CapacityLimit;
 use App\Models\Category;
 use App\Models\Coupon;
+use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\CustomerFavorite;
+use App\Services\GiftCardService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -19,7 +23,15 @@ class OrderController extends Controller
     {
         $categories = Category::with(['products' => function ($q) {
             $q->where('is_available', true)->orderBy('sort_order');
-        }])->orderBy('sort_order')->get();
+        }, 'products.seasonalItems'])->orderBy('sort_order')->get();
+
+        // Filter out products that are seasonal but not currently in season
+        $categories->each(function ($category) {
+            $category->setRelation(
+                'products',
+                $category->products->filter(fn ($product) => $product->isInSeason())
+            );
+        });
 
         return view('order', compact('categories'));
     }
@@ -72,6 +84,38 @@ class OrderController extends Controller
             'label' => $coupon->type === 'percentage'
                 ? number_format($coupon->value, 0) . '% off'
                 : '$' . number_format($coupon->value, 2) . ' off',
+        ]);
+    }
+
+    /**
+     * Validate and apply a gift card code via AJAX.
+     */
+    public function applyGiftCard(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+            'subtotal' => 'required|numeric|min:0',
+        ]);
+
+        $service = new GiftCardService();
+        $card = $service->checkBalance($request->code);
+
+        if (!$card) {
+            return response()->json(['error' => 'Gift card not found.'], 422);
+        }
+
+        if (!$card->isUsable()) {
+            return response()->json(['error' => 'This gift card is no longer valid.'], 422);
+        }
+
+        $applicable = min((float) $card->current_balance, (float) $request->subtotal);
+
+        return response()->json([
+            'success' => true,
+            'gift_card_id' => $card->id,
+            'code' => $card->code,
+            'available_balance' => (float) $card->current_balance,
+            'applicable_amount' => $applicable,
         ]);
     }
 
@@ -136,6 +180,20 @@ class OrderController extends Controller
             Coupon::where('id', $calculated['coupon_id'])->increment('used_count');
         }
 
+        // Redeem gift card if provided
+        $giftCardId = $request->input('gift_card_id');
+        if ($giftCardId) {
+            $giftCard = GiftCard::find($giftCardId);
+            if ($giftCard && $giftCard->isUsable()) {
+                $gcAmount = min((float) $giftCard->current_balance, (float) $order->total);
+                if ($gcAmount > 0) {
+                    $service = new GiftCardService();
+                    $service->redeem($giftCard->code, $gcAmount, $order->id);
+                    $order->update(['total' => max(0, (float) $order->total - $gcAmount)]);
+                }
+            }
+        }
+
         // Create order items
         foreach ($calculated['items'] as $item) {
             $order->orderItems()->create($item);
@@ -148,6 +206,64 @@ class OrderController extends Controller
     /**
      * Check capacity for a specific date
      */
+    /**
+     * Return availability for the next 30 days.
+     */
+    public function availability()
+    {
+        $dates = [];
+        $today = Carbon::today();
+
+        for ($i = 0; $i < 30; $i++) {
+            $date = $today->copy()->addDays($i);
+            $dayOfWeek = (int) $date->dayOfWeek;
+            $dateStr = $date->toDateString();
+
+            $schedule = BusinessSchedule::forDay($dayOfWeek);
+            $isOpen = $schedule?->is_open ?? false;
+
+            // Check blocked dates
+            $blocked = BlockedDate::where('date', $dateStr)->where('is_all_day', true)->first();
+
+            if ($blocked) {
+                $dates[] = [
+                    'date' => $dateStr,
+                    'available' => false,
+                    'reason' => $blocked->reason ?? 'Blocked',
+                    'remaining_capacity' => 0,
+                ];
+                continue;
+            }
+
+            if (!$isOpen) {
+                $dates[] = [
+                    'date' => $dateStr,
+                    'available' => false,
+                    'reason' => 'Closed',
+                    'remaining_capacity' => 0,
+                ];
+                continue;
+            }
+
+            // Check capacity
+            $maxOrders = $schedule->max_orders
+                ?? (int) \App\Models\Setting::get('default_daily_capacity', 100);
+            $currentOrders = Order::whereDate('delivery_date', $dateStr)
+                ->whereNotIn('status', ['cancelled'])
+                ->count();
+            $remaining = max(0, $maxOrders - $currentOrders);
+
+            $dates[] = [
+                'date' => $dateStr,
+                'available' => $remaining > 0,
+                'reason' => $remaining > 0 ? 'Open' : 'Fully booked',
+                'remaining_capacity' => $remaining,
+            ];
+        }
+
+        return response()->json($dates);
+    }
+
     public function checkCapacity(string $date)
     {
         try {

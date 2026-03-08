@@ -9,6 +9,7 @@ use App\Models\CustomerPhoto;
 use App\Models\LoyaltyReward;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Services\GiftCardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,7 +30,7 @@ class StorefrontController extends Controller
     public function menu()
     {
         $categories = Category::where('is_active', true)
-            ->with(['products' => fn($q) => $q->where('is_active', true)->orderBy('name')])
+            ->with(['products' => fn($q) => $q->where('is_active', true)->orderBy('name'), 'products.seasonalItems'])
             ->orderBy('sort_order')
             ->get();
 
@@ -173,6 +174,53 @@ class StorefrontController extends Controller
         return response($data)
             ->header('Content-Type', 'image/png')
             ->header('Cache-Control', 'public, max-age=86400');
+    }
+
+    public function giftCards()
+    {
+        return view('gift-cards');
+    }
+
+    public function purchaseGiftCard(Request $request)
+    {
+        $validated = $request->validate([
+            'purchaser_name' => 'required|string|max:255',
+            'purchaser_email' => 'required|email|max:255',
+            'recipient_name' => 'nullable|string|max:255',
+            'recipient_email' => 'nullable|email|max:255',
+            'message' => 'nullable|string|max:1000',
+            'initial_balance' => 'required|numeric|min:1|max:500',
+        ]);
+
+        $service = new GiftCardService();
+        $card = $service->create($validated);
+
+        return response()->json([
+            'success' => true,
+            'gift_card' => [
+                'code' => $card->code,
+                'balance' => $card->current_balance,
+            ],
+        ]);
+    }
+
+    public function checkGiftCardBalance(Request $request)
+    {
+        $request->validate(['code' => 'required|string']);
+
+        $service = new GiftCardService();
+        $card = $service->checkBalance($request->code);
+
+        if (!$card) {
+            return response()->json(['success' => false, 'error' => 'Gift card not found.'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'current_balance' => $card->current_balance,
+            'expires_at' => $card->expires_at?->format('M j, Y'),
+            'is_usable' => $card->isUsable(),
+        ]);
     }
 
     public function gallery()
