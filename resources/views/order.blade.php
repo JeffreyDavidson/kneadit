@@ -1,6 +1,71 @@
 @extends('layouts.storefront')
 
 @section('content')
+<style>
+    .order-card {
+        background: white;
+        border-radius: 1rem;
+        border: 1px solid var(--warm-200);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .order-sidebar {
+        background: white;
+        border-radius: 1rem;
+        border: 1.5px solid var(--warm-300);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .order-sidebar h3 {
+        font-family: var(--font-display);
+    }
+    .order-sidebar h4 {
+        font-family: var(--font-display);
+    }
+    .order-category-card {
+        background: var(--warm-50);
+        border-radius: 0.75rem;
+        border: 1px solid var(--warm-200);
+    }
+    .order-product-card {
+        border: 1px solid var(--warm-200);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        position: relative;
+    }
+    .order-product-card:hover {
+        border-color: var(--warm-400);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .order-qty-btn {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+        border: 1.5px solid var(--warm-300);
+        background: white;
+        color: var(--warm-700);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+    .order-qty-btn:hover:not(:disabled) {
+        background: var(--warm-200);
+        border-color: var(--warm-500);
+    }
+    .order-qty-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+    .order-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+
 <div class="max-w-7xl mx-auto px-4 py-12" 
      x-data="orderForm()" 
      x-init="init()">
@@ -15,31 +80,35 @@
         $freeDeliveryMin = \App\Models\Setting::get('free_delivery_minimum', '50');
     @endphp
 
-    <div class="text-center mb-12">
-        <h1 class="font-display text-4xl font-bold text-warm-900 mb-4">
+    {{-- Header --}}
+    <div class="mb-12">
+        <h1 class="font-display text-4xl md:text-5xl font-bold mb-4" style="color: var(--warm-900);">
             Place Your Order
         </h1>
-        <p class="text-warm-700 text-lg">
-            Please allow {{ $leadTimeHours }} hours notice for all orders. Orders placed today will be ready {{ date('l, F j', strtotime('+' . $leadTimeDays . ' days')) }} or later.
+        <p class="text-lg max-w-2xl" style="color: var(--warm-600);">
+            Choose your items, tell us when you need them, and we'll have everything freshly prepared. Orders need {{ $leadTimeHours }} hours notice — ready {{ date('l, F j', strtotime('+' . $leadTimeDays . ' days')) }} or later.
         </p>
     </div>
 
     <form @submit.prevent="submitOrder" class="grid lg:grid-cols-3 gap-8">
-        <!-- Product Selection -->
-        <div class="lg:col-span-2">
-            <h2 class="font-display text-2xl font-semibold text-warm-900 mb-6">Select Your Items</h2>
+        {{-- Product Selection --}}
+        <div class="lg:col-span-2 space-y-8">
+            <div class="flex items-center gap-4 mb-2">
+                <h2 class="font-display text-2xl font-bold whitespace-nowrap" style="color: var(--warm-900);">Select Your Items</h2>
+                <div class="flex-1 h-px" style="background: var(--warm-300);"></div>
+            </div>
             
             @foreach($categories as $category)
-            <div class="card p-6 mb-6">
-                <h3 class="font-display text-xl font-semibold text-warm-900 mb-4">
+            <div class="order-category-card p-5 md:p-6">
+                <h3 class="font-display text-xl font-semibold mb-5" style="color: var(--warm-900);">
                     {{ $category->name }}
                 </h3>
                 
                 <div class="grid md:grid-cols-2 gap-4">
                     @foreach($category->products as $product)
                     @if($product->is_available)
-                    <div class="border border-warm-200 rounded-lg overflow-hidden relative">
-                        <!-- Favorite Heart -->
+                    <div class="order-product-card" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
+                        {{-- Favorite Heart --}}
                         <button type="button"
                                 @click="toggleFavorite({{ $product->id }})" 
                                 class="absolute top-2 right-2 text-xl z-10"
@@ -47,41 +116,36 @@
                             <span x-text="isFavorite({{ $product->id }}) ? '❤️' : '🤍'"></span>
                         </button>
 
-                        <!-- Product Image -->
+                        {{-- Product Image --}}
                         <div style="aspect-ratio: 16/9;">
                             @if($product->image)
                                 <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                             @else
-                                <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-600));">
+                                <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-600), var(--warm-500));">
                                     <span class="text-3xl font-display font-bold" style="color: var(--warm-200);">{{ strtoupper(substr($product->name, 0, 1)) }}</span>
                                 </div>
                             @endif
                         </div>
                         
                         <div class="p-4">
-                            <h4 class="font-semibold text-warm-900 mb-1">{{ $product->name }}</h4>
+                            <h4 class="font-semibold mb-1" style="color: var(--warm-900);">{{ $product->name }}</h4>
                             @if($product->description)
-                            <p class="text-sm text-warm-700 mb-2">{{ $product->description }}</p>
+                            <p class="text-sm mb-2" style="color: var(--warm-600);">{{ $product->description }}</p>
                             @endif
-                            <p class="font-bold text-warm-600">${{ number_format($product->price, 2) }}</p>
-                            
-                            <div class="flex items-center mt-3">
-                                <button type="button" 
-                                        @click="decrementItem({{ $product->id }})"
-                                        :disabled="getQuantity({{ $product->id }}) <= 0"
-                                        class="btn-secondary py-1 px-3 text-sm"
-                                        :class="getQuantity({{ $product->id }}) <= 0 ? 'opacity-50 cursor-not-allowed' : ''">
-                                    −
-                                </button>
-                                <span class="mx-3 font-semibold min-w-[2rem] text-center" 
-                                      x-text="getQuantity({{ $product->id }})"></span>
-                                <button type="button" 
-                                        @click="incrementItem({{ $product->id }}, {{ $product->price }})"
-                                        class="btn-secondary py-1 px-3 text-sm">
-                                    +
-                                </button>
+                            <div class="flex items-center justify-between mt-3">
+                                <span class="font-display text-lg font-bold" style="color: var(--warm-800);">${{ number_format($product->price, 2) }}</span>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" 
+                                            @click="decrementItem({{ $product->id }})"
+                                            :disabled="getQuantity({{ $product->id }}) <= 0"
+                                            class="order-qty-btn">−</button>
+                                    <span class="font-semibold min-w-[1.5rem] text-center text-sm" style="color: var(--warm-900);"
+                                          x-text="getQuantity({{ $product->id }})"></span>
+                                    <button type="button" 
+                                            @click="incrementItem({{ $product->id }}, {{ $product->price }})"
+                                            class="order-qty-btn">+</button>
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </div>
                     @endif
@@ -91,30 +155,30 @@
             @endforeach
         </div>
 
-        <!-- Order Summary & Customer Info -->
+        {{-- Order Summary Sidebar --}}
         <div class="lg:col-span-1">
-            <div class="card p-6 sticky top-8">
-                <h3 class="font-display text-xl font-semibold text-warm-900 mb-4">Order Summary</h3>
+            <div class="order-sidebar p-6 md:p-8 sticky top-8">
+                <h3 class="text-xl font-semibold mb-6" style="color: var(--warm-900);">Your Order</h3>
                 
-                <!-- Cart Items -->
+                {{-- Cart Items --}}
                 <div class="space-y-2 mb-4" x-show="cartItems.length > 0">
                     <template x-for="item in cartItems" :key="item.id">
-                        <div class="flex justify-between items-center text-sm">
-                            <span>
-                                <span x-text="item.quantity"></span>× <span x-text="item.name"></span>
+                        <div class="flex justify-between items-center text-sm py-1">
+                            <span style="color: var(--warm-700);">
+                                <span class="font-medium" x-text="item.quantity"></span> × <span x-text="item.name"></span>
                             </span>
-                            <span x-text="'$' + (item.quantity * item.price).toFixed(2)"></span>
+                            <span class="font-medium" style="color: var(--warm-900);" x-text="'$' + (item.quantity * item.price).toFixed(2)"></span>
                         </div>
                     </template>
                 </div>
                 
-                <div x-show="cartItems.length === 0" class="text-gray-500 italic text-sm mb-4">
-                    No items selected
+                <div x-show="cartItems.length === 0" class="text-center py-6 mb-4">
+                    <p class="text-sm italic" style="color: var(--warm-400);">Add items to get started</p>
                 </div>
 
-                <!-- Coupon Section -->
-                <div class="border-t border-warm-200 pt-4 mb-4">
-                    <label class="block text-sm font-medium text-warm-900 mb-2">Coupon Code</label>
+                {{-- Coupon Section --}}
+                <div class="border-t pt-4 mb-4" style="border-color: var(--warm-200);">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Coupon Code</label>
                     <div class="flex">
                         <input type="text" 
                                x-model="couponCode"
@@ -125,19 +189,18 @@
                                 :disabled="!couponCode || isApplyingCoupon"
                                 class="btn-secondary rounded-l-none border-l-0"
                                 :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : ''">
-                            <span x-text="isApplyingCoupon ? 'Checking...' : 'Apply'"></span>
+                            <span x-text="isApplyingCoupon ? '...' : 'Apply'"></span>
                         </button>
                     </div>
-                    
                     <div x-show="couponError" class="text-red-600 text-sm mt-1" x-text="couponError"></div>
                     <div x-show="appliedCoupon" class="text-green-600 text-sm mt-1">
                         <span x-text="appliedCoupon?.label"></span> applied!
                     </div>
                 </div>
 
-                <!-- Gift Card Section -->
-                <div class="border-t border-warm-200 pt-4 mb-4">
-                    <label class="block text-sm font-medium text-warm-900 mb-2">Gift Card</label>
+                {{-- Gift Card Section --}}
+                <div class="border-t pt-4 mb-4" style="border-color: var(--warm-200);">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Gift Card</label>
                     <div class="flex">
                         <input type="text" 
                                x-model="giftCardCode"
@@ -148,105 +211,77 @@
                                 :disabled="!giftCardCode || isApplyingGiftCard"
                                 class="btn-secondary rounded-l-none border-l-0"
                                 :class="isApplyingGiftCard ? 'opacity-50 cursor-not-allowed' : ''">
-                            <span x-text="isApplyingGiftCard ? 'Checking...' : 'Apply'"></span>
+                            <span x-text="isApplyingGiftCard ? '...' : 'Apply'"></span>
                         </button>
                     </div>
-                    
                     <div x-show="giftCardError" class="text-red-600 text-sm mt-1" x-text="giftCardError"></div>
                     <div x-show="appliedGiftCard" class="text-green-600 text-sm mt-1">
                         Gift card applied! Balance: $<span x-text="appliedGiftCard?.available_balance?.toFixed(2)"></span>
                     </div>
                 </div>
 
-                <!-- Order Totals -->
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span>Subtotal:</span>
-                        <span x-text="'$' + subtotal.toFixed(2)"></span>
+                {{-- Totals --}}
+                <div class="border-t pt-4 space-y-2 text-sm" style="border-color: var(--warm-200);">
+                    <div class="order-total-row">
+                        <span style="color: var(--warm-600);">Subtotal</span>
+                        <span style="color: var(--warm-800);" x-text="'$' + subtotal.toFixed(2)"></span>
                     </div>
-                    
-                    <div x-show="deliveryFee > 0" class="flex justify-between">
-                        <span>Delivery Fee:</span>
-                        <span x-text="'$' + deliveryFee.toFixed(2)"></span>
+                    <div x-show="deliveryFee > 0" class="order-total-row">
+                        <span style="color: var(--warm-600);">Delivery</span>
+                        <span style="color: var(--warm-800);" x-text="'$' + deliveryFee.toFixed(2)"></span>
                     </div>
-                    
-                    <div x-show="appliedCoupon" class="flex justify-between text-green-600">
-                        <span>Discount:</span>
+                    <div x-show="appliedCoupon" class="order-total-row" style="color: #16a34a;">
+                        <span>Discount</span>
                         <span x-text="'-$' + discountAmount.toFixed(2)"></span>
                     </div>
-                    
-                    <div x-show="appliedGiftCard" class="flex justify-between text-green-600">
-                        <span>Gift Card:</span>
+                    <div x-show="appliedGiftCard" class="order-total-row" style="color: #16a34a;">
+                        <span>Gift Card</span>
                         <span x-text="'-$' + giftCardAmount.toFixed(2)"></span>
                     </div>
-                    
-                    <div class="flex justify-between font-bold text-lg border-t border-warm-200 pt-2">
-                        <span>Total:</span>
-                        <span x-text="'$' + total.toFixed(2)"></span>
+                    <div class="order-total-row pt-3 border-t" style="border-color: var(--warm-200);">
+                        <span class="font-display text-lg font-bold" style="color: var(--warm-900);">Total</span>
+                        <span class="font-display text-2xl font-bold" style="color: var(--warm-900);" x-text="'$' + total.toFixed(2)"></span>
                     </div>
                 </div>
 
-                <!-- Customer Information -->
-                <div class="border-t border-warm-200 pt-6 mt-6">
-                    <h4 class="font-semibold text-warm-900 mb-4">Customer Information</h4>
+                {{-- Customer Information --}}
+                <div class="border-t pt-6 mt-6" style="border-color: var(--warm-200);">
+                    <h4 class="text-lg font-semibold mb-4" style="color: var(--warm-900);">Your Details</h4>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-warm-900 mb-1">Name *</label>
-                            <input type="text" 
-                                   x-model="form.customer_name" 
-                                   required
-                                   class="input-field">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Name *</label>
+                            <input type="text" x-model="form.customer_name" required class="input-field">
                         </div>
-                        
                         <div>
-                            <label class="block text-sm font-medium text-warm-900 mb-1">Email *</label>
-                            <input type="email" 
-                                   x-model="form.customer_email"
-                                   @input="saveEmail()"
-                                   required
-                                   class="input-field">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Email *</label>
+                            <input type="email" x-model="form.customer_email" @input="saveEmail()" required class="input-field">
                         </div>
-                        
                         <div>
-                            <label class="block text-sm font-medium text-warm-900 mb-1">Phone</label>
-                            <input type="tel" 
-                                   x-model="form.customer_phone"
-                                   class="input-field">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Phone</label>
+                            <input type="tel" x-model="form.customer_phone" class="input-field">
                         </div>
-
                         <div>
-                            <label class="block text-sm font-medium text-warm-900 mb-1">Birthday <span class="text-warm-500 text-xs">(optional — for special treats! 🎂)</span></label>
-                            <input type="date" 
-                                   x-model="form.customer_birthday"
-                                   class="input-field"
-                                   max="{{ date('Y-m-d') }}">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Birthday <span class="text-xs" style="color: var(--warm-400);">(for special treats 🎂)</span></label>
+                            <input type="date" x-model="form.customer_birthday" class="input-field" max="{{ date('Y-m-d') }}">
                         </div>
                     </div>
                 </div>
 
-                <!-- Delivery Options -->
-                <div class="border-t border-warm-200 pt-6 mt-6">
-                    <h4 class="font-semibold text-warm-900 mb-4">Delivery Options</h4>
+                {{-- Delivery Options --}}
+                <div class="border-t pt-6 mt-6" style="border-color: var(--warm-200);">
+                    <h4 class="text-lg font-semibold mb-4" style="color: var(--warm-900);">Delivery</h4>
                     
                     <div class="space-y-3">
-                        <label class="flex items-center">
-                            <input type="radio" 
-                                   x-model="form.delivery_type" 
-                                   value="pickup"
-                                   @change="calculateDeliveryFee()"
-                                   class="mr-2">
-                            <span>Pickup (Free)</span>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" x-model="form.delivery_type" value="pickup" @change="calculateDeliveryFee()" class="mr-3" style="accent-color: var(--warm-600);">
+                            <span style="color: var(--warm-800);">Pickup <span class="text-sm" style="color: var(--warm-500);">(Free)</span></span>
                         </label>
                         
                         @if($deliveryEnabled)
-                        <label class="flex items-center">
-                            <input type="radio" 
-                                   x-model="form.delivery_type" 
-                                   value="delivery"
-                                   @change="calculateDeliveryFee()"
-                                   class="mr-2">
-                            <span>Delivery</span>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" x-model="form.delivery_type" value="delivery" @change="calculateDeliveryFee()" class="mr-3" style="accent-color: var(--warm-600);">
+                            <span style="color: var(--warm-800);">Delivery</span>
                         </label>
                         @endif
                     </div>
@@ -254,27 +289,20 @@
                     @if($deliveryEnabled)
                     <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-warm-900 mb-1">Delivery Address *</label>
-                            <textarea x-model="form.delivery_address"
-                                     placeholder="Enter your full address"
-                                     class="input-field"
-                                     rows="3"></textarea>
+                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Delivery Address *</label>
+                            <textarea x-model="form.delivery_address" placeholder="Full address" class="input-field" rows="3"></textarea>
                         </div>
-                        
                         <div>
-                            <label class="block text-sm font-medium text-warm-900 mb-1">Distance from bakery</label>
-                            <select x-model="form.delivery_tier" 
-                                    @change="calculateDeliveryFee()"
-                                    class="input-field">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Distance</label>
+                            <select x-model="form.delivery_tier" @change="calculateDeliveryFee()" class="input-field">
                                 <option value="">Select distance</option>
                                 @foreach($deliveryTiers as $index => $tier)
                                 <option value="{{ $index }}">{{ $tier['description'] }} (${{ number_format($tier['fee'], 2) }})</option>
                                 @endforeach
                             </select>
                         </div>
-
                         @if($freeDeliveryMin)
-                        <p class="text-sm" style="color: var(--warm-600);">
+                        <p class="text-sm" style="color: var(--warm-500);">
                             Free delivery on orders over ${{ number_format((float)$freeDeliveryMin, 2) }}!
                         </p>
                         @endif
@@ -282,75 +310,57 @@
                     @endif
                 </div>
 
-                <!-- Delivery Date & Time -->
-                <div class="border-t border-warm-200 pt-6 mt-6">
-                    <h4 class="font-semibold text-warm-900 mb-4">Date & Time</h4>
-                    
+                {{-- Date & Time --}}
+                <div class="border-t pt-6 mt-6" style="border-color: var(--warm-200);">
+                    <h4 class="text-lg font-semibold mb-4" style="color: var(--warm-900);">When</h4>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-warm-900 mb-1">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">
                                 <span x-text="form.delivery_type === 'delivery' ? 'Delivery Date' : 'Pickup Date'"></span> *
                             </label>
-                            <input type="date" 
-                                   x-model="form.delivery_date"
-                                   :min="minDate"
-                                   @change="checkCapacity()"
-                                   required
-                                   class="input-field">
-                            
+                            <input type="date" x-model="form.delivery_date" :min="minDate" @change="checkCapacity()" required class="input-field">
                             <div x-show="capacityWarning" class="text-orange-600 text-sm mt-1" x-text="capacityWarning"></div>
                             <div x-show="capacityError" class="text-red-600 text-sm mt-1" x-text="capacityError"></div>
                         </div>
-                        
                         <div>
-                            <label class="block text-sm font-medium text-warm-900 mb-1">
-                                Preferred Time
-                            </label>
-                            <input type="text" 
-                                   x-model="form.delivery_time"
-                                   placeholder="e.g., 10:00 AM or Morning"
-                                   class="input-field">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Preferred Time</label>
+                            <input type="text" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="input-field">
                         </div>
                     </div>
                 </div>
 
-                <!-- Notes -->
-                <div class="border-t border-warm-200 pt-6 mt-6">
-                    <label class="block text-sm font-medium text-warm-900 mb-2">Special Instructions</label>
-                    <textarea x-model="form.notes"
-                             placeholder="Any special requests or notes..."
-                             class="input-field"
-                             rows="3"></textarea>
+                {{-- Notes --}}
+                <div class="border-t pt-6 mt-6" style="border-color: var(--warm-200);">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Special Instructions</label>
+                    <textarea x-model="form.notes" placeholder="Allergies, decorations, anything..." class="input-field" rows="3"></textarea>
                 </div>
 
                 @if(!empty($paymentMethods))
-                <!-- Payment Methods -->
-                <div class="border-t border-warm-200 pt-6 mt-6">
-                    <h4 class="font-semibold text-warm-900 mb-2">Accepted Payment Methods</h4>
-                    <p class="text-sm" style="color: var(--warm-700);">
-                        {{ implode(', ', array_map('ucfirst', $paymentMethods)) }}
+                <div class="border-t pt-4 mt-4" style="border-color: var(--warm-200);">
+                    <p class="text-xs" style="color: var(--warm-500);">
+                        <span class="font-medium">Payment:</span> {{ implode(', ', array_map('ucfirst', $paymentMethods)) }}
                     </p>
                 </div>
                 @endif
 
                 @if($allergyDisclaimer)
-                <!-- Allergy Disclaimer -->
-                <div class="border-t border-warm-200 pt-4 mt-4">
-                    <p class="text-xs leading-relaxed" style="color: var(--warm-600);">
+                <div class="border-t pt-4 mt-4" style="border-color: var(--warm-200);">
+                    <p class="text-xs leading-relaxed" style="color: var(--warm-500);">
                         <strong>⚠ Allergy Notice:</strong> {{ $allergyDisclaimer }}
                     </p>
                 </div>
                 @endif
 
-                <!-- Submit Button -->
+                {{-- Submit --}}
                 <button type="submit" 
                         :disabled="!canSubmit || isSubmitting"
-                        class="w-full btn-primary mt-6 py-3"
-                        :class="!canSubmit || isSubmitting ? 'opacity-50 cursor-not-allowed' : ''">
+                        class="w-full mt-6 py-4 rounded-xl text-lg font-semibold transition-all duration-200"
+                        :class="!canSubmit || isSubmitting ? 'opacity-40 cursor-not-allowed' : 'hover:opacity-90'"
+                        style="background: var(--warm-800); color: white; font-family: var(--font-display);">
                     <span x-text="isSubmitting ? 'Placing Order...' : 'Place Order'"></span>
                 </button>
                 
-                <div x-show="submitError" class="text-red-600 text-sm mt-2" x-text="submitError"></div>
+                <div x-show="submitError" class="text-red-600 text-sm mt-2 text-center" x-text="submitError"></div>
             </div>
         </div>
     </form>
@@ -397,23 +407,16 @@ function orderForm() {
         unavailableDates: [],
 
         init() {
-            // Set minimum date based on lead time hours
             const leadTimeHours = {{ $leadTimeHours }};
             const today = new Date();
             today.setTime(today.getTime() + (leadTimeHours * 60 * 60 * 1000));
             this.minDate = today.toISOString().split('T')[0];
-            
-            // Load availability data for date picker
             this.loadAvailability();
-            
-            // Load favorites if email exists
             if (this.form.customer_email) {
                 this.loadFavorites();
             }
-            
             this.calculateTotals();
 
-            // Check for reorder param
             const params = new URLSearchParams(window.location.search);
             if (params.has('reorder')) {
                 fetch(`/order/reorder/${params.get('reorder')}`)
@@ -535,7 +538,6 @@ function orderForm() {
 
         async loadFavorites() {
             if (!this.form.customer_email) return;
-            
             try {
                 const response = await fetch(`{{ route('favorites.get') }}?email=${encodeURIComponent(this.form.customer_email)}`);
                 const data = await response.json();
@@ -554,7 +556,6 @@ function orderForm() {
                 alert('Please enter your email to save favorites');
                 return;
             }
-            
             try {
                 const response = await fetch('{{ route('favorites.toggle') }}', {
                     method: 'POST',
@@ -567,7 +568,6 @@ function orderForm() {
                         product_id: productId
                     })
                 });
-                
                 const data = await response.json();
                 if (data.success) {
                     if (data.is_favorite) {
@@ -583,10 +583,8 @@ function orderForm() {
 
         async applyGiftCard() {
             if (!this.giftCardCode || this.isApplyingGiftCard) return;
-            
             this.isApplyingGiftCard = true;
             this.giftCardError = '';
-            
             try {
                 const response = await fetch('{{ route("gift-card.apply") }}', {
                     method: 'POST',
@@ -599,9 +597,7 @@ function orderForm() {
                         subtotal: this.subtotal
                     })
                 });
-                
                 const data = await response.json();
-                
                 if (data.success) {
                     this.appliedGiftCard = data;
                     this.giftCardError = '';
@@ -620,10 +616,8 @@ function orderForm() {
 
         async applyCoupon() {
             if (!this.couponCode || this.isApplyingCoupon) return;
-            
             this.isApplyingCoupon = true;
             this.couponError = '';
-            
             try {
                 const response = await fetch('{{ route('coupon.apply') }}', {
                     method: 'POST',
@@ -636,9 +630,7 @@ function orderForm() {
                         subtotal: this.subtotal
                     })
                 });
-                
                 const data = await response.json();
-                
                 if (data.success) {
                     this.appliedCoupon = data;
                     this.couponError = '';
@@ -657,11 +649,9 @@ function orderForm() {
 
         async checkCapacity() {
             if (!this.form.delivery_date) return;
-            
             this.capacityWarning = '';
             this.capacityError = '';
 
-            // Check availability data first (schedule/blocked dates)
             const avail = this.getDateAvailability(this.form.delivery_date);
             if (avail && !avail.available) {
                 this.capacityError = avail.reason === 'Closed' 
@@ -676,7 +666,6 @@ function orderForm() {
             try {
                 const response = await fetch(`/capacity/check/${this.form.delivery_date}`);
                 const data = await response.json();
-                
                 if (!data.available) {
                     this.capacityError = 'This date is fully booked. Please choose another date.';
                 } else if (data.usage_percent > 80) {
@@ -689,35 +678,25 @@ function orderForm() {
 
         async submitOrder() {
             if (!this.canSubmit) return;
-            
             this.isSubmitting = true;
             this.submitError = '';
             
             const formData = new FormData();
-            
-            // Add form fields
             Object.keys(this.form).forEach(key => {
                 if (this.form[key]) {
                     formData.append(key, this.form[key]);
                 }
             });
-            
-            // Add cart items
             this.cartItems.forEach((item, index) => {
                 formData.append(`items[${index}][product_id]`, item.id);
                 formData.append(`items[${index}][quantity]`, item.quantity);
             });
-            
-            // Add coupon if applied
             if (this.appliedCoupon) {
                 formData.append('coupon_id', this.appliedCoupon.coupon_id);
             }
-            
-            // Add gift card if applied
             if (this.appliedGiftCard) {
                 formData.append('gift_card_id', this.appliedGiftCard.gift_card_id);
             }
-            
             formData.append('_token', '{{ csrf_token() }}');
             
             try {
@@ -725,11 +704,9 @@ function orderForm() {
                     method: 'POST',
                     body: formData
                 });
-                
                 if (response.ok) {
                     window.location.href = response.url;
                 } else {
-                    const text = await response.text();
                     this.submitError = 'There was an error submitting your order. Please try again.';
                 }
             } catch (error) {
@@ -741,23 +718,5 @@ function orderForm() {
         }
     }
 }
-
-// Add product data attributes for cart functionality
-document.addEventListener('DOMContentLoaded', function() {
-    @foreach($categories as $category)
-        @foreach($category->products as $product)
-        @if($product->is_available)
-            const productEl{{ $product->id }} = document.querySelector('[data-product-id="{{ $product->id }}"]');
-            if (!productEl{{ $product->id }}) {
-                const div = document.createElement('div');
-                div.setAttribute('data-product-id', '{{ $product->id }}');
-                div.setAttribute('data-product-name', '{{ addslashes($product->name) }}');
-                div.style.display = 'none';
-                document.body.appendChild(div);
-            }
-        @endif
-        @endforeach
-    @endforeach
-});
 </script>
 @endsection
