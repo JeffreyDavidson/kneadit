@@ -10,13 +10,19 @@ use App\Filament\Resources\Coupons\Tables\CouponsTable;
 use App\Models\Coupon;
 use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class CouponResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
     protected static ?string $model = Coupon::class;
     protected static string $requiredPlan = 'growth';

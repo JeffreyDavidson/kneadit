@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\StorefrontApiController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StorefrontController;
@@ -35,6 +36,12 @@ Route::middleware([
         return response()->file(public_path('service-worker.js'), ['Content-Type' => 'application/javascript']);
     });
     Route::get('/icons/icon-{size}.png', [StorefrontController::class, 'appIcon'])->name('app.icon');
+
+    // Driver view (no auth, shared via link)
+    Route::prefix('driver')->name('driver.')->group(function () {
+        Route::get('/', [DriverController::class, 'index'])->name('index');
+        Route::post('/{order}/delivered', [DriverController::class, 'markDelivered'])->name('delivered');
+    });
 
     // Staff invitation routes (outside auth & storefront middleware)
     Route::get('/invite/{token}', [InvitationController::class, 'show'])->name('invitation.show');

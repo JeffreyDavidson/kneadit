@@ -16,6 +16,7 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Grid;
@@ -30,7 +31,12 @@ use BackedEnum;
 use App\Traits\HasPlanGating;
 class QuickOrder extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
     protected string $view = 'filament-panels::pages.simple';
 

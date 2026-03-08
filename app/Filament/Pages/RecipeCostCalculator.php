@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Recipe;
 use App\Models\Product;
 use Illuminate\Support\Collection;
@@ -10,7 +11,12 @@ use Illuminate\Support\Collection;
 use App\Traits\HasPlanGating;
 class RecipeCostCalculator extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'growth';

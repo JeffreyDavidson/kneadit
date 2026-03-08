@@ -4,12 +4,18 @@ namespace App\Filament\Pages;
 
 use App\Models\SocialPost;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Illuminate\Support\Carbon;
 
 use App\Traits\HasPlanGating;
 class SocialCalendar extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';

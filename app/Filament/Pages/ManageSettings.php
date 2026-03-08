@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -21,7 +22,7 @@ use Filament\Support\Icons\Heroicon;
 use App\Traits\HasPlanGating;
 class ManageSettings extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
     use InteractsWithFormActions;
 

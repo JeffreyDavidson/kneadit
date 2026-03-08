@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Review;
 use App\Models\Product;
 use Carbon\Carbon;
@@ -12,7 +13,12 @@ use Illuminate\Support\Facades\DB;
 use App\Traits\HasPlanGating;
 class ReviewAnalytics extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';

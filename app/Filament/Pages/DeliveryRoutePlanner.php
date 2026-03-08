@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
 use App\Models\Setting;
 use Carbon\Carbon;
@@ -11,7 +12,12 @@ use Illuminate\Support\Collection;
 use App\Traits\HasPlanGating;
 class DeliveryRoutePlanner extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';

@@ -7,13 +7,14 @@ use App\Models\PageView;
 use App\Models\Product;
 use Carbon\Carbon;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 use App\Traits\HasPlanGating;
 class StorefrontAnalytics extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
 
     protected static string $requiredPlan = 'pro';

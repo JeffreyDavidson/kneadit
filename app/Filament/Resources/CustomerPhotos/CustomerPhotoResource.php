@@ -8,6 +8,7 @@ use App\Filament\Resources\CustomerPhotos\Pages\ListCustomerPhotos;
 use App\Models\CustomerPhoto;
 use BackedEnum;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -32,7 +33,12 @@ use Illuminate\Database\Eloquent\Collection;
 use App\Traits\HasPlanGating;
 class CustomerPhotoResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';

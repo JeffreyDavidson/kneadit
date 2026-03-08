@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Actions\Action;
 use App\Models\Ingredient;
 use App\Models\Order;
@@ -12,7 +13,12 @@ use Illuminate\Support\Collection;
 use App\Traits\HasPlanGating;
 class ShoppingListGenerator extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';

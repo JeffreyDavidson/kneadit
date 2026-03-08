@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,7 +17,12 @@ use Filament\Tables\Table;
 use App\Traits\HasPlanGating;
 class HolidayResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';

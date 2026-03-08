@@ -11,13 +11,19 @@ use App\Models\Recipe;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class RecipeResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
     protected static ?string $model = Recipe::class;
     protected static string $requiredPlan = 'growth';

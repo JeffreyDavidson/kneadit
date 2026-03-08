@@ -9,6 +9,7 @@ use App\Filament\Resources\WaitlistEntries\Schemas\WaitlistEntryForm;
 use App\Filament\Resources\WaitlistEntries\Tables\WaitlistEntriesTable;
 use App\Models\WaitlistEntry;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -16,7 +17,12 @@ use Filament\Tables\Table;
 use App\Traits\HasPlanGating;
 class WaitlistEntryResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
     protected static ?string $model = WaitlistEntry::class;
 

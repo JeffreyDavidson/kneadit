@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Actions\Action;
 use App\Models\Order;
 use App\Models\Expense;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class FinanceSummary extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'Finance Summary';

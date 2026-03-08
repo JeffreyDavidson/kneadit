@@ -10,13 +10,14 @@ use App\Filament\Resources\Expenses\Tables\ExpensesTable;
 use App\Models\Expense;
 use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ExpenseResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
     protected static ?string $model = Expense::class;
     protected static string $requiredPlan = 'growth';
