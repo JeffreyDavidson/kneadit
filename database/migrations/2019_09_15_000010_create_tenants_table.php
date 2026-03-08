@@ -29,6 +29,8 @@ class CreateTenantsTable extends Migration
             $table->string('store_logo')->nullable();
             $table->string('brand_color_primary')->default('#d4920c');
             $table->string('brand_color_secondary')->default('#1c1410');
+            $table->boolean('storefront_enabled')->default(true);
+            $table->string('external_website')->nullable();
             $table->boolean('is_active')->default(true);
 
             $table->timestamps();
