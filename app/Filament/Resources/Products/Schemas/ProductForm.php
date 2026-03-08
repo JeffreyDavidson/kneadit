@@ -5,12 +5,12 @@ namespace App\Filament\Resources\Products\Schemas;
 use App\Models\Category;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
 class ProductForm
@@ -66,8 +66,9 @@ class ProductForm
                                     ->dehydrated(false)
                                     ->formatStateUsing(function ($state, $record) {
                                         if ($record && $record->cost && $record->price) {
-                                            return round(($record->price - $record->cost) / $record->price * 100, 2) . '%';
+                                            return round(($record->price - $record->cost) / $record->price * 100, 2).'%';
                                         }
+
                                         return null;
                                     }),
                             ]),

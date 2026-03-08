@@ -7,21 +7,30 @@ use App\Filament\Resources\Categories\Pages\EditCategory;
 use App\Filament\Resources\Categories\Pages\ListCategories;
 use App\Filament\Resources\Categories\Schemas\CategoryForm;
 use App\Filament\Resources\Categories\Tables\CategoriesTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Category;
+use App\Traits\HasPlanGating;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class CategoryResource extends Resource
 {
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
+
     protected static ?string $model = Category::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Catalog';
+    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

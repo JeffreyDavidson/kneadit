@@ -5,9 +5,9 @@ namespace App\Filament\Resources\Recipes\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class RecipesTable
 {
@@ -27,7 +27,7 @@ class RecipesTable
 
                 TextColumn::make('prep_time_minutes')
                     ->label('Prep Time')
-                    ->formatStateUsing(fn ($state) => $state ? $state . ' min' : '-')
+                    ->formatStateUsing(fn ($state) => $state ? $state.' min' : '-')
                     ->sortable(),
 
                 TextColumn::make('cost')
@@ -37,9 +37,10 @@ class RecipesTable
                 TextColumn::make('ingredients')
                     ->formatStateUsing(function ($state) {
                         if (is_array($state)) {
-                            return collect($state)->take(3)->pluck('name')->join(', ') . 
+                            return collect($state)->take(3)->pluck('name')->join(', ').
                                    (count($state) > 3 ? '...' : '');
                         }
+
                         return '-';
                     })
                     ->limit(50),

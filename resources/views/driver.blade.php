@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Deliveries — {{ $storeName }}</title>
+    <style>
+        :root {
+            --warm-50: #fdf8f0;
+            --warm-100: #f5e6d3;
+            --warm-200: #e8d0b3;
+            --warm-500: #b8860b;
+            --warm-600: #96700a;
+            --warm-700: #5c4a1e;
+            --green-500: #22c55e;
+            --green-600: #16a34a;
+            --green-700: #15803d;
+            --gray-100: #f3f4f6;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --red-100: #fee2e2;
+            --red-600: #dc2626;
+            --blue-100: #dbeafe;
+            --blue-600: #2563eb;
+            --yellow-100: #fef9c3;
+            --yellow-700: #a16207;
+            --orange-100: #ffedd5;
+            --orange-700: #c2410c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--warm-50);
+            color: var(--gray-700);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--warm-500), var(--warm-600));
+            color: white;
+            padding: 20px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .store-name {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .admin-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.15);
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .flash {
+            margin: 12px 16px 0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .flash-success {
+            background: #dcfce7;
+            color: var(--green-700);
+        }
+
+        .pull-hint {
+            text-align: center;
+            padding: 12px;
+            color: var(--gray-400);
+            font-size: 13px;
+        }
+
+        .orders-list {
+            padding: 0 16px 24px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .customer-name {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .order-number {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .badge {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .badge-confirmed { background: var(--blue-100); color: var(--blue-600); }
+        .badge-baking { background: var(--orange-100); color: var(--orange-700); }
+        .badge-ready { background: #dcfce7; color: var(--green-700); }
+
+        .order-detail {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .order-detail .icon {
+            flex-shrink: 0;
+            width: 18px;
+            text-align: center;
+        }
+
+        .maps-link {
+            color: var(--blue-600);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .maps-link:active {
+            opacity: 0.7;
+        }
+
+        .items-list {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+            padding-left: 26px;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .order-total {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--warm-700);
+        }
+
+        .btn-delivered {
+            background: var(--green-500);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 44px;
+            min-width: 44px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-delivered:active {
+            background: var(--green-700);
+            transform: scale(0.97);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+        }
+
+        .empty-state .emoji {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state h2 {
+            font-size: 18px;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: var(--gray-400);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-top">
+        <span class="store-name">🚗 {{ $storeName }}</span>
+        <a href="/admin" class="admin-link">← Admin</a>
+    </div>
+    <div class="header-meta">
+        <span>{{ now()->format('l, M j') }}</span>
+        <span>{{ $orders->count() }} {{ Str::plural('delivery', $orders->count()) }}</span>
+    </div>
+</div>
+
+@if(session('success'))
+    <div class="flash flash-success">✅ {{ session('success') }}</div>
+@endif
+
+<div class="pull-hint">Pull down to refresh</div>
+
+<div class="orders-list">
+    @forelse($orders as $order)
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <div class="customer-name">{{ $order->customer->name ?? 'Unknown' }}</div>
+                    <div class="order-number">{{ $order->order_number }}</div>
+                </div>
+                <span class="badge badge-{{ $order->status }}">{{ $order->status }}</span>
+            </div>
+
+            @if($order->delivery_address)
+                <div class="order-detail">
+                    <span class="icon">📍</span>
+                    <a href="https://maps.google.com/?q={{ urlencode($order->delivery_address) }}" target="_blank" class="maps-link">
+                        {{ $order->delivery_address }}
+                    </a>
+                </div>
+            @endif
+
+            @if($order->requested_time)
+                <div class="order-detail">
+                    <span class="icon">🕐</span>
+                    <span>{{ \Carbon\Carbon::parse($order->requested_time)->format('g:i A') }}</span>
+                </div>
+            @endif
+
+            @if($order->orderItems->count())
+                <div class="items-list">
+                    {{ $order->orderItems->map(fn($i) => $i->quantity . '× ' . ($i->product->name ?? 'Item'))->join(', ') }}
+                </div>
+            @endif
+
+            @if($order->notes)
+                <div class="order-detail">
+                    <span class="icon">📝</span>
+                    <span>{{ $order->notes }}</span>
+                </div>
+            @endif
+
+            <div class="order-footer">
+                <span class="order-total">${{ number_format($order->total, 2) }}</span>
+                <form action="{{ route('driver.delivered', $order) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-delivered" onclick="return confirm('Mark as delivered?')">
+                        ✅ Mark Delivered
+                    </button>
+                </form>
+            </div>
+        </div>
+    @empty
+        <div class="empty-state">
+            <div class="emoji">🍞</div>
+            <h2>No deliveries scheduled for today</h2>
+            <p>Check back later or pull down to refresh</p>
+        </div>
+    @endforelse
+</div>
+
+</body>
+</html>

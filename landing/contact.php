@@ -22,13 +22,13 @@ $name = trim($data['name'] ?? '');
 $email = trim($data['email'] ?? '');
 $message = trim($data['message'] ?? '');
 
-if (!$name || !$email || !$message) {
+if (! $name || ! $email || ! $message) {
     http_response_code(400);
     echo json_encode(['error' => 'All fields are required']);
     exit;
 }
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(400);
     echo json_encode(['error' => 'Invalid email']);
     exit;
@@ -43,9 +43,9 @@ $entry = [
     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
 ];
 
-$file = __DIR__ . '/data/contacts.json';
+$file = __DIR__.'/data/contacts.json';
 $dir = dirname($file);
-if (!is_dir($dir)) {
+if (! is_dir($dir)) {
     mkdir($dir, 0755, true);
 }
 

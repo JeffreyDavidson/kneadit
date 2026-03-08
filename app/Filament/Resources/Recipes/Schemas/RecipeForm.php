@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources\Recipes\Schemas;
 
+use App\Models\Ingredient;
 use App\Models\Product;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class RecipeForm
 {
@@ -66,6 +67,48 @@ class RecipeForm
                             ])
                             ->columns(1)
                             ->addActionLabel('Add Ingredient')
+                            ->reorderable()
+                            ->collapsible(),
+                    ]),
+
+                Section::make('Linked Inventory Ingredients')
+                    ->description('Link to tracked ingredients for automatic stock management')
+                    ->components([
+                        Repeater::make('inventoryIngredients')
+                            ->relationship()
+                            ->schema([
+                                Grid::make(3)
+                                    ->components([
+                                        Select::make('ingredient_id')
+                                            ->label('Ingredient')
+                                            ->options(Ingredient::query()->pluck('name', 'id'))
+                                            ->searchable()
+                                            ->required(),
+
+                                        TextInput::make('quantity')
+                                            ->numeric()
+                                            ->required()
+                                            ->step(0.01),
+
+                                        Select::make('unit')
+                                            ->options([
+                                                'oz' => 'oz',
+                                                'lbs' => 'lbs',
+                                                'g' => 'g',
+                                                'kg' => 'kg',
+                                                'cups' => 'cups',
+                                                'tbsp' => 'tbsp',
+                                                'tsp' => 'tsp',
+                                                'ml' => 'ml',
+                                                'l' => 'l',
+                                                'each' => 'each',
+                                                'dozen' => 'dozen',
+                                            ])
+                                            ->required(),
+                                    ]),
+                            ])
+                            ->columns(1)
+                            ->addActionLabel('Link Ingredient')
                             ->reorderable()
                             ->collapsible(),
                     ]),

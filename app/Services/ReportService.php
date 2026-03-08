@@ -1,0 +1,198 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Customer;
+use App\Models\Expense;
+use App\Models\Income;
+use App\Models\Ingredient;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+
+class ReportService
+{
+    public function salesReport(string $startDate, string $endDate): array
+    {
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+
+        $orders = Order::whereBetween('requested_date', [$start, $end]);
+        $paidOrders = (clone $orders)->where('payment_status', 'paid');
+
+        $totalOrders = $orders->count();
+        $totalRevenue = $paidOrders->sum('total');
+        $avgOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+
+        $ordersByStatus = Order::whereBetween('requested_date', [$start, $end])
+            ->select('status', DB::raw('COUNT(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        $topProducts = OrderItem::whereHas('order', fn ($q) => $q->whereBetween('requested_date', [$start, $end])->where('payment_status', 'paid'))
+            ->select('product_id', DB::raw('SUM(quantity) as units_sold'), DB::raw('SUM(quantity * unit_price) as revenue'))
+            ->groupBy('product_id')
+            ->with('product:id,name')
+            ->orderByDesc('revenue')
+            ->limit(10)
+            ->get()
+            ->map(fn ($item) => [
+                'name' => $item->product?->name ?? 'Deleted Product',
+                'units_sold' => (int) $item->units_sold,
+                'revenue' => (float) $item->revenue,
+            ])
+            ->toArray();
+
+        $revenueByDay = Order::whereBetween('requested_date', [$start, $end])
+            ->where('payment_status', 'paid')
+            ->select(DB::raw('DATE(requested_date) as date'), DB::raw('SUM(total) as revenue'))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->map(fn ($row) => ['date' => $row->date, 'revenue' => (float) $row->revenue])
+            ->toArray();
+
+        return compact('totalOrders', 'totalRevenue', 'avgOrderValue', 'ordersByStatus', 'topProducts', 'revenueByDay');
+    }
+
+    public function customerReport(string $startDate, string $endDate): array
+    {
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+
+        $newCustomers = Customer::whereBetween('created_at', [$start, $end])->count();
+
+        $totalCustomersWithOrders = Customer::whereHas('orders', fn ($q) => $q->whereBetween('requested_date', [$start, $end]))->count();
+
+        $repeatCustomers = Customer::whereHas('orders', fn ($q) => $q->whereBetween('requested_date', [$start, $end]), '>=', 2)->count();
+
+        $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
+
+        $topCustomers = Customer::withSum(['orders as total_spend' => fn ($q) => $q->whereBetween('requested_date', [$start, $end])->where('payment_status', 'paid')], 'total')
+            ->withCount(['orders as order_count' => fn ($q) => $q->whereBetween('requested_date', [$start, $end])])
+            ->having('total_spend', '>', 0)
+            ->orderByDesc('total_spend')
+            ->limit(10)
+            ->get()
+            ->map(fn ($c) => [
+                'name' => $c->name,
+                'email' => $c->email,
+                'total_spend' => (float) $c->total_spend,
+                'order_count' => (int) $c->order_count,
+            ])
+            ->toArray();
+
+        $acquisitionByMonth = Customer::whereBetween('created_at', [$start, $end])
+            ->select(DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"), DB::raw('COUNT(*) as count'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        return compact('newCustomers', 'repeatRate', 'repeatCustomers', 'totalCustomersWithOrders', 'topCustomers', 'acquisitionByMonth');
+    }
+
+    public function productPerformanceReport(string $startDate, string $endDate): array
+    {
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+
+        $products = Product::withSum(['orderItems as units_sold' => fn ($q) => $q->whereHas('order', fn ($o) => $o->whereBetween('requested_date', [$start, $end])->where('payment_status', 'paid'))], 'quantity')
+            ->withSum(['orderItems as revenue' => fn ($q) => $q->whereHas('order', fn ($o) => $o->whereBetween('requested_date', [$start, $end])->where('payment_status', 'paid'))], DB::raw('quantity * unit_price'))
+            ->get()
+            ->map(function ($p) {
+                $margin = $p->price > 0 && $p->cost > 0 ? round((($p->price - $p->cost) / $p->price) * 100, 1) : null;
+
+                return [
+                    'name' => $p->name,
+                    'price' => (float) $p->price,
+                    'cost' => (float) $p->cost,
+                    'units_sold' => (int) ($p->units_sold ?? 0),
+                    'revenue' => (float) ($p->revenue ?? 0),
+                    'margin' => $margin,
+                ];
+            })
+            ->sortByDesc('revenue')
+            ->values()
+            ->toArray();
+
+        return ['products' => $products];
+    }
+
+    public function financialSummary(int $year): array
+    {
+        $revenue = Order::whereYear('requested_date', $year)
+            ->where('payment_status', 'paid')
+            ->sum('total');
+
+        $otherIncome = Income::whereYear('date', $year)->sum('amount');
+        $totalRevenue = $revenue + $otherIncome;
+
+        $totalExpenses = Expense::whereYear('date', $year)->sum('amount');
+        $profit = $totalRevenue - $totalExpenses;
+
+        $deductible = Expense::whereYear('date', $year)->sum('deductible_amount');
+
+        $monthly = collect();
+        for ($m = 1; $m <= 12; $m++) {
+            $mRev = Order::whereYear('requested_date', $year)->whereMonth('requested_date', $m)->where('payment_status', 'paid')->sum('total');
+            $mInc = Income::whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
+            $mExp = Expense::whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
+            $monthly->push([
+                'month' => date('M', mktime(0, 0, 0, $m, 1)),
+                'revenue' => (float) ($mRev + $mInc),
+                'expenses' => (float) $mExp,
+                'profit' => (float) ($mRev + $mInc - $mExp),
+            ]);
+        }
+
+        $expensesByCategory = Expense::whereYear('date', $year)
+            ->select('category', DB::raw('SUM(amount) as total'))
+            ->groupBy('category')
+            ->pluck('total', 'category')
+            ->map(fn ($v, $k) => ['category' => Expense::CATEGORIES[$k] ?? ucfirst($k), 'amount' => (float) $v])
+            ->values()
+            ->toArray();
+
+        return compact('totalRevenue', 'totalExpenses', 'profit', 'deductible', 'monthly', 'expensesByCategory');
+    }
+
+    public function inventoryReport(): array
+    {
+        $ingredients = Ingredient::orderBy('name')->get()->map(function ($i) {
+            // Estimate daily usage from last 30 days of orders
+            $usageLast30 = DB::table('recipe_ingredients')
+                ->join('recipes', 'recipes.id', '=', 'recipe_ingredients.recipe_id')
+                ->join('order_items', 'order_items.product_id', '=', 'recipes.product_id')
+                ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                ->where('recipe_ingredients.ingredient_id', $i->id)
+                ->where('orders.requested_date', '>=', now()->subDays(30))
+                ->where('orders.payment_status', 'paid')
+                ->sum(DB::raw('recipe_ingredients.quantity * order_items.quantity'));
+
+            $dailyUsage = $usageLast30 / 30;
+            $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
+
+            return [
+                'name' => $i->name,
+                'unit' => $i->unit,
+                'current_stock' => (float) $i->current_stock,
+                'low_stock_threshold' => (float) $i->low_stock_threshold,
+                'is_low' => $i->current_stock <= $i->low_stock_threshold,
+                'is_out' => $i->current_stock <= 0,
+                'daily_usage' => round($dailyUsage, 2),
+                'days_until_stockout' => $daysUntilStockout,
+                'cost_per_unit' => (float) $i->cost_per_unit,
+            ];
+        })->toArray();
+
+        $totalItems = count($ingredients);
+        $lowStockItems = collect($ingredients)->where('is_low', true)->count();
+        $outOfStockItems = collect($ingredients)->where('is_out', true)->count();
+
+        return compact('ingredients', 'totalItems', 'lowStockItems', 'outOfStockItems');
+    }
+}

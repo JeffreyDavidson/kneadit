@@ -7,9 +7,10 @@ use App\Filament\Resources\Settings\Pages\EditSetting;
 use App\Filament\Resources\Settings\Pages\ListSettings;
 use App\Filament\Resources\Settings\Schemas\SettingForm;
 use App\Filament\Resources\Settings\Tables\SettingsTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Setting;
+use App\Traits\HasPlanGating;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -17,11 +18,15 @@ use Filament\Tables\Table;
 
 class SettingResource extends Resource
 {
+    use HasPlanGating, RequiresRole;
+
     protected static ?string $model = Setting::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static string|UnitEnum|null $navigationGroup = 'System';
+    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
     {

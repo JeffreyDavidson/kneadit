@@ -1,0 +1,173 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\TextInput;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Schema;
+use Stancl\Tenancy\Database\Models\Domain;
+
+class CustomDomain extends Page
+{
+    use InteractsWithFormActions;
+
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-globe-alt';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
+
+    protected static ?string $navigationLabel = 'Custom Domain';
+
+    protected static ?int $navigationSort = 4;
+
+    protected string $view = 'filament.pages.custom-domain';
+
+    protected static ?string $title = 'Custom Domain';
+
+    public ?string $custom_domain = '';
+
+    public ?string $dns_status = null;
+
+    public function mount(): void
+    {
+        $this->custom_domain = tenant()->custom_domain ?? '';
+        if ($this->custom_domain) {
+            $this->checkDns();
+        }
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema->schema([
+            Section::make('Custom Domain')
+                ->description('Use your own domain name for your bakery storefront. Available on Growth and Pro plans.')
+                ->schema([
+                    TextInput::make('custom_domain')
+                        ->label('Your Domain')
+                        ->placeholder('sweetdreamsbakery.com')
+                        ->helperText('Enter your domain without http:// or www.'),
+                ]),
+
+            View::make('filament.pages.custom-domain-info'),
+        ]);
+    }
+
+    public function save(): void
+    {
+        $plan = tenant()->plan ?? 'free';
+
+        if (! in_array($plan, ['growth', 'pro'])) {
+            Notification::make()
+                ->title('Custom domains are available on Growth and Pro plans')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $domain = trim($this->custom_domain);
+
+        if (empty($domain)) {
+            // Remove custom domain
+            $this->removeCustomDomain();
+
+            return;
+        }
+
+        // Validate domain format
+        if (! preg_match('/^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$/', $domain)) {
+            Notification::make()
+                ->title('Invalid domain format')
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $tenant = tenant();
+
+        // Update tenant custom_domain
+        $tenant->update(['custom_domain' => $domain]);
+
+        // Add to Stancl domains table if not already there
+        $existingDomain = Domain::where('domain', $domain)->first();
+        if (! $existingDomain) {
+            $tenant->domains()->create(['domain' => $domain]);
+        }
+
+        $this->checkDns();
+
+        Notification::make()
+            ->title('Custom domain saved')
+            ->body($this->dns_status === 'verified' ? 'DNS is correctly configured!' : 'Please configure your DNS records.')
+            ->success()
+            ->send();
+    }
+
+    public function verifyDns(): void
+    {
+        $this->checkDns();
+
+        if ($this->dns_status === 'verified') {
+            Notification::make()
+                ->title('DNS Verified!')
+                ->body('Your domain is correctly pointing to our servers.')
+                ->success()
+                ->send();
+        } else {
+            Notification::make()
+                ->title('DNS Not Configured')
+                ->body('Your domain is not yet pointing to 137.184.194.56. DNS changes can take up to 48 hours.')
+                ->warning()
+                ->send();
+        }
+    }
+
+    protected function checkDns(): void
+    {
+        if (empty($this->custom_domain)) {
+            $this->dns_status = null;
+
+            return;
+        }
+
+        $ip = gethostbyname($this->custom_domain);
+        $this->dns_status = ($ip === '137.184.194.56') ? 'verified' : 'pending';
+    }
+
+    protected function removeCustomDomain(): void
+    {
+        $tenant = tenant();
+        $oldDomain = $tenant->custom_domain;
+
+        if ($oldDomain) {
+            Domain::where('domain', $oldDomain)->where('tenant_id', $tenant->id)->delete();
+        }
+
+        $tenant->update(['custom_domain' => null]);
+        $this->dns_status = null;
+
+        Notification::make()
+            ->title('Custom domain removed')
+            ->success()
+            ->send();
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            Action::make('save')
+                ->label('Save Domain')
+                ->action('save'),
+            Action::make('verify')
+                ->label('Verify DNS')
+                ->color('gray')
+                ->action('verifyDns'),
+        ];
+    }
+}
