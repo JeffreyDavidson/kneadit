@@ -7,9 +7,13 @@ use Filament\Pages\Page;
 class HelpCenter extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-question-mark-circle';
+
     protected static ?string $navigationLabel = 'Help';
+
     protected static string|\UnitEnum|null $navigationGroup = null;
+
     protected static ?int $navigationSort = 100;
+
     protected string $view = 'filament.pages.help-center';
 
     public function getTopics(): array

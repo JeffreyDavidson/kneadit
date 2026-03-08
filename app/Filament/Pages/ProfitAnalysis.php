@@ -2,21 +2,26 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Product;
+use App\Traits\HasPlanGating;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
-use App\Traits\HasPlanGating;
 class ProfitAnalysis extends Page
 {
     use HasPlanGating, RequiresRole;
 
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
+
     protected static ?string $navigationLabel = 'Profit Analysis';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 7;
+
     protected string $view = 'filament.pages.profit-analysis';
 
     public string $sortBy = 'margin_desc';
@@ -110,11 +115,11 @@ class ProfitAnalysis extends Page
     {
         $products = $this->getProductAnalysis();
         $productsWithCostData = $products->where('has_cost_data', true);
-        
+
         $totalProducts = $products->count();
         $productsWithCosts = $productsWithCostData->count();
         $averageMargin = $productsWithCostData->where('margin_percentage', '!=', null)->avg('margin_percentage');
-        
+
         $marginBreakdown = [
             'high' => $productsWithCostData->where('color_class', 'green')->count(), // >= 50%
             'medium' => $productsWithCostData->where('color_class', 'yellow')->count(), // 30-49%
@@ -158,7 +163,7 @@ class ProfitAnalysis extends Page
     public function getTotalRevenuePotential(): array
     {
         $products = $this->getProductAnalysis()->where('has_cost_data', true);
-        
+
         $totalRevenue = $products->sum('price');
         $totalCosts = $products->sum('cost');
         $totalProfit = $totalRevenue - $totalCosts;

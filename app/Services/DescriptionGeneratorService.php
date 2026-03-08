@@ -19,15 +19,15 @@ class DescriptionGeneratorService
             "If you haven't tried our {product} yet, what are you waiting for? It's {adjective} and seriously good {category}.",
             "Real talk: our {product} is the {adjective} {category} you've been looking for. Come grab one!",
             "Hey, just a heads up — our {product} is ridiculously {adjective}. Don't say we didn't warn you!",
-            "Our {product} is basically a hug in {category} form. {adjective}, comforting, and always a crowd-pleaser.",
+            'Our {product} is basically a hug in {category} form. {adjective}, comforting, and always a crowd-pleaser.',
         ],
         'playful' => [
             'Warning: Our {product} has been known to cause spontaneous happy dances. Proceed with delicious caution!',
             "Our {product} is so {adjective}, it should probably come with its own fan club. Just sayin'.",
             "Legend has it that one bite of our {product} can turn any Monday into a Friday. It's that {adjective}.",
-            "Plot twist: our {product} is the main character of your snack story. {adjective}, dramatic, unforgettable {category}!",
+            'Plot twist: our {product} is the main character of your snack story. {adjective}, dramatic, unforgettable {category}!',
             "Scientists confirm: our {product} is 100% {adjective} and 200% delightful. Yes, we broke math. You're welcome.",
-            "Breaking news: {adjective} {product} spotted in our bakery! Witnesses report extreme satisfaction and zero regrets.",
+            'Breaking news: {adjective} {product} spotted in our bakery! Witnesses report extreme satisfaction and zero regrets.',
         ],
         'luxurious' => [
             'Indulge in our exquisite {product}, a masterwork of culinary artistry that transforms the finest {category} into an unforgettable sensory experience.',
@@ -40,10 +40,10 @@ class DescriptionGeneratorService
         'homey' => [
             "Our {product} is made just like grandma used to make — with love, care, and a little extra butter. Because life's too short for boring {category}.",
             "There's something special about our {product}. Maybe it's the {adjective} taste, or maybe it's the feeling of home in every bite.",
-            "Our {product} is the kind of {adjective} {category} that makes the whole kitchen smell like a warm hug. Come taste the comfort!",
+            'Our {product} is the kind of {adjective} {category} that makes the whole kitchen smell like a warm hug. Come taste the comfort!',
             "We bake our {product} the old-fashioned way — slow, {adjective}, and full of heart. It's comfort {category} at its finest.",
-            "Nothing says home like a {adjective} {product} fresh from the oven. Pull up a chair, pour some coffee, and enjoy.",
-            "Our {product} recipe has been passed down with love. {adjective}, warm, and made to bring people together over great {category}.",
+            'Nothing says home like a {adjective} {product} fresh from the oven. Pull up a chair, pour some coffee, and enjoy.',
+            'Our {product} recipe has been passed down with love. {adjective}, warm, and made to bring people together over great {category}.',
         ],
     ];
 
@@ -71,7 +71,7 @@ class DescriptionGeneratorService
 
         // Pick $count random templates
         $selectedKeys = array_rand($templates, min($count, count($templates)));
-        if (!is_array($selectedKeys)) {
+        if (! is_array($selectedKeys)) {
             $selectedKeys = [$selectedKeys];
         }
 
@@ -80,7 +80,7 @@ class DescriptionGeneratorService
             $adjective = $adjectivePool[array_rand($adjectivePool)];
             $text = str_replace(
                 ['{product}', '{category}', '{adjective}', '{price}'],
-                [$product, $category ?: 'baked goods', $adjective, $price ? '$' . number_format($price, 2) : ''],
+                [$product, $category ?: 'baked goods', $adjective, $price ? '$'.number_format($price, 2) : ''],
                 $templates[$key]
             );
             $descriptions[] = $this->adjustLength($text, $length, $product, $category ?: 'baked goods', $adjectivePool);
@@ -109,25 +109,26 @@ class DescriptionGeneratorService
         if ($pos !== false) {
             return substr($text, 0, $pos + 1);
         }
+
         return $text;
     }
 
     protected function toLong(string $base, string $product, string $category, array $adjectives): string
     {
         $extras = [
-            "Made fresh daily in our bakery, every {product} is baked with care using only the finest ingredients.",
+            'Made fresh daily in our bakery, every {product} is baked with care using only the finest ingredients.',
             "Whether you're treating yourself or sharing with loved ones, our {product} is the perfect choice.",
-            "Stop by and experience why our {category} keeps customers coming back for more.",
-            "Each batch is crafted in small quantities to ensure the highest quality and flavor.",
-            "Pair it with your favorite coffee or tea for the ultimate {category} experience.",
+            'Stop by and experience why our {category} keeps customers coming back for more.',
+            'Each batch is crafted in small quantities to ensure the highest quality and flavor.',
+            'Pair it with your favorite coffee or tea for the ultimate {category} experience.',
         ];
 
         $adj = $adjectives[array_rand($adjectives)];
         $extra1 = $extras[array_rand($extras)];
         $extra2 = $extras[array_rand(array_diff_key($extras, [$extra1]))];
 
-        $replace = fn(string $s) => str_replace(['{product}', '{category}', '{adjective}'], [$product, $category, $adj], $s);
+        $replace = fn (string $s) => str_replace(['{product}', '{category}', '{adjective}'], [$product, $category, $adj], $s);
 
-        return $base . ' ' . $replace($extra1) . ' ' . $replace($extra2);
+        return $base.' '.$replace($extra1).' '.$replace($extra2);
     }
 }

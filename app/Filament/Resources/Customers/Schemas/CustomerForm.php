@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Customers\Schemas;
 
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\DatePicker;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class CustomerForm
 {
@@ -43,7 +43,7 @@ class CustomerForm
 
                         Textarea::make('notes')
                             ->rows(3),
-                            
+
                         Textarea::make('customerProfile.notes')
                             ->label('Customer Profile Notes')
                             ->rows(2)

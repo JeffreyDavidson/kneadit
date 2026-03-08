@@ -22,7 +22,7 @@ class EditGiftCard extends EditRecord
                 ->icon(fn () => $this->record->is_active ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
                 ->requiresConfirmation()
                 ->action(function () {
-                    $this->record->update(['is_active' => !$this->record->is_active]);
+                    $this->record->update(['is_active' => ! $this->record->is_active]);
                     $this->refreshFormData(['is_active']);
                 }),
 
@@ -41,7 +41,7 @@ class EditGiftCard extends EditRecord
                         ->placeholder('Reason for credit'),
                 ])
                 ->action(function (array $data) {
-                    $service = new GiftCardService();
+                    $service = new GiftCardService;
                     $service->addCredit(
                         $this->record,
                         (float) $data['amount'],

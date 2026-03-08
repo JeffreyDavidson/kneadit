@@ -19,10 +19,15 @@ class WeeklyDigest extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public array $stats;
+
     public $topProducts;
+
     public $atRiskCustomers;
+
     public int $upcomingCount;
+
     public string $storeName;
+
     public string $adminUrl;
 
     public function __construct()
@@ -47,7 +52,7 @@ class WeeklyDigest extends Mailable implements ShouldQueue
         ];
 
         $this->topProducts = OrderItem::select('product_id', DB::raw('SUM(quantity) as total_qty'))
-            ->whereHas('order', fn($q) => $q->whereBetween('created_at', [$weekStart, $weekEnd]))
+            ->whereHas('order', fn ($q) => $q->whereBetween('created_at', [$weekStart, $weekEnd]))
             ->groupBy('product_id')
             ->orderByDesc('total_qty')
             ->limit(5)
@@ -55,7 +60,7 @@ class WeeklyDigest extends Mailable implements ShouldQueue
             ->get();
 
         $this->atRiskCustomers = Customer::whereHas('orders')
-            ->whereDoesntHave('orders', fn($q) => $q->where('created_at', '>=', now()->subDays(30)))
+            ->whereDoesntHave('orders', fn ($q) => $q->where('created_at', '>=', now()->subDays(30)))
             ->limit(5)
             ->get();
 

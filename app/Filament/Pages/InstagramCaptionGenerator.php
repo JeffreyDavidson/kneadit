@@ -2,18 +2,18 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Product;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Icons\Heroicon;
 
-use App\Traits\HasPlanGating;
 class InstagramCaptionGenerator extends Page implements HasForms
 {
     use HasPlanGating, RequiresRole;
@@ -23,19 +23,24 @@ class InstagramCaptionGenerator extends Page implements HasForms
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     use InteractsWithForms;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCamera;
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 11;
+
     protected static ?string $navigationLabel = 'Instagram Captions';
+
     protected static ?string $title = 'Instagram Caption Generator';
 
     protected string $view = 'filament.pages.instagram-caption-generator';
 
     public ?array $data = [];
+
     public array $captions = [];
 
     public function mount(): void
@@ -108,21 +113,21 @@ class InstagramCaptionGenerator extends Page implements HasForms
     {
         $hooks = $this->getHooksByStyle($style);
         $hashtags = $this->getHashtagsByCategory($product->category->name ?? 'bakery');
-        
+
         $captions = [];
-        
+
         // Generate 3 different caption variations
         for ($i = 0; $i < 3; $i++) {
             $hook = $hooks[array_rand($hooks)];
             $body = $this->generateCaptionBody($product, $style, $tone);
             $selectedHashtags = $this->selectRandomHashtags($hashtags, rand(8, 15));
-            
+
             $captions[] = [
-                'text' => $hook . "\n\n" . $body . "\n\n" . implode(' ', $selectedHashtags),
+                'text' => $hook."\n\n".$body."\n\n".implode(' ', $selectedHashtags),
                 'variation' => $i + 1,
             ];
         }
-        
+
         return $captions;
     }
 
@@ -130,63 +135,63 @@ class InstagramCaptionGenerator extends Page implements HasForms
     {
         $hooks = [
             'playful' => [
-                "Fresh out of the oven 🍞",
-                "Weekend treat alert 🎉",
+                'Fresh out of the oven 🍞',
+                'Weekend treat alert 🎉',
                 "Who said you can't have cake for breakfast? 🧁",
-                "Plot twist: this tastes even better than it looks! 😍",
+                'Plot twist: this tastes even better than it looks! 😍',
                 "Current mood: surrounded by carbs and couldn't be happier 🥐",
-                "Breaking news: local bakery makes dreams come true ✨",
-                "Fun fact: this is what happiness looks like 🌈",
-                "Warning: may cause uncontrollable smiling 😊",
-                "Just dropped: the cure for Monday blues 💙",
+                'Breaking news: local bakery makes dreams come true ✨',
+                'Fun fact: this is what happiness looks like 🌈',
+                'Warning: may cause uncontrollable smiling 😊',
+                'Just dropped: the cure for Monday blues 💙',
                 "Pro tip: life's too short for mediocre pastries 🥯",
-                "Spoiler alert: your taste buds are in for a treat! 👅",
-                "Reality check: yes, it tastes as good as it looks 🤤",
+                'Spoiler alert: your taste buds are in for a treat! 👅',
+                'Reality check: yes, it tastes as good as it looks 🤤',
             ],
             'professional' => [
-                "Crafted with precision and passion.",
-                "Where tradition meets innovation.",
-                "Artisan quality, locally made.",
-                "Experience the difference quality makes.",
-                "Handcrafted using time-honored techniques.",
-                "Excellence in every bite.",
-                "Proudly serving our community for years.",
-                "Made fresh daily with premium ingredients.",
-                "The art of baking, perfected.",
-                "Quality you can taste, service you can trust.",
-                "From our kitchen to your table.",
-                "Dedication to craft meets modern flavor.",
+                'Crafted with precision and passion.',
+                'Where tradition meets innovation.',
+                'Artisan quality, locally made.',
+                'Experience the difference quality makes.',
+                'Handcrafted using time-honored techniques.',
+                'Excellence in every bite.',
+                'Proudly serving our community for years.',
+                'Made fresh daily with premium ingredients.',
+                'The art of baking, perfected.',
+                'Quality you can taste, service you can trust.',
+                'From our kitchen to your table.',
+                'Dedication to craft meets modern flavor.',
             ],
             'seasonal' => [
-                "Embracing the flavors of the season 🍂",
-                "Spring has sprung, and so have our fresh flavors! 🌸",
-                "Summer vibes and sweet treats ☀️",
-                "Fall favorites are here to warm your heart 🍁",
-                "Winter comfort in every bite ❄️",
-                "Celebrating the season with every creation 🎊",
-                "Fresh seasonal ingredients at their peak 🌿",
-                "Limited time seasonal magic ⏰",
+                'Embracing the flavors of the season 🍂',
+                'Spring has sprung, and so have our fresh flavors! 🌸',
+                'Summer vibes and sweet treats ☀️',
+                'Fall favorites are here to warm your heart 🍁',
+                'Winter comfort in every bite ❄️',
+                'Celebrating the season with every creation 🎊',
+                'Fresh seasonal ingredients at their peak 🌿',
+                'Limited time seasonal magic ⏰',
                 "Nature's finest, baked to perfection 🌺",
-                "Seasonal specialties worth the wait 🍃",
-                "Harvest-inspired and happiness-guaranteed 🥧",
-                "The taste of the season, captured perfectly 🎭",
+                'Seasonal specialties worth the wait 🍃',
+                'Harvest-inspired and happiness-guaranteed 🥧',
+                'The taste of the season, captured perfectly 🎭',
             ],
             'storytelling' => [
                 "There's something special about...",
-                "Every morning, our bakers arrive before dawn to...",
-                "The recipe for this began three generations ago...",
-                "Behind every perfect bite is a story of...",
-                "What started as a family tradition has become...",
-                "In our kitchen, magic happens when...",
-                "The secret ingredient? Love, patience, and...",
-                "From flour to finished product, every step matters...",
-                "Years of perfecting this recipe have led to...",
-                "When passion meets flour, beautiful things happen...",
+                'Every morning, our bakers arrive before dawn to...',
+                'The recipe for this began three generations ago...',
+                'Behind every perfect bite is a story of...',
+                'What started as a family tradition has become...',
+                'In our kitchen, magic happens when...',
+                'The secret ingredient? Love, patience, and...',
+                'From flour to finished product, every step matters...',
+                'Years of perfecting this recipe have led to...',
+                'When passion meets flour, beautiful things happen...',
                 "This isn't just food, it's a memory in the making...",
-                "The journey from simple ingredients to extraordinary taste...",
+                'The journey from simple ingredients to extraordinary taste...',
             ],
         ];
-        
+
         return $hooks[$style] ?? $hooks['playful'];
     }
 
@@ -198,43 +203,43 @@ class InstagramCaptionGenerator extends Page implements HasForms
             'casual' => ['awesome', 'great', 'nice', 'cool', 'perfect'],
             'elegant' => ['exquisite', 'refined', 'sophisticated', 'delicate', 'premium'],
         ];
-        
+
         $bodyTemplates = [
-            "Our {adjective} {product} is made with {ingredient_focus} and baked to perfection. {call_to_action}",
+            'Our {adjective} {product} is made with {ingredient_focus} and baked to perfection. {call_to_action}',
             "{product} that's {adjective} and crafted with care. Perfect for {occasion}. {call_to_action}",
-            "Experience the {adjective} taste of our {product}. Made fresh daily with premium ingredients. {call_to_action}",
-            "Nothing beats the {adjective} flavor of our signature {product}. {call_to_action}",
-            "Treat yourself to our {adjective} {product} - your taste buds will thank you! {call_to_action}",
+            'Experience the {adjective} taste of our {product}. Made fresh daily with premium ingredients. {call_to_action}',
+            'Nothing beats the {adjective} flavor of our signature {product}. {call_to_action}',
+            'Treat yourself to our {adjective} {product} - your taste buds will thank you! {call_to_action}',
         ];
-        
+
         $callToActions = [
-            "Visit us today!",
-            "Order yours now!",
-            "Available now in-store!",
-            "Perfect for sharing... or not! 😉",
-            "Made with love, enjoyed with joy.",
-            "Because you deserve the best.",
+            'Visit us today!',
+            'Order yours now!',
+            'Available now in-store!',
+            'Perfect for sharing... or not! 😉',
+            'Made with love, enjoyed with joy.',
+            'Because you deserve the best.',
         ];
-        
+
         $ingredients = [
-            "the finest ingredients",
-            "locally sourced materials",
-            "premium quality flour",
-            "farm-fresh ingredients",
-            "artisan-selected components",
+            'the finest ingredients',
+            'locally sourced materials',
+            'premium quality flour',
+            'farm-fresh ingredients',
+            'artisan-selected components',
         ];
-        
+
         $occasions = [
-            "breakfast treats",
-            "afternoon indulgence", 
-            "special celebrations",
-            "everyday moments",
-            "weekend relaxation",
+            'breakfast treats',
+            'afternoon indulgence',
+            'special celebrations',
+            'everyday moments',
+            'weekend relaxation',
         ];
-        
+
         $template = $bodyTemplates[array_rand($bodyTemplates)];
         $adjective = $toneWords[$tone][array_rand($toneWords[$tone])];
-        
+
         return str_replace([
             '{adjective}',
             '{product}',
@@ -261,7 +266,7 @@ class InstagramCaptionGenerator extends Page implements HasForms
             '#ArtisanBaked',
             '#FreshDaily',
         ];
-        
+
         $categoryHashtags = [
             'bread' => ['#FreshBread', '#ArtisanBread', '#DailyBread', '#SourdoughLife', '#BreadLovers'],
             'cake' => ['#CustomCakes', '#CakeLove', '#BirthdayCake', '#CelebrationCakes', '#CakeArt'],
@@ -270,22 +275,23 @@ class InstagramCaptionGenerator extends Page implements HasForms
             'muffin' => ['#MuffinMonday', '#FreshMuffins', '#BreakfastTreats', '#MorningFuel', '#MuffinTime'],
             'dessert' => ['#SweetTooth', '#DessertTime', '#Indulgence', '#SweetTreats', '#DessertLover'],
         ];
-        
+
         $generalBakeryHashtags = [
             '#Bakery', '#BakedGoods', '#ComfortFood', '#TreatYourself', '#QualityFirst',
             '#MadeToOrder', '#LocallyMade', '#BakingPassion', '#FlavorFirst', '#SweetLife',
             '#BakingTradition', '#QualityCrafted', '#BakingExcellence', '#FlourPower',
             '#CommunityBakery', '#BakeryCrafted', '#GoodnessBaked', '#FlavorTown',
         ];
-        
+
         $categorySpecific = $categoryHashtags[strtolower($category)] ?? [];
-        
+
         return array_merge($baseHashtags, $categorySpecific, $generalBakeryHashtags);
     }
 
     private function selectRandomHashtags(array $hashtags, int $count): array
     {
         shuffle($hashtags);
+
         return array_slice($hashtags, 0, min($count, count($hashtags)));
     }
 }

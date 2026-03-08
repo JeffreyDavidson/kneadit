@@ -3,9 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
-use BackedEnum;
-use Filament\Pages\Page;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 
 class DashboardConfig extends Page
 {
@@ -84,7 +83,9 @@ class DashboardConfig extends Page
 
     public function moveUp(int $index): void
     {
-        if ($index <= 0) return;
+        if ($index <= 0) {
+            return;
+        }
         $temp = $this->widgets[$index];
         $this->widgets[$index] = $this->widgets[$index - 1];
         $this->widgets[$index - 1] = $temp;
@@ -93,7 +94,9 @@ class DashboardConfig extends Page
 
     public function moveDown(int $index): void
     {
-        if ($index >= count($this->widgets) - 1) return;
+        if ($index >= count($this->widgets) - 1) {
+            return;
+        }
         $temp = $this->widgets[$index];
         $this->widgets[$index] = $this->widgets[$index + 1];
         $this->widgets[$index + 1] = $temp;

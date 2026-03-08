@@ -7,11 +7,11 @@ use App\Filament\Resources\Reviews\Pages\EditReview;
 use App\Filament\Resources\Reviews\Pages\ListReviews;
 use App\Filament\Resources\Reviews\Schemas\ReviewForm;
 use App\Filament\Resources\Reviews\Tables\ReviewsTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Review;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -26,12 +26,15 @@ class ReviewResource extends Resource
     }
 
     protected static ?string $model = Review::class;
+
     protected static string $requiredPlan = 'growth';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
+
     protected static ?int $navigationSort = 1;
+
     public static function form(Schema $schema): Schema
     {
         return ReviewForm::configure($schema);
@@ -56,7 +59,7 @@ class ReviewResource extends Resource
 
     public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
     {
-        return 'Review by ' . $record->customer_name;
+        return 'Review by '.$record->customer_name;
     }
 
     public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array

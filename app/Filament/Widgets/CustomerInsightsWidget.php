@@ -23,7 +23,9 @@ class CustomerInsightsWidget extends Widget
     public function getRepeatCustomerRate(): float
     {
         $totalWithOrders = Customer::whereHas('orders', fn ($q) => $q->where('status', '!=', 'cancelled'))->count();
-        if ($totalWithOrders === 0) return 0;
+        if ($totalWithOrders === 0) {
+            return 0;
+        }
 
         $repeat = Customer::whereHas('orders', fn ($q) => $q->where('status', '!=', 'cancelled'), '>=', 2)->count();
 

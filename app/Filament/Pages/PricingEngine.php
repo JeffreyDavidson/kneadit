@@ -18,19 +18,31 @@ class PricingEngine extends Page
     }
 
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
+
     protected static ?string $navigationLabel = 'Pricing';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 8;
+
     protected string $view = 'filament.pages.pricing-engine';
 
     public ?string $selectedProductId = null;
+
     public float $ingredientCost = 0;
+
     public float $prepTimeMinutes = 0;
+
     public float $hourlyLaborRate = 15;
+
     public float $overheadPercentage = 20;
+
     public int $targetProfitMargin = 50;
+
     public string $positioning = 'standard';
+
     public ?array $result = null;
 
     public function mount(): void
@@ -47,14 +59,17 @@ class PricingEngine extends Page
 
     public function updatedSelectedProductId(): void
     {
-        if (!$this->selectedProductId) {
+        if (! $this->selectedProductId) {
             $this->ingredientCost = 0;
             $this->prepTimeMinutes = 0;
+
             return;
         }
 
         $product = Product::with('recipes')->find($this->selectedProductId);
-        if (!$product) return;
+        if (! $product) {
+            return;
+        }
 
         // Pull cost from recipe if available
         $recipe = $product->recipes->first();
@@ -121,6 +136,7 @@ class PricingEngine extends Page
         if ($price < 5) {
             return round(ceil($price * 4) / 4 - 0.01, 2);
         }
+
         return round(floor($price) + 0.99, 2);
     }
 }

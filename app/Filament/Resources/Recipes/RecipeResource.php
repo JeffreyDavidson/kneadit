@@ -7,11 +7,11 @@ use App\Filament\Resources\Recipes\Pages\EditRecipe;
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Filament\Resources\Recipes\Schemas\RecipeForm;
 use App\Filament\Resources\Recipes\Tables\RecipesTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Recipe;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
@@ -25,12 +25,15 @@ class RecipeResource extends Resource
     }
 
     protected static ?string $model = Recipe::class;
+
     protected static string $requiredPlan = 'growth';
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 5;
+
     public static function form(Schema $schema): Schema
     {
         return RecipeForm::configure($schema);
@@ -62,7 +65,7 @@ class RecipeResource extends Resource
     {
         return [
             'Product' => $record->product?->name ?? 'N/A',
-            'Prep Time' => ($record->prep_time_minutes ?? 0) . ' min',
+            'Prep Time' => ($record->prep_time_minutes ?? 0).' min',
         ];
     }
 

@@ -2,12 +2,12 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Recipe;
+use App\Traits\HasPlanGating;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
-use App\Traits\HasPlanGating;
 class PriceSuggestionTool extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -18,17 +18,27 @@ class PriceSuggestionTool extends Page
     }
 
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
+
     protected static ?string $navigationLabel = 'Price Suggestion';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 8;
+
     protected static bool $shouldRegisterNavigation = false;
+
     protected string $view = 'filament.pages.price-suggestion-tool';
 
     public ?int $selectedRecipeId = null;
+
     public ?Recipe $selectedRecipe = null;
+
     public float $targetMarginPercentage = 65.0;
+
     public Collection $recipes;
+
     public Collection $marginComparisons;
 
     public function mount()
@@ -38,7 +48,7 @@ class PriceSuggestionTool extends Page
             ->where('cost', '>', 0)
             ->orderBy('name')
             ->get();
-        
+
         $this->generateMarginComparisons();
     }
 
@@ -59,18 +69,19 @@ class PriceSuggestionTool extends Page
 
     public function generateMarginComparisons()
     {
-        if (!$this->selectedRecipe || !$this->selectedRecipe->cost) {
+        if (! $this->selectedRecipe || ! $this->selectedRecipe->cost) {
             $this->marginComparisons = collect();
+
             return;
         }
 
         $margins = [50, 60, 65, 70];
-        
+
         $this->marginComparisons = collect($margins)->map(function ($margin) {
             $suggestedPrice = $this->calculatePriceForMargin($margin);
             $currentPrice = $this->selectedRecipe->product->price ?? 0;
             $difference = $suggestedPrice - $currentPrice;
-            
+
             return [
                 'margin' => $margin,
                 'price' => $suggestedPrice,
@@ -83,7 +94,7 @@ class PriceSuggestionTool extends Page
 
     private function calculatePriceForMargin(float $marginPercentage): float
     {
-        if (!$this->selectedRecipe || !$this->selectedRecipe->cost || $marginPercentage <= 0) {
+        if (! $this->selectedRecipe || ! $this->selectedRecipe->cost || $marginPercentage <= 0) {
             return 0.0;
         }
 
@@ -98,23 +109,23 @@ class PriceSuggestionTool extends Page
 
     public function getCurrentMargin(): ?float
     {
-        if (!$this->selectedRecipe || 
-            !$this->selectedRecipe->product || 
-            !$this->selectedRecipe->product->price || 
-            !$this->selectedRecipe->cost) {
+        if (! $this->selectedRecipe ||
+            ! $this->selectedRecipe->product ||
+            ! $this->selectedRecipe->product->price ||
+            ! $this->selectedRecipe->cost) {
             return null;
         }
 
         $price = $this->selectedRecipe->product->price;
         $cost = $this->selectedRecipe->cost;
-        
+
         return (($price - $cost) / $price) * 100;
     }
 
     public function getMarginAtCurrentPrice(): ?array
     {
         $currentMargin = $this->getCurrentMargin();
-        
+
         if ($currentMargin === null) {
             return null;
         }
@@ -130,7 +141,7 @@ class PriceSuggestionTool extends Page
 
     public function getPriceDifference(): ?array
     {
-        if (!$this->selectedRecipe || !$this->selectedRecipe->product) {
+        if (! $this->selectedRecipe || ! $this->selectedRecipe->product) {
             return null;
         }
 

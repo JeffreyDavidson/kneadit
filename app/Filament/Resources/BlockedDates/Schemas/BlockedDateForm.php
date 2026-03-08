@@ -43,12 +43,12 @@ class BlockedDateForm
                             TextInput::make('open_time')
                                 ->label('Open Time')
                                 ->type('time')
-                                ->visible(fn ($get) => !$get('is_all_day')),
+                                ->visible(fn ($get) => ! $get('is_all_day')),
 
                             TextInput::make('close_time')
                                 ->label('Close Time')
                                 ->type('time')
-                                ->visible(fn ($get) => !$get('is_all_day')),
+                                ->visible(fn ($get) => ! $get('is_all_day')),
                         ]),
                     ]),
             ]);

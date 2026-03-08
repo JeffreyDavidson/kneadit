@@ -2,12 +2,12 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Recipe;
+use App\Traits\HasPlanGating;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
-use App\Traits\HasPlanGating;
 class RecipeCostCalculator extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -18,19 +18,31 @@ class RecipeCostCalculator extends Page
     }
 
     protected static string $requiredPlan = 'growth';
+
     protected static bool $shouldRegisterNavigation = false;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
+
     protected static ?string $navigationLabel = 'Recipe Cost Calculator';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 13;
+
     protected string $view = 'filament.pages.recipe-cost-calculator';
 
     public ?int $selectedRecipeId = null;
+
     public ?Recipe $selectedRecipe = null;
+
     public float $targetMarginPercentage = 65.0;
+
     public float $totalRecipeCost = 0.0;
+
     public float $currentMargin = 0.0;
+
     public float $suggestedPrice = 0.0;
+
     public Collection $recipes;
 
     public function mount()
@@ -58,8 +70,9 @@ class RecipeCostCalculator extends Page
 
     public function calculateCosts()
     {
-        if (!$this->selectedRecipe || !$this->selectedRecipe->ingredients) {
+        if (! $this->selectedRecipe || ! $this->selectedRecipe->ingredients) {
             $this->resetCalculations();
+
             return;
         }
 
@@ -104,7 +117,7 @@ class RecipeCostCalculator extends Page
 
     public function getFormattedIngredients(): Collection
     {
-        if (!$this->selectedRecipe || !$this->selectedRecipe->ingredients) {
+        if (! $this->selectedRecipe || ! $this->selectedRecipe->ingredients) {
             return collect();
         }
 

@@ -5,8 +5,8 @@ namespace Tests\Feature;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
-use App\Models\User;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -16,6 +16,7 @@ class LoyaltyPointsTest extends TestCase
     use RefreshDatabase;
 
     protected Customer $customer;
+
     protected User $user;
 
     protected function setUp(): void
@@ -37,7 +38,7 @@ class LoyaltyPointsTest extends TestCase
     /** @test */
     public function points_awarded_when_order_delivered(): void
     {
-        $order = Order::create(['user_id' => $this->user->id, 
+        $order = Order::create(['user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
             'status' => 'confirmed',
             'total' => 25.00,
@@ -56,7 +57,7 @@ class LoyaltyPointsTest extends TestCase
     /** @test */
     public function points_calculated_correctly(): void
     {
-        $order = Order::create(['user_id' => $this->user->id, 
+        $order = Order::create(['user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
             'status' => 'confirmed',
             'total' => 25.50,
@@ -74,7 +75,7 @@ class LoyaltyPointsTest extends TestCase
     {
         Setting::set('loyalty_enabled', '0');
 
-        $order = Order::create(['user_id' => $this->user->id, 
+        $order = Order::create(['user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
             'status' => 'confirmed',
             'total' => 25.00,
@@ -89,7 +90,7 @@ class LoyaltyPointsTest extends TestCase
     /** @test */
     public function points_not_double_awarded(): void
     {
-        $order = Order::create(['user_id' => $this->user->id, 
+        $order = Order::create(['user_id' => $this->user->id,
             'customer_id' => $this->customer->id,
             'status' => 'confirmed',
             'total' => 25.00,

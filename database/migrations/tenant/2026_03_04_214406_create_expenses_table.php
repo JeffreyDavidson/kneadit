@@ -25,7 +25,7 @@ return new class extends Migration
                 'insurance',
                 'education',
                 'equipment',
-                'other'
+                'other',
             ]);
             $table->date('date');
             $table->string('receipt_image')->nullable();

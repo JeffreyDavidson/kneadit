@@ -2,15 +2,15 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Category;
 use App\Models\OrderItem;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Url;
 
-use App\Traits\HasPlanGating;
 class ProductTrends extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -20,8 +20,8 @@ class ProductTrends extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected string $view = 'filament.pages.product-trends';
 
     protected static ?string $title = 'Product Trends';
@@ -56,8 +56,12 @@ class ProductTrends extends Page
 
     public function mount(): void
     {
-        if ($this->month === 0) $this->month = now()->month;
-        if ($this->year === 0) $this->year = now()->year;
+        if ($this->month === 0) {
+            $this->month = now()->month;
+        }
+        if ($this->year === 0) {
+            $this->year = now()->year;
+        }
     }
 
     public function previousMonth(): void
@@ -106,7 +110,9 @@ class ProductTrends extends Page
                 $current = (int) ($currentCounts[$product->id] ?? 0);
                 $previous = (int) ($prevCounts[$product->id] ?? 0);
 
-                if ($current === 0 && $previous === 0) continue;
+                if ($current === 0 && $previous === 0) {
+                    continue;
+                }
 
                 $change = $previous > 0
                     ? round(($current - $previous) / $previous * 100, 1)
@@ -123,7 +129,7 @@ class ProductTrends extends Page
                 ];
             }
 
-            if (!empty($products)) {
+            if (! empty($products)) {
                 $grouped[] = [
                     'category' => $category->name,
                     'products' => $products,

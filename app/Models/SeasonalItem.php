@@ -28,6 +28,7 @@ class SeasonalItem extends Model
     public function scopeCurrent($query)
     {
         $today = Carbon::today();
+
         return $query->where('available_from', '<=', $today)
             ->where('available_until', '>=', $today);
     }
@@ -45,6 +46,7 @@ class SeasonalItem extends Model
     public function isCurrentlyAvailable(): bool
     {
         $today = Carbon::today();
+
         return $this->available_from <= $today && $this->available_until >= $today;
     }
 }

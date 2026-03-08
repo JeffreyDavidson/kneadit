@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CateringInquiry;
+use App\Models\BlogPost;
 use App\Models\Category;
+use App\Models\CateringInquiry;
 use App\Models\Customer;
 use App\Models\CustomerFavorite;
 use App\Models\CustomerPhoto;
 use App\Models\LoyaltyReward;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Review;
-use App\Models\BlogPost;
-use App\Models\Setting;
 use App\Models\ProductWaitlist;
+use App\Models\Review;
+use App\Models\Setting;
 use App\Models\Survey;
 use App\Models\SurveyResponse;
 use App\Services\GiftCardService;
@@ -24,7 +24,7 @@ class StorefrontController extends Controller
     public function home()
     {
         $categories = Category::where('is_active', true)
-            ->with(['products' => fn($q) => $q->where('is_active', true)->where('is_featured', true)])
+            ->with(['products' => fn ($q) => $q->where('is_active', true)->where('is_featured', true)])
             ->orderBy('sort_order')
             ->get();
 
@@ -36,7 +36,7 @@ class StorefrontController extends Controller
     public function menu()
     {
         $categories = Category::where('is_active', true)
-            ->with(['products' => fn($q) => $q->where('is_active', true)->orderBy('name'), 'products.seasonalItems'])
+            ->with(['products' => fn ($q) => $q->where('is_active', true)->orderBy('name'), 'products.seasonalItems'])
             ->orderBy('sort_order')
             ->get();
 
@@ -121,6 +121,7 @@ class StorefrontController extends Controller
 
         if ($existing) {
             $existing->delete();
+
             return response()->json(['favorited' => false]);
         }
 
@@ -198,7 +199,7 @@ class StorefrontController extends Controller
             'initial_balance' => 'required|numeric|min:1|max:500',
         ]);
 
-        $service = new GiftCardService();
+        $service = new GiftCardService;
         $card = $service->create($validated);
 
         return response()->json([
@@ -214,10 +215,10 @@ class StorefrontController extends Controller
     {
         $request->validate(['code' => 'required|string']);
 
-        $service = new GiftCardService();
+        $service = new GiftCardService;
         $card = $service->checkBalance($request->code);
 
-        if (!$card) {
+        if (! $card) {
             return response()->json(['success' => false, 'error' => 'Gift card not found.'], 404);
         }
 
@@ -373,8 +374,8 @@ class StorefrontController extends Controller
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'nullable|string|max:255',
             'event_type' => 'required|in:wedding,corporate,birthday,holiday,other',
-            'event_date' => 'required|date|after_or_equal:' . now()->addDays($leadTimeDays)->format('Y-m-d'),
-            'guest_count' => 'required|integer|min:' . $minimumGuests,
+            'event_date' => 'required|date|after_or_equal:'.now()->addDays($leadTimeDays)->format('Y-m-d'),
+            'guest_count' => 'required|integer|min:'.$minimumGuests,
             'budget' => 'nullable|string|max:255',
             'details' => 'required|string',
             'dietary_requirements' => 'nullable|string',
@@ -389,7 +390,7 @@ class StorefrontController extends Controller
 
     public function survey(Survey $survey)
     {
-        if (!$survey->is_active) {
+        if (! $survey->is_active) {
             abort(404);
         }
 
@@ -398,7 +399,7 @@ class StorefrontController extends Controller
 
     public function submitSurvey(Request $request, Survey $survey)
     {
-        if (!$survey->is_active) {
+        if (! $survey->is_active) {
             abort(404);
         }
 

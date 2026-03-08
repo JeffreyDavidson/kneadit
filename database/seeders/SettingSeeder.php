@@ -37,20 +37,20 @@ class SettingSeeder extends Seeder
                         'min_distance' => 0,
                         'max_distance' => 5,
                         'fee' => 3.00,
-                        'description' => 'Local delivery (0-5 miles)'
+                        'description' => 'Local delivery (0-5 miles)',
                     ],
                     [
                         'min_distance' => 5,
                         'max_distance' => 10,
                         'fee' => 5.00,
-                        'description' => 'Extended delivery (5-10 miles)'
+                        'description' => 'Extended delivery (5-10 miles)',
                     ],
                     [
                         'min_distance' => 10,
                         'max_distance' => 15,
                         'fee' => 8.00,
-                        'description' => 'Long distance delivery (10-15 miles)'
-                    ]
+                        'description' => 'Long distance delivery (10-15 miles)',
+                    ],
                 ]),
             ],
             [
@@ -62,7 +62,7 @@ class SettingSeeder extends Seeder
                     'thursday' => ['open' => '07:00', 'close' => '18:00'],
                     'friday' => ['open' => '07:00', 'close' => '19:00'],
                     'saturday' => ['open' => '06:00', 'close' => '19:00'],
-                    'sunday' => ['open' => '08:00', 'close' => '17:00']
+                    'sunday' => ['open' => '08:00', 'close' => '17:00'],
                 ]),
             ],
             [
@@ -98,7 +98,7 @@ class SettingSeeder extends Seeder
                 'value' => json_encode([
                     'facebook' => 'https://facebook.com/kneaditbakery',
                     'instagram' => 'https://instagram.com/kneaditbakery',
-                    'twitter' => 'https://twitter.com/kneaditbakery'
+                    'twitter' => 'https://twitter.com/kneaditbakery',
                 ]),
             ],
             [
@@ -182,48 +182,16 @@ class SettingSeeder extends Seeder
         $settings[] = ['key' => 'announcement_text', 'value' => ''];
         $settings[] = ['key' => 'announcement_enabled', 'value' => '0'];
         $settings[] = ['key' => 'announcement_type', 'value' => 'info'];
-
-            [
-                'key' => 'default_shelf_life_days',
-                'value' => '3',
-            ],
-            [
-                'key' => 'birthday_program_enabled',
-                'value' => '1',
-            ],
-            [
-                'key' => 'birthday_discount_percentage',
-                'value' => '15',
-            ],
-            [
-                'key' => 'birthday_coupon_valid_days',
-                'value' => '7',
-            ],
-            [
-                'key' => 'weekly_digest_enabled',
-                'value' => '1',
-            ],
-            [
-                'key' => 'review_requests_enabled',
-                'value' => '1',
-            ],
-            [
-                'key' => 'review_request_delay_hours',
-                'value' => '24',
-            ],
-            [
-                'key' => 'catering_enabled',
-                'value' => '0',
-            ],
-            [
-                'key' => 'catering_minimum_guests',
-                'value' => '10',
-            ],
-            [
-                'key' => 'catering_lead_time_days',
-                'value' => '14',
-            ],
-        ];
+        $settings[] = ['key' => 'default_shelf_life_days', 'value' => '3'];
+        $settings[] = ['key' => 'birthday_program_enabled', 'value' => '1'];
+        $settings[] = ['key' => 'birthday_discount_percentage', 'value' => '15'];
+        $settings[] = ['key' => 'birthday_coupon_valid_days', 'value' => '7'];
+        $settings[] = ['key' => 'weekly_digest_enabled', 'value' => '1'];
+        $settings[] = ['key' => 'review_requests_enabled', 'value' => '1'];
+        $settings[] = ['key' => 'review_request_delay_hours', 'value' => '24'];
+        $settings[] = ['key' => 'catering_enabled', 'value' => '0'];
+        $settings[] = ['key' => 'catering_minimum_guests', 'value' => '10'];
+        $settings[] = ['key' => 'catering_lead_time_days', 'value' => '14'];
 
         foreach ($settings as $setting) {
             Setting::updateOrCreate(

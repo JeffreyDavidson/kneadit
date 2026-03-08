@@ -7,13 +7,13 @@ use App\Filament\Resources\BlockedDates\Pages\EditBlockedDate;
 use App\Filament\Resources\BlockedDates\Pages\ListBlockedDates;
 use App\Filament\Resources\BlockedDates\Schemas\BlockedDateForm;
 use App\Filament\Resources\BlockedDates\Tables\BlockedDatesTable;
-use App\Models\BlockedDate;
-use Filament\Resources\Resource;
 use App\Filament\Traits\RequiresRole;
+use App\Models\BlockedDate;
+use App\Traits\HasPlanGating;
+use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class BlockedDateResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -23,12 +23,14 @@ class BlockedDateResource extends Resource
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static ?string $model = BlockedDate::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
+
     protected static ?int $navigationSort = 8;
 
     public static function form(Schema $schema): Schema

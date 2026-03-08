@@ -2,12 +2,12 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\SocialPost;
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
+use App\Models\SocialPost;
+use App\Traits\HasPlanGating;
+use Filament\Pages\Page;
 use Illuminate\Support\Carbon;
 
-use App\Traits\HasPlanGating;
 class SocialCalendar extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -17,8 +17,8 @@ class SocialCalendar extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
 
     protected static ?string $navigationLabel = 'Social Calendar';
@@ -30,9 +30,13 @@ class SocialCalendar extends Page
     protected string $view = 'filament.pages.social-calendar';
 
     public int $year;
+
     public int $month;
+
     public ?string $selectedDate = null;
+
     public array $posts = [];
+
     public array $selectedDayPosts = [];
 
     public function mount(): void

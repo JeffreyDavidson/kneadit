@@ -4,12 +4,11 @@ namespace App\Filament\Resources\Orders\Pages;
 
 use App\Filament\Resources\Orders\OrderResource;
 use App\Mail\NewOrderMessage;
-use App\Models\Order;
 use App\Models\Setting;
 use Filament\Actions\Action;
+use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
@@ -145,7 +144,7 @@ class ViewOrder extends ViewRecord
                 ])
                 ->action(function (array $data): void {
                     $this->record->update(['status' => $data['status']]);
-                    
+
                     $this->notify('success', 'Order status updated successfully.');
                 }),
 
@@ -153,7 +152,7 @@ class ViewOrder extends ViewRecord
                 ->label('Send PayPal Invoice')
                 ->icon('heroicon-o-paper-airplane')
                 ->color('info')
-                ->visible(fn (): bool => !$this->record->paypal_invoice_id)
+                ->visible(fn (): bool => ! $this->record->paypal_invoice_id)
                 ->action(function (): void {
                     // This would integrate with PayPal service
                     $this->notify('info', 'PayPal invoice functionality coming soon.');
@@ -211,12 +210,12 @@ class ViewOrder extends ViewRecord
                 ->action(function (array $data): void {
                     $currentNotes = $this->record->notes;
                     $timestamp = now()->format('Y-m-d H:i:s');
-                    $newNote = "[{$timestamp}] " . $data['note'];
-                    
-                    $updatedNotes = $currentNotes ? $currentNotes . "\n\n" . $newNote : $newNote;
-                    
+                    $newNote = "[{$timestamp}] ".$data['note'];
+
+                    $updatedNotes = $currentNotes ? $currentNotes."\n\n".$newNote : $newNote;
+
                     $this->record->update(['notes' => $updatedNotes]);
-                    
+
                     $this->notify('success', 'Note added successfully.');
                 }),
         ];

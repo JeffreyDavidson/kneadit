@@ -7,14 +7,14 @@ use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\Schemas\ProductForm;
 use App\Filament\Resources\Products\Tables\ProductsTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Product;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class ProductResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -29,6 +29,7 @@ class ProductResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-bag';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+
     protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
@@ -62,7 +63,7 @@ class ProductResource extends Resource
     {
         return [
             'Category' => $record->category?->name ?? 'N/A',
-            'Price' => '$' . number_format($record->price, 2),
+            'Price' => '$'.number_format($record->price, 2),
         ];
     }
 

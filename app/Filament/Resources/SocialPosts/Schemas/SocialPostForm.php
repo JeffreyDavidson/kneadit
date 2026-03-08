@@ -4,7 +4,6 @@ namespace App\Filament\Resources\SocialPosts\Schemas;
 
 use App\Models\Product;
 use App\Models\SocialPost;
-use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -44,7 +43,7 @@ class SocialPostForm
                             ->required()
                             ->rows(4)
                             ->maxLength(fn (Get $get): int => SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200)
-                            ->helperText(fn (Get $get): string => 'Max ' . number_format(SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200) . ' characters for ' . SocialPost::PLATFORMS[$get('platform') ?? 'instagram'] ?? 'Instagram')
+                            ->helperText(fn (Get $get): string => 'Max '.number_format(SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200).' characters for '.SocialPost::PLATFORMS[$get('platform') ?? 'instagram'] ?? 'Instagram')
                             ->hintAction(
                                 \Filament\Forms\Components\Actions\Action::make('generateCaption')
                                     ->label('Generate Caption')
@@ -58,6 +57,7 @@ class SocialPostForm
                                                 ->body('Choose a product to generate a caption from.')
                                                 ->warning()
                                                 ->send();
+
                                             return;
                                         }
 
@@ -70,16 +70,16 @@ class SocialPostForm
                                         $storeHashtag = str_replace(' ', '', ucwords($storeName));
 
                                         $templates = [
-                                            "Fresh from the oven! Our {product} is made with love and the finest ingredients. Order yours today! 🍞✨ #{store_hashtag}",
+                                            'Fresh from the oven! Our {product} is made with love and the finest ingredients. Order yours today! 🍞✨ #{store_hashtag}',
                                             "Have you tried our {product}? It's one of our favorites! DM us to place your order 💛 #{store_hashtag}",
-                                            "Weekend treat alert! 🎉 Our {product} ({price}) is calling your name. Link in bio to order! #{store_hashtag}",
+                                            'Weekend treat alert! 🎉 Our {product} ({price}) is calling your name. Link in bio to order! #{store_hashtag}',
                                         ];
 
                                         $template = $templates[array_rand($templates)];
 
                                         $caption = str_replace(
                                             ['{product}', '{price}', '{store_hashtag}'],
-                                            [$product->name, '$' . number_format($product->price, 2), $storeHashtag],
+                                            [$product->name, '$'.number_format($product->price, 2), $storeHashtag],
                                             $template
                                         );
 

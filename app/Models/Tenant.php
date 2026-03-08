@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
@@ -55,11 +55,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             ->first();
 
         if (! $referral) {
-            $code = Str::slug($this->store_name ?? $this->name) . '-' . Str::lower(Str::random(4));
+            $code = Str::slug($this->store_name ?? $this->name).'-'.Str::lower(Str::random(4));
 
             // Ensure uniqueness
             while (Referral::where('referral_code', $code)->exists()) {
-                $code = Str::slug($this->store_name ?? $this->name) . '-' . Str::lower(Str::random(4));
+                $code = Str::slug($this->store_name ?? $this->name).'-'.Str::lower(Str::random(4));
             }
 
             $referral = Referral::create([

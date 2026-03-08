@@ -7,11 +7,11 @@ use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Filament\Resources\BlogPosts\Schemas\BlogPostForm;
 use App\Filament\Resources\BlogPosts\Tables\BlogPostsTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\BlogPost;
+use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use App\Filament\Traits\RequiresRole;
-use App\Traits\HasPlanGating;
 use Filament\Tables\Table;
 
 class BlogPostResource extends Resource
@@ -22,6 +22,7 @@ class BlogPostResource extends Resource
     {
         return 'staff';
     }
+
     protected static ?string $model = BlogPost::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-pencil-square';

@@ -8,6 +8,7 @@ use Laravel\Cashier\Cashier;
 class CreateStripeProducts extends Command
 {
     protected $signature = 'stripe:create-products';
+
     protected $description = 'Create KneadIt subscription products and prices in Stripe';
 
     public function handle(): int

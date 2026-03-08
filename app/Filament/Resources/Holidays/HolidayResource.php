@@ -2,19 +2,18 @@
 
 namespace App\Filament\Resources\Holidays;
 
-use App\Filament\Resources\Holidays\Pages;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Holiday;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class HolidayResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -24,8 +23,8 @@ class HolidayResource extends Resource
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static ?string $model = Holiday::class;
 
     protected static ?string $navigationLabel = 'Holidays';
@@ -122,6 +121,7 @@ class HolidayResource extends Resource
                     ->label('Orders')
                     ->getStateUsing(function (Holiday $record) {
                         $count = $record->orderCount();
+
                         return $record->max_orders
                             ? "{$count} / {$record->max_orders}"
                             : (string) $count;
@@ -131,10 +131,17 @@ class HolidayResource extends Resource
                     ->label('Status')
                     ->badge()
                     ->getStateUsing(function (Holiday $record) {
-                        if ($record->date->isPast()) return 'Past';
-                        if ($record->isDeadlinePassed()) return 'Deadline passed';
+                        if ($record->date->isPast()) {
+                            return 'Past';
+                        }
+                        if ($record->isDeadlinePassed()) {
+                            return 'Deadline passed';
+                        }
                         $days = $record->daysUntilDeadline();
-                        if ($days <= 3) return 'Urgent';
+                        if ($days <= 3) {
+                            return 'Urgent';
+                        }
+
                         return 'Open';
                     })
                     ->color(fn (string $state) => match ($state) {
@@ -148,8 +155,11 @@ class HolidayResource extends Resource
                 Tables\Columns\TextColumn::make('days_until')
                     ->label('Days Until')
                     ->getStateUsing(function (Holiday $record) {
-                        if ($record->date->isPast()) return 'Passed';
+                        if ($record->date->isPast()) {
+                            return 'Passed';
+                        }
                         $days = (int) Carbon::today()->diffInDays($record->date, false);
+
                         return "{$days}d";
                     }),
 

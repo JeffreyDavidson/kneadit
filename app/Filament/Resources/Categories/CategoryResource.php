@@ -7,14 +7,14 @@ use App\Filament\Resources\Categories\Pages\EditCategory;
 use App\Filament\Resources\Categories\Pages\ListCategories;
 use App\Filament\Resources\Categories\Schemas\CategoryForm;
 use App\Filament\Resources\Categories\Tables\CategoriesTable;
+use App\Filament\Traits\RequiresRole;
 use App\Models\Category;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class CategoryResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -29,6 +29,7 @@ class CategoryResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema

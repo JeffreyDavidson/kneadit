@@ -16,7 +16,7 @@ return new class extends Migration
             $table->date('date');
             $table->integer('max_orders');
             $table->timestamps();
-            
+
             $table->unique('date');
         });
     }

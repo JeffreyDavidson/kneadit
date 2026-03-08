@@ -2,14 +2,15 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Setting;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -19,11 +20,9 @@ use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-use App\Traits\HasPlanGating;
 class ManageSettings extends Page
 {
     use HasPlanGating, RequiresRole;
-
     use InteractsWithFormActions;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
@@ -40,15 +39,25 @@ class ManageSettings extends Page
 
     // Form data properties
     public ?string $store_name = '';
+
     public ?string $store_email = '';
+
     public ?string $store_phone = '';
+
     public ?string $store_address = '';
+
     public ?int $default_daily_capacity = null;
+
     public ?int $minimum_order_lead_hours = 48;
+
     public ?string $delivery_fee_tiers = '';
+
     public bool $repeat_reminders_enabled = false;
+
     public bool $birthday_program_enabled = false;
+
     public ?string $allergy_disclaimer = '';
+
     public ?string $revenue_cap = '250000';
 
     public function mount(): void
@@ -85,17 +94,17 @@ class ManageSettings extends Page
                                     ->label('Store Name')
                                     ->required()
                                     ->placeholder('Your Bakery Name'),
-                                
+
                                 TextInput::make('store_email')
                                     ->label('Store Email')
                                     ->email()
                                     ->placeholder('contact@yourbakery.com'),
-                                
+
                                 TextInput::make('store_phone')
                                     ->label('Store Phone')
                                     ->tel()
                                     ->placeholder('+1 (555) 123-4567'),
-                                
+
                                 TextInput::make('store_address')
                                     ->label('Store Address')
                                     ->placeholder('123 Baker Street, City, State 12345')
@@ -114,14 +123,14 @@ class ManageSettings extends Page
                                     ->numeric()
                                     ->placeholder('100')
                                     ->helperText('Maximum number of orders per day'),
-                                
+
                                 TextInput::make('minimum_order_lead_hours')
                                     ->label('Minimum Order Lead Hours')
                                     ->numeric()
                                     ->default(48)
                                     ->helperText('Minimum hours before pickup/delivery'),
                             ]),
-                        
+
                         Textarea::make('delivery_fee_tiers')
                             ->label('Delivery Fee Tiers (JSON)')
                             ->placeholder('{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}')
@@ -139,7 +148,7 @@ class ManageSettings extends Page
                                 Toggle::make('repeat_reminders_enabled')
                                     ->label('Enable Repeat Order Reminders')
                                     ->helperText('Send reminders for repeat customers'),
-                                
+
                                 Toggle::make('birthday_program_enabled')
                                     ->label('Enable Birthday Program')
                                     ->helperText('Send birthday offers to customers'),
@@ -155,7 +164,7 @@ class ManageSettings extends Page
                             ->placeholder('Please inform us of any allergies or dietary restrictions...')
                             ->rows(3)
                             ->columnSpanFull(),
-                        
+
                         TextInput::make('revenue_cap')
                             ->label('Annual Revenue Cap')
                             ->numeric()
@@ -171,7 +180,7 @@ class ManageSettings extends Page
                         ->label('Save Settings')
                         ->color('primary')
                         ->action('save'),
-                    
+
                     Action::make('reset')
                         ->label('Reset to Defaults')
                         ->color('gray')
@@ -180,8 +189,8 @@ class ManageSettings extends Page
                         ->modalHeading('Reset Settings')
                         ->modalDescription('Are you sure you want to reset all settings to their default values?'),
                 ])
-                ->alignEnd()
-                ->columnSpanFull(),
+                    ->alignEnd()
+                    ->columnSpanFull(),
             ]);
     }
 

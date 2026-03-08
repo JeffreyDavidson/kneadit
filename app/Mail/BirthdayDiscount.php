@@ -2,8 +2,8 @@
 
 namespace App\Mail;
 
-use App\Models\Customer;
 use App\Models\Coupon;
+use App\Models\Customer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;

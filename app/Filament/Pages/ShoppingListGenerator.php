@@ -2,14 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
-use Filament\Actions\Action;
 use App\Models\Ingredient;
 use App\Models\Order;
+use App\Traits\HasPlanGating;
+use Filament\Actions\Action;
+use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
-use App\Traits\HasPlanGating;
 class ShoppingListGenerator extends Page
 {
     use HasPlanGating, RequiresRole;
@@ -20,16 +20,25 @@ class ShoppingListGenerator extends Page
     }
 
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
+
     protected static ?string $navigationLabel = 'Shopping List';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 3;
+
     protected static bool $shouldRegisterNavigation = false;
+
     protected string $view = 'filament.pages.shopping-list-generator';
 
     public string $startDate = '';
+
     public string $endDate = '';
+
     public Collection $shoppingList;
+
     public array $checkedItems = [];
 
     public function mount()
@@ -66,9 +75,9 @@ class ShoppingListGenerator extends Page
                         $ingredientUnit = $ingredient['unit'] ?? '';
 
                         if ($ingredientName) {
-                            $key = $ingredientName . '|' . $ingredientUnit;
+                            $key = $ingredientName.'|'.$ingredientUnit;
                             $totalQuantity = ($ingredientQuantity * $quantity);
-                            
+
                             if ($aggregatedIngredients->has($key)) {
                                 $aggregatedIngredients[$key]['quantity'] += $totalQuantity;
                             } else {
@@ -94,6 +103,7 @@ class ShoppingListGenerator extends Page
             $item['stock_unit'] = $tracked?->unit;
             $item['needs_purchase'] = $tracked ? $item['quantity'] > (float) $tracked->current_stock : true;
             $item['deficit'] = $tracked ? max(0, $item['quantity'] - (float) $tracked->current_stock) : $item['quantity'];
+
             return $item;
         });
 

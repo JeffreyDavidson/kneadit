@@ -12,7 +12,7 @@ class InvoiceController extends Controller
     {
         // Load necessary relationships
         $order->load(['customer', 'orderItems.product']);
-        
+
         // Get store information from settings
         $storeInfo = [
             'name' => Setting::get('store_name') ?? config('app.name'),

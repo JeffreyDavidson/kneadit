@@ -30,6 +30,7 @@ class CustomDomain extends Page
     protected static ?string $title = 'Custom Domain';
 
     public ?string $custom_domain = '';
+
     public ?string $dns_status = null;
 
     public function mount(): void
@@ -65,6 +66,7 @@ class CustomDomain extends Page
                 ->title('Custom domains are available on Growth and Pro plans')
                 ->warning()
                 ->send();
+
             return;
         }
 
@@ -73,6 +75,7 @@ class CustomDomain extends Page
         if (empty($domain)) {
             // Remove custom domain
             $this->removeCustomDomain();
+
             return;
         }
 
@@ -82,6 +85,7 @@ class CustomDomain extends Page
                 ->title('Invalid domain format')
                 ->danger()
                 ->send();
+
             return;
         }
 
@@ -128,6 +132,7 @@ class CustomDomain extends Page
     {
         if (empty($this->custom_domain)) {
             $this->dns_status = null;
+
             return;
         }
 

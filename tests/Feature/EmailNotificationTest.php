@@ -7,8 +7,8 @@ use App\Mail\OrderConfirmed;
 use App\Mail\OrderReady;
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\User;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -18,7 +18,9 @@ class EmailNotificationTest extends TestCase
     use RefreshDatabase;
 
     protected Customer $customer;
+
     protected Order $order;
+
     protected User $user;
 
     protected function setUp(): void

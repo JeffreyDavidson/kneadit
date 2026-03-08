@@ -8,13 +8,13 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Notifications\Notification;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker;
+use Filament\Notifications\Notification;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class OrdersTable
 {
@@ -191,7 +191,7 @@ class OrdersTable
                     ->action(function (Order $record) {
                         $paypalService = app(PayPalService::class);
                         $invoiceId = $paypalService->createAndSendInvoice($record);
-                        
+
                         if ($invoiceId) {
                             Notification::make()
                                 ->title('PayPal invoice sent successfully')
@@ -205,9 +205,8 @@ class OrdersTable
                                 ->send();
                         }
                     })
-                    ->visible(fn (Order $record) => 
-                        $record->payment_status === 'unpaid' && 
-                        !$record->paypal_invoice_id &&
+                    ->visible(fn (Order $record) => $record->payment_status === 'unpaid' &&
+                        ! $record->paypal_invoice_id &&
                         in_array($record->status, ['confirmed', 'baking', 'ready'])
                     ),
 

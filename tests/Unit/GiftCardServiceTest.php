@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Models\Customer;
-use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\GiftCardService;
@@ -26,7 +25,7 @@ class GiftCardServiceTest extends TestCase
             $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
         }
 
-        $this->service = new GiftCardService();
+        $this->service = new GiftCardService;
     }
 
     /** @test */

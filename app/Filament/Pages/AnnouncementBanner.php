@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -15,8 +16,6 @@ use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
-
-use App\Traits\HasPlanGating;
 
 class AnnouncementBanner extends Page
 {
@@ -36,7 +35,9 @@ class AnnouncementBanner extends Page
     protected static ?string $title = 'Announcement Banner';
 
     public bool $announcement_enabled = false;
+
     public ?string $announcement_text = '';
+
     public ?string $announcement_type = 'info';
 
     public function mount(): void
@@ -87,8 +88,8 @@ class AnnouncementBanner extends Page
                         ->color('primary')
                         ->action('save'),
                 ])
-                ->alignEnd()
-                ->columnSpanFull(),
+                    ->alignEnd()
+                    ->columnSpanFull(),
             ]);
     }
 

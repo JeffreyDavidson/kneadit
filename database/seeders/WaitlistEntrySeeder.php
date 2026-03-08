@@ -20,7 +20,7 @@ class WaitlistEntrySeeder extends Seeder
             'Classic Vanilla Birthday Cake',
             'Wedding Cake Consultation',
             'Custom Birthday Cake',
-            'Pumpkin Spice Cheesecake'
+            'Pumpkin Spice Cheesecake',
         ])->get();
 
         $waitlistEntries = [
@@ -73,7 +73,7 @@ class WaitlistEntrySeeder extends Seeder
 
         foreach ($waitlistEntries as $entryData) {
             $product = $products->where('name', $entryData['product_name'])->first();
-            
+
             if ($product) {
                 WaitlistEntry::create([
                     'customer_name' => $entryData['customer_name'],

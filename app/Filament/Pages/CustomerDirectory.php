@@ -2,8 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Customer;
 use App\Models\CustomerNote;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -11,11 +13,9 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 
-use App\Traits\HasPlanGating;
 class CustomerDirectory extends Page implements HasForms
 {
     use HasPlanGating, RequiresRole;
@@ -26,18 +26,25 @@ class CustomerDirectory extends Page implements HasForms
     }
 
     protected static string $requiredPlan = 'growth';
+
     protected static bool $shouldRegisterNavigation = false;
+
     use InteractsWithForms;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 12;
+
     protected static ?string $navigationLabel = 'Customer Directory';
+
     protected static ?string $title = 'Customer Directory';
 
     protected string $view = 'filament.pages.customer-directory';
 
     public string $search = '';
+
     public ?array $noteData = [];
 
     public function mount(): void
@@ -86,19 +93,19 @@ class CustomerDirectory extends Page implements HasForms
         $query = Customer::query()
             ->withCount('orders')
             ->withSum('orders', 'total')
-            ->with(['orders' => function($query) {
+            ->with(['orders' => function ($query) {
                 $query->latest()->take(1);
             }]);
 
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('email', 'like', '%' . $this->search . '%')
-                  ->orWhere('phone', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('email', 'like', '%'.$this->search.'%')
+                    ->orWhere('phone', 'like', '%'.$this->search.'%');
             });
         }
 
-        return $query->orderBy('name')->get()->map(function($customer) {
+        return $query->orderBy('name')->get()->map(function ($customer) {
             return [
                 'id' => $customer->id,
                 'name' => $customer->name,
@@ -114,15 +121,15 @@ class CustomerDirectory extends Page implements HasForms
     public function getCustomerDetails($customerId)
     {
         $customer = Customer::with([
-            'orders' => function($query) {
+            'orders' => function ($query) {
                 $query->orderBy('created_at', 'desc');
             },
-            'customerNotes' => function($query) {
+            'customerNotes' => function ($query) {
                 $query->with('createdBy')->orderBy('created_at', 'desc');
-            }
+            },
         ])->find($customerId);
 
-        if (!$customer) {
+        if (! $customer) {
             return null;
         }
 
@@ -132,7 +139,7 @@ class CustomerDirectory extends Page implements HasForms
             'email' => $customer->email,
             'phone' => $customer->phone,
             'address' => $customer->full_address,
-            'orders' => $customer->orders->map(function($order) {
+            'orders' => $customer->orders->map(function ($order) {
                 return [
                     'id' => $order->id,
                     'order_number' => $order->order_number,
@@ -143,7 +150,7 @@ class CustomerDirectory extends Page implements HasForms
                     'requested_date' => $order->requested_date?->format('M j, Y'),
                 ];
             }),
-            'notes' => $customer->customerNotes->map(function($note) {
+            'notes' => $customer->customerNotes->map(function ($note) {
                 return [
                     'id' => $note->id,
                     'note' => $note->note,
@@ -154,11 +161,11 @@ class CustomerDirectory extends Page implements HasForms
             'stats' => [
                 'total_orders' => $customer->orders->count(),
                 'total_spent' => $customer->orders->sum('total'),
-                'avg_order_value' => $customer->orders->count() > 0 
-                    ? $customer->orders->sum('total') / $customer->orders->count() 
+                'avg_order_value' => $customer->orders->count() > 0
+                    ? $customer->orders->sum('total') / $customer->orders->count()
                     : 0,
                 'last_order' => $customer->orders->first()?->created_at?->format('M j, Y'),
-            ]
+            ],
         ];
     }
 

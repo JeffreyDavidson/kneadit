@@ -2,12 +2,12 @@
 
 namespace Tests\Unit;
 
+use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderMessage;
 use App\Models\Product;
-use App\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,6 +17,7 @@ class OrderTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected Customer $customer;
 
     protected function setUp(): void

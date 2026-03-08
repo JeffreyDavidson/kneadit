@@ -2,16 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\EnsureStorefrontEnabled;
+use App\Http\Middleware\TrackPageView;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Http\Middleware\TrackPageView;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
@@ -21,6 +20,7 @@ class OrderTest extends TestCase
     use RefreshDatabase;
 
     protected Category $category;
+
     protected Product $product;
 
     protected function setUp(): void

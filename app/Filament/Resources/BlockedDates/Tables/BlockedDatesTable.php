@@ -35,7 +35,7 @@ class BlockedDatesTable
                 TextColumn::make('open_time')
                     ->time()
                     ->placeholder('—')
-                    ->visible(fn ($record) => $record && !$record->is_all_day),
+                    ->visible(fn ($record) => $record && ! $record->is_all_day),
 
                 TextColumn::make('close_time')
                     ->time()

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 class SendReviewRequests extends Command
 {
     protected $signature = 'reviews:send-requests';
+
     protected $description = 'Send review request emails for recently delivered orders';
 
     public function handle(): int
@@ -30,7 +31,7 @@ class SendReviewRequests extends Command
                 $orders = Order::where('status', 'delivered')
                     ->whereNull('review_request_sent_at')
                     ->where('updated_at', '<=', now()->subHours($delayHours))
-                    ->whereHas('customer', fn($q) => $q->whereNotNull('email'))
+                    ->whereHas('customer', fn ($q) => $q->whereNotNull('email'))
                     ->with('customer')
                     ->get();
 

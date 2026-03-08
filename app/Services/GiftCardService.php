@@ -41,7 +41,7 @@ class GiftCardService
     {
         $card = GiftCard::where('code', $code)->firstOrFail();
 
-        if (!$card->isUsable()) {
+        if (! $card->isUsable()) {
             return ['success' => false, 'error' => 'This gift card is not valid.'];
         }
 
@@ -85,7 +85,7 @@ class GiftCardService
         do {
             $raw = strtoupper(Str::random(16));
             // Ensure only alphanumeric
-            $raw = preg_replace('/[^A-Z0-9]/', '', $raw . Str::random(4));
+            $raw = preg_replace('/[^A-Z0-9]/', '', $raw.Str::random(4));
             $raw = substr($raw, 0, 16);
             $code = implode('-', str_split($raw, 4));
         } while (GiftCard::where('code', $code)->exists());

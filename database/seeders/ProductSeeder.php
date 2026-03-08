@@ -307,7 +307,7 @@ class ProductSeeder extends Seeder
 
         foreach ($products as $product) {
             $category = $categories[$product['category']];
-            
+
             Product::updateOrCreate(
                 ['name' => $product['name']],
                 [

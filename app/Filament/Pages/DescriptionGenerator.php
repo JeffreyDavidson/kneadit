@@ -18,16 +18,25 @@ class DescriptionGenerator extends Page
     }
 
     protected static string $requiredPlan = 'pro';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-sparkles';
+
     protected static ?string $navigationLabel = 'Descriptions';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
+
     protected static ?int $navigationSort = 12;
+
     protected string $view = 'filament.pages.description-generator';
 
     public ?string $selectedProductId = null;
+
     public string $manualProductName = '';
+
     public string $tone = 'professional';
+
     public string $length = 'medium';
+
     public array $descriptions = [];
 
     public function getProductsProperty(): \Illuminate\Support\Collection
@@ -40,7 +49,7 @@ class DescriptionGenerator extends Page
 
     public function generate(): void
     {
-        $service = new DescriptionGeneratorService();
+        $service = new DescriptionGeneratorService;
 
         $product = null;
         $productName = $this->manualProductName;
@@ -58,6 +67,7 @@ class DescriptionGenerator extends Page
 
         if (empty($productName)) {
             $this->descriptions = [];
+
             return;
         }
 
@@ -66,7 +76,7 @@ class DescriptionGenerator extends Page
 
     public function applyToProduct(int $index): void
     {
-        if (!$this->selectedProductId || !isset($this->descriptions[$index])) {
+        if (! $this->selectedProductId || ! isset($this->descriptions[$index])) {
             return;
         }
 

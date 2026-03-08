@@ -12,7 +12,7 @@ class CreateGiftCard extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $service = new GiftCardService();
+        $service = new GiftCardService;
         $data['code'] = $service->generateCode();
         $data['current_balance'] = $data['initial_balance'];
 

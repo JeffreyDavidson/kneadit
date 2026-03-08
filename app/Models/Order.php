@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -44,10 +43,10 @@ class Order extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($order) {
-            if (!$order->order_number) {
-                $order->order_number = 'ORD-' . str_pad(static::count() + 1, 6, '0', STR_PAD_LEFT);
+            if (! $order->order_number) {
+                $order->order_number = 'ORD-'.str_pad(static::count() + 1, 6, '0', STR_PAD_LEFT);
             }
         });
     }

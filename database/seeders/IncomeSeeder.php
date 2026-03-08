@@ -111,7 +111,7 @@ class IncomeSeeder extends Seeder
             // Spread incomes over the last 60 days, with some concentration on weekends for farmers markets
             $daysAgo = rand(1, 60);
             $date = Carbon::now()->subDays($daysAgo);
-            
+
             // If it's a farmers market income, try to put it on a weekend
             if ($incomeData['source'] === 'farmers_market') {
                 // Adjust to nearest weekend day (Saturday or Sunday)

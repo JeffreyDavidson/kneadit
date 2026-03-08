@@ -5,10 +5,11 @@ namespace App\Filament\Resources\GalleryPhotos;
 use App\Filament\Resources\GalleryPhotos\Pages\CreateGalleryPhoto;
 use App\Filament\Resources\GalleryPhotos\Pages\EditGalleryPhoto;
 use App\Filament\Resources\GalleryPhotos\Pages\ListGalleryPhotos;
+use App\Filament\Traits\RequiresRole;
 use App\Models\GalleryPhoto;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
-use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -17,18 +18,17 @@ use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Table;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Table;
 
-use App\Traits\HasPlanGating;
 class GalleryPhotoResource extends Resource
 {
     use HasPlanGating, RequiresRole;
@@ -38,8 +38,8 @@ class GalleryPhotoResource extends Resource
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
+
     protected static ?string $model = GalleryPhoto::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
@@ -65,7 +65,7 @@ class GalleryPhotoResource extends Resource
                                 TextInput::make('title')
                                     ->required()
                                     ->maxLength(255),
-                                
+
                                 Select::make('category')
                                     ->options(function () {
                                         // Get categories from database or return predefined ones
@@ -80,17 +80,17 @@ class GalleryPhotoResource extends Resource
                                     })
                                     ->placeholder('Select a category')
                                     ->searchable(),
-                                
+
                                 TextInput::make('sort_order')
                                     ->numeric()
                                     ->default(0)
                                     ->required(),
-                                
+
                                 Toggle::make('is_visible')
                                     ->label('Visible')
                                     ->default(true),
                             ]),
-                        
+
                         FileUpload::make('image_path')
                             ->label('Photo')
                             ->image()
@@ -112,24 +112,24 @@ class GalleryPhotoResource extends Resource
                     ->width(80)
                     ->height(60)
                     ->square(),
-                
+
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
-                
+
                 TextColumn::make('category')
                     ->searchable()
                     ->sortable()
                     ->badge(),
-                
+
                 TextColumn::make('sort_order')
                     ->label('Order')
                     ->sortable()
                     ->alignCenter(),
-                
+
                 ToggleColumn::make('is_visible')
                     ->label('Visible'),
-                
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

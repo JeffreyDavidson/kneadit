@@ -24,7 +24,7 @@ class ProductCsvTest extends TestCase
             $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
         }
 
-        $this->service = new ProductCsvService();
+        $this->service = new ProductCsvService;
     }
 
     /** @test */

@@ -2,27 +2,33 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
 use App\Models\Setting;
+use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
-use App\Filament\Traits\RequiresRole;
 
-use App\Traits\HasPlanGating;
 class LoyaltyDashboard extends Page
 {
     use HasPlanGating, RequiresRole;
 
     protected static string $requiredPlan = 'pro';
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-trophy';
+
     protected static ?string $navigationLabel = 'Loyalty Program';
+
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+
     protected static ?int $navigationSort = 13;
+
     protected string $view = 'filament.pages.loyalty-dashboard';
 
     public bool $loyaltyEnabled;
+
     public string $programName;
 
     public function mount(): void
@@ -33,7 +39,7 @@ class LoyaltyDashboard extends Page
 
     public function toggleLoyalty(): void
     {
-        $this->loyaltyEnabled = !$this->loyaltyEnabled;
+        $this->loyaltyEnabled = ! $this->loyaltyEnabled;
         Setting::set('loyalty_enabled', $this->loyaltyEnabled ? '1' : '0');
     }
 

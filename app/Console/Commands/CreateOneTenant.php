@@ -17,12 +17,13 @@ class CreateOneTenant extends Command
                             {brand_secondary : Secondary brand color}';
 
     protected $description = 'Create a single demo tenant (called by tenant:bakeries)';
+
     protected $hidden = true;
 
     public function handle(): int
     {
         $id = $this->argument('id');
-        $domain = $id . '.kneadit.test';
+        $domain = $id.'.kneadit.test';
 
         // Create tenant (triggers CreateDatabase + MigrateDatabase via events)
         $tenant = Tenant::create([

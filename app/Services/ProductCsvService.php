@@ -21,7 +21,7 @@ class ProductCsvService
 
     public function getTemplateContent(): string
     {
-        return implode(',', $this->headers) . "\n";
+        return implode(',', $this->headers)."\n";
     }
 
     public function export(): string
@@ -56,16 +56,17 @@ class ProductCsvService
         $handle = fopen($file->getRealPath(), 'r');
         $header = fgetcsv($handle);
 
-        if (!$header) {
+        if (! $header) {
             return ['rows' => [], 'errors' => ['CSV file is empty.']];
         }
 
-        $header = array_map(fn($h) => strtolower(trim($h)), $header);
+        $header = array_map(fn ($h) => strtolower(trim($h)), $header);
         $missing = array_diff(['name', 'price'], $header);
 
-        if (!empty($missing)) {
+        if (! empty($missing)) {
             fclose($handle);
-            return ['rows' => [], 'errors' => ['Missing required columns: ' . implode(', ', $missing)]];
+
+            return ['rows' => [], 'errors' => ['Missing required columns: '.implode(', ', $missing)]];
         }
 
         $line = 1;
@@ -73,6 +74,7 @@ class ProductCsvService
             $line++;
             if (count($row) !== count($header)) {
                 $errors[] = "Row {$line}: column count mismatch.";
+
                 continue;
             }
             $mapped = array_combine($header, $row);
@@ -82,10 +84,10 @@ class ProductCsvService
                 $rowErrors[] = 'Name is required';
             }
             $price = $mapped['price'] ?? '';
-            if ($price === '' || !is_numeric($price) || (float) $price < 0) {
+            if ($price === '' || ! is_numeric($price) || (float) $price < 0) {
                 $rowErrors[] = 'Invalid price';
             }
-            if (isset($mapped['cost']) && $mapped['cost'] !== '' && !is_numeric($mapped['cost'])) {
+            if (isset($mapped['cost']) && $mapped['cost'] !== '' && ! is_numeric($mapped['cost'])) {
                 $rowErrors[] = 'Invalid cost';
             }
 
@@ -93,8 +95,8 @@ class ProductCsvService
             $mapped['_errors'] = $rowErrors;
             $rows[] = $mapped;
 
-            if (!empty($rowErrors)) {
-                $errors[] = "Row {$line}: " . implode(', ', $rowErrors);
+            if (! empty($rowErrors)) {
+                $errors[] = "Row {$line}: ".implode(', ', $rowErrors);
             }
         }
 
@@ -107,7 +109,7 @@ class ProductCsvService
     {
         $parsed = $this->parseForPreview($file);
 
-        if (!empty($parsed['errors'])) {
+        if (! empty($parsed['errors'])) {
             return ['created' => 0, 'updated' => 0, 'errors' => $parsed['errors']];
         }
 
@@ -117,8 +119,9 @@ class ProductCsvService
         $categoryCache = [];
 
         foreach ($parsed['rows'] as $row) {
-            if (!empty($row['_errors'])) {
-                $errors[] = "Row {$row['_line']}: " . implode(', ', $row['_errors']);
+            if (! empty($row['_errors'])) {
+                $errors[] = "Row {$row['_line']}: ".implode(', ', $row['_errors']);
+
                 continue;
             }
 
@@ -126,7 +129,7 @@ class ProductCsvService
                 $categoryId = null;
                 $categoryName = trim($row['category'] ?? '');
                 if ($categoryName !== '') {
-                    if (!isset($categoryCache[$categoryName])) {
+                    if (! isset($categoryCache[$categoryName])) {
                         $categoryCache[$categoryName] = Category::firstOrCreate(
                             ['name' => $categoryName],
                             ['slug' => Str::slug($categoryName)]

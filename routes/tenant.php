@@ -137,4 +137,3 @@ Route::middleware([
             Route::post('/waitlist', [StorefrontApiController::class, 'waitlist']);
         });
 });
-
