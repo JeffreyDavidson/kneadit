@@ -7,7 +7,6 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
-use Stancl\Tenancy\Tenancy;
 
 class SendWeeklyDigest extends Command
 {

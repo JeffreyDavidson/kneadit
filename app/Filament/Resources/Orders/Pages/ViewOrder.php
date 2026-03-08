@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Orders\Pages;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Mail\NewOrderMessage;
 use App\Models\Order;
-use App\Models\OrderMessage;
 use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\Section;

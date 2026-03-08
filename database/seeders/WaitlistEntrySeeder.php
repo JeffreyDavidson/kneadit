@@ -11,6 +11,10 @@ class WaitlistEntrySeeder extends Seeder
 {
     public function run(): void
     {
+        if (\App\Models\WaitlistEntry::count() > 0) {
+            return;
+        }
+
         $products = Product::whereIn('name', [
             'Chocolate Ganache Torte',
             'Classic Vanilla Birthday Cake',

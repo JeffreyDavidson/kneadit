@@ -308,16 +308,18 @@ class ProductSeeder extends Seeder
         foreach ($products as $product) {
             $category = $categories[$product['category']];
             
-            Product::create([
-                'name' => $product['name'],
-                'slug' => Str::slug($product['name']),
-                'description' => $product['description'],
-                'price' => $product['price'],
-                'cost' => $product['cost'],
-                'category_id' => $category->id,
-                'is_active' => true,
-                'is_featured' => $product['is_featured'],
-            ]);
+            Product::updateOrCreate(
+                ['name' => $product['name']],
+                [
+                    'slug' => Str::slug($product['name']),
+                    'description' => $product['description'],
+                    'price' => $product['price'],
+                    'cost' => $product['cost'],
+                    'category_id' => $category->id,
+                    'is_active' => true,
+                    'is_featured' => $product['is_featured'],
+                ]
+            );
         }
     }
 }

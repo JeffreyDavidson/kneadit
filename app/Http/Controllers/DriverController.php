@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Setting;
-use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {

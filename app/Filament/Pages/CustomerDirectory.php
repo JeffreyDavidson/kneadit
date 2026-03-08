@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Models\Customer;
 use App\Models\CustomerNote;
 use BackedEnum;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -25,7 +24,6 @@ class CustomerDirectory extends Page implements HasForms
     {
         return 'manager';
     }
-
 
     protected static string $requiredPlan = 'growth';
     protected static bool $shouldRegisterNavigation = false;

@@ -5,14 +5,12 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Product;
-use App\Models\Recipe;
 use Illuminate\Support\Collection;
 
 use App\Traits\HasPlanGating;
 class ProfitAnalysis extends Page
 {
     use HasPlanGating, RequiresRole;
-
 
     protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';

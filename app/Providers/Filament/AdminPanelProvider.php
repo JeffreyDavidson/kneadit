@@ -10,8 +10,6 @@ use App\Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -73,13 +71,6 @@ class AdminPanelProvider extends PanelProvider
                 . '<link rel="apple-touch-icon" sizes="180x180" href="' . asset('images/favicon-180x180.png') . '">'
                 .
                 '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">'
-                . '<style>'
-                . '.fi-fo-repeater .fi-fo-repeater-items .fi-fo-repeater-item{border-radius:0!important;box-shadow:none!important;background:transparent!important;outline:none!important;--tw-ring-shadow:0 0 0 0 transparent!important;--tw-shadow:0 0 0 0 transparent!important;--tw-inset-shadow:0 0 0 0 transparent!important;--tw-inset-ring-shadow:0 0 0 0 transparent!important;--tw-ring-offset-shadow:0 0 0 0 transparent!important;--tw-ring-color:transparent!important;border:none!important;border-bottom:1px solid #f3ebe0!important}'
-                . '.fi-fo-repeater .fi-fo-repeater-items .fi-fo-repeater-item:last-child{border-bottom:none!important}'
-                . '.fi-fo-repeater .fi-fo-repeater-items{gap:0!important}'
-                . '.fi-input-wrp{box-shadow:0 0 0 1px #e8d0b0!important;border:none!important;border-radius:8px!important;outline:none!important}'
-                . '.fi-input-wrp:focus-within{box-shadow:0 0 0 2px #8b5e3c!important}'
-                . '</style>'
                 . '<style>:root{'
                 . '--brand-900:' . rescue(fn () => \App\Models\Setting::get('brand_color_900', '#3d2314'), '#3d2314', false) . ';'
                 . '--brand-800:' . rescue(fn () => \App\Models\Setting::get('brand_color_800', '#4a3225'), '#4a3225', false) . ';'

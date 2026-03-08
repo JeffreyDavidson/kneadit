@@ -18,7 +18,6 @@ use App\Models\Survey;
 use App\Models\SurveyResponse;
 use App\Services\GiftCardService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class StorefrontController extends Controller
 {

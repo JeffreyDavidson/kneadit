@@ -6,7 +6,6 @@ use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Review;
 use App\Models\Product;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +18,6 @@ class ReviewAnalytics extends Page
     {
         return 'manager';
     }
-
 
     protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';

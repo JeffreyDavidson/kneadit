@@ -10,6 +10,10 @@ class ReviewSeeder extends Seeder
 {
     public function run(): void
     {
+        if (\App\Models\Review::count() > 0) {
+            return;
+        }
+
         $products = Product::all();
         
         $customerNames = [

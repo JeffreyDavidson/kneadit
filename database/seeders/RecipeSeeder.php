@@ -10,6 +10,10 @@ class RecipeSeeder extends Seeder
 {
     public function run(): void
     {
+        if (\App\Models\Recipe::count() > 0) {
+            return;
+        }
+
         // Get specific products to create recipes for
         $products = Product::whereIn('name', [
             'Sourdough Boule',

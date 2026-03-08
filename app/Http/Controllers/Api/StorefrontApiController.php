@@ -11,7 +11,6 @@ use App\Models\Customer;
 use App\Models\CustomerFavorite;
 use App\Models\GalleryPhoto;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Setting;

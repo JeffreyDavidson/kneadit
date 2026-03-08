@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Customer;
 use App\Models\CustomerProfile;
 use App\Models\Coupon;
 use App\Models\Setting;

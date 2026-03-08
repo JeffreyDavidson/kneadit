@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\Customer;
 use App\Models\CustomerReminder;
-use App\Models\Order;
 use App\Models\Setting;
 use App\Mail\RepeatOrderReminder;
 use Illuminate\Console\Command;

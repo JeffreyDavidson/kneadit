@@ -14,6 +14,10 @@ class OrderSeeder extends Seeder
 {
     public function run(): void
     {
+        if (\App\Models\Order::count() > 0) {
+            return;
+        }
+
         $customers = Customer::all();
         $products = Product::all();
         $user = User::first(); // Assuming we have at least one user

@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Recipe;
-use App\Models\Product;
 use Illuminate\Support\Collection;
 
 use App\Traits\HasPlanGating;
@@ -17,7 +16,6 @@ class RecipeCostCalculator extends Page
     {
         return 'manager';
     }
-
 
     protected static string $requiredPlan = 'growth';
     protected static bool $shouldRegisterNavigation = false;

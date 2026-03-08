@@ -7,11 +7,7 @@ use App\Services\GiftCardService;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Components\TextInput;
-use Filament\Layouts\Section;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
 
 class ViewGiftCard extends ViewRecord
 {
