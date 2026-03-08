@@ -27,22 +27,27 @@ Route::middleware([
 ])->group(function () {
     // Note: The "/" route is handled by RootController in web.php
     // to avoid overriding the central domain landing page.
-    Route::get('/menu', [StorefrontController::class, 'menu'])->name('storefront.menu');
-    Route::get('/order', [OrderController::class, 'index'])->name('order.create');
-    Route::post('/order', [OrderController::class, 'store'])->name('order.store');
-    Route::get('/order/confirmation/{order}', [OrderController::class, 'confirmation'])->name('order.confirmation');
-    Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
-    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-    // Capacity check (AJAX)
-    Route::get('/capacity/check/{date}', [OrderController::class, 'checkCapacity'])->name('capacity.check');
+    // Storefront routes — only accessible when storefront is enabled
+    // When disabled, these redirect to the external website or show a minimal page
+    Route::middleware(\App\Http\Middleware\EnsureStorefrontEnabled::class)->group(function () {
+        Route::get('/menu', [StorefrontController::class, 'menu'])->name('storefront.menu');
+        Route::get('/order', [OrderController::class, 'index'])->name('order.create');
+        Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+        Route::get('/order/confirmation/{order}', [OrderController::class, 'confirmation'])->name('order.confirmation');
+        Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+        Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-    // Coupon validation (AJAX)
-    Route::post('/coupon/apply', [OrderController::class, 'applyCoupon'])->name('coupon.apply');
+        // Capacity check (AJAX)
+        Route::get('/capacity/check/{date}', [OrderController::class, 'checkCapacity'])->name('capacity.check');
 
-    // Customer favorites (AJAX)
-    Route::get('/favorites', [StorefrontController::class, 'getFavorites'])->name('favorites.get');
-    Route::post('/favorites/toggle', [StorefrontController::class, 'toggleFavorite'])->name('favorites.toggle');
+        // Coupon validation (AJAX)
+        Route::post('/coupon/apply', [OrderController::class, 'applyCoupon'])->name('coupon.apply');
+
+        // Customer favorites (AJAX)
+        Route::get('/favorites', [StorefrontController::class, 'getFavorites'])->name('favorites.get');
+        Route::post('/favorites/toggle', [StorefrontController::class, 'toggleFavorite'])->name('favorites.toggle');
+    });
 
     // Tenant Storefront API (JSON, no CSRF)
     Route::prefix('api')

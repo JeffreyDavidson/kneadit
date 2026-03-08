@@ -26,6 +26,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'store_logo',
             'brand_color_primary',
             'brand_color_secondary',
+            'storefront_enabled',
+            'external_website',
             'is_active',
         ];
     }
@@ -34,6 +36,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return [
             'trial_ends_at' => 'datetime',
+            'storefront_enabled' => 'boolean',
             'is_active' => 'boolean',
         ];
     }
