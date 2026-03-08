@@ -12,6 +12,27 @@
             </div>
         </div>
 
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Customers</dt>
+                <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-gray-100">{{ $stats['total_customers'] }}</dd>
+            </div>
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Lifetime Value</dt>
+                <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-gray-100">${{ $stats['avg_lifetime_value'] }}</dd>
+            </div>
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">At-Risk Customers</dt>
+                <dd class="mt-1 text-2xl font-semibold {{ $stats['at_risk_count'] > 0 ? 'text-red-600' : 'text-green-600' }}">{{ $stats['at_risk_count'] }}</dd>
+            </div>
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Top Customer</dt>
+                <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $stats['top_customer_name'] }}</dd>
+                <dd class="text-sm text-gray-500 dark:text-gray-400">${{ $stats['top_customer_value'] }}</dd>
+            </div>
+        </div>
+
         <!-- Search -->
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
             <div class="flex items-center space-x-4">

@@ -55,6 +55,24 @@ class CustomerDirectory extends Page implements HasForms
             ->statePath('noteData');
     }
 
+    public function getStats(): array
+    {
+        $customers = Customer::all();
+        $totalCustomers = $customers->count();
+        $lifetimeValues = $customers->map(fn ($c) => $c->lifetime_value);
+        $avgLifetimeValue = $totalCustomers > 0 ? $lifetimeValues->avg() : 0;
+        $atRiskCount = $customers->filter(fn ($c) => $c->is_at_risk)->count();
+        $topCustomer = $customers->sortByDesc(fn ($c) => $c->lifetime_value)->first();
+
+        return [
+            'total_customers' => $totalCustomers,
+            'avg_lifetime_value' => number_format($avgLifetimeValue, 2),
+            'at_risk_count' => $atRiskCount,
+            'top_customer_name' => $topCustomer?->name ?? 'N/A',
+            'top_customer_value' => number_format($topCustomer?->lifetime_value ?? 0, 2),
+        ];
+    }
+
     public function getCustomers()
     {
         $query = Customer::query()
@@ -168,6 +186,7 @@ class CustomerDirectory extends Page implements HasForms
     {
         return [
             'customers' => $this->getCustomers(),
+            'stats' => $this->getStats(),
         ];
     }
 }
