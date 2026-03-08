@@ -28,6 +28,13 @@ Route::middleware([
     // Note: The "/" route is handled by RootController in web.php
     // to avoid overriding the central domain landing page.
 
+    // PWA routes (outside storefront-enabled check so manifest/SW always work)
+    Route::get('/manifest.json', [StorefrontController::class, 'manifest'])->name('manifest');
+    Route::get('/service-worker.js', function () {
+        return response()->file(public_path('service-worker.js'), ['Content-Type' => 'application/javascript']);
+    });
+    Route::get('/icons/icon-{size}.png', [StorefrontController::class, 'appIcon'])->name('app.icon');
+
     // Storefront routes — only accessible when storefront is enabled
     // When disabled, these redirect to the external website or show a minimal page
     Route::middleware(\App\Http\Middleware\EnsureStorefrontEnabled::class)->group(function () {
