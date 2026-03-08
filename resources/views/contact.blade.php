@@ -5,7 +5,11 @@
     $storeAddress = \App\Models\Setting::get('store_address');
     $storePhone = \App\Models\Setting::get('store_phone');
     $storeEmail = \App\Models\Setting::get('store_email');
-    $businessHours = \App\Models\Setting::get('business_hours', 'Contact us for hours');
+    $operatingHours = json_decode(\App\Models\Setting::get('operating_hours', '{}'), true);
+    $faqItems = json_decode(\App\Models\Setting::get('faq_items', '[]'), true);
+    $leadTimeHours = \App\Models\Setting::get('order_lead_time_hours', '24');
+    $maxDeliveryMiles = \App\Models\Setting::get('max_delivery_distance_miles', '15');
+    $allergyDisclaimer = \App\Models\Setting::get('allergy_disclaimer');
 @endphp
 
 <div class="max-w-4xl mx-auto px-4 py-12">
@@ -167,56 +171,64 @@
                     Business Hours
                 </h2>
                 
-                <div style="color: var(--warm-700);">
-                    {!! nl2br(e($businessHours)) !!}
+                @if(!empty($operatingHours))
+                <div class="space-y-2" style="color: var(--warm-700);">
+                    @foreach($operatingHours as $day => $hours)
+                    <div class="flex justify-between">
+                        <span class="font-medium">{{ ucfirst($day) }}</span>
+                        <span>
+                            @if(isset($hours['open'], $hours['close']))
+                                {{ \Carbon\Carbon::createFromFormat('H:i', $hours['open'])->format('g:i A') }} - {{ \Carbon\Carbon::createFromFormat('H:i', $hours['close'])->format('g:i A') }}
+                            @else
+                                Closed
+                            @endif
+                        </span>
+                    </div>
+                    @endforeach
                 </div>
+                @else
+                <p style="color: var(--warm-700);">Contact us for hours</p>
+                @endif
                 
                 <div class="mt-6 p-4 rounded-lg" style="background: var(--warm-100);">
                     <p class="text-sm" style="color: var(--warm-700);">
-                        <strong>Note:</strong> Orders require 48 hours advance notice. 
+                        <strong>Note:</strong> Orders require {{ $leadTimeHours }} hours advance notice. 
                         Same-day orders may be available by calling us directly.
                     </p>
                 </div>
             </div>
 
+            @if($allergyDisclaimer)
+            <!-- Allergy Disclaimer -->
+            <div class="card p-8">
+                <h2 class="font-display text-2xl font-semibold mb-4" style="color: var(--warm-900);">
+                    Allergy Information
+                </h2>
+                <p class="text-sm leading-relaxed" style="color: var(--warm-700);">
+                    {{ $allergyDisclaimer }}
+                </p>
+            </div>
+            @endif
+
             <!-- FAQ -->
+            @if(!empty($faqItems))
             <div class="card p-8">
                 <h2 class="font-display text-2xl font-semibold mb-6" style="color: var(--warm-900);">
                     Quick Answers
                 </h2>
                 
                 <div class="space-y-4">
+                    @foreach($faqItems as $faq)
                     <div>
-                        <h3 class="font-semibold mb-2" style="color: var(--warm-900);">How far in advance should I place my order?</h3>
+                        <h3 class="font-semibold mb-2" style="color: var(--warm-900);">{{ $faq['question'] }}</h3>
                         <p class="text-sm" style="color: var(--warm-700);">
-                            We require a minimum of 48 hours notice for all orders to ensure quality and availability.
+                            {{ $faq['answer'] }}
                         </p>
                     </div>
-                    
-                    <div>
-                        <h3 class="font-semibold mb-2" style="color: var(--warm-900);">Do you deliver?</h3>
-                        <p class="text-sm" style="color: var(--warm-700);">
-                            Yes! We offer delivery within 15 miles of our bakery. Delivery fees vary based on distance.
-                        </p>
-                    </div>
-                    
-                    <div>
-                        <h3 class="font-semibold mb-2" style="color: var(--warm-900);">Can I cancel or modify my order?</h3>
-                        <p class="text-sm" style="color: var(--warm-700);">
-                            Orders can be modified or cancelled up to 24 hours before your pickup/delivery date. 
-                            Please contact us as soon as possible.
-                        </p>
-                    </div>
-                    
-                    <div>
-                        <h3 class="font-semibold mb-2" style="color: var(--warm-900);">Do you accommodate dietary restrictions?</h3>
-                        <p class="text-sm" style="color: var(--warm-700);">
-                            We offer various options for different dietary needs. Please mention any allergies or 
-                            restrictions in your order notes or contact us directly.
-                        </p>
-                    </div>
+                    @endforeach
                 </div>
             </div>
+            @endif
         </div>
     </div>
 

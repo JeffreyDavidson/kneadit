@@ -6,7 +6,7 @@
     <div class="text-center mb-16">
         <p class="font-script text-xl mb-2" style="color: var(--warm-500);">Explore</p>
         <h1 class="font-display text-4xl md:text-5xl font-bold mb-4" style="color: var(--warm-900);">
-            Our Menu
+            {{ \App\Models\Setting::get('store_name', 'Our') }} Menu
         </h1>
         <p class="text-lg max-w-2xl mx-auto" style="color: var(--warm-700);">
             Browse our full selection of handcrafted goods. When you're ready, place an order and we'll have everything freshly prepared for you.
@@ -68,7 +68,7 @@
                 See Something You Love?
             </h2>
             <p class="text-lg mb-8 max-w-2xl mx-auto" style="color: var(--warm-700);">
-                Place an order and we'll have it freshly prepared just for you. All orders require 48 hours advance notice.
+                Place an order and we'll have it freshly prepared just for you. All orders require {{ \App\Models\Setting::get('order_lead_time_hours', '24') }} hours advance notice.
             </p>
             <a href="{{ route('order.create') }}" class="btn-primary text-lg px-8 py-4 inline-block">
                 Place an Order
