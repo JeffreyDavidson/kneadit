@@ -7,7 +7,9 @@ use App\Mail\OrderCancelled;
 use App\Mail\OrderConfirmed;
 use App\Mail\OrderDelivered;
 use App\Mail\OrderReady;
+use App\Models\LoyaltyPoint;
 use App\Models\Order;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Mail;
 
 class OrderObserver
@@ -17,6 +19,10 @@ class OrderObserver
         // Check if status field has changed
         if ($order->wasChanged('status')) {
             $this->sendStatusEmail($order);
+
+            if ($order->status === 'delivered') {
+                $this->awardLoyaltyPoints($order);
+            }
         }
     }
 
@@ -37,5 +43,36 @@ class OrderObserver
             'cancelled' => Mail::to($customerEmail)->send(new OrderCancelled($order)),
             default => null
         };
+    }
+
+    private function awardLoyaltyPoints(Order $order): void
+    {
+        if (Setting::get('loyalty_enabled') !== '1') {
+            return;
+        }
+
+        if (!$order->customer_id) {
+            return;
+        }
+
+        // Don't double-award
+        if (LoyaltyPoint::where('order_id', $order->id)->where('type', 'earned')->exists()) {
+            return;
+        }
+
+        $pointsPerDollar = (int) Setting::get('loyalty_points_per_dollar', '10');
+        $points = (int) floor((float) $order->total * $pointsPerDollar);
+
+        if ($points <= 0) {
+            return;
+        }
+
+        LoyaltyPoint::create([
+            'customer_id' => $order->customer_id,
+            'points' => $points,
+            'type' => 'earned',
+            'description' => "Earned from order #{$order->id}",
+            'order_id' => $order->id,
+        ]);
     }
 }

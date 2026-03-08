@@ -118,6 +118,18 @@ class SettingSeeder extends Seeder
                 'value' => '1',
             ],
             [
+                'key' => 'loyalty_enabled',
+                'value' => '1',
+            ],
+            [
+                'key' => 'loyalty_points_per_dollar',
+                'value' => '10',
+            ],
+            [
+                'key' => 'loyalty_program_name',
+                'value' => 'Rewards',
+            ],
+            [
                 'key' => 'faq_items',
                 'value' => json_encode([
                     [
