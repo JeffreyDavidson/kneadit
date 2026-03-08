@@ -381,7 +381,7 @@ class OrderController extends Controller
         $orders = Order::whereHas('customer', function ($q) use ($request) {
                 $q->where('email', $request->email);
             })
-            ->with('orderItems.product')
+            ->with(['orderItems.product', 'messages'])
             ->latest()
             ->get();
 
