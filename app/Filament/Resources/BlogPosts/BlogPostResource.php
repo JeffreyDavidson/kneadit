@@ -10,10 +10,18 @@ use App\Filament\Resources\BlogPosts\Tables\BlogPostsTable;
 use App\Models\BlogPost;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use App\Filament\Traits\RequiresRole;
+use App\Traits\HasPlanGating;
 use Filament\Tables\Table;
 
 class BlogPostResource extends Resource
 {
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'staff';
+    }
     protected static ?string $model = BlogPost::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-pencil-square';
