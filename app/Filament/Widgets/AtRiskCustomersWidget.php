@@ -11,7 +11,7 @@ class AtRiskCustomersWidget extends BaseWidget
 {
     protected static ?int $sort = 6;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = ['md' => 1, 'xl' => 2];
 
     protected static ?string $heading = 'At Risk Customers';
 
