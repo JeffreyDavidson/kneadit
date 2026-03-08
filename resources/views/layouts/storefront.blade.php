@@ -8,9 +8,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Dancing+Script:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
     
+    @php $storefrontTheme = \App\Models\Setting::get('storefront_theme', 'classic'); @endphp
     <style>
+        /* ===== Base / Classic Theme (default) ===== */
         :root {
             --warm-900: #1c1410;
             --warm-800: #2a1f18;
@@ -21,27 +23,86 @@
             --warm-300: #f5d88e;
             --warm-200: #faf4e8;
             --warm-100: #fef9ef;
+            --font-display: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+            --font-script: 'Dancing Script', cursive;
+            --radius-card: 12px;
+            --radius-btn: 8px;
+        }
+
+        /* ===== Modern Theme ===== */
+        [data-theme="modern"] {
+            --warm-900: #111827;
+            --warm-800: #1f2937;
+            --warm-700: #374151;
+            --warm-600: #d4920c;
+            --warm-500: #f59e0b;
+            --warm-400: #fbbf24;
+            --warm-300: #e5e7eb;
+            --warm-200: #f3f4f6;
+            --warm-100: #ffffff;
+            --font-display: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-script: 'Inter', sans-serif;
+            --radius-card: 2px;
+            --radius-btn: 2px;
+        }
+
+        /* ===== Rustic Theme ===== */
+        [data-theme="rustic"] {
+            --warm-900: #3d3527;
+            --warm-800: #4a4035;
+            --warm-700: #5c5245;
+            --warm-600: #6b7c5e;
+            --warm-500: #8a9e76;
+            --warm-400: #a3b48f;
+            --warm-300: #d5ccba;
+            --warm-200: #e8e0d0;
+            --warm-100: #f5f0e8;
+            --font-display: 'Caveat', cursive;
+            --font-body: 'Inter', sans-serif;
+            --font-script: 'Caveat', cursive;
+            --radius-card: 16px;
+            --radius-btn: 16px;
+        }
+
+        /* ===== Elegant Theme ===== */
+        [data-theme="elegant"] {
+            --warm-900: #1a1a1a;
+            --warm-800: #2d2d2d;
+            --warm-700: #444444;
+            --warm-600: #b8960c;
+            --warm-500: #c9a827;
+            --warm-400: #d4b84a;
+            --warm-300: #e0e0e0;
+            --warm-200: #f5f5f5;
+            --warm-100: #ffffff;
+            --font-display: 'Cormorant Garamond', serif;
+            --font-body: 'Inter', sans-serif;
+            --font-script: 'Cormorant Garamond', serif;
+            --radius-card: 0px;
+            --radius-btn: 0px;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             color: var(--warm-900);
             background: var(--warm-100);
         }
 
         .font-display {
-            font-family: 'Playfair Display', serif;
+            font-family: var(--font-display);
         }
 
         .font-script {
-            font-family: 'Dancing Script', cursive;
+            font-family: var(--font-script);
         }
 
         .btn-primary {
             background: var(--warm-600);
             color: white;
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: var(--radius-btn);
             font-weight: 600;
             transition: all 0.3s ease;
             border: none;
@@ -57,7 +118,7 @@
             background: var(--warm-200);
             color: var(--warm-900);
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: var(--radius-btn);
             font-weight: 600;
             transition: all 0.3s ease;
             border: 1px solid var(--warm-300);
@@ -89,7 +150,7 @@
 
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius-card);
             box-shadow: 0 4px 20px rgba(28, 20, 16, 0.1);
             border: 1px solid var(--warm-200);
         }
@@ -98,7 +159,7 @@
             width: 100%;
             padding: 12px 16px;
             border: 2px solid var(--warm-200);
-            border-radius: 8px;
+            border-radius: var(--radius-btn);
             font-size: 16px;
             transition: border-color 0.3s ease;
             background: white;
@@ -127,6 +188,27 @@
 
         .border-primary {
             border-color: var(--warm-500);
+        }
+
+        /* Elegant theme: extra letter-spacing and thin borders */
+        [data-theme="elegant"] .font-display {
+            letter-spacing: 0.05em;
+            font-weight: 300;
+        }
+        [data-theme="elegant"] .card {
+            border-width: 1px;
+            box-shadow: none;
+        }
+
+        /* Rustic theme: larger heading sizes for handwritten feel */
+        [data-theme="rustic"] .font-display {
+            font-weight: 600;
+        }
+
+        /* Modern theme: stronger shadows */
+        [data-theme="modern"] .card {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+            border: none;
         }
 
         @media (max-width: 768px) {
@@ -158,7 +240,7 @@
 
     @yield('styles')
 </head>
-<body @yield('body_attrs')>
+<body data-theme="{{ $storefrontTheme }}" @yield('body_attrs')>
 
     <!-- Navigation -->
     <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
