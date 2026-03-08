@@ -150,6 +150,12 @@
         }
     </style>
     
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="{{ tenant()->brand_color_primary ?? '#d4920c' }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
     @yield('styles')
 </head>
 <body @yield('body_attrs')>
@@ -257,6 +263,11 @@
         </div>
     </footer>
 
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js');
+    }
+    </script>
     @yield('scripts')
 </body>
 </html>
