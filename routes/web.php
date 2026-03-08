@@ -18,6 +18,9 @@ require __DIR__.'/admin.php';
 // Root route — serves landing page on central domains, storefront on tenant subdomains
 Route::get('/', [\App\Http\Controllers\RootController::class, 'index'])->name('home');
 
+// Public bakery directory
+Route::get('/directory', [\App\Http\Controllers\DirectoryController::class, 'index'])->name('directory');
+
 // Tenant Registration (onboarding)
 Route::middleware(['web', 'auth'])->prefix('onboarding')->name('onboarding.')->group(function () {
     Route::get('/', [\App\Http\Controllers\OnboardingController::class, 'show'])->name('show');

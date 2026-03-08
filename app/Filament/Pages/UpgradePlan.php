@@ -3,11 +3,12 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Traits\RequiresRole;
+use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
 
 class UpgradePlan extends Page
 {
-    use RequiresRole;
+    use HasPlanGating, RequiresRole;
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-circle';
     protected static ?string $navigationLabel = 'Upgrade Plan';
     protected static ?string $title = 'Upgrade Your Plan';
