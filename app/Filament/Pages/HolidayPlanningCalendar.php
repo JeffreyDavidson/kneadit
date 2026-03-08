@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Holiday;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 use App\Traits\HasPlanGating;
@@ -17,7 +16,6 @@ class HolidayPlanningCalendar extends Page
     {
         return 'manager';
     }
-
 
     protected static string $requiredPlan = 'pro';
     protected static bool $shouldRegisterNavigation = false;

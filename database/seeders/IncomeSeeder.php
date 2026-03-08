@@ -10,6 +10,10 @@ class IncomeSeeder extends Seeder
 {
     public function run(): void
     {
+        if (\App\Models\Income::count() > 0) {
+            return;
+        }
+
         $incomes = [
             [
                 'description' => 'Winter Haven Farmers Market - Weekend Sales',

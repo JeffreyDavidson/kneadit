@@ -12,7 +12,6 @@ use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class CouponResource extends Resource

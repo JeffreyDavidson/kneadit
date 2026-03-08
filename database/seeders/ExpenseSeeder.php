@@ -10,6 +10,10 @@ class ExpenseSeeder extends Seeder
 {
     public function run(): void
     {
+        if (Expense::count() > 0) {
+            return;
+        }
+
         $expenses = [
             // Ingredients
             [

@@ -17,12 +17,14 @@ class TenantSeeder extends Seeder
         $tenant = tenant();
 
         // Create admin user from tenant data
-        \App\Models\User::create([
-            'name' => $tenant->name,
-            'email' => $tenant->email,
-            'password' => bcrypt('password'),
-            'email_verified_at' => now(),
-        ]);
+        \App\Models\User::firstOrCreate(
+            ['email' => $tenant->email],
+            [
+                'name' => $tenant->name,
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+            ]
+        );
 
         // Set store identity from tenant data
         \App\Models\Setting::set('store_name', $tenant->store_name);

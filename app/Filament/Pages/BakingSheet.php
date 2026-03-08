@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use Filament\Actions\Action;
-use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
