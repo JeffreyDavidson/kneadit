@@ -37,7 +37,7 @@ Route::middleware([
 
     // Storefront routes — only accessible when storefront is enabled
     // When disabled, these redirect to the external website or show a minimal page
-    Route::middleware(\App\Http\Middleware\EnsureStorefrontEnabled::class)->group(function () {
+    Route::middleware([\App\Http\Middleware\EnsureStorefrontEnabled::class, \App\Http\Middleware\TrackPageView::class])->group(function () {
         Route::get('/menu', [StorefrontController::class, 'menu'])->name('storefront.menu');
         Route::get('/order', [OrderController::class, 'index'])->name('order.create');
         Route::post('/order', [OrderController::class, 'store'])->name('order.store');
