@@ -61,6 +61,16 @@ class Product extends Model
         return $this->hasMany(SeasonalItem::class);
     }
 
+    public function waitlistEntries(): HasMany
+    {
+        return $this->hasMany(ProductWaitlist::class);
+    }
+
+    public function pendingWaitlistCount(): int
+    {
+        return $this->waitlistEntries()->whereNull('notified_at')->count();
+    }
+
     public function isInSeason(): bool
     {
         $seasonalItems = $this->seasonalItems;

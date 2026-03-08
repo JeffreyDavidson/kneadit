@@ -190,6 +190,18 @@ class SettingSeeder extends Seeder
                 'key' => 'review_request_delay_hours',
                 'value' => '24',
             ],
+            [
+                'key' => 'catering_enabled',
+                'value' => '0',
+            ],
+            [
+                'key' => 'catering_minimum_guests',
+                'value' => '10',
+            ],
+            [
+                'key' => 'catering_lead_time_days',
+                'value' => '14',
+            ],
         ];
 
         foreach ($settings as $setting) {

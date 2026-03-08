@@ -107,6 +107,13 @@ Route::middleware([
         // Review submission (from email link)
         Route::get('/review/{order}', [StorefrontController::class, 'submitReview'])->name('storefront.submit-review');
         Route::post('/review/{order}', [StorefrontController::class, 'storeReview'])->name('storefront.store-review');
+
+        // Surveys
+        Route::get('/survey/{survey}', [StorefrontController::class, 'survey'])->name('storefront.survey');
+        Route::post('/survey/{survey}', [StorefrontController::class, 'submitSurvey'])->name('survey.submit');
+
+        // Product waitlist
+        Route::post('/waitlist/product', [StorefrontController::class, 'joinProductWaitlist'])->name('product-waitlist.join');
     });
 
     // Tenant Storefront API (JSON, no CSRF)

@@ -258,6 +258,9 @@
                 <a href="{{ route('storefront.gallery') }}" class="nav-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}">Gallery</a>
                 <a href="{{ route('storefront.about') }}" class="nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
                 <a href="{{ route('storefront.blog') }}" class="nav-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}">Blog</a>
+                @if(\App\Models\Setting::get('catering_enabled', '0') === '1')
+                <a href="{{ route('storefront.catering') }}" class="nav-link font-display {{ request()->routeIs('storefront.catering') ? 'active' : '' }}">Catering</a>
+                @endif
                 @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
                 <a href="{{ route('storefront.rewards') }}" class="nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>
                 @endif
@@ -284,6 +287,9 @@
                     <a href="{{ route('storefront.gallery') }}" class="block nav-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}">Gallery</a>
                     <a href="{{ route('storefront.about') }}" class="block nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
                     <a href="{{ route('storefront.blog') }}" class="block nav-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}">Blog</a>
+                    @if(\App\Models\Setting::get('catering_enabled', '0') === '1')
+                    <a href="{{ route('storefront.catering') }}" class="block nav-link font-display {{ request()->routeIs('storefront.catering') ? 'active' : '' }}">Catering</a>
+                    @endif
                     @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
                     <a href="{{ route('storefront.rewards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>
                     @endif
