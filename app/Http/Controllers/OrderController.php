@@ -241,6 +241,28 @@ class OrderController extends Controller
         return $number;
     }
 
+    public function track()
+    {
+        return view('order-tracking');
+    }
+
+    public function trackLookup(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $orders = Order::whereHas('customer', function ($q) use ($request) {
+                $q->where('email', $request->email);
+            })
+            ->with('orderItems.product')
+            ->latest()
+            ->get();
+
+        return view('order-tracking', [
+            'orders' => $orders,
+            'email' => $request->email,
+        ]);
+    }
+
     /**
      * Toggle customer favorite
      */

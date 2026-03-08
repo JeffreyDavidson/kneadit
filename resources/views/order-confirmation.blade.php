@@ -197,7 +197,10 @@
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="{{ url('/') }}" class="btn-primary">
+                <a href="{{ route('order.track') }}" class="btn-primary">
+                    Track Your Order Status
+                </a>
+                <a href="{{ url('/') }}" class="btn-secondary">
                     Back to {{ \App\Models\Setting::get('store_name', 'Home') }}
                 </a>
                 <button onclick="window.print()" class="btn-secondary">

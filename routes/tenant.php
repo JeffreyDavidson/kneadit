@@ -35,6 +35,10 @@ Route::middleware([
         Route::get('/order', [OrderController::class, 'index'])->name('order.create');
         Route::post('/order', [OrderController::class, 'store'])->name('order.store');
         Route::get('/order/confirmation/{order}', [OrderController::class, 'confirmation'])->name('order.confirmation');
+        Route::get('/about', [StorefrontController::class, 'about'])->name('storefront.about');
+        Route::get('/reviews', [StorefrontController::class, 'reviews'])->name('storefront.reviews');
+        Route::get('/track', [OrderController::class, 'track'])->name('order.track');
+        Route::post('/track', [OrderController::class, 'trackLookup'])->name('order.track.lookup');
         Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
         Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 

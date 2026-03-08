@@ -38,16 +38,27 @@
                 <div class="grid md:grid-cols-2 gap-4">
                     @foreach($category->products as $product)
                     @if($product->is_available)
-                    <div class="border border-warm-200 rounded-lg p-4 relative">
+                    <div class="border border-warm-200 rounded-lg overflow-hidden relative">
                         <!-- Favorite Heart -->
                         <button type="button"
                                 @click="toggleFavorite({{ $product->id }})" 
-                                class="absolute top-2 right-2 text-xl"
+                                class="absolute top-2 right-2 text-xl z-10"
                                 :class="isFavorite({{ $product->id }}) ? 'text-red-500' : 'text-warm-300 hover:text-red-400'">
                             <span x-text="isFavorite({{ $product->id }}) ? '❤️' : '🤍'"></span>
                         </button>
+
+                        <!-- Product Image -->
+                        <div style="aspect-ratio: 16/9;">
+                            @if($product->image)
+                                <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, #4a3728, #8b6844);">
+                                    <span class="text-3xl font-display font-bold" style="color: #faf4e8;">{{ strtoupper(substr($product->name, 0, 1)) }}</span>
+                                </div>
+                            @endif
+                        </div>
                         
-                        <div class="pr-6">
+                        <div class="p-4">
                             <h4 class="font-semibold text-warm-900 mb-1">{{ $product->name }}</h4>
                             @if($product->description)
                             <p class="text-sm text-warm-700 mb-2">{{ $product->description }}</p>
@@ -70,6 +81,7 @@
                                     +
                                 </button>
                             </div>
+                        </div>
                         </div>
                     </div>
                     @endif
