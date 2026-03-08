@@ -27,7 +27,19 @@
         
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($category->products as $product)
-            <div class="card p-6 flex flex-col">
+            <div class="card overflow-hidden flex flex-col">
+                <!-- Product Image -->
+                <div style="aspect-ratio: 4/3;">
+                    @if($product->image)
+                        <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, #4a3728, #8b6844);">
+                            <span class="text-4xl font-display font-bold" style="color: #faf4e8;">{{ strtoupper(substr($product->name, 0, 1)) }}</span>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="p-6">
                 <h3 class="font-display text-xl font-semibold mb-2" style="color: var(--warm-900);">
                     {{ $product->name }}
                 </h3>
@@ -50,6 +62,7 @@
                     @else
                     <span class="text-red-600 text-sm font-medium px-3 py-1 rounded-full" style="background: #fef2f2;">Sold Out</span>
                     @endif
+                </div>
                 </div>
             </div>
             @endforeach

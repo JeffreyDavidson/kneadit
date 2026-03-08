@@ -34,6 +34,24 @@ class StorefrontController extends Controller
         return view('menu', compact('categories', 'storeName'));
     }
 
+    public function about()
+    {
+        return view('about');
+    }
+
+    public function reviews()
+    {
+        $reviews = \App\Models\Review::where('is_approved', true)
+            ->with('product')
+            ->latest()
+            ->paginate(12);
+
+        $avgRating = \App\Models\Review::where('is_approved', true)->avg('rating');
+        $totalReviews = \App\Models\Review::where('is_approved', true)->count();
+
+        return view('reviews', compact('reviews', 'avgRating', 'totalReviews'));
+    }
+
     public function getFavorites(Request $request)
     {
         $email = $request->query('email');

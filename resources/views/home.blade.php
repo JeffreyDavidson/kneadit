@@ -120,6 +120,17 @@
                             </svg>
                         </button>
                         
+                        <!-- Product Image -->
+                        <div class="mb-4 rounded-lg overflow-hidden" style="aspect-ratio: 4/3;">
+                            @if($product->image)
+                                <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, #4a3728, #8b6844);">
+                                    <span class="text-4xl font-display font-bold" style="color: #faf4e8;">{{ strtoupper(substr($product->name, 0, 1)) }}</span>
+                                </div>
+                            @endif
+                        </div>
+
                         <div class="pr-8">
                             <h3 class="font-display text-xl font-semibold mb-2" style="color: var(--warm-900);">
                                 {{ $product->name }}
