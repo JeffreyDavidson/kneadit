@@ -2,11 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use App\Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -66,25 +66,25 @@ class AdminPanelProvider extends PanelProvider
             ->font('Inter')
             ->favicon(asset('favicon.ico'))
             ->renderHook('panels::head.end', fn () => new HtmlString(
-                '<link rel="icon" type="image/png" sizes="32x32" href="' . asset('images/favicon-32x32.png') . '">'
-                . '<link rel="icon" type="image/png" sizes="16x16" href="' . asset('images/favicon-16x16.png') . '">'
-                . '<link rel="apple-touch-icon" sizes="180x180" href="' . asset('images/favicon-180x180.png') . '">'
+                '<link rel="icon" type="image/png" sizes="32x32" href="'.asset('images/favicon-32x32.png').'">'
+                .'<link rel="icon" type="image/png" sizes="16x16" href="'.asset('images/favicon-16x16.png').'">'
+                .'<link rel="apple-touch-icon" sizes="180x180" href="'.asset('images/favicon-180x180.png').'">'
                 .
-                '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">'
-                . '<style>:root{'
-                . '--brand-900:' . rescue(fn () => \App\Models\Setting::get('brand_color_900', '#3d2314'), '#3d2314', false) . ';'
-                . '--brand-800:' . rescue(fn () => \App\Models\Setting::get('brand_color_800', '#4a3225'), '#4a3225', false) . ';'
-                . '--brand-700:' . rescue(fn () => \App\Models\Setting::get('brand_color_700', '#6b4c3b'), '#6b4c3b', false) . ';'
-                . '--brand-600:' . rescue(fn () => \App\Models\Setting::get('brand_color_600', '#8b5e3c'), '#8b5e3c', false) . ';'
-                . '--brand-500:' . rescue(fn () => \App\Models\Setting::get('brand_color_500', '#a08060'), '#a08060', false) . ';'
-                . '--brand-400:' . rescue(fn () => \App\Models\Setting::get('brand_color_400', '#c4a882'), '#c4a882', false) . ';'
-                . '--brand-300:' . rescue(fn () => \App\Models\Setting::get('brand_color_300', '#d4a574'), '#d4a574', false) . ';'
-                . '--brand-200:' . rescue(fn () => \App\Models\Setting::get('brand_color_200', '#e8d0b0'), '#e8d0b0', false) . ';'
-                . '--brand-150:' . rescue(fn () => \App\Models\Setting::get('brand_color_150', '#f3ebe0'), '#f3ebe0', false) . ';'
-                . '--brand-100:' . rescue(fn () => \App\Models\Setting::get('brand_color_100', '#f5e6d0'), '#f5e6d0', false) . ';'
-                . '--brand-50:' . rescue(fn () => \App\Models\Setting::get('brand_color_50', '#fdf8f2'), '#fdf8f2', false) . ';'
-                . '--accent-gold:' . rescue(fn () => \App\Models\Setting::get('brand_color_300', '#d4a574'), '#d4a574', false) . ';'
-                . '}</style>'
+                '<link rel="stylesheet" href="'.asset('css/filament-custom.css').'?v='.filemtime(public_path('css/filament-custom.css')).'">'
+                .'<style>:root{'
+                .'--brand-900:'.rescue(fn () => \App\Models\Setting::get('brand_color_900', '#3d2314'), '#3d2314', false).';'
+                .'--brand-800:'.rescue(fn () => \App\Models\Setting::get('brand_color_800', '#4a3225'), '#4a3225', false).';'
+                .'--brand-700:'.rescue(fn () => \App\Models\Setting::get('brand_color_700', '#6b4c3b'), '#6b4c3b', false).';'
+                .'--brand-600:'.rescue(fn () => \App\Models\Setting::get('brand_color_600', '#8b5e3c'), '#8b5e3c', false).';'
+                .'--brand-500:'.rescue(fn () => \App\Models\Setting::get('brand_color_500', '#a08060'), '#a08060', false).';'
+                .'--brand-400:'.rescue(fn () => \App\Models\Setting::get('brand_color_400', '#c4a882'), '#c4a882', false).';'
+                .'--brand-300:'.rescue(fn () => \App\Models\Setting::get('brand_color_300', '#d4a574'), '#d4a574', false).';'
+                .'--brand-200:'.rescue(fn () => \App\Models\Setting::get('brand_color_200', '#e8d0b0'), '#e8d0b0', false).';'
+                .'--brand-150:'.rescue(fn () => \App\Models\Setting::get('brand_color_150', '#f3ebe0'), '#f3ebe0', false).';'
+                .'--brand-100:'.rescue(fn () => \App\Models\Setting::get('brand_color_100', '#f5e6d0'), '#f5e6d0', false).';'
+                .'--brand-50:'.rescue(fn () => \App\Models\Setting::get('brand_color_50', '#fdf8f2'), '#fdf8f2', false).';'
+                .'--accent-gold:'.rescue(fn () => \App\Models\Setting::get('brand_color_300', '#d4a574'), '#d4a574', false).';'
+                .'}</style>'
             ))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
