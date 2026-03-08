@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
 class Customer extends Model
 {
@@ -32,6 +33,37 @@ class Customer extends Model
     public function customerProfile(): HasOne
     {
         return $this->hasOne(CustomerProfile::class);
+    }
+
+    public function getLifetimeValueAttribute(): float
+    {
+        return $this->orders()->where('status', '!=', 'cancelled')->sum('total');
+    }
+
+    public function getOrderCountAttribute(): int
+    {
+        return $this->orders()->where('status', '!=', 'cancelled')->count();
+    }
+
+    public function getLastOrderDateAttribute(): ?Carbon
+    {
+        return $this->orders()->latest()->value('created_at');
+    }
+
+    public function getAverageOrderValueAttribute(): float
+    {
+        return $this->order_count > 0 ? $this->lifetime_value / $this->order_count : 0;
+    }
+
+    public function getDaysSinceLastOrderAttribute(): ?int
+    {
+        if (!$this->last_order_date) return null;
+        return (int) Carbon::parse($this->last_order_date)->diffInDays(now());
+    }
+
+    public function getIsAtRiskAttribute(): bool
+    {
+        return $this->order_count > 0 && $this->days_since_last_order !== null && $this->days_since_last_order > 30;
     }
 
     public function getFullAddressAttribute(): string
