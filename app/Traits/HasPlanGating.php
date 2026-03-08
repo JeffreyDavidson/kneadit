@@ -43,6 +43,7 @@ trait HasPlanGating
             'coupons',
             'customer-notes',
             'customer-favorites',
+            'gift-cards',
         ],
         'pro' => [
             'orders',
@@ -64,6 +65,7 @@ trait HasPlanGating
             'holiday-planning',
             'delivery-route-planner',
             'custom-branding',
+            'gift-cards',
         ],
     ];
 
