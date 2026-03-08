@@ -198,7 +198,7 @@
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a href="{{ url('/') }}" class="btn-primary">
-                    Continue Shopping
+                    Back to {{ \App\Models\Setting::get('store_name', 'Home') }}
                 </a>
                 <button onclick="window.print()" class="btn-secondary">
                     Print Order Details
