@@ -52,6 +52,32 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function seasonalItems(): HasMany
+    {
+        return $this->hasMany(SeasonalItem::class);
+    }
+
+    public function isInSeason(): bool
+    {
+        $seasonalItems = $this->seasonalItems;
+        if ($seasonalItems->isEmpty()) {
+            return true; // Not seasonal = always available
+        }
+        return $seasonalItems->contains(fn ($item) => $item->isCurrentlyAvailable());
+    }
+
+    public function getSeasonalBadgeAttribute(): ?string
+    {
+        $seasonal = $this->seasonalItems->first();
+        if (!$seasonal) {
+            return null;
+        }
+        if ($seasonal->isCurrentlyAvailable()) {
+            return 'Limited Time';
+        }
+        return 'Available ' . $seasonal->available_from->format('M') . ' - ' . $seasonal->available_until->format('M');
+    }
+
     public function getMarginAttribute(): ?float
     {
         if ($this->cost && $this->price) {

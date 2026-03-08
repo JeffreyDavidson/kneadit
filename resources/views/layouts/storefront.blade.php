@@ -255,6 +255,7 @@
                 <a href="{{ route('order.create') }}" class="nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
                 <a href="{{ route('order.track') }}" class="nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
                 <a href="{{ route('storefront.reviews') }}" class="nav-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}">Reviews</a>
+                <a href="{{ route('storefront.gallery') }}" class="nav-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}">Gallery</a>
                 <a href="{{ route('storefront.about') }}" class="nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
                 @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
                 <a href="{{ route('storefront.rewards') }}" class="nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>
@@ -278,6 +279,7 @@
                     <a href="{{ route('order.create') }}" class="block nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
                     <a href="{{ route('order.track') }}" class="block nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
                     <a href="{{ route('storefront.reviews') }}" class="block nav-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}">Reviews</a>
+                    <a href="{{ route('storefront.gallery') }}" class="block nav-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}">Gallery</a>
                     <a href="{{ route('storefront.about') }}" class="block nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
                     @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
                     <a href="{{ route('storefront.rewards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>

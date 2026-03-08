@@ -8,6 +8,7 @@
     $leadTimeHours = \App\Models\Setting::get('order_lead_time_hours', '24');
     $socialLinks = json_decode(\App\Models\Setting::get('social_media_links', '{}'), true);
     $reviews = \App\Models\Review::where('is_approved', true)->latest()->take(3)->get();
+    $customerPhotos = \App\Models\CustomerPhoto::approved()->featured()->with('product')->latest()->take(4)->get();
 @endphp
 
 <div class="max-w-7xl mx-auto px-4 py-12">
@@ -186,6 +187,38 @@
                 <p class="font-semibold" style="color: var(--warm-900);">{{ $review->customer_name }}</p>
             </div>
             @endforeach
+        </div>
+    </div>
+    @endif
+
+    <!-- Customer Gallery Section -->
+    @if($customerPhotos->count() > 0)
+    <div class="mb-20">
+        <div class="text-center mb-12">
+            <p class="font-script text-xl mb-2" style="color: var(--warm-500);">Shared by our community</p>
+            <h2 class="font-display text-3xl md:text-4xl font-semibold" style="color: var(--warm-900);">Customer Gallery</h2>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach($customerPhotos as $photo)
+            <div class="card overflow-hidden">
+                <img src="{{ asset('storage/customer-photos/' . basename($photo->photo_path)) }}" 
+                     alt="Photo by {{ $photo->customer_name }}" 
+                     class="w-full h-48 object-cover" loading="lazy">
+                <div class="p-4">
+                    @if($photo->caption)
+                    <p class="text-sm italic mb-2" style="color: var(--warm-700);">"{{ Str::limit($photo->caption, 60) }}"</p>
+                    @endif
+                    <p class="text-sm font-semibold" style="color: var(--warm-900);">— {{ Str::of($photo->customer_name)->explode(' ')->first() }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="{{ route('storefront.gallery') }}" class="btn-secondary inline-block px-6 py-3">
+                View Full Gallery →
+            </a>
         </div>
     </div>
     @endif
