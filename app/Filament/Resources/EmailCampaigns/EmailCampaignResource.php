@@ -49,6 +49,24 @@ class EmailCampaignResource extends Resource
         return [];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['subject'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return $record->subject;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Status' => ucfirst($record->status ?? 'draft'),
+            'Recipients' => $record->recipient_count ?? 0,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

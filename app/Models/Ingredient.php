@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ingredient extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'name',
         'unit',

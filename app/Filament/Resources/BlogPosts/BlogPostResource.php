@@ -47,6 +47,24 @@ class BlogPostResource extends Resource
         return [];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title', 'excerpt'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return $record->title;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Author' => $record->author_name ?? 'N/A',
+            'Published' => $record->is_published ? ($record->published_at?->format('M d, Y') ?? 'Yes') : 'Draft',
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

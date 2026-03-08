@@ -45,6 +45,24 @@ class IngredientResource extends Resource
         return [];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'supplier'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return $record->name;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Supplier' => $record->supplier ?? 'N/A',
+            'Stock' => $record->current_stock . ' ' . ($record->unit ?? ''),
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

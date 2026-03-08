@@ -49,6 +49,24 @@ class CustomerResource extends Resource
         ];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email', 'phone'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return $record->name;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Email' => $record->email ?? 'N/A',
+            'Phone' => $record->phone ?? 'N/A',
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

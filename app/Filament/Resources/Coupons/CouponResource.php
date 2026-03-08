@@ -47,6 +47,25 @@ class CouponResource extends Resource
         ];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['code', 'description'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return $record->code;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Type' => ucfirst($record->type ?? 'N/A'),
+            'Value' => $record->type === 'percentage' ? $record->value . '%' : '$' . number_format($record->value, 2),
+            'Active' => $record->is_active ? 'Yes' : 'No',
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

@@ -14,6 +14,9 @@ Schedule::command('paypal:check-payments')->hourly();
 // Schedule birthday discount emails daily at 9 AM
 Schedule::command('birthday:send-discounts')->dailyAt('09:00');
 
+// Schedule happy birthday emails daily at 8 AM
+Schedule::command('birthday:send-emails')->dailyAt('08:00');
+
 // Schedule repeat order reminders daily at 10 AM
 Schedule::command('orders:send-repeat-reminders')->dailyAt('10:00');
 
