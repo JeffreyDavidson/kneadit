@@ -12,13 +12,19 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 
 use App\Traits\HasPlanGating;
 class CustomerDirectory extends Page implements HasForms
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'growth';

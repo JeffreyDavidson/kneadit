@@ -10,13 +10,14 @@ use App\Filament\Resources\Incomes\Tables\IncomesTable;
 use App\Models\Income;
 use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class IncomeResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
     protected static ?string $model = Income::class;
     protected static string $requiredPlan = 'growth';

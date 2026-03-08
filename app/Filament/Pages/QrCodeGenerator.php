@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
@@ -18,7 +19,12 @@ use Illuminate\Support\Facades\Response;
 use App\Traits\HasPlanGating;
 class QrCodeGenerator extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'growth';

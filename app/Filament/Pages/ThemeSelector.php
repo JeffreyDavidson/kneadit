@@ -5,12 +5,13 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use BackedEnum;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Illuminate\Http\Request;
 
 use App\Traits\HasPlanGating;
 class ThemeSelector extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
 
     protected static string $requiredPlan = 'pro';

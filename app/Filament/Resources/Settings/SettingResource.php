@@ -10,6 +10,7 @@ use App\Filament\Resources\Settings\Tables\SettingsTable;
 use App\Models\Setting;
 use BackedEnum;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -17,7 +18,7 @@ use Filament\Tables\Table;
 use App\Traits\HasPlanGating;
 class SettingResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
     protected static ?string $model = Setting::class;
 

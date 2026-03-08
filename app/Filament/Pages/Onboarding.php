@@ -17,6 +17,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TimePicker;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
@@ -29,7 +30,7 @@ use Illuminate\Support\Str;
 use App\Traits\HasPlanGating;
 class Onboarding extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
     protected static bool $shouldRegisterNavigation = false;
 

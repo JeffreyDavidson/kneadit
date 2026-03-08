@@ -9,13 +9,19 @@ use App\Filament\Resources\BlockedDates\Schemas\BlockedDateForm;
 use App\Filament\Resources\BlockedDates\Tables\BlockedDatesTable;
 use App\Models\BlockedDate;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
 use App\Traits\HasPlanGating;
 class BlockedDateResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';

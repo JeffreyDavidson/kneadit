@@ -7,6 +7,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -17,7 +18,7 @@ use Filament\Schemas\Schema;
 use App\Traits\HasPlanGating;
 class ScheduleManager extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
 
     protected static string $requiredPlan = 'pro';

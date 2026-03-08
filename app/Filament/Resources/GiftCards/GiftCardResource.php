@@ -11,12 +11,18 @@ use App\Filament\Resources\GiftCards\Tables\GiftCardsTable;
 use App\Models\GiftCard;
 use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
 class GiftCardResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
     protected static ?string $model = GiftCard::class;
     protected static string $requiredPlan = 'growth';

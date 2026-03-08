@@ -10,6 +10,7 @@ use App\Filament\Resources\Products\Tables\ProductsTable;
 use App\Models\Product;
 use BackedEnum;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -17,7 +18,12 @@ use Filament\Tables\Table;
 use App\Traits\HasPlanGating;
 class ProductResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'staff';
+    }
 
     protected static ?string $model = Product::class;
 

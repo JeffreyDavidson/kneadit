@@ -10,13 +10,19 @@ use App\Filament\Resources\EmailCampaigns\Tables\EmailCampaignsTable;
 use App\Models\EmailCampaign;
 use BackedEnum;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
 use App\Traits\HasPlanGating;
 class EmailCampaignResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';

@@ -5,12 +5,18 @@ namespace App\Filament\Pages;
 use App\Models\Category;
 use App\Models\Setting;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 use App\Traits\HasPlanGating;
 class PrintableMenu extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'growth';

@@ -8,6 +8,7 @@ use App\Filament\Resources\GalleryPhotos\Pages\ListGalleryPhotos;
 use App\Models\GalleryPhoto;
 use BackedEnum;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -30,7 +31,12 @@ use Filament\Tables\Filters\TernaryFilter;
 use App\Traits\HasPlanGating;
 class GalleryPhotoResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';

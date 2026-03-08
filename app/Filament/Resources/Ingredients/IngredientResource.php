@@ -10,12 +10,18 @@ use App\Filament\Resources\Ingredients\Tables\IngredientsTable;
 use App\Models\Ingredient;
 use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
+use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
 class IngredientResource extends Resource
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
     protected static ?string $model = Ingredient::class;
     protected static string $requiredPlan = 'pro';

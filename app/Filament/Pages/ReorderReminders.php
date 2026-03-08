@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Order;
 use BackedEnum;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
@@ -12,7 +13,12 @@ use Livewire\Attributes\Url;
 use App\Traits\HasPlanGating;
 class ReorderReminders extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'growth';

@@ -8,12 +8,13 @@ use App\Models\LoyaltyReward;
 use App\Models\Setting;
 use BackedEnum;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Illuminate\Support\Facades\DB;
 
 use App\Traits\HasPlanGating;
 class LoyaltyDashboard extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
 
 
     protected static string $requiredPlan = 'pro';

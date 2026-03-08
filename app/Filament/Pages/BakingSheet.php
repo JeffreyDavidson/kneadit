@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Actions\Action;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -12,7 +13,12 @@ use Illuminate\Support\Facades\DB;
 use App\Traits\HasPlanGating;
 class BakingSheet extends Page
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-printer';
     protected static ?string $navigationLabel = 'Baking Sheet';

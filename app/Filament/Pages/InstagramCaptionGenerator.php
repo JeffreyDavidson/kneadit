@@ -9,13 +9,19 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
+use App\Filament\Traits\RequiresRole;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Icons\Heroicon;
 
 use App\Traits\HasPlanGating;
 class InstagramCaptionGenerator extends Page implements HasForms
 {
-    use HasPlanGating;
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'manager';
+    }
 
 
     protected static string $requiredPlan = 'pro';
