@@ -197,7 +197,7 @@
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="{{ route('storefront.home') }}" class="btn-primary">
+                <a href="{{ url('/') }}" class="btn-primary">
                     Continue Shopping
                 </a>
                 <button onclick="window.print()" class="btn-secondary">

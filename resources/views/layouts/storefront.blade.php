@@ -158,7 +158,7 @@
     <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
         <div class="bg-warm-800 bg-opacity-90 backdrop-blur-sm rounded-full px-6 py-3 border border-warm-600 border-opacity-20">
             <div class="nav-desktop items-center space-x-2">
-                <a href="{{ route('storefront.home') }}" class="nav-link font-display {{ request()->routeIs('storefront.home') ? 'active' : '' }}">Home</a>
+                <a href="{{ url('/') }}" class="nav-link font-display {{ request()->is('/') ? 'active' : '' }}">Home</a>
                 <a href="{{ route('order.create') }}" class="nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
                 <a href="{{ route('contact.show') }}" class="nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
             </div>
@@ -169,7 +169,7 @@
                     <span x-text="open ? '✕' : '☰'"></span>
                 </button>
                 <div x-show="open" x-collapse class="mt-4 space-y-2">
-                    <a href="{{ route('storefront.home') }}" class="block nav-link font-display {{ request()->routeIs('storefront.home') ? 'active' : '' }}">Home</a>
+                    <a href="{{ url('/') }}" class="block nav-link font-display {{ request()->is('/') ? 'active' : '' }}">Home</a>
                     <a href="{{ route('order.create') }}" class="block nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
                     <a href="{{ route('contact.show') }}" class="block nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
                 </div>
