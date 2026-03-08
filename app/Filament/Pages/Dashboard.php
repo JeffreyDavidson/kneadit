@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\AtRiskCustomersWidget;
 use App\Filament\Widgets\BakingSheetWidget;
 use App\Filament\Widgets\GoalTrackerWidget;
 use App\Filament\Widgets\MarginAlertWidget;
@@ -29,6 +30,7 @@ class Dashboard extends BaseDashboard
             PopularProductsWidget::class,
             WeeklyRevenueChart::class,
             GoalTrackerWidget::class,
+            AtRiskCustomersWidget::class,
         ];
     }
 }

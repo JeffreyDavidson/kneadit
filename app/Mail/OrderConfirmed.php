@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Order;
+use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -20,9 +21,18 @@ class OrderConfirmed extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: "Order #{$this->order->order_number} Confirmed - KneadIt Bakery",
+        $storeName = Setting::get('store_name', 'KneadIt Bakery');
+        $replyTo = Setting::get('store_email');
+
+        $envelope = new Envelope(
+            subject: "Order #{$this->order->order_number} Confirmed — {$storeName}",
         );
+
+        if ($replyTo) {
+            $envelope->replyTo($replyTo);
+        }
+
+        return $envelope;
     }
 
     public function content(): Content

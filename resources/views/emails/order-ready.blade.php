@@ -1,84 +1,35 @@
 @extends('emails.layout')
 
-@section('title', 'Your Order is Ready! - KneadIt Bakery')
-
-@section('badge-color', '#17a2b8')
+@section('title', 'Your Order is Ready!')
 
 @section('content')
-<p>Hello {{ $customer->name }},</p>
-
-<p><strong>🎉 Your order is ready!</strong> All your delicious treats have been freshly prepared and are waiting for you. They smell absolutely amazing!</p>
-
-<div class="status-badge" style="background-color: #17a2b8;">
-    ✨ Ready for {{ $order->delivery_address ? 'Delivery' : 'Pickup' }}
-</div>
-
-<div class="order-details">
-    <div class="order-number">Order #{{ $order->order_number }}</div>
-    
-    <div class="order-items">
-        <h4 style="margin-bottom: 10px; color: #8b4513;">Your Fresh Items:</h4>
-        @foreach($orderItems as $item)
-            <div class="order-item">
-                <div>
-                    <div class="item-name">✅ {{ $item->product->name }}</div>
-                    <div class="item-details">
-                        Quantity: {{ $item->quantity }} - <em>Freshly prepared!</em>
-                        @if($item->special_instructions)
-                            <br><em>Prepared with: {{ $item->special_instructions }}</em>
-                        @endif
-                    </div>
-                </div>
-                <div class="item-price">${{ number_format($item->total_price, 2) }}</div>
-            </div>
-        @endforeach
-    </div>
-
-    <div class="order-total">
-        <div style="display: flex; justify-content: space-between;">
-            <span class="total-label">Total Paid:</span>
-            <span class="total-amount">${{ number_format($order->total, 2) }}</span>
-        </div>
-    </div>
-</div>
+<p style="margin: 0 0 15px;">Hello {{ $customer->name }},</p>
 
 @if($order->delivery_address)
-    <div class="delivery-info" style="background-color: #d1ecf1; border-left: 4px solid #17a2b8;">
-        <div class="info-label">🚚 Delivery Information</div>
-        <p style="margin: 5px 0;"><strong>We're on our way!</strong></p>
-        <p style="margin: 5px 0;"><strong>Delivery Address:</strong> {{ $order->delivery_address }}</p>
-        <p style="margin: 5px 0;"><strong>Expected Time:</strong> {{ $order->requested_time->format('g:i A') }}</p>
-        <p style="margin: 10px 0 5px; color: #0c5460;"><em>Please ensure someone is available to receive the delivery. We'll call when we arrive!</em></p>
+    <p style="margin: 0 0 20px; font-size: 18px; font-weight: 600; color: #d4920c;">🚚 Your order is on its way!</p>
+
+    <div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid #d4920c;">
+        <div style="font-size: 18px; font-weight: 700; color: #1c1410; margin-bottom: 10px;">Order #{{ $order->order_number }}</div>
+        <p style="margin: 0 0 5px;"><strong>Delivery Address:</strong> {{ $order->delivery_address }}</p>
+        <p style="margin: 0 0 5px;"><strong>Estimated Time:</strong> {{ $order->requested_time->format('g:i A') }}</p>
+        <p style="margin: 10px 0 0; color: #555; font-size: 14px;"><em>Please ensure someone is available to receive the delivery.</em></p>
     </div>
 @else
-    <div class="delivery-info" style="background-color: #d1ecf1; border-left: 4px solid #17a2b8;">
-        <div class="info-label">🏪 Ready for Pickup!</div>
-        <p style="margin: 5px 0;"><strong>Available now until:</strong> {{ $order->requested_time->format('g:i A') }}</p>
-        <p style="margin: 5px 0;"><strong>Pickup Location:</strong></p>
-        <p style="margin: 5px 0; padding-left: 15px;">
-            KneadIt Bakery<br>
-            123 Baker Street<br>
-            Sweet City, SC 12345
-        </p>
-        <p style="margin: 10px 0 5px; color: #0c5460;"><em>Just mention your name or order number when you arrive!</em></p>
+    <p style="margin: 0 0 20px; font-size: 18px; font-weight: 600; color: #d4920c;">🎉 Your order is ready for pickup!</p>
+
+    <div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid #d4920c;">
+        <div style="font-size: 18px; font-weight: 700; color: #1c1410; margin-bottom: 10px;">Order #{{ $order->order_number }}</div>
+        <p style="margin: 0 0 5px;"><strong>Pickup Location:</strong> {{ \App\Models\Setting::get('store_address', '') }}</p>
+        @if(\App\Models\Setting::get('store_phone'))
+            <p style="margin: 0 0 5px;"><strong>Phone:</strong> {{ \App\Models\Setting::get('store_phone') }}</p>
+        @endif
+        <p style="margin: 10px 0 0; color: #555; font-size: 14px;"><em>Just mention your name or order number when you arrive!</em></p>
     </div>
 @endif
 
-<div style="background-color: #d4edda; border-radius: 6px; padding: 15px; margin: 20px 0; border-left: 4px solid #28a745;">
-    <div class="info-label">🌟 Order Complete!</div>
-    <p style="margin: 5px 0;">Everything has been prepared exactly as requested, using only the finest ingredients. We hope you love every bite!</p>
-    @if($order->payment_method === 'cash')
-        <p style="margin: 5px 0;"><strong>Payment:</strong> Cash payment due upon {{ $order->delivery_address ? 'delivery' : 'pickup' }}</p>
-    @else
-        <p style="margin: 5px 0;"><strong>Payment:</strong> Already processed via {{ ucfirst($order->payment_method) }}</p>
-    @endif
+<div style="text-align: center; margin: 25px 0;">
+    <a href="{{ url('/track') }}" style="display: inline-block; background-color: #d4920c; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">Track Your Order</a>
 </div>
 
-<p>Thank you for choosing KneadIt Bakery! We can't wait for you to enjoy your fresh, delicious treats.</p>
-
-<p><strong>Don't forget to share your experience!</strong> We'd love to hear how you enjoyed your order. Tag us on social media or leave a review!</p>
-
-<p style="color: #666; font-size: 14px;">
-    <em>Having any issues? Contact us immediately at (555) 123-BAKE or reply to this email.</em>
-</p>
+<p style="margin: 0; color: #555; font-size: 14px;">Thank you for choosing {{ \App\Models\Setting::get('store_name', 'KneadIt Bakery') }}!</p>
 @endsection
