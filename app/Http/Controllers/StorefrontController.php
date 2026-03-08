@@ -13,6 +13,9 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Models\BlogPost;
 use App\Models\Setting;
+use App\Models\ProductWaitlist;
+use App\Models\Survey;
+use App\Models\SurveyResponse;
 use App\Services\GiftCardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -383,5 +386,66 @@ class StorefrontController extends Controller
 
         return redirect()->route('storefront.catering')
             ->with('success', 'Thank you for your inquiry! We\'ll review your request and get back to you with a custom quote soon.');
+    }
+
+    public function survey(Survey $survey)
+    {
+        if (!$survey->is_active) {
+            abort(404);
+        }
+
+        return view('survey', compact('survey'));
+    }
+
+    public function submitSurvey(Request $request, Survey $survey)
+    {
+        if (!$survey->is_active) {
+            abort(404);
+        }
+
+        $request->validate([
+            'customer_name' => 'nullable|string|max:255',
+            'customer_email' => 'nullable|email|max:255',
+            'answers' => 'required|array',
+        ]);
+
+        SurveyResponse::create([
+            'survey_id' => $survey->id,
+            'customer_name' => $request->customer_name,
+            'customer_email' => $request->customer_email,
+            'answers' => array_values($request->answers),
+            'created_at' => now(),
+        ]);
+
+        $survey->increment('responses_count');
+
+        return redirect()->route('storefront.survey', $survey)->with('survey_submitted', true);
+    }
+
+    public function joinProductWaitlist(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'customer_email' => 'required|email|max:255',
+            'customer_name' => 'nullable|string|max:255',
+        ]);
+
+        ProductWaitlist::updateOrCreate(
+            [
+                'product_id' => $request->product_id,
+                'customer_email' => $request->customer_email,
+            ],
+            [
+                'customer_name' => $request->customer_name,
+                'notified_at' => null,
+                'created_at' => now(),
+            ]
+        );
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'You\'ll be notified when this item is available!']);
+        }
+
+        return back()->with('waitlist_success', 'You\'ll be notified when this item is available!');
     }
 }
