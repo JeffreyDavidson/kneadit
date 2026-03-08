@@ -56,10 +56,13 @@ class SchedulingTest extends TestCase
             'close_time' => '17:00',
         ]);
 
-        BlockedDate::create([
+        // Insert directly to avoid Eloquent date cast adding time component in SQLite
+        \DB::table('blocked_dates')->insert([
             'date' => $tomorrow->toDateString(),
             'reason' => 'Holiday',
             'is_all_day' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)->getJson('/availability');
