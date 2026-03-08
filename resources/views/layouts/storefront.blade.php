@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'KneadIt - Artisan Bakery SaaS' }}</title>
+    <title>{{ $title ?? \App\Models\Setting::get('store_name', 'Artisan Bakery') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -156,20 +156,31 @@
 
     <!-- Navigation -->
     <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-        <div class="bg-warm-800 bg-opacity-90 backdrop-blur-sm rounded-full px-6 py-3 border border-warm-600 border-opacity-20">
+        <div class="bg-warm-800 bg-opacity-90 backdrop-blur-sm rounded-full px-6 py-3 border border-warm-600 border-opacity-20" style="background: var(--warm-800);">
             <div class="nav-desktop items-center space-x-2">
+                <a href="{{ url('/') }}" class="nav-link font-script text-lg" style="color: var(--warm-400); font-size: 1.15rem;">
+                    {{ \App\Models\Setting::get('store_name', 'Our Bakery') }}
+                </a>
+                <span style="color: var(--warm-600); opacity: 0.4;">|</span>
                 <a href="{{ url('/') }}" class="nav-link font-display {{ request()->is('/') ? 'active' : '' }}">Home</a>
+                <a href="{{ route('storefront.menu') }}" class="nav-link font-display {{ request()->routeIs('storefront.menu') ? 'active' : '' }}">Menu</a>
                 <a href="{{ route('order.create') }}" class="nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
                 <a href="{{ route('contact.show') }}" class="nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
             </div>
             
             <!-- Mobile menu button -->
             <div class="nav-mobile" x-data="{ open: false }">
-                <button @click="open = !open" class="nav-link font-display">
-                    <span x-text="open ? '✕' : '☰'"></span>
-                </button>
+                <div class="flex items-center justify-between">
+                    <a href="{{ url('/') }}" class="font-script text-lg" style="color: var(--warm-400); text-decoration: none;">
+                        {{ \App\Models\Setting::get('store_name', 'Our Bakery') }}
+                    </a>
+                    <button @click="open = !open" class="nav-link font-display ml-4">
+                        <span x-text="open ? '✕' : '☰'"></span>
+                    </button>
+                </div>
                 <div x-show="open" x-collapse class="mt-4 space-y-2">
                     <a href="{{ url('/') }}" class="block nav-link font-display {{ request()->is('/') ? 'active' : '' }}">Home</a>
+                    <a href="{{ route('storefront.menu') }}" class="block nav-link font-display {{ request()->routeIs('storefront.menu') ? 'active' : '' }}">Menu</a>
                     <a href="{{ route('order.create') }}" class="block nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
                     <a href="{{ route('contact.show') }}" class="block nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
                 </div>
@@ -182,20 +193,36 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-warm-900 text-warm-200 py-16">
+    <footer style="background: var(--warm-900); color: var(--warm-200);" class="py-16">
         <div class="max-w-6xl mx-auto px-4 text-center">
-            <div class="h-1 bg-gradient-to-r from-transparent via-warm-500 to-transparent mb-12"></div>
+            <div class="h-1 mb-12" style="background: linear-gradient(to right, transparent, var(--warm-500), transparent);"></div>
             
-            <h3 class="font-display text-2xl mb-2">KneadIt</h3>
-            <p class="font-script text-xl text-warm-400 mb-6">Artisan Bakery Management</p>
+            <h3 class="font-display text-2xl mb-2">{{ \App\Models\Setting::get('store_name', 'Our Bakery') }}</h3>
+            <p class="font-script text-xl mb-6" style="color: var(--warm-400);">Baked with love, served with care</p>
             
-            <div class="inline-block border border-warm-600 border-opacity-30 rounded-full px-6 py-2 mb-6">
-                <span class="text-sm text-warm-400 tracking-wide">Powered by Innovation</span>
+            @php
+                $footerAddress = \App\Models\Setting::get('store_address');
+                $footerPhone = \App\Models\Setting::get('store_phone');
+                $footerEmail = \App\Models\Setting::get('store_email');
+            @endphp
+            
+            @if($footerAddress || $footerPhone || $footerEmail)
+            <div class="flex flex-wrap justify-center gap-6 mb-8 text-sm" style="color: var(--warm-400);">
+                @if($footerAddress)
+                <span>{{ $footerAddress }}</span>
+                @endif
+                @if($footerPhone)
+                <span>{{ $footerPhone }}</span>
+                @endif
+                @if($footerEmail)
+                <span>{{ $footerEmail }}</span>
+                @endif
             </div>
+            @endif
             
-            <div class="text-sm text-warm-400 leading-relaxed space-y-1">
-                <p>Built for artisan bakeries who demand excellence</p>
-                <p>© {{ date('Y') }} KneadIt. All rights reserved.</p>
+            <div class="text-sm leading-relaxed space-y-3" style="color: var(--warm-400);">
+                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::get('store_name', 'Our Bakery') }}. All rights reserved.</p>
+                <p class="text-xs opacity-60">Powered by KneadIt</p>
             </div>
         </div>
     </footer>
