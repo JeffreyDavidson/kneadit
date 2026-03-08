@@ -6,7 +6,6 @@ use App\Models\PageView;
 use App\Models\Product;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class TrackPageView
@@ -47,14 +46,16 @@ class TrackPageView
         }
 
         $sessionId = $request->session()->getId();
-        $cacheKey = "pv:{$sessionId}:{$page}";
 
-        // Throttle: one view per session per page per hour
-        if (Cache::has($cacheKey)) {
+        // Throttle: one view per session per page per hour (using session to avoid cache tagging issues with Stancl)
+        $throttleKey = "pv_tracked:{$page}";
+        $trackedAt = $request->session()->get($throttleKey);
+
+        if ($trackedAt && now()->diffInMinutes(\Carbon\Carbon::parse($trackedAt)) < 60) {
             return $response;
         }
 
-        Cache::put($cacheKey, true, now()->addHour());
+        $request->session()->put($throttleKey, now()->toISOString());
 
         PageView::create([
             'page' => $page,
@@ -66,11 +67,13 @@ class TrackPageView
 
         // Track product views on menu/home pages
         if (in_array($page, ['menu', 'home'])) {
-            $products = Product::where('is_active', true)->pluck('id');
-            foreach ($products as $productId) {
-                $productCacheKey = "pv:{$sessionId}:product:{$productId}";
-                if (! Cache::has($productCacheKey)) {
-                    Cache::put($productCacheKey, true, now()->addHour());
+            $productThrottleKey = "pv_products_tracked:{$page}";
+            $productsTrackedAt = $request->session()->get($productThrottleKey);
+
+            if (! $productsTrackedAt || now()->diffInMinutes(\Carbon\Carbon::parse($productsTrackedAt)) >= 60) {
+                $request->session()->put($productThrottleKey, now()->toISOString());
+                $products = Product::where('is_active', true)->pluck('id');
+                foreach ($products as $productId) {
                     PageView::create([
                         'page' => $page,
                         'product_id' => $productId,
