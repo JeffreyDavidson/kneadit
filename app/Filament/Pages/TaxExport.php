@@ -30,7 +30,7 @@ class TaxExport extends Page
         return 'manager';
     }
 
-    protected static string $requiredPlan = 'growth';
+    protected static string $requiredPlan = 'pro';
     protected string $view = 'filament.pages.tax-export';
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-arrow-down';

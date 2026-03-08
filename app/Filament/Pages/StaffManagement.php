@@ -12,10 +12,18 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use App\Filament\Traits\RequiresRole;
+use App\Traits\HasPlanGating;
 use UnitEnum;
 
 class StaffManagement extends Page
 {
+    use HasPlanGating, RequiresRole;
+
+    protected static function getRequiredRole(): string
+    {
+        return 'owner';
+    }
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
