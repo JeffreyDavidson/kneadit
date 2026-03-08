@@ -152,6 +152,11 @@ class SettingSeeder extends Seeder
             ],
         ];
 
+        // Pricing engine settings
+        $settings[] = ['key' => 'hourly_labor_rate', 'value' => '15'];
+        $settings[] = ['key' => 'overhead_percentage', 'value' => '20'];
+        $settings[] = ['key' => 'target_profit_margin', 'value' => '50'];
+
         // Announcement banner settings
         $settings[] = ['key' => 'announcement_text', 'value' => ''];
         $settings[] = ['key' => 'announcement_enabled', 'value' => '0'];

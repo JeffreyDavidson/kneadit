@@ -34,8 +34,8 @@ class CustomerForm
                                 TextInput::make('phone')
                                     ->tel()
                                     ->maxLength(255),
-                                    
-                                DatePicker::make('customerProfile.birthday')
+
+                                DatePicker::make('birthday')
                                     ->label('Birthday')
                                     ->displayFormat('M j')
                                     ->maxDate(now()),

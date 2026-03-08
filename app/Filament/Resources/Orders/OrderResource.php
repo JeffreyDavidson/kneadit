@@ -50,6 +50,30 @@ class OrderResource extends Resource
         ];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['customer.name', 'customer.email', 'status'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return 'Order #' . $record->order_number;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Customer' => $record->customer?->name ?? 'N/A',
+            'Total' => '$' . number_format($record->total, 2),
+            'Status' => ucfirst($record->status),
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with('customer');
+    }
+
     public static function getPages(): array
     {
         return [
