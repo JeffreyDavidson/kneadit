@@ -44,6 +44,8 @@ Route::middleware([
         Route::get('/order/confirmation/{order}', [OrderController::class, 'confirmation'])->name('order.confirmation');
         Route::get('/about', [StorefrontController::class, 'about'])->name('storefront.about');
         Route::get('/reviews', [StorefrontController::class, 'reviews'])->name('storefront.reviews');
+        Route::get('/gallery', [StorefrontController::class, 'gallery'])->name('storefront.gallery');
+        Route::post('/gallery', [StorefrontController::class, 'submitPhoto'])->name('gallery.submit');
         Route::get('/track', [OrderController::class, 'track'])->name('order.track');
         Route::post('/track', [OrderController::class, 'trackLookup'])->name('order.track.lookup');
         Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');

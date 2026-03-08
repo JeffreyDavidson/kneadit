@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\CustomerFavorite;
+use App\Models\CustomerPhoto;
 use App\Models\LoyaltyReward;
 use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class StorefrontController extends Controller
 {
@@ -171,5 +173,42 @@ class StorefrontController extends Controller
         return response($data)
             ->header('Content-Type', 'image/png')
             ->header('Cache-Control', 'public, max-age=86400');
+    }
+
+    public function gallery()
+    {
+        $photos = CustomerPhoto::approved()
+            ->with('product')
+            ->orderByDesc('is_featured')
+            ->latest()
+            ->paginate(18);
+
+        $products = Product::where('is_active', true)->orderBy('name')->get();
+
+        return view('gallery', compact('photos', 'products'));
+    }
+
+    public function submitPhoto(Request $request)
+    {
+        $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'customer_email' => 'required|email|max:255',
+            'photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'caption' => 'nullable|string|max:1000',
+            'product_id' => 'nullable|exists:products,id',
+        ]);
+
+        $path = $request->file('photo')->store('customer-photos', 'public');
+
+        CustomerPhoto::create([
+            'customer_name' => $request->customer_name,
+            'customer_email' => $request->customer_email,
+            'caption' => $request->caption,
+            'photo_path' => $path,
+            'product_id' => $request->product_id,
+        ]);
+
+        return redirect()->route('storefront.gallery')
+            ->with('success', 'Thank you! Your photo has been submitted and will appear after approval.');
     }
 }
