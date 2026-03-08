@@ -42,7 +42,7 @@ class ProductTest extends TestCase
         $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
         $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
 
-        Recipe::create(['product_id' => $product->id, 'name' => 'Sourdough Recipe', 'instructions' => 'Mix and bake']);
+        Recipe::create(['product_id' => $product->id, 'name' => 'Sourdough Recipe', 'instructions' => 'Mix and bake', 'ingredients' => json_encode(['flour', 'water', 'salt'])]);
 
         $this->assertCount(1, $product->recipes);
     }

@@ -15,12 +15,12 @@ class SurveyResults extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-    protected static string|\UnitEnum|null $navigationGroup = 'Communication';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static string | \UnitEnum | null $navigationGroup = 'Communication';
     protected static ?int $navigationSort = 12;
     protected static ?string $navigationLabel = 'Survey Results';
     protected static ?string $title = 'Survey Results';
-    protected static string $view = 'filament.pages.survey-results';
+    protected string $view = 'filament.pages.survey-results';
 
     public ?int $surveyId = null;
 

@@ -31,17 +31,24 @@ class OrderTest extends TestCase
         $this->customer = Customer::create(['name' => 'John Doe', 'email' => 'john@example.com']);
     }
 
-    /** @test */
-    public function order_has_customer_relationship(): void
+    protected function makeOrder(array $attrs = []): Order
     {
-        $order = Order::create([
+        return Order::create(array_merge([
             'customer_id' => $this->customer->id,
+            'user_id' => $this->user->id,
             'status' => 'pending',
             'payment_status' => 'unpaid',
             'subtotal' => 10.00,
             'total' => 10.00,
-        ]);
+            'requested_date' => now()->addDay(),
+            'requested_time' => '10:00',
+        ], $attrs));
+    }
 
+    /** @test */
+    public function order_has_customer_relationship(): void
+    {
+        $order = $this->makeOrder();
         $this->assertInstanceOf(Customer::class, $order->customer);
         $this->assertEquals($this->customer->id, $order->customer->id);
     }
@@ -51,14 +58,7 @@ class OrderTest extends TestCase
     {
         $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
         $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
-
-        $order = Order::create([
-            'customer_id' => $this->customer->id,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-            'subtotal' => 10.00,
-            'total' => 10.00,
-        ]);
+        $order = $this->makeOrder();
 
         OrderItem::create(['order_id' => $order->id, 'product_id' => $product->id, 'quantity' => 2, 'unit_price' => 5.00]);
 
@@ -69,46 +69,22 @@ class OrderTest extends TestCase
     /** @test */
     public function order_has_messages_relationship(): void
     {
-        $order = Order::create([
-            'customer_id' => $this->customer->id,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-            'subtotal' => 10.00,
-            'total' => 10.00,
-        ]);
-
-        OrderMessage::create(['order_id' => $order->id, 'message' => 'Hello', 'sender_type' => 'bakery']);
-
+        $order = $this->makeOrder();
+        OrderMessage::create(['order_id' => $order->id, 'message' => 'Hello', 'sender_type' => 'bakery', 'sender_name' => 'Baker']);
         $this->assertCount(1, $order->messages);
     }
 
     /** @test */
     public function order_number_is_auto_generated(): void
     {
-        $order = Order::create([
-            'customer_id' => $this->customer->id,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-            'subtotal' => 10.00,
-            'total' => 10.00,
-        ]);
-
+        $order = $this->makeOrder();
         $this->assertStringStartsWith('ORD-', $order->order_number);
     }
 
     /** @test */
     public function order_total_is_cast_to_decimal(): void
     {
-        $order = Order::create([
-            'customer_id' => $this->customer->id,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-            'subtotal' => 25.50,
-            'delivery_fee' => 5.00,
-            'discount' => 2.50,
-            'total' => 28.00,
-        ]);
-
+        $order = $this->makeOrder(['subtotal' => 25.50, 'delivery_fee' => 5.00, 'discount' => 2.50, 'total' => 28.00]);
         $order->refresh();
         $this->assertEquals('28.00', $order->total);
         $this->assertEquals('5.00', $order->delivery_fee);
@@ -118,16 +94,8 @@ class OrderTest extends TestCase
     /** @test */
     public function order_status_transitions(): void
     {
-        $order = Order::create([
-            'customer_id' => $this->customer->id,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-            'subtotal' => 10.00,
-            'total' => 10.00,
-        ]);
-
-        $statuses = ['confirmed', 'baking', 'ready', 'delivered'];
-        foreach ($statuses as $status) {
+        $order = $this->makeOrder();
+        foreach (['confirmed', 'baking', 'ready', 'delivered'] as $status) {
             $order->update(['status' => $status]);
             $this->assertEquals($status, $order->fresh()->status);
         }
@@ -136,14 +104,7 @@ class OrderTest extends TestCase
     /** @test */
     public function order_can_be_cancelled(): void
     {
-        $order = Order::create([
-            'customer_id' => $this->customer->id,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-            'subtotal' => 10.00,
-            'total' => 10.00,
-        ]);
-
+        $order = $this->makeOrder();
         $order->update(['status' => 'cancelled']);
         $this->assertEquals('cancelled', $order->fresh()->status);
     }
@@ -151,15 +112,7 @@ class OrderTest extends TestCase
     /** @test */
     public function order_belongs_to_user(): void
     {
-        $order = Order::create([
-            'customer_id' => $this->customer->id,
-            'user_id' => $this->user->id,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-            'subtotal' => 10.00,
-            'total' => 10.00,
-        ]);
-
+        $order = $this->makeOrder();
         $this->assertInstanceOf(User::class, $order->user);
     }
 
@@ -168,17 +121,8 @@ class OrderTest extends TestCase
     {
         $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
         $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
-
-        $order = Order::create([
-            'customer_id' => $this->customer->id,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-            'subtotal' => 15.00,
-            'total' => 15.00,
-        ]);
-
+        $order = $this->makeOrder(['subtotal' => 15.00, 'total' => 15.00]);
         $item = OrderItem::create(['order_id' => $order->id, 'product_id' => $product->id, 'quantity' => 3, 'unit_price' => 5.00]);
-
         $this->assertEquals(15.00, $item->total_price);
     }
 }
