@@ -4,7 +4,7 @@
         $store = $this->getStoreInfo();
         $url = $this->getStorefrontUrl();
         $qr = $this->getQrCode();
-        $isElegant = $this->layout === 'elegant';
+        $isElegant = $this->menuLayout === 'elegant';
     @endphp
 
     {{-- Controls (hidden when printing) --}}
