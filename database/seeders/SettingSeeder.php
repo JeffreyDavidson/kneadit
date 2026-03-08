@@ -157,6 +157,20 @@ class SettingSeeder extends Seeder
         $settings[] = ['key' => 'announcement_enabled', 'value' => '0'];
         $settings[] = ['key' => 'announcement_type', 'value' => 'info'];
 
+            [
+                'key' => 'weekly_digest_enabled',
+                'value' => '1',
+            ],
+            [
+                'key' => 'review_requests_enabled',
+                'value' => '1',
+            ],
+            [
+                'key' => 'review_request_delay_hours',
+                'value' => '24',
+            ],
+        ];
+
         foreach ($settings as $setting) {
             Setting::updateOrCreate(
                 ['key' => $setting['key']],

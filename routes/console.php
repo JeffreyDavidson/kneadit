@@ -16,3 +16,9 @@ Schedule::command('birthday:send-discounts')->dailyAt('09:00');
 
 // Schedule repeat order reminders daily at 10 AM
 Schedule::command('orders:send-repeat-reminders')->dailyAt('10:00');
+
+// Weekly digest email every Monday at 8 AM
+Schedule::command('digest:weekly')->weeklyOn(1, '8:00');
+
+// Review request emails every hour
+Schedule::command('reviews:send-requests')->hourly();

@@ -3,7 +3,10 @@
 namespace App\Filament\Resources\Orders\Pages;
 
 use App\Filament\Resources\Orders\OrderResource;
+use App\Mail\NewOrderMessage;
 use App\Models\Order;
+use App\Models\OrderMessage;
+use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -11,6 +14,7 @@ use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Mail;
 
 class ViewOrder extends ViewRecord
 {
@@ -109,6 +113,14 @@ class ViewOrder extends ViewRecord
                             ->placeholder('No notes')
                             ->columnSpanFull(),
                     ]),
+
+                Section::make('Messages')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->schema([
+                        ViewEntry::make('messages_view')
+                            ->view('filament.resources.orders.view-order-messages')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -153,6 +165,40 @@ class ViewOrder extends ViewRecord
                 ->icon('heroicon-o-printer')
                 ->url(fn (): string => route('admin.orders.invoice', $this->record))
                 ->openUrlInNewTab(),
+
+            Action::make('sendMessage')
+                ->label('Send Message')
+                ->icon('heroicon-o-chat-bubble-left-right')
+                ->color('success')
+                ->form([
+                    \Filament\Forms\Components\Textarea::make('message')
+                        ->label('Message to Customer')
+                        ->required()
+                        ->rows(3),
+                ])
+                ->action(function (array $data): void {
+                    $bakerName = auth()->user()->name ?? Setting::get('store_name', 'Baker');
+
+                    $message = $this->record->messages()->create([
+                        'sender_type' => 'baker',
+                        'sender_name' => $bakerName,
+                        'message' => $data['message'],
+                    ]);
+
+                    // Mark customer messages as read
+                    $this->record->messages()
+                        ->where('sender_type', 'customer')
+                        ->where('is_read', false)
+                        ->update(['is_read' => true]);
+
+                    // Email customer
+                    $customerEmail = $this->record->customer?->email;
+                    if ($customerEmail) {
+                        Mail::to($customerEmail)->send(new NewOrderMessage($message));
+                    }
+
+                    $this->notify('success', 'Message sent to customer.');
+                }),
 
             Action::make('addNote')
                 ->label('Add Note')

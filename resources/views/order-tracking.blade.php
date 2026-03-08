@@ -189,4 +189,64 @@
         @endif
     @endisset
 </div>
+
+@isset($orders)
+@if($orders->isNotEmpty())
+<script>
+const customerEmail = @json($email);
+const customerName = @json($orders->first()->customer->name ?? $email);
+
+function renderMessages(orderId, messages) {
+    const container = document.getElementById('messages-' + orderId);
+    if (!messages.length) {
+        container.innerHTML = '<p class="text-sm italic" style="color: var(--warm-500);">No messages yet. Send one below!</p>';
+        return;
+    }
+    container.innerHTML = messages.map(msg => {
+        const isBaker = msg.sender_type === 'baker';
+        const align = isBaker ? 'items-start' : 'items-end';
+        const bg = isBaker ? 'background: #fef3c7' : 'background: #78350f; color: white';
+        const time = new Date(msg.created_at).toLocaleString([], {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'});
+        return `<div class="flex flex-col ${align}">
+            <div class="rounded-lg px-3 py-2 max-w-xs text-sm" style="${bg}">
+                <p class="font-medium text-xs mb-1" style="${isBaker ? 'color: var(--warm-700)' : 'opacity:0.8'}">${msg.sender_name}</p>
+                <p class="whitespace-pre-wrap">${msg.message.replace(/</g,'&lt;')}</p>
+            </div>
+            <span class="text-xs mt-1" style="color: var(--warm-400);">${time}</span>
+        </div>`;
+    }).join('');
+    container.scrollTop = container.scrollHeight;
+}
+
+function loadMessages(orderId) {
+    fetch('/order/' + orderId + '/messages')
+        .then(r => r.json())
+        .then(data => renderMessages(orderId, data.messages))
+        .catch(() => {
+            document.getElementById('messages-' + orderId).innerHTML = '<p class="text-sm italic" style="color: var(--warm-500);">Could not load messages.</p>';
+        });
+}
+
+function sendOrderMessage(e, orderId) {
+    e.preventDefault();
+    const input = document.getElementById('msg-input-' + orderId);
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    fetch('/order/' + orderId + '/messages', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+        body: JSON.stringify({message: msg, sender_name: customerName, sender_email: customerEmail})
+    })
+    .then(r => r.json())
+    .then(() => { input.value = ''; loadMessages(orderId); })
+    .catch(() => alert('Failed to send message. Please try again.'));
+}
+
+@foreach($orders as $order)
+loadMessages({{ $order->id }});
+@endforeach
+</script>
+@endif
+@endisset
 @endsection
