@@ -84,29 +84,29 @@
                     <div>
                         <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Your Name *</label>
                         <input type="text" name="customer_name" value="{{ old('customer_name') }}" required
-                            class="w-full rounded-lg border px-4 py-3" style="border-color: var(--warm-300);">
+                            class="input-field">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Your Email *</label>
                         <input type="email" name="customer_email" value="{{ old('customer_email') }}" required
-                            class="w-full rounded-lg border px-4 py-3" style="border-color: var(--warm-300);">
+                            class="input-field">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Photo * <span class="font-normal">(JPG, PNG, or WebP — max 5MB)</span></label>
                     <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required
-                        class="w-full rounded-lg border px-4 py-3" style="border-color: var(--warm-300);">
+                        class="input-field">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Caption</label>
-                    <textarea name="caption" rows="3" class="w-full rounded-lg border px-4 py-3" style="border-color: var(--warm-300);">{{ old('caption') }}</textarea>
+                    <textarea name="caption" rows="3" class="input-field">{{ old('caption') }}</textarea>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Which product? (optional)</label>
-                    <select name="product_id" class="w-full rounded-lg border px-4 py-3" style="border-color: var(--warm-300);">
+                    <select name="product_id" class="input-field">
                         <option value="">— Select a product —</option>
                         @foreach($products as $product)
                         <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>

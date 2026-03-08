@@ -185,7 +185,7 @@
             </div>
 
             <div class="mt-8 text-center">
-                <button type="submit" class="btn-primary" style="background: var(--warm-500); color: white; padding: 14px 40px; border-radius: 100px; font-weight: 600; font-size: 16px; border: none; cursor: pointer; transition: all 0.3s ease;">
+                <button type="submit" class="btn-primary text-lg px-10 py-3">
                     Submit Inquiry ✨
                 </button>
             </div>

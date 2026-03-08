@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? \App\Models\Setting::get('store_name', 'Artisan Bakery') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    warm: {
+                        50:  'var(--warm-50)',
+                        100: 'var(--warm-100)',
+                        200: 'var(--warm-200)',
+                        300: 'var(--warm-300)',
+                        400: 'var(--warm-400)',
+                        500: 'var(--warm-500)',
+                        600: 'var(--warm-600)',
+                        700: 'var(--warm-700)',
+                        800: 'var(--warm-800)',
+                        900: 'var(--warm-900)',
+                    }
+                }
+            }
+        }
+    }
+    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +45,7 @@
             --warm-300: #f5d88e;
             --warm-200: #faf4e8;
             --warm-100: #fef9ef;
+            --warm-50: #fffdf7;
             --font-display: 'Playfair Display', serif;
             --font-body: 'Inter', sans-serif;
             --font-script: 'Dancing Script', cursive;
@@ -41,6 +64,7 @@
             --warm-300: #e5e7eb;
             --warm-200: #f3f4f6;
             --warm-100: #ffffff;
+            --warm-50: #ffffff;
             --font-display: 'Inter', sans-serif;
             --font-body: 'Inter', sans-serif;
             --font-script: 'Inter', sans-serif;
@@ -59,6 +83,7 @@
             --warm-300: #d5ccba;
             --warm-200: #e8e0d0;
             --warm-100: #f5f0e8;
+            --warm-50: #faf7f2;
             --font-display: 'Caveat', cursive;
             --font-body: 'Inter', sans-serif;
             --font-script: 'Caveat', cursive;
@@ -77,6 +102,7 @@
             --warm-300: #e0e0e0;
             --warm-200: #f5f5f5;
             --warm-100: #ffffff;
+            --warm-50: #ffffff;
             --font-display: 'Cormorant Garamond', serif;
             --font-body: 'Inter', sans-serif;
             --font-script: 'Cormorant Garamond', serif;
