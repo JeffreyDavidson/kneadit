@@ -193,6 +193,22 @@ class SettingSeeder extends Seeder
         $settings[] = ['key' => 'catering_minimum_guests', 'value' => '10'];
         $settings[] = ['key' => 'catering_lead_time_days', 'value' => '14'];
 
+        // Homepage sections configuration
+        $settings[] = [
+            'key' => 'homepage_sections',
+            'value' => json_encode([
+                'hero' => ['visible' => true, 'order' => 1],
+                'about' => ['visible' => true, 'order' => 2],
+                'featured_products' => ['visible' => true, 'order' => 3, 'count' => 6, 'title' => 'Our Favorites', 'subtitle' => 'Freshly made'],
+                'categories' => ['visible' => true, 'order' => 4, 'title' => 'What We Bake', 'subtitle' => 'Something for everyone'],
+                'reviews' => ['visible' => true, 'order' => 5, 'count' => 3, 'title' => 'Kind Words', 'subtitle' => 'What our customers say'],
+                'gallery' => ['visible' => true, 'order' => 6, 'count' => 4, 'title' => 'Customer Gallery', 'subtitle' => 'Shared by our community'],
+                'blog' => ['visible' => true, 'order' => 7, 'count' => 3, 'title' => 'Latest Updates', 'subtitle' => 'From our kitchen'],
+                'cta' => ['visible' => true, 'order' => 8, 'heading' => 'Treat Yourself Today', 'button_text' => 'Start Your Order'],
+                'social' => ['visible' => true, 'order' => 9],
+            ]),
+        ];
+
         foreach ($settings as $setting) {
             Setting::updateOrCreate(
                 ['key' => $setting['key']],
