@@ -174,6 +174,26 @@
             color: var(--warm-900);
         }
 
+        .nav-dropdown-link {
+            display: block;
+            color: var(--warm-200);
+            text-decoration: none;
+            padding: 8px 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-dropdown-link:hover {
+            background: rgba(212, 146, 12, 0.15);
+            color: var(--warm-400);
+        }
+
+        .nav-dropdown-link.active {
+            color: var(--warm-400);
+            background: rgba(212, 146, 12, 0.1);
+        }
+
         .card {
             background: white;
             border-radius: var(--radius-card);
@@ -268,58 +288,112 @@
 </head>
 <body data-theme="{{ $storefrontTheme }}" @yield('body_attrs')>
 
+    @php
+        $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
+        $cateringEnabled = \App\Models\Setting::get('catering_enabled', '0') === '1';
+        $loyaltyEnabled = \App\Models\Setting::get('loyalty_enabled', '1') === '1';
+        $loyaltyName = \App\Models\Setting::get('loyalty_program_name', 'Rewards');
+        $exploreActive = request()->routeIs('storefront.blog*', 'storefront.gallery', 'storefront.reviews', 'storefront.about', 'storefront.catering');
+        $accountActive = request()->routeIs('order.track', 'storefront.gift-cards', 'storefront.rewards');
+    @endphp
+
     <!-- Navigation -->
-    <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-        <div class="bg-warm-800 bg-opacity-90 backdrop-blur-sm rounded-full px-6 py-3 border border-warm-600 border-opacity-20" style="background: var(--warm-800);">
-            <div class="nav-desktop items-center space-x-2">
-                <a href="{{ url('/') }}" class="nav-link font-script text-lg" style="color: var(--warm-400); font-size: 1.15rem;">
-                    {{ \App\Models\Setting::get('store_name', 'Our Bakery') }}
+    <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50" style="width: max-content; max-width: 95vw;">
+        <div style="background: var(--warm-800); border: 1px solid rgba(139, 104, 68, 0.2);" class="backdrop-blur-sm rounded-full px-6 py-3">
+
+            <!-- Desktop Nav -->
+            <div class="nav-desktop items-center space-x-1" x-data="{ explore: false, account: false }" @click.outside="explore = false; account = false">
+                <a href="{{ url('/') }}" class="nav-link font-script" style="color: var(--warm-400); font-size: 1.15rem; padding: 8px 16px;">
+                    {{ $storeName }}
                 </a>
-                <span style="color: var(--warm-600); opacity: 0.4;">|</span>
-                <a href="{{ url('/') }}" class="nav-link font-display {{ request()->is('/') ? 'active' : '' }}">Home</a>
+                <span style="color: var(--warm-600); opacity: 0.3;">|</span>
+
                 <a href="{{ route('storefront.menu') }}" class="nav-link font-display {{ request()->routeIs('storefront.menu') ? 'active' : '' }}">Menu</a>
                 <a href="{{ route('order.create') }}" class="nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
-                <a href="{{ route('order.track') }}" class="nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
-                <a href="{{ route('storefront.reviews') }}" class="nav-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}">Reviews</a>
-                <a href="{{ route('storefront.gallery') }}" class="nav-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}">Gallery</a>
-                <a href="{{ route('storefront.about') }}" class="nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
-                <a href="{{ route('storefront.blog') }}" class="nav-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}">Blog</a>
-                @if(\App\Models\Setting::get('catering_enabled', '0') === '1')
-                <a href="{{ route('storefront.catering') }}" class="nav-link font-display {{ request()->routeIs('storefront.catering') ? 'active' : '' }}">Catering</a>
-                @endif
-                @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
-                <a href="{{ route('storefront.rewards') }}" class="nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>
-                @endif
-                <a href="{{ route('storefront.gift-cards') }}" class="nav-link font-display {{ request()->routeIs('storefront.gift-cards') ? 'active' : '' }}">Gift Cards</a>
+
+                <!-- Explore Dropdown -->
+                <div class="relative">
+                    <button @click="explore = !explore; account = false" 
+                            class="nav-link font-display inline-flex items-center gap-1 {{ $exploreActive ? 'active' : '' }}">
+                        Explore
+                        <svg class="w-3.5 h-3.5 transition-transform" :class="explore ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="explore" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                         class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl"
+                         style="background: var(--warm-800); border: 1px solid rgba(139, 104, 68, 0.25);">
+                        <a href="{{ route('storefront.blog') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}">Blog</a>
+                        <a href="{{ route('storefront.gallery') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}">Gallery</a>
+                        <a href="{{ route('storefront.reviews') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}">Reviews</a>
+                        <a href="{{ route('storefront.about') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
+                        @if($cateringEnabled)
+                        <a href="{{ route('storefront.catering') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.catering') ? 'active' : '' }}">Catering</a>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- My Account Dropdown -->
+                <div class="relative">
+                    <button @click="account = !account; explore = false" 
+                            class="nav-link font-display inline-flex items-center gap-1 {{ $accountActive ? 'active' : '' }}">
+                        My Account
+                        <svg class="w-3.5 h-3.5 transition-transform" :class="account ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="account" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                         class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl"
+                         style="background: var(--warm-800); border: 1px solid rgba(139, 104, 68, 0.25);">
+                        <a href="{{ route('order.track') }}" class="nav-dropdown-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
+                        <a href="{{ route('storefront.gift-cards') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.gift-cards') ? 'active' : '' }}">Gift Cards</a>
+                        @if($loyaltyEnabled)
+                        <a href="{{ route('storefront.rewards') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ $loyaltyName }}</a>
+                        @endif
+                    </div>
+                </div>
+
                 <a href="{{ route('contact.show') }}" class="nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
             </div>
-            
-            <!-- Mobile menu button -->
-            <div class="nav-mobile" x-data="{ open: false }">
+
+            <!-- Mobile Nav -->
+            <div class="nav-mobile" x-data="{ open: false, explore: false, account: false }">
                 <div class="flex items-center justify-between">
                     <a href="{{ url('/') }}" class="font-script text-lg" style="color: var(--warm-400); text-decoration: none;">
-                        {{ \App\Models\Setting::get('store_name', 'Our Bakery') }}
+                        {{ $storeName }}
                     </a>
-                    <button @click="open = !open" class="nav-link font-display ml-4">
+                    <button @click="open = !open" class="nav-link font-display ml-4" style="padding: 8px 12px;">
                         <span x-text="open ? '✕' : '☰'"></span>
                     </button>
                 </div>
-                <div x-show="open" x-collapse class="mt-4 space-y-2">
-                    <a href="{{ url('/') }}" class="block nav-link font-display {{ request()->is('/') ? 'active' : '' }}">Home</a>
+                <div x-show="open" x-collapse class="mt-4 space-y-1">
                     <a href="{{ route('storefront.menu') }}" class="block nav-link font-display {{ request()->routeIs('storefront.menu') ? 'active' : '' }}">Menu</a>
                     <a href="{{ route('order.create') }}" class="block nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
-                    <a href="{{ route('order.track') }}" class="block nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
-                    <a href="{{ route('storefront.reviews') }}" class="block nav-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}">Reviews</a>
-                    <a href="{{ route('storefront.gallery') }}" class="block nav-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}">Gallery</a>
-                    <a href="{{ route('storefront.about') }}" class="block nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
-                    <a href="{{ route('storefront.blog') }}" class="block nav-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}">Blog</a>
-                    @if(\App\Models\Setting::get('catering_enabled', '0') === '1')
-                    <a href="{{ route('storefront.catering') }}" class="block nav-link font-display {{ request()->routeIs('storefront.catering') ? 'active' : '' }}">Catering</a>
-                    @endif
-                    @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
-                    <a href="{{ route('storefront.rewards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>
-                    @endif
-                    <a href="{{ route('storefront.gift-cards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.gift-cards') ? 'active' : '' }}">Gift Cards</a>
+
+                    <!-- Mobile Explore Group -->
+                    <button @click="explore = !explore" class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $exploreActive ? 'active' : '' }}">
+                        Explore
+                        <svg class="w-3.5 h-3.5 transition-transform" :class="explore ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="explore" x-collapse class="pl-4 space-y-1">
+                        <a href="{{ route('storefront.blog') }}" class="block nav-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}">Blog</a>
+                        <a href="{{ route('storefront.gallery') }}" class="block nav-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}">Gallery</a>
+                        <a href="{{ route('storefront.reviews') }}" class="block nav-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}">Reviews</a>
+                        <a href="{{ route('storefront.about') }}" class="block nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
+                        @if($cateringEnabled)
+                        <a href="{{ route('storefront.catering') }}" class="block nav-link font-display {{ request()->routeIs('storefront.catering') ? 'active' : '' }}">Catering</a>
+                        @endif
+                    </div>
+
+                    <!-- Mobile Account Group -->
+                    <button @click="account = !account" class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $accountActive ? 'active' : '' }}">
+                        My Account
+                        <svg class="w-3.5 h-3.5 transition-transform" :class="account ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="account" x-collapse class="pl-4 space-y-1">
+                        <a href="{{ route('order.track') }}" class="block nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
+                        <a href="{{ route('storefront.gift-cards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.gift-cards') ? 'active' : '' }}">Gift Cards</a>
+                        @if($loyaltyEnabled)
+                        <a href="{{ route('storefront.rewards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ $loyaltyName }}</a>
+                        @endif
+                    </div>
+
                     <a href="{{ route('contact.show') }}" class="block nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
                 </div>
             </div>
