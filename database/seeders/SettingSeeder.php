@@ -109,6 +109,35 @@ class SettingSeeder extends Seeder
                 'key' => 'about_us_text',
                 'value' => 'KneadIt Bakery is a family-owned artisan bakery located in the heart of Central Florida. We specialize in handcrafted breads, pastries, cakes, and seasonal specialties using traditional techniques and the finest local ingredients. From our signature sourdough to custom wedding cakes, every item is made fresh daily with passion and attention to detail.',
             ],
+            [
+                'key' => 'delivery_enabled',
+                'value' => '1',
+            ],
+            [
+                'key' => 'storefront_enabled',
+                'value' => '1',
+            ],
+            [
+                'key' => 'faq_items',
+                'value' => json_encode([
+                    [
+                        'question' => 'How far in advance should I place my order?',
+                        'answer' => 'We require a minimum of 24 hours notice for all orders to ensure quality and availability. Custom cakes require at least 7 days advance notice.',
+                    ],
+                    [
+                        'question' => 'Do you offer delivery?',
+                        'answer' => 'Yes! We deliver within 15 miles of our bakery. Delivery fees vary by distance, and orders over $50.00 qualify for free local delivery.',
+                    ],
+                    [
+                        'question' => 'What payment methods do you accept?',
+                        'answer' => 'We accept cash, PayPal, Venmo, and Zelle. Payment is collected at pickup or upon delivery.',
+                    ],
+                    [
+                        'question' => 'Do you accommodate dietary restrictions or allergies?',
+                        'answer' => 'We offer options for various dietary needs. Please note that our kitchen uses wheat, eggs, dairy, nuts, and soy. Mention any allergies in your order notes or contact us directly.',
+                    ],
+                ]),
+            ],
         ];
 
         foreach ($settings as $setting) {

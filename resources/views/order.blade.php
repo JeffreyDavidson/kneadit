@@ -5,12 +5,22 @@
      x-data="orderForm()" 
      x-init="init()">
      
+    @php
+        $leadTimeHours = \App\Models\Setting::get('order_lead_time_hours', '24');
+        $leadTimeDays = ceil($leadTimeHours / 24);
+        $deliveryEnabled = \App\Models\Setting::get('delivery_enabled', '1') === '1';
+        $deliveryTiers = json_decode(\App\Models\Setting::get('delivery_fee_tiers', '[]'), true);
+        $allergyDisclaimer = \App\Models\Setting::get('allergy_disclaimer');
+        $paymentMethods = json_decode(\App\Models\Setting::get('payment_methods_accepted', '[]'), true);
+        $freeDeliveryMin = \App\Models\Setting::get('free_delivery_minimum', '50');
+    @endphp
+
     <div class="text-center mb-12">
         <h1 class="font-display text-4xl font-bold text-warm-900 mb-4">
             Place Your Order
         </h1>
         <p class="text-warm-700 text-lg">
-            Please allow 48 hours notice for all orders. Orders placed today will be ready {{ date('l, F j', strtotime('+2 days')) }} or later.
+            Please allow {{ $leadTimeHours }} hours notice for all orders. Orders placed today will be ready {{ date('l, F j', strtotime('+' . $leadTimeDays . ' days')) }} or later.
         </p>
     </div>
 
@@ -181,6 +191,7 @@
                             <span>Pickup (Free)</span>
                         </label>
                         
+                        @if($deliveryEnabled)
                         <label class="flex items-center">
                             <input type="radio" 
                                    x-model="form.delivery_type" 
@@ -189,8 +200,10 @@
                                    class="mr-2">
                             <span>Delivery</span>
                         </label>
+                        @endif
                     </div>
                     
+                    @if($deliveryEnabled)
                     <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-warm-900 mb-1">Delivery Address *</label>
@@ -206,13 +219,19 @@
                                     @change="calculateDeliveryFee()"
                                     class="input-field">
                                 <option value="">Select distance</option>
-                                <option value="under5">0-5 miles (Free)</option>
-                                <option value="5to10">5-10 miles ($5.00)</option>
-                                <option value="10to15">10-15 miles ($10.00)</option>
-                                <option value="over15">15+ miles ($15.00)</option>
+                                @foreach($deliveryTiers as $index => $tier)
+                                <option value="{{ $index }}">{{ $tier['description'] }} (${{ number_format($tier['fee'], 2) }})</option>
+                                @endforeach
                             </select>
                         </div>
+
+                        @if($freeDeliveryMin)
+                        <p class="text-sm" style="color: var(--warm-600);">
+                            Free delivery on orders over ${{ number_format((float)$freeDeliveryMin, 2) }}!
+                        </p>
+                        @endif
                     </div>
+                    @endif
                 </div>
 
                 <!-- Delivery Date & Time -->
@@ -255,6 +274,25 @@
                              class="input-field"
                              rows="3"></textarea>
                 </div>
+
+                @if(!empty($paymentMethods))
+                <!-- Payment Methods -->
+                <div class="border-t border-warm-200 pt-6 mt-6">
+                    <h4 class="font-semibold text-warm-900 mb-2">Accepted Payment Methods</h4>
+                    <p class="text-sm" style="color: var(--warm-700);">
+                        {{ implode(', ', array_map('ucfirst', $paymentMethods)) }}
+                    </p>
+                </div>
+                @endif
+
+                @if($allergyDisclaimer)
+                <!-- Allergy Disclaimer -->
+                <div class="border-t border-warm-200 pt-4 mt-4">
+                    <p class="text-xs leading-relaxed" style="color: var(--warm-600);">
+                        <strong>⚠ Allergy Notice:</strong> {{ $allergyDisclaimer }}
+                    </p>
+                </div>
+                @endif
 
                 <!-- Submit Button -->
                 <button type="submit" 
@@ -303,9 +341,10 @@ function orderForm() {
         minDate: '',
 
         init() {
-            // Set minimum date to 2 days from now
+            // Set minimum date based on lead time hours
+            const leadTimeHours = {{ $leadTimeHours }};
             const today = new Date();
-            today.setDate(today.getDate() + 2);
+            today.setTime(today.getTime() + (leadTimeHours * 60 * 60 * 1000));
             this.minDate = today.toISOString().split('T')[0];
             
             // Load favorites if email exists
@@ -372,21 +411,13 @@ function orderForm() {
             if (this.form.delivery_type === 'pickup') {
                 this.deliveryFee = 0;
             } else {
-                switch (this.form.delivery_tier) {
-                    case 'under5':
-                        this.deliveryFee = 0;
-                        break;
-                    case '5to10':
-                        this.deliveryFee = 5;
-                        break;
-                    case '10to15':
-                        this.deliveryFee = 10;
-                        break;
-                    case 'over15':
-                        this.deliveryFee = 15;
-                        break;
-                    default:
-                        this.deliveryFee = 0;
+                const tiers = @json($deliveryTiers);
+                const freeMin = {{ (float)($freeDeliveryMin ?: 0) }};
+                const tierIndex = parseInt(this.form.delivery_tier);
+                if (!isNaN(tierIndex) && tiers[tierIndex]) {
+                    this.deliveryFee = (freeMin > 0 && this.subtotal >= freeMin) ? 0 : parseFloat(tiers[tierIndex].fee);
+                } else {
+                    this.deliveryFee = 0;
                 }
             }
             this.calculateTotals();
