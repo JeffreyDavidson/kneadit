@@ -16,7 +16,7 @@ class PrintableMenu extends Page
     protected string $view = 'filament.pages.printable-menu';
 
     public string $activeView = 'menu';
-    public string $layout = 'elegant';
+    public string $menuLayout = 'elegant';
 
     public function getCategories()
     {
@@ -57,6 +57,6 @@ class PrintableMenu extends Page
 
     public function setLayout(string $layout): void
     {
-        $this->layout = $layout;
+        $this->menuLayout = $layout;
     }
 }
