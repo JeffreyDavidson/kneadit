@@ -13,7 +13,7 @@ class LowStockWidget extends BaseWidget
 
     protected static ?string $heading = '⚠️ Low Stock Ingredients';
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = ['md' => 1, 'xl' => 1];
 
     public static function canView(): bool
     {

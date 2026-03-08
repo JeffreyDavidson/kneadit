@@ -15,7 +15,7 @@ class TopProductsWidget extends ChartWidget
 
     protected int|string|array $columnSpan = 1;
 
-    protected static ?string $maxHeight = '240px';
+    protected ?string $maxHeight = '240px';
 
     protected function getType(): string
     {
