@@ -223,6 +223,51 @@
     </div>
     @endif
 
+    <!-- Latest Blog Posts -->
+    @php
+        $latestPosts = \App\Models\BlogPost::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->latest('published_at')
+            ->take(3)
+            ->get();
+    @endphp
+    @if($latestPosts->isNotEmpty())
+    <div class="mb-20">
+        <div class="text-center mb-10">
+            <p class="font-script text-xl mb-2" style="color: var(--warm-500);">From our kitchen</p>
+            <h2 class="font-display text-3xl md:text-4xl font-semibold" style="color: var(--warm-900);">Latest Updates</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @foreach($latestPosts as $blogPost)
+                <a href="{{ route('storefront.blog.show', $blogPost->slug) }}" class="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" style="background: var(--warm-50); border: 1px solid var(--warm-200);">
+                    @if($blogPost->featured_image)
+                        <div class="aspect-video overflow-hidden">
+                            <img src="{{ Storage::disk('public')->url($blogPost->featured_image) }}" alt="{{ $blogPost->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        </div>
+                    @else
+                        <div class="aspect-video flex items-center justify-center" style="background: var(--warm-100);">
+                            <svg class="w-10 h-10" style="color: var(--warm-300);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                        </div>
+                    @endif
+                    <div class="p-5">
+                        <h3 class="font-display text-lg font-semibold group-hover:underline" style="color: var(--warm-900);">{{ $blogPost->title }}</h3>
+                        @if($blogPost->excerpt)
+                            <p class="text-sm mt-2 line-clamp-2" style="color: var(--warm-600);">{{ $blogPost->excerpt }}</p>
+                        @endif
+                        <p class="text-xs mt-3" style="color: var(--warm-500);">{{ $blogPost->published_at->format('M j, Y') }}</p>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+        <div class="text-center mt-6">
+            <a href="{{ route('storefront.blog') }}" class="inline-flex items-center gap-1 font-display text-sm hover:underline" style="color: var(--warm-600);">
+                View All Posts →
+            </a>
+        </div>
+    </div>
+    @endif
+
     <!-- Call to Action -->
     <div class="text-center">
         <div class="rounded-2xl p-12" style="background: var(--warm-200);">
