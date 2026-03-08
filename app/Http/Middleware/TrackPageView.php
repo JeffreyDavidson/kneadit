@@ -57,33 +57,37 @@ class TrackPageView
 
         $request->session()->put($throttleKey, now()->toISOString());
 
-        PageView::create([
-            'page' => $page,
-            'session_id' => $sessionId,
-            'ip_address' => $request->ip(),
-            'user_agent' => substr($request->userAgent() ?? '', 0, 255),
-            'created_at' => now(),
-        ]);
+        try {
+            PageView::create([
+                'page' => $page,
+                'session_id' => $sessionId,
+                'ip_address' => $request->ip(),
+                'user_agent' => substr($request->userAgent() ?? '', 0, 255),
+                'created_at' => now(),
+            ]);
 
-        // Track product views on menu/home pages
-        if (in_array($page, ['menu', 'home'])) {
-            $productThrottleKey = "pv_products_tracked:{$page}";
-            $productsTrackedAt = $request->session()->get($productThrottleKey);
+            // Track product views on menu/home pages
+            if (in_array($page, ['menu', 'home'])) {
+                $productThrottleKey = "pv_products_tracked:{$page}";
+                $productsTrackedAt = $request->session()->get($productThrottleKey);
 
-            if (! $productsTrackedAt || now()->diffInMinutes(\Carbon\Carbon::parse($productsTrackedAt)) >= 60) {
-                $request->session()->put($productThrottleKey, now()->toISOString());
-                $products = Product::where('is_active', true)->pluck('id');
-                foreach ($products as $productId) {
-                    PageView::create([
-                        'page' => $page,
-                        'product_id' => $productId,
-                        'session_id' => $sessionId,
-                        'ip_address' => $request->ip(),
-                        'user_agent' => substr($request->userAgent() ?? '', 0, 255),
-                        'created_at' => now(),
-                    ]);
+                if (! $productsTrackedAt || now()->diffInMinutes(\Carbon\Carbon::parse($productsTrackedAt)) >= 60) {
+                    $request->session()->put($productThrottleKey, now()->toISOString());
+                    $products = Product::where('is_active', true)->pluck('id');
+                    foreach ($products as $productId) {
+                        PageView::create([
+                            'page' => $page,
+                            'product_id' => $productId,
+                            'session_id' => $sessionId,
+                            'ip_address' => $request->ip(),
+                            'user_agent' => substr($request->userAgent() ?? '', 0, 255),
+                            'created_at' => now(),
+                        ]);
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            // Silently fail if page_views table doesn't exist yet
         }
 
         return $response;
