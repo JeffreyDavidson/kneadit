@@ -22,9 +22,9 @@
         }
     </style>
 
-    <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold" style="color: #3d2314;">Let's set up your bakery</h2>
-        <p class="mt-1" style="color: #6b4c3b;">Just a few steps and you'll be ready to go</p>
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: #3d2314;">Let's set up your bakery</h2>
+        <p style="margin-top: 0.25rem; color: #6b4c3b;">Just a few steps and you'll be ready to go</p>
     </div>
 
     {{ $this->content }}
