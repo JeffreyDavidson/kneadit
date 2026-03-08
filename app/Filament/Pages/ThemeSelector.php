@@ -6,13 +6,11 @@ use App\Models\Setting;
 use BackedEnum;
 use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
-use Illuminate\Http\Request;
 
 use App\Traits\HasPlanGating;
 class ThemeSelector extends Page
 {
     use HasPlanGating, RequiresRole;
-
 
     protected static string $requiredPlan = 'pro';
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-paint-brush';
@@ -21,7 +19,7 @@ class ThemeSelector extends Page
 
     protected static ?string $navigationLabel = 'Storefront Theme';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
 
     protected string $view = 'filament.pages.theme-selector';
 

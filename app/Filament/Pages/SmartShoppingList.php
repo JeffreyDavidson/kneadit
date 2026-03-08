@@ -10,8 +10,6 @@ use App\Models\Setting;
 use App\Models\Supplier;
 use App\Traits\HasPlanGating;
 use Filament\Actions\Action;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
@@ -27,10 +25,10 @@ class SmartShoppingList extends Page
     }
 
     protected static string $requiredPlan = 'pro';
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
-    protected static ?string $navigationLabel = 'Smart Shopping';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?string $navigationLabel = 'Shopping List';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
-    protected static ?int $navigationSort = 17;
+    protected static ?int $navigationSort = 3;
     protected string $view = 'filament.pages.smart-shopping-list';
 
     public string $startDate = '';

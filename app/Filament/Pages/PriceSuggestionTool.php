@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Recipe;
-use App\Models\Product;
 use Illuminate\Support\Collection;
 
 use App\Traits\HasPlanGating;
@@ -18,12 +17,12 @@ class PriceSuggestionTool extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
     protected static ?string $navigationLabel = 'Price Suggestion';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 8;
+    protected static bool $shouldRegisterNavigation = false;
     protected string $view = 'filament.pages.price-suggestion-tool';
 
     public ?int $selectedRecipeId = null;

@@ -23,7 +23,7 @@ class PrintableMenu extends Page
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Printable Menu';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 16;
     protected string $view = 'filament.pages.printable-menu';
 
     public string $activeView = 'menu';

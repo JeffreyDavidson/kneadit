@@ -9,19 +9,17 @@ use App\Models\Setting;
 use BackedEnum;
 use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
-use Illuminate\Support\Facades\DB;
 
 use App\Traits\HasPlanGating;
 class LoyaltyDashboard extends Page
 {
     use HasPlanGating, RequiresRole;
 
-
     protected static string $requiredPlan = 'pro';
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-trophy';
     protected static ?string $navigationLabel = 'Loyalty Program';
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 13;
     protected string $view = 'filament.pages.loyalty-dashboard';
 
     public bool $loyaltyEnabled;

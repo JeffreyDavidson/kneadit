@@ -34,7 +34,7 @@ class HolidayResource extends Resource
 
     public static function getNavigationIcon(): string|BackedEnum|null
     {
-        return 'heroicon-o-calendar-days';
+        return 'heroicon-o-sun';
     }
 
     public static function getNavigationGroup(): ?string

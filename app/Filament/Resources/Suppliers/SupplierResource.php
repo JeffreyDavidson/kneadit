@@ -28,7 +28,7 @@ class SupplierResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-truck';
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
-    protected static ?int $navigationSort = 14;
+    protected static ?int $navigationSort = 9;
     protected static ?string $navigationLabel = 'Suppliers';
 
     public static function form(Schema $schema): Schema

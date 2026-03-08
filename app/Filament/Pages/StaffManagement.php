@@ -26,11 +26,11 @@ class StaffManagement extends Page
     }
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+    protected static string|UnitEnum|null $navigationGroup = 'Admin';
 
-    protected static ?string $navigationLabel = 'Team';
+    protected static ?string $navigationLabel = 'Staff';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 1;
 
     protected string $view = 'filament.pages.staff-management';
 

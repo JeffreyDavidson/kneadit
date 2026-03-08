@@ -12,7 +12,6 @@ use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use App\Filament\Traits\RequiresRole;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ExpenseResource extends Resource
@@ -25,6 +24,7 @@ class ExpenseResource extends Resource
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-down';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+    protected static ?int $navigationSort = 1;
     public static function form(Schema $schema): Schema
     {
         return ExpenseForm::configure($schema);

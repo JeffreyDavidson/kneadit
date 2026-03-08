@@ -7,15 +7,6 @@ use App\Models\Product;
 use App\Models\Setting;
 use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
-use Filament\Actions\Action;
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\DatePicker;
-use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
 
 class LabelGenerator extends Page
 {
@@ -27,9 +18,9 @@ class LabelGenerator extends Page
     }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';
-    protected static ?string $navigationLabel = 'Label Generator';
+    protected static ?string $navigationLabel = 'Labels';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
-    protected static ?int $navigationSort = 16;
+    protected static ?int $navigationSort = 13;
     protected string $view = 'filament.pages.label-generator';
 
     public array $selectedProducts = [];

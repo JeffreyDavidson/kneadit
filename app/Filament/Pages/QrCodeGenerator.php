@@ -4,15 +4,11 @@ namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 use App\Filament\Traits\RequiresRole;
-use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\EmbeddedSchema;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Response;
 
@@ -26,12 +22,11 @@ class QrCodeGenerator extends Page
         return 'manager';
     }
 
-
     protected static string $requiredPlan = 'growth';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-qr-code';
-    protected static ?string $navigationLabel = 'QR Code Generator';
+    protected static ?string $navigationLabel = 'QR Code';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 15;
     protected string $view = 'filament.pages.qr-code-generator';
 
     public ?array $data = [];

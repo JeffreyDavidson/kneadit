@@ -23,7 +23,7 @@ class CustomDomain extends Page
 
     protected static ?string $navigationLabel = 'Custom Domain';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 4;
 
     protected string $view = 'filament.pages.custom-domain';
 
