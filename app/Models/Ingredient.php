@@ -34,6 +34,13 @@ class Ingredient extends Model
             ->withPivot('quantity', 'unit');
     }
 
+    public function suppliers(): BelongsToMany
+    {
+        return $this->belongsToMany(Supplier::class, 'ingredient_supplier')
+            ->withPivot('unit_price', 'minimum_order', 'lead_time_days', 'sku')
+            ->withTimestamps();
+    }
+
     public function stockAdjustments(): HasMany
     {
         return $this->hasMany(StockAdjustment::class);
