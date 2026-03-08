@@ -30,10 +30,9 @@
                 placeholder="Enter your email address"
                 value="{{ old('email', $customer->email ?? '') }}"
                 required
-                class="flex-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2"
-                style="border-color: var(--warm-300); focus:ring-color: var(--warm-500);"
+                class="input-field flex-1"
             >
-            <button type="submit" class="btn-primary px-6 py-3 rounded-lg font-semibold text-white" style="background: var(--warm-600);">
+            <button type="submit" class="btn-primary px-6 py-3">
                 Check Balance
             </button>
         </form>

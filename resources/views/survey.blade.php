@@ -25,11 +25,11 @@
             <div class="grid gap-4 sm:grid-cols-2">
                 <div>
                     <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Your Name (optional)</label>
-                    <input type="text" name="customer_name" class="w-full rounded-lg border px-3 py-2" style="border-color: var(--warm-300);">
+                    <input type="text" name="customer_name" class="input-field">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Your Email (optional)</label>
-                    <input type="email" name="customer_email" class="w-full rounded-lg border px-3 py-2" style="border-color: var(--warm-300);">
+                    <input type="email" name="customer_email" class="input-field">
                 </div>
             </div>
 
@@ -54,13 +54,13 @@
 
                     @elseif($question['type'] === 'text')
                         <textarea name="answers[{{ $index }}]" rows="3"
-                            class="w-full rounded-lg border px-3 py-2" style="border-color: var(--warm-300);"
+                            class="input-field"
                             placeholder="Type your answer..."></textarea>
 
                     @elseif($question['type'] === 'multiple_choice')
                         <div class="space-y-2">
                             @foreach($question['options'] ?? [] as $option)
-                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-warm-50">
                                     <input type="radio" name="answers[{{ $index }}]" value="{{ $option }}"
                                         class="w-4 h-4" style="accent-color: var(--warm-600);">
                                     <span style="color: var(--warm-800);">{{ $option }}</span>

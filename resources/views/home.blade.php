@@ -126,8 +126,8 @@
                             @if($product->image)
                                 <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                             @else
-                                <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, #4a3728, #8b6844);">
-                                    <span class="text-4xl font-display font-bold" style="color: #faf4e8;">{{ strtoupper(substr($product->name, 0, 1)) }}</span>
+                                <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-600));">
+                                    <span class="text-4xl font-display font-bold" style="color: var(--warm-200);">{{ strtoupper(substr($product->name, 0, 1)) }}</span>
                                 </div>
                             @endif
                         </div>
