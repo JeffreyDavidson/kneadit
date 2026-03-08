@@ -95,6 +95,11 @@ Route::middleware([
         Route::get('/favorites', [StorefrontController::class, 'getFavorites'])->name('favorites.get');
         Route::post('/favorites/toggle', [StorefrontController::class, 'toggleFavorite'])->name('favorites.toggle');
 
+        // Blog
+        Route::get('/blog', [StorefrontController::class, 'blog'])->name('storefront.blog');
+        Route::get('/blog/feed.xml', [StorefrontController::class, 'blogFeed'])->name('storefront.blog.feed');
+        Route::get('/blog/{slug}', [StorefrontController::class, 'blogPost'])->name('storefront.blog.show');
+
         // Review submission (from email link)
         Route::get('/review/{order}', [StorefrontController::class, 'submitReview'])->name('storefront.submit-review');
         Route::post('/review/{order}', [StorefrontController::class, 'storeReview'])->name('storefront.store-review');

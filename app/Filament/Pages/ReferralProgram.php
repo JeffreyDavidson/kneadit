@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use App\Models\Referral;
+use BackedEnum;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Schema;
+
+class ReferralProgram extends Page
+{
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-plus';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
+
+    protected static ?string $navigationLabel = 'Referral Program';
+
+    protected static ?int $navigationSort = 8;
+
+    protected string $view = 'filament.pages.referral-program';
+
+    protected static ?string $title = 'Referral Program';
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema->schema([
+            View::make('filament.pages.referral-program-content'),
+        ]);
+    }
+
+    public function getReferralCode(): string
+    {
+        return tenant()->referral_code;
+    }
+
+    public function getReferralLink(): string
+    {
+        return 'https://getkneadit.app/ref/' . $this->getReferralCode();
+    }
+
+    public function getTotalReferrals(): int
+    {
+        return Referral::where('referrer_tenant_id', tenant()->id)
+            ->whereNotNull('referred_tenant_id')
+            ->count();
+    }
+
+    public function getCompletedReferrals(): int
+    {
+        return Referral::where('referrer_tenant_id', tenant()->id)
+            ->whereIn('status', ['completed', 'rewarded'])
+            ->count();
+    }
+
+    public function getMonthsEarned(): int
+    {
+        return Referral::where('referrer_tenant_id', tenant()->id)
+            ->where('status', 'rewarded')
+            ->sum('reward_months');
+    }
+
+    public function getReferrals(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Referral::where('referrer_tenant_id', tenant()->id)
+            ->whereNotNull('referred_tenant_id')
+            ->orderByDesc('created_at')
+            ->get();
+    }
+}

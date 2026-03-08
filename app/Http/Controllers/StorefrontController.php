@@ -10,6 +10,7 @@ use App\Models\LoyaltyReward;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\BlogPost;
 use App\Models\Setting;
 use App\Services\GiftCardService;
 use Illuminate\Http\Request;
@@ -302,5 +303,49 @@ class StorefrontController extends Controller
             'prefilledRating' => null,
             'success' => true,
         ]);
+    }
+
+    public function blog()
+    {
+        $posts = BlogPost::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->latest('published_at')
+            ->paginate(6);
+
+        return view('blog.index', compact('posts'));
+    }
+
+    public function blogPost($slug)
+    {
+        $post = BlogPost::where('slug', $slug)
+            ->where('is_published', true)
+            ->firstOrFail();
+
+        $related = BlogPost::where('is_published', true)
+            ->where('id', '!=', $post->id)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->latest('published_at')
+            ->take(3)
+            ->get();
+
+        return view('blog.show', compact('post', 'related'));
+    }
+
+    public function blogFeed()
+    {
+        $posts = BlogPost::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->latest('published_at')
+            ->take(20)
+            ->get();
+
+        $storeName = Setting::get('store_name', 'Our Bakery');
+
+        return response()
+            ->view('blog.feed', compact('posts', 'storeName'))
+            ->header('Content-Type', 'application/rss+xml; charset=UTF-8');
     }
 }

@@ -15,6 +15,9 @@ require __DIR__.'/admin.php';
 |
 */
 
+// Referral tracking
+Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');
+
 // Root route — serves landing page on central domains, storefront on tenant subdomains
 Route::get('/', [\App\Http\Controllers\RootController::class, 'index'])->name('home');
 
