@@ -260,6 +260,7 @@
                 @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
                 <a href="{{ route('storefront.rewards') }}" class="nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>
                 @endif
+                <a href="{{ route('storefront.gift-cards') }}" class="nav-link font-display {{ request()->routeIs('storefront.gift-cards') ? 'active' : '' }}">Gift Cards</a>
                 <a href="{{ route('contact.show') }}" class="nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
             </div>
             
@@ -284,6 +285,7 @@
                     @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
                     <a href="{{ route('storefront.rewards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>
                     @endif
+                    <a href="{{ route('storefront.gift-cards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.gift-cards') ? 'active' : '' }}">Gift Cards</a>
                     <a href="{{ route('contact.show') }}" class="block nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
                 </div>
             </div>
