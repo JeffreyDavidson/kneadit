@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\CustomerFavorite;
+use App\Models\LoyaltyReward;
 use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -50,6 +52,36 @@ class StorefrontController extends Controller
         $totalReviews = \App\Models\Review::where('is_approved', true)->count();
 
         return view('reviews', compact('reviews', 'avgRating', 'totalReviews'));
+    }
+
+    public function rewards()
+    {
+        $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
+        $programName = Setting::get('loyalty_program_name', 'Rewards');
+        $pointsPerDollar = Setting::get('loyalty_points_per_dollar', '10');
+        $loyaltyEnabled = Setting::get('loyalty_enabled', '1') === '1';
+
+        return view('loyalty', compact('rewards', 'programName', 'pointsPerDollar', 'loyaltyEnabled'));
+    }
+
+    public function checkRewards(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $customer = Customer::where('email', $request->email)->first();
+        $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
+        $programName = Setting::get('loyalty_program_name', 'Rewards');
+        $pointsPerDollar = Setting::get('loyalty_points_per_dollar', '10');
+        $loyaltyEnabled = Setting::get('loyalty_enabled', '1') === '1';
+
+        $totalPoints = $customer ? $customer->total_points : 0;
+        $lifetimeEarned = $customer ? $customer->lifetime_points_earned : 0;
+        $history = $customer ? $customer->loyaltyPoints()->latest('created_at')->limit(20)->get() : collect();
+
+        return view('loyalty', compact(
+            'rewards', 'programName', 'pointsPerDollar', 'loyaltyEnabled',
+            'customer', 'totalPoints', 'lifetimeEarned', 'history'
+        ));
     }
 
     public function getFavorites(Request $request)

@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 use Filament\Actions\Action;
+use App\Models\Ingredient;
 use App\Models\Order;
 use App\Models\Recipe;
 use Illuminate\Support\Collection;
@@ -72,6 +73,19 @@ class ShoppingListGenerator extends Page
                 }
             }
         }
+
+        // Cross-reference with ingredient inventory
+        $inventoryIngredients = Ingredient::all()->keyBy(fn ($i) => strtolower($i->name));
+
+        $aggregatedIngredients = $aggregatedIngredients->map(function ($item) use ($inventoryIngredients) {
+            $key = strtolower($item['name']);
+            $tracked = $inventoryIngredients->get($key);
+            $item['in_stock'] = $tracked ? (float) $tracked->current_stock : null;
+            $item['stock_unit'] = $tracked?->unit;
+            $item['needs_purchase'] = $tracked ? $item['quantity'] > (float) $tracked->current_stock : true;
+            $item['deficit'] = $tracked ? max(0, $item['quantity'] - (float) $tracked->current_stock) : $item['quantity'];
+            return $item;
+        });
 
         // Sort by ingredient name
         $this->shoppingList = $aggregatedIngredients->sortBy('name')->values();

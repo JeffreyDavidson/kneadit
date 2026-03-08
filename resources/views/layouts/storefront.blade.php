@@ -256,6 +256,9 @@
                 <a href="{{ route('order.track') }}" class="nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
                 <a href="{{ route('storefront.reviews') }}" class="nav-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}">Reviews</a>
                 <a href="{{ route('storefront.about') }}" class="nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
+                @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
+                <a href="{{ route('storefront.rewards') }}" class="nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>
+                @endif
                 <a href="{{ route('contact.show') }}" class="nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
             </div>
             
@@ -276,6 +279,9 @@
                     <a href="{{ route('order.track') }}" class="block nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
                     <a href="{{ route('storefront.reviews') }}" class="block nav-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}">Reviews</a>
                     <a href="{{ route('storefront.about') }}" class="block nav-link font-display {{ request()->routeIs('storefront.about') ? 'active' : '' }}">About</a>
+                    @if(\App\Models\Setting::get('loyalty_enabled', '1') === '1')
+                    <a href="{{ route('storefront.rewards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ \App\Models\Setting::get('loyalty_program_name', 'Rewards') }}</a>
+                    @endif
                     <a href="{{ route('contact.show') }}" class="block nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>
                 </div>
             </div>

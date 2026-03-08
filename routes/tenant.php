@@ -52,6 +52,10 @@ Route::middleware([
         // Capacity check (AJAX)
         Route::get('/capacity/check/{date}', [OrderController::class, 'checkCapacity'])->name('capacity.check');
 
+        // Loyalty rewards
+        Route::get('/rewards', [StorefrontController::class, 'rewards'])->name('storefront.rewards');
+        Route::post('/rewards/check', [StorefrontController::class, 'checkRewards'])->name('rewards.check');
+
         // Coupon validation (AJAX)
         Route::post('/coupon/apply', [OrderController::class, 'applyCoupon'])->name('coupon.apply');
 
