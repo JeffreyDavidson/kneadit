@@ -107,13 +107,22 @@ class PlanGatingTest extends TestCase
 
     private function setTenantPlan(string $plan): void
     {
-        $mock = $this->createMock(Tenant::class);
-        $mock->plan = $plan;
-        $mock->method('getAttribute')->willReturnCallback(fn ($key) => $key === 'plan' ? $plan : null);
-        $mock->method('getTenantKey')->willReturn('test');
-        $mock->method('getTenantKeyName')->willReturn('id');
+        $tenant = new class($plan) implements Tenant {
+            public string $plan;
 
-        app()->instance(Tenant::class, $mock);
+            public function __construct(string $plan)
+            {
+                $this->plan = $plan;
+            }
+
+            public function getTenantKeyName(): string { return 'id'; }
+            public function getTenantKey() { return 'test'; }
+            public function getInternal(string $key) { return $key === 'plan' ? $this->plan : null; }
+            public function setInternal(string $key, $value) {}
+            public function run(callable $callback) { return $callback($this); }
+        };
+
+        app()->instance(Tenant::class, $tenant);
     }
 }
 

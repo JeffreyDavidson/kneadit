@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\GiftCard;
 use App\Models\GiftCardTransaction;
-use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class GiftCardStorefrontTest extends TestCase
@@ -22,6 +21,21 @@ class GiftCardStorefrontTest extends TestCase
         }
     }
 
+    private function makeCard(array $overrides = []): GiftCard
+    {
+        static $counter = 0;
+        $counter++;
+
+        return GiftCard::create(array_merge([
+            'code' => 'GIFT-TEST-' . str_pad($counter, 4, '0', STR_PAD_LEFT),
+            'initial_balance' => 50.00,
+            'current_balance' => 50.00,
+            'purchaser_name' => 'John Doe',
+            'purchaser_email' => 'john@example.com',
+            'is_active' => true,
+        ], $overrides));
+    }
+
     public function test_gift_card_model_exists(): void
     {
         $this->assertTrue(class_exists(GiftCard::class));
@@ -29,102 +43,49 @@ class GiftCardStorefrontTest extends TestCase
 
     public function test_gift_card_can_be_created_with_correct_balance(): void
     {
-        $card = GiftCard::create([
-            'code' => 'GIFT-TEST-1234',
+        $card = $this->makeCard([
             'initial_balance' => 50.00,
             'current_balance' => 50.00,
-            'purchaser_name' => 'John Doe',
-            'purchaser_email' => 'john@example.com',
             'recipient_name' => 'Jane Doe',
             'recipient_email' => 'jane@example.com',
             'message' => 'Happy birthday!',
-            'is_active' => true,
         ]);
 
-        $this->assertDatabaseHas('gift_cards', ['code' => 'GIFT-TEST-1234']);
+        $this->assertDatabaseHas('gift_cards', ['id' => $card->id]);
         $this->assertEquals(50.00, $card->current_balance);
         $this->assertEquals(50.00, $card->initial_balance);
     }
 
     public function test_gift_card_is_usable_when_active_with_balance(): void
     {
-        $card = GiftCard::create([
-            'code' => 'GIFT-USABLE-001',
-            'initial_balance' => 25.00,
-            'current_balance' => 25.00,
-            'is_active' => true,
-        ]);
-
+        $card = $this->makeCard();
         $this->assertTrue($card->isUsable());
     }
 
     public function test_gift_card_is_not_usable_when_inactive(): void
     {
-        $card = GiftCard::create([
-            'code' => 'GIFT-INACTIVE-001',
-            'initial_balance' => 25.00,
-            'current_balance' => 25.00,
-            'is_active' => false,
-        ]);
-
+        $card = $this->makeCard(['is_active' => false]);
         $this->assertFalse($card->isUsable());
     }
 
     public function test_gift_card_is_not_usable_when_depleted(): void
     {
-        $card = GiftCard::create([
-            'code' => 'GIFT-EMPTY-001',
-            'initial_balance' => 25.00,
-            'current_balance' => 0.00,
-            'is_active' => true,
-        ]);
-
+        $card = $this->makeCard(['current_balance' => 0.00]);
         $this->assertFalse($card->isUsable());
     }
 
     public function test_gift_card_is_not_usable_when_expired(): void
     {
-        $card = GiftCard::create([
-            'code' => 'GIFT-EXPIRED-001',
-            'initial_balance' => 25.00,
-            'current_balance' => 25.00,
-            'is_active' => true,
-            'expires_at' => now()->subDay(),
-        ]);
-
+        $card = $this->makeCard(['expires_at' => now()->subDay()]);
         $this->assertFalse($card->isUsable());
     }
 
     public function test_gift_card_status_attribute(): void
     {
-        $active = GiftCard::create([
-            'code' => 'GIFT-STATUS-A',
-            'initial_balance' => 25.00,
-            'current_balance' => 25.00,
-            'is_active' => true,
-        ]);
-
-        $inactive = GiftCard::create([
-            'code' => 'GIFT-STATUS-I',
-            'initial_balance' => 25.00,
-            'current_balance' => 25.00,
-            'is_active' => false,
-        ]);
-
-        $depleted = GiftCard::create([
-            'code' => 'GIFT-STATUS-D',
-            'initial_balance' => 25.00,
-            'current_balance' => 0.00,
-            'is_active' => true,
-        ]);
-
-        $expired = GiftCard::create([
-            'code' => 'GIFT-STATUS-E',
-            'initial_balance' => 25.00,
-            'current_balance' => 25.00,
-            'is_active' => true,
-            'expires_at' => now()->subDay(),
-        ]);
+        $active = $this->makeCard();
+        $inactive = $this->makeCard(['is_active' => false]);
+        $depleted = $this->makeCard(['current_balance' => 0.00]);
+        $expired = $this->makeCard(['expires_at' => now()->subDay()]);
 
         $this->assertEquals('active', $active->status);
         $this->assertEquals('inactive', $inactive->status);
@@ -134,12 +95,7 @@ class GiftCardStorefrontTest extends TestCase
 
     public function test_gift_card_has_transactions_relationship(): void
     {
-        $card = GiftCard::create([
-            'code' => 'GIFT-TXN-001',
-            'initial_balance' => 50.00,
-            'current_balance' => 50.00,
-            'is_active' => true,
-        ]);
+        $card = $this->makeCard();
 
         GiftCardTransaction::create([
             'gift_card_id' => $card->id,
