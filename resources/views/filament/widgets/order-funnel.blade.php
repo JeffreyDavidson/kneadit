@@ -9,7 +9,7 @@
                     <span style="font-weight: 700; font-size: 1.25rem; color: {{ $stage['color'] }}; min-width: 36px; text-align: center;">
                         {{ $stage['count'] }}
                     </span>
-                    <span style="font-weight: 500; color: #374151; font-size: 0.9rem;">{{ $stage['label'] }}</span>
+                    <span style="font-weight: 500; color: var(--brand-900); font-size: 0.9rem;">{{ $stage['label'] }}</span>
                     <span style="margin-left: auto; color: {{ $stage['color'] }}; opacity: 0.5;">→</span>
                 </a>
             @endforeach
