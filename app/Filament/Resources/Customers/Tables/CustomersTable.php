@@ -42,6 +42,17 @@ class CustomersTable
                         return $state;
                     }),
 
+                TextColumn::make('birthday')
+                    ->label('Birthday')
+                    ->date('M j')
+                    ->badge()
+                    ->color(fn ($record) => $record->isBirthdayToday() ? 'success' : 'gray')
+                    ->formatStateUsing(fn ($state, $record) => $record->isBirthdayToday()
+                        ? '🎂 Today!'
+                        : ($state ? \Carbon\Carbon::parse($state)->format('M j') : '—'))
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('lifetime_value')
                     ->label('Lifetime Value')
                     ->money('USD')

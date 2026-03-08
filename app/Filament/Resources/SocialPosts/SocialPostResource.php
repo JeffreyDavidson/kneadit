@@ -59,6 +59,24 @@ class SocialPostResource extends Resource
         ];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['caption'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return \Illuminate\Support\Str::limit($record->caption, 50);
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Platform' => ucfirst($record->platform ?? 'N/A'),
+            'Status' => ucfirst($record->status ?? 'draft'),
+        ];
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::where('status', 'scheduled')->count() ?: null;

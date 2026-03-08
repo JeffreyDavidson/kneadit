@@ -49,6 +49,29 @@ class ReviewResource extends Resource
         ];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['customer_name', 'customer_email'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return 'Review by ' . $record->customer_name;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Rating' => str_repeat('⭐', $record->rating ?? 0),
+            'Product' => $record->product?->name ?? 'N/A',
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with('product');
+    }
+
     public static function getPages(): array
     {
         return [

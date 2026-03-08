@@ -152,10 +152,11 @@ class OrderController extends Controller
         // Create or update customer
         $customer = Customer::updateOrCreate(
             ['email' => $validated['customer_email']],
-            [
+            array_filter([
                 'name' => $validated['customer_name'],
                 'phone' => $validated['customer_phone'] ?? null,
-            ]
+                'birthday' => $validated['customer_birthday'] ?? null,
+            ], fn ($v) => $v !== null)
         );
 
         // Create order
@@ -297,6 +298,7 @@ class OrderController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'nullable|string|max:20',
+            'customer_birthday' => 'nullable|date',
             'delivery_type' => 'required|in:pickup,delivery',
             'delivery_address' => 'required_if:delivery_type,delivery|nullable|string|max:500',
             'delivery_date' => 'required|date|after_or_equal:' . now()->addDays(2)->toDateString(),

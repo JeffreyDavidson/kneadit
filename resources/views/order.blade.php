@@ -214,6 +214,14 @@
                                    x-model="form.customer_phone"
                                    class="input-field">
                         </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-warm-900 mb-1">Birthday <span class="text-warm-500 text-xs">(optional — for special treats! 🎂)</span></label>
+                            <input type="date" 
+                                   x-model="form.customer_birthday"
+                                   class="input-field"
+                                   max="{{ date('Y-m-d') }}">
+                        </div>
                     </div>
                 </div>
 
@@ -358,6 +366,7 @@ function orderForm() {
             customer_name: '',
             customer_email: localStorage.getItem('customer_email') || '',
             customer_phone: '',
+            customer_birthday: '',
             delivery_type: 'pickup',
             delivery_address: '',
             delivery_tier: '',

@@ -47,6 +47,25 @@ class GiftCardResource extends Resource
         return [];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['code', 'purchaser_name', 'recipient_name'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return 'Gift Card: ' . $record->code;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Balance' => '$' . number_format($record->current_balance, 2),
+            'Recipient' => $record->recipient_name ?? 'N/A',
+            'Active' => $record->is_active ? 'Yes' : 'No',
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

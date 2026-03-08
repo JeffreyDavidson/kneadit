@@ -163,6 +163,22 @@ class SettingSeeder extends Seeder
         $settings[] = ['key' => 'announcement_type', 'value' => 'info'];
 
             [
+                'key' => 'default_shelf_life_days',
+                'value' => '3',
+            ],
+            [
+                'key' => 'birthday_program_enabled',
+                'value' => '1',
+            ],
+            [
+                'key' => 'birthday_discount_percentage',
+                'value' => '15',
+            ],
+            [
+                'key' => 'birthday_coupon_valid_days',
+                'value' => '7',
+            ],
+            [
                 'key' => 'weekly_digest_enabled',
                 'value' => '1',
             ],

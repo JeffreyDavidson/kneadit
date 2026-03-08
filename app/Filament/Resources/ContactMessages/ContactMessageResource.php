@@ -48,6 +48,25 @@ class ContactMessageResource extends Resource
         ];
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email', 'subject'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return $record->subject ?? 'Message from ' . $record->name;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'From' => $record->name,
+            'Email' => $record->email ?? 'N/A',
+            'Read' => $record->is_read ? 'Yes' : 'No',
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
