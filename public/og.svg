@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#1c1410"/>
+  <!-- Subtle wheat accents -->
+  <g opacity="0.12" transform="translate(60, 420) rotate(-15)">
+    <line x1="30" y1="160" x2="30" y2="5" stroke="#e8b04a" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="18" cy="40" rx="8" ry="18" transform="rotate(-20 18 40)" fill="#e8b04a"/>
+    <ellipse cx="42" cy="55" rx="8" ry="18" transform="rotate(20 42 55)" fill="#e8b04a"/>
+    <ellipse cx="16" cy="80" rx="7" ry="16" transform="rotate(-25 16 80)" fill="#e8b04a"/>
+    <ellipse cx="44" cy="95" rx="7" ry="16" transform="rotate(25 44 95)" fill="#e8b04a"/>
+  </g>
+  <g opacity="0.12" transform="translate(1080, 40) rotate(15) scale(-1,1)">
+    <line x1="30" y1="160" x2="30" y2="5" stroke="#e8b04a" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="18" cy="40" rx="8" ry="18" transform="rotate(-20 18 40)" fill="#e8b04a"/>
+    <ellipse cx="42" cy="55" rx="8" ry="18" transform="rotate(20 42 55)" fill="#e8b04a"/>
+    <ellipse cx="16" cy="80" rx="7" ry="16" transform="rotate(-25 16 80)" fill="#e8b04a"/>
+    <ellipse cx="44" cy="95" rx="7" ry="16" transform="rotate(25 44 95)" fill="#e8b04a"/>
+  </g>
+  <!-- Brand name -->
+  <text x="600" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="42" font-weight="700" fill="#e8b04a">KneadIt</text>
+  <!-- Headline -->
+  <text x="600" y="290" text-anchor="middle" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#fef9ef">Your home bakery</text>
+  <text x="600" y="370" text-anchor="middle" font-family="Georgia, serif" font-size="64" font-weight="700" fill="#e8b04a">deserves real tools.</text>
+  <!-- Subline -->
+  <text x="600" y="430" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" fill="#8b6844">Orders · Invoicing · Recipes · Finances · Storefronts</text>
+  <!-- CTA badge -->
+  <rect x="465" y="475" width="270" height="50" rx="25" fill="#d4920c"/>
+  <text x="600" y="507" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#ffffff">getkneadit.app</text>
+</svg>
