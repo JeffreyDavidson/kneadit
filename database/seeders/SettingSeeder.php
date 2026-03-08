@@ -157,6 +157,27 @@ class SettingSeeder extends Seeder
         $settings[] = ['key' => 'overhead_percentage', 'value' => '20'];
         $settings[] = ['key' => 'target_profit_margin', 'value' => '50'];
 
+        // Dashboard widget configuration
+        $settings[] = [
+            'key' => 'dashboard_widgets',
+            'value' => json_encode([
+                'welcome_banner' => ['visible' => true, 'order' => 1],
+                'stats_overview' => ['visible' => true, 'order' => 2],
+                'revenue_chart' => ['visible' => true, 'order' => 3],
+                'order_funnel' => ['visible' => true, 'order' => 4],
+                'recent_orders' => ['visible' => true, 'order' => 5],
+                'upcoming_orders' => ['visible' => true, 'order' => 6],
+                'top_products' => ['visible' => true, 'order' => 7],
+                'customer_insights' => ['visible' => true, 'order' => 8],
+                'quick_actions' => ['visible' => true, 'order' => 9],
+                'at_risk_customers' => ['visible' => true, 'order' => 10],
+                'low_stock' => ['visible' => true, 'order' => 11],
+                'storefront_views' => ['visible' => true, 'order' => 12],
+                'birthday' => ['visible' => true, 'order' => 13],
+                'recent_activity' => ['visible' => true, 'order' => 14],
+            ]),
+        ];
+
         // Announcement banner settings
         $settings[] = ['key' => 'announcement_text', 'value' => ''];
         $settings[] = ['key' => 'announcement_enabled', 'value' => '0'];
