@@ -24,6 +24,7 @@ class Order extends Model
         'requested_time',
         'notes',
         'user_id',
+        'review_request_sent_at',
     ];
 
     protected $casts = [
@@ -33,6 +34,7 @@ class Order extends Model
         'total' => 'decimal:2',
         'requested_date' => 'date',
         'requested_time' => 'datetime:H:i',
+        'review_request_sent_at' => 'datetime',
     ];
 
     protected static function boot()
@@ -59,5 +61,10 @@ class Order extends Model
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(OrderMessage::class);
     }
 }

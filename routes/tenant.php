@@ -60,8 +60,15 @@ Route::middleware([
         Route::post('/gallery', [StorefrontController::class, 'submitPhoto'])->name('gallery.submit');
         Route::get('/track', [OrderController::class, 'track'])->name('order.track');
         Route::post('/track', [OrderController::class, 'trackLookup'])->name('order.track.lookup');
+
+        // Order messages
+        Route::get('/order/{order}/messages', [OrderController::class, 'messages'])->name('order.messages');
+        Route::post('/order/{order}/messages', [OrderController::class, 'sendMessage'])->name('order.messages.send');
         Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
         Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+        // Reorder data (AJAX)
+        Route::get('/order/reorder/{order}', [OrderController::class, 'reorderData'])->name('order.reorder');
 
         // Capacity check (AJAX)
         Route::get('/capacity/check/{date}', [OrderController::class, 'checkCapacity'])->name('capacity.check');
@@ -87,6 +94,10 @@ Route::middleware([
         // Customer favorites (AJAX)
         Route::get('/favorites', [StorefrontController::class, 'getFavorites'])->name('favorites.get');
         Route::post('/favorites/toggle', [StorefrontController::class, 'toggleFavorite'])->name('favorites.toggle');
+
+        // Review submission (from email link)
+        Route::get('/review/{order}', [StorefrontController::class, 'submitReview'])->name('storefront.submit-review');
+        Route::post('/review/{order}', [StorefrontController::class, 'storeReview'])->name('storefront.store-review');
     });
 
     // Tenant Storefront API (JSON, no CSRF)

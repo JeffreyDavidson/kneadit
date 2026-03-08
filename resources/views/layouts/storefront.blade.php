@@ -293,6 +293,36 @@
     </nav>
 
     <main class="min-h-screen pt-24">
+        @php
+            $announcementEnabled = \App\Models\Setting::get('announcement_enabled', '0');
+            $announcementText = \App\Models\Setting::get('announcement_text', '');
+            $announcementType = \App\Models\Setting::get('announcement_type', 'info');
+        @endphp
+
+        @if($announcementEnabled === '1' && $announcementText)
+        <div x-data="{ show: !localStorage.getItem('announcement_dismissed_{{ md5($announcementText) }}') }"
+             x-show="show"
+             x-transition
+             class="relative px-4 py-3 text-center text-sm font-medium"
+             :style="show ? '' : 'display:none'"
+             style="
+                @if($announcementType === 'warning')
+                    background: #fef3cd; color: #856404; border-bottom: 2px solid #ffc107;
+                @elseif($announcementType === 'success')
+                    background: #d4edda; color: #155724; border-bottom: 2px solid #28a745;
+                @elseif($announcementType === 'holiday')
+                    background: linear-gradient(135deg, #c41e3a, #1a6b2a); color: #fff; border-bottom: 2px solid #ffd700;
+                @else
+                    background: #fff3cd; color: #664d03; border-bottom: 2px solid var(--warm-500);
+                @endif
+             ">
+            <span>{{ $announcementText }}</span>
+            <button @click="show = false; localStorage.setItem('announcement_dismissed_{{ md5($announcementText) }}', '1')"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 text-lg leading-none"
+                    aria-label="Dismiss">&times;</button>
+        </div>
+        @endif
+
         @yield('content')
     </main>
 

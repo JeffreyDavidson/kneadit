@@ -403,6 +403,22 @@ function orderForm() {
             }
             
             this.calculateTotals();
+
+            // Check for reorder param
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('reorder')) {
+                fetch(`/order/reorder/${params.get('reorder')}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        this.cartItems = data.items.map(item => ({
+                            id: item.product_id,
+                            name: item.product_name,
+                            price: parseFloat(item.price),
+                            quantity: item.quantity
+                        }));
+                        this.calculateTotals();
+                    });
+            }
         },
 
         async loadAvailability() {

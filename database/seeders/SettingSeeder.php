@@ -152,6 +152,11 @@ class SettingSeeder extends Seeder
             ],
         ];
 
+        // Announcement banner settings
+        $settings[] = ['key' => 'announcement_text', 'value' => ''];
+        $settings[] = ['key' => 'announcement_enabled', 'value' => '0'];
+        $settings[] = ['key' => 'announcement_type', 'value' => 'info'];
+
         foreach ($settings as $setting) {
             Setting::updateOrCreate(
                 ['key' => $setting['key']],
