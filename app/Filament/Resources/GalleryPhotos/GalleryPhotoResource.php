@@ -7,7 +7,6 @@ use App\Filament\Resources\GalleryPhotos\Pages\EditGalleryPhoto;
 use App\Filament\Resources\GalleryPhotos\Pages\ListGalleryPhotos;
 use App\Models\GalleryPhoto;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
@@ -28,13 +27,18 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Filters\TernaryFilter;
 
+use App\Traits\HasPlanGating;
 class GalleryPhotoResource extends Resource
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static ?string $model = GalleryPhoto::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Content';
+    protected static string|\UnitEnum|null $navigationGroup = 'Content';
 
     protected static ?string $navigationLabel = 'Photo Gallery';
 

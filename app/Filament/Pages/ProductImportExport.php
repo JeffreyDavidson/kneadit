@@ -13,15 +13,19 @@ use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use BackedEnum;
-use UnitEnum;
 
+use App\Traits\HasPlanGating;
 class ProductImportExport extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected string $view = 'filament.pages.product-import-export';
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-tray';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Shop';
+    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
     protected static ?string $title = 'Import / Export';
 

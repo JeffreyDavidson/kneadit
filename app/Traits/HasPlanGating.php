@@ -2,148 +2,109 @@
 
 namespace App\Traits;
 
-use Illuminate\Support\Facades\Auth;
-
 trait HasPlanGating
 {
     /**
-     * Plan hierarchy definition
+     * Plan hierarchy - higher number = more access.
      */
     private static array $planHierarchy = [
         'starter' => 1,
-        'growth' => 2, 
+        'growth' => 2,
         'pro' => 3,
     ];
 
     /**
-     * Feature access by plan
+     * Override in each resource/page to set the minimum plan required.
      */
-    private static array $planFeatures = [
-        'starter' => [
-            'orders',
-            'products',
-            'categories',
-            'customers',
-            'dashboard',
-            'quick-order',
-            'settings',
-        ],
-        'growth' => [
-            'orders',
-            'products',
-            'categories',
-            'customers',
-            'dashboard',
-            'quick-order',
-            'settings',
-            'expenses',
-            'incomes',
-            'finance-summary',
-            'recipes',
-            'coupons',
-            'customer-notes',
-            'customer-favorites',
-            'gift-cards',
-        ],
-        'pro' => [
-            'orders',
-            'products',
-            'categories',
-            'customers',
-            'dashboard',
-            'quick-order',
-            'settings',
-            'expenses',
-            'incomes',
-            'finance-summary',
-            'recipes',
-            'coupons',
-            'customer-notes',
-            'customer-favorites',
-            'review-analytics',
-            'instagram-captions',
-            'holiday-planning',
-            'delivery-route-planner',
-            'custom-branding',
-            'gift-cards',
-        ],
-    ];
-
-    /**
-     * Check if current tenant has access to a feature
-     */
-    public static function hasFeatureAccess(string $feature): bool
+    public static function getRequiredPlan(): string
     {
-        $currentPlan = self::getCurrentPlan();
-        
-        // If no plan is set, default to starter
-        if (!$currentPlan || !isset(self::$planFeatures[$currentPlan])) {
-            $currentPlan = 'starter';
-        }
-        
-        return in_array($feature, self::$planFeatures[$currentPlan]);
+        return property_exists(static::class, 'requiredPlan')
+            ? static::$requiredPlan
+            : 'starter';
     }
 
     /**
-     * Check if current plan has minimum required plan level
+     * Get current tenant's plan.
      */
-    public static function hasMinimumPlan(string $requiredPlan): bool
-    {
-        $currentPlan = self::getCurrentPlan();
-        
-        if (!$currentPlan || !isset(self::$planHierarchy[$currentPlan])) {
-            $currentPlan = 'starter';
-        }
-        
-        if (!isset(self::$planHierarchy[$requiredPlan])) {
-            return false;
-        }
-        
-        return self::$planHierarchy[$currentPlan] >= self::$planHierarchy[$requiredPlan];
-    }
-
-    /**
-     * Get current tenant's plan
-     */
-    private static function getCurrentPlan(): ?string
+    private static function getCurrentPlan(): string
     {
         if (function_exists('tenant') && tenant()) {
             return tenant()->plan ?? 'starter';
         }
-        
-        // Fallback for non-tenant context
+
         return 'starter';
     }
 
     /**
-     * Get upgrade message for restricted features
+     * Check if current tenant meets the minimum plan requirement.
      */
-    public static function getUpgradeMessage(string $requiredPlan): string
+    public static function hasMinimumPlan(string $requiredPlan): bool
     {
-        $planNames = [
-            'starter' => 'Starter',
-            'growth' => 'Growth',
-            'pro' => 'Pro',
-        ];
-        
-        $requiredPlanName = $planNames[$requiredPlan] ?? ucfirst($requiredPlan);
-        
-        return "This feature requires the {$requiredPlanName} plan or higher. Please upgrade your subscription to access this feature.";
+        $currentPlan = static::getCurrentPlan();
+
+        return (self::$planHierarchy[$currentPlan] ?? 1) >= (self::$planHierarchy[$requiredPlan] ?? 1);
     }
 
     /**
-     * Check access and redirect/show message if needed (for use in resources)
+     * Filament calls this to determine if the resource/page is accessible.
+     * We always return true so the nav item shows, but mount() will redirect.
      */
-    public static function checkAccess(string $feature): bool
+    public static function canAccess(): bool
     {
-        return self::hasFeatureAccess($feature);
+        return static::hasMinimumPlan(static::getRequiredPlan());
     }
 
     /**
-     * Check minimum plan access (for use in resources with $requiredPlan property)
+     * Show a plan badge on nav items the baker can't access yet.
      */
+    public static function getNavigationBadge(): ?string
+    {
+        if (! static::hasMinimumPlan(static::getRequiredPlan())) {
+            return strtoupper(static::getRequiredPlan());
+        }
+
+        return null;
+    }
+
+    /**
+     * Badge color for locked features.
+     */
+    public static function getNavigationBadgeColor(): ?string
+    {
+        if (! static::hasMinimumPlan(static::getRequiredPlan())) {
+            return static::getRequiredPlan() === 'pro' ? 'warning' : 'info';
+        }
+
+        return null;
+    }
+
+    /**
+     * Keep nav items visible even when plan-gated.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get upgrade message for the required plan.
+     */
+    public static function getUpgradeMessage(): string
+    {
+        $planNames = ['starter' => 'Starter', 'growth' => 'Growth', 'pro' => 'Pro'];
+        $name = $planNames[static::getRequiredPlan()] ?? ucfirst(static::getRequiredPlan());
+
+        return "This feature requires the {$name} plan or higher. Please upgrade to access it.";
+    }
+
+    // Keep backward compat
     public static function checkMinimumPlan(string $requiredPlan): bool
     {
-        return self::hasMinimumPlan($requiredPlan);
+        return static::hasMinimumPlan($requiredPlan);
+    }
+
+    public static function hasFeatureAccess(string $feature): bool
+    {
+        return true; // Deprecated - use plan hierarchy instead
     }
 }

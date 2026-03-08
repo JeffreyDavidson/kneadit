@@ -9,18 +9,22 @@ use App\Filament\Resources\EmailCampaigns\Schemas\EmailCampaignForm;
 use App\Filament\Resources\EmailCampaigns\Tables\EmailCampaignsTable;
 use App\Models\EmailCampaign;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
+use App\Traits\HasPlanGating;
 class EmailCampaignResource extends Resource
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static ?string $model = EmailCampaign::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-megaphone';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Communication';
+    protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
     protected static ?int $navigationSort = 5;
 

@@ -10,8 +10,13 @@ use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+use App\Traits\HasPlanGating;
 class StorefrontAnalytics extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
     protected static ?string $navigationLabel = 'Storefront Analytics';
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';

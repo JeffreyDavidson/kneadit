@@ -10,7 +10,6 @@ use App\Filament\Resources\Recipes\Tables\RecipesTable;
 use App\Models\Recipe;
 use App\Traits\HasPlanGating;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -25,14 +24,8 @@ class RecipeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Tools';
+    protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 5;
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return static::checkMinimumPlan(static::$requiredPlan);
-    }
-
     public static function form(Schema $schema): Schema
     {
         return RecipeForm::configure($schema);

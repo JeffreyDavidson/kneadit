@@ -12,8 +12,13 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
+use App\Traits\HasPlanGating;
 class BlockedDateResource extends Resource
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static ?string $model = BlockedDate::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar';

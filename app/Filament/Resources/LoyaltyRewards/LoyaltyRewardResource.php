@@ -8,7 +8,6 @@ use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
 use App\Models\LoyaltyReward;
 use App\Models\Product;
 use BackedEnum;
-use UnitEnum;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -20,13 +19,18 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
+use App\Traits\HasPlanGating;
 class LoyaltyRewardResource extends Resource
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static ?string $model = LoyaltyReward::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-gift';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Shop';
+    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
     protected static ?int $navigationSort = 8;
 

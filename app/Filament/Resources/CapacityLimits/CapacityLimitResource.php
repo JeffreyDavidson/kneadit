@@ -12,8 +12,13 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+use App\Traits\HasPlanGating;
 class CapacityLimitResource extends Resource
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static ?string $model = CapacityLimit::class;
 
     protected static ?string $navigationLabel = 'Capacity Limits';

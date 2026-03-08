@@ -12,8 +12,13 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
+use App\Traits\HasPlanGating;
 class SocialPostResource extends Resource
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static ?string $model = SocialPost::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-share';

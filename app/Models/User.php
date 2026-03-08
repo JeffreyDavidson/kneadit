@@ -17,6 +17,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'role',
     ];
 
     protected $hidden = [
@@ -76,5 +77,27 @@ class User extends Authenticatable implements FilamentUser
     public function hasAccess(): bool
     {
         return $this->subscribed('default') || $this->onTrial();
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->role === 'owner';
+    }
+
+    public function isManager(): bool
+    {
+        return $this->role === 'manager';
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->role === 'staff';
+    }
+
+    public function hasMinRole(string $role): bool
+    {
+        $hierarchy = ['staff' => 1, 'manager' => 2, 'owner' => 3];
+
+        return ($hierarchy[$this->role] ?? 0) >= ($hierarchy[$role] ?? 0);
     }
 }

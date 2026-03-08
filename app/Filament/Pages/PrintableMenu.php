@@ -7,8 +7,13 @@ use App\Models\Setting;
 use Filament\Pages\Page;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
+use App\Traits\HasPlanGating;
 class PrintableMenu extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'growth';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Printable Menu';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';

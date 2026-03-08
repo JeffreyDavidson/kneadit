@@ -9,8 +9,13 @@ use Filament\Pages\Page;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Url;
 
+use App\Traits\HasPlanGating;
 class ProductTrends extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected string $view = 'filament.pages.product-trends';
 
     protected static ?string $title = 'Product Trends';

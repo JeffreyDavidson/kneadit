@@ -14,15 +14,19 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
-use UnitEnum;
 
+use App\Traits\HasPlanGating;
 class CustomerDirectory extends Page implements HasForms
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'growth';
     protected static bool $shouldRegisterNavigation = false;
     use InteractsWithForms;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
-    protected static string|UnitEnum|null $navigationGroup = 'Tools';
+    protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 12;
     protected static ?string $navigationLabel = 'Customer Directory';
     protected static ?string $title = 'Customer Directory';

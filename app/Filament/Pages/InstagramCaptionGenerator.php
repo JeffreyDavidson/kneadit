@@ -11,14 +11,18 @@ use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Icons\Heroicon;
-use UnitEnum;
 
+use App\Traits\HasPlanGating;
 class InstagramCaptionGenerator extends Page implements HasForms
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     use InteractsWithForms;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCamera;
-    protected static string|UnitEnum|null $navigationGroup = 'Tools';
+    protected static string|\UnitEnum|null $navigationGroup = 'Tools';
     protected static ?int $navigationSort = 11;
     protected static ?string $navigationLabel = 'Instagram Captions';
     protected static ?string $title = 'Instagram Caption Generator';

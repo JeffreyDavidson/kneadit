@@ -7,15 +7,19 @@ use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
 use App\Models\Setting;
 use BackedEnum;
-use UnitEnum;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
 
+use App\Traits\HasPlanGating;
 class LoyaltyDashboard extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-trophy';
     protected static ?string $navigationLabel = 'Loyalty Program';
-    protected static string|UnitEnum|null $navigationGroup = 'Shop';
+    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
     protected static ?int $navigationSort = 9;
     protected string $view = 'filament.pages.loyalty-dashboard';
 

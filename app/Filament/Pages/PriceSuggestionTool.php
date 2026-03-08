@@ -7,8 +7,13 @@ use App\Models\Recipe;
 use App\Models\Product;
 use Illuminate\Support\Collection;
 
+use App\Traits\HasPlanGating;
 class PriceSuggestionTool extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
     protected static ?string $navigationLabel = 'Price Suggestion';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';

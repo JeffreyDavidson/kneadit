@@ -25,10 +25,12 @@ use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
-use UnitEnum;
 
+use App\Traits\HasPlanGating;
 class Onboarding extends Page
 {
+    use HasPlanGating;
+
     protected static bool $shouldRegisterNavigation = false;
 
     protected static string|BackedEnum|null $navigationIcon = null;

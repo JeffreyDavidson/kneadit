@@ -6,13 +6,17 @@ use App\Models\Setting;
 use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Http\Request;
-use UnitEnum;
 
+use App\Traits\HasPlanGating;
 class ThemeSelector extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-paint-brush';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
     protected static ?string $navigationLabel = 'Storefront Theme';
 

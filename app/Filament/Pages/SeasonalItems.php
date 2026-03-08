@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Models\Product;
 use App\Models\SeasonalItem;
 use BackedEnum;
-use UnitEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -16,10 +15,15 @@ use Filament\Schemas\Components\Select;
 use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Schema;
 
+use App\Traits\HasPlanGating;
 class SeasonalItems extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-sparkles';
-    protected static string|UnitEnum|null $navigationGroup = 'Shop';
+    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
     protected static ?string $navigationLabel = 'Seasonal Items';
     protected static ?int $navigationSort = 12;
     protected string $view = 'filament.pages.seasonal-items';
