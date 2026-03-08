@@ -95,6 +95,10 @@ Route::middleware([
         Route::get('/favorites', [StorefrontController::class, 'getFavorites'])->name('favorites.get');
         Route::post('/favorites/toggle', [StorefrontController::class, 'toggleFavorite'])->name('favorites.toggle');
 
+        // Catering
+        Route::get('/catering', [StorefrontController::class, 'catering'])->name('storefront.catering');
+        Route::post('/catering', [StorefrontController::class, 'submitCateringInquiry'])->name('catering.submit');
+
         // Blog
         Route::get('/blog', [StorefrontController::class, 'blog'])->name('storefront.blog');
         Route::get('/blog/feed.xml', [StorefrontController::class, 'blogFeed'])->name('storefront.blog.feed');
