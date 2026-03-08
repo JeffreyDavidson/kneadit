@@ -15,10 +15,41 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create the default user first (required for orders)
-        // Use DB::table to avoid double-hashing (User model has 'password' => 'hashed' cast)
-        $connection = tenant() ? 'tenant' : \Illuminate\Support\Facades\DB::getDefaultConnection();
-        \Illuminate\Support\Facades\DB::connection($connection)->table('users')->updateOrInsert(
+        // If running in a tenant context, seed tenant data
+        // If running in central context (migrate:fresh --seed), only seed central data
+        if (tenant()) {
+            $this->seedTenantData();
+        } else {
+            $this->seedCentralData();
+        }
+    }
+
+    /**
+     * Seed central database (users, holidays, etc.)
+     */
+    protected function seedCentralData(): void
+    {
+        User::updateOrCreate(
+            ['email' => 'jeffrey@getkneadit.app'],
+            [
+                'name' => 'Jeffrey Davidson',
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        if ($this->command) {
+            $this->command->info('Central database seeded. Use `php artisan tenant:demo --fresh` to create a demo tenant with sample data.');
+        }
+    }
+
+    /**
+     * Seed tenant database (categories, products, orders, etc.)
+     */
+    protected function seedTenantData(): void
+    {
+        // Create the tenant admin user
+        \Illuminate\Support\Facades\DB::connection('tenant')->table('users')->updateOrInsert(
             ['email' => 'baker@kneaditbakery.com'],
             [
                 'name' => 'KneadIt Baker',
@@ -29,9 +60,8 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Seed all tables in dependency order
+        // Seed all tenant tables in dependency order
         $this->call([
-            // Core data with no dependencies
             CategorySeeder::class,
             CustomerSeeder::class,
             SettingSeeder::class,
@@ -39,11 +69,7 @@ class DatabaseSeeder extends Seeder
             IncomeSeeder::class,
             CouponSeeder::class,
             CapacityLimitSeeder::class,
-            
-            // Data that depends on categories
             ProductSeeder::class,
-            
-            // Data that depends on products and customers
             OrderSeeder::class,
             RecipeSeeder::class,
             ReviewSeeder::class,
@@ -51,7 +77,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         if ($this->command) {
-            $this->command->info('Demo data seeded successfully!');
+            $this->command->info('Tenant data seeded successfully!');
         }
     }
 }
