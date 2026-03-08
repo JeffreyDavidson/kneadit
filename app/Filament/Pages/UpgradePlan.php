@@ -2,10 +2,12 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Traits\RequiresRole;
 use Filament\Pages\Page;
 
 class UpgradePlan extends Page
 {
+    use RequiresRole;
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-circle';
     protected static ?string $navigationLabel = 'Upgrade Plan';
     protected static ?string $title = 'Upgrade Your Plan';

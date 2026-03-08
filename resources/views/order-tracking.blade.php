@@ -142,6 +142,17 @@
                         </div>
                         @endunless
 
+                        {{-- Reorder Button --}}
+                        <div class="border-t pt-4 mb-4" style="border-color: var(--warm-200);">
+                            <a href="{{ route('order.create') }}?reorder={{ $order->id }}"
+                               class="btn-primary inline-flex items-center gap-2 text-sm px-4 py-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                Order Again
+                            </a>
+                        </div>
+
                         {{-- Items --}}
                         <div class="border-t pt-4" style="border-color: var(--warm-200);">
                             <h4 class="font-medium mb-3 text-sm" style="color: var(--warm-700);">Items Ordered</h4>
@@ -156,6 +167,21 @@
                                     </div>
                                 @endforeach
                             </div>
+                        </div>
+
+                        {{-- Messages --}}
+                        <div class="border-t pt-4 mt-4" style="border-color: var(--warm-200);">
+                            <h4 class="font-medium mb-3 text-sm flex items-center gap-2" style="color: var(--warm-700);">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                Messages
+                            </h4>
+                            <div id="messages-{{ $order->id }}" class="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                                <p class="text-sm italic" style="color: var(--warm-500);">Loading messages...</p>
+                            </div>
+                            <form onsubmit="sendOrderMessage(event, {{ $order->id }})" class="flex gap-2">
+                                <input type="text" id="msg-input-{{ $order->id }}" placeholder="Type a message..." class="input-field flex-1 text-sm" required>
+                                <button type="submit" class="btn-primary text-sm px-4 py-2">Send</button>
+                            </form>
                         </div>
                     </div>
                 @endforeach

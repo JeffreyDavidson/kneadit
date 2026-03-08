@@ -357,6 +357,18 @@ class OrderController extends Controller
         return $number;
     }
 
+    public function reorderData(Order $order)
+    {
+        $items = $order->orderItems->map(fn($item) => [
+            'product_id' => $item->product_id,
+            'product_name' => $item->product?->name ?? 'Unknown',
+            'price' => $item->unit_price,
+            'quantity' => $item->quantity,
+        ]);
+
+        return response()->json(['items' => $items]);
+    }
+
     public function track()
     {
         return view('order-tracking');
@@ -415,5 +427,36 @@ class OrderController extends Controller
             ->toArray();
 
         return response()->json(['favorites' => $favorites]);
+    }
+
+    public function messages(Order $order)
+    {
+        $messages = $order->messages()->oldest()->get();
+
+        return response()->json(['messages' => $messages]);
+    }
+
+    public function sendMessage(Request $request, Order $order)
+    {
+        $request->validate([
+            'message' => 'required|string|max:2000',
+            'sender_name' => 'required|string|max:255',
+            'sender_email' => 'required|email',
+        ]);
+
+        $message = $order->messages()->create([
+            'sender_type' => 'customer',
+            'sender_name' => $request->sender_name,
+            'message' => $request->message,
+        ]);
+
+        // Email the baker
+        $storeEmail = \App\Models\Setting::get('store_email');
+        if ($storeEmail) {
+            \Illuminate\Support\Facades\Mail::to($storeEmail)
+                ->send(new \App\Mail\NewOrderMessage($message));
+        }
+
+        return response()->json(['success' => true, 'message' => $message]);
     }
 }
