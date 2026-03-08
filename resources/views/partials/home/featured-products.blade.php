@@ -7,13 +7,37 @@
 @if($featuredProducts->isNotEmpty())
 <section class="py-20 px-4" style="background: var(--warm-200);">
     <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-14">
-            <p class="font-script text-xl mb-2" style="color: var(--warm-500);">{{ $subtitle }}</p>
-            <h2 class="font-display text-3xl md:text-5xl font-semibold" style="color: var(--warm-900);">{{ $title }}</h2>
+        <div class="mb-14">
+            <h2 class="font-display text-4xl md:text-6xl font-semibold" style="color: var(--warm-900);">{{ $title }}</h2>
+            <p class="mt-2 text-lg" style="color: var(--warm-600);">{{ $subtitle }}</p>
         </div>
-        
+
+        @if($featuredProducts->count() >= 1)
+        {{-- Featured first product: large horizontal card --}}
+        @php $star = $featuredProducts->first(); @endphp
+        <div class="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden mb-10 group transition-shadow duration-300 hover:shadow-2xl" style="background: white;">
+            <div class="relative overflow-hidden" style="aspect-ratio: 4/3;">
+                @if($star->image)
+                    <img src="{{ Storage::url($star->image) }}" alt="{{ $star->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                @else
+                    <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-800), var(--warm-700));">
+                        <span class="font-display font-bold" style="font-size: 5rem; color: var(--warm-400); opacity: 0.6;">{{ strtoupper(substr($star->name, 0, 1)) }}</span>
+                    </div>
+                @endif
+            </div>
+            <div class="flex flex-col justify-center p-8 md:p-12">
+                <span class="text-sm font-bold uppercase tracking-widest mb-4" style="color: var(--warm-500);">${{ number_format($star->price, 2) }}</span>
+                <h3 class="font-display text-3xl md:text-4xl font-semibold mb-4" style="color: var(--warm-900);">{{ $star->name }}</h3>
+                @if($star->description)
+                <p class="text-base leading-relaxed" style="color: var(--warm-600);">{{ $star->description }}</p>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        @if($featuredProducts->count() > 1)
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach($featuredProducts as $product)
+            @foreach($featuredProducts->skip(1) as $product)
             <div class="group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" style="background: white;">
                 <div class="relative overflow-hidden" style="aspect-ratio: 4/3;">
                     @if($product->image)
@@ -27,20 +51,16 @@
                         ${{ number_format($product->price, 2) }}
                     </div>
                 </div>
-
                 <div class="p-6">
-                    <h3 class="font-display text-xl font-semibold mb-2" style="color: var(--warm-900);">
-                        {{ $product->name }}
-                    </h3>
+                    <h3 class="font-display text-xl font-semibold mb-2" style="color: var(--warm-900);">{{ $product->name }}</h3>
                     @if($product->description)
-                    <p class="text-sm leading-relaxed line-clamp-2" style="color: var(--warm-600);">
-                        {{ $product->description }}
-                    </p>
+                    <p class="text-sm leading-relaxed line-clamp-2" style="color: var(--warm-600);">{{ $product->description }}</p>
                     @endif
                 </div>
             </div>
             @endforeach
         </div>
+        @endif
 
         <div class="text-center mt-12">
             <a href="{{ route('storefront.menu') }}" class="inline-flex items-center gap-2 font-display text-lg font-semibold transition-colors hover:underline" style="color: var(--warm-700);">
