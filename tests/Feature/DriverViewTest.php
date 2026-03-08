@@ -7,6 +7,7 @@ use App\Http\Middleware\TrackPageView;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -33,12 +34,21 @@ class DriverViewTest extends TestCase
         ];
     }
 
-    private function createCustomer(): Customer
+    private function createOrder(array $attrs = []): Order
     {
-        return Customer::create([
-            'name' => 'Test Customer',
-            'email' => 'test@example.com',
-        ]);
+        $user = User::create(['name' => 'Baker', 'email' => 'baker@test.com', 'password' => bcrypt('pass')]);
+        $customer = Customer::create(['name' => 'Test Customer', 'email' => 'cust@test.com']);
+
+        return Order::create(array_merge([
+            'order_number' => 'ORD-' . uniqid(),
+            'customer_id' => $customer->id,
+            'user_id' => $user->id,
+            'status' => 'confirmed',
+            'subtotal' => 25.00,
+            'total' => 25.00,
+            'delivery_address' => '123 Main St',
+            'requested_date' => today(),
+        ], $attrs));
     }
 
     /** @test */
@@ -54,16 +64,7 @@ class DriverViewTest extends TestCase
     public function driver_page_shows_todays_delivery_orders(): void
     {
         Setting::set('store_name', 'Test Bakery');
-        $customer = $this->createCustomer();
-
-        Order::create([
-            'order_number' => 'ORD-001',
-            'customer_id' => $customer->id,
-            'status' => 'confirmed',
-            'delivery_address' => '123 Main St',
-            'requested_date' => today(),
-            'total' => 25.00,
-        ]);
+        $order = $this->createOrder(['order_number' => 'ORD-001']);
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)->get('/driver');
         $response->assertOk();
@@ -74,17 +75,7 @@ class DriverViewTest extends TestCase
     public function driver_page_hides_pickup_orders(): void
     {
         Setting::set('store_name', 'Test Bakery');
-        $customer = $this->createCustomer();
-
-        // Pickup order (no delivery address)
-        Order::create([
-            'order_number' => 'ORD-PICKUP',
-            'customer_id' => $customer->id,
-            'status' => 'confirmed',
-            'delivery_address' => '',
-            'requested_date' => today(),
-            'total' => 15.00,
-        ]);
+        $this->createOrder(['order_number' => 'ORD-PICKUP', 'delivery_address' => '']);
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)->get('/driver');
         $response->assertOk();
@@ -95,16 +86,7 @@ class DriverViewTest extends TestCase
     public function driver_page_hides_past_orders(): void
     {
         Setting::set('store_name', 'Test Bakery');
-        $customer = $this->createCustomer();
-
-        Order::create([
-            'order_number' => 'ORD-OLD',
-            'customer_id' => $customer->id,
-            'status' => 'confirmed',
-            'delivery_address' => '456 Oak Ave',
-            'requested_date' => today()->subDay(),
-            'total' => 30.00,
-        ]);
+        $this->createOrder(['order_number' => 'ORD-OLD', 'requested_date' => today()->subDay()]);
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)->get('/driver');
         $response->assertOk();
@@ -114,16 +96,7 @@ class DriverViewTest extends TestCase
     /** @test */
     public function mark_delivered_changes_order_status(): void
     {
-        $customer = $this->createCustomer();
-
-        $order = Order::create([
-            'order_number' => 'ORD-DEL',
-            'customer_id' => $customer->id,
-            'status' => 'ready',
-            'delivery_address' => '789 Elm St',
-            'requested_date' => today(),
-            'total' => 20.00,
-        ]);
+        $order = $this->createOrder(['status' => 'ready']);
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)->post("/driver/{$order->id}/delivered");
         $response->assertRedirect();
@@ -134,16 +107,7 @@ class DriverViewTest extends TestCase
     /** @test */
     public function mark_delivered_redirects_back(): void
     {
-        $customer = $this->createCustomer();
-
-        $order = Order::create([
-            'order_number' => 'ORD-BACK',
-            'customer_id' => $customer->id,
-            'status' => 'ready',
-            'delivery_address' => '101 Pine St',
-            'requested_date' => today(),
-            'total' => 18.00,
-        ]);
+        $order = $this->createOrder(['status' => 'ready']);
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)
             ->from('/driver')

@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -37,26 +38,36 @@ class ReorderTest extends TestCase
         ];
     }
 
-    /** @test */
-    public function reorder_endpoint_returns_order_items_as_json(): void
+    private function createOrderWithItems(string $productName = 'Sourdough', float $price = 8.50): Order
     {
+        $user = User::create(['name' => 'Baker', 'email' => 'baker@test.com', 'password' => bcrypt('pass')]);
         $customer = Customer::create(['name' => 'Test', 'email' => 'test@example.com']);
-        $category = Category::create(['name' => 'Bread']);
-        $product = Product::create(['name' => 'Sourdough', 'price' => 8.50, 'category_id' => $category->id, 'is_active' => true]);
+        $category = Category::create(['name' => $productName . ' Cat', 'slug' => 'cat-' . uniqid()]);
+        $product = Product::create(['name' => $productName, 'slug' => \Str::slug($productName) . '-' . uniqid(), 'price' => $price, 'category_id' => $category->id, 'is_active' => true]);
 
         $order = Order::create([
-            'order_number' => 'ORD-RE-001',
+            'order_number' => 'ORD-RE-' . uniqid(),
             'customer_id' => $customer->id,
-            'status' => 'completed',
-            'total' => 17.00,
+            'user_id' => $user->id,
+            'status' => 'delivered',
+            'subtotal' => $price * 2,
+            'total' => $price * 2,
         ]);
 
         OrderItem::create([
             'order_id' => $order->id,
             'product_id' => $product->id,
             'quantity' => 2,
-            'unit_price' => 8.50,
+            'unit_price' => $price,
         ]);
+
+        return $order;
+    }
+
+    /** @test */
+    public function reorder_endpoint_returns_order_items_as_json(): void
+    {
+        $order = $this->createOrderWithItems();
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)
             ->getJson("/order/reorder/{$order->id}");
@@ -68,23 +79,7 @@ class ReorderTest extends TestCase
     /** @test */
     public function reorder_data_includes_product_names_and_prices(): void
     {
-        $customer = Customer::create(['name' => 'Test', 'email' => 'test@example.com']);
-        $category = Category::create(['name' => 'Pastries']);
-        $product = Product::create(['name' => 'Croissant', 'price' => 4.00, 'category_id' => $category->id, 'is_active' => true]);
-
-        $order = Order::create([
-            'order_number' => 'ORD-RE-002',
-            'customer_id' => $customer->id,
-            'status' => 'completed',
-            'total' => 4.00,
-        ]);
-
-        OrderItem::create([
-            'order_id' => $order->id,
-            'product_id' => $product->id,
-            'quantity' => 1,
-            'unit_price' => 4.00,
-        ]);
+        $order = $this->createOrderWithItems('Croissant', 4.00);
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)
             ->getJson("/order/reorder/{$order->id}");

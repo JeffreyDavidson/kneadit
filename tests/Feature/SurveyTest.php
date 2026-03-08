@@ -41,8 +41,8 @@ class SurveyTest extends TestCase
             'title' => 'Customer Satisfaction',
             'description' => 'Tell us how we did',
             'questions' => [
-                ['type' => 'rating', 'label' => 'How was the food?'],
-                ['type' => 'text', 'label' => 'Any comments?'],
+                ['type' => 'rating', 'question' => 'How was the food?'],
+                ['type' => 'text', 'question' => 'Any comments?'],
             ],
             'is_active' => true,
             'responses_count' => 0,
@@ -58,7 +58,7 @@ class SurveyTest extends TestCase
     {
         $survey = Survey::create([
             'title' => 'Old Survey',
-            'questions' => [['type' => 'text', 'label' => 'Feedback']],
+            'questions' => [['type' => 'text', 'question' => 'Feedback']],
             'is_active' => false,
             'responses_count' => 0,
         ]);
@@ -72,7 +72,7 @@ class SurveyTest extends TestCase
     {
         $survey = Survey::create([
             'title' => 'Quick Poll',
-            'questions' => [['type' => 'rating', 'label' => 'Rate us']],
+            'questions' => [['type' => 'rating', 'question' => 'Rate us']],
             'is_active' => true,
             'responses_count' => 0,
         ]);
@@ -96,8 +96,8 @@ class SurveyTest extends TestCase
         $survey = Survey::create([
             'title' => 'Detailed Survey',
             'questions' => [
-                ['type' => 'rating', 'label' => 'Quality'],
-                ['type' => 'text', 'label' => 'Comments'],
+                ['type' => 'rating', 'question' => 'Quality'],
+                ['type' => 'text', 'question' => 'Comments'],
             ],
             'is_active' => true,
             'responses_count' => 0,
@@ -119,7 +119,7 @@ class SurveyTest extends TestCase
     {
         $survey = Survey::create([
             'title' => 'Counter Test',
-            'questions' => [['type' => 'text', 'label' => 'Feedback']],
+            'questions' => [['type' => 'text', 'question' => 'Feedback']],
             'is_active' => true,
             'responses_count' => 0,
         ]);
@@ -136,7 +136,7 @@ class SurveyTest extends TestCase
     {
         $survey = Survey::create([
             'title' => 'Rating Test',
-            'questions' => [['type' => 'rating', 'label' => 'Score']],
+            'questions' => [['type' => 'rating', 'question' => 'Score']],
             'is_active' => true,
             'responses_count' => 0,
         ]);
@@ -154,7 +154,7 @@ class SurveyTest extends TestCase
     {
         $survey = Survey::create([
             'title' => 'Text Test',
-            'questions' => [['type' => 'text', 'label' => 'Thoughts']],
+            'questions' => [['type' => 'text', 'question' => 'Thoughts']],
             'is_active' => true,
             'responses_count' => 0,
         ]);
