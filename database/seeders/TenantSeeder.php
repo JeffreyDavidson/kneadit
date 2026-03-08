@@ -42,6 +42,7 @@ class TenantSeeder extends Seeder
             RecipeSeeder::class,
             ReviewSeeder::class,
             WaitlistEntrySeeder::class,
+            BusinessScheduleSeeder::class,
         ]);
     }
 }

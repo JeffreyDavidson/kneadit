@@ -54,12 +54,23 @@ Route::middleware([
         // Capacity check (AJAX)
         Route::get('/capacity/check/{date}', [OrderController::class, 'checkCapacity'])->name('capacity.check');
 
+        // Availability for next 30 days (scheduling integration)
+        Route::get('/availability', [OrderController::class, 'availability'])->name('order.availability');
+
         // Loyalty rewards
         Route::get('/rewards', [StorefrontController::class, 'rewards'])->name('storefront.rewards');
         Route::post('/rewards/check', [StorefrontController::class, 'checkRewards'])->name('rewards.check');
 
+        // Gift Cards
+        Route::get('/gift-cards', [StorefrontController::class, 'giftCards'])->name('storefront.gift-cards');
+        Route::post('/gift-cards/purchase', [StorefrontController::class, 'purchaseGiftCard'])->name('gift-cards.purchase');
+        Route::post('/gift-cards/balance', [StorefrontController::class, 'checkGiftCardBalance'])->name('gift-cards.balance');
+
         // Coupon validation (AJAX)
         Route::post('/coupon/apply', [OrderController::class, 'applyCoupon'])->name('coupon.apply');
+
+        // Gift card validation (AJAX)
+        Route::post('/gift-card/apply', [OrderController::class, 'applyGiftCard'])->name('gift-card.apply');
 
         // Customer favorites (AJAX)
         Route::get('/favorites', [StorefrontController::class, 'getFavorites'])->name('favorites.get');

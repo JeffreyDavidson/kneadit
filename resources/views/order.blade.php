@@ -135,6 +135,29 @@
                     </div>
                 </div>
 
+                <!-- Gift Card Section -->
+                <div class="border-t border-warm-200 pt-4 mb-4">
+                    <label class="block text-sm font-medium text-warm-900 mb-2">Gift Card</label>
+                    <div class="flex">
+                        <input type="text" 
+                               x-model="giftCardCode"
+                               placeholder="XXXX-XXXX-XXXX-XXXX"
+                               class="input-field rounded-r-none flex-1 font-mono uppercase tracking-wider text-sm">
+                        <button type="button" 
+                                @click="applyGiftCard()"
+                                :disabled="!giftCardCode || isApplyingGiftCard"
+                                class="btn-secondary rounded-l-none border-l-0"
+                                :class="isApplyingGiftCard ? 'opacity-50 cursor-not-allowed' : ''">
+                            <span x-text="isApplyingGiftCard ? 'Checking...' : 'Apply'"></span>
+                        </button>
+                    </div>
+                    
+                    <div x-show="giftCardError" class="text-red-600 text-sm mt-1" x-text="giftCardError"></div>
+                    <div x-show="appliedGiftCard" class="text-green-600 text-sm mt-1">
+                        Gift card applied! Balance: $<span x-text="appliedGiftCard?.available_balance?.toFixed(2)"></span>
+                    </div>
+                </div>
+
                 <!-- Order Totals -->
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
@@ -150,6 +173,11 @@
                     <div x-show="appliedCoupon" class="flex justify-between text-green-600">
                         <span>Discount:</span>
                         <span x-text="'-$' + discountAmount.toFixed(2)"></span>
+                    </div>
+                    
+                    <div x-show="appliedGiftCard" class="flex justify-between text-green-600">
+                        <span>Gift Card:</span>
+                        <span x-text="'-$' + giftCardAmount.toFixed(2)"></span>
                     </div>
                     
                     <div class="flex justify-between font-bold text-lg border-t border-warm-200 pt-2">
@@ -346,11 +374,18 @@ function orderForm() {
         appliedCoupon: null,
         couponError: '',
         isApplyingCoupon: false,
+        giftCardCode: '',
+        appliedGiftCard: null,
+        giftCardError: '',
+        isApplyingGiftCard: false,
+        giftCardAmount: 0,
         isSubmitting: false,
         submitError: '',
         capacityWarning: '',
         capacityError: '',
         minDate: '',
+        availabilityData: [],
+        unavailableDates: [],
 
         init() {
             // Set minimum date based on lead time hours
@@ -359,12 +394,31 @@ function orderForm() {
             today.setTime(today.getTime() + (leadTimeHours * 60 * 60 * 1000));
             this.minDate = today.toISOString().split('T')[0];
             
+            // Load availability data for date picker
+            this.loadAvailability();
+            
             // Load favorites if email exists
             if (this.form.customer_email) {
                 this.loadFavorites();
             }
             
             this.calculateTotals();
+        },
+
+        async loadAvailability() {
+            try {
+                const response = await fetch('/availability');
+                this.availabilityData = await response.json();
+                this.unavailableDates = this.availabilityData
+                    .filter(d => !d.available)
+                    .map(d => d.date);
+            } catch (e) {
+                console.error('Failed to load availability', e);
+            }
+        },
+
+        getDateAvailability(dateStr) {
+            return this.availabilityData.find(d => d.date === dateStr);
         },
 
         get canSubmit() {
@@ -416,7 +470,13 @@ function orderForm() {
             this.subtotal = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             this.calculateDeliveryFee();
             this.calculateDiscount();
-            this.total = Math.max(0, this.subtotal + this.deliveryFee - this.discountAmount);
+            let afterDiscount = Math.max(0, this.subtotal + this.deliveryFee - this.discountAmount);
+            if (this.appliedGiftCard) {
+                this.giftCardAmount = Math.min(this.appliedGiftCard.available_balance, afterDiscount);
+            } else {
+                this.giftCardAmount = 0;
+            }
+            this.total = Math.max(0, afterDiscount - this.giftCardAmount);
         },
 
         calculateDeliveryFee() {
@@ -496,6 +556,43 @@ function orderForm() {
             }
         },
 
+        async applyGiftCard() {
+            if (!this.giftCardCode || this.isApplyingGiftCard) return;
+            
+            this.isApplyingGiftCard = true;
+            this.giftCardError = '';
+            
+            try {
+                const response = await fetch('{{ route("gift-card.apply") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        code: this.giftCardCode,
+                        subtotal: this.subtotal
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.appliedGiftCard = data;
+                    this.giftCardError = '';
+                    this.calculateTotals();
+                } else {
+                    this.giftCardError = data.error || 'Invalid gift card';
+                    this.appliedGiftCard = null;
+                    this.calculateTotals();
+                }
+            } catch (error) {
+                this.giftCardError = 'Error validating gift card';
+            } finally {
+                this.isApplyingGiftCard = false;
+            }
+        },
+
         async applyCoupon() {
             if (!this.couponCode || this.isApplyingCoupon) return;
             
@@ -538,6 +635,18 @@ function orderForm() {
             
             this.capacityWarning = '';
             this.capacityError = '';
+
+            // Check availability data first (schedule/blocked dates)
+            const avail = this.getDateAvailability(this.form.delivery_date);
+            if (avail && !avail.available) {
+                this.capacityError = avail.reason === 'Closed' 
+                    ? 'The bakery is closed on this day.' 
+                    : (avail.reason || 'This date is not available.');
+                return;
+            }
+            if (avail && avail.remaining_capacity > 0 && avail.remaining_capacity <= 5) {
+                this.capacityWarning = `Only ${avail.remaining_capacity} order slots remaining for this date.`;
+            }
             
             try {
                 const response = await fetch(`/capacity/check/${this.form.delivery_date}`);
@@ -577,6 +686,11 @@ function orderForm() {
             // Add coupon if applied
             if (this.appliedCoupon) {
                 formData.append('coupon_id', this.appliedCoupon.coupon_id);
+            }
+            
+            // Add gift card if applied
+            if (this.appliedGiftCard) {
+                formData.append('gift_card_id', this.appliedGiftCard.gift_card_id);
             }
             
             formData.append('_token', '{{ csrf_token() }}');
