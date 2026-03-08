@@ -236,6 +236,43 @@
             border-color: var(--warm-500);
         }
 
+        /* Section divider — reusable organic curve */
+        .section-divider {
+            position: relative;
+            height: 40px;
+            overflow: hidden;
+        }
+        .section-divider::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 1px;
+            background: var(--warm-500);
+            opacity: 0.4;
+        }
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--warm-500);
+            opacity: 0.5;
+        }
+        .section-divider-dark::before { background: var(--warm-400); opacity: 0.3; }
+        .section-divider-dark::after { background: var(--warm-400); opacity: 0.4; }
+
+        /* Better base typography scale */
+        h1 { line-height: 1.05; }
+        h2 { line-height: 1.15; }
+        h3 { line-height: 1.25; }
+
         /* Elegant theme: extra letter-spacing and thin borders */
         [data-theme="elegant"] .font-display {
             letter-spacing: 0.05em;
