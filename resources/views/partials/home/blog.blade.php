@@ -16,7 +16,7 @@
 @if($latestPosts->isNotEmpty())
 <section class="py-20 px-4" style="background: var(--warm-100);">
     <div class="max-w-6xl mx-auto">
-        <div class="section-divider mb-14"></div>
+        
         <h2 class="font-display text-3xl md:text-5xl font-semibold mb-12" style="color: var(--warm-900);">{{ $title }}</h2>
 
         <div class="grid md:grid-cols-3 gap-8">

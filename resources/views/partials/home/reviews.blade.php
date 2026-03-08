@@ -7,7 +7,7 @@
 @if($reviews->count() > 0)
 <section class="py-24 px-4" style="background: var(--warm-900);">
     <div class="max-w-6xl mx-auto">
-        <div class="section-divider section-divider-dark mb-16"></div>
+        
         <h2 class="font-display text-3xl md:text-5xl font-semibold text-center mb-16" style="color: var(--warm-100);">{{ $title }}</h2>
 
         @if($reviews->count() >= 3)
