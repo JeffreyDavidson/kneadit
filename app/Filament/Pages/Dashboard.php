@@ -13,8 +13,11 @@ use App\Filament\Widgets\UpcomingHolidayWidget;
 use App\Filament\Widgets\WeeklyRevenueChart;
 use Filament\Pages\Dashboard as BaseDashboard;
 
+use App\Traits\HasPlanGating;
 class Dashboard extends BaseDashboard
 {
+    use HasPlanGating;
+
     protected static ?string $navigationLabel = 'Bakery Dashboard';
 
     protected static ?string $title = 'Bakery Dashboard';

@@ -15,8 +15,13 @@ use Filament\Schemas\Components\Utilities\Set;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Response;
 
+use App\Traits\HasPlanGating;
 class QrCodeGenerator extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'growth';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-qr-code';
     protected static ?string $navigationLabel = 'QR Code Generator';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';

@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Models\BusinessSchedule;
 use BackedEnum;
-use UnitEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -15,10 +14,15 @@ use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 
+use App\Traits\HasPlanGating;
 class ScheduleManager extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clock';
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'Schedule Manager';
     protected static ?int $navigationSort = 4;
     protected string $view = 'filament.pages.schedule-manager';

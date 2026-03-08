@@ -9,8 +9,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
 
+use App\Traits\HasPlanGating;
 class ReorderReminders extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'growth';
     protected string $view = 'filament.pages.reorder-reminders';
 
     protected static ?string $title = 'Reorder Reminders';

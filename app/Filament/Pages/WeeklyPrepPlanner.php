@@ -8,8 +8,13 @@ use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
+use App\Traits\HasPlanGating;
 class WeeklyPrepPlanner extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'growth';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
     protected static ?string $navigationLabel = 'Prep Planner';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';

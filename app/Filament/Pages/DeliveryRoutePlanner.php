@@ -8,8 +8,13 @@ use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
+use App\Traits\HasPlanGating;
 class DeliveryRoutePlanner extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';
     protected static ?string $navigationLabel = 'Delivery Planner';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';

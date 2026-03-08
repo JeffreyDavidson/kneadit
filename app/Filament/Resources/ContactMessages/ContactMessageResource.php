@@ -13,8 +13,11 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
+use App\Traits\HasPlanGating;
 class ContactMessageResource extends Resource
 {
+    use HasPlanGating;
+
     protected static ?string $model = ContactMessage::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-envelope';

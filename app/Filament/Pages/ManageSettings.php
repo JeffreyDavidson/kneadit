@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Models\Setting;
 use BackedEnum;
-use UnitEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -19,13 +18,16 @@ use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
+use App\Traits\HasPlanGating;
 class ManageSettings extends Page
 {
+    use HasPlanGating;
+
     use InteractsWithFormActions;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Admin';
+    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
 
     protected static ?string $navigationLabel = 'Settings';
 

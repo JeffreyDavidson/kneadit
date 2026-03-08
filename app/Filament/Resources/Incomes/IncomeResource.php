@@ -24,12 +24,6 @@ class IncomeResource extends Resource
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-up';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return static::checkMinimumPlan(static::$requiredPlan);
-    }
-
     public static function form(Schema $schema): Schema
     {
         return IncomeForm::configure($schema);

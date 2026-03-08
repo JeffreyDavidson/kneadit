@@ -21,12 +21,6 @@ class FinanceSummary extends Page
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
     protected string $view = 'filament.pages.finance-summary';
     protected static string $requiredPlan = 'growth';
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return static::checkMinimumPlan(static::$requiredPlan);
-    }
-
     public int $selectedYear;
     public float $totalRevenue = 0;
     public float $totalExpenses = 0;

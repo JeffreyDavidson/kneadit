@@ -7,8 +7,13 @@ use App\Models\Recipe;
 use App\Models\Product;
 use Illuminate\Support\Collection;
 
+use App\Traits\HasPlanGating;
 class RecipeCostCalculator extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'growth';
     protected static bool $shouldRegisterNavigation = false;
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
     protected static ?string $navigationLabel = 'Recipe Cost Calculator';

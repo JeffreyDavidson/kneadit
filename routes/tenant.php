@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\StorefrontApiController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StorefrontController;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,10 @@ Route::middleware([
         return response()->file(public_path('service-worker.js'), ['Content-Type' => 'application/javascript']);
     });
     Route::get('/icons/icon-{size}.png', [StorefrontController::class, 'appIcon'])->name('app.icon');
+
+    // Staff invitation routes (outside auth & storefront middleware)
+    Route::get('/invite/{token}', [InvitationController::class, 'show'])->name('invitation.show');
+    Route::post('/invite/{token}', [InvitationController::class, 'accept'])->name('invitation.accept');
 
     // Storefront routes — only accessible when storefront is enabled
     // When disabled, these redirect to the external website or show a minimal page

@@ -7,8 +7,13 @@ use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
+use App\Traits\HasPlanGating;
 class OrderCalendar extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'growth';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $navigationLabel = 'Order Calendar';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';

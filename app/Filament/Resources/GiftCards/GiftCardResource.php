@@ -26,12 +26,6 @@ class GiftCardResource extends Resource
     protected static ?int $navigationSort = 11;
     protected static ?string $navigationLabel = 'Gift Cards';
     protected static ?string $pluralModelLabel = 'Gift Cards';
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return static::checkMinimumPlan(static::$requiredPlan);
-    }
-
     public static function form(Schema $schema): Schema
     {
         return GiftCardForm::configure($schema);

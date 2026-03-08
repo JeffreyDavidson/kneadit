@@ -9,8 +9,13 @@ use App\Models\Order;
 use App\Models\Recipe;
 use Illuminate\Support\Collection;
 
+use App\Traits\HasPlanGating;
 class ShoppingListGenerator extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
     protected static ?string $navigationLabel = 'Shopping List';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';

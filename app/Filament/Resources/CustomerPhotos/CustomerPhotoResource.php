@@ -7,7 +7,6 @@ use App\Filament\Resources\CustomerPhotos\Pages\EditCustomerPhoto;
 use App\Filament\Resources\CustomerPhotos\Pages\ListCustomerPhotos;
 use App\Models\CustomerPhoto;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
@@ -30,13 +29,18 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Database\Eloquent\Collection;
 
+use App\Traits\HasPlanGating;
 class CustomerPhotoResource extends Resource
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static ?string $model = CustomerPhoto::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Communication';
+    protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 
     protected static ?string $navigationLabel = 'Customer Photos';
 

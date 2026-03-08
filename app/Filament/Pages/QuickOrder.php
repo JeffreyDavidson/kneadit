@@ -26,15 +26,17 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
 use BackedEnum;
-use UnitEnum;
 
+use App\Traits\HasPlanGating;
 class QuickOrder extends Page
 {
+    use HasPlanGating;
+
     protected string $view = 'filament-panels::pages.simple';
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-plus-circle';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Shop';
+    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
     protected static ?string $title = 'Quick Order';
 

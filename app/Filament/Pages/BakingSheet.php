@@ -9,8 +9,11 @@ use App\Models\OrderItem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+use App\Traits\HasPlanGating;
 class BakingSheet extends Page
 {
+    use HasPlanGating;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-printer';
     protected static ?string $navigationLabel = 'Baking Sheet';
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';

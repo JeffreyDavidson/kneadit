@@ -9,7 +9,6 @@ use App\Filament\Resources\Expenses\Schemas\ExpenseForm;
 use App\Filament\Resources\Expenses\Tables\ExpensesTable;
 use App\Models\Expense;
 use App\Traits\HasPlanGating;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -25,12 +24,6 @@ class ExpenseResource extends Resource
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-down';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return static::checkMinimumPlan(static::$requiredPlan);
-    }
-
     public static function form(Schema $schema): Schema
     {
         return ExpenseForm::configure($schema);

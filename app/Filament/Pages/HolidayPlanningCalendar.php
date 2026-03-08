@@ -7,8 +7,13 @@ use App\Models\Holiday;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
+use App\Traits\HasPlanGating;
 class HolidayPlanningCalendar extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static bool $shouldRegisterNavigation = false;
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-gift';
     protected static ?string $navigationLabel = 'Holidays';

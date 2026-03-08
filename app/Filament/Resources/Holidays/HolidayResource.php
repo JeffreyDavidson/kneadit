@@ -13,8 +13,13 @@ use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+use App\Traits\HasPlanGating;
 class HolidayResource extends Resource
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static ?string $model = Holiday::class;
 
     protected static ?string $navigationLabel = 'Holidays';

@@ -6,8 +6,13 @@ use App\Models\SocialPost;
 use Filament\Pages\Page;
 use Illuminate\Support\Carbon;
 
+use App\Traits\HasPlanGating;
 class SocialCalendar extends Page
 {
+    use HasPlanGating;
+
+
+    protected static string $requiredPlan = 'pro';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
 
     protected static ?string $navigationLabel = 'Social Calendar';
