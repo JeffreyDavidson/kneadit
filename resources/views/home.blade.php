@@ -151,7 +151,17 @@
                                 @if($product->is_available)
                                 <span class="text-green-600 text-sm font-medium">Available</span>
                                 @else
-                                <span class="text-red-600 text-sm font-medium">Out of Stock</span>
+                                <div x-data="{ showWaitlist: false, submitted: false }">
+                                    <button x-show="!showWaitlist && !submitted" @click="showWaitlist = true"
+                                        class="text-amber-700 text-sm font-medium cursor-pointer hover:underline">
+                                        🔔 Notify Me
+                                    </button>
+                                    <span x-show="submitted" class="text-green-600 text-sm font-medium">✓ We'll notify you!</span>
+                                    <form x-show="showWaitlist" @submit.prevent="fetch('{{ route('product-waitlist.join') }}', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'},body:JSON.stringify({product_id:{{ $product->id }},customer_email:$refs.wemail.value})}).then(()=>{submitted=true;showWaitlist=false})" class="flex gap-1 mt-1">
+                                        <input x-ref="wemail" type="email" required placeholder="Email" class="text-xs rounded border px-2 py-1 w-32" style="border-color: var(--warm-300);">
+                                        <button type="submit" class="text-xs px-2 py-1 rounded text-white" style="background: var(--warm-600);">Go</button>
+                                    </form>
+                                </div>
                                 @endif
                             </div>
                         </div>
