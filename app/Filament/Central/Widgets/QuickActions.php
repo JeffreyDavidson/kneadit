@@ -4,11 +4,11 @@ namespace App\Filament\Central\Widgets;
 
 use Filament\Widgets\Widget;
 
-class WelcomeBanner extends Widget
+class QuickActions extends Widget
 {
     protected static ?int $sort = -1;
 
     protected int|string|array $columnSpan = 1;
 
-    protected string $view = 'filament.central.widgets.welcome-banner';
+    protected string $view = 'filament.central.widgets.quick-actions';
 }
