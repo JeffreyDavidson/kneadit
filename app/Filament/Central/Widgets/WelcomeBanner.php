@@ -6,7 +6,7 @@ use Filament\Widgets\Widget;
 
 class WelcomeBanner extends Widget
 {
-    protected static ?int $sort = -2;
+    protected static ?int $sort = -1;
 
     protected int|string|array $columnSpan = 1;
 
