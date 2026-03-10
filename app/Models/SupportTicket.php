@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SupportTicket extends Model
 {
-    protected $connection = 'mysql';
+    protected $connection = 'central';
 
     protected $fillable = [
         'tenant_id',
