@@ -8,12 +8,10 @@ use Tests\CentralTestCase;
 
 class PlatformStatsWidgetTest extends CentralTestCase
 {
-    use CentralTenantHelper;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->ensureCentralTenantsTable();
     }
 
     public function test_mrr_calculation_with_different_plans(): void

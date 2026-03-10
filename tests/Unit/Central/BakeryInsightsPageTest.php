@@ -7,14 +7,12 @@ use Tests\CentralTestCase;
 
 class BakeryInsightsPageTest extends CentralTestCase
 {
-    use CentralTenantHelper;
 
     private BakeryInsights $page;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->ensureCentralTenantsTable();
         $this->page = new BakeryInsights();
     }
 

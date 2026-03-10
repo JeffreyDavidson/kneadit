@@ -8,14 +8,12 @@ use Tests\CentralTestCase;
 
 class AnalyticsPageTest extends CentralTestCase
 {
-    use CentralTenantHelper;
 
     private Analytics $page;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->ensureCentralTenantsTable();
         $this->page = new Analytics();
     }
 

@@ -15,7 +15,7 @@ class ExportControllerTest extends CentralTestCase
 
     private function insertTenant(string $id = 'test-bakery'): string
     {
-        DB::connection('central')->table('tenants')->insert([
+        DB::table('tenants')->insert([
             'id' => $id,
             'name' => 'Test Owner',
             'email' => 'test@example.com',
