@@ -10,5 +10,5 @@ class QuickActions extends Widget
 
     protected int|string|array $columnSpan = 1;
 
-    protected string $view = 'filament.central.widgets.welcome-banner';
+    protected string $view = 'filament.central.widgets.quick-actions';
 }
