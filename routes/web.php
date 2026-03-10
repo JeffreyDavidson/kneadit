@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Controllers\Central\ExportController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/billing.php';
 require __DIR__.'/admin.php';
+
+// Data Export (central admin)
+Route::get('/admin/export/{tenant}/{type}', [ExportController::class, 'export'])->name('central.export')->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
