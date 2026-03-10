@@ -37,6 +37,9 @@ Route::middleware([
     });
     Route::get('/icons/icon-{size}.png', [StorefrontController::class, 'appIcon'])->name('app.icon');
 
+    // Hero lookbook (temporary — design review)
+    Route::get('/hero-lookbook', fn () => view('hero-lookbook'))->name('hero.lookbook');
+
     // Driver view (no auth, shared via link)
     Route::prefix('driver')->name('driver.')->group(function () {
         Route::get('/', [DriverController::class, 'index'])->name('index');
