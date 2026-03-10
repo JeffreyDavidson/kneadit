@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'subscribed' => \App\Http\Middleware\EnsureSubscribed::class,
         ]);
+
+        $middleware->redirectGuestsTo('/login');
+        $middleware->redirectUsersTo('/billing/plans');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

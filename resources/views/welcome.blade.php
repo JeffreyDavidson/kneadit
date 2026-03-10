@@ -393,7 +393,7 @@ footer{background:var(--warm-black);color:var(--cinnamon);padding:3rem 1.5rem;te
 <a href="#story">Our Story</a>
 <a href="#pricing">Pricing</a>
 <a href="#contact">Contact</a>
-<a href="#cta" class="nav-cta">Join Waitlist</a>
+<a href="/register" class="nav-cta">Get Started</a>
 </div>
 </nav>
 
@@ -429,18 +429,11 @@ Your bakery.<br>
 <button class="sf-order-btn">Order Now</button>
 </div>
 
-<form class="waitlist reveal reveal-d3" id="waitlistHero" aria-label="Join the waitlist" onsubmit="return handleWaitlist(event)">
-<input type="email" placeholder="your@email.com" required>
-<button type="submit" class="cta-btn">Get Early Access</button>
-</form>
-<div class="hero-social-proof reveal reveal-d3">
-<div class="hero-avatars">
-<div class="hero-avatar" style="background:var(--honey)"></div>
-<div class="hero-avatar" style="background:var(--sage)"></div>
-<div class="hero-avatar" style="background:var(--crust)"></div>
-<div class="hero-avatar" style="background:var(--berry)"></div>
+<div class="reveal reveal-d3" style="margin-top:2.5rem">
+<a href="/register" class="cta-btn" style="display:inline-block;padding:.85rem 2.5rem;border-radius:14px;text-decoration:none">Start Free Trial</a>
 </div>
-<span>Be one of the first bakers on the platform</span>
+<div class="hero-social-proof reveal reveal-d3">
+<span>30-day free trial · No credit card required</span>
 </div>
 
 <div class="hero-divider reveal reveal-d4">
@@ -724,7 +717,7 @@ Your bakery.<br>
 <div class="price-amount">$9<span style="font-size:var(--text-sm);font-weight:400;color:var(--cinnamon)">/month</span></div>
 <div class="price-founding"><s>$15/mo</s> · Founding rate</div>
 <div style="font-size:var(--text-xs);color:var(--sage);margin-bottom:1rem;font-weight:600">✓ 30-day free trial · Cancel anytime</div>
-<a href="#cta" class="price-btn">Start Free Trial</a>
+<a href="/register" class="price-btn">Start Free Trial</a>
 </div>
 <div class="price-card popular reveal reveal-d1">
 <span class="price-badge">Most Popular</span>
@@ -742,7 +735,7 @@ Your bakery.<br>
 <div class="price-amount">$19<span style="font-size:var(--text-sm);font-weight:400;color:var(--cinnamon)">/month</span></div>
 <div class="price-founding"><s>$29/mo</s> · Founding rate</div>
 <div style="font-size:var(--text-xs);color:var(--sage);margin-bottom:1rem;font-weight:600">✓ 30-day free trial · Cancel anytime</div>
-<a href="#cta" class="price-btn">Start Free Trial</a>
+<a href="/register" class="price-btn">Start Free Trial</a>
 </div>
 <div class="price-card reveal reveal-d2">
 <div class="price-tier">Pro</div>
@@ -764,7 +757,7 @@ Your bakery.<br>
 <div class="price-amount">$29<span style="font-size:var(--text-sm);font-weight:400;color:var(--cinnamon)">/month</span></div>
 <div class="price-founding"><s>$45/mo</s> · Founding rate</div>
 <div style="font-size:var(--text-xs);color:var(--sage);margin-bottom:1rem;font-weight:600">✓ 30-day free trial · Cancel anytime</div>
-<a href="#cta" class="price-btn">Start Free Trial</a>
+<a href="/register" class="price-btn">Start Free Trial</a>
 </div>
 </div>
 </section>
@@ -859,13 +852,11 @@ Your bakery.<br>
 <ellipse cx="42" cy="58" rx="5" ry="12" transform="rotate(25 42 58)" fill="#e8b04a" opacity=".35"/>
 </svg>
 <h2 class="reveal">Your bakery deserves this.</h2>
-<p class="cta-sub reveal reveal-d1">Join the bakers getting ready for launch.</p>
-<form class="waitlist reveal reveal-d1" aria-label="Join the waitlist" onsubmit="return handleWaitlist(event)">
-<input type="email" placeholder="your@email.com" required>
-<button type="submit" class="cta-btn">Get Early Access</button>
-</form>
+<p class="cta-sub reveal reveal-d1">Start your 30-day free trial today.</p>
+<div class="reveal reveal-d1" style="margin-top:1.5rem">
+<a href="/register" class="cta-btn" style="display:inline-block;padding:.85rem 2.5rem;border-radius:14px;text-decoration:none">Get Started Free</a>
+</div>
 <p class="cta-note reveal reveal-d2">No credit card required. 30-day free trial on every plan.</p>
-<p class="cta-privacy reveal reveal-d2">🔒 We respect your inbox. Only launch updates, nothing spammy.</p>
 </div>
 </section>
 
