@@ -105,7 +105,6 @@ class MessageResource extends Resource
     {
         return [
             'index' => \App\Filament\Central\Resources\MessageResource\Pages\ListMessages::route('/'),
-            'compose' => \App\Filament\Central\Resources\MessageResource\Pages\ComposeMessage::route('/compose'),
             'view' => \App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::route('/{record}'),
         ];
     }
