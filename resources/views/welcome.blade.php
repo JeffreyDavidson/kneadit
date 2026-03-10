@@ -392,7 +392,6 @@ footer{background:var(--warm-black);color:var(--cinnamon);padding:3rem 1.5rem;te
 <a href="#features">Features</a>
 <a href="#story">Our Story</a>
 <a href="#pricing">Pricing</a>
-<a href="/directory">Find a Bakery</a>
 <a href="#contact">Contact</a>
 <a href="#cta" class="nav-cta">Join Waitlist</a>
 </div>
@@ -767,15 +766,6 @@ Your bakery.<br>
 <div style="font-size:var(--text-xs);color:var(--sage);margin-bottom:1rem;font-weight:600">✓ 30-day free trial · Cancel anytime</div>
 <a href="#cta" class="price-btn">Start Free Trial</a>
 </div>
-</div>
-</section>
-
-<!-- ===== DIRECTORY PROMO ===== -->
-<section style="background:linear-gradient(135deg,var(--flour) 0%,var(--cream) 100%);padding:5rem 1.5rem;text-align:center">
-<div style="max-width:700px;margin:0 auto">
-<h2 class="reveal" style="font-family:var(--font-serif);font-size:var(--text-3xl);margin-bottom:1rem">Discover KneadIt Bakeries</h2>
-<p class="reveal reveal-d1" style="color:var(--walnut);font-size:var(--text-lg);margin-bottom:2rem">Browse our growing directory of cottage food bakers. Find fresh, homemade baked goods from talented bakers near you.</p>
-<a href="/directory" class="cta-btn reveal reveal-d2" style="display:inline-block;text-decoration:none">Find a Bakery →</a>
 </div>
 </section>
 
