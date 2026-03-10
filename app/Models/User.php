@@ -35,6 +35,10 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
+        if ($panel->getId() === 'central') {
+            return $this->role === 'platform_admin';
+        }
+
         return true;
     }
 
