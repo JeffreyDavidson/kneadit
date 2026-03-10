@@ -57,11 +57,14 @@ class AnnouncementResource extends Resource
                         CheckboxList::make('target_plans')
                             ->label('Target Plans')
                             ->options([
+                                'all' => 'All Plans',
                                 'starter' => 'Starter',
                                 'growth' => 'Growth',
                                 'pro' => 'Pro',
                             ])
-                            ->helperText('Leave empty to target all plans'),
+                            ->required()
+                            ->rule('min:1')
+                            ->helperText('Select which plans should see this announcement'),
                     ]),
                 Section::make('Settings')
                     ->schema([
