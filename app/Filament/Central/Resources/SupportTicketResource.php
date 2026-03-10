@@ -22,6 +22,13 @@ class SupportTicketResource extends Resource
 {
     protected static ?string $model = SupportTicket::class;
 
+    protected static ?string $recordTitleAttribute = 'subject';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['subject'];
+    }
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedInbox;
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';

@@ -124,6 +124,12 @@ class EmailCampaignResource extends Resource
                         ]);
                     })
                     ->visible(fn (EmailCampaign $record) => $record->status !== 'sent'),
+                Actions\Action::make('preview')
+                    ->icon('heroicon-o-eye')
+                    ->modalHeading(fn (EmailCampaign $record) => 'Preview: ' . $record->subject)
+                    ->modalContent(fn (EmailCampaign $record) => view('filament.central.partials.email-preview', ['campaign' => $record]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close'),
                 Actions\ViewAction::make(),
             ])
             ->bulkActions([
