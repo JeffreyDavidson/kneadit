@@ -38,8 +38,16 @@
                             <div style="color: #8b6844; font-size: 0.75rem; margin-top: 0.35rem;">Signed up {{ $alert['days_since_signup'] }} days ago</div>
                         </div>
                         <div style="display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0;">
-                            <button wire:click="extendTrial('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled" style="background: #1c1410; color: #d4920c; border: 1px solid rgba(212,146,12,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Extend Trial</button>
-                            <button wire:click="sendNudge('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled" style="background: #1c1410; color: #e8b04a; border: 1px solid rgba(232,176,74,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Send Nudge</button>
+                            @if(in_array($alert['tenant_id'], $this->extendedTrials))
+                                <span style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600;">Extended</span>
+                            @else
+                                <button wire:click="extendTrial('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled" style="background: #1c1410; color: #d4920c; border: 1px solid rgba(212,146,12,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Extend Trial</button>
+                            @endif
+                            @if(in_array($alert['tenant_id'], $this->sentNudges))
+                                <span style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600;">Nudge Sent</span>
+                            @else
+                                <button wire:click="sendNudge('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled" style="background: #1c1410; color: #e8b04a; border: 1px solid rgba(232,176,74,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Send Nudge</button>
+                            @endif
                             <a href="{{ $this->getViewTenantUrl($alert['tenant_id']) }}" style="background: #d4920c; color: #1c1410; border: none; border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block;">View Tenant</a>
                         </div>
                     </div>
