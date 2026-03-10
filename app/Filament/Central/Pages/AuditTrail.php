@@ -99,7 +99,7 @@ class AuditTrail extends Page
         $this->page = 1;
     }
 
-    public function getActions(): array
+    public static function getActionTypes(): array
     {
         return [
             'created_tenant',

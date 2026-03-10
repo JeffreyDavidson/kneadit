@@ -21,7 +21,7 @@
             <label style="color: #e8b04a; font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Action</label>
             <select wire:model.live="filterAction" style="width: 100%; background: #2a1f18; border: 1px solid #3d2c1e; border-radius: 0.5rem; padding: 0.5rem; color: #f5d88e; font-size: 0.875rem;">
                 <option value="">All Actions</option>
-                @foreach(\App\Filament\Central\Pages\AuditTrail::getActions() as $action)
+                @foreach(\App\Filament\Central\Pages\AuditTrail::getActionTypes() as $action)
                     <option value="{{ $action }}">{{ str_replace('_', ' ', ucfirst($action)) }}</option>
                 @endforeach
             </select>
