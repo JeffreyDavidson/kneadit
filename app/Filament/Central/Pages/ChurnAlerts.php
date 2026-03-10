@@ -2,9 +2,11 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\Models\PlatformMessage;
 use App\Models\Tenant;
 use BackedEnum;
 use Carbon\Carbon;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -126,6 +128,53 @@ class ChurnAlerts extends Page
             try { tenancy()->end(); } catch (\Throwable) {}
             return 0;
         }
+    }
+
+    public function extendTrial(string $tenantId): void
+    {
+        $tenant = Tenant::find($tenantId);
+
+        if (! $tenant) {
+            Notification::make()->title('Tenant not found.')->danger()->send();
+            return;
+        }
+
+        $currentEnd = $tenant->trial_ends_at ? Carbon::parse($tenant->trial_ends_at) : now();
+        $newEnd = $currentEnd->isPast() ? now()->addDays(30) : $currentEnd->addDays(30);
+
+        $tenant->update(['trial_ends_at' => $newEnd]);
+
+        Notification::make()
+            ->title('Trial Extended')
+            ->body(($tenant->store_name ?? $tenant->name) . ' trial extended to ' . $newEnd->format('M j, Y') . '.')
+            ->success()
+            ->send();
+    }
+
+    public function sendNudge(string $tenantId): void
+    {
+        $tenant = Tenant::find($tenantId);
+
+        if (! $tenant) {
+            Notification::make()->title('Tenant not found.')->danger()->send();
+            return;
+        }
+
+        $storeName = $tenant->store_name ?? $tenant->name;
+
+        PlatformMessage::create([
+            'tenant_id' => $tenant->id,
+            'sender_type' => 'admin',
+            'subject' => 'We noticed you haven\'t been around lately',
+            'body' => "Hi {$storeName}!\n\nWe noticed it's been a little quiet on your end. Just wanted to check in — is there anything we can help with?\n\nWhether you need help setting up your storefront, adding products, or just have questions, we're here for you.\n\nThe KneadIt Team",
+            'is_read' => false,
+        ]);
+
+        Notification::make()
+            ->title('Nudge Sent')
+            ->body('A check-in message has been sent to ' . $storeName . '.')
+            ->success()
+            ->send();
     }
 
     public function getViewTenantUrl(string $tenantId): string
