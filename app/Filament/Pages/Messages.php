@@ -19,7 +19,7 @@ class Messages extends Page
 
     protected static ?int $navigationSort = 90;
 
-    protected static string $view = 'filament.pages.messages';
+    protected string $view = 'filament.pages.messages';
 
     public ?int $viewingMessage = null;
 

@@ -11,7 +11,7 @@ class ViewMessage extends Page
 {
     protected static string $resource = MessageResource::class;
 
-    protected static string $view = 'filament.central.pages.view-message';
+    protected string $view = 'filament.central.pages.view-message';
 
     #[Locked]
     public PlatformMessage $record;

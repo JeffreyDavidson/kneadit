@@ -16,7 +16,7 @@ class ComposeMessage extends Page
 {
     protected static string $resource = MessageResource::class;
 
-    protected static string $view = 'filament.central.pages.compose-message';
+    protected string $view = 'filament.central.pages.compose-message';
 
     public ?string $tenant_id = null;
     public ?string $subject = null;
