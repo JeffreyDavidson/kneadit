@@ -6,21 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected $connection = 'central';
+
     public function up(): void
     {
-        Schema::create('email_campaigns', function (Blueprint $table) {
+        Schema::connection('central')->create('checkin_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('subject');
-            $table->text('body');
-            $table->unsignedInteger('recipient_count')->default(0);
+            $table->foreignId('checkin_id')->constrained('scheduled_checkins')->cascadeOnDelete();
+            $table->string('tenant_id');
             $table->timestamp('sent_at')->nullable();
-            $table->string('status')->default('draft');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('email_campaigns');
+        Schema::connection('central')->dropIfExists('checkin_logs');
     }
 };

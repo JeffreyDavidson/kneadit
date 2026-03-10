@@ -2,369 +2,425 @@
 
 @section('content')
 <style>
-    .order-card {
-        background: white;
-        border-radius: 1rem;
-        border: 1px solid var(--warm-200);
-        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .order-sidebar {
-        background: white;
-        border-radius: 1rem;
-        border: 1.5px solid var(--warm-300);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    }
-    .order-sidebar h3 {
-        font-family: var(--font-display);
-    }
-    .order-sidebar h4 {
-        font-family: var(--font-display);
-    }
-    .order-category-card {
-        background: var(--warm-50);
-        border-radius: 0.75rem;
-        border: 1px solid var(--warm-200);
-    }
     .order-product-card {
-        border: 1px solid var(--warm-200);
-        border-radius: 0.75rem;
-        overflow: hidden;
-        transition: border-color 0.2s, box-shadow 0.2s;
         position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        background: var(--warm-800);
     }
     .order-product-card:hover {
-        border-color: var(--warm-400);
-        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(28, 20, 16, 0.3);
+    }
+    .order-product-card:hover img {
+        transform: scale(1.08);
+    }
+    .order-product-card img {
+        transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .order-sidebar-card {
+        background: var(--warm-800);
+        border-radius: 20px;
+        border: 1px solid rgba(212,146,12,0.15);
     }
     .order-qty-btn {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 0.5rem;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.625rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 600;
+        font-weight: 700;
         font-size: 1rem;
-        border: 1.5px solid var(--warm-300);
-        background: white;
-        color: var(--warm-700);
+        border: 1.5px solid rgba(212,146,12,0.3);
+        background: rgba(212,146,12,0.1);
+        color: var(--warm-400);
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all 0.2s;
     }
     .order-qty-btn:hover:not(:disabled) {
-        background: var(--warm-200);
+        background: var(--warm-500);
+        color: var(--warm-900);
         border-color: var(--warm-500);
     }
     .order-qty-btn:disabled {
-        opacity: 0.3;
+        opacity: 0.2;
         cursor: not-allowed;
     }
-    .order-total-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .order-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        border: 1.5px solid rgba(139,104,68,0.25);
+        background: rgba(255,255,255,0.05);
+        color: var(--warm-100);
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+    }
+    .order-input:focus {
+        border-color: var(--warm-500);
+        box-shadow: 0 0 0 3px rgba(212,146,12,0.12);
+    }
+    .order-input::placeholder {
+        color: var(--warm-600);
+    }
+    .order-input option {
+        background: var(--warm-800);
+        color: var(--warm-100);
+    }
+    .order-radio {
+        accent-color: var(--warm-500);
+    }
+    .order-section-divider {
+        height: 1px;
+        background: rgba(139,104,68,0.2);
+    }
+    @keyframes cartPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
     }
 </style>
 
-<div class="max-w-7xl mx-auto px-4 py-12" 
-     x-data="orderForm()" 
-     x-init="init()">
-     
-    @php
-        $leadTimeHours = \App\Models\Setting::get('order_lead_time_hours', '24');
-        $leadTimeDays = ceil($leadTimeHours / 24);
-        $deliveryEnabled = \App\Models\Setting::get('delivery_enabled', '1') === '1';
-        $deliveryTiers = json_decode(\App\Models\Setting::get('delivery_fee_tiers', '[]'), true);
-        $allergyDisclaimer = \App\Models\Setting::get('allergy_disclaimer');
-        $paymentMethods = json_decode(\App\Models\Setting::get('payment_methods_accepted', '[]'), true);
-        $freeDeliveryMin = \App\Models\Setting::get('free_delivery_minimum', '50');
-    @endphp
+{{-- Dark Hero Banner --}}
+<section class="relative overflow-hidden" style="background: var(--warm-900); padding-top: 2rem;">
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 70% 0%, rgba(212,146,12,0.08), transparent 60%);"></div>
 
-    {{-- Header --}}
-    <div class="mb-12">
-        <h1 class="font-display text-4xl md:text-5xl font-bold mb-4" style="color: var(--warm-900);">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-16 md:py-24">
+        @php
+            $leadTimeHours = \App\Models\Setting::get('order_lead_time_hours', '24');
+            $leadTimeDays = ceil($leadTimeHours / 24);
+            $deliveryEnabled = \App\Models\Setting::get('delivery_enabled', '1') === '1';
+            $deliveryTiers = json_decode(\App\Models\Setting::get('delivery_fee_tiers', '[]'), true);
+            $allergyDisclaimer = \App\Models\Setting::get('allergy_disclaimer');
+            $paymentMethods = json_decode(\App\Models\Setting::get('payment_methods_accepted', '[]'), true);
+            $freeDeliveryMin = \App\Models\Setting::get('free_delivery_minimum', '50');
+        @endphp
+
+        <div class="flex items-center gap-3 mb-6">
+            <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Fresh From Our Ovens</span>
+        </div>
+        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4" style="color: var(--warm-100);">
             Place Your Order
         </h1>
-        <p class="text-lg max-w-2xl" style="color: var(--warm-600);">
-            Choose your items, tell us when you need them, and we'll have everything freshly prepared. Orders need {{ $leadTimeHours }} hours notice — ready {{ date('l, F j', strtotime('+' . $leadTimeDays . ' days')) }} or later.
+        <p class="text-lg max-w-2xl" style="color: var(--warm-400);">
+            Choose your items, tell us when you need them, and we'll have everything freshly prepared.
+            Orders need {{ $leadTimeHours }} hours notice — ready {{ date('l, F j', strtotime('+' . $leadTimeDays . ' days')) }} or later.
         </p>
     </div>
+</section>
 
-    <form @submit.prevent="submitOrder" class="grid lg:grid-cols-3 gap-8">
-        {{-- Product Selection --}}
-        <div class="lg:col-span-2 space-y-8">
-            <div class="flex items-center gap-4 mb-2">
-                <h2 class="font-display text-2xl font-bold whitespace-nowrap" style="color: var(--warm-900);">Select Your Items</h2>
-                <div class="flex-1 h-px" style="background: var(--warm-300);"></div>
-            </div>
-            
-            @foreach($categories as $category)
-            <div class="order-category-card p-5 md:p-6">
-                <h3 class="font-display text-xl font-semibold mb-5" style="color: var(--warm-900);">
-                    {{ $category->name }}
-                </h3>
-                
-                <div class="grid md:grid-cols-2 gap-4">
-                    @foreach($category->products as $product)
-                    @if($product->is_available)
-                    <div class="order-product-card" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
-                        {{-- Favorite Heart --}}
-                        <button type="button"
-                                @click="toggleFavorite({{ $product->id }})" 
-                                class="absolute top-2 right-2 text-xl z-10"
-                                :class="isFavorite({{ $product->id }}) ? 'text-red-500' : 'text-warm-300 hover:text-red-400'">
-                            <span x-text="isFavorite({{ $product->id }}) ? '❤️' : '🤍'"></span>
-                        </button>
+{{-- Main Content --}}
+<section class="relative" style="background: var(--warm-900);">
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
 
-                        {{-- Product Image --}}
-                        <div style="aspect-ratio: 16/9;">
-                            @if($product->image)
-                                <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-600), var(--warm-500));">
-                                    <span class="text-3xl font-display font-bold" style="color: var(--warm-200);">{{ strtoupper(substr($product->name, 0, 1)) }}</span>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 pb-24"
+         x-data="orderForm()"
+         x-init="init()">
+
+        <form @submit.prevent="submitOrder" class="grid lg:grid-cols-3 gap-8">
+            {{-- Product Selection --}}
+            <div class="lg:col-span-2 space-y-10">
+                <div class="flex items-center gap-4">
+                    <h2 class="font-display text-2xl font-bold whitespace-nowrap" style="color: var(--warm-100);">Select Your Items</h2>
+                    <div class="flex-1 h-px" style="background: rgba(139,104,68,0.25);"></div>
+                </div>
+
+                @foreach($categories as $category)
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="block w-6 h-px" style="background: var(--warm-500);"></span>
+                        <h3 class="font-display text-xl font-semibold" style="color: var(--warm-300);">{{ $category->name }}</h3>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        @foreach($category->products as $product)
+                        @if($product->is_active)
+                        <div class="order-product-card" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
+                            {{-- Favorite Heart --}}
+                            <button type="button"
+                                    @click="toggleFavorite({{ $product->id }})"
+                                    class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-sm transition-all"
+                                    style="background: rgba(28,20,16,0.6);"
+                                    :class="isFavorite({{ $product->id }}) ? '' : 'hover:scale-110'">
+                                <span x-text="isFavorite({{ $product->id }}) ? '❤️' : '🤍'" class="text-lg"></span>
+                            </button>
+
+                            {{-- Product Image --}}
+                            <div class="relative overflow-hidden" style="aspect-ratio: 4/3;">
+                                @if($product->image)
+                                    <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-800));">
+                                        <span class="text-5xl font-display font-bold" style="color: var(--warm-600); opacity: 0.3;">{{ strtoupper(substr($product->name, 0, 1)) }}</span>
+                                    </div>
+                                @endif
+                                {{-- Price badge --}}
+                                <div class="absolute top-3 left-3 px-3 py-1.5 rounded-full text-sm font-bold backdrop-blur-sm" style="background: rgba(28,20,16,0.8); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.2);">
+                                    ${{ number_format($product->price, 2) }}
                                 </div>
-                            @endif
-                        </div>
-                        
-                        <div class="p-4">
-                            <h4 class="font-semibold mb-1" style="color: var(--warm-900);">{{ $product->name }}</h4>
-                            @if($product->description)
-                            <p class="text-sm mb-2" style="color: var(--warm-600);">{{ $product->description }}</p>
-                            @endif
-                            <div class="flex items-center justify-between mt-3">
-                                <span class="font-display text-lg font-bold" style="color: var(--warm-800);">${{ number_format($product->price, 2) }}</span>
-                                <div class="flex items-center gap-2">
-                                    <button type="button" 
-                                            @click="decrementItem({{ $product->id }})"
-                                            :disabled="getQuantity({{ $product->id }}) <= 0"
-                                            class="order-qty-btn">−</button>
-                                    <span class="font-semibold min-w-[1.5rem] text-center text-sm" style="color: var(--warm-900);"
-                                          x-text="getQuantity({{ $product->id }})"></span>
-                                    <button type="button" 
-                                            @click="incrementItem({{ $product->id }}, {{ $product->price }})"
-                                            class="order-qty-btn">+</button>
+                            </div>
+
+                            <div class="p-5">
+                                <h4 class="font-display text-lg font-semibold mb-1" style="color: var(--warm-100);">{{ $product->name }}</h4>
+                                @if($product->description)
+                                <p class="text-sm mb-3 line-clamp-2" style="color: var(--warm-500);">{{ $product->description }}</p>
+                                @endif
+                                <div class="flex items-center justify-between mt-2">
+                                    <div x-show="getQuantity({{ $product->id }}) > 0" class="text-sm font-medium" style="color: var(--warm-400);">
+                                        <span x-text="getQuantity({{ $product->id }})"></span> in cart
+                                    </div>
+                                    <div x-show="getQuantity({{ $product->id }}) === 0"></div>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button"
+                                                @click="decrementItem({{ $product->id }})"
+                                                :disabled="getQuantity({{ $product->id }}) <= 0"
+                                                class="order-qty-btn">−</button>
+                                        <span class="font-bold min-w-[1.5rem] text-center text-sm" style="color: var(--warm-100);"
+                                              x-text="getQuantity({{ $product->id }})"></span>
+                                        <button type="button"
+                                                @click="incrementItem({{ $product->id }}, {{ $product->price }})"
+                                                class="order-qty-btn">+</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        @endif
+                        @endforeach
                     </div>
-                    @endif
-                    @endforeach
                 </div>
+                @endforeach
             </div>
-            @endforeach
-        </div>
 
-        {{-- Order Summary Sidebar --}}
-        <div class="lg:col-span-1">
-            <div class="order-sidebar p-6 md:p-8 sticky top-8">
-                <h3 class="text-xl font-semibold mb-6" style="color: var(--warm-900);">Your Order</h3>
-                
-                {{-- Cart Items --}}
-                <div class="space-y-2 mb-4" x-show="cartItems.length > 0">
-                    <template x-for="item in cartItems" :key="item.id">
-                        <div class="flex justify-between items-center text-sm py-1">
-                            <span style="color: var(--warm-700);">
-                                <span class="font-medium" x-text="item.quantity"></span> × <span x-text="item.name"></span>
-                            </span>
-                            <span class="font-medium" style="color: var(--warm-900);" x-text="'$' + (item.quantity * item.price).toFixed(2)"></span>
+            {{-- Order Summary Sidebar --}}
+            <div class="lg:col-span-1">
+                <div class="order-sidebar-card p-6 md:p-8 sticky top-24">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="block w-6 h-px" style="background: var(--warm-500);"></span>
+                        <h3 class="font-display text-xl font-semibold" style="color: var(--warm-100);">Your Order</h3>
+                    </div>
+
+                    {{-- Cart Items --}}
+                    <div class="space-y-2 mb-4" x-show="cartItems.length > 0">
+                        <template x-for="item in cartItems" :key="item.id">
+                            <div class="flex justify-between items-center text-sm py-2 px-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+                                <span style="color: var(--warm-400);">
+                                    <span class="font-semibold" style="color: var(--warm-300);" x-text="item.quantity"></span> × <span x-text="item.name"></span>
+                                </span>
+                                <span class="font-semibold" style="color: var(--warm-300);" x-text="'$' + (item.quantity * item.price).toFixed(2)"></span>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div x-show="cartItems.length === 0" class="text-center py-8 mb-4">
+                        <div class="text-4xl mb-3 opacity-30">🧺</div>
+                        <p class="text-sm" style="color: var(--warm-600);">Your cart is empty</p>
+                        <p class="text-xs mt-1" style="color: var(--warm-700);">Add items to get started</p>
+                    </div>
+
+                    {{-- Coupon Section --}}
+                    <div class="pt-4 mb-4" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                        <label class="block text-xs font-medium uppercase tracking-wider mb-2" style="color: var(--warm-500);">Coupon Code</label>
+                        <div class="flex gap-2">
+                            <input type="text"
+                                   x-model="couponCode"
+                                   placeholder="Enter coupon"
+                                   class="order-input flex-1">
+                            <button type="button"
+                                    @click="applyCoupon()"
+                                    :disabled="!couponCode || isApplyingCoupon"
+                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                                    :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
+                                    style="background: rgba(212,146,12,0.15); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.3);">
+                                <span x-text="isApplyingCoupon ? '...' : 'Apply'"></span>
+                            </button>
                         </div>
-                    </template>
-                </div>
-                
-                <div x-show="cartItems.length === 0" class="text-center py-6 mb-4">
-                    <p class="text-sm italic" style="color: var(--warm-400);">Add items to get started</p>
-                </div>
-
-                {{-- Coupon Section --}}
-                <div class="border-t pt-4 mb-4" style="border-color: var(--warm-200);">
-                    <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Coupon Code</label>
-                    <div class="flex">
-                        <input type="text" 
-                               x-model="couponCode"
-                               placeholder="Enter coupon"
-                               class="input-field rounded-r-none flex-1">
-                        <button type="button" 
-                                @click="applyCoupon()"
-                                :disabled="!couponCode || isApplyingCoupon"
-                                class="btn-secondary rounded-l-none border-l-0"
-                                :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : ''">
-                            <span x-text="isApplyingCoupon ? '...' : 'Apply'"></span>
-                        </button>
-                    </div>
-                    <div x-show="couponError" class="text-red-600 text-sm mt-1" x-text="couponError"></div>
-                    <div x-show="appliedCoupon" class="text-green-600 text-sm mt-1">
-                        <span x-text="appliedCoupon?.label"></span> applied!
-                    </div>
-                </div>
-
-                {{-- Gift Card Section --}}
-                <div class="border-t pt-4 mb-4" style="border-color: var(--warm-200);">
-                    <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Gift Card</label>
-                    <div class="flex">
-                        <input type="text" 
-                               x-model="giftCardCode"
-                               placeholder="XXXX-XXXX-XXXX-XXXX"
-                               class="input-field rounded-r-none flex-1 font-mono uppercase tracking-wider text-sm">
-                        <button type="button" 
-                                @click="applyGiftCard()"
-                                :disabled="!giftCardCode || isApplyingGiftCard"
-                                class="btn-secondary rounded-l-none border-l-0"
-                                :class="isApplyingGiftCard ? 'opacity-50 cursor-not-allowed' : ''">
-                            <span x-text="isApplyingGiftCard ? '...' : 'Apply'"></span>
-                        </button>
-                    </div>
-                    <div x-show="giftCardError" class="text-red-600 text-sm mt-1" x-text="giftCardError"></div>
-                    <div x-show="appliedGiftCard" class="text-green-600 text-sm mt-1">
-                        Gift card applied! Balance: $<span x-text="appliedGiftCard?.available_balance?.toFixed(2)"></span>
-                    </div>
-                </div>
-
-                {{-- Totals --}}
-                <div class="border-t pt-4 space-y-2 text-sm" style="border-color: var(--warm-200);">
-                    <div class="order-total-row">
-                        <span style="color: var(--warm-600);">Subtotal</span>
-                        <span style="color: var(--warm-800);" x-text="'$' + subtotal.toFixed(2)"></span>
-                    </div>
-                    <div x-show="deliveryFee > 0" class="order-total-row">
-                        <span style="color: var(--warm-600);">Delivery</span>
-                        <span style="color: var(--warm-800);" x-text="'$' + deliveryFee.toFixed(2)"></span>
-                    </div>
-                    <div x-show="appliedCoupon" class="order-total-row" style="color: #16a34a;">
-                        <span>Discount</span>
-                        <span x-text="'-$' + discountAmount.toFixed(2)"></span>
-                    </div>
-                    <div x-show="appliedGiftCard" class="order-total-row" style="color: #16a34a;">
-                        <span>Gift Card</span>
-                        <span x-text="'-$' + giftCardAmount.toFixed(2)"></span>
-                    </div>
-                    <div class="order-total-row pt-3 border-t" style="border-color: var(--warm-200);">
-                        <span class="font-display text-lg font-bold" style="color: var(--warm-900);">Total</span>
-                        <span class="font-display text-2xl font-bold" style="color: var(--warm-900);" x-text="'$' + total.toFixed(2)"></span>
-                    </div>
-                </div>
-
-                {{-- Customer Information --}}
-                <div class="border-t pt-6 mt-6" style="border-color: var(--warm-200);">
-                    <h4 class="text-lg font-semibold mb-4" style="color: var(--warm-900);">Your Details</h4>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Name *</label>
-                            <input type="text" x-model="form.customer_name" required class="input-field">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Email *</label>
-                            <input type="email" x-model="form.customer_email" @input="saveEmail()" required class="input-field">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Phone</label>
-                            <input type="tel" x-model="form.customer_phone" class="input-field">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Birthday <span class="text-xs" style="color: var(--warm-400);">(for special treats 🎂)</span></label>
-                            <input type="date" x-model="form.customer_birthday" class="input-field" max="{{ date('Y-m-d') }}">
+                        <div x-show="couponError" class="text-red-400 text-sm mt-2" x-text="couponError"></div>
+                        <div x-show="appliedCoupon" class="text-green-400 text-sm mt-2">
+                            ✓ <span x-text="appliedCoupon?.label"></span> applied!
                         </div>
                     </div>
-                </div>
 
-                {{-- Delivery Options --}}
-                <div class="border-t pt-6 mt-6" style="border-color: var(--warm-200);">
-                    <h4 class="text-lg font-semibold mb-4" style="color: var(--warm-900);">Delivery</h4>
-                    
-                    <div class="space-y-3">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="radio" x-model="form.delivery_type" value="pickup" @change="calculateDeliveryFee()" class="mr-3" style="accent-color: var(--warm-600);">
-                            <span style="color: var(--warm-800);">Pickup <span class="text-sm" style="color: var(--warm-500);">(Free)</span></span>
-                        </label>
-                        
-                        @if($deliveryEnabled)
-                        <label class="flex items-center cursor-pointer">
-                            <input type="radio" x-model="form.delivery_type" value="delivery" @change="calculateDeliveryFee()" class="mr-3" style="accent-color: var(--warm-600);">
-                            <span style="color: var(--warm-800);">Delivery</span>
-                        </label>
-                        @endif
-                    </div>
-                    
-                    @if($deliveryEnabled)
-                    <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Delivery Address *</label>
-                            <textarea x-model="form.delivery_address" placeholder="Full address" class="input-field" rows="3"></textarea>
+                    {{-- Gift Card Section --}}
+                    <div class="pt-4 mb-4" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                        <label class="block text-xs font-medium uppercase tracking-wider mb-2" style="color: var(--warm-500);">Gift Card</label>
+                        <div class="flex gap-2">
+                            <input type="text"
+                                   x-model="giftCardCode"
+                                   placeholder="XXXX-XXXX-XXXX-XXXX"
+                                   class="order-input flex-1 font-mono uppercase tracking-wider text-sm">
+                            <button type="button"
+                                    @click="applyGiftCard()"
+                                    :disabled="!giftCardCode || isApplyingGiftCard"
+                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                                    :class="isApplyingGiftCard ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
+                                    style="background: rgba(212,146,12,0.15); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.3);">
+                                <span x-text="isApplyingGiftCard ? '...' : 'Apply'"></span>
+                            </button>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Distance</label>
-                            <select x-model="form.delivery_tier" @change="calculateDeliveryFee()" class="input-field">
-                                <option value="">Select distance</option>
-                                @foreach($deliveryTiers as $index => $tier)
-                                <option value="{{ $index }}">{{ $tier['description'] }} (${{ number_format($tier['fee'], 2) }})</option>
-                                @endforeach
-                            </select>
+                        <div x-show="giftCardError" class="text-red-400 text-sm mt-2" x-text="giftCardError"></div>
+                        <div x-show="appliedGiftCard" class="text-green-400 text-sm mt-2">
+                            ✓ Gift card applied! Balance: $<span x-text="appliedGiftCard?.available_balance?.toFixed(2)"></span>
                         </div>
-                        @if($freeDeliveryMin)
-                        <p class="text-sm" style="color: var(--warm-500);">
-                            Free delivery on orders over ${{ number_format((float)$freeDeliveryMin, 2) }}!
-                        </p>
-                        @endif
                     </div>
-                    @endif
-                </div>
 
-                {{-- Date & Time --}}
-                <div class="border-t pt-6 mt-6" style="border-color: var(--warm-200);">
-                    <h4 class="text-lg font-semibold mb-4" style="color: var(--warm-900);">When</h4>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">
-                                <span x-text="form.delivery_type === 'delivery' ? 'Delivery Date' : 'Pickup Date'"></span> *
+                    {{-- Totals --}}
+                    <div class="pt-4 space-y-2 text-sm" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                        <div class="flex justify-between">
+                            <span style="color: var(--warm-500);">Subtotal</span>
+                            <span style="color: var(--warm-300);" x-text="'$' + subtotal.toFixed(2)"></span>
+                        </div>
+                        <div x-show="deliveryFee > 0" class="flex justify-between">
+                            <span style="color: var(--warm-500);">Delivery</span>
+                            <span style="color: var(--warm-300);" x-text="'$' + deliveryFee.toFixed(2)"></span>
+                        </div>
+                        <div x-show="appliedCoupon" class="flex justify-between" style="color: #4ade80;">
+                            <span>Discount</span>
+                            <span x-text="'-$' + discountAmount.toFixed(2)"></span>
+                        </div>
+                        <div x-show="appliedGiftCard" class="flex justify-between" style="color: #4ade80;">
+                            <span>Gift Card</span>
+                            <span x-text="'-$' + giftCardAmount.toFixed(2)"></span>
+                        </div>
+                        <div class="flex justify-between pt-3" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                            <span class="font-display text-lg font-bold" style="color: var(--warm-100);">Total</span>
+                            <span class="font-display text-2xl font-bold" style="color: var(--warm-400);" x-text="'$' + total.toFixed(2)"></span>
+                        </div>
+                    </div>
+
+                    {{-- Customer Information --}}
+                    <div class="pt-6 mt-6" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="uppercase tracking-[0.2em] text-xs font-semibold" style="color: var(--warm-500);">Your Details</span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Name *</label>
+                                <input type="text" x-model="form.customer_name" required class="order-input">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Email *</label>
+                                <input type="email" x-model="form.customer_email" @input="saveEmail()" required class="order-input">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Phone</label>
+                                <input type="tel" x-model="form.customer_phone" class="order-input">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Birthday <span style="color: var(--warm-600);">(for special treats 🎂)</span></label>
+                                <input type="date" x-model="form.customer_birthday" class="order-input" max="{{ date('Y-m-d') }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Delivery Options --}}
+                    <div class="pt-6 mt-6" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="uppercase tracking-[0.2em] text-xs font-semibold" style="color: var(--warm-500);">Delivery</span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(139,104,68,0.15);"
+                                   :style="form.delivery_type === 'pickup' ? 'border-color: var(--warm-500); background: rgba(212,146,12,0.08);' : ''">
+                                <input type="radio" x-model="form.delivery_type" value="pickup" @change="calculateDeliveryFee()" class="order-radio mr-3">
+                                <span style="color: var(--warm-200);">Pickup <span class="text-sm" style="color: var(--warm-500);">(Free)</span></span>
                             </label>
-                            <input type="date" x-model="form.delivery_date" :min="minDate" @change="checkCapacity()" required class="input-field">
-                            <div x-show="capacityWarning" class="text-orange-600 text-sm mt-1" x-text="capacityWarning"></div>
-                            <div x-show="capacityError" class="text-red-600 text-sm mt-1" x-text="capacityError"></div>
+
+                            @if($deliveryEnabled)
+                            <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(139,104,68,0.15);"
+                                   :style="form.delivery_type === 'delivery' ? 'border-color: var(--warm-500); background: rgba(212,146,12,0.08);' : ''">
+                                <input type="radio" x-model="form.delivery_type" value="delivery" @change="calculateDeliveryFee()" class="order-radio mr-3">
+                                <span style="color: var(--warm-200);">Delivery</span>
+                            </label>
+                            @endif
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1" style="color: var(--warm-800);">Preferred Time</label>
-                            <input type="text" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="input-field">
+
+                        @if($deliveryEnabled)
+                        <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Delivery Address *</label>
+                                <textarea x-model="form.delivery_address" placeholder="Full address" class="order-input" rows="3"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Distance</label>
+                                <select x-model="form.delivery_tier" @change="calculateDeliveryFee()" class="order-input">
+                                    <option value="">Select distance</option>
+                                    @foreach($deliveryTiers as $index => $tier)
+                                    <option value="{{ $index }}">{{ $tier['description'] }} (${{ number_format($tier['fee'], 2) }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if($freeDeliveryMin)
+                            <p class="text-sm" style="color: var(--warm-500);">
+                                🚚 Free delivery on orders over ${{ number_format((float)$freeDeliveryMin, 2) }}!
+                            </p>
+                            @endif
+                        </div>
+                        @endif
+                    </div>
+
+                    {{-- Date & Time --}}
+                    <div class="pt-6 mt-6" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="uppercase tracking-[0.2em] text-xs font-semibold" style="color: var(--warm-500);">When</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">
+                                    <span x-text="form.delivery_type === 'delivery' ? 'Delivery Date' : 'Pickup Date'"></span> *
+                                </label>
+                                <input type="date" x-model="form.delivery_date" :min="minDate" @change="checkCapacity()" required class="order-input">
+                                <div x-show="capacityWarning" class="text-amber-400 text-sm mt-1" x-text="capacityWarning"></div>
+                                <div x-show="capacityError" class="text-red-400 text-sm mt-1" x-text="capacityError"></div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Preferred Time</label>
+                                <input type="text" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="order-input">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {{-- Notes --}}
-                <div class="border-t pt-6 mt-6" style="border-color: var(--warm-200);">
-                    <label class="block text-sm font-medium mb-2" style="color: var(--warm-800);">Special Instructions</label>
-                    <textarea x-model="form.notes" placeholder="Allergies, decorations, anything..." class="input-field" rows="3"></textarea>
-                </div>
+                    {{-- Notes --}}
+                    <div class="pt-6 mt-6" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                        <label class="block text-xs font-medium uppercase tracking-wider mb-2" style="color: var(--warm-500);">Special Instructions</label>
+                        <textarea x-model="form.notes" placeholder="Allergies, decorations, anything..." class="order-input" rows="3"></textarea>
+                    </div>
 
-                @if(!empty($paymentMethods))
-                <div class="border-t pt-4 mt-4" style="border-color: var(--warm-200);">
-                    <p class="text-xs" style="color: var(--warm-500);">
-                        <span class="font-medium">Payment:</span> {{ implode(', ', array_map('ucfirst', $paymentMethods)) }}
-                    </p>
-                </div>
-                @endif
+                    @if(!empty($paymentMethods))
+                    <div class="pt-4 mt-4" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                        <p class="text-xs" style="color: var(--warm-600);">
+                            <span class="font-medium" style="color: var(--warm-500);">Payment:</span> {{ implode(', ', array_map('ucfirst', $paymentMethods)) }}
+                        </p>
+                    </div>
+                    @endif
 
-                @if($allergyDisclaimer)
-                <div class="border-t pt-4 mt-4" style="border-color: var(--warm-200);">
-                    <p class="text-xs leading-relaxed" style="color: var(--warm-500);">
-                        <strong>⚠ Allergy Notice:</strong> {{ $allergyDisclaimer }}
-                    </p>
-                </div>
-                @endif
+                    @if($allergyDisclaimer)
+                    <div class="pt-4 mt-4" style="border-top: 1px solid rgba(139,104,68,0.2);">
+                        <p class="text-xs leading-relaxed" style="color: var(--warm-600);">
+                            <strong style="color: var(--warm-500);">⚠ Allergy Notice:</strong> {{ $allergyDisclaimer }}
+                        </p>
+                    </div>
+                    @endif
 
-                {{-- Submit --}}
-                <button type="submit" 
-                        :disabled="!canSubmit || isSubmitting"
-                        class="w-full mt-6 py-4 rounded-xl text-lg font-semibold transition-all duration-200"
-                        :class="!canSubmit || isSubmitting ? 'opacity-40 cursor-not-allowed' : 'hover:opacity-90'"
-                        style="background: var(--warm-800); color: white; font-family: var(--font-display);">
-                    <span x-text="isSubmitting ? 'Placing Order...' : 'Place Order'"></span>
-                </button>
-                
-                <div x-show="submitError" class="text-red-600 text-sm mt-2 text-center" x-text="submitError"></div>
+                    {{-- Submit --}}
+                    <button type="submit"
+                            :disabled="!canSubmit || isSubmitting"
+                            class="w-full mt-6 py-4 rounded-full text-lg font-semibold transition-all duration-300"
+                            :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-lg'"
+                            style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
+                        <span x-text="isSubmitting ? 'Placing Order...' : 'Place Order →'"></span>
+                    </button>
+
+                    <div x-show="submitError" class="text-red-400 text-sm mt-3 text-center" x-text="submitError"></div>
+                </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+</section>
 @endsection
 
 @section('scripts')
@@ -450,11 +506,11 @@ function orderForm() {
         },
 
         get canSubmit() {
-            return this.cartItems.length > 0 && 
-                   this.form.customer_name && 
-                   this.form.customer_email && 
+            return this.cartItems.length > 0 &&
+                   this.form.customer_name &&
+                   this.form.customer_email &&
                    this.form.delivery_date &&
-                   (this.form.delivery_type === 'pickup' || 
+                   (this.form.delivery_type === 'pickup' ||
                     (this.form.delivery_address && this.form.delivery_tier)) &&
                    !this.capacityError &&
                    !this.isSubmitting;
@@ -464,7 +520,7 @@ function orderForm() {
             const existingItem = this.cartItems.find(item => item.id === productId);
             const productElement = document.querySelector(`[data-product-id="${productId}"]`);
             const productName = productElement ? productElement.dataset.productName : `Product ${productId}`;
-            
+
             if (existingItem) {
                 existingItem.quantity++;
             } else {
@@ -654,15 +710,15 @@ function orderForm() {
 
             const avail = this.getDateAvailability(this.form.delivery_date);
             if (avail && !avail.available) {
-                this.capacityError = avail.reason === 'Closed' 
-                    ? 'The bakery is closed on this day.' 
+                this.capacityError = avail.reason === 'Closed'
+                    ? 'The bakery is closed on this day.'
                     : (avail.reason || 'This date is not available.');
                 return;
             }
             if (avail && avail.remaining_capacity > 0 && avail.remaining_capacity <= 5) {
                 this.capacityWarning = `Only ${avail.remaining_capacity} order slots remaining for this date.`;
             }
-            
+
             try {
                 const response = await fetch(`/capacity/check/${this.form.delivery_date}`);
                 const data = await response.json();
@@ -680,7 +736,7 @@ function orderForm() {
             if (!this.canSubmit) return;
             this.isSubmitting = true;
             this.submitError = '';
-            
+
             const formData = new FormData();
             Object.keys(this.form).forEach(key => {
                 if (this.form[key]) {
@@ -698,7 +754,7 @@ function orderForm() {
                 formData.append('gift_card_id', this.appliedGiftCard.gift_card_id);
             }
             formData.append('_token', '{{ csrf_token() }}');
-            
+
             try {
                 const response = await fetch('{{ route('order.store') }}', {
                     method: 'POST',

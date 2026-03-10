@@ -35,8 +35,13 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Jeffrey Davidson',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
+                'role' => 'platform_admin',
             ]
         );
+
+        $this->call([
+            CentralSeeder::class,
+        ]);
 
         if ($this->command) {
             $this->command->info('Central database seeded. Use `php artisan tenant:demo --fresh` to create a demo tenant with sample data.');

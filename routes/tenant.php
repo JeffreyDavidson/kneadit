@@ -37,6 +37,10 @@ Route::middleware([
     });
     Route::get('/icons/icon-{size}.png', [StorefrontController::class, 'appIcon'])->name('app.icon');
 
+    // Impersonation token consumer (from central admin)
+    Route::get('/impersonate/{token}', [\App\Http\Controllers\ImpersonateController::class, 'consume'])
+        ->name('impersonate.consume');
+
     // Hero lookbook (temporary — design review)
     Route::get('/hero-lookbook', fn () => view('hero-lookbook'))->name('hero.lookbook');
 

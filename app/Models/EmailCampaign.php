@@ -2,25 +2,32 @@
 
 namespace App\Models;
 
-use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EmailCampaign extends Model
 {
-    use LogsActivity;
+    protected $connection = 'central';
 
     protected $fillable = [
+        'name',
         'subject',
         'body',
-        'recipient_count',
-        'sent_at',
+        'target_segment',
         'status',
+        'scheduled_at',
+        'sent_at',
+        'recipient_count',
     ];
 
-    protected function casts(): array
+    protected $casts = [
+        'scheduled_at' => 'datetime',
+        'sent_at' => 'datetime',
+        'recipient_count' => 'integer',
+    ];
+
+    public function logs(): HasMany
     {
-        return [
-            'sent_at' => 'datetime',
-        ];
+        return $this->hasMany(EmailCampaignLog::class, 'campaign_id');
     }
 }

@@ -22,7 +22,7 @@ class OrderController extends Controller
     public function index()
     {
         $categories = Category::with(['products' => function ($q) {
-            $q->where('is_available', true)->orderBy('sort_order');
+            $q->where('is_active', true)->orderBy('name');
         }, 'products.seasonalItems'])->orderBy('sort_order')->get();
 
         // Filter out products that are seasonal but not currently in season
@@ -39,7 +39,7 @@ class OrderController extends Controller
     public function home()
     {
         $categories = Category::with(['products' => function ($q) {
-            $q->where('is_available', true)->orderBy('sort_order');
+            $q->where('is_active', true)->orderBy('name');
         }])->orderBy('sort_order')->get();
 
         return view('home', compact('categories'));
@@ -320,7 +320,7 @@ class OrderController extends Controller
 
         foreach ($validated['items'] as $item) {
             $product = Product::findOrFail($item['product_id']);
-            if (! $product->is_available) {
+            if (! $product->is_active) {
                 continue;
             }
 

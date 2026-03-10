@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance - KneadIt</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a2e;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #e0e0e0;
+        }
+        .container {
+            text-align: center;
+            max-width: 520px;
+            padding: 2rem;
+        }
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #d4a437;
+            margin-bottom: 0.5rem;
+        }
+        .logo span { font-size: 3.5rem; }
+        h1 {
+            font-size: 1.75rem;
+            color: #c9973a;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .message {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #b0b0b0;
+            margin-bottom: 2rem;
+        }
+        .scheduled-end {
+            display: inline-block;
+            background: rgba(212, 164, 55, 0.15);
+            border: 1px solid rgba(212, 164, 55, 0.3);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            color: #d4a437;
+            font-size: 0.95rem;
+        }
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: #d4a437;
+            margin: 0 auto 1.5rem;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo"><span>🍞</span> KneadIt</div>
+        <div class="divider"></div>
+        <h1>We'll be back soon!</h1>
+        <p class="message">
+            {{ $message ?? 'We are currently performing scheduled maintenance. We\'ll be back shortly!' }}
+        </p>
+        @if(!empty($scheduled_end))
+            <div class="scheduled-end">
+                ⏰ Expected back: {{ \Carbon\Carbon::parse($scheduled_end)->format('M j, Y \a\t g:i A') }}
+            </div>
+        @endif
+    </div>
+</body>
+</html>
