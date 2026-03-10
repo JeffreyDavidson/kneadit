@@ -13,7 +13,7 @@ class Analytics extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
 
-    protected static string|NITENUM|NULL $NAVIGATIONGROUP = 'Platform';
+    protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
     protected static ?int $navigationSort = 2;
 
@@ -95,11 +95,20 @@ class Analytics extends Page
 
     public function getAvgDaysOnTrial(): float
     {
-        $avg = Tenant::whereNotNull('trial_ends_at')
-            ->selectRaw('AVG(DATEDIFF(trial_ends_at, created_at)) as avg_days')
-            ->value('avg_days');
+        $tenants = Tenant::whereNotNull('trial_ends_at')
+            ->select('trial_ends_at', 'created_at')
+            ->get();
 
-        return round($avg ?? 0, 1);
+        if ($tenants->isEmpty()) {
+            return 0;
+        }
+
+        $avgDays = $tenants->avg(function ($tenant) {
+            return Carbon::parse($tenant->created_at)
+                ->diffInDays(Carbon::parse($tenant->trial_ends_at));
+        });
+
+        return round($avgDays, 1);
     }
 
     public function getMostPopularPlan(): string
