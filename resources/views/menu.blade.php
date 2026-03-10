@@ -62,6 +62,7 @@
     $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
     $heroImage = \App\Models\Setting::get('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+    $content = \App\Models\Setting::pageContentAll('menu');
 @endphp
 
 {{-- Photo-Forward Hero --}}
@@ -75,17 +76,17 @@
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20" style="min-height: 55vh;">
         <div class="menu-fade-1 flex items-center gap-3 mb-6">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $storeName }}</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ str_replace('{{store_name}}', $storeName, $content['hero_eyebrow'] ?? $storeName) }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="menu-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4" style="color: var(--warm-100);">
-            Our Menu
+            {{ $content['hero_title'] ?? 'Our Menu' }}
         </h1>
         <p class="menu-fade-2 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
             Crafted with care, baked with love
         </p>
         <p class="menu-fade-3 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mt-4" style="color: var(--warm-400);">
-            Everything we make, crafted with care. Browse at your pace — when something catches your eye, we'll have it freshly prepared just for you.
+            {{ $content['hero_subtitle'] ?? 'Everything we make, crafted with care. Browse at your pace — when something catches your eye, we\'ll have it freshly prepared just for you.' }}
         </p>
     </div>
 </section>
@@ -123,7 +124,7 @@
             <div class="mb-12">
                 <div class="flex items-center gap-4 mb-3">
                     <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Collection</span>
+                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['category_eyebrow'] ?? 'Collection' }}</span>
                 </div>
                 <div class="flex items-end gap-6">
                     <h2 class="font-display text-3xl md:text-5xl font-bold" style="color: var(--warm-100);">
@@ -207,15 +208,15 @@
 <section class="relative py-24 overflow-hidden" style="background: var(--warm-800);">
     <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 50%, rgba(212,146,12,0.06), transparent 60%);"></div>
     <div class="relative z-10 text-center max-w-2xl mx-auto px-4">
-        <p class="font-script text-2xl mb-4" style="color: var(--warm-500);">Ready to order?</p>
+        <p class="font-script text-2xl mb-4" style="color: var(--warm-500);">{{ $content['cta_script'] ?? 'Ready to order?' }}</p>
         <h2 class="font-display text-3xl md:text-5xl font-bold mb-6" style="color: var(--warm-100);">
-            Let's get baking.
+            {{ $content['cta_heading'] ?? 'Let\'s get baking.' }}
         </h2>
         <p class="text-lg mb-10" style="color: var(--warm-400);">
-            All orders need {{ \App\Models\Setting::get('order_lead_time_hours', '24') }} hours notice. Place yours now.
+            {{ str_replace('{{lead_time}}', \App\Models\Setting::get('order_lead_time_hours', '24'), $content['cta_description'] ?? 'All orders need ' . \App\Models\Setting::get('order_lead_time_hours', '24') . ' hours notice. Place yours now.') }}
         </p>
         <a href="{{ route('order.create') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
-            Place an Order
+            {{ $content['cta_button'] ?? 'Place an Order' }}
         </a>
     </div>
 </section>

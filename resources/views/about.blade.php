@@ -14,6 +14,8 @@
     $customerCount = \App\Models\Customer::count();
     $avgRating = \App\Models\Review::where('is_approved', true)->avg('rating');
     $orderCount = \App\Models\Order::count();
+
+    $content = \App\Models\Setting::pageContentAll('about');
 @endphp
 
 <style>
@@ -48,7 +50,7 @@
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20" style="min-height: 70vh;">
         <div class="about-fade-1 flex items-center gap-3 mb-6">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">The story behind</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'The story behind' }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="about-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6" style="color: var(--warm-100);">
@@ -97,7 +99,7 @@
             <div class="md:col-span-3">
                 <div class="flex items-center gap-3 mb-8">
                     <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Our Story</span>
+                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['story_eyebrow'] ?? 'Our Story' }}</span>
                 </div>
 
                 @if($tagline)
@@ -143,34 +145,26 @@
         <div class="text-center mb-16">
             <div class="flex items-center justify-center gap-3 mb-4">
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Our Values</span>
+                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['values_eyebrow'] ?? 'Our Values' }}</span>
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
             </div>
-            <h2 class="font-display text-3xl md:text-5xl font-bold" style="color: var(--warm-100);">What We Believe</h2>
+            <h2 class="font-display text-3xl md:text-5xl font-bold" style="color: var(--warm-100);">{{ $content['values_heading'] ?? 'What We Believe' }}</h2>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
+            @foreach($content['values'] ?? [
+                ['title' => 'Quality Ingredients', 'description' => 'We source only the finest, freshest ingredients for every recipe. No shortcuts, no compromises — just honest baking.'],
+                ['title' => 'Freshly Baked', 'description' => 'Everything is baked fresh for your order. We believe in delivering the best experience, every single time.'],
+                ['title' => 'Handmade with Love', 'description' => 'Every product is handcrafted by skilled bakers who take pride in their craft and care about every detail.'],
+            ] as $value)
             <div class="p-8 rounded-2xl transition-all duration-300 hover:-translate-y-1" style="background: var(--warm-800); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-12 h-12 rounded-full flex items-center justify-center mb-6" style="background: rgba(212,146,12,0.15);">
                     <span class="text-xl" style="color: var(--warm-500);">✦</span>
                 </div>
-                <h3 class="font-display text-xl font-semibold mb-3" style="color: var(--warm-200);">Quality Ingredients</h3>
-                <p class="leading-relaxed" style="color: var(--warm-400);">We source only the finest, freshest ingredients for every recipe. No shortcuts, no compromises — just honest baking.</p>
+                <h3 class="font-display text-xl font-semibold mb-3" style="color: var(--warm-200);">{{ $value['title'] }}</h3>
+                <p class="leading-relaxed" style="color: var(--warm-400);">{{ $value['description'] }}</p>
             </div>
-            <div class="p-8 rounded-2xl transition-all duration-300 hover:-translate-y-1" style="background: var(--warm-800); border: 1px solid rgba(139,104,68,0.15);">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center mb-6" style="background: rgba(212,146,12,0.15);">
-                    <span class="text-xl" style="color: var(--warm-500);">✦</span>
-                </div>
-                <h3 class="font-display text-xl font-semibold mb-3" style="color: var(--warm-200);">Freshly Baked</h3>
-                <p class="leading-relaxed" style="color: var(--warm-400);">Everything is baked fresh for your order. We believe in delivering the best experience, every single time.</p>
-            </div>
-            <div class="p-8 rounded-2xl transition-all duration-300 hover:-translate-y-1" style="background: var(--warm-800); border: 1px solid rgba(139,104,68,0.15);">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center mb-6" style="background: rgba(212,146,12,0.15);">
-                    <span class="text-xl" style="color: var(--warm-500);">✦</span>
-                </div>
-                <h3 class="font-display text-xl font-semibold mb-3" style="color: var(--warm-200);">Handmade with Love</h3>
-                <p class="leading-relaxed" style="color: var(--warm-400);">Every product is handcrafted by skilled bakers who take pride in their craft and care about every detail.</p>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -197,7 +191,7 @@
             <div>
                 <div class="flex items-center gap-3 mb-6">
                     <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Find Us</span>
+                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['location_eyebrow'] ?? 'Find Us' }}</span>
                 </div>
                 <p class="font-display text-2xl md:text-3xl leading-relaxed" style="color: var(--warm-800);">{{ $address }}</p>
             </div>
@@ -207,7 +201,7 @@
             <div>
                 <div class="flex items-center gap-3 mb-6">
                     <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Follow Along</span>
+                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['social_eyebrow'] ?? 'Follow Along' }}</span>
                 </div>
                 <div class="flex gap-4">
                     @if(!empty($socialLinks['facebook']))
@@ -237,12 +231,12 @@
 <section class="relative py-24 overflow-hidden" style="background: var(--warm-900);">
     <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 50%, rgba(212,146,12,0.08), transparent 60%);"></div>
     <div class="relative z-10 text-center max-w-2xl mx-auto px-4">
-        <p class="font-script text-2xl mb-4" style="color: var(--warm-500);">Come taste the difference</p>
+        <p class="font-script text-2xl mb-4" style="color: var(--warm-500);">{{ $content['cta_script'] ?? 'Come taste the difference' }}</p>
         <h2 class="font-display text-3xl md:text-5xl font-bold mb-8" style="color: var(--warm-100);">
-            Ready to place an order?
+            {{ $content['cta_heading'] ?? 'Ready to place an order?' }}
         </h2>
         <a href="{{ route('order.create') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
-            Order Now
+            {{ $content['cta_button'] ?? 'Order Now' }}
         </a>
     </div>
 </section>

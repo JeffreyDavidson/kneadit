@@ -6,6 +6,10 @@
 @endphp
 
 @section('content')
+@php
+    $content = \App\Models\Setting::pageContentAll('submit_review');
+    $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
+@endphp
 @if(isset($success) && $success)
 {{-- Success State --}}
 <section class="relative overflow-hidden" style="min-height: 80vh;">
@@ -22,8 +26,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                 </svg>
             </div>
-            <h1 class="font-display text-4xl font-bold mb-4 review-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">Thank You!</h1>
-            <p class="text-lg mb-8 review-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">Your review has been submitted and will appear once approved. We appreciate your feedback!</p>
+            <h1 class="font-display text-4xl font-bold mb-4 review-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
+            <p class="text-lg mb-8 review-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your review has been submitted and will appear once approved. We appreciate your feedback!' }}</p>
             <a href="{{ route('storefront.menu') }}" class="inline-block px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 review-fade-up" style="background: var(--warm-500); color: var(--warm-900); animation-delay: 0.9s;">
                 Back to Menu
             </a>
@@ -43,11 +47,11 @@
     <div class="relative z-10 text-center px-4 py-16 md:py-24">
         <div class="flex items-center justify-center gap-3 mb-6 review-fade-up" style="animation-delay: 0.3s;">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">We'd Love to Hear From You</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'We\'d Love to Hear From You' }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 review-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">
-            How Was Your Order?
+            {{ $content['hero_title'] ?? 'How Was Your Order?' }}
         </h1>
         <p class="text-lg review-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">
             From {{ $storeName }} · Order #{{ $order->order_number }}
@@ -75,7 +79,7 @@
 
             {{-- Star Rating --}}
             <div class="text-center" x-data="{ rating: {{ $prefilledRating ?? 0 }}, hover: 0 }">
-                <label class="block text-xs uppercase tracking-wider font-medium mb-4" style="color: var(--warm-600);">Your Rating</label>
+                <label class="block text-xs uppercase tracking-wider font-medium mb-4" style="color: var(--warm-600);">{{ $content['rating_label'] ?? 'Your Rating' }}</label>
                 <div class="flex gap-3 justify-center mb-2">
                     @for($i = 1; $i <= 5; $i++)
                         <button type="button"
@@ -93,7 +97,7 @@
                     <input type="hidden" name="rating" x-bind:value="rating">
                 </div>
                 <p class="text-sm" style="color: var(--warm-500);" x-show="rating > 0">
-                    <span x-text="['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'][rating]"></span>
+                    <span x-text="{{ json_encode($ratingDescriptions) }}[rating]"></span>
                 </p>
                 @error('rating')
                     <p class="text-red-600 text-sm mt-2">{{ $message }}</p>
@@ -102,13 +106,13 @@
 
             {{-- Comment --}}
             <div>
-                <label for="comment" class="block text-xs uppercase tracking-wider font-medium mb-2" style="color: var(--warm-600);">Tell Us About Your Experience</label>
+                <label for="comment" class="block text-xs uppercase tracking-wider font-medium mb-2" style="color: var(--warm-600);">{{ $content['comment_label'] ?? 'Tell Us About Your Experience' }}</label>
                 <textarea name="comment" id="comment" rows="5"
                     class="w-full p-4 rounded-xl text-base"
                     style="background: var(--warm-50); border: 1.5px solid var(--warm-200); color: var(--warm-800); outline: none; transition: border-color 0.2s;"
                     onfocus="this.style.borderColor='var(--warm-500)'"
                     onblur="this.style.borderColor='var(--warm-200)'"
-                    placeholder="What did you love? What could we improve?">{{ old('comment') }}</textarea>
+                    placeholder="{{ $content['comment_placeholder'] ?? 'What did you love? What could we improve?' }}">{{ old('comment') }}</textarea>
                 @error('comment')
                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                 @enderror
@@ -116,7 +120,7 @@
 
             {{-- Photo Upload --}}
             <div>
-                <label for="photo" class="block text-xs uppercase tracking-wider font-medium mb-2" style="color: var(--warm-600);">Add a Photo <span style="color: var(--warm-400);">(optional)</span></label>
+                <label for="photo" class="block text-xs uppercase tracking-wider font-medium mb-2" style="color: var(--warm-600);">{{ $content['photo_label'] ?? 'Add a Photo' }} <span style="color: var(--warm-400);">(optional)</span></label>
                 <div class="rounded-xl p-6 text-center cursor-pointer transition-all"
                      style="background: var(--warm-50); border: 2px dashed var(--warm-300);"
                      onclick="document.getElementById('photo').click()">
@@ -133,7 +137,7 @@
 
             {{-- Submit --}}
             <button type="submit" class="w-full py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
-                Submit Review
+                {{ $content['submit_button'] ?? 'Submit Review' }}
             </button>
         </form>
     </div>

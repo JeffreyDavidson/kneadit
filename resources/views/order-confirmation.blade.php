@@ -6,6 +6,14 @@
 @endphp
 
 @section('content')
+@php
+    $content = \App\Models\Setting::pageContentAll('order_confirmation');
+    $journeySteps = $content['journey_steps'] ?? [
+        ['title' => 'Confirmation', 'description' => 'You\'ll receive an email confirmation with your order details shortly.'],
+        ['title' => 'Preparation', 'description' => 'Our bakers will craft your items fresh on your scheduled date.'],
+        ['title' => 'Delivery', 'description_delivery' => 'We\'ll deliver your fresh items right to your door.', 'description_pickup' => 'Your items will be warm and ready for you to pick up.'],
+    ];
+@endphp
 {{-- Photo-Forward Hero with Success --}}
 <section class="relative overflow-hidden" style="min-height: 40vh;">
     <div class="absolute inset-0">
@@ -24,15 +32,15 @@
 
         <div class="flex items-center justify-center gap-3 mb-4 confirmation-fade-up" style="animation-delay: 0.5s;">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Order Placed</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'Order Placed' }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
 
         <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 confirmation-fade-up" style="color: var(--warm-100); animation-delay: 0.7s;">
-            Thank You!
+            {{ $content['hero_title'] ?? 'Thank You!' }}
         </h1>
         <p class="text-lg mb-3 max-w-lg mx-auto confirmation-fade-up" style="color: var(--warm-400); animation-delay: 0.9s;">
-            Your order has been received and we'll start preparing your items right away.
+            {{ $content['hero_description'] ?? 'Your order has been received and we\'ll start preparing your items right away.' }}
         </p>
         <div class="inline-block px-6 py-3 rounded-full confirmation-fade-up" style="background: rgba(212,146,12,0.1); border: 1px solid rgba(212,146,12,0.25); animation-delay: 1.1s;">
             <span class="text-sm font-medium" style="color: var(--warm-400);">Order Number:</span>
@@ -49,7 +57,7 @@
             <div class="rounded-2xl p-6 md:p-8" style="background: var(--warm-800); border: 1px solid rgba(139,104,68,0.2);">
                 <div class="flex items-center gap-3 mb-6">
                     <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-                    <h2 class="font-display text-xl font-semibold" style="color: var(--warm-100);">Order Details</h2>
+                    <h2 class="font-display text-xl font-semibold" style="color: var(--warm-100);">{{ $content['details_heading'] ?? 'Order Details' }}</h2>
                 </div>
 
                 <div class="space-y-3 mb-6">
@@ -142,46 +150,36 @@
         {{-- What Happens Next --}}
         <div class="rounded-2xl p-8 md:p-12 mt-8" style="background: var(--warm-800); border: 1px solid rgba(139,104,68,0.2);">
             <div class="text-center mb-10">
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">What Happens Next</span>
-                <h2 class="font-display text-3xl font-bold mt-2" style="color: var(--warm-100);">Your Order Journey</h2>
+                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['journey_eyebrow'] ?? 'What Happens Next' }}</span>
+                <h2 class="font-display text-3xl font-bold mt-2" style="color: var(--warm-100);">{{ $content['journey_heading'] ?? 'Your Order Journey' }}</h2>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
+                @foreach($journeySteps as $stepIndex => $step)
                 <div class="text-center">
                     <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background: rgba(212,146,12,0.15); border: 1.5px solid rgba(212,146,12,0.3);">
-                        <span class="font-display text-xl font-bold" style="color: var(--warm-400);">1</span>
-                    </div>
-                    <h3 class="font-display text-lg font-semibold mb-2" style="color: var(--warm-200);">Confirmation</h3>
-                    <p class="text-sm" style="color: var(--warm-500);">
-                        You'll receive an email confirmation with your order details shortly.
-                    </p>
-                </div>
-
-                <div class="text-center">
-                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background: rgba(212,146,12,0.15); border: 1.5px solid rgba(212,146,12,0.3);">
-                        <span class="font-display text-xl font-bold" style="color: var(--warm-400);">2</span>
-                    </div>
-                    <h3 class="font-display text-lg font-semibold mb-2" style="color: var(--warm-200);">Preparation</h3>
-                    <p class="text-sm" style="color: var(--warm-500);">
-                        Our bakers will craft your items fresh on your scheduled date.
-                    </p>
-                </div>
-
-                <div class="text-center">
-                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background: rgba(212,146,12,0.15); border: 1.5px solid rgba(212,146,12,0.3);">
-                        <span class="font-display text-xl font-bold" style="color: var(--warm-400);">3</span>
+                        <span class="font-display text-xl font-bold" style="color: var(--warm-400);">{{ $stepIndex + 1 }}</span>
                     </div>
                     <h3 class="font-display text-lg font-semibold mb-2" style="color: var(--warm-200);">
-                        {{ $order->delivery_type === 'delivery' ? 'Delivery' : 'Pickup' }}
+                        @if(isset($step['description_delivery']) || isset($step['description_pickup']))
+                            {{ $order->delivery_type === 'delivery' ? 'Delivery' : 'Pickup' }}
+                        @else
+                            {{ $step['title'] }}
+                        @endif
                     </h3>
                     <p class="text-sm" style="color: var(--warm-500);">
-                        @if($order->delivery_type === 'delivery')
-                            We'll deliver your fresh items right to your door.
+                        @if(isset($step['description_delivery']) || isset($step['description_pickup']))
+                            @if($order->delivery_type === 'delivery')
+                                {{ $step['description_delivery'] ?? 'We\'ll deliver your fresh items right to your door.' }}
+                            @else
+                                {{ $step['description_pickup'] ?? 'Your items will be warm and ready for you to pick up.' }}
+                            @endif
                         @else
-                            Your items will be warm and ready for you to pick up.
+                            {{ $step['description'] }}
                         @endif
                     </p>
                 </div>
+                @endforeach
             </div>
 
             <div class="text-center mt-10 pt-8" style="border-top: 1px solid rgba(139,104,68,0.2);">
