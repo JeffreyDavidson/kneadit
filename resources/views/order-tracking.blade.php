@@ -2,6 +2,7 @@
 
 @section('content')
 @php
+    $content = \App\Models\Setting::pageContentAll('order_tracking');
     $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
     $heroImage = \App\Models\Setting::get('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
@@ -87,7 +88,7 @@
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20" style="min-height: 55vh;">
         <div class="track-fade-1 flex items-center gap-3 mb-6">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Order Status</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'Order Status' }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="track-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6" style="color: var(--warm-100);">

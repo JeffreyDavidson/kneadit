@@ -7,6 +7,9 @@
 @endphp
 
 @section('content')
+@php
+    $content = \App\Models\Setting::pageContentAll('survey');
+@endphp
 @if(session('survey_submitted'))
 {{-- Success State --}}
 <section class="relative overflow-hidden" style="min-height: 60vh;">
@@ -22,8 +25,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
-        <h1 class="font-display text-4xl font-bold mb-4 survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">Thank You!</h1>
-        <p class="text-lg mb-10 survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">Your feedback has been submitted. We appreciate you taking the time to share your thoughts!</p>
+        <h1 class="font-display text-4xl font-bold mb-4 survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
+        <p class="text-lg mb-10 survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
         <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 survey-fade-up" style="background: var(--warm-500); color: var(--warm-900); animation-delay: 0.9s;">
             Back to {{ $storeName }}
         </a>
@@ -42,7 +45,7 @@
     <div class="relative z-10 max-w-3xl mx-auto text-center px-4 py-20 md:py-24">
         <div class="flex items-center justify-center gap-3 mb-6 survey-fade-up" style="animation-delay: 0.3s;">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Your Opinion Matters</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'Your Opinion Matters' }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $survey->title }}</h1>
@@ -132,9 +135,9 @@
             {{-- Submit --}}
             <div class="text-center pt-4">
                 <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
-                    Submit Feedback
+                    {{ $content['submit_button'] ?? 'Submit Feedback' }}
                 </button>
-                <p class="text-sm mt-4" style="color: var(--warm-500);">Your feedback helps us bake better for you</p>
+                <p class="text-sm mt-4" style="color: var(--warm-500);">{{ $content['submit_footer'] ?? 'Your feedback helps us bake better for you' }}</p>
             </div>
         </form>
     </div>

@@ -5,6 +5,7 @@
     $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
     $heroImage = \App\Models\Setting::get('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+    $content = \App\Models\Setting::pageContentAll('reviews');
 @endphp
 
 <style>
@@ -50,11 +51,11 @@
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20" style="min-height: 60vh;">
         <div class="review-fade-1 flex items-center gap-3 mb-6">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">What People Say</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'What People Say' }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="review-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6" style="color: var(--warm-100);">
-            Kind Words
+            {{ $content['hero_title'] ?? 'Kind Words' }}
         </h1>
         @if($totalReviews > 0)
         <p class="review-fade-2 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">{{ $totalReviews }} {{ Str::plural('review', $totalReviews) }} from happy customers</p>
@@ -131,7 +132,7 @@
         <div class="text-center mb-12">
             <div class="flex items-center justify-center gap-3 mb-4">
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Rating Breakdown</span>
+                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['rating_eyebrow'] ?? 'Rating Breakdown' }}</span>
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
             </div>
         </div>
@@ -164,7 +165,7 @@
     <div class="max-w-6xl mx-auto px-4">
         <div class="flex items-center gap-6 mb-16">
             <div class="flex-1 h-px" style="background: var(--warm-300);"></div>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">All Reviews</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['all_reviews_label'] ?? 'All Reviews' }}</span>
             <div class="flex-1 h-px" style="background: var(--warm-300);"></div>
         </div>
 
@@ -211,8 +212,8 @@
 <section class="relative py-24" style="background: var(--warm-100);">
     <div class="text-center max-w-md mx-auto px-4">
         <div class="font-display font-bold leading-none mb-4" style="font-size: 5rem; color: var(--warm-300); opacity: 0.3; line-height: 0.6;">&ldquo;</div>
-        <p class="font-display text-3xl md:text-4xl font-bold mb-4" style="color: var(--warm-800);">No reviews yet</p>
-        <p class="text-lg leading-relaxed" style="color: var(--warm-600);">Be the first to share your experience.</p>
+        <p class="font-display text-3xl md:text-4xl font-bold mb-4" style="color: var(--warm-800);">{{ $content['empty_heading'] ?? 'No reviews yet' }}</p>
+        <p class="text-lg leading-relaxed" style="color: var(--warm-600);">{{ $content['empty_description'] ?? 'Be the first to share your experience.' }}</p>
     </div>
 </section>
 @endif
@@ -222,15 +223,15 @@
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
     <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 50%, rgba(212,146,12,0.08), transparent 60%);"></div>
     <div class="relative z-10 text-center max-w-2xl mx-auto px-4">
-        <p class="font-script text-2xl mb-4" style="color: var(--warm-500);">Enjoyed something?</p>
+        <p class="font-script text-2xl mb-4" style="color: var(--warm-500);">{{ $content['cta_script'] ?? 'Enjoyed something?' }}</p>
         <h2 class="font-display text-3xl md:text-5xl font-bold mb-4" style="color: var(--warm-100);">
-            We'd love to hear about it.
+            {{ $content['cta_heading'] ?? 'We\'d love to hear about it.' }}
         </h2>
         <p class="text-lg mb-10" style="color: var(--warm-400);">
-            Your feedback helps us bake better and helps others discover their next favorite treat.
+            {{ $content['cta_description'] ?? 'Your feedback helps us bake better and helps others discover their next favorite treat.' }}
         </p>
         <a href="{{ route('order.track') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
-            Leave a Review
+            {{ $content['cta_button'] ?? 'Leave a Review' }}
         </a>
     </div>
 </section>

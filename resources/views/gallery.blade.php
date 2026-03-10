@@ -67,6 +67,7 @@
     $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
     $heroImage = \App\Models\Setting::get('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+    $content = \App\Models\Setting::pageContentAll('gallery');
 @endphp
 
 {{-- Photo-Forward Hero --}}
@@ -80,17 +81,17 @@
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20" style="min-height: 55vh;">
         <div class="gallery-fade-1 flex items-center gap-3 mb-6">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">From Our Customers</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'From Our Customers' }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="gallery-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4" style="color: var(--warm-100);">
-            Customer Gallery
+            {{ $content['hero_title'] ?? 'Customer Gallery' }}
         </h1>
         <p class="gallery-fade-2 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
             Moments worth sharing
         </p>
         <p class="gallery-fade-3 text-lg md:text-xl max-w-xl mx-auto mt-4" style="color: var(--warm-400);">
-            See what our customers are creating and enjoying!
+            {{ $content['hero_subtitle'] ?? 'See what our customers are creating and enjoying!' }}
         </p>
     </div>
 </section>
@@ -149,11 +150,11 @@
                 </svg>
             </div>
 
-            <h2 class="font-display text-3xl font-bold mb-4" style="color: var(--warm-900);">Your Photos Will Shine Here</h2>
+            <h2 class="font-display text-3xl font-bold mb-4" style="color: var(--warm-900);">{{ $content['empty_heading'] ?? 'Your Photos Will Shine Here' }}</h2>
             <p class="text-lg leading-relaxed mb-6" style="color: var(--warm-600);">
-                We'd love to see what you're baking and enjoying! Share a photo of your order and it'll appear right here for the whole community to see.
+                {{ $content['empty_description'] ?? 'We\'d love to see what you\'re baking and enjoying! Share a photo of your order and it\'ll appear right here for the whole community to see.' }}
             </p>
-            <p class="font-script text-xl mb-10" style="color: var(--warm-500);">Be the first to share!</p>
+            <p class="font-script text-xl mb-10" style="color: var(--warm-500);">{{ $content['empty_script'] ?? 'Be the first to share!' }}</p>
 
             {{-- Faux gallery preview --}}
             <div class="grid grid-cols-3 gap-3 opacity-20">
@@ -193,11 +194,11 @@
         <div class="text-center mb-12">
             <div class="flex items-center justify-center gap-3 mb-6">
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Share Yours</span>
+                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['upload_eyebrow'] ?? 'Share Yours' }}</span>
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
             </div>
-            <h2 class="font-display text-3xl md:text-5xl font-bold mb-4" style="color: var(--warm-100);">Share Your Photo</h2>
-            <p class="text-lg" style="color: var(--warm-400);">Show off your order! Photos will appear after approval.</p>
+            <h2 class="font-display text-3xl md:text-5xl font-bold mb-4" style="color: var(--warm-100);">{{ $content['upload_heading'] ?? 'Share Your Photo' }}</h2>
+            <p class="text-lg" style="color: var(--warm-400);">{{ $content['upload_description'] ?? 'Show off your order! Photos will appear after approval.' }}</p>
         </div>
 
         @if(session('success'))

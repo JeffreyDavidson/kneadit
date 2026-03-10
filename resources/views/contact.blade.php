@@ -54,6 +54,7 @@
     $faqItems = json_decode(\App\Models\Setting::get('faq_items', '[]'), true);
     $leadTimeHours = \App\Models\Setting::get('order_lead_time_hours', '24');
     $allergyDisclaimer = \App\Models\Setting::get('allergy_disclaimer');
+    $content = \App\Models\Setting::pageContentAll('contact');
 @endphp
 
 {{-- Photo-Forward Hero --}}
@@ -67,17 +68,17 @@
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20" style="min-height: 55vh;">
         <div class="contact-fade-1 flex items-center gap-3 mb-6">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Get in Touch</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'Get in Touch' }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="contact-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4" style="color: var(--warm-100);">
-            We'd Love to<br>Hear From You
+            {!! nl2br(e($content['hero_title'] ?? "We'd Love to\nHear From You")) !!}
         </h1>
         <p class="contact-fade-2 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
             Let's start a conversation
         </p>
         <p class="contact-fade-3 text-lg md:text-xl max-w-xl mx-auto mt-4" style="color: var(--warm-400);">
-            Questions, special requests, or just want to say hello — we're all ears.
+            {{ $content['hero_subtitle'] ?? 'Questions, special requests, or just want to say hello — we\'re all ears.' }}
         </p>
     </div>
 </section>
@@ -127,7 +128,7 @@
             <div class="md:col-span-3">
                 <div class="flex items-center gap-3 mb-8">
                     <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Send a Message</span>
+                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['form_eyebrow'] ?? 'Send a Message' }}</span>
                 </div>
 
                 @if(session('success'))
@@ -177,7 +178,7 @@
                 <div class="p-8 rounded-2xl" style="background: white; border: 1px solid var(--warm-200);">
                     <div class="flex items-center gap-3 mb-6">
                         <span class="block w-6 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                        <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Hours</span>
+                        <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hours_eyebrow'] ?? 'Hours' }}</span>
                     </div>
                     <div class="space-y-3">
                         @foreach($operatingHours as $day => $hours)
@@ -230,10 +231,10 @@
         <div class="text-center mb-12">
             <div class="flex items-center justify-center gap-3 mb-4">
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">FAQ</span>
+                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['faq_eyebrow'] ?? 'FAQ' }}</span>
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
             </div>
-            <h2 class="font-display text-3xl md:text-5xl font-bold" style="color: var(--warm-100);">Common Questions</h2>
+            <h2 class="font-display text-3xl md:text-5xl font-bold" style="color: var(--warm-100);">{{ $content['faq_heading'] ?? 'Common Questions' }}</h2>
         </div>
         <div class="grid md:grid-cols-2 gap-x-12 gap-y-8">
             @foreach($faqItems as $faq)
