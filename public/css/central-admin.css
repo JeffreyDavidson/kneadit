@@ -146,6 +146,13 @@
 }
 
 /* ===== STATS WIDGETS ===== */
+/* Remove the outer container/card wrapper from stat groups */
+.fi-wi-stats-overview {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
 .fi-wi-stats-overview-stat {
     background: var(--platform-900) !important;
     border: 1px solid var(--border-subtle) !important;
