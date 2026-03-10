@@ -24,6 +24,10 @@ class ChurnAlerts extends Page
 
     protected string $view = 'filament.central.pages.churn-alerts';
 
+    public array $extendedTrials = [];
+
+    public array $sentNudges = [];
+
     public function getAlerts(): Collection
     {
         $tenants = Tenant::all();
@@ -144,6 +148,8 @@ class ChurnAlerts extends Page
 
         $tenant->update(['trial_ends_at' => $newEnd]);
 
+        $this->extendedTrials[] = $tenantId;
+
         Notification::make()
             ->title('Trial Extended')
             ->body(($tenant->store_name ?? $tenant->name) . ' trial extended to ' . $newEnd->format('M j, Y') . '.')
@@ -169,6 +175,8 @@ class ChurnAlerts extends Page
             'body' => "Hi {$storeName}!\n\nWe noticed it's been a little quiet on your end. Just wanted to check in — is there anything we can help with?\n\nWhether you need help setting up your storefront, adding products, or just have questions, we're here for you.\n\nThe KneadIt Team",
             'is_read' => false,
         ]);
+
+        $this->sentNudges[] = $tenantId;
 
         Notification::make()
             ->title('Nudge Sent')
