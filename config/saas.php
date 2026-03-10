@@ -72,4 +72,10 @@ return [
     ],
 
     'trial_days' => 30,
+
+    'stripe_prices' => [
+        'starter' => env('STRIPE_PRICE_STARTER'),
+        'growth' => env('STRIPE_PRICE_GROWTH'),
+        'pro' => env('STRIPE_PRICE_PRO'),
+    ],
 ];
