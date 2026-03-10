@@ -138,7 +138,7 @@
 
                     <div class="grid sm:grid-cols-2 gap-5">
                         @foreach($category->products as $product)
-                        @if($product->is_available)
+                        @if($product->is_active)
                         <div class="order-product-card" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
                             {{-- Favorite Heart --}}
                             <button type="button"

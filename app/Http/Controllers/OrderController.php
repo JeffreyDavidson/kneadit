@@ -320,7 +320,7 @@ class OrderController extends Controller
 
         foreach ($validated['items'] as $item) {
             $product = Product::findOrFail($item['product_id']);
-            if (! $product->is_available) {
+            if (! $product->is_active) {
                 continue;
             }
 

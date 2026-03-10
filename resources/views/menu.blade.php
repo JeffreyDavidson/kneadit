@@ -145,7 +145,7 @@
                         @endif
                         {{-- Hover overlay --}}
                         <div class="menu-card-overlay absolute inset-0 flex items-center justify-center" style="background: rgba(28,20,16,0.5);">
-                            @if($product->is_available)
+                            @if($product->is_active)
                             <a href="{{ route('order.create') }}" class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold" style="background: var(--warm-500); color: var(--warm-900);">
                                 Add to Order
                             </a>
@@ -161,7 +161,7 @@
                         @if($product->description)
                         <p class="text-sm leading-relaxed line-clamp-2 mb-3" style="color: var(--warm-500);">{{ $product->description }}</p>
                         @endif
-                        @if(!$product->is_available)
+                        @if(!$product->is_active)
                         <div x-data="{ showWaitlist: false, submitted: false }">
                             <button x-show="!showWaitlist && !submitted" @click="showWaitlist = true"
                                 class="text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer transition-all duration-200"
