@@ -10,7 +10,7 @@ class ImpersonateController extends Controller
 {
     public function login(Request $request, Tenant $tenant)
     {
-        $tenant->initialize();
+        tenancy()->initialize($tenant);
 
         $user = $tenant->users()->first();
 
