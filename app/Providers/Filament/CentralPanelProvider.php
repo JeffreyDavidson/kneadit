@@ -16,8 +16,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Stancl\Tenancy\Middleware\PreventAccessFromTenantDomains;
-
 class CentralPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -58,7 +56,6 @@ class CentralPanelProvider extends PanelProvider
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
-                PreventAccessFromTenantDomains::class,
                 StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
