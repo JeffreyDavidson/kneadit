@@ -1,0 +1,265 @@
+/* ===================================================================
+   KneadIt – Central Platform Admin Theme
+   ===================================================================
+   Dark, modern SaaS dashboard — distinct from tenant bakery admin
+   =================================================================== */
+
+:root {
+    --platform-950: #0a0a1a;
+    --platform-900: #111127;
+    --platform-800: #1a1a3e;
+    --platform-700: #2a2a5e;
+    --platform-600: #3d3d7a;
+    --platform-500: #6366f1;
+    --platform-400: #818cf8;
+    --platform-300: #a5b4fc;
+    --platform-200: #c7d2fe;
+    --platform-100: #e0e7ff;
+    --platform-50: #eef2ff;
+    --accent: #f59e0b;
+    --accent-light: #fbbf24;
+}
+
+/* ===== FONTS ===== */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* Login page */
+.fi-simple-layout {
+    background: linear-gradient(135deg, var(--platform-950) 0%, var(--platform-900) 50%, #0f172a 100%) !important;
+    min-height: 100vh;
+}
+.fi-simple-main {
+    background: var(--platform-900) !important;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4) !important;
+    border-radius: 16px !important;
+}
+.fi-simple-main .fi-section-content {
+    background: var(--platform-900) !important;
+}
+.fi-simple-main label,
+.fi-simple-main .fi-fo-field-wrp label {
+    color: var(--platform-200) !important;
+}
+.fi-simple-main h2,
+.fi-simple-main .fi-header-heading {
+    color: white !important;
+}
+
+/* Sidebar */
+.fi-sidebar {
+    background: var(--platform-950) !important;
+    border-right: 1px solid rgba(99, 102, 241, 0.1) !important;
+}
+.fi-sidebar-header {
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1) !important;
+    padding: 1.25rem 1rem !important;
+}
+.fi-sidebar-item-label {
+    color: var(--platform-200) !important;
+    font-weight: 500 !important;
+}
+.fi-sidebar-item-active .fi-sidebar-item-label {
+    color: white !important;
+    font-weight: 600 !important;
+}
+.fi-sidebar-item-active {
+    background: rgba(99, 102, 241, 0.15) !important;
+    border-radius: 8px !important;
+}
+.fi-sidebar-item:hover {
+    background: rgba(99, 102, 241, 0.08) !important;
+    border-radius: 8px !important;
+}
+.fi-sidebar-group-label {
+    color: var(--platform-500) !important;
+    font-size: 0.65rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    font-weight: 700 !important;
+}
+.fi-sidebar-nav {
+    padding: 0.5rem !important;
+}
+
+/* Top bar */
+.fi-topbar {
+    background: var(--platform-900) !important;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Main content */
+.fi-main {
+    background: var(--platform-950) !important;
+}
+.fi-main-ctn {
+    background: var(--platform-950) !important;
+}
+.fi-page-header {
+    padding-bottom: 1rem !important;
+}
+.fi-header-heading {
+    color: white !important;
+    font-weight: 700 !important;
+}
+.fi-header-subheading {
+    color: var(--platform-400) !important;
+}
+
+/* Cards & Sections */
+.fi-section {
+    background: var(--platform-900) !important;
+    border: 1px solid rgba(99, 102, 241, 0.1) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+}
+.fi-section-header-heading {
+    color: white !important;
+}
+.fi-section-header-description {
+    color: var(--platform-400) !important;
+}
+
+/* Stats widgets */
+.fi-wi-stats-overview-stat {
+    background: var(--platform-900) !important;
+    border: 1px solid rgba(99, 102, 241, 0.12) !important;
+    border-radius: 12px !important;
+    transition: all 0.2s ease !important;
+}
+.fi-wi-stats-overview-stat:hover {
+    border-color: rgba(99, 102, 241, 0.25) !important;
+    transform: translateY(-1px) !important;
+}
+.fi-wi-stats-overview-stat-label {
+    color: var(--platform-400) !important;
+}
+.fi-wi-stats-overview-stat-value {
+    color: white !important;
+    font-weight: 700 !important;
+}
+.fi-wi-stats-overview-stat-description {
+    color: var(--platform-300) !important;
+}
+
+/* Tables */
+.fi-ta-ctn {
+    background: var(--platform-900) !important;
+    border: 1px solid rgba(99, 102, 241, 0.1) !important;
+    border-radius: 12px !important;
+    overflow: visible !important;
+}
+.fi-ta-header-cell {
+    background: rgba(99, 102, 241, 0.06) !important;
+    color: var(--platform-300) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.05em !important;
+}
+.fi-ta-row {
+    border-color: rgba(99, 102, 241, 0.06) !important;
+}
+.fi-ta-row:hover {
+    background: rgba(99, 102, 241, 0.04) !important;
+}
+.fi-ta-cell {
+    color: var(--platform-200) !important;
+}
+.fi-ta-text-item {
+    color: var(--platform-200) !important;
+}
+.fi-ta-empty-state {
+    background: var(--platform-900) !important;
+}
+.fi-ta-empty-state-heading {
+    color: var(--platform-200) !important;
+}
+.fi-ta-empty-state-description {
+    color: var(--platform-400) !important;
+}
+
+/* Table search */
+.fi-ta-search-field input {
+    background: var(--platform-800) !important;
+    border-color: rgba(99, 102, 241, 0.15) !important;
+    color: white !important;
+}
+
+/* Pagination */
+.fi-ta-pagination {
+    background: var(--platform-900) !important;
+    border-top: 1px solid rgba(99, 102, 241, 0.08) !important;
+}
+
+/* Forms */
+.fi-fo-field-wrp label {
+    color: var(--platform-200) !important;
+}
+.fi-input {
+    background: var(--platform-800) !important;
+    border-color: rgba(99, 102, 241, 0.15) !important;
+    color: white !important;
+}
+.fi-input:focus {
+    border-color: var(--platform-500) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+.fi-select-input {
+    background: var(--platform-800) !important;
+    color: white !important;
+}
+
+/* Tabs */
+.fi-tabs-tab {
+    color: var(--platform-400) !important;
+}
+.fi-tabs-tab-active {
+    color: white !important;
+    border-color: var(--platform-500) !important;
+}
+
+/* Buttons */
+.fi-btn-primary {
+    background: var(--platform-500) !important;
+}
+.fi-btn-primary:hover {
+    background: var(--platform-400) !important;
+}
+
+/* Badges */
+.fi-badge {
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+}
+
+/* Notifications */
+.fi-no-notification {
+    background: var(--platform-800) !important;
+    border: 1px solid rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Breadcrumbs */
+.fi-breadcrumbs li {
+    color: var(--platform-400) !important;
+}
+.fi-breadcrumbs a {
+    color: var(--platform-300) !important;
+}
+
+/* Toggle */
+.fi-toggle-input:checked {
+    background: var(--platform-500) !important;
+}
+
+/* Modal */
+.fi-modal-content {
+    background: var(--platform-900) !important;
+    border: 1px solid rgba(99, 102, 241, 0.15) !important;
+}
+.fi-modal-heading {
+    color: white !important;
+}
+.fi-modal-description {
+    color: var(--platform-400) !important;
+}
