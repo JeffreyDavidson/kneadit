@@ -107,8 +107,21 @@
             });
         }
 
+        function tryInitCharts(attempts = 0) {
+            const el = document.getElementById('signupsChart');
+            if (el) {
+                initAnalyticsCharts();
+            } else if (attempts < 10) {
+                setTimeout(() => tryInitCharts(attempts + 1), 100);
+            }
+        }
+
         // Init on first load and SPA navigation
-        document.addEventListener('DOMContentLoaded', initAnalyticsCharts);
-        document.addEventListener('livewire:navigated', initAnalyticsCharts);
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            tryInitCharts();
+        } else {
+            document.addEventListener('DOMContentLoaded', tryInitCharts);
+        }
+        document.addEventListener('livewire:navigated', () => setTimeout(tryInitCharts, 50));
     </script>
 </x-filament-panels::page>
