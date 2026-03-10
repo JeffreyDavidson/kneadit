@@ -39,6 +39,10 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        $this->call([
+            CentralSeeder::class,
+        ]);
+
         if ($this->command) {
             $this->command->info('Central database seeded. Use `php artisan tenant:demo --fresh` to create a demo tenant with sample data.');
         }
