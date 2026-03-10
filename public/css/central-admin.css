@@ -1,23 +1,27 @@
 /* ===================================================================
    KneadIt – Central Platform Admin Theme
    ===================================================================
-   Dark, modern SaaS dashboard — distinct from tenant bakery admin
+   Dark base + KneadIt brand gold/amber accents
    =================================================================== */
 
 :root {
-    --platform-950: #0a0a1a;
-    --platform-900: #111127;
-    --platform-800: #1a1a3e;
-    --platform-700: #2a2a5e;
-    --platform-600: #3d3d7a;
-    --platform-500: #6366f1;
-    --platform-400: #818cf8;
-    --platform-300: #a5b4fc;
-    --platform-200: #c7d2fe;
-    --platform-100: #e0e7ff;
-    --platform-50: #eef2ff;
-    --accent: #f59e0b;
-    --accent-light: #fbbf24;
+    --platform-950: #0c0a09;
+    --platform-900: #1c1410;
+    --platform-800: #2a1f18;
+    --platform-700: #3d2c1e;
+    --platform-600: #5c4333;
+    --platform-500: #d4920c;
+    --platform-400: #e8b04a;
+    --platform-300: #f5d88e;
+    --platform-200: #faf0d6;
+    --platform-100: #fdf8ed;
+    --platform-50: #fefcf5;
+    --accent: #d4920c;
+    --accent-light: #e8b04a;
+    --border-subtle: rgba(212, 146, 12, 0.12);
+    --border-medium: rgba(212, 146, 12, 0.2);
+    --hover-bg: rgba(212, 146, 12, 0.06);
+    --active-bg: rgba(212, 146, 12, 0.12);
 }
 
 /* ===== FONTS ===== */
@@ -25,12 +29,12 @@
 
 /* Login page */
 .fi-simple-layout {
-    background: linear-gradient(135deg, var(--platform-950) 0%, var(--platform-900) 50%, #0f172a 100%) !important;
+    background: linear-gradient(135deg, var(--platform-950) 0%, var(--platform-900) 50%, #1a1008 100%) !important;
     min-height: 100vh;
 }
 .fi-simple-main {
     background: var(--platform-900) !important;
-    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    border: 1px solid var(--border-medium) !important;
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4) !important;
     border-radius: 16px !important;
 }
@@ -46,30 +50,53 @@
     color: white !important;
 }
 
-/* Sidebar */
+/* ===== SIDEBAR ===== */
 .fi-sidebar {
     background: var(--platform-950) !important;
-    border-right: 1px solid rgba(99, 102, 241, 0.1) !important;
+    border-right: 1px solid var(--border-subtle) !important;
 }
 .fi-sidebar-header {
-    border-bottom: 1px solid rgba(99, 102, 241, 0.1) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
     padding: 1.25rem 1rem !important;
+}
+/* Fix sidebar nav alignment */
+.fi-sidebar-nav {
+    padding: 0.75rem 0.75rem !important;
+}
+.fi-sidebar-group {
+    padding: 0 !important;
+}
+.fi-sidebar-group-items {
+    padding: 0 !important;
+    gap: 2px !important;
+}
+.fi-sidebar-item {
+    margin: 0 !important;
+}
+.fi-sidebar-item a {
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 8px !important;
 }
 .fi-sidebar-item-label {
     color: var(--platform-200) !important;
     font-weight: 500 !important;
+    font-size: 0.875rem !important;
+}
+.fi-sidebar-item-icon {
+    color: var(--platform-400) !important;
+}
+.fi-sidebar-item-active a {
+    background: var(--active-bg) !important;
 }
 .fi-sidebar-item-active .fi-sidebar-item-label {
     color: white !important;
     font-weight: 600 !important;
 }
-.fi-sidebar-item-active {
-    background: rgba(99, 102, 241, 0.15) !important;
-    border-radius: 8px !important;
+.fi-sidebar-item-active .fi-sidebar-item-icon {
+    color: var(--accent) !important;
 }
-.fi-sidebar-item:hover {
-    background: rgba(99, 102, 241, 0.08) !important;
-    border-radius: 8px !important;
+.fi-sidebar-item:not(.fi-sidebar-item-active):hover a {
+    background: var(--hover-bg) !important;
 }
 .fi-sidebar-group-label {
     color: var(--platform-500) !important;
@@ -77,18 +104,16 @@
     text-transform: uppercase !important;
     letter-spacing: 0.1em !important;
     font-weight: 700 !important;
-}
-.fi-sidebar-nav {
-    padding: 0.5rem !important;
+    padding: 0.75rem 0.75rem 0.35rem !important;
 }
 
-/* Top bar */
+/* ===== TOP BAR ===== */
 .fi-topbar {
     background: var(--platform-900) !important;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.1) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
 }
 
-/* Main content */
+/* ===== MAIN CONTENT ===== */
 .fi-main {
     background: var(--platform-950) !important;
 }
@@ -106,10 +131,10 @@
     color: var(--platform-400) !important;
 }
 
-/* Cards & Sections */
+/* ===== CARDS & SECTIONS ===== */
 .fi-section {
     background: var(--platform-900) !important;
-    border: 1px solid rgba(99, 102, 241, 0.1) !important;
+    border: 1px solid var(--border-subtle) !important;
     border-radius: 12px !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
 }
@@ -120,15 +145,15 @@
     color: var(--platform-400) !important;
 }
 
-/* Stats widgets */
+/* ===== STATS WIDGETS ===== */
 .fi-wi-stats-overview-stat {
     background: var(--platform-900) !important;
-    border: 1px solid rgba(99, 102, 241, 0.12) !important;
+    border: 1px solid var(--border-subtle) !important;
     border-radius: 12px !important;
     transition: all 0.2s ease !important;
 }
 .fi-wi-stats-overview-stat:hover {
-    border-color: rgba(99, 102, 241, 0.25) !important;
+    border-color: var(--border-medium) !important;
     transform: translateY(-1px) !important;
 }
 .fi-wi-stats-overview-stat-label {
@@ -142,15 +167,15 @@
     color: var(--platform-300) !important;
 }
 
-/* Tables */
+/* ===== TABLES ===== */
 .fi-ta-ctn {
     background: var(--platform-900) !important;
-    border: 1px solid rgba(99, 102, 241, 0.1) !important;
+    border: 1px solid var(--border-subtle) !important;
     border-radius: 12px !important;
     overflow: visible !important;
 }
 .fi-ta-header-cell {
-    background: rgba(99, 102, 241, 0.06) !important;
+    background: rgba(212, 146, 12, 0.06) !important;
     color: var(--platform-300) !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
@@ -158,10 +183,10 @@
     letter-spacing: 0.05em !important;
 }
 .fi-ta-row {
-    border-color: rgba(99, 102, 241, 0.06) !important;
+    border-color: var(--border-subtle) !important;
 }
 .fi-ta-row:hover {
-    background: rgba(99, 102, 241, 0.04) !important;
+    background: var(--hover-bg) !important;
 }
 .fi-ta-cell {
     color: var(--platform-200) !important;
@@ -178,68 +203,66 @@
 .fi-ta-empty-state-description {
     color: var(--platform-400) !important;
 }
-
-/* Table search */
 .fi-ta-search-field input {
     background: var(--platform-800) !important;
-    border-color: rgba(99, 102, 241, 0.15) !important;
+    border-color: var(--border-medium) !important;
     color: white !important;
 }
-
-/* Pagination */
 .fi-ta-pagination {
     background: var(--platform-900) !important;
-    border-top: 1px solid rgba(99, 102, 241, 0.08) !important;
+    border-top: 1px solid var(--border-subtle) !important;
 }
 
-/* Forms */
+/* ===== FORMS ===== */
 .fi-fo-field-wrp label {
     color: var(--platform-200) !important;
 }
 .fi-input {
     background: var(--platform-800) !important;
-    border-color: rgba(99, 102, 241, 0.15) !important;
+    border-color: var(--border-medium) !important;
     color: white !important;
 }
 .fi-input:focus {
-    border-color: var(--platform-500) !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(212, 146, 12, 0.15) !important;
 }
 .fi-select-input {
     background: var(--platform-800) !important;
     color: white !important;
 }
 
-/* Tabs */
+/* ===== TABS ===== */
 .fi-tabs-tab {
     color: var(--platform-400) !important;
 }
 .fi-tabs-tab-active {
     color: white !important;
-    border-color: var(--platform-500) !important;
+    border-color: var(--accent) !important;
 }
 
-/* Buttons */
+/* ===== BUTTONS ===== */
 .fi-btn-primary {
-    background: var(--platform-500) !important;
+    background: var(--accent) !important;
+    color: var(--platform-950) !important;
+    font-weight: 600 !important;
 }
 .fi-btn-primary:hover {
-    background: var(--platform-400) !important;
+    background: var(--accent-light) !important;
 }
 
-/* Badges */
+/* ===== BADGES ===== */
 .fi-badge {
     font-weight: 600 !important;
     letter-spacing: 0.02em !important;
 }
 
-/* Notifications */
+/* ===== NOTIFICATIONS ===== */
 .fi-no-notification {
     background: var(--platform-800) !important;
-    border: 1px solid rgba(99, 102, 241, 0.15) !important;
+    border: 1px solid var(--border-medium) !important;
 }
 
-/* Breadcrumbs */
+/* ===== BREADCRUMBS ===== */
 .fi-breadcrumbs li {
     color: var(--platform-400) !important;
 }
@@ -247,15 +270,15 @@
     color: var(--platform-300) !important;
 }
 
-/* Toggle */
+/* ===== TOGGLE ===== */
 .fi-toggle-input:checked {
-    background: var(--platform-500) !important;
+    background: var(--accent) !important;
 }
 
-/* Modal */
+/* ===== MODAL ===== */
 .fi-modal-content {
     background: var(--platform-900) !important;
-    border: 1px solid rgba(99, 102, 241, 0.15) !important;
+    border: 1px solid var(--border-medium) !important;
 }
 .fi-modal-heading {
     color: white !important;
