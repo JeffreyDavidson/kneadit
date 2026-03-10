@@ -73,6 +73,14 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     }
 
     /**
+     * Notes for this tenant.
+     */
+    public function notes(): HasMany
+    {
+        return $this->hasMany(TenantNote::class);
+    }
+
+    /**
      * Referrals made by this tenant.
      */
     public function referralsMade(): HasMany

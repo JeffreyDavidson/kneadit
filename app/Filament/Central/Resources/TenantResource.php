@@ -16,6 +16,7 @@ use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -24,6 +25,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\URL;
 
 class TenantResource extends Resource
@@ -206,6 +208,53 @@ class TenantResource extends Resource
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
+                BulkAction::make('activate')
+                    ->label('Activate')
+                    ->icon('heroicon-o-check-circle')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->update(['is_active' => true]))
+                    ->deselectRecordsAfterCompletion(),
+                BulkAction::make('deactivate')
+                    ->label('Deactivate')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->update(['is_active' => false]))
+                    ->deselectRecordsAfterCompletion(),
+                BulkAction::make('enable_storefront')
+                    ->label('Enable Storefront')
+                    ->icon('heroicon-o-building-storefront')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->update(['storefront_enabled' => true]))
+                    ->deselectRecordsAfterCompletion(),
+                BulkAction::make('disable_storefront')
+                    ->label('Disable Storefront')
+                    ->icon('heroicon-o-building-storefront')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->update(['storefront_enabled' => false]))
+                    ->deselectRecordsAfterCompletion(),
+                BulkAction::make('extend_trial')
+                    ->label('Extend Trial 30 Days')
+                    ->icon('heroicon-o-clock')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->update(['trial_ends_at' => now()->addDays(30)]))
+                    ->deselectRecordsAfterCompletion(),
+                BulkAction::make('change_plan')
+                    ->label('Change Plan')
+                    ->icon('heroicon-o-arrow-path')
+                    ->form([
+                        Select::make('plan')
+                            ->label('New Plan')
+                            ->options([
+                                'starter' => 'Starter ($9/mo)',
+                                'growth' => 'Growth ($19/mo)',
+                                'pro' => 'Pro ($29/mo)',
+                            ])
+                            ->required(),
+                    ])
+                    ->action(fn (Collection $records, array $data) => $records->each->update(['plan' => $data['plan']]))
+                    ->deselectRecordsAfterCompletion(),
             ])
             ->defaultSort('created_at', 'desc');
     }
@@ -299,7 +348,9 @@ class TenantResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            \App\Filament\Central\Resources\TenantResource\RelationManagers\NotesRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
