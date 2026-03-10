@@ -44,13 +44,14 @@ class SupportTicketResource extends Resource
     public static function form(Schema $form): Schema
     {
         return $form->schema([
-            Section::make('Ticket Details')->schema([
-                TextInput::make('subject')->required()->maxLength(255),
-                Select::make('tenant_id')
-                    ->relationship('tenant', 'store_name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->store_name ?: $record->name)
-                    ->required()
-                    ->searchable(),
+            TextInput::make('subject')->required()->maxLength(255),
+            Select::make('tenant_id')
+                ->label('Bakery')
+                ->relationship('tenant', 'store_name')
+                ->getOptionLabelFromRecordUsing(fn ($record) => $record->store_name ?: $record->name)
+                ->required()
+                ->searchable(),
+            Grid::make(2)->schema([
                 Select::make('status')
                     ->options([
                         'open' => 'Open',
@@ -68,9 +69,9 @@ class SupportTicketResource extends Resource
                     ])
                     ->default('normal')
                     ->required(),
-                Textarea::make('body')->required()->rows(5),
-                Textarea::make('admin_notes')->rows(3),
             ]),
+            Textarea::make('body')->required()->rows(5),
+            Textarea::make('admin_notes')->rows(3),
         ]);
     }
 
