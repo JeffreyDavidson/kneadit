@@ -5,6 +5,7 @@
     padding: 1rem 1.5rem;
     position: relative;
     overflow: hidden;
+    width: 100%;
 ">
     {{-- Decorative elements --}}
     <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; border-radius: 50%; background: rgba(212, 146, 12, 0.06);"></div>
