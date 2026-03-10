@@ -159,11 +159,22 @@
 
 /* ===== STATS WIDGETS ===== */
 /* Remove the outer container/card wrapper from stat groups */
-.fi-wi-stats-overview {
+.fi-wi-stats-overview,
+.fi-wi-stats-overview > div,
+.fi-wi-stats-overview .fi-section,
+.fi-wi-stats-overview .fi-section-content-ctn,
+.fi-wi-stats-overview .fi-section-content {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
+    ring: none !important;
+}
+.fi-wi-stats-overview .ring-1,
+.fi-wi-stats-overview [class*="ring-"] {
+    --tw-ring-shadow: none !important;
+    --tw-ring-color: transparent !important;
+    box-shadow: none !important;
 }
 .fi-wi-stats-overview-stat {
     background: var(--platform-900) !important;
