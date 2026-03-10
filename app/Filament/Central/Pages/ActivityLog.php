@@ -4,12 +4,14 @@ namespace App\Filament\Central\Pages;
 
 use App\Models\PlatformActivity;
 use Filament\Pages\Page;
+use BackedEnum;
+use UnitEnum;
 
 class ActivityLog extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $navigationGroup = 'Platform';
+    protected static string|NITENUM|NULL $NAVIGATIONGROUP = 'Platform';
 
     protected static ?int $navigationSort = 3;
 
