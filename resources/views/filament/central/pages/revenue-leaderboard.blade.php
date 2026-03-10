@@ -4,22 +4,21 @@
         $summary = $this->getSummaryStats();
         $top3 = array_slice($leaderboard, 0, 3);
         $rankColors = ['#d4920c', '#94a3b8', '#b45309'];
-        $rankLabels = ['🥇 Gold', '🥈 Silver', '🥉 Bronze'];
         $podiumHeights = [140, 110, 90];
     @endphp
 
     {{-- Summary Stats --}}
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; text-align: center;">
-            <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Total Platform Orders</div>
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Total Platform Orders</div>
             <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ number_format($summary['total_orders']) }}</div>
         </div>
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; text-align: center;">
-            <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Average Orders / Bakery</div>
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Average Orders / Bakery</div>
             <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ $summary['avg_orders'] }}</div>
         </div>
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; text-align: center;">
-            <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Total Bakeries</div>
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Total Bakeries</div>
             <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ $summary['total_bakeries'] }}</div>
         </div>
     </div>

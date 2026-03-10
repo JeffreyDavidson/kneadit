@@ -23,15 +23,15 @@
         {{-- Summary Cards --}}
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
             <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Most Used Feature</div>
-                <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ $this->formatFeatureName($this->getMostUsedFeature() ?? '—') }}</div>
+                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Most Used Feature</div>
+                <div style="color: white; font-size: 1.25rem; font-weight: 700;">{{ $this->formatFeatureName($this->getMostUsedFeature() ?? '—') }}</div>
             </div>
             <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Least Used Feature</div>
-                <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ $this->formatFeatureName($this->getLeastUsedFeature() ?? '—') }}</div>
+                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Least Used Feature</div>
+                <div style="color: white; font-size: 1.25rem; font-weight: 700;">{{ $this->formatFeatureName($this->getLeastUsedFeature() ?? '—') }}</div>
             </div>
             <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Total Interactions This Month</div>
+                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Total Interactions This Month</div>
                 <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ number_format($this->getTotalInteractionsThisMonth()) }}</div>
             </div>
         </div>
