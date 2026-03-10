@@ -4,6 +4,8 @@
 @php
     $heroImage = \App\Models\Setting::get('gift_cards_hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+
+    $content = \App\Models\Setting::pageContentAll('gift_cards');
 @endphp
 
 <style>
@@ -27,14 +29,14 @@
         <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
             <div class="gift-fade-1 flex items-center justify-center gap-4 mb-6">
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">A Sweet Gesture</span>
+                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'A Sweet Gesture' }}</span>
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
             </div>
             <h1 class="gift-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
-                Give the Gift of<br>Fresh Baked Goods
+                {!! nl2br(e($content['hero_title'] ?? "Give the Gift of\nFresh Baked Goods")) !!}
             </h1>
             <p class="gift-fade-3 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
-                A treat they'll remember long after the last crumb
+                {{ $content['hero_subtitle'] ?? 'A treat they\'ll remember long after the last crumb' }}
             </p>
         </div>
     </section>
@@ -55,8 +57,8 @@
                 </div>
             </div>
 
-            <h2 class="font-display text-2xl font-bold mb-2" style="color: var(--warm-900);">Gift Card Purchased!</h2>
-            <p class="mb-6" style="color: var(--warm-600);">Share the code below with the lucky recipient.</p>
+            <h2 class="font-display text-2xl font-bold mb-2" style="color: var(--warm-900);">{{ $content['success_heading'] ?? 'Gift Card Purchased!' }}</h2>
+            <p class="mb-6" style="color: var(--warm-600);">{{ $content['success_description'] ?? 'Share the code below with the lucky recipient.' }}</p>
 
             <div class="flex justify-center gap-4">
                 <button @click="copyCode()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105" style="border: 2px solid var(--warm-300); color: var(--warm-700);">
