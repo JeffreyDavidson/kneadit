@@ -1,46 +1,38 @@
 <x-filament-panels::page>
-    <style>
-        .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .analytics-card { background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 0.75rem; padding: 1.5rem; }
-        .analytics-card-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #f5d88e; margin-bottom: 0.25rem; }
-        .analytics-card-value { font-size: 1.75rem; font-weight: 700; color: #ffffff; }
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; }
-        .chart-container { background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 0.75rem; padding: 1.5rem; }
-        .chart-title { font-size: 1rem; font-weight: 600; color: #ffffff; margin-bottom: 1rem; }
-    </style>
-
-    <div class="analytics-grid">
-        <div class="analytics-card">
-            <div class="analytics-card-label">Total Signups</div>
-            <div class="analytics-card-value">{{ $this->getTotalSignups() }}</div>
+    {{-- Summary Stats --}}
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <div style="color: #d4920c; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Total Signups</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #ffffff;">{{ $this->getTotalSignups() }}</div>
         </div>
-        <div class="analytics-card">
-            <div class="analytics-card-label">This Month</div>
-            <div class="analytics-card-value">{{ $this->getThisMonthSignups() }}</div>
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <div style="color: #d4920c; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">This Month</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #ffffff;">{{ $this->getThisMonthSignups() }}</div>
         </div>
-        <div class="analytics-card">
-            <div class="analytics-card-label">Avg Days on Trial</div>
-            <div class="analytics-card-value">{{ $this->getAvgDaysOnTrial() }}</div>
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <div style="color: #d4920c; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Avg Days on Trial</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #ffffff;">{{ $this->getAvgDaysOnTrial() }}</div>
         </div>
-        <div class="analytics-card">
-            <div class="analytics-card-label">Most Popular Plan</div>
-            <div class="analytics-card-value" style="font-size: 1.25rem; text-transform: capitalize;">{{ $this->getMostPopularPlan() }}</div>
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <div style="color: #d4920c; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Most Popular Plan</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: #ffffff; text-transform: capitalize;">{{ $this->getMostPopularPlan() }}</div>
         </div>
     </div>
 
-    <div class="charts-grid">
-        <div class="chart-container">
-            <div class="chart-title">Signups Over Last 12 Months</div>
+    {{-- Charts --}}
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;">
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <div style="color: #ffffff; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Signups Over Last 12 Months</div>
             <canvas id="signupsChart" height="250"></canvas>
         </div>
-        <div class="chart-container">
-            <div class="chart-title">Plan Distribution</div>
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <div style="color: #ffffff; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Plan Distribution</div>
             <canvas id="planChart" height="250"></canvas>
         </div>
-        <div class="chart-container" style="grid-column: 1 / -1;">
-            <div class="chart-title">Monthly Growth Rate (%)</div>
-            <canvas id="growthChart" height="150"></canvas>
-        </div>
+    </div>
+    <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+        <div style="color: #ffffff; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Monthly Growth Rate (%)</div>
+        <canvas id="growthChart" height="150"></canvas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -51,9 +43,8 @@
             const brown = '#8b6844';
             const darkBrown = '#5c4333';
             const paleGold = '#f5d88e';
-            const chartDefaults = { color: '#faf0d6', borderColor: 'rgba(212,146,12,0.12)' };
-            Chart.defaults.color = chartDefaults.color;
-            Chart.defaults.borderColor = chartDefaults.borderColor;
+            Chart.defaults.color = '#faf0d6';
+            Chart.defaults.borderColor = 'rgba(212,146,12,0.12)';
 
             const signups = @json($this->getSignupsByMonth());
             new Chart(document.getElementById('signupsChart'), {
