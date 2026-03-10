@@ -28,3 +28,6 @@ Schedule::command('reviews:send-requests')->hourly();
 
 // Scheduled check-in emails daily at 9 AM
 Schedule::command('checkins:send')->dailyAt('09:00');
+
+// Churn alert checks daily at 7 AM
+Schedule::command('churn:check')->dailyAt('07:00');
