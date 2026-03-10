@@ -5,31 +5,44 @@
     $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
     $minimumGuests = \App\Models\Setting::get('catering_minimum_guests', '10');
     $leadTimeDays = \App\Models\Setting::get('catering_lead_time_days', '14');
+    $heroImage = \App\Models\Setting::get('catering_hero_image');
+    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1555244162-803834f70033?w=1920&q=80';
 @endphp
 
-{{-- Dark Hero with Background Image --}}
-<section class="relative overflow-hidden" style="min-height: 500px;">
-    <div class="absolute inset-0">
-        <img src="https://images.unsplash.com/photo-1555244162-803834f70033?w=1920&q=80" alt="" class="w-full h-full object-cover" style="filter: brightness(0.3);">
-    </div>
-    <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(28,20,16,0.95) 0%, rgba(28,20,16,0.7) 50%, rgba(28,20,16,0.95) 100%);"></div>
-    <div class="absolute inset-0 opacity-[0.04]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+<style>
+    @keyframes cateringKenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
+    @keyframes cateringFadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .catering-hero-img { animation: cateringKenBurns 25s ease-in-out infinite alternate; }
+    .catering-fade-1 { animation: cateringFadeUp 0.8s ease-out 0.3s both; }
+    .catering-fade-2 { animation: cateringFadeUp 0.8s ease-out 0.5s both; }
+    .catering-fade-3 { animation: cateringFadeUp 0.8s ease-out 0.7s both; }
+</style>
 
-    <div class="relative z-10 max-w-4xl mx-auto text-center px-4 py-28 md:py-36">
-        <div class="flex items-center justify-center gap-4 mb-6">
-            <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
+{{-- Photo-Forward Hero --}}
+<section class="relative overflow-hidden" style="min-height: 55vh;">
+    <div class="absolute inset-0">
+        <img src="{{ $heroImageUrl }}" alt="Catering spread" class="w-full h-full object-cover catering-hero-img">
+    </div>
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+
+    <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
+        <div class="catering-fade-1 flex items-center justify-center gap-4 mb-6">
+            <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
             <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Premium Catering</span>
-            <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
+            <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
         </div>
-        <h1 class="font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
+        <h1 class="catering-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
             Events & Catering
         </h1>
-        <p class="font-script text-xl md:text-2xl mb-10" style="color: var(--warm-400);">
+        <p class="catering-fade-2 font-script text-2xl md:text-3xl mb-10" style="color: var(--warm-400);">
             Let us make your celebration unforgettable
         </p>
-        <a href="#inquiry-form" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
-            Request a Quote
-        </a>
+        <div class="catering-fade-3">
+            <a href="#inquiry-form" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
+                Request a Quote
+            </a>
+        </div>
     </div>
 </section>
 
@@ -43,12 +56,14 @@
 
         <div class="grid md:grid-cols-3 gap-8">
             @foreach([
-                ['💒', 'Weddings', 'Custom wedding cakes, dessert tables, pastry towers, and sweet treats to make your big day even sweeter.'],
-                ['🏢', 'Corporate Events', 'Professional catering for meetings, launches, office parties, and team celebrations.'],
-                ['🎉', 'Parties & Celebrations', 'Birthday parties, holiday gatherings, baby showers — we bring the sweetness to any celebration.'],
-            ] as [$icon, $title, $desc])
+                ['M12 21C12 21 4 14.36 4 8.5C4 5.42 6.42 3 9.5 3C11.24 3 12.91 3.81 14 5.09C15.09 3.81 16.76 3 18.5 3C21.58 3 24 5.42 24 8.5C24 14.36 16 21 16 21', 'Weddings', 'Custom wedding cakes, dessert tables, pastry towers, and sweet treats to make your big day even sweeter.'],
+                ['M3 21V5a2 2 0 012-2h14a2 2 0 012 2v16l-4-3H5a2 2 0 01-2-2z', 'Corporate Events', 'Professional catering for meetings, launches, office parties, and team celebrations.'],
+                ['M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z', 'Parties & Celebrations', 'Birthday parties, holiday gatherings, baby showers — we bring the sweetness to any celebration.'],
+            ] as [$svgPath, $title, $desc])
             <div class="rounded-2xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1" style="background: white; border: 1px solid var(--warm-200);">
-                <div class="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center text-3xl" style="background: var(--warm-100);">{{ $icon }}</div>
+                <div class="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style="background: var(--warm-100);">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warm-500);"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $svgPath }}"/></svg>
+                </div>
                 <h3 class="font-display text-xl font-bold mb-3" style="color: var(--warm-900);">{{ $title }}</h3>
                 <p style="color: var(--warm-600);">{{ $desc }}</p>
             </div>
@@ -129,7 +144,7 @@
 
         @if(session('success'))
         <div class="rounded-2xl p-6 mb-8 text-center" style="background: #d4edda; border: 1px solid #28a745;">
-            <p style="color: #155724; font-weight: 600;">🎉 {{ session('success') }}</p>
+            <p style="color: #155724; font-weight: 600;">{{ session('success') }}</p>
         </div>
         @endif
 
@@ -163,11 +178,11 @@
                     <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Event Type *</label>
                     <select name="event_type" required class="input-field">
                         <option value="">Select event type...</option>
-                        <option value="wedding" {{ old('event_type') === 'wedding' ? 'selected' : '' }}>💒 Wedding</option>
-                        <option value="corporate" {{ old('event_type') === 'corporate' ? 'selected' : '' }}>🏢 Corporate Event</option>
-                        <option value="birthday" {{ old('event_type') === 'birthday' ? 'selected' : '' }}>🎂 Birthday Party</option>
-                        <option value="holiday" {{ old('event_type') === 'holiday' ? 'selected' : '' }}>🎄 Holiday Gathering</option>
-                        <option value="other" {{ old('event_type') === 'other' ? 'selected' : '' }}>🎉 Other</option>
+                        <option value="wedding" {{ old('event_type') === 'wedding' ? 'selected' : '' }}>Wedding</option>
+                        <option value="corporate" {{ old('event_type') === 'corporate' ? 'selected' : '' }}>Corporate Event</option>
+                        <option value="birthday" {{ old('event_type') === 'birthday' ? 'selected' : '' }}>Birthday Party</option>
+                        <option value="holiday" {{ old('event_type') === 'holiday' ? 'selected' : '' }}>Holiday Gathering</option>
+                        <option value="other" {{ old('event_type') === 'other' ? 'selected' : '' }}>Other</option>
                     </select>
                 </div>
                 <div>

@@ -1,20 +1,39 @@
 @extends('layouts.storefront')
 
 @section('content')
+@php
+    $heroImage = \App\Models\Setting::get('gift_cards_hero_image');
+    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+@endphp
+
+<style>
+    @keyframes giftKenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
+    @keyframes giftFadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .gift-hero-img { animation: giftKenBurns 25s ease-in-out infinite alternate; }
+    .gift-fade-1 { animation: giftFadeUp 0.8s ease-out 0.3s both; }
+    .gift-fade-2 { animation: giftFadeUp 0.8s ease-out 0.5s both; }
+    .gift-fade-3 { animation: giftFadeUp 0.8s ease-out 0.7s both; }
+</style>
+
 <div x-data="giftCardPage()">
-    {{-- Dark Hero --}}
-    <section class="relative overflow-hidden" style="background: var(--warm-900);">
+    {{-- Photo-Forward Hero --}}
+    <section class="relative overflow-hidden" style="min-height: 55vh;">
+        <div class="absolute inset-0">
+            <img src="{{ $heroImageUrl }}" alt="Fresh baked goods" class="w-full h-full object-cover gift-hero-img">
+        </div>
+        <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
         <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
-        <div class="relative z-10 max-w-4xl mx-auto text-center px-4 py-24 md:py-32">
-            <div class="flex items-center justify-center gap-4 mb-6">
-                <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
+
+        <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
+            <div class="gift-fade-1 flex items-center justify-center gap-4 mb-6">
+                <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
                 <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">A Sweet Gesture</span>
-                <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
+                <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
             </div>
-            <h1 class="font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
+            <h1 class="gift-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
                 Give the Gift of<br>Fresh Baked Goods
             </h1>
-            <p class="font-script text-xl md:text-2xl" style="color: var(--warm-400);">
+            <p class="gift-fade-3 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
                 A treat they'll remember long after the last crumb
             </p>
         </div>

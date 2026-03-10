@@ -1,19 +1,38 @@
 @extends('layouts.storefront')
 
 @section('content')
-{{-- Dark Hero --}}
-<section class="relative overflow-hidden" style="background: var(--warm-900);">
+@php
+    $heroImage = \App\Models\Setting::get('loyalty_hero_image');
+    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+@endphp
+
+<style>
+    @keyframes loyaltyKenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
+    @keyframes loyaltyFadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .loyalty-hero-img { animation: loyaltyKenBurns 25s ease-in-out infinite alternate; }
+    .loyalty-fade-1 { animation: loyaltyFadeUp 0.8s ease-out 0.3s both; }
+    .loyalty-fade-2 { animation: loyaltyFadeUp 0.8s ease-out 0.5s both; }
+    .loyalty-fade-3 { animation: loyaltyFadeUp 0.8s ease-out 0.7s both; }
+</style>
+
+{{-- Photo-Forward Hero --}}
+<section class="relative overflow-hidden" style="min-height: 55vh;">
+    <div class="absolute inset-0">
+        <img src="{{ $heroImageUrl }}" alt="Fresh baked goods" class="w-full h-full object-cover loyalty-hero-img">
+    </div>
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
-    <div class="relative z-10 max-w-4xl mx-auto text-center px-4 py-24 md:py-32">
-        <div class="flex items-center justify-center gap-4 mb-6">
-            <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
+
+    <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
+        <div class="loyalty-fade-1 flex items-center justify-center gap-4 mb-6">
+            <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
             <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Rewards Program</span>
-            <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
+            <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
         </div>
-        <h1 class="font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
+        <h1 class="loyalty-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
             {{ \App\Models\Setting::get('store_name', 'Our') }} {{ $programName }}
         </h1>
-        <p class="font-script text-xl md:text-2xl" style="color: var(--warm-400);">
+        <p class="loyalty-fade-3 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
             Earn points with every order, unlock delicious rewards
         </p>
     </div>
@@ -128,7 +147,9 @@
                     @if($canRedeem)
                     <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold" style="background: var(--warm-500); color: var(--warm-900);">Redeemable!</div>
                     @endif
-                    <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl" style="background: var(--warm-100);">🎁</div>
+                    <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background: var(--warm-100);">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warm-500);"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                    </div>
                     <h3 class="font-display text-lg font-bold mb-1" style="color: var(--warm-900);">{{ $reward->name }}</h3>
                     @if($reward->description)
                     <p class="text-sm mb-3" style="color: var(--warm-600);">{{ $reward->description }}</p>
@@ -156,12 +177,14 @@
         </div>
         <div class="grid sm:grid-cols-3 gap-10 text-center">
             @foreach([
-                ['🛒', 'Place an Order', 'Order your favorite baked goods as usual.'],
-                ['⭐', 'Earn Points', "Get {$pointsPerDollar} points for every \$1 spent when delivered."],
-                ['🎉', 'Redeem Rewards', 'Use your points for discounts and free treats!'],
-            ] as [$icon, $title, $desc])
+                ['M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z', 'Place an Order', 'Order your favorite baked goods as usual.'],
+                ['M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z', 'Earn Points', "Get {$pointsPerDollar} points for every \$1 spent when delivered."],
+                ['M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7', 'Redeem Rewards', 'Use your points for discounts and free treats!'],
+            ] as [$svgPath, $title, $desc])
             <div>
-                <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center text-3xl" style="background: rgba(232,176,74,0.1); border: 1px solid rgba(232,176,74,0.2);">{{ $icon }}</div>
+                <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style="background: rgba(232,176,74,0.1); border: 1px solid rgba(232,176,74,0.2);">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warm-500);"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $svgPath }}"/></svg>
+                </div>
                 <h3 class="font-display text-xl font-bold mb-2" style="color: var(--warm-200);">{{ $title }}</h3>
                 <p style="color: var(--warm-500);">{{ $desc }}</p>
             </div>
