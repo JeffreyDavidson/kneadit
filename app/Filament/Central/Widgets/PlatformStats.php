@@ -8,6 +8,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class PlatformStats extends StatsOverviewWidget
 {
+    protected static ?int $sort = 0;
     protected function getStats(): array
     {
         $totalTenants = Tenant::count();
