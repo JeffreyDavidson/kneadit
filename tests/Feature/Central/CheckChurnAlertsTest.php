@@ -17,7 +17,7 @@ class CheckChurnAlertsTest extends CentralTestCase
     public function test_trial_expiring_in_48h_creates_churn_alert(): void
     {
         // Insert tenant directly to avoid HasDatabase trait creating a real DB
-        DB::connection('central')->table('tenants')->insert([
+        DB::table('tenants')->insert([
             'id' => 'expiring-bakery',
             'name' => 'Expiring Bakery',
             'email' => 'expiring@example.com',

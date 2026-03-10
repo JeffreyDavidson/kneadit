@@ -2,42 +2,41 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 abstract class CentralTestCase extends TestCase
 {
-    use RefreshDatabase;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Point central connection to the same test SQLite in-memory DB
-        config(['database.connections.central' => config('database.connections.sqlite')]);
         config(['tenancy.central_domains' => []]);
+        config(['database.connections.central' => config('database.connections.sqlite')]);
 
-        // Share the same PDO instance so central and sqlite use the same in-memory DB
-        $pdo = DB::connection('sqlite')->getPdo();
-        DB::connection('central')->setPdo($pdo);
-        DB::connection('central')->setReadPdo($pdo);
+        // Run main migrations fresh each test
+        $this->artisan('migrate:fresh');
 
-        // Run tenant migrations on the same DB
+        // Run tenant migrations
         $tenantMigrationPath = database_path('migrations/tenant');
         if (is_dir($tenantMigrationPath)) {
             $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
         }
 
-        // Create central-only tables
+        // Create central tables on default connection
         $this->createCentralTables();
+
+        // AFTER all tables exist, share the PDO so 'central' connection
+        // sees the same :memory: DB. Must be AFTER migrate:fresh which purges connections.
+        DB::purge('central');
+        $pdo = DB::connection('sqlite')->getPdo();
+        DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
     }
 
     protected function createCentralTables(): void
     {
-        // Create tenants table if not present (central migration)
-        if (! Schema::connection('central')->hasTable('tenants')) {
-            Schema::connection('central')->create('tenants', function ($table) {
+        if (! Schema::hasTable('tenants')) {
+            Schema::create('tenants', function ($table) {
                 $table->string('id')->primary();
                 $table->string('name');
                 $table->string('email');
@@ -56,14 +55,12 @@ abstract class CentralTestCase extends TestCase
             });
         }
 
-        // Create domains table if not present (tenancy requirement)
-        if (! Schema::connection('central')->hasTable('domains')) {
-            Schema::connection('central')->create('domains', function ($table) {
+        if (! Schema::hasTable('domains')) {
+            Schema::create('domains', function ($table) {
                 $table->increments('id');
                 $table->string('domain', 255)->unique();
                 $table->string('tenant_id');
                 $table->timestamps();
-                $table->foreign('tenant_id')->references('id')->on('tenants')->onUpdate('cascade')->onDelete('cascade');
             });
         }
 
@@ -149,9 +146,10 @@ abstract class CentralTestCase extends TestCase
                 $table->id();
                 $table->string('tenant_id')->nullable();
                 $table->string('feature');
-                $table->integer('count')->default(1);
+                $table->integer('usage_count')->default(1);
+                $table->timestamp('last_used_at')->nullable();
                 $table->date('date');
-                $table->timestamps();
+                $table->timestamp('created_at')->nullable();
             },
             'platform_settings' => function ($table) {
                 $table->id();
@@ -169,11 +167,35 @@ abstract class CentralTestCase extends TestCase
         ];
 
         foreach ($tables as $name => $callback) {
-            if (! Schema::connection('central')->hasTable($name)) {
-                Schema::connection('central')->create($name, function ($table) use ($callback) {
+            if (! Schema::hasTable($name)) {
+                Schema::create($name, function ($table) use ($callback) {
                     $callback($table);
                 });
             }
         }
+    }
+
+    /**
+     * Create a tenant directly via DB insert (bypasses tenancy events).
+     */
+    protected function createTenant(array $attributes = []): object
+    {
+        $defaults = [
+            'id' => 'test-bakery',
+            'name' => 'Test Owner',
+            'email' => 'test@example.com',
+            'plan' => 'starter',
+            'is_active' => true,
+            'storefront_enabled' => true,
+            'brand_color_primary' => '#d4920c',
+            'brand_color_secondary' => '#1c1410',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+
+        $data = array_merge($defaults, $attributes);
+        DB::table('tenants')->insert($data);
+
+        return DB::table('tenants')->where('id', $data['id'])->first();
     }
 }

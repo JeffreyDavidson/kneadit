@@ -33,17 +33,20 @@ class FeatureUsageLog extends Model
      */
     public static function track(string $tenantId, string $feature): self
     {
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today();
         $now = Carbon::now();
 
         $log = static::where('tenant_id', $tenantId)
             ->where('feature', $feature)
-            ->where('date', $today)
+            ->whereDate('date', $today)
             ->first();
 
         if ($log) {
-            $log->increment('usage_count');
-            $log->update(['last_used_at' => $now]);
+            static::where('id', $log->id)->update([
+                'usage_count' => $log->usage_count + 1,
+                'last_used_at' => $now,
+            ]);
+            $log->refresh();
         } else {
             $log = static::create([
                 'tenant_id' => $tenantId,
