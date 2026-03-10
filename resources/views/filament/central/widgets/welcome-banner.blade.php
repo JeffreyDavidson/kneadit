@@ -1,47 +1,39 @@
 <div style="
     background: linear-gradient(135deg, #1c1410 0%, #2a1f18 50%, #1a1008 100%);
     border: 1px solid rgba(212, 146, 12, 0.15);
-    border-radius: 16px;
-    padding: 2.5rem 3rem;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
     position: relative;
     overflow: hidden;
 ">
     {{-- Decorative elements --}}
-    <div style="position: absolute; top: -30px; right: -30px; width: 200px; height: 200px; border-radius: 50%; background: rgba(212, 146, 12, 0.06);"></div>
-    <div style="position: absolute; bottom: -40px; right: 80px; width: 150px; height: 150px; border-radius: 50%; background: rgba(232, 176, 74, 0.04);"></div>
+    <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; border-radius: 50%; background: rgba(212, 146, 12, 0.06);"></div>
+    <div style="position: absolute; bottom: -25px; right: 60px; width: 90px; height: 90px; border-radius: 50%; background: rgba(232, 176, 74, 0.04);"></div>
 
-    <div style="position: relative; z-index: 10;">
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-            <span style="font-size: 2rem;">🍞</span>
-            <div>
-                <h2 style="color: white; font-size: 1.5rem; font-weight: 700; margin: 0; line-height: 1.2;">
-                    KneadIt Platform
-                </h2>
-                <p style="color: #d4920c; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; margin: 0;">
-                    Command Center
-                </p>
-            </div>
+    <div style="position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span style="font-size: 1.5rem;">🍞</span>
+            <h2 style="color: white; font-size: 1.25rem; font-weight: 700; margin: 0;">
+                KneadIt Platform
+            </h2>
         </div>
-        <p style="color: #f5d88e; font-size: 0.95rem; margin: 0; max-width: 500px; line-height: 1.6;">
-            Manage your bakery tenants, monitor subscriptions, and keep the platform running smoothly.
-        </p>
 
-        <div style="display: flex; gap: 2rem; margin-top: 1.5rem;">
-            <div>
-                <span style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Version</span>
-                <p style="color: white; font-weight: 600; margin: 0.25rem 0 0;">1.0.0</p>
+        <div style="display: flex; gap: 1.5rem; align-items: center;">
+            <div style="text-align: center;">
+                <span style="color: #d4920c; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Version</span>
+                <p style="color: white; font-weight: 600; margin: 0.1rem 0 0; font-size: 0.85rem;">1.0.0</p>
             </div>
-            <div>
-                <span style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Environment</span>
-                <p style="color: white; font-weight: 600; margin: 0.25rem 0 0;">{{ app()->environment() }}</p>
+            <div style="text-align: center;">
+                <span style="color: #d4920c; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Environment</span>
+                <p style="color: white; font-weight: 600; margin: 0.1rem 0 0; font-size: 0.85rem;">{{ app()->environment() }}</p>
             </div>
-            <div>
-                <span style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">PHP</span>
-                <p style="color: white; font-weight: 600; margin: 0.25rem 0 0;">{{ PHP_VERSION }}</p>
+            <div style="text-align: center;">
+                <span style="color: #d4920c; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">PHP</span>
+                <p style="color: white; font-weight: 600; margin: 0.1rem 0 0; font-size: 0.85rem;">{{ PHP_VERSION }}</p>
             </div>
-            <div>
-                <span style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Laravel</span>
-                <p style="color: white; font-weight: 600; margin: 0.25rem 0 0;">{{ app()->version() }}</p>
+            <div style="text-align: center;">
+                <span style="color: #d4920c; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Laravel</span>
+                <p style="color: white; font-weight: 600; margin: 0.1rem 0 0; font-size: 0.85rem;">{{ app()->version() }}</p>
             </div>
         </div>
     </div>

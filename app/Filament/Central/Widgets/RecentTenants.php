@@ -19,7 +19,7 @@ class RecentTenants extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(Tenant::query()->latest()->limit(10))
+            ->query(Tenant::query()->latest()->limit(5))
             ->columns([
                 TextColumn::make('store_name')
                     ->label('Bakery')
