@@ -40,7 +40,7 @@ a:hover{color:var(--golden)}
 </head>
 <body>
 <div class="auth-container">
-    <div class="auth-brand"><a href="/">KneadIt</a></div>
+    <div class="auth-brand"><a href="/"><img src="/images/logo.png" alt="KneadIt" style="height:3rem;width:auto"></a></div>
     <div class="auth-card">
         <h1>Start your bakery journey</h1>
         <p class="subtitle">Create your account and get baking in minutes.</p>
