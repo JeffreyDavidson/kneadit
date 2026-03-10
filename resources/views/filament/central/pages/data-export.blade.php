@@ -7,7 +7,7 @@
         <select
             wire:model.live="selectedTenant"
             id="tenant-select"
-            style="flex: 1; max-width: 400px; padding: 0.5rem 0.75rem; background: #2a1f18; border: 1px solid rgba(212,146,12,0.12); border-radius: 8px; color: #faf0d6; font-size: 0.875rem; outline: none;"
+            style="flex: 1; max-width: 400px; padding: 0.5rem 2rem 0.5rem 0.75rem; background: #2a1f18; border: 1px solid rgba(212,146,12,0.12); border-radius: 8px; color: #faf0d6; font-size: 0.875rem; outline: none; -webkit-appearance: none; appearance: none; background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23d4920c%22 stroke-width=%222%22><path d=%22M6 9l6 6 6-6%22/></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center;"
         >
             <option value="">— Choose a bakery —</option>
             @foreach($this->getTenants() as $id => $name)

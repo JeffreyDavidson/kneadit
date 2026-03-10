@@ -32,7 +32,7 @@
             @for ($i = 1; $i <= 3; $i++)
                 <div style="flex: 1; min-width: 200px;">
                     <label style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; display: block; margin-bottom: 0.25rem;">Tenant {{ $i }}</label>
-                    <select x-model="tenant{{ $i }}" style="width: 100%; background: #2a1f18; border: 1px solid rgba(212,146,12,0.12); color: #faf0d6; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem;">
+                    <select x-model="tenant{{ $i }}" style="width: 100%; background: #2a1f18; border: 1px solid rgba(212,146,12,0.12); color: #faf0d6; padding: 0.5rem 2rem 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem; -webkit-appearance: none; appearance: none; background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23d4920c%22 stroke-width=%222%22><path d=%22M6 9l6 6 6-6%22/></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center;">
                         <option value="">— Select —</option>
                         @foreach ($allTenants as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
