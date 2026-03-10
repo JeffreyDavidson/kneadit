@@ -77,7 +77,7 @@ class UpgradeTriggers extends Page
                 if ($approachingLimit) {
                     $results->push([
                         'tenant' => $tenant,
-                        'name' => $tenant->name ?? $tenant->store_name ?? $tenant->id,
+                        'name' => $tenant->store_name ?? $tenant->name ?? $tenant->id,
                         'plan' => $limits['label'],
                         'plan_key' => $plan,
                         'product_count' => $productCount,
