@@ -25,11 +25,9 @@ class BillingController extends Controller
     {
         $request->validate(['plan' => 'in:starter,growth,pro']);
 
-        $priceId = match ($plan) {
-            'starter' => env('STRIPE_PRICE_STARTER'),
-            'growth' => env('STRIPE_PRICE_GROWTH'),
-            'pro' => env('STRIPE_PRICE_PRO'),
-        };
+        $priceId = config("saas.stripe_prices.{$plan}");
+
+        abort_unless($priceId, 404, 'Plan not found.');
 
         return $request->user()
             ->newSubscription('default', $priceId)
@@ -62,12 +60,9 @@ class BillingController extends Controller
      */
     public function swap(Request $request, string $plan)
     {
-        $priceId = match ($plan) {
-            'starter' => env('STRIPE_PRICE_STARTER'),
-            'growth' => env('STRIPE_PRICE_GROWTH'),
-            'pro' => env('STRIPE_PRICE_PRO'),
-            default => abort(404),
-        };
+        $priceId = config("saas.stripe_prices.{$plan}");
+
+        abort_unless($priceId, 404, 'Plan not found.');
 
         $request->user()->subscription('default')->swap($priceId);
 
