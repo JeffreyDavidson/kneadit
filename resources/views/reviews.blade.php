@@ -160,7 +160,7 @@
 </section>
 
 {{-- All Reviews Grid --}}
-<section class="relative py-24 md:py-28" style="background: var(--warm-100);">
+<section id="reviews" class="relative py-24 md:py-28" style="background: var(--warm-100);">
     <div class="max-w-6xl mx-auto px-4">
         <div class="flex items-center gap-6 mb-16">
             <div class="flex-1 h-px" style="background: var(--warm-300);"></div>
@@ -201,7 +201,7 @@
 
         {{-- Pagination --}}
         <div class="flex justify-center">
-            {{ $reviews->links() }}
+            {{ $reviews->fragment('reviews')->links() }}
         </div>
     </div>
 </section>
