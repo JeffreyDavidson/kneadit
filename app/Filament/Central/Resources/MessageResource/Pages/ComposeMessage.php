@@ -6,9 +6,9 @@ use App\Filament\Central\Resources\MessageResource;
 use App\Models\PlatformMessage;
 use App\Models\Tenant;
 use Filament\Resources\Pages\Page;
-use Filament\Schemas\Components\Select;
-use Filament\Schemas\Components\Textarea;
-use Filament\Schemas\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Actions;
 
