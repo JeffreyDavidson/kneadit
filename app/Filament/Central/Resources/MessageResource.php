@@ -94,8 +94,10 @@ class MessageResource extends Resource
                     ->searchable(),
             ])
             ->defaultSort('is_read', 'asc')
+            ->recordUrl(fn ($record) => static::getUrl('view', ['record' => $record->getKey()]))
             ->actions([
-                Actions\ViewAction::make(),
+                Actions\ViewAction::make()
+                    ->url(fn ($record) => static::getUrl('view', ['record' => $record->getKey()])),
             ]);
     }
 
