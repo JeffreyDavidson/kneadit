@@ -194,7 +194,7 @@ class TenantResource extends Resource
             ->actions([
                 Actions\ActionGroup::make([
                     ViewAction::make(),
-                    EditAction::make(),
+                    EditAction::make()->slideOver(),
                     Actions\Action::make('impersonate')
                         ->label('Login as Baker')
                         ->icon('heroicon-o-finger-print')
@@ -359,9 +359,7 @@ class TenantResource extends Resource
     {
         return [
             'index' => \App\Filament\Central\Resources\TenantResource\Pages\ListTenants::route('/'),
-            'create' => \App\Filament\Central\Resources\TenantResource\Pages\CreateTenant::route('/create'),
             'view' => \App\Filament\Central\Resources\TenantResource\Pages\ViewTenant::route('/{record}'),
-            'edit' => \App\Filament\Central\Resources\TenantResource\Pages\EditTenant::route('/{record}/edit'),
         ];
     }
 }

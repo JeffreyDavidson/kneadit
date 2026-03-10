@@ -35,29 +35,26 @@ class EmailCampaignResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Campaign Details')
-                    ->schema([
-                        TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('subject')
-                            ->required()
-                            ->maxLength(255),
-                        Textarea::make('body')
-                            ->required()
-                            ->columnSpanFull(),
-                        Select::make('target_segment')
-                            ->options([
-                                'all' => 'All',
-                                'starter' => 'Starter',
-                                'growth' => 'Growth',
-                                'pro' => 'Pro',
-                                'trial' => 'Trial',
-                                'inactive' => 'Inactive',
-                            ])
-                            ->required()
-                            ->default('all'),
-                    ]),
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('subject')
+                    ->required()
+                    ->maxLength(255),
+                Textarea::make('body')
+                    ->required()
+                    ->columnSpanFull(),
+                Select::make('target_segment')
+                    ->options([
+                        'all' => 'All',
+                        'starter' => 'Starter',
+                        'growth' => 'Growth',
+                        'pro' => 'Pro',
+                        'trial' => 'Trial',
+                        'inactive' => 'Inactive',
+                    ])
+                    ->required()
+                    ->default('all'),
             ]);
     }
 
@@ -94,7 +91,7 @@ class EmailCampaignResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
-                Actions\EditAction::make(),
+                Actions\EditAction::make()->slideOver(),
                 Actions\Action::make('send_now')
                     ->label('Send Now')
                     ->icon('heroicon-o-paper-airplane')
@@ -138,8 +135,6 @@ class EmailCampaignResource extends Resource
     {
         return [
             'index' => Pages\ListEmailCampaigns::route('/'),
-            'create' => Pages\CreateEmailCampaign::route('/create'),
-            'edit' => Pages\EditEmailCampaign::route('/{record}/edit'),
         ];
     }
 }

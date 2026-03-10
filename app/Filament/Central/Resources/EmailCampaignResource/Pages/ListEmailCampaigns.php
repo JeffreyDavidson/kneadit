@@ -13,7 +13,7 @@ class ListEmailCampaigns extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('New Campaign'),
+            Actions\CreateAction::make()->label('New Campaign')->slideOver(),
         ];
     }
 }
