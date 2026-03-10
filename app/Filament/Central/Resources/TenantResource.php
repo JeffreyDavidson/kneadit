@@ -32,6 +32,21 @@ class TenantResource extends Resource
 {
     protected static ?string $model = Tenant::class;
 
+    protected static ?string $recordTitleAttribute = 'store_name';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['store_name', 'name', 'email', 'id'];
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Owner' => $record->name,
+            'Plan' => ucfirst($record->plan),
+        ];
+    }
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingStorefront;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Platform';
