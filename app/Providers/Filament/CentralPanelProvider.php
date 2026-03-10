@@ -45,6 +45,19 @@ class CentralPanelProvider extends PanelProvider
             ->renderHook('panels::head.end', fn () => new HtmlString(
                 '<link rel="stylesheet" href="'.asset('css/central-admin.css').'?v='.time().'">'
             ))
+            ->renderHook('panels::body.end', fn () => new HtmlString('
+                <script>
+                    document.addEventListener("livewire:navigating", () => {
+                        const nav = document.querySelector(".fi-sidebar-nav");
+                        if (nav) sessionStorage.setItem("sidebar-scroll", nav.scrollTop);
+                    });
+                    document.addEventListener("livewire:navigated", () => {
+                        const nav = document.querySelector(".fi-sidebar-nav");
+                        const pos = sessionStorage.getItem("sidebar-scroll");
+                        if (nav && pos) requestAnimationFrame(() => nav.scrollTop = parseInt(pos));
+                    });
+                </script>
+            '))
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\Filament\Central\Resources')
             ->discoverPages(in: app_path('Filament/Central/Pages'), for: 'App\Filament\Central\Pages')
             ->pages([

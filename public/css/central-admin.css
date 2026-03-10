@@ -59,9 +59,20 @@
     border-bottom: 1px solid var(--border-subtle) !important;
     padding: 1.25rem 1rem !important;
 }
-/* Fix sidebar nav alignment */
+/* Fix sidebar nav alignment + preserve scroll on navigation */
 .fi-sidebar-nav {
     padding: 0.75rem 0.75rem !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 80px) !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(212,146,12,0.2) transparent !important;
+}
+.fi-sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+.fi-sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(212,146,12,0.2);
+    border-radius: 4px;
 }
 .fi-sidebar-group {
     padding: 0 !important;
