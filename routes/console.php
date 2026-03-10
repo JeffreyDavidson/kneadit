@@ -25,3 +25,6 @@ Schedule::command('digest:weekly')->weeklyOn(1, '8:00');
 
 // Review request emails every hour
 Schedule::command('reviews:send-requests')->hourly();
+
+// Scheduled check-in emails daily at 9 AM
+Schedule::command('checkins:send')->dailyAt('09:00');
