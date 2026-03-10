@@ -34,26 +34,23 @@ class ScheduledCheckinResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Check-in Details')
-                    ->schema([
-                        TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        TextInput::make('days_after_signup')
-                            ->label('Days After Signup')
-                            ->numeric()
-                            ->required()
-                            ->minValue(1),
-                        TextInput::make('subject')
-                            ->required()
-                            ->maxLength(255),
-                        Textarea::make('body')
-                            ->required()
-                            ->columnSpanFull(),
-                        Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true),
-                    ]),
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('days_after_signup')
+                    ->label('Days After Signup')
+                    ->numeric()
+                    ->required()
+                    ->minValue(1),
+                TextInput::make('subject')
+                    ->required()
+                    ->maxLength(255),
+                Textarea::make('body')
+                    ->required()
+                    ->columnSpanFull(),
+                Toggle::make('is_active')
+                    ->label('Active')
+                    ->default(true),
             ]);
     }
 
