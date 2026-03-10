@@ -6,21 +6,25 @@ use App\Models\Tenant;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\DateTimePicker;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Select;
 use Filament\Schemas\Components\Textarea;
+use Filament\Schemas\Components\TextEntry;
 use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\URL;
 
 class TenantResource extends Resource
 {
@@ -82,9 +86,11 @@ class TenantResource extends Resource
                         Grid::make(2)->schema([
                             TextInput::make('brand_color_primary')
                                 ->label('Primary Color')
+                                ->type('color')
                                 ->placeholder('#d4920c'),
                             TextInput::make('brand_color_secondary')
                                 ->label('Secondary Color')
+                                ->type('color')
                                 ->placeholder('#1c1410'),
                         ]),
                         TextInput::make('external_website')
@@ -103,9 +109,8 @@ class TenantResource extends Resource
                             Toggle::make('storefront_enabled')
                                 ->label('Storefront Enabled')
                                 ->default(true),
-                            TextInput::make('trial_ends_at')
+                            DateTimePicker::make('trial_ends_at')
                                 ->label('Trial Ends')
-                                ->disabled()
                                 ->placeholder('N/A'),
                         ]),
                     ]),
@@ -141,7 +146,7 @@ class TenantResource extends Resource
                 TextColumn::make('plan')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'starter' => 'gray',
+                        'starter' => 'warning',
                         'growth' => 'info',
                         'pro' => 'success',
                         default => 'gray',
@@ -185,17 +190,111 @@ class TenantResource extends Resource
                     ->label('Storefront'),
             ])
             ->actions([
+                ViewAction::make(),
                 EditAction::make(),
-                \Filament\Actions\Action::make('visit')
+                Actions\Action::make('impersonate')
+                    ->label('Login as Baker')
+                    ->icon('heroicon-o-finger-print')
+                    ->color('warning')
+                    ->url(fn (Tenant $record) => URL::signedRoute('tenant.impersonate', ['tenant' => $record->id]))
+                    ->openUrlInNewTab(),
+                Actions\Action::make('visit')
                     ->label('Visit')
                     ->icon('heroicon-o-arrow-top-right-on-square')
-                    ->url(fn (Tenant $record) => 'http://' . $record->id . '.getkneadit.app')
+                    ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
                     ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    public static function infolist(Schema $infolist): Schema
+    {
+        return $infolist
+            ->schema([
+                Section::make('Store Information')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextEntry::make('store_name')
+                                ->label('Bakery Name')
+                                ->size('lg')
+                                ->weight('bold')
+                                ->placeholder('Not set'),
+                            TextEntry::make('id')
+                                ->label('Subdomain URL')
+                                ->formatStateUsing(fn (string $state) => $state . '.getkneadit.app')
+                                ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
+                                ->openUrlInNewTab(),
+                            TextEntry::make('custom_domain')
+                                ->label('Custom Domain')
+                                ->placeholder('None'),
+                            TextEntry::make('external_website')
+                                ->label('External Website')
+                                ->url(fn (?string $state) => $state)
+                                ->openUrlInNewTab()
+                                ->placeholder('None'),
+                        ]),
+                    ]),
+
+                Section::make('Owner Information')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextEntry::make('name')
+                                ->label('Owner Name'),
+                            TextEntry::make('email')
+                                ->label('Email')
+                                ->copyable(),
+                        ]),
+                    ]),
+
+                Section::make('Plan & Status')
+                    ->schema([
+                        Grid::make(3)->schema([
+                            TextEntry::make('plan')
+                                ->badge()
+                                ->color(fn (string $state): string => match ($state) {
+                                    'starter' => 'warning',
+                                    'growth' => 'info',
+                                    'pro' => 'success',
+                                    default => 'gray',
+                                })
+                                ->formatStateUsing(fn (string $state) => ucfirst($state)),
+                            TextEntry::make('is_active')
+                                ->label('Active')
+                                ->badge()
+                                ->formatStateUsing(fn (bool $state) => $state ? 'Yes' : 'No')
+                                ->color(fn (bool $state) => $state ? 'success' : 'danger'),
+                            TextEntry::make('storefront_enabled')
+                                ->label('Storefront')
+                                ->badge()
+                                ->formatStateUsing(fn (bool $state) => $state ? 'Enabled' : 'Disabled')
+                                ->color(fn (bool $state) => $state ? 'success' : 'danger'),
+                        ]),
+                        Grid::make(2)->schema([
+                            TextEntry::make('trial_ends_at')
+                                ->label('Trial Ends')
+                                ->dateTime()
+                                ->placeholder('No trial'),
+                            TextEntry::make('created_at')
+                                ->label('Created')
+                                ->dateTime(),
+                        ]),
+                    ]),
+
+                Section::make('Branding')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextEntry::make('brand_color_primary')
+                                ->label('Primary Color')
+                                ->placeholder('Not set'),
+                            TextEntry::make('brand_color_secondary')
+                                ->label('Secondary Color')
+                                ->placeholder('Not set'),
+                        ]),
+                    ]),
+            ]);
     }
 
     public static function getRelations(): array
@@ -208,6 +307,7 @@ class TenantResource extends Resource
         return [
             'index' => \App\Filament\Central\Resources\TenantResource\Pages\ListTenants::route('/'),
             'create' => \App\Filament\Central\Resources\TenantResource\Pages\CreateTenant::route('/create'),
+            'view' => \App\Filament\Central\Resources\TenantResource\Pages\ViewTenant::route('/{record}'),
             'edit' => \App\Filament\Central\Resources\TenantResource\Pages\EditTenant::route('/{record}/edit'),
         ];
     }

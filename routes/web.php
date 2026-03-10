@@ -15,6 +15,11 @@ require __DIR__.'/admin.php';
 |
 */
 
+// Impersonation (central admin → tenant)
+Route::get('/impersonate/{tenant}', [\App\Http\Controllers\ImpersonateController::class, 'login'])
+    ->name('tenant.impersonate')
+    ->middleware('signed');
+
 // Referral tracking
 Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');
 
