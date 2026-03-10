@@ -77,7 +77,8 @@ class ScheduledCheckinResource extends Resource
             ])
             ->defaultSort('days_after_signup', 'asc')
             ->actions([
-                Actions\EditAction::make(),
+                Actions\EditAction::make()
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Actions\DeleteBulkAction::make(),
@@ -88,8 +89,6 @@ class ScheduledCheckinResource extends Resource
     {
         return [
             'index' => Pages\ListScheduledCheckins::route('/'),
-            'create' => Pages\CreateScheduledCheckin::route('/create'),
-            'edit' => Pages\EditScheduledCheckin::route('/{record}/edit'),
         ];
     }
 }
