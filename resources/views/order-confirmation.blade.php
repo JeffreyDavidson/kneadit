@@ -1,32 +1,40 @@
 @extends('layouts.storefront')
 
+@php
+    $heroImage = \App\Models\Setting::get('hero_image');
+    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+@endphp
+
 @section('content')
-{{-- Dark Hero with Success --}}
-<section class="relative overflow-hidden" style="background: var(--warm-900);">
+{{-- Photo-Forward Hero with Success --}}
+<section class="relative overflow-hidden" style="min-height: 40vh;">
+    <div class="absolute inset-0">
+        <img src="{{ $heroImageUrl }}" alt="Order confirmed" class="w-full h-full object-cover confirmation-hero-img">
+    </div>
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 30%, rgba(212,146,12,0.1), transparent 60%);"></div>
 
     <div class="relative z-10 text-center px-4 py-24 md:py-32" style="padding-top: 6rem;">
         {{-- Animated success checkmark --}}
-        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500);">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 confirmation-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
             <svg class="w-12 h-12" style="color: var(--warm-500);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
 
-        <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="flex items-center justify-center gap-3 mb-4 confirmation-fade-up" style="animation-delay: 0.5s;">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
             <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Order Placed</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
 
-        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4" style="color: var(--warm-100);">
+        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 confirmation-fade-up" style="color: var(--warm-100); animation-delay: 0.7s;">
             Thank You!
         </h1>
-        <p class="text-lg mb-3 max-w-lg mx-auto" style="color: var(--warm-400);">
+        <p class="text-lg mb-3 max-w-lg mx-auto confirmation-fade-up" style="color: var(--warm-400); animation-delay: 0.9s;">
             Your order has been received and we'll start preparing your items right away.
         </p>
-        <div class="inline-block px-6 py-3 rounded-full" style="background: rgba(212,146,12,0.1); border: 1px solid rgba(212,146,12,0.25);">
+        <div class="inline-block px-6 py-3 rounded-full confirmation-fade-up" style="background: rgba(212,146,12,0.1); border: 1px solid rgba(212,146,12,0.25); animation-delay: 1.1s;">
             <span class="text-sm font-medium" style="color: var(--warm-400);">Order Number:</span>
             <span class="font-mono font-bold ml-2" style="color: var(--warm-300);">{{ $order->order_number }}</span>
         </div>
@@ -40,7 +48,7 @@
             {{-- Items & Totals --}}
             <div class="rounded-2xl p-6 md:p-8" style="background: var(--warm-800); border: 1px solid rgba(139,104,68,0.2);">
                 <div class="flex items-center gap-3 mb-6">
-                    <span class="block w-6 h-px" style="background: var(--warm-500);"></span>
+                    <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
                     <h2 class="font-display text-xl font-semibold" style="color: var(--warm-100);">Order Details</h2>
                 </div>
 
@@ -83,7 +91,7 @@
             {{-- Customer & Delivery Info --}}
             <div class="rounded-2xl p-6 md:p-8" style="background: var(--warm-800); border: 1px solid rgba(139,104,68,0.2);">
                 <div class="flex items-center gap-3 mb-6">
-                    <span class="block w-6 h-px" style="background: var(--warm-500);"></span>
+                    <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
                     <h2 class="font-display text-xl font-semibold" style="color: var(--warm-100);">
                         {{ $order->delivery_type === 'delivery' ? 'Delivery' : 'Pickup' }} Details
                     </h2>
@@ -202,6 +210,21 @@
 
 @section('styles')
 <style>
+@keyframes confirmationKenBurns {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.06); }
+}
+@keyframes confirmationFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.confirmation-hero-img {
+    animation: confirmationKenBurns 25s ease-out forwards;
+}
+.confirmation-fade-up {
+    opacity: 0;
+    animation: confirmationFadeUp 0.8s ease-out forwards;
+}
 @media print {
     nav, footer, button, a[href] { display: none !important; }
     body { background: white !important; }

@@ -1,37 +1,53 @@
 @extends('layouts.storefront')
 
-@section('content')
 @php
     $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
+    $heroImage = \App\Models\Setting::get('hero_image');
+    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 @endphp
 
+@section('content')
 @if(session('survey_submitted'))
 {{-- Success State --}}
-<section class="relative overflow-hidden" style="background: var(--warm-900); min-height: 60vh;" class="flex items-center">
+<section class="relative overflow-hidden" style="min-height: 60vh;">
+    <div class="absolute inset-0">
+        <img src="{{ $heroImageUrl }}" alt="Survey submitted" class="w-full h-full object-cover survey-hero-img">
+    </div>
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+
     <div class="relative z-10 max-w-lg mx-auto text-center px-4 py-28">
-        <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center text-4xl" style="background: rgba(232,176,74,0.1); border: 1px solid rgba(232,176,74,0.2);">🎉</div>
-        <h1 class="font-display text-4xl font-bold mb-4" style="color: white;">Thank You!</h1>
-        <p class="text-lg mb-10" style="color: var(--warm-400);">Your feedback has been submitted. We appreciate you taking the time to share your thoughts!</p>
-        <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105" style="background: var(--warm-500); color: var(--warm-900);">
+        <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center survey-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
+            <svg class="w-10 h-10" style="color: var(--warm-500);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+        <h1 class="font-display text-4xl font-bold mb-4 survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">Thank You!</h1>
+        <p class="text-lg mb-10 survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">Your feedback has been submitted. We appreciate you taking the time to share your thoughts!</p>
+        <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 survey-fade-up" style="background: var(--warm-500); color: var(--warm-900); animation-delay: 0.9s;">
             Back to {{ $storeName }}
         </a>
     </div>
 </section>
 @else
 
-{{-- Warm Hero --}}
-<section class="relative overflow-hidden" style="background: var(--warm-900);">
+{{-- Photo-Forward Hero --}}
+<section class="relative overflow-hidden" style="min-height: 40vh;">
+    <div class="absolute inset-0">
+        <img src="{{ $heroImageUrl }}" alt="Share your feedback" class="w-full h-full object-cover survey-hero-img">
+    </div>
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+
     <div class="relative z-10 max-w-3xl mx-auto text-center px-4 py-20 md:py-24">
-        <div class="flex items-center justify-center gap-4 mb-6">
-            <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
+        <div class="flex items-center justify-center gap-3 mb-6 survey-fade-up" style="animation-delay: 0.3s;">
+            <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
             <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Your Opinion Matters</span>
-            <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
+            <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
-        <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight" style="color: white;">{{ $survey->title }}</h1>
+        <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $survey->title }}</h1>
         @if($survey->description)
-        <p class="font-script text-xl" style="color: var(--warm-400);">{{ $survey->description }}</p>
+        <p class="font-script text-2xl md:text-3xl survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $survey->description }}</p>
         @endif
     </div>
 </section>
@@ -56,7 +72,7 @@
 
             {{-- Contact Info --}}
             <div class="rounded-2xl p-6 md:p-8" style="background: white; border: 1px solid var(--warm-200);">
-                <p class="font-script text-lg mb-4" style="color: var(--warm-500);">A little about you</p>
+                <p class="font-script text-2xl md:text-3xl mb-4" style="color: var(--warm-400);">A little about you</p>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div>
                         <label class="block text-sm font-semibold mb-1" style="color: var(--warm-700);">Your Name (optional)</label>
@@ -118,10 +134,30 @@
                 <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
                     Submit Feedback
                 </button>
-                <p class="text-sm mt-4" style="color: var(--warm-500);">Your feedback helps us bake better for you 💛</p>
+                <p class="text-sm mt-4" style="color: var(--warm-500);">Your feedback helps us bake better for you</p>
             </div>
         </form>
     </div>
 </section>
 @endif
+@endsection
+
+@section('styles')
+<style>
+@keyframes surveyKenBurns {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.06); }
+}
+@keyframes surveyFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.survey-hero-img {
+    animation: surveyKenBurns 25s ease-out forwards;
+}
+.survey-fade-up {
+    opacity: 0;
+    animation: surveyFadeUp 0.8s ease-out forwards;
+}
+</style>
 @endsection
