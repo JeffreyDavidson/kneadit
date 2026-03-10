@@ -4,23 +4,19 @@ namespace App\Filament\Central\Resources\MessageResource\Pages;
 
 use App\Filament\Central\Resources\MessageResource;
 use App\Models\PlatformMessage;
-use Filament\Resources\Pages\Page;
-use Livewire\Attributes\Locked;
+use Filament\Resources\Pages\ViewRecord;
 
-class ViewMessage extends Page
+class ViewMessage extends ViewRecord
 {
     protected static string $resource = MessageResource::class;
 
     protected string $view = 'filament.central.pages.view-message';
 
-    #[Locked]
-    public PlatformMessage $record;
-
     public string $replyBody = '';
 
     public function mount(int|string $record): void
     {
-        $this->record = PlatformMessage::findOrFail($record);
+        parent::mount($record);
 
         // Mark as read
         if (! $this->record->is_read) {
