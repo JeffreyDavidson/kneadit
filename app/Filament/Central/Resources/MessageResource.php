@@ -49,8 +49,9 @@ class MessageResource extends Resource
         return $table
             ->query(PlatformMessage::query()->topLevel())
             ->columns([
-                TextColumn::make('tenant.name')
+                TextColumn::make('tenant.store_name')
                     ->label('Bakery')
+                    ->placeholder('Not set')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('subject')

@@ -47,7 +47,8 @@ class SupportTicketResource extends Resource
             Section::make('Ticket Details')->schema([
                 TextInput::make('subject')->required()->maxLength(255),
                 Select::make('tenant_id')
-                    ->relationship('tenant', 'name')
+                    ->relationship('tenant', 'store_name')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->store_name ?: $record->name)
                     ->required()
                     ->searchable(),
                 Select::make('status')
@@ -80,8 +81,9 @@ class SupportTicketResource extends Resource
                 TextColumn::make('subject')
                     ->searchable()
                     ->limit(50),
-                TextColumn::make('tenant.name')
+                TextColumn::make('tenant.store_name')
                     ->label('Bakery')
+                    ->placeholder('Not set')
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge()
