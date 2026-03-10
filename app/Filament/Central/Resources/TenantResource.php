@@ -14,10 +14,12 @@ use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class TenantResource extends Resource
@@ -177,21 +179,21 @@ class TenantResource extends Resource
                         'growth' => 'Growth',
                         'pro' => 'Pro',
                     ]),
-                Tables\Filters\TernaryFilter::make('is_active')
+                TernaryFilter::make('is_active')
                     ->label('Active'),
-                Tables\Filters\TernaryFilter::make('storefront_enabled')
+                TernaryFilter::make('storefront_enabled')
                     ->label('Storefront'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('visit')
+                EditAction::make(),
+                \Filament\Actions\Action::make('visit')
                     ->label('Visit')
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->url(fn (Tenant $record) => 'http://' . $record->id . '.getkneadit.app')
                     ->openUrlInNewTab(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
     }
