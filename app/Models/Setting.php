@@ -50,6 +50,28 @@ class Setting extends Model
     }
 
     /**
+     * Get page content for a specific page and key.
+     * Usage: Setting::pageContent('menu', 'hero_title', 'Our Menu')
+     */
+    public static function pageContent(string $page, string $key, $default = '')
+    {
+        $content = json_decode(static::get('page_content', '{}'), true);
+
+        return $content[$page][$key] ?? $default;
+    }
+
+    /**
+     * Get all page content for a specific page.
+     * Usage: Setting::pageContentAll('menu')
+     */
+    public static function pageContentAll(string $page): array
+    {
+        $content = json_decode(static::get('page_content', '{}'), true);
+
+        return $content[$page] ?? [];
+    }
+
+    /**
      * Clear the in-memory cache (useful for testing or after bulk updates).
      */
     public static function flushCache(): void

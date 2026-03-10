@@ -213,6 +213,12 @@ class SettingSeeder extends Seeder
             ]),
         ];
 
+        // Page content — all storefront copy in one JSON blob
+        $settings[] = [
+            'key' => 'page_content',
+            'value' => json_encode(json_decode(file_get_contents(database_path('../page-content-structure.json')), true)),
+        ];
+
         foreach ($settings as $setting) {
             Setting::updateOrCreate(
                 ['key' => $setting['key']],
