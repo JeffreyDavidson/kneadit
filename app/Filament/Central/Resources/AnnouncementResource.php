@@ -114,7 +114,8 @@ class AnnouncementResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
-                Actions\EditAction::make(),
+                Actions\EditAction::make()
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Actions\DeleteBulkAction::make(),
@@ -125,8 +126,6 @@ class AnnouncementResource extends Resource
     {
         return [
             'index' => Pages\ListAnnouncements::route('/'),
-            'create' => Pages\CreateAnnouncement::route('/create'),
-            'edit' => Pages\EditAnnouncement::route('/{record}/edit'),
         ];
     }
 }
