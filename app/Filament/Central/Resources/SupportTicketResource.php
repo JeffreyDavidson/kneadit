@@ -124,7 +124,8 @@ class SupportTicketResource extends Resource
             ])
             ->actions([
                 Actions\ViewAction::make(),
-                Actions\EditAction::make(),
+                Actions\EditAction::make()
+                    ->slideOver(),
             ]);
     }
 
@@ -137,7 +138,6 @@ class SupportTicketResource extends Resource
     {
         return [
             'index' => SupportTicketResource\Pages\ListTickets::route('/'),
-            'edit' => SupportTicketResource\Pages\EditTicket::route('/{record}/edit'),
             'view' => SupportTicketResource\Pages\ViewTicket::route('/{record}'),
         ];
     }
