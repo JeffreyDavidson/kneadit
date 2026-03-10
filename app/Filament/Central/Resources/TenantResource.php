@@ -192,19 +192,21 @@ class TenantResource extends Resource
                     ->label('Storefront'),
             ])
             ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-                Actions\Action::make('impersonate')
-                    ->label('Login as Baker')
-                    ->icon('heroicon-o-finger-print')
-                    ->color('warning')
-                    ->url(fn (Tenant $record) => URL::signedRoute('tenant.impersonate', ['tenant' => $record->id]))
-                    ->openUrlInNewTab(),
-                Actions\Action::make('visit')
-                    ->label('Visit')
-                    ->icon('heroicon-o-arrow-top-right-on-square')
-                    ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
-                    ->openUrlInNewTab(),
+                Actions\ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    Actions\Action::make('impersonate')
+                        ->label('Login as Baker')
+                        ->icon('heroicon-o-finger-print')
+                        ->color('warning')
+                        ->url(fn (Tenant $record) => URL::signedRoute('tenant.impersonate', ['tenant' => $record->id]))
+                        ->openUrlInNewTab(),
+                    Actions\Action::make('visit')
+                        ->label('Visit Storefront')
+                        ->icon('heroicon-o-arrow-top-right-on-square')
+                        ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
+                        ->openUrlInNewTab(),
+                ]),
             ])
             ->bulkActions([
                 DeleteBulkAction::make(),
