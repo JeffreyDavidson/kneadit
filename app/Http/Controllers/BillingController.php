@@ -14,6 +14,7 @@ class BillingController extends Controller
         return view('billing.plans', [
             'plans' => config('saas.plans'),
             'currentPlan' => $request->user()?->currentPlan(),
+            'bakeryName' => session('bakery_name'),
         ]);
     }
 
@@ -45,7 +46,7 @@ class BillingController extends Controller
      */
     public function success(Request $request)
     {
-        return view('billing.success');
+        return redirect('/onboarding');
     }
 
     /**

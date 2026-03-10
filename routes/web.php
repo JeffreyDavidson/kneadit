@@ -6,6 +6,14 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/billing.php';
 require __DIR__.'/admin.php';
 
+// Auth routes (central only)
+Route::middleware('web')->group(function () {
+    Route::get('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register')->middleware('guest');
+    Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register'])->middleware('guest');
+    Route::get('/login', function () { return redirect('/'); })->name('login')->middleware('guest');
+    Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout')->middleware('auth');
+});
+
 // Data Export (central admin) — uses signed URL to avoid auth middleware redirect issues
 Route::get('/admin/export/{tenant}/{type}', [ExportController::class, 'export'])->name('central.export')->middleware('web');
 
