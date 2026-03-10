@@ -790,7 +790,7 @@ Your bakery.<br>
 </div>
 <div class="faq-item reveal reveal-d5">
 <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">When does KneadIt launch?<span class="faq-icon">+</span></button>
-<div class="faq-a"><div class="faq-a-inner">We're targeting a 2026 launch. Join the waitlist to get early access and lock in founding member pricing. Those rates stay with you forever.</div></div>
+<div class="faq-a"><div class="faq-a-inner">KneadIt is live! Sign up today and start your 30-day free trial. Early adopters lock in founding member pricing — those rates stay with you forever.</div></div>
 </div>
 </div>
 </section>
@@ -1097,38 +1097,7 @@ function handleContact(e) {
   return false;
 }
 
-/* === Waitlist handler === */
-function handleWaitlist(e) {
-  e.preventDefault();
-  const form = e.target;
-  const emailInput = form.querySelector('input');
-  const btn = form.querySelector('button');
-  const email = emailInput.value;
-  if (!email) return false;
-  btn.disabled = true;
-  btn.textContent = 'Joining...';
-  fetch('/waitlist.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
-  })
-  .then(r => r.json())
-  .then(data => {
-    btn.textContent = data.message === 'Already on the list!' ? 'You\'re already on the list! 👍' : 'You\'re on the list! 🎉';
-    btn.style.background = 'var(--sage)';
-    emailInput.value = '';
-    if (data.count) {
-      document.querySelectorAll('.waitlist-count').forEach(el => el.textContent = (200 + data.count) + '+');
-    }
-    setTimeout(() => { btn.textContent = 'Get Early Access'; btn.style.background = ''; btn.disabled = false; }, 3000);
-  })
-  .catch(() => {
-    btn.textContent = 'Something went wrong';
-    btn.style.background = 'var(--berry)';
-    setTimeout(() => { btn.textContent = 'Get Early Access'; btn.style.background = ''; btn.disabled = false; }, 3000);
-  });
-  return false;
-}
+/* Waitlist removed — registration flow is live */
 </script>
 </body>
 </html>
