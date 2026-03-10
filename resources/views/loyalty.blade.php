@@ -4,6 +4,8 @@
 @php
     $heroImage = \App\Models\Setting::get('loyalty_hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+
+    $content = \App\Models\Setting::pageContentAll('loyalty');
 @endphp
 
 <style>
@@ -26,14 +28,14 @@
     <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
         <div class="loyalty-fade-1 flex items-center justify-center gap-4 mb-6">
             <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Rewards Program</span>
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'Rewards Program' }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
         </div>
         <h1 class="loyalty-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
             {{ \App\Models\Setting::get('store_name', 'Our') }} {{ $programName }}
         </h1>
         <p class="loyalty-fade-3 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
-            Earn points with every order, unlock delicious rewards
+            {{ $content['hero_subtitle'] ?? 'Earn points with every order, unlock delicious rewards' }}
         </p>
     </div>
 </section>
@@ -41,7 +43,7 @@
 @if(!$loyaltyEnabled)
 <section class="py-20 px-4" style="background: var(--warm-50);">
     <div class="max-w-lg mx-auto text-center rounded-2xl p-12" style="background: white; border: 1px solid var(--warm-200);">
-        <p class="font-display text-xl" style="color: var(--warm-700);">Our loyalty program is currently paused. Check back soon!</p>
+        <p class="font-display text-xl" style="color: var(--warm-700);">{{ $content['paused_message'] ?? 'Our loyalty program is currently paused. Check back soon!' }}</p>
     </div>
 </section>
 @else
@@ -53,7 +55,7 @@
         {{-- Points Lookup --}}
         <div class="max-w-xl mx-auto mb-16">
             <div class="rounded-2xl p-8" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);">
-                <h2 class="font-display text-2xl font-bold mb-4 text-center" style="color: var(--warm-900);">Check Your Points</h2>
+                <h2 class="font-display text-2xl font-bold mb-4 text-center" style="color: var(--warm-900);">{{ $content['check_heading'] ?? 'Check Your Points' }}</h2>
                 <form action="{{ route('rewards.check') }}" method="POST" class="flex flex-col sm:flex-row gap-3">
                     @csrf
                     <input type="email" name="email" placeholder="Enter your email address"
@@ -136,8 +138,8 @@
         @if($rewards->count())
         <div class="mb-16">
             <div class="text-center mb-10">
-                <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">Unlock</p>
-                <h2 class="font-display text-3xl font-bold" style="color: var(--warm-900);">Available Rewards</h2>
+                <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">{{ $content['rewards_eyebrow'] ?? 'Unlock' }}</p>
+                <h2 class="font-display text-3xl font-bold" style="color: var(--warm-900);">{{ $content['rewards_heading'] ?? 'Available Rewards' }}</h2>
             </div>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
                 @foreach($rewards as $reward)
@@ -172,21 +174,32 @@
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
     <div class="relative z-10 max-w-4xl mx-auto">
         <div class="text-center mb-12">
-            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">Simple as</p>
-            <h2 class="font-display text-3xl md:text-4xl font-bold" style="color: white;">How It Works</h2>
+            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">{{ $content['how_it_works_eyebrow'] ?? 'Simple as' }}</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold" style="color: white;">{{ $content['how_it_works_heading'] ?? 'How It Works' }}</h2>
         </div>
+        @php
+            $howSteps = $content['how_it_works_steps'] ?? [
+                ['title' => 'Place an Order', 'description' => 'Order your favorite baked goods as usual.'],
+                ['title' => 'Earn Points', 'description' => "Get {$pointsPerDollar} points for every \$1 spent when delivered."],
+                ['title' => 'Redeem Rewards', 'description' => 'Use your points for discounts and free treats!'],
+            ];
+            $howSvgs = [
+                'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z',
+                'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z',
+                'M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7',
+            ];
+        @endphp
         <div class="grid sm:grid-cols-3 gap-10 text-center">
-            @foreach([
-                ['M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z', 'Place an Order', 'Order your favorite baked goods as usual.'],
-                ['M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z', 'Earn Points', "Get {$pointsPerDollar} points for every \$1 spent when delivered."],
-                ['M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7', 'Redeem Rewards', 'Use your points for discounts and free treats!'],
-            ] as [$svgPath, $title, $desc])
+            @foreach($howSteps as $i => $step)
+            @php
+                $stepDesc = str_replace('{{points_per_dollar}}', $pointsPerDollar, $step['description']);
+            @endphp
             <div>
                 <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style="background: rgba(232,176,74,0.1); border: 1px solid rgba(232,176,74,0.2);">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warm-500);"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $svgPath }}"/></svg>
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warm-500);"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $howSvgs[$i] ?? $howSvgs[0] }}"/></svg>
                 </div>
-                <h3 class="font-display text-xl font-bold mb-2" style="color: var(--warm-200);">{{ $title }}</h3>
-                <p style="color: var(--warm-500);">{{ $desc }}</p>
+                <h3 class="font-display text-xl font-bold mb-2" style="color: var(--warm-200);">{{ $step['title'] }}</h3>
+                <p style="color: var(--warm-500);">{{ $stepDesc }}</p>
             </div>
             @endforeach
         </div>
