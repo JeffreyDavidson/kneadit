@@ -1,55 +1,56 @@
 <x-filament-panels::page>
     @if(! $this->getHasData())
         {{-- Empty State --}}
-        <div style="background: #1c1410; border: 1px solid #3d2c1e; border-radius: 12px; padding: 48px; text-align: center;">
-            <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
-            <h3 style="color: #e8b04a; font-size: 20px; font-weight: 600; margin-bottom: 8px;">No Usage Data Yet</h3>
-            <p style="color: #a89580; max-width: 480px; margin: 0 auto 16px;">
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 3rem; text-align: center;">
+            <div style="margin-bottom: 1rem;">
+                <svg style="width: 48px; height: 48px; display: inline-block;" viewBox="0 0 24 24" fill="none" stroke="#d4920c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">No Usage Data Yet</div>
+            <p style="color: #8b6844; max-width: 480px; margin: 0 auto 1rem;">
                 Feature usage tracking hasn't recorded any data yet. Once tracking middleware is added to the tenant application,
                 you'll see detailed analytics about which features your bakeries use most.
             </p>
-            <div style="background: #2a1f18; border-radius: 8px; padding: 16px; display: inline-block; text-align: left;">
-                <p style="color: #d4920c; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Features that will be tracked:</p>
-                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <div style="background: #2a1f18; border-radius: 8px; padding: 1rem; display: inline-block; text-align: left;">
+                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Features that will be tracked</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
                     @foreach(['quick_order', 'recipe_calculator', 'shopping_list', 'instagram_captions', 'delivery_planner', 'baking_sheet', 'order_calendar', 'review_analytics', 'storefront'] as $feature)
-                        <span style="background: #3d2c1e; color: #f5d88e; padding: 4px 10px; border-radius: 6px; font-size: 12px;">{{ str_replace('_', ' ', ucfirst($feature)) }}</span>
+                        <span style="display: inline-block; background: rgba(212,146,12,0.1); color: #faf0d6; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600;">{{ str_replace('_', ' ', ucfirst($feature)) }}</span>
                     @endforeach
                 </div>
             </div>
         </div>
     @else
         {{-- Summary Cards --}}
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
-            <div style="background: #1c1410; border: 1px solid #3d2c1e; border-radius: 12px; padding: 20px;">
-                <p style="color: #a89580; font-size: 13px; margin-bottom: 4px;">Most Used Feature</p>
-                <p style="color: #e8b04a; font-size: 22px; font-weight: 700;">{{ $this->formatFeatureName($this->getMostUsedFeature() ?? '—') }}</p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Most Used Feature</div>
+                <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ $this->formatFeatureName($this->getMostUsedFeature() ?? '—') }}</div>
             </div>
-            <div style="background: #1c1410; border: 1px solid #3d2c1e; border-radius: 12px; padding: 20px;">
-                <p style="color: #a89580; font-size: 13px; margin-bottom: 4px;">Least Used Feature</p>
-                <p style="color: #e8b04a; font-size: 22px; font-weight: 700;">{{ $this->formatFeatureName($this->getLeastUsedFeature() ?? '—') }}</p>
+            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Least Used Feature</div>
+                <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ $this->formatFeatureName($this->getLeastUsedFeature() ?? '—') }}</div>
             </div>
-            <div style="background: #1c1410; border: 1px solid #3d2c1e; border-radius: 12px; padding: 20px;">
-                <p style="color: #a89580; font-size: 13px; margin-bottom: 4px;">Total Interactions This Month</p>
-                <p style="color: #e8b04a; font-size: 22px; font-weight: 700;">{{ number_format($this->getTotalInteractionsThisMonth()) }}</p>
+            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Total Interactions This Month</div>
+                <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ number_format($this->getTotalInteractionsThisMonth()) }}</div>
             </div>
         </div>
 
         {{-- Bar Chart --}}
-        <div style="background: #1c1410; border: 1px solid #3d2c1e; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-            <h3 style="color: #e8b04a; font-size: 16px; font-weight: 600; margin-bottom: 16px;">Usage by Feature</h3>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Usage by Feature</div>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
                 @foreach($this->getFeatureUsageBars() as $bar)
-                    <div wire:click="selectFeature('{{ $bar['feature'] }}')" style="cursor: pointer; display: flex; align-items: center; gap: 12px;">
+                    <div wire:click="selectFeature('{{ $bar['feature'] }}')" style="cursor: pointer; display: flex; align-items: center; gap: 0.75rem;">
                         <div style="width: 160px; flex-shrink: 0; text-align: right;">
-                            <span style="color: {{ $this->selectedFeature === $bar['feature'] ? '#f5d88e' : '#a89580' }}; font-size: 13px; font-weight: {{ $this->selectedFeature === $bar['feature'] ? '600' : '400' }};">
+                            <span style="color: {{ $this->selectedFeature === $bar['feature'] ? '#e8b04a' : '#8b6844' }}; font-size: 0.8rem; font-weight: {{ $this->selectedFeature === $bar['feature'] ? '700' : '400' }};">
                                 {{ $this->formatFeatureName($bar['feature']) }}
                             </span>
                         </div>
-                        <div style="flex: 1; background: #2a1f18; border-radius: 6px; height: 28px; overflow: hidden;">
-                            <div style="width: {{ $bar['percent'] }}%; background: linear-gradient(90deg, #d4920c, #e8b04a); height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; min-width: 40px;">
-                                <span style="color: #0c0a09; font-size: 12px; font-weight: 700;">{{ number_format($bar['total']) }}</span>
-                            </div>
+                        <div style="flex: 1; background: #2a1f18; border-radius: 4px; height: 8px; overflow: hidden;">
+                            <div style="width: {{ $bar['percent'] }}%; background: linear-gradient(90deg, #d4920c, #e8b04a); height: 100%; border-radius: 4px; min-width: 4px;"></div>
                         </div>
+                        <span style="color: #faf0d6; font-size: 0.75rem; font-weight: 700; width: 50px; text-align: right;">{{ number_format($bar['total']) }}</span>
                     </div>
                 @endforeach
             </div>
@@ -57,19 +58,19 @@
 
         {{-- Per-feature tenant breakdown --}}
         @if($this->selectedFeature)
-            <div style="background: #1c1410; border: 1px solid #d4920c; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-                <h3 style="color: #e8b04a; font-size: 16px; font-weight: 600; margin-bottom: 16px;">
+            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">
                     {{ $this->formatFeatureName($this->selectedFeature) }} — Top Tenants
-                </h3>
+                </div>
                 @php $breakdown = $this->getFeatureTenantBreakdown(); @endphp
                 @if($breakdown->isEmpty())
-                    <p style="color: #a89580;">No tenant data available.</p>
+                    <p style="color: #8b6844;">No tenant data available.</p>
                 @else
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                         @foreach($breakdown as $row)
-                            <div style="display: flex; align-items: center; justify-content: space-between; background: #2a1f18; border-radius: 8px; padding: 10px 16px;">
-                                <span style="color: #f5d88e; font-size: 14px;">{{ $row->tenant_id }}</span>
-                                <span style="color: #d4920c; font-weight: 700; font-size: 14px;">{{ number_format($row->total) }} uses</span>
+                            <div style="display: flex; align-items: center; justify-content: space-between; background: #2a1f18; border-radius: 8px; padding: 0.6rem 1rem;">
+                                <span style="color: #faf0d6; font-size: 0.875rem;">{{ $row->tenant_id }}</span>
+                                <span style="color: #d4920c; font-weight: 700; font-size: 0.875rem;">{{ number_format($row->total) }} uses</span>
                             </div>
                         @endforeach
                     </div>
@@ -79,21 +80,21 @@
 
         {{-- Heatmap --}}
         @php $heatmap = $this->getHeatmapData(); @endphp
-        <div style="background: #1c1410; border: 1px solid #3d2c1e; border-radius: 12px; padding: 24px; overflow-x: auto;">
-            <h3 style="color: #e8b04a; font-size: 16px; font-weight: 600; margin-bottom: 16px;">7-Day Usage Heatmap</h3>
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; overflow-x: auto;">
+            <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">7-Day Usage Heatmap</div>
             <table style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr>
-                        <th style="text-align: left; padding: 8px 12px; color: #a89580; font-size: 12px; font-weight: 600;">Feature</th>
+                        <th style="text-align: left; padding: 0.5rem 0.75rem; color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Feature</th>
                         @foreach($heatmap['days'] as $day)
-                            <th style="text-align: center; padding: 8px 6px; color: #a89580; font-size: 12px; font-weight: 600;">{{ $day }}</th>
+                            <th style="text-align: center; padding: 0.5rem 0.4rem; color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">{{ $day }}</th>
                         @endforeach
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($heatmap['rows'] as $row)
                         <tr>
-                            <td style="padding: 6px 12px; color: #f5d88e; font-size: 13px; white-space: nowrap;">{{ $this->formatFeatureName($row['feature']) }}</td>
+                            <td style="padding: 0.4rem 0.75rem; color: #faf0d6; font-size: 0.8rem; white-space: nowrap;">{{ $this->formatFeatureName($row['feature']) }}</td>
                             @foreach($row['cells'] as $cell)
                                 @php
                                     $i = $cell['intensity'];
@@ -109,8 +110,8 @@
                                         $bg = '#e8b04a';
                                     }
                                 @endphp
-                                <td style="text-align: center; padding: 6px;" title="{{ $cell['count'] }} uses on {{ $cell['date'] }}">
-                                    <div style="background: {{ $bg }}; border-radius: 4px; width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; color: {{ $i >= 0.5 ? '#0c0a09' : '#a89580' }}; font-size: 11px; font-weight: 600;">
+                                <td style="text-align: center; padding: 0.4rem;" title="{{ $cell['count'] }} uses on {{ $cell['date'] }}">
+                                    <div style="background: {{ $bg }}; border-radius: 4px; width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; color: {{ $i >= 0.5 ? '#1c1410' : '#8b6844' }}; font-size: 0.7rem; font-weight: 600;">
                                         {{ $cell['count'] ?: '' }}
                                     </div>
                                 </td>
