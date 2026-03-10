@@ -67,7 +67,7 @@
                                 ['label' => 'This Month', 'value' => $tenant['month_orders']],
                                 ['label' => 'Products', 'value' => $tenant['total_products']],
                                 ['label' => 'Categories', 'value' => $tenant['total_categories']],
-                                ['label' => 'Avg Review', 'value' => ($tenant['avg_review'] ?: '—') . ' ⭐'],
+                                ['label' => 'Avg Review', 'value' => ($tenant['avg_review'] ?: '—') . '/5'],
                                 ['label' => 'Setup', 'value' => $tenant['setup_completed'] . '/7'],
                                 ['label' => 'Days Since Signup', 'value' => $tenant['days_since_signup']],
                             ];
