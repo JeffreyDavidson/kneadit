@@ -8,7 +8,7 @@ use App\Models\Tenant;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\DateTimePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Select;
 use Filament\Schemas\Components\Textarea;
