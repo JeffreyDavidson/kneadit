@@ -25,9 +25,11 @@
             <div style="color: #ffffff; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Signups Over Last 12 Months</div>
             <canvas id="signupsChart" height="250"></canvas>
         </div>
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; overflow: hidden;">
             <div style="color: #ffffff; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Plan Distribution</div>
-            <canvas id="planChart" height="250"></canvas>
+            <div style="position: relative; max-height: 280px;">
+                <canvas id="planChart"></canvas>
+            </div>
         </div>
     </div>
     <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
@@ -74,7 +76,7 @@
                         borderWidth: 0,
                     }]
                 },
-                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
             });
 
             const growth = @json($this->getMonthlyGrowth());
