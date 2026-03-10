@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    protected $connection = 'mysql';
+    protected $connection = 'central';
 
     public function up(): void
     {
-        Schema::connection($this->connection)->create('support_replies', function (Blueprint $table) {
+        Schema::connection('central')->create('support_replies', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ticket_id')->constrained('support_tickets')->cascadeOnDelete();
             $table->string('author_type');
@@ -22,6 +22,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::connection($this->connection)->dropIfExists('support_replies');
+        Schema::connection('central')->dropIfExists('support_replies');
     }
 };

@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    protected $connection = 'mysql';
+    protected $connection = 'central';
 
     public function up(): void
     {
-        Schema::connection($this->connection)->create('support_tickets', function (Blueprint $table) {
+        Schema::connection('central')->create('support_tickets', function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id');
             $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
@@ -28,6 +28,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::connection($this->connection)->dropIfExists('support_tickets');
+        Schema::connection('central')->dropIfExists('support_tickets');
     }
 };
