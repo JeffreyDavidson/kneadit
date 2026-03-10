@@ -122,12 +122,12 @@ class ExportController extends Controller
 
     private function writeCategories($handle): void
     {
-        fputcsv($handle, ['ID', 'Name', 'Slug', 'Description', 'Parent ID', 'Created At', 'Updated At']);
+        fputcsv($handle, ['ID', 'Name', 'Slug', 'Description', 'Created At', 'Updated At']);
         DB::table('categories')->orderBy('id')->chunk(500, function ($rows) use ($handle) {
             foreach ($rows as $row) {
                 fputcsv($handle, [
                     $row->id, $row->name, $row->slug ?? '', $row->description ?? '',
-                    $row->parent_id ?? '', $row->created_at, $row->updated_at,
+                    $row->created_at, $row->updated_at,
                 ]);
             }
         });
@@ -135,16 +135,16 @@ class ExportController extends Controller
 
     private function writeOrders($handle): void
     {
-        fputcsv($handle, ['Order ID', 'Customer ID', 'Status', 'Total', 'Item Product ID', 'Item Name', 'Item Qty', 'Item Price', 'Order Created At']);
+        fputcsv($handle, ['Order ID', 'Customer ID', 'Status', 'Total', 'Item Product ID', 'Item Qty', 'Item Unit Price', 'Order Created At']);
         DB::table('orders')
             ->leftJoin('order_items', 'orders.id', '=', 'order_items.order_id')
-            ->select('orders.*', 'order_items.product_id as item_product_id', 'order_items.name as item_name', 'order_items.quantity as item_qty', 'order_items.price as item_price')
+            ->select('orders.*', 'order_items.product_id as item_product_id', 'order_items.quantity as item_qty', 'order_items.unit_price as item_price')
             ->orderBy('orders.id')
             ->chunk(500, function ($rows) use ($handle) {
                 foreach ($rows as $row) {
                     fputcsv($handle, [
                         $row->id, $row->user_id ?? '', $row->status ?? '', $row->total ?? '',
-                        $row->item_product_id ?? '', $row->item_name ?? '', $row->item_qty ?? '', $row->item_price ?? '',
+                        $row->item_product_id ?? '', $row->item_qty ?? '', $row->item_price ?? '',
                         $row->created_at,
                     ]);
                 }
