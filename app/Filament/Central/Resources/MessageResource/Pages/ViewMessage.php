@@ -14,6 +14,11 @@ class ViewMessage extends ViewRecord
 
     public string $replyBody = '';
 
+    public function resolveRecord(int|string $key): \Illuminate\Database\Eloquent\Model
+    {
+        return PlatformMessage::findOrFail($key);
+    }
+
     public function mount(int|string $record): void
     {
         parent::mount($record);
