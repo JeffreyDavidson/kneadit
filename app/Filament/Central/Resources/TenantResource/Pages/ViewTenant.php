@@ -19,13 +19,13 @@ class ViewTenant extends ViewRecord
                 ->label('Login as Baker')
                 ->icon('heroicon-o-finger-print')
                 ->color('warning')
-                ->url(fn (Tenant $record) => URL::signedRoute('tenant.impersonate', ['tenant' => $record->id]))
+                ->url(fn () => URL::signedRoute('tenant.impersonate', ['tenant' => $this->record->id]))
                 ->openUrlInNewTab(),
             Actions\Action::make('visit')
                 ->label('Visit Storefront')
                 ->icon('heroicon-o-arrow-top-right-on-square')
                 ->color('info')
-                ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
+                ->url(fn () => 'https://' . $this->record->id . '.getkneadit.app')
                 ->openUrlInNewTab(),
             Actions\EditAction::make(),
         ];
