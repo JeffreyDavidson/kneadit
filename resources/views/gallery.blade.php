@@ -120,12 +120,31 @@
             {{ $photos->links() }}
         </div>
         @else
-        <div class="text-center py-20">
-            <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center" style="background: var(--warm-200);">
-                <span class="text-3xl">📸</span>
+        <div class="max-w-2xl mx-auto text-center py-16">
+            {{-- Decorative icon --}}
+            <div class="w-20 h-20 rounded-full mx-auto mb-8 flex items-center justify-center" style="background: var(--warm-200);">
+                <svg class="w-10 h-10" style="color: var(--warm-500);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/>
+                </svg>
             </div>
-            <p class="font-display text-2xl font-bold mb-2" style="color: var(--warm-800);">No photos yet</p>
-            <p class="text-lg" style="color: var(--warm-600);">Be the first to share!</p>
+
+            <h2 class="font-display text-3xl font-bold mb-4" style="color: var(--warm-900);">Your Photos Will Shine Here</h2>
+            <p class="text-lg leading-relaxed mb-6" style="color: var(--warm-600);">
+                We'd love to see what you're baking and enjoying! Share a photo of your order and it'll appear right here for the whole community to see.
+            </p>
+            <p class="font-script text-xl mb-10" style="color: var(--warm-500);">Be the first to share!</p>
+
+            {{-- Faux gallery preview --}}
+            <div class="grid grid-cols-3 gap-3 opacity-20">
+                @for($i = 0; $i < 6; $i++)
+                <div class="rounded-xl overflow-hidden" style="aspect-ratio: {{ [1, '4/5', 1, '5/4', 1, '4/5'][$i] }}; background: linear-gradient(135deg, var(--warm-200), var(--warm-300));"></div>
+                @endfor
+            </div>
+
+            <a href="#share-photo" class="inline-block mt-10 px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105" style="background: var(--warm-900); color: var(--warm-100);">
+                Share Your Photo ↓
+            </a>
         </div>
         @endif
     </div>
@@ -147,18 +166,18 @@
 </section>
 
 {{-- Upload CTA + Form --}}
-<section class="relative py-20 overflow-hidden" style="background: var(--warm-900);">
+<section id="share-photo" class="relative py-24 overflow-hidden" style="background: var(--warm-900); scroll-margin-top: 80px;">
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
     <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 50%, rgba(212,146,12,0.06), transparent 60%);"></div>
     <div class="relative z-10 max-w-2xl mx-auto px-4">
-        <div class="text-center mb-10">
-            <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="text-center mb-12">
+            <div class="flex items-center justify-center gap-3 mb-6">
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
                 <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Share Yours</span>
                 <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
             </div>
-            <h2 class="font-display text-3xl md:text-4xl font-bold mb-3" style="color: var(--warm-100);">Share Your Photo</h2>
-            <p style="color: var(--warm-400);">Show off your order! Photos will appear after approval.</p>
+            <h2 class="font-display text-3xl md:text-5xl font-bold mb-4" style="color: var(--warm-100);">Share Your Photo</h2>
+            <p class="text-lg" style="color: var(--warm-400);">Show off your order! Photos will appear after approval.</p>
         </div>
 
         @if(session('success'))
@@ -191,9 +210,25 @@
                     </div>
                 </div>
 
-                <div>
+                <div x-data="{ fileName: '' }">
                     <label class="block text-sm font-medium mb-2" style="color: var(--warm-300);">Photo * <span class="font-normal" style="color: var(--warm-500);">(JPG, PNG, or WebP — max 5MB)</span></label>
-                    <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required class="gallery-input">
+                    <label class="block cursor-pointer rounded-xl p-8 text-center transition-all duration-300 hover:border-opacity-60"
+                           style="border: 2px dashed rgba(212,146,12,0.25); background: rgba(212,146,12,0.03);"
+                           onmouseover="this.style.borderColor='rgba(212,146,12,0.5)';this.style.background='rgba(212,146,12,0.06)'"
+                           onmouseout="this.style.borderColor='rgba(212,146,12,0.25)';this.style.background='rgba(212,146,12,0.03)'">
+                        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required class="hidden" @change="fileName = $event.target.files[0]?.name || ''">
+                        <div x-show="!fileName">
+                            <svg class="w-10 h-10 mx-auto mb-3" style="color: var(--warm-500); opacity: 0.6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                            </svg>
+                            <p class="font-medium mb-1" style="color: var(--warm-300);">Click to upload or drag & drop</p>
+                            <p class="text-sm" style="color: var(--warm-500);">JPG, PNG, or WebP up to 5MB</p>
+                        </div>
+                        <div x-show="fileName" class="flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" style="color: #4ade80;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                            <span class="font-medium" style="color: var(--warm-300);" x-text="fileName"></span>
+                        </div>
+                    </label>
                 </div>
 
                 <div>
