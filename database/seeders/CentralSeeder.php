@@ -15,6 +15,9 @@ class CentralSeeder extends Seeder
         $db->beginTransaction();
 
         try {
+            // Clear seeded data from previous runs
+            $this->truncateSeededTables($db);
+
             $this->seedTenants($db);
             $this->seedAnnouncements($db);
             $this->seedSupportTickets($db);
@@ -35,12 +38,35 @@ class CentralSeeder extends Seeder
         $this->command?->info('Central admin tables seeded with demo data.');
     }
 
+    private function truncateSeededTables($db): void
+    {
+        $tables = [
+            'platform_announcements', 'support_replies', 'support_tickets',
+            'platform_messages', 'email_campaign_logs', 'email_campaigns',
+            'platform_activities', 'feature_usage_logs', 'admin_audit_logs',
+            'tenant_notes', 'platform_settings', 'impersonation_tokens',
+        ];
+
+        foreach ($tables as $table) {
+            try {
+                $db->table($table)->truncate();
+            } catch (\Throwable) {
+                // Table may not exist yet
+            }
+        }
+    }
+
     // ──────────────────────────────────────────────
     // 1. Tenants
     // ──────────────────────────────────────────────
     private function seedTenants($db): void
     {
         $now = now();
+
+        // Clear existing demo tenants + domains
+        $demoIds = ['sweet-surrender', 'rolling-pin', 'flour-and-fancy', 'cake-boss', 'sugar-rush'];
+        $db->table('domains')->whereIn('tenant_id', $demoIds)->delete();
+        $db->table('tenants')->whereIn('id', $demoIds)->delete();
 
         $db->table('tenants')->insert([
             [
