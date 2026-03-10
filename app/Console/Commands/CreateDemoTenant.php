@@ -23,6 +23,13 @@ class CreateDemoTenant extends Command
                 $this->info('Deleting existing demo tenant...');
                 $existing->delete();
             }
+
+            // Fallback: remove SQLite tenant DB file if it still exists
+            $dbFile = database_path("tenant{$subdomain}.sqlite");
+            if (file_exists($dbFile)) {
+                unlink($dbFile);
+                $this->info('Removed leftover database file.');
+            }
         }
 
         if (Tenant::find($subdomain)) {
