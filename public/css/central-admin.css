@@ -145,6 +145,18 @@
     color: var(--platform-400) !important;
 }
 
+/* ===== WELCOME BANNER FULL WIDTH ===== */
+/* The banner widget's Livewire wrapper must span all grid columns */
+.fi-page-dashboard [col-span-full],
+.fi-page-dashboard [style*="grid-column: span full"],
+.fi-page-dashboard .fi-wi:has([style*="linear-gradient"]) {
+    grid-column: 1 / -1 !important;
+}
+/* Fallback: any widget wrapper whose content has the banner gradient */
+[wire\:id]:has(> div > [style*="linear-gradient(135deg, #1c1410"]) {
+    grid-column: 1 / -1 !important;
+}
+
 /* ===== STATS WIDGETS ===== */
 /* Remove the outer container/card wrapper from stat groups */
 .fi-wi-stats-overview {
