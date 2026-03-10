@@ -80,7 +80,7 @@
                 <div class="lg:col-span-3 space-y-10">
                     {{-- Card Preview --}}
                     <div>
-                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4" style="color: var(--warm-500);">Preview</p>
+                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4" style="color: var(--warm-500);">{{ $content['preview_label'] ?? 'Preview' }}</p>
                         <div class="rounded-2xl p-10 shadow-xl relative overflow-hidden aspect-[16/9] flex flex-col justify-between" style="background: linear-gradient(135deg, var(--warm-900) 0%, var(--warm-800) 100%);">
                             <div class="absolute top-0 right-0 w-60 h-60 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(30%, -30%);"></div>
                             <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(-30%, 30%);"></div>
@@ -96,7 +96,7 @@
 
                     {{-- Amount Selection --}}
                     <div>
-                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4" style="color: var(--warm-500);">Select Amount</p>
+                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4" style="color: var(--warm-500);">{{ $content['amount_label'] ?? 'Select Amount' }}</p>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
                             <template x-for="preset in [10, 25, 50, 100]" :key="preset">
                                 <button type="button"
@@ -123,7 +123,7 @@
 
                     {{-- Check Balance --}}
                     <div class="rounded-2xl p-8" style="background: white; border: 1px solid var(--warm-200);">
-                        <h3 class="font-display text-xl font-semibold mb-4" style="color: var(--warm-900);">Check Gift Card Balance</h3>
+                        <h3 class="font-display text-xl font-semibold mb-4" style="color: var(--warm-900);">{{ $content['balance_heading'] ?? 'Check Gift Card Balance' }}</h3>
                         <form @submit.prevent="checkBalance()" class="flex flex-col sm:flex-row gap-3">
                             <input type="text" x-model="balanceCode" required
                                    placeholder="XXXX-XXXX-XXXX-XXXX"
@@ -153,8 +153,8 @@
                 {{-- Right: Purchase Form (2 cols) --}}
                 <div class="lg:col-span-2">
                     <div class="rounded-2xl p-8 sticky top-8" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08);">
-                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-1" style="color: var(--warm-500);">Details</p>
-                        <h2 class="font-display text-2xl font-bold mb-6" style="color: var(--warm-900);">Send Your Gift</h2>
+                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-1" style="color: var(--warm-500);">{{ $content['details_eyebrow'] ?? 'Details' }}</p>
+                        <h2 class="font-display text-2xl font-bold mb-6" style="color: var(--warm-900);">{{ $content['details_heading'] ?? 'Send Your Gift' }}</h2>
 
                         <form @submit.prevent="purchase()" class="space-y-5">
                             <div>
@@ -167,7 +167,7 @@
                             </div>
 
                             <div class="pt-4" style="border-top: 1px solid var(--warm-200);">
-                                <p class="font-script text-lg mb-3" style="color: var(--warm-500);">Recipient Info</p>
+                                <p class="font-script text-lg mb-3" style="color: var(--warm-500);">{{ $content['recipient_label'] ?? 'Recipient Info' }}</p>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold mb-1" style="color: var(--warm-700);">Recipient Name</label>
