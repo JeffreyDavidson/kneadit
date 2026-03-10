@@ -76,7 +76,8 @@
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20" style="min-height: 55vh;">
         <div class="menu-fade-1 flex items-center gap-3 mb-6">
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ str_replace('{{store_name}}', $storeName, $content['hero_eyebrow'] ?? $storeName) }}</span>
+            @php $heroEyebrow = str_replace('{{store_name}}', $storeName, $content['hero_eyebrow'] ?? $storeName); @endphp
+            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $heroEyebrow }}</span>
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="menu-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4" style="color: var(--warm-100);">
@@ -213,7 +214,8 @@
             {{ $content['cta_heading'] ?? 'Let\'s get baking.' }}
         </h2>
         <p class="text-lg mb-10" style="color: var(--warm-400);">
-            {{ str_replace('{{lead_time}}', \App\Models\Setting::get('order_lead_time_hours', '24'), $content['cta_description'] ?? 'All orders need ' . \App\Models\Setting::get('order_lead_time_hours', '24') . ' hours notice. Place yours now.') }}
+            @php $ctaDesc = str_replace('{{lead_time}}', \App\Models\Setting::get('order_lead_time_hours', '24'), $content['cta_description'] ?? 'All orders need ' . \App\Models\Setting::get('order_lead_time_hours', '24') . ' hours notice. Place yours now.'); @endphp
+            {{ $ctaDesc }}
         </p>
         <a href="{{ route('order.create') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
             {{ $content['cta_button'] ?? 'Place an Order' }}
