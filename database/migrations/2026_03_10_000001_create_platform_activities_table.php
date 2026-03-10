@@ -6,9 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected $connection = 'central';
+
     public function up(): void
     {
-        Schema::create('platform_activities', function (Blueprint $table) {
+        Schema::connection('central')->create('platform_activities', function (Blueprint $table) {
             $table->id();
             $table->string('event'); // tenant_created, tenant_deactivated, plan_changed, storefront_toggled, trial_expired
             $table->string('tenant_id')->nullable();
@@ -20,6 +22,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('platform_activities');
+        Schema::connection('central')->dropIfExists('platform_activities');
     }
 };
