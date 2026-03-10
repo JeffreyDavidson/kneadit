@@ -10,16 +10,27 @@ class ImpersonateController extends Controller
 {
     public function login(Request $request, Tenant $tenant)
     {
-        tenancy()->initialize($tenant);
+        try {
+            tenancy()->initialize($tenant);
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Could not connect to tenant database: ' . $e->getMessage());
+        }
 
-        $user = $tenant->users()->first();
+        $user = \App\Models\User::first();
 
         if (! $user) {
-            abort(404, 'No users found for this tenant.');
+            tenancy()->end();
+            return redirect()->back()->with('error', 'No users found for this tenant.');
         }
 
         Auth::login($user);
 
-        return redirect()->to('https://' . $tenant->id . '.getkneadit.app/admin');
+        $domain = $tenant->domains()->first()?->domain ?? $tenant->id;
+        $host = app()->environment('local')
+            ? $domain . '.kneadit.test'
+            : $domain . '.getkneadit.app';
+        $scheme = app()->environment('local') ? 'http' : 'https';
+
+        return redirect()->to("{$scheme}://{$host}/admin");
     }
 }
