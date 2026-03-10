@@ -14,6 +14,10 @@ class ExportController extends Controller
 
     public function export(Request $request, string $tenantId, string $type): StreamedResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
     {
+        if (! auth()->check()) {
+            abort(403, 'Unauthorized.');
+        }
+
         if (! in_array($type, self::VALID_TYPES)) {
             abort(404, 'Invalid export type.');
         }

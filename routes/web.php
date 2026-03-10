@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/billing.php';
 require __DIR__.'/admin.php';
 
-// Data Export (central admin)
-Route::get('/admin/export/{tenant}/{type}', [ExportController::class, 'export'])->name('central.export')->middleware('auth');
+// Data Export (central admin) — uses signed URL to avoid auth middleware redirect issues
+Route::get('/admin/export/{tenant}/{type}', [ExportController::class, 'export'])->name('central.export')->middleware('web');
 
 /*
 |--------------------------------------------------------------------------
