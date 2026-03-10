@@ -136,11 +136,11 @@
         <div class="rounded-2xl p-12 text-center relative overflow-hidden" style="background: var(--warm-900);">
             <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
             <div class="relative z-10">
-                <p class="font-script text-2xl mb-6" style="color: var(--warm-500);">What our clients say</p>
+                <p class="font-script text-2xl mb-6" style="color: var(--warm-500);">{{ $content['testimonial_script'] ?? 'What our clients say' }}</p>
                 <p class="text-xl italic leading-relaxed mb-6" style="color: var(--warm-200);">
-                    "The dessert spread at our wedding was absolutely stunning. Every guest raved about the pastries and the cake was a masterpiece. We couldn't have asked for a better experience!"
+                    "{{ $content['testimonial_quote'] ?? 'The dessert spread at our wedding was absolutely stunning. Every guest raved about the pastries and the cake was a masterpiece. We couldn\'t have asked for a better experience!' }}"
                 </p>
-                <p class="font-display font-semibold" style="color: var(--warm-500);">— A Happy Couple</p>
+                <p class="font-display font-semibold" style="color: var(--warm-500);">— {{ $content['testimonial_attribution'] ?? 'A Happy Couple' }}</p>
             </div>
         </div>
     </div>
@@ -150,8 +150,8 @@
 <section id="inquiry-form" class="py-20 px-4" style="background: var(--warm-50);">
     <div class="max-w-3xl mx-auto">
         <div class="text-center mb-10">
-            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">Ready to get started?</p>
-            <h2 class="font-display text-3xl md:text-4xl font-bold mb-3" style="color: var(--warm-900);">Request a Quote</h2>
+            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">{{ $content['form_eyebrow'] ?? 'Ready to get started?' }}</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold mb-3" style="color: var(--warm-900);">{{ $content['form_heading'] ?? 'Request a Quote' }}</h2>
             <p style="color: var(--warm-600);">Minimum {{ $minimumGuests }} guests · Please allow at least {{ $leadTimeDays }} days lead time</p>
         </div>
 

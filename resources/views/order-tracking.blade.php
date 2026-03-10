@@ -92,10 +92,10 @@
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="track-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6" style="color: var(--warm-100);">
-            Track Your Order
+            {{ $content['hero_title'] ?? 'Track Your Order' }}
         </h1>
         <p class="track-fade-2 text-lg max-w-lg mx-auto" style="color: var(--warm-400);">
-            Enter your email to see how your order is coming along.
+            {{ $content['hero_subtitle'] ?? 'Enter your email to see how your order is coming along.' }}
         </p>
     </div>
 </section>
@@ -105,12 +105,12 @@
     <div class="max-w-xl mx-auto px-4">
         <form method="POST" action="{{ route('order.track.lookup') }}" class="track-fade-3">
             @csrf
-            <label for="email" class="block text-xs font-medium uppercase tracking-[0.2em] mb-3 text-center" style="color: var(--warm-500);">Email Address</label>
+            <label for="email" class="block text-xs font-medium uppercase tracking-[0.2em] mb-3 text-center" style="color: var(--warm-500);">{{ $content['email_label'] ?? 'Email Address' }}</label>
             <div class="flex gap-3">
                 <input type="email" name="email" id="email" class="track-input flex-1"
                        placeholder="you@example.com" value="{{ old('email', $email ?? '') }}" required>
                 <button type="submit" class="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl flex-shrink-0" style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
-                    Look Up
+                    {{ $content['lookup_button'] ?? 'Look Up' }}
                 </button>
             </div>
             @error('email')
@@ -132,11 +132,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
             </div>
-            <p class="font-display text-3xl md:text-4xl font-bold mb-4" style="color: var(--warm-100);">No orders found</p>
+            <p class="font-display text-3xl md:text-4xl font-bold mb-4" style="color: var(--warm-100);">{{ $content['empty_heading'] ?? 'No orders found' }}</p>
             <p class="text-lg mb-2" style="color: var(--warm-400);">
-                We couldn't find any orders for <strong style="color: var(--warm-300);">{{ $email }}</strong>.
+                {{ $content['empty_description_prefix'] ?? 'We couldn\'t find any orders for' }} <strong style="color: var(--warm-300);">{{ $email }}</strong>.
             </p>
-            <p class="text-sm" style="color: var(--warm-600);">Make sure you're using the same email you ordered with.</p>
+            <p class="text-sm" style="color: var(--warm-600);">{{ $content['empty_hint'] ?? 'Make sure you\'re using the same email you ordered with.' }}</p>
         </div>
     </section>
     @else
@@ -252,7 +252,7 @@
                             <div class="pt-6" style="border-top: 1px solid rgba(139,104,68,0.15);">
                                 <div class="flex items-center gap-3 mb-4">
                                     <span class="block w-6 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                                    <span class="text-xs uppercase tracking-[0.2em] font-semibold" style="color: var(--warm-500);">Items Ordered</span>
+                                    <span class="text-xs uppercase tracking-[0.2em] font-semibold" style="color: var(--warm-500);">{{ $content['items_label'] ?? 'Items Ordered' }}</span>
                                 </div>
                                 <div class="space-y-3">
                                     @foreach($order->orderItems as $item)
@@ -271,7 +271,7 @@
                             <div class="pt-6" style="border-top: 1px solid rgba(139,104,68,0.15);">
                                 <div class="flex items-center gap-3 mb-4">
                                     <span class="block w-6 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                                    <span class="text-xs uppercase tracking-[0.2em] font-semibold" style="color: var(--warm-500);">Messages</span>
+                                    <span class="text-xs uppercase tracking-[0.2em] font-semibold" style="color: var(--warm-500);">{{ $content['messages_label'] ?? 'Messages' }}</span>
                                 </div>
                                 <div id="messages-{{ $order->id }}" class="space-y-3 mb-4 max-h-64 overflow-y-auto rounded-xl p-4" style="background: rgba(139,104,68,0.06);">
                                     <p class="text-sm italic" style="color: var(--warm-600);">Loading messages...</p>
@@ -292,7 +292,7 @@
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                     </svg>
-                                    Order Again
+                                    {{ $content['reorder_button'] ?? 'Order Again' }}
                                 </a>
                             </div>
                         </div>
@@ -310,12 +310,12 @@
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
     <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 50%, rgba(212,146,12,0.08), transparent 60%);"></div>
     <div class="relative z-10 text-center max-w-2xl mx-auto px-4">
-        <p class="font-script text-2xl mb-4" style="color: var(--warm-500);">Ready to order?</p>
+        <p class="font-script text-2xl mb-4" style="color: var(--warm-500);">{{ $content['cta_script'] ?? 'Ready to order?' }}</p>
         <h2 class="font-display text-3xl md:text-5xl font-bold mb-8" style="color: var(--warm-100);">
-            Start your first order today.
+            {{ $content['cta_heading'] ?? 'Start your first order today.' }}
         </h2>
         <a href="{{ route('order.create') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
-            Order Now
+            {{ $content['cta_button'] ?? 'Order Now' }}
         </a>
     </div>
 </section>
