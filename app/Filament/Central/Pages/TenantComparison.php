@@ -33,7 +33,10 @@ class TenantComparison extends Page
 
     public function getAllTenants(): array
     {
-        return Tenant::orderBy('name')->pluck('name', 'id')->toArray();
+        return Tenant::orderBy('store_name')
+            ->get()
+            ->mapWithKeys(fn ($t) => [$t->id => $t->store_name ?: $t->name])
+            ->toArray();
     }
 
     public function getComparisonData(): array

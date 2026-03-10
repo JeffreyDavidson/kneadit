@@ -32,7 +32,7 @@ class ComposeMessage extends Page
         return $form->schema([
             Select::make('tenant_id')
                 ->label('Bakery')
-                ->options(fn () => Tenant::pluck('name', 'id')->toArray())
+                ->options(fn () => Tenant::get()->mapWithKeys(fn ($t) => [$t->id => $t->store_name ?: $t->name])->toArray())
                 ->searchable()
                 ->required(),
             TextInput::make('subject')
