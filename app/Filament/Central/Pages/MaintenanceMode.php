@@ -104,7 +104,7 @@ class MaintenanceMode extends Page
                     ]),
 
                 Actions::make([
-                    Actions\Action::make('save')
+                    Action::make('save')
                         ->label('Save Settings')
                         ->action('save')
                         ->icon('heroicon-o-check')
