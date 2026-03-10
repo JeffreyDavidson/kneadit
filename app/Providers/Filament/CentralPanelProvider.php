@@ -34,6 +34,8 @@ class CentralPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
             ])
             ->brandName('KneadIt Platform')
+            ->brandLogo(view('filament.central.brand-logo'))
+            ->brandLogoHeight('50px')
             ->darkMode(true)
             ->navigationGroups([
                 \Filament\Navigation\NavigationGroup::make('Platform'),
@@ -41,11 +43,7 @@ class CentralPanelProvider extends PanelProvider
             ])
             ->font('Inter')
             ->renderHook('panels::head.end', fn () => new HtmlString(
-                '<style>'
-                .'.fi-sidebar { background: #1a1a2e !important; }'
-                .'.fi-sidebar-item-label { color: #e2e8f0 !important; }'
-                .'.fi-sidebar-group-label { color: #94a3b8 !important; }'
-                .'</style>'
+                '<link rel="stylesheet" href="'.asset('css/central-admin.css').'?v='.time().'">'
             ))
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\Filament\Central\Resources')
             ->discoverPages(in: app_path('Filament/Central/Pages'), for: 'App\Filament\Central\Pages')
