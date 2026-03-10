@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Widgets;
 
-use App\Filament\Central\Pages\TenantHealth;
+use App\Filament\Central\Pages\BakeryInsights;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -12,8 +12,8 @@ class HealthOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $healthPage = new TenantHealth();
-        $stats = $healthPage->getSummaryStats();
+        $healthPage = new BakeryInsights();
+        $stats = $healthPage->getHealthSummaryStats();
 
         return [
             Stat::make('Healthy', $stats['healthy'])

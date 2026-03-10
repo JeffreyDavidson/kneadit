@@ -17,9 +17,11 @@ class TenantComparison extends Page
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $title = 'Tenant Comparison';
+    protected static ?string $title = 'Bakery Comparison';
 
     protected string $view = 'filament.central.pages.tenant-comparison';
+
+    public string $activeTab = 'compare';
 
     public array $selectedTenants = [];
 
@@ -62,7 +64,6 @@ class TenantComparison extends Page
                 'setup_completed' => 0,
             ];
 
-            // Setup checks (central DB)
             $setupChecks = [
                 !empty($tenant->store_name),
                 !empty($tenant->store_logo),
@@ -104,7 +105,6 @@ class TenantComparison extends Page
     {
         $score = 0;
 
-        // Login recency (up to 30 points)
         if ($tenant->last_login_at) {
             $daysSinceLogin = Carbon::parse($tenant->last_login_at)->diffInDays(now());
             if ($daysSinceLogin < 1) $score += 30;
@@ -113,21 +113,74 @@ class TenantComparison extends Page
             elseif ($daysSinceLogin < 30) $score += 5;
         }
 
-        // Orders (up to 30 points)
         if ($data['total_orders'] >= 50) $score += 30;
         elseif ($data['total_orders'] >= 20) $score += 20;
         elseif ($data['total_orders'] >= 5) $score += 10;
         elseif ($data['total_orders'] > 0) $score += 5;
 
-        // Products (up to 20 points)
         if ($data['total_products'] >= 20) $score += 20;
         elseif ($data['total_products'] >= 10) $score += 15;
         elseif ($data['total_products'] >= 3) $score += 10;
         elseif ($data['total_products'] > 0) $score += 5;
 
-        // Setup completion (up to 20 points)
         $score += (int) round(($data['setup_completed'] / 7) * 20);
 
         return min($score, 100);
+    }
+
+    // ── Revenue Leaderboard Methods ──
+
+    public function getLeaderboardData(): array
+    {
+        $tenants = Tenant::all();
+        $results = [];
+
+        foreach ($tenants as $tenant) {
+            $data = [
+                'id' => $tenant->id,
+                'name' => $tenant->store_name ?? $tenant->name,
+                'owner' => $tenant->name,
+                'email' => $tenant->email,
+                'plan' => $tenant->plan ?? 'free',
+                'total_orders' => 0,
+                'month_orders' => 0,
+                'total_products' => 0,
+                'avg_review' => 0,
+            ];
+
+            try {
+                tenancy()->initialize($tenant);
+
+                $data['total_orders'] = DB::table('orders')->count();
+                $data['month_orders'] = DB::table('orders')
+                    ->where('created_at', '>=', now()->startOfMonth())
+                    ->count();
+                $data['total_products'] = DB::table('products')->count();
+                $data['avg_review'] = round((float) DB::table('reviews')->avg('rating'), 1);
+
+                tenancy()->end();
+            } catch (\Throwable $e) {
+                tenancy()->end();
+            }
+
+            $results[] = $data;
+        }
+
+        usort($results, fn ($a, $b) => $b['total_orders'] <=> $a['total_orders']);
+
+        return $results;
+    }
+
+    public function getLeaderboardSummaryStats(): array
+    {
+        $data = $this->getLeaderboardData();
+        $totalOrders = array_sum(array_column($data, 'total_orders'));
+        $count = count($data);
+
+        return [
+            'total_orders' => $totalOrders,
+            'avg_orders' => $count > 0 ? round($totalOrders / $count, 1) : 0,
+            'total_bakeries' => $count,
+        ];
     }
 }
