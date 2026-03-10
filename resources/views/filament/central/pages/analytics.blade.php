@@ -39,7 +39,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        function initAnalyticsCharts() {
             const gold = '#d4920c';
             const lightGold = '#e8b04a';
             const brown = '#8b6844';
@@ -48,8 +48,17 @@
             Chart.defaults.color = '#faf0d6';
             Chart.defaults.borderColor = 'rgba(212,146,12,0.12)';
 
+            // Destroy existing charts to prevent duplicates
+            Chart.helpers.each(Chart.instances, (instance) => instance.destroy());
+
+            const signupsEl = document.getElementById('signupsChart');
+            const planEl = document.getElementById('planChart');
+            const growthEl = document.getElementById('growthChart');
+
+            if (!signupsEl || !planEl || !growthEl) return;
+
             const signups = @json($this->getSignupsByMonth());
-            new Chart(document.getElementById('signupsChart'), {
+            new Chart(signupsEl, {
                 type: 'bar',
                 data: {
                     labels: signups.map(s => s.label),
@@ -66,7 +75,7 @@
             const plans = @json($this->getPlanDistribution());
             const planLabels = Object.keys(plans);
             const planColors = [gold, lightGold, brown, darkBrown, paleGold];
-            new Chart(document.getElementById('planChart'), {
+            new Chart(planEl, {
                 type: 'doughnut',
                 data: {
                     labels: planLabels.map(l => l.charAt(0).toUpperCase() + l.slice(1)),
@@ -80,7 +89,7 @@
             });
 
             const growth = @json($this->getMonthlyGrowth());
-            new Chart(document.getElementById('growthChart'), {
+            new Chart(growthEl, {
                 type: 'line',
                 data: {
                     labels: growth.map(g => g.label),
@@ -96,6 +105,10 @@
                 },
                 options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => v + '%' } } } }
             });
-        });
+        }
+
+        // Init on first load and SPA navigation
+        document.addEventListener('DOMContentLoaded', initAnalyticsCharts);
+        document.addEventListener('livewire:navigated', initAnalyticsCharts);
     </script>
 </x-filament-panels::page>
