@@ -45,6 +45,7 @@ class TenantSeeder extends Seeder
             ReviewSeeder::class,
             WaitlistEntrySeeder::class,
             BusinessScheduleSeeder::class,
+            BlogPostSeeder::class,
         ]);
     }
 }
