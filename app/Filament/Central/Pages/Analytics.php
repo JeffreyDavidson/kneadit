@@ -5,13 +5,15 @@ namespace App\Filament\Central\Pages;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Filament\Pages\Page;
+use BackedEnum;
+use UnitEnum;
 use Illuminate\Support\Facades\DB;
 
 class Analytics extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar-square';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
 
-    protected static ?string $navigationGroup = 'Platform';
+    protected static string|NITENUM|NULL $NAVIGATIONGROUP = 'Platform';
 
     protected static ?int $navigationSort = 2;
 
