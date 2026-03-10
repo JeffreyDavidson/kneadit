@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create Your Account | KneadIt</title>
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/images/logo-icon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -40,7 +40,7 @@ a:hover{color:var(--golden)}
 </head>
 <body>
 <div class="auth-container">
-    <div class="auth-brand"><a href="/"><img src="/images/logo.png" alt="KneadIt" style="height:3rem;width:auto"></a></div>
+    <div class="auth-brand"><a href="/" style="display:inline-flex;align-items:center;gap:.5rem"><img src="/images/logo-icon.png" alt="" style="height:2.25rem;width:auto"><span style="font-family:var(--font-sans);font-size:1.5rem;font-weight:700;color:var(--honey)">KneadIt</span></a></div>
     <div class="auth-card">
         <h1>Start your bakery journey</h1>
         <p class="subtitle">Create your account and get baking in minutes.</p>
@@ -82,7 +82,7 @@ a:hover{color:var(--golden)}
         </form>
 
         <div class="auth-footer">
-            Already have an account? <a href="/login">Sign in</a>
+            Already have an account? Log in at your bakery's subdomain.
         </div>
     </div>
 </div>
