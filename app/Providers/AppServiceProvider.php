@@ -38,16 +38,17 @@ class AppServiceProvider extends ServiceProvider
         // Debug: log auth attempts on tenant subdomains
         \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Failed::class, function ($event) {
             $manualCheck = $event->user ? \Hash::check($event->credentials['password'] ?? '', $event->user->password) : false;
+            $panel = \Filament\Facades\Filament::getCurrentOrDefaultPanel();
             \Log::warning('AUTH FAILED', [
                 'tenant' => tenant()?->id,
                 'guard' => $event->guard,
                 'email' => $event->credentials['email'] ?? 'n/a',
                 'db' => \DB::connection()->getDatabaseName(),
                 'user_found' => $event->user ? 'yes' : 'no',
-                'user_class' => $event->user ? get_class($event->user) : 'n/a',
                 'manual_hash_check' => $manualCheck ? 'PASS' : 'FAIL',
-                'hash_prefix' => $event->user ? substr($event->user->password, 0, 10) : 'n/a',
-                'password_length' => strlen($event->credentials['password'] ?? ''),
+                'panel_id' => $panel?->getId(),
+                'user_role' => $event->user?->role ?? 'n/a',
+                'canAccessPanel' => ($event->user && $panel) ? ($event->user->canAccessPanel($panel) ? 'YES' : 'NO') : 'n/a',
             ]);
         });
 
