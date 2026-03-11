@@ -72,7 +72,9 @@ class OnboardingController extends Controller
         });
 
         // Redirect to their new admin panel
-        $tenantUrl = 'http://'.$subdomain.'.'.config('tenancy.central_domains.0', 'getkneadit.app').'/admin';
+        $scheme = $request->secure() ? 'https' : 'http';
+        $host = $request->getHost();
+        $tenantUrl = "{$scheme}://{$subdomain}.{$host}/admin";
 
         return redirect()->away($tenantUrl);
     }
