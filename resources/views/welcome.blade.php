@@ -865,8 +865,8 @@ Your bakery.<br>
 <div class="footer-tagline">Business management for cottage food bakers</div>
 <!-- social removed -->
 <div class="footer-links">
-<a href="#">Privacy</a>
-<a href="#">Terms</a>
+<a href="/privacy">Privacy</a>
+<a href="/terms">Terms</a>
 <a href="#contact">Contact</a>
 </div>
 <div class="footer-made">© 2026 KneadIt · Created by Infinity Digital</div>
