@@ -34,31 +34,5 @@ class AppServiceProvider extends ServiceProvider
         Livewire::addPersistentMiddleware([
             InitializeTenancyByDomainOrSubdomain::class,
         ]);
-
-        // Debug: log auth attempts on tenant subdomains
-        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Failed::class, function ($event) {
-            $manualCheck = $event->user ? \Hash::check($event->credentials['password'] ?? '', $event->user->password) : false;
-            $panel = \Filament\Facades\Filament::getCurrentOrDefaultPanel();
-            \Log::warning('AUTH FAILED', [
-                'tenant' => tenant()?->id,
-                'guard' => $event->guard,
-                'email' => $event->credentials['email'] ?? 'n/a',
-                'db' => \DB::connection()->getDatabaseName(),
-                'user_found' => $event->user ? 'yes' : 'no',
-                'manual_hash_check' => $manualCheck ? 'PASS' : 'FAIL',
-                'panel_id' => $panel?->getId(),
-                'user_role' => $event->user?->role ?? 'n/a',
-                'canAccessPanel' => ($event->user && $panel) ? ($event->user->canAccessPanel($panel) ? 'YES' : 'NO') : 'n/a',
-            ]);
-        });
-
-        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Attempting::class, function ($event) {
-            \Log::info('AUTH ATTEMPTING', [
-                'tenant' => tenant()?->id,
-                'guard' => $event->guard,
-                'email' => $event->credentials['email'] ?? 'n/a',
-                'db' => \DB::connection()->getDatabaseName(),
-            ]);
-        });
     }
 }
