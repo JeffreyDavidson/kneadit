@@ -463,11 +463,13 @@ class Onboarding extends Page
                                 Radio::make('payment_method')
                                     ->label('Payment Method')
                                     ->options([
+                                        'stripe' => 'Stripe — Accept credit cards, Apple Pay, Google Pay',
                                         'paypal' => 'PayPal — Accept payments through PayPal Business',
                                         'cash' => 'Cash / Manual — Collect payment in person (cash, Venmo, Zelle, etc.)',
                                         'none' => 'No payment collection — I just need order management',
                                     ])
                                     ->descriptions([
+                                        'stripe' => 'Recommended. Connect your Stripe account in one click. Customers pay with cards, Apple Pay, and more.',
                                         'paypal' => 'Invoices are sent automatically when orders are placed. Requires a PayPal Business account.',
                                         'cash' => 'You handle payment collection outside the platform. Orders are tracked but no invoices are sent.',
                                         'none' => 'Customers place orders and you manage fulfillment. No payment tracking.',
@@ -475,6 +477,13 @@ class Onboarding extends Page
                                     ->required()
                                     ->live()
                                     ->columnSpanFull(),
+
+                                Section::make('Stripe Connection')
+                                    ->description('Connect your Stripe account to accept credit card payments.')
+                                    ->schema([
+                                        \Filament\Schemas\Components\View::make('filament.pages.stripe-connect-status'),
+                                    ])
+                                    ->visible(fn (Get $get) => $get('payment_method') === 'stripe'),
 
                                 Section::make('PayPal Connection')
                                     ->description('Connect your PayPal Business account.')
@@ -662,6 +671,9 @@ class Onboarding extends Page
                 $tenant->save();
             }
         }
+
+        // Stripe Connect account is created during the OAuth flow,
+        // so nothing to save here — the connect ID is already stored.
     }
 
     public function completeOnboarding(): void

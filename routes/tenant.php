@@ -41,6 +41,11 @@ Route::middleware([
     Route::get('/impersonate/{token}', [\App\Http\Controllers\ImpersonateController::class, 'consume'])
         ->name('impersonate.consume');
 
+    // Stripe Connect OAuth
+    Route::get('/stripe/connect', [\App\Http\Controllers\StripeConnectController::class, 'redirect'])
+        ->middleware('auth')
+        ->name('stripe.connect');
+
     // Hero lookbook (temporary — design review)
     Route::get('/hero-lookbook', fn () => view('hero-lookbook'))->name('hero.lookbook');
 
