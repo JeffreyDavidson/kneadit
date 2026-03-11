@@ -559,14 +559,18 @@ class Onboarding extends Page
 
     protected function saveProductStep(): void
     {
-        Product::create([
-            'name' => $this->product_name,
-            'slug' => Str::slug($this->product_name),
-            'description' => $this->product_description,
-            'price' => $this->product_price,
-            'category_id' => $this->product_category_id,
-            'is_active' => true,
-        ]);
+        $slug = Str::slug($this->product_name);
+
+        Product::updateOrCreate(
+            ['slug' => $slug],
+            [
+                'name' => $this->product_name,
+                'description' => $this->product_description,
+                'price' => $this->product_price,
+                'category_id' => $this->product_category_id,
+                'is_active' => true,
+            ]
+        );
     }
 
     protected function saveBusinessHoursStep(): void
