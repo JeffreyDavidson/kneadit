@@ -49,7 +49,7 @@ class OnboardingController extends Controller
 
         // Add the subdomain
         $tenant->domains()->create([
-            'domain' => $subdomain.'.'.config('tenancy.central_domains.0', 'getkneadit.app'),
+            'domain' => $subdomain.'.'.$request->getHost(),
         ]);
 
         // Create the tenant's database and run migrations
