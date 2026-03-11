@@ -34,5 +34,25 @@ class AppServiceProvider extends ServiceProvider
         Livewire::addPersistentMiddleware([
             InitializeTenancyByDomainOrSubdomain::class,
         ]);
+
+        // Debug: log auth attempts on tenant subdomains
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Failed::class, function ($event) {
+            \Log::warning('AUTH FAILED', [
+                'tenant' => tenant()?->id,
+                'guard' => $event->guard,
+                'email' => $event->credentials['email'] ?? 'n/a',
+                'db' => \DB::connection()->getDatabaseName(),
+                'user_found' => $event->user ? 'yes' : 'no',
+            ]);
+        });
+
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Attempting::class, function ($event) {
+            \Log::info('AUTH ATTEMPTING', [
+                'tenant' => tenant()?->id,
+                'guard' => $event->guard,
+                'email' => $event->credentials['email'] ?? 'n/a',
+                'db' => \DB::connection()->getDatabaseName(),
+            ]);
+        });
     }
 }
