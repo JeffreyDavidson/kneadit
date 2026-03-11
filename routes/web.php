@@ -35,6 +35,10 @@ Route::get('/impersonate/{tenant}', [\App\Http\Controllers\ImpersonateController
 // Referral tracking
 Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');
 
+// Legal pages
+Route::get('/terms', fn () => view('legal.terms'))->name('terms');
+Route::get('/privacy', fn () => view('legal.privacy'))->name('privacy');
+
 // Root route — serves landing page on central domains, storefront on tenant subdomains
 Route::get('/', [\App\Http\Controllers\RootController::class, 'index'])->name('home');
 
