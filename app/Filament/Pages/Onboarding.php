@@ -115,7 +115,7 @@ class Onboarding extends Page
     // Step 6: Cottage Food Compliance
     public ?string $cottage_food_state = '';
 
-    public ?string $revenue_cap = '250000';
+    public ?string $revenue_cap = '';
 
     public ?string $license_number = '';
 
@@ -172,8 +172,8 @@ class Onboarding extends Page
         $this->contact_phone = Setting::get('store_phone', '');
         $this->contact_address = Setting::get('store_address', '');
 
-        // Pre-fill allergy disclaimer
-        $this->allergy_disclaimer = Setting::get('allergy_disclaimer', 'Please be aware that our bakery uses wheat, eggs, dairy, nuts, and soy in our kitchen. While we take precautions to prevent cross-contamination, we cannot guarantee that any item is completely free from allergens. Please inform us of any allergies when placing your order.');
+        // Load existing allergy disclaimer if set, otherwise leave blank
+        $this->allergy_disclaimer = Setting::get('allergy_disclaimer', '');
 
         // Pre-fill operating hours from settings if available
         $existingHours = Setting::get('operating_hours');
