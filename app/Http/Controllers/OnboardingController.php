@@ -49,7 +49,7 @@ class OnboardingController extends Controller
 
         // Add the subdomain
         $tenant->domains()->create([
-            'domain' => $subdomain.'.'.$request->getHost(),
+            'domain' => $subdomain,
         ]);
 
         // Create the tenant's database and run migrations
