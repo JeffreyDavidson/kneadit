@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class OnboardingController extends Controller
@@ -70,6 +71,11 @@ class OnboardingController extends Controller
                 \App\Models\Setting::set('external_website', $validated['external_website']);
             }
         });
+
+        // Clear central session — they'll log in fresh on their tenant subdomain
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         // Redirect to their new admin panel
         $scheme = $request->secure() ? 'https' : 'http';
