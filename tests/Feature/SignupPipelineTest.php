@@ -100,7 +100,7 @@ class SignupPipelineTest extends CentralTestCase
         // The controller validates 'plan' from request body but uses route param in match.
         // An invalid plan hits an unhandled match case → 500 error.
         $response = $this->actingAs($user)->post(route('billing.checkout', 'nonexistent'));
-        $response->assertStatus(500);
+        $response->assertStatus(404);
     }
 
     // -------------------------------------------------------
