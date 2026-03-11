@@ -20,6 +20,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Radio;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard;
@@ -141,6 +142,8 @@ class Onboarding extends Page
     public ?string $pickup_instructions = '';
 
     // Step 8: PayPal Connection
+    public ?string $payment_method = 'cash';
+
     public ?string $paypal_client_id = '';
 
     public ?string $paypal_client_secret = '';
@@ -450,33 +453,56 @@ class Onboarding extends Page
                         $this->saveDeliveryStep();
                     }),
 
-                Step::make('PayPal')
+                Step::make('Payments')
                     ->icon('heroicon-o-credit-card')
-                    ->description('Connect payments')
+                    ->description('How you get paid')
                     ->schema([
-                        Section::make('PayPal Connection')
-                            ->description('Connect your PayPal Business account to accept online payments. You can skip this step and set it up later.')
+                        Section::make('Payment Collection')
+                            ->description('Choose how you want to collect payments from customers.')
                             ->schema([
-                                TextInput::make('paypal_client_id')
-                                    ->label('PayPal Client ID')
-                                    ->placeholder('Your PayPal Client ID')
-                                    ->maxLength(255)
-                                    ->helperText('Find this in your PayPal Developer Dashboard under Apps & Credentials.'),
-                                TextInput::make('paypal_client_secret')
-                                    ->label('PayPal Client Secret')
-                                    ->password()
-                                    ->placeholder('Your PayPal Client Secret')
-                                    ->maxLength(255),
-                                Toggle::make('paypal_sandbox')
-                                    ->label('Sandbox Mode (Testing)')
-                                    ->helperText('Enable this to test payments without real money. Disable when you\'re ready to go live.')
-                                    ->default(true),
+                                Radio::make('payment_method')
+                                    ->label('Payment Method')
+                                    ->options([
+                                        'paypal' => 'PayPal — Accept payments through PayPal Business',
+                                        'cash' => 'Cash / Manual — Collect payment in person (cash, Venmo, Zelle, etc.)',
+                                        'none' => 'No payment collection — I just need order management',
+                                    ])
+                                    ->descriptions([
+                                        'paypal' => 'Invoices are sent automatically when orders are placed. Requires a PayPal Business account.',
+                                        'cash' => 'You handle payment collection outside the platform. Orders are tracked but no invoices are sent.',
+                                        'none' => 'Customers place orders and you manage fulfillment. No payment tracking.',
+                                    ])
+                                    ->required()
+                                    ->live()
+                                    ->columnSpanFull(),
+
+                                Section::make('PayPal Connection')
+                                    ->description('Connect your PayPal Business account.')
+                                    ->schema([
+                                        TextInput::make('paypal_client_id')
+                                            ->label('PayPal Client ID')
+                                            ->placeholder('Your PayPal Client ID')
+                                            ->maxLength(255)
+                                            ->helperText('Find this in your PayPal Developer Dashboard under Apps & Credentials.')
+                                            ->required(fn (Get $get) => $get('payment_method') === 'paypal'),
+                                        TextInput::make('paypal_client_secret')
+                                            ->label('PayPal Client Secret')
+                                            ->password()
+                                            ->placeholder('Your PayPal Client Secret')
+                                            ->maxLength(255)
+                                            ->required(fn (Get $get) => $get('payment_method') === 'paypal'),
+                                        Toggle::make('paypal_sandbox')
+                                            ->label('Sandbox Mode (Testing)')
+                                            ->helperText('Enable this to test payments without real money. Disable when you\'re ready to go live.')
+                                            ->default(true),
+                                    ])
+                                    ->visible(fn (Get $get) => $get('payment_method') === 'paypal'),
                             ])
                             ->footerActions([])
                             ->footerActionsAlignment(null),
                     ])
                     ->afterValidation(function () {
-                        $this->savePayPalStep();
+                        $this->savePaymentStep();
                     }),
 
                 Step::make('Preview')
@@ -616,21 +642,25 @@ class Onboarding extends Page
         Setting::set('pickup_instructions', $this->pickup_instructions);
     }
 
-    protected function savePayPalStep(): void
+    protected function savePaymentStep(): void
     {
-        Setting::set('paypal_client_id', $this->paypal_client_id);
-        Setting::set('paypal_client_secret', $this->paypal_client_secret);
-        Setting::set('paypal_sandbox', $this->paypal_sandbox ? '1' : '0');
+        Setting::set('payment_method', $this->payment_method);
 
-        $tenant = tenant();
-        if ($tenant) {
-            if ($this->paypal_client_id) {
-                $tenant->paypal_client_id = $this->paypal_client_id;
+        if ($this->payment_method === 'paypal') {
+            Setting::set('paypal_client_id', $this->paypal_client_id);
+            Setting::set('paypal_client_secret', $this->paypal_client_secret);
+            Setting::set('paypal_sandbox', $this->paypal_sandbox ? '1' : '0');
+
+            $tenant = tenant();
+            if ($tenant) {
+                if ($this->paypal_client_id) {
+                    $tenant->paypal_client_id = $this->paypal_client_id;
+                }
+                if ($this->paypal_client_secret) {
+                    $tenant->paypal_client_secret = $this->paypal_client_secret;
+                }
+                $tenant->save();
             }
-            if ($this->paypal_client_secret) {
-                $tenant->paypal_client_secret = $this->paypal_client_secret;
-            }
-            $tenant->save();
         }
     }
 
