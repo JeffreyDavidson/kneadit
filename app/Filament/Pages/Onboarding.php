@@ -441,6 +441,11 @@ class Onboarding extends Page
                             ]),
                     ])
                     ->afterValidation(function () {
+                        if (! $this->delivery_enabled && ! $this->pickup_enabled) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'pickup_enabled' => 'You must enable at least one option: pickup or delivery.',
+                            ]);
+                        }
                         $this->saveDeliveryStep();
                     }),
 
