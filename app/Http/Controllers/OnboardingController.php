@@ -55,11 +55,14 @@ class OnboardingController extends Controller
         // Create the tenant's database and run migrations
         $tenant->run(function () use ($request, $validated, $useKneadItStorefront) {
             // Create the owner user in the tenant database
-            \App\Models\User::create([
+            // Use query builder to avoid the 'hashed' cast double-hashing the password
+            \Illuminate\Support\Facades\DB::table('users')->insert([
                 'name' => $request->user()->name,
                 'email' => $request->user()->email,
                 'password' => $request->user()->password,
                 'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             // Seed default settings
