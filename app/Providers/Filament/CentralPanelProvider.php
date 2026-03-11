@@ -23,6 +23,7 @@ class CentralPanelProvider extends PanelProvider
         return $panel
             ->id('central')
             ->path('admin')
+            ->domains(config('tenancy.central_domains'))
             ->login()
             ->spa()
             ->maxContentWidth('full')
