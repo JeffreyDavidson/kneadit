@@ -78,4 +78,8 @@ return [
         'growth' => env('STRIPE_PRICE_GROWTH'),
         'pro' => env('STRIPE_PRICE_PRO'),
     ],
+
+    'stripe_connect' => [
+        'client_id' => env('STRIPE_CONNECT_CLIENT_ID'),
+    ],
 ];
