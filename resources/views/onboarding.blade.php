@@ -53,7 +53,7 @@
             @csrf
 
             <label for="store_name">Bakery Name</label>
-            <input type="text" id="store_name" name="store_name" placeholder="e.g. Sweet Dreams Bakery" value="{{ old('store_name') }}" required>
+            <input type="text" id="store_name" name="store_name" placeholder="e.g. Sweet Dreams Bakery" value="{{ old('store_name', $bakeryName) }}" required>
             @error('store_name')<p class="error">{{ $message }}</p>@enderror
             <div class="hint">This is what your customers will see.</div>
 
