@@ -1,104 +1,146 @@
-<div style="background: #fdf8f2; border-radius: 16px; padding: 32px; max-width: 640px; margin: 0 auto; font-family: system-ui, sans-serif;">
-    {{-- Header --}}
-    <div style="text-align: center; margin-bottom: 24px;">
-        @php
-            $logoPath = is_array($page->store_logo) ? collect($page->store_logo)->first() : $page->store_logo;
-        @endphp
-        @if($logoPath)
-            <img src="{{ Storage::url($logoPath) }}" alt="Logo" style="max-height: 80px; margin-bottom: 12px; border-radius: 8px;">
-        @endif
-        <h2 style="color: #3d2314; margin: 0; font-size: 24px;">{{ $page->bakery_name ?: 'Your Bakery' }}</h2>
-        <p style="color: #6b4c3b; margin: 4px 0 0;">{{ $page->owner_name }}</p>
-    </div>
+@php
+    $logoPath = is_array($page->store_logo) ? collect($page->store_logo)->first() : $page->store_logo;
+    $primary = $page->brand_color_primary ?: '#d4920c';
+    $secondary = $page->brand_color_secondary ?: '#8b6844';
+    $days = ['monday' => 'Mon', 'tuesday' => 'Tue', 'wednesday' => 'Wed', 'thursday' => 'Thu', 'friday' => 'Fri', 'saturday' => 'Sat', 'sunday' => 'Sun'];
+    $methods = is_array($page->payment_methods) ? $page->payment_methods : ['cash'];
+@endphp
 
-    {{-- Brand Colors --}}
-    <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-            <span style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background: {{ $page->brand_color_primary }}; border: 2px solid #e8d0b0;"></span>
-            <span style="color: #6b4c3b; font-size: 13px;">Primary</span>
+<div style="max-width: 720px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
+
+    {{-- Storefront Preview Card --}}
+    <div style="background: linear-gradient(135deg, #1c1410 0%, #2a1f18 100%); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+
+        {{-- Hero Banner --}}
+        <div style="background: linear-gradient(135deg, {{ $primary }}22 0%, {{ $secondary }}22 100%); padding: 40px 32px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.06);">
+            @if($logoPath)
+                <img src="{{ Storage::url($logoPath) }}" alt="Logo" style="max-height: 64px; margin-bottom: 16px; border-radius: 8px;">
+            @endif
+            <h2 style="color: #fef9ef; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">{{ $page->bakery_name ?: 'Your Bakery' }}</h2>
+            <p style="color: {{ $primary }}; margin: 6px 0 0; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">{{ $page->owner_name }}</p>
+
+            {{-- Brand Colors --}}
+            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 20px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: {{ $primary }}; border: 2px solid rgba(255,255,255,0.15);"></div>
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: {{ $secondary }}; border: 2px solid rgba(255,255,255,0.15);"></div>
+            </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-            <span style="display: inline-block; width: 24px; height: 24px; border-radius: 50%; background: {{ $page->brand_color_secondary }}; border: 2px solid #e8d0b0;"></span>
-            <span style="color: #6b4c3b; font-size: 13px;">Secondary</span>
-        </div>
-    </div>
 
-    <hr style="border: none; border-top: 1px solid #e8d0b0; margin: 16px 0;">
+        {{-- Content Grid --}}
+        <div style="padding: 28px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
 
-    {{-- Contact Info --}}
-    <div style="margin-bottom: 20px;">
-        <h3 style="color: #3d2314; font-size: 16px; margin: 0 0 8px;">📧 Contact</h3>
-        <div style="color: #6b4c3b; font-size: 14px; line-height: 1.6;">
-            @if($page->contact_email)<div>{{ $page->contact_email }}</div>@endif
-            @if($page->contact_phone)<div>{{ $page->contact_phone }}</div>@endif
-            @if($page->contact_address)<div>{{ $page->contact_address }}</div>@endif
-        </div>
-    </div>
-
-    {{-- Business Hours --}}
-    <div style="margin-bottom: 20px;">
-        <h3 style="color: #3d2314; font-size: 16px; margin: 0 0 8px;">🕐 Business Hours</h3>
-        <div style="color: #6b4c3b; font-size: 14px; line-height: 1.8;">
-            @php
-                $days = ['monday' => 'Mon', 'tuesday' => 'Tue', 'wednesday' => 'Wed', 'thursday' => 'Thu', 'friday' => 'Fri', 'saturday' => 'Sat', 'sunday' => 'Sun'];
-            @endphp
-            @foreach($days as $key => $label)
-                <div style="display: flex; justify-content: space-between; max-width: 300px;">
-                    <span style="font-weight: 600;">{{ $label }}</span>
-                    @if($page->{"hours_{$key}"})
-                        <span>{{ $page->{"hours_{$key}_open"} }} – {{ $page->{"hours_{$key}_close"} }}</span>
-                    @else
-                        <span style="color: #d4a574;">Closed</span>
+            {{-- Contact --}}
+            <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.06);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <svg style="width: 16px; height: 16px; color: {{ $primary }};" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                    <span style="color: #fef9ef; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Contact</span>
+                </div>
+                <div style="color: #d4a574; font-size: 13px; line-height: 1.8;">
+                    @if($page->contact_email)<div>{{ $page->contact_email }}</div>@endif
+                    @if($page->contact_phone)<div>{{ $page->contact_phone }}</div>@endif
+                    @if($page->contact_address)<div style="margin-top: 4px;">{{ $page->contact_address }}</div>@endif
+                    @if(!$page->contact_email && !$page->contact_phone)
+                        <div style="color: #6b4c3b; font-style: italic;">Not set yet</div>
                     @endif
                 </div>
-            @endforeach
-        </div>
-    </div>
-
-    {{-- First Product --}}
-    @if($page->product_name)
-    <div style="margin-bottom: 20px;">
-        <h3 style="color: #3d2314; font-size: 16px; margin: 0 0 8px;">🧁 Featured Product</h3>
-        <div style="background: white; border: 1px solid #e8d0b0; border-radius: 10px; padding: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: #3d2314; font-weight: 600;">{{ $page->product_name }}</span>
-                <span style="color: #6b4c3b; font-weight: 700;">${{ number_format((float)$page->product_price, 2) }}</span>
             </div>
-            @if($page->product_description)
-                <p style="color: #6b4c3b; font-size: 13px; margin: 8px 0 0;">{{ $page->product_description }}</p>
-            @endif
-        </div>
-    </div>
-    @endif
 
-    {{-- Delivery / Pickup --}}
-    <div style="margin-bottom: 20px;">
-        <h3 style="color: #3d2314; font-size: 16px; margin: 0 0 8px;">🚚 Order Fulfillment</h3>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <span style="display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
-                background: {{ $page->delivery_enabled ? '#d4f5d4' : '#f5e0d0' }};
-                color: {{ $page->delivery_enabled ? '#1a5c1a' : '#6b4c3b' }};">
-                {{ $page->delivery_enabled ? '✓ Delivery' : '✗ No Delivery' }}
-            </span>
-            <span style="display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
-                background: {{ $page->pickup_enabled ? '#d4f5d4' : '#f5e0d0' }};
-                color: {{ $page->pickup_enabled ? '#1a5c1a' : '#6b4c3b' }};">
-                {{ $page->pickup_enabled ? '✓ Pickup' : '✗ No Pickup' }}
-            </span>
-        </div>
-    </div>
+            {{-- Fulfillment --}}
+            <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.06);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <svg style="width: 16px; height: 16px; color: {{ $primary }};" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>
+                    <span style="color: #fef9ef; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Fulfillment</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: {{ $page->delivery_enabled ? '#6ee7b7' : '#6b4c3b' }};">
+                        <span style="font-size: 11px;">{{ $page->delivery_enabled ? '●' : '○' }}</span>
+                        Delivery{{ $page->delivery_enabled && $page->delivery_fee ? ' — $' . number_format((float)$page->delivery_fee, 2) : '' }}
+                    </span>
+                    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: {{ $page->pickup_enabled ? '#6ee7b7' : '#6b4c3b' }};">
+                        <span style="font-size: 11px;">{{ $page->pickup_enabled ? '●' : '○' }}</span>
+                        Pickup
+                    </span>
+                </div>
+            </div>
 
-    {{-- PayPal --}}
-    <div style="margin-bottom: 8px;">
-        <h3 style="color: #3d2314; font-size: 16px; margin: 0 0 8px;">💳 Payments</h3>
-        @if($page->paypal_client_id)
-            <span style="display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; background: #d4f5d4; color: #1a5c1a;">
-                ✓ PayPal Connected{{ $page->paypal_sandbox ? ' (Sandbox)' : '' }}
-            </span>
-        @else
-            <span style="display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; background: #f5e0d0; color: #6b4c3b;">
-                PayPal not connected — you can set this up later
-            </span>
+            {{-- Business Hours --}}
+            <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.06);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <svg style="width: 16px; height: 16px; color: {{ $primary }};" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span style="color: #fef9ef; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Hours</span>
+                </div>
+                <div style="font-size: 12px; line-height: 1.9;">
+                    @foreach($days as $key => $label)
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #d4a574; font-weight: 600;">{{ $label }}</span>
+                            @if($page->{"hours_{$key}"})
+                                <span style="color: #fef9ef;">{{ $page->{"hours_{$key}_open"} }} – {{ $page->{"hours_{$key}_close"} }}</span>
+                            @else
+                                <span style="color: #6b4c3b;">Closed</span>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Payments --}}
+            <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.06);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <svg style="width: 16px; height: 16px; color: {{ $primary }};" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" /></svg>
+                    <span style="color: #fef9ef; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Payments</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    @php
+                        $methodLabels = ['stripe' => 'Stripe', 'paypal' => 'PayPal', 'cash' => 'Cash / Manual'];
+                    @endphp
+                    @foreach($methods as $method)
+                        @if(isset($methodLabels[$method]))
+                            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #6ee7b7;">
+                                <span style="font-size: 11px;">●</span>
+                                {{ $methodLabels[$method] }}
+                                @if($method === 'paypal' && $page->paypal_sandbox)
+                                    <span style="font-size: 10px; color: {{ $primary }}; background: {{ $primary }}22; padding: 1px 6px; border-radius: 4px;">sandbox</span>
+                                @endif
+                            </span>
+                        @endif
+                    @endforeach
+                    @if(empty($methods))
+                        <span style="color: #6b4c3b; font-style: italic; font-size: 13px;">Not configured</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        {{-- Featured Product --}}
+        @if($page->product_name)
+        <div style="padding: 0 32px 28px;">
+            <div style="background: linear-gradient(135deg, {{ $primary }}15 0%, {{ $secondary }}10 100%); border: 1px solid {{ $primary }}33; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="color: {{ $primary }}; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Featured Product</span>
+                    <div style="color: #fef9ef; font-size: 16px; font-weight: 600; margin-top: 4px;">{{ $page->product_name }}</div>
+                    @if($page->product_description)
+                        <div style="color: #d4a574; font-size: 12px; margin-top: 4px; max-width: 400px;">{{ Str::limit($page->product_description, 80) }}</div>
+                    @endif
+                </div>
+                <div style="color: #fef9ef; font-size: 24px; font-weight: 700;">${{ number_format((float)$page->product_price, 2) }}</div>
+            </div>
+        </div>
         @endif
+
+        {{-- Subdomain --}}
+        <div style="padding: 16px 32px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center;">
+            <span style="color: #6b4c3b; font-size: 12px;">Your storefront will be live at</span>
+            <div style="color: {{ $primary }}; font-size: 14px; font-weight: 600; margin-top: 4px;">
+                {{ $page->subdomain ? Str::slug($page->subdomain) . '.getkneadit.app' : 'your-bakery.getkneadit.app' }}
+            </div>
+        </div>
+    </div>
+
+    {{-- Ready Message --}}
+    <div style="text-align: center; margin-top: 24px; padding: 0 16px;">
+        <p style="color: #d4a574; font-size: 14px; margin: 0;">
+            Everything look good? Hit <strong style="color: #fef9ef;">Finish</strong> to launch your bakery.
+            <br><span style="font-size: 12px; color: #6b4c3b;">You can change all of this later from your admin dashboard.</span>
+        </p>
     </div>
 </div>
