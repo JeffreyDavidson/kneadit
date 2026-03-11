@@ -15,6 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'stripe/*',
         ]);
 
+        // Initialize tenancy on ALL web requests (including Livewire updates)
+        // This ensures tenant DB is active before auth checks
+        // Only runs on non-central domains (subdomains)
+        $middleware->web(append: [
+            \App\Http\Middleware\InitializeTenancyIfNeeded::class,
+        ]);
+
         $middleware->alias([
             'subscribed' => \App\Http\Middleware\EnsureSubscribed::class,
         ]);
