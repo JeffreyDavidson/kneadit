@@ -8,7 +8,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
 {
     protected function tenantDbPath(string $name): string
     {
-        $sharedBase = env('TENANT_DB_PATH');
+        $sharedBase = config('tenancy.tenant_db_path');
 
         if ($sharedBase) {
             return $sharedBase . '/' . $name;

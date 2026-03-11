@@ -16,6 +16,8 @@ return [
      *
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
+    'tenant_db_path' => env('TENANT_DB_PATH', database_path()),
+
     'central_domains' => [
         '127.0.0.1',
         'localhost',
