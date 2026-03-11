@@ -436,6 +436,7 @@ class Onboarding extends Page
                                     ->label('Pickup Instructions')
                                     ->placeholder('e.g. Pick up at the side door, ring the bell...')
                                     ->rows(3)
+                                    ->required(fn (Get $get) => $get('pickup_enabled'))
                                     ->visible(fn (Get $get) => $get('pickup_enabled'))
                                     ->columnSpanFull(),
                             ]),
