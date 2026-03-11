@@ -464,25 +464,16 @@ class Onboarding extends Page
                                     ->label('Payment Methods')
                                     ->helperText('Select all that apply — offer your customers multiple ways to pay.')
                                     ->options([
-                                        'stripe' => 'Stripe — Credit cards, Apple Pay, Google Pay',
                                         'paypal' => 'PayPal — Accept payments through PayPal Business',
                                         'cash' => 'Cash / Manual — In person (cash, Venmo, Zelle, etc.)',
                                     ])
                                     ->descriptions([
-                                        'stripe' => 'Recommended. Customers pay with cards, Apple Pay, and more.',
                                         'paypal' => 'Invoices sent automatically. Requires a PayPal Business account.',
                                         'cash' => 'You handle payment collection outside the platform.',
                                     ])
                                     ->required()
                                     ->live()
                                     ->columnSpanFull(),
-
-                                Section::make('Stripe Connection')
-                                    ->description('Connect your Stripe account to accept credit card payments.')
-                                    ->schema([
-                                        \Filament\Schemas\Components\View::make('filament.pages.stripe-connect-status'),
-                                    ])
-                                    ->visible(fn (Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
 
                                 Section::make('PayPal Connection')
                                     ->description('Connect your PayPal Business account.')
