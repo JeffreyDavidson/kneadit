@@ -44,6 +44,19 @@ class BillingController extends Controller
      */
     public function success(Request $request)
     {
+        // Re-authenticate user from Stripe session (session may be lost after external redirect)
+        if (! $request->user() && $request->has('session_id')) {
+            $checkoutSession = \Laravel\Cashier\Cashier::stripe()->checkout->sessions->retrieve($request->get('session_id'));
+
+            if ($checkoutSession && $checkoutSession->customer) {
+                $user = \App\Models\User::where('stripe_id', $checkoutSession->customer)->first();
+
+                if ($user) {
+                    \Illuminate\Support\Facades\Auth::login($user);
+                }
+            }
+        }
+
         return redirect('/onboarding');
     }
 
