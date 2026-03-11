@@ -16,9 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // Initialize tenancy on ALL web requests (including Livewire updates)
-        // This ensures tenant DB is active before auth checks
+        // This ensures tenant DB is active before auth/session checks
+        // Must be prepended so it runs BEFORE StartSession (which uses DB)
         // Only runs on non-central domains (subdomains)
-        $middleware->web(append: [
+        $middleware->web(prepend: [
             \App\Http\Middleware\InitializeTenancyIfNeeded::class,
         ]);
 
