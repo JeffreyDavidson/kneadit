@@ -10,7 +10,9 @@ class OnboardingController extends Controller
 {
     public function show()
     {
-        return view('onboarding');
+        return view('onboarding', [
+            'bakeryName' => session('bakery_name', ''),
+        ]);
     }
 
     public function store(Request $request)
