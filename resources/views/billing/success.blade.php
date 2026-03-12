@@ -15,6 +15,7 @@
         a { display: inline-block; background: linear-gradient(135deg, #d4920c, #e8b04a); color: white; text-decoration: none; padding: 0.85rem 2rem; border-radius: 0.75rem; font-weight: 600; transition: all 0.2s; }
         a:hover { box-shadow: 0 4px 15px rgba(212, 146, 12, 0.3); transform: translateY(-1px); }
     </style>
+@include('partials.fathom')
 </head>
 <body>
     <div class="card">

@@ -64,6 +64,7 @@ img{max-width:100%;display:block}
 
 @yield('styles')
 </style>
+@include('partials.fathom')
 </head>
 <body>
 

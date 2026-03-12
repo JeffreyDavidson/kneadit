@@ -43,6 +43,7 @@
 
         .divider { height: 1px; background: #f0e6d2; margin: 1.5rem 0; }
     </style>
+@include('partials.fathom')
 </head>
 <body>
     <div class="card">

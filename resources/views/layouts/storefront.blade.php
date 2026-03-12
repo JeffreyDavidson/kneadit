@@ -344,6 +344,7 @@
     @endif
 
     @yield('styles')
+@include('partials.fathom')
 </head>
 <body data-theme="{{ $storefrontTheme }}" @yield('body_attrs')>
 

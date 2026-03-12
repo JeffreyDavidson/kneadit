@@ -380,6 +380,7 @@ footer{background:var(--warm-black);color:var(--cinnamon);padding:3rem 1.5rem;te
 .footer-links a:hover,.footer-links a:focus-visible{color:var(--cream)}
 .footer-made{margin-top:.25rem}
 </style>
+@include('partials.fathom')
 </head>
 <body>
 

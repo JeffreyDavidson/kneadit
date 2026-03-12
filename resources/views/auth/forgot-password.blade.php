@@ -36,6 +36,7 @@ a:hover{color:var(--golden)}
 .status-msg{background:rgba(90,122,90,.15);border:1px solid rgba(90,122,90,.3);border-radius:12px;padding:.75rem 1rem;margin-bottom:1.5rem;font-size:.875rem;color:#7dba7d}
 @media(max-width:500px){.auth-card{padding:1.75rem}}
 </style>
+@include('partials.fathom')
 </head>
 <body>
 <div class="auth-container">
