@@ -41,4 +41,8 @@ return [
         'sandbox' => env('PAYPAL_SANDBOX', true),
     ],
 
+    'fathom' => [
+        'site_id' => env('FATHOM_SITE_ID'),
+    ],
+
 ];

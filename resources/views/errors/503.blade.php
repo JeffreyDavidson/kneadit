@@ -22,6 +22,7 @@ p{color:var(--cinnamon);line-height:1.6;margin-bottom:1.5rem}
 .dots span:nth-child(3){animation-delay:.4s}
 @keyframes pulse{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
 </style>
+@include('partials.fathom')
 </head>
 <body>
 <div class="wrap">

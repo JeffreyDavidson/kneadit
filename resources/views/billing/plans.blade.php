@@ -71,6 +71,7 @@
         }
         @endif
     </style>
+@include('partials.fathom')
 </head>
 <body>
     @if(session('success'))

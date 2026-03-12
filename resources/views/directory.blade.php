@@ -69,6 +69,7 @@ a{color:inherit;text-decoration:none}
 .directory-footer{background:var(--warm-black);color:var(--cinnamon);padding:2rem 1.5rem;text-align:center;font-size:.875rem}
 .directory-footer a{color:var(--honey)}
 </style>
+@include('partials.fathom')
 </head>
 <body>
 
