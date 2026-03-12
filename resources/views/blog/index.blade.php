@@ -5,14 +5,13 @@
 
 @section('styles')
 <style>
-.res-hero{background:var(--warm-black);padding:5rem 1.5rem 6rem;text-align:center;position:relative;overflow:hidden}
-.res-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to bottom,transparent,var(--cream));pointer-events:none}
-.res-hero h1{font-family:var(--font-serif);font-size:clamp(2rem,5vw,3.5rem);color:var(--cream);margin:0 0 .5rem;line-height:1.15}
+.res-hero{background:var(--warm-black);padding:4rem 1.5rem 2.5rem;text-align:center}
+.res-hero h1{font-family:var(--font-serif);font-size:clamp(1.75rem,4vw,2.75rem);color:var(--cream);margin:0 0 .4rem;line-height:1.15}
 .res-hero h1 span{color:var(--honey)}
-.res-hero p{color:var(--cinnamon);font-size:1.1rem;max-width:520px;margin:.5rem auto 0;line-height:1.7}
+.res-hero p{color:var(--cinnamon);font-size:.95rem;max-width:480px;margin:.25rem auto 0;line-height:1.6;opacity:.8}
 
-.cat-strip{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;padding:0 1.5rem;margin-top:-1.5rem;position:relative;z-index:2;margin-bottom:2.5rem}
-.cat-strip a{padding:.5rem 1.25rem;border-radius:50px;font-size:.8rem;font-weight:600;background:var(--white);color:var(--walnut);border:1px solid var(--butter);transition:all .2s;text-decoration:none}
+.cat-strip{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;padding:1.25rem 1.5rem 0;background:var(--warm-black);padding-bottom:2rem;margin-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.cat-strip a{padding:.45rem 1.1rem;border-radius:50px;font-size:.78rem;font-weight:600;background:transparent;color:var(--cinnamon);border:1px solid rgba(139,104,68,.3);transition:all .2s;text-decoration:none}
 .cat-strip a:hover{border-color:var(--honey);color:var(--honey)}
 .cat-strip a.on{background:var(--honey);color:var(--white);border-color:var(--honey)}
 
@@ -57,7 +56,7 @@
 
 @section('content')
 <section class="res-hero">
-    <h1>The Baker's <span>Resource</span></h1>
+    <h1>Baker's <span>Resources</span></h1>
     <p>Everything you need to start, run, and grow your cottage food business.</p>
 </section>
 
