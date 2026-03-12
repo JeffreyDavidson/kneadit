@@ -48,6 +48,9 @@ Route::get('/privacy', fn () => view('legal.privacy'))->name('privacy');
 // Sitemap
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 
+// Changelog
+Route::get('/changelog', [\App\Http\Controllers\ChangelogController::class, 'index'])->name('changelog');
+
 // Resources / Blog (central only)
 Route::get('/resources', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
 Route::get('/resources/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
