@@ -319,13 +319,28 @@ class StorefrontController extends Controller
 
     public function blog()
     {
-        $posts = BlogPost::where('is_published', true)
+        $categories = [
+            'all' => 'All Posts',
+            'guides' => 'Getting Started',
+            'tips' => 'Baker Tips',
+            'news' => 'News',
+            'recipes' => 'Recipes',
+        ];
+
+        $activeCategory = request('category', 'all');
+
+        $query = BlogPost::where('is_published', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
-            ->latest('published_at')
-            ->paginate(6);
+            ->latest('published_at');
 
-        return view('blog.index', compact('posts'));
+        if ($activeCategory !== 'all') {
+            $query->where('category', $activeCategory);
+        }
+
+        $posts = $query->paginate(6);
+
+        return view('blog.index', compact('posts', 'categories', 'activeCategory'));
     }
 
     public function blogPost($slug)

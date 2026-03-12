@@ -21,6 +21,10 @@ class BlogTest extends TestCase
         parent::setUp();
         config(['database.connections.central' => config('database.connections.sqlite')]);
         config(['tenancy.central_domains' => []]);
+        // Share PDO so central connection sees the same :memory: DB
+        \Illuminate\Support\Facades\DB::connection('central')->setPdo(
+            \Illuminate\Support\Facades\DB::connection('sqlite')->getPdo()
+        );
         $tenantMigrationPath = database_path('migrations/tenant');
         if (is_dir($tenantMigrationPath)) {
             $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
