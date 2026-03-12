@@ -3,7 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? \App\Models\Setting::get('store_name', 'Artisan Bakery') }}</title>
+    @php
+        $ogStoreName = \App\Models\Setting::get('store_name', 'Artisan Bakery');
+        $ogDescription = \App\Models\Setting::get('store_tagline', $ogStoreName . ' — Fresh baked goods made with love');
+        $ogLogo = \App\Models\Setting::get('store_logo') ? asset('storage/' . \App\Models\Setting::get('store_logo')) : null;
+    @endphp
+    <title>{{ $title ?? $ogStoreName }}</title>
+    <meta name="description" content="{{ $metaDescription ?? $ogDescription }}">
+    <meta property="og:title" content="{{ $title ?? $ogStoreName }}">
+    <meta property="og:description" content="{{ $metaDescription ?? $ogDescription }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    @if($ogLogo)
+    <meta property="og:image" content="{{ $ogLogo }}">
+    @endif
+    <meta property="og:site_name" content="{{ $ogStoreName }}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ $title ?? $ogStoreName }}">
+    <meta name="twitter:description" content="{{ $metaDescription ?? $ogDescription }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
     tailwind.config = {
@@ -320,6 +337,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    @if(\App\Models\Setting::get('store_logo'))
+    <link rel="icon" href="{{ asset('storage/' . \App\Models\Setting::get('store_logo')) }}" type="image/png">
+    @else
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ urlencode(tenant()->brand_color_primary ?? '#d4920c') }}'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-family='serif' font-weight='bold'>{{ substr(\App\Models\Setting::get('store_name', 'B'), 0, 1) }}</text></svg>" type="image/svg+xml">
+    @endif
 
     @yield('styles')
 </head>
@@ -529,6 +551,20 @@
             </div>
         </div>
     </footer>
+
+    {{-- Cookie Consent Banner --}}
+    <div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1c1410;color:#faf4e8;padding:1rem 1.5rem;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,.3);font-size:.85rem;line-height:1.5">
+        <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+            <p style="margin:0;flex:1;min-width:200px">We use cookies to improve your experience. By continuing to browse, you agree to our use of cookies.
+                <a href="/privacy" style="color:#d4920c;text-decoration:underline">Privacy Policy</a>
+            </p>
+            <button onclick="acceptCookies()" style="padding:.5rem 1.5rem;border-radius:50px;background:#d4920c;color:#fff;border:none;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap;transition:background .2s">Accept</button>
+        </div>
+    </div>
+    <script>
+    function acceptCookies(){document.getElementById('cookieConsent').style.display='none';localStorage.setItem('cookieConsent','1')}
+    if(!localStorage.getItem('cookieConsent')){document.getElementById('cookieConsent').style.display='block'}
+    </script>
 
     @yield('scripts')
 </body>
