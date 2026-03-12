@@ -66,6 +66,8 @@ Route::middleware([
         Route::get('/order', [OrderController::class, 'index'])->name('order.create');
         Route::post('/order', [OrderController::class, 'store'])->name('order.store');
         Route::get('/order/confirmation/{order}', [OrderController::class, 'confirmation'])->name('order.confirmation');
+        Route::get('/order/stripe/success/{order}', [OrderController::class, 'stripeSuccess'])->name('order.stripe.success');
+        Route::get('/order/stripe/cancel/{order}', [OrderController::class, 'stripeCancel'])->name('order.stripe.cancel');
         Route::get('/about', [StorefrontController::class, 'about'])->name('storefront.about');
         Route::get('/reviews', [StorefrontController::class, 'reviews'])->name('storefront.reviews');
         Route::get('/gallery', [StorefrontController::class, 'gallery'])->name('storefront.gallery');

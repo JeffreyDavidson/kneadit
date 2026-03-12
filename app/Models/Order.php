@@ -28,6 +28,8 @@ class Order extends Model
         'notes',
         'user_id',
         'review_request_sent_at',
+        'stripe_checkout_session_id',
+        'stripe_payment_intent_id',
     ];
 
     protected $casts = [
