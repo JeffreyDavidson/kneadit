@@ -7,34 +7,34 @@
 
 <p style="margin: 0 0 20px;">Thank you for your catering inquiry! We've put together a quote for your upcoming event.</p>
 
-<div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid #d4920c;">
-    <div style="font-size: 18px; font-weight: 700; color: #1c1410; margin-bottom: 15px;">🎉 Event Details</div>
+<div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
+    <div style="font-size: 18px; font-weight: 700; color: {{ $secondaryColor }}; margin-bottom: 15px;">🎉 Event Details</div>
 
     <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8;">
         <span style="color: #888; font-size: 13px;">Event Type</span><br>
-        <span style="color: #1c1410; font-weight: 600;">{{ $inquiry->event_type_label }}</span>
+        <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $inquiry->event_type_label }}</span>
     </div>
 
     <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8;">
         <span style="color: #888; font-size: 13px;">Date</span><br>
-        <span style="color: #1c1410; font-weight: 600;">{{ $inquiry->event_date->format('l, F j, Y') }}</span>
+        <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $inquiry->event_date->format('l, F j, Y') }}</span>
     </div>
 
     <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8;">
         <span style="color: #888; font-size: 13px;">Guest Count</span><br>
-        <span style="color: #1c1410; font-weight: 600;">{{ $inquiry->guest_count }} guests</span>
+        <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $inquiry->guest_count }} guests</span>
     </div>
 
     @if($inquiry->venue_address)
     <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8;">
         <span style="color: #888; font-size: 13px;">Venue</span><br>
-        <span style="color: #1c1410; font-weight: 600;">{{ $inquiry->venue_address }}</span>
+        <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $inquiry->venue_address }}</span>
     </div>
     @endif
 
-    <div style="margin-top: 16px; padding-top: 12px; border-top: 2px solid #d4920c; text-align: center;">
+    <div style="margin-top: 16px; padding-top: 12px; border-top: 2px solid {{ $primaryColor }}; text-align: center;">
         <span style="color: #888; font-size: 13px;">Your Quote</span><br>
-        <span style="font-size: 28px; font-weight: 700; color: #1c1410;">${{ number_format($inquiry->quoted_amount, 2) }}</span>
+        <span style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">${{ number_format($inquiry->quoted_amount, 2) }}</span>
     </div>
 </div>
 
