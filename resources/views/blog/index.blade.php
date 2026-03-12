@@ -4,7 +4,6 @@
 @section('meta_description', 'Guides, tips, and resources for cottage food bakers. Learn about cottage food laws, pricing, marketing, and growing your home bakery business.')
 
 @section('styles')
-<style>
 .res-hero{background:var(--warm-black);padding:3.5rem 1.5rem 2.5rem;text-align:center}
 .res-hero h1{font-family:var(--font-serif);font-size:clamp(1.75rem,4vw,2.5rem);color:var(--cream);margin:0 0 .4rem;line-height:1.15}
 .res-hero h1 span{color:var(--honey)}
@@ -50,7 +49,6 @@
     .grid{grid-template-columns:1fr}
     .feat{padding:1.75rem}
 }
-</style>
 @endsection
 
 @section('content')

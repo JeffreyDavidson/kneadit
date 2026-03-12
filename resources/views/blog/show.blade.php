@@ -9,7 +9,6 @@
 @endif
 
 @section('styles')
-<style>
 .post-hero{background:var(--warm-black);padding:4rem 1.5rem 3rem}
 .post-hero .container{max-width:720px}
 .post-meta{font-size:.8rem;color:var(--honey);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:.75rem}
@@ -32,7 +31,6 @@
 .cta-box h3{font-family:var(--font-serif);color:var(--cream);margin-bottom:.5rem}
 .cta-box p{color:var(--cinnamon);font-size:.9rem;margin-bottom:1rem}
 .cta-box a{display:inline-block;padding:.6rem 1.5rem;background:var(--honey);color:var(--white);border-radius:50px;font-weight:700;font-size:.9rem}
-</style>
 @endsection
 
 @section('content')
