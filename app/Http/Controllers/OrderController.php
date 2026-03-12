@@ -13,6 +13,7 @@ use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\Product;
 use App\Services\GiftCardService;
+use App\Services\StripeCheckoutService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -200,13 +201,57 @@ class OrderController extends Controller
             $order->orderItems()->create($item);
         }
 
+        // If baker has Stripe Connect enabled and order total > 0, redirect to Stripe Checkout
+        if ($order->total > 0 && StripeCheckoutService::isEnabled()) {
+            $stripeService = new StripeCheckoutService;
+            $session = $stripeService->createCheckoutSession(
+                $order,
+                route('order.stripe.success', $order->order_number) . '?session_id={CHECKOUT_SESSION_ID}',
+                route('order.stripe.cancel', $order->order_number),
+            );
+
+            if ($session) {
+                return redirect($session->url);
+            }
+
+            // Stripe session creation failed — fall through to normal confirmation
+        }
+
         return redirect()->route('order.confirmation', $order->order_number)
             ->with('success', 'Order submitted successfully!');
     }
 
     /**
-     * Check capacity for a specific date
+     * Stripe checkout success callback.
      */
+    public function stripeSuccess(Request $request, string $orderNumber)
+    {
+        $sessionId = $request->query('session_id');
+
+        if ($sessionId) {
+            $stripeService = new StripeCheckoutService;
+            $stripeService->handleCheckoutComplete($sessionId);
+        }
+
+        return redirect()->route('order.confirmation', $orderNumber)
+            ->with('success', 'Payment successful! Your order has been placed.');
+    }
+
+    /**
+     * Stripe checkout cancel callback.
+     */
+    public function stripeCancel(string $orderNumber)
+    {
+        $order = Order::where('order_number', $orderNumber)->first();
+
+        if ($order) {
+            $order->update(['payment_status' => 'unpaid']);
+        }
+
+        return redirect()->route('order.confirmation', $orderNumber)
+            ->with('warning', 'Payment was not completed. You can pay later or contact the baker.');
+    }
+
     /**
      * Return availability for the next 30 days.
      */
