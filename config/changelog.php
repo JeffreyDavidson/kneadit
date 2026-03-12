@@ -1,0 +1,75 @@
+<?php
+
+return [
+    [
+        'date' => '2026-03-12',
+        'version' => '1.4.0',
+        'title' => 'Platform Hardening & Quality of Life',
+        'items' => [
+            'Baker-branded emails — your store name shows as the sender',
+            'Automated database backups twice daily',
+            'Health monitoring with email alerts',
+            'Dynamic favicon using your brand color',
+            'Open Graph social sharing metadata on all pages',
+            'Cookie consent banner for GDPR/CCPA compliance',
+            'Custom 404 error page',
+            'Password reset on central domain',
+            'API rate limiting for security',
+            'Webhook support for order events (Zapier-ready)',
+            'PWA install prompt for mobile customers',
+            'Referral program wired into signup flow',
+        ],
+    ],
+    [
+        'date' => '2026-03-11',
+        'version' => '1.3.0',
+        'title' => 'Stripe Checkout & Order Emails',
+        'items' => [
+            'Stripe checkout on connected baker accounts',
+            'Order confirmation emails to customers',
+            'New order notification emails to bakers',
+            'Dynamic brand colors in all email templates',
+            'Resources/blog section with SEO content',
+        ],
+    ],
+    [
+        'date' => '2026-03-10',
+        'version' => '1.2.0',
+        'title' => 'Central Admin & Platform Management',
+        'items' => [
+            'Central admin panel with gold/amber theme',
+            'Tenant management with health scores',
+            'Support ticket system',
+            'Email campaign manager',
+            'Announcement system',
+            'Data export center',
+            'Activity & audit logging',
+        ],
+    ],
+    [
+        'date' => '2026-03-08',
+        'version' => '1.1.0',
+        'title' => 'Storefront Premium Redesign',
+        'items' => [
+            'Photo-forward hero sections on all pages',
+            'Dynamic page content — all copy editable from admin',
+            'Custom pagination styling',
+            'Configurable dashboard widgets',
+            'Multi-user access with roles',
+            'Plan-gated features',
+        ],
+    ],
+    [
+        'date' => '2026-03-04',
+        'version' => '1.0.0',
+        'title' => 'KneadIt Launch',
+        'items' => [
+            'Multi-tenant platform for cottage food bakers',
+            'Stripe billing with 30-day free trial',
+            'Full storefront with ordering system',
+            'Filament admin panel',
+            'Onboarding wizard',
+            'Stripe Connect for baker payments',
+        ],
+    ],
+];

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Referral extends Model
 {
-    protected $connection = 'mysql'; // central connection
+    protected $connection = 'central';
 
     protected $fillable = [
         'referrer_tenant_id',

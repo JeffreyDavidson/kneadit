@@ -78,6 +78,23 @@ class OnboardingController extends Controller
             }
         });
 
+        // Complete referral if one exists
+        $referralCode = $request->session()->get('referral_code') ?? $request->cookie('referral_code');
+        if ($referralCode) {
+            $referral = \App\Models\Referral::where('referral_code', $referralCode)
+                ->where('status', 'pending')
+                ->whereNull('referred_tenant_id')
+                ->first();
+
+            if ($referral) {
+                $referral->update([
+                    'referred_tenant_id' => $tenant->id,
+                    'referred_email' => $request->user()->email,
+                    'status' => 'completed',
+                ]);
+            }
+        }
+
         // Send welcome email to the baker
         $scheme = $request->secure() ? 'https' : 'http';
         $host = $request->getHost();

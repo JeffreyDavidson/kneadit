@@ -12,6 +12,7 @@ use App\Mail\OrderReady;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
 use App\Models\Setting;
+use App\Services\WebhookService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -36,6 +37,22 @@ class OrderObserver
                 'error' => $e->getMessage(),
             ]);
         }
+
+        // Dispatch webhook
+        WebhookService::dispatch('order.created', [
+            'order_number' => $order->order_number,
+            'customer_name' => $order->customer?->name,
+            'customer_email' => $order->customer?->email,
+            'total' => $order->total,
+            'status' => $order->status,
+            'payment_status' => $order->payment_status,
+            'requested_date' => $order->requested_date?->toDateString(),
+            'items' => $order->items->map(fn ($item) => [
+                'product' => $item->product?->name,
+                'quantity' => $item->quantity,
+                'unit_price' => $item->unit_price,
+            ])->toArray(),
+        ]);
     }
 
     public function updated(Order $order): void
@@ -51,6 +68,14 @@ class OrderObserver
             if ($order->status === 'baking') {
                 $this->deductIngredients($order);
             }
+
+            WebhookService::dispatch('order.updated', [
+                'order_number' => $order->order_number,
+                'status' => $order->status,
+                'previous_status' => $order->getOriginal('status'),
+                'payment_status' => $order->payment_status,
+                'total' => $order->total,
+            ]);
         }
     }
 
