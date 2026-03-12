@@ -313,48 +313,54 @@ class OnboardingTest extends TestCase
     }
 
     /** @test */
-    public function paypal_step_saves_credentials(): void
+    public function payment_step_saves_paypal_credentials(): void
     {
         $page = new \App\Filament\Pages\Onboarding;
+        $page->payment_methods = ['paypal', 'cash'];
         $page->paypal_client_id = 'AaBbCcDdEeFf123456';
         $page->paypal_client_secret = 'secret_xyz_789';
         $page->paypal_sandbox = true;
 
-        $reflection = new \ReflectionMethod($page, 'savePayPalStep');
+        $reflection = new \ReflectionMethod($page, 'savePaymentStep');
         $reflection->invoke($page);
 
         $this->assertEquals('AaBbCcDdEeFf123456', Setting::get('paypal_client_id'));
         $this->assertEquals('secret_xyz_789', Setting::get('paypal_client_secret'));
         $this->assertEquals('1', Setting::get('paypal_sandbox'));
+        $this->assertEquals('["paypal","cash"]', Setting::get('payment_methods'));
     }
 
     /** @test */
-    public function paypal_step_with_live_mode(): void
+    public function payment_step_with_live_mode(): void
     {
         $page = new \App\Filament\Pages\Onboarding;
+        $page->payment_methods = ['paypal'];
         $page->paypal_client_id = 'LiveClientId';
         $page->paypal_client_secret = 'LiveSecret';
         $page->paypal_sandbox = false;
 
-        $reflection = new \ReflectionMethod($page, 'savePayPalStep');
+        $reflection = new \ReflectionMethod($page, 'savePaymentStep');
         $reflection->invoke($page);
 
         $this->assertEquals('0', Setting::get('paypal_sandbox'));
     }
 
     /** @test */
-    public function paypal_step_with_empty_credentials(): void
+    public function payment_step_with_cash_only(): void
     {
         $page = new \App\Filament\Pages\Onboarding;
+        $page->payment_methods = ['cash'];
         $page->paypal_client_id = '';
         $page->paypal_client_secret = '';
         $page->paypal_sandbox = true;
 
-        $reflection = new \ReflectionMethod($page, 'savePayPalStep');
+        $reflection = new \ReflectionMethod($page, 'savePaymentStep');
         $reflection->invoke($page);
 
-        $this->assertEquals('', Setting::get('paypal_client_id'));
-        $this->assertEquals('', Setting::get('paypal_client_secret'));
+        $this->assertEquals('["cash"]', Setting::get('payment_methods'));
+        $this->assertEquals('cash', Setting::get('payment_method'));
+        // PayPal credentials should not be saved when paypal not in payment_methods
+        $this->assertNull(Setting::get('paypal_client_id'));
     }
 
     /** @test */
@@ -465,11 +471,12 @@ class OnboardingTest extends TestCase
         $page->pickup_instructions = 'Text when you arrive.';
         (new \ReflectionMethod($page, 'saveDeliveryStep'))->invoke($page);
 
-        // Step 8: PayPal
+        // Step 8: Payment
+        $page->payment_methods = ['paypal', 'cash'];
         $page->paypal_client_id = 'test_client_id';
         $page->paypal_client_secret = 'test_secret';
         $page->paypal_sandbox = true;
-        (new \ReflectionMethod($page, 'savePayPalStep'))->invoke($page);
+        (new \ReflectionMethod($page, 'savePaymentStep'))->invoke($page);
 
         // Step 10: Complete
         $page->completeOnboarding();
