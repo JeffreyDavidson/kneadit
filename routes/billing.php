@@ -12,7 +12,7 @@ Route::middleware(['web', 'auth'])->prefix('billing')->name('billing.')->group(f
 });
 
 // Stripe webhooks (excluded from CSRF)
-Route::post('/stripe/webhook', [\Laravel\Cashier\Http\Controllers\WebhookController::class, 'handleWebhook'])
+Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handleWebhook'])
     ->name('cashier.webhook');
 
 // Stripe Connect webhooks (for connected account events)
