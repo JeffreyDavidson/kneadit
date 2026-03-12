@@ -6,7 +6,7 @@
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://getkneadit.app/blog</loc>
+        <loc>https://getkneadit.app/resources</loc>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -17,7 +17,7 @@
     </url>
     @foreach($posts as $post)
     <url>
-        <loc>https://getkneadit.app/blog/{{ $post->slug }}</loc>
+        <loc>https://getkneadit.app/resources/{{ $post->slug }}</loc>
         <lastmod>{{ $post->updated_at->toW3cString() }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
