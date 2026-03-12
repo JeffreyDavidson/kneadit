@@ -37,3 +37,6 @@ Schedule::command('backup:databases --keep=7')->twiceDaily(3, 15);
 
 // Health check every 30 minutes — alerts on failure
 Schedule::command('health:check')->everyThirtyMinutes();
+
+// Trial expiration checks daily at 10 AM
+Schedule::command('trial:check')->dailyAt('10:00');
