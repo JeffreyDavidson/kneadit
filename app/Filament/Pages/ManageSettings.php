@@ -67,6 +67,8 @@ class ManageSettings extends Page
     public ?string $paypal_client_secret = '';
 
     public bool $paypal_sandbox = true;
+    public string $webhook_url = '';
+    public string $webhook_secret = '';
 
     public function mount(): void
     {
@@ -91,6 +93,8 @@ class ManageSettings extends Page
         $this->paypal_client_id = Setting::get('paypal_client_id', '');
         $this->paypal_client_secret = Setting::get('paypal_client_secret', '');
         $this->paypal_sandbox = (bool) Setting::get('paypal_sandbox', true);
+        $this->webhook_url = Setting::get('webhook_url', '');
+        $this->webhook_secret = Setting::get('webhook_secret', '');
     }
 
     public function content(Schema $schema): Schema
@@ -222,6 +226,25 @@ class ManageSettings extends Page
                             ->columnSpanFull(),
                     ]),
 
+                // Integrations Section
+                Section::make('Integrations')
+                    ->description('Connect KneadIt to other tools via webhooks')
+                    ->schema([
+                        TextInput::make('webhook_url')
+                            ->label('Webhook URL')
+                            ->url()
+                            ->placeholder('https://hooks.zapier.com/...')
+                            ->helperText('We\'ll send order events (created, updated) to this URL')
+                            ->columnSpanFull(),
+
+                        TextInput::make('webhook_secret')
+                            ->label('Webhook Secret')
+                            ->password()
+                            ->placeholder('Optional signing secret for verification')
+                            ->helperText('Used to sign webhook payloads (X-KneadIt-Signature header)')
+                            ->columnSpanFull(),
+                    ]),
+
                 // Save Actions
                 Actions::make([
                     Action::make('save')
@@ -267,6 +290,8 @@ class ManageSettings extends Page
                 Setting::set('paypal_client_id', $this->paypal_client_id);
                 Setting::set('paypal_client_secret', $this->paypal_client_secret);
                 Setting::set('paypal_sandbox', $this->paypal_sandbox ? '1' : '0');
+                Setting::set('webhook_url', $this->webhook_url);
+                Setting::set('webhook_secret', $this->webhook_secret);
             }
 
             // Compliance
