@@ -13,7 +13,7 @@
 .res-hero .cat-strip a:hover{border-color:var(--honey);color:var(--honey)}
 .res-hero .cat-strip a.on{background:var(--honey);color:var(--white);border-color:var(--honey)}
 
-.container{max-width:1000px;margin:0 auto;padding:0 1.5rem}
+.container{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem 0}
 
 /* Featured — first post is large */
 .feat{display:block;background:var(--warm-black);border-radius:16px;padding:2.5rem;margin-bottom:2.5rem;border:1px solid rgba(255,255,255,.06);transition:border-color .3s;text-decoration:none}
