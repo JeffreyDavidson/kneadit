@@ -56,9 +56,9 @@ class User extends Authenticatable implements FilamentUser
         $priceId = $subscription->stripe_price;
 
         return match ($priceId) {
-            env('STRIPE_PRICE_STARTER') => 'starter',
-            env('STRIPE_PRICE_GROWTH') => 'growth',
-            env('STRIPE_PRICE_PRO') => 'pro',
+            config('saas.stripe_prices.starter') => 'starter',
+            config('saas.stripe_prices.growth') => 'growth',
+            config('saas.stripe_prices.pro') => 'pro',
             default => null,
         };
     }
