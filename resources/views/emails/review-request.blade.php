@@ -4,20 +4,20 @@
 
 @section('content')
     <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="margin: 0 0 8px; font-size: 22px; color: #1c1410;">How was your order? 🍰</h2>
+        <h2 style="margin: 0 0 8px; font-size: 22px; color: {{ $secondaryColor }};">How was your order? 🍰</h2>
         <p style="margin: 0; color: #6b5c4d; font-size: 15px;">We'd love to hear from you, {{ $order->customer->name }}!</p>
     </div>
 
     <div style="background-color: #fef9ef; border-radius: 10px; padding: 15px 20px; margin-bottom: 20px;">
         <p style="margin: 0 0 8px; font-size: 13px; color: #6b5c4d; text-transform: uppercase;">Order #{{ $order->order_number }}</p>
         @foreach($orderItems as $item)
-            <p style="margin: 0 0 4px; font-size: 14px; color: #1c1410;">
+            <p style="margin: 0 0 4px; font-size: 14px; color: {{ $secondaryColor }};">
                 {{ $item->quantity }}× {{ $item->product->name ?? 'Item' }}
             </p>
         @endforeach
     </div>
 
-    <p style="text-align: center; margin: 0 0 20px; font-size: 15px; color: #1c1410;">
+    <p style="text-align: center; margin: 0 0 20px; font-size: 15px; color: {{ $secondaryColor }};">
         Tap a star to leave your review:
     </p>
 
@@ -28,7 +28,7 @@
     </div>
 
     <div style="text-align: center;">
-        <a href="{{ $reviewUrl }}" style="display: inline-block; background-color: #d4920c; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">Write a Review</a>
+        <a href="{{ $reviewUrl }}" style="display: inline-block; background-color: {{ $primaryColor }}; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">Write a Review</a>
     </div>
 
     <p style="text-align: center; margin: 20px 0 0; font-size: 13px; color: #6b5c4d;">
