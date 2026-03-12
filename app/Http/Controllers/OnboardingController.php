@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewSubscriberNotification;
+use App\Mail\WelcomeBaker;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class OnboardingController extends Controller
@@ -75,15 +78,39 @@ class OnboardingController extends Controller
             }
         });
 
+        // Send welcome email to the baker
+        $scheme = $request->secure() ? 'https' : 'http';
+        $host = $request->getHost();
+        $adminUrl = "{$scheme}://{$subdomain}.{$host}/admin";
+
+        try {
+            Mail::to($request->user()->email)->send(new WelcomeBaker(
+                bakerName: $request->user()->name,
+                storeName: $validated['store_name'],
+                adminUrl: $adminUrl,
+                plan: 'starter',
+                trialEndsAt: now()->addDays(config('saas.trial_days', 30))->format('F j, Y'),
+            ));
+
+            // Notify platform owner
+            Mail::to(config('mail.platform_notify', 'jeffrey@getkneadit.app'))->send(new NewSubscriberNotification(
+                bakerName: $request->user()->name,
+                bakerEmail: $request->user()->email,
+                storeName: $validated['store_name'],
+                subdomain: $subdomain,
+                plan: 'starter',
+            ));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Signup emails failed', ['error' => $e->getMessage()]);
+        }
+
         // Clear central session — they'll log in fresh on their tenant subdomain
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         // Redirect to their new admin panel
-        $scheme = $request->secure() ? 'https' : 'http';
-        $host = $request->getHost();
-        $tenantUrl = "{$scheme}://{$subdomain}.{$host}/admin";
+        $tenantUrl = $adminUrl;
 
         return redirect()->away($tenantUrl);
     }
