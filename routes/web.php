@@ -45,8 +45,9 @@ Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'tra
 Route::get('/terms', fn () => view('legal.terms'))->name('terms');
 Route::get('/privacy', fn () => view('legal.privacy'))->name('privacy');
 
-// Sitemap
+// SEO
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', fn () => response("User-agent: *\nAllow: /\n\nSitemap: https://getkneadit.app/sitemap.xml\n", 200, ['Content-Type' => 'text/plain']))->name('robots');
 
 // Changelog
 Route::get('/changelog', [\App\Http\Controllers\ChangelogController::class, 'index'])->name('changelog');
