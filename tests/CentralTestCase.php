@@ -11,7 +11,7 @@ abstract class CentralTestCase extends TestCase
     {
         parent::setUp();
 
-        config(['tenancy.central_domains' => []]);
+        config(['tenancy.central_domains' => ['localhost']]);
         config(['database.connections.central' => config('database.connections.sqlite')]);
 
         // Run main migrations fresh each test
