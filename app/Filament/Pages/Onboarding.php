@@ -43,6 +43,7 @@ class Onboarding extends Page
     protected static ?string $slug = 'onboarding';
 
     // Step 1: Welcome
+    public ?string $subdomain = '';
     public ?string $bakery_name = '';
 
     public ?string $owner_name = '';
