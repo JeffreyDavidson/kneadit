@@ -78,6 +78,14 @@ a:hover{color:var(--golden)}
                 </div>
             </div>
 
+            <div class="form-group" style="margin-top:.25rem">
+                <label style="display:flex;align-items:flex-start;gap:.6rem;cursor:pointer;color:var(--cinnamon);font-weight:400">
+                    <input type="checkbox" name="terms" value="1" required style="accent-color:var(--honey);margin-top:3px;min-width:16px">
+                    <span>I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a></span>
+                </label>
+                @error('terms') <div class="form-error">{{ $message }}</div> @enderror
+            </div>
+
             <button type="submit" class="auth-btn">Create Account</button>
         </form>
 
