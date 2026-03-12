@@ -11,9 +11,19 @@
         <priority>0.8</priority>
     </url>
     <url>
+        <loc>https://getkneadit.app/pricing</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
         <loc>https://getkneadit.app/register</loc>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://getkneadit.app/changelog</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
     </url>
     @foreach($posts as $post)
     <url>

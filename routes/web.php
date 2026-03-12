@@ -13,6 +13,17 @@ Route::middleware('web')->group(function () {
     Route::get('/login', function () { return redirect('/'); })->name('login')->middleware('guest');
     Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
+    // Email verification
+    Route::get('/email/verify', fn () => view('auth.verify-email'))->middleware('auth')->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect('/')->with('verified', true);
+    })->middleware(['auth', 'signed'])->name('verification.verify');
+    Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('message', 'Verification link sent!');
+    })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
     // Password reset
     Route::get('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request')->middleware('guest');
     Route::post('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('guest');
@@ -42,6 +53,7 @@ Route::get('/impersonate/{tenant}', [\App\Http\Controllers\ImpersonateController
 Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');
 
 // Legal pages
+Route::get('/pricing', fn () => view('pricing'))->name('pricing');
 Route::get('/terms', fn () => view('legal.terms'))->name('terms');
 Route::get('/privacy', fn () => view('legal.privacy'))->name('privacy');
 
