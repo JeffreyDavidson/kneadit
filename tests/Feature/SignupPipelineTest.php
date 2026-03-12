@@ -145,7 +145,8 @@ class SignupPipelineTest extends CentralTestCase
             ->where('tenant_id', $sub)->first();
 
         $this->assertNotNull($domain);
-        $this->assertEquals($sub . '.' . $centralDomain, $domain->domain);
+        // Domain is stored as just the subdomain; Stancl resolves by stripping central domain suffix
+        $this->assertEquals($sub, $domain->domain);
     }
 
     /** @test */
