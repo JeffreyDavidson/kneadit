@@ -32,9 +32,7 @@ Route::middleware([
 
     // PWA routes (outside storefront-enabled check so manifest/SW always work)
     Route::get('/manifest.json', [StorefrontController::class, 'manifest'])->name('manifest');
-    Route::get('/service-worker.js', function () {
-        return response()->file(public_path('service-worker.js'), ['Content-Type' => 'application/javascript']);
-    });
+    // Service worker removed — was caching stale pages after deploys
     Route::get('/icons/icon-{size}.png', [StorefrontController::class, 'appIcon'])->name('app.icon');
 
     // Impersonation token consumer (from central admin)

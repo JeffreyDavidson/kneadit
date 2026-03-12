@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use App\Mail\Concerns\BakerBranded;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -13,6 +14,7 @@ use Illuminate\Queue\SerializesModels;
 class OrderPlaced extends Mailable
 {
     use Queueable, SerializesModels;
+    use BakerBranded;
 
     public function __construct(
         public Order $order,
@@ -23,6 +25,8 @@ class OrderPlaced extends Mailable
         $storeName = Setting::get('store_name', 'KneadIt Bakery');
 
         return new Envelope(
+            from: $this->bakerFrom(),
+            replyTo: array_filter([$this->bakerReplyTo()]),
             subject: "Order #{$this->order->order_number} Received — {$storeName}",
         );
     }
