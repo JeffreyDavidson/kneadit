@@ -60,6 +60,14 @@ class ManageSettings extends Page
 
     public ?string $revenue_cap = '250000';
 
+    public ?array $payment_methods = ['cash'];
+
+    public ?string $paypal_client_id = '';
+
+    public ?string $paypal_client_secret = '';
+
+    public bool $paypal_sandbox = true;
+
     public function mount(): void
     {
         $this->loadSettings();
@@ -78,6 +86,11 @@ class ManageSettings extends Page
         $this->birthday_program_enabled = Setting::get('birthday_program_enabled', false);
         $this->allergy_disclaimer = Setting::get('allergy_disclaimer', 'Please inform us of any allergies or dietary restrictions when placing your order.');
         $this->revenue_cap = Setting::get('revenue_cap', '250000');
+        $methods = Setting::get('payment_methods');
+        $this->payment_methods = $methods ? json_decode($methods, true) : ['cash'];
+        $this->paypal_client_id = Setting::get('paypal_client_id', '');
+        $this->paypal_client_secret = Setting::get('paypal_client_secret', '');
+        $this->paypal_sandbox = (bool) Setting::get('paypal_sandbox', true);
     }
 
     public function content(Schema $schema): Schema
@@ -155,6 +168,41 @@ class ManageSettings extends Page
                             ]),
                     ]),
 
+                // Payment Settings
+                Section::make('Payment Methods')
+                    ->description('Configure how you collect payments from customers')
+                    ->schema([
+                        \Filament\Forms\Components\CheckboxList::make('payment_methods')
+                            ->label('Accepted Payment Methods')
+                            ->options([
+                                'stripe' => 'Stripe — Credit cards, Apple Pay, Google Pay',
+                                'paypal' => 'PayPal — Accept payments through PayPal Business',
+                                'cash' => 'Cash / Manual — In person (cash, Venmo, Zelle, etc.)',
+                            ])
+                            ->required()
+                            ->live()
+                            ->columnSpanFull(),
+
+                        \Filament\Schemas\Components\View::make('filament.pages.stripe-connect-status')
+                            ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('paypal_client_id')
+                                    ->label('PayPal Client ID')
+                                    ->placeholder('Your PayPal Client ID'),
+                                TextInput::make('paypal_client_secret')
+                                    ->label('PayPal Client Secret')
+                                    ->password(),
+                            ])
+                            ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
+
+                        Toggle::make('paypal_sandbox')
+                            ->label('PayPal Sandbox Mode')
+                            ->helperText('Enable to test payments without real money')
+                            ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
+                    ]),
+
                 // Compliance Section
                 Section::make('Compliance & Legal')
                     ->description('Legal disclaimers and business compliance settings')
@@ -211,6 +259,15 @@ class ManageSettings extends Page
             // Notification Settings
             Setting::set('repeat_reminders_enabled', $this->repeat_reminders_enabled);
             Setting::set('birthday_program_enabled', $this->birthday_program_enabled);
+
+            // Payment Methods
+            Setting::set('payment_methods', json_encode($this->payment_methods));
+            Setting::set('payment_method', $this->payment_methods[0] ?? 'cash');
+            if (in_array('paypal', $this->payment_methods)) {
+                Setting::set('paypal_client_id', $this->paypal_client_id);
+                Setting::set('paypal_client_secret', $this->paypal_client_secret);
+                Setting::set('paypal_sandbox', $this->paypal_sandbox ? '1' : '0');
+            }
 
             // Compliance
             Setting::set('allergy_disclaimer', $this->allergy_disclaimer);

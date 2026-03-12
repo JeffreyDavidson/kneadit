@@ -81,5 +81,6 @@ return [
 
     'stripe_connect' => [
         'client_id' => env('STRIPE_CONNECT_CLIENT_ID'),
+        'webhook_secret' => env('STRIPE_CONNECT_WEBHOOK_SECRET'),
     ],
 ];

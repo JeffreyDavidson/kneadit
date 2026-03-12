@@ -20,7 +20,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard;
@@ -142,7 +142,7 @@ class Onboarding extends Page
     public ?string $pickup_instructions = '';
 
     // Step 8: PayPal Connection
-    public ?string $payment_method = 'cash';
+    public ?array $payment_methods = ['cash'];
 
     public ?string $paypal_client_id = '';
 
@@ -460,30 +460,29 @@ class Onboarding extends Page
                         Section::make('Payment Collection')
                             ->description('Choose how you want to collect payments from customers.')
                             ->schema([
-                                Radio::make('payment_method')
-                                    ->label('Payment Method')
+                                CheckboxList::make('payment_methods')
+                                    ->label('Payment Methods')
+                                    ->helperText('Select all that apply — offer your customers multiple ways to pay.')
                                     ->options([
-                                        'stripe' => 'Stripe — Accept credit cards, Apple Pay, Google Pay',
+                                        'stripe' => 'Stripe — Credit cards, Apple Pay, Google Pay',
                                         'paypal' => 'PayPal — Accept payments through PayPal Business',
-                                        'cash' => 'Cash / Manual — Collect payment in person (cash, Venmo, Zelle, etc.)',
-                                        'none' => 'No payment collection — I just need order management',
+                                        'cash' => 'Cash / Manual — In person (cash, Venmo, Zelle, etc.)',
                                     ])
                                     ->descriptions([
-                                        'stripe' => 'Recommended. Connect your Stripe account in one click. Customers pay with cards, Apple Pay, and more.',
-                                        'paypal' => 'Invoices are sent automatically when orders are placed. Requires a PayPal Business account.',
-                                        'cash' => 'You handle payment collection outside the platform. Orders are tracked but no invoices are sent.',
-                                        'none' => 'Customers place orders and you manage fulfillment. No payment tracking.',
+                                        'stripe' => 'Connect your own Stripe account. Payments go directly to you.',
+                                        'paypal' => 'Invoices sent automatically. Requires a PayPal Business account.',
+                                        'cash' => 'You handle payment collection outside the platform.',
                                     ])
                                     ->required()
                                     ->live()
                                     ->columnSpanFull(),
 
                                 Section::make('Stripe Connection')
-                                    ->description('Connect your Stripe account to accept credit card payments.')
+                                    ->description('Connect your own Stripe account — payments go directly to you, not us.')
                                     ->schema([
                                         \Filament\Schemas\Components\View::make('filament.pages.stripe-connect-status'),
                                     ])
-                                    ->visible(fn (Get $get) => $get('payment_method') === 'stripe'),
+                                    ->visible(fn (Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
 
                                 Section::make('PayPal Connection')
                                     ->description('Connect your PayPal Business account.')
@@ -493,19 +492,19 @@ class Onboarding extends Page
                                             ->placeholder('Your PayPal Client ID')
                                             ->maxLength(255)
                                             ->helperText('Find this in your PayPal Developer Dashboard under Apps & Credentials.')
-                                            ->required(fn (Get $get) => $get('payment_method') === 'paypal'),
+                                            ->required(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
                                         TextInput::make('paypal_client_secret')
                                             ->label('PayPal Client Secret')
                                             ->password()
                                             ->placeholder('Your PayPal Client Secret')
                                             ->maxLength(255)
-                                            ->required(fn (Get $get) => $get('payment_method') === 'paypal'),
+                                            ->required(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
                                         Toggle::make('paypal_sandbox')
                                             ->label('Sandbox Mode (Testing)')
                                             ->helperText('Enable this to test payments without real money. Disable when you\'re ready to go live.')
                                             ->default(true),
                                     ])
-                                    ->visible(fn (Get $get) => $get('payment_method') === 'paypal'),
+                                    ->visible(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
                             ])
                             ->footerActions([])
                             ->footerActionsAlignment(null),
@@ -653,9 +652,11 @@ class Onboarding extends Page
 
     protected function savePaymentStep(): void
     {
-        Setting::set('payment_method', $this->payment_method);
+        Setting::set('payment_methods', json_encode($this->payment_methods));
+        // Keep legacy single value for backward compatibility
+        Setting::set('payment_method', $this->payment_methods[0] ?? 'cash');
 
-        if ($this->payment_method === 'paypal') {
+        if (in_array('paypal', $this->payment_methods)) {
             Setting::set('paypal_client_id', $this->paypal_client_id);
             Setting::set('paypal_client_secret', $this->paypal_client_secret);
             Setting::set('paypal_sandbox', $this->paypal_sandbox ? '1' : '0');
