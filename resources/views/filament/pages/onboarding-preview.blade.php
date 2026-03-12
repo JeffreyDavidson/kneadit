@@ -91,7 +91,7 @@
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     @php
-                        $methodLabels = ['stripe' => 'Stripe', 'paypal' => 'PayPal', 'cash' => 'Cash / Manual'];
+                        $methodLabels = ['stripe' => 'Stripe Connect', 'paypal' => 'PayPal', 'cash' => 'Cash / Manual'];
                     @endphp
                     @foreach($methods as $method)
                         @if(isset($methodLabels[$method]))
