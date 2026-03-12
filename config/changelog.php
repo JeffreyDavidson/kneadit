@@ -3,6 +3,20 @@
 return [
     [
         'date' => '2026-03-12',
+        'version' => '1.5.0',
+        'title' => 'Blog & Platform Polish',
+        'items' => [
+            '10 SEO-optimized resource articles for cottage food bakers',
+            'Blog post auto-slug generation with duplicate handling',
+            'Storefront blog categories and filtering',
+            'PayPal service graceful handling when unconfigured',
+            'www subdomain redirect to apex domain',
+            '374 tests passing with 648 assertions',
+            'Trial expiration handling with Stripe webhook lifecycle',
+        ],
+    ],
+    [
+        'date' => '2026-03-12',
         'version' => '1.4.0',
         'title' => 'Platform Hardening & Quality of Life',
         'items' => [
