@@ -16,8 +16,16 @@ class InitializeTenancyIfNeeded
             return $next($request);
         }
 
-        // Skip if we're on a central domain
+        // Redirect www to apex domain
         $host = $request->getHost();
+        if ($host === 'www.getkneadit.app') {
+            return redirect()->to(
+                $request->getScheme() . '://getkneadit.app' . $request->getRequestUri(),
+                301
+            );
+        }
+
+        // Skip if we're on a central domain
         if (in_array($host, config('tenancy.central_domains', []), true)) {
             return $next($request);
         }
