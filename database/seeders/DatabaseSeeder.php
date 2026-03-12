@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CentralSeeder::class,
+            BlogPostSeeder::class,
         ]);
 
         if ($this->command) {
