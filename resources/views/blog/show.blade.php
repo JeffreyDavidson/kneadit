@@ -1,78 +1,84 @@
-@extends('layouts.storefront')
+@extends('blog.layout')
+
+@section('title', ($post->meta_title ?: $post->title) . ' — KneadIt')
+@section('meta_description', $post->meta_description ?: Str::limit(strip_tags($post->body), 155))
+@section('og_type', 'article')
+@section('canonical', route('blog.show', $post->slug))
+@if($post->featured_image)
+@section('og_image', $post->featured_image)
+@endif
+
+@section('styles')
+<style>
+.post-hero{background:var(--warm-black);padding:4rem 1.5rem 3rem}
+.post-hero .container{max-width:720px}
+.post-meta{font-size:.8rem;color:var(--honey);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:.75rem}
+.post-hero h1{font-family:var(--font-serif);font-size:clamp(1.75rem,4vw,2.75rem);color:var(--cream);line-height:1.2;margin-bottom:1rem}
+.post-hero .excerpt{color:var(--cinnamon);font-size:1.05rem;line-height:1.6}
+.post-hero .date{color:var(--cinnamon);font-size:.85rem;margin-top:1rem;opacity:.7}
+.post-image{max-width:720px;margin:0 auto;padding:0 1.5rem}
+.post-image img{width:100%;border-radius:0 0 12px 12px}
+.post-body{padding:2.5rem 1.5rem 4rem}
+.related{background:var(--flour);padding:3rem 1.5rem;border-top:1px solid var(--butter)}
+.related h2{font-family:var(--font-serif);text-align:center;margin-bottom:2rem;color:var(--warm-black)}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;max-width:1100px;margin:0 auto}
+.related-card{background:var(--white);border-radius:10px;padding:1.25rem;border:1px solid var(--butter);transition:transform .2s}
+.related-card:hover{transform:translateY(-2px)}
+.related-card-cat{font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--honey);letter-spacing:.08em}
+.related-card-title{font-family:var(--font-serif);font-size:1.05rem;margin:.4rem 0;color:var(--warm-black)}
+.related-card-excerpt{font-size:.8rem;color:var(--cinnamon);line-height:1.5}
+.back-link{display:inline-flex;align-items:center;gap:.4rem;color:var(--honey);font-size:.875rem;font-weight:600;margin-bottom:1.5rem}
+.cta-box{max-width:720px;margin:2rem auto;background:linear-gradient(135deg,var(--warm-black),var(--espresso));border-radius:12px;padding:2rem;text-align:center}
+.cta-box h3{font-family:var(--font-serif);color:var(--cream);margin-bottom:.5rem}
+.cta-box p{color:var(--cinnamon);font-size:.9rem;margin-bottom:1rem}
+.cta-box a{display:inline-block;padding:.6rem 1.5rem;background:var(--honey);color:var(--white);border-radius:50px;font-weight:700;font-size:.9rem}
+</style>
+@endsection
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 py-12">
-    <a href="{{ route('storefront.blog') }}" class="inline-flex items-center gap-1 text-sm mb-8 hover:underline" style="color: var(--warm-500);">
-        ← Back to Blog
-    </a>
-
-    <article>
-        @if($post->featured_image)
-            <div class="rounded-2xl overflow-hidden mb-8">
-                <img src="{{ Storage::disk('public')->url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full max-h-96 object-cover">
-            </div>
+<div class="post-hero">
+    <div class="container" style="max-width:720px">
+        <a href="{{ route('blog.index') }}" class="back-link" style="color:var(--honey)">← Back to Blog</a>
+        <div class="post-meta">{{ $post->category }}</div>
+        <h1>{{ $post->title }}</h1>
+        @if($post->excerpt)
+            <p class="excerpt">{{ $post->excerpt }}</p>
         @endif
-
-        <h1 class="font-display text-4xl md:text-5xl font-bold mb-4" style="color: var(--warm-900);">{{ $post->title }}</h1>
-
-        <div class="flex flex-wrap items-center gap-3 mb-6 text-sm" style="color: var(--warm-500);">
-            @if($post->author_name)
-                <span>By {{ $post->author_name }}</span>
-                <span>·</span>
-            @endif
-            <span>{{ $post->published_at?->format('F j, Y') }}</span>
-        </div>
-
-        @if($post->tags)
-            <div class="flex flex-wrap gap-2 mb-8">
-                @foreach($post->tags as $tag)
-                    <span class="text-xs px-3 py-1 rounded-full" style="background: var(--warm-100); color: var(--warm-600);">{{ $tag }}</span>
-                @endforeach
-            </div>
-        @endif
-
-        <div class="prose prose-lg max-w-none mb-12" style="color: var(--warm-800);">
-            {!! $post->body !!}
-        </div>
-
-        <!-- Share -->
-        <div class="border-t pt-6 mb-12" style="border-color: var(--warm-200);">
-            <div class="flex items-center gap-3">
-                <span class="text-sm font-medium" style="color: var(--warm-600);">Share this post:</span>
-                <button
-                    x-data
-                    @click="navigator.clipboard.writeText(window.location.href); $el.textContent = 'Copied!'; setTimeout(() => $el.textContent = 'Copy Link', 2000)"
-                    class="text-sm px-4 py-1.5 rounded-full transition-colors cursor-pointer"
-                    style="background: var(--warm-100); color: var(--warm-700);"
-                >Copy Link</button>
-            </div>
-        </div>
-    </article>
-
-    <!-- Related Posts -->
-    @if($related->isNotEmpty())
-        <div class="border-t pt-10" style="border-color: var(--warm-200);">
-            <h2 class="font-display text-2xl font-bold mb-6" style="color: var(--warm-900);">More Posts</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                @foreach($related as $relatedPost)
-                    <a href="{{ route('storefront.blog.show', $relatedPost->slug) }}" class="group block rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow" style="background: var(--warm-50); border: 1px solid var(--warm-200);">
-                        @if($relatedPost->featured_image)
-                            <div class="aspect-video overflow-hidden">
-                                <img src="{{ Storage::disk('public')->url($relatedPost->featured_image) }}" alt="{{ $relatedPost->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                            </div>
-                        @else
-                            <div class="aspect-video flex items-center justify-center" style="background: var(--warm-100);">
-                                <svg class="w-8 h-8" style="color: var(--warm-300);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
-                            </div>
-                        @endif
-                        <div class="p-4">
-                            <h3 class="font-display font-semibold group-hover:underline" style="color: var(--warm-900);">{{ $relatedPost->title }}</h3>
-                            <p class="text-xs mt-1" style="color: var(--warm-500);">{{ $relatedPost->published_at?->format('M j, Y') }}</p>
-                        </div>
-                    </a>
-                @endforeach
-            </div>
-        </div>
-    @endif
+        <p class="date">{{ $post->published_at->format('F j, Y') }}</p>
+    </div>
 </div>
+
+@if($post->featured_image)
+<div class="post-image">
+    <img src="{{ $post->featured_image }}" alt="{{ $post->title }}">
+</div>
+@endif
+
+<div class="post-body">
+    <div class="prose">
+        {!! $post->body !!}
+    </div>
+
+    {{-- CTA --}}
+    <div class="cta-box">
+        <h3>Ready to manage your bakery like a pro?</h3>
+        <p>KneadIt gives cottage food bakers the tools to take orders, manage finances, and grow — all in one place.</p>
+        <a href="/register">Start Your Free Trial →</a>
+    </div>
+</div>
+
+@if($related->count())
+<div class="related">
+    <h2>Keep Reading</h2>
+    <div class="related-grid">
+        @foreach($related as $relatedPost)
+            <a href="{{ route('blog.show', $relatedPost->slug) }}" class="related-card">
+                <div class="related-card-cat">{{ $relatedPost->category }}</div>
+                <div class="related-card-title">{{ $relatedPost->title }}</div>
+                <div class="related-card-excerpt">{{ Str::limit($relatedPost->excerpt ?? strip_tags($relatedPost->body), 100) }}</div>
+            </a>
+        @endforeach
+    </div>
+</div>
+@endif
 @endsection
