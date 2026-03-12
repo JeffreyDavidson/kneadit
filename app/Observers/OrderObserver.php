@@ -2,18 +2,42 @@
 
 namespace App\Observers;
 
+use App\Mail\NewOrderNotification;
 use App\Mail\OrderBaking;
 use App\Mail\OrderCancelled;
 use App\Mail\OrderConfirmed;
 use App\Mail\OrderDelivered;
+use App\Mail\OrderPlaced;
 use App\Mail\OrderReady;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class OrderObserver
 {
+    public function created(Order $order): void
+    {
+        try {
+            // Send confirmation to customer
+            if ($order->customer?->email) {
+                Mail::to($order->customer->email)->send(new OrderPlaced($order));
+            }
+
+            // Notify baker
+            $bakerEmail = Setting::get('store_email');
+            if ($bakerEmail) {
+                Mail::to($bakerEmail)->send(new NewOrderNotification($order));
+            }
+        } catch (\Exception $e) {
+            Log::warning('Order creation emails failed', [
+                'order' => $order->order_number,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function updated(Order $order): void
     {
         // Check if status field has changed
