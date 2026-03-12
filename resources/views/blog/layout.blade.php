@@ -70,7 +70,7 @@ img{max-width:100%;display:block}
     <a href="/" class="nav-brand">KneadIt</a>
     <div class="nav-links">
         <a href="/">Home</a>
-        <a href="/blog">Blog</a>
+        <a href="/resources">Resources</a>
         <a href="/register" class="nav-cta">Get Started</a>
     </div>
 </nav>
@@ -80,7 +80,7 @@ img{max-width:100%;display:block}
 <footer class="site-footer">
     <p style="color:var(--honey);font-weight:600;font-family:var(--font-serif);font-size:1.1rem;margin-bottom:.5rem">KneadIt</p>
     <p>The bakery management platform for cottage food bakers.</p>
-    <p style="margin-top:1rem"><a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/blog">Blog</a></p>
+    <p style="margin-top:1rem"><a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/resources">Resources</a></p>
     <p style="margin-top:1rem;opacity:.4;font-size:.75rem">© {{ date('Y') }} KneadIt. All rights reserved.</p>
 </footer>
 

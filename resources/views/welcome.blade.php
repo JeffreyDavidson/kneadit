@@ -393,7 +393,7 @@ footer{background:var(--warm-black);color:var(--cinnamon);padding:3rem 1.5rem;te
 <a href="#story">Our Story</a>
 <a href="#pricing">Pricing</a>
 <a href="#contact">Contact</a>
-<a href="/blog">Blog</a>
+<a href="/resources">Resources</a>
 <a href="/register" class="nav-cta">Get Started</a>
 </div>
 </nav>

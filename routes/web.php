@@ -42,9 +42,9 @@ Route::get('/privacy', fn () => view('legal.privacy'))->name('privacy');
 // Sitemap
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 
-// Blog / Resources (central only)
-Route::get('/blog', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
+// Resources / Blog (central only)
+Route::get('/resources', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
+Route::get('/resources/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 
 // Root route — serves landing page on central domains, storefront on tenant subdomains
 Route::get('/', [\App\Http\Controllers\RootController::class, 'index'])->name('home');
