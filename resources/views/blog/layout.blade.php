@@ -70,6 +70,9 @@ img{max-width:100%;display:block}
     <a href="/" class="nav-brand">KneadIt</a>
     <div class="nav-links">
         <a href="/">Home</a>
+        <a href="/#features">Features</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/#contact">Contact</a>
         <a href="/resources">Resources</a>
         <a href="/register" class="nav-cta">Get Started</a>
     </div>
