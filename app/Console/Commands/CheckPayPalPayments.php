@@ -17,6 +17,11 @@ class CheckPayPalPayments extends Command
 
     public function handle()
     {
+        // Skip entirely if PayPal isn't configured at the platform level
+        if (! config('services.paypal.client_id')) {
+            return Command::SUCCESS;
+        }
+
         $tenants = Tenant::all();
 
         foreach ($tenants as $tenant) {
