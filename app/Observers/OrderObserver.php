@@ -47,7 +47,7 @@ class OrderObserver
             'status' => $order->status,
             'payment_status' => $order->payment_status,
             'requested_date' => $order->requested_date?->toDateString(),
-            'items' => $order->items->map(fn ($item) => [
+            'items' => ($order->items ?? collect())->map(fn ($item) => [
                 'product' => $item->product?->name,
                 'quantity' => $item->quantity,
                 'unit_price' => $item->unit_price,

@@ -29,6 +29,27 @@ class BlogPost extends Model
         'published_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (BlogPost $post) {
+            if (empty($post->slug)) {
+                $slug = \Illuminate\Support\Str::slug($post->title);
+                $original = $slug;
+                $i = 2;
+                while (static::where('slug', $slug)->exists()) {
+                    $slug = $original . '-' . $i++;
+                }
+                $post->slug = $slug;
+            }
+        });
+
+        static::updating(function (BlogPost $post) {
+            if ($post->isDirty('title')) {
+                $post->slug = \Illuminate\Support\Str::slug($post->title);
+            }
+        });
+    }
+
     public function scopePublished($query)
     {
         return $query->where('is_published', true)
