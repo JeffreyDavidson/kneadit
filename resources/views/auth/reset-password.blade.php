@@ -35,6 +35,7 @@ a:hover{color:var(--golden)}
 .auth-footer{text-align:center;margin-top:1.5rem;font-size:.875rem;color:var(--cinnamon)}
 @media(max-width:500px){.auth-card{padding:1.75rem}}
 </style>
+@include('partials.fathom')
 </head>
 <body>
 <div class="auth-container">

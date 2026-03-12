@@ -45,6 +45,7 @@
             transform: translateY(-1px);
         }
     </style>
+@include('partials.fathom')
 </head>
 <body>
     <div class="container">

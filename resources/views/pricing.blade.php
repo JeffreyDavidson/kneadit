@@ -71,6 +71,7 @@ a{color:var(--honey);text-decoration:none;transition:color .2s}
 
 @media(max-width:767px){.pricing-grid{grid-template-columns:1fr;max-width:400px}.nav-links{display:none}}
 </style>
+@include('partials.fathom')
 </head>
 <body>
 

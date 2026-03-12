@@ -19,6 +19,7 @@ p{color:var(--cinnamon);line-height:1.6;margin-bottom:1.5rem}
 a{display:inline-block;padding:.75rem 2rem;border-radius:50px;background:var(--honey);color:var(--white);font-weight:700;font-size:.9rem;text-decoration:none;transition:background .2s,transform .2s}
 a:hover{background:var(--golden);transform:translateY(-1px)}
 </style>
+@include('partials.fathom')
 </head>
 <body>
 <div class="wrap">

@@ -22,6 +22,7 @@ body{font-family:var(--font-sans);background:var(--warm-black);color:var(--cream
 .success{color:var(--sage);font-size:.9rem;margin-bottom:1rem}
 a{color:var(--honey);text-decoration:none}
 </style>
+@include('partials.fathom')
 </head>
 <body>
 <div class="auth-container">
