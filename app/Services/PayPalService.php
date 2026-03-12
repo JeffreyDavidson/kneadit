@@ -11,9 +11,9 @@ class PayPalService
 {
     private string $baseUrl;
 
-    private string $clientId;
+    private ?string $clientId;
 
-    private string $clientSecret;
+    private ?string $clientSecret;
 
     private ?string $accessToken = null;
 
