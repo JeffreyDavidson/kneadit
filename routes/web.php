@@ -54,6 +54,7 @@ Route::get('/changelog', [\App\Http\Controllers\ChangelogController::class, 'ind
 
 // Resources / Blog (central only)
 Route::get('/resources', [\App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
+Route::get('/resources/feed.xml', [\App\Http\Controllers\BlogController::class, 'feed'])->name('blog.feed');
 Route::get('/resources/{slug}', [\App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
 
 // Root route — serves landing page on central domains, storefront on tenant subdomains
