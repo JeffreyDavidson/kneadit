@@ -46,9 +46,6 @@ Route::middleware([
         ->middleware('auth')
         ->name('stripe.connect');
 
-    // Hero lookbook (temporary — design review)
-    Route::get('/hero-lookbook', fn () => view('hero-lookbook'))->name('hero.lookbook');
-
     // Driver view (no auth, shared via link)
     Route::prefix('driver')->name('driver.')->group(function () {
         Route::get('/', [DriverController::class, 'index'])->name('index');
@@ -134,20 +131,26 @@ Route::middleware([
     Route::prefix('api')
         ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
         ->group(function () {
-            Route::get('/store', [StorefrontApiController::class, 'store']);
-            Route::get('/categories', [StorefrontApiController::class, 'categories']);
-            Route::get('/products', [StorefrontApiController::class, 'products']);
-            Route::get('/menu', [StorefrontApiController::class, 'menu']);
-            Route::get('/capacity/{date}', [StorefrontApiController::class, 'capacity']);
-            Route::get('/reviews', [StorefrontApiController::class, 'reviews']);
-            Route::get('/gallery', [StorefrontApiController::class, 'gallery']);
-            Route::get('/favorites', [StorefrontApiController::class, 'favorites']);
+            // Read endpoints — generous limit
+            Route::middleware('throttle:60,1')->group(function () {
+                Route::get('/store', [StorefrontApiController::class, 'store']);
+                Route::get('/categories', [StorefrontApiController::class, 'categories']);
+                Route::get('/products', [StorefrontApiController::class, 'products']);
+                Route::get('/menu', [StorefrontApiController::class, 'menu']);
+                Route::get('/capacity/{date}', [StorefrontApiController::class, 'capacity']);
+                Route::get('/reviews', [StorefrontApiController::class, 'reviews']);
+                Route::get('/gallery', [StorefrontApiController::class, 'gallery']);
+                Route::get('/favorites', [StorefrontApiController::class, 'favorites']);
+            });
 
-            Route::post('/orders', [StorefrontApiController::class, 'submitOrder']);
-            Route::post('/coupon/validate', [StorefrontApiController::class, 'validateCoupon']);
-            Route::post('/reviews', [StorefrontApiController::class, 'submitReview']);
-            Route::post('/contact', [StorefrontApiController::class, 'submitContact']);
-            Route::post('/favorites/toggle', [StorefrontApiController::class, 'toggleFavorite']);
-            Route::post('/waitlist', [StorefrontApiController::class, 'waitlist']);
+            // Write endpoints — tighter limit
+            Route::middleware('throttle:10,1')->group(function () {
+                Route::post('/orders', [StorefrontApiController::class, 'submitOrder']);
+                Route::post('/coupon/validate', [StorefrontApiController::class, 'validateCoupon']);
+                Route::post('/reviews', [StorefrontApiController::class, 'submitReview']);
+                Route::post('/contact', [StorefrontApiController::class, 'submitContact']);
+                Route::post('/favorites/toggle', [StorefrontApiController::class, 'toggleFavorite']);
+                Route::post('/waitlist', [StorefrontApiController::class, 'waitlist']);
+            });
         });
 });
