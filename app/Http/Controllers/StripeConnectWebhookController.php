@@ -42,6 +42,7 @@ class StripeConnectWebhookController extends Controller
 
         match ($type) {
             'account.updated' => $this->handleAccountUpdated($data),
+            'checkout.session.completed' => $this->handleCheckoutCompleted($data),
             default => null,
         };
 
@@ -96,6 +97,54 @@ class StripeConnectWebhookController extends Controller
                 'tenant_id' => $tenantId,
                 'error' => $e->getMessage(),
             ]);
+        }
+    }
+
+    /**
+     * When a checkout session completes on a connected account.
+     */
+    protected function handleCheckoutCompleted($session)
+    {
+        $sessionId = is_object($session) ? $session->id : ($session['id'] ?? null);
+        $metadata = is_object($session) ? ($session->metadata ?? null) : ($session['metadata'] ?? null);
+        $orderId = is_object($metadata) ? ($metadata->order_id ?? null) : ($metadata['order_id'] ?? null);
+
+        if (! $sessionId) {
+            return;
+        }
+
+        Log::info('Stripe Connect checkout completed', [
+            'session_id' => $sessionId,
+            'order_id' => $orderId,
+        ]);
+
+        // Find the tenant by looking up which order has this session ID
+        // We need to search across all tenants
+        $tenants = \App\Models\Tenant::all();
+        foreach ($tenants as $tenant) {
+            try {
+                tenancy()->initialize($tenant);
+
+                $order = \App\Models\Order::where('stripe_checkout_session_id', $sessionId)->first();
+                if ($order) {
+                    $order->update([
+                        'payment_status' => 'paid',
+                    ]);
+                    Log::info('Order marked paid via webhook', [
+                        'order' => $order->order_number,
+                        'tenant' => $tenant->id,
+                    ]);
+                    tenancy()->end();
+                    return;
+                }
+
+                tenancy()->end();
+            } catch (\Exception $e) {
+                Log::warning('Error checking tenant for checkout session', [
+                    'tenant' => $tenant->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
     }
 }
