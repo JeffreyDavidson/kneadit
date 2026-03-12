@@ -31,3 +31,9 @@ Schedule::command('checkins:send')->dailyAt('09:00');
 
 // Churn alert checks daily at 7 AM
 Schedule::command('churn:check')->dailyAt('07:00');
+
+// Database backups twice daily, keep 7 days
+Schedule::command('backup:databases --keep=7')->twiceDaily(3, 15);
+
+// Health check every 30 minutes — alerts on failure
+Schedule::command('health:check')->everyThirtyMinutes();

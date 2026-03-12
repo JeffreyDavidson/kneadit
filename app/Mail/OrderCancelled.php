@@ -6,6 +6,7 @@ use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use App\Mail\Concerns\BakerBranded;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -13,6 +14,7 @@ use Illuminate\Queue\SerializesModels;
 class OrderCancelled extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+    use BakerBranded;
 
     public function __construct(
         public Order $order
@@ -21,6 +23,8 @@ class OrderCancelled extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: $this->bakerFrom(),
+            replyTo: array_filter([$this->bakerReplyTo()]),
             subject: "Order #{$this->order->order_number} Cancelled - KneadIt Bakery",
         );
     }
