@@ -459,6 +459,227 @@ HTML,
 <p>KneadIt's finance tracking categorizes expenses using IRS Schedule C categories automatically, so tax time is just pulling a report instead of digging through bank statements.</p>
 HTML,
             ],
+            [
+                'title' => 'How to Sell Cookies from Home: A Complete Guide for 2026',
+                'slug' => 'how-to-sell-cookies-from-home',
+                'category' => 'guides',
+                'meta_title' => 'How to Sell Cookies from Home — Start Your Cookie Business | KneadIt',
+                'meta_description' => 'Learn how to sell cookies from home legally and profitably. Covers cottage food laws, best cookies to sell, pricing, packaging, and finding customers.',
+                'excerpt' => 'Cookies are the perfect entry point for a home baking business. Here\'s everything you need to know to start selling cookies from your kitchen.',
+                'body' => <<<'HTML'
+<h2>Why Cookies Are the Perfect Home Bakery Product</h2>
+<p>If you're looking to start a home baking business, cookies are hands-down the best place to begin. They're relatively quick to make, easy to package, travel well, and everyone loves them. Plus, the profit margins can be surprisingly good once you nail your pricing.</p>
+<p>Whether you want a weekend side hustle or a full-time gig, selling cookies from home is one of the lowest-barrier ways to start making money with your baking skills.</p>
+
+<h2>Step 1: Check Your State's Cottage Food Laws</h2>
+<p>Before you bake a single batch, look up your state's cottage food law. The good news: cookies are allowed in virtually every state. But you still need to know:</p>
+<ul>
+<li><strong>Your annual revenue cap</strong> — ranges from $25,000 to $250,000+ depending on your state</li>
+<li><strong>Where you can sell</strong> — some states allow online orders and delivery, others restrict you to farmers markets and in-person sales</li>
+<li><strong>Labeling requirements</strong> — almost every state requires labels with ingredients, allergens, and a "made in a home kitchen" disclaimer</li>
+<li><strong>Whether you need to register</strong> — some states require a simple (usually free) registration</li>
+</ul>
+<p>Search "[your state] cottage food law" to find the official guidelines. It takes 15 minutes and saves you headaches later.</p>
+
+<h2>Step 2: Choose Your Cookie Lineup</h2>
+<p>Don't try to sell every cookie recipe you know. Start with 3–5 varieties that you can make consistently and that have broad appeal. The best sellers for home cookie businesses are:</p>
+<ul>
+<li><strong>Chocolate chip cookies</strong> — the classic never fails</li>
+<li><strong>Custom decorated sugar cookies</strong> — high-margin, perfect for events and holidays</li>
+<li><strong>Specialty cookies</strong> — think stuffed cookies, crumbl-style cookies, or unique flavor combos that set you apart</li>
+<li><strong>Cookie boxes/assortments</strong> — great for gifting, higher average order value</li>
+</ul>
+
+<h3>Think About Scalability</h3>
+<p>Decorated sugar cookies look amazing on Instagram but take hours per dozen. If you want volume, include some "batch-friendly" cookies that you can crank out quickly alongside your premium options.</p>
+
+<h2>Step 3: Price for Profit (Not Charity)</h2>
+<p>This is where most home bakers stumble. Your cookies are not grocery store cookies — don't price them like they are. A solid pricing formula:</p>
+<p><strong>(Ingredient cost × 3) + labor + packaging = your price</strong></p>
+<p>For regular cookies, expect to charge $3–5 per cookie or $24–48 per dozen. Custom decorated sugar cookies command $5–8 each or $60–96 per dozen. These are normal market prices — don't feel guilty about them.</p>
+
+<h2>Step 4: Get Your Packaging Right</h2>
+<p>Packaging matters more than you think. It protects your product, makes it look professional, and is required by law to include certain information. At minimum you need:</p>
+<ul>
+<li>Food-safe bags, boxes, or containers</li>
+<li>A label with your business name, ingredients, allergens, weight, and home kitchen disclaimer</li>
+<li>Tissue paper or parchment to separate layers</li>
+</ul>
+<p>Your packaging is your brand's first impression. Clear cellophane bags with a nice sticker label look clean and professional without breaking the bank.</p>
+
+<h2>Step 5: Find Your Customers</h2>
+<p>You don't need a marketing degree. Start with what's free and easy:</p>
+<ul>
+<li><strong>Instagram and Facebook</strong> — post mouth-watering photos of your cookies. Consistency beats perfection.</li>
+<li><strong>Friends and family</strong> — tell everyone you know. Word of mouth is the #1 driver for home bakers.</li>
+<li><strong>Local Facebook groups</strong> — many communities have buy/sell groups or foodie groups where you can promote.</li>
+<li><strong>Farmers markets</strong> — great for building a customer base and getting real-time feedback.</li>
+<li><strong>Holiday and event seasons</strong> — Valentine's Day, Christmas, graduation parties, baby showers. Cookies are perfect for all of them.</li>
+</ul>
+
+<h2>Step 6: Set Up Systems Early</h2>
+<p>It's tempting to manage everything through DMs and notes on your phone. That works for your first five orders. By order twenty, you'll be losing track of who ordered what, when it's due, and whether they paid.</p>
+<p>Set up a simple order tracking system from day one. Track your orders, costs, and revenue so you know what's actually making you money. Tools like <a href="https://getkneadit.app">KneadIt</a> are built specifically for this — managing orders, tracking costs, and giving your customers a professional way to browse and order.</p>
+
+<h2>Start This Weekend</h2>
+<p>Seriously — you don't need to overthink this. Check your state law, pick your top 3 cookies, price them properly, post on Instagram, and take your first order. You can refine everything else as you go. The hardest part is starting, and cookies make it easy.</p>
+HTML,
+            ],
+            [
+                'title' => 'Cottage Food Packaging Ideas and Requirements You Need to Know',
+                'slug' => 'cottage-food-packaging-ideas-requirements',
+                'category' => 'tips',
+                'meta_title' => 'Cottage Food Packaging Ideas & Requirements (2026) | KneadIt',
+                'meta_description' => 'Packaging ideas and legal requirements for cottage food bakers. Learn what your labels must include and how to package baked goods that look professional.',
+                'excerpt' => 'Great packaging protects your product, builds your brand, and keeps you legal. Here\'s how to nail all three without overcomplicating it.',
+                'body' => <<<'HTML'
+<h2>Packaging Is More Than a Box</h2>
+<p>When a customer picks up their order, your packaging is the first thing they see and touch. It tells them whether you're a serious business or someone winging it. Good packaging does three things: protects the product, meets legal requirements, and makes people want to buy from you again.</p>
+<p>Let's break down the requirements first, then get into the fun stuff — the ideas.</p>
+
+<h2>What the Law Requires on Your Packaging</h2>
+<p>Cottage food laws in nearly every state require specific information on your labels. Missing any of these can get you fined or shut down, so take this seriously:</p>
+
+<h3>Required Label Elements (Most States)</h3>
+<ul>
+<li><strong>Product name</strong> — "Double Chocolate Brownies," not just "brownies"</li>
+<li><strong>Ingredients list</strong> — in descending order by weight, just like store-bought products</li>
+<li><strong>Allergen statement</strong> — must call out the Big 9: milk, eggs, wheat, soy, peanuts, tree nuts, fish, shellfish, sesame</li>
+<li><strong>Net weight or quantity</strong> — "12 oz" or "6 cookies"</li>
+<li><strong>Your name and home address</strong> — PO boxes usually don't count</li>
+<li><strong>"Made in a home kitchen" disclaimer</strong> — exact wording varies by state, so look up yours</li>
+<li><strong>Date</strong> — production date or best-by date, depending on your state</li>
+</ul>
+<p>Some states have additional requirements like a registration number or specific font size minimums. Always check your state's Department of Agriculture website for the exact language.</p>
+
+<h2>Packaging Ideas by Product Type</h2>
+
+<h3>Cookies</h3>
+<ul>
+<li><strong>Clear cellophane bags with a heat seal</strong> — classic, affordable, and lets the product sell itself visually</li>
+<li><strong>Kraft paper boxes with a window</strong> — more premium feel, great for gift sets and decorated cookies</li>
+<li><strong>Individually wrapped</strong> — perfect for farmers markets where people want to grab one or two</li>
+</ul>
+
+<h3>Bread and Loaf Cakes</h3>
+<ul>
+<li><strong>Paper bread bags</strong> — the bakery-style look people love, with a label sticker to seal</li>
+<li><strong>Kraft paper wrap + twine</strong> — rustic, Instagram-worthy, and inexpensive</li>
+<li><strong>Clear poly bags</strong> — practical for seeing the product, less aesthetic</li>
+</ul>
+
+<h3>Cakes</h3>
+<ul>
+<li><strong>Sturdy cake boxes</strong> — non-negotiable. Get boxes that fit your standard sizes (8", 10", etc.)</li>
+<li><strong>Non-slip shelf liner on the bottom</strong> — prevents sliding during transport</li>
+<li><strong>Cake boards</strong> — always use a board that's 2" larger than the cake</li>
+</ul>
+
+<h3>Bars, Brownies, and Small Items</h3>
+<ul>
+<li><strong>Glassine bags</strong> — grease-resistant, translucent, professional-looking</li>
+<li><strong>Small kraft boxes</strong> — great for brownie assortments or sampler packs</li>
+<li><strong>Wax paper wraps</strong> — simple, clean, and eco-friendly</li>
+</ul>
+
+<h2>Labeling Tips That Look Professional</h2>
+<p>Your label is your brand. Here's how to make it look legit without spending a fortune:</p>
+<ul>
+<li><strong>Use Canva</strong> to design your label — free templates get you 80% of the way there</li>
+<li><strong>Print on Avery labels</strong> at home to start. Upgrade to Sticker Mule or a local printer when volume justifies it.</li>
+<li><strong>Pick one or two fonts and stick with them</strong> — consistency looks professional, randomness looks amateur</li>
+<li><strong>Include your Instagram handle or website</strong> — turns every package into a marketing tool</li>
+<li><strong>Use waterproof labels</strong> if your products create any condensation</li>
+</ul>
+
+<h2>Where to Buy Packaging Supplies</h2>
+<p>You don't need to spend a fortune. Here are reliable, affordable sources:</p>
+<ul>
+<li><strong>Amazon</strong> — widest selection, fast shipping, competitive prices on bulk orders</li>
+<li><strong>WebstaurantStore</strong> — commercial-grade supplies at wholesale prices</li>
+<li><strong>Nashville Wraps</strong> — beautiful packaging specifically for food businesses</li>
+<li><strong>Dollar Tree</strong> — surprisingly good for basic cellophane bags and tissue paper when starting out</li>
+</ul>
+
+<h2>Don't Forget the Cost</h2>
+<p>Packaging adds up fast. A nice box, label, tissue paper, and ribbon can cost $2–4 per order. Make sure you're including packaging costs in your pricing formula — not eating it as a hidden expense. Track your packaging costs per product so you know exactly what each order costs you. <a href="https://getkneadit.app">KneadIt</a> lets you include packaging in your recipe cost calculations so nothing gets overlooked.</p>
+HTML,
+            ],
+            [
+                'title' => 'How to Price Custom Cakes for Profit (Without Scaring Off Customers)',
+                'slug' => 'how-to-price-custom-cakes-profit',
+                'category' => 'tips',
+                'meta_title' => 'How to Price Custom Cakes for Profit — Cake Pricing Guide | KneadIt',
+                'meta_description' => 'Learn how to price custom cakes that cover your costs and pay you fairly. Includes pricing formulas, tier-based examples, and common mistakes to avoid.',
+                'excerpt' => 'Custom cakes are high-effort, high-reward — but only if you price them right. Here\'s how to calculate prices that are fair to you AND your customers.',
+                'body' => <<<'HTML'
+<h2>The Custom Cake Pricing Problem</h2>
+<p>Custom cakes are one of the most profitable products a home baker can offer — but they're also the easiest to underprice. Unlike cookies or bread where you make a batch and sell multiples, every custom cake is a one-off project with unique design requirements, consultations, and hours of hands-on work.</p>
+<p>If you're charging $50 for a cake that took 6 hours to make, you're paying yourself less than minimum wage after costs. Let's fix that.</p>
+
+<h2>The Pricing Formula</h2>
+<p>Here's a straightforward formula that works for custom cakes:</p>
+<p><strong>Price = Ingredients + Packaging + Labor + Overhead + Profit Margin</strong></p>
+
+<h3>Breaking It Down</h3>
+<ul>
+<li><strong>Ingredients</strong> — cost of every ingredient in the cake, filling, and frosting/fondant. Weigh and measure precisely.</li>
+<li><strong>Packaging</strong> — cake box, cake board, dowels, any delivery supplies</li>
+<li><strong>Labor</strong> — every hour you spend: baking, cooling, leveling, filling, crumb coating, decorating, cleaning up, and any consultation time. Use $25–40/hr depending on your experience and market.</li>
+<li><strong>Overhead</strong> — electricity, gas, equipment wear, and the cost of running your business. A simple approach: add 15–20% to your subtotal.</li>
+<li><strong>Profit margin</strong> — add 10–20% on top. This isn't your labor pay — it's business profit that funds growth, covers slow months, and rewards the risk you take.</li>
+</ul>
+
+<h2>Example: A Two-Tier Custom Cake</h2>
+<p>Let's price a two-tier buttercream cake with custom decorations (a popular order for birthdays and showers):</p>
+<ul>
+<li>Ingredients (cake, filling, buttercream): $22</li>
+<li>Packaging (box, board, dowels): $8</li>
+<li>Labor: 5 hours × $30/hr = $150</li>
+<li>Subtotal: $180</li>
+<li>Overhead (18%): $32</li>
+<li>Profit (15%): $32</li>
+<li><strong>Price: $244</strong></li>
+</ul>
+<p>Does $244 feel high? It shouldn't. Custom two-tier cakes regularly sell for $200–400+ depending on your market and the complexity of the design. You're offering a handmade, personalized product — not a sheet cake from Costco.</p>
+
+<h2>Pricing by Serving Size</h2>
+<p>Many bakers price per serving as a quick reference. Here are common ranges for custom cakes:</p>
+<ul>
+<li><strong>Simple buttercream:</strong> $4–6 per serving</li>
+<li><strong>Detailed buttercream:</strong> $6–9 per serving</li>
+<li><strong>Fondant-covered:</strong> $8–12 per serving</li>
+<li><strong>Sculpted or elaborate designs:</strong> $10–15+ per serving</li>
+</ul>
+<p>A typical 8" round cake serves 15–20 people, so even the "simple" tier puts you at $60–120 for a single-tier cake. That's a reasonable starting point.</p>
+
+<h2>Common Pricing Mistakes</h2>
+
+<h3>1. Forgetting Consultation Time</h3>
+<p>Emails, texts, phone calls, Pinterest board reviews, design sketches — all of this is work. If you spend 45 minutes going back and forth with a customer before they even order, that time needs to be reflected in your price.</p>
+
+<h3>2. Not Charging for Complexity</h3>
+<p>A cake with hand-painted flowers takes three times longer than a smooth buttercream finish. Your pricing should reflect the difference. Create pricing tiers based on decoration complexity.</p>
+
+<h3>3. Matching Grocery Store Prices</h3>
+<p>Stop comparing yourself to Walmart. They use industrial equipment, pre-made mixes, and minimum-wage labor. You are a skilled artisan creating something custom and made with care. Different product, different price point.</p>
+
+<h3>4. Offering Too Many Free Extras</h3>
+<p>Tastings, delivery, cake toppers, extra servings "just in case" — if you're giving these away, you're cutting into your profit. Decide what's included and what costs extra. Be upfront about it.</p>
+
+<h2>How to Communicate Your Prices</h2>
+<p>Confidence matters. Don't apologize for your prices or over-explain. State them clearly:</p>
+<ul>
+<li>Post a starting price on your website or social media: "Custom cakes start at $XX"</li>
+<li>Provide a detailed quote for each custom order so the customer sees what they're paying for</li>
+<li>Require a 50% deposit to secure the order date</li>
+</ul>
+<p>Customers who balk at fair pricing aren't your customers. The ones who value quality and craftsmanship will happily pay.</p>
+
+<h2>Track Your Actual Costs</h2>
+<p>The only way to know if your pricing works is to track real numbers — not estimates. After each cake, log what you actually spent on ingredients and how many hours it really took. You'll be surprised how often your estimates are too low. <a href="https://getkneadit.app">KneadIt</a> makes this easy with built-in recipe costing and order tracking, so you can see your true profit on every cake you make.</p>
+HTML,
+            ],
         ];
 
         // Space posts 3 days apart, newest first
