@@ -24,7 +24,7 @@
 .feat h2{font-family:var(--font-serif);font-size:clamp(1.5rem,3vw,2rem);color:var(--cream);margin:0 0 .75rem;line-height:1.25}
 .feat p{color:var(--cinnamon);font-size:.95rem;line-height:1.7;margin:0 0 1rem;max-width:640px}
 .feat-foot{display:flex;align-items:center;gap:1.5rem;font-size:.8rem}
-.feat-foot .date{color:var(--cinnamon);opacity:.6}
+.feat-foot .date{color:var(--cinnamon)}
 .feat-foot .read{color:var(--honey);font-weight:600}
 
 /* Grid */
@@ -33,8 +33,8 @@
 .card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(28,20,16,.08);border-color:var(--honey)}
 .card-cat{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--honey);margin-bottom:.5rem}
 .card h3{font-family:var(--font-serif);font-size:1.1rem;color:var(--warm-black);margin:0 0 .5rem;line-height:1.3}
-.card p{font-size:.85rem;color:var(--cinnamon);line-height:1.6;margin:0 0 .75rem}
-.card .date{font-size:.72rem;color:var(--cinnamon);opacity:.5}
+.card p{font-size:.85rem;color:var(--walnut);line-height:1.6;margin:0 0 .75rem}
+.card .date{font-size:.72rem;color:var(--cinnamon)}
 
 /* CTA */
 .res-cta{background:var(--warm-black);padding:4rem 1.5rem;text-align:center;margin-top:1rem}
