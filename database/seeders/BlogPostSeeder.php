@@ -247,6 +247,218 @@ HTML,
 <p>Follow up with email subscribers. Let them know they can order online for pickup or delivery — don't make them wait until next week's market.</p>
 HTML,
             ],
+            [
+                'title' => 'How Much Can You Make Selling Baked Goods from Home?',
+                'slug' => 'how-much-money-selling-baked-goods-from-home',
+                'category' => 'tips',
+                'meta_title' => 'How Much Money Can You Make Selling Baked Goods from Home? | KneadIt',
+                'meta_description' => 'Realistic income expectations for cottage food bakers. What top home bakers earn, how to scale, and the math behind a profitable home bakery.',
+                'excerpt' => 'The honest answer: it depends. But here\'s what real cottage food bakers are earning and how they got there.',
+                'body' => <<<'HTML'
+<h2>The Short Answer</h2>
+<p>Most cottage food bakers earn between <strong>$500–$2,000/month</strong> part-time, with top performers hitting <strong>$5,000–$10,000/month</strong>. Your ceiling depends on your state's revenue cap, your product mix, and how seriously you treat it as a business.</p>
+
+<h2>Revenue by Stage</h2>
+<ul>
+<li><strong>Month 1–3 (Getting Started):</strong> $200–$500/month. You're finding your products, building word-of-mouth, and figuring out pricing.</li>
+<li><strong>Month 3–6 (Building Momentum):</strong> $500–$1,500/month. Repeat customers, social media traction, maybe your first farmers market.</li>
+<li><strong>Month 6–12 (Established):</strong> $1,500–$4,000/month. Consistent orders, efficient processes, possibly a waitlist for busy periods.</li>
+<li><strong>Year 2+ (Scaling):</strong> $4,000–$10,000+/month. Multiple channels, holiday rushes, possibly considering a commercial kitchen.</li>
+</ul>
+
+<h2>What Affects Your Income</h2>
+
+<h3>Product Choice Matters</h3>
+<p>Not all baked goods have the same margins:</p>
+<ul>
+<li><strong>High margin:</strong> Custom decorated cookies ($4–8 each), specialty cakes ($50–150+), macarons ($3–5 each)</li>
+<li><strong>Good margin:</strong> Artisan bread ($6–12/loaf), brownies/bars ($3–5 each), cinnamon rolls ($4–6 each)</li>
+<li><strong>Lower margin:</strong> Basic cookies ($1–2 each), muffins ($2–3 each) — volume needed</li>
+</ul>
+
+<h3>Sales Channels</h3>
+<p>Diversifying where you sell increases income:</p>
+<ul>
+<li><strong>Direct orders</strong> (online/phone) — highest margin, lowest effort per sale</li>
+<li><strong>Farmers markets</strong> — great for new customers, but booth fees + time eat into margins</li>
+<li><strong>Wholesale to cafés</strong> — lower margin but consistent volume (check your state laws)</li>
+<li><strong>Special events</strong> — weddings, corporate events = big orders</li>
+</ul>
+
+<h2>The Math</h2>
+<p>Let's say you sell custom sugar cookies:</p>
+<ul>
+<li>Price: $48/dozen</li>
+<li>Ingredient cost: $8/dozen</li>
+<li>Packaging: $3/dozen</li>
+<li>Labor: 2 hours × $20 = $40/dozen</li>
+<li><strong>Profit per dozen: -$3</strong> (you're losing money at $48!)</li>
+</ul>
+<p>This is why pricing matters so much. At $72/dozen (market rate for custom cookies), you'd profit $21/dozen. Ten dozen orders per week = $840/month profit.</p>
+
+<h2>Track Everything</h2>
+<p>You can't grow what you don't measure. Track every order, every expense, every hour. KneadIt gives you the financial dashboard to see exactly where your money goes — and where it comes from.</p>
+HTML,
+            ],
+            [
+                'title' => 'Do I Need a License to Sell Baked Goods from Home?',
+                'slug' => 'do-i-need-license-sell-baked-goods-home',
+                'category' => 'laws',
+                'meta_title' => 'Do I Need a License to Sell Baked Goods from Home? (2026) | KneadIt',
+                'meta_description' => 'The answer depends on your state. Learn about cottage food exemptions, when you need permits vs. when you don\'t, and how to sell legally.',
+                'excerpt' => 'Spoiler: in most states, you don\'t need a license. But you do need to follow specific rules. Here\'s how it works.',
+                'body' => <<<'HTML'
+<h2>The Good News</h2>
+<p>All 50 US states allow some form of home-based food sales under <strong>cottage food laws</strong>. In most states, you do <em>not</em> need a food handler's license, commercial kitchen, or health department inspection to sell baked goods from your home kitchen.</p>
+
+<h2>What You Typically DON'T Need</h2>
+<ul>
+<li>Food handler's permit (most states)</li>
+<li>Commercial kitchen inspection</li>
+<li>Business license (in many states)</li>
+<li>Health department approval</li>
+</ul>
+
+<h2>What You Typically DO Need</h2>
+<ul>
+<li><strong>Proper labeling</strong> — Name, address, ingredients, allergens, "Made in a Home Kitchen" disclaimer</li>
+<li><strong>To stay within your revenue cap</strong> — Ranges from $25,000 to $250,000+ depending on state</li>
+<li><strong>Registration</strong> — Some states require a simple registration (not a license). Usually free or under $50.</li>
+<li><strong>Food safety training</strong> — A handful of states require a basic food safety course</li>
+</ul>
+
+<h2>States That DON'T Require a License or Registration</h2>
+<p>Many states let you start selling immediately with just proper labels: Florida, Texas, Colorado, Utah, Ohio, and others. Check your state's specific rules.</p>
+
+<h2>States With More Requirements</h2>
+<p>Some states require permits, inspections, or food safety certifications: California, New York, New Jersey, and a few others have more stringent requirements.</p>
+
+<h2>When You DO Need a License</h2>
+<p>You typically need to step up to a commercial license when:</p>
+<ul>
+<li>You exceed your state's cottage food revenue cap</li>
+<li>You want to sell products not on the "allowed" list (like anything requiring refrigeration)</li>
+<li>You want to sell wholesale to stores or restaurants</li>
+<li>You want to ship products across state lines (federal FDA regulations apply)</li>
+</ul>
+
+<h2>Bottom Line</h2>
+<p>For most home bakers selling directly to customers in their state, cottage food laws make it easy to start legally. The key is knowing your state's specific rules and staying compliant. KneadIt tracks your revenue against your state's cap automatically, so you always know where you stand.</p>
+HTML,
+            ],
+            [
+                'title' => 'Instagram Marketing for Home Bakers: A Complete Guide',
+                'slug' => 'instagram-marketing-home-bakers-guide',
+                'category' => 'tips',
+                'meta_title' => 'Instagram Marketing for Home Bakers — Get More Orders | KneadIt',
+                'meta_description' => 'How to use Instagram to grow your cottage food business. Photo tips, hashtags, content ideas, and strategies that actually convert followers to customers.',
+                'excerpt' => 'Instagram is the #1 marketing tool for home bakers. Here\'s how to use it to actually get orders, not just likes.',
+                'body' => <<<'HTML'
+<h2>Why Instagram Works for Bakers</h2>
+<p>Baked goods are inherently visual. A perfectly golden sourdough loaf, a tray of decorated sugar cookies, layers of a cake being assembled — this is content that stops the scroll. Instagram is built for exactly this.</p>
+
+<h2>Setting Up Your Profile</h2>
+<ul>
+<li><strong>Business account</strong> — Switch to a business profile for analytics and contact buttons</li>
+<li><strong>Clear bio</strong> — What you sell, where you're located, how to order. Include a link to your menu/order page.</li>
+<li><strong>Consistent name</strong> — Use your bakery name, not your personal name</li>
+<li><strong>Profile photo</strong> — Your logo or a signature product photo</li>
+</ul>
+
+<h2>Content That Converts</h2>
+
+<h3>The 80/20 Rule</h3>
+<p>80% value/entertainment, 20% selling. Nobody follows a feed that's all "ORDER NOW!" Post content people actually want to see:</p>
+
+<h3>Content Ideas</h3>
+<ul>
+<li><strong>Process shots</strong> — Dough being shaped, icing being piped, bread scoring. People love watching the craft.</li>
+<li><strong>Before/after</strong> — Raw dough → finished product. Oddly satisfying.</li>
+<li><strong>Behind the scenes</strong> — Your kitchen setup, ingredient sourcing, early morning prep. Builds connection.</li>
+<li><strong>Customer reactions</strong> — Repost stories of people enjoying your products (with permission).</li>
+<li><strong>Flat lays</strong> — Styled product photos from above. Clean, professional, shareable.</li>
+<li><strong>Seasonal specials</strong> — Holiday cookies, fall-themed items. Create urgency.</li>
+</ul>
+
+<h2>Photo Tips</h2>
+<ul>
+<li><strong>Natural light only</strong> — Shoot near a window. No flash. No overhead fluorescents.</li>
+<li><strong>Clean backgrounds</strong> — Marble counters, wooden boards, clean white surfaces.</li>
+<li><strong>Shoot from above or 45°</strong> — These angles work best for food.</li>
+<li><strong>Edit consistently</strong> — Use the same filter/preset so your feed looks cohesive.</li>
+</ul>
+
+<h2>Hashtags That Work</h2>
+<p>Use a mix of sizes:</p>
+<ul>
+<li><strong>Large (1M+):</strong> #homebaker #bakingfromscratch #homemade</li>
+<li><strong>Medium (100K–1M):</strong> #cottagefoodbaker #homebakery #smallbatchbaking</li>
+<li><strong>Small/local (under 100K):</strong> #[yourcity]baker #[yourstate]cottagefood #[yourcity]foodie</li>
+</ul>
+<p>Use 15–25 hashtags per post. Save sets as templates so you can rotate them.</p>
+
+<h2>Converting Followers to Customers</h2>
+<p>The goal isn't followers — it's orders. Make it dead simple to order:</p>
+<ul>
+<li>Link to your order page in bio</li>
+<li>Use "Link in bio" in captions when showing products</li>
+<li>Add order page link to Stories with the link sticker</li>
+<li>Respond to DMs quickly — but redirect to your order system (DM orders get messy)</li>
+</ul>
+<p>Having a proper online storefront (like the one KneadIt provides) makes you look professional and eliminates the back-and-forth of DM ordering.</p>
+HTML,
+            ],
+            [
+                'title' => 'Cottage Food Tax Guide: What Home Bakers Need to Know',
+                'slug' => 'cottage-food-tax-guide-home-bakers',
+                'category' => 'laws',
+                'meta_title' => 'Cottage Food Tax Guide — Taxes for Home Bakers Explained | KneadIt',
+                'meta_description' => 'Yes, cottage food income is taxable. Learn about deductions, Schedule C, sales tax, quarterly payments, and how to keep the IRS happy as a home baker.',
+                'excerpt' => 'Cottage food income IS taxable — but the deductions can be significant. Here\'s what you need to know at tax time.',
+                'body' => <<<'HTML'
+<h2>Is Cottage Food Income Taxable?</h2>
+<p><strong>Yes.</strong> Income from selling baked goods is self-employment income, even if it's a side hustle. The IRS considers you a sole proprietor unless you've formed an LLC or corporation.</p>
+
+<h2>What You Owe</h2>
+<ul>
+<li><strong>Federal income tax</strong> — Your cottage food profit is added to your other income and taxed at your marginal rate.</li>
+<li><strong>Self-employment tax</strong> — 15.3% on net earnings (Social Security + Medicare). This is on top of income tax.</li>
+<li><strong>State income tax</strong> — If your state has one.</li>
+<li><strong>Sales tax</strong> — Depends on your state and what you sell. Many states exempt cottage food from sales tax. Check yours.</li>
+</ul>
+
+<h2>Deductions That Save You Money</h2>
+<p>The good news: you can deduct legitimate business expenses. Common deductions for home bakers:</p>
+
+<h3>Cost of Goods Sold (COGS)</h3>
+<ul>
+<li>Flour, sugar, butter, eggs — all ingredients</li>
+<li>Packaging materials (boxes, bags, labels, ribbon)</li>
+<li>Baking supplies consumed (parchment paper, piping bags)</li>
+</ul>
+
+<h3>Business Expenses</h3>
+<ul>
+<li><strong>Equipment</strong> — Mixers, ovens, pans, tools (depreciated or Section 179)</li>
+<li><strong>Marketing</strong> — Business cards, website costs, social media tools</li>
+<li><strong>Farmers market fees</strong> — Booth rental, event fees</li>
+<li><strong>Delivery costs</strong> — Gas mileage (67¢/mile in 2026), delivery bags</li>
+<li><strong>Software</strong> — Order management, accounting, website hosting</li>
+<li><strong>Insurance</strong> — If you have product liability insurance</li>
+<li><strong>Education</strong> — Baking classes, food safety courses, business courses</li>
+</ul>
+
+<h3>Home Office (Limited)</h3>
+<p>Note: Since cottage food is made in your home <em>kitchen</em> (not a dedicated office), the home office deduction is tricky. You generally can't deduct a portion of your kitchen since it's not used "exclusively" for business. Consult a tax professional.</p>
+
+<h2>Quarterly Estimated Taxes</h2>
+<p>If you expect to owe more than $1,000 in taxes for the year, you should make quarterly estimated payments to avoid penalties. Deadlines: April 15, June 15, September 15, January 15.</p>
+
+<h2>Record Keeping</h2>
+<p>Keep receipts for everything. Track every dollar in and every dollar out. The IRS requires records for at least 3 years. Use a system — a shoebox of receipts won't cut it when you're doing 50+ orders a month.</p>
+<p>KneadIt's finance tracking categorizes expenses using IRS Schedule C categories automatically, so tax time is just pulling a report instead of digging through bank statements.</p>
+HTML,
+            ],
         ];
 
         foreach ($posts as $post) {
