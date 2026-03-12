@@ -5,15 +5,14 @@
 
 @section('styles')
 <style>
-.res-hero{background:var(--warm-black);padding:4rem 1.5rem 2.5rem;text-align:center}
-.res-hero h1{font-family:var(--font-serif);font-size:clamp(1.75rem,4vw,2.75rem);color:var(--cream);margin:0 0 .4rem;line-height:1.15}
+.res-hero{background:var(--warm-black);padding:3.5rem 1.5rem 2.5rem;text-align:center}
+.res-hero h1{font-family:var(--font-serif);font-size:clamp(1.75rem,4vw,2.5rem);color:var(--cream);margin:0 0 .4rem;line-height:1.15}
 .res-hero h1 span{color:var(--honey)}
-.res-hero p{color:var(--cinnamon);font-size:.95rem;max-width:480px;margin:.25rem auto 0;line-height:1.6;opacity:.8}
-
-.cat-strip{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;padding:1.25rem 1.5rem 0;background:var(--warm-black);padding-bottom:2rem;margin-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,.06)}
-.cat-strip a{padding:.45rem 1.1rem;border-radius:50px;font-size:.78rem;font-weight:600;background:transparent;color:var(--cinnamon);border:1px solid rgba(139,104,68,.3);transition:all .2s;text-decoration:none}
-.cat-strip a:hover{border-color:var(--honey);color:var(--honey)}
-.cat-strip a.on{background:var(--honey);color:var(--white);border-color:var(--honey)}
+.res-hero p{color:var(--butter);font-size:.95rem;max-width:480px;margin:.25rem auto 1.5rem;line-height:1.6}
+.res-hero .cat-strip{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:0}
+.res-hero .cat-strip a{padding:.45rem 1.1rem;border-radius:50px;font-size:.78rem;font-weight:600;background:transparent;color:var(--butter);border:1px solid rgba(245,216,142,.25);transition:all .2s;text-decoration:none}
+.res-hero .cat-strip a:hover{border-color:var(--honey);color:var(--honey)}
+.res-hero .cat-strip a.on{background:var(--honey);color:var(--white);border-color:var(--honey)}
 
 .container{max-width:1000px;margin:0 auto;padding:0 1.5rem}
 
@@ -58,14 +57,13 @@
 <section class="res-hero">
     <h1>Baker's <span>Resources</span></h1>
     <p>Everything you need to start, run, and grow your cottage food business.</p>
+    <div class="cat-strip">
+        @foreach($categories as $key => $label)
+            <a href="{{ $key === 'all' ? route('blog.index') : route('blog.index', ['category' => $key]) }}"
+               class="{{ $activeCategory === $key ? 'on' : '' }}">{{ $label }}</a>
+        @endforeach
+    </div>
 </section>
-
-<div class="cat-strip">
-    @foreach($categories as $key => $label)
-        <a href="{{ $key === 'all' ? route('blog.index') : route('blog.index', ['category' => $key]) }}"
-           class="{{ $activeCategory === $key ? 'on' : '' }}">{{ $label }}</a>
-    @endforeach
-</div>
 
 <div class="container">
     @if($posts->count())
