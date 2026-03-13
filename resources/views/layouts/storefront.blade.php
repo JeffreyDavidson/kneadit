@@ -494,6 +494,34 @@
         @yield('content')
     </main>
 
+    <!-- Policies -->
+    @php
+        $showPolicies = \App\Models\Setting::get('show_policies_on_storefront', '0') === '1';
+        $policies = $showPolicies ? array_filter([
+            'Cancellation Policy' => \App\Models\Setting::get('cancellation_policy', ''),
+            'Deposit Policy' => \App\Models\Setting::get('deposit_policy', ''),
+            'Refund Policy' => \App\Models\Setting::get('refund_policy', ''),
+            'Pickup Policy' => \App\Models\Setting::get('pickup_policy', ''),
+            'Additional Terms' => \App\Models\Setting::get('additional_terms', ''),
+        ]) : [];
+    @endphp
+
+    @if(!empty($policies))
+    <section style="background: var(--warm-50); border-top: 1px solid var(--warm-200);" class="py-12">
+        <div class="max-w-4xl mx-auto px-4">
+            <h3 class="font-display text-2xl text-center mb-8" style="color: var(--warm-700);">Policies & Terms</h3>
+            <div class="grid gap-6 md:grid-cols-2">
+                @foreach($policies as $label => $text)
+                <div class="card p-5">
+                    <h4 class="font-display text-lg mb-2" style="color: var(--warm-600);">{{ $label }}</h4>
+                    <p class="text-sm leading-relaxed" style="color: var(--warm-700);">{{ $text }}</p>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
     <!-- Footer -->
     <footer style="background: var(--warm-900); color: var(--warm-200);" class="py-16">
         <div class="max-w-6xl mx-auto px-4 text-center">

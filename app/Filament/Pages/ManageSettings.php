@@ -70,6 +70,13 @@ class ManageSettings extends Page
     public string $webhook_url = '';
     public string $webhook_secret = '';
 
+    public ?string $cancellation_policy = '';
+    public ?string $deposit_policy = '';
+    public ?string $refund_policy = '';
+    public ?string $pickup_policy = '';
+    public ?string $additional_terms = '';
+    public bool $show_policies_on_storefront = false;
+
     public function mount(): void
     {
         $this->loadSettings();
@@ -95,6 +102,13 @@ class ManageSettings extends Page
         $this->paypal_sandbox = (bool) Setting::get('paypal_sandbox', true);
         $this->webhook_url = Setting::get('webhook_url', '');
         $this->webhook_secret = Setting::get('webhook_secret', '');
+
+        $this->cancellation_policy = Setting::get('cancellation_policy', '');
+        $this->deposit_policy = Setting::get('deposit_policy', '');
+        $this->refund_policy = Setting::get('refund_policy', '');
+        $this->pickup_policy = Setting::get('pickup_policy', '');
+        $this->additional_terms = Setting::get('additional_terms', '');
+        $this->show_policies_on_storefront = (bool) Setting::get('show_policies_on_storefront', false);
     }
 
     public function content(Schema $schema): Schema
@@ -224,6 +238,40 @@ class ManageSettings extends Page
                             ->default('250000')
                             ->helperText('Annual revenue limit for compliance')
                             ->columnSpanFull(),
+
+                        Textarea::make('cancellation_policy')
+                            ->label('Cancellation Policy')
+                            ->placeholder('Orders cancelled within 48 hours of pickup are non-refundable.')
+                            ->rows(2)
+                            ->columnSpanFull(),
+
+                        Textarea::make('deposit_policy')
+                            ->label('Deposit Policy')
+                            ->placeholder('A 50% deposit is required to secure your order. Remaining balance due at pickup.')
+                            ->rows(2)
+                            ->columnSpanFull(),
+
+                        Textarea::make('refund_policy')
+                            ->label('Refund Policy')
+                            ->placeholder('No refunds on custom orders. Store credit may be offered at our discretion.')
+                            ->rows(2)
+                            ->columnSpanFull(),
+
+                        Textarea::make('pickup_policy')
+                            ->label('Pickup Policy')
+                            ->placeholder('Orders not picked up within 2 hours of scheduled time will be forfeited.')
+                            ->rows(2)
+                            ->columnSpanFull(),
+
+                        Textarea::make('additional_terms')
+                            ->label('Additional Terms')
+                            ->placeholder('Any other terms or conditions...')
+                            ->rows(3)
+                            ->columnSpanFull(),
+
+                        Toggle::make('show_policies_on_storefront')
+                            ->label('Show Policies on Storefront')
+                            ->helperText('Display your policies in the storefront footer'),
                     ]),
 
                 // Integrations Section
@@ -297,6 +345,12 @@ class ManageSettings extends Page
             // Compliance
             Setting::set('allergy_disclaimer', $this->allergy_disclaimer);
             Setting::set('revenue_cap', $this->revenue_cap);
+            Setting::set('cancellation_policy', $this->cancellation_policy);
+            Setting::set('deposit_policy', $this->deposit_policy);
+            Setting::set('refund_policy', $this->refund_policy);
+            Setting::set('pickup_policy', $this->pickup_policy);
+            Setting::set('additional_terms', $this->additional_terms);
+            Setting::set('show_policies_on_storefront', $this->show_policies_on_storefront ? '1' : '0');
 
             Notification::make()
                 ->title('Settings saved successfully!')
@@ -326,6 +380,12 @@ class ManageSettings extends Page
         $this->birthday_program_enabled = false;
         $this->allergy_disclaimer = 'Please inform us of any allergies or dietary restrictions when placing your order.';
         $this->revenue_cap = '250000';
+        $this->cancellation_policy = '';
+        $this->deposit_policy = '';
+        $this->refund_policy = '';
+        $this->pickup_policy = '';
+        $this->additional_terms = '';
+        $this->show_policies_on_storefront = false;
 
         Notification::make()
             ->title('Settings reset to defaults')
