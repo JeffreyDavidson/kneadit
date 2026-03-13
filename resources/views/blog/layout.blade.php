@@ -87,6 +87,7 @@ img{max-width:100%;display:block}
     <p>The bakery management platform for cottage food bakers.</p>
     <p style="margin-top:1rem"><a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href="/resources">Resources</a> · <a href="/changelog">Changelog</a></p>
     <p style="margin-top:1rem;opacity:.4;font-size:.75rem">© {{ date('Y') }} KneadIt. All rights reserved.</p>
+    <p style="margin-top:.5rem;opacity:.35;font-size:.7rem">KneadIt is a business management tool. Users are responsible for compliance with their state's cottage food laws.</p>
 </footer>
 
 </body>
