@@ -70,9 +70,13 @@ HTML,
 <li>Ingredient cost × 3: $13.50</li>
 <li>Labor: 1.5 hours × your hourly rate (at minimum, pay yourself what you'd earn at a day job)</li>
 <li>Packaging: $1.50</li>
-<li><strong>Price: $45.00 per dozen</strong></li>
+<li><strong>Price: ingredients + labor + packaging (use the formula above)</strong></li>
 </ul>
 <p>That might feel high, but artisan cookies at farmers markets regularly sell for $4-6 each ($48-72/dozen). You're not competing with Chips Ahoy.</p>
+
+<h2>Not All Baking Is Equal</h2>
+<p>A batch of chocolate chip cookies and a batch of hand-decorated sugar cookies require completely different levels of skill, time, and effort. Your pricing should reflect that. Mixing dough and scooping cookies onto a sheet pan might take 30 minutes. Decorating a dozen custom sugar cookies with royal icing can take 2-3 hours or more.</p>
+<p>Think about what goes into each product: simple baking, detailed decorating, multi-step assembly, fondant work, hand-piped details. The more skilled and time-intensive the work, the more you should charge. Don't price your decorated sugar cookies the same as your drop cookies just because they're both "cookies."</p>
 
 <h2>Common Pricing Mistakes</h2>
 <ul>
@@ -84,6 +88,7 @@ HTML,
 
 <h2>Track Your Real Costs</h2>
 <p>You can't price correctly if you don't know your true costs. KneadIt's recipe cost calculator lets you input every ingredient and see your exact cost per item, so you can price with confidence, not guesswork.</p>
+<p><strong>A note on labor rates:</strong> Re-evaluate your hourly rate regularly. As your skills improve and your products get more complex, your time becomes more valuable. Start with at least your state's minimum wage, and increase as you grow.</p>
 HTML,
             ],
             [
@@ -286,15 +291,14 @@ HTML,
 </ul>
 
 <h2>The Math</h2>
-<p>Let's say you sell custom sugar cookies:</p>
+<p>Let's say you sell custom sugar cookies at $48/dozen. Sounds great, right? Let's break it down:</p>
 <ul>
-<li>Price: $48/dozen</li>
 <li>Ingredient cost: $8/dozen</li>
 <li>Packaging: $3/dozen</li>
-<li>Labor: 2 hours × your hourly rate</li>
-<li><strong>Profit per dozen: -$3</strong> (you're losing money at $48!)</li>
+<li>Labor: 2 hours of decorating, baking, and cleanup</li>
 </ul>
-<p>This is why pricing matters so much. At $72/dozen (market rate for custom cookies), you'd profit $21/dozen. Ten dozen orders per week = $840/month profit.</p>
+<p>That leaves $37 to cover your labor. For 2 hours of work, that's $18.50/hour before overhead costs like electricity, gas, and equipment wear. Once you factor those in, your real earnings shrink fast.</p>
+<p>Many bakers are shocked to find they're barely breaking even once they honestly account for their time. This is why pricing matters so much.</p>
 
 <h2>Track Everything</h2>
 <p>You can't grow what you don't measure. Track every order, every expense, every hour. KneadIt gives you the financial dashboard to see exactly where your money goes and where it comes from.</p>
@@ -625,7 +629,7 @@ HTML,
 <ul>
 <li><strong>Ingredients:</strong> cost of every ingredient in the cake, filling, and frosting/fondant. Weigh and measure precisely.</li>
 <li><strong>Packaging:</strong> cake box, cake board, dowels, any delivery supplies</li>
-<li><strong>Labor:</strong> every hour you spend: baking, cooling, leveling, filling, crumb coating, decorating, cleaning up, and any consultation time. Use $25–40/hr depending on your experience and market.</li>
+<li><strong>Labor:</strong> every hour you spend: baking, cooling, leveling, filling, crumb coating, decorating, cleaning up, and any consultation time. Set your rate based on your experience level, skill, and local market. At minimum, pay yourself what you'd earn at a day job, and increase as your skills grow.</li>
 <li><strong>Overhead:</strong> electricity, gas, equipment wear, and the cost of running your business. A simple approach: add 15–20% to your subtotal.</li>
 <li><strong>Profit margin:</strong> add 10–20% on top. This isn't your labor pay; it's business profit that funds growth, covers slow months, and rewards the risk you take.</li>
 </ul>
@@ -635,13 +639,12 @@ HTML,
 <ul>
 <li>Ingredients (cake, filling, buttercream): $22</li>
 <li>Packaging (box, board, dowels): $8</li>
-<li>Labor: 5 hours × your hourly rate (set this based on your experience level and market)</li>
-<li>Subtotal: $180</li>
-<li>Overhead (18%): $32</li>
-<li>Profit (15%): $32</li>
-<li><strong>Price: $244</strong></li>
+<li>Labor: 5 hours × your hourly rate</li>
+<li>Subtotal: $30 + your labor cost</li>
+<li>Overhead (15–20% of subtotal)</li>
+<li>Profit margin (15–20% on top)</li>
 </ul>
-<p>Does $244 feel high? It shouldn't. Custom two-tier cakes regularly sell for $200–400+ depending on your market and the complexity of the design. You're offering a handmade, personalized product, not a sheet cake from Costco.</p>
+<p>If the final number feels high, remember: Custom two-tier cakes regularly sell for $200–400+ depending on your market and the complexity of the design. You're offering a handmade, personalized product, not a sheet cake from Costco.</p>
 
 <h2>Pricing by Serving Size</h2>
 <p>Many bakers price per serving as a quick reference. Here are common ranges for custom cakes:</p>
