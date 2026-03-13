@@ -92,7 +92,20 @@
             @endforeach
         </div>
 
-        {{ $posts->links() }}
+        @if($posts->hasPages())
+            <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:2.5rem">
+                @if($posts->onFirstPage())
+                    <span style="padding:.5rem 1rem;border-radius:8px;background:var(--sourdough);color:var(--cinnamon);font-size:.85rem">← Previous</span>
+                @else
+                    <a href="{{ $posts->previousPageUrl() }}" style="padding:.5rem 1rem;border-radius:8px;background:var(--honey);color:var(--white);font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">← Previous</a>
+                @endif
+                @if($posts->hasMorePages())
+                    <a href="{{ $posts->nextPageUrl() }}" style="padding:.5rem 1rem;border-radius:8px;background:var(--honey);color:var(--white);font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Next →</a>
+                @else
+                    <span style="padding:.5rem 1rem;border-radius:8px;background:var(--sourdough);color:var(--cinnamon);font-size:.85rem">Next →</span>
+                @endif
+            </div>
+        @endif
     @else
         <div class="empty">
             <h2>Coming Soon</h2>

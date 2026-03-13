@@ -8,10 +8,6 @@ class BlogController extends Controller
 {
     public function index()
     {
-        $posts = BlogPost::published()
-            ->orderByDesc('published_at')
-            ->paginate(12);
-
         $categories = [
             'all' => 'All Posts',
             'guides' => 'Getting Started',
@@ -22,12 +18,13 @@ class BlogController extends Controller
 
         $activeCategory = request('category', 'all');
 
+        $query = BlogPost::published()->orderByDesc('published_at');
+
         if ($activeCategory !== 'all') {
-            $posts = BlogPost::published()
-                ->where('category', $activeCategory)
-                ->orderByDesc('published_at')
-                ->paginate(12);
+            $query->where('category', $activeCategory);
         }
+
+        $posts = $query->paginate(18);
 
         return view('blog.index', compact('posts', 'categories', 'activeCategory'));
     }
