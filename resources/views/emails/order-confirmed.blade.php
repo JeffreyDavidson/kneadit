@@ -52,5 +52,24 @@
     <a href="{{ url('/track') }}" style="display: inline-block; background-color: {{ $primaryColor }}; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">Track Your Order</a>
 </div>
 
+@php
+    $emailPolicies = array_filter([
+        'Cancellation Policy' => \App\Models\Setting::get('cancellation_policy', ''),
+        'Deposit Policy' => \App\Models\Setting::get('deposit_policy', ''),
+        'Refund Policy' => \App\Models\Setting::get('refund_policy', ''),
+        'Pickup Policy' => \App\Models\Setting::get('pickup_policy', ''),
+        'Additional Terms' => \App\Models\Setting::get('additional_terms', ''),
+    ]);
+@endphp
+
+@if(!empty($emailPolicies))
+<div style="background-color: #f9f6f1; border-radius: 6px; padding: 15px; margin: 20px 0 20px; border-top: 2px solid {{ $primaryColor }};">
+    <p style="margin: 0 0 10px; font-weight: 700; font-size: 14px; color: {{ $secondaryColor }};">Order Terms</p>
+    @foreach($emailPolicies as $label => $text)
+    <p style="margin: 0 0 6px; font-size: 12px; color: #555;"><strong>{{ $label }}:</strong> {{ $text }}</p>
+    @endforeach
+</div>
+@endif
+
 <p style="margin: 0; color: #555; font-size: 14px;">We'll keep you updated as your order progresses. Thank you for your order!</p>
 @endsection
