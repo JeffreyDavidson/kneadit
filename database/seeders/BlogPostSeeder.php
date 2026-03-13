@@ -347,7 +347,7 @@ HTML,
 </ul>
 
 <h2>Bottom Line</h2>
-<p>For most home bakers selling directly to customers in their state, cottage food laws make it easy to start legally. The key is knowing your state's specific rules and staying compliant. KneadIt tracks your revenue against your state's cap automatically, so you always know where you stand.</p>
+<p>For most home bakers selling directly to customers in their state, cottage food laws make it easy to start legally. The key is knowing your state's specific rules and staying compliant. KneadIt lets you set your state's revenue cap and tracks your earnings against it, so you always know where you stand.</p>
 HTML,
             ],
             [
@@ -460,7 +460,7 @@ HTML,
 
 <h2>Record Keeping</h2>
 <p>Keep receipts for everything. Track every dollar in and every dollar out. The IRS requires records for at least 3 years. Use a system. A shoebox of receipts won't cut it when you're doing 50+ orders a month.</p>
-<p>KneadIt's finance tracking categorizes expenses using IRS Schedule C categories automatically, so tax time is just pulling a report instead of digging through bank statements.</p>
+<p>KneadIt's finance tracking lets you categorize expenses using IRS Schedule C categories, so tax time is just pulling a report instead of digging through bank statements.</p>
 HTML,
             ],
             [
