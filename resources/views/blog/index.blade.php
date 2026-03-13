@@ -73,7 +73,6 @@
                 <h2>{{ $featured->title }}</h2>
                 <p>{{ Str::limit($featured->excerpt ?? strip_tags($featured->body), 180) }}</p>
                 <div class="feat-foot">
-                    <span class="date">{{ $featured->published_at->format('M j, Y') }}</span>
                     <span class="read">Read →</span>
                 </div>
             </a>
@@ -87,7 +86,6 @@
                     <div class="card-cat">{{ $categories[$post->category] ?? $post->category }}</div>
                     <h3>{{ $post->title }}</h3>
                     <p>{{ Str::limit($post->excerpt ?? strip_tags($post->body), 110) }}</p>
-                    <div class="date">{{ $post->published_at->format('M j, Y') }}</div>
                 </a>
             @endforeach
         </div>
