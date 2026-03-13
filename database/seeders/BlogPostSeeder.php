@@ -68,7 +68,7 @@ HTML,
 <ul>
 <li>Ingredients: $4.50</li>
 <li>Ingredient cost × 3: $13.50</li>
-<li>Labor: 1.5 hours × $20/hr = $30.00</li>
+<li>Labor: 1.5 hours × your hourly rate (at minimum, pay yourself what you'd earn at a day job)</li>
 <li>Packaging: $1.50</li>
 <li><strong>Price: $45.00 per dozen</strong></li>
 </ul>
@@ -291,7 +291,7 @@ HTML,
 <li>Price: $48/dozen</li>
 <li>Ingredient cost: $8/dozen</li>
 <li>Packaging: $3/dozen</li>
-<li>Labor: 2 hours × $20 = $40/dozen</li>
+<li>Labor: 2 hours × your hourly rate</li>
 <li><strong>Profit per dozen: -$3</strong> (you're losing money at $48!)</li>
 </ul>
 <p>This is why pricing matters so much. At $72/dozen (market rate for custom cookies), you'd profit $21/dozen. Ten dozen orders per week = $840/month profit.</p>
@@ -635,7 +635,7 @@ HTML,
 <ul>
 <li>Ingredients (cake, filling, buttercream): $22</li>
 <li>Packaging (box, board, dowels): $8</li>
-<li>Labor: 5 hours × $30/hr = $150</li>
+<li>Labor: 5 hours × your hourly rate (set this based on your experience level and market)</li>
 <li>Subtotal: $180</li>
 <li>Overhead (18%): $32</li>
 <li>Profit (15%): $32</li>
