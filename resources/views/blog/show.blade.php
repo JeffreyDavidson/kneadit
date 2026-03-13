@@ -31,6 +31,8 @@
 .cta-box h3{font-family:var(--font-serif);color:var(--cream);margin-bottom:.5rem}
 .cta-box p{color:var(--cinnamon);font-size:.9rem;margin-bottom:1rem}
 .cta-box a{display:inline-block;padding:.6rem 1.5rem;background:var(--honey);color:var(--white);border-radius:50px;font-weight:700;font-size:.9rem}
+.post-disclaimer{max-width:720px;margin:2rem auto 0;padding:1rem 1.25rem;border-left:3px solid var(--sourdough);font-size:.78rem;color:var(--cinnamon);line-height:1.6}
+.post-disclaimer p{margin:0}
 @endsection
 
 @section('content')
@@ -60,8 +62,13 @@
     {{-- CTA --}}
     <div class="cta-box">
         <h3>Ready to manage your bakery like a pro?</h3>
-        <p>KneadIt gives cottage food bakers the tools to take orders, manage finances, and grow — all in one place.</p>
+        <p>KneadIt gives cottage food bakers the tools to take orders, manage finances, and grow, all in one place.</p>
         <a href="/register">Start Your Free Trial →</a>
+    </div>
+
+    {{-- Disclaimer --}}
+    <div class="post-disclaimer">
+        <p>This content is for informational purposes only and is not legal advice. Cottage food laws vary by state. You are responsible for understanding and complying with your state's regulations.</p>
     </div>
 </div>
 
