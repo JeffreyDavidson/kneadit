@@ -42,7 +42,7 @@
         @if($post->excerpt)
             <p class="excerpt">{{ $post->excerpt }}</p>
         @endif
-        <p class="date">{{ $post->published_at->format('F j, Y') }}</p>
+        {{-- date removed per Cassie's request --}}
     </div>
 </div>
 
