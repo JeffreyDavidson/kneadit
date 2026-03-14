@@ -37,59 +37,9 @@ class Dashboard extends BaseDashboard
         ];
     }
 
-    protected string $view = 'filament.pages.dashboard';
-
     public function getHeading(): string|Htmlable
     {
         return 'Bakery Dashboard';
-    }
-
-    /**
-     * Get widgets with grid positions for GridStack static rendering.
-     */
-    public function getWidgetsWithGrid(): array
-    {
-        $registry = $this->getWidgetRegistry();
-
-        $savedGrid = Setting::get('dashboard_grid_layout');
-        $gridLayout = $savedGrid ? json_decode($savedGrid, true) : [];
-
-        $savedWidgets = Setting::get('dashboard_widgets');
-        $widgetConfig = $savedWidgets ? json_decode($savedWidgets, true) : null;
-
-        $defaults = [
-            'welcome_banner'    => ['x' => 0, 'y' => 0,  'w' => 12, 'h' => 2],
-            'stats_overview'    => ['x' => 0, 'y' => 2,  'w' => 12, 'h' => 4],
-            'revenue_chart'     => ['x' => 0, 'y' => 6,  'w' => 8,  'h' => 7],
-            'recent_orders'     => ['x' => 8, 'y' => 6,  'w' => 4,  'h' => 7],
-            'upcoming_orders'   => ['x' => 0, 'y' => 13, 'w' => 4,  'h' => 6],
-            'top_products'      => ['x' => 4, 'y' => 13, 'w' => 4,  'h' => 6],
-            'customer_insights' => ['x' => 8, 'y' => 13, 'w' => 4,  'h' => 6],
-            'at_risk_customers' => ['x' => 0, 'y' => 19, 'w' => 8,  'h' => 6],
-            'low_stock'         => ['x' => 8, 'y' => 19, 'w' => 4,  'h' => 6],
-            'birthday'          => ['x' => 0, 'y' => 25, 'w' => 4,  'h' => 5],
-            'recent_activity'   => ['x' => 4, 'y' => 25, 'w' => 8,  'h' => 5],
-        ];
-
-        $result = [];
-        foreach ($registry as $key => $class) {
-            if ($widgetConfig && isset($widgetConfig[$key]) && ! ($widgetConfig[$key]['visible'] ?? true)) {
-                continue;
-            }
-
-            $grid = $gridLayout[$key] ?? $defaults[$key] ?? ['x' => 0, 'y' => 99, 'w' => 4, 'h' => 3];
-
-            $result[] = [
-                'key' => $key,
-                'class' => $class,
-                'x' => $grid['x'] ?? 0,
-                'y' => $grid['y'] ?? 0,
-                'w' => $grid['w'] ?? 4,
-                'h' => $grid['h'] ?? 3,
-            ];
-        }
-
-        return $result;
     }
 
     protected function getWidgetRegistry(): array
