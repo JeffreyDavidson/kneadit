@@ -9,7 +9,7 @@ use Filament\Widgets\Widget;
 
 class CustomerInsightsWidget extends Widget
 {
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 7;
 
     protected int|string|array $columnSpan = 1;
 
