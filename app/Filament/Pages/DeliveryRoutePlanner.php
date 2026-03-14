@@ -58,10 +58,10 @@ class DeliveryRoutePlanner extends Page
         }
 
         $this->deliveryOrders = Order::with(['customer', 'orderItems'])
-            ->whereDate('requested_date', $this->selectedDate)
+            ->whereDate('delivery_date', $this->selectedDate)
             ->whereNotNull('delivery_address')
             ->where('delivery_address', '!=', '')
-            ->orderBy('requested_time')
+            ->orderBy('delivery_time')
             ->get()
             ->map(function ($order) {
                 return [
@@ -69,7 +69,7 @@ class DeliveryRoutePlanner extends Page
                     'order_number' => $order->order_number,
                     'customer_name' => $order->customer->name ?? 'Unknown Customer',
                     'delivery_address' => $order->delivery_address,
-                    'requested_time' => $order->requested_time ? Carbon::parse($order->requested_time)->format('H:i') : 'Not specified',
+                    'delivery_time' => $order->delivery_time ? Carbon::parse($order->delivery_time)->format('H:i') : 'Not specified',
                     'total' => $order->total,
                     'distance_tier' => $this->calculateDistanceTier($order->delivery_address),
                 ];

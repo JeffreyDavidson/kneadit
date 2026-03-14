@@ -11,7 +11,7 @@
     <div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
         <div style="font-size: 18px; font-weight: 700; color: {{ $secondaryColor }}; margin-bottom: 10px;">Order #{{ $order->order_number }}</div>
         <p style="margin: 0 0 5px;"><strong>Delivery Address:</strong> {{ $order->delivery_address }}</p>
-        <p style="margin: 0 0 5px;"><strong>Estimated Time:</strong> {{ $order->requested_time->format('g:i A') }}</p>
+        <p style="margin: 0 0 5px;"><strong>Estimated Time:</strong> {{ $order->delivery_time->format('g:i A') }}</p>
         <p style="margin: 10px 0 0; color: #555; font-size: 14px;"><em>Please ensure someone is available to receive the delivery.</em></p>
     </div>
 @else

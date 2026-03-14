@@ -32,9 +32,9 @@ class BakingSheetWidget extends BaseWidget
                     ->whereHas('order', function (Builder $query) {
                         $query->whereIn('status', ['pending', 'confirmed', 'baking'])
                             ->where(function (Builder $q) {
-                                $q->whereDate('requested_date', Carbon::today())
+                                $q->whereDate('delivery_date', Carbon::today())
                                     ->orWhere(function (Builder $q2) {
-                                        $q2->whereDate('requested_date', '>', Carbon::today())
+                                        $q2->whereDate('delivery_date', '>', Carbon::today())
                                             ->where('status', 'confirmed');
                                     });
                             });

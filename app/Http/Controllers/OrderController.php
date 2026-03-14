@@ -81,7 +81,7 @@ class OrderController extends Controller
             'success' => true,
             'coupon_id' => $coupon->id,
             'code' => $coupon->code,
-            'discount' => $discount,
+            'discount_amount' => $discount,
             'label' => $coupon->type === 'percentage'
                 ? number_format($coupon->value, 0).'% off'
                 : '$'.number_format($coupon->value, 2).' off',

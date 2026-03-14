@@ -21,18 +21,18 @@ class UpcomingOrdersWidget extends Widget
 
         $orders = Order::with('customer')
             ->where('status', '!=', 'cancelled')
-            ->whereBetween('requested_date', [$today, $endDate])
-            ->orderBy('requested_date')
-            ->orderBy('requested_time')
+            ->whereBetween('delivery_date', [$today, $endDate])
+            ->orderBy('delivery_date')
+            ->orderBy('delivery_time')
             ->get();
 
         $grouped = [];
         foreach ($orders as $order) {
-            $date = $order->requested_date->format('Y-m-d');
+            $date = $order->delivery_date->format('Y-m-d');
             $label = match (true) {
-                $order->requested_date->isToday() => 'Today',
-                $order->requested_date->isTomorrow() => 'Tomorrow',
-                default => $order->requested_date->format('l, M j'),
+                $order->delivery_date->isToday() => 'Today',
+                $order->delivery_date->isTomorrow() => 'Tomorrow',
+                default => $order->delivery_date->format('l, M j'),
             };
 
             $grouped[$date] ??= ['label' => $label, 'orders' => []];
@@ -42,7 +42,7 @@ class UpcomingOrdersWidget extends Widget
                 'customer' => $order->customer?->name ?? 'Walk-in',
                 'items' => $order->orderItems()->count(),
                 'total' => number_format($order->total, 2),
-                'time' => $order->requested_time?->format('g:i A') ?? '',
+                'time' => $order->delivery_time?->format('g:i A') ?? '',
                 'status' => $order->status,
             ];
         }

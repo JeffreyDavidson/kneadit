@@ -272,10 +272,10 @@
                 </div>
             @endif
 
-            @if($order->requested_time)
+            @if($order->delivery_time)
                 <div class="order-detail">
                     <span class="icon">🕐</span>
-                    <span>{{ \Carbon\Carbon::parse($order->requested_time)->format('g:i A') }}</span>
+                    <span>{{ \Carbon\Carbon::parse($order->delivery_time)->format('g:i A') }}</span>
                 </div>
             @endif
 

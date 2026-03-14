@@ -76,10 +76,10 @@
     <p style="margin: 10px 0 5px; color: #856404;"><em>Contact us to claim your discount code: (555) 123-BAKE</em></p>
 </div>
 
-@if($order->requested_date->isFuture())
+@if($order->delivery_date->isFuture())
     <div style="background-color: #d4edda; border-radius: 6px; padding: 15px; margin: 20px 0; border-left: 4px solid #28a745;">
         <div class="info-label">🗓️ Reschedule Your Order</div>
-        <p style="margin: 5px 0;">Since your original date was {{ $order->requested_date->format('M j, Y') }}, you may still have time to place a new order!</p>
+        <p style="margin: 5px 0;">Since your original date was {{ $order->delivery_date->format('M j, Y') }}, you may still have time to place a new order!</p>
         <p style="margin: 5px 0;"><strong>Call us at (555) 123-BAKE</strong> and we'll help you find an alternative solution.</p>
     </div>
 @endif

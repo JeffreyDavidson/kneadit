@@ -79,7 +79,7 @@ class Holiday extends Model
 
     public function orderCount(): int
     {
-        return Order::whereDate('requested_date', $this->date)->count();
+        return Order::whereDate('delivery_date', $this->date)->count();
     }
 
     public static function nearDate(Carbon $date, int $days = 2): ?self

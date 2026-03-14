@@ -19,7 +19,7 @@ class StatsOverview extends BaseWidget
         $weekStart = Carbon::now()->startOfWeek();
 
         return [
-            Stat::make("Today's Orders", Order::whereDate('requested_date', $today)->count())
+            Stat::make("Today's Orders", Order::whereDate('delivery_date', $today)->count())
                 ->icon('heroicon-o-shopping-bag')
                 ->color('primary'),
 
@@ -29,7 +29,7 @@ class StatsOverview extends BaseWidget
 
             Stat::make("This Week's Revenue", '$'.number_format(
                 (float) Order::where('status', '!=', 'cancelled')
-                    ->whereBetween('requested_date', [$weekStart, Carbon::now()->endOfWeek()])
+                    ->whereBetween('delivery_date', [$weekStart, Carbon::now()->endOfWeek()])
                     ->sum('total'),
                 2
             ))
@@ -38,7 +38,7 @@ class StatsOverview extends BaseWidget
 
             Stat::make('Avg Order Value', '$'.number_format(
                 (float) Order::where('status', '!=', 'cancelled')
-                    ->whereBetween('requested_date', [$weekStart, Carbon::now()->endOfWeek()])
+                    ->whereBetween('delivery_date', [$weekStart, Carbon::now()->endOfWeek()])
                     ->avg('total') ?? 0,
                 2
             ))

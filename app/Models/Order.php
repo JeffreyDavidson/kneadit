@@ -19,14 +19,16 @@ class Order extends Model
         'payment_method',
         'subtotal',
         'delivery_fee',
-        'discount',
+        'discount_amount',
         'total',
         'paypal_invoice_id',
         'delivery_address',
-        'requested_date',
-        'requested_time',
+        'delivery_type',
+        'delivery_date',
+        'delivery_time',
         'notes',
         'user_id',
+        'coupon_id',
         'review_request_sent_at',
         'stripe_checkout_session_id',
         'stripe_payment_intent_id',
@@ -35,10 +37,10 @@ class Order extends Model
     protected $casts = [
         'subtotal' => 'decimal:2',
         'delivery_fee' => 'decimal:2',
-        'discount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
         'total' => 'decimal:2',
-        'requested_date' => 'date',
-        'requested_time' => 'datetime:H:i',
+        'delivery_date' => 'date',
+        'delivery_time' => 'datetime:H:i',
         'review_request_sent_at' => 'datetime',
     ];
 
@@ -61,6 +63,11 @@ class Order extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
     public function orderItems(): HasMany

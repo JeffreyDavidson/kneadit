@@ -59,14 +59,14 @@ class ReorderReminders extends Page
             ->select([
                 'customer_email',
                 DB::raw('MAX(customer_name) as customer_name'),
-                DB::raw('MAX(requested_date) as last_order_date'),
+                DB::raw('MAX(delivery_date) as last_order_date'),
                 DB::raw('COUNT(*) as total_orders'),
                 DB::raw('SUM(total) as total_spent'),
             ])
             ->where('status', '!=', 'cancelled')
             ->groupBy('customer_email')
-            ->having(DB::raw('MAX(requested_date)'), '<=', $cutoff->toDateString())
-            ->orderBy(DB::raw('MAX(requested_date)'), 'asc')
+            ->having(DB::raw('MAX(delivery_date)'), '<=', $cutoff->toDateString())
+            ->orderBy(DB::raw('MAX(delivery_date)'), 'asc')
             ->get()
             ->map(function ($customer) {
                 $customer->days_since = (int) floor(Carbon::parse($customer->last_order_date)->diffInDays(now()));

@@ -34,7 +34,7 @@ class WeeklyRevenueChart extends ChartWidget
         foreach ($period as $date) {
             $labels[] = $date->format('D');
             $revenue[] = (float) Order::where('status', '!=', 'cancelled')
-                ->whereDate('requested_date', $date)
+                ->whereDate('delivery_date', $date)
                 ->sum('total');
             $expenses[] = (float) Expense::whereDate('date', $date)
                 ->get()

@@ -13,8 +13,8 @@ class DriverController extends Controller
             ->whereNotNull('delivery_address')
             ->where('delivery_address', '!=', '')
             ->whereIn('status', ['confirmed', 'baking', 'ready'])
-            ->whereDate('requested_date', today())
-            ->orderBy('requested_time')
+            ->whereDate('delivery_date', today())
+            ->orderBy('delivery_time')
             ->get();
 
         $storeName = Setting::get('store_name', 'Our Bakery');

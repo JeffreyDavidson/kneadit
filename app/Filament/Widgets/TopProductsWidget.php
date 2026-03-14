@@ -28,7 +28,7 @@ class TopProductsWidget extends ChartWidget
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->join('products', 'products.id', '=', 'order_items.product_id')
             ->where('orders.status', '!=', 'cancelled')
-            ->whereBetween('orders.requested_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+            ->whereBetween('orders.delivery_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
             ->select(
                 'products.name',
                 DB::raw('SUM(order_items.quantity * order_items.unit_price) as revenue')

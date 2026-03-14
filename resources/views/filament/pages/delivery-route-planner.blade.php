@@ -147,7 +147,7 @@
                                         <div class="max-w-xs">{{ $order['delivery_address'] }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                        {{ $order['requested_time'] }}
+                                        {{ $order['delivery_time'] }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         ${{ number_format($order['total'], 2) }}

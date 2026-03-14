@@ -71,8 +71,8 @@ class RevenueChartWidget extends ChartWidget
     private function getDailyRevenue(Carbon $start, Carbon $end): array
     {
         $raw = Order::where('status', '!=', 'cancelled')
-            ->whereBetween('requested_date', [$start, $end])
-            ->selectRaw('DATE(requested_date) as date, SUM(total) as revenue')
+            ->whereBetween('delivery_date', [$start, $end])
+            ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue')
             ->groupBy('date')
             ->pluck('revenue', 'date')
             ->toArray();

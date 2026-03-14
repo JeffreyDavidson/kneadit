@@ -77,13 +77,13 @@
                     </td>
                 </tr>
             @endif
-            @if($getRecord()->discount > 0)
+            @if($getRecord()->discount_amount > 0)
                 <tr>
                     <td colspan="3" class="px-4 py-3 text-right text-sm font-medium text-green-600">
                         Discount:
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-600">
-                        -${{ number_format($getRecord()->discount, 2) }}
+                        -${{ number_format($getRecord()->discount_amount, 2) }}
                     </td>
                 </tr>
             @endif

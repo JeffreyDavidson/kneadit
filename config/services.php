@@ -45,4 +45,10 @@ return [
         'site_id' => env('FATHOM_SITE_ID'),
     ],
 
+    'forge' => [
+        'token' => env('FORGE_API_TOKEN'),
+        'server_id' => env('FORGE_SERVER_ID', '753072'),
+        'site_id' => env('FORGE_SITE_ID', '3062608'),
+    ],
+
 ];

@@ -53,7 +53,7 @@ class ShoppingListGenerator extends Page
         // Get all order items within the date range
         $orderItems = Order::query()
             ->with(['orderItems.product.recipes'])
-            ->whereBetween('requested_date', [$this->startDate, $this->endDate])
+            ->whereBetween('delivery_date', [$this->startDate, $this->endDate])
             ->whereIn('status', ['confirmed', 'in_progress'])
             ->get()
             ->flatMap(function ($order) {

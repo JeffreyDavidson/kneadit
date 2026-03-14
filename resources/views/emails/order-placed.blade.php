@@ -15,10 +15,10 @@
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Order #</td>
                 <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right;">{{ $order->order_number }}</td>
             </tr>
-            @if($order->requested_date)
+            @if($order->delivery_date)
             <tr>
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Requested Date</td>
-                <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right;">{{ $order->requested_date->format('M j, Y') }}</td>
+                <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right;">{{ $order->delivery_date->format('M j, Y') }}</td>
             </tr>
             @endif
             <tr>
