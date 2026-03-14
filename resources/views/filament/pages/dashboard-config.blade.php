@@ -210,6 +210,75 @@
                                         <div class="pw-stat"><span class="pw-stat-label">New this week</span><span class="pw-stat-value">4</span></div>
                                         <div class="pw-stat" style="margin-top: 8px;"><span class="pw-stat-label">Repeat rate</span><span class="pw-stat-value">62%</span></div>
                                         @break
+                                    @case('weekly_revenue')
+                                        <div class="pw-line">
+                                            @foreach([50, 70, 45, 80, 65, 90, 55] as $h)
+                                                <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
+                                            @endforeach
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a08060; margin-top: 4px;">
+                                            <span>Mon</span><span>Thu</span><span>Sun</span>
+                                        </div>
+                                        @break
+                                    @case('order_funnel')
+                                        @foreach(['Pending' => '#e8b04a', 'Confirmed' => '#d4a574', 'Delivered' => '#8b6844'] as $status => $color)
+                                            <div class="pw-row">
+                                                <span><span class="pw-dot" style="background: {{ $color }};"></span>{{ $status }}</span>
+                                                <span>{{ ['Pending' => 3, 'Confirmed' => 5, 'Delivered' => 12][$status] }}</span>
+                                            </div>
+                                        @endforeach
+                                        @break
+                                    @case('todays_orders')
+                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+                                            @foreach(['9:00 AM' => '$28', '11:30 AM' => '$45', '2:00 PM' => '$32'] as $time => $amt)
+                                                <div style="background: #fdf8f2; border-radius: 6px; padding: 6px 8px;">
+                                                    <div style="font-size: 0.6rem; color: #a08060;">{{ $time }}</div>
+                                                    <div style="font-size: 0.8rem; font-weight: 700; color: #3d2314;">{{ $amt }}</div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        @break
+                                    @case('baking_sheet')
+                                        @foreach(['Chocolate Cake ×2', 'Banana Bread ×4', 'Sugar Cookies ×24'] as $item)
+                                            <div class="pw-row">
+                                                <span>{{ $item }}</span>
+                                                <span style="color: #d4a574;">○</span>
+                                            </div>
+                                        @endforeach
+                                        @break
+                                    @case('inbox')
+                                        <div class="pw-stat"><span class="pw-stat-label">Unread</span><span class="pw-stat-value">3</span></div>
+                                        <div style="font-size: 0.65rem; color: #a08060; margin-top: 4px;">Latest: "Can I add to my order?"</div>
+                                        @break
+                                    @case('margin_alert')
+                                        <div class="pw-row"><span>🔴 Cookies</span><span>12%</span></div>
+                                        <div class="pw-row"><span>🟡 Brownies</span><span>28%</span></div>
+                                        @break
+                                    @case('goal_tracker')
+                                        <div style="margin-bottom: 6px;">
+                                            <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
+                                                <span>Monthly Revenue</span><span>$850 / $1,200</span>
+                                            </div>
+                                            <div class="pw-bar"><div class="pw-bar-fill" style="width: 71%;"></div></div>
+                                        </div>
+                                        <div>
+                                            <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
+                                                <span>New Customers</span><span>8 / 15</span>
+                                            </div>
+                                            <div class="pw-bar"><div class="pw-bar-fill" style="width: 53%;"></div></div>
+                                        </div>
+                                        @break
+                                    @case('upcoming_holiday')
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 1.2rem;">🐣</div>
+                                            <div style="font-size: 0.75rem; font-weight: 600; color: #3d2314;">Easter</div>
+                                            <div style="font-size: 0.6rem; color: #a08060;">in 12 days</div>
+                                        </div>
+                                        @break
+                                    @case('storefront_views')
+                                        <div class="pw-stat"><span class="pw-stat-label">Today</span><span class="pw-stat-value">47</span></div>
+                                        <div style="font-size: 0.6rem; color: #6b9e3a; margin-top: 2px;">↑ 12% vs yesterday</div>
+                                        @break
                                     @default
                                         <div style="display: flex; flex-direction: column; gap: 4px;">
                                             @for($i = 0; $i < 2; $i++)
