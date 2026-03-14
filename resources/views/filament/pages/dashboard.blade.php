@@ -2,8 +2,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@10.3.1/dist/gridstack.min.css">
 
     <style>
-        .grid-stack { min-height: 200px; }
-        .grid-stack-item-content { border-radius: 12px; overflow: hidden !important; }
+        .grid-stack { min-height: 200px; margin: 8px; }
+        .grid-stack-item-content { border-radius: 12px; overflow: hidden !important; padding: 4px; }
         .grid-stack-item-content > div { height: 100%; }
         /* Remove grab cursor — dashboard is static */
         .grid-stack-item-content { cursor: default !important; }
@@ -34,7 +34,7 @@
             GridStack.init({
                 column: 12,
                 cellHeight: 60,
-                margin: 6,
+                margin: 10,
                 animate: false,
                 staticGrid: true,  // No drag or resize on dashboard
                 float: false,
