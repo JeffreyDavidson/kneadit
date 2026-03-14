@@ -2,12 +2,38 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@10.3.1/dist/gridstack.min.css">
 
     <style>
-        .grid-stack { min-height: 200px; margin: 8px; }
-        .grid-stack-item-content { border-radius: 12px; overflow: hidden !important; padding: 4px; }
-        .grid-stack-item-content > div { height: 100%; }
-        /* Remove grab cursor — dashboard is static */
-        .grid-stack-item-content { cursor: default !important; }
+        .grid-stack { min-height: 200px; }
+
+        /* Widget fills the entire grid cell */
+        .grid-stack-item-content {
+            border-radius: 12px;
+            overflow: hidden !important;
+            cursor: default !important;
+            inset: 0 !important;
+        }
         .grid-stack-item { cursor: default !important; }
+
+        /* Make Filament widget wrappers fill cell height */
+        .grid-stack-item-content > div,
+        .grid-stack-item-content .fi-wi,
+        .grid-stack-item-content .fi-wi > div,
+        .grid-stack-item-content .fi-section,
+        .grid-stack-item-content .fi-section-content-ctn {
+            height: 100%;
+        }
+
+        /* Section content should scroll if overflow */
+        .grid-stack-item-content .fi-section-content-ctn {
+            overflow-y: auto;
+        }
+
+        /* Stats overview needs auto height since it has multiple rows */
+        .grid-stack-item[gs-id="stats_overview"] .grid-stack-item-content > div,
+        .grid-stack-item[gs-id="stats_overview"] .fi-wi,
+        .grid-stack-item[gs-id="welcome_banner"] .grid-stack-item-content > div,
+        .grid-stack-item[gs-id="welcome_banner"] .fi-wi {
+            height: auto;
+        }
     </style>
 
     <div class="grid-stack" id="dashboard-grid">
@@ -33,10 +59,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             GridStack.init({
                 column: 12,
-                cellHeight: 60,
-                margin: 10,
+                cellHeight: 65,
+                margin: 8,
                 animate: false,
-                staticGrid: true,  // No drag or resize on dashboard
+                staticGrid: true,
                 float: false,
             }, '#dashboard-grid');
         });
