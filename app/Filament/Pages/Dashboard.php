@@ -58,17 +58,17 @@ class Dashboard extends BaseDashboard
         $widgetConfig = $savedWidgets ? json_decode($savedWidgets, true) : null;
 
         $defaults = [
-            'welcome_banner'    => ['x' => 0, 'y' => 0,  'w' => 12, 'h' => 3],
-            'stats_overview'    => ['x' => 0, 'y' => 3,  'w' => 12, 'h' => 4],
-            'revenue_chart'     => ['x' => 0, 'y' => 7,  'w' => 8,  'h' => 7],
-            'recent_orders'     => ['x' => 8, 'y' => 7,  'w' => 4,  'h' => 7],
-            'upcoming_orders'   => ['x' => 0, 'y' => 14, 'w' => 4,  'h' => 6],
-            'top_products'      => ['x' => 4, 'y' => 14, 'w' => 4,  'h' => 6],
-            'customer_insights' => ['x' => 8, 'y' => 14, 'w' => 4,  'h' => 6],
-            'at_risk_customers' => ['x' => 0, 'y' => 20, 'w' => 8,  'h' => 6],
-            'low_stock'         => ['x' => 8, 'y' => 20, 'w' => 4,  'h' => 6],
-            'birthday'          => ['x' => 0, 'y' => 26, 'w' => 4,  'h' => 5],
-            'recent_activity'   => ['x' => 4, 'y' => 26, 'w' => 8,  'h' => 5],
+            'welcome_banner'    => ['x' => 0, 'y' => 0,  'w' => 12, 'h' => 2],
+            'stats_overview'    => ['x' => 0, 'y' => 2,  'w' => 12, 'h' => 4],
+            'revenue_chart'     => ['x' => 0, 'y' => 6,  'w' => 8,  'h' => 7],
+            'recent_orders'     => ['x' => 8, 'y' => 6,  'w' => 4,  'h' => 7],
+            'upcoming_orders'   => ['x' => 0, 'y' => 13, 'w' => 4,  'h' => 6],
+            'top_products'      => ['x' => 4, 'y' => 13, 'w' => 4,  'h' => 6],
+            'customer_insights' => ['x' => 8, 'y' => 13, 'w' => 4,  'h' => 6],
+            'at_risk_customers' => ['x' => 0, 'y' => 19, 'w' => 8,  'h' => 6],
+            'low_stock'         => ['x' => 8, 'y' => 19, 'w' => 4,  'h' => 6],
+            'birthday'          => ['x' => 0, 'y' => 25, 'w' => 4,  'h' => 5],
+            'recent_activity'   => ['x' => 4, 'y' => 25, 'w' => 8,  'h' => 5],
         ];
 
         $result = [];
