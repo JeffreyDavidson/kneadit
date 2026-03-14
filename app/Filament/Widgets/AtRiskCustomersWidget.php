@@ -27,6 +27,7 @@ class AtRiskCustomersWidget extends BaseWidget
                         $query->where('status', '!=', 'cancelled')
                             ->where('created_at', '>=', now()->subDays(30));
                     })
+                    ->limit(5)
             )
             ->columns([
                 TextColumn::make('name')
@@ -46,7 +47,6 @@ class AtRiskCustomersWidget extends BaseWidget
                     ->suffix(' days'),
             ])
             ->paginated(false)
-            ->defaultSort('last_order_date', 'asc')
-            ->limit(5);
+            ->defaultSort('last_order_date', 'asc');
     }
 }
