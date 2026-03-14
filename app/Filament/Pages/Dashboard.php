@@ -66,11 +66,18 @@ class Dashboard extends BaseDashboard
     {
         $registry = $this->getWidgetRegistry();
 
+        // Dashboard customization disabled until config page is finalized
+        // When ready, set 'dashboard_config_enabled' to 'true' in Settings
+        $enabled = Setting::get('dashboard_config_enabled') === 'true';
+
+        if (! $enabled) {
+            return array_values($registry);
+        }
+
         $saved = Setting::get('dashboard_widgets');
         $config = $saved ? json_decode($saved, true) : null;
 
         if (! $config) {
-            // Fallback: return all widgets in default order
             return array_values($registry);
         }
 

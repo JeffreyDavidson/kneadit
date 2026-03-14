@@ -57,8 +57,11 @@
 
     <div class="config-container">
         <div class="config-header">
-            <p>Drag to reorder. Toggle to show or hide widgets.</p>
+            <p>Drag to reorder. Toggle to show or hide widgets. Changes won't affect the dashboard until enabled.</p>
             <div class="config-actions">
+                <x-filament::button color="gray" wire:click="togglePreview">
+                    {{ $showPreview ? 'Hide Preview' : 'Preview' }}
+                </x-filament::button>
                 <x-filament::button color="gray" wire:click="resetDefaults">
                     Reset Defaults
                 </x-filament::button>
@@ -67,6 +70,24 @@
                 </x-filament::button>
             </div>
         </div>
+
+        @if($showPreview)
+            <div style="border: 2px dashed rgba(212,165,116,0.4); border-radius: 16px; padding: 24px; margin-bottom: 24px; background: rgba(212,165,116,0.03);">
+                <p style="font-size: 0.8rem; color: #8b6844; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Dashboard Preview</p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                    @foreach($widgets as $widget)
+                        @if($widget['visible'])
+                            <div style="background: #fdf8f2; border: 1px solid rgba(212,165,116,0.25); border-radius: 8px; padding: 12px 14px; {{ in_array($widget['key'], ['welcome_banner', 'stats_overview']) ? 'grid-column: span 3;' : (in_array($widget['key'], ['revenue_chart', 'at_risk_customers', 'recent_activity']) ? 'grid-column: span 2;' : '') }}">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 1rem;">{{ $widget['icon'] }}</span>
+                                    <span style="font-size: 0.8rem; font-weight: 600; color: #3d2314;">{{ $widget['name'] }}</span>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         <div class="widget-list" id="widget-sortable">
             @foreach($widgets as $index => $widget)

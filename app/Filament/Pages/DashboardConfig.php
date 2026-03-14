@@ -22,6 +22,8 @@ class DashboardConfig extends Page
 
     public array $widgets = [];
 
+    public bool $showPreview = false;
+
     protected array $widgetMeta = [
         'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋'],
         'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics — orders, revenue, customers', 'icon' => '📊'],
@@ -86,6 +88,11 @@ class DashboardConfig extends Page
         array_splice($this->widgets, $oldIndex, 1);
         array_splice($this->widgets, $newIndex, 0, [$item]);
         $this->widgets = array_values($this->widgets);
+    }
+
+    public function togglePreview(): void
+    {
+        $this->showPreview = ! $this->showPreview;
     }
 
     public function toggleWidget(int $index): void
