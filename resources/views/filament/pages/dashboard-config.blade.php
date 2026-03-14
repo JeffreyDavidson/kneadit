@@ -279,6 +279,50 @@
                                         <div class="pw-stat"><span class="pw-stat-label">Today</span><span class="pw-stat-value">47</span></div>
                                         <div style="font-size: 0.6rem; color: #6b9e3a; margin-top: 2px;">↑ 12% vs yesterday</div>
                                         @break
+                                    @case('coupon_usage')
+                                        <div class="pw-stat"><span class="pw-stat-label">Active</span><span class="pw-stat-value">4</span></div>
+                                        <div class="pw-row" style="margin-top: 6px;"><span>WELCOME10</span><span>23 uses</span></div>
+                                        <div class="pw-row"><span>SPRING20</span><span>8 uses</span></div>
+                                        @break
+                                    @case('gift_card_balance')
+                                        <div class="pw-stat"><span class="pw-stat-label">Outstanding</span><span class="pw-stat-value">$340</span></div>
+                                        <div style="font-size: 0.65rem; color: #a08060; margin-top: 4px;">12 active cards</div>
+                                        @break
+                                    @case('loyalty_leaders')
+                                        @foreach(['Sarah M.' => '520 pts', 'Mike R.' => '380 pts', 'Lisa K.' => '290 pts'] as $name => $pts)
+                                            <div class="pw-row"><span>{{ $name }}</span><span>{{ $pts }}</span></div>
+                                        @endforeach
+                                        @break
+                                    @case('capacity_today')
+                                        <div style="margin-bottom: 8px;">
+                                            <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;"><span>Today</span><span>72%</span></div>
+                                            <div class="pw-bar"><div class="pw-bar-fill" style="width: 72%;"></div></div>
+                                        </div>
+                                        <div>
+                                            <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;"><span>Tomorrow</span><span>35%</span></div>
+                                            <div class="pw-bar"><div class="pw-bar-fill" style="width: 35%;"></div></div>
+                                        </div>
+                                        @break
+                                    @case('catering_pipeline')
+                                        <div class="pw-stat"><span class="pw-stat-label">Open</span><span class="pw-stat-value">3</span></div>
+                                        <div style="font-size: 0.6rem; color: #a08060; margin-top: 4px;">Pipeline: $1,250</div>
+                                        @break
+                                    @case('seasonal_items')
+                                        <div class="pw-row"><span style="color: #6b9e3a;">● Coming Soon</span><span>2</span></div>
+                                        <div class="pw-row"><span style="color: #d4574a;">● Ending Soon</span><span>1</span></div>
+                                        <div class="pw-row"><span style="color: #d4a574;">● In Season</span><span>5</span></div>
+                                        @break
+                                    @case('review_summary')
+                                        <div style="display: flex; align-items: baseline; gap: 6px;">
+                                            <span style="font-size: 1.2rem; font-weight: 700; color: #3d2314;">4.8</span>
+                                            <span style="font-size: 0.75rem; color: #e8b04a;">★★★★★</span>
+                                        </div>
+                                        <div style="font-size: 0.6rem; color: #a08060; margin-top: 2px;">28 reviews</div>
+                                        @break
+                                    @case('reorder_reminders')
+                                        <div class="pw-stat"><span class="pw-stat-label">Lapsed</span><span class="pw-stat-value">6</span></div>
+                                        <div style="font-size: 0.6rem; color: #a08060; margin-top: 4px;">Haven't ordered in 30+ days</div>
+                                        @break
                                     @default
                                         <div style="display: flex; flex-direction: column; gap: 4px;">
                                             @for($i = 0; $i < 2; $i++)
