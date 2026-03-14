@@ -1,78 +1,69 @@
 <x-filament-panels::page>
-    <div class="space-y-6">
+    <div style="display: flex; flex-direction: column; gap: 24px;">
         {{-- Header --}}
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                    Choose which widgets appear on your dashboard and arrange them in your preferred order.
-                </p>
-            </div>
-            <div class="flex gap-2">
-                <x-filament::button color="gray" wire:click="resetDefaults" icon="heroicon-o-arrow-path">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <p style="color: var(--brand-500); font-size: 0.9rem;">
+                Choose which widgets appear on your dashboard and arrange them in your preferred order.
+            </p>
+            <div style="display: flex; gap: 8px;">
+                <x-filament::button color="gray" wire:click="resetDefaults">
                     Reset to Defaults
                 </x-filament::button>
-                <x-filament::button wire:click="save" icon="heroicon-o-check">
+                <x-filament::button wire:click="save">
                     Save Layout
                 </x-filament::button>
             </div>
         </div>
 
         {{-- Widget Cards --}}
-        <div class="space-y-2">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
             @foreach($widgets as $index => $widget)
-                <div
-                    class="flex items-center gap-4 rounded-xl border p-4 transition-all duration-200
-                        {{ $widget['visible']
-                            ? 'bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700'
-                            : 'bg-gray-50 border-gray-100 opacity-60 dark:bg-gray-900 dark:border-gray-800' }}"
-                >
+                <div style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 12px; border: 1px solid {{ $widget['visible'] ? 'rgba(212,165,116,0.25)' : 'rgba(212,165,116,0.1)' }}; background: {{ $widget['visible'] ? 'var(--brand-50, #fdf8f2)' : '#f5f5f5' }}; {{ $widget['visible'] ? '' : 'opacity: 0.5;' }}">
                     {{-- Order arrows --}}
-                    <div class="flex flex-col gap-0.5">
-                        <button
-                            wire:click="moveUp({{ $index }})"
-                            @class(['text-gray-400 hover:text-primary-500 transition-colors', 'invisible' => $index === 0])
-                        >
-                            <x-heroicon-s-chevron-up class="w-5 h-5" />
-                        </button>
-                        <button
-                            wire:click="moveDown({{ $index }})"
-                            @class(['text-gray-400 hover:text-primary-500 transition-colors', 'invisible' => $index === count($widgets) - 1])
-                        >
-                            <x-heroicon-s-chevron-down class="w-5 h-5" />
-                        </button>
+                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                        @if($index > 0)
+                            <button wire:click="moveUp({{ $index }})" style="background: none; border: none; cursor: pointer; color: var(--brand-500); padding: 2px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px;"><path fill-rule="evenodd" d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" clip-rule="evenodd" /></svg>
+                            </button>
+                        @else
+                            <div style="width: 20px; height: 24px;"></div>
+                        @endif
+                        @if($index < count($widgets) - 1)
+                            <button wire:click="moveDown({{ $index }})" style="background: none; border: none; cursor: pointer; color: var(--brand-500); padding: 2px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px;"><path fill-rule="evenodd" d="M10.53 13.53a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 0 1 1.06-1.06L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25Z" clip-rule="evenodd" /></svg>
+                            </button>
+                        @else
+                            <div style="width: 20px; height: 24px;"></div>
+                        @endif
                     </div>
 
                     {{-- Icon --}}
-                    <div class="text-2xl flex-shrink-0 w-10 text-center">
+                    <div style="font-size: 1.5rem; flex-shrink: 0; width: 40px; text-align: center;">
                         {{ $widget['icon'] }}
                     </div>
 
                     {{-- Info --}}
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-semibold text-gray-900 dark:text-white">
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <h3 style="font-weight: 600; color: var(--brand-900); margin: 0;">
                                 {{ $widget['name'] }}
                             </h3>
-                            <span class="text-xs text-gray-400 dark:text-gray-500 font-mono">
+                            <span style="font-size: 0.75rem; color: var(--brand-400); font-family: monospace;">
                                 #{{ $widget['order'] }}
                             </span>
                         </div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                        <p style="font-size: 0.85rem; color: var(--brand-500); margin: 4px 0 0 0;">
                             {{ $widget['description'] }}
                         </p>
                     </div>
 
                     {{-- Toggle --}}
-                    <div class="flex-shrink-0">
+                    <div style="flex-shrink: 0;">
                         <button
                             wire:click="toggleWidget({{ $index }})"
-                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200
-                                {{ $widget['visible'] ? 'bg-primary-500' : 'bg-gray-300 dark:bg-gray-600' }}"
+                            style="position: relative; display: inline-flex; height: 24px; width: 44px; align-items: center; border-radius: 12px; border: none; cursor: pointer; transition: background 0.2s; background: {{ $widget['visible'] ? 'var(--brand-300, #d4a574)' : '#ccc' }};"
                         >
-                            <span
-                                class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200
-                                    {{ $widget['visible'] ? 'translate-x-6' : 'translate-x-1' }}"
-                            ></span>
+                            <span style="display: inline-block; height: 18px; width: 18px; border-radius: 50%; background: white; transition: transform 0.2s; transform: translateX({{ $widget['visible'] ? '22px' : '3px' }});"></span>
                         </button>
                     </div>
                 </div>
@@ -80,12 +71,12 @@
         </div>
 
         {{-- Bottom save --}}
-        <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-            <a href="{{ route('filament.admin.pages.dashboard') }}" class="text-sm text-gray-500 hover:text-primary-500 flex items-center gap-1">
-                <x-heroicon-o-arrow-left class="w-4 h-4" />
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid rgba(212,165,116,0.2);">
+            <a href="{{ route('filament.admin.pages.dashboard') }}" style="font-size: 0.9rem; color: var(--brand-500); text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 16px; height: 16px;"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>
                 Back to Dashboard
             </a>
-            <x-filament::button wire:click="save" icon="heroicon-o-check">
+            <x-filament::button wire:click="save">
                 Save Layout
             </x-filament::button>
         </div>
