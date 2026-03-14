@@ -9,7 +9,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class LowStockWidget extends BaseWidget
 {
-    protected static ?int $sort = 10;
+    protected static ?int $sort = 11;
 
     protected static ?string $heading = 'Low Stock Ingredients';
 
