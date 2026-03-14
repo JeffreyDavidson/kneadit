@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\CapacityLimit;
 use App\Models\Order;
+use App\Models\PageView;
 use App\Models\WaitlistEntry;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -48,6 +49,14 @@ class StatsOverview extends BaseWidget
             Stat::make('Total Customers', Order::distinct('customer_email')->count('customer_email'))
                 ->icon('heroicon-o-users')
                 ->color('info'),
+
+            Stat::make('Storefront Views Today', number_format(
+                PageView::whereNull('product_id')
+                    ->where('created_at', '>=', $today)
+                    ->count()
+            ))
+                ->icon('heroicon-o-eye')
+                ->color('primary'),
 
             ...collect([WaitlistEntry::waiting()->where('requested_date', '>=', $today)->count()])
                 ->filter()

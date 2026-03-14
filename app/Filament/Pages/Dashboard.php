@@ -58,7 +58,7 @@ class Dashboard extends BaseDashboard
             // 'quick_actions' => QuickActionsWidget::class,
             'at_risk_customers' => AtRiskCustomersWidget::class,
             'low_stock' => LowStockWidget::class,
-            'storefront_views' => StorefrontViewsWidget::class,
+            // 'storefront_views' => StorefrontViewsWidget::class,
             'birthday' => BirthdayWidget::class,
             'recent_activity' => RecentActivityWidget::class,
         ];
