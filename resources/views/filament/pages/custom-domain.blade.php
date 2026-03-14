@@ -5,7 +5,7 @@
         </div>
     </div>
 
-    <x-filament-panels::form wire:submit="save">
+    <form wire:submit="save">
         {{ $this->getFormActionsComponent() }}
-    </x-filament-panels::form>
+    </form>
 </x-filament-panels::page>
