@@ -55,7 +55,7 @@ class Dashboard extends BaseDashboard
             'upcoming_orders' => UpcomingOrdersWidget::class,
             'top_products' => TopProductsWidget::class,
             'customer_insights' => CustomerInsightsWidget::class,
-            'quick_actions' => QuickActionsWidget::class,
+            // 'quick_actions' => QuickActionsWidget::class,
             'at_risk_customers' => AtRiskCustomersWidget::class,
             'low_stock' => LowStockWidget::class,
             'storefront_views' => StorefrontViewsWidget::class,
