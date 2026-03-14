@@ -1027,3 +1027,22 @@ section:has(.fi-wi-stats-overview-stat),
     background: rgba(61,35,20,0.4) !important;
     backdrop-filter: blur(2px) !important;
 }
+
+/* Global search bar */
+.fi-global-search-field input {
+    background: var(--brand-100, #faf4e8) !important;
+    border: 1px solid rgba(212,165,116,0.3) !important;
+    border-radius: 8px !important;
+    color: var(--brand-900, #3d2314) !important;
+}
+.fi-global-search-field input::placeholder {
+    color: var(--brand-400, #8b6844) !important;
+    opacity: 0.6 !important;
+}
+.fi-global-search-field input:focus {
+    border-color: var(--brand-500, #d4920c) !important;
+    box-shadow: 0 0 0 2px rgba(212,146,12,0.15) !important;
+}
+.fi-global-search-field .fi-icon {
+    color: var(--brand-400, #8b6844) !important;
+}

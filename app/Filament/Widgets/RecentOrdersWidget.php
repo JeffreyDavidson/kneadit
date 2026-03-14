@@ -51,7 +51,7 @@ class RecentOrdersWidget extends BaseWidget
                 \Filament\Actions\Action::make('viewAll')
                     ->label('View All →')
                     ->url(route('filament.admin.resources.orders.index'))
-                    ->color('gray'),
+                    ->color('warning'),
             ]);
     }
 }
