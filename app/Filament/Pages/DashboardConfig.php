@@ -58,6 +58,20 @@ class DashboardConfig extends Page
         'goal_tracker' => ['name' => 'Goal Tracker', 'description' => 'Business goal progress', 'icon' => '🎯', 'defaultSpan' => 2],
         'upcoming_holiday' => ['name' => 'Upcoming Holiday', 'description' => 'Next holiday prep reminder', 'icon' => '🎄', 'defaultSpan' => 1],
         'storefront_views' => ['name' => 'Storefront Views', 'description' => 'Online store traffic today', 'icon' => '🏪', 'defaultSpan' => 1],
+
+        // Promotions & Loyalty
+        'coupon_usage' => ['name' => 'Coupon Usage', 'description' => 'Active coupons and redemption stats', 'icon' => '🎫', 'defaultSpan' => 1],
+        'gift_card_balance' => ['name' => 'Gift Card Balance', 'description' => 'Outstanding gift card liability', 'icon' => '🎁', 'defaultSpan' => 1],
+        'loyalty_leaders' => ['name' => 'Loyalty Leaders', 'description' => 'Top customers by loyalty points', 'icon' => '🏅', 'defaultSpan' => 1],
+
+        // Operations
+        'capacity_today' => ['name' => 'Capacity Today', 'description' => 'Today and tomorrow order capacity', 'icon' => '⏰', 'defaultSpan' => 1],
+        'catering_pipeline' => ['name' => 'Catering Pipeline', 'description' => 'Open catering inquiries and quotes', 'icon' => '📝', 'defaultSpan' => 1],
+        'seasonal_items' => ['name' => 'Seasonal Items', 'description' => 'Products going in/out of season', 'icon' => '🌸', 'defaultSpan' => 1],
+
+        // Feedback
+        'review_summary' => ['name' => 'Review Summary', 'description' => 'Average rating and recent reviews', 'icon' => '⭐', 'defaultSpan' => 1],
+        'reorder_reminders' => ['name' => 'Reorder Reminders', 'description' => 'Lapsed repeat customers', 'icon' => '🔄', 'defaultSpan' => 1],
     ];
 
     public function mount(): void

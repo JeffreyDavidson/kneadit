@@ -5,16 +5,24 @@ namespace App\Filament\Pages;
 use App\Filament\Widgets\AtRiskCustomersWidget;
 use App\Filament\Widgets\BakingSheetWidget;
 use App\Filament\Widgets\BirthdayWidget;
+use App\Filament\Widgets\CapacityTodayWidget;
+use App\Filament\Widgets\CateringPipelineWidget;
+use App\Filament\Widgets\CouponUsageWidget;
 use App\Filament\Widgets\CustomerInsightsWidget;
+use App\Filament\Widgets\GiftCardBalanceWidget;
 use App\Filament\Widgets\GoalTrackerWidget;
 use App\Filament\Widgets\InboxWidget;
 use App\Filament\Widgets\LowStockWidget;
+use App\Filament\Widgets\LoyaltyLeadersWidget;
 use App\Filament\Widgets\MarginAlertWidget;
 use App\Filament\Widgets\OrderFunnelWidget;
 use App\Filament\Widgets\QuickActionsWidget;
 use App\Filament\Widgets\RecentActivityWidget;
 use App\Filament\Widgets\RecentOrdersWidget;
+use App\Filament\Widgets\ReorderRemindersWidget;
 use App\Filament\Widgets\RevenueChartWidget;
+use App\Filament\Widgets\ReviewSummaryWidget;
+use App\Filament\Widgets\SeasonalItemsWidget;
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\StorefrontViewsWidget;
 use App\Filament\Widgets\TodaysOrdersWidget;
@@ -72,6 +80,14 @@ class Dashboard extends BaseDashboard
             'goal_tracker' => GoalTrackerWidget::class,
             'upcoming_holiday' => UpcomingHolidayWidget::class,
             'storefront_views' => StorefrontViewsWidget::class,
+            'coupon_usage' => CouponUsageWidget::class,
+            'gift_card_balance' => GiftCardBalanceWidget::class,
+            'capacity_today' => CapacityTodayWidget::class,
+            'catering_pipeline' => CateringPipelineWidget::class,
+            'review_summary' => ReviewSummaryWidget::class,
+            'reorder_reminders' => ReorderRemindersWidget::class,
+            'loyalty_leaders' => LoyaltyLeadersWidget::class,
+            'seasonal_items' => SeasonalItemsWidget::class,
         ];
     }
 
