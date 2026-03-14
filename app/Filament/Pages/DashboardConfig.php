@@ -81,15 +81,21 @@ class DashboardConfig extends Page
         }
     }
 
+    public function reorder(int $oldIndex, int $newIndex): void
+    {
+        $item = $this->widgets[$oldIndex];
+        array_splice($this->widgets, $oldIndex, 1);
+        array_splice($this->widgets, $newIndex, 0, [$item]);
+        $this->widgets = array_values($this->widgets);
+        $this->reindex();
+    }
+
     public function moveUp(int $index): void
     {
         if ($index <= 0) {
             return;
         }
-        $temp = $this->widgets[$index];
-        $this->widgets[$index] = $this->widgets[$index - 1];
-        $this->widgets[$index - 1] = $temp;
-        $this->reindex();
+        $this->reorder($index, $index - 1);
     }
 
     public function moveDown(int $index): void
@@ -97,10 +103,7 @@ class DashboardConfig extends Page
         if ($index >= count($this->widgets) - 1) {
             return;
         }
-        $temp = $this->widgets[$index];
-        $this->widgets[$index] = $this->widgets[$index + 1];
-        $this->widgets[$index + 1] = $temp;
-        $this->reindex();
+        $this->reorder($index, $index + 1);
     }
 
     public function toggleWidget(int $index): void
