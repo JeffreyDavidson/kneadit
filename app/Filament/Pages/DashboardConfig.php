@@ -25,17 +25,17 @@ class DashboardConfig extends Page
     public bool $showPreview = false;
 
     protected array $widgetMeta = [
-        'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋'],
-        'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics — orders, revenue, customers', 'icon' => '📊'],
-        'revenue_chart' => ['name' => 'Revenue Chart', 'description' => 'Revenue trends over time', 'icon' => '📈'],
-        'recent_orders' => ['name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾'],
-        'upcoming_orders' => ['name' => 'Upcoming Orders', 'description' => 'Orders due soon', 'icon' => '📅'],
-        'top_products' => ['name' => 'Top Products', 'description' => 'Best-selling items this month', 'icon' => '⭐'],
-        'customer_insights' => ['name' => 'Customer Insights', 'description' => 'Customer trends and segments', 'icon' => '👥'],
-        'at_risk_customers' => ['name' => 'At-Risk Customers', 'description' => 'Inactive customers needing attention', 'icon' => '⚠️'],
-        'low_stock' => ['name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦'],
-        'birthday' => ['name' => 'Birthday Reminders', 'description' => 'Upcoming customer birthdays', 'icon' => '🎂'],
-        'recent_activity' => ['name' => 'Recent Activity', 'description' => 'Latest actions and events', 'icon' => '🕐'],
+        'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋', 'defaultSpan' => 3],
+        'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics — orders, revenue, customers', 'icon' => '📊', 'defaultSpan' => 3],
+        'revenue_chart' => ['name' => 'Revenue Chart', 'description' => 'Revenue trends over time', 'icon' => '📈', 'defaultSpan' => 2],
+        'recent_orders' => ['name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾', 'defaultSpan' => 1],
+        'upcoming_orders' => ['name' => 'Upcoming Orders', 'description' => 'Orders due soon', 'icon' => '📅', 'defaultSpan' => 1],
+        'top_products' => ['name' => 'Top Products', 'description' => 'Best-selling items this month', 'icon' => '⭐', 'defaultSpan' => 1],
+        'customer_insights' => ['name' => 'Customer Insights', 'description' => 'Customer trends and segments', 'icon' => '👥', 'defaultSpan' => 1],
+        'at_risk_customers' => ['name' => 'At-Risk Customers', 'description' => 'Inactive customers needing attention', 'icon' => '⚠️', 'defaultSpan' => 2],
+        'low_stock' => ['name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦', 'defaultSpan' => 1],
+        'birthday' => ['name' => 'Birthday Reminders', 'description' => 'Upcoming customer birthdays', 'icon' => '🎂', 'defaultSpan' => 1],
+        'recent_activity' => ['name' => 'Recent Activity', 'description' => 'Latest actions and events', 'icon' => '🕐', 'defaultSpan' => 2],
     ];
 
     public function mount(): void
@@ -62,6 +62,7 @@ class DashboardConfig extends Page
             $this->widgets[] = [
                 'key' => $key,
                 'visible' => $settings['visible'] ?? true,
+                'span' => $settings['span'] ?? $this->widgetMeta[$key]['defaultSpan'] ?? 1,
                 'name' => $this->widgetMeta[$key]['name'],
                 'description' => $this->widgetMeta[$key]['description'],
                 'icon' => $this->widgetMeta[$key]['icon'],
@@ -74,6 +75,7 @@ class DashboardConfig extends Page
                 $this->widgets[] = [
                     'key' => $key,
                     'visible' => true,
+                    'span' => $meta['defaultSpan'] ?? 1,
                     'name' => $meta['name'],
                     'description' => $meta['description'],
                     'icon' => $meta['icon'],
@@ -95,6 +97,11 @@ class DashboardConfig extends Page
         $this->showPreview = ! $this->showPreview;
     }
 
+    public function setSpan(int $index, int $span): void
+    {
+        $this->widgets[$index]['span'] = max(1, min(3, $span));
+    }
+
     public function toggleWidget(int $index): void
     {
         $this->widgets[$index]['visible'] = ! $this->widgets[$index]['visible'];
@@ -107,6 +114,7 @@ class DashboardConfig extends Page
             $config[$widget['key']] = [
                 'visible' => $widget['visible'],
                 'order' => $i + 1,
+                'span' => $widget['span'] ?? 1,
             ];
         }
 

@@ -28,6 +28,15 @@
         .widget-desc { font-size: 0.8rem; color: #8b6844; margin: 2px 0 0; }
         .widget-pos { font-size: 0.7rem; color: #c4a882; font-family: monospace; min-width: 20px; text-align: center; }
 
+        .span-selector { display: flex; gap: 2px; flex-shrink: 0; }
+        .span-btn {
+            width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(212,165,116,0.3);
+            background: white; color: #8b6844; font-size: 0.75rem; font-weight: 700;
+            cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+        }
+        .span-btn:hover { border-color: #d4a574; background: #fdf8f2; }
+        .span-btn.active { background: #d4a574; color: white; border-color: #d4a574; }
+
         .toggle-btn {
             position: relative; display: inline-flex; height: 26px; width: 48px;
             align-items: center; border-radius: 13px; border: none; cursor: pointer;
@@ -77,7 +86,7 @@
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
                     @foreach($widgets as $widget)
                         @if($widget['visible'])
-                            <div style="background: #fdf8f2; border: 1px solid rgba(212,165,116,0.25); border-radius: 8px; padding: 12px 14px; {{ in_array($widget['key'], ['welcome_banner', 'stats_overview']) ? 'grid-column: span 3;' : (in_array($widget['key'], ['revenue_chart', 'at_risk_customers', 'recent_activity']) ? 'grid-column: span 2;' : '') }}">
+                            <div style="background: #fdf8f2; border: 1px solid rgba(212,165,116,0.25); border-radius: 8px; padding: 12px 14px; grid-column: span {{ $widget['span'] ?? 1 }};">
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <span style="font-size: 1rem;">{{ $widget['icon'] }}</span>
                                     <span style="font-size: 0.8rem; font-weight: 600; color: #3d2314;">{{ $widget['name'] }}</span>
@@ -102,7 +111,15 @@
                         <p class="widget-name">{{ $widget['name'] }}</p>
                         <p class="widget-desc">{{ $widget['description'] }}</p>
                     </div>
-                    <div class="widget-pos">#{{ $index + 1 }}</div>
+                    <div class="span-selector">
+                        @for($s = 1; $s <= 3; $s++)
+                            <button class="span-btn {{ ($widget['span'] ?? 1) == $s ? 'active' : '' }}"
+                                    wire:click="setSpan({{ $index }}, {{ $s }})" type="button"
+                                    title="{{ $s }} column{{ $s > 1 ? 's' : '' }}">
+                                {{ $s }}
+                            </button>
+                        @endfor
+                    </div>
                     <button class="toggle-btn {{ $widget['visible'] ? 'on' : 'off' }}"
                             wire:click="toggleWidget({{ $index }})" type="button">
                         <span></span>
