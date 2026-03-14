@@ -23,105 +23,97 @@ class DashboardConfig extends Page
     public array $widgets = [];
 
     protected array $widgetMeta = [
-        'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting message with quick stats', 'icon' => '👋'],
-        'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics at a glance — orders, revenue, customers', 'icon' => '📊'],
-        'revenue_chart' => ['name' => 'Revenue Chart', 'description' => 'Visual revenue trends over time', 'icon' => '📈'],
-        'order_funnel' => ['name' => 'Order Funnel', 'description' => 'Order status breakdown', 'icon' => '🔽'],
-        'recent_orders' => ['name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾'],
-        'upcoming_orders' => ['name' => 'Upcoming Orders', 'description' => 'Orders due soon', 'icon' => '📅'],
-        'top_products' => ['name' => 'Top Products', 'description' => 'Best-selling items', 'icon' => '⭐'],
-        'customer_insights' => ['name' => 'Customer Insights', 'description' => 'Customer trends and segments', 'icon' => '👥'],
-        'quick_actions' => ['name' => 'Quick Actions', 'description' => 'Shortcuts to common tasks', 'icon' => '⚡'],
-        'at_risk_customers' => ['name' => 'At-Risk Customers', 'description' => 'Customers who haven\'t ordered recently', 'icon' => '⚠️'],
-        'low_stock' => ['name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦'],
-        'storefront_views' => ['name' => 'Storefront Views', 'description' => 'Online store traffic stats', 'icon' => '🏪'],
-        'birthday' => ['name' => 'Birthday Reminders', 'description' => 'Upcoming customer birthdays', 'icon' => '🎂'],
-        'recent_activity' => ['name' => 'Recent Activity', 'description' => 'Latest actions and events', 'icon' => '🕐'],
+        'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats', 'icon' => '👋', 'w' => 12, 'h' => 2, 'minW' => 6, 'minH' => 2],
+        'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics at a glance', 'icon' => '📊', 'w' => 12, 'h' => 2, 'minW' => 6, 'minH' => 2],
+        'revenue_chart' => ['name' => 'Revenue Chart', 'description' => 'Revenue trends over time', 'icon' => '📈', 'w' => 8, 'h' => 4, 'minW' => 4, 'minH' => 3],
+        'recent_orders' => ['name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾', 'w' => 4, 'h' => 4, 'minW' => 3, 'minH' => 3],
+        'upcoming_orders' => ['name' => 'Upcoming Orders', 'description' => 'Orders due soon', 'icon' => '📅', 'w' => 4, 'h' => 4, 'minW' => 3, 'minH' => 3],
+        'top_products' => ['name' => 'Top Products', 'description' => 'Best-selling items', 'icon' => '⭐', 'w' => 4, 'h' => 4, 'minW' => 3, 'minH' => 3],
+        'customer_insights' => ['name' => 'Customer Insights', 'description' => 'Customer trends', 'icon' => '👥', 'w' => 4, 'h' => 4, 'minW' => 3, 'minH' => 3],
+        'at_risk_customers' => ['name' => 'At-Risk Customers', 'description' => 'Inactive customers', 'icon' => '⚠️', 'w' => 8, 'h' => 4, 'minW' => 4, 'minH' => 3],
+        'low_stock' => ['name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦', 'w' => 4, 'h' => 3, 'minW' => 3, 'minH' => 2],
+        'birthday' => ['name' => 'Birthday Reminders', 'description' => 'Upcoming birthdays', 'icon' => '🎂', 'w' => 4, 'h' => 3, 'minW' => 3, 'minH' => 2],
+        'recent_activity' => ['name' => 'Recent Activity', 'description' => 'Latest actions', 'icon' => '🕐', 'w' => 8, 'h' => 3, 'minW' => 4, 'minH' => 2],
     ];
 
     public function mount(): void
     {
-        $saved = Setting::get('dashboard_widgets');
-        $config = $saved ? json_decode($saved, true) : null;
+        $this->loadWidgets();
+    }
 
-        if (! $config) {
-            $config = $this->getDefaults();
-        }
+    protected function loadWidgets(): void
+    {
+        $savedGrid = Setting::get('dashboard_grid_layout');
+        $gridLayout = $savedGrid ? json_decode($savedGrid, true) : [];
 
-        // Sort by order
-        uasort($config, fn ($a, $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
+        $savedVisibility = Setting::get('dashboard_widgets');
+        $visConfig = $savedVisibility ? json_decode($savedVisibility, true) : null;
 
         $this->widgets = [];
-        foreach ($config as $key => $settings) {
-            if (! isset($this->widgetMeta[$key])) {
-                continue;
+        $y = 0;
+        foreach ($this->widgetMeta as $key => $meta) {
+            $visible = true;
+            if ($visConfig && isset($visConfig[$key])) {
+                $visible = $visConfig[$key]['visible'] ?? true;
             }
+
+            $grid = $gridLayout[$key] ?? null;
+
             $this->widgets[] = [
                 'key' => $key,
-                'visible' => $settings['visible'] ?? true,
-                'order' => $settings['order'] ?? 99,
-                'name' => $this->widgetMeta[$key]['name'],
-                'description' => $this->widgetMeta[$key]['description'],
-                'icon' => $this->widgetMeta[$key]['icon'],
+                'name' => $meta['name'],
+                'description' => $meta['description'],
+                'icon' => $meta['icon'],
+                'visible' => $visible,
+                'x' => $grid['x'] ?? 0,
+                'y' => $grid['y'] ?? $y,
+                'w' => $grid['w'] ?? $meta['w'],
+                'h' => $grid['h'] ?? $meta['h'],
+                'minW' => $meta['minW'],
+                'minH' => $meta['minH'],
             ];
+            $y += ($grid['h'] ?? $meta['h']);
         }
+    }
 
-        // Add any missing widgets
-        foreach ($this->widgetMeta as $key => $meta) {
-            if (! collect($this->widgets)->where('key', $key)->count()) {
-                $this->widgets[] = [
-                    'key' => $key,
-                    'visible' => true,
-                    'order' => count($this->widgets) + 1,
-                    'name' => $meta['name'],
-                    'description' => $meta['description'],
-                    'icon' => $meta['icon'],
-                ];
+    public function toggleWidget(string $key): void
+    {
+        foreach ($this->widgets as &$widget) {
+            if ($widget['key'] === $key) {
+                $widget['visible'] = ! $widget['visible'];
+                break;
             }
         }
     }
 
-    public function reorder(int $oldIndex, int $newIndex): void
+    public function saveLayout(array $gridData): void
     {
-        $item = $this->widgets[$oldIndex];
-        array_splice($this->widgets, $oldIndex, 1);
-        array_splice($this->widgets, $newIndex, 0, [$item]);
-        $this->widgets = array_values($this->widgets);
-        $this->reindex();
-    }
+        $gridLayout = [];
+        $visConfig = [];
 
-    public function moveUp(int $index): void
-    {
-        if ($index <= 0) {
-            return;
-        }
-        $this->reorder($index, $index - 1);
-    }
-
-    public function moveDown(int $index): void
-    {
-        if ($index >= count($this->widgets) - 1) {
-            return;
-        }
-        $this->reorder($index, $index + 1);
-    }
-
-    public function toggleWidget(int $index): void
-    {
-        $this->widgets[$index]['visible'] = ! $this->widgets[$index]['visible'];
-    }
-
-    public function save(): void
-    {
-        $config = [];
-        foreach ($this->widgets as $i => $widget) {
-            $config[$widget['key']] = [
-                'visible' => $widget['visible'],
-                'order' => $i + 1,
+        foreach ($gridData as $item) {
+            $key = $item['id'] ?? null;
+            if (! $key || ! isset($this->widgetMeta[$key])) {
+                continue;
+            }
+            $gridLayout[$key] = [
+                'x' => (int) ($item['x'] ?? 0),
+                'y' => (int) ($item['y'] ?? 0),
+                'w' => (int) ($item['w'] ?? 4),
+                'h' => (int) ($item['h'] ?? 3),
             ];
         }
 
-        Setting::set('dashboard_widgets', json_encode($config));
+        // Save visibility from widgets array
+        foreach ($this->widgets as $widget) {
+            $visConfig[$widget['key']] = [
+                'visible' => $widget['visible'],
+                'order' => $gridLayout[$widget['key']]['y'] ?? 99,
+            ];
+        }
+
+        Setting::set('dashboard_grid_layout', json_encode($gridLayout));
+        Setting::set('dashboard_widgets', json_encode($visConfig));
 
         Notification::make()
             ->title('Dashboard layout saved!')
@@ -132,39 +124,13 @@ class DashboardConfig extends Page
 
     public function resetDefaults(): void
     {
-        Setting::set('dashboard_widgets', json_encode($this->getDefaults()));
-        $this->mount();
+        Setting::set('dashboard_grid_layout', null);
+        Setting::set('dashboard_widgets', null);
+        $this->loadWidgets();
 
         Notification::make()
             ->title('Dashboard reset to defaults')
             ->success()
             ->send();
-    }
-
-    protected function reindex(): void
-    {
-        foreach ($this->widgets as $i => &$widget) {
-            $widget['order'] = $i + 1;
-        }
-    }
-
-    protected function getDefaults(): array
-    {
-        return [
-            'welcome_banner' => ['visible' => true, 'order' => 1],
-            'stats_overview' => ['visible' => true, 'order' => 2],
-            'revenue_chart' => ['visible' => true, 'order' => 3],
-            'order_funnel' => ['visible' => true, 'order' => 4],
-            'recent_orders' => ['visible' => true, 'order' => 5],
-            'upcoming_orders' => ['visible' => true, 'order' => 6],
-            'top_products' => ['visible' => true, 'order' => 7],
-            'customer_insights' => ['visible' => true, 'order' => 8],
-            'quick_actions' => ['visible' => true, 'order' => 9],
-            'at_risk_customers' => ['visible' => true, 'order' => 10],
-            'low_stock' => ['visible' => true, 'order' => 11],
-            'storefront_views' => ['visible' => true, 'order' => 12],
-            'birthday' => ['visible' => true, 'order' => 13],
-            'recent_activity' => ['visible' => true, 'order' => 14],
-        ];
     }
 }
