@@ -3,9 +3,13 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\AtRiskCustomersWidget;
+use App\Filament\Widgets\BakingSheetWidget;
 use App\Filament\Widgets\BirthdayWidget;
 use App\Filament\Widgets\CustomerInsightsWidget;
+use App\Filament\Widgets\GoalTrackerWidget;
+use App\Filament\Widgets\InboxWidget;
 use App\Filament\Widgets\LowStockWidget;
+use App\Filament\Widgets\MarginAlertWidget;
 use App\Filament\Widgets\OrderFunnelWidget;
 use App\Filament\Widgets\QuickActionsWidget;
 use App\Filament\Widgets\RecentActivityWidget;
@@ -13,8 +17,11 @@ use App\Filament\Widgets\RecentOrdersWidget;
 use App\Filament\Widgets\RevenueChartWidget;
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\StorefrontViewsWidget;
+use App\Filament\Widgets\TodaysOrdersWidget;
 use App\Filament\Widgets\TopProductsWidget;
+use App\Filament\Widgets\UpcomingHolidayWidget;
 use App\Filament\Widgets\UpcomingOrdersWidget;
+use App\Filament\Widgets\WeeklyRevenueChart;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Setting;
 use App\Traits\HasPlanGating;
@@ -48,17 +55,23 @@ class Dashboard extends BaseDashboard
             'welcome_banner' => WelcomeBannerWidget::class,
             'stats_overview' => StatsOverview::class,
             'revenue_chart' => RevenueChartWidget::class,
-            // 'order_funnel' => OrderFunnelWidget::class,
+            'weekly_revenue' => WeeklyRevenueChart::class,
+            'order_funnel' => OrderFunnelWidget::class,
             'recent_orders' => RecentOrdersWidget::class,
+            'todays_orders' => TodaysOrdersWidget::class,
             'upcoming_orders' => UpcomingOrdersWidget::class,
             'top_products' => TopProductsWidget::class,
             'customer_insights' => CustomerInsightsWidget::class,
-            // 'quick_actions' => QuickActionsWidget::class,
             'at_risk_customers' => AtRiskCustomersWidget::class,
             'low_stock' => LowStockWidget::class,
-            // 'storefront_views' => StorefrontViewsWidget::class,
+            'baking_sheet' => BakingSheetWidget::class,
             'birthday' => BirthdayWidget::class,
             'recent_activity' => RecentActivityWidget::class,
+            'inbox' => InboxWidget::class,
+            'margin_alert' => MarginAlertWidget::class,
+            'goal_tracker' => GoalTrackerWidget::class,
+            'upcoming_holiday' => UpcomingHolidayWidget::class,
+            'storefront_views' => StorefrontViewsWidget::class,
         ];
     }
 
