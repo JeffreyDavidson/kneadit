@@ -11,9 +11,19 @@ class RecentOrdersWidget extends BaseWidget
 {
     protected static ?int $sort = 4;
 
-    protected static ?string $heading = 'Recent Orders';
-
     protected int|string|array $columnSpan = ['md' => 1, 'xl' => 1];
+
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        $url = route('filament.admin.resources.orders.index');
+
+        return new \Illuminate\Support\HtmlString(
+            '<div style="display:flex;justify-content:space-between;align-items:center;width:100%;">'
+            .'<span>Recent Orders</span>'
+            .'<a href="'.$url.'" style="color:#FFFFFF;font-size:0.85rem;font-weight:500;opacity:0.85;text-decoration:none;">View All →</a>'
+            .'</div>'
+        );
+    }
 
     public function table(Table $table): Table
     {
@@ -46,13 +56,6 @@ class RecentOrdersWidget extends BaseWidget
                     ->label('When')
                     ->since(),
             ])
-            ->paginated(false)
-            ->headerActions([
-                \Filament\Actions\Action::make('viewAll')
-                    ->label('View All →')
-                    ->url(route('filament.admin.resources.orders.index'))
-                    ->link()
-                    ->color('warning'),
-            ]);
+            ->paginated(false);
     }
 }
