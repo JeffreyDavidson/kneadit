@@ -8,7 +8,7 @@ use Filament\Widgets\Widget;
 
 class UpcomingOrdersWidget extends Widget
 {
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 6;
 
     protected int|string|array $columnSpan = ['md' => 1, 'xl' => 1];
 

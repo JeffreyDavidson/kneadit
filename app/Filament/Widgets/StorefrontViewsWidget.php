@@ -8,7 +8,9 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StorefrontViewsWidget extends BaseWidget
 {
-    protected static ?int $sort = 11;
+    protected static ?int $sort = 2;
+
+    protected int|string|array $columnSpan = 1;
 
     protected function getStats(): array
     {
