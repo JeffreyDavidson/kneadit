@@ -190,7 +190,7 @@
                                                         <span class="text-sm font-bold text-gray-900">{{ $order->order_number }}</span>
                                                         <span class="text-sm text-gray-600">{{ $order->customer->name ?? 'Unknown Customer' }}</span>
                                                         <span class="text-sm text-gray-500">
-                                                            {{ $order->requested_time ? \Carbon\Carbon::parse($order->requested_time)->format('H:i') : 'Time not specified' }}
+                                                            {{ $order->delivery_time ? \Carbon\Carbon::parse($order->delivery_time)->format('H:i') : 'Time not specified' }}
                                                         </span>
                                                     </div>
                                                     <span class="text-sm font-medium text-gray-900">${{ number_format($order->total, 2) }}</span>

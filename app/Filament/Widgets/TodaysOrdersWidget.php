@@ -21,8 +21,8 @@ class TodaysOrdersWidget extends BaseWidget
         return $table
             ->query(
                 Order::query()
-                    ->whereDate('requested_date', Carbon::today())
-                    ->orderBy('requested_time')
+                    ->whereDate('delivery_date', Carbon::today())
+                    ->orderBy('delivery_time')
             )
             ->columns([
                 TextColumn::make('order_number')
@@ -34,7 +34,7 @@ class TodaysOrdersWidget extends BaseWidget
                     ->label('Type')
                     ->badge()
                     ->formatStateUsing(fn (string $state) => ucfirst($state)),
-                TextColumn::make('requested_time')
+                TextColumn::make('delivery_time')
                     ->label('Time')
                     ->time('g:i A'),
                 TextColumn::make('status')

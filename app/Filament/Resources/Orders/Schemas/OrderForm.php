@@ -88,7 +88,7 @@ class OrderForm
                                     ->step(0.01)
                                     ->default(0),
 
-                                TextInput::make('discount')
+                                TextInput::make('discount_amount')
                                     ->numeric()
                                     ->prefix('$')
                                     ->step(0.01)
@@ -109,9 +109,9 @@ class OrderForm
 
                         Grid::make(2)
                             ->components([
-                                DatePicker::make('requested_date'),
+                                DatePicker::make('delivery_date'),
 
-                                TimePicker::make('requested_time'),
+                                TimePicker::make('delivery_time'),
                             ]),
 
                         Textarea::make('notes')

@@ -46,7 +46,7 @@ class BakingSheet extends Page
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->join('products', 'order_items.product_id', '=', 'products.id')
             ->join('customers', 'orders.customer_id', '=', 'customers.id')
-            ->whereDate('orders.requested_date', $this->selectedDate)
+            ->whereDate('orders.delivery_date', $this->selectedDate)
             ->whereIn('orders.status', ['confirmed', 'in_progress'])
             ->select([
                 'products.name as product_name',

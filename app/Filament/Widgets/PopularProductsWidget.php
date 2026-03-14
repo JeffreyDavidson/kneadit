@@ -30,7 +30,7 @@ class PopularProductsWidget extends BaseWidget
                     ->join('orders', 'orders.id', '=', 'order_items.order_id')
                     ->join('products', 'products.id', '=', 'order_items.product_id')
                     ->where('orders.status', '!=', 'cancelled')
-                    ->whereBetween('orders.requested_date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                    ->whereBetween('orders.delivery_date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
                     ->select(
                         'order_items.product_id',
                         'products.name as product_name',

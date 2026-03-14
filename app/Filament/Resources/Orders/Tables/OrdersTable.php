@@ -53,7 +53,7 @@ class OrdersTable
                     ->money('USD')
                     ->sortable(),
 
-                TextColumn::make('requested_date')
+                TextColumn::make('delivery_date')
                     ->date()
                     ->sortable(),
 
@@ -85,7 +85,7 @@ class OrdersTable
                         'refunded' => 'Refunded',
                     ]),
 
-                Filter::make('requested_date')
+                Filter::make('delivery_date')
                     ->form([
                         DatePicker::make('from'),
                         DatePicker::make('until'),
@@ -94,11 +94,11 @@ class OrdersTable
                         return $query
                             ->when(
                                 $data['from'],
-                                fn ($query, $date) => $query->whereDate('requested_date', '>=', $date),
+                                fn ($query, $date) => $query->whereDate('delivery_date', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn ($query, $date) => $query->whereDate('requested_date', '<=', $date),
+                                fn ($query, $date) => $query->whereDate('delivery_date', '<=', $date),
                             );
                     }),
             ])

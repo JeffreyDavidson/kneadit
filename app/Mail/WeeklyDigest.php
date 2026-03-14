@@ -66,7 +66,7 @@ class WeeklyDigest extends Mailable implements ShouldQueue
             ->limit(5)
             ->get();
 
-        $this->upcomingCount = Order::whereBetween('requested_date', [$nextWeekStart, $nextWeekEnd])
+        $this->upcomingCount = Order::whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
             ->where('status', '!=', 'cancelled')
             ->count();
 

@@ -88,9 +88,9 @@
                                 <div class="flex-1">
                                     <h4 class="font-medium text-gray-900">{{ $order->order_number }}</h4>
                                     <p class="text-sm text-gray-600">{{ $order->customer->name }}</p>
-                                    @if($order->requested_time)
+                                    @if($order->delivery_time)
                                         <p class="text-sm text-gray-500">
-                                            Requested time: {{ \Carbon\Carbon::parse($order->requested_time)->format('g:i A') }}
+                                            Requested time: {{ \Carbon\Carbon::parse($order->delivery_time)->format('g:i A') }}
                                         </p>
                                     @endif
                                 </div>

@@ -80,12 +80,12 @@ class SendRepeatOrderReminders extends Command
     private function getCustomersNeedingReminders($cutoffDate, $reminderDays)
     {
         return Customer::whereHas('orders', fn ($q) => $q->where('payment_status', 'paid'))
-            ->with(['orders' => fn ($q) => $q->where('payment_status', 'paid')->latest('requested_date')])
+            ->with(['orders' => fn ($q) => $q->where('payment_status', 'paid')->latest('delivery_date')])
             ->get()
             ->map(function ($customer) use ($cutoffDate, $reminderDays) {
                 $lastOrder = $customer->orders->first();
 
-                if (! $lastOrder || $lastOrder->requested_date->isAfter($cutoffDate)) {
+                if (! $lastOrder || $lastOrder->delivery_date->isAfter($cutoffDate)) {
                     return null;
                 }
 
@@ -96,8 +96,8 @@ class SendRepeatOrderReminders extends Command
 
                 return [
                     'customer' => $customer,
-                    'last_order_date' => $lastOrder->requested_date,
-                    'days_since_last_order' => $lastOrder->requested_date->diffInDays(Carbon::today()),
+                    'last_order_date' => $lastOrder->delivery_date,
+                    'days_since_last_order' => $lastOrder->delivery_date->diffInDays(Carbon::today()),
                 ];
             })
             ->filter();

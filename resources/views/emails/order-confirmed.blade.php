@@ -30,14 +30,14 @@
     <div style="background-color: #fef9ef; border-radius: 8px; padding: 15px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
         <p style="margin: 0 0 5px; font-weight: 600;">🚚 Delivery Details</p>
         <p style="margin: 0 0 3px;"><strong>Address:</strong> {{ $order->delivery_address }}</p>
-        <p style="margin: 0 0 3px;"><strong>Date:</strong> {{ $order->requested_date->format('M j, Y') }}</p>
-        <p style="margin: 0;"><strong>Time:</strong> {{ $order->requested_time->format('g:i A') }}</p>
+        <p style="margin: 0 0 3px;"><strong>Date:</strong> {{ $order->delivery_date->format('M j, Y') }}</p>
+        <p style="margin: 0;"><strong>Time:</strong> {{ $order->delivery_time->format('g:i A') }}</p>
     </div>
 @else
     <div style="background-color: #fef9ef; border-radius: 8px; padding: 15px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
         <p style="margin: 0 0 5px; font-weight: 600;">🏪 Pickup Details</p>
-        <p style="margin: 0 0 3px;"><strong>Date:</strong> {{ $order->requested_date->format('M j, Y') }}</p>
-        <p style="margin: 0 0 3px;"><strong>Time:</strong> {{ $order->requested_time->format('g:i A') }}</p>
+        <p style="margin: 0 0 3px;"><strong>Date:</strong> {{ $order->delivery_date->format('M j, Y') }}</p>
+        <p style="margin: 0 0 3px;"><strong>Time:</strong> {{ $order->delivery_time->format('g:i A') }}</p>
         <p style="margin: 0;"><strong>Location:</strong> {{ \App\Models\Setting::get('store_address', '') }}</p>
     </div>
 @endif

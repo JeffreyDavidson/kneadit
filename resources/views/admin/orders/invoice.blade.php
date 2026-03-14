@@ -331,13 +331,13 @@
                     <span class="info-label">Order Date:</span>
                     <span class="info-value">{{ $order->created_at->format('M j, Y g:i A') }}</span>
                 </div>
-                @if($order->requested_date)
+                @if($order->delivery_date)
                     <div class="info-item">
                         <span class="info-label">Requested:</span>
                         <span class="info-value">
-                            {{ \Carbon\Carbon::parse($order->requested_date)->format('M j, Y') }}
-                            @if($order->requested_time)
-                                at {{ \Carbon\Carbon::parse($order->requested_time)->format('g:i A') }}
+                            {{ \Carbon\Carbon::parse($order->delivery_date)->format('M j, Y') }}
+                            @if($order->delivery_time)
+                                at {{ \Carbon\Carbon::parse($order->delivery_time)->format('g:i A') }}
                             @endif
                         </span>
                     </div>
@@ -394,10 +394,10 @@
                         <td class="text-right">${{ number_format($order->delivery_fee, 2) }}</td>
                     </tr>
                 @endif
-                @if($order->discount > 0)
+                @if($order->discount_amount > 0)
                     <tr style="color: #059669;">
                         <td><strong>Discount:</strong></td>
-                        <td class="text-right">-${{ number_format($order->discount, 2) }}</td>
+                        <td class="text-right">-${{ number_format($order->discount_amount, 2) }}</td>
                     </tr>
                 @endif
                 <tr>

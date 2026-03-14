@@ -53,8 +53,8 @@ class OrderCalendar extends Page
         $startOfMonth = Carbon::createFromDate($this->currentYear, $this->currentMonth, 1)->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
-        $this->orderCounts = Order::whereBetween('requested_date', [$startOfMonth, $endOfMonth])
-            ->selectRaw('DATE(requested_date) as date, COUNT(*) as count')
+        $this->orderCounts = Order::whereBetween('delivery_date', [$startOfMonth, $endOfMonth])
+            ->selectRaw('DATE(delivery_date) as date, COUNT(*) as count')
             ->groupBy('date')
             ->pluck('count', 'date');
     }
@@ -83,8 +83,8 @@ class OrderCalendar extends Page
     {
         $this->selectedDate = $date;
         $this->selectedDayOrders = Order::with(['customer', 'orderItems.product'])
-            ->whereDate('requested_date', $date)
-            ->orderBy('requested_time')
+            ->whereDate('delivery_date', $date)
+            ->orderBy('delivery_time')
             ->get();
     }
 

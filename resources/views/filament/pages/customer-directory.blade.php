@@ -230,7 +230,7 @@
                                                         <div>
                                                             <div class="font-medium text-gray-900 dark:text-gray-100" x-text="order.order_number"></div>
                                                             <div class="text-sm text-gray-500 dark:text-gray-400" x-text="order.date"></div>
-                                                            <div class="text-sm" x-text="'Requested: ' + (order.requested_date || 'N/A')"></div>
+                                                            <div class="text-sm" x-text="'Requested: ' + (order.delivery_date || 'N/A')"></div>
                                                         </div>
                                                         <div class="text-right">
                                                             <div class="font-medium text-gray-900 dark:text-gray-100" x-text="'$' + order.total"></div>

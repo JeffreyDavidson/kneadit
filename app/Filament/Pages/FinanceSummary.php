@@ -68,7 +68,7 @@ class FinanceSummary extends Page
     private function calculateYearlyTotals()
     {
         // Total revenue from paid orders
-        $this->totalRevenue = Order::whereYear('requested_date', $this->selectedYear)
+        $this->totalRevenue = Order::whereYear('delivery_date', $this->selectedYear)
             ->where('payment_status', 'paid')
             ->sum('total');
 
@@ -91,8 +91,8 @@ class FinanceSummary extends Page
         $this->monthlyBreakdown = collect();
 
         for ($month = 1; $month <= 12; $month++) {
-            $monthRevenue = Order::whereYear('requested_date', $this->selectedYear)
-                ->whereMonth('requested_date', $month)
+            $monthRevenue = Order::whereYear('delivery_date', $this->selectedYear)
+                ->whereMonth('delivery_date', $month)
                 ->where('payment_status', 'paid')
                 ->sum('total');
 

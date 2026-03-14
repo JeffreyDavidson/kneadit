@@ -52,9 +52,9 @@ class ViewOrder extends ViewRecord
                             ]),
                         Grid::make(2)
                             ->schema([
-                                TextEntry::make('requested_date')
+                                TextEntry::make('delivery_date')
                                     ->date(),
-                                TextEntry::make('requested_time')
+                                TextEntry::make('delivery_time')
                                     ->time('H:i'),
                             ]),
                     ]),
@@ -89,7 +89,7 @@ class ViewOrder extends ViewRecord
                                     ->money('USD'),
                                 TextEntry::make('delivery_fee')
                                     ->money('USD'),
-                                TextEntry::make('discount')
+                                TextEntry::make('discount_amount')
                                     ->money('USD'),
                                 TextEntry::make('total')
                                     ->money('USD')

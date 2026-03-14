@@ -180,7 +180,7 @@ class PayPalService
             ],
         ];
 
-        if ($order->discount > 0) {
+        if ($order->discount_amount > 0) {
             $invoiceData['amount']['breakdown']['discount'] = [
                 'invoice_discount' => [
                     'percent' => '0',

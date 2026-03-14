@@ -35,14 +35,14 @@ class WelcomeBannerWidget extends Widget
 
     public function getOrdersToday(): int
     {
-        return Order::whereDate('requested_date', Carbon::today())->count();
+        return Order::whereDate('delivery_date', Carbon::today())->count();
     }
 
     public function getRevenueToday(): string
     {
         return number_format(
             (float) Order::where('status', '!=', 'cancelled')
-                ->whereDate('requested_date', Carbon::today())
+                ->whereDate('delivery_date', Carbon::today())
                 ->sum('total'),
             2
         );

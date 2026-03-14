@@ -203,12 +203,12 @@ class QuickOrder extends Page
             Section::make('Order Details')
                 ->schema([
                     Grid::make(2)->schema([
-                        DatePicker::make('requested_date')
+                        DatePicker::make('delivery_date')
                             ->label('Requested Date')
                             ->required()
                             ->minDate(today()),
 
-                        TimePicker::make('requested_time')
+                        TimePicker::make('delivery_time')
                             ->label('Requested Time')
                             ->required(),
                     ]),
@@ -300,8 +300,8 @@ class QuickOrder extends Page
                     'delivery_fee' => $deliveryFee,
                     'total' => $total,
                     'delivery_address' => $data['delivery_type'] === 'delivery' ? $data['delivery_address'] : null,
-                    'requested_date' => $data['requested_date'],
-                    'requested_time' => $data['requested_time'],
+                    'delivery_date' => $data['delivery_date'],
+                    'delivery_time' => $data['delivery_time'],
                     'notes' => $data['notes'] ?? null,
                     'user_id' => auth()->id(),
                 ]);

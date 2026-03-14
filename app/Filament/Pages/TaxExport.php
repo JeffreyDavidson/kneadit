@@ -208,7 +208,7 @@ class TaxExport extends Page
                         $items,
                         $order->subtotal,
                         $order->delivery_fee,
-                        $order->discount,
+                        $order->discount_amount,
                         $order->total,
                         $order->payment_status,
                         $order->payment_method,
