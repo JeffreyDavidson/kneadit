@@ -23,17 +23,17 @@ class DashboardConfig extends Page
     public array $widgets = [];
 
     protected array $widgetMeta = [
-        'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats', 'icon' => '👋', 'w' => 12, 'h' => 2, 'minW' => 6, 'minH' => 2],
-        'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics at a glance', 'icon' => '📊', 'w' => 12, 'h' => 2, 'minW' => 6, 'minH' => 2],
-        'revenue_chart' => ['name' => 'Revenue Chart', 'description' => 'Revenue trends over time', 'icon' => '📈', 'w' => 8, 'h' => 4, 'minW' => 4, 'minH' => 3],
-        'recent_orders' => ['name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾', 'w' => 4, 'h' => 4, 'minW' => 3, 'minH' => 3],
-        'upcoming_orders' => ['name' => 'Upcoming Orders', 'description' => 'Orders due soon', 'icon' => '📅', 'w' => 4, 'h' => 4, 'minW' => 3, 'minH' => 3],
-        'top_products' => ['name' => 'Top Products', 'description' => 'Best-selling items', 'icon' => '⭐', 'w' => 4, 'h' => 4, 'minW' => 3, 'minH' => 3],
-        'customer_insights' => ['name' => 'Customer Insights', 'description' => 'Customer trends', 'icon' => '👥', 'w' => 4, 'h' => 4, 'minW' => 3, 'minH' => 3],
-        'at_risk_customers' => ['name' => 'At-Risk Customers', 'description' => 'Inactive customers', 'icon' => '⚠️', 'w' => 8, 'h' => 4, 'minW' => 4, 'minH' => 3],
-        'low_stock' => ['name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦', 'w' => 4, 'h' => 3, 'minW' => 3, 'minH' => 2],
-        'birthday' => ['name' => 'Birthday Reminders', 'description' => 'Upcoming birthdays', 'icon' => '🎂', 'w' => 4, 'h' => 3, 'minW' => 3, 'minH' => 2],
-        'recent_activity' => ['name' => 'Recent Activity', 'description' => 'Latest actions', 'icon' => '🕐', 'w' => 8, 'h' => 3, 'minW' => 4, 'minH' => 2],
+        'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats', 'icon' => '👋', 'w' => 12, 'h' => 3, 'minW' => 6, 'minH' => 2],
+        'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics at a glance', 'icon' => '📊', 'w' => 12, 'h' => 4, 'minW' => 6, 'minH' => 3],
+        'revenue_chart' => ['name' => 'Revenue Chart', 'description' => 'Revenue trends over time', 'icon' => '📈', 'w' => 8, 'h' => 7, 'minW' => 4, 'minH' => 4],
+        'recent_orders' => ['name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾', 'w' => 4, 'h' => 7, 'minW' => 3, 'minH' => 4],
+        'upcoming_orders' => ['name' => 'Upcoming Orders', 'description' => 'Orders due soon', 'icon' => '📅', 'w' => 4, 'h' => 6, 'minW' => 3, 'minH' => 3],
+        'top_products' => ['name' => 'Top Products', 'description' => 'Best-selling items', 'icon' => '⭐', 'w' => 4, 'h' => 6, 'minW' => 3, 'minH' => 3],
+        'customer_insights' => ['name' => 'Customer Insights', 'description' => 'Customer trends', 'icon' => '👥', 'w' => 4, 'h' => 6, 'minW' => 3, 'minH' => 3],
+        'at_risk_customers' => ['name' => 'At-Risk Customers', 'description' => 'Inactive customers', 'icon' => '⚠️', 'w' => 8, 'h' => 6, 'minW' => 4, 'minH' => 3],
+        'low_stock' => ['name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦', 'w' => 4, 'h' => 6, 'minW' => 3, 'minH' => 3],
+        'birthday' => ['name' => 'Birthday Reminders', 'description' => 'Upcoming birthdays', 'icon' => '🎂', 'w' => 4, 'h' => 5, 'minW' => 3, 'minH' => 2],
+        'recent_activity' => ['name' => 'Recent Activity', 'description' => 'Latest actions', 'icon' => '🕐', 'w' => 8, 'h' => 5, 'minW' => 4, 'minH' => 2],
     ];
 
     public function mount(): void
