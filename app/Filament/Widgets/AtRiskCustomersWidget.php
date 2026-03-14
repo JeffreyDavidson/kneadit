@@ -9,7 +9,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class AtRiskCustomersWidget extends BaseWidget
 {
-    protected static ?int $sort = 6;
+    protected static ?int $sort = 9;
 
     protected int|string|array $columnSpan = ['md' => 1, 'xl' => 2];
 

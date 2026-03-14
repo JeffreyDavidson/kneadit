@@ -6,7 +6,7 @@ use Filament\Widgets\Widget;
 
 class QuickActionsWidget extends Widget
 {
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 8;
 
     protected int|string|array $columnSpan = 1;
 
