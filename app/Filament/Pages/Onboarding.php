@@ -36,6 +36,11 @@ class Onboarding extends Page
 
     protected static ?string $navigationLabel = null;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected static string|BackedEnum|null $navigationIcon = null;
 
     protected string $view = 'filament.pages.onboarding';
