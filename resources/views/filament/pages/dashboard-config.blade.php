@@ -1,56 +1,90 @@
 <x-filament-panels::page>
     <style>
-        .config-container { max-width: 720px; margin: 0 auto; }
-        .config-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-        .config-header p { color: #8b6844; font-size: 0.9rem; margin: 0; }
-        .config-actions { display: flex; gap: 8px; }
+        .config-layout { display: grid; grid-template-columns: 340px 1fr; gap: 28px; min-height: 600px; }
+        @media (max-width: 1024px) { .config-layout { grid-template-columns: 1fr; } }
 
-        .widget-list { display: flex; flex-direction: column; gap: 6px; }
+        /* Left panel — widget list */
+        .widget-panel { background: #fdf8f2; border: 1px solid rgba(212,165,116,0.2); border-radius: 16px; padding: 20px; }
+        .widget-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(212,165,116,0.15); }
+        .widget-panel-title { font-size: 0.85rem; font-weight: 700; color: #3d2314; text-transform: uppercase; letter-spacing: 0.5px; margin: 0; }
 
+        .widget-list { display: flex; flex-direction: column; gap: 4px; }
         .widget-card {
-            display: flex; align-items: center; gap: 16px;
-            padding: 16px 20px; border-radius: 12px;
-            border: 1px solid rgba(212,165,116,0.25);
-            background: #fdf8f2;
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 10px;
+            border: 1px solid transparent; background: white;
             cursor: grab; user-select: none;
-            transition: box-shadow 0.2s, border-color 0.2s, opacity 0.2s;
+            transition: all 0.15s;
         }
-        .widget-card:hover { border-color: #d4a574; box-shadow: 0 2px 8px rgba(61,35,20,0.08); }
+        .widget-card:hover { border-color: rgba(212,165,116,0.3); box-shadow: 0 1px 4px rgba(61,35,20,0.06); }
         .widget-card:active { cursor: grabbing; }
-        .widget-card.disabled { opacity: 0.45; background: #f5f5f5; border-style: dashed; }
-        .widget-card.sortable-ghost { opacity: 0.3; background: #f5e6d0; }
-        .widget-card.sortable-drag { box-shadow: 0 8px 24px rgba(61,35,20,0.15); }
+        .widget-card.disabled { opacity: 0.4; background: #f8f8f8; }
+        .widget-card.sortable-ghost { opacity: 0.2; }
+        .widget-card.sortable-drag { box-shadow: 0 6px 20px rgba(61,35,20,0.12); z-index: 10; }
 
-        .widget-drag { color: #c4a882; flex-shrink: 0; }
-        .widget-icon { font-size: 1.4rem; flex-shrink: 0; width: 32px; text-align: center; }
+        .widget-drag { color: #d4c4b0; flex-shrink: 0; }
+        .widget-icon { font-size: 1.1rem; flex-shrink: 0; }
         .widget-info { flex: 1; min-width: 0; }
-        .widget-name { font-weight: 600; color: #3d2314; margin: 0; font-size: 0.95rem; }
-        .widget-desc { font-size: 0.8rem; color: #8b6844; margin: 2px 0 0; }
-        .widget-pos { font-size: 0.7rem; color: #c4a882; font-family: monospace; min-width: 20px; text-align: center; }
+        .widget-name { font-weight: 600; color: #3d2314; margin: 0; font-size: 0.85rem; line-height: 1.2; }
+        .widget-desc { font-size: 0.7rem; color: #a08060; margin: 1px 0 0; }
 
-        .span-selector { display: flex; gap: 2px; flex-shrink: 0; }
+        .span-selector { display: flex; gap: 1px; flex-shrink: 0; background: rgba(212,165,116,0.15); border-radius: 6px; overflow: hidden; }
         .span-btn {
-            width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(212,165,116,0.3);
-            background: white; color: #8b6844; font-size: 0.75rem; font-weight: 700;
+            width: 24px; height: 24px; border: none;
+            background: white; color: #a08060; font-size: 0.7rem; font-weight: 700;
             cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
         }
-        .span-btn:hover { border-color: #d4a574; background: #fdf8f2; }
-        .span-btn.active { background: #d4a574; color: white; border-color: #d4a574; }
+        .span-btn:hover { background: #fdf8f2; color: #6b4c3b; }
+        .span-btn.active { background: #d4a574; color: white; }
 
-        .toggle-btn {
-            position: relative; display: inline-flex; height: 26px; width: 48px;
-            align-items: center; border-radius: 13px; border: none; cursor: pointer;
-            transition: background 0.2s; flex-shrink: 0;
+        .toggle-mini {
+            width: 36px; height: 20px; border-radius: 10px; border: none;
+            cursor: pointer; transition: background 0.2s; flex-shrink: 0; position: relative;
         }
-        .toggle-btn.on { background: #d4a574; }
-        .toggle-btn.off { background: #ccc; }
-        .toggle-btn span {
-            display: inline-block; height: 20px; width: 20px; border-radius: 50%;
-            background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-            transition: transform 0.2s;
+        .toggle-mini.on { background: #d4a574; }
+        .toggle-mini.off { background: #d0d0d0; }
+        .toggle-mini span {
+            display: block; width: 16px; height: 16px; border-radius: 50%;
+            background: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            position: absolute; top: 2px; transition: left 0.15s;
         }
-        .toggle-btn.on span { transform: translateX(24px); }
-        .toggle-btn.off span { transform: translateX(3px); }
+        .toggle-mini.on span { left: 18px; }
+        .toggle-mini.off span { left: 2px; }
+
+        /* Right panel — preview */
+        .preview-panel { background: #f5f0ea; border: 1px solid rgba(212,165,116,0.15); border-radius: 16px; padding: 20px; overflow: hidden; }
+        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(212,165,116,0.12); }
+        .preview-title { font-size: 0.85rem; font-weight: 700; color: #3d2314; text-transform: uppercase; letter-spacing: 0.5px; margin: 0; }
+        .preview-badge { font-size: 0.65rem; background: rgba(212,165,116,0.2); color: #8b6844; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
+
+        .preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+        .preview-widget {
+            border-radius: 10px; overflow: hidden;
+            border: 1px solid rgba(212,165,116,0.15);
+            background: white;
+            transition: all 0.2s;
+        }
+        .preview-widget-header {
+            background: linear-gradient(135deg, #6b4c3b, #8b6844);
+            padding: 8px 12px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .preview-widget-header span { color: white; font-size: 0.75rem; font-weight: 600; }
+        .preview-widget-header .pw-icon { font-size: 0.85rem; }
+        .preview-widget-body { padding: 12px; min-height: 50px; }
+
+        /* Simulated content */
+        .pw-stat { display: flex; justify-content: space-between; align-items: baseline; }
+        .pw-stat-value { font-size: 1.4rem; font-weight: 700; color: #3d2314; }
+        .pw-stat-label { font-size: 0.65rem; color: #a08060; text-transform: uppercase; }
+        .pw-bar { height: 6px; border-radius: 3px; background: rgba(212,165,116,0.15); margin-top: 6px; }
+        .pw-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #d4a574, #e8b04a); }
+        .pw-line { height: 40px; display: flex; align-items: end; gap: 2px; }
+        .pw-line-bar { flex: 1; background: rgba(212,165,116,0.3); border-radius: 2px 2px 0 0; min-height: 4px; }
+        .pw-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(212,165,116,0.08); font-size: 0.7rem; color: #6b4c3b; }
+        .pw-row:last-child { border: none; }
+        .pw-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
 
         .config-footer {
             display: flex; align-items: center; justify-content: space-between;
@@ -64,79 +98,141 @@
         .config-footer a:hover { color: #3d2314; }
     </style>
 
-    <div class="config-container">
-        <div class="config-header">
-            <p>Drag to reorder. Toggle to show or hide widgets. Changes won't affect the dashboard until enabled.</p>
-            <div class="config-actions">
-                <x-filament::button color="gray" wire:click="togglePreview">
-                    {{ $showPreview ? 'Hide Preview' : 'Preview' }}
-                </x-filament::button>
-                <x-filament::button color="gray" wire:click="resetDefaults">
-                    Reset Defaults
-                </x-filament::button>
-                <x-filament::button wire:click="save">
-                    Save Layout
-                </x-filament::button>
+    <div class="config-layout">
+        {{-- Left: Widget List --}}
+        <div class="widget-panel">
+            <div class="widget-panel-header">
+                <p class="widget-panel-title">Widgets</p>
+                <x-filament::button size="xs" color="gray" wire:click="resetDefaults">Reset</x-filament::button>
+            </div>
+
+            <div class="widget-list" id="widget-sortable">
+                @foreach($widgets as $index => $widget)
+                    <div class="widget-card {{ $widget['visible'] ? '' : 'disabled' }}" data-index="{{ $index }}">
+                        <div class="widget-drag">
+                            <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M7 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                            </svg>
+                        </div>
+                        <div class="widget-icon">{{ $widget['icon'] }}</div>
+                        <div class="widget-info">
+                            <p class="widget-name">{{ $widget['name'] }}</p>
+                            <p class="widget-desc">{{ $widget['description'] }}</p>
+                        </div>
+                        <div class="span-selector">
+                            @for($s = 1; $s <= 3; $s++)
+                                <button class="span-btn {{ ($widget['span'] ?? 1) == $s ? 'active' : '' }}"
+                                        wire:click="setSpan({{ $index }}, {{ $s }})" type="button"
+                                        title="{{ $s }}/3 width">{{ $s }}</button>
+                            @endfor
+                        </div>
+                        <button class="toggle-mini {{ $widget['visible'] ? 'on' : 'off' }}"
+                                wire:click="toggleWidget({{ $index }})" type="button">
+                            <span></span>
+                        </button>
+                    </div>
+                @endforeach
             </div>
         </div>
 
-        @if($showPreview)
-            <div style="border: 2px dashed rgba(212,165,116,0.4); border-radius: 16px; padding: 24px; margin-bottom: 24px; background: rgba(212,165,116,0.03);">
-                <p style="font-size: 0.8rem; color: #8b6844; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Dashboard Preview</p>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                    @foreach($widgets as $widget)
-                        @if($widget['visible'])
-                            <div style="background: #fdf8f2; border: 1px solid rgba(212,165,116,0.25); border-radius: 8px; padding: 12px 14px; grid-column: span {{ $widget['span'] ?? 1 }};">
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 1rem;">{{ $widget['icon'] }}</span>
-                                    <span style="font-size: 0.8rem; font-weight: 600; color: #3d2314;">{{ $widget['name'] }}</span>
-                                </div>
+        {{-- Right: Live Preview --}}
+        <div class="preview-panel">
+            <div class="preview-header">
+                <p class="preview-title">Preview</p>
+                <span class="preview-badge">Live Preview</span>
+            </div>
+
+            <div class="preview-grid">
+                @foreach($widgets as $widget)
+                    @if($widget['visible'])
+                        <div class="preview-widget" style="grid-column: span {{ $widget['span'] ?? 1 }};">
+                            <div class="preview-widget-header">
+                                <span class="pw-icon">{{ $widget['icon'] }}</span>
+                                <span>{{ $widget['name'] }}</span>
                             </div>
-                        @endif
-                    @endforeach
-                </div>
+                            <div class="preview-widget-body">
+                                @switch($widget['key'])
+                                    @case('welcome_banner')
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <div style="font-size: 0.85rem; font-weight: 600; color: #3d2314;">Good evening!</div>
+                                                <div style="font-size: 0.65rem; color: #a08060;">Saturday, March 14</div>
+                                            </div>
+                                            <div style="display: flex; gap: 6px;">
+                                                <div style="background: #fdf8f2; border-radius: 6px; padding: 4px 8px; text-align: center;">
+                                                    <div style="font-size: 0.9rem; font-weight: 700; color: #3d2314;">3</div>
+                                                    <div style="font-size: 0.55rem; color: #a08060;">ORDERS</div>
+                                                </div>
+                                                <div style="background: #fdf8f2; border-radius: 6px; padding: 4px 8px; text-align: center;">
+                                                    <div style="font-size: 0.9rem; font-weight: 700; color: #3d2314;">$85</div>
+                                                    <div style="font-size: 0.55rem; color: #a08060;">REVENUE</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @break
+                                    @case('stats_overview')
+                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+                                            @foreach(['Orders: 5', 'Pending: 2', 'Revenue: $142'] as $stat)
+                                                <div style="background: #fdf8f2; border-radius: 6px; padding: 6px 8px;">
+                                                    <div style="font-size: 0.6rem; color: #a08060;">{{ explode(':', $stat)[0] }}</div>
+                                                    <div style="font-size: 0.85rem; font-weight: 700; color: #3d2314;">{{ trim(explode(':', $stat)[1]) }}</div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        @break
+                                    @case('revenue_chart')
+                                        <div class="pw-line">
+                                            @foreach([30, 45, 20, 60, 80, 55, 70, 40, 90, 65, 50, 75] as $h)
+                                                <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
+                                            @endforeach
+                                        </div>
+                                        @break
+                                    @case('recent_orders')
+                                    @case('upcoming_orders')
+                                        @for($i = 0; $i < 3; $i++)
+                                            <div class="pw-row">
+                                                <span><span class="pw-dot" style="background: {{ ['#d4a574','#e8b04a','#8b6844'][$i] }};"></span>Order #{{ 100 + $i }}</span>
+                                                <span>${{ [28, 45, 32][$i] }}</span>
+                                            </div>
+                                        @endfor
+                                        @break
+                                    @case('top_products')
+                                        @foreach(['Chocolate Cake' => 85, 'Banana Bread' => 60, 'Cookies' => 40] as $name => $pct)
+                                            <div style="margin-bottom: 6px;">
+                                                <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
+                                                    <span>{{ $name }}</span><span>{{ $pct }}%</span>
+                                                </div>
+                                                <div class="pw-bar"><div class="pw-bar-fill" style="width: {{ $pct }}%;"></div></div>
+                                            </div>
+                                        @endforeach
+                                        @break
+                                    @case('customer_insights')
+                                        <div class="pw-stat"><span class="pw-stat-label">New this week</span><span class="pw-stat-value">4</span></div>
+                                        <div class="pw-stat" style="margin-top: 8px;"><span class="pw-stat-label">Repeat rate</span><span class="pw-stat-value">62%</span></div>
+                                        @break
+                                    @default
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            @for($i = 0; $i < 2; $i++)
+                                                <div style="height: 8px; border-radius: 4px; background: rgba(212,165,116,0.12); width: {{ [100, 70][$i] }}%;"></div>
+                                            @endfor
+                                        </div>
+                                @endswitch
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
             </div>
-        @endif
-
-        <div class="widget-list" id="widget-sortable">
-            @foreach($widgets as $index => $widget)
-                <div class="widget-card {{ $widget['visible'] ? '' : 'disabled' }}" data-index="{{ $index }}">
-                    <div class="widget-drag">
-                        <svg xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M7 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                        </svg>
-                    </div>
-                    <div class="widget-icon">{{ $widget['icon'] }}</div>
-                    <div class="widget-info">
-                        <p class="widget-name">{{ $widget['name'] }}</p>
-                        <p class="widget-desc">{{ $widget['description'] }}</p>
-                    </div>
-                    <div class="span-selector">
-                        @for($s = 1; $s <= 3; $s++)
-                            <button class="span-btn {{ ($widget['span'] ?? 1) == $s ? 'active' : '' }}"
-                                    wire:click="setSpan({{ $index }}, {{ $s }})" type="button"
-                                    title="{{ $s }} column{{ $s > 1 ? 's' : '' }}">
-                                {{ $s }}
-                            </button>
-                        @endfor
-                    </div>
-                    <button class="toggle-btn {{ $widget['visible'] ? 'on' : 'off' }}"
-                            wire:click="toggleWidget({{ $index }})" type="button">
-                        <span></span>
-                    </button>
-                </div>
-            @endforeach
         </div>
+    </div>
 
-        <div class="config-footer">
-            <a href="{{ route('filament.admin.pages.dashboard') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 16px; height: 16px;"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>
-                Back to Dashboard
-            </a>
-            <x-filament::button wire:click="save">
-                Save Layout
-            </x-filament::button>
-        </div>
+    <div class="config-footer">
+        <a href="{{ route('filament.admin.pages.dashboard') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 16px; height: 16px;"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>
+            Back to Dashboard
+        </a>
+        <x-filament::button wire:click="save">
+            Save Layout
+        </x-filament::button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
@@ -144,7 +240,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const el = document.getElementById('widget-sortable');
             if (!el) return;
-
             Sortable.create(el, {
                 animation: 200,
                 ghostClass: 'sortable-ghost',
