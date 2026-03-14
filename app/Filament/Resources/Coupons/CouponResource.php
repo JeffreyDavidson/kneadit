@@ -52,7 +52,7 @@ class CouponResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['code', 'description'];
+        return ['code'];
     }
 
     public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
