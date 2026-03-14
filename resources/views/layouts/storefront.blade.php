@@ -21,30 +21,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ $title ?? $ogStoreName }}">
     <meta name="twitter:description" content="{{ $metaDescription ?? $ogDescription }}">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    warm: {
-                        50:  'var(--warm-50)',
-                        100: 'var(--warm-100)',
-                        200: 'var(--warm-200)',
-                        300: 'var(--warm-300)',
-                        400: 'var(--warm-400)',
-                        500: 'var(--warm-500)',
-                        600: 'var(--warm-600)',
-                        700: 'var(--warm-700)',
-                        800: 'var(--warm-800)',
-                        900: 'var(--warm-900)',
-                    }
-                }
-            }
-        }
-    }
-    </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @vite(['resources/css/storefront.css', 'resources/js/storefront.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Dancing+Script:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">

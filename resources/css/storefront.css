@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+
+@source '../views/**/*.blade.php';
+
+/* Custom warm color palette mapped to CSS variables for multi-tenant theming */
+@theme {
+    --color-warm-50: var(--warm-50);
+    --color-warm-100: var(--warm-100);
+    --color-warm-200: var(--warm-200);
+    --color-warm-300: var(--warm-300);
+    --color-warm-400: var(--warm-400);
+    --color-warm-500: var(--warm-500);
+    --color-warm-600: var(--warm-600);
+    --color-warm-700: var(--warm-700);
+    --color-warm-800: var(--warm-800);
+    --color-warm-900: var(--warm-900);
+}
