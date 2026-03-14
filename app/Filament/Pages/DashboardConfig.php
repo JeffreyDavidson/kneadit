@@ -23,17 +23,17 @@ class DashboardConfig extends Page
     public array $widgets = [];
 
     protected array $widgetMeta = [
-        'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats', 'icon' => '👋', 'w' => 12, 'h' => 3, 'minW' => 6, 'minH' => 2],
-        'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics at a glance', 'icon' => '📊', 'w' => 12, 'h' => 4, 'minW' => 6, 'minH' => 3],
-        'revenue_chart' => ['name' => 'Revenue Chart', 'description' => 'Revenue trends over time', 'icon' => '📈', 'w' => 8, 'h' => 7, 'minW' => 4, 'minH' => 4],
-        'recent_orders' => ['name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾', 'w' => 4, 'h' => 7, 'minW' => 3, 'minH' => 4],
-        'upcoming_orders' => ['name' => 'Upcoming Orders', 'description' => 'Orders due soon', 'icon' => '📅', 'w' => 4, 'h' => 6, 'minW' => 3, 'minH' => 3],
-        'top_products' => ['name' => 'Top Products', 'description' => 'Best-selling items', 'icon' => '⭐', 'w' => 4, 'h' => 6, 'minW' => 3, 'minH' => 3],
-        'customer_insights' => ['name' => 'Customer Insights', 'description' => 'Customer trends', 'icon' => '👥', 'w' => 4, 'h' => 6, 'minW' => 3, 'minH' => 3],
-        'at_risk_customers' => ['name' => 'At-Risk Customers', 'description' => 'Inactive customers', 'icon' => '⚠️', 'w' => 8, 'h' => 6, 'minW' => 4, 'minH' => 3],
-        'low_stock' => ['name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦', 'w' => 4, 'h' => 6, 'minW' => 3, 'minH' => 3],
-        'birthday' => ['name' => 'Birthday Reminders', 'description' => 'Upcoming birthdays', 'icon' => '🎂', 'w' => 4, 'h' => 5, 'minW' => 3, 'minH' => 2],
-        'recent_activity' => ['name' => 'Recent Activity', 'description' => 'Latest actions', 'icon' => '🕐', 'w' => 8, 'h' => 5, 'minW' => 4, 'minH' => 2],
+        'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋'],
+        'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics — orders, revenue, customers', 'icon' => '📊'],
+        'revenue_chart' => ['name' => 'Revenue Chart', 'description' => 'Revenue trends over time', 'icon' => '📈'],
+        'recent_orders' => ['name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾'],
+        'upcoming_orders' => ['name' => 'Upcoming Orders', 'description' => 'Orders due soon', 'icon' => '📅'],
+        'top_products' => ['name' => 'Top Products', 'description' => 'Best-selling items this month', 'icon' => '⭐'],
+        'customer_insights' => ['name' => 'Customer Insights', 'description' => 'Customer trends and segments', 'icon' => '👥'],
+        'at_risk_customers' => ['name' => 'At-Risk Customers', 'description' => 'Inactive customers needing attention', 'icon' => '⚠️'],
+        'low_stock' => ['name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦'],
+        'birthday' => ['name' => 'Birthday Reminders', 'description' => 'Upcoming customer birthdays', 'icon' => '🎂'],
+        'recent_activity' => ['name' => 'Recent Activity', 'description' => 'Latest actions and events', 'icon' => '🕐'],
     ];
 
     public function mount(): void
@@ -43,77 +43,67 @@ class DashboardConfig extends Page
 
     protected function loadWidgets(): void
     {
-        $savedGrid = Setting::get('dashboard_grid_layout');
-        $gridLayout = $savedGrid ? json_decode($savedGrid, true) : [];
+        $saved = Setting::get('dashboard_widgets');
+        $config = $saved ? json_decode($saved, true) : null;
 
-        $savedVisibility = Setting::get('dashboard_widgets');
-        $visConfig = $savedVisibility ? json_decode($savedVisibility, true) : null;
+        if (! $config) {
+            $config = $this->getDefaults();
+        }
+
+        uasort($config, fn ($a, $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
 
         $this->widgets = [];
-        $y = 0;
-        foreach ($this->widgetMeta as $key => $meta) {
-            $visible = true;
-            if ($visConfig && isset($visConfig[$key])) {
-                $visible = $visConfig[$key]['visible'] ?? true;
-            }
-
-            $grid = $gridLayout[$key] ?? null;
-
-            $this->widgets[] = [
-                'key' => $key,
-                'name' => $meta['name'],
-                'description' => $meta['description'],
-                'icon' => $meta['icon'],
-                'visible' => $visible,
-                'x' => $grid['x'] ?? 0,
-                'y' => $grid['y'] ?? $y,
-                'w' => $grid['w'] ?? $meta['w'],
-                'h' => $grid['h'] ?? $meta['h'],
-                'minW' => $meta['minW'],
-                'minH' => $meta['minH'],
-            ];
-            $y += ($grid['h'] ?? $meta['h']);
-        }
-    }
-
-    public function toggleWidget(string $key): void
-    {
-        foreach ($this->widgets as &$widget) {
-            if ($widget['key'] === $key) {
-                $widget['visible'] = ! $widget['visible'];
-                break;
-            }
-        }
-    }
-
-    public function saveLayout(array $gridData): void
-    {
-        $gridLayout = [];
-        $visConfig = [];
-
-        foreach ($gridData as $item) {
-            $key = $item['id'] ?? null;
-            if (! $key || ! isset($this->widgetMeta[$key])) {
+        foreach ($config as $key => $settings) {
+            if (! isset($this->widgetMeta[$key])) {
                 continue;
             }
-            $gridLayout[$key] = [
-                'x' => (int) ($item['x'] ?? 0),
-                'y' => (int) ($item['y'] ?? 0),
-                'w' => (int) ($item['w'] ?? 4),
-                'h' => (int) ($item['h'] ?? 3),
+            $this->widgets[] = [
+                'key' => $key,
+                'visible' => $settings['visible'] ?? true,
+                'name' => $this->widgetMeta[$key]['name'],
+                'description' => $this->widgetMeta[$key]['description'],
+                'icon' => $this->widgetMeta[$key]['icon'],
             ];
         }
 
-        // Save visibility from widgets array
-        foreach ($this->widgets as $widget) {
-            $visConfig[$widget['key']] = [
+        // Add any missing widgets
+        foreach ($this->widgetMeta as $key => $meta) {
+            if (! collect($this->widgets)->where('key', $key)->count()) {
+                $this->widgets[] = [
+                    'key' => $key,
+                    'visible' => true,
+                    'name' => $meta['name'],
+                    'description' => $meta['description'],
+                    'icon' => $meta['icon'],
+                ];
+            }
+        }
+    }
+
+    public function reorder(int $oldIndex, int $newIndex): void
+    {
+        $item = $this->widgets[$oldIndex];
+        array_splice($this->widgets, $oldIndex, 1);
+        array_splice($this->widgets, $newIndex, 0, [$item]);
+        $this->widgets = array_values($this->widgets);
+    }
+
+    public function toggleWidget(int $index): void
+    {
+        $this->widgets[$index]['visible'] = ! $this->widgets[$index]['visible'];
+    }
+
+    public function save(): void
+    {
+        $config = [];
+        foreach ($this->widgets as $i => $widget) {
+            $config[$widget['key']] = [
                 'visible' => $widget['visible'],
-                'order' => $gridLayout[$widget['key']]['y'] ?? 99,
+                'order' => $i + 1,
             ];
         }
 
-        Setting::set('dashboard_grid_layout', json_encode($gridLayout));
-        Setting::set('dashboard_widgets', json_encode($visConfig));
+        Setting::set('dashboard_widgets', json_encode($config));
 
         Notification::make()
             ->title('Dashboard layout saved!')
@@ -124,13 +114,24 @@ class DashboardConfig extends Page
 
     public function resetDefaults(): void
     {
+        Setting::set('dashboard_widgets', json_encode($this->getDefaults()));
         Setting::set('dashboard_grid_layout', null);
-        Setting::set('dashboard_widgets', null);
         $this->loadWidgets();
 
         Notification::make()
             ->title('Dashboard reset to defaults')
             ->success()
             ->send();
+    }
+
+    protected function getDefaults(): array
+    {
+        $defaults = [];
+        $i = 1;
+        foreach ($this->widgetMeta as $key => $meta) {
+            $defaults[$key] = ['visible' => true, 'order' => $i++];
+        }
+
+        return $defaults;
     }
 }
