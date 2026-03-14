@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join {{ $storeName }} on KneadIt</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(["resources/css/storefront.css"])
 </head>
 <body class="min-h-screen bg-amber-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-lg max-w-md w-full overflow-hidden">
