@@ -50,7 +50,7 @@ class Dashboard extends BaseDashboard
             'welcome_banner' => WelcomeBannerWidget::class,
             'stats_overview' => StatsOverview::class,
             'revenue_chart' => RevenueChartWidget::class,
-            'order_funnel' => OrderFunnelWidget::class,
+            // 'order_funnel' => OrderFunnelWidget::class,
             'recent_orders' => RecentOrdersWidget::class,
             'upcoming_orders' => UpcomingOrdersWidget::class,
             'top_products' => TopProductsWidget::class,
