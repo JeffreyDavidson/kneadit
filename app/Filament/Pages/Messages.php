@@ -13,7 +13,7 @@ class Messages extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
-    protected static string|UnitEnum|null $navigationGroup = null;
+    protected static string|UnitEnum|null $navigationGroup = 'Support';
 
     protected static ?string $navigationLabel = 'Messages';
 
