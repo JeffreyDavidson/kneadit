@@ -40,7 +40,7 @@
                     @if($announcement['type'] === 'warning') ⚠️
                     @elseif($announcement['type'] === 'info') ℹ️
                     @elseif($announcement['type'] === 'success') ✅
-                    @elseif($announcement['type'] === 'maintenance') 🔧
+                    @elseif($announcement['type'] === 'maintenance')
                     @endif
                     {{ $announcement['title'] }}
                 </div>

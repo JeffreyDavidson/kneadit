@@ -22,9 +22,9 @@ class WelcomeBannerWidget extends Widget
         $firstName = explode(' ', $name)[0];
 
         return match (true) {
-            $hour < 12 => "Good morning, {$firstName}! ☀️",
-            $hour < 17 => "Good afternoon, {$firstName}! 🍞",
-            default => "Good evening, {$firstName}! 🌙",
+            $hour < 12 => "Good morning, {$firstName}!",
+            $hour < 17 => "Good afternoon, {$firstName}!",
+            default => "Good evening, {$firstName}!",
         };
     }
 
