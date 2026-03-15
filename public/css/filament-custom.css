@@ -327,9 +327,13 @@
 .fi-ta-ctn {
     border: 1px solid rgba(212,165,116,0.25) !important;
     border-radius: 12px !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     box-shadow: 0 4px 24px rgba(61,35,20,0.06) !important;
     background: #FFFFFF !important;
+}
+/* Column toggle dropdown needs visible overflow */
+.fi-ta-ctn .fi-ta-header-toolbar {
+    overflow: visible !important;
 }
 
 /* Dark brown gradient header */
