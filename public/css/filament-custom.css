@@ -1109,3 +1109,10 @@ section:has(.fi-wi-stats-overview-stat),
 .fi-wi .fi-ta-search-field input::placeholder {
     color: var(--brand-500, #a08060) !important;
 }
+
+/* Fix search prefix divider in widget tables */
+.fi-wi .fi-ta-search-field .fi-input-wrp-prefix,
+.fi-wi .fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix {
+    border-right: none !important;
+    border-inline-end: none !important;
+}
