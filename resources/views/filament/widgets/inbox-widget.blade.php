@@ -1,3 +1,4 @@
+<div>
 @php
     $count = $this->getUnreadCount();
 @endphp
@@ -22,3 +23,4 @@
         </div>
     </div>
 @endif
+</div>
