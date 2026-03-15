@@ -24,7 +24,7 @@
             </div>
         @empty
             <div style="text-align: center; padding: 24px; color: var(--brand-500);">
-                <div style="font-size: 2rem; margin-bottom: 8px;">📋</div>
+                <div style="font-size: 2rem; margin-bottom: 8px;"></div>
                 <p style="margin: 0;">No upcoming orders in the next 3 days</p>
             </div>
         @endforelse
