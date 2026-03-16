@@ -1196,7 +1196,30 @@ section:has(.fi-wi-stats-overview-stat),
 }
 .fi-modal-slide-over .fi-modal-content {
     background: var(--brand-50) !important;
+    padding: 1.5rem !important;
+}
+/* Section headers inside slide-overs */
+.fi-modal-slide-over .fi-section-header {
+    background: linear-gradient(135deg, var(--brand-800), var(--brand-600)) !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 0.75rem 1rem !important;
+}
+.fi-modal-slide-over .fi-section-header-heading {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+.fi-modal-slide-over .fi-section-content-ctn {
+    border: 1px solid var(--brand-200) !important;
+    border-top: none !important;
+    border-radius: 0 0 8px 8px !important;
+    background: #FFFFFF !important;
     padding: 1.25rem !important;
+}
+/* Form labels */
+.fi-modal-slide-over .fi-fo-field-wrp label {
+    color: var(--brand-800) !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
 }
 /* Footer */
 .fi-modal-slide-over .fi-modal-footer {
