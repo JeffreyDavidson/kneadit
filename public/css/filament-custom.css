@@ -581,15 +581,23 @@ table thead tr {
     padding-block: 0 !important;
     height: 30px !important;
 }
-/* Kill any inner borders/shadows on the select or its containers */
+/* Kill any inner borders/shadows on everything inside per-page select */
 .fi-pagination-records-per-page-select-ctn .fi-select-wrp,
 .fi-pagination-records-per-page-select-ctn .fi-input-wrp-content-ctn,
-.fi-pagination-records-per-page-select-ctn .fi-input-wrp-suffix {
+.fi-pagination-records-per-page-select-ctn .fi-input-wrp-suffix,
+.fi-pagination-records-per-page-select-ctn select {
     border: none !important;
     box-shadow: none !important;
     outline: none !important;
     border-radius: 0 !important;
     --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-color: transparent !important;
+    --tw-shadow: 0 0 #0000 !important;
+}
+/* Also kill ring on the wrp itself and re-apply as single box-shadow */
+.fi-pagination-records-per-page-select-ctn .fi-input-wrp {
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-ring-color: transparent !important;
     --tw-shadow: 0 0 #0000 !important;
 }
 .fi-pagination:has(.fi-pagination-items) .fi-pagination-previous-btn,
