@@ -10,7 +10,7 @@ class HelpCenter extends Page
 
     protected static ?string $navigationLabel = 'Help';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Support';
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?int $navigationSort = 100;
 
