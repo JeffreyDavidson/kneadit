@@ -621,10 +621,12 @@ table thead tr {
     padding-inline-end: 0 !important;
     padding-right: 0 !important;
 }
-/* Global search — no divider only, keep default spacing */
+/* Global search — no divider, match table search spacing */
 .fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
     border-inline-end: none !important;
     border-right: none !important;
+    padding-inline-end: 0 !important;
+    padding-right: 0 !important;
 }
 .fi-input-wrp .fi-input-wrp-suffix {
     border-inline-start: 1px solid var(--brand-200) !important;
