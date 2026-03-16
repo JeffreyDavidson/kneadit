@@ -7,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -62,6 +63,20 @@ class AdminPanelProvider extends PanelProvider
                 \Filament\Navigation\NavigationGroup::make('Tools'),
                 \Filament\Navigation\NavigationGroup::make('Finance'),
                 \Filament\Navigation\NavigationGroup::make('Communication'),
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Upgrade Plan')
+                    ->url(fn () => route('filament.admin.pages.upgrade-plan'))
+                    ->icon('heroicon-o-arrow-up-circle'),
+                MenuItem::make()
+                    ->label('Messages')
+                    ->url(fn () => route('filament.admin.pages.messages'))
+                    ->icon('heroicon-o-envelope'),
+                MenuItem::make()
+                    ->label('Help')
+                    ->url(fn () => route('filament.admin.pages.help-center'))
+                    ->icon('heroicon-o-question-mark-circle'),
             ])
             ->databaseNotifications()
             ->font('Inter')
