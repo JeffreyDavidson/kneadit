@@ -427,9 +427,14 @@ table thead tr {
 .fi-ta-header-toolbar {
     background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
     border-bottom: 1px solid var(--brand-200) !important;
-    padding: 12px 1.5rem !important;
+    padding: 14px 1.5rem !important;
     margin: 0 !important;
     border-radius: 11px 11px 0 0;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    width: 100% !important;
 }
 /* When toolbar follows header-ctn, remove top radius */
 .fi-ta-header-ctn + .fi-ta-header-toolbar {
@@ -440,8 +445,9 @@ table thead tr {
 
 /* Search input */
 .fi-ta-search-field {
-    max-width: 180px !important;
-    min-width: 140px !important;
+    flex: 1 !important;
+    max-width: 320px !important;
+    min-width: 160px !important;
 }
 .fi-ta-search-field .fi-input-wrp {
     border: 1px solid rgba(255,255,255,0.25) !important;
@@ -475,10 +481,15 @@ table thead tr {
 .fi-ta-header-ctn .fi-icon-btn,
 .fi-ta-header-toolbar .fi-icon-btn {
     color: rgba(255,255,255,0.85) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    border-radius: 8px !important;
+    padding: 6px !important;
+    transition: all 0.15s !important;
 }
 .fi-ta-header-ctn .fi-icon-btn:hover,
 .fi-ta-header-toolbar .fi-icon-btn:hover {
-    background: rgba(255,255,255,0.1) !important;
+    background: rgba(255,255,255,0.12) !important;
+    border-color: rgba(255,255,255,0.3) !important;
 }
 .fi-ta-header-ctn .fi-badge,
 .fi-ta-header-toolbar .fi-badge {
