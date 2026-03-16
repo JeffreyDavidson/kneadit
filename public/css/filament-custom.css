@@ -538,6 +538,29 @@ table thead tr {
 }
 
 /* Pagination footer */
+/* Selection indicator bar */
+.fi-ta-selection-indicator {
+    background: linear-gradient(135deg, var(--brand-800), var(--brand-700)) !important;
+    border-bottom: none !important;
+    color: #FFFFFF !important;
+    padding: 0.5rem 1.5rem !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+}
+.fi-ta-selection-indicator span,
+.fi-ta-selection-indicator p {
+    color: rgba(255,255,255,0.9) !important;
+}
+.fi-ta-selection-indicator .fi-link {
+    color: var(--accent-gold) !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+}
+.fi-ta-selection-indicator .fi-link:hover {
+    color: #FFFFFF !important;
+    text-decoration: underline !important;
+}
+
 .fi-ta-footer {
     background: rgba(245,230,208,0.2) !important;
     border-top: 1px solid rgba(212,165,116,0.1) !important;
