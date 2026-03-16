@@ -450,23 +450,13 @@ table thead tr {
     min-width: 160px !important;
 }
 /* Search prefix: narrow icon area, kill divider completely */
-.fi-ta-search-field .fi-input-wrp-prefix,
-.fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix,
-.fi-ta-ctn .fi-ta-search-field .fi-input-wrp-prefix,
-.fi-ta-header-toolbar .fi-ta-search-field .fi-input-wrp-prefix {
-    border: none !important;
-    border-right: none !important;
-    border-inline-end: none !important;
-    border-inline-end-width: 0 !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
+.fi-input-wrp-prefix:not(.fi-inline) {
+    border-inline-end-color: transparent !important;
+    border-right-color: transparent !important;
+}
+.fi-ta-search-field .fi-input-wrp-prefix {
     padding-inline: 0.5rem !important;
     min-width: 0 !important;
-    width: auto !important;
-}
-/* Nuclear: kill any border on prefix via attribute */
-[class*="fi-input-wrp-prefix"] {
-    border-inline-end-color: transparent !important;
 }
 /* Separate filter and column toggle icons */
 .fi-ta-header-toolbar .fi-ta-actions {
