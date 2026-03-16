@@ -123,13 +123,6 @@ class Dashboard extends BaseDashboard
             }
         }
 
-        // Add any registry widgets not in config (new widgets)
-        foreach ($registry as $key => $class) {
-            if (! isset($config[$key]) && ! in_array($class, $widgets)) {
-                $widgets[] = $class;
-            }
-        }
-
         return $widgets;
     }
 }
