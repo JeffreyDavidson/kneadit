@@ -456,9 +456,11 @@ table thead tr {
 }
 /* Match table search prefix spacing to global search */
 .fi-ta-search-field .fi-input-wrp-prefix {
-    gap: 0.75rem !important;
-    padding-inline-start: 0.75rem !important;
-    padding-inline-end: 0 !important;
+    padding-inline-end: 0.25rem !important;
+}
+.fi-ta-search-field input,
+.fi-ta-search-field .fi-input {
+    padding-inline-start: 0.25rem !important;
 }
 /* Separate filter and column toggle icons */
 .fi-ta-header-toolbar .fi-ta-actions {
