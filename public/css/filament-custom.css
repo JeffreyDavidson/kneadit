@@ -449,12 +449,14 @@ table thead tr {
     max-width: 220px !important;
     min-width: 160px !important;
 }
-/* Remove prefix divider in search */
+/* Search prefix: narrow icon area + divider color */
 .fi-ta-search-field .fi-input-wrp-prefix,
 .fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix {
     border-right: none !important;
-    border-inline-end: none !important;
-    border-inline-end-width: 0 !important;
+    border-inline-end: 1px solid rgba(255,255,255,0.2) !important;
+    padding-inline: 0.5rem !important;
+    min-width: 0 !important;
+    width: auto !important;
 }
 /* Separate filter and column toggle icons */
 .fi-ta-header-toolbar .fi-ta-actions {
