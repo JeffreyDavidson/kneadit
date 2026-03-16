@@ -26,8 +26,7 @@ class TodaysOrdersWidget extends BaseWidget
             )
             ->columns([
                 TextColumn::make('order_number')
-                    ->label('Order #')
-                    ->searchable(),
+                    ->label('Order #'),
                 TextColumn::make('customer_name')
                     ->label('Customer'),
                 TextColumn::make('fulfillment_type')
