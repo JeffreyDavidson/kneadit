@@ -11,7 +11,32 @@
             'Billing' => '<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />',
             'FAQ' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />',
         ];
+        $topicColors = [
+            'Getting Started' => '#d4920c',
+            'Managing Orders' => '#8B5E3C',
+            'Storefront' => '#2d8a5e',
+            'Finances' => '#6366f1',
+            'Marketing' => '#e85d75',
+            'Tools' => '#0891b2',
+            'Billing' => '#7c3aed',
+            'FAQ' => '#d97706',
+        ];
+        $popularArticles = [
+            ['topic' => 'Getting Started', 'title' => 'Setting Up Your Store'],
+            ['topic' => 'Managing Orders', 'title' => 'Using Quick Order'],
+            ['topic' => 'Storefront', 'title' => 'Customizing Your Theme'],
+            ['topic' => 'Billing', 'title' => 'Plans & Pricing'],
+        ];
     @endphp
+
+    <style>
+        .kb-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; }
+        .kb-popular-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+        .kb-card { background: #fff; border: 1px solid rgba(212,165,116,0.15); border-radius: 12px; padding: 28px 24px; cursor: pointer; transition: all 0.2s; }
+        .kb-card:hover { border-color: #d4920c; box-shadow: 0 8px 24px rgba(212,146,12,0.08); transform: translateY(-2px); }
+        .kb-article-card { background: #fff; border: 1px solid rgba(212,165,116,0.15); border-radius: 10px; padding: 16px 20px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 12px; }
+        .kb-article-card:hover { border-color: #d4920c; background: #fffcf7; }
+    </style>
 
     <div x-data="{
         search: '',
@@ -26,89 +51,122 @@
                     a.title.toLowerCase().includes(q) || a.content.toLowerCase().includes(q)
                 )
             })).filter(t => t.articles.length > 0);
-        },
-        get totalArticles() {
-            return this.topics.reduce((sum, t) => sum + t.articles.length, 0);
         }
     }">
 
-        {{-- Hero Search --}}
-        <div style="background: linear-gradient(135deg, #3d2314 0%, #6b4c3b 60%, #8B5E3C 100%); border-radius: 16px; padding: 52px 48px; margin-bottom: 36px; text-align: center; position: relative; overflow: hidden;">
-            <div style="position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: rgba(255,255,255,0.03); border-radius: 50%;"></div>
-            <div style="position: absolute; bottom: -40px; left: 40px; width: 140px; height: 140px; background: rgba(255,255,255,0.02); border-radius: 50%;"></div>
+        {{-- Hero Search (Intercom/Stripe style) --}}
+        <div style="background: linear-gradient(135deg, #3d2314 0%, #6b4c3b 60%, #8B5E3C 100%); border-radius: 16px; padding: 56px 48px; margin-bottom: 40px; text-align: center; position: relative; overflow: hidden;">
+            <div style="position: absolute; inset: 0; opacity: 0.04; background-image: radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px); background-size: 60px 60px;"></div>
             <div style="position: relative; z-index: 1;">
-                <h2 style="color: white; font-size: 2rem; font-weight: 800; margin: 0 0 8px 0;">How can we help?</h2>
-                <p style="color: rgba(255,255,255,0.6); margin: 0 0 28px 0; font-size: 0.95rem;" x-text="totalArticles + ' articles across ' + topics.length + ' topics'"></p>
-                <div style="position: relative; max-width: 560px; margin: 0 auto;">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px; position: absolute; left: 18px; top: 16px; color: #a08060; pointer-events: none;"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
-                    <input x-model="search" type="text" placeholder="Search articles..."
-                        style="width: 100%; padding: 16px 24px 16px 52px; border-radius: 14px; border: none; background: white; font-size: 1rem; color: #3d2314; outline: none; box-shadow: 0 8px 24px rgba(0,0,0,0.2);" />
+                <h2 style="color: white; font-size: 2rem; font-weight: 800; margin: 0 0 6px 0; letter-spacing: -0.5px;">How can we help?</h2>
+                <p style="color: rgba(255,255,255,0.55); margin: 0 0 28px 0; font-size: 0.9rem;">Search our knowledge base or browse topics below</p>
+                <div style="position: relative; max-width: 520px; margin: 0 auto;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px; position: absolute; left: 16px; top: 15px; color: #a08060; pointer-events: none;"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
+                    <input x-model="search" @input="openTopic = null" type="text" placeholder="Search for articles..."
+                        style="width: 100%; padding: 15px 20px 15px 48px; border-radius: 12px; border: none; background: white; font-size: 0.95rem; color: #3d2314; outline: none; box-shadow: 0 8px 32px rgba(0,0,0,0.15);" />
                 </div>
             </div>
         </div>
 
         {{-- Search Results --}}
         <div x-show="search.trim() !== ''" x-cloak>
+            <p style="font-size: 0.8rem; color: #a08060; margin: 0 0 16px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Search Results</p>
             <template x-for="(topic, ti) in filteredTopics" :key="ti">
-                <div style="margin-bottom: 24px;">
-                    <h3 style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #a08060; margin: 0 0 12px 0;" x-text="topic.title"></h3>
+                <div style="margin-bottom: 20px;">
+                    <p style="font-size: 0.75rem; color: #8B5E3C; font-weight: 700; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 1px;" x-text="topic.title"></p>
                     <template x-for="(article, ai) in topic.articles" :key="ai">
-                        <div style="background: #fff; border: 1px solid rgba(212,165,116,0.2); border-radius: 12px; padding: 20px 24px; margin-bottom: 10px; transition: border-color 0.15s, box-shadow 0.15s;"
-                            onmouseover="this.style.borderColor='#d4920c';this.style.boxShadow='0 4px 16px rgba(212,146,12,0.08)'"
-                            onmouseout="this.style.borderColor='rgba(212,165,116,0.2)';this.style.boxShadow='none'">
-                            <h4 style="font-weight: 600; color: #3d2314; margin: 0 0 8px 0; font-size: 0.95rem;" x-text="article.title"></h4>
-                            <div style="font-size: 0.875rem; color: #6b4c3b; line-height: 1.7;" x-html="article.content"></div>
+                        <div style="background: #fff; border: 1px solid rgba(212,165,116,0.15); border-radius: 10px; padding: 18px 22px; margin-bottom: 8px; transition: border-color 0.15s;"
+                            onmouseover="this.style.borderColor='#d4920c'" onmouseout="this.style.borderColor='rgba(212,165,116,0.15)'">
+                            <h4 style="font-weight: 600; color: #3d2314; margin: 0 0 6px 0; font-size: 0.9rem;" x-text="article.title"></h4>
+                            <div style="font-size: 0.8rem; color: #6b4c3b; line-height: 1.7;" x-html="article.content"></div>
                         </div>
                     </template>
                 </div>
             </template>
-            <div x-show="filteredTopics.length === 0" style="text-align: center; padding: 48px 0; color: #a08060;">
-                <p style="margin: 0; font-size: 1.1rem; font-weight: 600;">No results found</p>
-                <p style="margin: 8px 0 0 0; font-size: 0.875rem;">Try different keywords or browse categories below.</p>
+            <div x-show="filteredTopics.length === 0" style="text-align: center; padding: 40px 0; color: #a08060;">
+                <p style="margin: 0; font-weight: 600;">No results found</p>
+                <p style="margin: 6px 0 0; font-size: 0.85rem;">Try different keywords</p>
             </div>
         </div>
 
-        {{-- Category Grid --}}
-        <div x-show="search.trim() === '' && openTopic === null" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 36px;">
-            @foreach ($topics as $i => $topic)
-                <div @click="openTopic = {{ $i }}"
-                    style="background: #fff; border: 1px solid rgba(212,165,116,0.2); border-radius: 14px; padding: 28px 20px; cursor: pointer; transition: all 0.2s; text-align: center;"
-                    onmouseover="this.style.borderColor='#d4920c';this.style.boxShadow='0 8px 24px rgba(212,146,12,0.1)';this.style.transform='translateY(-3px)'"
-                    onmouseout="this.style.borderColor='rgba(212,165,116,0.2)';this.style.boxShadow='none';this.style.transform='translateY(0)'">
-                    <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #8B5E3C, #D4A574); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 26px; height: 26px; color: white;">{!! $topicIcons[$topic['title']] ?? '' !!}</svg>
-                    </div>
-                    <h3 style="margin: 0 0 6px 0; font-size: 0.95rem; font-weight: 700; color: #3d2314;">{{ $topic['title'] }}</h3>
-                    <p style="margin: 0; font-size: 0.8rem; color: #a08060;">{{ count($topic['articles']) }} articles</p>
+        {{-- Main Content (no search) --}}
+        <div x-show="search.trim() === '' && openTopic === null">
+
+            {{-- Popular Articles (Slack style) --}}
+            <div style="margin-bottom: 36px;">
+                <h3 style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #a08060; margin: 0 0 14px 0;">Popular Articles</h3>
+                <div class="kb-popular-grid">
+                    @foreach ($popularArticles as $pa)
+                        @php
+                            $color = $topicColors[$pa['topic']] ?? '#8B5E3C';
+                        @endphp
+                        <div class="kb-article-card" onclick="document.querySelectorAll('[x-data]')[0].__x.$data.search = '{{ addslashes($pa['title']) }}'">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: {{ $color }}; flex-shrink: 0;"></div>
+                            <div>
+                                <p style="margin: 0; font-size: 0.875rem; font-weight: 600; color: #3d2314;">{{ $pa['title'] }}</p>
+                                <p style="margin: 2px 0 0; font-size: 0.75rem; color: #a08060;">{{ $pa['topic'] }}</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px; color: #c4a882; margin-left: auto; flex-shrink: 0;"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                        </div>
+                    @endforeach
                 </div>
-            @endforeach
+            </div>
+
+            {{-- Category Grid (Intercom style) --}}
+            <h3 style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #a08060; margin: 0 0 14px 0;">Browse by Topic</h3>
+            <div class="kb-grid">
+                @foreach ($topics as $i => $topic)
+                    @php $color = $topicColors[$topic['title']] ?? '#8B5E3C'; @endphp
+                    <div class="kb-card" @click="openTopic = {{ $i }}">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: {{ $color }}15; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 24px; height: 24px; color: {{ $color }};">{!! $topicIcons[$topic['title']] ?? '' !!}</svg>
+                        </div>
+                        <h3 style="margin: 0 0 4px 0; font-size: 1rem; font-weight: 700; color: #3d2314;">{{ $topic['title'] }}</h3>
+                        <p style="margin: 0 0 12px 0; font-size: 0.8rem; color: #a08060;">{{ count($topic['articles']) }} articles</p>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            @foreach (array_slice($topic['articles'], 0, 2) as $article)
+                                <li style="font-size: 0.8rem; color: #6b4c3b; padding: 4px 0; display: flex; align-items: center; gap: 6px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 12px; height: 12px; color: #c4a882; flex-shrink: 0;"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                                    {{ $article['title'] }}
+                                </li>
+                            @endforeach
+                            @if (count($topic['articles']) > 2)
+                                <li style="font-size: 0.75rem; color: #d4920c; padding: 4px 0; font-weight: 600;">+ {{ count($topic['articles']) - 2 }} more</li>
+                            @endif
+                        </ul>
+                    </div>
+                @endforeach
+            </div>
         </div>
 
-        {{-- Expanded Topic --}}
+        {{-- Expanded Topic (Notion style — clean article list) --}}
         <div x-show="openTopic !== null && search.trim() === ''" x-cloak>
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
-                <button @click="openTopic = null" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: rgba(212,165,116,0.1); border: 1px solid rgba(212,165,116,0.2); cursor: pointer; transition: background 0.15s;"
-                    onmouseover="this.style.background='rgba(212,165,116,0.2)'" onmouseout="this.style.background='rgba(212,165,116,0.1)'">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px; color: #8B5E3C;"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid rgba(212,165,116,0.12);">
+                <button @click="openTopic = null" style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; background: none; border: 1px solid rgba(212,165,116,0.2); cursor: pointer; transition: background 0.15s; flex-shrink: 0;"
+                    onmouseover="this.style.background='rgba(212,165,116,0.08)'" onmouseout="this.style.background='transparent'">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px; color: #8B5E3C;"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
                 </button>
                 @foreach ($topics as $i => $topic)
+                    @php $color = $topicColors[$topic['title']] ?? '#8B5E3C'; @endphp
                     <div x-show="openTopic === {{ $i }}" style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #8B5E3C, #D4A574); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px; color: white;">{!! $topicIcons[$topic['title']] ?? '' !!}</svg>
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: {{ $color }}15; display: flex; align-items: center; justify-content: center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px; color: {{ $color }};">{!! $topicIcons[$topic['title']] ?? '' !!}</svg>
                         </div>
-                        <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #3d2314;">{{ $topic['title'] }}</h3>
+                        <div>
+                            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #3d2314;">{{ $topic['title'] }}</h3>
+                            <p style="margin: 2px 0 0; font-size: 0.75rem; color: #a08060;">{{ count($topic['articles']) }} articles</p>
+                        </div>
                     </div>
                 @endforeach
             </div>
 
             @foreach ($topics as $i => $topic)
-                <div x-show="openTopic === {{ $i }}" style="display: grid; gap: 12px;">
-                    @foreach ($topic['articles'] as $article)
-                        <div style="background: #fff; border: 1px solid rgba(212,165,116,0.2); border-radius: 12px; padding: 24px 28px; transition: border-color 0.15s;"
-                            onmouseover="this.style.borderColor='rgba(212,165,116,0.4)'"
-                            onmouseout="this.style.borderColor='rgba(212,165,116,0.2)'">
-                            <h4 style="font-weight: 600; color: #3d2314; margin: 0 0 10px 0; font-size: 1rem;">{{ $article['title'] }}</h4>
-                            <div style="font-size: 0.875rem; color: #6b4c3b; line-height: 1.8;">{!! $article['content'] !!}</div>
+                <div x-show="openTopic === {{ $i }}">
+                    @foreach ($topic['articles'] as $j => $article)
+                        <div style="background: #fff; border: 1px solid rgba(212,165,116,0.12); border-radius: 10px; padding: 24px 28px; margin-bottom: 12px; transition: border-color 0.15s;"
+                            onmouseover="this.style.borderColor='rgba(212,165,116,0.3)'" onmouseout="this.style.borderColor='rgba(212,165,116,0.12)'">
+                            <h4 style="font-weight: 600; color: #3d2314; margin: 0 0 10px 0; font-size: 0.95rem;">{{ $article['title'] }}</h4>
+                            <div style="font-size: 0.85rem; color: #6b4c3b; line-height: 1.8;">{!! $article['content'] !!}</div>
                         </div>
                     @endforeach
                 </div>
@@ -116,11 +174,13 @@
         </div>
 
         {{-- Contact Footer --}}
-        <div style="background: rgba(212,165,116,0.06); border: 1px solid rgba(212,165,116,0.12); border-radius: 14px; padding: 36px; text-align: center; margin-top: 36px;">
-            <h3 style="margin: 0 0 6px 0; font-size: 1.15rem; font-weight: 700; color: #3d2314;">Still need help?</h3>
-            <p style="margin: 0 0 20px 0; color: #6b4c3b; font-size: 0.9rem;">Our team typically responds within 24 hours.</p>
-            <a href="mailto:support@getkneadit.app" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4920c, #e8b04a); color: white; font-weight: 600; text-decoration: none; padding: 12px 32px; border-radius: 10px; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(212,146,12,0.25); transition: transform 0.15s;"
-                onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+        <div style="margin-top: 40px; padding: 32px; border-radius: 12px; background: #fffcf7; border: 1px solid rgba(212,165,116,0.12); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h3 style="margin: 0 0 4px 0; font-size: 1rem; font-weight: 700; color: #3d2314;">Can't find what you need?</h3>
+                <p style="margin: 0; color: #6b4c3b; font-size: 0.85rem;">Our team responds within 24 hours.</p>
+            </div>
+            <a href="mailto:support@getkneadit.app" style="display: inline-flex; align-items: center; gap: 8px; background: #3d2314; color: white; font-weight: 600; text-decoration: none; padding: 11px 24px; border-radius: 10px; font-size: 0.875rem; transition: background 0.15s;"
+                onmouseover="this.style.background='#6b4c3b'" onmouseout="this.style.background='#3d2314'">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
                 Contact Support
             </a>
