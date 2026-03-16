@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Categories\Tables;
 
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -49,10 +48,6 @@ class CategoriesTable
             ])
             ->recordActions([
                 EditAction::make()
-                    ->slideOver(),
-            ])
-            ->headerActions([
-                CreateAction::make()
                     ->slideOver(),
             ])
             ->toolbarActions([
