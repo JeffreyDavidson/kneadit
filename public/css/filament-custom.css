@@ -427,13 +427,13 @@ table thead tr {
 .fi-ta-header-toolbar {
     background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
     border-bottom: none !important;
-    padding: 14px 1.5rem !important;
+    padding: 8px 1.5rem !important;
     margin: 0 !important;
     border-radius: 11px 11px 0 0;
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
-    gap: 12px !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
     width: 100% !important;
 }
 /* When toolbar follows header-ctn, remove top radius */
