@@ -1144,6 +1144,7 @@ section:has(.fi-wi-stats-overview-stat),
     border: none !important;
     color: var(--brand-900, #3d2314) !important;
     box-shadow: none !important;
+    padding-inline-start: 6px !important;
 }
 .fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix {
     border-right: none !important;
