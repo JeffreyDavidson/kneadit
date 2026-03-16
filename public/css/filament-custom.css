@@ -562,19 +562,27 @@ table thead tr {
     display: flex !important;
     justify-content: flex-end !important;
 }
-/* Per-page select — clean single border, no double border effect */
+/* Per-page select — single clean border */
 .fi-pagination-records-per-page-select-ctn .fi-input-wrp {
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 0 0 1px var(--brand-200) !important;
+    border-radius: 8px !important;
 }
-.fi-pagination-records-per-page-select-ctn .fi-input-wrp-prefix {
+.fi-pagination-records-per-page-select-ctn .fi-input-wrp .fi-input-wrp-prefix {
     border-inline-end: 1px solid rgba(0,0,0,0.1) !important;
     border-right: 1px solid rgba(0,0,0,0.1) !important;
 }
+/* Kill any inner borders/shadows on the select or its containers */
+.fi-pagination-records-per-page-select-ctn select,
+.fi-pagination-records-per-page-select-ctn .fi-select-wrp,
+.fi-pagination-records-per-page-select-ctn .fi-input-wrp-content-ctn,
 .fi-pagination-records-per-page-select-ctn .fi-input-wrp-suffix {
-    border-inline-start: none !important;
-    border-left: none !important;
     border: none !important;
+    box-shadow: none !important;
+    ring: none !important;
+    outline: none !important;
     border-radius: 0 !important;
+    --tw-ring-shadow: 0 0 0 0 transparent !important;
+    --tw-shadow: 0 0 #0000 !important;
 }
 .fi-pagination:has(.fi-pagination-items) .fi-pagination-previous-btn,
 .fi-pagination:has(.fi-pagination-items) .fi-pagination-next-btn {
