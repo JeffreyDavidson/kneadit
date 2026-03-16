@@ -423,6 +423,53 @@ table thead tr {
     font-size: 0.8rem !important;
 }
 
+/* Checkboxes — brand gold when checked */
+input[type='checkbox'].fi-checkbox-input:checked,
+input[type='checkbox'].fi-checkbox-input:checked:hover {
+    background-color: var(--brand-700) !important;
+    --tw-ring-color: var(--brand-700) !important;
+}
+input[type='checkbox'].fi-checkbox-input:checked:focus {
+    --tw-ring-color: rgba(139,104,68,0.5) !important;
+}
+input[type='checkbox'].fi-checkbox-input:indeterminate {
+    background-color: var(--brand-700) !important;
+}
+input[type='checkbox'].fi-checkbox-input {
+    --tw-ring-color: var(--brand-300) !important;
+}
+
+/* Bulk actions button — warm brand styling */
+.fi-ta-header-toolbar .fi-dropdown .fi-btn {
+    background: rgba(255,255,255,0.95) !important;
+    color: var(--brand-800) !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+}
+.fi-ta-header-toolbar .fi-dropdown .fi-btn:hover {
+    background: #FFFFFF !important;
+}
+
+/* Reorder trigger icon — white on dark header */
+.fi-ta-header-toolbar .fi-ta-actions > .fi-icon-btn {
+    color: rgba(255,255,255,0.8) !important;
+}
+.fi-ta-header-toolbar .fi-ta-actions > .fi-icon-btn:hover {
+    color: #FFFFFF !important;
+    background: rgba(255,255,255,0.1) !important;
+}
+
+/* Edit action link in table rows */
+.fi-ta-row .fi-ta-actions .fi-link {
+    color: var(--brand-700) !important;
+    font-weight: 600 !important;
+    transition: color 0.15s !important;
+}
+.fi-ta-row .fi-ta-actions .fi-link:hover {
+    color: var(--accent-gold) !important;
+}
+
 /* Toolbar (search + filters) — dark background to match header */
 .fi-ta-header-toolbar {
     background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
