@@ -1121,13 +1121,19 @@ section:has(.fi-wi-stats-overview-stat),
     border-inline-end: none !important;
 }
 
-/* Remove bottom divider on page content */
-.fi-page > * > hr:last-child,
-.fi-page-content > hr:last-child,
-.fi-body > .fi-main > * > hr,
-.fi-section-footer,
-[class*="fi-page"] > .border-t,
-.fi-main .border-t:last-child {
+/* Remove bottom divider on dashboard */
+.fi-page hr,
+.fi-page .border-t,
+.fi-widgets + hr,
+.fi-widgets + .border-t,
+.fi-page-content > :last-child.border-t,
+.divide-y > :last-child {
+    border-top: none !important;
+    border-bottom: none !important;
+    border-color: transparent !important;
     display: none !important;
-    border: none !important;
+}
+/* Catch any stray horizontal rules in main content */
+.fi-main hr {
+    display: none !important;
 }
