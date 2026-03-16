@@ -455,10 +455,13 @@ table thead tr {
     border-right-color: transparent !important;
 }
 .fi-ta-search-field .fi-input-wrp-prefix {
-    padding-inline-start: 0.75rem !important;
-    padding-inline-end: 0 !important;
+    padding-inline-start: 0.5rem !important;
+    padding-inline-end: 0.25rem !important;
     min-width: 0 !important;
-    gap: 0 !important;
+    gap: 0.5rem !important;
+}
+.fi-ta-search-field .fi-input-wrp input {
+    padding-inline-start: 0.25rem !important;
 }
 /* Separate filter and column toggle icons */
 .fi-ta-header-toolbar .fi-ta-actions {
