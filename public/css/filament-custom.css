@@ -562,23 +562,31 @@ table thead tr {
     display: flex !important;
     justify-content: flex-end !important;
 }
-/* Per-page select — single clean border */
+/* Per-page select — refined compact style */
 .fi-pagination-records-per-page-select-ctn .fi-input-wrp {
-    box-shadow: 0 0 0 1px var(--brand-200) !important;
-    border-radius: 8px !important;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.12) !important;
+    border-radius: 6px !important;
+    height: 32px !important;
+    min-height: 0 !important;
 }
 .fi-pagination-records-per-page-select-ctn .fi-input-wrp .fi-input-wrp-prefix {
-    border-inline-end: 1px solid rgba(0,0,0,0.1) !important;
-    border-right: 1px solid rgba(0,0,0,0.1) !important;
+    border-inline-end: 1px solid rgba(0,0,0,0.08) !important;
+    border-right: 1px solid rgba(0,0,0,0.08) !important;
+    font-size: 0.8rem !important;
+    color: var(--brand-500) !important;
+}
+.fi-pagination-records-per-page-select-ctn select {
+    font-size: 0.8rem !important;
+    color: var(--brand-800) !important;
+    padding-block: 0 !important;
+    height: 30px !important;
 }
 /* Kill any inner borders/shadows on the select or its containers */
-.fi-pagination-records-per-page-select-ctn select,
 .fi-pagination-records-per-page-select-ctn .fi-select-wrp,
 .fi-pagination-records-per-page-select-ctn .fi-input-wrp-content-ctn,
 .fi-pagination-records-per-page-select-ctn .fi-input-wrp-suffix {
     border: none !important;
     box-shadow: none !important;
-    ring: none !important;
     outline: none !important;
     border-radius: 0 !important;
     --tw-ring-shadow: 0 0 0 0 transparent !important;
