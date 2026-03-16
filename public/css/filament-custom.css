@@ -1120,3 +1120,14 @@ section:has(.fi-wi-stats-overview-stat),
     border-right: none !important;
     border-inline-end: none !important;
 }
+
+/* Remove bottom divider on page content */
+.fi-page > * > hr:last-child,
+.fi-page-content > hr:last-child,
+.fi-body > .fi-main > * > hr,
+.fi-section-footer,
+[class*="fi-page"] > .border-t,
+.fi-main .border-t:last-child {
+    display: none !important;
+    border: none !important;
+}
