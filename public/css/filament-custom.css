@@ -454,7 +454,12 @@ table thead tr {
     border-inline-end-color: transparent !important;
     border-right-color: transparent !important;
 }
-/* Let table search prefix use Filament defaults (matches global search) */
+/* Match table search prefix spacing to global search */
+.fi-ta-search-field .fi-input-wrp-prefix {
+    gap: 0.75rem !important;
+    padding-inline-start: 0.75rem !important;
+    padding-inline-end: 0 !important;
+}
 /* Separate filter and column toggle icons */
 .fi-ta-header-toolbar .fi-ta-actions {
     display: flex !important;
