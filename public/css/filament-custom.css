@@ -449,18 +449,32 @@ table thead tr {
     min-width: 160px !important;
 }
 /* Remove prefix divider in search */
-.fi-ta-search-field .fi-input-wrp-prefix {
+.fi-ta-search-field .fi-input-wrp-prefix,
+.fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix {
     border-right: none !important;
     border-inline-end: none !important;
+    border-inline-end-width: 0 !important;
+}
+/* Separate filter and column toggle icons */
+.fi-ta-header-toolbar .fi-ta-actions {
+    display: flex !important;
+    gap: 8px !important;
+}
+.fi-ta-header-toolbar .fi-ta-actions .fi-icon-btn {
+    margin: 0 !important;
 }
 .fi-ta-search-field .fi-input-wrp {
-    border: 1px solid rgba(255,255,255,0.25) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
     border-radius: 8px !important;
-    background: rgba(255,255,255,0.95) !important;
+    background: rgba(255,255,255,0.12) !important;
     box-shadow: none !important;
     padding: 0 !important;
     min-height: 0 !important;
-    height: 36px !important;
+    height: 34px !important;
+}
+.fi-ta-search-field .fi-input-wrp:focus-within {
+    background: rgba(255,255,255,0.95) !important;
+    border-color: rgba(255,255,255,0.4) !important;
 }
 .fi-ta-search-field input {
     border: none !important;
@@ -468,10 +482,19 @@ table thead tr {
     background: transparent !important;
     box-shadow: none !important;
     outline: none !important;
-    color: var(--brand-900) !important;
+    color: rgba(255,255,255,0.85) !important;
     padding: 6px 10px !important;
-    height: 34px !important;
+    height: 32px !important;
     font-size: 0.85rem !important;
+}
+.fi-ta-search-field input::placeholder {
+    color: rgba(255,255,255,0.5) !important;
+}
+.fi-ta-search-field .fi-input-wrp:focus-within input {
+    color: var(--brand-900) !important;
+}
+.fi-ta-search-field .fi-input-wrp:focus-within input::placeholder {
+    color: var(--brand-500) !important;
 }
 .fi-ta-search-field input:focus {
     border-color: rgba(255,255,255,0.5) !important;
@@ -480,6 +503,9 @@ table thead tr {
 }
 .fi-ta-header-ctn .fi-ta-search-field .fi-icon,
 .fi-ta-header-toolbar .fi-ta-search-field .fi-icon {
+    color: rgba(255,255,255,0.5) !important;
+}
+.fi-ta-search-field .fi-input-wrp:focus-within .fi-icon {
     color: var(--brand-600) !important;
 }
 .fi-ta-header-ctn .fi-icon-btn,
