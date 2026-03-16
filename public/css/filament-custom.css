@@ -562,6 +562,20 @@ table thead tr {
     display: flex !important;
     justify-content: flex-end !important;
 }
+/* Per-page select — clean single border, no double border effect */
+.fi-pagination-records-per-page-select-ctn .fi-input-wrp {
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.1) !important;
+}
+.fi-pagination-records-per-page-select-ctn .fi-input-wrp-prefix {
+    border-inline-end: 1px solid rgba(0,0,0,0.1) !important;
+    border-right: 1px solid rgba(0,0,0,0.1) !important;
+}
+.fi-pagination-records-per-page-select-ctn .fi-input-wrp-suffix {
+    border-inline-start: none !important;
+    border-left: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
 .fi-pagination:has(.fi-pagination-items) .fi-pagination-previous-btn,
 .fi-pagination:has(.fi-pagination-items) .fi-pagination-next-btn {
     display: none !important;
