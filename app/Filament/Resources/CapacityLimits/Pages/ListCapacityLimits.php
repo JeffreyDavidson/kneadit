@@ -13,7 +13,7 @@ class ListCapacityLimits extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->slideOver()->modalWidth('2xl'),
+            Actions\CreateAction::make()->slideOver()->modalWidth('md'),
         ];
     }
 }

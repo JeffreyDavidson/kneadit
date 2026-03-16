@@ -48,7 +48,8 @@ class CategoriesTable
             ])
             ->recordActions([
                 EditAction::make()
-                    ->slideOver(),
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

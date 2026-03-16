@@ -46,7 +46,7 @@ class CapacityLimitResource extends Resource
             \Filament\Schemas\Components\Section::make('Capacity Limit')
                 ->icon('heroicon-o-clock')
                 ->description('Set order limits for a specific day or recurring weekday')
-                ->columns(2)
+                ->columns(1)
                 ->columnSpanFull()
                 ->components([
                     \Filament\Forms\Components\Select::make('day_type')
@@ -153,7 +153,7 @@ class CapacityLimitResource extends Resource
             ])
             ->defaultSort('day_of_week')
             ->actions([
-                EditAction::make()->slideOver()->modalWidth('2xl'),
+                EditAction::make()->slideOver()->modalWidth('md'),
                 Actions\DeleteAction::make(),
             ])
             ->bulkActions([
