@@ -483,8 +483,8 @@ table thead tr {
     height: 34px !important;
 }
 .fi-ta-search-field .fi-input-wrp:focus-within {
-    background: rgba(255,255,255,0.95) !important;
-    border-color: rgba(255,255,255,0.4) !important;
+    background: rgba(255,255,255,0.18) !important;
+    border-color: rgba(255,255,255,0.35) !important;
 }
 .fi-ta-search-field input {
     border: none !important;
@@ -501,14 +501,14 @@ table thead tr {
     color: rgba(255,255,255,0.5) !important;
 }
 .fi-ta-search-field .fi-input-wrp:focus-within input {
-    color: var(--brand-900) !important;
+    color: rgba(255,255,255,0.95) !important;
 }
 .fi-ta-search-field .fi-input-wrp:focus-within input::placeholder {
-    color: var(--brand-500) !important;
+    color: rgba(255,255,255,0.4) !important;
 }
 .fi-ta-search-field input:focus {
-    border-color: rgba(255,255,255,0.5) !important;
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.15) !important;
+    border: none !important;
+    box-shadow: none !important;
     outline: none !important;
 }
 .fi-ta-header-ctn .fi-ta-search-field .fi-icon,
@@ -516,7 +516,7 @@ table thead tr {
     color: rgba(255,255,255,0.5) !important;
 }
 .fi-ta-search-field .fi-input-wrp:focus-within .fi-icon {
-    color: var(--brand-600) !important;
+    color: rgba(255,255,255,0.7) !important;
 }
 .fi-ta-header-ctn .fi-icon-btn,
 .fi-ta-header-toolbar .fi-icon-btn {
