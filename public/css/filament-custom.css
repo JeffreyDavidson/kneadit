@@ -608,10 +608,10 @@ table thead tr {
     --tw-ring-color: transparent !important;
 }
 
-/* Prefix/suffix dividers */
+/* Prefix/suffix dividers — subtle, not brand-colored */
 .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
-    border-inline-end: 1px solid var(--brand-200) !important;
-    border-right: 1px solid var(--brand-200) !important;
+    border-inline-end: 1px solid rgba(0,0,0,0.1) !important;
+    border-right: 1px solid rgba(0,0,0,0.1) !important;
     padding-inline-end: 0.75rem !important;
 }
 /* Search fields (shared) — no divider, consistent icon-to-text spacing */
@@ -626,8 +626,8 @@ table thead tr {
     padding-inline-start: 6px !important;
 }
 .fi-input-wrp .fi-input-wrp-suffix {
-    border-inline-start: 1px solid var(--brand-200) !important;
-    border-left: 1px solid var(--brand-200) !important;
+    border-inline-start: 1px solid rgba(0,0,0,0.1) !important;
+    border-left: 1px solid rgba(0,0,0,0.1) !important;
 }
 
 /* Input field inside wrapper */
