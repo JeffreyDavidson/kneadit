@@ -493,7 +493,7 @@ table thead tr {
     box-shadow: none !important;
     outline: none !important;
     color: rgba(255,255,255,0.85) !important;
-    padding: 6px 10px 6px 0 !important;
+    padding: 6px 10px 6px 6px !important;
     height: 32px !important;
     font-size: 0.85rem !important;
 }
@@ -614,19 +614,17 @@ table thead tr {
     border-right: 1px solid var(--brand-200) !important;
     padding-inline-end: 0.75rem !important;
 }
-/* Table search — no divider, tight spacing */
+/* Table search — no divider, balanced spacing */
 .fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
     border-inline-end: none !important;
     border-right: none !important;
-    padding-inline-end: 0 !important;
-    padding-right: 0 !important;
+    padding-inline-end: 2px !important;
 }
-/* Global search — no divider, match table search spacing */
+/* Global search — no divider, balanced spacing */
 .fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
     border-inline-end: none !important;
     border-right: none !important;
-    padding-inline-end: 0 !important;
-    padding-right: 0 !important;
+    padding-inline-end: 2px !important;
 }
 .fi-input-wrp .fi-input-wrp-suffix {
     border-inline-start: 1px solid var(--brand-200) !important;
