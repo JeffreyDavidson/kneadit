@@ -612,6 +612,35 @@ input[type='checkbox'].fi-checkbox-input {
     text-decoration: underline !important;
 }
 
+/* Filter dropdown/modal — branded apply button */
+.fi-ta-filters .fi-btn,
+.fi-ta-filters-dropdown .fi-btn,
+.fi-ta-filters-modal .fi-btn {
+    background: var(--brand-700) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    padding: 0.4rem 1rem !important;
+}
+.fi-ta-filters .fi-btn:hover,
+.fi-ta-filters-dropdown .fi-btn:hover,
+.fi-ta-filters-modal .fi-btn:hover {
+    background: var(--brand-800) !important;
+}
+/* Filter reset link */
+.fi-ta-filters .fi-link,
+.fi-ta-filters-dropdown .fi-link,
+.fi-ta-filters-modal .fi-link {
+    color: var(--brand-600) !important;
+    font-weight: 600 !important;
+}
+.fi-ta-filters .fi-link:hover,
+.fi-ta-filters-dropdown .fi-link:hover,
+.fi-ta-filters-modal .fi-link:hover {
+    color: var(--accent-gold) !important;
+}
+
 .fi-ta-footer {
     background: rgba(245,230,208,0.2) !important;
     border-top: 1px solid rgba(212,165,116,0.1) !important;
