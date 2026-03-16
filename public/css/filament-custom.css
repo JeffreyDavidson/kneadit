@@ -433,7 +433,7 @@ table thead tr {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-end !important;
-    gap: 8px !important;
+    gap: 10px !important;
     width: 100% !important;
 }
 /* When toolbar follows header-ctn, remove top radius */
@@ -445,9 +445,13 @@ table thead tr {
 
 /* Search input */
 .fi-ta-search-field {
-    flex: 1 !important;
-    max-width: 320px !important;
+    max-width: 220px !important;
     min-width: 160px !important;
+}
+/* Remove prefix divider in search */
+.fi-ta-search-field .fi-input-wrp-prefix {
+    border-right: none !important;
+    border-inline-end: none !important;
 }
 .fi-ta-search-field .fi-input-wrp {
     border: 1px solid rgba(255,255,255,0.25) !important;
