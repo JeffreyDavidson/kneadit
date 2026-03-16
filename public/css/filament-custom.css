@@ -463,6 +463,18 @@ table thead tr {
 .fi-ta-header-toolbar .fi-ta-actions .fi-icon-btn {
     margin: 0 !important;
 }
+/* Gap between filter trigger and column toggle in toolbar second child */
+.fi-ta-header-toolbar > *:last-child {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+.fi-ta-filters-dropdown,
+.fi-ta-filters-modal,
+.fi-ta-filters-trigger-action-ctn,
+.fi-ta-column-manager-dropdown {
+    margin-left: 4px !important;
+}
 .fi-ta-search-field .fi-input-wrp {
     border: 1px solid rgba(255,255,255,0.2) !important;
     border-radius: 8px !important;
