@@ -547,16 +547,20 @@ table thead tr {
     font-size: 0.8rem !important;
     font-weight: 600 !important;
 }
-.fi-ta-selection-indicator span,
-.fi-ta-selection-indicator p {
+.fi-ta-selection-indicator * {
     color: rgba(255,255,255,0.9) !important;
 }
-.fi-ta-selection-indicator .fi-link {
+.fi-ta-selection-indicator .fi-link,
+.fi-ta-selection-indicator a,
+.fi-ta-selection-indicator button:not(.fi-icon-btn) {
     color: var(--accent-gold) !important;
     font-weight: 700 !important;
     text-decoration: none !important;
+    font-size: 0.8rem !important;
 }
-.fi-ta-selection-indicator .fi-link:hover {
+.fi-ta-selection-indicator .fi-link:hover,
+.fi-ta-selection-indicator a:hover,
+.fi-ta-selection-indicator button:not(.fi-icon-btn):hover {
     color: #FFFFFF !important;
     text-decoration: underline !important;
 }
