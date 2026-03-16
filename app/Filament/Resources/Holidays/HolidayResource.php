@@ -47,7 +47,7 @@ class HolidayResource extends Resource
             \Filament\Schemas\Components\Section::make('Holiday Details')
                 ->icon('heroicon-o-calendar-days')
                 ->description('Plan for upcoming holiday orders')
-                ->columns(2)
+                ->columns(1)
                 ->columnSpanFull()
                 ->components([
                     \Filament\Forms\Components\TextInput::make('name')
@@ -169,7 +169,7 @@ class HolidayResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
-                EditAction::make()->slideOver()->modalWidth('2xl'),
+                EditAction::make()->slideOver()->modalWidth('md'),
                 Actions\DeleteAction::make(),
             ])
             ->bulkActions([

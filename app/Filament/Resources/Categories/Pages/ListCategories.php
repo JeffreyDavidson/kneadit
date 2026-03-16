@@ -14,7 +14,8 @@ class ListCategories extends ListRecords
     {
         return [
             CreateAction::make()
-                ->slideOver(),
+                ->slideOver()
+                ->modalWidth('md'),
         ];
     }
 }

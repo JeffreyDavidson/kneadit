@@ -40,7 +40,7 @@ class CategoryForm
                             ->numeric()
                             ->default(0),
                     ])
-                    ->columns(2),
+                    ->columns(1),
             ]);
     }
 }
