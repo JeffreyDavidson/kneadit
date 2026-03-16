@@ -493,7 +493,7 @@ table thead tr {
     box-shadow: none !important;
     outline: none !important;
     color: rgba(255,255,255,0.85) !important;
-    padding: 6px 10px 6px 6px !important;
+    padding: 6px 10px !important;
     height: 32px !important;
     font-size: 0.85rem !important;
 }
@@ -614,17 +614,16 @@ table thead tr {
     border-right: 1px solid var(--brand-200) !important;
     padding-inline-end: 0.75rem !important;
 }
-/* Table search — no divider, balanced spacing */
-.fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
-    border-inline-end: none !important;
-    border-right: none !important;
-    padding-inline-end: 2px !important;
-}
-/* Global search — no divider, balanced spacing */
+/* Search fields (shared) — no divider, consistent icon-to-text spacing */
+.fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content,
 .fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
     border-inline-end: none !important;
     border-right: none !important;
     padding-inline-end: 2px !important;
+}
+.fi-ta-search-field input,
+.fi-global-search-field input {
+    padding-inline-start: 6px !important;
 }
 .fi-input-wrp .fi-input-wrp-suffix {
     border-inline-start: 1px solid var(--brand-200) !important;
@@ -1144,7 +1143,6 @@ section:has(.fi-wi-stats-overview-stat),
     border: none !important;
     color: var(--brand-900, #3d2314) !important;
     box-shadow: none !important;
-    padding-inline-start: 6px !important;
 }
 .fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix {
     border-right: none !important;
