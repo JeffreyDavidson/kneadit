@@ -427,7 +427,8 @@ table thead tr {
 .fi-ta-header-toolbar {
     background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
     border-bottom: none !important;
-    padding: 8px 1rem !important;
+    padding: 8px 0 !important;
+    padding-inline: 0 !important;
     margin: 0 !important;
     border-radius: 11px 11px 0 0;
     display: flex !important;
