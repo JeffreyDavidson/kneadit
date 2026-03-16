@@ -493,7 +493,7 @@ table thead tr {
     box-shadow: none !important;
     outline: none !important;
     color: rgba(255,255,255,0.85) !important;
-    padding: 6px 10px !important;
+    padding: 6px 10px 6px 4px !important;
     height: 32px !important;
     font-size: 0.85rem !important;
 }
