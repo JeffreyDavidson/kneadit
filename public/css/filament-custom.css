@@ -455,10 +455,9 @@ table thead tr {
     border-right-color: transparent !important;
 }
 .fi-ta-search-field .fi-input-wrp-prefix {
-    padding-inline-start: 0.5rem !important;
-    padding-inline-end: 0.25rem !important;
+    padding: 0 0 0 0.5rem !important;
     min-width: 0 !important;
-    gap: 0.5rem !important;
+    gap: 0.25rem !important;
 }
 .fi-ta-search-field .fi-input-wrp input {
     padding-inline-start: 0.25rem !important;
