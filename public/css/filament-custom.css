@@ -346,7 +346,6 @@
     padding: 1rem 1.5rem !important;
     gap: 1rem !important;
     border-bottom: 1px solid var(--brand-200) !important;
-    overflow: hidden !important;
 }
 .fi-ta-header {
     background: transparent !important;
@@ -435,7 +434,8 @@ table thead tr {
 
 /* Search input */
 .fi-ta-search-field {
-    max-width: 200px !important;
+    max-width: 180px !important;
+    min-width: 140px !important;
 }
 .fi-ta-search-field .fi-input-wrp {
     border: 1px solid rgba(255,255,255,0.25) !important;
