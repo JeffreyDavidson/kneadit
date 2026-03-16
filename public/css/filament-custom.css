@@ -426,7 +426,7 @@ table thead tr {
 /* Toolbar (search + filters) — dark background to match header */
 .fi-ta-header-toolbar {
     background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
-    border-bottom: 1px solid var(--brand-200) !important;
+    border-bottom: none !important;
     padding: 14px 1.5rem !important;
     margin: 0 !important;
     border-radius: 11px 11px 0 0;
