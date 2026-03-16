@@ -423,13 +423,13 @@ table thead tr {
     font-size: 0.8rem !important;
 }
 
-/* Toolbar (search + filters) */
+/* Toolbar (search + filters) — pull into dark header */
 .fi-ta-header-toolbar {
-    background: transparent !important;
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
     border-bottom: none !important;
-    padding: 0 !important;
-    margin-left: auto !important;
-    flex-shrink: 0 !important;
+    padding: 8px 1.5rem !important;
+    margin: 0 !important;
+    margin-top: -1px !important;
 }
 
 /* Search input */
