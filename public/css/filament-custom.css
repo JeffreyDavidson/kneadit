@@ -454,14 +454,7 @@ table thead tr {
     border-inline-end-color: transparent !important;
     border-right-color: transparent !important;
 }
-/* Match table search prefix spacing to global search */
-.fi-ta-search-field .fi-input-wrp-prefix {
-    padding-inline-end: 0.25rem !important;
-}
-.fi-ta-search-field input,
-.fi-ta-search-field .fi-input {
-    padding-inline-start: 0.25rem !important;
-}
+/* Table search prefix — match global search spacing */
 /* Separate filter and column toggle icons */
 .fi-ta-header-toolbar .fi-ta-actions {
     display: flex !important;
@@ -621,10 +614,12 @@ table thead tr {
     border-right: 1px solid var(--brand-200) !important;
     padding-inline-end: 0.75rem !important;
 }
-/* But NOT on table search — no divider there */
-.fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
+/* But NOT on search fields — no divider, use Filament default spacing */
+.fi-ta-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content,
+.fi-global-search-field .fi-input-wrp .fi-input-wrp-prefix.fi-input-wrp-prefix-has-content {
     border-inline-end: none !important;
     border-right: none !important;
+    padding-inline-end: calc(var(--spacing, 0.25rem) * 2) !important;
 }
 .fi-input-wrp .fi-input-wrp-suffix {
     border-inline-start: 1px solid var(--brand-200) !important;
