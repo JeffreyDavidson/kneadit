@@ -13,7 +13,10 @@ class UpgradePlan extends Page
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-circle';
 
     protected static ?string $navigationLabel = 'Upgrade Plan';
-    protected static bool $shouldRegisterNavigation = false;
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     protected static ?string $title = 'Upgrade Your Plan';
 
