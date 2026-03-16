@@ -17,8 +17,6 @@ class UpgradePlan extends Page
 
     protected static ?string $title = 'Upgrade Your Plan';
 
-    protected static bool $shouldRegisterNavigation = false;
-
     protected string $view = 'filament.pages.upgrade-plan';
 
     public string $currentPlan = 'starter';
