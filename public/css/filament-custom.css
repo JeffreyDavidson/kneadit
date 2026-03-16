@@ -427,13 +427,13 @@ table thead tr {
 .fi-ta-header-toolbar {
     background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
     border-bottom: none !important;
-    padding: 8px 1.5rem !important;
+    padding: 8px 1rem !important;
     margin: 0 !important;
     border-radius: 11px 11px 0 0;
     display: flex !important;
     align-items: center !important;
     justify-content: flex-end !important;
-    gap: 10px !important;
+    gap: 8px !important;
     width: 100% !important;
 }
 /* When toolbar follows header-ctn, remove top radius */
@@ -467,11 +467,11 @@ table thead tr {
 .fi-ta-header-toolbar > * {
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
+    gap: 8px !important;
 }
 /* Force gap on icon buttons inside toolbar (filter + column toggle) */
 .fi-ta-header-toolbar .fi-icon-btn {
-    margin: 0 4px !important;
+    margin: 0 2px !important;
 }
 .fi-ta-search-field .fi-input-wrp {
     border: 1px solid rgba(255,255,255,0.2) !important;
