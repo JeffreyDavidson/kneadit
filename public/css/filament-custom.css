@@ -423,12 +423,18 @@ table thead tr {
     font-size: 0.8rem !important;
 }
 
-/* Toolbar (search + filters) — pull into dark header */
+/* Toolbar (search + filters) — dark background to match header */
 .fi-ta-header-toolbar {
     background: linear-gradient(135deg, var(--brand-900), var(--brand-700)) !important;
-    border-bottom: none !important;
-    padding: 8px 1.5rem !important;
+    border-bottom: 1px solid var(--brand-200) !important;
+    padding: 12px 1.5rem !important;
     margin: 0 !important;
+    border-radius: 11px 11px 0 0;
+}
+/* When toolbar follows header-ctn, remove top radius */
+.fi-ta-header-ctn + .fi-ta-header-toolbar {
+    border-radius: 0 !important;
+    border-top: none !important;
     margin-top: -1px !important;
 }
 
@@ -462,16 +468,20 @@ table thead tr {
     box-shadow: 0 0 0 2px rgba(255,255,255,0.15) !important;
     outline: none !important;
 }
-.fi-ta-header-ctn .fi-ta-search-field .fi-icon {
+.fi-ta-header-ctn .fi-ta-search-field .fi-icon,
+.fi-ta-header-toolbar .fi-ta-search-field .fi-icon {
     color: var(--brand-600) !important;
 }
-.fi-ta-header-ctn .fi-icon-btn {
+.fi-ta-header-ctn .fi-icon-btn,
+.fi-ta-header-toolbar .fi-icon-btn {
     color: rgba(255,255,255,0.85) !important;
 }
-.fi-ta-header-ctn .fi-icon-btn:hover {
+.fi-ta-header-ctn .fi-icon-btn:hover,
+.fi-ta-header-toolbar .fi-icon-btn:hover {
     background: rgba(255,255,255,0.1) !important;
 }
-.fi-ta-header-ctn .fi-badge {
+.fi-ta-header-ctn .fi-badge,
+.fi-ta-header-toolbar .fi-badge {
     background: var(--accent-gold) !important;
     color: var(--brand-900) !important;
 }
