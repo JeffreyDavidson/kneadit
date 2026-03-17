@@ -43,6 +43,24 @@ class WaitlistEntryResource extends Resource
         return WaitlistEntriesTable::configure($table);
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['customer_email', 'customer_name'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return $record->customer_name ?? $record->customer_email;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Email' => $record->customer_email ?? 'N/A',
+            'Product' => $record->product?->name ?? 'N/A',
+        ];
+    }
+
     public static function getRelations(): array
     {
         return [

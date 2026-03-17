@@ -121,6 +121,24 @@ class LoyaltyRewardResource extends Resource
             ->defaultSort('points_required');
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return $record->name;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Points' => $record->points_required,
+            'Type' => $record->reward_type_label,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

@@ -45,6 +45,24 @@ class SurveyResource extends Resource
         return SurveysTable::configure($table);
     }
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title'];
+    }
+
+    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return $record->title;
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Status' => $record->is_active ? 'Active' : 'Inactive',
+            'Responses' => $record->responses_count ?? 0,
+        ];
+    }
+
     public static function getRelations(): array
     {
         return [];
