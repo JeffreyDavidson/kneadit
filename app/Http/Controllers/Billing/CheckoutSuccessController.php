@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\Controllers\Billing;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Cashier\Cashier;
+
+class CheckoutSuccessController extends Controller
+{
+    /**
+     * Handle successful checkout.
+     *
+     * Re-authenticates the user from a verified Stripe checkout session
+     * when the Laravel session is lost after the external redirect.
+     */
+    public function __invoke(Request $request)
+    {
+        if (! $request->user() && $request->has('session_id')) {
+            $checkoutSession = Cashier::stripe()->checkout->sessions->retrieve($request->get('session_id'));
+
+            if ($checkoutSession
+                && $checkoutSession->status === 'complete'
+                && $checkoutSession->customer
+                && $checkoutSession->created >= now()->subMinutes(30)->getTimestamp()
+            ) {
+                $user = User::where('stripe_id', $checkoutSession->customer)->first();
+
+                if ($user) {
+                    Auth::login($user);
+                }
+            }
+        }
+
+        return redirect('/onboarding');
+    }
+}

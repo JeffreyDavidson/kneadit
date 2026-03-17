@@ -12,7 +12,7 @@ class StripeConnectController extends Controller
     /**
      * Redirect baker to Stripe Connect onboarding.
      */
-    public function redirect(Request $request)
+    public function __invoke(Request $request)
     {
         $tenant = tenant();
 

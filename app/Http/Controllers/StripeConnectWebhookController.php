@@ -20,7 +20,7 @@ class StripeConnectWebhookController extends Controller
      * This endpoint receives events about connected accounts
      * (separate from the Cashier webhook for platform subscriptions).
      */
-    public function handle(Request $request)
+    public function __invoke(Request $request)
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');

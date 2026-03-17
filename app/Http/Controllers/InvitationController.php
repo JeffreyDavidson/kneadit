@@ -31,7 +31,7 @@ class InvitationController extends Controller
         ]);
     }
 
-    public function accept(Request $request, string $token)
+    public function store(Request $request, string $token)
     {
         $invitation = StaffInvitation::where('token', $token)
             ->whereNull('accepted_at')

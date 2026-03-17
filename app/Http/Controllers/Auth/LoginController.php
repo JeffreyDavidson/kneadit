@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function showLoginForm()
+    public function show()
     {
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'email' => ['required', 'string', 'email'],
@@ -47,15 +47,5 @@ class LoginController extends Controller
         $tenant = $user->tenants()->first();
 
         return redirect("https://{$tenant->id}.".config('app.central_domain', 'getkneadit.app').'/admin');
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/');
     }
 }

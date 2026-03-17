@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Storefront\HomeController;
 use App\Models\Setting;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 
@@ -35,7 +36,7 @@ class RootController extends Controller
                 ]);
             }
 
-            return resolve(StorefrontController::class)->home();
+            return resolve(HomeController::class)();
         });
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class ReferralController extends Controller
 {
-    public function track(Request $request, string $code)
+    public function __invoke(Request $request, string $code)
     {
         $referral = Referral::where('referral_code', $code)->first();
 

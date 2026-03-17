@@ -13,7 +13,7 @@ class ExportController extends Controller
 {
     private const VALID_TYPES = ['products', 'categories', 'orders', 'customers', 'reviews', 'all'];
 
-    public function export(Request $request, string $tenantId, string $type): StreamedResponse|BinaryFileResponse
+    public function __invoke(Request $request, string $tenantId, string $type): StreamedResponse|BinaryFileResponse
     {
         abort_if(! auth()->check() || auth()->user()->role !== 'platform_admin', 403, 'Unauthorized.');
 

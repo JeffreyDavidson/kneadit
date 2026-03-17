@@ -9,14 +9,14 @@ use Illuminate\Http\Request;
 
 class SurveyController extends Controller
 {
-    public function survey(Survey $survey)
+    public function show(Survey $survey)
     {
         abort_unless($survey->is_active, 404);
 
         return view('survey', compact('survey'));
     }
 
-    public function submitSurvey(Request $request, Survey $survey)
+    public function store(Request $request, Survey $survey)
     {
         abort_unless($survey->is_active, 404);
 
