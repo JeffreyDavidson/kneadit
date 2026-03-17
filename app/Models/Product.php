@@ -60,6 +60,21 @@ class Product extends Model
         return $this->hasMany(SeasonalItem::class);
     }
 
+    public function customerPhotos(): HasMany
+    {
+        return $this->hasMany(CustomerPhoto::class);
+    }
+
+    public function pageViews(): HasMany
+    {
+        return $this->hasMany(PageView::class);
+    }
+
+    public function socialPosts(): HasMany
+    {
+        return $this->hasMany(SocialPost::class);
+    }
+
     public function waitlistEntries(): HasMany
     {
         return $this->hasMany(ProductWaitlist::class);
