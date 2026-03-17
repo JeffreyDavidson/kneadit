@@ -25,11 +25,11 @@ class GalleryController extends Controller
     public function submitPhoto(Request $request)
     {
         $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'caption' => 'nullable|string|max:1000',
-            'product_id' => 'nullable|exists:products,id',
+            'customer_name' => ['required', 'string', 'max:255'],
+            'customer_email' => ['required', 'email', 'max:255'],
+            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'caption' => ['nullable', 'string', 'max:1000'],
+            'product_id' => ['nullable', 'exists:products,id'],
         ]);
 
         $path = $request->file('photo')->store('customer-photos', 'public');

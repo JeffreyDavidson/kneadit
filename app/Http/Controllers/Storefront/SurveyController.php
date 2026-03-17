@@ -25,9 +25,9 @@ class SurveyController extends Controller
         }
 
         $request->validate([
-            'customer_name' => 'nullable|string|max:255',
-            'customer_email' => 'nullable|email|max:255',
-            'answers' => 'required|array',
+            'customer_name' => ['nullable', 'string', 'max:255'],
+            'customer_email' => ['nullable', 'email', 'max:255'],
+            'answers' => ['required', 'array'],
         ]);
 
         $sanitizedAnswers = array_map(

@@ -73,8 +73,8 @@ class StorefrontController extends Controller
     public function toggleFavorite(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'product_id' => 'required|exists:products,id',
+            'email' => ['required', 'email'],
+            'product_id' => ['required', 'exists:products,id'],
         ]);
 
         $existing = CustomerFavorite::where('customer_email', $request->email)
@@ -153,12 +153,12 @@ class StorefrontController extends Controller
     public function purchaseGiftCard(Request $request)
     {
         $validated = $request->validate([
-            'purchaser_name' => 'required|string|max:255',
-            'purchaser_email' => 'required|email|max:255',
-            'recipient_name' => 'nullable|string|max:255',
-            'recipient_email' => 'nullable|email|max:255',
-            'message' => 'nullable|string|max:1000',
-            'initial_balance' => 'required|numeric|min:1|max:500',
+            'purchaser_name' => ['required', 'string', 'max:255'],
+            'purchaser_email' => ['required', 'email', 'max:255'],
+            'recipient_name' => ['nullable', 'string', 'max:255'],
+            'recipient_email' => ['nullable', 'email', 'max:255'],
+            'message' => ['nullable', 'string', 'max:1000'],
+            'initial_balance' => ['required', 'numeric', 'min:1', 'max:500'],
         ]);
 
         if (isset($validated['message'])) {
@@ -179,7 +179,7 @@ class StorefrontController extends Controller
 
     public function checkGiftCardBalance(Request $request)
     {
-        $request->validate(['code' => 'required|string']);
+        $request->validate(['code' => ['required', 'string']]);
 
         $service = new GiftCardService;
         $card = $service->checkBalance($request->code);
@@ -258,9 +258,9 @@ class StorefrontController extends Controller
     public function joinProductWaitlist(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'customer_email' => 'required|email|max:255',
-            'customer_name' => 'nullable|string|max:255',
+            'product_id' => ['required', 'exists:products,id'],
+            'customer_email' => ['required', 'email', 'max:255'],
+            'customer_name' => ['nullable', 'string', 'max:255'],
         ]);
 
         ProductWaitlist::updateOrCreate(

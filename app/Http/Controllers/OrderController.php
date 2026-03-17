@@ -47,8 +47,8 @@ class OrderController extends Controller
     public function applyCoupon(Request $request)
     {
         $request->validate([
-            'code' => 'required|string',
-            'subtotal' => 'required|numeric|min:0',
+            'code' => ['required', 'string'],
+            'subtotal' => ['required', 'numeric', 'min:0'],
         ]);
 
         $couponService = new CouponService;
@@ -77,8 +77,8 @@ class OrderController extends Controller
     public function applyGiftCard(Request $request)
     {
         $request->validate([
-            'code' => 'required|string',
-            'subtotal' => 'required|numeric|min:0',
+            'code' => ['required', 'string'],
+            'subtotal' => ['required', 'numeric', 'min:0'],
         ]);
 
         $service = new GiftCardService;
@@ -273,7 +273,7 @@ class OrderController extends Controller
 
     public function trackLookup(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $request->validate(['email' => ['required', 'email']]);
 
         $orders = Order::whereHas('customer', function ($q) use ($request) {
             $q->where('email', $request->email);
@@ -295,8 +295,8 @@ class OrderController extends Controller
     public function toggleFavorite(Request $request)
     {
         $validated = $request->validate([
-            'customer_email' => 'required|email',
-            'product_id' => 'required|exists:products,id',
+            'customer_email' => ['required', 'email'],
+            'product_id' => ['required', 'exists:products,id'],
         ]);
 
         $isFavorite = CustomerFavorite::toggle(
@@ -337,9 +337,9 @@ class OrderController extends Controller
     public function sendMessage(Request $request, Order $order)
     {
         $request->validate([
-            'message' => 'required|string|max:2000',
-            'sender_name' => 'required|string|max:255',
-            'sender_email' => 'required|email',
+            'message' => ['required', 'string', 'max:2000'],
+            'sender_name' => ['required', 'string', 'max:255'],
+            'sender_email' => ['required', 'email'],
         ]);
 
         $message = $order->messages()->create([
