@@ -44,7 +44,7 @@ test('sales report returns correct totals', function () {
     $report = $this->service->salesReport('2026-03-01', '2026-03-31');
 
     expect($report['totalOrders'])->toBe(2);
-    expect($report['totalRevenue'])->toBe(80.00);
+    expect((float) $report['totalRevenue'])->toBe(80.00);
 });
 
 test('sales report respects date range', function () {
@@ -54,7 +54,7 @@ test('sales report respects date range', function () {
     $report = $this->service->salesReport('2026-03-01', '2026-03-31');
 
     expect($report['totalOrders'])->toBe(1);
-    expect($report['totalRevenue'])->toBe(30.00);
+    expect((float) $report['totalRevenue'])->toBe(30.00);
 });
 
 test('customer report counts new customers', function () {
@@ -70,9 +70,9 @@ test('financial summary calculates profit', function () {
 
     $report = $this->service->financialSummary(2026);
 
-    expect($report['totalRevenue'])->toBe(100.00);
-    expect($report['totalExpenses'])->toBe(30.00);
-    expect($report['profit'])->toBe(70.00);
+    expect((float) $report['totalRevenue'])->toBe(100.00);
+    expect((float) $report['totalExpenses'])->toBe(30.00);
+    expect((float) $report['profit'])->toBe(70.00);
 });
 
 test('inventory report flags low stock', function () {

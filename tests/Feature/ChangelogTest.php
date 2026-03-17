@@ -2,10 +2,6 @@
 
 use function Pest\Laravel\get;
 
-beforeEach(function () {
-    setUpCentralTest();
-});
-
 test('changelog page loads', function () {
     $response = get('/changelog');
 

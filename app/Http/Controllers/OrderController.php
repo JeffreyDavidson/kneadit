@@ -9,14 +9,14 @@ use App\Models\Product;
 use App\Services\OrderService;
 use App\Services\StripeCheckoutService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
 
 class OrderController extends Controller
 {
     public function index(): View
     {
-        $categories = Category::with(['products' => function (Builder $q) {
+        $categories = Category::with(['products' => function (HasMany $q) {
             $q->where('is_active', true)->orderBy('name');
         }, 'products.seasonalItems'])->orderBy('sort_order')->get();
 
