@@ -52,13 +52,13 @@ class StorefrontController extends Controller
 
     public function reviews()
     {
-        $reviews = \App\Models\Review::where('is_approved', true)
+        $reviews = Review::where('is_approved', true)
             ->with('product')
             ->latest()
             ->paginate(12);
 
-        $avgRating = \App\Models\Review::where('is_approved', true)->avg('rating');
-        $totalReviews = \App\Models\Review::where('is_approved', true)->count();
+        $avgRating = Review::where('is_approved', true)->avg('rating');
+        $totalReviews = Review::where('is_approved', true)->count();
 
         return view('reviews', compact('reviews', 'avgRating', 'totalReviews'));
     }

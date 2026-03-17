@@ -46,7 +46,7 @@ class LoginController extends Controller
         // Fully set up — go to tenant admin
         $tenant = $user->tenants()->first();
 
-        return redirect("https://{$tenant->id}." . config('app.central_domain', 'getkneadit.app') . '/admin');
+        return redirect("https://{$tenant->id}.".config('app.central_domain', 'getkneadit.app').'/admin');
     }
 
     public function logout(Request $request)

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -55,7 +56,7 @@ class DatabaseSeeder extends Seeder
     protected function seedTenantData(): void
     {
         // Create the tenant admin user
-        \Illuminate\Support\Facades\DB::connection('tenant')->table('users')->updateOrInsert(
+        DB::connection('tenant')->table('users')->updateOrInsert(
             ['email' => 'baker@kneaditbakery.com'],
             [
                 'name' => 'KneadIt Baker',

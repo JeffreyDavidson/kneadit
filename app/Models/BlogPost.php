@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class BlogPost extends Model
 {
@@ -33,11 +34,11 @@ class BlogPost extends Model
     {
         static::creating(function (BlogPost $post) {
             if (empty($post->slug)) {
-                $slug = \Illuminate\Support\Str::slug($post->title);
+                $slug = Str::slug($post->title);
                 $original = $slug;
                 $i = 2;
                 while (static::where('slug', $slug)->exists()) {
-                    $slug = $original . '-' . $i++;
+                    $slug = $original.'-'.$i++;
                 }
                 $post->slug = $slug;
             }
@@ -45,7 +46,7 @@ class BlogPost extends Model
 
         static::updating(function (BlogPost $post) {
             if ($post->isDirty('title')) {
-                $post->slug = \Illuminate\Support\Str::slug($post->title);
+                $post->slug = Str::slug($post->title);
             }
         });
     }

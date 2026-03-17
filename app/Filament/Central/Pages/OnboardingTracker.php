@@ -51,10 +51,10 @@ class OnboardingTracker extends Page
     protected function getOnboardingChecks(Tenant $tenant): array
     {
         $checks = [
-            'store_name' => !empty($tenant->store_name),
-            'store_logo' => !empty($tenant->store_logo),
+            'store_name' => ! empty($tenant->store_name),
+            'store_logo' => ! empty($tenant->store_logo),
             'storefront_enabled' => (bool) $tenant->storefront_enabled,
-            'brand_customized' => !empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c',
+            'brand_customized' => ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c',
             'has_products' => false,
             'has_categories' => false,
             'has_orders' => false,

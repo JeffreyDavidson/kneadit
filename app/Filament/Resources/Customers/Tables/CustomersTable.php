@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Customers\Tables;
 
+use App\Models\Order;
+use Carbon\Carbon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -50,7 +52,7 @@ class CustomersTable
                     ->color(fn ($record) => $record->isBirthdayToday() ? 'success' : 'gray')
                     ->formatStateUsing(fn ($state, $record) => $record->isBirthdayToday()
                         ? '🎂 Today!'
-                        : ($state ? \Carbon\Carbon::parse($state)->format('M j') : '—'))
+                        : ($state ? Carbon::parse($state)->format('M j') : '—'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -76,7 +78,7 @@ class CustomersTable
                     ->since()
                     ->sortable(query: function ($query, string $direction) {
                         return $query->orderBy(
-                            \App\Models\Order::select('created_at')
+                            Order::select('created_at')
                                 ->whereColumn('customer_id', 'customers.id')
                                 ->latest()
                                 ->limit(1),

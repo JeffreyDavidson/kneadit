@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\BlogPost;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class BlogPostTest extends TestCase
@@ -15,8 +16,8 @@ class BlogPostTest extends TestCase
     {
         parent::setUp();
         config(['database.connections.central' => config('database.connections.sqlite')]);
-        \Illuminate\Support\Facades\DB::connection('central')->setPdo(
-            \Illuminate\Support\Facades\DB::connection('sqlite')->getPdo()
+        DB::connection('central')->setPdo(
+            DB::connection('sqlite')->getPdo()
         );
         $tenantMigrationPath = database_path('migrations/tenant');
         if (is_dir($tenantMigrationPath)) {

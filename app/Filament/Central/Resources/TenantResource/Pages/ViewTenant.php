@@ -3,7 +3,6 @@
 namespace App\Filament\Central\Resources\TenantResource\Pages;
 
 use App\Filament\Central\Resources\TenantResource;
-use App\Models\Tenant;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +27,7 @@ class ViewTenant extends ViewRecord
                 ->label('Visit Storefront')
                 ->icon('heroicon-o-arrow-top-right-on-square')
                 ->color('info')
-                ->url(fn () => 'https://' . $this->record->id . '.getkneadit.app')
+                ->url(fn () => 'https://'.$this->record->id.'.getkneadit.app')
                 ->openUrlInNewTab(),
             Actions\EditAction::make(),
         ];

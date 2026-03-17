@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class PopularProductsWidget extends BaseWidget
@@ -17,7 +18,7 @@ class PopularProductsWidget extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    public function getTableRecordKey(\Illuminate\Database\Eloquent\Model|array $record): string
+    public function getTableRecordKey(Model|array $record): string
     {
         return (string) $record->product_id;
     }

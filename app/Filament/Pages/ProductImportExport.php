@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Http\UploadedFile;
 
 class ProductImportExport extends Page
 {
@@ -141,7 +142,7 @@ class ProductImportExport extends Page
                                     return;
                                 }
 
-                                $file = new \Illuminate\Http\UploadedFile($fullPath, basename($fullPath));
+                                $file = new UploadedFile($fullPath, basename($fullPath));
                                 $service = new ProductCsvService;
                                 $result = $service->parseForPreview($file);
 
@@ -188,7 +189,7 @@ class ProductImportExport extends Page
                                     return;
                                 }
 
-                                $file = new \Illuminate\Http\UploadedFile($fullPath, basename($fullPath));
+                                $file = new UploadedFile($fullPath, basename($fullPath));
                                 $service = new ProductCsvService;
                                 $this->importResults = $service->import($file);
 

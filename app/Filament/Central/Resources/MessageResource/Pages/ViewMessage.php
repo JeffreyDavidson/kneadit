@@ -5,6 +5,8 @@ namespace App\Filament\Central\Resources\MessageResource\Pages;
 use App\Filament\Central\Resources\MessageResource;
 use App\Models\PlatformMessage;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewMessage extends ViewRecord
 {
@@ -14,7 +16,7 @@ class ViewMessage extends ViewRecord
 
     public string $replyBody = '';
 
-    public function resolveRecord(int|string $key): \Illuminate\Database\Eloquent\Model
+    public function resolveRecord(int|string $key): Model
     {
         return PlatformMessage::findOrFail($key);
     }
@@ -37,7 +39,7 @@ class ViewMessage extends ViewRecord
         return $this->record->subject;
     }
 
-    public function getThread(): \Illuminate\Database\Eloquent\Collection
+    public function getThread(): Collection
     {
         return PlatformMessage::where('parent_id', $this->record->id)
             ->orderBy('created_at', 'asc')
@@ -53,7 +55,7 @@ class ViewMessage extends ViewRecord
         PlatformMessage::create([
             'tenant_id' => $this->record->tenant_id,
             'sender_type' => 'admin',
-            'subject' => 'Re: ' . $this->record->subject,
+            'subject' => 'Re: '.$this->record->subject,
             'body' => $this->replyBody,
             'parent_id' => $this->record->id,
         ]);

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -16,8 +17,8 @@ return new class extends Migration
         });
 
         // Copy data
-        \Illuminate\Support\Facades\DB::table('orders')->update([
-            'payment_method_new' => \Illuminate\Support\Facades\DB::raw('payment_method'),
+        DB::table('orders')->update([
+            'payment_method_new' => DB::raw('payment_method'),
         ]);
 
         Schema::table('orders', function (Blueprint $table) {

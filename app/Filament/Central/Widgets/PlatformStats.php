@@ -4,7 +4,6 @@ namespace App\Filament\Central\Widgets;
 
 use App\Models\SupportTicket;
 use App\Models\Tenant;
-use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -57,15 +56,15 @@ class PlatformStats extends StatsOverviewWidget
         }
 
         return [
-            Stat::make('MRR', '$' . number_format($mrr))
-                ->description($activeTenants->count() . ' paying')
+            Stat::make('MRR', '$'.number_format($mrr))
+                ->description($activeTenants->count().' paying')
                 ->color('success')
                 ->icon('heroicon-o-currency-dollar')
                 ->chart($mrrChart)
                 ->chartColor('success'),
 
             Stat::make('Total Bakeries', $totalTenants)
-                ->description($activeTenants->count() . ' active')
+                ->description($activeTenants->count().' active')
                 ->color('success')
                 ->icon('heroicon-o-building-storefront')
                 ->chart($bakeryChart)

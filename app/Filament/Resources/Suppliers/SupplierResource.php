@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Suppliers;
 use App\Filament\Resources\Suppliers\Pages\CreateSupplier;
 use App\Filament\Resources\Suppliers\Pages\EditSupplier;
 use App\Filament\Resources\Suppliers\Pages\ListSuppliers;
+use App\Filament\Resources\Suppliers\RelationManagers\IngredientsRelationManager;
 use App\Filament\Resources\Suppliers\Schemas\SupplierForm;
 use App\Filament\Resources\Suppliers\Tables\SuppliersTable;
 use App\Filament\Traits\RequiresRole;
@@ -48,7 +49,7 @@ class SupplierResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Resources\Suppliers\RelationManagers\IngredientsRelationManager::class,
+            IngredientsRelationManager::class,
         ];
     }
 

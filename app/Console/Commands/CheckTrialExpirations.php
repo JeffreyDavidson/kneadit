@@ -54,13 +54,13 @@ class CheckTrialExpirations extends Command
                 $daysText = $daysLeft === 1 ? 'tomorrow' : "in {$daysLeft} days";
 
                 Mail::raw(
-                    "Hi {$user->name},\n\n" .
-                    "Your KneadIt free trial for {$storeName} ends {$daysText}.\n\n" .
-                    "Subscribe now to keep your bakery running without interruption:\n" .
-                    "https://getkneadit.app/billing/plans\n\n" .
+                    "Hi {$user->name},\n\n".
+                    "Your KneadIt free trial for {$storeName} ends {$daysText}.\n\n".
+                    "Subscribe now to keep your bakery running without interruption:\n".
+                    "https://getkneadit.app/billing/plans\n\n".
                     ($daysLeft <= 3
                         ? "After your trial expires, your storefront will be paused until you subscribe.\n\n"
-                        : "") .
+                        : '').
                     "Questions? Just reply to this email.\n\n— The KneadIt Team",
                     function ($m) use ($user, $daysLeft) {
                         $subjects = [
@@ -69,7 +69,7 @@ class CheckTrialExpirations extends Command
                             1 => '🚨 Your KneadIt trial ends tomorrow',
                         ];
                         $m->to($user->email)
-                            ->subject($subjects[$daysLeft] ?? "Trial ending soon")
+                            ->subject($subjects[$daysLeft] ?? 'Trial ending soon')
                             ->from(config('mail.from.address'), 'KneadIt');
                     }
                 );
@@ -107,13 +107,13 @@ class CheckTrialExpirations extends Command
                 if ($user) {
                     try {
                         Mail::raw(
-                            "Hi {$user->name},\n\n" .
-                            "Your KneadIt free trial has expired. Your storefront has been paused.\n\n" .
-                            "Don't worry — your data is safe. Subscribe to reactivate:\n" .
-                            "https://getkneadit.app/billing/plans\n\n" .
-                            "Your admin panel is still accessible at:\n" .
-                            "https://{$tenant->id}.getkneadit.app/admin\n\n" .
-                            "— The KneadIt Team",
+                            "Hi {$user->name},\n\n".
+                            "Your KneadIt free trial has expired. Your storefront has been paused.\n\n".
+                            "Don't worry — your data is safe. Subscribe to reactivate:\n".
+                            "https://getkneadit.app/billing/plans\n\n".
+                            "Your admin panel is still accessible at:\n".
+                            "https://{$tenant->id}.getkneadit.app/admin\n\n".
+                            '— The KneadIt Team',
                             function ($m) use ($user) {
                                 $m->to($user->email)
                                     ->subject('Your KneadIt trial has expired')
@@ -125,7 +125,7 @@ class CheckTrialExpirations extends Command
                     }
                 }
 
-                Log::info("Trial expired — storefront paused", ['tenant' => $tenant->id]);
+                Log::info('Trial expired — storefront paused', ['tenant' => $tenant->id]);
             }
         }
     }

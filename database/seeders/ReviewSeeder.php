@@ -10,7 +10,7 @@ class ReviewSeeder extends Seeder
 {
     public function run(): void
     {
-        if (\App\Models\Review::count() > 0) {
+        if (Review::count() > 0) {
             return;
         }
 

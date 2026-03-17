@@ -2,9 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\Tenant;
 use App\Models\User;
 use App\Traits\HasPlanGating;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Testing\TestResponse;
 use Tests\CentralTestCase;
 
 class SignupPipelineTest extends CentralTestCase
@@ -35,13 +38,13 @@ class SignupPipelineTest extends CentralTestCase
     protected function uniqueSubdomain(): string
     {
         $this->subdomainCounter++;
-        $sub = 'testbakery' . $this->subdomainCounter;
+        $sub = 'testbakery'.$this->subdomainCounter;
         $this->createdSubdomains[] = $sub;
 
         return $sub;
     }
 
-    protected function submitOnboarding(User $user, array $data = []): \Illuminate\Testing\TestResponse
+    protected function submitOnboarding(User $user, array $data = []): TestResponse
     {
         if (! isset($data['subdomain'])) {
             $data['subdomain'] = $this->uniqueSubdomain();
@@ -156,7 +159,7 @@ class SignupPipelineTest extends CentralTestCase
         $sub = $this->uniqueSubdomain();
         $this->submitOnboarding($user, ['subdomain' => $sub]);
 
-        $tenant = \App\Models\Tenant::find($sub);
+        $tenant = Tenant::find($sub);
         $tenant->run(function () use ($user) {
             $this->assertDatabaseHas('users', ['email' => $user->email]);
         });
@@ -169,7 +172,7 @@ class SignupPipelineTest extends CentralTestCase
         $sub = $this->uniqueSubdomain();
         $this->submitOnboarding($user, ['subdomain' => $sub, 'store_name' => 'Artisan Breads']);
 
-        $tenant = \App\Models\Tenant::find($sub);
+        $tenant = Tenant::find($sub);
         $tenant->run(function () {
             $this->assertDatabaseHas('settings', [
                 'key' => 'store_name',
@@ -185,7 +188,7 @@ class SignupPipelineTest extends CentralTestCase
         $sub = $this->uniqueSubdomain();
         $this->submitOnboarding($user, ['subdomain' => $sub]);
 
-        $tenant = \App\Models\Tenant::find($sub);
+        $tenant = Tenant::find($sub);
         $tenant->run(function () use ($user) {
             $this->assertDatabaseHas('settings', [
                 'key' => 'store_email',
@@ -245,7 +248,7 @@ class SignupPipelineTest extends CentralTestCase
         $response = $this->submitOnboarding($user, ['subdomain' => $sub]);
 
         $centralDomain = config('tenancy.central_domains.0', 'getkneadit.app');
-        $response->assertRedirect('http://' . $sub . '.' . $centralDomain . '/admin');
+        $response->assertRedirect('http://'.$sub.'.'.$centralDomain.'/admin');
     }
 
     /** @test */
@@ -331,7 +334,7 @@ class SignupPipelineTest extends CentralTestCase
     public function subdomain_is_lowercased(): void
     {
         $user = $this->createUser();
-        $sub = 'MyBaKeRy' . $this->subdomainCounter++;
+        $sub = 'MyBaKeRy'.$this->subdomainCounter++;
         $lower = strtolower($sub);
         $this->createdSubdomains[] = $lower;
 
@@ -361,7 +364,7 @@ class SignupPipelineTest extends CentralTestCase
         $this->submitOnboarding($user, ['subdomain' => $sub]);
 
         $tenant = DB::table('tenants')->where('id', $sub)->first();
-        $trialEnds = \Carbon\Carbon::parse($tenant->trial_ends_at);
+        $trialEnds = Carbon::parse($tenant->trial_ends_at);
 
         $this->assertTrue(
             $trialEnds->isBetween(now()->addDays(29), now()->addDays(31)),
@@ -375,7 +378,7 @@ class SignupPipelineTest extends CentralTestCase
 
     protected function mockTenantWithPlan(string $plan): void
     {
-        $tenant = \App\Models\Tenant::make([
+        $tenant = Tenant::make([
             'id' => "test-{$plan}",
             'name' => 'Test',
             'email' => 'test@example.com',
@@ -390,8 +393,10 @@ class SignupPipelineTest extends CentralTestCase
     {
         $this->mockTenantWithPlan('starter');
 
-        $testClass = new class {
+        $testClass = new class
+        {
             use HasPlanGating;
+
             protected static string $requiredPlan = 'growth';
         };
 
@@ -403,8 +408,10 @@ class SignupPipelineTest extends CentralTestCase
     {
         $this->mockTenantWithPlan('growth');
 
-        $testClass = new class {
+        $testClass = new class
+        {
             use HasPlanGating;
+
             protected static string $requiredPlan = 'growth';
         };
 
@@ -416,8 +423,10 @@ class SignupPipelineTest extends CentralTestCase
     {
         $this->mockTenantWithPlan('pro');
 
-        $testClass = new class {
+        $testClass = new class
+        {
             use HasPlanGating;
+
             protected static string $requiredPlan = 'pro';
         };
 
@@ -429,8 +438,10 @@ class SignupPipelineTest extends CentralTestCase
     {
         $this->mockTenantWithPlan('starter');
 
-        $testClass = new class {
+        $testClass = new class
+        {
             use HasPlanGating;
+
             protected static string $requiredPlan = 'growth';
         };
 
@@ -442,8 +453,10 @@ class SignupPipelineTest extends CentralTestCase
     {
         $this->mockTenantWithPlan('growth');
 
-        $testClass = new class {
+        $testClass = new class
+        {
             use HasPlanGating;
+
             protected static string $requiredPlan = 'growth';
         };
 

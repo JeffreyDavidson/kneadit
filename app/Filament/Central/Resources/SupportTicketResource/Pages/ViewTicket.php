@@ -3,7 +3,6 @@
 namespace App\Filament\Central\Resources\SupportTicketResource\Pages;
 
 use App\Filament\Central\Resources\SupportTicketResource;
-use App\Models\SupportReply;
 use Filament\Resources\Pages\ViewRecord;
 use Livewire\Attributes\Rule;
 

@@ -15,6 +15,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ReviewResource extends Resource
 {
@@ -57,12 +59,12 @@ class ReviewResource extends Resource
         return ['customer_name', 'customer_email'];
     }
 
-    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    public static function getGlobalSearchResultTitle(Model $record): string
     {
         return 'Review by '.$record->customer_name;
     }
 
-    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
             'Rating' => str_repeat('⭐', $record->rating ?? 0),
@@ -70,7 +72,7 @@ class ReviewResource extends Resource
         ];
     }
 
-    public static function getGlobalSearchEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()->with('product');
     }

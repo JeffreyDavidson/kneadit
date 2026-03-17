@@ -12,7 +12,7 @@ class HealthOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $healthPage = new BakeryInsights();
+        $healthPage = new BakeryInsights;
         $stats = $healthPage->getHealthSummaryStats();
 
         return [

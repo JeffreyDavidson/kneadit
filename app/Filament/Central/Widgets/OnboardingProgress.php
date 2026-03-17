@@ -3,10 +3,8 @@
 namespace App\Filament\Central\Widgets;
 
 use App\Models\Tenant;
-use BackedEnum;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\DB;
-use UnitEnum;
 
 class OnboardingProgress extends Widget
 {
@@ -40,16 +38,30 @@ class OnboardingProgress extends Widget
     {
         $count = 0;
 
-        if (!empty($tenant->store_name)) $count++;
-        if (!empty($tenant->store_logo)) $count++;
-        if ($tenant->storefront_enabled) $count++;
-        if (!empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c') $count++;
+        if (! empty($tenant->store_name)) {
+            $count++;
+        }
+        if (! empty($tenant->store_logo)) {
+            $count++;
+        }
+        if ($tenant->storefront_enabled) {
+            $count++;
+        }
+        if (! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c') {
+            $count++;
+        }
 
         try {
             tenancy()->initialize($tenant);
-            if (DB::table('products')->count() > 0) $count++;
-            if (DB::table('categories')->count() > 0) $count++;
-            if (DB::table('orders')->count() > 0) $count++;
+            if (DB::table('products')->count() > 0) {
+                $count++;
+            }
+            if (DB::table('categories')->count() > 0) {
+                $count++;
+            }
+            if (DB::table('orders')->count() > 0) {
+                $count++;
+            }
             tenancy()->end();
         } catch (\Throwable $e) {
             tenancy()->end();

@@ -6,6 +6,7 @@ use App\Mail\HappyBirthday;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\Setting;
+use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -18,7 +19,7 @@ class SendBirthdayEmails extends Command
 
     public function handle(): int
     {
-        $tenants = \App\Models\Tenant::all();
+        $tenants = Tenant::all();
 
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);

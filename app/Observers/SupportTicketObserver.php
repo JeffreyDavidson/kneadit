@@ -11,7 +11,7 @@ class SupportTicketObserver
     {
         AdminAuditLog::log(
             action: 'ticket_opened',
-            description: 'Support ticket opened: ' . $ticket->subject,
+            description: 'Support ticket opened: '.$ticket->subject,
             targetType: 'support_ticket',
             targetId: (string) $ticket->id,
             metadata: [

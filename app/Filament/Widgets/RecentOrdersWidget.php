@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Order;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -48,7 +49,7 @@ class RecentOrdersWidget extends BaseWidget
             ])
             ->paginated(false)
             ->headerActions([
-                \Filament\Actions\Action::make('viewAll')
+                Action::make('viewAll')
                     ->label('View All →')
                     ->url(route('filament.admin.resources.orders.index'))
                     ->color('gray'),

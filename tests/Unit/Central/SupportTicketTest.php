@@ -2,8 +2,9 @@
 
 namespace Tests\Unit\Central;
 
-use App\Models\SupportTicket;
 use App\Models\SupportReply;
+use App\Models\SupportTicket;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Tests\CentralTestCase;
 
 class SupportTicketTest extends CentralTestCase
@@ -63,6 +64,6 @@ class SupportTicketTest extends CentralTestCase
     {
         $ticket = SupportTicket::create(['subject' => 'T', 'body' => 'B', 'tenant_id' => 't1']);
 
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $ticket->tenant());
+        $this->assertInstanceOf(BelongsTo::class, $ticket->tenant());
     }
 }

@@ -10,7 +10,7 @@ class RecipeSeeder extends Seeder
 {
     public function run(): void
     {
-        if (\App\Models\Recipe::count() > 0) {
+        if (Recipe::count() > 0) {
             return;
         }
 

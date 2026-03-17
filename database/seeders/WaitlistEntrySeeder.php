@@ -11,7 +11,7 @@ class WaitlistEntrySeeder extends Seeder
 {
     public function run(): void
     {
-        if (\App\Models\WaitlistEntry::count() > 0) {
+        if (WaitlistEntry::count() > 0) {
             return;
         }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Stripe\StripeClient;
 
 class StripeConnectController extends Controller
 {
@@ -20,7 +21,7 @@ class StripeConnectController extends Controller
         }
 
         // Create a Stripe Connect account for this tenant
-        $stripe = new \Stripe\StripeClient(config('cashier.secret'));
+        $stripe = new StripeClient(config('cashier.secret'));
 
         // Check if tenant already has a connect account
         $connectId = Setting::get('stripe_connect_id');
@@ -63,7 +64,7 @@ class StripeConnectController extends Controller
         }
 
         try {
-            $stripe = new \Stripe\StripeClient(config('cashier.secret'));
+            $stripe = new StripeClient(config('cashier.secret'));
             $account = $stripe->accounts->retrieve($connectId);
 
             return [

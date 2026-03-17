@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -20,13 +21,13 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class Onboarding extends Page
 {
@@ -51,6 +52,7 @@ class Onboarding extends Page
 
     // Step 1: Welcome
     public ?string $subdomain = '';
+
     public ?string $bakery_name = '';
 
     public ?string $owner_name = '';
@@ -454,7 +456,7 @@ class Onboarding extends Page
                     ])
                     ->afterValidation(function () {
                         if (! $this->delivery_enabled && ! $this->pickup_enabled) {
-                            throw \Illuminate\Validation\ValidationException::withMessages([
+                            throw ValidationException::withMessages([
                                 'pickup_enabled' => 'You must enable at least one option: pickup or delivery.',
                             ]);
                         }
@@ -488,7 +490,7 @@ class Onboarding extends Page
                                 Section::make('Stripe Connection')
                                     ->description('Connect your own Stripe account — payments go directly to you, not us.')
                                     ->schema([
-                                        \Filament\Schemas\Components\View::make('filament.pages.stripe-connect-status'),
+                                        View::make('filament.pages.stripe-connect-status'),
                                     ])
                                     ->visible(fn (Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
 

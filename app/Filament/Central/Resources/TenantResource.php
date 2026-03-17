@@ -2,30 +2,33 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Filament\Central\Resources\TenantResource\Pages\ListTenants;
+use App\Filament\Central\Resources\TenantResource\Pages\ViewTenant;
+use App\Filament\Central\Resources\TenantResource\RelationManagers\NotesRelationManager;
 use App\Models\Tenant;
 use BackedEnum;
 use Filament\Actions;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
 
 class TenantResource extends Resource
@@ -39,7 +42,7 @@ class TenantResource extends Resource
         return ['store_name', 'name', 'email', 'id'];
     }
 
-    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
             'Owner' => $record->name,
@@ -143,7 +146,7 @@ class TenantResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->copyable()
-                    ->description(fn (Tenant $record) => $record->id . '.getkneadit.app'),
+                    ->description(fn (Tenant $record) => $record->id.'.getkneadit.app'),
 
                 TextColumn::make('store_name')
                     ->label('Bakery')
@@ -219,7 +222,7 @@ class TenantResource extends Resource
                     Actions\Action::make('visit')
                         ->label('Visit Storefront')
                         ->icon('heroicon-o-arrow-top-right-on-square')
-                        ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
+                        ->url(fn (Tenant $record) => 'https://'.$record->id.'.getkneadit.app')
                         ->openUrlInNewTab(),
                 ]),
             ])
@@ -290,8 +293,8 @@ class TenantResource extends Resource
                                 ->placeholder('Not set'),
                             TextEntry::make('id')
                                 ->label('Subdomain URL')
-                                ->formatStateUsing(fn (string $state) => $state . '.getkneadit.app')
-                                ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
+                                ->formatStateUsing(fn (string $state) => $state.'.getkneadit.app')
+                                ->url(fn (Tenant $record) => 'https://'.$record->id.'.getkneadit.app')
                                 ->openUrlInNewTab(),
                             TextEntry::make('custom_domain')
                                 ->label('Custom Domain')
@@ -366,15 +369,15 @@ class TenantResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Central\Resources\TenantResource\RelationManagers\NotesRelationManager::class,
+            NotesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Central\Resources\TenantResource\Pages\ListTenants::route('/'),
-            'view' => \App\Filament\Central\Resources\TenantResource\Pages\ViewTenant::route('/{record}'),
+            'index' => ListTenants::route('/'),
+            'view' => ViewTenant::route('/{record}'),
         ];
     }
 }

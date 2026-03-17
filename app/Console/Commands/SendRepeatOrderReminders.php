@@ -82,7 +82,7 @@ class SendRepeatOrderReminders extends Command
         return Customer::whereHas('orders', fn ($q) => $q->where('payment_status', 'paid'))
             ->with(['orders' => fn ($q) => $q->where('payment_status', 'paid')->latest('delivery_date')])
             ->get()
-            ->map(function ($customer) use ($cutoffDate, $reminderDays) {
+            ->map(function ($customer) use ($cutoffDate) {
                 $lastOrder = $customer->orders->first();
 
                 if (! $lastOrder || $lastOrder->delivery_date->isAfter($cutoffDate)) {

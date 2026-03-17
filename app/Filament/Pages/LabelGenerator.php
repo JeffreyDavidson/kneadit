@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Setting;
 use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
+use Illuminate\Support\Collection;
 
 class LabelGenerator extends Page
 {
@@ -60,7 +61,7 @@ class LabelGenerator extends Page
         $this->showPreview = true;
     }
 
-    public function getProducts(): \Illuminate\Support\Collection
+    public function getProducts(): Collection
     {
         return Product::where('is_active', true)
             ->orderBy('name')
@@ -68,7 +69,7 @@ class LabelGenerator extends Page
             ->map(fn ($p) => ['id' => $p->id, 'name' => $p->name, 'price' => $p->price]);
     }
 
-    public function getSelectedProductModels(): \Illuminate\Support\Collection
+    public function getSelectedProductModels(): Collection
     {
         return Product::whereIn('id', $this->selectedProducts)->with('recipe')->get();
     }

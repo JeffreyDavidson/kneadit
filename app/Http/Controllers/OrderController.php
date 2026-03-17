@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewOrderMessage;
 use App\Models\BlockedDate;
 use App\Models\BusinessSchedule;
 use App\Models\CapacityLimit;
@@ -12,10 +13,12 @@ use App\Models\CustomerFavorite;
 use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Services\GiftCardService;
 use App\Services\StripeCheckoutService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class OrderController extends Controller
@@ -206,7 +209,7 @@ class OrderController extends Controller
             $stripeService = new StripeCheckoutService;
             $session = $stripeService->createCheckoutSession(
                 $order,
-                route('order.stripe.success', $order) . '?session_id={CHECKOUT_SESSION_ID}',
+                route('order.stripe.success', $order).'?session_id={CHECKOUT_SESSION_ID}',
                 route('order.stripe.cancel', $order),
             );
 
@@ -291,7 +294,7 @@ class OrderController extends Controller
 
             // Check capacity
             $maxOrders = $schedule->max_orders
-                ?? (int) \App\Models\Setting::get('default_daily_capacity', 100);
+                ?? (int) Setting::get('default_daily_capacity', 100);
             $currentOrders = Order::whereDate('delivery_date', $dateStr)
                 ->whereNotIn('status', ['cancelled'])
                 ->count();
@@ -498,10 +501,10 @@ class OrderController extends Controller
         ]);
 
         // Email the baker
-        $storeEmail = \App\Models\Setting::get('store_email');
+        $storeEmail = Setting::get('store_email');
         if ($storeEmail) {
-            \Illuminate\Support\Facades\Mail::to($storeEmail)
-                ->send(new \App\Mail\NewOrderMessage($message));
+            Mail::to($storeEmail)
+                ->send(new NewOrderMessage($message));
         }
 
         return response()->json(['success' => true, 'message' => $message]);

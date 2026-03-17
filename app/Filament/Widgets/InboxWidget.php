@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Pages\Messages;
 use App\Models\PlatformMessage;
 use Filament\Facades\Filament;
 use Filament\Widgets\Widget;
@@ -31,6 +32,6 @@ class InboxWidget extends Widget
 
     public function getMessagesUrl(): string
     {
-        return \App\Filament\Pages\Messages::getUrl();
+        return Messages::getUrl();
     }
 }

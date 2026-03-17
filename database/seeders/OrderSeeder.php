@@ -14,7 +14,7 @@ class OrderSeeder extends Seeder
 {
     public function run(): void
     {
-        if (\App\Models\Order::count() > 0) {
+        if (Order::count() > 0) {
             return;
         }
 

@@ -15,6 +15,8 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class OrderResource extends Resource
 {
@@ -55,12 +57,12 @@ class OrderResource extends Resource
         return ['customer.name', 'customer.email', 'status'];
     }
 
-    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    public static function getGlobalSearchResultTitle(Model $record): string
     {
         return 'Order #'.$record->order_number;
     }
 
-    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
             'Customer' => $record->customer?->name ?? 'N/A',
@@ -69,7 +71,7 @@ class OrderResource extends Resource
         ];
     }
 
-    public static function getGlobalSearchEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()->with('customer');
     }

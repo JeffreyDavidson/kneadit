@@ -13,7 +13,7 @@ class ActivityPageTest extends CentralTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->page = new Activity();
+        $this->page = new Activity;
     }
 
     public function test_get_activities_returns_collection(): void

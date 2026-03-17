@@ -13,6 +13,7 @@ use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class WaitlistEntryResource extends Resource
 {
@@ -48,12 +49,12 @@ class WaitlistEntryResource extends Resource
         return ['customer_email', 'customer_name'];
     }
 
-    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->customer_name ?? $record->customer_email;
     }
 
-    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
             'Email' => $record->customer_email ?? 'N/A',

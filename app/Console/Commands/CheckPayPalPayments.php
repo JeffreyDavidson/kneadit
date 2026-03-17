@@ -64,6 +64,7 @@ class CheckPayPalPayments extends Command
 
             if (! $status) {
                 $this->error("  ✗ Failed to check order #{$order->order_number}");
+
                 continue;
             }
 

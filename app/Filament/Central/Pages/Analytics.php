@@ -3,11 +3,11 @@
 namespace App\Filament\Central\Pages;
 
 use App\Models\Tenant;
+use BackedEnum;
 use Carbon\Carbon;
 use Filament\Pages\Page;
-use BackedEnum;
-use UnitEnum;
 use Illuminate\Support\Facades\DB;
+use UnitEnum;
 
 class Analytics extends Page
 {

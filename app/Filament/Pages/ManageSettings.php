@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -17,6 +18,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Textarea;
 use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\Toggle;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -67,14 +70,21 @@ class ManageSettings extends Page
     public ?string $paypal_client_secret = '';
 
     public bool $paypal_sandbox = true;
+
     public string $webhook_url = '';
+
     public string $webhook_secret = '';
 
     public ?string $cancellation_policy = '';
+
     public ?string $deposit_policy = '';
+
     public ?string $refund_policy = '';
+
     public ?string $pickup_policy = '';
+
     public ?string $additional_terms = '';
+
     public bool $show_policies_on_storefront = false;
 
     public function mount(): void
@@ -190,7 +200,7 @@ class ManageSettings extends Page
                 Section::make('Payment Methods')
                     ->description('Configure how you collect payments from customers')
                     ->schema([
-                        \Filament\Forms\Components\CheckboxList::make('payment_methods')
+                        CheckboxList::make('payment_methods')
                             ->label('Accepted Payment Methods')
                             ->options([
                                 'stripe' => 'Stripe — Credit cards, Apple Pay, Google Pay',
@@ -201,8 +211,8 @@ class ManageSettings extends Page
                             ->live()
                             ->columnSpanFull(),
 
-                        \Filament\Schemas\Components\View::make('filament.pages.stripe-connect-status')
-                            ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
+                        View::make('filament.pages.stripe-connect-status')
+                            ->visible(fn (Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
 
                         Grid::make(2)
                             ->schema([
@@ -213,12 +223,12 @@ class ManageSettings extends Page
                                     ->label('PayPal Client Secret')
                                     ->password(),
                             ])
-                            ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
+                            ->visible(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
 
                         Toggle::make('paypal_sandbox')
                             ->label('PayPal Sandbox Mode')
                             ->helperText('Enable to test payments without real money')
-                            ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
+                            ->visible(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
                     ]),
 
                 // Compliance Section

@@ -11,7 +11,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
         $sharedBase = config('tenancy.tenant_db_path');
 
         if ($sharedBase) {
-            return $sharedBase . '/' . $name;
+            return $sharedBase.'/'.$name;
         }
 
         return database_path($name);

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 
 class DirectoryController extends Controller
 {
     public function index(Request $request)
     {
-        $bakeries = \App\Models\Tenant::where('is_active', true)
+        $bakeries = Tenant::where('is_active', true)
             ->where('storefront_enabled', true)
             ->with('domains')
             ->get()

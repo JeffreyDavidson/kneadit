@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\Setting;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -10,6 +11,6 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        \App\Models\Setting::flushCache();
+        Setting::flushCache();
     }
 }

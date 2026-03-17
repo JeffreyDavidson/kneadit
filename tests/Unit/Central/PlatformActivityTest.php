@@ -3,6 +3,7 @@
 namespace Tests\Unit\Central;
 
 use App\Models\PlatformActivity;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Tests\CentralTestCase;
 
 class PlatformActivityTest extends CentralTestCase
@@ -41,6 +42,6 @@ class PlatformActivityTest extends CentralTestCase
     {
         $activity = PlatformActivity::log('test', null, 'desc');
 
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $activity->tenant());
+        $this->assertInstanceOf(BelongsTo::class, $activity->tenant());
     }
 }

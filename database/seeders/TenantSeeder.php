@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
@@ -17,7 +19,7 @@ class TenantSeeder extends Seeder
         $tenant = tenant();
 
         // Create admin user from tenant data
-        \App\Models\User::firstOrCreate(
+        User::firstOrCreate(
             ['email' => $tenant->email],
             [
                 'name' => $tenant->name,
@@ -27,8 +29,8 @@ class TenantSeeder extends Seeder
         );
 
         // Set store identity from tenant data
-        \App\Models\Setting::set('store_name', $tenant->store_name);
-        \App\Models\Setting::set('store_email', $tenant->email);
+        Setting::set('store_name', $tenant->store_name);
+        Setting::set('store_email', $tenant->email);
 
         // Run the standard seeders
         $this->call([

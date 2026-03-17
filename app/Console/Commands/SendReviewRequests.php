@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Mail\ReviewRequest;
 use App\Models\Order;
 use App\Models\Setting;
+use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
@@ -16,7 +17,7 @@ class SendReviewRequests extends Command
 
     public function handle(): int
     {
-        $tenants = \App\Models\Tenant::all();
+        $tenants = Tenant::all();
 
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);

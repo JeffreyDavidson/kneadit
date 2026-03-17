@@ -9,7 +9,7 @@ class BakeryInsightsTest extends CentralTestCase
 {
     public function test_page_class_has_required_methods(): void
     {
-        $page = new BakeryInsights();
+        $page = new BakeryInsights;
 
         $this->assertTrue(method_exists($page, 'getTenantHealthData'));
         $this->assertTrue(method_exists($page, 'getAlerts'));
@@ -19,7 +19,7 @@ class BakeryInsightsTest extends CentralTestCase
 
     public function test_health_summary_returns_expected_keys(): void
     {
-        $page = new BakeryInsights();
+        $page = new BakeryInsights;
         $stats = $page->getHealthSummaryStats();
 
         $this->assertArrayHasKey('average', $stats);
@@ -31,7 +31,7 @@ class BakeryInsightsTest extends CentralTestCase
 
     public function test_get_next_plan_returns_correct_upgrades(): void
     {
-        $page = new BakeryInsights();
+        $page = new BakeryInsights;
 
         $this->assertEquals('Growth', $page->getNextPlan('starter'));
         $this->assertEquals('Pro', $page->getNextPlan('growth'));

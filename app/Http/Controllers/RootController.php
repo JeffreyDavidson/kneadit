@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 
 class RootController extends Controller
@@ -29,12 +30,12 @@ class RootController extends Controller
             // If storefront is disabled but no external URL, show a minimal page
             if ($tenant && ! $tenant->storefront_enabled) {
                 return response()->view('storefront-disabled', [
-                    'storeName' => \App\Models\Setting::get('store_name', $tenant->store_name ?? 'Our Bakery'),
+                    'storeName' => Setting::get('store_name', $tenant->store_name ?? 'Our Bakery'),
                     'tenant' => $tenant,
                 ]);
             }
 
-            return app(\App\Http\Controllers\StorefrontController::class)->home();
+            return app(StorefrontController::class)->home();
         });
     }
 }

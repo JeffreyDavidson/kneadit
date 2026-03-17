@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\Onboarding;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -23,7 +24,7 @@ class PaymentMethodsTest extends TestCase
     /** @test */
     public function payment_step_stores_payment_methods_as_json_array(): void
     {
-        $page = new \App\Filament\Pages\Onboarding;
+        $page = new Onboarding;
         $page->payment_methods = ['cash', 'paypal', 'stripe'];
         $page->paypal_client_id = 'test_id';
         $page->paypal_client_secret = 'test_secret';
@@ -45,7 +46,7 @@ class PaymentMethodsTest extends TestCase
     /** @test */
     public function payment_step_sets_legacy_payment_method_to_first_value(): void
     {
-        $page = new \App\Filament\Pages\Onboarding;
+        $page = new Onboarding;
         $page->payment_methods = ['stripe', 'cash'];
         $page->paypal_client_id = '';
         $page->paypal_client_secret = '';
@@ -60,7 +61,7 @@ class PaymentMethodsTest extends TestCase
     /** @test */
     public function payment_step_defaults_to_cash_when_empty(): void
     {
-        $page = new \App\Filament\Pages\Onboarding;
+        $page = new Onboarding;
         $page->payment_methods = [];
         $page->paypal_client_id = '';
         $page->paypal_client_secret = '';
@@ -75,7 +76,7 @@ class PaymentMethodsTest extends TestCase
     /** @test */
     public function payment_methods_property_defaults_to_cash(): void
     {
-        $page = new \App\Filament\Pages\Onboarding;
+        $page = new Onboarding;
 
         $this->assertEquals(['cash'], $page->payment_methods);
     }

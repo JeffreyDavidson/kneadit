@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class EnsureStorefrontEnabled
 
             // Otherwise show disabled page
             return response()->view('storefront-disabled', [
-                'storeName' => \App\Models\Setting::get('store_name', $tenant->store_name ?? 'Our Bakery'),
+                'storeName' => Setting::get('store_name', $tenant->store_name ?? 'Our Bakery'),
                 'tenant' => $tenant,
             ]);
         }

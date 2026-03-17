@@ -5,9 +5,14 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\StorefrontApiController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\ImpersonateController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StorefrontController;
+use App\Http\Controllers\StripeConnectController;
+use App\Http\Middleware\EnsureStorefrontEnabled;
+use App\Http\Middleware\TrackPageView;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -36,11 +41,11 @@ Route::middleware([
     Route::get('/icons/icon-{size}.png', [StorefrontController::class, 'appIcon'])->name('app.icon');
 
     // Impersonation token consumer (from central admin)
-    Route::get('/impersonate/{token}', [\App\Http\Controllers\ImpersonateController::class, 'consume'])
+    Route::get('/impersonate/{token}', [ImpersonateController::class, 'consume'])
         ->name('impersonate.consume');
 
     // Stripe Connect OAuth
-    Route::get('/stripe/connect', [\App\Http\Controllers\StripeConnectController::class, 'redirect'])
+    Route::get('/stripe/connect', [StripeConnectController::class, 'redirect'])
         ->middleware('auth')
         ->name('stripe.connect');
 
@@ -56,7 +61,7 @@ Route::middleware([
 
     // Storefront routes — only accessible when storefront is enabled
     // When disabled, these redirect to the external website or show a minimal page
-    Route::middleware([\App\Http\Middleware\EnsureStorefrontEnabled::class, \App\Http\Middleware\TrackPageView::class])->group(function () {
+    Route::middleware([EnsureStorefrontEnabled::class, TrackPageView::class])->group(function () {
         Route::get('/menu', [StorefrontController::class, 'menu'])->name('storefront.menu');
         Route::get('/order', [OrderController::class, 'index'])->name('order.create');
         Route::post('/order', [OrderController::class, 'store'])->name('order.store')->middleware('throttle:10,1');
@@ -127,7 +132,7 @@ Route::middleware([
 
     // Tenant Storefront API (JSON, no CSRF)
     Route::prefix('api')
-        ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+        ->withoutMiddleware(VerifyCsrfToken::class)
         ->group(function () {
             // Read endpoints — generous limit
             Route::middleware('throttle:60,1')->group(function () {

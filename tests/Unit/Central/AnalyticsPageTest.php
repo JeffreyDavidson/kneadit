@@ -3,18 +3,16 @@
 namespace Tests\Unit\Central;
 
 use App\Filament\Central\Pages\Analytics;
-use App\Models\Tenant;
 use Tests\CentralTestCase;
 
 class AnalyticsPageTest extends CentralTestCase
 {
-
     private Analytics $page;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->page = new Analytics();
+        $this->page = new Analytics;
     }
 
     public function test_get_signups_by_month_returns_12_months(): void
