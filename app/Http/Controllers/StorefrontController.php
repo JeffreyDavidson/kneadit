@@ -4,18 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
 use App\Models\Category;
-use App\Models\CateringInquiry;
-use App\Models\Customer;
 use App\Models\CustomerFavorite;
-use App\Models\CustomerPhoto;
-use App\Models\LoyaltyReward;
-use App\Models\Order;
-use App\Models\Product;
 use App\Models\ProductWaitlist;
 use App\Models\Review;
 use App\Models\Setting;
-use App\Models\Survey;
-use App\Models\SurveyResponse;
 use App\Services\GiftCardService;
 use Illuminate\Http\Request;
 
@@ -61,44 +53,6 @@ class StorefrontController extends Controller
         $totalReviews = Review::where('is_approved', true)->count();
 
         return view('reviews', compact('reviews', 'avgRating', 'totalReviews'));
-    }
-
-    public function rewards()
-    {
-        try {
-            $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
-        } catch (\Exception $e) {
-            $rewards = collect();
-        }
-        $programName = Setting::get('loyalty_program_name', 'Rewards');
-        $pointsPerDollar = Setting::get('loyalty_points_per_dollar', '10');
-        $loyaltyEnabled = Setting::get('loyalty_enabled', '1') === '1';
-
-        return view('loyalty', compact('rewards', 'programName', 'pointsPerDollar', 'loyaltyEnabled'));
-    }
-
-    public function checkRewards(Request $request)
-    {
-        $request->validate(['email' => 'required|email']);
-
-        $customer = Customer::where('email', $request->email)->first();
-        try {
-            $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
-        } catch (\Exception $e) {
-            $rewards = collect();
-        }
-        $programName = Setting::get('loyalty_program_name', 'Rewards');
-        $pointsPerDollar = Setting::get('loyalty_points_per_dollar', '10');
-        $loyaltyEnabled = Setting::get('loyalty_enabled', '1') === '1';
-
-        $totalPoints = $customer ? $customer->total_points : 0;
-        $lifetimeEarned = $customer ? $customer->lifetime_points_earned : 0;
-        $history = $customer ? $customer->loyaltyPoints()->latest('created_at')->limit(20)->get() : collect();
-
-        return view('loyalty', compact(
-            'rewards', 'programName', 'pointsPerDollar', 'loyaltyEnabled',
-            'customer', 'totalPoints', 'lifetimeEarned', 'history'
-        ));
     }
 
     public function getFavorites(Request $request)
@@ -242,85 +196,6 @@ class StorefrontController extends Controller
         ]);
     }
 
-    public function gallery()
-    {
-        $photos = CustomerPhoto::approved()
-            ->with('product')
-            ->orderByDesc('is_featured')
-            ->latest()
-            ->paginate(18);
-
-        $products = Product::where('is_active', true)->orderBy('name')->get();
-
-        return view('gallery', compact('photos', 'products'));
-    }
-
-    public function submitPhoto(Request $request)
-    {
-        $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'caption' => 'nullable|string|max:1000',
-            'product_id' => 'nullable|exists:products,id',
-        ]);
-
-        $path = $request->file('photo')->store('customer-photos', 'public');
-
-        CustomerPhoto::create([
-            'customer_name' => strip_tags($request->customer_name),
-            'customer_email' => $request->customer_email,
-            'caption' => $request->caption ? strip_tags($request->caption) : null,
-            'photo_path' => $path,
-            'product_id' => $request->product_id,
-        ]);
-
-        return redirect()->route('storefront.gallery')
-            ->with('success', 'Thank you! Your photo has been submitted and will appear after approval.');
-    }
-
-    public function submitReview(Order $order, Request $request)
-    {
-        $order->load(['customer', 'orderItems.product']);
-        $storeName = Setting::get('store_name', 'Our Bakery');
-        $prefilledRating = $request->query('rating');
-
-        return view('submit-review', compact('order', 'storeName', 'prefilledRating'));
-    }
-
-    public function storeReview(Order $order, Request $request)
-    {
-        $validated = $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:2000',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-        ]);
-
-        $photoPath = null;
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('review-photos', 'public');
-        }
-
-        Review::create([
-            'customer_name' => $order->customer->name ?? 'Customer',
-            'customer_email' => $order->customer->email ?? '',
-            'order_id' => $order->id,
-            'rating' => $validated['rating'],
-            'comment' => isset($validated['comment']) ? strip_tags($validated['comment']) : null,
-            'photo_path' => $photoPath,
-            'is_approved' => false,
-        ]);
-
-        $storeName = Setting::get('store_name', 'Our Bakery');
-
-        return view('submit-review', [
-            'order' => $order,
-            'storeName' => $storeName,
-            'prefilledRating' => null,
-            'success' => true,
-        ]);
-    }
-
     public function blog()
     {
         $categories = [
@@ -378,91 +253,6 @@ class StorefrontController extends Controller
         return response()
             ->view('blog.feed', compact('posts', 'storeName'))
             ->header('Content-Type', 'application/rss+xml; charset=UTF-8');
-    }
-
-    public function catering()
-    {
-        $cateringPhotos = CustomerPhoto::where('caption', 'like', '%catering%')
-            ->where('is_approved', true)
-            ->latest()
-            ->take(8)
-            ->get();
-
-        return view('catering', compact('cateringPhotos'));
-    }
-
-    public function submitCateringInquiry(Request $request)
-    {
-        $minimumGuests = (int) Setting::get('catering_minimum_guests', '10');
-        $leadTimeDays = (int) Setting::get('catering_lead_time_days', '14');
-
-        $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'nullable|string|max:255',
-            'event_type' => 'required|in:wedding,corporate,birthday,holiday,other',
-            'event_date' => 'required|date|after_or_equal:'.now()->addDays($leadTimeDays)->format('Y-m-d'),
-            'guest_count' => 'required|integer|min:'.$minimumGuests,
-            'budget' => 'nullable|string|max:255',
-            'details' => 'required|string',
-            'dietary_requirements' => 'nullable|string',
-            'venue_address' => 'nullable|string',
-        ]);
-
-        $validated['details'] = strip_tags($validated['details']);
-        if (isset($validated['budget'])) {
-            $validated['budget'] = strip_tags($validated['budget']);
-        }
-        if (isset($validated['dietary_requirements'])) {
-            $validated['dietary_requirements'] = strip_tags($validated['dietary_requirements']);
-        }
-        if (isset($validated['venue_address'])) {
-            $validated['venue_address'] = strip_tags($validated['venue_address']);
-        }
-
-        CateringInquiry::create($validated);
-
-        return redirect()->route('storefront.catering')
-            ->with('success', 'Thank you for your inquiry! We\'ll review your request and get back to you with a custom quote soon.');
-    }
-
-    public function survey(Survey $survey)
-    {
-        if (! $survey->is_active) {
-            abort(404);
-        }
-
-        return view('survey', compact('survey'));
-    }
-
-    public function submitSurvey(Request $request, Survey $survey)
-    {
-        if (! $survey->is_active) {
-            abort(404);
-        }
-
-        $request->validate([
-            'customer_name' => 'nullable|string|max:255',
-            'customer_email' => 'nullable|email|max:255',
-            'answers' => 'required|array',
-        ]);
-
-        $sanitizedAnswers = array_map(
-            fn ($answer) => is_string($answer) ? strip_tags($answer) : $answer,
-            array_values($request->answers)
-        );
-
-        SurveyResponse::create([
-            'survey_id' => $survey->id,
-            'customer_name' => $request->customer_name ? strip_tags($request->customer_name) : null,
-            'customer_email' => $request->customer_email,
-            'answers' => $sanitizedAnswers,
-            'created_at' => now(),
-        ]);
-
-        $survey->increment('responses_count');
-
-        return redirect()->route('storefront.survey', $survey)->with('survey_submitted', true);
     }
 
     public function joinProductWaitlist(Request $request)
