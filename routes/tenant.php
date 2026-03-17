@@ -8,6 +8,11 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\ImpersonateController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Storefront\CateringController;
+use App\Http\Controllers\Storefront\GalleryController;
+use App\Http\Controllers\Storefront\LoyaltyController;
+use App\Http\Controllers\Storefront\ReviewController;
+use App\Http\Controllers\Storefront\SurveyController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\StripeConnectController;
 use App\Http\Middleware\EnsureStorefrontEnabled;
@@ -70,8 +75,8 @@ Route::middleware([
         Route::get('/order/stripe/cancel/{order}', [OrderController::class, 'stripeCancel'])->name('order.stripe.cancel');
         Route::get('/about', [StorefrontController::class, 'about'])->name('storefront.about');
         Route::get('/reviews', [StorefrontController::class, 'reviews'])->name('storefront.reviews');
-        Route::get('/gallery', [StorefrontController::class, 'gallery'])->name('storefront.gallery');
-        Route::post('/gallery', [StorefrontController::class, 'submitPhoto'])->name('gallery.submit');
+        Route::get('/gallery', [GalleryController::class, 'gallery'])->name('storefront.gallery');
+        Route::post('/gallery', [GalleryController::class, 'submitPhoto'])->name('gallery.submit');
         Route::get('/track', [OrderController::class, 'track'])->name('order.track');
         Route::post('/track', [OrderController::class, 'trackLookup'])->name('order.track.lookup');
 
@@ -91,8 +96,8 @@ Route::middleware([
         Route::get('/availability', [OrderController::class, 'availability'])->name('order.availability');
 
         // Loyalty rewards
-        Route::get('/rewards', [StorefrontController::class, 'rewards'])->name('storefront.rewards');
-        Route::post('/rewards/check', [StorefrontController::class, 'checkRewards'])->name('rewards.check');
+        Route::get('/rewards', [LoyaltyController::class, 'rewards'])->name('storefront.rewards');
+        Route::post('/rewards/check', [LoyaltyController::class, 'checkRewards'])->name('rewards.check');
 
         // Gift Cards
         Route::get('/gift-cards', [StorefrontController::class, 'giftCards'])->name('storefront.gift-cards');
@@ -110,8 +115,8 @@ Route::middleware([
         Route::post('/favorites/toggle', [StorefrontController::class, 'toggleFavorite'])->name('favorites.toggle');
 
         // Catering
-        Route::get('/catering', [StorefrontController::class, 'catering'])->name('storefront.catering');
-        Route::post('/catering', [StorefrontController::class, 'submitCateringInquiry'])->name('catering.submit');
+        Route::get('/catering', [CateringController::class, 'catering'])->name('storefront.catering');
+        Route::post('/catering', [CateringController::class, 'submitCateringInquiry'])->name('catering.submit');
 
         // Blog
         Route::get('/blog', [StorefrontController::class, 'blog'])->name('storefront.blog');
@@ -119,12 +124,12 @@ Route::middleware([
         Route::get('/blog/{slug}', [StorefrontController::class, 'blogPost'])->name('storefront.blog.show');
 
         // Review submission (from email link)
-        Route::get('/review/{order}', [StorefrontController::class, 'submitReview'])->name('storefront.submit-review');
-        Route::post('/review/{order}', [StorefrontController::class, 'storeReview'])->name('storefront.store-review');
+        Route::get('/review/{order}', [ReviewController::class, 'submitReview'])->name('storefront.submit-review');
+        Route::post('/review/{order}', [ReviewController::class, 'storeReview'])->name('storefront.store-review');
 
         // Surveys
-        Route::get('/survey/{survey}', [StorefrontController::class, 'survey'])->name('storefront.survey');
-        Route::post('/survey/{survey}', [StorefrontController::class, 'submitSurvey'])->name('survey.submit');
+        Route::get('/survey/{survey}', [SurveyController::class, 'survey'])->name('storefront.survey');
+        Route::post('/survey/{survey}', [SurveyController::class, 'submitSurvey'])->name('survey.submit');
 
         // Product waitlist
         Route::post('/waitlist/product', [StorefrontController::class, 'joinProductWaitlist'])->name('product-waitlist.join');
