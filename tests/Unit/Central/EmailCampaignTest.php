@@ -2,9 +2,7 @@
 
 use App\Models\EmailCampaign;
 use Carbon\Carbon;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
+beforeEach(fn () => setUpCentralTest());
 
 test('can create campaign', function () {
     $campaign = EmailCampaign::create([

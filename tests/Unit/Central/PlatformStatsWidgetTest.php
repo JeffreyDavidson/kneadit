@@ -2,9 +2,7 @@
 
 use App\Models\SupportTicket;
 use App\Models\Tenant;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
+beforeEach(fn () => setUpCentralTest());
 
 test('mrr calculation with different plans', function () {
     $this->createTenant(['id' => 'bakery1', 'name' => 'B1', 'email' => 'b1@test.com', 'plan' => 'starter', 'is_active' => true]);

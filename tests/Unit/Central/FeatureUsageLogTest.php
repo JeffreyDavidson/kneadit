@@ -1,9 +1,7 @@
 <?php
 
 use App\Models\FeatureUsageLog;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
+beforeEach(fn () => setUpCentralTest());
 
 test('track creates new record', function () {
     $log = FeatureUsageLog::track('tenant-1', 'recipe_import');

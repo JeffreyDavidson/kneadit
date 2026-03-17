@@ -1,9 +1,7 @@
 <?php
 
 use App\Models\PlatformAnnouncement;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
+beforeEach(fn () => setUpCentralTest());
 
 test('can create announcement', function () {
     $ann = PlatformAnnouncement::create([

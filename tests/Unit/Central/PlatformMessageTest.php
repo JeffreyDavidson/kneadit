@@ -1,9 +1,7 @@
 <?php
 
 use App\Models\PlatformMessage;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
+beforeEach(fn () => setUpCentralTest());
 
 test('can create message', function () {
     $msg = PlatformMessage::create([

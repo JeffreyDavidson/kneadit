@@ -2,9 +2,7 @@
 
 use App\Models\PlatformActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
+beforeEach(fn () => setUpCentralTest());
 
 test('log creates record', function () {
     $activity = PlatformActivity::log('tenant.created', 'tenant-1', 'A new tenant was created', ['plan' => 'pro']);

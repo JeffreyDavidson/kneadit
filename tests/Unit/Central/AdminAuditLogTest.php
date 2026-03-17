@@ -1,9 +1,7 @@
 <?php
 
 use App\Models\AdminAuditLog;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
+beforeEach(fn () => setUpCentralTest());
 
 test('log creates record', function () {
     $log = AdminAuditLog::log('tenant.suspend', 'Suspended tenant', 'tenant', 'tenant-1', ['reason' => 'abuse']);
