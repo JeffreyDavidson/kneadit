@@ -169,7 +169,7 @@ class StorefrontApiController extends Controller
                 'product_id' => $product->id,
                 'quantity' => $item['quantity'],
                 'unit_price' => $product->price,
-                'special_instructions' => $item['special_instructions'] ?? null,
+                'special_instructions' => isset($item['special_instructions']) ? strip_tags($item['special_instructions']) : null,
             ];
         }
 
@@ -194,7 +194,7 @@ class StorefrontApiController extends Controller
             'delivery_date' => $validated['delivery_date'],
             'delivery_time' => $validated['delivery_time'] ?? null,
             'delivery_address' => $validated['delivery_address'] ?? null,
-            'notes' => $validated['notes'] ?? null,
+            'notes' => isset($validated['notes']) ? strip_tags($validated['notes']) : null,
         ]);
 
         foreach ($itemsData as $itemData) {
@@ -270,6 +270,8 @@ class StorefrontApiController extends Controller
             'comment' => 'required|string|max:2000',
         ]);
 
+        $validated['comment'] = strip_tags($validated['comment']);
+
         $review = Review::create([
             ...$validated,
             'is_approved' => false,
@@ -299,6 +301,9 @@ class StorefrontApiController extends Controller
             'subject' => 'required|string|max:255',
             'message' => 'required|string|max:5000',
         ]);
+
+        $validated['subject'] = strip_tags($validated['subject']);
+        $validated['message'] = strip_tags($validated['message']);
 
         ContactMessage::create($validated);
 
@@ -346,6 +351,10 @@ class StorefrontApiController extends Controller
             'product_id' => 'nullable|exists:products,id',
             'notes' => 'nullable|string|max:1000',
         ]);
+
+        if (isset($validated['notes'])) {
+            $validated['notes'] = strip_tags($validated['notes']);
+        }
 
         $entry = WaitlistEntry::create([
             ...$validated,

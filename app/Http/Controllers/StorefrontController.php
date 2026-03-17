@@ -207,6 +207,10 @@ class StorefrontController extends Controller
             'initial_balance' => 'required|numeric|min:1|max:500',
         ]);
 
+        if (isset($validated['message'])) {
+            $validated['message'] = strip_tags($validated['message']);
+        }
+
         $service = new GiftCardService;
         $card = $service->create($validated);
 
@@ -264,9 +268,9 @@ class StorefrontController extends Controller
         $path = $request->file('photo')->store('customer-photos', 'public');
 
         CustomerPhoto::create([
-            'customer_name' => $request->customer_name,
+            'customer_name' => strip_tags($request->customer_name),
             'customer_email' => $request->customer_email,
-            'caption' => $request->caption,
+            'caption' => $request->caption ? strip_tags($request->caption) : null,
             'photo_path' => $path,
             'product_id' => $request->product_id,
         ]);
@@ -302,7 +306,7 @@ class StorefrontController extends Controller
             'customer_email' => $order->customer->email ?? '',
             'order_id' => $order->id,
             'rating' => $validated['rating'],
-            'comment' => $validated['comment'],
+            'comment' => isset($validated['comment']) ? strip_tags($validated['comment']) : null,
             'photo_path' => $photoPath,
             'is_approved' => false,
         ]);
@@ -405,6 +409,14 @@ class StorefrontController extends Controller
             'venue_address' => 'nullable|string',
         ]);
 
+        $validated['details'] = strip_tags($validated['details']);
+        if (isset($validated['dietary_requirements'])) {
+            $validated['dietary_requirements'] = strip_tags($validated['dietary_requirements']);
+        }
+        if (isset($validated['venue_address'])) {
+            $validated['venue_address'] = strip_tags($validated['venue_address']);
+        }
+
         CateringInquiry::create($validated);
 
         return redirect()->route('storefront.catering')
@@ -432,11 +444,16 @@ class StorefrontController extends Controller
             'answers' => 'required|array',
         ]);
 
+        $sanitizedAnswers = array_map(
+            fn ($answer) => is_string($answer) ? strip_tags($answer) : $answer,
+            array_values($request->answers)
+        );
+
         SurveyResponse::create([
             'survey_id' => $survey->id,
-            'customer_name' => $request->customer_name,
+            'customer_name' => $request->customer_name ? strip_tags($request->customer_name) : null,
             'customer_email' => $request->customer_email,
-            'answers' => array_values($request->answers),
+            'answers' => $sanitizedAnswers,
             'created_at' => now(),
         ]);
 
