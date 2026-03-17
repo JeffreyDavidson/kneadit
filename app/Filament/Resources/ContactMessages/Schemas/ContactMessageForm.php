@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\ContactMessages\Schemas;
 
-use Filament\Components\Textarea;
-use Filament\Components\TextInput;
-use Filament\Components\Toggle;
-use Filament\Layouts\Grid;
-use Filament\Layouts\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class ContactMessageForm

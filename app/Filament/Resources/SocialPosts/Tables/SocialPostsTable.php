@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\SocialPosts\Tables;
 
+use App\Models\SocialPost;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -15,6 +18,7 @@ class SocialPostsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with(['product']))
             ->columns([
                 BadgeColumn::make('platform')
                     ->colors([
@@ -71,6 +75,53 @@ class SocialPostsTable
                     ]),
             ])
             ->recordActions([
+                Action::make('schedule')
+                    ->icon('heroicon-o-calendar')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Schedule Post')
+                    ->modalDescription('Mark this post as scheduled?')
+                    ->action(function (SocialPost $record) {
+                        $record->update(['status' => 'scheduled']);
+                        Notification::make()
+                            ->title('Post scheduled')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (SocialPost $record) => $record->status === 'draft'),
+
+                Action::make('mark_posted')
+                    ->label('Mark Posted')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Mark as Posted')
+                    ->modalDescription('Mark this post as posted?')
+                    ->action(function (SocialPost $record) {
+                        $record->update(['status' => 'posted']);
+                        Notification::make()
+                            ->title('Post marked as posted')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (SocialPost $record) => $record->status === 'scheduled'),
+
+                Action::make('revert_to_draft')
+                    ->label('Revert to Draft')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->modalHeading('Revert to Draft')
+                    ->modalDescription('Move this post back to draft status?')
+                    ->action(function (SocialPost $record) {
+                        $record->update(['status' => 'draft']);
+                        Notification::make()
+                            ->title('Post reverted to draft')
+                            ->warning()
+                            ->send();
+                    })
+                    ->visible(fn (SocialPost $record) => $record->status === 'scheduled'),
+
                 EditAction::make(),
             ])
             ->toolbarActions([
