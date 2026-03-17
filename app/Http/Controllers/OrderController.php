@@ -14,6 +14,7 @@ use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Services\CouponService;
 use App\Services\GiftCardService;
 use App\Services\StripeCheckoutService;
 use Carbon\Carbon;
@@ -51,32 +52,20 @@ class OrderController extends Controller
             'subtotal' => 'required|numeric|min:0',
         ]);
 
-        $code = strtoupper(trim($request->input('code')));
-        $subtotal = (float) $request->input('subtotal');
+        $couponService = new CouponService;
+        $result = $couponService->validate($request->input('code'), (float) $request->input('subtotal'));
 
-        $coupon = Coupon::where('code', $code)->first();
-
-        if (! $coupon) {
-            return response()->json(['error' => 'Coupon not found.'], 422);
+        if (! $result['valid']) {
+            return response()->json(['error' => $result['error']], 422);
         }
 
-        if (! $coupon->isValid()) {
-            return response()->json(['error' => 'This coupon is no longer valid.'], 422);
-        }
-
-        if ($coupon->min_order_amount && $subtotal < (float) $coupon->min_order_amount) {
-            return response()->json([
-                'error' => 'Minimum order of $'.number_format($coupon->min_order_amount, 2).' required for this coupon.',
-            ], 422);
-        }
-
-        $discount = $coupon->calculateDiscount($subtotal);
+        $coupon = $result['coupon'];
 
         return response()->json([
             'success' => true,
             'coupon_id' => $coupon->id,
             'code' => $coupon->code,
-            'discount_amount' => $discount,
+            'discount_amount' => $result['discount'],
             'label' => $coupon->type === 'percentage'
                 ? number_format($coupon->value, 0).'% off'
                 : '$'.number_format($coupon->value, 2).' off',
@@ -136,7 +125,7 @@ class OrderController extends Controller
                 return null;
             }
 
-            // Apply coupon with pessimistic locking
+            // Apply coupon via service (uses lockForUpdate for thread safety)
             if ($couponId) {
                 $coupon = Coupon::lockForUpdate()->find($couponId);
                 if ($coupon && $coupon->isValid()) {
@@ -176,7 +165,8 @@ class OrderController extends Controller
 
             // Increment coupon usage atomically (already locked above)
             if (! empty($calculated['coupon_id'])) {
-                Coupon::where('id', $calculated['coupon_id'])->increment('used_count');
+                $couponService = new CouponService;
+                $couponService->apply($coupon);
             }
 
             // Redeem gift card if provided
@@ -362,9 +352,12 @@ class OrderController extends Controller
         $subtotal = 0;
         $orderItems = [];
 
+        $productIds = array_column($validated['items'], 'product_id');
+        $products = Product::findOrFail($productIds)->keyBy('id');
+
         foreach ($validated['items'] as $item) {
-            $product = Product::findOrFail($item['product_id']);
-            if (! $product->is_active) {
+            $product = $products->get($item['product_id']);
+            if (! $product || ! $product->is_active) {
                 continue;
             }
 
@@ -433,6 +426,7 @@ class OrderController extends Controller
         })
             ->with(['orderItems.product', 'messages'])
             ->latest()
+            ->limit(50)
             ->get();
 
         return view('order-tracking', [

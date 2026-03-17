@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->index('status');
             $table->index('payment_status');
-            $table->index('requested_date');
+            $table->index('delivery_date');
             $table->index('customer_id');
             $table->index('created_at');
         });
@@ -56,7 +56,7 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->dropIndex(['status']);
             $table->dropIndex(['payment_status']);
-            $table->dropIndex(['requested_date']);
+            $table->dropIndex(['delivery_date']);
             $table->dropIndex(['customer_id']);
             $table->dropIndex(['created_at']);
         });
