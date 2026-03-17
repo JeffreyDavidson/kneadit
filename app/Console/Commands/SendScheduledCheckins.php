@@ -7,6 +7,7 @@ use App\Models\ScheduledCheckin;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class SendScheduledCheckins extends Command
 {
@@ -40,14 +41,28 @@ class SendScheduledCheckins extends Command
                     continue;
                 }
 
-                // TODO: Actually send the email here
-                CheckinLog::create([
-                    'checkin_id' => $checkin->id,
-                    'tenant_id' => $tenant->id,
-                    'sent_at' => now(),
-                ]);
+                if (! $tenant->email) {
+                    $this->warn("Skipping tenant {$tenant->id} — no email address.");
 
-                $sentCount++;
+                    continue;
+                }
+
+                try {
+                    Mail::raw($checkin->body, function ($message) use ($tenant, $checkin) {
+                        $message->to($tenant->email)
+                            ->subject($checkin->subject);
+                    });
+
+                    CheckinLog::create([
+                        'checkin_id' => $checkin->id,
+                        'tenant_id' => $tenant->id,
+                        'sent_at' => now(),
+                    ]);
+
+                    $sentCount++;
+                } catch (\Exception $e) {
+                    $this->error("Failed to send checkin to {$tenant->id}: {$e->getMessage()}");
+                }
             }
         }
 
