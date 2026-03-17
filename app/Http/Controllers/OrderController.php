@@ -18,6 +18,7 @@ use App\Services\GiftCardService;
 use App\Services\StripeCheckoutService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -38,15 +39,6 @@ class OrderController extends Controller
         });
 
         return view('order', compact('categories'));
-    }
-
-    public function home()
-    {
-        $categories = Category::with(['products' => function ($q) {
-            $q->where('is_active', true)->orderBy('name');
-        }])->orderBy('sort_order')->get();
-
-        return view('home', compact('categories'));
     }
 
     /**
@@ -135,73 +127,81 @@ class OrderController extends Controller
             return back()->withErrors(['items' => 'No valid items in order.']);
         }
 
-        // Check capacity limits
-        if (! CapacityLimit::isAvailable($validated['delivery_date'])) {
-            return back()->withErrors(['delivery_date' => 'Sorry, this date is fully booked. Please choose another date.']);
-        }
-
-        // Apply coupon if provided
         $couponId = $request->input('coupon_id');
-        $discountAmount = 0;
-        if ($couponId) {
-            $coupon = Coupon::find($couponId);
-            if ($coupon && $coupon->isValid()) {
-                $discountAmount = $coupon->calculateDiscount($calculated['subtotal']);
-                $calculated['discount_amount'] = $discountAmount;
-                $calculated['coupon_id'] = $coupon->id;
-                $calculated['total'] = max(0, $calculated['total'] - $discountAmount);
-            }
-        }
-
-        // Create or update customer
-        $customer = Customer::updateOrCreate(
-            ['email' => $validated['customer_email']],
-            array_filter([
-                'name' => $validated['customer_name'],
-                'phone' => $validated['customer_phone'] ?? null,
-                'birthday' => $validated['customer_birthday'] ?? null,
-            ], fn ($v) => $v !== null)
-        );
-
-        // Create order
-        $order = Order::create([
-            'customer_id' => $customer->id,
-            'order_number' => $this->generateOrderNumber(),
-            'delivery_date' => $validated['delivery_date'],
-            'delivery_time' => $validated['delivery_time'] ?? null,
-            'delivery_type' => $validated['delivery_type'],
-            'delivery_address' => $validated['delivery_address'] ?? null,
-            'subtotal' => $calculated['subtotal'],
-            'delivery_fee' => $calculated['delivery_fee'],
-            'discount_amount' => $calculated['discount_amount'] ?? 0,
-            'coupon_id' => $calculated['coupon_id'] ?? null,
-            'total' => $calculated['total'],
-            'notes' => $validated['notes'] ?? null,
-            'status' => 'pending',
-        ]);
-
-        // Increment coupon usage
-        if (! empty($calculated['coupon_id'])) {
-            Coupon::where('id', $calculated['coupon_id'])->increment('used_count');
-        }
-
-        // Redeem gift card if provided
         $giftCardId = $request->input('gift_card_id');
-        if ($giftCardId) {
-            $giftCard = GiftCard::find($giftCardId);
-            if ($giftCard && $giftCard->isUsable()) {
-                $gcAmount = min((float) $giftCard->current_balance, (float) $order->total);
-                if ($gcAmount > 0) {
-                    $service = new GiftCardService;
-                    $service->redeem($giftCard->code, $gcAmount, $order->id);
-                    $order->update(['total' => max(0, (float) $order->total - $gcAmount)]);
+
+        $order = DB::transaction(function () use ($validated, $calculated, $couponId, $giftCardId) {
+            // Check capacity limits inside transaction for atomicity
+            if (! CapacityLimit::isAvailable($validated['delivery_date'])) {
+                return null;
+            }
+
+            // Apply coupon with pessimistic locking
+            if ($couponId) {
+                $coupon = Coupon::lockForUpdate()->find($couponId);
+                if ($coupon && $coupon->isValid()) {
+                    $discountAmount = $coupon->calculateDiscount($calculated['subtotal']);
+                    $calculated['discount_amount'] = $discountAmount;
+                    $calculated['coupon_id'] = $coupon->id;
+                    $calculated['total'] = max(0, $calculated['total'] - $discountAmount);
                 }
             }
-        }
 
-        // Create order items
-        foreach ($calculated['items'] as $item) {
-            $order->orderItems()->create($item);
+            // Create or update customer
+            $customer = Customer::updateOrCreate(
+                ['email' => $validated['customer_email']],
+                array_filter([
+                    'name' => $validated['customer_name'],
+                    'phone' => $validated['customer_phone'] ?? null,
+                    'birthday' => $validated['customer_birthday'] ?? null,
+                ], fn ($v) => $v !== null)
+            );
+
+            // Create order
+            $order = Order::create([
+                'customer_id' => $customer->id,
+                'order_number' => $this->generateOrderNumber(),
+                'delivery_date' => $validated['delivery_date'],
+                'delivery_time' => $validated['delivery_time'] ?? null,
+                'delivery_type' => $validated['delivery_type'],
+                'delivery_address' => $validated['delivery_address'] ?? null,
+                'subtotal' => $calculated['subtotal'],
+                'delivery_fee' => $calculated['delivery_fee'],
+                'discount_amount' => $calculated['discount_amount'] ?? 0,
+                'coupon_id' => $calculated['coupon_id'] ?? null,
+                'total' => $calculated['total'],
+                'notes' => $validated['notes'] ?? null,
+                'status' => 'pending',
+            ]);
+
+            // Increment coupon usage atomically (already locked above)
+            if (! empty($calculated['coupon_id'])) {
+                Coupon::where('id', $calculated['coupon_id'])->increment('used_count');
+            }
+
+            // Redeem gift card if provided
+            if ($giftCardId) {
+                $giftCard = GiftCard::lockForUpdate()->find($giftCardId);
+                if ($giftCard && $giftCard->isUsable()) {
+                    $gcAmount = min((float) $giftCard->current_balance, (float) $order->total);
+                    if ($gcAmount > 0) {
+                        $service = new GiftCardService;
+                        $service->redeem($giftCard->code, $gcAmount, $order->id);
+                        $order->update(['total' => max(0, (float) $order->total - $gcAmount)]);
+                    }
+                }
+            }
+
+            // Create order items
+            foreach ($calculated['items'] as $item) {
+                $order->orderItems()->create($item);
+            }
+
+            return $order;
+        });
+
+        if (! $order) {
+            return back()->withErrors(['delivery_date' => 'Sorry, this date is fully booked. Please choose another date.']);
         }
 
         // If baker has Stripe Connect enabled and order total > 0, redirect to Stripe Checkout

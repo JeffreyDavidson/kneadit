@@ -45,9 +45,9 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     }
 
     /**
-     * Get or generate a unique referral code for this tenant.
+     * Find an existing referral code or create a new one for this tenant.
      */
-    public function getReferralCodeAttribute(): string
+    public function findOrCreateReferralCode(): string
     {
         $referral = Referral::where('referrer_tenant_id', $this->id)
             ->whereNull('referred_tenant_id')
