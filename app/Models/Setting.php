@@ -14,13 +14,23 @@ class Setting extends Model
         'value',
     ];
 
-    protected static ?array $cache = null;
+    protected static array $cache = [];
+
+    /**
+     * Get the cache key for the current tenant context.
+     */
+    protected static function tenantCacheKey(): string
+    {
+        return tenant() ? tenant()->getTenantKey() : 'central';
+    }
 
     public static function get(string $key, $default = null)
     {
         static::loadAll();
 
-        return static::$cache[$key] ?? $default;
+        $tenantKey = static::tenantCacheKey();
+
+        return static::$cache[$tenantKey][$key] ?? $default;
     }
 
     public static function set(string $key, $value): void
@@ -31,22 +41,26 @@ class Setting extends Model
         );
 
         // Update in-memory cache
-        if (static::$cache !== null) {
-            static::$cache[$key] = $value;
+        $tenantKey = static::tenantCacheKey();
+
+        if (isset(static::$cache[$tenantKey])) {
+            static::$cache[$tenantKey][$key] = $value;
         }
     }
 
     /**
      * Load all settings into memory with a single query.
-     * Called once per request, then serves from memory.
+     * Called once per tenant per request, then serves from memory.
      */
     public static function loadAll(): void
     {
-        if (static::$cache !== null) {
+        $tenantKey = static::tenantCacheKey();
+
+        if (isset(static::$cache[$tenantKey])) {
             return;
         }
 
-        static::$cache = static::pluck('value', 'key')->all();
+        static::$cache[$tenantKey] = static::pluck('value', 'key')->all();
     }
 
     /**
@@ -72,10 +86,10 @@ class Setting extends Model
     }
 
     /**
-     * Clear the in-memory cache (useful for testing or after bulk updates).
+     * Clear the in-memory cache for all tenants (useful for testing or after bulk updates).
      */
     public static function flushCache(): void
     {
-        static::$cache = null;
+        static::$cache = [];
     }
 }

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('product_waitlists', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('customer_email');
             $table->string('customer_name')->nullable();
             $table->timestamp('notified_at')->nullable();
