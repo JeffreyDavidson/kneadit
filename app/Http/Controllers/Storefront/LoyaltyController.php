@@ -26,7 +26,7 @@ class LoyaltyController extends Controller
 
     public function checkRewards(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $request->validate(['email' => ['required', 'email']]);
 
         $customer = Customer::where('email', $request->email)->first();
         try {

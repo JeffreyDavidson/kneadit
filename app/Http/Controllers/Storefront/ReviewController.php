@@ -22,9 +22,9 @@ class ReviewController extends Controller
     public function storeReview(Order $order, Request $request)
     {
         $validated = $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:2000',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['nullable', 'string', 'max:2000'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ]);
 
         $photoPath = null;

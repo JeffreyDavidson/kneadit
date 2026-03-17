@@ -137,20 +137,20 @@ class StorefrontApiController extends Controller
     public function submitOrder(Request $request, OrderService $orderService): JsonResponse
     {
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'required|string|max:50',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.special_instructions' => 'nullable|string|max:500',
-            'delivery_date' => 'required|date|after_or_equal:today',
-            'delivery_time' => 'nullable|string',
-            'delivery_type' => 'nullable|in:pickup,delivery',
-            'delivery_address' => 'nullable|string|max:500',
-            'delivery_tier' => 'nullable|in:under5,5to10,10to15,over15',
-            'notes' => 'nullable|string|max:1000',
-            'coupon_code' => 'nullable|string',
+            'customer_name' => ['required', 'string', 'max:255'],
+            'customer_email' => ['required', 'email', 'max:255'],
+            'customer_phone' => ['required', 'string', 'max:50'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.product_id' => ['required', 'exists:products,id'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.special_instructions' => ['nullable', 'string', 'max:500'],
+            'delivery_date' => ['required', 'date', 'after_or_equal:today'],
+            'delivery_time' => ['nullable', 'string'],
+            'delivery_type' => ['nullable', 'in:pickup,delivery'],
+            'delivery_address' => ['nullable', 'string', 'max:500'],
+            'delivery_tier' => ['nullable', 'in:under5,5to10,10to15,over15'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+            'coupon_code' => ['nullable', 'string'],
         ]);
 
         // Resolve coupon ID from code if provided
@@ -188,8 +188,8 @@ class StorefrontApiController extends Controller
     public function validateCoupon(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'code' => 'required|string',
-            'subtotal' => 'required|numeric|min:0',
+            'code' => ['required', 'string'],
+            'subtotal' => ['required', 'numeric', 'min:0'],
         ]);
 
         $couponService = new CouponService;
@@ -240,11 +240,11 @@ class StorefrontApiController extends Controller
     public function submitReview(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'product_id' => 'required|exists:products,id',
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:2000',
+            'customer_name' => ['required', 'string', 'max:255'],
+            'customer_email' => ['required', 'email', 'max:255'],
+            'product_id' => ['required', 'exists:products,id'],
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['required', 'string', 'max:2000'],
         ]);
 
         $validated['comment'] = strip_tags($validated['comment']);
@@ -273,10 +273,10 @@ class StorefrontApiController extends Controller
     public function submitContact(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string|max:5000',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'subject' => ['required', 'string', 'max:255'],
+            'message' => ['required', 'string', 'max:5000'],
         ]);
 
         $validated['subject'] = strip_tags($validated['subject']);
@@ -292,7 +292,7 @@ class StorefrontApiController extends Controller
 
     public function favorites(Request $request): JsonResponse
     {
-        $request->validate(['email' => 'required|email']);
+        $request->validate(['email' => ['required', 'email']]);
 
         $productIds = CustomerFavorite::forCustomer($request->input('email'))
             ->pluck('product_id');
@@ -306,8 +306,8 @@ class StorefrontApiController extends Controller
     public function toggleFavorite(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'email' => 'required|email',
-            'product_id' => 'required|exists:products,id',
+            'email' => ['required', 'email'],
+            'product_id' => ['required', 'exists:products,id'],
         ]);
 
         $favorited = CustomerFavorite::toggle($validated['email'], $validated['product_id']);
@@ -321,12 +321,12 @@ class StorefrontApiController extends Controller
     public function waitlist(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'required|string|max:50',
-            'delivery_date' => 'required|date',
-            'product_id' => 'nullable|exists:products,id',
-            'notes' => 'nullable|string|max:1000',
+            'customer_name' => ['required', 'string', 'max:255'],
+            'customer_email' => ['required', 'email', 'max:255'],
+            'customer_phone' => ['required', 'string', 'max:50'],
+            'delivery_date' => ['required', 'date'],
+            'product_id' => ['nullable', 'exists:products,id'],
+            'notes' => ['nullable', 'string', 'max:1000'],
         ]);
 
         if (isset($validated['notes'])) {

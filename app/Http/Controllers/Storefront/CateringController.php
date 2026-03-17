@@ -27,16 +27,16 @@ class CateringController extends Controller
         $leadTimeDays = (int) Setting::get('catering_lead_time_days', '14');
 
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'nullable|string|max:255',
-            'event_type' => 'required|in:wedding,corporate,birthday,holiday,other',
+            'customer_name' => ['required', 'string', 'max:255'],
+            'customer_email' => ['required', 'email', 'max:255'],
+            'customer_phone' => ['nullable', 'string', 'max:255'],
+            'event_type' => ['required', 'in:wedding,corporate,birthday,holiday,other'],
             'event_date' => 'required|date|after_or_equal:'.now()->addDays($leadTimeDays)->format('Y-m-d'),
             'guest_count' => 'required|integer|min:'.$minimumGuests,
-            'budget' => 'nullable|string|max:255',
-            'details' => 'required|string',
-            'dietary_requirements' => 'nullable|string',
-            'venue_address' => 'nullable|string',
+            'budget' => ['nullable', 'string', 'max:255'],
+            'details' => ['required', 'string'],
+            'dietary_requirements' => ['nullable', 'string'],
+            'venue_address' => ['nullable', 'string'],
         ]);
 
         $validated['details'] = strip_tags($validated['details']);

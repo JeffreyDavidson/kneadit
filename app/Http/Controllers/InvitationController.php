@@ -53,8 +53,8 @@ class InvitationController extends Controller
             $user = $existingUser;
         } else {
             $request->validate([
-                'name' => 'required|string|max:255',
-                'password' => 'required|string|min:8|confirmed',
+                'name' => ['required', 'string', 'max:255'],
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
             ]);
 
             $user = User::create([
