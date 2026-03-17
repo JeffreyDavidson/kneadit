@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\DeliveryType;
+use App\Enums\WaitlistStatus;
 use App\Http\Controllers\Controller;
 use App\Models\CapacityLimit;
 use App\Models\Category;
 use App\Models\ContactMessage;
-use App\Models\Customer;
 use App\Models\CustomerFavorite;
 use App\Models\GalleryPhoto;
-use App\Models\Order;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Setting;
 use App\Models\WaitlistEntry;
 use App\Services\CouponService;
+use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -133,7 +134,7 @@ class StorefrontApiController extends Controller
         ]);
     }
 
-    public function submitOrder(Request $request): JsonResponse
+    public function submitOrder(Request $request, OrderService $orderService): JsonResponse
     {
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
@@ -145,61 +146,33 @@ class StorefrontApiController extends Controller
             'items.*.special_instructions' => 'nullable|string|max:500',
             'delivery_date' => 'required|date|after_or_equal:today',
             'delivery_time' => 'nullable|string',
+            'delivery_type' => 'nullable|in:pickup,delivery',
             'delivery_address' => 'nullable|string|max:500',
+            'delivery_tier' => 'nullable|in:under5,5to10,10to15,over15',
             'notes' => 'nullable|string|max:1000',
             'coupon_code' => 'nullable|string',
         ]);
 
-        $customer = Customer::firstOrCreate(
-            ['email' => $validated['customer_email']],
-            [
-                'name' => $validated['customer_name'],
-                'phone' => $validated['customer_phone'],
-            ]
-        );
-
-        $subtotal = 0;
-        $itemsData = [];
-
-        foreach ($validated['items'] as $item) {
-            $product = Product::findOrFail($item['product_id']);
-            $lineTotal = $product->price * $item['quantity'];
-            $subtotal += $lineTotal;
-            $itemsData[] = [
-                'product_id' => $product->id,
-                'quantity' => $item['quantity'],
-                'unit_price' => $product->price,
-                'special_instructions' => isset($item['special_instructions']) ? strip_tags($item['special_instructions']) : null,
-            ];
-        }
-
-        $discount = 0;
+        // Resolve coupon ID from code if provided
+        $couponId = null;
         if (! empty($validated['coupon_code'])) {
             $couponService = new CouponService;
-            $result = $couponService->validate($validated['coupon_code'], $subtotal);
+            $result = $couponService->validate($validated['coupon_code'], 0);
             if ($result['valid']) {
-                $discount = $result['discount'];
-                $couponService->apply($result['coupon']);
+                $couponId = $result['coupon']->id;
             }
         }
 
-        $total = max(0, $subtotal - $discount);
+        // Default delivery_type to pickup for API requests that omit it
+        $validated['delivery_type'] = $validated['delivery_type'] ?? DeliveryType::Pickup->value;
 
-        $order = Order::create([
-            'customer_id' => $customer->id,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-            'subtotal' => $subtotal,
-            'discount_amount' => $discount,
-            'total' => $total,
-            'delivery_date' => $validated['delivery_date'],
-            'delivery_time' => $validated['delivery_time'] ?? null,
-            'delivery_address' => $validated['delivery_address'] ?? null,
-            'notes' => isset($validated['notes']) ? strip_tags($validated['notes']) : null,
-        ]);
+        $order = $orderService->createOrder($validated, $couponId);
 
-        foreach ($itemsData as $itemData) {
-            $order->orderItems()->create($itemData);
+        if (! $order) {
+            return response()->json([
+                'data' => null,
+                'message' => 'This date is fully booked or no valid items in order.',
+            ], 422);
         }
 
         return response()->json([
@@ -362,7 +335,7 @@ class StorefrontApiController extends Controller
 
         $entry = WaitlistEntry::create([
             ...$validated,
-            'status' => 'waiting',
+            'status' => WaitlistStatus::Waiting,
         ]);
 
         return response()->json([

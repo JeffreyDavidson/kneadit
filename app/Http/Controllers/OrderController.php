@@ -2,26 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CouponType;
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
+use App\Http\Requests\StoreOrderRequest;
 use App\Mail\NewOrderMessage;
 use App\Models\BlockedDate;
 use App\Models\BusinessSchedule;
 use App\Models\CapacityLimit;
 use App\Models\Category;
-use App\Models\Coupon;
-use App\Models\Customer;
 use App\Models\CustomerFavorite;
-use App\Models\GiftCard;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\Setting;
 use App\Services\CouponService;
 use App\Services\GiftCardService;
+use App\Services\OrderService;
 use App\Services\StripeCheckoutService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -66,7 +65,7 @@ class OrderController extends Controller
             'coupon_id' => $coupon->id,
             'code' => $coupon->code,
             'discount_amount' => $result['discount'],
-            'label' => $coupon->type === 'percentage'
+            'label' => $coupon->type === CouponType::Percentage
                 ? number_format($coupon->value, 0).'% off'
                 : '$'.number_format($coupon->value, 2).' off',
         ]);
@@ -105,90 +104,17 @@ class OrderController extends Controller
     }
 
     /**
-     * Submit order (simplified without payment processing for now)
+     * Submit an order, delegating business logic to OrderService.
      */
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request, OrderService $orderService)
     {
-        $validated = $this->validateOrder($request);
-        $calculated = $this->calculateOrder($validated);
+        $validated = $request->validated();
 
-        if (empty($calculated['items'])) {
-            return back()->withErrors(['items' => 'No valid items in order.']);
-        }
-
-        $couponId = $request->input('coupon_id');
-        $giftCardId = $request->input('gift_card_id');
-
-        $order = DB::transaction(function () use ($validated, $calculated, $couponId, $giftCardId) {
-            // Check capacity limits inside transaction for atomicity
-            if (! CapacityLimit::isAvailable($validated['delivery_date'])) {
-                return null;
-            }
-
-            // Apply coupon via service (uses lockForUpdate for thread safety)
-            if ($couponId) {
-                $coupon = Coupon::lockForUpdate()->find($couponId);
-                if ($coupon && $coupon->isValid()) {
-                    $discountAmount = $coupon->calculateDiscount($calculated['subtotal']);
-                    $calculated['discount_amount'] = $discountAmount;
-                    $calculated['coupon_id'] = $coupon->id;
-                    $calculated['total'] = max(0, $calculated['total'] - $discountAmount);
-                }
-            }
-
-            // Create or update customer
-            $customer = Customer::updateOrCreate(
-                ['email' => $validated['customer_email']],
-                array_filter([
-                    'name' => $validated['customer_name'],
-                    'phone' => $validated['customer_phone'] ?? null,
-                    'birthday' => $validated['customer_birthday'] ?? null,
-                ], fn ($v) => $v !== null)
-            );
-
-            // Create order
-            $order = Order::create([
-                'customer_id' => $customer->id,
-                'order_number' => $this->generateOrderNumber(),
-                'delivery_date' => $validated['delivery_date'],
-                'delivery_time' => $validated['delivery_time'] ?? null,
-                'delivery_type' => $validated['delivery_type'],
-                'delivery_address' => $validated['delivery_address'] ?? null,
-                'subtotal' => $calculated['subtotal'],
-                'delivery_fee' => $calculated['delivery_fee'],
-                'discount_amount' => $calculated['discount_amount'] ?? 0,
-                'coupon_id' => $calculated['coupon_id'] ?? null,
-                'total' => $calculated['total'],
-                'notes' => $validated['notes'] ?? null,
-                'status' => 'pending',
-            ]);
-
-            // Increment coupon usage atomically (already locked above)
-            if (! empty($calculated['coupon_id'])) {
-                $couponService = new CouponService;
-                $couponService->apply($coupon);
-            }
-
-            // Redeem gift card if provided
-            if ($giftCardId) {
-                $giftCard = GiftCard::lockForUpdate()->find($giftCardId);
-                if ($giftCard && $giftCard->isUsable()) {
-                    $gcAmount = min((float) $giftCard->current_balance, (float) $order->total);
-                    if ($gcAmount > 0) {
-                        $service = new GiftCardService;
-                        $service->redeem($giftCard->code, $gcAmount, $order->id);
-                        $order->update(['total' => max(0, (float) $order->total - $gcAmount)]);
-                    }
-                }
-            }
-
-            // Create order items
-            foreach ($calculated['items'] as $item) {
-                $order->orderItems()->create($item);
-            }
-
-            return $order;
-        });
+        $order = $orderService->createOrder(
+            $validated,
+            $request->input('coupon_id'),
+            $request->input('gift_card_id'),
+        );
 
         if (! $order) {
             return back()->withErrors(['delivery_date' => 'Sorry, this date is fully booked. Please choose another date.']);
@@ -235,7 +161,7 @@ class OrderController extends Controller
      */
     public function stripeCancel(Order $order)
     {
-        $order->update(['payment_status' => 'unpaid']);
+        $order->update(['payment_status' => PaymentStatus::Unpaid]);
 
         return redirect()->route('order.confirmation', $order)
             ->with('warning', 'Payment was not completed. You can pay later or contact the baker.');
@@ -286,7 +212,7 @@ class OrderController extends Controller
             $maxOrders = $schedule->max_orders
                 ?? (int) Setting::get('default_daily_capacity', 100);
             $currentOrders = Order::whereDate('delivery_date', $dateStr)
-                ->whereNotIn('status', ['cancelled'])
+                ->whereNotIn('status', [OrderStatus::Cancelled])
                 ->count();
             $remaining = max(0, $maxOrders - $currentOrders);
 
@@ -326,78 +252,6 @@ class OrderController extends Controller
         $order->load('orderItems');
 
         return view('order-confirmation', compact('order'));
-    }
-
-    protected function validateOrder(Request $request): array
-    {
-        return $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'nullable|string|max:20',
-            'customer_birthday' => 'nullable|date',
-            'delivery_type' => 'required|in:pickup,delivery',
-            'delivery_address' => 'required_if:delivery_type,delivery|nullable|string|max:500',
-            'delivery_date' => 'required|date|after_or_equal:'.now()->addDays(2)->toDateString(),
-            'delivery_time' => 'nullable|string|max:20',
-            'delivery_tier' => 'required_if:delivery_type,delivery|nullable|in:under5,5to10,10to15,over15',
-            'notes' => 'nullable|string|max:500',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1|max:20',
-        ]);
-    }
-
-    protected function calculateOrder(array $validated): array
-    {
-        $subtotal = 0;
-        $orderItems = [];
-
-        $productIds = array_column($validated['items'], 'product_id');
-        $products = Product::findOrFail($productIds)->keyBy('id');
-
-        foreach ($validated['items'] as $item) {
-            $product = $products->get($item['product_id']);
-            if (! $product || ! $product->is_active) {
-                continue;
-            }
-
-            $lineTotal = $product->price * $item['quantity'];
-            $subtotal += $lineTotal;
-
-            $orderItems[] = [
-                'product_id' => $product->id,
-                'quantity' => $item['quantity'],
-                'unit_price' => $product->price,
-                'total_price' => $lineTotal,
-            ];
-        }
-
-        $deliveryFee = 0;
-        if ($validated['delivery_type'] === 'delivery') {
-            $deliveryFee = match ($validated['delivery_tier'] ?? null) {
-                'under5' => 0,
-                '5to10' => 5.00,
-                '10to15' => 10.00,
-                'over15' => 15.00,
-                default => 0,
-            };
-        }
-
-        return [
-            'items' => $orderItems,
-            'subtotal' => $subtotal,
-            'delivery_fee' => $deliveryFee,
-            'total' => $subtotal + $deliveryFee,
-        ];
-    }
-
-    protected function generateOrderNumber(): string
-    {
-        do {
-            $number = 'KN'.date('ymd').strtoupper(Str::random(4));
-        } while (Order::where('order_number', $number)->exists());
-
-        return $number;
     }
 
     public function reorderData(Order $order)
