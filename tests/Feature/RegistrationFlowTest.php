@@ -11,7 +11,7 @@ class RegistrationFlowTest extends CentralTestCase
     /** @test */
     public function registration_page_loads(): void
     {
-        $response = $this->get('/register');
+        $response = $this->get(route('register'));
 
         $response->assertStatus(200);
         $response->assertSee('Start your bakery journey');
@@ -20,7 +20,7 @@ class RegistrationFlowTest extends CentralTestCase
     /** @test */
     public function user_can_register_with_valid_data(): void
     {
-        $response = $this->post('/register', [
+        $response = $this->post(route('register'), [
             'name' => 'Jane Baker',
             'email' => 'jane@example.com',
             'password' => 'SecurePass123!',
@@ -28,7 +28,7 @@ class RegistrationFlowTest extends CentralTestCase
             'bakery_name' => 'Sunshine Bakery',
         ]);
 
-        $response->assertRedirect('/billing/plans');
+        $response->assertRedirect(route('billing.plans'));
         $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
         $this->assertAuthenticated();
         $this->assertEquals('Sunshine Bakery', session('bakery_name'));
@@ -37,7 +37,7 @@ class RegistrationFlowTest extends CentralTestCase
     /** @test */
     public function registration_requires_all_fields(): void
     {
-        $response = $this->post('/register', []);
+        $response = $this->post(route('register'), []);
 
         $response->assertSessionHasErrors(['name', 'email', 'password', 'bakery_name']);
     }
@@ -51,7 +51,7 @@ class RegistrationFlowTest extends CentralTestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->post('/register', [
+        $response = $this->post(route('register'), [
             'name' => 'New User',
             'email' => 'taken@example.com',
             'password' => 'SecurePass123!',
@@ -65,7 +65,7 @@ class RegistrationFlowTest extends CentralTestCase
     /** @test */
     public function registration_requires_password_confirmation(): void
     {
-        $response = $this->post('/register', [
+        $response = $this->post(route('register'), [
             'name' => 'Jane Baker',
             'email' => 'jane@example.com',
             'password' => 'SecurePass123!',
@@ -79,7 +79,7 @@ class RegistrationFlowTest extends CentralTestCase
     /** @test */
     public function registration_requires_minimum_password_length(): void
     {
-        $response = $this->post('/register', [
+        $response = $this->post(route('register'), [
             'name' => 'Jane Baker',
             'email' => 'jane@example.com',
             'password' => 'short',
@@ -93,7 +93,7 @@ class RegistrationFlowTest extends CentralTestCase
     /** @test */
     public function plans_page_requires_authentication(): void
     {
-        $response = $this->get('/billing/plans');
+        $response = $this->get(route('billing.plans'));
 
         $response->assertRedirect();
     }
@@ -107,7 +107,7 @@ class RegistrationFlowTest extends CentralTestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->actingAs($user)->get('/billing/plans');
+        $response = $this->actingAs($user)->get(route('billing.plans'));
 
         $response->assertStatus(200);
         $response->assertSee('Choose Your Plan');
@@ -116,7 +116,7 @@ class RegistrationFlowTest extends CentralTestCase
     /** @test */
     public function checkout_requires_authentication(): void
     {
-        $response = $this->post('/billing/checkout/starter');
+        $response = $this->post(route('billing.checkout', ['plan' => 'starter']));
 
         $response->assertRedirect();
     }
@@ -130,7 +130,7 @@ class RegistrationFlowTest extends CentralTestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->actingAs($user)->post('/billing/checkout/invalid');
+        $response = $this->actingAs($user)->post(route('billing.checkout', ['plan' => 'invalid']));
 
         $response->assertStatus(404);
     }
@@ -144,7 +144,7 @@ class RegistrationFlowTest extends CentralTestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->actingAs($user)->get('/onboarding');
+        $response = $this->actingAs($user)->get(route('onboarding.show'));
 
         $response->assertStatus(200);
     }
@@ -165,7 +165,7 @@ class RegistrationFlowTest extends CentralTestCase
 
         // We can't fully test tenant creation in SQLite without Stancl spinning up
         // a real tenant DB. Instead, test the validation.
-        $response = $this->actingAs($user)->post('/onboarding', [
+        $response = $this->actingAs($user)->post(route('onboarding.store'), [
             'store_name' => '',
             'subdomain' => '',
             'storefront_choice' => '',
@@ -183,7 +183,7 @@ class RegistrationFlowTest extends CentralTestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->actingAs($user)->post('/onboarding', [
+        $response = $this->actingAs($user)->post(route('onboarding.store'), [
             'store_name' => 'My Bakery',
             'subdomain' => 'invalid subdomain!',
             'storefront_choice' => 'kneadit',
@@ -201,7 +201,7 @@ class RegistrationFlowTest extends CentralTestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->actingAs($user)->post('/onboarding', [
+        $response = $this->actingAs($user)->post(route('onboarding.store'), [
             'store_name' => 'My Bakery',
             'subdomain' => 'mybakery',
             'storefront_choice' => 'own',
@@ -219,7 +219,7 @@ class RegistrationFlowTest extends CentralTestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->actingAs($user)->post('/onboarding', [
+        $response = $this->actingAs($user)->post(route('onboarding.store'), [
             'store_name' => 'My Bakery',
             'subdomain' => 'mybakery',
             'storefront_choice' => 'kneadit',
@@ -232,7 +232,7 @@ class RegistrationFlowTest extends CentralTestCase
     /** @test */
     public function guest_cannot_access_onboarding(): void
     {
-        $response = $this->get('/onboarding');
+        $response = $this->get(route('onboarding.show'));
 
         $response->assertRedirect();
     }
@@ -246,16 +246,16 @@ class RegistrationFlowTest extends CentralTestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->actingAs($user)->get('/billing/success');
+        $response = $this->actingAs($user)->get(route('billing.success'));
 
-        $response->assertRedirect('/onboarding');
+        $response->assertRedirect(route('onboarding.show'));
     }
 
     /** @test */
     public function login_redirects_to_homepage(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get(route('login'));
 
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('home'));
     }
 }

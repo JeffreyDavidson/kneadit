@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Http\Middleware\TrackPageView;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
@@ -11,13 +9,13 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
-use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
+use Tests\Traits\SetUpTenantTest;
 
 class OrderTest extends TestCase
 {
     use RefreshDatabase;
+    use SetUpTenantTest;
 
     protected Category $category;
 
@@ -26,11 +24,7 @@ class OrderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
+        $this->setUpTenant();
 
         $this->category = Category::create([
             'name' => 'Breads',
@@ -51,7 +45,7 @@ class OrderTest extends TestCase
     /** @test */
     public function order_page_loads(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/order');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('order.create', [], false));
         $response->assertOk();
     }
 
@@ -60,7 +54,7 @@ class OrderTest extends TestCase
     {
         $deliveryDate = now()->addDays(3)->toDateString();
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/order', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'customer_email' => 'john@example.com',
             'customer_phone' => '555-1234',
@@ -79,7 +73,7 @@ class OrderTest extends TestCase
     /** @test */
     public function order_validation_rejects_missing_customer_name(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/order', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
             'customer_email' => 'john@example.com',
             'delivery_type' => 'pickup',
             'delivery_date' => now()->addDays(3)->toDateString(),
@@ -94,7 +88,7 @@ class OrderTest extends TestCase
     /** @test */
     public function order_validation_rejects_missing_email(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/order', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'delivery_type' => 'pickup',
             'delivery_date' => now()->addDays(3)->toDateString(),
@@ -109,7 +103,7 @@ class OrderTest extends TestCase
     /** @test */
     public function order_validation_rejects_missing_delivery_date(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/order', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'customer_email' => 'john@example.com',
             'delivery_type' => 'pickup',
@@ -124,7 +118,7 @@ class OrderTest extends TestCase
     /** @test */
     public function order_validation_rejects_empty_cart(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/order', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'customer_email' => 'john@example.com',
             'delivery_type' => 'pickup',
@@ -147,7 +141,7 @@ class OrderTest extends TestCase
             'expires_at' => now()->addMonth(),
         ]);
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->postJson('/coupon/apply', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->postJson(route('coupon.apply', [], false), [
             'code' => 'SAVE10',
             'subtotal' => 50.00,
         ]);
@@ -159,7 +153,7 @@ class OrderTest extends TestCase
     /** @test */
     public function invalid_coupon_returns_error(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->postJson('/coupon/apply', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->postJson(route('coupon.apply', [], false), [
             'code' => 'FAKECODE',
             'subtotal' => 50.00,
         ]);
@@ -173,7 +167,7 @@ class OrderTest extends TestCase
     {
         $date = now()->addDays(5)->toDateString();
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->getJson("/capacity/check/{$date}");
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->getJson(route('capacity.check', ['date' => $date], false));
         $response->assertOk();
         $response->assertJsonStructure(['available', 'remaining', 'max_orders']);
     }
@@ -201,7 +195,7 @@ class OrderTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get("/order/confirmation/{$order->order_number}");
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('order.confirmation', ['order' => $order->order_number], false));
         $response->assertOk();
     }
 }

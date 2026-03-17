@@ -2,35 +2,29 @@
 
 namespace Tests\Feature;
 
-use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Http\Middleware\TrackPageView;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
-use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
+use Tests\Traits\SetUpTenantTest;
 
 class LoyaltyTest extends TestCase
 {
     use RefreshDatabase;
+    use SetUpTenantTest;
 
     protected function setUp(): void
     {
         parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
+        $this->setUpTenant();
     }
 
     /** @test */
     public function rewards_page_loads(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/rewards');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.rewards', [], false));
         $response->assertOk();
     }
 
@@ -46,7 +40,7 @@ class LoyaltyTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/rewards');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.rewards', [], false));
         $response->assertOk();
         $response->assertSee('Free Cookie');
     }
@@ -66,7 +60,7 @@ class LoyaltyTest extends TestCase
             'description' => 'Order reward',
         ]);
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/rewards/check', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('rewards.check', [], false), [
             'email' => 'loyal@example.com',
         ]);
 
@@ -77,7 +71,7 @@ class LoyaltyTest extends TestCase
     /** @test */
     public function points_balance_check_for_unknown_email_shows_zero(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/rewards/check', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('rewards.check', [], false), [
             'email' => 'unknown@example.com',
         ]);
 
@@ -115,7 +109,7 @@ class LoyaltyTest extends TestCase
     {
         Setting::set('loyalty_program_name', 'Baker Bucks');
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/rewards');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.rewards', [], false));
         $response->assertOk();
         $response->assertSee('Baker Bucks');
     }
@@ -123,7 +117,7 @@ class LoyaltyTest extends TestCase
     /** @test */
     public function rewards_check_requires_email(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/rewards/check', []);
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('rewards.check', [], false), []);
         $response->assertSessionHasErrors('email');
     }
 
