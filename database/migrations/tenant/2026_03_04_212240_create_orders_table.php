@@ -6,34 +6,34 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_number')->unique();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
-            $table->enum('status', ['pending', 'confirmed', 'baking', 'ready', 'delivered', 'cancelled'])->default('pending');
-            $table->enum('payment_status', ['unpaid', 'paid', 'cancelled', 'refunded'])->default('unpaid');
-            $table->enum('payment_method', ['cash', 'paypal', 'other'])->default('cash');
+            $table->string('status')->default('pending');
+            $table->string('payment_status')->default('unpaid');
+            $table->string('payment_method')->default('cash');
             $table->decimal('subtotal', 8, 2);
             $table->decimal('delivery_fee', 8, 2)->default(0);
-            $table->decimal('discount', 8, 2)->default(0);
+            $table->decimal('discount_amount', 8, 2)->default(0);
             $table->decimal('total', 8, 2);
+            $table->string('paypal_invoice_id')->nullable();
             $table->text('delivery_address')->nullable();
-            $table->date('requested_date')->nullable();
-            $table->time('requested_time')->nullable();
+            $table->string('delivery_type')->default('pickup');
+            $table->date('delivery_date')->nullable();
+            $table->time('delivery_time')->nullable();
             $table->text('notes')->nullable();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('coupon_id')->nullable();
+            $table->timestamp('review_request_sent_at')->nullable();
+            $table->string('stripe_checkout_session_id')->nullable();
+            $table->string('stripe_payment_intent_id')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('orders');

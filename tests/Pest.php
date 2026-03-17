@@ -68,10 +68,8 @@ function setUpCentralTest(): void
 
 function createCentralTables(): void
 {
-    $schema = Schema::getFacadeRoot();
-
-    if (! $schema::hasTable('tenants')) {
-        $schema::create('tenants', function ($table) {
+    if (! Schema::hasTable('tenants')) {
+        Schema::create('tenants', function ($table) {
             $table->string('id')->primary();
             $table->string('name');
             $table->string('email');
@@ -90,8 +88,8 @@ function createCentralTables(): void
         });
     }
 
-    if (! $schema::hasTable('domains')) {
-        $schema::create('domains', function ($table) {
+    if (! Schema::hasTable('domains')) {
+        Schema::create('domains', function ($table) {
             $table->increments('id');
             $table->string('domain', 255)->unique();
             $table->string('tenant_id');
@@ -202,8 +200,8 @@ function createCentralTables(): void
     ];
 
     foreach ($tables as $name => $callback) {
-        if (! $schema::hasTable($name)) {
-            $schema::create($name, function ($table) use ($callback) {
+        if (! Schema::hasTable($name)) {
+            Schema::create($name, function ($table) use ($callback) {
                 $callback($table);
             });
         }
