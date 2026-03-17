@@ -206,8 +206,8 @@ class OrderController extends Controller
             $stripeService = new StripeCheckoutService;
             $session = $stripeService->createCheckoutSession(
                 $order,
-                route('order.stripe.success', $order->order_number) . '?session_id={CHECKOUT_SESSION_ID}',
-                route('order.stripe.cancel', $order->order_number),
+                route('order.stripe.success', $order) . '?session_id={CHECKOUT_SESSION_ID}',
+                route('order.stripe.cancel', $order),
             );
 
             if ($session) {
@@ -217,14 +217,14 @@ class OrderController extends Controller
             // Stripe session creation failed — fall through to normal confirmation
         }
 
-        return redirect()->route('order.confirmation', $order->order_number)
+        return redirect()->route('order.confirmation', $order)
             ->with('success', 'Order submitted successfully!');
     }
 
     /**
      * Stripe checkout success callback.
      */
-    public function stripeSuccess(Request $request, string $orderNumber)
+    public function stripeSuccess(Request $request, Order $order)
     {
         $sessionId = $request->query('session_id');
 
@@ -233,22 +233,18 @@ class OrderController extends Controller
             $stripeService->handleCheckoutComplete($sessionId);
         }
 
-        return redirect()->route('order.confirmation', $orderNumber)
+        return redirect()->route('order.confirmation', $order)
             ->with('success', 'Payment successful! Your order has been placed.');
     }
 
     /**
      * Stripe checkout cancel callback.
      */
-    public function stripeCancel(string $orderNumber)
+    public function stripeCancel(Order $order)
     {
-        $order = Order::where('order_number', $orderNumber)->first();
+        $order->update(['payment_status' => 'unpaid']);
 
-        if ($order) {
-            $order->update(['payment_status' => 'unpaid']);
-        }
-
-        return redirect()->route('order.confirmation', $orderNumber)
+        return redirect()->route('order.confirmation', $order)
             ->with('warning', 'Payment was not completed. You can pay later or contact the baker.');
     }
 
@@ -332,9 +328,9 @@ class OrderController extends Controller
         ]);
     }
 
-    public function confirmation(string $orderNumber)
+    public function confirmation(Order $order)
     {
-        $order = Order::where('order_number', $orderNumber)->with('orderItems')->firstOrFail();
+        $order->load('orderItems');
 
         return view('order-confirmation', compact('order'));
     }

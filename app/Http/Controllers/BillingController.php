@@ -41,14 +41,20 @@ class BillingController extends Controller
 
     /**
      * Handle successful checkout.
+     *
+     * Re-authenticates the user from a verified Stripe checkout session
+     * when the Laravel session is lost after the external redirect.
      */
     public function success(Request $request)
     {
-        // Re-authenticate user from Stripe session (session may be lost after external redirect)
         if (! $request->user() && $request->has('session_id')) {
             $checkoutSession = \Laravel\Cashier\Cashier::stripe()->checkout->sessions->retrieve($request->get('session_id'));
 
-            if ($checkoutSession && $checkoutSession->customer) {
+            if ($checkoutSession
+                && $checkoutSession->status === 'complete'
+                && $checkoutSession->customer
+                && $checkoutSession->created >= now()->subMinutes(30)->getTimestamp()
+            ) {
                 $user = \App\Models\User::where('stripe_id', $checkoutSession->customer)->first();
 
                 if ($user) {
@@ -77,7 +83,14 @@ class BillingController extends Controller
 
         abort_unless($priceId, 404, 'Plan not found.');
 
-        $request->user()->subscription('default')->swap($priceId);
+        try {
+            $request->user()->subscription('default')->swap($priceId);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Plan swap failed', ['error' => $e->getMessage()]);
+
+            return redirect()->route('billing.plans')
+                ->with('error', 'Unable to update your plan. Please try again or contact support.');
+        }
 
         return redirect()->route('billing.plans')
             ->with('success', 'Your plan has been updated!');

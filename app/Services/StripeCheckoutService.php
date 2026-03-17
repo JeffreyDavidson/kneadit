@@ -107,11 +107,13 @@ class StripeCheckoutService
                 'metadata' => [
                     'order_id' => $order->id,
                     'order_number' => $order->order_number,
+                    'tenant_id' => tenant()->getTenantKey(),
                 ],
                 'payment_intent_data' => [
                     'metadata' => [
                         'order_id' => $order->id,
                         'order_number' => $order->order_number,
+                        'tenant_id' => tenant()->getTenantKey(),
                     ],
                 ],
             ];

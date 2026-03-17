@@ -15,6 +15,12 @@ class ImpersonateController extends Controller
      */
     public function login(Request $request, Tenant $tenant)
     {
+        abort_unless(
+            $request->user() && $request->user()->role === 'platform_admin',
+            403,
+            'Unauthorized.'
+        );
+
         $token = Str::random(64);
 
         // Store token in central DB (shared across domains)

@@ -70,7 +70,7 @@ class ReorderTest extends TestCase
         $order = $this->createOrderWithItems();
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)
-            ->getJson("/order/reorder/{$order->id}");
+            ->getJson("/order/reorder/{$order->order_number}");
 
         $response->assertOk();
         $response->assertJsonStructure(['items' => [['product_id', 'product_name', 'price', 'quantity']]]);
@@ -82,7 +82,7 @@ class ReorderTest extends TestCase
         $order = $this->createOrderWithItems('Croissant', 4.00);
 
         $response = $this->withoutMiddleware($this->tenantMiddleware)
-            ->getJson("/order/reorder/{$order->id}");
+            ->getJson("/order/reorder/{$order->order_number}");
 
         $response->assertJsonPath('items.0.product_name', 'Croissant');
         $response->assertJsonPath('items.0.price', '4.00');
