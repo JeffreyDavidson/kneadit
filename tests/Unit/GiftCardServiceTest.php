@@ -1,156 +1,130 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\GiftCardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
-use Tests\TestCase;
 
-class GiftCardServiceTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    protected GiftCardService $service;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
-
-        $this->service = new GiftCardService;
+beforeEach(function () {
+    config(['database.connections.central' => config('database.connections.sqlite')]);
+    $tenantMigrationPath = database_path('migrations/tenant');
+    if (is_dir($tenantMigrationPath)) {
+        test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
 
-    /** @test */
-    public function generate_code_creates_formatted_code(): void
-    {
-        $code = $this->service->generateCode();
+    test()->service = new GiftCardService;
+});
 
-        $this->assertMatchesRegularExpression('/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/', $code);
-    }
+test('generate code creates formatted code', function () {
+    $code = test()->service->generateCode();
 
-    /** @test */
-    public function create_generates_unique_codes(): void
-    {
-        $card1 = $this->service->create([
-            'initial_balance' => 50,
-            'purchaser_name' => 'Alice',
-            'purchaser_email' => 'alice@test.com',
-        ]);
-        $card2 = $this->service->create([
-            'initial_balance' => 25,
-            'purchaser_name' => 'Bob',
-            'purchaser_email' => 'bob@test.com',
-        ]);
+    expect($code)->toMatch('/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/');
+});
 
-        $this->assertNotEquals($card1->code, $card2->code);
-    }
+test('create generates unique codes', function () {
+    $card1 = test()->service->create([
+        'initial_balance' => 50,
+        'purchaser_name' => 'Alice',
+        'purchaser_email' => 'alice@test.com',
+    ]);
+    $card2 = test()->service->create([
+        'initial_balance' => 25,
+        'purchaser_name' => 'Bob',
+        'purchaser_email' => 'bob@test.com',
+    ]);
 
-    /** @test */
-    public function check_balance_returns_correct_card(): void
-    {
-        $card = $this->service->create([
-            'initial_balance' => 100,
-            'purchaser_name' => 'Test',
-            'purchaser_email' => 'test@test.com',
-        ]);
+    expect($card1->code)->not->toBe($card2->code);
+});
 
-        $found = $this->service->checkBalance($card->code);
+test('check balance returns correct card', function () {
+    $card = test()->service->create([
+        'initial_balance' => 100,
+        'purchaser_name' => 'Test',
+        'purchaser_email' => 'test@test.com',
+    ]);
 
-        $this->assertNotNull($found);
-        $this->assertEquals(100, (float) $found->current_balance);
-    }
+    $found = test()->service->checkBalance($card->code);
 
-    /** @test */
-    public function redeem_deducts_from_balance(): void
-    {
-        $card = $this->service->create([
-            'initial_balance' => 50,
-            'purchaser_name' => 'Test',
-            'purchaser_email' => 'test@test.com',
-        ]);
+    expect($found)->not->toBeNull();
+    expect((float) $found->current_balance)->toBe(100.0);
+});
 
-        $result = $this->service->redeem($card->code, 20);
+test('redeem deducts from balance', function () {
+    $card = test()->service->create([
+        'initial_balance' => 50,
+        'purchaser_name' => 'Test',
+        'purchaser_email' => 'test@test.com',
+    ]);
 
-        $this->assertTrue($result['success']);
-        $this->assertEquals(20, $result['amount_applied']);
-        $this->assertEquals(30, $result['remaining_balance']);
-    }
+    $result = test()->service->redeem($card->code, 20);
 
-    /** @test */
-    public function redeem_creates_transaction_record(): void
-    {
-        $card = $this->service->create([
-            'initial_balance' => 50,
-            'purchaser_name' => 'Test',
-            'purchaser_email' => 'test@test.com',
-        ]);
+    expect($result['success'])->toBeTrue();
+    expect($result['amount_applied'])->toBe(20);
+    expect($result['remaining_balance'])->toBe(30);
+});
 
-        Mail::fake();
-        $user = User::create(['name' => 'Test', 'email' => 'u@t.com', 'password' => bcrypt('p')]);
-        $customer = Customer::create(['name' => 'C', 'email' => 'c@t.com']);
-        $order = Order::create(['user_id' => $user->id, 'customer_id' => $customer->id, 'status' => 'pending', 'total' => 15, 'subtotal' => 15]);
+test('redeem creates transaction record', function () {
+    $card = test()->service->create([
+        'initial_balance' => 50,
+        'purchaser_name' => 'Test',
+        'purchaser_email' => 'test@test.com',
+    ]);
 
-        $this->service->redeem($card->code, 15, $order->id);
+    Mail::fake();
+    $user = User::create(['name' => 'Test', 'email' => 'u@t.com', 'password' => bcrypt('p')]);
+    $customer = Customer::create(['name' => 'C', 'email' => 'c@t.com']);
+    $order = Order::create(['user_id' => $user->id, 'customer_id' => $customer->id, 'status' => 'pending', 'total' => 15, 'subtotal' => 15]);
 
-        $this->assertDatabaseHas('gift_card_transactions', [
-            'gift_card_id' => $card->id,
-            'amount' => -15,
-            'type' => 'redemption',
-            'order_id' => $order->id,
-        ]);
-    }
+    test()->service->redeem($card->code, 15, $order->id);
 
-    /** @test */
-    public function redeem_caps_at_available_balance(): void
-    {
-        $card = $this->service->create([
-            'initial_balance' => 20,
-            'purchaser_name' => 'Test',
-            'purchaser_email' => 'test@test.com',
-        ]);
+    assertDatabaseHas('gift_card_transactions', [
+        'gift_card_id' => $card->id,
+        'amount' => -15,
+        'type' => 'redemption',
+        'order_id' => $order->id,
+    ]);
+});
 
-        $result = $this->service->redeem($card->code, 50);
+test('redeem caps at available balance', function () {
+    $card = test()->service->create([
+        'initial_balance' => 20,
+        'purchaser_name' => 'Test',
+        'purchaser_email' => 'test@test.com',
+    ]);
 
-        $this->assertTrue($result['success']);
-        $this->assertEquals(20, $result['amount_applied']);
-        $this->assertEquals(0, $result['remaining_balance']);
-    }
+    $result = test()->service->redeem($card->code, 50);
 
-    /** @test */
-    public function redeem_fails_when_card_inactive(): void
-    {
-        $card = $this->service->create([
-            'initial_balance' => 50,
-            'purchaser_name' => 'Test',
-            'purchaser_email' => 'test@test.com',
-        ]);
-        $card->update(['is_active' => false]);
+    expect($result['success'])->toBeTrue();
+    expect($result['amount_applied'])->toBe(20);
+    expect($result['remaining_balance'])->toBe(0);
+});
 
-        $result = $this->service->redeem($card->code, 10);
+test('redeem fails when card inactive', function () {
+    $card = test()->service->create([
+        'initial_balance' => 50,
+        'purchaser_name' => 'Test',
+        'purchaser_email' => 'test@test.com',
+    ]);
+    $card->update(['is_active' => false]);
 
-        $this->assertFalse($result['success']);
-    }
+    $result = test()->service->redeem($card->code, 10);
 
-    /** @test */
-    public function redeem_fails_when_card_expired(): void
-    {
-        $card = $this->service->create([
-            'initial_balance' => 50,
-            'purchaser_name' => 'Test',
-            'purchaser_email' => 'test@test.com',
-            'expires_at' => now()->subDay(),
-        ]);
+    expect($result['success'])->toBeFalse();
+});
 
-        $result = $this->service->redeem($card->code, 10);
+test('redeem fails when card expired', function () {
+    $card = test()->service->create([
+        'initial_balance' => 50,
+        'purchaser_name' => 'Test',
+        'purchaser_email' => 'test@test.com',
+        'expires_at' => now()->subDay(),
+    ]);
 
-        $this->assertFalse($result['success']);
-    }
-}
+    $result = test()->service->redeem($card->code, 10);
+
+    expect($result['success'])->toBeFalse();
+});

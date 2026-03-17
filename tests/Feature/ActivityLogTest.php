@@ -1,102 +1,71 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\ActivityLog;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class ActivityLogTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(function () {
+    setUpTenantTest();
+    $this->user = User::create(['name' => 'Baker Bob', 'email' => 'bob@test.com', 'password' => bcrypt('password')]);
+    $this->category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
+});
 
-    protected User $user;
+test('creating a product logs created activity', function () {
+    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
 
-    protected Category $category;
+    $log = ActivityLog::where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'created')->first();
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
-        $this->user = User::create(['name' => 'Baker Bob', 'email' => 'bob@test.com', 'password' => bcrypt('password')]);
-        $this->category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    }
+    expect($log)->not->toBeNull();
+    expect($log->description)->toContain('created');
+});
 
-    /** @test */
-    public function creating_a_product_logs_created_activity(): void
-    {
-        $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+test('updating a product logs updated activity', function () {
+    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
 
-        $log = ActivityLog::where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'created')->first();
+    $product->update(['price' => 6.00]);
 
-        $this->assertNotNull($log);
-        $this->assertStringContainsString('created', $log->description);
-    }
+    $log = ActivityLog::where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'updated')->first();
 
-    /** @test */
-    public function updating_a_product_logs_updated_activity(): void
-    {
-        $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+    expect($log)->not->toBeNull();
+});
 
-        $product->update(['price' => 6.00]);
+test('deleting a product logs deleted activity', function () {
+    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+    $productId = $product->id;
 
-        $log = ActivityLog::where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'updated')->first();
+    $product->delete();
 
-        $this->assertNotNull($log);
-    }
+    $log = ActivityLog::where('model_type', Product::class)->where('model_id', $productId)->where('action', 'deleted')->first();
 
-    /** @test */
-    public function deleting_a_product_logs_deleted_activity(): void
-    {
-        $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
-        $productId = $product->id;
+    expect($log)->not->toBeNull();
+});
 
-        $product->delete();
+test('activity log stores user name', function () {
+    actingAs($this->user);
 
-        $log = ActivityLog::where('model_type', Product::class)->where('model_id', $productId)->where('action', 'deleted')->first();
+    Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
 
-        $this->assertNotNull($log);
-    }
+    $log = ActivityLog::where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
 
-    /** @test */
-    public function activity_log_stores_user_name(): void
-    {
-        $this->actingAs($this->user);
+    expect($log->user_name)->toBe('Baker Bob');
+});
 
-        Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+test('changes are captured in properties', function () {
+    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
 
-        $log = ActivityLog::where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
+    $product->update(['price' => 7.50]);
 
-        $this->assertEquals('Baker Bob', $log->user_name);
-    }
+    $log = ActivityLog::where('action', 'updated')->where('model_type', Product::class)->where('model_id', $product->id)->first();
 
-    /** @test */
-    public function changes_are_captured_in_properties(): void
-    {
-        $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+    expect($log->properties)->not->toBeNull();
+    expect($log->properties)->toHaveKey('changes');
+});
 
-        $product->update(['price' => 7.50]);
+test('system user name when not authenticated', function () {
+    Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
 
-        $log = ActivityLog::where('action', 'updated')->where('model_type', Product::class)->where('model_id', $product->id)->first();
+    $log = ActivityLog::where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
 
-        $this->assertNotNull($log->properties);
-        $this->assertArrayHasKey('changes', $log->properties);
-    }
-
-    /** @test */
-    public function system_user_name_when_not_authenticated(): void
-    {
-        Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
-
-        $log = ActivityLog::where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
-
-        $this->assertEquals('System', $log->user_name);
-    }
-}
+    expect($log->user_name)->toBe('System');
+});

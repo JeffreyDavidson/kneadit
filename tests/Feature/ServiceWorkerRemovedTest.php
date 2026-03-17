@@ -1,23 +1,18 @@
 <?php
 
-namespace Tests\Feature;
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-use Tests\CentralTestCase;
+test('service worker route returns 404', function () {
+    $response = get('/service-worker.js');
 
-class ServiceWorkerRemovedTest extends CentralTestCase
-{
-    public function test_service_worker_route_returns_404(): void
-    {
-        $response = $this->get('/service-worker.js');
+    $response->assertNotFound();
+});
 
-        $response->assertNotFound();
-    }
+test('storefront layout does not register service worker', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_storefront_layout_does_not_register_service_worker(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
-
-        $this->assertStringNotContainsString('serviceWorker', $layout);
-        $this->assertStringNotContainsString('service-worker.js', $layout);
-    }
-}
+    expect($layout)->not->toContain('serviceWorker');
+    expect($layout)->not->toContain('service-worker.js');
+});

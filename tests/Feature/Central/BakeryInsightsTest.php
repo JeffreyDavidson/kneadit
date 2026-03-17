@@ -1,47 +1,41 @@
 <?php
 
-namespace Tests\Feature\Central;
-
 use App\Filament\Central\Pages\BakeryInsights;
-use Tests\CentralTestCase;
 
-class BakeryInsightsTest extends CentralTestCase
-{
-    public function test_page_class_has_required_methods(): void
-    {
-        $page = new BakeryInsights;
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-        $this->assertTrue(method_exists($page, 'getTenantHealthData'));
-        $this->assertTrue(method_exists($page, 'getAlerts'));
-        $this->assertTrue(method_exists($page, 'getTenantUsageData'));
-        $this->assertTrue(method_exists($page, 'getHealthSummaryStats'));
-    }
+test('page class has required methods', function () {
+    $page = new BakeryInsights;
 
-    public function test_health_summary_returns_expected_keys(): void
-    {
-        $page = new BakeryInsights;
-        $stats = $page->getHealthSummaryStats();
+    expect(method_exists($page, 'getTenantHealthData'))->toBeTrue();
+    expect(method_exists($page, 'getAlerts'))->toBeTrue();
+    expect(method_exists($page, 'getTenantUsageData'))->toBeTrue();
+    expect(method_exists($page, 'getHealthSummaryStats'))->toBeTrue();
+});
 
-        $this->assertArrayHasKey('average', $stats);
-        $this->assertArrayHasKey('healthy', $stats);
-        $this->assertArrayHasKey('at_risk', $stats);
-        $this->assertArrayHasKey('critical', $stats);
-        $this->assertArrayHasKey('total', $stats);
-    }
+test('health summary returns expected keys', function () {
+    $page = new BakeryInsights;
+    $stats = $page->getHealthSummaryStats();
 
-    public function test_get_next_plan_returns_correct_upgrades(): void
-    {
-        $page = new BakeryInsights;
+    expect($stats)->toHaveKey('average');
+    expect($stats)->toHaveKey('healthy');
+    expect($stats)->toHaveKey('at_risk');
+    expect($stats)->toHaveKey('critical');
+    expect($stats)->toHaveKey('total');
+});
 
-        $this->assertEquals('Growth', $page->getNextPlan('starter'));
-        $this->assertEquals('Pro', $page->getNextPlan('growth'));
-        $this->assertNull($page->getNextPlan('pro'));
-    }
+test('get next plan returns correct upgrades', function () {
+    $page = new BakeryInsights;
 
-    public function test_plan_limits_constant_exists(): void
-    {
-        $this->assertArrayHasKey('starter', BakeryInsights::PLAN_LIMITS);
-        $this->assertArrayHasKey('growth', BakeryInsights::PLAN_LIMITS);
-        $this->assertArrayHasKey('pro', BakeryInsights::PLAN_LIMITS);
-    }
-}
+    expect($page->getNextPlan('starter'))->toBe('Growth');
+    expect($page->getNextPlan('growth'))->toBe('Pro');
+    expect($page->getNextPlan('pro'))->toBeNull();
+});
+
+test('plan limits constant exists', function () {
+    expect(BakeryInsights::PLAN_LIMITS)->toHaveKey('starter');
+    expect(BakeryInsights::PLAN_LIMITS)->toHaveKey('growth');
+    expect(BakeryInsights::PLAN_LIMITS)->toHaveKey('pro');
+});

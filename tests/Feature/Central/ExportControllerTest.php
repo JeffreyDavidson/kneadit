@@ -1,99 +1,105 @@
 <?php
 
-namespace Tests\Feature\Central;
-
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Tests\CentralTestCase;
 
-class ExportControllerTest extends CentralTestCase
+function createAdmin(): User
 {
-    private function createAdmin(): User
-    {
-        return User::factory()->create(['role' => 'platform_admin']);
-    }
-
-    private function insertTenant(string $id = 'test-bakery'): string
-    {
-        DB::table('tenants')->insert([
-            'id' => $id,
-            'name' => 'Test Owner',
-            'email' => 'test@example.com',
-            'plan' => 'starter',
-            'data' => '{}',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return $id;
-    }
-
-    public function test_unauthenticated_request_returns_403(): void
-    {
-        $id = $this->insertTenant();
-        $response = $this->get("/admin/export/{$id}/products");
-        $response->assertForbidden();
-    }
-
-    public function test_invalid_export_type_returns_404(): void
-    {
-        $id = $this->insertTenant();
-        $response = $this->actingAs($this->createAdmin())
-            ->get("/admin/export/{$id}/invalid");
-        $response->assertNotFound();
-    }
-
-    public function test_products_csv_export_returns_correct_content_type(): void
-    {
-        $id = $this->insertTenant();
-        $response = $this->actingAs($this->createAdmin())
-            ->get("/admin/export/{$id}/products");
-        $response->assertOk();
-        $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
-    }
-
-    public function test_categories_csv_export_works(): void
-    {
-        $id = $this->insertTenant();
-        $response = $this->actingAs($this->createAdmin())
-            ->get("/admin/export/{$id}/categories");
-        $response->assertOk();
-        $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
-    }
-
-    public function test_orders_csv_export_works(): void
-    {
-        $id = $this->insertTenant();
-        $response = $this->actingAs($this->createAdmin())
-            ->get("/admin/export/{$id}/orders");
-        $response->assertOk();
-        $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
-    }
-
-    public function test_customers_csv_export_works(): void
-    {
-        $id = $this->insertTenant();
-        $response = $this->actingAs($this->createAdmin())
-            ->get("/admin/export/{$id}/customers");
-        $response->assertOk();
-        $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
-    }
-
-    public function test_reviews_csv_export_works(): void
-    {
-        $id = $this->insertTenant();
-        $response = $this->actingAs($this->createAdmin())
-            ->get("/admin/export/{$id}/reviews");
-        $response->assertOk();
-        $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
-    }
-
-    public function test_all_zip_export_returns_zip_content_type(): void
-    {
-        $id = $this->insertTenant();
-        $response = $this->actingAs($this->createAdmin())
-            ->get("/admin/export/{$id}/all");
-        $response->assertOk();
-        $this->assertStringContainsString('application/zip', $response->headers->get('content-type'));
-    }
+    return User::factory()->create(['role' => 'platform_admin']);
 }
+
+function insertTenant(string $id = 'test-bakery'): string
+{
+    DB::table('tenants')->insert([
+        'id' => $id,
+        'name' => 'Test Owner',
+        'email' => 'test@example.com',
+        'plan' => 'starter',
+        'data' => '{}',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    return $id;
+}
+
+beforeEach(function () {
+    setUpCentralTest();
+});
+
+test('unauthenticated request returns 403', function () {
+    $id = insertTenant();
+
+    $response = get("/admin/export/{$id}/products");
+
+    $response->assertForbidden();
+});
+
+test('invalid export type returns 404', function () {
+    $id = insertTenant();
+
+    $response = actingAs(createAdmin())
+        ->get("/admin/export/{$id}/invalid");
+
+    $response->assertNotFound();
+});
+
+test('products csv export returns correct content type', function () {
+    $id = insertTenant();
+
+    $response = actingAs(createAdmin())
+        ->get("/admin/export/{$id}/products");
+
+    $response->assertOk();
+    expect($response->headers->get('content-type'))->toContain('text/csv');
+});
+
+test('categories csv export works', function () {
+    $id = insertTenant();
+
+    $response = actingAs(createAdmin())
+        ->get("/admin/export/{$id}/categories");
+
+    $response->assertOk();
+    expect($response->headers->get('content-type'))->toContain('text/csv');
+});
+
+test('orders csv export works', function () {
+    $id = insertTenant();
+
+    $response = actingAs(createAdmin())
+        ->get("/admin/export/{$id}/orders");
+
+    $response->assertOk();
+    expect($response->headers->get('content-type'))->toContain('text/csv');
+});
+
+test('customers csv export works', function () {
+    $id = insertTenant();
+
+    $response = actingAs(createAdmin())
+        ->get("/admin/export/{$id}/customers");
+
+    $response->assertOk();
+    expect($response->headers->get('content-type'))->toContain('text/csv');
+});
+
+test('reviews csv export works', function () {
+    $id = insertTenant();
+
+    $response = actingAs(createAdmin())
+        ->get("/admin/export/{$id}/reviews");
+
+    $response->assertOk();
+    expect($response->headers->get('content-type'))->toContain('text/csv');
+});
+
+test('all zip export returns zip content type', function () {
+    $id = insertTenant();
+
+    $response = actingAs(createAdmin())
+        ->get("/admin/export/{$id}/all");
+
+    $response->assertOk();
+    expect($response->headers->get('content-type'))->toContain('application/zip');
+});

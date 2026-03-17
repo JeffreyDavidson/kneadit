@@ -1,51 +1,31 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Http\Controllers\StripeConnectController;
 use App\Models\Setting;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class StripeConnectTest extends TestCase
-{
-    use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
+beforeEach(function () {
+    $tenantMigrationPath = database_path('migrations/tenant');
+    if (is_dir($tenantMigrationPath)) {
+        test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
+});
 
-    /** @test */
-    public function get_account_status_returns_null_when_no_connect_id(): void
-    {
-        $this->assertNull(StripeConnectController::getAccountStatus());
-    }
+test('get account status returns null when no connect id', function () {
+    expect(StripeConnectController::getAccountStatus())->toBeNull();
+});
 
-    /** @test */
-    public function get_account_status_returns_null_when_connect_id_is_empty(): void
-    {
-        Setting::set('stripe_connect_id', '');
+test('get account status returns null when connect id is empty', function () {
+    Setting::set('stripe_connect_id', '');
 
-        // Empty string is falsy, should return null
-        $this->assertNull(StripeConnectController::getAccountStatus());
-    }
+    expect(StripeConnectController::getAccountStatus())->toBeNull();
+});
 
-    /** @test */
-    public function get_account_status_returns_null_when_stripe_api_fails(): void
-    {
-        Setting::set('stripe_connect_id', 'acct_invalid_12345');
+test('get account status returns null when stripe api fails', function () {
+    Setting::set('stripe_connect_id', 'acct_invalid_12345');
 
-        // With no valid Stripe key configured, this should catch the exception and return null
-        config(['cashier.secret' => 'sk_test_fake_key']);
+    config(['cashier.secret' => 'sk_test_fake_key']);
 
-        $result = StripeConnectController::getAccountStatus();
+    $result = StripeConnectController::getAccountStatus();
 
-        $this->assertNull($result);
-    }
-}
+    expect($result)->toBeNull();
+});

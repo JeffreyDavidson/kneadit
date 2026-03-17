@@ -1,74 +1,60 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Mail\NewSubscriberNotification;
 use App\Mail\WelcomeBaker;
-use Tests\TestCase;
 
-class WelcomeEmailTest extends TestCase
-{
-    /** @test */
-    public function welcome_baker_email_has_correct_subject(): void
-    {
-        $mail = new WelcomeBaker(
-            bakerName: 'Jane',
-            storeName: 'Sunrise Bakery',
-            adminUrl: 'https://sunrise.kneadit.test/admin',
-            plan: 'starter',
-            trialEndsAt: 'April 15, 2026',
-        );
+test('welcome baker email has correct subject', function () {
+    $mail = new WelcomeBaker(
+        bakerName: 'Jane',
+        storeName: 'Sunrise Bakery',
+        adminUrl: 'https://sunrise.kneadit.test/admin',
+        plan: 'starter',
+        trialEndsAt: 'April 15, 2026',
+    );
 
-        $this->assertEquals('Welcome to KneadIt — Sunrise Bakery is ready!', $mail->envelope()->subject);
-    }
+    expect($mail->envelope()->subject)->toBe('Welcome to KneadIt — Sunrise Bakery is ready!');
+});
 
-    /** @test */
-    public function welcome_baker_email_has_correct_properties(): void
-    {
-        $mail = new WelcomeBaker(
-            bakerName: 'Jane',
-            storeName: 'Sunrise Bakery',
-            adminUrl: 'https://sunrise.kneadit.test/admin',
-            plan: 'starter',
-            trialEndsAt: 'April 15, 2026',
-        );
+test('welcome baker email has correct properties', function () {
+    $mail = new WelcomeBaker(
+        bakerName: 'Jane',
+        storeName: 'Sunrise Bakery',
+        adminUrl: 'https://sunrise.kneadit.test/admin',
+        plan: 'starter',
+        trialEndsAt: 'April 15, 2026',
+    );
 
-        $this->assertEquals('Jane', $mail->bakerName);
-        $this->assertEquals('Sunrise Bakery', $mail->storeName);
-        $this->assertEquals('https://sunrise.kneadit.test/admin', $mail->adminUrl);
-        $this->assertEquals('starter', $mail->plan);
-        $this->assertEquals('April 15, 2026', $mail->trialEndsAt);
-    }
+    expect($mail->bakerName)->toBe('Jane');
+    expect($mail->storeName)->toBe('Sunrise Bakery');
+    expect($mail->adminUrl)->toBe('https://sunrise.kneadit.test/admin');
+    expect($mail->plan)->toBe('starter');
+    expect($mail->trialEndsAt)->toBe('April 15, 2026');
+});
 
-    /** @test */
-    public function new_subscriber_notification_has_correct_subject(): void
-    {
-        $mail = new NewSubscriberNotification(
-            bakerName: 'Jane',
-            bakerEmail: 'jane@example.com',
-            storeName: 'Sunrise Bakery',
-            subdomain: 'sunrise',
-            plan: 'starter',
-        );
+test('new subscriber notification has correct subject', function () {
+    $mail = new NewSubscriberNotification(
+        bakerName: 'Jane',
+        bakerEmail: 'jane@example.com',
+        storeName: 'Sunrise Bakery',
+        subdomain: 'sunrise',
+        plan: 'starter',
+    );
 
-        $this->assertEquals('New KneadIt Signup — Sunrise Bakery', $mail->envelope()->subject);
-    }
+    expect($mail->envelope()->subject)->toBe('New KneadIt Signup — Sunrise Bakery');
+});
 
-    /** @test */
-    public function new_subscriber_notification_has_correct_properties(): void
-    {
-        $mail = new NewSubscriberNotification(
-            bakerName: 'Jane',
-            bakerEmail: 'jane@example.com',
-            storeName: 'Sunrise Bakery',
-            subdomain: 'sunrise',
-            plan: 'starter',
-        );
+test('new subscriber notification has correct properties', function () {
+    $mail = new NewSubscriberNotification(
+        bakerName: 'Jane',
+        bakerEmail: 'jane@example.com',
+        storeName: 'Sunrise Bakery',
+        subdomain: 'sunrise',
+        plan: 'starter',
+    );
 
-        $this->assertEquals('Jane', $mail->bakerName);
-        $this->assertEquals('jane@example.com', $mail->bakerEmail);
-        $this->assertEquals('Sunrise Bakery', $mail->storeName);
-        $this->assertEquals('sunrise', $mail->subdomain);
-        $this->assertEquals('starter', $mail->plan);
-    }
-}
+    expect($mail->bakerName)->toBe('Jane');
+    expect($mail->bakerEmail)->toBe('jane@example.com');
+    expect($mail->storeName)->toBe('Sunrise Bakery');
+    expect($mail->subdomain)->toBe('sunrise');
+    expect($mail->plan)->toBe('starter');
+});

@@ -1,40 +1,35 @@
 <?php
 
-namespace Tests\Feature\Central;
-
 use App\Models\AdminAuditLog;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Tests\CentralTestCase;
 
-class CheckChurnAlertsTest extends CentralTestCase
-{
-    public function test_command_runs_without_errors(): void
-    {
-        $this->artisan('churn:check')->assertSuccessful();
-    }
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-    public function test_trial_expiring_in_48h_creates_churn_alert(): void
-    {
-        // Insert tenant directly to avoid HasDatabase trait creating a real DB
-        DB::table('tenants')->insert([
-            'id' => 'expiring-bakery',
-            'name' => 'Expiring Bakery',
-            'email' => 'expiring@example.com',
-            'plan' => 'starter',
-            'trial_ends_at' => Date::now()->addHours(24),
-            'data' => '{}',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+test('command runs without errors', function () {
+    $this->artisan('churn:check')->assertSuccessful();
+});
 
-        $this->artisan('churn:check')->assertSuccessful();
+test('trial expiring in 48h creates churn alert', function () {
+    DB::table('tenants')->insert([
+        'id' => 'expiring-bakery',
+        'name' => 'Expiring Bakery',
+        'email' => 'expiring@example.com',
+        'plan' => 'starter',
+        'trial_ends_at' => Date::now()->addHours(24),
+        'data' => '{}',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 
-        $log = AdminAuditLog::where('action', 'churn_alert')
-            ->where('target_id', 'expiring-bakery')
-            ->first();
+    $this->artisan('churn:check')->assertSuccessful();
 
-        $this->assertNotNull($log, 'Expected a churn_alert audit log for expiring tenant');
-        $this->assertStringContainsString('Trial expiring soon', $log->description);
-    }
-}
+    $log = AdminAuditLog::where('action', 'churn_alert')
+        ->where('target_id', 'expiring-bakery')
+        ->first();
+
+    expect($log)->not->toBeNull('Expected a churn_alert audit log for expiring tenant');
+    expect($log->description)->toContain('Trial expiring soon');
+});

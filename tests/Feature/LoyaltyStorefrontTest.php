@@ -1,147 +1,124 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class LoyaltyStorefrontTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(function () {
+    setUpTenantTest();
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
-    }
+test('loyalty point model exists', function () {
+    expect(class_exists(LoyaltyPoint::class))->toBeTrue();
+});
 
-    public function test_loyalty_point_model_exists(): void
-    {
-        $this->assertTrue(class_exists(LoyaltyPoint::class));
-    }
+test('loyalty reward model exists', function () {
+    expect(class_exists(LoyaltyReward::class))->toBeTrue();
+});
 
-    public function test_loyalty_reward_model_exists(): void
-    {
-        $this->assertTrue(class_exists(LoyaltyReward::class));
-    }
+test('customer total points calculation', function () {
+    $customer = Customer::create([
+        'name' => 'Test Customer',
+        'email' => 'test@example.com',
+    ]);
 
-    public function test_customer_total_points_calculation(): void
-    {
-        $customer = Customer::create([
-            'name' => 'Test Customer',
-            'email' => 'test@example.com',
-        ]);
+    LoyaltyPoint::create([
+        'customer_id' => $customer->id,
+        'points' => 100,
+        'type' => 'earned',
+        'description' => 'Order #1',
+    ]);
 
-        LoyaltyPoint::create([
-            'customer_id' => $customer->id,
-            'points' => 100,
-            'type' => 'earned',
-            'description' => 'Order #1',
-        ]);
+    LoyaltyPoint::create([
+        'customer_id' => $customer->id,
+        'points' => 50,
+        'type' => 'earned',
+        'description' => 'Order #2',
+    ]);
 
-        LoyaltyPoint::create([
-            'customer_id' => $customer->id,
-            'points' => 50,
-            'type' => 'earned',
-            'description' => 'Order #2',
-        ]);
+    LoyaltyPoint::create([
+        'customer_id' => $customer->id,
+        'points' => 30,
+        'type' => 'redeemed',
+        'description' => 'Reward redeemed',
+    ]);
 
-        LoyaltyPoint::create([
-            'customer_id' => $customer->id,
-            'points' => 30,
-            'type' => 'redeemed',
-            'description' => 'Reward redeemed',
-        ]);
+    expect($customer->total_points)->toBe(120);
+});
 
-        $this->assertEquals(120, $customer->total_points);
-    }
+test('loyalty reward can be created', function () {
+    $reward = LoyaltyReward::create([
+        'name' => 'Free Cookie',
+        'description' => 'Get a free cookie!',
+        'points_required' => 100,
+        'reward_type' => 'free_product',
+        'reward_value' => 0,
+        'is_active' => true,
+    ]);
 
-    public function test_loyalty_reward_can_be_created(): void
-    {
-        $reward = LoyaltyReward::create([
-            'name' => 'Free Cookie',
-            'description' => 'Get a free cookie!',
-            'points_required' => 100,
-            'reward_type' => 'free_product',
-            'reward_value' => 0,
-            'is_active' => true,
-        ]);
+    $this->assertDatabaseHas('loyalty_rewards', ['name' => 'Free Cookie']);
+    expect($reward->is_active)->toBeTrue();
+});
 
-        $this->assertDatabaseHas('loyalty_rewards', ['name' => 'Free Cookie']);
-        $this->assertTrue($reward->is_active);
-    }
+test('loyalty reward type label percentage', function () {
+    $reward = LoyaltyReward::create([
+        'name' => '10% Off',
+        'points_required' => 50,
+        'reward_type' => 'percentage_discount',
+        'reward_value' => 10,
+        'is_active' => true,
+    ]);
 
-    public function test_loyalty_reward_type_label_percentage(): void
-    {
-        $reward = LoyaltyReward::create([
-            'name' => '10% Off',
-            'points_required' => 50,
-            'reward_type' => 'percentage_discount',
-            'reward_value' => 10,
-            'is_active' => true,
-        ]);
+    expect($reward->reward_type_label)->toContain('% Off');
+});
 
-        $this->assertStringContainsString('% Off', $reward->reward_type_label);
-    }
+test('loyalty reward type label fixed', function () {
+    $reward = LoyaltyReward::create([
+        'name' => '$5 Off',
+        'points_required' => 75,
+        'reward_type' => 'fixed_discount',
+        'reward_value' => 5.00,
+        'is_active' => true,
+    ]);
 
-    public function test_loyalty_reward_type_label_fixed(): void
-    {
-        $reward = LoyaltyReward::create([
-            'name' => '$5 Off',
-            'points_required' => 75,
-            'reward_type' => 'fixed_discount',
-            'reward_value' => 5.00,
-            'is_active' => true,
-        ]);
+    expect($reward->reward_type_label)->toBe('$5.00 Off');
+});
 
-        $this->assertEquals('$5.00 Off', $reward->reward_type_label);
-    }
+test('customer lifetime points earned', function () {
+    $customer = Customer::create([
+        'name' => 'Test Customer',
+        'email' => 'lifetime@example.com',
+    ]);
 
-    public function test_customer_lifetime_points_earned(): void
-    {
-        $customer = Customer::create([
-            'name' => 'Test Customer',
-            'email' => 'lifetime@example.com',
-        ]);
+    LoyaltyPoint::create([
+        'customer_id' => $customer->id,
+        'points' => 200,
+        'type' => 'earned',
+        'description' => 'Big order',
+    ]);
 
-        LoyaltyPoint::create([
-            'customer_id' => $customer->id,
-            'points' => 200,
-            'type' => 'earned',
-            'description' => 'Big order',
-        ]);
+    LoyaltyPoint::create([
+        'customer_id' => $customer->id,
+        'points' => 50,
+        'type' => 'redeemed',
+        'description' => 'Reward',
+    ]);
 
-        LoyaltyPoint::create([
-            'customer_id' => $customer->id,
-            'points' => 50,
-            'type' => 'redeemed',
-            'description' => 'Reward',
-        ]);
+    expect($customer->lifetime_points_earned)->toBe(200);
+});
 
-        $this->assertEquals(200, $customer->lifetime_points_earned);
-    }
+test('loyalty points belong to customer', function () {
+    $customer = Customer::create([
+        'name' => 'Test Customer',
+        'email' => 'belong@example.com',
+    ]);
 
-    public function test_loyalty_points_belong_to_customer(): void
-    {
-        $customer = Customer::create([
-            'name' => 'Test Customer',
-            'email' => 'belong@example.com',
-        ]);
+    $point = LoyaltyPoint::create([
+        'customer_id' => $customer->id,
+        'points' => 100,
+        'type' => 'earned',
+        'description' => 'Order',
+    ]);
 
-        $point = LoyaltyPoint::create([
-            'customer_id' => $customer->id,
-            'points' => 100,
-            'type' => 'earned',
-            'description' => 'Order',
-        ]);
-
-        $this->assertEquals($customer->id, $point->customer->id);
-    }
-}
+    expect($point->customer->id)->toBe($customer->id);
+});

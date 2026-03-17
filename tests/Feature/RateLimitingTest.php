@@ -1,25 +1,15 @@
 <?php
 
-namespace Tests\Feature;
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-use Tests\CentralTestCase;
+test('read api allows 60 requests per minute', function () {
+    expect(true)->toBeTrue('Rate limiting configured: 60/min for reads, 10/min for writes');
+});
 
-class RateLimitingTest extends CentralTestCase
-{
-    public function test_read_api_allows_60_requests_per_minute(): void
-    {
-        // We can't easily test the exact limit, but we verify the throttle
-        // middleware is applied by checking the rate limit headers
-        // The route exists and returns a response (may be 404 for tenant routes
-        // on central domain, but the throttle header check is what matters)
-        $this->assertTrue(true, 'Rate limiting configured: 60/min for reads, 10/min for writes');
-    }
+test('hero lookbook route removed', function () {
+    $response = get('/hero-lookbook');
 
-    public function test_hero_lookbook_route_removed(): void
-    {
-        // Hero lookbook was a temporary design review route — should be gone
-        $response = $this->get('/hero-lookbook');
-
-        $response->assertNotFound();
-    }
-}
+    $response->assertNotFound();
+});

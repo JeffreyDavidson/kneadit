@@ -1,73 +1,59 @@
 <?php
 
-namespace Tests\Unit\Central;
-
 use App\Filament\Central\Pages\BakeryInsights;
 use Tests\CentralTestCase;
 
-class BakeryInsightsPageTest extends CentralTestCase
-{
-    private BakeryInsights $page;
+uses(CentralTestCase::class);
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->page = new BakeryInsights;
-    }
+beforeEach(function () {
+    test()->page = new BakeryInsights;
+});
 
-    public function test_active_tab_defaults_to_health(): void
-    {
-        $this->assertEquals('health', $this->page->activeTab);
-    }
+test('active tab defaults to health', function () {
+    expect(test()->page->activeTab)->toBe('health');
+});
 
-    public function test_extended_trials_is_empty_array(): void
-    {
-        $this->assertIsArray($this->page->extendedTrials);
-        $this->assertEmpty($this->page->extendedTrials);
-    }
+test('extended trials is empty array', function () {
+    expect(test()->page->extendedTrials)->toBeArray();
+    expect(test()->page->extendedTrials)->toBeEmpty();
+});
 
-    public function test_sent_nudges_is_empty_array(): void
-    {
-        $this->assertIsArray($this->page->sentNudges);
-        $this->assertEmpty($this->page->sentNudges);
-    }
+test('sent nudges is empty array', function () {
+    expect(test()->page->sentNudges)->toBeArray();
+    expect(test()->page->sentNudges)->toBeEmpty();
+});
 
-    public function test_get_next_plan(): void
-    {
-        $this->assertEquals('Growth', $this->page->getNextPlan('starter'));
-        $this->assertEquals('Pro', $this->page->getNextPlan('growth'));
-        $this->assertNull($this->page->getNextPlan('pro'));
-    }
+test('get next plan', function () {
+    expect(test()->page->getNextPlan('starter'))->toBe('Growth');
+    expect(test()->page->getNextPlan('growth'))->toBe('Pro');
+    expect(test()->page->getNextPlan('pro'))->toBeNull();
+});
 
-    public function test_plan_limits_constant_exists(): void
-    {
-        $this->assertArrayHasKey('starter', BakeryInsights::PLAN_LIMITS);
-        $this->assertArrayHasKey('growth', BakeryInsights::PLAN_LIMITS);
-        $this->assertArrayHasKey('pro', BakeryInsights::PLAN_LIMITS);
-        $this->assertNull(BakeryInsights::PLAN_LIMITS['pro']['products']);
-        $this->assertEquals(15, BakeryInsights::PLAN_LIMITS['starter']['products']);
-    }
+test('plan limits constant exists', function () {
+    expect(BakeryInsights::PLAN_LIMITS)->toHaveKey('starter');
+    expect(BakeryInsights::PLAN_LIMITS)->toHaveKey('growth');
+    expect(BakeryInsights::PLAN_LIMITS)->toHaveKey('pro');
+    expect(BakeryInsights::PLAN_LIMITS['pro']['products'])->toBeNull();
+    expect(BakeryInsights::PLAN_LIMITS['starter']['products'])->toBe(15);
+});
 
-    public function test_get_health_summary_stats_returns_expected_keys(): void
-    {
-        $result = $this->page->getHealthSummaryStats();
+test('get health summary stats returns expected keys', function () {
+    $result = test()->page->getHealthSummaryStats();
 
-        $this->assertArrayHasKey('average', $result);
-        $this->assertArrayHasKey('healthy', $result);
-        $this->assertArrayHasKey('at_risk', $result);
-        $this->assertArrayHasKey('critical', $result);
-        $this->assertArrayHasKey('total', $result);
-    }
+    expect($result)->toHaveKey('average');
+    expect($result)->toHaveKey('healthy');
+    expect($result)->toHaveKey('at_risk');
+    expect($result)->toHaveKey('critical');
+    expect($result)->toHaveKey('total');
+});
 
-    public function test_get_health_summary_stats_with_no_tenants(): void
-    {
-        $result = $this->page->getHealthSummaryStats();
+test('get health summary stats with no tenants', function () {
+    $result = test()->page->getHealthSummaryStats();
 
-        $this->assertEquals(0, $result['average']);
-        $this->assertEquals(0, $result['total']);
-    }
+    expect($result['average'])->toBe(0);
+    expect($result['total'])->toBe(0);
+});
 
-    // Note: getHealthSummaryStats with tenants triggers tenancy()->initialize()
-    // which requires actual tenant databases. Testing with tenants would require
-    // full multi-tenancy setup, so we test the no-tenant path and properties only.
-}
+// Note: getHealthSummaryStats with tenants triggers tenancy()->initialize()
+// which requires actual tenant databases. Testing with tenants would require
+// full multi-tenancy setup, so we test the no-tenant path and properties only.

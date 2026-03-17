@@ -1,39 +1,32 @@
 <?php
 
-namespace Tests\Feature;
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-use Tests\CentralTestCase;
+test('storefront layout has pwa install prompt', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-class PwaInstallTest extends CentralTestCase
-{
-    public function test_storefront_layout_has_pwa_install_prompt(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain('pwaInstall');
+    expect($layout)->toContain('beforeinstallprompt');
+    expect($layout)->toContain('pwaInstallBtn');
+});
 
-        $this->assertStringContainsString('pwaInstall', $layout);
-        $this->assertStringContainsString('beforeinstallprompt', $layout);
-        $this->assertStringContainsString('pwaInstallBtn', $layout);
-    }
+test('pwa prompt hidden by default', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_pwa_prompt_hidden_by_default(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain('id="pwaInstall" style="display:none');
+});
 
-        $this->assertStringContainsString('id="pwaInstall" style="display:none', $layout);
-    }
+test('pwa prompt has dismiss functionality', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_pwa_prompt_has_dismiss_functionality(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain('dismissPwa');
+    expect($layout)->toContain('pwaDismissed');
+});
 
-        $this->assertStringContainsString('dismissPwa', $layout);
-        $this->assertStringContainsString('pwaDismissed', $layout);
-    }
+test('manifest link exists in storefront', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_manifest_link_exists_in_storefront(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
-
-        $this->assertStringContainsString('rel="manifest"', $layout);
-    }
-}
+    expect($layout)->toContain('rel="manifest"');
+});
