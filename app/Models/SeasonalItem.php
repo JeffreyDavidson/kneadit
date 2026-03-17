@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -25,22 +27,25 @@ class SeasonalItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function scopeCurrent($query)
+    #[Scope]
+    protected function current(Builder $query): void
     {
         $today = Carbon::today();
 
-        return $query->where('available_from', '<=', $today)
+        $query->where('available_from', '<=', $today)
             ->where('available_until', '>=', $today);
     }
 
-    public function scopeUpcoming($query)
+    #[Scope]
+    protected function upcoming(Builder $query): void
     {
-        return $query->where('available_from', '>', Carbon::today());
+        $query->where('available_from', '>', Carbon::today());
     }
 
-    public function scopeExpired($query)
+    #[Scope]
+    protected function expired(Builder $query): void
     {
-        return $query->where('available_until', '<', Carbon::today());
+        $query->where('available_until', '<', Carbon::today());
     }
 
     public function isCurrentlyAvailable(): bool

@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\GiftCardStatus;
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -45,18 +48,26 @@ class GiftCard extends Model
             && ($this->expires_at === null || $this->expires_at->isFuture());
     }
 
-    public function getStatusAttribute(): string
+    #[Scope]
+    protected function usable(Builder $query): void
+    {
+        $query->where('is_active', true)
+            ->where('current_balance', '>', 0)
+            ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
+    }
+
+    public function getStatusAttribute(): GiftCardStatus
     {
         if (! $this->is_active) {
-            return 'inactive';
+            return GiftCardStatus::Inactive;
         }
         if ($this->expires_at && $this->expires_at->isPast()) {
-            return 'expired';
+            return GiftCardStatus::Expired;
         }
         if ((float) $this->current_balance <= 0) {
-            return 'depleted';
+            return GiftCardStatus::Depleted;
         }
 
-        return 'active';
+        return GiftCardStatus::Active;
     }
 }

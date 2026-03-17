@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -27,13 +29,15 @@ class CustomerPhoto extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function scopeApproved($query)
+    #[Scope]
+    protected function approved(Builder $query): void
     {
-        return $query->where('is_approved', true);
+        $query->where('is_approved', true);
     }
 
-    public function scopeFeatured($query)
+    #[Scope]
+    protected function featured(Builder $query): void
     {
-        return $query->where('is_featured', true);
+        $query->where('is_featured', true);
     }
 }

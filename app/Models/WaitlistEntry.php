@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\WaitlistStatus;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,15 +28,9 @@ class WaitlistEntry extends Model
     {
         return [
             'requested_date' => 'date',
+            'status' => WaitlistStatus::class,
         ];
     }
-
-    public const STATUSES = [
-        'waiting' => 'Waiting',
-        'notified' => 'Notified',
-        'converted' => 'Converted',
-        'removed' => 'Removed',
-    ];
 
     public function product(): BelongsTo
     {
@@ -43,37 +39,39 @@ class WaitlistEntry extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return self::STATUSES[$this->status] ?? ucfirst($this->status);
+        return ucfirst($this->status->value);
     }
 
-    public function scopeWaiting(Builder $query): Builder
+    #[Scope]
+    protected function waiting(Builder $query): void
     {
-        return $query->where('status', 'waiting');
+        $query->where('status', WaitlistStatus::Waiting);
     }
 
-    public function scopeForDate(Builder $query, Carbon|string $date): Builder
+    #[Scope]
+    protected function forDate(Builder $query, Carbon|string $date): void
     {
-        return $query->whereDate('requested_date', Carbon::parse($date));
+        $query->whereDate('requested_date', Carbon::parse($date));
     }
 
     public function markNotified(): void
     {
         $this->update([
-            'status' => 'notified',
+            'status' => WaitlistStatus::Notified,
         ]);
     }
 
     public function markConverted(): void
     {
         $this->update([
-            'status' => 'converted',
+            'status' => WaitlistStatus::Converted,
         ]);
     }
 
     public function markRemoved(): void
     {
         $this->update([
-            'status' => 'removed',
+            'status' => WaitlistStatus::Removed,
         ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,14 +50,16 @@ class Holiday extends Model
         return now()->isAfter($this->start_prep_by) && $this->date->isFuture();
     }
 
-    public function scopeUpcoming(Builder $query): Builder
+    #[Scope]
+    protected function upcoming(Builder $query): void
     {
-        return $query->where('date', '>=', Carbon::today())->orderBy('date');
+        $query->where('date', '>=', Carbon::today())->orderBy('date');
     }
 
-    public function scopeActive(Builder $query): Builder
+    #[Scope]
+    protected function active(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 
     public function daysUntilDeadline(): int

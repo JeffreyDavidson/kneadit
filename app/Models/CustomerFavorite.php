@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -17,9 +19,10 @@ class CustomerFavorite extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function scopeForCustomer($query, string $email)
+    #[Scope]
+    protected function forCustomer(Builder $query, string $email): void
     {
-        return $query->where('customer_email', $email);
+        $query->where('customer_email', $email);
     }
 
     public static function toggle(string $email, int $productId): bool

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class GalleryPhoto extends Model
@@ -19,13 +21,15 @@ class GalleryPhoto extends Model
         'sort_order' => 'integer',
     ];
 
-    public function scopeVisible($query)
+    #[Scope]
+    protected function visible(Builder $query): void
     {
-        return $query->where('is_visible', true);
+        $query->where('is_visible', true);
     }
 
-    public function scopeOrdered($query)
+    #[Scope]
+    protected function ordered(Builder $query): void
     {
-        return $query->orderBy('sort_order');
+        $query->orderBy('sort_order');
     }
 }
