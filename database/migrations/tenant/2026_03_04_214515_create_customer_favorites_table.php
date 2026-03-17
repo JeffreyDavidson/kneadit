@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('customer_favorites', function (Blueprint $table) {
             $table->id();
             $table->string('customer_email');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
             $table->unique(['customer_email', 'product_id']);

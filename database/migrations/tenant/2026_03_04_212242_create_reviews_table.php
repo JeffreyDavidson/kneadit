@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('customer_name');
             $table->string('customer_email');
-            $table->foreignId('product_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->nullable()->constrained()->cascadeOnDelete();
             $table->integer('rating')->check('rating >= 1 AND rating <= 5');
             $table->text('comment')->nullable();
             $table->boolean('is_approved')->default(false);

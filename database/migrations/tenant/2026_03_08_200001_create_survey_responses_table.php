@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('survey_responses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('survey_id')->constrained()->onDelete('cascade');
+            $table->foreignId('survey_id')->constrained()->cascadeOnDelete();
             $table->string('customer_name')->nullable();
             $table->string('customer_email')->nullable();
             $table->json('answers');
