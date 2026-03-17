@@ -1,9 +1,7 @@
 <?php
 
 use App\Models\TenantNote;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
+beforeEach(fn () => setUpCentralTest());
 
 test('can create note', function () {
     $note = TenantNote::create([

@@ -2,11 +2,8 @@
 
 use App\Filament\Central\Pages\Activity;
 use App\Models\PlatformActivity;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
-
 beforeEach(function () {
+    setUpCentralTest();
     test()->page = new Activity;
 });
 

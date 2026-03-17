@@ -3,9 +3,7 @@
 use App\Models\SupportReply;
 use App\Models\SupportTicket;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
+beforeEach(fn () => setUpCentralTest());
 
 test('can create ticket', function () {
     $ticket = SupportTicket::create([

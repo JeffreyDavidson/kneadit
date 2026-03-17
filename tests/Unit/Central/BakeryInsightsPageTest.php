@@ -1,11 +1,8 @@
 <?php
 
 use App\Filament\Central\Pages\BakeryInsights;
-use Tests\CentralTestCase;
-
-uses(CentralTestCase::class);
-
 beforeEach(function () {
+    setUpCentralTest();
     test()->page = new BakeryInsights;
 });
 
