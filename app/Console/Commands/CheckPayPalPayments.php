@@ -16,7 +16,7 @@ class CheckPayPalPayments extends Command
 
     protected $description = 'Check PayPal invoice payment statuses and update orders across all tenants';
 
-    public function handle()
+    public function handle(): int
     {
         // Skip entirely if PayPal isn't configured at the platform level
         if (! config('services.paypal.client_id')) {
@@ -70,11 +70,11 @@ class CheckPayPalPayments extends Command
             }
 
             match ($status) {
-                'PAID' => tap($order, fn ($o) => $o->update(['payment_status' => PaymentStatus::Paid]))
+                'PAID' => tap($order, fn (Order $o) => $o->update(['payment_status' => PaymentStatus::Paid]))
                     && $this->info("  ✓ #{$order->order_number} paid"),
-                'CANCELLED' => tap($order, fn ($o) => $o->update(['payment_status' => PaymentStatus::Cancelled]))
+                'CANCELLED' => tap($order, fn (Order $o) => $o->update(['payment_status' => PaymentStatus::Cancelled]))
                     && $this->warn("  ⚠ #{$order->order_number} cancelled"),
-                'REFUNDED' => tap($order, fn ($o) => $o->update(['payment_status' => PaymentStatus::Refunded]))
+                'REFUNDED' => tap($order, fn (Order $o) => $o->update(['payment_status' => PaymentStatus::Refunded]))
                     && $this->warn("  ⚠ #{$order->order_number} refunded"),
                 default => null,
             };

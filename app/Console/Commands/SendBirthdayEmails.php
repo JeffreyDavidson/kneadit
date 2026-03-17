@@ -41,7 +41,7 @@ class SendBirthdayEmails extends Command
         return 0;
     }
 
-    protected function processTenant($tenant): void
+    protected function processTenant(Tenant $tenant): void
     {
         $today = Date::today();
         $discountPercent = (int) Setting::get('birthday_discount_percentage', '15');

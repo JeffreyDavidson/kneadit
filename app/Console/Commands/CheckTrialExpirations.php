@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -62,7 +63,7 @@ class CheckTrialExpirations extends Command
                         ? "After your trial expires, your storefront will be paused until you subscribe.\n\n"
                         : '').
                     "Questions? Just reply to this email.\n\n— The KneadIt Team",
-                    function ($m) use ($user, $daysLeft) {
+                    function (Message $m) use ($user, $daysLeft) {
                         $subjects = [
                             7 => 'Your KneadIt trial ends in 7 days',
                             3 => '⏰ 3 days left on your KneadIt trial',
@@ -114,7 +115,7 @@ class CheckTrialExpirations extends Command
                             "Your admin panel is still accessible at:\n".
                             "https://{$tenant->id}.getkneadit.app/admin\n\n".
                             '— The KneadIt Team',
-                            function ($m) use ($user) {
+                            function (Message $m) use ($user) {
                                 $m->to($user->email)
                                     ->subject('Your KneadIt trial has expired')
                                     ->from(config('mail.from.address'), 'KneadIt');
