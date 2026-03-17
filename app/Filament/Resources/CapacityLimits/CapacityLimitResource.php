@@ -73,7 +73,7 @@ class CapacityLimitResource extends Resource
                         ])
                         ->required()
                         ->live()
-                        ->afterStateHydrated(function ($component, ?CapacityLimit $record) {
+                        ->afterStateHydrated(function (mixed $component, ?CapacityLimit $record) {
                             if (! $record) {
                                 return;
                             }

@@ -194,7 +194,7 @@ class TaxExport extends Page
     }
 
     /** @param resource $handle */
-    protected function writeOrdersCsv($handle, string $from, string $to): void
+    protected function writeOrdersCsv(mixed $handle, string $from, string $to): void
     {
         fputcsv($handle, ['=== ORDERS ===']);
         fputcsv($handle, ['Date', 'Order Number', 'Customer', 'Items', 'Subtotal', 'Delivery Fee', 'Discount', 'Total', 'Payment Status', 'Payment Method']);
@@ -221,7 +221,7 @@ class TaxExport extends Page
     }
 
     /** @param resource $handle */
-    protected function writeExpensesCsv($handle, string $from, string $to): void
+    protected function writeExpensesCsv(mixed $handle, string $from, string $to): void
     {
         fputcsv($handle, ['=== EXPENSES ===']);
         fputcsv($handle, ['Date', 'Category (IRS Schedule C)', 'Description', 'Amount', 'Business Use %', 'Deductible Amount', 'Vendor']);
@@ -257,7 +257,7 @@ class TaxExport extends Page
     }
 
     /** @param resource $handle */
-    protected function writeIncomeCsv($handle, string $from, string $to): void
+    protected function writeIncomeCsv(mixed $handle, string $from, string $to): void
     {
         fputcsv($handle, ['=== INCOME ===']);
         fputcsv($handle, ['Date', 'Source', 'Description', 'Amount', 'Category']);
@@ -278,7 +278,7 @@ class TaxExport extends Page
     }
 
     /** @param resource $handle */
-    protected function writeSummaryCsv($handle, string $from, string $to): void
+    protected function writeSummaryCsv(mixed $handle, string $from, string $to): void
     {
         $totalOrderRevenue = Order::whereBetween('created_at', [$from, $to.' 23:59:59'])
             ->where('payment_status', PaymentStatus::Paid)

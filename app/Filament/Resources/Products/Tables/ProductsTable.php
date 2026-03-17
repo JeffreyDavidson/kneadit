@@ -43,7 +43,7 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('margin')
-                    ->formatStateUsing(function ($state, Product $record) {
+                    ->formatStateUsing(function (mixed $state, Product $record) {
                         if ($record->cost && $record->price) {
                             return round(($record->price - $record->cost) / $record->price * 100, 2).'%';
                         }

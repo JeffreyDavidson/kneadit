@@ -34,7 +34,7 @@ class CouponsTable
 
                 TextColumn::make('value')
                     ->money('USD')
-                    ->formatStateUsing(function ($state, Coupon $record) {
+                    ->formatStateUsing(function (mixed $state, Coupon $record) {
                         if ($record->type === CouponType::Percentage) {
                             return $state.'%';
                         }
@@ -47,7 +47,7 @@ class CouponsTable
                     ->placeholder('No minimum'),
 
                 TextColumn::make('usage')
-                    ->formatStateUsing(function ($state, Coupon $record) {
+                    ->formatStateUsing(function (mixed $state, Coupon $record) {
                         if ($record->max_uses) {
                             return "{$record->used_count} / {$record->max_uses}";
                         }

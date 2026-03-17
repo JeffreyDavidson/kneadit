@@ -112,7 +112,7 @@ class ExportController extends Controller
     /**
      * @param  resource  $handle
      */
-    private function writeProducts($handle): void
+    private function writeProducts(mixed $handle): void
     {
         fputcsv($handle, ['ID', 'Name', 'Slug', 'Description', 'Price', 'Status', 'Created At', 'Updated At']);
         DB::table('products')->orderBy('id')->chunk(500, function (Collection $rows) use ($handle) {
@@ -128,7 +128,7 @@ class ExportController extends Controller
     /**
      * @param  resource  $handle
      */
-    private function writeCategories($handle): void
+    private function writeCategories(mixed $handle): void
     {
         fputcsv($handle, ['ID', 'Name', 'Slug', 'Description', 'Created At', 'Updated At']);
         DB::table('categories')->orderBy('id')->chunk(500, function (Collection $rows) use ($handle) {
@@ -144,7 +144,7 @@ class ExportController extends Controller
     /**
      * @param  resource  $handle
      */
-    private function writeOrders($handle): void
+    private function writeOrders(mixed $handle): void
     {
         fputcsv($handle, ['Order ID', 'Customer ID', 'Status', 'Total', 'Item Product ID', 'Item Qty', 'Item Unit Price', 'Order Created At']);
         DB::table('orders')
@@ -165,7 +165,7 @@ class ExportController extends Controller
     /**
      * @param  resource  $handle
      */
-    private function writeCustomers($handle): void
+    private function writeCustomers(mixed $handle): void
     {
         fputcsv($handle, ['ID', 'Name', 'Email', 'Created At', 'Updated At']);
         DB::table('users')->orderBy('id')->chunk(500, function (Collection $rows) use ($handle) {
@@ -180,7 +180,7 @@ class ExportController extends Controller
     /**
      * @param  resource  $handle
      */
-    private function writeReviews($handle): void
+    private function writeReviews(mixed $handle): void
     {
         fputcsv($handle, ['ID', 'Product ID', 'User ID', 'Rating', 'Comment', 'Created At', 'Updated At']);
         DB::table('reviews')->orderBy('id')->chunk(500, function (Collection $rows) use ($handle) {
