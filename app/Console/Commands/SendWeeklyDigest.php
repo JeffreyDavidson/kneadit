@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Mail\WeeklyDigest;
 use App\Models\Setting;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -16,7 +17,7 @@ class SendWeeklyDigest extends Command
 
     public function handle(): int
     {
-        $tenants = \App\Models\Tenant::all();
+        $tenants = Tenant::all();
 
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);

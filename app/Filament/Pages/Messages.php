@@ -7,7 +7,7 @@ use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use UnitEnum;
+use Illuminate\Database\Eloquent\Collection;
 
 class Messages extends Page
 {
@@ -30,7 +30,7 @@ class Messages extends Page
         return 'Messages';
     }
 
-    public function getMessages(): \Illuminate\Database\Eloquent\Collection
+    public function getMessages(): Collection
     {
         $tenant = Filament::getTenant();
 
@@ -52,7 +52,7 @@ class Messages extends Page
         }
     }
 
-    public function getThread(): ?\Illuminate\Database\Eloquent\Collection
+    public function getThread(): ?Collection
     {
         if (! $this->viewingMessage) {
             return null;
@@ -78,7 +78,7 @@ class Messages extends Page
         PlatformMessage::create([
             'tenant_id' => $tenant->id,
             'sender_type' => 'tenant',
-            'subject' => 'Re: ' . $parent->subject,
+            'subject' => 'Re: '.$parent->subject,
             'body' => $this->replyBody,
             'parent_id' => $parent->id,
         ]);

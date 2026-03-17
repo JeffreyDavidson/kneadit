@@ -62,6 +62,7 @@ class WebhookServiceTest extends CentralTestCase
 
         Http::assertSent(function ($request) {
             $body = json_decode($request->body(), true);
+
             return $body['event'] === 'order.created'
                 && $body['data']['order_number'] === 'ORD-001'
                 && isset($body['timestamp']);

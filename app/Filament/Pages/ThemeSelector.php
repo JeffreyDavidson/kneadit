@@ -6,6 +6,7 @@ use App\Filament\Traits\RequiresRole;
 use App\Models\Setting;
 use App\Traits\HasPlanGating;
 use BackedEnum;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
 class ThemeSelector extends Page
@@ -39,7 +40,7 @@ class ThemeSelector extends Page
 
         $this->dispatch('$refresh');
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('Theme updated to '.ucfirst($theme))
             ->success()
             ->send();

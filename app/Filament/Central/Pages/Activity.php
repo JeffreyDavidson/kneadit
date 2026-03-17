@@ -27,10 +27,15 @@ class Activity extends Page
     // ── Audit Trail Properties ──
 
     public string $filterAction = '';
+
     public string $filterSearch = '';
+
     public string $filterDateFrom = '';
+
     public string $filterDateTo = '';
+
     public int $page = 1;
+
     public int $perPage = 20;
 
     protected $queryString = [
@@ -83,7 +88,7 @@ class Activity extends Page
         }
 
         if ($this->filterSearch) {
-            $query->where('description', 'like', '%' . $this->filterSearch . '%');
+            $query->where('description', 'like', '%'.$this->filterSearch.'%');
         }
 
         if ($this->filterDateFrom) {

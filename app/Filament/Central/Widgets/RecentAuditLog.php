@@ -4,7 +4,6 @@ namespace App\Filament\Central\Widgets;
 
 use App\Models\AdminAuditLog;
 use Filament\Widgets\Widget;
-use BackedEnum;
 
 class RecentAuditLog extends Widget
 {

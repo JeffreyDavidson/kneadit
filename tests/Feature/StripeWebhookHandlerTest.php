@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\StripeWebhookController;
+use Laravel\Cashier\Http\Controllers\WebhookController;
 use Tests\CentralTestCase;
 
 class StripeWebhookHandlerTest extends CentralTestCase
@@ -10,7 +11,7 @@ class StripeWebhookHandlerTest extends CentralTestCase
     public function test_webhook_controller_extends_cashier(): void
     {
         $this->assertTrue(
-            is_subclass_of(StripeWebhookController::class, \Laravel\Cashier\Http\Controllers\WebhookController::class)
+            is_subclass_of(StripeWebhookController::class, WebhookController::class)
         );
     }
 
@@ -43,7 +44,7 @@ class StripeWebhookHandlerTest extends CentralTestCase
             'pro' => 'price_test_pro',
         ]]);
 
-        $controller = new StripeWebhookController();
+        $controller = new StripeWebhookController;
         $reflection = new \ReflectionMethod($controller, 'priceIdToPlan');
         $reflection->setAccessible(true);
 

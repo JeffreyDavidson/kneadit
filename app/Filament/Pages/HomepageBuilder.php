@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Models\Setting;
 use BackedEnum;
-use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
@@ -77,7 +76,7 @@ class HomepageBuilder extends Page
 
     public function toggleVisibility(string $key): void
     {
-        $this->sections[$key]['visible'] = !($this->sections[$key]['visible'] ?? true);
+        $this->sections[$key]['visible'] = ! ($this->sections[$key]['visible'] ?? true);
     }
 
     public function moveUp(string $key): void

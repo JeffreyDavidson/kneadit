@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Setting;
 use Tests\CentralTestCase;
 
 class TenantStorefrontMetaTest extends CentralTestCase
@@ -99,6 +98,6 @@ class TenantStorefrontMetaTest extends CentralTestCase
     {
         $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-        $this->assertStringContainsString("display:none", $layout);
+        $this->assertStringContainsString('display:none', $layout);
     }
 }

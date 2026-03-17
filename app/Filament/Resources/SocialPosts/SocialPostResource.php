@@ -13,6 +13,8 @@ use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class SocialPostResource extends Resource
 {
@@ -64,12 +66,12 @@ class SocialPostResource extends Resource
         return ['caption'];
     }
 
-    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return \Illuminate\Support\Str::limit($record->caption, 50);
+        return Str::limit($record->caption, 50);
     }
 
-    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
             'Platform' => ucfirst($record->platform ?? 'N/A'),

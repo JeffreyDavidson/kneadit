@@ -7,13 +7,12 @@ use Tests\CentralTestCase;
 
 class BakeryInsightsPageTest extends CentralTestCase
 {
-
     private BakeryInsights $page;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->page = new BakeryInsights();
+        $this->page = new BakeryInsights;
     }
 
     public function test_active_tab_defaults_to_health(): void

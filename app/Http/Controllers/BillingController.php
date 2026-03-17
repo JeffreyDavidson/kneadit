@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Laravel\Cashier\Cashier;
 
 class BillingController extends Controller
 {
@@ -48,17 +52,17 @@ class BillingController extends Controller
     public function success(Request $request)
     {
         if (! $request->user() && $request->has('session_id')) {
-            $checkoutSession = \Laravel\Cashier\Cashier::stripe()->checkout->sessions->retrieve($request->get('session_id'));
+            $checkoutSession = Cashier::stripe()->checkout->sessions->retrieve($request->get('session_id'));
 
             if ($checkoutSession
                 && $checkoutSession->status === 'complete'
                 && $checkoutSession->customer
                 && $checkoutSession->created >= now()->subMinutes(30)->getTimestamp()
             ) {
-                $user = \App\Models\User::where('stripe_id', $checkoutSession->customer)->first();
+                $user = User::where('stripe_id', $checkoutSession->customer)->first();
 
                 if ($user) {
-                    \Illuminate\Support\Facades\Auth::login($user);
+                    Auth::login($user);
                 }
             }
         }
@@ -86,7 +90,7 @@ class BillingController extends Controller
         try {
             $request->user()->subscription('default')->swap($priceId);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Plan swap failed', ['error' => $e->getMessage()]);
+            Log::error('Plan swap failed', ['error' => $e->getMessage()]);
 
             return redirect()->route('billing.plans')
                 ->with('error', 'Unable to update your plan. Please try again or contact support.');

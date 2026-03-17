@@ -2,10 +2,22 @@
 
 namespace Tests\Feature;
 
-use App\Mail\OrderPlaced;
-use App\Mail\OrderConfirmed;
-use App\Mail\ReviewRequest;
+use App\Mail\BirthdayDiscount;
 use App\Mail\CateringQuote;
+use App\Mail\Concerns\BakerBranded;
+use App\Mail\CustomerBlast;
+use App\Mail\HappyBirthday;
+use App\Mail\NewOrderMessage;
+use App\Mail\OrderBaking;
+use App\Mail\OrderCancelled;
+use App\Mail\OrderConfirmed;
+use App\Mail\OrderDelivered;
+use App\Mail\OrderPlaced;
+use App\Mail\OrderReady;
+use App\Mail\ProductAvailable;
+use App\Mail\RepeatOrderReminder;
+use App\Mail\ReviewRequest;
+use App\Mail\WeeklyDigest;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Setting;
@@ -106,27 +118,27 @@ class BakerBrandedEmailTest extends CentralTestCase
     public function test_all_customer_mailables_use_baker_branded_trait(): void
     {
         $mailables = [
-            \App\Mail\OrderPlaced::class,
-            \App\Mail\OrderConfirmed::class,
-            \App\Mail\OrderReady::class,
-            \App\Mail\OrderBaking::class,
-            \App\Mail\OrderCancelled::class,
-            \App\Mail\OrderDelivered::class,
-            \App\Mail\ReviewRequest::class,
-            \App\Mail\HappyBirthday::class,
-            \App\Mail\BirthdayDiscount::class,
-            \App\Mail\CustomerBlast::class,
-            \App\Mail\ProductAvailable::class,
-            \App\Mail\WeeklyDigest::class,
-            \App\Mail\CateringQuote::class,
-            \App\Mail\NewOrderMessage::class,
-            \App\Mail\RepeatOrderReminder::class,
+            OrderPlaced::class,
+            OrderConfirmed::class,
+            OrderReady::class,
+            OrderBaking::class,
+            OrderCancelled::class,
+            OrderDelivered::class,
+            ReviewRequest::class,
+            HappyBirthday::class,
+            BirthdayDiscount::class,
+            CustomerBlast::class,
+            ProductAvailable::class,
+            WeeklyDigest::class,
+            CateringQuote::class,
+            NewOrderMessage::class,
+            RepeatOrderReminder::class,
         ];
 
         foreach ($mailables as $mailable) {
             $uses = class_uses_recursive($mailable);
             $this->assertContains(
-                \App\Mail\Concerns\BakerBranded::class,
+                BakerBranded::class,
                 $uses,
                 "{$mailable} should use BakerBranded trait"
             );

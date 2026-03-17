@@ -28,7 +28,7 @@ class BackupDatabases extends Command
         if ($centralDb && file_exists($centralDb)) {
             $dest = "{$backupPath}/central.sqlite";
             copy($centralDb, $dest);
-            $this->info("  ✓ Central DB (" . $this->formatSize(filesize($centralDb)) . ")");
+            $this->info('  ✓ Central DB ('.$this->formatSize(filesize($centralDb)).')');
         } else {
             $this->warn("  ⚠ Central DB not found at: {$centralDb}");
         }
@@ -47,7 +47,7 @@ class BackupDatabases extends Command
 
             $this->info("  ✓ {$count} tenant database(s)");
         } else {
-            $this->info("  - No tenant DB directory found");
+            $this->info('  - No tenant DB directory found');
         }
 
         // 3. Clean old backups
@@ -57,7 +57,7 @@ class BackupDatabases extends Command
         $totalSize = $this->dirSize($backupPath);
         $this->info("Backup complete ({$this->formatSize($totalSize)})");
 
-        Log::info("Database backup completed", [
+        Log::info('Database backup completed', [
             'path' => $backupPath,
             'size' => $totalSize,
         ]);
@@ -68,7 +68,7 @@ class BackupDatabases extends Command
     protected function getBackupDir(): string
     {
         // Use a shared directory outside releases for Forge deploys
-        $sharedDir = dirname(base_path()) . '/backups';
+        $sharedDir = dirname(base_path()).'/backups';
 
         // Fallback for local dev
         if (str_contains(base_path(), '/current/') || str_contains(base_path(), '/releases/')) {
@@ -117,14 +117,16 @@ class BackupDatabases extends Command
         foreach (glob("{$dir}/*") as $file) {
             $size += filesize($file);
         }
+
         return $size;
     }
 
     protected function formatSize(int $bytes): string
     {
         if ($bytes >= 1048576) {
-            return round($bytes / 1048576, 1) . ' MB';
+            return round($bytes / 1048576, 1).' MB';
         }
-        return round($bytes / 1024, 1) . ' KB';
+
+        return round($bytes / 1024, 1).' KB';
     }
 }

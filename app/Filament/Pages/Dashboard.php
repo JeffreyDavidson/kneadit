@@ -16,7 +16,6 @@ use App\Filament\Widgets\LowStockWidget;
 use App\Filament\Widgets\LoyaltyLeadersWidget;
 use App\Filament\Widgets\MarginAlertWidget;
 use App\Filament\Widgets\OrderFunnelWidget;
-use App\Filament\Widgets\QuickActionsWidget;
 use App\Filament\Widgets\RecentActivityWidget;
 use App\Filament\Widgets\RecentOrdersWidget;
 use App\Filament\Widgets\ReorderRemindersWidget;

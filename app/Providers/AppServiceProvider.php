@@ -28,8 +28,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         FilamentView::registerRenderHook(
-            "panels::body.end",
-            fn () => Blade::render(<<<HTML
+            'panels::body.end',
+            fn () => Blade::render(<<<'HTML'
                 <script>
                     document.addEventListener("livewire:navigating", () => {
                         const sidebar = document.querySelector(".fi-sidebar-nav");

@@ -8,8 +8,11 @@ use Illuminate\Support\Facades\Log;
 class ForgeService
 {
     protected string $baseUrl = 'https://forge.laravel.com/api/v1';
+
     protected string $token;
+
     protected string $serverId;
+
     protected string $siteId;
 
     public function __construct()
@@ -21,9 +24,9 @@ class ForgeService
 
     public static function isConfigured(): bool
     {
-        return !empty(config('services.forge.token'))
-            && !empty(config('services.forge.server_id'))
-            && !empty(config('services.forge.site_id'));
+        return ! empty(config('services.forge.token'))
+            && ! empty(config('services.forge.server_id'))
+            && ! empty(config('services.forge.site_id'));
     }
 
     protected function request()
@@ -42,8 +45,9 @@ class ForgeService
             // Get current site config
             $response = $this->request()->get("/servers/{$this->serverId}/sites/{$this->siteId}");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Forge: failed to get site', ['status' => $response->status()]);
+
                 return false;
             }
 
@@ -62,18 +66,21 @@ class ForgeService
                 ['aliases' => $currentAliases]
             );
 
-            if (!$updateResponse->successful()) {
+            if (! $updateResponse->successful()) {
                 Log::error('Forge: failed to add alias', [
                     'domain' => $domain,
                     'status' => $updateResponse->status(),
                 ]);
+
                 return false;
             }
 
             Log::info('Forge: domain alias added', ['domain' => $domain]);
+
             return true;
         } catch (\Throwable $e) {
             Log::error('Forge: addDomainAlias failed', ['error' => $e->getMessage()]);
+
             return false;
         }
     }
@@ -89,19 +96,22 @@ class ForgeService
                 ['domains' => [$domain]]
             );
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('Forge: SSL request failed', [
                     'domain' => $domain,
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
+
                 return false;
             }
 
             Log::info('Forge: SSL certificate requested', ['domain' => $domain]);
+
             return true;
         } catch (\Throwable $e) {
             Log::error('Forge: obtainSslCertificate failed', ['error' => $e->getMessage()]);
+
             return false;
         }
     }
@@ -114,13 +124,13 @@ class ForgeService
         try {
             $response = $this->request()->get("/servers/{$this->serverId}/sites/{$this->siteId}");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return false;
             }
 
             $site = $response->json('site');
             $currentAliases = $site['aliases'] ?? [];
-            $currentAliases = array_values(array_filter($currentAliases, fn($a) => $a !== $domain));
+            $currentAliases = array_values(array_filter($currentAliases, fn ($a) => $a !== $domain));
 
             $updateResponse = $this->request()->put(
                 "/servers/{$this->serverId}/sites/{$this->siteId}",
@@ -130,6 +140,7 @@ class ForgeService
             return $updateResponse->successful();
         } catch (\Throwable $e) {
             Log::error('Forge: removeDomainAlias failed', ['error' => $e->getMessage()]);
+
             return false;
         }
     }

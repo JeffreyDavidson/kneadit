@@ -6,7 +6,9 @@ use App\Filament\Traits\RequiresRole;
 use App\Models\Product;
 use App\Services\DescriptionGeneratorService;
 use App\Traits\HasPlanGating;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Collection;
 
 class DescriptionGenerator extends Page
 {
@@ -39,7 +41,7 @@ class DescriptionGenerator extends Page
 
     public array $descriptions = [];
 
-    public function getProductsProperty(): \Illuminate\Support\Collection
+    public function getProductsProperty(): Collection
     {
         return Product::query()
             ->with('category')
@@ -83,7 +85,7 @@ class DescriptionGenerator extends Page
         $product = Product::find($this->selectedProductId);
         if ($product) {
             $product->update(['description' => $this->descriptions[$index]]);
-            \Filament\Notifications\Notification::make()
+            Notification::make()
                 ->title('Description applied!')
                 ->body("Description saved to {$product->name}.")
                 ->success()

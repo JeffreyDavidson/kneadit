@@ -2,10 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Central\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -16,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+
 class CentralPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -39,8 +42,8 @@ class CentralPanelProvider extends PanelProvider
             ->brandLogoHeight('50px')
             ->darkMode(true)
             ->navigationGroups([
-                \Filament\Navigation\NavigationGroup::make('Platform'),
-                \Filament\Navigation\NavigationGroup::make('Settings'),
+                NavigationGroup::make('Platform'),
+                NavigationGroup::make('Settings'),
             ])
             ->font('Inter')
             ->renderHook('panels::head.end', fn () => new HtmlString(
@@ -62,7 +65,7 @@ class CentralPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\Filament\Central\Resources')
             ->discoverPages(in: app_path('Filament/Central/Pages'), for: 'App\Filament\Central\Pages')
             ->pages([
-                \App\Filament\Central\Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Central/Widgets'), for: 'App\Filament\Central\Widgets')
             ->middleware([

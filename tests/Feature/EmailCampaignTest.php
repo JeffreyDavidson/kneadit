@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Customer;
 use App\Models\EmailCampaign;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class EmailCampaignTest extends TestCase
@@ -99,7 +100,7 @@ class EmailCampaignTest extends TestCase
             'sent_at' => '2026-03-08 12:00:00',
         ]);
 
-        $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $campaign->sent_at);
+        $this->assertInstanceOf(Carbon::class, $campaign->sent_at);
     }
 
     public function test_campaign_recipient_count_stored_correctly(): void

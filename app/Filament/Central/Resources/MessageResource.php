@@ -2,12 +2,13 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Filament\Central\Resources\MessageResource\Pages\ListMessages;
+use App\Filament\Central\Resources\MessageResource\Pages\ViewMessage;
 use App\Models\PlatformMessage;
 use App\Models\Tenant;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -104,8 +105,8 @@ class MessageResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Central\Resources\MessageResource\Pages\ListMessages::route('/'),
-            'view' => \App\Filament\Central\Resources\MessageResource\Pages\ViewMessage::route('/{record}'),
+            'index' => ListMessages::route('/'),
+            'view' => ViewMessage::route('/{record}'),
         ];
     }
 }

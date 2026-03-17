@@ -7,6 +7,7 @@ use App\Models\SocialPost;
 use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class SocialCalendar extends Page
 {
@@ -63,7 +64,7 @@ class SocialCalendar extends Page
             $this->posts[$day][] = [
                 'id' => $post->id,
                 'platform' => $post->platform,
-                'caption' => \Illuminate\Support\Str::limit($post->caption, 60),
+                'caption' => Str::limit($post->caption, 60),
                 'status' => $post->status,
                 'time' => $post->scheduled_for->format('g:i A'),
                 'product' => $post->product?->name,

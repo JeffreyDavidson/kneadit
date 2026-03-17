@@ -2,12 +2,14 @@
 
 namespace App\Filament\Pages\Auth;
 
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
+use Filament\Auth\MultiFactor\Contracts\HasBeforeChallengeHook;
 use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Log;
-use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 
 class Login extends BaseLogin
 {
@@ -22,9 +24,10 @@ class Login extends BaseLogin
 
         try {
             $this->rateLimit(5);
-        } catch (\DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException $exception) {
+        } catch (TooManyRequestsException $exception) {
             Log::warning('LOGIN: Rate limited');
             $this->getRateLimitedNotification($exception)?->send();
+
             return null;
         }
 
@@ -86,7 +89,7 @@ class Login extends BaseLogin
                 }
                 Log::info('LOGIN: MFA required');
                 $this->userUndertakingMultiFactorAuthentication = encrypt($user->getAuthIdentifier());
-                if ($mfaProvider instanceof \Filament\Auth\MultiFactor\Contracts\HasBeforeChallengeHook) {
+                if ($mfaProvider instanceof HasBeforeChallengeHook) {
                     $mfaProvider->beforeChallenge($user);
                 }
                 break;
@@ -94,6 +97,7 @@ class Login extends BaseLogin
 
             if (filled($this->userUndertakingMultiFactorAuthentication)) {
                 $this->multiFactorChallengeForm->fill();
+
                 return null;
             }
         }
@@ -118,6 +122,7 @@ class Login extends BaseLogin
                 'can_access' => $canAccess ? 'YES' : 'NO',
                 'db_in_callback' => \DB::connection()->getDatabaseName(),
             ]);
+
             return $canAccess;
         }, $data['remember'] ?? false);
 

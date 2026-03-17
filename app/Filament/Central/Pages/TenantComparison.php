@@ -65,10 +65,10 @@ class TenantComparison extends Page
             ];
 
             $setupChecks = [
-                !empty($tenant->store_name),
-                !empty($tenant->store_logo),
+                ! empty($tenant->store_name),
+                ! empty($tenant->store_logo),
                 (bool) $tenant->storefront_enabled,
-                !empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c',
+                ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c',
             ];
 
             try {
@@ -107,21 +107,36 @@ class TenantComparison extends Page
 
         if ($tenant->last_login_at) {
             $daysSinceLogin = Carbon::parse($tenant->last_login_at)->diffInDays(now());
-            if ($daysSinceLogin < 1) $score += 30;
-            elseif ($daysSinceLogin < 3) $score += 25;
-            elseif ($daysSinceLogin < 7) $score += 15;
-            elseif ($daysSinceLogin < 30) $score += 5;
+            if ($daysSinceLogin < 1) {
+                $score += 30;
+            } elseif ($daysSinceLogin < 3) {
+                $score += 25;
+            } elseif ($daysSinceLogin < 7) {
+                $score += 15;
+            } elseif ($daysSinceLogin < 30) {
+                $score += 5;
+            }
         }
 
-        if ($data['total_orders'] >= 50) $score += 30;
-        elseif ($data['total_orders'] >= 20) $score += 20;
-        elseif ($data['total_orders'] >= 5) $score += 10;
-        elseif ($data['total_orders'] > 0) $score += 5;
+        if ($data['total_orders'] >= 50) {
+            $score += 30;
+        } elseif ($data['total_orders'] >= 20) {
+            $score += 20;
+        } elseif ($data['total_orders'] >= 5) {
+            $score += 10;
+        } elseif ($data['total_orders'] > 0) {
+            $score += 5;
+        }
 
-        if ($data['total_products'] >= 20) $score += 20;
-        elseif ($data['total_products'] >= 10) $score += 15;
-        elseif ($data['total_products'] >= 3) $score += 10;
-        elseif ($data['total_products'] > 0) $score += 5;
+        if ($data['total_products'] >= 20) {
+            $score += 20;
+        } elseif ($data['total_products'] >= 10) {
+            $score += 15;
+        } elseif ($data['total_products'] >= 3) {
+            $score += 10;
+        } elseif ($data['total_products'] > 0) {
+            $score += 5;
+        }
 
         $score += (int) round(($data['setup_completed'] / 7) * 20);
 

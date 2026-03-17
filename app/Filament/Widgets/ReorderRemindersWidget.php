@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Models\Customer;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\DB;
 
 class ReorderRemindersWidget extends Widget
 {

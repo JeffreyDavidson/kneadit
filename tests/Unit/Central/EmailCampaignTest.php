@@ -3,6 +3,7 @@
 namespace Tests\Unit\Central;
 
 use App\Models\EmailCampaign;
+use Carbon\Carbon;
 use Tests\CentralTestCase;
 
 class EmailCampaignTest extends CentralTestCase
@@ -30,7 +31,7 @@ class EmailCampaignTest extends CentralTestCase
         ]);
 
         $campaign->refresh();
-        $this->assertInstanceOf(\Carbon\Carbon::class, $campaign->sent_at);
+        $this->assertInstanceOf(Carbon::class, $campaign->sent_at);
     }
 
     public function test_status_can_be_updated_to_sent(): void

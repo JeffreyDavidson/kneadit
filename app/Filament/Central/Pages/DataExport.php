@@ -36,12 +36,14 @@ class DataExport extends Page
     {
         if (! $value) {
             $this->counts = [];
+
             return;
         }
 
         $tenant = Tenant::find($value);
         if (! $tenant) {
             $this->counts = [];
+
             return;
         }
 

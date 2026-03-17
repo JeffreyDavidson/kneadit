@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Referral;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Tests\CentralTestCase;
 

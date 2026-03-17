@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\DB;
 
 class LoyaltyLeadersWidget extends Widget
 {

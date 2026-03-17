@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SocialPosts\Schemas;
 
 use App\Models\Product;
 use App\Models\SocialPost;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -45,7 +46,7 @@ class SocialPostForm
                             ->maxLength(fn (Get $get): int => SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200)
                             ->helperText(fn (Get $get): string => 'Max '.number_format(SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200).' characters for '.SocialPost::PLATFORMS[$get('platform') ?? 'instagram'] ?? 'Instagram')
                             ->hintAction(
-                                \Filament\Forms\Components\Actions\Action::make('generateCaption')
+                                Action::make('generateCaption')
                                     ->label('Generate Caption')
                                     ->icon('heroicon-o-sparkles')
                                     ->action(function (Get $get, Set $set) {

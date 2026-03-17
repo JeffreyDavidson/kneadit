@@ -7,12 +7,11 @@ use App\Models\EmailCampaign;
 use App\Models\Tenant;
 use BackedEnum;
 use Filament\Actions;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -126,7 +125,7 @@ class EmailCampaignResource extends Resource
                     ->visible(fn (EmailCampaign $record) => $record->status !== 'sent'),
                 Actions\Action::make('preview')
                     ->icon('heroicon-o-eye')
-                    ->modalHeading(fn (EmailCampaign $record) => 'Preview: ' . $record->subject)
+                    ->modalHeading(fn (EmailCampaign $record) => 'Preview: '.$record->subject)
                     ->modalContent(fn (EmailCampaign $record) => view('filament.central.partials.email-preview', ['campaign' => $record]))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close'),

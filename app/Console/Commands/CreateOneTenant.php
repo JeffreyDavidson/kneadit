@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Setting;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 class CreateOneTenant extends Command
 {
@@ -51,7 +53,7 @@ class CreateOneTenant extends Command
         $tenant->run(function () use ($tenant) {
             // Use DB::connection('tenant') to ensure we hit the tenant DB
             // and raw table insert to avoid User model's 'hashed' cast double-hashing
-            \Illuminate\Support\Facades\DB::connection('tenant')->table('users')->insert([
+            DB::connection('tenant')->table('users')->insert([
                 'name' => $tenant->name,
                 'email' => $tenant->email,
                 'password' => bcrypt('password'),
@@ -60,8 +62,8 @@ class CreateOneTenant extends Command
                 'updated_at' => now(),
             ]);
 
-            \App\Models\Setting::set('store_name', $tenant->store_name);
-            \App\Models\Setting::set('store_email', $tenant->email);
+            Setting::set('store_name', $tenant->store_name);
+            Setting::set('store_email', $tenant->email);
 
             Artisan::call('db:seed', ['--force' => true]);
         });

@@ -6,6 +6,8 @@ use App\Filament\Resources\Orders\OrderResource;
 use App\Mail\NewOrderMessage;
 use App\Models\Setting;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -129,7 +131,7 @@ class ViewOrder extends ViewRecord
                 ->label('Change Status')
                 ->icon('heroicon-o-arrow-path')
                 ->form([
-                    \Filament\Forms\Components\Select::make('status')
+                    Select::make('status')
                         ->label('New Status')
                         ->options([
                             'pending' => 'Pending',
@@ -169,7 +171,7 @@ class ViewOrder extends ViewRecord
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->color('success')
                 ->form([
-                    \Filament\Forms\Components\Textarea::make('message')
+                    Textarea::make('message')
                         ->label('Message to Customer')
                         ->required()
                         ->rows(3),
@@ -202,7 +204,7 @@ class ViewOrder extends ViewRecord
                 ->label('Add Note')
                 ->icon('heroicon-o-chat-bubble-left-ellipsis')
                 ->form([
-                    \Filament\Forms\Components\Textarea::make('note')
+                    Textarea::make('note')
                         ->label('Note')
                         ->required()
                         ->rows(3),

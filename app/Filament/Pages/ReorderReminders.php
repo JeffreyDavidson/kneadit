@@ -8,6 +8,7 @@ use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
 
@@ -51,7 +52,7 @@ class ReorderReminders extends Page
         ];
     }
 
-    public function getCustomers(): \Illuminate\Support\Collection
+    public function getCustomers(): Collection
     {
         $cutoff = Carbon::now()->subDays($this->threshold);
 

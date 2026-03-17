@@ -24,7 +24,7 @@ class PlanGatingTest extends TestCase
     public function test_has_plan_gating_trait_exists(): void
     {
         $this->assertTrue(
-            trait_exists(\App\Traits\HasPlanGating::class),
+            trait_exists(HasPlanGating::class),
             'HasPlanGating trait should exist at app/Traits/HasPlanGating.php'
         );
     }

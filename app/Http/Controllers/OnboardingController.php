@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Mail\NewSubscriberNotification;
 use App\Mail\WelcomeBaker;
+use App\Models\Referral;
+use App\Models\Setting;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -73,19 +76,19 @@ class OnboardingController extends Controller
             ]);
 
             // Seed default settings
-            \App\Models\Setting::set('store_name', $validated['store_name']);
-            \App\Models\Setting::set('store_email', $request->user()->email);
-            \App\Models\Setting::set('storefront_enabled', $useKneadItStorefront ? '1' : '0');
+            Setting::set('store_name', $validated['store_name']);
+            Setting::set('store_email', $request->user()->email);
+            Setting::set('storefront_enabled', $useKneadItStorefront ? '1' : '0');
 
             if (! $useKneadItStorefront && isset($validated['external_website'])) {
-                \App\Models\Setting::set('external_website', $validated['external_website']);
+                Setting::set('external_website', $validated['external_website']);
             }
         });
 
         // Complete referral if one exists
         $referralCode = $request->session()->get('referral_code') ?? $request->cookie('referral_code');
         if ($referralCode) {
-            $referral = \App\Models\Referral::where('referral_code', $referralCode)
+            $referral = Referral::where('referral_code', $referralCode)
                 ->where('status', 'pending')
                 ->whereNull('referred_tenant_id')
                 ->first();
@@ -122,7 +125,7 @@ class OnboardingController extends Controller
                 plan: 'starter',
             ));
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::warning('Signup emails failed', ['error' => $e->getMessage()]);
+            Log::warning('Signup emails failed', ['error' => $e->getMessage()]);
         }
 
         // Clear central session — they'll log in fresh on their tenant subdomain

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\SocialPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class SocialPostTest extends TestCase
@@ -85,7 +86,7 @@ class SocialPostTest extends TestCase
         ]);
 
         $this->assertNotNull($post->scheduled_for);
-        $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $post->scheduled_for);
+        $this->assertInstanceOf(Carbon::class, $post->scheduled_for);
     }
 
     public function test_social_post_belongs_to_product(): void

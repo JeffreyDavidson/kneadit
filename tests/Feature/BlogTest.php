@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Http\Middleware\TrackPageView;
 use App\Models\BlogPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
@@ -22,8 +23,8 @@ class BlogTest extends TestCase
         config(['database.connections.central' => config('database.connections.sqlite')]);
         config(['tenancy.central_domains' => []]);
         // Share PDO so central connection sees the same :memory: DB
-        \Illuminate\Support\Facades\DB::connection('central')->setPdo(
-            \Illuminate\Support\Facades\DB::connection('sqlite')->getPdo()
+        DB::connection('central')->setPdo(
+            DB::connection('sqlite')->getPdo()
         );
         $tenantMigrationPath = database_path('migrations/tenant');
         if (is_dir($tenantMigrationPath)) {

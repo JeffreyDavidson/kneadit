@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Tenant;
 use App\Models\User;
 use Tests\CentralTestCase;
 
@@ -158,8 +159,8 @@ class RegistrationFlowTest extends CentralTestCase
         ]);
 
         // Mock the tenant creation since Stancl tries to create actual databases
-        $this->mock(\App\Models\Tenant::class, function ($mock) {
-            $mock->shouldReceive('create')->andReturn(new \App\Models\Tenant);
+        $this->mock(Tenant::class, function ($mock) {
+            $mock->shouldReceive('create')->andReturn(new Tenant);
         });
 
         // We can't fully test tenant creation in SQLite without Stancl spinning up

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Console\Commands\BackupDatabases;
 use Tests\CentralTestCase;
 
 class BackupDatabasesTest extends CentralTestCase
@@ -20,7 +21,7 @@ class BackupDatabasesTest extends CentralTestCase
 
     public function test_backup_command_class_has_correct_signature(): void
     {
-        $command = new \App\Console\Commands\BackupDatabases();
+        $command = new BackupDatabases;
         $this->assertStringContainsString('backup:databases', $command->getName());
     }
 
@@ -30,8 +31,8 @@ class BackupDatabasesTest extends CentralTestCase
 
         // Check that either the shared backup dir or a fallback exists
         $possibleDirs = [
-            dirname(base_path()) . '/backups',
-            base_path() . '/../backups',
+            dirname(base_path()).'/backups',
+            base_path().'/../backups',
         ];
 
         $found = false;

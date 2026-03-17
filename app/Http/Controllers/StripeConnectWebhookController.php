@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Setting;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Tenancy;
+use Stripe\Webhook;
 
 class StripeConnectWebhookController extends Controller
 {
@@ -30,7 +33,7 @@ class StripeConnectWebhookController extends Controller
         }
 
         try {
-            $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $secret);
+            $event = Webhook::constructEvent($payload, $sigHeader, $secret);
         } catch (\Exception $e) {
             Log::warning('Stripe Connect webhook signature verification failed', [
                 'error' => $e->getMessage(),
@@ -80,6 +83,7 @@ class StripeConnectWebhookController extends Controller
             Log::warning('Stripe Connect account.updated missing tenant_id', [
                 'account_id' => $accountId,
             ]);
+
             return;
         }
 
@@ -91,9 +95,10 @@ class StripeConnectWebhookController extends Controller
 
         // Initialize tenancy to update the tenant's settings
         try {
-            $tenant = \App\Models\Tenant::find($tenantId);
+            $tenant = Tenant::find($tenantId);
             if (! $tenant) {
                 Log::warning('Tenant not found for Stripe Connect update', ['tenant_id' => $tenantId]);
+
                 return;
             }
 
@@ -138,19 +143,21 @@ class StripeConnectWebhookController extends Controller
             Log::warning('Stripe Connect checkout.session.completed missing tenant_id', [
                 'session_id' => $sessionId,
             ]);
+
             return;
         }
 
-        $tenant = \App\Models\Tenant::find($tenantId);
+        $tenant = Tenant::find($tenantId);
         if (! $tenant) {
             Log::warning('Tenant not found for checkout session', ['tenant_id' => $tenantId]);
+
             return;
         }
 
         try {
             tenancy()->initialize($tenant);
 
-            $order = \App\Models\Order::where('stripe_checkout_session_id', $sessionId)->first();
+            $order = Order::where('stripe_checkout_session_id', $sessionId)->first();
             if ($order) {
                 $order->update([
                     'payment_status' => 'paid',

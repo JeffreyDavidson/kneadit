@@ -8,7 +8,6 @@ use Tests\CentralTestCase;
 
 class PlatformStatsWidgetTest extends CentralTestCase
 {
-
     protected function setUp(): void
     {
         parent::setUp();

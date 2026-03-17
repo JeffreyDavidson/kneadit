@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Setting;
 use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
+use Illuminate\Support\Collection;
 
 class PricingEngine extends Page
 {
@@ -52,7 +53,7 @@ class PricingEngine extends Page
         $this->targetProfitMargin = (int) (Setting::where('key', 'target_profit_margin')->value('value') ?? 50);
     }
 
-    public function getProductsProperty(): \Illuminate\Support\Collection
+    public function getProductsProperty(): Collection
     {
         return Product::query()->with(['category', 'recipes'])->orderBy('name')->get();
     }

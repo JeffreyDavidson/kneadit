@@ -2,14 +2,15 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Filament\Central\Resources\BlogPostResource\Pages\CreateBlogPost;
+use App\Filament\Central\Resources\BlogPostResource\Pages\EditBlogPost;
+use App\Filament\Central\Resources\BlogPostResource\Pages\ListBlogPosts;
 use App\Models\BlogPost;
 use BackedEnum;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -136,9 +137,9 @@ class BlogPostResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Central\Resources\BlogPostResource\Pages\ListBlogPosts::route('/'),
-            'create' => \App\Filament\Central\Resources\BlogPostResource\Pages\CreateBlogPost::route('/create'),
-            'edit' => \App\Filament\Central\Resources\BlogPostResource\Pages\EditBlogPost::route('/{record}/edit'),
+            'index' => ListBlogPosts::route('/'),
+            'create' => CreateBlogPost::route('/create'),
+            'edit' => EditBlogPost::route('/{record}/edit'),
         ];
     }
 }

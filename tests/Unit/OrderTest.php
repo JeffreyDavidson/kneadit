@@ -10,6 +10,7 @@ use App\Models\OrderMessage;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class OrderTest extends TestCase
@@ -95,7 +96,7 @@ class OrderTest extends TestCase
     /** @test */
     public function order_status_transitions(): void
     {
-        \Illuminate\Support\Facades\Mail::fake();
+        Mail::fake();
         $order = $this->makeOrder();
         foreach (['confirmed', 'baking', 'ready', 'delivered'] as $status) {
             $order->update(['status' => $status]);
@@ -106,7 +107,7 @@ class OrderTest extends TestCase
     /** @test */
     public function order_can_be_cancelled(): void
     {
-        \Illuminate\Support\Facades\Mail::fake();
+        Mail::fake();
         $order = $this->makeOrder();
         $order->update(['status' => 'cancelled']);
         $this->assertEquals('cancelled', $order->fresh()->status);

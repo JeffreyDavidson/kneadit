@@ -7,6 +7,7 @@ use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Collection;
 
 class ReferralProgram extends Page
 {
@@ -60,7 +61,7 @@ class ReferralProgram extends Page
             ->sum('reward_months');
     }
 
-    public function getReferrals(): \Illuminate\Database\Eloquent\Collection
+    public function getReferrals(): Collection
     {
         return Referral::where('referrer_tenant_id', tenant()->id)
             ->whereNotNull('referred_tenant_id')

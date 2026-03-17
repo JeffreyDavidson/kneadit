@@ -14,6 +14,7 @@ use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class GiftCardResource extends Resource
 {
@@ -58,12 +59,12 @@ class GiftCardResource extends Resource
         return ['code', 'purchaser_name', 'recipient_name'];
     }
 
-    public static function getGlobalSearchResultTitle(\Illuminate\Database\Eloquent\Model $record): string
+    public static function getGlobalSearchResultTitle(Model $record): string
     {
         return 'Gift Card: '.$record->code;
     }
 
-    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
             'Balance' => '$'.number_format($record->current_balance, 2),

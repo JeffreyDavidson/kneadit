@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\PageView;
 use App\Models\Product;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,7 +52,7 @@ class TrackPageView
         $throttleKey = "pv_tracked:{$page}";
         $trackedAt = $request->session()->get($throttleKey);
 
-        if ($trackedAt && now()->diffInMinutes(\Carbon\Carbon::parse($trackedAt)) < 60) {
+        if ($trackedAt && now()->diffInMinutes(Carbon::parse($trackedAt)) < 60) {
             return $response;
         }
 
@@ -71,7 +72,7 @@ class TrackPageView
                 $productThrottleKey = "pv_products_tracked:{$page}";
                 $productsTrackedAt = $request->session()->get($productThrottleKey);
 
-                if (! $productsTrackedAt || now()->diffInMinutes(\Carbon\Carbon::parse($productsTrackedAt)) >= 60) {
+                if (! $productsTrackedAt || now()->diffInMinutes(Carbon::parse($productsTrackedAt)) >= 60) {
                     $request->session()->put($productThrottleKey, now()->toISOString());
                     $products = Product::where('is_active', true)->pluck('id');
                     foreach ($products as $productId) {

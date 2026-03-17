@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportController extends Controller
 {
     private const VALID_TYPES = ['products', 'categories', 'orders', 'customers', 'reviews', 'all'];
 
-    public function export(Request $request, string $tenantId, string $type): StreamedResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function export(Request $request, string $tenantId, string $type): StreamedResponse|BinaryFileResponse
     {
         if (! auth()->check() || auth()->user()->role !== 'platform_admin') {
             abort(403, 'Unauthorized.');
@@ -33,7 +34,7 @@ class ExportController extends Controller
 
     private function streamCsv(Tenant $tenant, string $type): StreamedResponse
     {
-        $filename = "{$tenant->id}_{$type}_" . now()->format('Y-m-d_His') . '.csv';
+        $filename = "{$tenant->id}_{$type}_".now()->format('Y-m-d_His').'.csv';
 
         return response()->streamDownload(function () use ($tenant, $type) {
             try {
@@ -61,11 +62,11 @@ class ExportController extends Controller
 
     private function exportAll(Tenant $tenant): StreamedResponse
     {
-        $filename = "{$tenant->id}_all_data_" . now()->format('Y-m-d_His') . '.zip';
+        $filename = "{$tenant->id}_all_data_".now()->format('Y-m-d_His').'.zip';
 
         return response()->streamDownload(function () use ($tenant) {
             $tmpFile = tempnam(sys_get_temp_dir(), 'export_');
-            $zip = new \ZipArchive();
+            $zip = new \ZipArchive;
             $zip->open($tmpFile, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
             try {

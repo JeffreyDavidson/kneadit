@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\Filament\Central\Resources\TenantResource;
 use App\Models\PlatformMessage;
 use App\Models\Tenant;
 use BackedEnum;
@@ -73,13 +74,23 @@ class BakeryInsights extends Page
 
             $days = Carbon::parse($lastLogin)->diffInDays(now());
 
-            if ($days <= 7) return 25;
-            if ($days <= 14) return 15;
-            if ($days <= 30) return 5;
+            if ($days <= 7) {
+                return 25;
+            }
+            if ($days <= 14) {
+                return 15;
+            }
+            if ($days <= 30) {
+                return 5;
+            }
 
             return 0;
         } catch (\Throwable $e) {
-            try { tenancy()->end(); } catch (\Throwable) {}
+            try {
+                tenancy()->end();
+            } catch (\Throwable) {
+            }
+
             return 0;
         }
     }
@@ -93,13 +104,23 @@ class BakeryInsights extends Page
                 ->count();
             tenancy()->end();
 
-            if ($count >= 10) return 25;
-            if ($count >= 5) return 15;
-            if ($count >= 1) return 10;
+            if ($count >= 10) {
+                return 25;
+            }
+            if ($count >= 5) {
+                return 15;
+            }
+            if ($count >= 1) {
+                return 10;
+            }
 
             return 0;
         } catch (\Throwable $e) {
-            try { tenancy()->end(); } catch (\Throwable) {}
+            try {
+                tenancy()->end();
+            } catch (\Throwable) {
+            }
+
             return 0;
         }
     }
@@ -111,13 +132,23 @@ class BakeryInsights extends Page
             $count = DB::table('products')->count();
             tenancy()->end();
 
-            if ($count >= 10) return 20;
-            if ($count >= 5) return 15;
-            if ($count >= 1) return 5;
+            if ($count >= 10) {
+                return 20;
+            }
+            if ($count >= 5) {
+                return 15;
+            }
+            if ($count >= 1) {
+                return 5;
+            }
 
             return 0;
         } catch (\Throwable $e) {
-            try { tenancy()->end(); } catch (\Throwable) {}
+            try {
+                tenancy()->end();
+            } catch (\Throwable) {
+            }
+
             return 0;
         }
     }
@@ -127,21 +158,38 @@ class BakeryInsights extends Page
         $pointsPer = 30 / 7;
         $completed = 0;
 
-        if (! empty($tenant->store_name)) $completed++;
-        if (! empty($tenant->store_logo)) $completed++;
-        if ($tenant->storefront_enabled) $completed++;
-        if (! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c') $completed++;
+        if (! empty($tenant->store_name)) {
+            $completed++;
+        }
+        if (! empty($tenant->store_logo)) {
+            $completed++;
+        }
+        if ($tenant->storefront_enabled) {
+            $completed++;
+        }
+        if (! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c') {
+            $completed++;
+        }
 
         try {
             tenancy()->initialize($tenant);
 
-            if (DB::table('products')->count() > 0) $completed++;
-            if (DB::table('categories')->count() > 0) $completed++;
-            if (DB::table('orders')->count() > 0) $completed++;
+            if (DB::table('products')->count() > 0) {
+                $completed++;
+            }
+            if (DB::table('categories')->count() > 0) {
+                $completed++;
+            }
+            if (DB::table('orders')->count() > 0) {
+                $completed++;
+            }
 
             tenancy()->end();
         } catch (\Throwable $e) {
-            try { tenancy()->end(); } catch (\Throwable) {}
+            try {
+                tenancy()->end();
+            } catch (\Throwable) {
+            }
         }
 
         return (int) round($completed * $pointsPer);
@@ -188,7 +236,7 @@ class BakeryInsights extends Page
                             'name' => $tenant->store_name ?? $tenant->name,
                             'type' => 'trial_expiring',
                             'type_label' => 'Trial Expiring',
-                            'description' => 'Trial ends in ' . $trialEnds->diffForHumans() . ' with less than 50% setup complete.',
+                            'description' => 'Trial ends in '.$trialEnds->diffForHumans().' with less than 50% setup complete.',
                             'days_since_signup' => $daysSinceSignup,
                             'severity' => 'critical',
                         ]);
@@ -203,7 +251,7 @@ class BakeryInsights extends Page
                     'name' => $tenant->store_name ?? $tenant->name,
                     'type' => 'no_login',
                     'type_label' => 'No Recent Login',
-                    'description' => 'No login activity in ' . Carbon::parse($lastLogin)->diffInDays(now()) . ' days.',
+                    'description' => 'No login activity in '.Carbon::parse($lastLogin)->diffInDays(now()).' days.',
                     'days_since_signup' => $daysSinceSignup,
                     'severity' => 'warning',
                 ]);
@@ -230,7 +278,7 @@ class BakeryInsights extends Page
                     'name' => $tenant->store_name ?? $tenant->name,
                     'type' => 'low_health',
                     'type_label' => 'Critical Health',
-                    'description' => 'Health score is ' . $healthScore . '/100.',
+                    'description' => 'Health score is '.$healthScore.'/100.',
                     'days_since_signup' => $daysSinceSignup,
                     'severity' => 'critical',
                 ]);
@@ -246,9 +294,14 @@ class BakeryInsights extends Page
             tenancy()->initialize($tenant);
             $lastLogin = DB::table('users')->max('updated_at');
             tenancy()->end();
+
             return $lastLogin;
         } catch (\Throwable $e) {
-            try { tenancy()->end(); } catch (\Throwable) {}
+            try {
+                tenancy()->end();
+            } catch (\Throwable) {
+            }
+
             return null;
         }
     }
@@ -261,9 +314,14 @@ class BakeryInsights extends Page
                 ->where('created_at', '>=', now()->subDays($days))
                 ->count();
             tenancy()->end();
+
             return $count;
         } catch (\Throwable $e) {
-            try { tenancy()->end(); } catch (\Throwable) {}
+            try {
+                tenancy()->end();
+            } catch (\Throwable) {
+            }
+
             return 0;
         }
     }
@@ -274,6 +332,7 @@ class BakeryInsights extends Page
 
         if (! $tenant) {
             Notification::make()->title('Tenant not found.')->danger()->send();
+
             return;
         }
 
@@ -286,7 +345,7 @@ class BakeryInsights extends Page
 
         Notification::make()
             ->title('Trial Extended')
-            ->body(($tenant->store_name ?? $tenant->name) . ' trial extended to ' . $newEnd->format('M j, Y') . '.')
+            ->body(($tenant->store_name ?? $tenant->name).' trial extended to '.$newEnd->format('M j, Y').'.')
             ->success()
             ->send();
     }
@@ -297,6 +356,7 @@ class BakeryInsights extends Page
 
         if (! $tenant) {
             Notification::make()->title('Tenant not found.')->danger()->send();
+
             return;
         }
 
@@ -314,14 +374,14 @@ class BakeryInsights extends Page
 
         Notification::make()
             ->title('Nudge Sent')
-            ->body('A check-in message has been sent to ' . $storeName . '.')
+            ->body('A check-in message has been sent to '.$storeName.'.')
             ->success()
             ->send();
     }
 
     public function getViewTenantUrl(string $tenantId): string
     {
-        return \App\Filament\Central\Resources\TenantResource::getUrl('view', ['record' => $tenantId]);
+        return TenantResource::getUrl('view', ['record' => $tenantId]);
     }
 
     // ── Upgrade Triggers Tab Methods ──
@@ -395,6 +455,7 @@ class BakeryInsights extends Page
                 }
             } catch (\Throwable $e) {
                 tenancy()->end();
+
                 continue;
             }
         }

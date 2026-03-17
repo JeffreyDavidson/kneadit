@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,8 +34,8 @@ class ImpersonateController extends Controller
 
         $domain = $tenant->domains()->first()?->domain ?? $tenant->id;
         $host = app()->environment('local')
-            ? $domain . '.kneadit.test'
-            : $domain . '.getkneadit.app';
+            ? $domain.'.kneadit.test'
+            : $domain.'.getkneadit.app';
         $scheme = app()->environment('local') ? 'http' : 'https';
 
         return redirect()->to("{$scheme}://{$host}/impersonate/{$token}");
@@ -60,7 +61,7 @@ class ImpersonateController extends Controller
             ->where('token', $hashed)
             ->delete();
 
-        $user = \App\Models\User::first();
+        $user = User::first();
 
         if (! $user) {
             abort(404, 'No users found for this tenant.');

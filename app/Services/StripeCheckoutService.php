@@ -5,14 +5,16 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
+use Stripe\Checkout\Session;
+use Stripe\StripeClient;
 
 class StripeCheckoutService
 {
-    protected \Stripe\StripeClient $stripe;
+    protected StripeClient $stripe;
 
     public function __construct()
     {
-        $this->stripe = new \Stripe\StripeClient(config('cashier.secret'));
+        $this->stripe = new StripeClient(config('cashier.secret'));
     }
 
     /**
@@ -44,12 +46,13 @@ class StripeCheckoutService
     /**
      * Create a Stripe Checkout Session on the baker's connected account.
      */
-    public function createCheckoutSession(Order $order, string $successUrl, string $cancelUrl): ?\Stripe\Checkout\Session
+    public function createCheckoutSession(Order $order, string $successUrl, string $cancelUrl): ?Session
     {
         $connectId = self::getConnectId();
 
         if (! $connectId) {
             Log::warning('No Stripe Connect ID for checkout', ['order' => $order->id]);
+
             return null;
         }
 
@@ -178,6 +181,7 @@ class StripeCheckoutService
 
             if (! $order) {
                 Log::warning('No order found for checkout session', ['session_id' => $sessionId]);
+
                 return null;
             }
 

@@ -63,7 +63,7 @@ class SendBirthdayDiscounts extends Command
             }
 
             try {
-                $couponCode = 'BDAY-' . $customer->id . '-' . $today->year;
+                $couponCode = 'BDAY-'.$customer->id.'-'.$today->year;
 
                 if (Coupon::where('code', $couponCode)->exists()) {
                     continue;

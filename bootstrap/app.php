@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\EnsureSubscribed;
+use App\Http\Middleware\InitializeTenancyIfNeeded;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Add security headers to all web responses
         $middleware->web(append: [
-            \App\Http\Middleware\SecurityHeaders::class,
+            SecurityHeaders::class,
         ]);
 
         // Initialize tenancy on ALL web requests (including Livewire updates)
@@ -25,11 +28,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Must be prepended so it runs BEFORE StartSession (which uses DB)
         // Only runs on non-central domains (subdomains)
         $middleware->web(prepend: [
-            \App\Http\Middleware\InitializeTenancyIfNeeded::class,
+            InitializeTenancyIfNeeded::class,
         ]);
 
         $middleware->alias([
-            'subscribed' => \App\Http\Middleware\EnsureSubscribed::class,
+            'subscribed' => EnsureSubscribed::class,
         ]);
 
         $middleware->redirectGuestsTo('/login');
