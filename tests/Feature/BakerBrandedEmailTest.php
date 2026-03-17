@@ -120,6 +120,6 @@ test('all customer mailables use baker branded trait', function () {
 
     foreach ($mailables as $mailable) {
         $uses = class_uses_recursive($mailable);
-        expect($uses)->toContain(BakerBranded::class, "{$mailable} should use BakerBranded trait");
+        expect($uses)->toContain(BakerBranded::class);
     }
 });

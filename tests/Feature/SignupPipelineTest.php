@@ -3,6 +3,7 @@
 use App\Models\Tenant;
 use App\Models\User;
 use App\Traits\HasPlanGating;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\TestResponse;
@@ -10,8 +11,22 @@ use Illuminate\Testing\TestResponse;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
+uses(DatabaseMigrations::class);
+
 beforeEach(function () {
-    setUpCentralTest();
+    config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
+    config(['database.connections.central' => config('database.connections.sqlite')]);
+
+    $tenantMigrationPath = database_path('migrations/tenant');
+    if (is_dir($tenantMigrationPath)) {
+        $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
+    }
+
+    DB::purge('central');
+    $pdo = DB::connection('sqlite')->getPdo();
+    DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
+
+    createCentralTables();
     $this->createdSubdomains = [];
     $this->subdomainCounter = 0;
 });
@@ -36,7 +51,9 @@ function uniqueSubdomain(): string
 {
     test()->subdomainCounter++;
     $sub = 'testbakery'.test()->subdomainCounter;
-    test()->createdSubdomains[] = $sub;
+    $subs = test()->createdSubdomains;
+    $subs[] = $sub;
+    test()->createdSubdomains = $subs;
 
     return $sub;
 }
@@ -48,7 +65,9 @@ function submitOnboarding(User $user, array $data = []): TestResponse
     } else {
         $sub = strtolower($data['subdomain']);
         if (! in_array($sub, test()->createdSubdomains)) {
-            test()->createdSubdomains[] = $sub;
+            $subs = test()->createdSubdomains;
+            $subs[] = $sub;
+            test()->createdSubdomains = $subs;
         }
     }
 
@@ -215,8 +234,8 @@ test('onboarding redirects to tenant admin url', function () {
     $sub = uniqueSubdomain();
     $response = submitOnboarding($user, ['subdomain' => $sub]);
 
-    $centralDomain = config('tenancy.central_domains.0', 'getkneadit.app');
-    $response->assertRedirect('http://'.$sub.'.'.$centralDomain.'/admin');
+    $host = parse_url(config('app.url'), PHP_URL_HOST);
+    $response->assertRedirect('http://'.$sub.'.'.$host.'/admin');
 });
 
 test('duplicate subdomain returns validation error', function () {

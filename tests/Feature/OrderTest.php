@@ -125,7 +125,7 @@ test('coupon application works for valid coupon', function () {
         ]);
 
     $response->assertOk();
-    $response->assertJsonStructure(['success', 'coupon_id', 'discount']);
+    $response->assertJsonStructure(['success', 'coupon_id', 'discount_amount']);
 });
 
 test('invalid coupon returns error', function () {

@@ -2,13 +2,24 @@
 
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
 
+uses(RefreshDatabase::class);
+
 beforeEach(function () {
-    setUpCentralTest();
+    config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
+    config(['database.connections.central' => config('database.connections.sqlite')]);
+
+    DB::purge('central');
+    $pdo = DB::connection('sqlite')->getPdo();
+    DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
+
+    createCentralTables();
 });
 
 test('registration page loads', function () {

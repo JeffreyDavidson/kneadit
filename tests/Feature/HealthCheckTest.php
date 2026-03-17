@@ -1,9 +1,24 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 
+uses(RefreshDatabase::class);
+
 beforeEach(function () {
-    setUpCentralTest();
+    config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
+    config(['mail.platform_notify' => 'test@example.com']);
+
+    // Point storage to a real writable temp directory so the health check passes
+    $tempStorage = sys_get_temp_dir().'/kneadit_test_storage_'.getmypid();
+    @mkdir($tempStorage.'/logs', 0755, true);
+    $this->app->useStoragePath($tempStorage);
+});
+
+afterEach(function () {
+    $tempStorage = sys_get_temp_dir().'/kneadit_test_storage_'.getmypid();
+    @rmdir($tempStorage.'/logs');
+    @rmdir($tempStorage);
 });
 
 test('health check command exists', function () {

@@ -58,8 +58,12 @@ class HealthCheck extends Command
         }
 
         // 5. Storage directory writable
-        if (is_writable(storage_path('logs'))) {
+        $logsPath = storage_path('logs');
+        if (is_dir($logsPath) && is_writable($logsPath)) {
             $this->info('✓ Storage/logs writable');
+        } elseif (! is_dir($logsPath)) {
+            $issues[] = 'Storage/logs directory does not exist';
+            $this->error('✗ Storage/logs directory MISSING');
         } else {
             $issues[] = 'Storage/logs directory not writable';
             $this->error('✗ Storage/logs NOT writable');
