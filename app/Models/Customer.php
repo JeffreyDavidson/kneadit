@@ -59,6 +59,21 @@ class Customer extends Model
         return (int) $this->loyaltyPoints()->where('type', 'earned')->sum('points');
     }
 
+    public function customerReminders(): HasMany
+    {
+        return $this->hasMany(CustomerReminder::class);
+    }
+
+    public function customerPhotos(): HasMany
+    {
+        return $this->hasMany(CustomerPhoto::class, 'customer_email', 'email');
+    }
+
+    public function customerFavorites(): HasMany
+    {
+        return $this->hasMany(CustomerFavorite::class, 'customer_email', 'email');
+    }
+
     public function customerProfile(): HasOne
     {
         return $this->hasOne(CustomerProfile::class);
