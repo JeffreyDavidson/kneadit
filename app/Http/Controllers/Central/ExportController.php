@@ -14,7 +14,7 @@ class ExportController extends Controller
 
     public function export(Request $request, string $tenantId, string $type): StreamedResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        if (! auth()->check()) {
+        if (! auth()->check() || auth()->user()->role !== 'platform_admin') {
             abort(403, 'Unauthorized.');
         }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Tenancy;
 
@@ -21,22 +22,31 @@ class StripeConnectWebhookController extends Controller
         $sigHeader = $request->header('Stripe-Signature');
         $secret = config('saas.stripe_connect.webhook_secret');
 
-        // Verify webhook signature if secret is configured
-        if ($secret) {
-            try {
-                $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $secret);
-            } catch (\Exception $e) {
-                Log::warning('Stripe Connect webhook signature verification failed', [
-                    'error' => $e->getMessage(),
-                ]);
-                return response('Invalid signature', 400);
-            }
-        } else {
-            $event = json_decode($payload);
+        // Webhook signature verification is mandatory
+        if (! $secret) {
+            Log::error('STRIPE_CONNECT_WEBHOOK_SECRET not configured');
+
+            return response('Webhook secret not configured', 500);
+        }
+
+        try {
+            $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $secret);
+        } catch (\Exception $e) {
+            Log::warning('Stripe Connect webhook signature verification failed', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response('Invalid signature', 400);
         }
 
         $type = is_object($event) ? ($event->type ?? null) : ($event['type'] ?? null);
         $data = is_object($event) ? ($event->data->object ?? null) : ($event['data']['object'] ?? null);
+
+        // Idempotency: skip already-processed events
+        $eventId = is_object($event) ? ($event->id ?? null) : ($event['id'] ?? null);
+        if ($eventId && Cache::has("stripe_event:{$eventId}")) {
+            return response('Already processed', 200);
+        }
 
         Log::info('Stripe Connect webhook received', ['type' => $type]);
 
@@ -45,6 +55,10 @@ class StripeConnectWebhookController extends Controller
             'checkout.session.completed' => $this->handleCheckoutCompleted($data),
             default => null,
         };
+
+        if ($eventId) {
+            Cache::put("stripe_event:{$eventId}", true, now()->addHours(24));
+        }
 
         return response('OK', 200);
     }
@@ -108,6 +122,7 @@ class StripeConnectWebhookController extends Controller
         $sessionId = is_object($session) ? $session->id : ($session['id'] ?? null);
         $metadata = is_object($session) ? ($session->metadata ?? null) : ($session['metadata'] ?? null);
         $orderId = is_object($metadata) ? ($metadata->order_id ?? null) : ($metadata['order_id'] ?? null);
+        $tenantId = is_object($metadata) ? ($metadata->tenant_id ?? null) : ($metadata['tenant_id'] ?? null);
 
         if (! $sessionId) {
             return;
@@ -116,35 +131,43 @@ class StripeConnectWebhookController extends Controller
         Log::info('Stripe Connect checkout completed', [
             'session_id' => $sessionId,
             'order_id' => $orderId,
+            'tenant_id' => $tenantId,
         ]);
 
-        // Find the tenant by looking up which order has this session ID
-        // We need to search across all tenants
-        $tenants = \App\Models\Tenant::all();
-        foreach ($tenants as $tenant) {
-            try {
-                tenancy()->initialize($tenant);
+        if (! $tenantId) {
+            Log::warning('Stripe Connect checkout.session.completed missing tenant_id', [
+                'session_id' => $sessionId,
+            ]);
+            return;
+        }
 
-                $order = \App\Models\Order::where('stripe_checkout_session_id', $sessionId)->first();
-                if ($order) {
-                    $order->update([
-                        'payment_status' => 'paid',
-                    ]);
-                    Log::info('Order marked paid via webhook', [
-                        'order' => $order->order_number,
-                        'tenant' => $tenant->id,
-                    ]);
-                    tenancy()->end();
-                    return;
-                }
+        $tenant = \App\Models\Tenant::find($tenantId);
+        if (! $tenant) {
+            Log::warning('Tenant not found for checkout session', ['tenant_id' => $tenantId]);
+            return;
+        }
 
-                tenancy()->end();
-            } catch (\Exception $e) {
-                Log::warning('Error checking tenant for checkout session', [
+        try {
+            tenancy()->initialize($tenant);
+
+            $order = \App\Models\Order::where('stripe_checkout_session_id', $sessionId)->first();
+            if ($order) {
+                $order->update([
+                    'payment_status' => 'paid',
+                ]);
+                Log::info('Order marked paid via webhook', [
+                    'order' => $order->order_number,
                     'tenant' => $tenant->id,
-                    'error' => $e->getMessage(),
                 ]);
             }
+
+            tenancy()->end();
+        } catch (\Exception $e) {
+            tenancy()->end();
+            Log::warning('Error processing checkout session for tenant', [
+                'tenant' => $tenant->id,
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 }

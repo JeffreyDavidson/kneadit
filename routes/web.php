@@ -47,7 +47,7 @@ Route::get('/admin/export/{tenant}/{type}', [ExportController::class, 'export'])
 // Impersonation (central admin → tenant)
 Route::get('/impersonate/{tenant}', [\App\Http\Controllers\ImpersonateController::class, 'login'])
     ->name('tenant.impersonate')
-    ->middleware('signed');
+    ->middleware(['auth', 'signed']);
 
 // Referral tracking
 Route::get('/ref/{code}', [\App\Http\Controllers\ReferralController::class, 'track'])->name('referral.track');

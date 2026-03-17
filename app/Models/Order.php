@@ -11,6 +11,11 @@ class Order extends Model
 {
     use LogsActivity;
 
+    public function getRouteKeyName(): string
+    {
+        return 'order_number';
+    }
+
     protected $fillable = [
         'order_number',
         'customer_id',
@@ -78,5 +83,25 @@ class Order extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(OrderMessage::class);
+    }
+
+    public function loyaltyPoints(): HasMany
+    {
+        return $this->hasMany(LoyaltyPoint::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function surveyResponses(): HasMany
+    {
+        return $this->hasMany(SurveyResponse::class);
+    }
+
+    public function giftCardTransactions(): HasMany
+    {
+        return $this->hasMany(GiftCardTransaction::class);
     }
 }

@@ -47,19 +47,19 @@ Route::middleware([
     // Driver view (no auth, shared via link)
     Route::prefix('driver')->name('driver.')->group(function () {
         Route::get('/', [DriverController::class, 'index'])->name('index');
-        Route::post('/{order}/delivered', [DriverController::class, 'markDelivered'])->name('delivered');
+        Route::post('/{order}/delivered', [DriverController::class, 'markDelivered'])->name('delivered')->middleware('auth');
     });
 
     // Staff invitation routes (outside auth & storefront middleware)
     Route::get('/invite/{token}', [InvitationController::class, 'show'])->name('invitation.show');
-    Route::post('/invite/{token}', [InvitationController::class, 'accept'])->name('invitation.accept');
+    Route::post('/invite/{token}', [InvitationController::class, 'accept'])->name('invitation.accept')->middleware('throttle:5,1');
 
     // Storefront routes — only accessible when storefront is enabled
     // When disabled, these redirect to the external website or show a minimal page
     Route::middleware([\App\Http\Middleware\EnsureStorefrontEnabled::class, \App\Http\Middleware\TrackPageView::class])->group(function () {
         Route::get('/menu', [StorefrontController::class, 'menu'])->name('storefront.menu');
         Route::get('/order', [OrderController::class, 'index'])->name('order.create');
-        Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+        Route::post('/order', [OrderController::class, 'store'])->name('order.store')->middleware('throttle:10,1');
         Route::get('/order/confirmation/{order}', [OrderController::class, 'confirmation'])->name('order.confirmation');
         Route::get('/order/stripe/success/{order}', [OrderController::class, 'stripeSuccess'])->name('order.stripe.success');
         Route::get('/order/stripe/cancel/{order}', [OrderController::class, 'stripeCancel'])->name('order.stripe.cancel');
@@ -91,7 +91,7 @@ Route::middleware([
 
         // Gift Cards
         Route::get('/gift-cards', [StorefrontController::class, 'giftCards'])->name('storefront.gift-cards');
-        Route::post('/gift-cards/purchase', [StorefrontController::class, 'purchaseGiftCard'])->name('gift-cards.purchase');
+        Route::post('/gift-cards/purchase', [StorefrontController::class, 'purchaseGiftCard'])->name('gift-cards.purchase')->middleware('throttle:5,1');
         Route::post('/gift-cards/balance', [StorefrontController::class, 'checkGiftCardBalance'])->name('gift-cards.balance');
 
         // Coupon validation (AJAX)

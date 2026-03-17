@@ -7,6 +7,7 @@ use App\Mail\WelcomeBaker;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -23,7 +24,7 @@ class OnboardingController extends Controller
     {
         $rules = [
             'store_name' => 'required|string|max:255',
-            'subdomain' => 'required|string|max:63|alpha_dash|unique:domains,domain',
+            'subdomain' => 'required|string|max:63|alpha_dash|not_in:www,mail,admin,api,app,blog,cdn,dev,ftp,help,imap,login,mx,ns,pop,smtp,staging,status,support,test,webmail|unique:domains,domain',
             'storefront_choice' => 'required|in:kneadit,own',
         ];
 
@@ -37,29 +38,32 @@ class OnboardingController extends Controller
         $subdomain = Str::lower($validated['subdomain']);
         $useKneadItStorefront = $validated['storefront_choice'] === 'kneadit';
 
-        // Create the tenant
-        $tenant = Tenant::create([
-            'id' => $subdomain,
-            'name' => $request->user()->name,
-            'email' => $request->user()->email,
-            'plan' => 'starter',
-            'trial_ends_at' => now()->addDays(config('saas.trial_days', 30)),
-            'store_name' => $validated['store_name'],
-            'storefront_enabled' => $useKneadItStorefront,
-            'external_website' => $useKneadItStorefront ? null : ($validated['external_website'] ?? null),
-            'is_active' => true,
-        ]);
+        // Create the tenant, domain, and seed initial data
+        $tenant = DB::transaction(function () use ($request, $validated, $subdomain, $useKneadItStorefront) {
+            $tenant = Tenant::create([
+                'id' => $subdomain,
+                'name' => $request->user()->name,
+                'email' => $request->user()->email,
+                'plan' => 'starter',
+                'trial_ends_at' => now()->addDays(config('saas.trial_days', 30)),
+                'store_name' => $validated['store_name'],
+                'storefront_enabled' => $useKneadItStorefront,
+                'external_website' => $useKneadItStorefront ? null : ($validated['external_website'] ?? null),
+                'is_active' => true,
+            ]);
 
-        // Add the subdomain
-        $tenant->domains()->create([
-            'domain' => $subdomain,
-        ]);
+            $tenant->domains()->create([
+                'domain' => $subdomain,
+            ]);
+
+            return $tenant;
+        });
 
         // Create the tenant's database and run migrations
         $tenant->run(function () use ($request, $validated, $useKneadItStorefront) {
             // Create the owner user in the tenant database
             // Use query builder to avoid the 'hashed' cast double-hashing the password
-            \Illuminate\Support\Facades\DB::table('users')->insert([
+            DB::table('users')->insert([
                 'name' => $request->user()->name,
                 'email' => $request->user()->email,
                 'password' => $request->user()->password,
@@ -110,7 +114,7 @@ class OnboardingController extends Controller
             ));
 
             // Notify platform owner
-            Mail::to(config('mail.platform_notify', 'jeffrey@getkneadit.app'))->send(new NewSubscriberNotification(
+            Mail::to(config('mail.platform_notify'))->send(new NewSubscriberNotification(
                 bakerName: $request->user()->name,
                 bakerEmail: $request->user()->email,
                 storeName: $validated['store_name'],
