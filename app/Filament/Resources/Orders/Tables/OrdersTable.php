@@ -217,6 +217,8 @@ class OrdersTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('No orders yet')
+            ->emptyStateDescription('Orders will appear here as customers place them.');
     }
 }

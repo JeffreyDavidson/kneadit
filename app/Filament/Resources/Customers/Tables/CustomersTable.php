@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 
 class CustomersTable
@@ -105,7 +106,17 @@ class CustomersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('at_risk')
+                    ->label('At Risk')
+                    ->query(fn ($query) => $query->whereHas('orders')
+                        ->whereDoesntHave('orders', fn ($q) => $q->where('created_at', '>=', now()->subDays(30)))
+                    ),
+
+                Filter::make('has_birthday_this_month')
+                    ->label('Birthday This Month')
+                    ->query(fn ($query) => $query->whereNotNull('birthday')
+                        ->whereMonth('birthday', now()->month)
+                    ),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -115,6 +126,8 @@ class CustomersTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('name');
+            ->defaultSort('name')
+            ->emptyStateHeading('No customers yet')
+            ->emptyStateDescription('Customers will appear here once they place their first order.');
     }
 }

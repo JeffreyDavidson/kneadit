@@ -38,7 +38,7 @@ class RecipeForm
                                     ->label('Prep Time (minutes)')
                                     ->numeric()
                                     ->required()
-                                    ->default(0),
+                                    ->minValue(1),
 
                                 TextInput::make('cost')
                                     ->numeric()

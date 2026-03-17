@@ -99,6 +99,8 @@ class ProductsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('name');
+            ->defaultSort('name')
+            ->emptyStateHeading('No products yet')
+            ->emptyStateDescription('Add your first product to start building your catalog.');
     }
 }
