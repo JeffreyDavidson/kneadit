@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'stripe/*',
         ]);
 
+        // Add security headers to all web responses
+        $middleware->web(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
+        ]);
+
         // Initialize tenancy on ALL web requests (including Livewire updates)
         // This ensures tenant DB is active before auth/session checks
         // Must be prepended so it runs BEFORE StartSession (which uses DB)

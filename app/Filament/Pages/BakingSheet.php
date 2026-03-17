@@ -42,6 +42,10 @@ class BakingSheet extends Page
     public function loadBakingSheet()
     {
         // Aggregate order items by product for the selected date
+        $groupConcat = DB::getDriverName() === 'sqlite'
+            ? "group_concat(customers.name, ', ')"
+            : "GROUP_CONCAT(customers.name SEPARATOR ', ')";
+
         $this->bakingItems = OrderItem::query()
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->join('products', 'order_items.product_id', '=', 'products.id')
@@ -51,7 +55,7 @@ class BakingSheet extends Page
             ->select([
                 'products.name as product_name',
                 DB::raw('SUM(order_items.quantity) as total_quantity'),
-                DB::raw('GROUP_CONCAT(customers.name SEPARATOR ", ") as customer_names'),
+                DB::raw("{$groupConcat} as customer_names"),
             ])
             ->groupBy('products.id', 'products.name')
             ->orderBy('products.name')
