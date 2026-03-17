@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\CapacityLimit;
 use App\Models\Order;
 use App\Models\PageView;
@@ -24,12 +25,12 @@ class StatsOverview extends BaseWidget
                 ->icon('heroicon-o-shopping-bag')
                 ->color('primary'),
 
-            Stat::make('Pending Orders', Order::where('status', 'pending')->count())
+            Stat::make('Pending Orders', Order::where('status', OrderStatus::Pending)->count())
                 ->icon('heroicon-o-clock')
                 ->color('warning'),
 
             Stat::make("This Week's Revenue", '$'.number_format(
-                (float) Order::where('status', '!=', 'cancelled')
+                (float) Order::where('status', '!=', OrderStatus::Cancelled)
                     ->whereBetween('delivery_date', [$weekStart, Carbon::now()->endOfWeek()])
                     ->sum('total'),
                 2
@@ -38,7 +39,7 @@ class StatsOverview extends BaseWidget
                 ->color('success'),
 
             Stat::make('Avg Order Value', '$'.number_format(
-                (float) Order::where('status', '!=', 'cancelled')
+                (float) Order::where('status', '!=', OrderStatus::Cancelled)
                     ->whereBetween('delivery_date', [$weekStart, Carbon::now()->endOfWeek()])
                     ->avg('total') ?? 0,
                 2

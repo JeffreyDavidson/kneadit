@@ -1,3 +1,4 @@
+@use('App\Enums\OrderStatus')
 @extends('layouts.storefront')
 
 @section('content')
@@ -142,13 +143,19 @@
     @else
 
     @php
-        $allStatuses = ['pending', 'confirmed', 'baking', 'ready', 'delivered'];
+        $allStatuses = [
+            OrderStatus::Pending->value,
+            OrderStatus::Confirmed->value,
+            OrderStatus::Baking->value,
+            OrderStatus::Ready->value,
+            OrderStatus::Delivered->value,
+        ];
         $statusLabels = [
-            'pending' => 'Pending',
-            'confirmed' => 'Confirmed',
-            'baking' => 'Baking',
-            'ready' => 'Ready',
-            'delivered' => 'Delivered',
+            OrderStatus::Pending->value => 'Pending',
+            OrderStatus::Confirmed->value => 'Confirmed',
+            OrderStatus::Baking->value => 'Baking',
+            OrderStatus::Ready->value => 'Ready',
+            OrderStatus::Delivered->value => 'Delivered',
         ];
     @endphp
 
@@ -169,8 +176,8 @@
             <div class="space-y-8">
                 @foreach($orders as $order)
                     @php
-                        $isCancelled = $order->status === 'cancelled';
-                        $currentIndex = array_search($order->status, $allStatuses);
+                        $isCancelled = $order->status === OrderStatus::Cancelled;
+                        $currentIndex = array_search($order->status->value, $allStatuses);
                         if ($currentIndex === false) $currentIndex = -1;
                     @endphp
                     <div class="order-card rounded-2xl overflow-hidden" style="background: var(--warm-800); border: 1px solid rgba(139,104,68,0.2);">

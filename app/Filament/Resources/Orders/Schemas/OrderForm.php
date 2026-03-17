@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Models\Customer;
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
@@ -38,32 +41,16 @@ class OrderForm
                         Grid::make(2)
                             ->components([
                                 Select::make('status')
-                                    ->options([
-                                        'pending' => 'Pending',
-                                        'confirmed' => 'Confirmed',
-                                        'baking' => 'Baking',
-                                        'ready' => 'Ready',
-                                        'delivered' => 'Delivered',
-                                        'cancelled' => 'Cancelled',
-                                    ])
+                                    ->options(OrderStatus::class)
                                     ->required(),
 
                                 Select::make('payment_status')
-                                    ->options([
-                                        'unpaid' => 'Unpaid',
-                                        'paid' => 'Paid',
-                                        'cancelled' => 'Cancelled',
-                                        'refunded' => 'Refunded',
-                                    ])
+                                    ->options(PaymentStatus::class)
                                     ->required(),
                             ]),
 
                         Select::make('payment_method')
-                            ->options([
-                                'cash' => 'Cash',
-                                'paypal' => 'PayPal',
-                                'other' => 'Other',
-                            ])
+                            ->options(PaymentMethod::class)
                             ->required(),
 
                         Select::make('user_id')

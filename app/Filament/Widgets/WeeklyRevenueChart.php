@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\Expense;
 use App\Models\Order;
 use Carbon\Carbon;
@@ -33,7 +34,7 @@ class WeeklyRevenueChart extends ChartWidget
 
         foreach ($period as $date) {
             $labels[] = $date->format('D');
-            $revenue[] = (float) Order::where('status', '!=', 'cancelled')
+            $revenue[] = (float) Order::where('status', '!=', OrderStatus::Cancelled)
                 ->whereDate('delivery_date', $date)
                 ->sum('total');
             $expenses[] = (float) Expense::whereDate('date', $date)

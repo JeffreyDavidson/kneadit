@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\CouponType;
 use App\Mail\BirthdayDiscount;
 use App\Models\Coupon;
 use App\Models\CustomerProfile;
@@ -71,7 +72,7 @@ class SendBirthdayDiscounts extends Command
 
                 $coupon = Coupon::create([
                     'code' => $couponCode,
-                    'type' => 'percentage',
+                    'type' => CouponType::Percentage,
                     'value' => $discountPercent,
                     'max_uses' => 1,
                     'used_count' => 0,

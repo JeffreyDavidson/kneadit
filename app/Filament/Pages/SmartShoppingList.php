@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\OrderStatus;
 use App\Filament\Traits\RequiresRole;
 use App\Mail\PurchaseOrder;
 use App\Models\Ingredient;
@@ -64,7 +65,7 @@ class SmartShoppingList extends Page
         $upcomingNeeds = collect();
         if ($this->includeUpcoming && $this->startDate && $this->endDate) {
             $orders = Order::whereBetween('pickup_date', [$this->startDate, $this->endDate])
-                ->whereNotIn('status', ['cancelled', 'delivered'])
+                ->whereNotIn('status', [OrderStatus::Cancelled, OrderStatus::Delivered])
                 ->with('items.product.recipe.ingredients')
                 ->get();
 

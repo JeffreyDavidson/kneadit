@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Setting;
 use Filament\Widgets\Widget;
@@ -51,7 +52,7 @@ class GoalTrackerWidget extends Widget
         $end = Carbon::now()->endOfMonth();
 
         $revenue = (float) Order::whereBetween('created_at', [$start, $end])
-            ->whereNotIn('status', ['cancelled'])
+            ->whereNotIn('status', [OrderStatus::Cancelled])
             ->sum('total');
 
         $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
@@ -71,7 +72,7 @@ class GoalTrackerWidget extends Widget
         $end = Carbon::now()->endOfYear();
 
         $revenue = (float) Order::whereBetween('created_at', [$start, $end])
-            ->whereNotIn('status', ['cancelled'])
+            ->whereNotIn('status', [OrderStatus::Cancelled])
             ->sum('total');
 
         $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;

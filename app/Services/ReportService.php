@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\PaymentStatus;
 use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\Income;
@@ -20,7 +21,7 @@ class ReportService
         $end = Carbon::parse($endDate)->endOfDay();
 
         $orders = Order::whereBetween('delivery_date', [$start, $end]);
-        $paidOrders = (clone $orders)->where('payment_status', 'paid');
+        $paidOrders = (clone $orders)->where('payment_status', PaymentStatus::Paid);
 
         $totalOrders = $orders->count();
         $totalRevenue = $paidOrders->sum('total');
@@ -32,7 +33,7 @@ class ReportService
             ->pluck('count', 'status')
             ->toArray();
 
-        $topProducts = OrderItem::whereHas('order', fn ($q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', 'paid'))
+        $topProducts = OrderItem::whereHas('order', fn ($q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))
             ->select('product_id', DB::raw('SUM(quantity) as units_sold'), DB::raw('SUM(quantity * unit_price) as revenue'))
             ->groupBy('product_id')
             ->with('product:id,name')
@@ -47,7 +48,7 @@ class ReportService
             ->toArray();
 
         $revenueByDay = Order::whereBetween('delivery_date', [$start, $end])
-            ->where('payment_status', 'paid')
+            ->where('payment_status', PaymentStatus::Paid)
             ->select(DB::raw('DATE(delivery_date) as date'), DB::raw('SUM(total) as revenue'))
             ->groupBy('date')
             ->orderBy('date')
@@ -71,7 +72,7 @@ class ReportService
 
         $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
 
-        $topCustomers = Customer::withSum(['orders as total_spend' => fn ($q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', 'paid')], 'total')
+        $topCustomers = Customer::withSum(['orders as total_spend' => fn ($q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid)], 'total')
             ->withCount(['orders as order_count' => fn ($q) => $q->whereBetween('delivery_date', [$start, $end])])
             ->having('total_spend', '>', 0)
             ->orderByDesc('total_spend')
@@ -100,8 +101,8 @@ class ReportService
         $start = Carbon::parse($startDate)->startOfDay();
         $end = Carbon::parse($endDate)->endOfDay();
 
-        $products = Product::withSum(['orderItems as units_sold' => fn ($q) => $q->whereHas('order', fn ($o) => $o->whereBetween('delivery_date', [$start, $end])->where('payment_status', 'paid'))], 'quantity')
-            ->withSum(['orderItems as revenue' => fn ($q) => $q->whereHas('order', fn ($o) => $o->whereBetween('delivery_date', [$start, $end])->where('payment_status', 'paid'))], DB::raw('quantity * unit_price'))
+        $products = Product::withSum(['orderItems as units_sold' => fn ($q) => $q->whereHas('order', fn ($o) => $o->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))], 'quantity')
+            ->withSum(['orderItems as revenue' => fn ($q) => $q->whereHas('order', fn ($o) => $o->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))], DB::raw('quantity * unit_price'))
             ->get()
             ->map(function ($p) {
                 $margin = $p->price > 0 && $p->cost > 0 ? round((($p->price - $p->cost) / $p->price) * 100, 1) : null;
@@ -125,7 +126,7 @@ class ReportService
     public function financialSummary(int $year): array
     {
         $revenue = Order::whereYear('delivery_date', $year)
-            ->where('payment_status', 'paid')
+            ->where('payment_status', PaymentStatus::Paid)
             ->sum('total');
 
         $otherIncome = Income::whereYear('date', $year)->sum('amount');
@@ -138,7 +139,7 @@ class ReportService
 
         $monthly = collect();
         for ($m = 1; $m <= 12; $m++) {
-            $mRev = Order::whereYear('delivery_date', $year)->whereMonth('delivery_date', $m)->where('payment_status', 'paid')->sum('total');
+            $mRev = Order::whereYear('delivery_date', $year)->whereMonth('delivery_date', $m)->where('payment_status', PaymentStatus::Paid)->sum('total');
             $mInc = Income::whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
             $mExp = Expense::whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
             $monthly->push([
@@ -168,7 +169,7 @@ class ReportService
             ->join('order_items', 'order_items.product_id', '=', 'recipes.product_id')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->where('orders.delivery_date', '>=', now()->subDays(30))
-            ->where('orders.payment_status', 'paid')
+            ->where('orders.payment_status', PaymentStatus::Paid->value)
             ->selectRaw('recipe_ingredients.ingredient_id, SUM(recipe_ingredients.quantity * order_items.quantity) as total_usage')
             ->groupBy('recipe_ingredients.ingredient_id')
             ->pluck('total_usage', 'ingredient_id');

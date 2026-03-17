@@ -101,7 +101,7 @@
                 <div class="flex items-center gap-3 mb-6">
                     <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
                     <h2 class="font-display text-xl font-semibold" style="color: var(--warm-100);">
-                        {{ $order->delivery_type === 'delivery' ? 'Delivery' : 'Pickup' }} Details
+                        {{ $order->delivery_type->value === 'delivery' ? 'Delivery' : 'Pickup' }} Details
                     </h2>
                 </div>
 
@@ -123,7 +123,7 @@
                         @endif
                     </div>
 
-                    @if($order->delivery_type === 'delivery' && $order->delivery_address)
+                    @if($order->delivery_type->value === 'delivery' && $order->delivery_address)
                     <div>
                         <span class="block text-xs uppercase tracking-wider font-medium mb-1" style="color: var(--warm-500);">Delivery Address</span>
                         <p style="color: var(--warm-200);">{{ $order->delivery_address }}</p>
@@ -162,14 +162,14 @@
                     </div>
                     <h3 class="font-display text-lg font-semibold mb-2" style="color: var(--warm-200);">
                         @if(isset($step['description_delivery']) || isset($step['description_pickup']))
-                            {{ $order->delivery_type === 'delivery' ? 'Delivery' : 'Pickup' }}
+                            {{ $order->delivery_type->value === 'delivery' ? 'Delivery' : 'Pickup' }}
                         @else
                             {{ $step['title'] }}
                         @endif
                     </h3>
                     <p class="text-sm" style="color: var(--warm-500);">
                         @if(isset($step['description_delivery']) || isset($step['description_pickup']))
-                            @if($order->delivery_type === 'delivery')
+                            @if($order->delivery_type->value === 'delivery')
                                 {{ $step['description_delivery'] ?? 'We\'ll deliver your fresh items right to your door.' }}
                             @else
                                 {{ $step['description_pickup'] ?? 'Your items will be warm and ready for you to pick up.' }}

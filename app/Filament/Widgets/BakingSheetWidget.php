@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\OrderItem;
 use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
@@ -31,12 +32,12 @@ class BakingSheetWidget extends BaseWidget
                     ->join('products', 'order_items.product_id', '=', 'products.id')
                     ->selectRaw('order_items.product_id, products.name as product_name, SUM(order_items.quantity) as total_quantity')
                     ->whereHas('order', function (Builder $query) {
-                        $query->whereIn('status', ['pending', 'confirmed', 'baking'])
+                        $query->whereIn('status', [OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Baking])
                             ->where(function (Builder $q) {
                                 $q->whereDate('delivery_date', Carbon::today())
                                     ->orWhere(function (Builder $q2) {
                                         $q2->whereDate('delivery_date', '>', Carbon::today())
-                                            ->where('status', 'confirmed');
+                                            ->where('status', OrderStatus::Confirmed);
                                     });
                             });
                     })

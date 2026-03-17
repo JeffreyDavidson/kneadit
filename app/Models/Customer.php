@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -83,12 +84,12 @@ class Customer extends Model
 
     public function getLifetimeValueAttribute(): float
     {
-        return $this->orders()->where('status', '!=', 'cancelled')->sum('total');
+        return $this->orders()->where('status', '!=', OrderStatus::Cancelled)->sum('total');
     }
 
     public function getOrderCountAttribute(): int
     {
-        return $this->orders()->where('status', '!=', 'cancelled')->count();
+        return $this->orders()->where('status', '!=', OrderStatus::Cancelled)->count();
     }
 
     public function getLastOrderDateAttribute(): ?Carbon

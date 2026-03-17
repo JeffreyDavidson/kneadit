@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GiftCards\Tables;
 
+use App\Enums\GiftCardStatus;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -40,12 +41,12 @@ class GiftCardsTable
                     ->placeholder('—'),
 
                 BadgeColumn::make('status')
-                    ->getStateUsing(fn ($record) => $record->status)
+                    ->getStateUsing(fn ($record) => $record->status->value)
                     ->colors([
-                        'success' => 'active',
-                        'danger' => 'expired',
-                        'warning' => 'depleted',
-                        'secondary' => 'inactive',
+                        'success' => GiftCardStatus::Active->value,
+                        'danger' => GiftCardStatus::Expired->value,
+                        'warning' => GiftCardStatus::Depleted->value,
+                        'secondary' => GiftCardStatus::Inactive->value,
                     ]),
 
                 TextColumn::make('created_at')
@@ -54,18 +55,15 @@ class GiftCardsTable
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
-                        'active' => 'Active',
-                        'depleted' => 'Depleted',
-                        'expired' => 'Expired',
-                    ])
+                    ->options(GiftCardStatus::class)
                     ->query(function ($query, $state) {
                         return match ($state['value'] ?? null) {
-                            'active' => $query->where('is_active', true)
+                            GiftCardStatus::Active->value => $query->where('is_active', true)
                                 ->where('current_balance', '>', 0)
                                 ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now())),
-                            'depleted' => $query->where('current_balance', '<=', 0),
-                            'expired' => $query->whereNotNull('expires_at')->where('expires_at', '<', now()),
+                            GiftCardStatus::Inactive->value => $query->where('is_active', false),
+                            GiftCardStatus::Depleted->value => $query->where('current_balance', '<=', 0),
+                            GiftCardStatus::Expired->value => $query->whereNotNull('expires_at')->where('expires_at', '<', now()),
                             default => $query,
                         };
                     }),

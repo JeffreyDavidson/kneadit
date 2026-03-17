@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Models\Tenant;
@@ -160,7 +161,7 @@ class StripeConnectWebhookController extends Controller
             $order = Order::where('stripe_checkout_session_id', $sessionId)->first();
             if ($order) {
                 $order->update([
-                    'payment_status' => 'paid',
+                    'payment_status' => PaymentStatus::Paid,
                 ]);
                 Log::info('Order marked paid via webhook', [
                     'order' => $order->order_number,

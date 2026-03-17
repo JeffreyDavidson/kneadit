@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\PaymentStatus;
 use App\Mail\RepeatOrderReminder;
 use App\Models\Customer;
 use App\Models\CustomerReminder;
@@ -79,8 +80,8 @@ class SendRepeatOrderReminders extends Command
 
     private function getCustomersNeedingReminders($cutoffDate, $reminderDays)
     {
-        return Customer::whereHas('orders', fn ($q) => $q->where('payment_status', 'paid'))
-            ->with(['orders' => fn ($q) => $q->where('payment_status', 'paid')->latest('delivery_date')])
+        return Customer::whereHas('orders', fn ($q) => $q->where('payment_status', PaymentStatus::Paid))
+            ->with(['orders' => fn ($q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date')])
             ->get()
             ->map(function ($customer) use ($cutoffDate) {
                 $lastOrder = $customer->orders->first();

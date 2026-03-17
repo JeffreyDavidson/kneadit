@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\PaymentStatus;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Expense;
 use App\Models\Income;
@@ -69,7 +70,7 @@ class FinanceSummary extends Page
     {
         // Total revenue from paid orders
         $this->totalRevenue = Order::whereYear('delivery_date', $this->selectedYear)
-            ->where('payment_status', 'paid')
+            ->where('payment_status', PaymentStatus::Paid)
             ->sum('total');
 
         // Total expenses for the year
@@ -93,7 +94,7 @@ class FinanceSummary extends Page
         for ($month = 1; $month <= 12; $month++) {
             $monthRevenue = Order::whereYear('delivery_date', $this->selectedYear)
                 ->whereMonth('delivery_date', $month)
-                ->where('payment_status', 'paid')
+                ->where('payment_status', PaymentStatus::Paid)
                 ->sum('total');
 
             $monthIncome = Income::whereYear('date', $this->selectedYear)

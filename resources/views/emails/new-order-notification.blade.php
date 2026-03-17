@@ -29,9 +29,9 @@
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Payment</td>
                 <td style="padding: 6px 0; color: {{ $secondaryColor }}; text-align: right;">
                     <span style="padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;
-                        background: {{ $order->payment_status === 'paid' ? '#d4f5d4' : '#fef3c7' }};
-                        color: {{ $order->payment_status === 'paid' ? '#065f46' : '#92400e' }};">
-                        {{ ucfirst($order->payment_status) }} ({{ ucfirst($order->payment_method) }})
+                        background: {{ $order->payment_status->value === 'paid' ? '#d4f5d4' : '#fef3c7' }};
+                        color: {{ $order->payment_status->value === 'paid' ? '#065f46' : '#92400e' }};">
+                        {{ ucfirst($order->payment_status->value) }} ({{ ucfirst($order->payment_method->value) }})
                     </span>
                 </td>
             </tr>

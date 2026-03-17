@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -21,10 +22,10 @@ class AtRiskCustomersWidget extends BaseWidget
             ->query(
                 Customer::query()
                     ->whereHas('orders', function ($query) {
-                        $query->where('status', '!=', 'cancelled');
+                        $query->where('status', '!=', OrderStatus::Cancelled);
                     })
                     ->whereDoesntHave('orders', function ($query) {
-                        $query->where('status', '!=', 'cancelled')
+                        $query->where('status', '!=', OrderStatus::Cancelled)
                             ->where('created_at', '>=', now()->subDays(30));
                     })
                     ->limit(5)
