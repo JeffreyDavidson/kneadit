@@ -115,4 +115,16 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Platform Notification Address
+    |--------------------------------------------------------------------------
+    |
+    | The email address that receives platform-level alerts such as new
+    | subscriber notifications, payment failures, and health checks.
+    |
+    */
+
+    'platform_notify' => env('PLATFORM_NOTIFY_EMAIL'),
+
 ];

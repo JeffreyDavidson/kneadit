@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Cashier\Http\Controllers\WebhookController;
@@ -11,11 +12,46 @@ use Laravel\Cashier\Http\Controllers\WebhookController;
 class StripeWebhookController extends WebhookController
 {
     /**
+     * Check if a Stripe event has already been processed.
+     * Returns true if the event should be skipped.
+     */
+    protected function alreadyProcessed(array $payload): bool
+    {
+        $eventId = $payload['id'] ?? null;
+
+        if (! $eventId) {
+            return false;
+        }
+
+        if (Cache::has("stripe_event:{$eventId}")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Mark a Stripe event as processed.
+     */
+    protected function markProcessed(array $payload): void
+    {
+        $eventId = $payload['id'] ?? null;
+
+        if ($eventId) {
+            Cache::put("stripe_event:{$eventId}", true, now()->addHours(24));
+        }
+    }
+
+    /**
      * Handle customer subscription updated.
      * Syncs plan changes from Stripe to tenant record.
      */
     public function handleCustomerSubscriptionUpdated(array $payload): void
     {
+        if ($this->alreadyProcessed($payload)) {
+            return;
+        }
+
         parent::handleCustomerSubscriptionUpdated($payload);
 
         $subscription = $payload['data']['object'] ?? [];
@@ -50,6 +86,8 @@ class StripeWebhookController extends WebhookController
         if ($status === 'canceled' || ($subscription['cancel_at_period_end'] ?? false)) {
             Log::info("Tenant {$tenant->id} subscription canceling at period end");
         }
+
+        $this->markProcessed($payload);
     }
 
     /**
@@ -58,6 +96,10 @@ class StripeWebhookController extends WebhookController
      */
     public function handleInvoicePaymentFailed(array $payload): void
     {
+        if ($this->alreadyProcessed($payload)) {
+            return;
+        }
+
         $invoice = $payload['data']['object'] ?? [];
         $stripeCustomerId = $invoice['customer'] ?? null;
 
@@ -101,7 +143,7 @@ class StripeWebhookController extends WebhookController
                 ($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '') .
                 "\nAmount: $" . number_format(($invoice['amount_due'] ?? 0) / 100, 2),
                 function ($m) {
-                    $m->to(config('mail.platform_notify', 'jeffrey@getkneadit.app'))
+                    $m->to(config('mail.platform_notify'))
                         ->subject('Payment Failed — ' . now()->format('M j'))
                         ->from(config('mail.from.address'), 'KneadIt Platform');
                 }
@@ -109,6 +151,8 @@ class StripeWebhookController extends WebhookController
         } catch (\Exception $e) {
             Log::error('Failed to send platform payment alert', ['error' => $e->getMessage()]);
         }
+
+        $this->markProcessed($payload);
     }
 
     /**
@@ -116,6 +160,10 @@ class StripeWebhookController extends WebhookController
      */
     public function handleCustomerSubscriptionDeleted(array $payload): void
     {
+        if ($this->alreadyProcessed($payload)) {
+            return;
+        }
+
         parent::handleCustomerSubscriptionDeleted($payload);
 
         $subscription = $payload['data']['object'] ?? [];
@@ -130,6 +178,8 @@ class StripeWebhookController extends WebhookController
         if ($tenant) {
             Log::info("Tenant {$tenant->id} subscription fully canceled");
         }
+
+        $this->markProcessed($payload);
     }
 
     protected function priceIdToPlan(string $priceId): ?string

@@ -97,7 +97,7 @@ class HealthCheck extends Command
 
         // Send email alert
         try {
-            $alertEmail = config('mail.platform_notify', 'jeffrey@getkneadit.app');
+            $alertEmail = config('mail.platform_notify');
             Mail::raw($message, function ($m) use ($alertEmail) {
                 $m->to($alertEmail)
                     ->subject('⚠️ KneadIt Health Check Alert')
