@@ -162,17 +162,19 @@ class ReportService
 
     public function inventoryReport(): array
     {
-        $ingredients = Ingredient::orderBy('name')->get()->map(function ($i) {
-            // Estimate daily usage from last 30 days of orders
-            $usageLast30 = DB::table('recipe_ingredients')
-                ->join('recipes', 'recipes.id', '=', 'recipe_ingredients.recipe_id')
-                ->join('order_items', 'order_items.product_id', '=', 'recipes.product_id')
-                ->join('orders', 'orders.id', '=', 'order_items.order_id')
-                ->where('recipe_ingredients.ingredient_id', $i->id)
-                ->where('orders.delivery_date', '>=', now()->subDays(30))
-                ->where('orders.payment_status', 'paid')
-                ->sum(DB::raw('recipe_ingredients.quantity * order_items.quantity'));
+        // Pre-compute usage per ingredient in a single query (avoids N+1)
+        $usageData = DB::table('recipe_ingredients')
+            ->join('recipes', 'recipes.id', '=', 'recipe_ingredients.recipe_id')
+            ->join('order_items', 'order_items.product_id', '=', 'recipes.product_id')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.delivery_date', '>=', now()->subDays(30))
+            ->where('orders.payment_status', 'paid')
+            ->selectRaw('recipe_ingredients.ingredient_id, SUM(recipe_ingredients.quantity * order_items.quantity) as total_usage')
+            ->groupBy('recipe_ingredients.ingredient_id')
+            ->pluck('total_usage', 'ingredient_id');
 
+        $ingredients = Ingredient::orderBy('name')->get()->map(function ($i) use ($usageData) {
+            $usageLast30 = (float) ($usageData[$i->id] ?? 0);
             $dailyUsage = $usageLast30 / 30;
             $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
 
