@@ -2,6 +2,7 @@
 
 use App\Models\EmailCampaign;
 use Carbon\Carbon;
+
 beforeEach(fn () => setUpCentralTest());
 
 test('can create campaign', function () {

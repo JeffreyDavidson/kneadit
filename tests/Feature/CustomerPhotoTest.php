@@ -4,6 +4,8 @@ use App\Models\CustomerPhoto;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
+use function Pest\Laravel\withoutMiddleware;
+
 beforeEach(function () {
     setUpTenantTest();
 });

@@ -1,11 +1,15 @@
 <?php
 
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Models\User;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -28,7 +32,7 @@ function createDeliveryOrder(array $attrs = []): Order
         'subtotal' => 25.00,
         'total' => 25.00,
         'delivery_address' => '123 Main St',
-        'requested_date' => today(),
+        'delivery_date' => today(),
     ], $attrs));
 }
 
@@ -62,7 +66,7 @@ test('driver page hides pickup orders', function () {
 
 test('driver page hides past orders', function () {
     Setting::set('store_name', 'Test Bakery');
-    createDeliveryOrder(['order_number' => 'ORD-OLD', 'requested_date' => today()->subDay()]);
+    createDeliveryOrder(['order_number' => 'ORD-OLD', 'delivery_date' => today()->subDay()]);
 
     $response = withoutMiddleware($this->driverMiddleware)->get('/driver');
 
@@ -72,20 +76,24 @@ test('driver page hides past orders', function () {
 
 test('mark delivered changes order status', function () {
     $order = createDeliveryOrder(['status' => 'ready']);
+    $user = User::where('email', 'baker@test.com')->first();
 
-    $response = withoutMiddleware($this->driverMiddleware)
-        ->post("/driver/{$order->id}/delivered");
+    $response = actingAs($user)
+        ->withoutMiddleware($this->driverMiddleware)
+        ->post("/driver/{$order->order_number}/delivered");
 
     $response->assertRedirect();
-    expect($order->fresh()->status)->toBe('delivered');
+    expect($order->fresh()->status)->toBe(OrderStatus::Delivered);
 });
 
 test('mark delivered redirects back', function () {
     $order = createDeliveryOrder(['status' => 'ready']);
+    $user = User::where('email', 'baker@test.com')->first();
 
-    $response = withoutMiddleware($this->driverMiddleware)
+    $response = actingAs($user)
+        ->withoutMiddleware($this->driverMiddleware)
         ->from('/driver')
-        ->post("/driver/{$order->id}/delivered");
+        ->post("/driver/{$order->order_number}/delivered");
 
     $response->assertRedirect('/driver');
 });

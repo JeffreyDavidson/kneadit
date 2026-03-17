@@ -2,6 +2,9 @@
 
 use App\Models\BusinessSchedule;
 use App\Models\Setting;
+use Illuminate\Support\Facades\DB;
+
+use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(function () {
     setUpTenantTest();

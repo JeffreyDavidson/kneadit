@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Central\Pages\BakeryInsights;
+
 beforeEach(function () {
     setUpCentralTest();
     test()->page = new BakeryInsights;

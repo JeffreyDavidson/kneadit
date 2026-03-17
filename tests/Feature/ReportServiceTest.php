@@ -29,7 +29,7 @@ function createPaidOrder(float $total, string $date): Order
         'payment_status' => 'paid',
         'subtotal' => $total,
         'total' => $total,
-        'requested_date' => $date,
+        'delivery_date' => $date,
     ]);
 }
 

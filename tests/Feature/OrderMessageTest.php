@@ -8,6 +8,8 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
+use function Pest\Laravel\withoutMiddleware;
+
 beforeEach(function () {
     setUpTenantTest();
 
@@ -32,7 +34,7 @@ test('messages endpoint returns order messages', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->getJson("/order/{$this->order->id}/messages");
+        ->getJson("/order/{$this->order->order_number}/messages");
 
     $response->assertOk();
     $response->assertJsonPath('messages.0.message', 'Your order is being prepared!');
@@ -42,7 +44,7 @@ test('customer can send message on their order', function () {
     Mail::fake();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson("/order/{$this->order->id}/messages", [
+        ->postJson("/order/{$this->order->order_number}/messages", [
             'message' => 'Can I add extra frosting?',
             'sender_name' => 'Test Customer',
             'sender_email' => 'test@example.com',
@@ -60,7 +62,7 @@ test('message is saved with correct sender type', function () {
     Mail::fake();
 
     withoutMiddleware(tenantMiddleware())
-        ->postJson("/order/{$this->order->id}/messages", [
+        ->postJson("/order/{$this->order->order_number}/messages", [
             'message' => 'Hello!',
             'sender_name' => 'Customer',
             'sender_email' => 'cust@example.com',
@@ -72,7 +74,7 @@ test('message is saved with correct sender type', function () {
 
 test('messages require content', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson("/order/{$this->order->id}/messages", [
+        ->postJson("/order/{$this->order->order_number}/messages", [
             'sender_name' => 'Test',
             'sender_email' => 'test@example.com',
         ]);
@@ -86,7 +88,7 @@ test('notification email is sent to baker', function () {
     Setting::set('store_email', 'baker@bakery.com');
 
     withoutMiddleware(tenantMiddleware())
-        ->postJson("/order/{$this->order->id}/messages", [
+        ->postJson("/order/{$this->order->order_number}/messages", [
             'message' => 'Question about my order',
             'sender_name' => 'Customer',
             'sender_email' => 'cust@example.com',

@@ -3,6 +3,10 @@
 use App\Models\Tenant;
 use App\Models\User;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+use function Pest\Laravel\post;
+
 beforeEach(function () {
     setUpCentralTest();
 });
@@ -21,6 +25,7 @@ test('user can register with valid data', function () {
         'password' => 'SecurePass123!',
         'password_confirmation' => 'SecurePass123!',
         'bakery_name' => 'Sunshine Bakery',
+        'terms' => true,
     ]);
 
     $response->assertRedirect(route('billing.plans'));
@@ -32,7 +37,7 @@ test('user can register with valid data', function () {
 test('registration requires all fields', function () {
     $response = post(route('register'), []);
 
-    $response->assertSessionHasErrors(['name', 'email', 'password', 'bakery_name']);
+    $response->assertSessionHasErrors(['name', 'email', 'password', 'bakery_name', 'terms']);
 });
 
 test('registration requires unique email', function () {

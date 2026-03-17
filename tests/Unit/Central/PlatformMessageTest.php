@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\PlatformMessage;
+
 beforeEach(fn () => setUpCentralTest());
 
 test('can create message', function () {

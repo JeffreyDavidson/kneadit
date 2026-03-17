@@ -1,5 +1,7 @@
 <?php
 
+use function Pest\Laravel\postJson;
+
 beforeEach(function () {
     config(['tenancy.central_domains' => ['localhost']]);
 });
@@ -17,7 +19,7 @@ test('webhook returns 400 for invalid signature when secret configured', functio
     $response->assertStatus(400);
 });
 
-test('webhook handles account updated without secret', function () {
+test('webhook returns 500 when secret not configured', function () {
     config(['saas.stripe_connect.webhook_secret' => null]);
 
     $payload = json_encode([
@@ -35,11 +37,11 @@ test('webhook handles account updated without secret', function () {
         'CONTENT_TYPE' => 'application/json',
     ], $payload);
 
-    $response->assertOk();
-    $response->assertSee('OK');
+    $response->assertStatus(500);
+    $response->assertSee('Webhook secret not configured');
 });
 
-test('webhook returns ok for unknown event type', function () {
+test('webhook returns 500 for unknown event type without secret', function () {
     config(['saas.stripe_connect.webhook_secret' => null]);
 
     $payload = json_encode([
@@ -51,5 +53,5 @@ test('webhook returns ok for unknown event type', function () {
         'CONTENT_TYPE' => 'application/json',
     ], $payload);
 
-    $response->assertOk();
+    $response->assertStatus(500);
 });

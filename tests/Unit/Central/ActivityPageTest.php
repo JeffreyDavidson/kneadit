@@ -2,6 +2,7 @@
 
 use App\Filament\Central\Pages\Activity;
 use App\Models\PlatformActivity;
+
 beforeEach(function () {
     setUpCentralTest();
     test()->page = new Activity;

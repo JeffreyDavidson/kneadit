@@ -7,6 +7,8 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 
+use function Pest\Laravel\withoutMiddleware;
+
 beforeEach(function () {
     setUpTenantTest();
 });

@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\DB;
 
+use function Pest\Laravel\get;
+
 beforeEach(function () {
     setUpCentralTest();
 });

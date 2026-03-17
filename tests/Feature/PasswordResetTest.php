@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 
+use function Pest\Laravel\get;
+use function Pest\Laravel\post;
+
 beforeEach(function () {
     setUpCentralTest();
 });

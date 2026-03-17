@@ -8,6 +8,8 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Str;
 
+use function Pest\Laravel\withoutMiddleware;
+
 beforeEach(function () {
     setUpTenantTest();
 });

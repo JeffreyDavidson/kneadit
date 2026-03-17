@@ -3,6 +3,8 @@
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\assertDatabaseHas;
+
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -11,6 +13,7 @@ beforeEach(function () {
     if (is_dir($tenantMigrationPath)) {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
+    Setting::flushCache();
 });
 
 test('get returns value when exists', function () {

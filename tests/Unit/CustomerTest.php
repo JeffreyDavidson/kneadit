@@ -52,7 +52,7 @@ test('average order value is correct', function () {
 test('average order value is zero with no orders', function () {
     $customer = Customer::create(['name' => 'Eve', 'email' => 'eve@test.com']);
 
-    expect($customer->average_order_value)->toBe(0);
+    expect($customer->average_order_value)->toBe(0.0);
 });
 
 test('days since last order returns correct number', function () {

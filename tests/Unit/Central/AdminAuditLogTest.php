@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\AdminAuditLog;
+
 beforeEach(fn () => setUpCentralTest());
 
 test('log creates record', function () {

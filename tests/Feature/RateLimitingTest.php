@@ -1,5 +1,7 @@
 <?php
 
+use function Pest\Laravel\get;
+
 beforeEach(function () {
     setUpCentralTest();
 });
