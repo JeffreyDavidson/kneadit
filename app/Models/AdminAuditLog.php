@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -54,30 +55,31 @@ class AdminAuditLog extends Model
     /**
      * Scope: filter by action.
      */
-    public function scopeForAction(Builder $query, string $action): Builder
+    #[Scope]
+    protected function forAction(Builder $query, string $action): void
     {
-        return $query->where('action', $action);
+        $query->where('action', $action);
     }
 
     /**
      * Scope: filter by target type and id.
      */
-    public function scopeForTarget(Builder $query, string $type, ?string $id = null): Builder
+    #[Scope]
+    protected function forTarget(Builder $query, string $type, ?string $id = null): void
     {
         $query->where('target_type', $type);
 
         if ($id !== null) {
             $query->where('target_id', $id);
         }
-
-        return $query;
     }
 
     /**
      * Scope: last 30 days.
      */
-    public function scopeRecent(Builder $query): Builder
+    #[Scope]
+    protected function recent(Builder $query): void
     {
-        return $query->where('created_at', '>=', now()->subDays(30));
+        $query->where('created_at', '>=', now()->subDays(30));
     }
 }

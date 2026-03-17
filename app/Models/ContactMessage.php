@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,13 +26,15 @@ class ContactMessage extends Model
         ];
     }
 
-    public function scopeUnread($query)
+    #[Scope]
+    protected function unread(Builder $query): void
     {
-        return $query->where('is_read', false);
+        $query->where('is_read', false);
     }
 
-    public function scopeRead($query)
+    #[Scope]
+    protected function read(Builder $query): void
     {
-        return $query->where('is_read', true);
+        $query->where('is_read', true);
     }
 }

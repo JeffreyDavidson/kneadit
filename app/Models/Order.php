@@ -2,8 +2,14 @@
 
 namespace App\Models;
 
+use App\Enums\DeliveryType;
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -49,6 +55,10 @@ class Order extends Model
         'delivery_date' => 'date',
         'delivery_time' => 'datetime:H:i',
         'review_request_sent_at' => 'datetime',
+        'status' => OrderStatus::class,
+        'payment_status' => PaymentStatus::class,
+        'payment_method' => PaymentMethod::class,
+        'delivery_type' => DeliveryType::class,
     ];
 
     protected static function boot()
@@ -105,5 +115,23 @@ class Order extends Model
     public function giftCardTransactions(): HasMany
     {
         return $this->hasMany(GiftCardTransaction::class);
+    }
+
+    #[Scope]
+    protected function paid(Builder $query): void
+    {
+        $query->where('payment_status', PaymentStatus::Paid);
+    }
+
+    #[Scope]
+    protected function active(Builder $query): void
+    {
+        $query->whereNotIn('status', [OrderStatus::Cancelled]);
+    }
+
+    #[Scope]
+    protected function byStatus(Builder $query, OrderStatus $status): void
+    {
+        $query->where('status', $status);
     }
 }

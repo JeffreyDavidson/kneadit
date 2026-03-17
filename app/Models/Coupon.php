@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\CouponType;
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -30,6 +33,7 @@ class Coupon extends Model
             'min_order_amount' => 'decimal:2',
             'max_uses' => 'integer',
             'used_count' => 'integer',
+            'type' => CouponType::class,
             'is_active' => 'boolean',
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
@@ -52,14 +56,16 @@ class Coupon extends Model
         return $this->hasMany(Order::class);
     }
 
-    public function scopeActive($query)
+    #[Scope]
+    protected function active(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 
-    public function scopeValid($query)
+    #[Scope]
+    protected function valid(Builder $query): void
     {
-        return $query->active()
+        $query->active()
             ->where(function ($q) {
                 $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
             })
@@ -95,7 +101,7 @@ class Coupon extends Model
             return 0;
         }
 
-        if ($this->type === 'percentage') {
+        if ($this->type === CouponType::Percentage) {
             return round($subtotal * ((float) $this->value / 100), 2);
         }
 

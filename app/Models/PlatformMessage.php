@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,23 +34,27 @@ class PlatformMessage extends Model
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    public function scopeUnread(Builder $query): Builder
+    #[Scope]
+    protected function unread(Builder $query): void
     {
-        return $query->where('is_read', false);
+        $query->where('is_read', false);
     }
 
-    public function scopeFromAdmin(Builder $query): Builder
+    #[Scope]
+    protected function fromAdmin(Builder $query): void
     {
-        return $query->where('sender_type', 'admin');
+        $query->where('sender_type', 'admin');
     }
 
-    public function scopeFromTenant(Builder $query): Builder
+    #[Scope]
+    protected function fromTenant(Builder $query): void
     {
-        return $query->where('sender_type', 'tenant');
+        $query->where('sender_type', 'tenant');
     }
 
-    public function scopeTopLevel(Builder $query): Builder
+    #[Scope]
+    protected function topLevel(Builder $query): void
     {
-        return $query->whereNull('parent_id');
+        $query->whereNull('parent_id');
     }
 }
