@@ -2,12 +2,11 @@
 
 namespace App\Traits;
 
+use App\Enums\SubscriptionTier;
 use Illuminate\Support\Facades\Auth;
 
 trait HasPlanGating
 {
-    private static array $planLevels = ['starter' => 1, 'growth' => 2, 'pro' => 3];
-
     public static function getRequiredPlan(): string
     {
         return property_exists(static::class, 'requiredPlan')
@@ -26,34 +25,38 @@ trait HasPlanGating
         }
 
         // Check plan access
-        $current = tenant()?->plan ?? 'starter';
-        $required = static::getRequiredPlan();
+        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? 'starter');
+        $required = SubscriptionTier::tryFrom(static::getRequiredPlan());
 
-        return (self::$planLevels[$current] ?? 1) >= (self::$planLevels[$required] ?? 1);
+        if (! $current || ! $required) {
+            return false;
+        }
+
+        return $current->meetsRequirement($required);
     }
 
     public static function getNavigationBadge(): ?string
     {
-        $current = tenant()?->plan ?? 'starter';
-        $required = static::getRequiredPlan();
+        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? 'starter');
+        $required = SubscriptionTier::tryFrom(static::getRequiredPlan());
 
-        if ((self::$planLevels[$current] ?? 1) >= (self::$planLevels[$required] ?? 1)) {
+        if (! $current || ! $required || $current->meetsRequirement($required)) {
             return null;
         }
 
-        return strtoupper($required);
+        return strtoupper($required->value);
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
-        $current = tenant()?->plan ?? 'starter';
-        $required = static::getRequiredPlan();
+        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? 'starter');
+        $required = SubscriptionTier::tryFrom(static::getRequiredPlan());
 
-        if ((self::$planLevels[$current] ?? 1) >= (self::$planLevels[$required] ?? 1)) {
+        if (! $current || ! $required || $current->meetsRequirement($required)) {
             return null;
         }
 
-        return $required === 'growth' ? 'info' : 'warning';
+        return $required === SubscriptionTier::Growth ? 'info' : 'warning';
     }
 
     public static function shouldRegisterNavigation(): bool

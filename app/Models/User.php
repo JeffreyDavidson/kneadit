@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SubscriptionTier;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -69,11 +70,14 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
      */
     public function hasPlan(string $plan): bool
     {
-        $hierarchy = ['starter' => 1, 'growth' => 2, 'pro' => 3];
-        $currentLevel = $hierarchy[$this->currentPlan()] ?? 0;
-        $requiredLevel = $hierarchy[$plan] ?? 0;
+        $current = SubscriptionTier::tryFrom($this->currentPlan() ?? '');
+        $required = SubscriptionTier::tryFrom($plan);
 
-        return $currentLevel >= $requiredLevel;
+        if (! $current || ! $required) {
+            return false;
+        }
+
+        return $current->meetsRequirement($required);
     }
 
     /**
