@@ -7,8 +7,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 
 class OrderSeeder extends Seeder
 {
@@ -36,7 +36,7 @@ class OrderSeeder extends Seeder
 
         for ($i = 0; $i < 65; $i++) {
             $customer = $customers->random();
-            $requestedDate = Carbon::now()->subDays(rand(0, 60));
+            $requestedDate = Date::now()->subDays(rand(0, 60));
 
             // Weight the status distribution - most delivered, fewer cancelled
             $statusWeights = [
@@ -52,7 +52,7 @@ class OrderSeeder extends Seeder
 
             // Payment status logic - most paid, some unpaid for recent orders
             $paymentStatus = 'paid';
-            if ($requestedDate->isAfter(Carbon::now()->subDays(7)) && in_array($status, ['pending', 'confirmed'])) {
+            if ($requestedDate->isAfter(Date::now()->subDays(7)) && in_array($status, ['pending', 'confirmed'])) {
                 $paymentStatus = rand(0, 100) < 30 ? 'unpaid' : 'paid'; // 30% chance unpaid for recent pending/confirmed
             }
 

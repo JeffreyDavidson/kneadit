@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\AdminAuditLog;
 use App\Models\Tenant;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class CheckChurnAlerts extends Command
@@ -21,11 +21,11 @@ class CheckChurnAlerts extends Command
 
         foreach ($tenants as $tenant) {
             $name = $tenant->store_name ?? $tenant->name;
-            $daysSinceSignup = $tenant->created_at ? (int) Carbon::parse($tenant->created_at)->diffInDays(now()) : 0;
+            $daysSinceSignup = $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0;
 
             // Trial expiring in 48h with low setup
             if ($tenant->trial_ends_at) {
-                $trialEnds = Carbon::parse($tenant->trial_ends_at);
+                $trialEnds = Date::parse($tenant->trial_ends_at);
                 if ($trialEnds->isFuture() && $trialEnds->diffInHours(now()) <= 48) {
                     $setupScore = $this->getSetupScore($tenant);
                     if ($setupScore < 15) {
@@ -43,8 +43,8 @@ class CheckChurnAlerts extends Command
 
             // No login in 7+ days
             $lastLogin = $this->getLastLogin($tenant);
-            if ($lastLogin && Carbon::parse($lastLogin)->diffInDays(now()) >= 7) {
-                $days = Carbon::parse($lastLogin)->diffInDays(now());
+            if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= 7) {
+                $days = Date::parse($lastLogin)->diffInDays(now());
                 AdminAuditLog::log(
                     action: 'churn_alert',
                     description: "No login in {$days} days: {$name}",

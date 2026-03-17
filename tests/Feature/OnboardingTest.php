@@ -7,8 +7,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Tests\TestCase;
 
 class OnboardingTest extends TestCase
@@ -383,7 +383,7 @@ class OnboardingTest extends TestCase
         $page->completeOnboarding();
 
         $timestamp = Setting::get('onboarding_completed_at');
-        $parsed = Carbon::parse($timestamp);
+        $parsed = Date::parse($timestamp);
         $this->assertNotNull($parsed);
         $this->assertTrue($parsed->isToday());
     }

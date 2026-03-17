@@ -24,11 +24,17 @@ class SupportTicket extends Model
         'resolved_at' => 'datetime',
     ];
 
+    /**
+     * @return HasMany<SupportReply, $this>
+     */
     public function replies(): HasMany
     {
         return $this->hasMany(SupportReply::class, 'ticket_id');
     }
 
+    /**
+     * @return BelongsTo<Tenant, $this>
+     */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

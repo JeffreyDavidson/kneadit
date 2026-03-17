@@ -4,8 +4,8 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
-use Carbon\Carbon;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Date;
 
 class UpcomingOrdersWidget extends Widget
 {
@@ -17,13 +17,13 @@ class UpcomingOrdersWidget extends Widget
 
     public function getUpcomingOrders(): array
     {
-        $today = Carbon::today();
+        $today = Date::today();
         $endDate = $today->copy()->addDays(3);
 
         $orders = Order::with('customer')
             ->where('status', '!=', OrderStatus::Cancelled)
             ->whereBetween('delivery_date', [$today, $endDate])
-            ->orderBy('delivery_date')
+            ->oldest('delivery_date')
             ->orderBy('delivery_time')
             ->get();
 

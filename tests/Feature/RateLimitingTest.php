@@ -20,6 +20,6 @@ class RateLimitingTest extends CentralTestCase
         // Hero lookbook was a temporary design review route — should be gone
         $response = $this->get('/hero-lookbook');
 
-        $response->assertStatus(404);
+        $response->assertNotFound();
     }
 }

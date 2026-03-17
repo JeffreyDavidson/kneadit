@@ -15,7 +15,7 @@ class PasswordResetTest extends CentralTestCase
     {
         $response = $this->get('/forgot-password');
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertSee('Reset your password');
     }
 
@@ -76,7 +76,7 @@ class PasswordResetTest extends CentralTestCase
     {
         $response = $this->get('/reset-password/fake-token?email=baker@example.com');
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertSee('Set new password');
     }
 
@@ -114,7 +114,7 @@ class PasswordResetTest extends CentralTestCase
     {
         $response = $this->get('/register');
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertSee('forgot-password');
     }
 }

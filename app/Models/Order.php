@@ -72,46 +72,73 @@ class Order extends Model
         });
     }
 
+    /**
+     * @return BelongsTo<Customer, $this>
+     */
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Coupon, $this>
+     */
     public function coupon(): BelongsTo
     {
         return $this->belongsTo(Coupon::class);
     }
 
+    /**
+     * @return HasMany<OrderItem, $this>
+     */
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
+    /**
+     * @return HasMany<OrderMessage, $this>
+     */
     public function messages(): HasMany
     {
         return $this->hasMany(OrderMessage::class);
     }
 
+    /**
+     * @return HasMany<LoyaltyPoint, $this>
+     */
     public function loyaltyPoints(): HasMany
     {
         return $this->hasMany(LoyaltyPoint::class);
     }
 
+    /**
+     * @return HasMany<Review, $this>
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }
 
+    /**
+     * @return HasMany<SurveyResponse, $this>
+     */
     public function surveyResponses(): HasMany
     {
         return $this->hasMany(SurveyResponse::class);
     }
 
+    /**
+     * @return HasMany<GiftCardTransaction, $this>
+     */
     public function giftCardTransactions(): HasMany
     {
         return $this->hasMany(GiftCardTransaction::class);

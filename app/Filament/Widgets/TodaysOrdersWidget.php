@@ -4,10 +4,10 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
-use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\Facades\Date;
 
 class TodaysOrdersWidget extends BaseWidget
 {
@@ -22,7 +22,7 @@ class TodaysOrdersWidget extends BaseWidget
         return $table
             ->query(
                 Order::query()
-                    ->whereDate('delivery_date', Carbon::today())
+                    ->whereDate('delivery_date', Date::today())
                     ->orderBy('delivery_time')
             )
             ->columns([

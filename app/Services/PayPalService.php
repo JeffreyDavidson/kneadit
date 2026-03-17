@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Order;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -74,7 +74,7 @@ class PayPalService
             'detail' => [
                 'invoice_number' => $order->order_number,
                 'reference' => 'Order #'.$order->order_number,
-                'invoice_date' => Carbon::now()->toISOString(),
+                'invoice_date' => Date::now()->toISOString(),
                 'currency_code' => 'USD',
                 'note' => 'Thank you for your order with KneadIt Bakery!',
                 'terms' => 'Payment due within 30 days.',

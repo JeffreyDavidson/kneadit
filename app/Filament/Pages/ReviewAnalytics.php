@@ -141,8 +141,7 @@ class ReviewAnalytics extends Page
 
     public function getRecentReviews(): Collection
     {
-        return Review::with('product')
-            ->orderBy('created_at', 'desc')
+        return Review::with('product')->latest()
             ->limit(10)
             ->get()
             ->map(function ($review) {
@@ -185,8 +184,8 @@ class ReviewAnalytics extends Page
             $positiveWords = ['amazing', 'excellent', 'perfect', 'love', 'best', 'wonderful', 'fantastic', 'delicious', 'great'];
             $negativeWords = ['terrible', 'awful', 'bad', 'hate', 'worst', 'disgusting', 'horrible', 'disappointing'];
 
-            $hasPositive = collect($positiveWords)->some(fn ($word) => str_contains($comment, $word));
-            $hasNegative = collect($negativeWords)->some(fn ($word) => str_contains($comment, $word));
+            $hasPositive = collect($positiveWords)->contains(fn ($word) => str_contains($comment, $word));
+            $hasNegative = collect($negativeWords)->contains(fn ($word) => str_contains($comment, $word));
 
             if ($rating >= 4 && ($hasPositive || ! $hasNegative)) {
                 $positive++;

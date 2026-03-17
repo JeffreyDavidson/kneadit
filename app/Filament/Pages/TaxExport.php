@@ -145,7 +145,7 @@ class TaxExport extends Page
             $allYears = collect([now()->year]);
         }
 
-        return $allYears->mapWithKeys(fn ($y) => [$y => (string) $y])->toArray();
+        return $allYears->mapWithKeys(fn ($y) => [$y => (string) $y])->all();
     }
 
     protected function generateExport(array $data): StreamedResponse
@@ -197,8 +197,7 @@ class TaxExport extends Page
         fputcsv($handle, ['Date', 'Order Number', 'Customer', 'Items', 'Subtotal', 'Delivery Fee', 'Discount', 'Total', 'Payment Status', 'Payment Method']);
 
         Order::with(['customer', 'orderItems.product'])
-            ->whereBetween('created_at', [$from, $to.' 23:59:59'])
-            ->orderBy('created_at')
+            ->whereBetween('created_at', [$from, $to.' 23:59:59'])->oldest()
             ->chunk(100, function ($orders) use ($handle) {
                 foreach ($orders as $order) {
                     $items = $order->orderItems->map(fn ($i) => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');

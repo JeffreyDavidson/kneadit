@@ -8,8 +8,8 @@ use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\Setting;
 use App\Models\Tenant;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 
 class SendBirthdayEmails extends Command
@@ -43,7 +43,7 @@ class SendBirthdayEmails extends Command
 
     protected function processTenant($tenant): void
     {
-        $today = Carbon::today();
+        $today = Date::today();
         $discountPercent = (int) Setting::get('birthday_discount_percentage', '15');
         $couponValidDays = (int) Setting::get('birthday_coupon_valid_days', '7');
 

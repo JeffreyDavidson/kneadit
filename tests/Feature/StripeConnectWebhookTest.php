@@ -52,7 +52,7 @@ class StripeConnectWebhookTest extends TestCase
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertSee('OK');
     }
 
@@ -70,6 +70,6 @@ class StripeConnectWebhookTest extends TestCase
             'CONTENT_TYPE' => 'application/json',
         ], $payload);
 
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 }

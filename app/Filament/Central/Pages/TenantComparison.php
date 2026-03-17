@@ -4,8 +4,8 @@ namespace App\Filament\Central\Pages;
 
 use App\Models\Tenant;
 use BackedEnum;
-use Carbon\Carbon;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
@@ -55,7 +55,7 @@ class TenantComparison extends Page
                 'id' => $tenant->id,
                 'name' => $tenant->store_name ?? $tenant->name,
                 'plan' => $tenant->plan ?? 'free',
-                'days_since_signup' => $tenant->created_at ? (int) Carbon::parse($tenant->created_at)->diffInDays(now()) : 0,
+                'days_since_signup' => $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0,
                 'total_orders' => 0,
                 'month_orders' => 0,
                 'total_products' => 0,
@@ -106,7 +106,7 @@ class TenantComparison extends Page
         $score = 0;
 
         if ($tenant->last_login_at) {
-            $daysSinceLogin = Carbon::parse($tenant->last_login_at)->diffInDays(now());
+            $daysSinceLogin = Date::parse($tenant->last_login_at)->diffInDays(now());
             if ($daysSinceLogin < 1) {
                 $score += 30;
             } elseif ($daysSinceLogin < 3) {

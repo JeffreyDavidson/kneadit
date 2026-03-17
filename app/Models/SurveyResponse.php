@@ -23,11 +23,17 @@ class SurveyResponse extends Model
         'created_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Survey, $this>
+     */
     public function survey(): BelongsTo
     {
         return $this->belongsTo(Survey::class);
     }
 
+    /**
+     * @return BelongsTo<Order, $this>
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);

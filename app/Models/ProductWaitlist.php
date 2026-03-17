@@ -24,6 +24,9 @@ class ProductWaitlist extends Model
 
     protected $table = 'product_waitlists';
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

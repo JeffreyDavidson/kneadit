@@ -19,16 +19,25 @@ class PlatformMessage extends Model
         'read_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Tenant, $this>
+     */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
     }
 
+    /**
+     * @return HasMany<PlatformMessage, $this>
+     */
     public function replies(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
     }
 
+    /**
+     * @return BelongsTo<PlatformMessage, $this>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');

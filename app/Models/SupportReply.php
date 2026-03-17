@@ -16,6 +16,9 @@ class SupportReply extends Model
         'body',
     ];
 
+    /**
+     * @return BelongsTo<SupportTicket, $this>
+     */
     public function ticket(): BelongsTo
     {
         return $this->belongsTo(SupportTicket::class, 'ticket_id');

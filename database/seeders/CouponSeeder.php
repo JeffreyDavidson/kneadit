@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Coupon;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 
 class CouponSeeder extends Seeder
 {
@@ -18,8 +18,8 @@ class CouponSeeder extends Seeder
                 'min_order_amount' => 25.00,
                 'max_uses' => 100,
                 'used_count' => 23,
-                'starts_at' => Carbon::now()->subDays(30),
-                'expires_at' => Carbon::now()->addDays(60),
+                'starts_at' => Date::now()->subDays(30),
+                'expires_at' => Date::now()->addDays(60),
                 'is_active' => true,
             ],
             [
@@ -29,8 +29,8 @@ class CouponSeeder extends Seeder
                 'min_order_amount' => 15.00,
                 'max_uses' => 50,
                 'used_count' => 17,
-                'starts_at' => Carbon::now()->subDays(45),
-                'expires_at' => Carbon::now()->addDays(45),
+                'starts_at' => Date::now()->subDays(45),
+                'expires_at' => Date::now()->addDays(45),
                 'is_active' => true,
             ],
             [
@@ -40,8 +40,8 @@ class CouponSeeder extends Seeder
                 'min_order_amount' => 40.00,
                 'max_uses' => 200,
                 'used_count' => 156,
-                'starts_at' => Carbon::now()->subDays(90),
-                'expires_at' => Carbon::now()->subDays(15), // Expired
+                'starts_at' => Date::now()->subDays(90),
+                'expires_at' => Date::now()->subDays(15), // Expired
                 'is_active' => false,
             ],
             [
@@ -51,8 +51,8 @@ class CouponSeeder extends Seeder
                 'min_order_amount' => 30.00,
                 'max_uses' => null, // Unlimited uses
                 'used_count' => 42,
-                'starts_at' => Carbon::now()->subDays(20),
-                'expires_at' => Carbon::now()->addDays(40),
+                'starts_at' => Date::now()->subDays(20),
+                'expires_at' => Date::now()->addDays(40),
                 'is_active' => true,
             ],
             [
@@ -62,8 +62,8 @@ class CouponSeeder extends Seeder
                 'min_order_amount' => 20.00,
                 'max_uses' => 75,
                 'used_count' => 8,
-                'starts_at' => Carbon::now()->subDays(10),
-                'expires_at' => Carbon::now()->addDays(50),
+                'starts_at' => Date::now()->subDays(10),
+                'expires_at' => Date::now()->addDays(50),
                 'is_active' => true,
             ],
         ];

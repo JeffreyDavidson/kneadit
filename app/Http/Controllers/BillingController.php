@@ -92,11 +92,11 @@ class BillingController extends Controller
         } catch (\Exception $e) {
             Log::error('Plan swap failed', ['error' => $e->getMessage()]);
 
-            return redirect()->route('billing.plans')
+            return to_route('billing.plans')
                 ->with('error', 'Unable to update your plan. Please try again or contact support.');
         }
 
-        return redirect()->route('billing.plans')
+        return to_route('billing.plans')
             ->with('success', 'Your plan has been updated!');
     }
 }

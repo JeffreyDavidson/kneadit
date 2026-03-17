@@ -23,6 +23,9 @@ class EmailCampaignLog extends Model
         'opened_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<EmailCampaign, $this>
+     */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(EmailCampaign::class, 'campaign_id');

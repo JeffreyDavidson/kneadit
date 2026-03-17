@@ -4,12 +4,12 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\OrderItem;
-use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 
 class BakingSheetWidget extends BaseWidget
 {
@@ -34,9 +34,9 @@ class BakingSheetWidget extends BaseWidget
                     ->whereHas('order', function (Builder $query) {
                         $query->whereIn('status', [OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Baking])
                             ->where(function (Builder $q) {
-                                $q->whereDate('delivery_date', Carbon::today())
+                                $q->whereDate('delivery_date', Date::today())
                                     ->orWhere(function (Builder $q2) {
-                                        $q2->whereDate('delivery_date', '>', Carbon::today())
+                                        $q2->whereDate('delivery_date', '>', Date::today())
                                             ->where('status', OrderStatus::Confirmed);
                                     });
                             });

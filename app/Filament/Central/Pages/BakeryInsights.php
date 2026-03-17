@@ -6,10 +6,10 @@ use App\Filament\Central\Resources\TenantResource;
 use App\Models\PlatformMessage;
 use App\Models\Tenant;
 use BackedEnum;
-use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
@@ -72,7 +72,7 @@ class BakeryInsights extends Page
                 return 0;
             }
 
-            $days = Carbon::parse($lastLogin)->diffInDays(now());
+            $days = Date::parse($lastLogin)->diffInDays(now());
 
             if ($days <= 7) {
                 return 25;
@@ -222,12 +222,12 @@ class BakeryInsights extends Page
         $alerts = collect();
 
         foreach ($tenants as $tenant) {
-            $daysSinceSignup = $tenant->created_at ? (int) Carbon::parse($tenant->created_at)->diffInDays(now()) : 0;
+            $daysSinceSignup = $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0;
             $health = $healthData->get($tenant->id);
             $healthScore = $health ? $health['health_score'] : 0;
 
             if ($tenant->trial_ends_at) {
-                $trialEnds = Carbon::parse($tenant->trial_ends_at);
+                $trialEnds = Date::parse($tenant->trial_ends_at);
                 if ($trialEnds->isFuture() && $trialEnds->diffInHours(now()) <= 48) {
                     $setupScore = $health ? $health['setup_score'] : 0;
                     if ($setupScore < 15) {
@@ -245,13 +245,13 @@ class BakeryInsights extends Page
             }
 
             $lastLogin = $this->getLastLogin($tenant);
-            if ($lastLogin && Carbon::parse($lastLogin)->diffInDays(now()) >= 7) {
+            if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= 7) {
                 $alerts->push([
                     'tenant_id' => $tenant->id,
                     'name' => $tenant->store_name ?? $tenant->name,
                     'type' => 'no_login',
                     'type_label' => 'No Recent Login',
-                    'description' => 'No login activity in '.Carbon::parse($lastLogin)->diffInDays(now()).' days.',
+                    'description' => 'No login activity in '.Date::parse($lastLogin)->diffInDays(now()).' days.',
                     'days_since_signup' => $daysSinceSignup,
                     'severity' => 'warning',
                 ]);
@@ -336,7 +336,7 @@ class BakeryInsights extends Page
             return;
         }
 
-        $currentEnd = $tenant->trial_ends_at ? Carbon::parse($tenant->trial_ends_at) : now();
+        $currentEnd = $tenant->trial_ends_at ? Date::parse($tenant->trial_ends_at) : now();
         $newEnd = $currentEnd->isPast() ? now()->addDays(30) : $currentEnd->addDays(30);
 
         $tenant->update(['trial_ends_at' => $newEnd]);
@@ -422,8 +422,8 @@ class BakeryInsights extends Page
 
                 $productCount = DB::connection('tenant')->table('products')->count();
                 $orderCount = DB::connection('tenant')->table('orders')
-                    ->whereMonth('created_at', Carbon::now()->month)
-                    ->whereYear('created_at', Carbon::now()->year)
+                    ->whereMonth('created_at', Date::now()->month)
+                    ->whereYear('created_at', Date::now()->year)
                     ->count();
 
                 tenancy()->end();

@@ -6,8 +6,8 @@ use App\Models\BlockedDate;
 use App\Models\BusinessSchedule;
 use App\Models\Product;
 use App\Models\SeasonalItem;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 
 class BusinessScheduleSeeder extends Seeder
 {
@@ -30,10 +30,10 @@ class BusinessScheduleSeeder extends Seeder
 
         // Blocked dates (upcoming holidays)
         $blockedDates = [
-            ['date' => Carbon::parse('2026-05-25'), 'reason' => 'Holiday', 'is_all_day' => true], // Memorial Day
-            ['date' => Carbon::parse('2026-07-04'), 'reason' => 'Holiday', 'is_all_day' => true], // July 4th
-            ['date' => Carbon::parse('2026-09-07'), 'reason' => 'Holiday', 'is_all_day' => true], // Labor Day
-            ['date' => Carbon::parse('2026-12-25'), 'reason' => 'Holiday', 'is_all_day' => true], // Christmas
+            ['date' => Date::parse('2026-05-25'), 'reason' => 'Holiday', 'is_all_day' => true], // Memorial Day
+            ['date' => Date::parse('2026-07-04'), 'reason' => 'Holiday', 'is_all_day' => true], // July 4th
+            ['date' => Date::parse('2026-09-07'), 'reason' => 'Holiday', 'is_all_day' => true], // Labor Day
+            ['date' => Date::parse('2026-12-25'), 'reason' => 'Holiday', 'is_all_day' => true], // Christmas
         ];
 
         foreach ($blockedDates as $data) {

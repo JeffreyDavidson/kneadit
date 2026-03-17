@@ -91,14 +91,14 @@ class QuickOrder extends Page
                             ->label('Search Customer')
                             ->searchable()
                             ->getSearchResultsUsing(fn (string $search): array => Customer::query()
-                                ->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%")
-                                ->orWhere('phone', 'like', "%{$search}%")
+                                ->whereLike('name', "%{$search}%")
+                                ->orWhereLike('email', "%{$search}%")
+                                ->orWhereLike('phone', "%{$search}%")
                                 ->limit(50)
                                 ->get()
                                 ->mapWithKeys(fn (Customer $customer): array => [
                                     $customer->id => "{$customer->name} - {$customer->email}",
-                                ])->toArray())
+                                ])->all())
                             ->getOptionLabelUsing(fn ($value): ?string => Customer::find($value)?->name)
                             ->live()
                             ->afterStateUpdated(function (Set $set, ?string $state) {

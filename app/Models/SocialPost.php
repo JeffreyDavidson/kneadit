@@ -39,6 +39,9 @@ class SocialPost extends Model
         'tiktok' => 4000,
     ];
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

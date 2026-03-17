@@ -179,7 +179,7 @@ class OrdersTable
                     ->modalHeading('Send PayPal Invoice')
                     ->modalDescription('This will create and send a PayPal invoice to the customer for payment.')
                     ->action(function (Order $record) {
-                        $paypalService = app(PayPalService::class);
+                        $paypalService = resolve(PayPalService::class);
                         $invoiceId = $paypalService->createAndSendInvoice($record);
 
                         if ($invoiceId) {

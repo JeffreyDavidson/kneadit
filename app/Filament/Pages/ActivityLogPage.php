@@ -43,7 +43,7 @@ class ActivityLogPage extends Page
 
     public function getActivitiesProperty()
     {
-        $query = ActivityLog::query()->orderByDesc('created_at');
+        $query = ActivityLog::query()->latest();
 
         if ($this->filterAction) {
             $query->where('action', $this->filterAction);
@@ -54,7 +54,7 @@ class ActivityLogPage extends Page
         }
 
         if ($this->filterUser) {
-            $query->where('user_name', 'like', "%{$this->filterUser}%");
+            $query->whereLike('user_name', "%{$this->filterUser}%");
         }
 
         if ($this->filterDateFrom) {

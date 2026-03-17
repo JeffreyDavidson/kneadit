@@ -4,9 +4,9 @@ namespace App\Filament\Central\Pages;
 
 use App\Models\FeatureUsageLog;
 use BackedEnum;
-use Carbon\Carbon;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use UnitEnum;
 
 class FeatureUsage extends Page
@@ -48,8 +48,8 @@ class FeatureUsage extends Page
 
     public function getTotalInteractionsThisMonth(): int
     {
-        return (int) FeatureUsageLog::whereMonth('date', Carbon::now()->month)
-            ->whereYear('date', Carbon::now()->year)
+        return (int) FeatureUsageLog::whereMonth('date', Date::now()->month)
+            ->whereYear('date', Date::now()->year)
             ->sum('usage_count');
     }
 
@@ -74,7 +74,7 @@ class FeatureUsage extends Page
     {
         $days = collect();
         for ($i = 6; $i >= 0; $i--) {
-            $days->push(Carbon::today()->subDays($i));
+            $days->push(Date::today()->subDays($i));
         }
 
         $features = FeatureUsageLog::distinct()->pluck('feature')->sort()->values();

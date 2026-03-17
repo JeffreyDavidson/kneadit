@@ -77,7 +77,7 @@ class GiftCardTest extends TestCase
             'code' => 'INVALID-CODE-HERE',
         ]);
 
-        $response->assertStatus(404);
+        $response->assertNotFound();
         $response->assertJson(['success' => false]);
     }
 
@@ -148,7 +148,7 @@ class GiftCardTest extends TestCase
     {
         $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->postJson('/gift-cards/purchase', []);
 
-        $response->assertStatus(422);
+        $response->assertUnprocessable();
         $response->assertJsonValidationErrors(['purchaser_name', 'purchaser_email', 'initial_balance']);
     }
 }

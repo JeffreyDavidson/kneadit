@@ -3,7 +3,7 @@
 namespace Tests\Feature\Central;
 
 use App\Models\AdminAuditLog;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Tests\CentralTestCase;
 
@@ -22,7 +22,7 @@ class CheckChurnAlertsTest extends CentralTestCase
             'name' => 'Expiring Bakery',
             'email' => 'expiring@example.com',
             'plan' => 'starter',
-            'trial_ends_at' => Carbon::now()->addHours(24),
+            'trial_ends_at' => Date::now()->addHours(24),
             'data' => '{}',
             'created_at' => now(),
             'updated_at' => now(),

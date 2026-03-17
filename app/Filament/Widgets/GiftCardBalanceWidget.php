@@ -28,8 +28,7 @@ class GiftCardBalanceWidget extends Widget
 
     public function getRecentlyRedeemed(): array
     {
-        return GiftCardTransaction::with('giftCard')
-            ->orderByDesc('created_at')
+        return GiftCardTransaction::with('giftCard')->latest()
             ->limit(3)
             ->get()
             ->map(fn ($t) => [
@@ -37,6 +36,6 @@ class GiftCardBalanceWidget extends Widget
                 'amount' => $t->amount ?? 0,
                 'date' => $t->created_at?->diffForHumans() ?? '',
             ])
-            ->toArray();
+            ->all();
     }
 }

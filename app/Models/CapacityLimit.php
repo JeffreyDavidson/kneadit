@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\OrderStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 
 class CapacityLimit extends Model
 {
@@ -26,7 +27,7 @@ class CapacityLimit extends Model
      */
     public static function forDate(Carbon|string $date): ?self
     {
-        $date = Carbon::parse($date);
+        $date = Date::parse($date);
 
         return static::whereDate('date', $date)->first();
     }
@@ -72,7 +73,7 @@ class CapacityLimit extends Model
      */
     protected static function ordersOnDate(Carbon|string $date): int
     {
-        return Order::whereDate('delivery_date', Carbon::parse($date))
+        return Order::whereDate('delivery_date', Date::parse($date))
             ->where('status', '!=', OrderStatus::Cancelled)
             ->count();
     }

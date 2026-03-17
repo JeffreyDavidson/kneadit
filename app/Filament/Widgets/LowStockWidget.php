@@ -6,6 +6,7 @@ use App\Models\Ingredient;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class LowStockWidget extends BaseWidget
 {
@@ -17,7 +18,7 @@ class LowStockWidget extends BaseWidget
 
     public static function canView(): bool
     {
-        return Ingredient::where(function ($q) {
+        return Ingredient::where(function (Builder $q) {
             $q->where('current_stock', '<=', 0)
                 ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
         })->exists();
@@ -28,7 +29,7 @@ class LowStockWidget extends BaseWidget
         return $table
             ->query(
                 Ingredient::query()
-                    ->where(function ($q) {
+                    ->where(function (\Illuminate\Contracts\Database\Query\Builder $q) {
                         $q->where('current_stock', '<=', 0)
                             ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
                     })

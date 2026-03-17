@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Supplier extends Model
 {
@@ -25,6 +26,9 @@ class Supplier extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @return BelongsToMany<Ingredient, $this, Pivot>
+     */
     public function ingredients(): BelongsToMany
     {
         return $this->belongsToMany(Ingredient::class, 'ingredient_supplier')

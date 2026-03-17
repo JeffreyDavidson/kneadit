@@ -10,7 +10,7 @@ class ServiceWorkerRemovedTest extends CentralTestCase
     {
         $response = $this->get('/service-worker.js');
 
-        $response->assertStatus(404);
+        $response->assertNotFound();
     }
 
     public function test_storefront_layout_does_not_register_service_worker(): void

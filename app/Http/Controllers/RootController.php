@@ -16,7 +16,7 @@ class RootController extends Controller
         }
 
         // Tenant subdomain — initialize tenancy and serve storefront or redirect
-        $middleware = app(InitializeTenancyByDomainOrSubdomain::class);
+        $middleware = resolve(InitializeTenancyByDomainOrSubdomain::class);
 
         return $middleware->handle(request(), function ($request) {
             $tenant = tenant();
@@ -35,7 +35,7 @@ class RootController extends Controller
                 ]);
             }
 
-            return app(StorefrontController::class)->home();
+            return resolve(StorefrontController::class)->home();
         });
     }
 }

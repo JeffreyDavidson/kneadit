@@ -31,7 +31,7 @@ class BusinessSchedule extends Model
         6 => 'Saturday',
     ];
 
-    public function getDayNameAttribute(): string
+    protected function getDayNameAttribute(): string
     {
         return self::DAYS[$this->day_of_week] ?? 'Unknown';
     }

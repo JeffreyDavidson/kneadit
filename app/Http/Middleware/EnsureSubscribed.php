@@ -15,12 +15,10 @@ class EnsureSubscribed
                 return $next($request);
             }
 
-            return redirect()->route('billing.plans');
+            return to_route('billing.plans');
         }
 
-        if ($plan && ! $request->user()->hasPlan($plan)) {
-            abort(403, 'Your current plan does not include this feature. Please upgrade.');
-        }
+        abort_if($plan && ! $request->user()->hasPlan($plan), 403, 'Your current plan does not include this feature. Please upgrade.');
 
         return $next($request);
     }

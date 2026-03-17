@@ -10,15 +10,16 @@ use App\Models\Ingredient;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use Illuminate\Support\Carbon;
+use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class ReportService
 {
     public function salesReport(string $startDate, string $endDate): array
     {
-        $start = Carbon::parse($startDate)->startOfDay();
-        $end = Carbon::parse($endDate)->endOfDay();
+        $start = Date::parse($startDate)->startOfDay();
+        $end = Date::parse($endDate)->endOfDay();
 
         $orders = Order::whereBetween('delivery_date', [$start, $end]);
         $paidOrders = (clone $orders)->where('payment_status', PaymentStatus::Paid);
@@ -33,7 +34,7 @@ class ReportService
             ->pluck('count', 'status')
             ->toArray();
 
-        $topProducts = OrderItem::whereHas('order', fn ($q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))
+        $topProducts = OrderItem::whereHas('order', fn (Builder $q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))
             ->select('product_id', DB::raw('SUM(quantity) as units_sold'), DB::raw('SUM(quantity * unit_price) as revenue'))
             ->groupBy('product_id')
             ->with('product:id,name')
@@ -61,14 +62,14 @@ class ReportService
 
     public function customerReport(string $startDate, string $endDate): array
     {
-        $start = Carbon::parse($startDate)->startOfDay();
-        $end = Carbon::parse($endDate)->endOfDay();
+        $start = Date::parse($startDate)->startOfDay();
+        $end = Date::parse($endDate)->endOfDay();
 
         $newCustomers = Customer::whereBetween('created_at', [$start, $end])->count();
 
-        $totalCustomersWithOrders = Customer::whereHas('orders', fn ($q) => $q->whereBetween('delivery_date', [$start, $end]))->count();
+        $totalCustomersWithOrders = Customer::whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', [$start, $end]))->count();
 
-        $repeatCustomers = Customer::whereHas('orders', fn ($q) => $q->whereBetween('delivery_date', [$start, $end]), '>=', 2)->count();
+        $repeatCustomers = Customer::whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', [$start, $end]), '>=', 2)->count();
 
         $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
 
@@ -98,8 +99,8 @@ class ReportService
 
     public function productPerformanceReport(string $startDate, string $endDate): array
     {
-        $start = Carbon::parse($startDate)->startOfDay();
-        $end = Carbon::parse($endDate)->endOfDay();
+        $start = Date::parse($startDate)->startOfDay();
+        $end = Date::parse($endDate)->endOfDay();
 
         $products = Product::withSum(['orderItems as units_sold' => fn ($q) => $q->whereHas('order', fn ($o) => $o->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))], 'quantity')
             ->withSum(['orderItems as revenue' => fn ($q) => $q->whereHas('order', fn ($o) => $o->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))], DB::raw('quantity * unit_price'))

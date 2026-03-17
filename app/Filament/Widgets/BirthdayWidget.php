@@ -23,7 +23,7 @@ class BirthdayWidget extends Widget
                 if ($next->lt($today->startOfDay())) {
                     $next->addYear();
                 }
-                $daysUntil = (int) now()->startOfDay()->diffInDays($next, false);
+                $daysUntil = (int) today()->diffInDays($next, false);
 
                 return (object) [
                     'customer' => $customer,

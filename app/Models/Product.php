@@ -35,51 +35,81 @@ class Product extends Model
         'is_featured' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<Category, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * @return HasMany<OrderItem, $this>
+     */
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
+    /**
+     * @return HasMany<Recipe, $this>
+     */
     public function recipes(): HasMany
     {
         return $this->hasMany(Recipe::class);
     }
 
+    /**
+     * @return HasOne<Recipe, $this>
+     */
     public function recipe(): HasOne
     {
         return $this->hasOne(Recipe::class);
     }
 
+    /**
+     * @return HasMany<Review, $this>
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }
 
+    /**
+     * @return HasMany<SeasonalItem, $this>
+     */
     public function seasonalItems(): HasMany
     {
         return $this->hasMany(SeasonalItem::class);
     }
 
+    /**
+     * @return HasMany<CustomerPhoto, $this>
+     */
     public function customerPhotos(): HasMany
     {
         return $this->hasMany(CustomerPhoto::class);
     }
 
+    /**
+     * @return HasMany<PageView, $this>
+     */
     public function pageViews(): HasMany
     {
         return $this->hasMany(PageView::class);
     }
 
+    /**
+     * @return HasMany<SocialPost, $this>
+     */
     public function socialPosts(): HasMany
     {
         return $this->hasMany(SocialPost::class);
     }
 
+    /**
+     * @return HasMany<ProductWaitlist, $this>
+     */
     public function waitlistEntries(): HasMany
     {
         return $this->hasMany(ProductWaitlist::class);
@@ -100,7 +130,7 @@ class Product extends Model
         return $seasonalItems->contains(fn ($item) => $item->isCurrentlyAvailable());
     }
 
-    public function getSeasonalBadgeAttribute(): ?string
+    protected function getSeasonalBadgeAttribute(): ?string
     {
         $seasonal = $this->seasonalItems->first();
         if (! $seasonal) {
@@ -113,7 +143,7 @@ class Product extends Model
         return 'Available '.$seasonal->available_from->format('M').' - '.$seasonal->available_until->format('M');
     }
 
-    public function getMarginAttribute(): ?float
+    protected function getMarginAttribute(): ?float
     {
         if ($this->cost && $this->price) {
             return round(($this->price - $this->cost) / $this->price * 100, 2);

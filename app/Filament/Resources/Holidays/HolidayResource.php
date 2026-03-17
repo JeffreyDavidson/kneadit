@@ -6,7 +6,6 @@ use App\Filament\Traits\RequiresRole;
 use App\Models\Holiday;
 use App\Traits\HasPlanGating;
 use BackedEnum;
-use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
@@ -18,6 +17,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Date;
 
 class HolidayResource extends Resource
 {
@@ -163,7 +163,7 @@ class HolidayResource extends Resource
                         if ($record->date->isPast()) {
                             return 'Passed';
                         }
-                        $days = (int) Carbon::today()->diffInDays($record->date, false);
+                        $days = (int) Date::today()->diffInDays($record->date, false);
 
                         return "{$days}d";
                     }),

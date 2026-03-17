@@ -22,6 +22,9 @@ class OrderMessage extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Order, $this>
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);

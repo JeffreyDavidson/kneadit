@@ -11,18 +11,14 @@ class SurveyController extends Controller
 {
     public function survey(Survey $survey)
     {
-        if (! $survey->is_active) {
-            abort(404);
-        }
+        abort_unless($survey->is_active, 404);
 
         return view('survey', compact('survey'));
     }
 
     public function submitSurvey(Request $request, Survey $survey)
     {
-        if (! $survey->is_active) {
-            abort(404);
-        }
+        abort_unless($survey->is_active, 404);
 
         $request->validate([
             'customer_name' => ['nullable', 'string', 'max:255'],
@@ -45,6 +41,6 @@ class SurveyController extends Controller
 
         $survey->increment('responses_count');
 
-        return redirect()->route('storefront.survey', $survey)->with('survey_submitted', true);
+        return to_route('storefront.survey', $survey)->with('survey_submitted', true);
     }
 }

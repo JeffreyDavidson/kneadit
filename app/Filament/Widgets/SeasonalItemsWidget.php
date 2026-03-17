@@ -3,8 +3,8 @@
 namespace App\Filament\Widgets;
 
 use App\Models\SeasonalItem;
-use Carbon\Carbon;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Date;
 
 class SeasonalItemsWidget extends Widget
 {
@@ -22,8 +22,8 @@ class SeasonalItemsWidget extends Widget
     public function getComingSoon(): array
     {
         return SeasonalItem::with('product')
-            ->where('available_from', '>', Carbon::today())
-            ->where('available_from', '<=', Carbon::today()->addDays(14))
+            ->where('available_from', '>', Date::today())
+            ->where('available_from', '<=', Date::today()->addDays(14))
             ->orderBy('available_from')
             ->limit(5)
             ->get()
@@ -31,14 +31,14 @@ class SeasonalItemsWidget extends Widget
                 'name' => $s->product?->name ?? 'Unknown',
                 'date' => $s->available_from->format('M j'),
             ])
-            ->toArray();
+            ->all();
     }
 
     public function getEndingSoon(): array
     {
         return SeasonalItem::with('product')
-            ->where('available_until', '>=', Carbon::today())
-            ->where('available_until', '<=', Carbon::today()->addDays(14))
+            ->where('available_until', '>=', Date::today())
+            ->where('available_until', '<=', Date::today()->addDays(14))
             ->orderBy('available_until')
             ->limit(5)
             ->get()
@@ -46,6 +46,6 @@ class SeasonalItemsWidget extends Widget
                 'name' => $s->product?->name ?? 'Unknown',
                 'date' => $s->available_until->format('M j'),
             ])
-            ->toArray();
+            ->all();
     }
 }

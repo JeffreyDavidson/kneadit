@@ -42,7 +42,7 @@ class GalleryController extends Controller
             'product_id' => $request->product_id,
         ]);
 
-        return redirect()->route('storefront.gallery')
+        return to_route('storefront.gallery')
             ->with('success', 'Thank you! Your photo has been submitted and will appear after approval.');
     }
 }

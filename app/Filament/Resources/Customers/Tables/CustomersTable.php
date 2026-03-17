@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Customers\Tables;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
-use Carbon\Carbon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -12,6 +11,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Date;
 
 class CustomersTable
 {
@@ -64,7 +64,7 @@ class CustomersTable
                     ->color(fn ($record) => $record->isBirthdayToday() ? 'success' : 'gray')
                     ->formatStateUsing(fn ($state, $record) => $record->isBirthdayToday()
                         ? '🎂 Today!'
-                        : ($state ? Carbon::parse($state)->format('M j') : '—'))
+                        : ($state ? Date::parse($state)->format('M j') : '—'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -98,7 +98,7 @@ class CustomersTable
                     ->badge()
                     ->getStateUsing(function ($record) {
                         if ($record->orders_count > 0 && $record->last_order_date) {
-                            return Carbon::parse($record->last_order_date)->diffInDays(now()) > 30
+                            return Date::parse($record->last_order_date)->diffInDays(now()) > 30
                                 ? 'At Risk'
                                 : 'Active';
                         }

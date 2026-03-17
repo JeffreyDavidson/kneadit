@@ -32,7 +32,7 @@ class CateringInquiry extends Model
         'quoted_amount' => 'decimal:2',
     ];
 
-    public function getEventTypeLabelAttribute(): string
+    protected function getEventTypeLabelAttribute(): string
     {
         return match ($this->event_type) {
             'wedding' => '💒 Wedding',
@@ -43,7 +43,7 @@ class CateringInquiry extends Model
         };
     }
 
-    public function getStatusLabelAttribute(): string
+    protected function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
             'inquiry' => 'New Inquiry',

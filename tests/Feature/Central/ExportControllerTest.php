@@ -32,7 +32,7 @@ class ExportControllerTest extends CentralTestCase
     {
         $id = $this->insertTenant();
         $response = $this->get("/admin/export/{$id}/products");
-        $response->assertStatus(403);
+        $response->assertForbidden();
     }
 
     public function test_invalid_export_type_returns_404(): void
@@ -40,7 +40,7 @@ class ExportControllerTest extends CentralTestCase
         $id = $this->insertTenant();
         $response = $this->actingAs($this->createAdmin())
             ->get("/admin/export/{$id}/invalid");
-        $response->assertStatus(404);
+        $response->assertNotFound();
     }
 
     public function test_products_csv_export_returns_correct_content_type(): void
@@ -48,7 +48,7 @@ class ExportControllerTest extends CentralTestCase
         $id = $this->insertTenant();
         $response = $this->actingAs($this->createAdmin())
             ->get("/admin/export/{$id}/products");
-        $response->assertStatus(200);
+        $response->assertOk();
         $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
     }
 
@@ -57,7 +57,7 @@ class ExportControllerTest extends CentralTestCase
         $id = $this->insertTenant();
         $response = $this->actingAs($this->createAdmin())
             ->get("/admin/export/{$id}/categories");
-        $response->assertStatus(200);
+        $response->assertOk();
         $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
     }
 
@@ -66,7 +66,7 @@ class ExportControllerTest extends CentralTestCase
         $id = $this->insertTenant();
         $response = $this->actingAs($this->createAdmin())
             ->get("/admin/export/{$id}/orders");
-        $response->assertStatus(200);
+        $response->assertOk();
         $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
     }
 
@@ -75,7 +75,7 @@ class ExportControllerTest extends CentralTestCase
         $id = $this->insertTenant();
         $response = $this->actingAs($this->createAdmin())
             ->get("/admin/export/{$id}/customers");
-        $response->assertStatus(200);
+        $response->assertOk();
         $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
     }
 
@@ -84,7 +84,7 @@ class ExportControllerTest extends CentralTestCase
         $id = $this->insertTenant();
         $response = $this->actingAs($this->createAdmin())
             ->get("/admin/export/{$id}/reviews");
-        $response->assertStatus(200);
+        $response->assertOk();
         $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
     }
 
@@ -93,7 +93,7 @@ class ExportControllerTest extends CentralTestCase
         $id = $this->insertTenant();
         $response = $this->actingAs($this->createAdmin())
             ->get("/admin/export/{$id}/all");
-        $response->assertStatus(200);
+        $response->assertOk();
         $this->assertStringContainsString('application/zip', $response->headers->get('content-type'));
     }
 }

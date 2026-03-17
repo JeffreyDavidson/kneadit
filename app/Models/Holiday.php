@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 
 class Holiday extends Model
 {
@@ -30,22 +31,22 @@ class Holiday extends Model
         ];
     }
 
-    public function getDaysAwayAttribute(): int
+    protected function getDaysAwayAttribute(): int
     {
         return now()->diffInDays($this->date, false);
     }
 
-    public function getStartPrepByAttribute(): Carbon
+    protected function getStartPrepByAttribute(): Carbon
     {
         return $this->date->subDays($this->lead_days ?? 7);
     }
 
-    public function getIsUpcomingAttribute(): bool
+    protected function getIsUpcomingAttribute(): bool
     {
         return $this->date->isFuture();
     }
 
-    public function getIsInPrepPeriodAttribute(): bool
+    protected function getIsInPrepPeriodAttribute(): bool
     {
         return now()->isAfter($this->start_prep_by) && $this->date->isFuture();
     }
@@ -53,7 +54,7 @@ class Holiday extends Model
     #[Scope]
     protected function upcoming(Builder $query): void
     {
-        $query->where('date', '>=', Carbon::today())->orderBy('date');
+        $query->where('date', '>=', Date::today())->orderBy('date');
     }
 
     #[Scope]
@@ -68,7 +69,7 @@ class Holiday extends Model
             return $this->days_away;
         }
 
-        return (int) Carbon::today()->diffInDays($this->order_deadline, false);
+        return (int) Date::today()->diffInDays($this->order_deadline, false);
     }
 
     public function isDeadlinePassed(): bool

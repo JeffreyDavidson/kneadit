@@ -8,8 +8,8 @@ use App\Models\Order;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
 
@@ -55,7 +55,7 @@ class ReorderReminders extends Page
 
     public function getCustomers(): Collection
     {
-        $cutoff = Carbon::now()->subDays($this->threshold);
+        $cutoff = Date::now()->subDays($this->threshold);
 
         return Order::query()
             ->select([
@@ -71,7 +71,7 @@ class ReorderReminders extends Page
             ->orderBy(DB::raw('MAX(delivery_date)'), 'asc')
             ->get()
             ->map(function ($customer) {
-                $customer->days_since = (int) floor(Carbon::parse($customer->last_order_date)->diffInDays(now()));
+                $customer->days_since = (int) floor(Date::parse($customer->last_order_date)->diffInDays(now()));
 
                 return $customer;
             });

@@ -6,7 +6,7 @@ use App\Models\CheckinLog;
 use App\Models\ScheduledCheckin;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 
 class SendScheduledCheckins extends Command
@@ -28,7 +28,7 @@ class SendScheduledCheckins extends Command
         $sentCount = 0;
 
         foreach ($checkins as $checkin) {
-            $targetDate = Carbon::today()->subDays($checkin->days_after_signup);
+            $targetDate = Date::today()->subDays($checkin->days_after_signup);
 
             $tenants = Tenant::whereDate('created_at', $targetDate)->get();
 

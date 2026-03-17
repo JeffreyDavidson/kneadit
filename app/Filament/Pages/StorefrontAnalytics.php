@@ -38,7 +38,7 @@ class StorefrontAnalytics extends Page
     protected function getStartDate(): ?Carbon
     {
         return match ($this->period) {
-            'today' => now()->startOfDay(),
+            'today' => today(),
             'week' => now()->startOfWeek(),
             'month' => now()->startOfMonth(),
             'all' => null,

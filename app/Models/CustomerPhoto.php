@@ -24,6 +24,9 @@ class CustomerPhoto extends Model
         'is_featured' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

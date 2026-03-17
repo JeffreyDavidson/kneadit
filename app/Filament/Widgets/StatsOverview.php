@@ -10,6 +10,7 @@ use App\Models\WaitlistEntry;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Date;
 
 class StatsOverview extends BaseWidget
 {
@@ -17,8 +18,8 @@ class StatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $today = Carbon::today();
-        $weekStart = Carbon::now()->startOfWeek();
+        $today = Date::today();
+        $weekStart = Date::now()->startOfWeek();
 
         return [
             Stat::make("Today's Orders", Order::whereDate('delivery_date', $today)->count())
@@ -31,7 +32,7 @@ class StatsOverview extends BaseWidget
 
             Stat::make("This Week's Revenue", '$'.number_format(
                 (float) Order::where('status', '!=', OrderStatus::Cancelled)
-                    ->whereBetween('delivery_date', [$weekStart, Carbon::now()->endOfWeek()])
+                    ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                     ->sum('total'),
                 2
             ))
@@ -40,7 +41,7 @@ class StatsOverview extends BaseWidget
 
             Stat::make('Avg Order Value', '$'.number_format(
                 (float) Order::where('status', '!=', OrderStatus::Cancelled)
-                    ->whereBetween('delivery_date', [$weekStart, Carbon::now()->endOfWeek()])
+                    ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                     ->avg('total') ?? 0,
                 2
             ))

@@ -11,6 +11,9 @@ class TenantNote extends Model
 
     protected $fillable = ['tenant_id', 'body', 'author'];
 
+    /**
+     * @return BelongsTo<Tenant, $this>
+     */
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
