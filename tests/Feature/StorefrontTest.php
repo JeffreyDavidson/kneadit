@@ -2,35 +2,28 @@
 
 namespace Tests\Feature;
 
-use App\Http\Middleware\EnsureStorefrontEnabled;
-use App\Http\Middleware\TrackPageView;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
-use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
+use Tests\Traits\SetUpTenantTest;
 
 class StorefrontTest extends TestCase
 {
     use RefreshDatabase;
+    use SetUpTenantTest;
 
     protected function setUp(): void
     {
         parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        config(['tenancy.central_domains' => []]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
+        $this->setUpTenant();
     }
 
     /** @test */
     public function menu_page_loads_successfully(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/menu');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.menu', [], false));
         $response->assertOk();
     }
 
@@ -39,7 +32,7 @@ class StorefrontTest extends TestCase
     {
         Setting::set('store_name', 'Sweet Dreams Bakery');
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/menu');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.menu', [], false));
         $response->assertOk();
         $response->assertSee('Sweet Dreams Bakery');
     }
@@ -62,7 +55,7 @@ class StorefrontTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/menu');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.menu', [], false));
         $response->assertOk();
         $response->assertSee('Pastries');
         $response->assertSee('Croissant');
@@ -86,7 +79,7 @@ class StorefrontTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/menu');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.menu', [], false));
         $response->assertOk();
         $response->assertSee('Red Velvet Cake');
         $response->assertSee('35.00');
@@ -102,7 +95,7 @@ class StorefrontTest extends TestCase
             'sort_order' => 1,
         ]);
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/menu');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.menu', [], false));
         $response->assertOk();
         $response->assertDontSee('Seasonal Only');
     }
@@ -125,7 +118,7 @@ class StorefrontTest extends TestCase
             'is_active' => false,
         ]);
 
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/menu');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.menu', [], false));
         $response->assertOk();
         $response->assertDontSee('Hidden Bread');
     }
@@ -133,21 +126,21 @@ class StorefrontTest extends TestCase
     /** @test */
     public function about_page_loads(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/about');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('storefront.about', [], false));
         $response->assertOk();
     }
 
     /** @test */
     public function contact_page_loads(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->get('/contact');
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('contact.show', [], false));
         $response->assertOk();
     }
 
     /** @test */
     public function contact_form_submission_works_with_valid_data(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/contact', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('contact.store', [], false), [
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
             'subject' => 'Question about orders',
@@ -165,7 +158,7 @@ class StorefrontTest extends TestCase
     /** @test */
     public function contact_form_validation_rejects_missing_name(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/contact', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('contact.store', [], false), [
             'email' => 'jane@example.com',
             'subject' => 'Test',
             'message' => 'Test message',
@@ -177,7 +170,7 @@ class StorefrontTest extends TestCase
     /** @test */
     public function contact_form_validation_rejects_missing_email(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/contact', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('contact.store', [], false), [
             'name' => 'Jane',
             'subject' => 'Test',
             'message' => 'Test message',
@@ -189,7 +182,7 @@ class StorefrontTest extends TestCase
     /** @test */
     public function contact_form_validation_rejects_missing_subject(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/contact', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('contact.store', [], false), [
             'name' => 'Jane',
             'email' => 'jane@example.com',
             'message' => 'Test message',
@@ -201,7 +194,7 @@ class StorefrontTest extends TestCase
     /** @test */
     public function contact_form_validation_rejects_missing_message(): void
     {
-        $response = $this->withoutMiddleware([InitializeTenancyByDomainOrSubdomain::class, PreventAccessFromCentralDomains::class, EnsureStorefrontEnabled::class, TrackPageView::class])->post('/contact', [
+        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('contact.store', [], false), [
             'name' => 'Jane',
             'email' => 'jane@example.com',
             'subject' => 'Test',
