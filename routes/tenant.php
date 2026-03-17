@@ -2,7 +2,18 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Api\StorefrontApiController;
+use App\Http\Controllers\Api\CapacityController as ApiCapacityController;
+use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
+use App\Http\Controllers\Api\ContactController as ApiContactController;
+use App\Http\Controllers\Api\CouponValidationController;
+use App\Http\Controllers\Api\FavoriteController as ApiFavoriteController;
+use App\Http\Controllers\Api\GalleryController as ApiGalleryController;
+use App\Http\Controllers\Api\MenuController as ApiMenuController;
+use App\Http\Controllers\Api\OrderController as ApiOrderController;
+use App\Http\Controllers\Api\ProductController as ApiProductController;
+use App\Http\Controllers\Api\ReviewController as ApiReviewController;
+use App\Http\Controllers\Api\StoreInfoController;
+use App\Http\Controllers\Api\WaitlistController as ApiWaitlistController;
 use App\Http\Controllers\ConsumeImpersonationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DriverController;
@@ -161,24 +172,24 @@ Route::middleware([
         ->group(function () {
             // Read endpoints — generous limit
             Route::middleware('throttle:60,1')->group(function () {
-                Route::get('/store', [StorefrontApiController::class, 'store']);
-                Route::get('/categories', [StorefrontApiController::class, 'categories']);
-                Route::get('/products', [StorefrontApiController::class, 'products']);
-                Route::get('/menu', [StorefrontApiController::class, 'menu']);
-                Route::get('/capacity/{date}', [StorefrontApiController::class, 'capacity']);
-                Route::get('/reviews', [StorefrontApiController::class, 'reviews']);
-                Route::get('/gallery', [StorefrontApiController::class, 'gallery']);
-                Route::get('/favorites', [StorefrontApiController::class, 'favorites']);
+                Route::get('/store', StoreInfoController::class);
+                Route::get('/categories', ApiCategoryController::class);
+                Route::get('/products', ApiProductController::class);
+                Route::get('/menu', ApiMenuController::class);
+                Route::get('/capacity/{date}', ApiCapacityController::class);
+                Route::get('/reviews', [ApiReviewController::class, 'index']);
+                Route::get('/gallery', ApiGalleryController::class);
+                Route::get('/favorites', [ApiFavoriteController::class, 'index']);
             });
 
             // Write endpoints — tighter limit
             Route::middleware('throttle:10,1')->group(function () {
-                Route::post('/orders', [StorefrontApiController::class, 'submitOrder']);
-                Route::post('/coupon/validate', [StorefrontApiController::class, 'validateCoupon']);
-                Route::post('/reviews', [StorefrontApiController::class, 'submitReview']);
-                Route::post('/contact', [StorefrontApiController::class, 'submitContact']);
-                Route::post('/favorites/toggle', [StorefrontApiController::class, 'toggleFavorite']);
-                Route::post('/waitlist', [StorefrontApiController::class, 'waitlist']);
+                Route::post('/orders', ApiOrderController::class);
+                Route::post('/coupon/validate', CouponValidationController::class);
+                Route::post('/reviews', [ApiReviewController::class, 'store']);
+                Route::post('/contact', ApiContactController::class);
+                Route::post('/favorites/toggle', [ApiFavoriteController::class, 'store']);
+                Route::post('/waitlist', ApiWaitlistController::class);
             });
         });
 });
