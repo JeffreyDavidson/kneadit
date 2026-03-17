@@ -2,19 +2,19 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\SubscriptionTier;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckPlanAccess
 {
-    private static array $hierarchy = ['starter' => 1, 'growth' => 2, 'pro' => 3];
-
     public function handle(Request $request, Closure $next, string $requiredPlan = 'starter'): Response
     {
-        $currentPlan = tenant()?->plan ?? 'starter';
+        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? 'starter');
+        $required = SubscriptionTier::tryFrom($requiredPlan);
 
-        if ((self::$hierarchy[$currentPlan] ?? 1) < (self::$hierarchy[$requiredPlan] ?? 1)) {
+        if (! $current || ! $required || ! $current->meetsRequirement($required)) {
             return redirect()->route('filament.admin.pages.upgrade-plan');
         }
 

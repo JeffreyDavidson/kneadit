@@ -18,20 +18,10 @@ class EnsureSubscribed
             return redirect()->route('billing.plans');
         }
 
-        if ($plan && ! $this->hasRequiredPlan($request->user(), $plan)) {
+        if ($plan && ! $request->user()->hasPlan($plan)) {
             abort(403, 'Your current plan does not include this feature. Please upgrade.');
         }
 
         return $next($request);
-    }
-
-    private function hasRequiredPlan($user, string $requiredPlan): bool
-    {
-        $hierarchy = ['starter' => 1, 'growth' => 2, 'pro' => 3];
-        $currentPlan = $user->currentPlan();
-        $currentLevel = $hierarchy[$currentPlan] ?? 0;
-        $requiredLevel = $hierarchy[$requiredPlan] ?? 0;
-
-        return $currentLevel >= $requiredLevel;
     }
 }
