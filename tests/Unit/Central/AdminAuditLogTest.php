@@ -1,54 +1,46 @@
 <?php
 
-namespace Tests\Unit\Central;
-
 use App\Models\AdminAuditLog;
 use Tests\CentralTestCase;
 
-class AdminAuditLogTest extends CentralTestCase
-{
-    public function test_log_creates_record(): void
-    {
-        $log = AdminAuditLog::log('tenant.suspend', 'Suspended tenant', 'tenant', 'tenant-1', ['reason' => 'abuse']);
+uses(CentralTestCase::class);
 
-        $found = AdminAuditLog::where('action', 'tenant.suspend')->first();
-        $this->assertNotNull($found);
-        $this->assertEquals('Suspended tenant', $found->description);
-        $this->assertEquals('tenant', $found->target_type);
-        $this->assertEquals('tenant-1', $found->target_id);
-        $this->assertEquals(['reason' => 'abuse'], $found->metadata);
-    }
+test('log creates record', function () {
+    $log = AdminAuditLog::log('tenant.suspend', 'Suspended tenant', 'tenant', 'tenant-1', ['reason' => 'abuse']);
 
-    public function test_log_works_with_minimal_params(): void
-    {
-        $log = AdminAuditLog::log('login', 'Admin logged in');
+    $found = AdminAuditLog::where('action', 'tenant.suspend')->first();
+    expect($found)->not->toBeNull();
+    expect($found->description)->toBe('Suspended tenant');
+    expect($found->target_type)->toBe('tenant');
+    expect($found->target_id)->toBe('tenant-1');
+    expect($found->metadata)->toBe(['reason' => 'abuse']);
+});
 
-        $this->assertNotNull(AdminAuditLog::where('action', 'login')->first());
-        $this->assertNull($log->target_type);
-    }
+test('log works with minimal params', function () {
+    $log = AdminAuditLog::log('login', 'Admin logged in');
 
-    public function test_scope_for_action(): void
-    {
-        AdminAuditLog::log('login', 'Logged in');
-        AdminAuditLog::log('logout', 'Logged out');
+    expect(AdminAuditLog::where('action', 'login')->first())->not->toBeNull();
+    expect($log->target_type)->toBeNull();
+});
 
-        $this->assertCount(1, AdminAuditLog::forAction('login')->get());
-    }
+test('scope for action', function () {
+    AdminAuditLog::log('login', 'Logged in');
+    AdminAuditLog::log('logout', 'Logged out');
 
-    public function test_scope_for_target(): void
-    {
-        AdminAuditLog::log('update', 'Updated', 'tenant', 't1');
-        AdminAuditLog::log('update', 'Updated', 'user', 'u1');
+    expect(AdminAuditLog::forAction('login')->get())->toHaveCount(1);
+});
 
-        $this->assertCount(1, AdminAuditLog::forTarget('tenant', 't1')->get());
-        $this->assertCount(1, AdminAuditLog::forTarget('user')->get());
-    }
+test('scope for target', function () {
+    AdminAuditLog::log('update', 'Updated', 'tenant', 't1');
+    AdminAuditLog::log('update', 'Updated', 'user', 'u1');
 
-    public function test_scope_recent(): void
-    {
-        $log = AdminAuditLog::log('test', 'Recent');
+    expect(AdminAuditLog::forTarget('tenant', 't1')->get())->toHaveCount(1);
+    expect(AdminAuditLog::forTarget('user')->get())->toHaveCount(1);
+});
 
-        $results = AdminAuditLog::recent()->get();
-        $this->assertTrue($results->contains($log));
-    }
-}
+test('scope recent', function () {
+    $log = AdminAuditLog::log('test', 'Recent');
+
+    $results = AdminAuditLog::recent()->get();
+    expect($results->contains($log))->toBeTrue();
+});

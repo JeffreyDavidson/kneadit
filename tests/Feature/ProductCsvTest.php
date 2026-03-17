@@ -1,116 +1,89 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Category;
 use App\Models\Product;
 use App\Services\ProductCsvService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Tests\TestCase;
 
-class ProductCsvTest extends TestCase
+beforeEach(function () {
+    config(['database.connections.central' => config('database.connections.sqlite')]);
+    $tenantMigrationPath = database_path('migrations/tenant');
+    if (is_dir($tenantMigrationPath)) {
+        test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
+    }
+
+    $this->service = new ProductCsvService;
+});
+
+function createCsvFile(string $content): UploadedFile
 {
-    use RefreshDatabase;
+    $path = tempnam(sys_get_temp_dir(), 'csv_');
+    file_put_contents($path, $content);
 
-    protected ProductCsvService $service;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
-
-        $this->service = new ProductCsvService;
-    }
-
-    /** @test */
-    public function export_generates_valid_csv_with_headers(): void
-    {
-        $csv = $this->service->export();
-        $lines = explode("\n", trim($csv));
-        $headers = str_getcsv($lines[0]);
-
-        $this->assertContains('name', $headers);
-        $this->assertContains('price', $headers);
-        $this->assertContains('category', $headers);
-    }
-
-    /** @test */
-    public function export_includes_all_active_products(): void
-    {
-        $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-        Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
-        Product::create(['name' => 'Rye', 'slug' => 'rye', 'price' => 7, 'category_id' => $category->id, 'is_active' => true]);
-
-        $csv = $this->service->export();
-        $this->assertStringContainsString('Sourdough', $csv);
-        $this->assertStringContainsString('Rye', $csv);
-    }
-
-    /** @test */
-    public function import_creates_new_products(): void
-    {
-        Category::create(['name' => 'Cakes', 'slug' => 'cakes']);
-        $file = $this->createCsvFile("name,category,description,price,cost,is_active,is_featured\nChocolate Cake,Cakes,Rich and moist,25.00,,1,0\n");
-
-        $result = $this->service->import($file);
-
-        $this->assertEquals(1, $result['created']);
-        $this->assertDatabaseHas('products', ['name' => 'Chocolate Cake', 'price' => 25.00]);
-    }
-
-    /** @test */
-    public function import_updates_existing_products_by_name(): void
-    {
-        $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-        Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
-
-        $file = $this->createCsvFile("name,category,description,price,cost,is_active,is_featured\nSourdough,Bread,Updated desc,10.00,,1,0\n");
-        $result = $this->service->import($file);
-
-        $this->assertEquals(1, $result['updated']);
-        $this->assertEquals(0, $result['created']);
-        $this->assertEquals(10.00, (float) Product::where('name', 'Sourdough')->first()->price);
-    }
-
-    /** @test */
-    public function import_handles_missing_required_fields(): void
-    {
-        $file = $this->createCsvFile("name,category\nTest,Bread\n");
-        $result = $this->service->import($file);
-
-        $this->assertNotEmpty($result['errors']);
-        $this->assertEquals(0, $result['created']);
-    }
-
-    /** @test */
-    public function import_handles_invalid_prices(): void
-    {
-        $file = $this->createCsvFile("name,category,description,price,cost,is_active,is_featured\nBad Item,Bread,desc,notanumber,,1,0\n");
-        $result = $this->service->import($file);
-
-        $this->assertNotEmpty($result['errors']);
-        $this->assertEquals(0, $result['created']);
-    }
-
-    /** @test */
-    public function template_has_correct_headers(): void
-    {
-        $template = $this->service->getTemplateContent();
-        $headers = str_getcsv(trim($template));
-
-        $this->assertEquals(['name', 'category', 'description', 'price', 'cost', 'is_active', 'is_featured'], $headers);
-    }
-
-    private function createCsvFile(string $content): UploadedFile
-    {
-        $path = tempnam(sys_get_temp_dir(), 'csv_');
-        file_put_contents($path, $content);
-
-        return new UploadedFile($path, 'products.csv', 'text/csv', null, true);
-    }
+    return new UploadedFile($path, 'products.csv', 'text/csv', null, true);
 }
+
+test('export generates valid csv with headers', function () {
+    $csv = $this->service->export();
+    $lines = explode("\n", trim($csv));
+    $headers = str_getcsv($lines[0]);
+
+    expect($headers)->toContain('name');
+    expect($headers)->toContain('price');
+    expect($headers)->toContain('category');
+});
+
+test('export includes all active products', function () {
+    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
+    Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
+    Product::create(['name' => 'Rye', 'slug' => 'rye', 'price' => 7, 'category_id' => $category->id, 'is_active' => true]);
+
+    $csv = $this->service->export();
+    expect($csv)->toContain('Sourdough');
+    expect($csv)->toContain('Rye');
+});
+
+test('import creates new products', function () {
+    Category::create(['name' => 'Cakes', 'slug' => 'cakes']);
+    $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nChocolate Cake,Cakes,Rich and moist,25.00,,1,0\n");
+
+    $result = $this->service->import($file);
+
+    expect($result['created'])->toBe(1);
+    $this->assertDatabaseHas('products', ['name' => 'Chocolate Cake', 'price' => 25.00]);
+});
+
+test('import updates existing products by name', function () {
+    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
+    Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
+
+    $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nSourdough,Bread,Updated desc,10.00,,1,0\n");
+    $result = $this->service->import($file);
+
+    expect($result['updated'])->toBe(1);
+    expect($result['created'])->toBe(0);
+    expect((float) Product::where('name', 'Sourdough')->first()->price)->toBe(10.00);
+});
+
+test('import handles missing required fields', function () {
+    $file = createCsvFile("name,category\nTest,Bread\n");
+    $result = $this->service->import($file);
+
+    expect($result['errors'])->not->toBeEmpty();
+    expect($result['created'])->toBe(0);
+});
+
+test('import handles invalid prices', function () {
+    $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nBad Item,Bread,desc,notanumber,,1,0\n");
+    $result = $this->service->import($file);
+
+    expect($result['errors'])->not->toBeEmpty();
+    expect($result['created'])->toBe(0);
+});
+
+test('template has correct headers', function () {
+    $template = $this->service->getTemplateContent();
+    $headers = str_getcsv(trim($template));
+
+    expect($headers)->toBe(['name', 'category', 'description', 'price', 'cost', 'is_active', 'is_featured']);
+});

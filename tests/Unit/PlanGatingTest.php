@@ -1,147 +1,135 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Traits\HasPlanGating;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Stancl\Tenancy\Contracts\Tenant;
-use Tests\TestCase;
 
-class PlanGatingTest extends TestCase
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    config(['database.connections.central' => config('database.connections.sqlite')]);
+    $tenantMigrationPath = database_path('migrations/tenant');
+    if (is_dir($tenantMigrationPath)) {
+        test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
+    }
+});
+
+function setTenantPlan(string $plan): void
 {
-    use RefreshDatabase;
-
-    protected function setUp(): void
+    $tenant = new class($plan) implements Tenant
     {
-        parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
-    }
+        public string $plan;
 
-    public function test_has_plan_gating_trait_exists(): void
-    {
-        $this->assertTrue(
-            trait_exists(HasPlanGating::class),
-            'HasPlanGating trait should exist at app/Traits/HasPlanGating.php'
-        );
-    }
-
-    public function test_starter_plan_can_access_starter_features(): void
-    {
-        $this->setTenantPlan('starter');
-        $this->assertTrue(StarterGatedResource::canAccess());
-    }
-
-    public function test_starter_plan_cannot_access_growth_features(): void
-    {
-        $this->setTenantPlan('starter');
-        $this->assertFalse(GrowthGatedResource::canAccess());
-    }
-
-    public function test_starter_plan_cannot_access_pro_features(): void
-    {
-        $this->setTenantPlan('starter');
-        $this->assertFalse(ProGatedResource::canAccess());
-    }
-
-    public function test_growth_plan_can_access_starter_features(): void
-    {
-        $this->setTenantPlan('growth');
-        $this->assertTrue(StarterGatedResource::canAccess());
-    }
-
-    public function test_growth_plan_can_access_growth_features(): void
-    {
-        $this->setTenantPlan('growth');
-        $this->assertTrue(GrowthGatedResource::canAccess());
-    }
-
-    public function test_growth_plan_cannot_access_pro_features(): void
-    {
-        $this->setTenantPlan('growth');
-        $this->assertFalse(ProGatedResource::canAccess());
-    }
-
-    public function test_pro_plan_can_access_all_features(): void
-    {
-        $this->setTenantPlan('pro');
-        $this->assertTrue(StarterGatedResource::canAccess());
-        $this->assertTrue(GrowthGatedResource::canAccess());
-        $this->assertTrue(ProGatedResource::canAccess());
-    }
-
-    public function test_navigation_badge_shows_plan_name_for_locked_features(): void
-    {
-        $this->setTenantPlan('starter');
-        $this->assertEquals('GROWTH', GrowthGatedResource::getNavigationBadge());
-        $this->assertEquals('PRO', ProGatedResource::getNavigationBadge());
-    }
-
-    public function test_navigation_badge_is_null_for_accessible_features(): void
-    {
-        $this->setTenantPlan('growth');
-        $this->assertNull(StarterGatedResource::getNavigationBadge());
-        $this->assertNull(GrowthGatedResource::getNavigationBadge());
-    }
-
-    public function test_navigation_badge_color_is_info_for_growth(): void
-    {
-        $this->setTenantPlan('starter');
-        $this->assertEquals('info', GrowthGatedResource::getNavigationBadgeColor());
-    }
-
-    public function test_navigation_badge_color_is_warning_for_pro(): void
-    {
-        $this->setTenantPlan('starter');
-        $this->assertEquals('warning', ProGatedResource::getNavigationBadgeColor());
-    }
-
-    public function test_navigation_badge_color_is_null_when_accessible(): void
-    {
-        $this->setTenantPlan('pro');
-        $this->assertNull(ProGatedResource::getNavigationBadgeColor());
-    }
-
-    private function setTenantPlan(string $plan): void
-    {
-        $tenant = new class($plan) implements Tenant
+        public function __construct(string $plan)
         {
-            public string $plan;
+            $this->plan = $plan;
+        }
 
-            public function __construct(string $plan)
-            {
-                $this->plan = $plan;
-            }
+        public function getTenantKeyName(): string
+        {
+            return 'id';
+        }
 
-            public function getTenantKeyName(): string
-            {
-                return 'id';
-            }
+        public function getTenantKey()
+        {
+            return 'test';
+        }
 
-            public function getTenantKey()
-            {
-                return 'test';
-            }
+        public function getInternal(string $key)
+        {
+            return $key === 'plan' ? $this->plan : null;
+        }
 
-            public function getInternal(string $key)
-            {
-                return $key === 'plan' ? $this->plan : null;
-            }
+        public function setInternal(string $key, $value) {}
 
-            public function setInternal(string $key, $value) {}
+        public function run(callable $callback)
+        {
+            return $callback($this);
+        }
+    };
 
-            public function run(callable $callback)
-            {
-                return $callback($this);
-            }
-        };
-
-        app()->instance(Tenant::class, $tenant);
-    }
+    app()->instance(Tenant::class, $tenant);
 }
+
+test('has plan gating trait exists', function () {
+    expect(trait_exists(HasPlanGating::class))->toBeTrue('HasPlanGating trait should exist at app/Traits/HasPlanGating.php');
+});
+
+test('starter plan can access starter features', function () {
+    setTenantPlan('starter');
+
+    expect(StarterGatedResource::canAccess())->toBeTrue();
+});
+
+test('starter plan cannot access growth features', function () {
+    setTenantPlan('starter');
+
+    expect(GrowthGatedResource::canAccess())->toBeFalse();
+});
+
+test('starter plan cannot access pro features', function () {
+    setTenantPlan('starter');
+
+    expect(ProGatedResource::canAccess())->toBeFalse();
+});
+
+test('growth plan can access starter features', function () {
+    setTenantPlan('growth');
+
+    expect(StarterGatedResource::canAccess())->toBeTrue();
+});
+
+test('growth plan can access growth features', function () {
+    setTenantPlan('growth');
+
+    expect(GrowthGatedResource::canAccess())->toBeTrue();
+});
+
+test('growth plan cannot access pro features', function () {
+    setTenantPlan('growth');
+
+    expect(ProGatedResource::canAccess())->toBeFalse();
+});
+
+test('pro plan can access all features', function () {
+    setTenantPlan('pro');
+
+    expect(StarterGatedResource::canAccess())->toBeTrue();
+    expect(GrowthGatedResource::canAccess())->toBeTrue();
+    expect(ProGatedResource::canAccess())->toBeTrue();
+});
+
+test('navigation badge shows plan name for locked features', function () {
+    setTenantPlan('starter');
+
+    expect(GrowthGatedResource::getNavigationBadge())->toBe('GROWTH');
+    expect(ProGatedResource::getNavigationBadge())->toBe('PRO');
+});
+
+test('navigation badge is null for accessible features', function () {
+    setTenantPlan('growth');
+
+    expect(StarterGatedResource::getNavigationBadge())->toBeNull();
+    expect(GrowthGatedResource::getNavigationBadge())->toBeNull();
+});
+
+test('navigation badge color is info for growth', function () {
+    setTenantPlan('starter');
+
+    expect(GrowthGatedResource::getNavigationBadgeColor())->toBe('info');
+});
+
+test('navigation badge color is warning for pro', function () {
+    setTenantPlan('starter');
+
+    expect(ProGatedResource::getNavigationBadgeColor())->toBe('warning');
+});
+
+test('navigation badge color is null when accessible', function () {
+    setTenantPlan('pro');
+
+    expect(ProGatedResource::getNavigationBadgeColor())->toBeNull();
+});
 
 class StarterGatedResource
 {

@@ -1,111 +1,92 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\GiftCard;
 use App\Models\GiftCardTransaction;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class GiftCardStorefrontTest extends TestCase
+beforeEach(function () {
+    setUpTenantTest();
+});
+
+function makeGiftCard(array $overrides = []): GiftCard
 {
-    use RefreshDatabase;
+    static $counter = 0;
+    $counter++;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
-    }
-
-    private function makeCard(array $overrides = []): GiftCard
-    {
-        static $counter = 0;
-        $counter++;
-
-        return GiftCard::create(array_merge([
-            'code' => 'GIFT-TEST-'.str_pad($counter, 4, '0', STR_PAD_LEFT),
-            'initial_balance' => 50.00,
-            'current_balance' => 50.00,
-            'purchaser_name' => 'John Doe',
-            'purchaser_email' => 'john@example.com',
-            'is_active' => true,
-        ], $overrides));
-    }
-
-    public function test_gift_card_model_exists(): void
-    {
-        $this->assertTrue(class_exists(GiftCard::class));
-    }
-
-    public function test_gift_card_can_be_created_with_correct_balance(): void
-    {
-        $card = $this->makeCard([
-            'initial_balance' => 50.00,
-            'current_balance' => 50.00,
-            'recipient_name' => 'Jane Doe',
-            'recipient_email' => 'jane@example.com',
-            'message' => 'Happy birthday!',
-        ]);
-
-        $this->assertDatabaseHas('gift_cards', ['id' => $card->id]);
-        $this->assertEquals(50.00, $card->current_balance);
-        $this->assertEquals(50.00, $card->initial_balance);
-    }
-
-    public function test_gift_card_is_usable_when_active_with_balance(): void
-    {
-        $card = $this->makeCard();
-        $this->assertTrue($card->isUsable());
-    }
-
-    public function test_gift_card_is_not_usable_when_inactive(): void
-    {
-        $card = $this->makeCard(['is_active' => false]);
-        $this->assertFalse($card->isUsable());
-    }
-
-    public function test_gift_card_is_not_usable_when_depleted(): void
-    {
-        $card = $this->makeCard(['current_balance' => 0.00]);
-        $this->assertFalse($card->isUsable());
-    }
-
-    public function test_gift_card_is_not_usable_when_expired(): void
-    {
-        $card = $this->makeCard(['expires_at' => now()->subDay()]);
-        $this->assertFalse($card->isUsable());
-    }
-
-    public function test_gift_card_status_attribute(): void
-    {
-        $active = $this->makeCard();
-        $inactive = $this->makeCard(['is_active' => false]);
-        $depleted = $this->makeCard(['current_balance' => 0.00]);
-        $expired = $this->makeCard(['expires_at' => now()->subDay()]);
-
-        $this->assertEquals('active', $active->status);
-        $this->assertEquals('inactive', $inactive->status);
-        $this->assertEquals('depleted', $depleted->status);
-        $this->assertEquals('expired', $expired->status);
-    }
-
-    public function test_gift_card_has_transactions_relationship(): void
-    {
-        $card = $this->makeCard();
-
-        GiftCardTransaction::create([
-            'gift_card_id' => $card->id,
-            'amount' => 50.00,
-            'type' => 'purchase',
-            'notes' => 'Initial purchase',
-            'created_at' => now(),
-        ]);
-
-        $this->assertCount(1, $card->transactions);
-        $this->assertEquals(50.00, $card->transactions->first()->amount);
-    }
+    return GiftCard::create(array_merge([
+        'code' => 'GIFT-TEST-'.str_pad($counter, 4, '0', STR_PAD_LEFT),
+        'initial_balance' => 50.00,
+        'current_balance' => 50.00,
+        'purchaser_name' => 'John Doe',
+        'purchaser_email' => 'john@example.com',
+        'is_active' => true,
+    ], $overrides));
 }
+
+test('gift card model exists', function () {
+    expect(class_exists(GiftCard::class))->toBeTrue();
+});
+
+test('gift card can be created with correct balance', function () {
+    $card = makeGiftCard([
+        'initial_balance' => 50.00,
+        'current_balance' => 50.00,
+        'recipient_name' => 'Jane Doe',
+        'recipient_email' => 'jane@example.com',
+        'message' => 'Happy birthday!',
+    ]);
+
+    $this->assertDatabaseHas('gift_cards', ['id' => $card->id]);
+    expect($card->current_balance)->toBe(50.00);
+    expect($card->initial_balance)->toBe(50.00);
+});
+
+test('gift card is usable when active with balance', function () {
+    $card = makeGiftCard();
+
+    expect($card->isUsable())->toBeTrue();
+});
+
+test('gift card is not usable when inactive', function () {
+    $card = makeGiftCard(['is_active' => false]);
+
+    expect($card->isUsable())->toBeFalse();
+});
+
+test('gift card is not usable when depleted', function () {
+    $card = makeGiftCard(['current_balance' => 0.00]);
+
+    expect($card->isUsable())->toBeFalse();
+});
+
+test('gift card is not usable when expired', function () {
+    $card = makeGiftCard(['expires_at' => now()->subDay()]);
+
+    expect($card->isUsable())->toBeFalse();
+});
+
+test('gift card status attribute', function () {
+    $active = makeGiftCard();
+    $inactive = makeGiftCard(['is_active' => false]);
+    $depleted = makeGiftCard(['current_balance' => 0.00]);
+    $expired = makeGiftCard(['expires_at' => now()->subDay()]);
+
+    expect($active->status)->toBe('active');
+    expect($inactive->status)->toBe('inactive');
+    expect($depleted->status)->toBe('depleted');
+    expect($expired->status)->toBe('expired');
+});
+
+test('gift card has transactions relationship', function () {
+    $card = makeGiftCard();
+
+    GiftCardTransaction::create([
+        'gift_card_id' => $card->id,
+        'amount' => 50.00,
+        'type' => 'purchase',
+        'notes' => 'Initial purchase',
+        'created_at' => now(),
+    ]);
+
+    expect($card->transactions)->toHaveCount(1);
+    expect($card->transactions->first()->amount)->toBe(50.00);
+});

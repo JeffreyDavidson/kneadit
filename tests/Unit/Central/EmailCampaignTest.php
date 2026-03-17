@@ -1,44 +1,38 @@
 <?php
 
-namespace Tests\Unit\Central;
-
 use App\Models\EmailCampaign;
 use Carbon\Carbon;
 use Tests\CentralTestCase;
 
-class EmailCampaignTest extends CentralTestCase
-{
-    public function test_can_create_campaign(): void
-    {
-        $campaign = EmailCampaign::create([
-            'name' => 'Test Campaign',
-            'subject' => 'Newsletter',
-            'body' => 'Content here',
-            'status' => 'draft',
-        ]);
+uses(CentralTestCase::class);
 
-        $this->assertNotNull(EmailCampaign::where('subject', 'Newsletter')->first());
-    }
+test('can create campaign', function () {
+    $campaign = EmailCampaign::create([
+        'name' => 'Test Campaign',
+        'subject' => 'Newsletter',
+        'body' => 'Content here',
+        'status' => 'draft',
+    ]);
 
-    public function test_sent_at_is_cast_to_datetime(): void
-    {
-        $campaign = EmailCampaign::create([
-            'name' => 'Test',
-            'subject' => 'Test',
-            'body' => 'Body',
-            'status' => 'sent',
-            'sent_at' => '2026-01-01 12:00:00',
-        ]);
+    expect(EmailCampaign::where('subject', 'Newsletter')->first())->not->toBeNull();
+});
 
-        $campaign->refresh();
-        $this->assertInstanceOf(Carbon::class, $campaign->sent_at);
-    }
+test('sent at is cast to datetime', function () {
+    $campaign = EmailCampaign::create([
+        'name' => 'Test',
+        'subject' => 'Test',
+        'body' => 'Body',
+        'status' => 'sent',
+        'sent_at' => '2026-01-01 12:00:00',
+    ]);
 
-    public function test_status_can_be_updated_to_sent(): void
-    {
-        $campaign = EmailCampaign::create(['name' => 'T', 'subject' => 'T', 'body' => 'B', 'status' => 'draft']);
-        $campaign->update(['status' => 'sent', 'sent_at' => now()]);
+    $campaign->refresh();
+    expect($campaign->sent_at)->toBeInstanceOf(Carbon::class);
+});
 
-        $this->assertEquals('sent', $campaign->fresh()->status);
-    }
-}
+test('status can be updated to sent', function () {
+    $campaign = EmailCampaign::create(['name' => 'T', 'subject' => 'T', 'body' => 'B', 'status' => 'draft']);
+    $campaign->update(['status' => 'sent', 'sent_at' => now()]);
+
+    expect($campaign->fresh()->status)->toBe('sent');
+});

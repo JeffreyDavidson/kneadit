@@ -1,91 +1,82 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Setting;
 use App\Services\WebhookService;
 use Illuminate\Support\Facades\Http;
-use Tests\CentralTestCase;
 
-class WebhookServiceTest extends CentralTestCase
-{
-    public function test_dispatch_does_nothing_without_webhook_url(): void
-    {
-        Http::fake();
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-        WebhookService::dispatch('order.created', ['test' => true]);
+test('dispatch does nothing without webhook url', function () {
+    Http::fake();
 
-        Http::assertNothingSent();
-    }
+    WebhookService::dispatch('order.created', ['test' => true]);
 
-    public function test_dispatch_sends_to_configured_url(): void
-    {
-        Http::fake(['*' => Http::response('ok', 200)]);
-        Setting::set('webhook_url', 'https://hooks.example.com/test');
+    Http::assertNothingSent();
+});
 
-        WebhookService::dispatch('order.created', ['order_number' => 'ORD-001']);
+test('dispatch sends to configured url', function () {
+    Http::fake(['*' => Http::response('ok', 200)]);
+    Setting::set('webhook_url', 'https://hooks.example.com/test');
 
-        Http::assertSentCount(1);
-    }
+    WebhookService::dispatch('order.created', ['order_number' => 'ORD-001']);
 
-    public function test_dispatch_includes_event_header(): void
-    {
-        Http::fake(['*' => Http::response('ok', 200)]);
-        Setting::set('webhook_url', 'https://hooks.example.com/test');
+    Http::assertSentCount(1);
+});
 
-        WebhookService::dispatch('order.updated', ['status' => 'delivered']);
+test('dispatch includes event header', function () {
+    Http::fake(['*' => Http::response('ok', 200)]);
+    Setting::set('webhook_url', 'https://hooks.example.com/test');
 
-        Http::assertSent(function ($request) {
-            return $request->hasHeader('X-KneadIt-Event', 'order.updated');
-        });
-    }
+    WebhookService::dispatch('order.updated', ['status' => 'delivered']);
 
-    public function test_dispatch_includes_signature_header(): void
-    {
-        Http::fake(['*' => Http::response('ok', 200)]);
-        Setting::set('webhook_url', 'https://hooks.example.com/test');
-        Setting::set('webhook_secret', 'my-secret');
+    Http::assertSent(function ($request) {
+        return $request->hasHeader('X-KneadIt-Event', 'order.updated');
+    });
+});
 
-        WebhookService::dispatch('order.created', ['test' => true]);
+test('dispatch includes signature header', function () {
+    Http::fake(['*' => Http::response('ok', 200)]);
+    Setting::set('webhook_url', 'https://hooks.example.com/test');
+    Setting::set('webhook_secret', 'my-secret');
 
-        Http::assertSent(function ($request) {
-            return $request->hasHeader('X-KneadIt-Signature');
-        });
-    }
+    WebhookService::dispatch('order.created', ['test' => true]);
 
-    public function test_dispatch_body_contains_event_and_data(): void
-    {
-        Http::fake(['*' => Http::response('ok', 200)]);
-        Setting::set('webhook_url', 'https://hooks.example.com/test');
+    Http::assertSent(function ($request) {
+        return $request->hasHeader('X-KneadIt-Signature');
+    });
+});
 
-        WebhookService::dispatch('order.created', ['order_number' => 'ORD-001']);
+test('dispatch body contains event and data', function () {
+    Http::fake(['*' => Http::response('ok', 200)]);
+    Setting::set('webhook_url', 'https://hooks.example.com/test');
 
-        Http::assertSent(function ($request) {
-            $body = json_decode($request->body(), true);
+    WebhookService::dispatch('order.created', ['order_number' => 'ORD-001']);
 
-            return $body['event'] === 'order.created'
-                && $body['data']['order_number'] === 'ORD-001'
-                && isset($body['timestamp']);
-        });
-    }
+    Http::assertSent(function ($request) {
+        $body = json_decode($request->body(), true);
 
-    public function test_dispatch_handles_failed_request_gracefully(): void
-    {
-        Http::fake(['*' => Http::response('error', 500)]);
-        Setting::set('webhook_url', 'https://hooks.example.com/test');
+        return $body['event'] === 'order.created'
+            && $body['data']['order_number'] === 'ORD-001'
+            && isset($body['timestamp']);
+    });
+});
 
-        // Should not throw
-        WebhookService::dispatch('order.created', ['test' => true]);
+test('dispatch handles failed request gracefully', function () {
+    Http::fake(['*' => Http::response('error', 500)]);
+    Setting::set('webhook_url', 'https://hooks.example.com/test');
 
-        $this->assertTrue(true);
-    }
+    // Should not throw
+    WebhookService::dispatch('order.created', ['test' => true]);
 
-    public function test_order_observer_dispatches_webhook(): void
-    {
-        $source = file_get_contents(app_path('Observers/OrderObserver.php'));
+    expect(true)->toBeTrue();
+});
 
-        $this->assertStringContainsString('WebhookService::dispatch', $source);
-        $this->assertStringContainsString('order.created', $source);
-        $this->assertStringContainsString('order.updated', $source);
-    }
-}
+test('order observer dispatches webhook', function () {
+    $source = file_get_contents(app_path('Observers/OrderObserver.php'));
+
+    expect($source)->toContain('WebhookService::dispatch');
+    expect($source)->toContain('order.created');
+    expect($source)->toContain('order.updated');
+});

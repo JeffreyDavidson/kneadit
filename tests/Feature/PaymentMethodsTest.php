@@ -1,83 +1,63 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Filament\Pages\Onboarding;
 use App\Models\Setting;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class PaymentMethodsTest extends TestCase
-{
-    use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
+beforeEach(function () {
+    $tenantMigrationPath = database_path('migrations/tenant');
+    if (is_dir($tenantMigrationPath)) {
+        test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
+});
 
-    /** @test */
-    public function payment_step_stores_payment_methods_as_json_array(): void
-    {
-        $page = new Onboarding;
-        $page->payment_methods = ['cash', 'paypal', 'stripe'];
-        $page->paypal_client_id = 'test_id';
-        $page->paypal_client_secret = 'test_secret';
-        $page->paypal_sandbox = true;
+test('payment step stores payment methods as json array', function () {
+    $page = new Onboarding;
+    $page->payment_methods = ['cash', 'paypal', 'stripe'];
+    $page->paypal_client_id = 'test_id';
+    $page->paypal_client_secret = 'test_secret';
+    $page->paypal_sandbox = true;
 
-        $reflection = new \ReflectionMethod($page, 'savePaymentStep');
-        $reflection->invoke($page);
+    $reflection = new ReflectionMethod($page, 'savePaymentStep');
+    $reflection->invoke($page);
 
-        $stored = Setting::get('payment_methods');
-        $this->assertNotNull($stored);
+    $stored = Setting::get('payment_methods');
+    expect($stored)->not->toBeNull();
 
-        $decoded = json_decode($stored, true);
-        $this->assertIsArray($decoded);
-        $this->assertContains('cash', $decoded);
-        $this->assertContains('paypal', $decoded);
-        $this->assertContains('stripe', $decoded);
-    }
+    $decoded = json_decode($stored, true);
+    expect($decoded)->toBeArray();
+    expect($decoded)->toContain('cash');
+    expect($decoded)->toContain('paypal');
+    expect($decoded)->toContain('stripe');
+});
 
-    /** @test */
-    public function payment_step_sets_legacy_payment_method_to_first_value(): void
-    {
-        $page = new Onboarding;
-        $page->payment_methods = ['stripe', 'cash'];
-        $page->paypal_client_id = '';
-        $page->paypal_client_secret = '';
-        $page->paypal_sandbox = false;
+test('payment step sets legacy payment method to first value', function () {
+    $page = new Onboarding;
+    $page->payment_methods = ['stripe', 'cash'];
+    $page->paypal_client_id = '';
+    $page->paypal_client_secret = '';
+    $page->paypal_sandbox = false;
 
-        $reflection = new \ReflectionMethod($page, 'savePaymentStep');
-        $reflection->invoke($page);
+    $reflection = new ReflectionMethod($page, 'savePaymentStep');
+    $reflection->invoke($page);
 
-        $this->assertEquals('stripe', Setting::get('payment_method'));
-    }
+    expect(Setting::get('payment_method'))->toBe('stripe');
+});
 
-    /** @test */
-    public function payment_step_defaults_to_cash_when_empty(): void
-    {
-        $page = new Onboarding;
-        $page->payment_methods = [];
-        $page->paypal_client_id = '';
-        $page->paypal_client_secret = '';
-        $page->paypal_sandbox = false;
+test('payment step defaults to cash when empty', function () {
+    $page = new Onboarding;
+    $page->payment_methods = [];
+    $page->paypal_client_id = '';
+    $page->paypal_client_secret = '';
+    $page->paypal_sandbox = false;
 
-        $reflection = new \ReflectionMethod($page, 'savePaymentStep');
-        $reflection->invoke($page);
+    $reflection = new ReflectionMethod($page, 'savePaymentStep');
+    $reflection->invoke($page);
 
-        $this->assertEquals('cash', Setting::get('payment_method'));
-    }
+    expect(Setting::get('payment_method'))->toBe('cash');
+});
 
-    /** @test */
-    public function payment_methods_property_defaults_to_cash(): void
-    {
-        $page = new Onboarding;
+test('payment methods property defaults to cash', function () {
+    $page = new Onboarding;
 
-        $this->assertEquals(['cash'], $page->payment_methods);
-    }
-}
+    expect($page->payment_methods)->toBe(['cash']);
+});

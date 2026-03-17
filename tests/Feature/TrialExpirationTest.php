@@ -1,159 +1,147 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Tests\CentralTestCase;
 
-class TrialExpirationTest extends CentralTestCase
-{
-    public function test_trial_check_command_exists(): void
-    {
-        Mail::fake();
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-        $this->artisan('trial:check')
-            ->assertSuccessful();
-    }
+test('trial check command exists', function () {
+    Mail::fake();
 
-    public function test_7_day_reminder_sends_email(): void
-    {
-        Mail::fake();
+    $this->artisan('trial:check')
+        ->assertSuccessful();
+});
 
-        User::create([
-            'name' => 'Baker',
-            'email' => 'baker7@test.com',
-            'password' => bcrypt('password'),
-        ]);
+test('7 day reminder sends email', function () {
+    Mail::fake();
 
-        $this->createTenant([
-            'id' => 'expiring-7d',
-            'name' => 'Baker',
-            'email' => 'baker7@test.com',
-            'trial_ends_at' => now()->addDays(7)->startOfDay(),
-            'is_active' => true,
-        ]);
+    User::create([
+        'name' => 'Baker',
+        'email' => 'baker7@test.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $this->artisan('trial:check')
-            ->expectsOutputToContain('7d reminder');
-    }
+    createTenant([
+        'id' => 'expiring-7d',
+        'name' => 'Baker',
+        'email' => 'baker7@test.com',
+        'trial_ends_at' => now()->addDays(7)->startOfDay(),
+        'is_active' => true,
+    ]);
 
-    public function test_expired_trial_pauses_storefront(): void
-    {
-        Mail::fake();
+    $this->artisan('trial:check')
+        ->expectsOutputToContain('7d reminder');
+});
 
-        User::create([
-            'name' => 'Baker',
-            'email' => 'expired@test.com',
-            'password' => bcrypt('password'),
-        ]);
+test('expired trial pauses storefront', function () {
+    Mail::fake();
 
-        $this->createTenant([
-            'id' => 'expired-bakery',
-            'name' => 'Baker',
-            'email' => 'expired@test.com',
-            'trial_ends_at' => now()->subDays(1),
-            'is_active' => true,
-            'storefront_enabled' => true,
-        ]);
+    User::create([
+        'name' => 'Baker',
+        'email' => 'expired@test.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $this->artisan('trial:check');
+    createTenant([
+        'id' => 'expired-bakery',
+        'name' => 'Baker',
+        'email' => 'expired@test.com',
+        'trial_ends_at' => now()->subDays(1),
+        'is_active' => true,
+        'storefront_enabled' => true,
+    ]);
 
-        $tenant = DB::table('tenants')
-            ->where('id', 'expired-bakery')
-            ->first();
+    $this->artisan('trial:check');
 
-        $this->assertFalse((bool) $tenant->storefront_enabled);
-    }
+    $tenant = DB::table('tenants')
+        ->where('id', 'expired-bakery')
+        ->first();
 
-    public function test_expired_storefront_already_paused_not_repaused(): void
-    {
-        Mail::fake();
+    expect((bool) $tenant->storefront_enabled)->toBeFalse();
+});
 
-        User::create([
-            'name' => 'Baker',
-            'email' => 'already@test.com',
-            'password' => bcrypt('password'),
-        ]);
+test('expired storefront already paused not repaused', function () {
+    Mail::fake();
 
-        $this->createTenant([
-            'id' => 'already-paused',
-            'name' => 'Baker',
-            'email' => 'already@test.com',
-            'trial_ends_at' => now()->subDays(5),
-            'is_active' => true,
-            'storefront_enabled' => false,
-        ]);
+    User::create([
+        'name' => 'Baker',
+        'email' => 'already@test.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        // Should succeed without trying to pause again
-        $this->artisan('trial:check')
-            ->assertSuccessful();
-    }
+    createTenant([
+        'id' => 'already-paused',
+        'name' => 'Baker',
+        'email' => 'already@test.com',
+        'trial_ends_at' => now()->subDays(5),
+        'is_active' => true,
+        'storefront_enabled' => false,
+    ]);
 
-    public function test_no_action_for_inactive_tenant(): void
-    {
-        Mail::fake();
+    $this->artisan('trial:check')
+        ->assertSuccessful();
+});
 
-        User::create([
-            'name' => 'Inactive',
-            'email' => 'inactive@test.com',
-            'password' => bcrypt('password'),
-        ]);
+test('no action for inactive tenant', function () {
+    Mail::fake();
 
-        $this->createTenant([
-            'id' => 'inactive-bakery',
-            'name' => 'Inactive',
-            'email' => 'inactive@test.com',
-            'trial_ends_at' => now()->addDays(7)->startOfDay(),
-            'is_active' => false,
-        ]);
+    User::create([
+        'name' => 'Inactive',
+        'email' => 'inactive@test.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $this->artisan('trial:check')
-            ->assertSuccessful();
+    createTenant([
+        'id' => 'inactive-bakery',
+        'name' => 'Inactive',
+        'email' => 'inactive@test.com',
+        'trial_ends_at' => now()->addDays(7)->startOfDay(),
+        'is_active' => false,
+    ]);
 
-        // Inactive tenants should not receive reminders (no output about them)
-        Mail::assertNothingSent();
-    }
+    $this->artisan('trial:check')
+        ->assertSuccessful();
 
-    public function test_no_action_when_trial_far_away(): void
-    {
-        Mail::fake();
+    Mail::assertNothingSent();
+});
 
-        User::create([
-            'name' => 'New',
-            'email' => 'new@test.com',
-            'password' => bcrypt('password'),
-        ]);
+test('no action when trial far away', function () {
+    Mail::fake();
 
-        $this->createTenant([
-            'id' => 'new-bakery',
-            'name' => 'New',
-            'email' => 'new@test.com',
-            'trial_ends_at' => now()->addDays(25),
-            'is_active' => true,
-        ]);
+    User::create([
+        'name' => 'New',
+        'email' => 'new@test.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $this->artisan('trial:check')
-            ->assertSuccessful();
+    createTenant([
+        'id' => 'new-bakery',
+        'name' => 'New',
+        'email' => 'new@test.com',
+        'trial_ends_at' => now()->addDays(25),
+        'is_active' => true,
+    ]);
 
-        Mail::assertNothingSent();
-    }
+    $this->artisan('trial:check')
+        ->assertSuccessful();
 
-    public function test_command_source_sends_at_three_intervals(): void
-    {
-        $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirations.php'));
+    Mail::assertNothingSent();
+});
 
-        $this->assertStringContainsString('trial_reminder_7d', $source);
-        $this->assertStringContainsString('trial_reminder_3d', $source);
-        $this->assertStringContainsString('trial_reminder_1d', $source);
-    }
+test('command source sends at three intervals', function () {
+    $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirations.php'));
 
-    public function test_expired_handler_sends_expiration_email(): void
-    {
-        $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirations.php'));
+    expect($source)->toContain('trial_reminder_7d');
+    expect($source)->toContain('trial_reminder_3d');
+    expect($source)->toContain('trial_reminder_1d');
+});
 
-        $this->assertStringContainsString('trial has expired', $source);
-        $this->assertStringContainsString('storefront has been paused', $source);
-    }
-}
+test('expired handler sends expiration email', function () {
+    $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirations.php'));
+
+    expect($source)->toContain('trial has expired');
+    expect($source)->toContain('storefront has been paused');
+});

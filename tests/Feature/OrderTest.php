@@ -1,60 +1,43 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Tests\Traits\SetUpTenantTest;
 
-class OrderTest extends TestCase
-{
-    use RefreshDatabase;
-    use SetUpTenantTest;
+beforeEach(function () {
+    setUpTenantTest();
 
-    protected Category $category;
+    $this->category = Category::create([
+        'name' => 'Breads',
+        'slug' => 'breads',
+        'is_active' => true,
+        'sort_order' => 1,
+    ]);
 
-    protected Product $product;
+    $this->product = Product::create([
+        'name' => 'Sourdough Loaf',
+        'slug' => 'sourdough-loaf',
+        'price' => 12.50,
+        'category_id' => $this->category->id,
+        'is_active' => true,
+    ]);
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->setUpTenant();
+test('order page loads', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.create', [], false));
 
-        $this->category = Category::create([
-            'name' => 'Breads',
-            'slug' => 'breads',
-            'is_active' => true,
-            'sort_order' => 1,
-        ]);
+    $response->assertOk();
+});
 
-        $this->product = Product::create([
-            'name' => 'Sourdough Loaf',
-            'slug' => 'sourdough-loaf',
-            'price' => 12.50,
-            'category_id' => $this->category->id,
-            'is_active' => true,
-        ]);
-    }
+test('order validation passes with valid data', function () {
+    $deliveryDate = now()->addDays(3)->toDateString();
 
-    /** @test */
-    public function order_page_loads(): void
-    {
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('order.create', [], false));
-        $response->assertOk();
-    }
-
-    /** @test */
-    public function order_validation_passes_with_valid_data(): void
-    {
-        $deliveryDate = now()->addDays(3)->toDateString();
-
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'customer_email' => 'john@example.com',
             'customer_phone' => '555-1234',
@@ -65,15 +48,12 @@ class OrderTest extends TestCase
             ],
         ]);
 
-        // Validation passes - the redirect means no validation errors on input fields
-        // (The "No valid items" error comes from calculateOrder filtering, not input validation)
-        $response->assertSessionDoesntHaveErrors(['customer_name', 'customer_email', 'delivery_date']);
-    }
+    $response->assertSessionDoesntHaveErrors(['customer_name', 'customer_email', 'delivery_date']);
+});
 
-    /** @test */
-    public function order_validation_rejects_missing_customer_name(): void
-    {
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
+test('order validation rejects missing customer name', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
             'customer_email' => 'john@example.com',
             'delivery_type' => 'pickup',
             'delivery_date' => now()->addDays(3)->toDateString(),
@@ -82,13 +62,12 @@ class OrderTest extends TestCase
             ],
         ]);
 
-        $response->assertSessionHasErrors('customer_name');
-    }
+    $response->assertSessionHasErrors('customer_name');
+});
 
-    /** @test */
-    public function order_validation_rejects_missing_email(): void
-    {
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
+test('order validation rejects missing email', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'delivery_type' => 'pickup',
             'delivery_date' => now()->addDays(3)->toDateString(),
@@ -97,13 +76,12 @@ class OrderTest extends TestCase
             ],
         ]);
 
-        $response->assertSessionHasErrors('customer_email');
-    }
+    $response->assertSessionHasErrors('customer_email');
+});
 
-    /** @test */
-    public function order_validation_rejects_missing_delivery_date(): void
-    {
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
+test('order validation rejects missing delivery date', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'customer_email' => 'john@example.com',
             'delivery_type' => 'pickup',
@@ -112,13 +90,12 @@ class OrderTest extends TestCase
             ],
         ]);
 
-        $response->assertSessionHasErrors('delivery_date');
-    }
+    $response->assertSessionHasErrors('delivery_date');
+});
 
-    /** @test */
-    public function order_validation_rejects_empty_cart(): void
-    {
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->post(route('order.store', [], false), [
+test('order validation rejects empty cart', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'customer_email' => 'john@example.com',
             'delivery_type' => 'pickup',
@@ -126,76 +103,73 @@ class OrderTest extends TestCase
             'items' => [],
         ]);
 
-        $response->assertSessionHasErrors('items');
-    }
+    $response->assertSessionHasErrors('items');
+});
 
-    /** @test */
-    public function coupon_application_works_for_valid_coupon(): void
-    {
-        $coupon = Coupon::create([
-            'code' => 'SAVE10',
-            'type' => 'percentage',
-            'value' => 10.00,
-            'is_active' => true,
-            'starts_at' => now()->subDay(),
-            'expires_at' => now()->addMonth(),
-        ]);
+test('coupon application works for valid coupon', function () {
+    $coupon = Coupon::create([
+        'code' => 'SAVE10',
+        'type' => 'percentage',
+        'value' => 10.00,
+        'is_active' => true,
+        'starts_at' => now()->subDay(),
+        'expires_at' => now()->addMonth(),
+    ]);
 
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->postJson(route('coupon.apply', [], false), [
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson(route('coupon.apply', [], false), [
             'code' => 'SAVE10',
             'subtotal' => 50.00,
         ]);
 
-        $response->assertOk();
-        $response->assertJsonStructure(['success', 'coupon_id', 'discount']);
-    }
+    $response->assertOk();
+    $response->assertJsonStructure(['success', 'coupon_id', 'discount']);
+});
 
-    /** @test */
-    public function invalid_coupon_returns_error(): void
-    {
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->postJson(route('coupon.apply', [], false), [
+test('invalid coupon returns error', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson(route('coupon.apply', [], false), [
             'code' => 'FAKECODE',
             'subtotal' => 50.00,
         ]);
 
-        $response->assertUnprocessable();
-        $response->assertJsonStructure(['error']);
-    }
+    $response->assertUnprocessable();
+    $response->assertJsonStructure(['error']);
+});
 
-    /** @test */
-    public function capacity_check_endpoint_works(): void
-    {
-        $date = now()->addDays(5)->toDateString();
+test('capacity check endpoint works', function () {
+    $date = now()->addDays(5)->toDateString();
 
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->getJson(route('capacity.check', ['date' => $date], false));
-        $response->assertOk();
-        $response->assertJsonStructure(['available', 'remaining', 'max_orders']);
-    }
+    $response = withoutMiddleware(tenantMiddleware())
+        ->getJson(route('capacity.check', ['date' => $date], false));
 
-    /** @test */
-    public function order_confirmation_page_shows_after_successful_order(): void
-    {
-        $user = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.com',
-            'password' => bcrypt('password'),
-        ]);
+    $response->assertOk();
+    $response->assertJsonStructure(['available', 'remaining', 'max_orders']);
+});
 
-        $customer = Customer::create([
-            'name' => 'John Baker',
-            'email' => 'john@example.com',
-        ]);
+test('order confirmation page shows after successful order', function () {
+    $user = User::create([
+        'name' => 'Admin',
+        'email' => 'admin@test.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $order = Order::create([
-            'order_number' => 'KN260308TEST',
-            'customer_id' => $customer->id,
-            'status' => 'pending',
-            'subtotal' => 25.00,
-            'total' => 25.00,
-            'user_id' => $user->id,
-        ]);
+    $customer = Customer::create([
+        'name' => 'John Baker',
+        'email' => 'john@example.com',
+    ]);
 
-        $response = $this->withoutMiddleware($this->tenantMiddleware)->get(route('order.confirmation', ['order' => $order->order_number], false));
-        $response->assertOk();
-    }
-}
+    $order = Order::create([
+        'order_number' => 'KN260308TEST',
+        'customer_id' => $customer->id,
+        'status' => 'pending',
+        'subtotal' => 25.00,
+        'total' => 25.00,
+        'user_id' => $user->id,
+    ]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.confirmation', ['order' => $order->order_number], false));
+
+    $response->assertOk();
+});

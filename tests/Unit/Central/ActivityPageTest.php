@@ -1,97 +1,81 @@
 <?php
 
-namespace Tests\Unit\Central;
-
 use App\Filament\Central\Pages\Activity;
 use App\Models\PlatformActivity;
 use Tests\CentralTestCase;
 
-class ActivityPageTest extends CentralTestCase
-{
-    private Activity $page;
+uses(CentralTestCase::class);
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->page = new Activity;
-    }
+beforeEach(function () {
+    test()->page = new Activity;
+});
 
-    public function test_get_activities_returns_collection(): void
-    {
-        PlatformActivity::create(['event' => 'tenant_created', 'description' => 'New tenant']);
-        PlatformActivity::create(['event' => 'plan_changed', 'description' => 'Plan upgraded']);
+test('get activities returns collection', function () {
+    PlatformActivity::create(['event' => 'tenant_created', 'description' => 'New tenant']);
+    PlatformActivity::create(['event' => 'plan_changed', 'description' => 'Plan upgraded']);
 
-        $result = $this->page->getActivities();
+    $result = test()->page->getActivities();
 
-        $this->assertCount(2, $result);
-    }
+    expect($result)->toHaveCount(2);
+});
 
-    public function test_get_action_types_returns_array(): void
-    {
-        $result = Activity::getActionTypes();
+test('get action types returns array', function () {
+    $result = Activity::getActionTypes();
 
-        $this->assertIsArray($result);
-        $this->assertContains('created_tenant', $result);
-        $this->assertContains('changed_plan', $result);
-        $this->assertContains('impersonated', $result);
-        $this->assertCount(13, $result);
-    }
+    expect($result)->toBeArray();
+    expect($result)->toContain('created_tenant');
+    expect($result)->toContain('changed_plan');
+    expect($result)->toContain('impersonated');
+    expect($result)->toHaveCount(13);
+});
 
-    public function test_get_action_color_returns_hex_for_known_actions(): void
-    {
-        $this->assertMatchesRegularExpression('/^#[0-9a-f]{6}$/', Activity::getActionColor('created_tenant'));
-        $this->assertMatchesRegularExpression('/^#[0-9a-f]{6}$/', Activity::getActionColor('changed_plan'));
-        $this->assertMatchesRegularExpression('/^#[0-9a-f]{6}$/', Activity::getActionColor('impersonated'));
-        $this->assertMatchesRegularExpression('/^#[0-9a-f]{6}$/', Activity::getActionColor('unknown_action'));
-    }
+test('get action color returns hex for known actions', function () {
+    expect(Activity::getActionColor('created_tenant'))->toMatch('/^#[0-9a-f]{6}$/');
+    expect(Activity::getActionColor('changed_plan'))->toMatch('/^#[0-9a-f]{6}$/');
+    expect(Activity::getActionColor('impersonated'))->toMatch('/^#[0-9a-f]{6}$/');
+    expect(Activity::getActionColor('unknown_action'))->toMatch('/^#[0-9a-f]{6}$/');
+});
 
-    public function test_get_event_icon_returns_string(): void
-    {
-        $this->assertStringStartsWith('heroicon-', Activity::getEventIcon('tenant_created'));
-        $this->assertStringStartsWith('heroicon-', Activity::getEventIcon('unknown'));
-    }
+test('get event icon returns string', function () {
+    expect(Activity::getEventIcon('tenant_created'))->toStartWith('heroicon-');
+    expect(Activity::getEventIcon('unknown'))->toStartWith('heroicon-');
+});
 
-    public function test_get_event_color_returns_hex(): void
-    {
-        $this->assertMatchesRegularExpression('/^#[0-9a-f]{6}$/', Activity::getEventColor('tenant_created'));
-        $this->assertMatchesRegularExpression('/^#[0-9a-f]{6}$/', Activity::getEventColor('tenant_deactivated'));
-    }
+test('get event color returns hex', function () {
+    expect(Activity::getEventColor('tenant_created'))->toMatch('/^#[0-9a-f]{6}$/');
+    expect(Activity::getEventColor('tenant_deactivated'))->toMatch('/^#[0-9a-f]{6}$/');
+});
 
-    public function test_get_action_category(): void
-    {
-        $this->assertEquals('Tenant', Activity::getActionCategory('created_tenant'));
-        $this->assertEquals('Billing', Activity::getActionCategory('changed_plan'));
-        $this->assertEquals('Communication', Activity::getActionCategory('sent_announcement'));
-        $this->assertEquals('Security', Activity::getActionCategory('impersonated'));
-        $this->assertEquals('Operations', Activity::getActionCategory('exported_data'));
-        $this->assertEquals('Other', Activity::getActionCategory('unknown'));
-    }
+test('get action category', function () {
+    expect(Activity::getActionCategory('created_tenant'))->toBe('Tenant');
+    expect(Activity::getActionCategory('changed_plan'))->toBe('Billing');
+    expect(Activity::getActionCategory('sent_announcement'))->toBe('Communication');
+    expect(Activity::getActionCategory('impersonated'))->toBe('Security');
+    expect(Activity::getActionCategory('exported_data'))->toBe('Operations');
+    expect(Activity::getActionCategory('unknown'))->toBe('Other');
+});
 
-    public function test_audit_trail_filter_properties_exist(): void
-    {
-        $this->assertEquals('', $this->page->filterAction);
-        $this->assertEquals('', $this->page->filterSearch);
-        $this->assertEquals('', $this->page->filterDateFrom);
-        $this->assertEquals('', $this->page->filterDateTo);
-        $this->assertEquals(1, $this->page->page);
-        $this->assertEquals(20, $this->page->perPage);
-    }
+test('audit trail filter properties exist', function () {
+    expect(test()->page->filterAction)->toBe('');
+    expect(test()->page->filterSearch)->toBe('');
+    expect(test()->page->filterDateFrom)->toBe('');
+    expect(test()->page->filterDateTo)->toBe('');
+    expect(test()->page->page)->toBe(1);
+    expect(test()->page->perPage)->toBe(20);
+});
 
-    public function test_active_tab_defaults_to_platform(): void
-    {
-        $this->assertEquals('platform', $this->page->activeTab);
-    }
+test('active tab defaults to platform', function () {
+    expect(test()->page->activeTab)->toBe('platform');
+});
 
-    public function test_reset_filters(): void
-    {
-        $this->page->filterAction = 'created_tenant';
-        $this->page->filterSearch = 'test';
-        $this->page->page = 3;
+test('reset filters', function () {
+    test()->page->filterAction = 'created_tenant';
+    test()->page->filterSearch = 'test';
+    test()->page->page = 3;
 
-        $this->page->resetFilters();
+    test()->page->resetFilters();
 
-        $this->assertEquals('', $this->page->filterAction);
-        $this->assertEquals('', $this->page->filterSearch);
-        $this->assertEquals(1, $this->page->page);
-    }
-}
+    expect(test()->page->filterAction)->toBe('');
+    expect(test()->page->filterSearch)->toBe('');
+    expect(test()->page->page)->toBe(1);
+});

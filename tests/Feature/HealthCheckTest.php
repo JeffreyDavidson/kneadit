@@ -1,61 +1,53 @@
 <?php
 
-namespace Tests\Feature;
-
 use Illuminate\Support\Facades\Http;
-use Tests\CentralTestCase;
 
-class HealthCheckTest extends CentralTestCase
-{
-    public function test_health_check_command_exists(): void
-    {
-        Http::fake(['*' => Http::response('OK', 200)]);
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-        $this->artisan('health:check')
-            ->assertSuccessful();
-    }
+test('health check command exists', function () {
+    Http::fake(['*' => Http::response('OK', 200)]);
 
-    public function test_health_check_verifies_database_connection(): void
-    {
-        Http::fake(['*' => Http::response('OK', 200)]);
+    $this->artisan('health:check')
+        ->assertSuccessful();
+});
 
-        $this->artisan('health:check')
-            ->expectsOutputToContain('Database connection OK')
-            ->assertSuccessful();
-    }
+test('health check verifies database connection', function () {
+    Http::fake(['*' => Http::response('OK', 200)]);
 
-    public function test_health_check_verifies_users_table(): void
-    {
-        Http::fake(['*' => Http::response('OK', 200)]);
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Database connection OK')
+        ->assertSuccessful();
+});
 
-        $this->artisan('health:check')
-            ->expectsOutputToContain('Users table OK')
-            ->assertSuccessful();
-    }
+test('health check verifies users table', function () {
+    Http::fake(['*' => Http::response('OK', 200)]);
 
-    public function test_health_check_verifies_disk_space(): void
-    {
-        Http::fake(['*' => Http::response('OK', 200)]);
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Users table OK')
+        ->assertSuccessful();
+});
 
-        $this->artisan('health:check')
-            ->expectsOutputToContain('Disk space OK')
-            ->assertSuccessful();
-    }
+test('health check verifies disk space', function () {
+    Http::fake(['*' => Http::response('OK', 200)]);
 
-    public function test_health_check_verifies_storage_writable(): void
-    {
-        Http::fake(['*' => Http::response('OK', 200)]);
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Disk space OK')
+        ->assertSuccessful();
+});
 
-        $this->artisan('health:check')
-            ->expectsOutputToContain('Storage/logs writable')
-            ->assertSuccessful();
-    }
+test('health check verifies storage writable', function () {
+    Http::fake(['*' => Http::response('OK', 200)]);
 
-    public function test_health_check_detects_homepage_failure(): void
-    {
-        Http::fake(['*' => Http::response('Server Error', 500)]);
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Storage/logs writable')
+        ->assertSuccessful();
+});
 
-        $this->artisan('health:check')
-            ->assertFailed();
-    }
-}
+test('health check detects homepage failure', function () {
+    Http::fake(['*' => Http::response('Server Error', 500)]);
+
+    $this->artisan('health:check')
+        ->assertFailed();
+});

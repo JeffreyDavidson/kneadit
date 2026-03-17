@@ -1,54 +1,47 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Console\Commands\BackupDatabases;
-use Tests\CentralTestCase;
 
-class BackupDatabasesTest extends CentralTestCase
-{
-    public function test_backup_command_exists(): void
-    {
-        $this->artisan('backup:databases')
-            ->assertSuccessful();
-    }
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-    public function test_backup_command_accepts_keep_option(): void
-    {
-        $this->artisan('backup:databases', ['--keep' => 3])
-            ->assertSuccessful();
-    }
+test('backup command exists', function () {
+    $this->artisan('backup:databases')
+        ->assertSuccessful();
+});
 
-    public function test_backup_command_class_has_correct_signature(): void
-    {
-        $command = new BackupDatabases;
-        $this->assertStringContainsString('backup:databases', $command->getName());
-    }
+test('backup command accepts keep option', function () {
+    $this->artisan('backup:databases', ['--keep' => 3])
+        ->assertSuccessful();
+});
 
-    public function test_backup_creates_backup_directory(): void
-    {
-        $this->artisan('backup:databases');
+test('backup command class has correct signature', function () {
+    $command = new BackupDatabases;
 
-        // Check that either the shared backup dir or a fallback exists
-        $possibleDirs = [
-            dirname(base_path()).'/backups',
-            base_path().'/../backups',
-        ];
+    expect($command->getName())->toContain('backup:databases');
+});
 
-        $found = false;
-        foreach ($possibleDirs as $dir) {
-            if (is_dir($dir)) {
-                $found = true;
-                // Clean up
-                $subdirs = glob("{$dir}/20*", GLOB_ONLYDIR);
-                foreach ($subdirs as $subdir) {
-                    array_map('unlink', glob("{$subdir}/*"));
-                    rmdir($subdir);
-                }
-                break;
+test('backup creates backup directory', function () {
+    $this->artisan('backup:databases');
+
+    $possibleDirs = [
+        dirname(base_path()).'/backups',
+        base_path().'/../backups',
+    ];
+
+    $found = false;
+    foreach ($possibleDirs as $dir) {
+        if (is_dir($dir)) {
+            $found = true;
+            $subdirs = glob("{$dir}/20*", GLOB_ONLYDIR);
+            foreach ($subdirs as $subdir) {
+                array_map('unlink', glob("{$subdir}/*"));
+                rmdir($subdir);
             }
+            break;
         }
-
-        $this->assertTrue($found, 'Backup directory should be created');
     }
-}
+
+    expect($found)->toBeTrue('Backup directory should be created');
+});

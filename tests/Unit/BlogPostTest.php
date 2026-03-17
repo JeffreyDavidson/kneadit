@@ -1,76 +1,61 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Models\BlogPost;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Tests\TestCase;
 
-class BlogPostTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        DB::connection('central')->setPdo(
-            DB::connection('sqlite')->getPdo()
-        );
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
-        User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+beforeEach(function () {
+    config(['database.connections.central' => config('database.connections.sqlite')]);
+    DB::connection('central')->setPdo(
+        DB::connection('sqlite')->getPdo()
+    );
+    $tenantMigrationPath = database_path('migrations/tenant');
+    if (is_dir($tenantMigrationPath)) {
+        test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
+    User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+});
 
-    /** @test */
-    public function slug_is_auto_generated_from_title(): void
-    {
-        $post = BlogPost::create([
-            'title' => 'My Awesome Blog Post',
-            'body' => 'Some content here',
-        ]);
+test('slug is auto generated from title', function () {
+    $post = BlogPost::create([
+        'title' => 'My Awesome Blog Post',
+        'body' => 'Some content here',
+    ]);
 
-        $this->assertEquals('my-awesome-blog-post', $post->slug);
-    }
+    expect($post->slug)->toBe('my-awesome-blog-post');
+});
 
-    /** @test */
-    public function slug_is_updated_when_title_changes(): void
-    {
-        $post = BlogPost::create([
-            'title' => 'Original Title',
-            'body' => 'Content',
-        ]);
+test('slug is updated when title changes', function () {
+    $post = BlogPost::create([
+        'title' => 'Original Title',
+        'body' => 'Content',
+    ]);
 
-        $post->update(['title' => 'Updated Title']);
-        $this->assertEquals('updated-title', $post->fresh()->slug);
-    }
+    $post->update(['title' => 'Updated Title']);
 
-    /** @test */
-    public function duplicate_slugs_are_made_unique(): void
-    {
-        BlogPost::create(['title' => 'Same Title', 'body' => 'First']);
-        $post2 = BlogPost::create(['title' => 'Same Title', 'body' => 'Second']);
+    expect($post->fresh()->slug)->toBe('updated-title');
+});
 
-        $this->assertEquals('same-title-2', $post2->slug);
-    }
+test('duplicate slugs are made unique', function () {
+    BlogPost::create(['title' => 'Same Title', 'body' => 'First']);
+    $post2 = BlogPost::create(['title' => 'Same Title', 'body' => 'Second']);
 
-    /** @test */
-    public function published_at_can_be_set(): void
-    {
-        $post = BlogPost::create([
-            'title' => 'Published Post',
-            'body' => 'Content',
-            'is_published' => true,
-            'published_at' => now(),
-        ]);
+    expect($post2->slug)->toBe('same-title-2');
+});
 
-        $this->assertTrue($post->is_published);
-        $this->assertNotNull($post->published_at);
-    }
+test('published at can be set', function () {
+    $post = BlogPost::create([
+        'title' => 'Published Post',
+        'body' => 'Content',
+        'is_published' => true,
+        'published_at' => now(),
+    ]);
 
-    // tags_are_cast_to_array removed — blog_posts table doesn't have a tags column yet
-}
+    expect($post->is_published)->toBeTrue();
+    expect($post->published_at)->not->toBeNull();
+});
+
+// tags_are_cast_to_array removed — blog_posts table doesn't have a tags column yet

@@ -1,69 +1,59 @@
 <?php
 
-namespace Tests\Unit\Central;
-
 use App\Models\PlatformMessage;
 use Tests\CentralTestCase;
 
-class PlatformMessageTest extends CentralTestCase
-{
-    public function test_can_create_message(): void
-    {
-        $msg = PlatformMessage::create([
-            'tenant_id' => 't1',
-            'sender_type' => 'admin',
-            'subject' => 'Welcome',
-            'body' => 'Hello there',
-        ]);
+uses(CentralTestCase::class);
 
-        $this->assertNotNull(PlatformMessage::where('subject', 'Welcome')->first());
-    }
+test('can create message', function () {
+    $msg = PlatformMessage::create([
+        'tenant_id' => 't1',
+        'sender_type' => 'admin',
+        'subject' => 'Welcome',
+        'body' => 'Hello there',
+    ]);
 
-    public function test_scope_unread(): void
-    {
-        PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S1', 'body' => 'B', 'is_read' => false]);
-        PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S2', 'body' => 'B', 'is_read' => true]);
+    expect(PlatformMessage::where('subject', 'Welcome')->first())->not->toBeNull();
+});
 
-        $this->assertCount(1, PlatformMessage::unread()->get());
-    }
+test('scope unread', function () {
+    PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S1', 'body' => 'B', 'is_read' => false]);
+    PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S2', 'body' => 'B', 'is_read' => true]);
 
-    public function test_scope_from_admin(): void
-    {
-        PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
-        PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'tenant', 'subject' => 'S', 'body' => 'B']);
+    expect(PlatformMessage::unread()->get())->toHaveCount(1);
+});
 
-        $this->assertCount(1, PlatformMessage::fromAdmin()->get());
-    }
+test('scope from admin', function () {
+    PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
+    PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'tenant', 'subject' => 'S', 'body' => 'B']);
 
-    public function test_scope_from_tenant(): void
-    {
-        PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'tenant', 'subject' => 'S', 'body' => 'B']);
-        PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
+    expect(PlatformMessage::fromAdmin()->get())->toHaveCount(1);
+});
 
-        $this->assertCount(1, PlatformMessage::fromTenant()->get());
-    }
+test('scope from tenant', function () {
+    PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'tenant', 'subject' => 'S', 'body' => 'B']);
+    PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
 
-    public function test_scope_top_level(): void
-    {
-        $parent = PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
-        PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'Reply', 'parent_id' => $parent->id]);
+    expect(PlatformMessage::fromTenant()->get())->toHaveCount(1);
+});
 
-        $this->assertCount(1, PlatformMessage::topLevel()->get());
-    }
+test('scope top level', function () {
+    $parent = PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
+    PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'Reply', 'parent_id' => $parent->id]);
 
-    public function test_replies_relationship(): void
-    {
-        $parent = PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
-        PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'tenant', 'subject' => 'S', 'body' => 'Reply', 'parent_id' => $parent->id]);
+    expect(PlatformMessage::topLevel()->get())->toHaveCount(1);
+});
 
-        $this->assertCount(1, $parent->replies);
-    }
+test('replies relationship', function () {
+    $parent = PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
+    PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'tenant', 'subject' => 'S', 'body' => 'Reply', 'parent_id' => $parent->id]);
 
-    public function test_parent_relationship(): void
-    {
-        $parent = PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
-        $reply = PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'tenant', 'subject' => 'S', 'body' => 'Reply', 'parent_id' => $parent->id]);
+    expect($parent->replies)->toHaveCount(1);
+});
 
-        $this->assertEquals($parent->id, $reply->parent->id);
-    }
-}
+test('parent relationship', function () {
+    $parent = PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'admin', 'subject' => 'S', 'body' => 'B']);
+    $reply = PlatformMessage::create(['tenant_id' => 't1', 'sender_type' => 'tenant', 'subject' => 'S', 'body' => 'Reply', 'parent_id' => $parent->id]);
+
+    expect($reply->parent->id)->toBe($parent->id);
+});

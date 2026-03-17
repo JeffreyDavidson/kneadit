@@ -1,103 +1,86 @@
 <?php
 
-namespace Tests\Feature;
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-use Tests\CentralTestCase;
+// --- #24: Custom 404 page ---
 
-class TenantStorefrontMetaTest extends CentralTestCase
-{
-    // --- #24: Custom 404 page ---
+test('404 page exists', function () {
+    expect(file_exists(resource_path('views/errors/404.blade.php')))->toBeTrue('Custom 404 view should exist');
+});
 
-    public function test_404_page_exists(): void
-    {
-        $this->assertTrue(
-            file_exists(resource_path('views/errors/404.blade.php')),
-            'Custom 404 view should exist'
-        );
-    }
+test('404 page contains bakery themed copy', function () {
+    $content = file_get_contents(resource_path('views/errors/404.blade.php'));
 
-    public function test_404_page_contains_bakery_themed_copy(): void
-    {
-        $content = file_get_contents(resource_path('views/errors/404.blade.php'));
+    expect($content)->toContain('Nothing baking here');
+    expect($content)->toContain('404');
+});
 
-        $this->assertStringContainsString('Nothing baking here', $content);
-        $this->assertStringContainsString('404', $content);
-    }
+test('nonexistent route returns 404', function () {
+    $response = get('/this-page-does-not-exist-at-all');
 
-    public function test_nonexistent_route_returns_404(): void
-    {
-        $response = $this->get('/this-page-does-not-exist-at-all');
+    $response->assertNotFound();
+});
 
-        $response->assertNotFound();
-    }
+// --- #22: OG meta tags ---
 
-    // --- #22: OG meta tags ---
+test('storefront layout has og tags', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_storefront_layout_has_og_tags(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain('og:title');
+    expect($layout)->toContain('og:description');
+    expect($layout)->toContain('og:type');
+    expect($layout)->toContain('og:url');
+    expect($layout)->toContain('og:site_name');
+    expect($layout)->toContain('twitter:card');
+});
 
-        $this->assertStringContainsString('og:title', $layout);
-        $this->assertStringContainsString('og:description', $layout);
-        $this->assertStringContainsString('og:type', $layout);
-        $this->assertStringContainsString('og:url', $layout);
-        $this->assertStringContainsString('og:site_name', $layout);
-        $this->assertStringContainsString('twitter:card', $layout);
-    }
+test('storefront layout has meta description', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_storefront_layout_has_meta_description(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain('meta name="description"');
+});
 
-        $this->assertStringContainsString('meta name="description"', $layout);
-    }
+// --- #21: Dynamic favicon ---
 
-    // --- #21: Dynamic favicon ---
+test('storefront layout has favicon', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_storefront_layout_has_favicon(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain('rel="icon"');
+});
 
-        $this->assertStringContainsString('rel="icon"', $layout);
-    }
+test('favicon uses store logo when available', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_favicon_uses_store_logo_when_available(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain("Setting::get('store_logo')");
+});
 
-        $this->assertStringContainsString("Setting::get('store_logo')", $layout);
-    }
+test('favicon falls back to svg with brand color', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_favicon_falls_back_to_svg_with_brand_color(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain('image/svg+xml');
+    expect($layout)->toContain('brand_color_primary');
+});
 
-        $this->assertStringContainsString('image/svg+xml', $layout);
-        $this->assertStringContainsString('brand_color_primary', $layout);
-    }
+// --- #23: Cookie consent ---
 
-    // --- #23: Cookie consent ---
+test('storefront layout has cookie consent banner', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_storefront_layout_has_cookie_consent_banner(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain('cookieConsent');
+    expect($layout)->toContain('acceptCookies');
+    expect($layout)->toContain('localStorage');
+});
 
-        $this->assertStringContainsString('cookieConsent', $layout);
-        $this->assertStringContainsString('acceptCookies', $layout);
-        $this->assertStringContainsString('localStorage', $layout);
-    }
+test('cookie consent links to privacy policy', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_cookie_consent_links_to_privacy_policy(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    expect($layout)->toContain('/privacy');
+});
 
-        $this->assertStringContainsString('/privacy', $layout);
-    }
+test('cookie consent hidden by default', function () {
+    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    public function test_cookie_consent_hidden_by_default(): void
-    {
-        $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
-
-        $this->assertStringContainsString('display:none', $layout);
-    }
-}
+    expect($layout)->toContain('display:none');
+});

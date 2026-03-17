@@ -1,261 +1,227 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Tenant;
 use App\Models\User;
-use Tests\CentralTestCase;
 
-class RegistrationFlowTest extends CentralTestCase
-{
-    /** @test */
-    public function registration_page_loads(): void
-    {
-        $response = $this->get(route('register'));
+beforeEach(function () {
+    setUpCentralTest();
+});
 
-        $response->assertOk();
-        $response->assertSee('Start your bakery journey');
-    }
+test('registration page loads', function () {
+    $response = get(route('register'));
 
-    /** @test */
-    public function user_can_register_with_valid_data(): void
-    {
-        $response = $this->post(route('register'), [
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => 'SecurePass123!',
-            'password_confirmation' => 'SecurePass123!',
-            'bakery_name' => 'Sunshine Bakery',
-        ]);
+    $response->assertOk();
+    $response->assertSee('Start your bakery journey');
+});
 
-        $response->assertRedirect(route('billing.plans'));
-        $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
-        $this->assertAuthenticated();
-        $this->assertEquals('Sunshine Bakery', session('bakery_name'));
-    }
+test('user can register with valid data', function () {
+    $response = post(route('register'), [
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => 'SecurePass123!',
+        'password_confirmation' => 'SecurePass123!',
+        'bakery_name' => 'Sunshine Bakery',
+    ]);
 
-    /** @test */
-    public function registration_requires_all_fields(): void
-    {
-        $response = $this->post(route('register'), []);
+    $response->assertRedirect(route('billing.plans'));
+    $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
+    $this->assertAuthenticated();
+    expect(session('bakery_name'))->toBe('Sunshine Bakery');
+});
 
-        $response->assertSessionHasErrors(['name', 'email', 'password', 'bakery_name']);
-    }
+test('registration requires all fields', function () {
+    $response = post(route('register'), []);
 
-    /** @test */
-    public function registration_requires_unique_email(): void
-    {
-        User::create([
-            'name' => 'Existing User',
-            'email' => 'taken@example.com',
-            'password' => bcrypt('password'),
-        ]);
+    $response->assertSessionHasErrors(['name', 'email', 'password', 'bakery_name']);
+});
 
-        $response = $this->post(route('register'), [
-            'name' => 'New User',
-            'email' => 'taken@example.com',
-            'password' => 'SecurePass123!',
-            'password_confirmation' => 'SecurePass123!',
-            'bakery_name' => 'My Bakery',
-        ]);
+test('registration requires unique email', function () {
+    User::create([
+        'name' => 'Existing User',
+        'email' => 'taken@example.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $response->assertSessionHasErrors(['email']);
-    }
+    $response = post(route('register'), [
+        'name' => 'New User',
+        'email' => 'taken@example.com',
+        'password' => 'SecurePass123!',
+        'password_confirmation' => 'SecurePass123!',
+        'bakery_name' => 'My Bakery',
+    ]);
 
-    /** @test */
-    public function registration_requires_password_confirmation(): void
-    {
-        $response = $this->post(route('register'), [
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => 'SecurePass123!',
-            'password_confirmation' => 'DifferentPass!',
-            'bakery_name' => 'My Bakery',
-        ]);
+    $response->assertSessionHasErrors(['email']);
+});
 
-        $response->assertSessionHasErrors(['password']);
-    }
+test('registration requires password confirmation', function () {
+    $response = post(route('register'), [
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => 'SecurePass123!',
+        'password_confirmation' => 'DifferentPass!',
+        'bakery_name' => 'My Bakery',
+    ]);
 
-    /** @test */
-    public function registration_requires_minimum_password_length(): void
-    {
-        $response = $this->post(route('register'), [
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => 'short',
-            'password_confirmation' => 'short',
-            'bakery_name' => 'My Bakery',
-        ]);
+    $response->assertSessionHasErrors(['password']);
+});
 
-        $response->assertSessionHasErrors(['password']);
-    }
+test('registration requires minimum password length', function () {
+    $response = post(route('register'), [
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => 'short',
+        'password_confirmation' => 'short',
+        'bakery_name' => 'My Bakery',
+    ]);
 
-    /** @test */
-    public function plans_page_requires_authentication(): void
-    {
-        $response = $this->get(route('billing.plans'));
+    $response->assertSessionHasErrors(['password']);
+});
 
-        $response->assertRedirect();
-    }
+test('plans page requires authentication', function () {
+    $response = get(route('billing.plans'));
 
-    /** @test */
-    public function authenticated_user_can_view_plans(): void
-    {
-        $user = User::create([
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => bcrypt('password'),
-        ]);
+    $response->assertRedirect();
+});
 
-        $response = $this->actingAs($user)->get(route('billing.plans'));
+test('authenticated user can view plans', function () {
+    $user = User::create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $response->assertOk();
-        $response->assertSee('Choose Your Plan');
-    }
+    $response = actingAs($user)
+        ->get(route('billing.plans'));
 
-    /** @test */
-    public function checkout_requires_authentication(): void
-    {
-        $response = $this->post(route('billing.checkout', ['plan' => 'starter']));
+    $response->assertOk();
+    $response->assertSee('Choose Your Plan');
+});
 
-        $response->assertRedirect();
-    }
+test('checkout requires authentication', function () {
+    $response = post(route('billing.checkout', ['plan' => 'starter']));
 
-    /** @test */
-    public function checkout_rejects_invalid_plan(): void
-    {
-        $user = User::create([
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => bcrypt('password'),
-        ]);
+    $response->assertRedirect();
+});
 
-        $response = $this->actingAs($user)->post(route('billing.checkout', ['plan' => 'invalid']));
+test('checkout rejects invalid plan', function () {
+    $user = User::create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $response->assertNotFound();
-    }
+    $response = actingAs($user)
+        ->post(route('billing.checkout', ['plan' => 'invalid']));
 
-    /** @test */
-    public function onboarding_page_loads(): void
-    {
-        $user = User::create([
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => bcrypt('password'),
-        ]);
+    $response->assertNotFound();
+});
 
-        $response = $this->actingAs($user)->get(route('onboarding.show'));
+test('onboarding page loads', function () {
+    $user = User::create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $response->assertOk();
-    }
+    $response = actingAs($user)
+        ->get(route('onboarding.show'));
 
-    /** @test */
-    public function onboarding_store_creates_tenant(): void
-    {
-        $user = User::create([
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => bcrypt('password'),
-        ]);
+    $response->assertOk();
+});
 
-        // Mock the tenant creation since Stancl tries to create actual databases
-        $this->mock(Tenant::class, function ($mock) {
-            $mock->shouldReceive('create')->andReturn(new Tenant);
-        });
+test('onboarding store creates tenant', function () {
+    $user = User::create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        // We can't fully test tenant creation in SQLite without Stancl spinning up
-        // a real tenant DB. Instead, test the validation.
-        $response = $this->actingAs($user)->post(route('onboarding.store'), [
+    $this->mock(Tenant::class, function ($mock) {
+        $mock->shouldReceive('create')->andReturn(new Tenant);
+    });
+
+    $response = actingAs($user)
+        ->post(route('onboarding.store'), [
             'store_name' => '',
             'subdomain' => '',
             'storefront_choice' => '',
         ]);
 
-        $response->assertSessionHasErrors(['store_name', 'subdomain', 'storefront_choice']);
-    }
+    $response->assertSessionHasErrors(['store_name', 'subdomain', 'storefront_choice']);
+});
 
-    /** @test */
-    public function onboarding_validates_subdomain_format(): void
-    {
-        $user = User::create([
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => bcrypt('password'),
-        ]);
+test('onboarding validates subdomain format', function () {
+    $user = User::create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $response = $this->actingAs($user)->post(route('onboarding.store'), [
+    $response = actingAs($user)
+        ->post(route('onboarding.store'), [
             'store_name' => 'My Bakery',
             'subdomain' => 'invalid subdomain!',
             'storefront_choice' => 'kneadit',
         ]);
 
-        $response->assertSessionHasErrors(['subdomain']);
-    }
+    $response->assertSessionHasErrors(['subdomain']);
+});
 
-    /** @test */
-    public function onboarding_requires_external_website_when_own_chosen(): void
-    {
-        $user = User::create([
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => bcrypt('password'),
-        ]);
+test('onboarding requires external website when own chosen', function () {
+    $user = User::create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $response = $this->actingAs($user)->post(route('onboarding.store'), [
+    $response = actingAs($user)
+        ->post(route('onboarding.store'), [
             'store_name' => 'My Bakery',
             'subdomain' => 'mybakery',
             'storefront_choice' => 'own',
         ]);
 
-        $response->assertSessionHasErrors(['external_website']);
-    }
+    $response->assertSessionHasErrors(['external_website']);
+});
 
-    /** @test */
-    public function onboarding_does_not_require_external_website_for_kneadit(): void
-    {
-        $user = User::create([
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => bcrypt('password'),
-        ]);
+test('onboarding does not require external website for kneadit', function () {
+    $user = User::create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $response = $this->actingAs($user)->post(route('onboarding.store'), [
+    $response = actingAs($user)
+        ->post(route('onboarding.store'), [
             'store_name' => 'My Bakery',
             'subdomain' => 'mybakery',
             'storefront_choice' => 'kneadit',
         ]);
 
-        // Should not have external_website error (may fail on tenant creation, that's ok)
-        $this->assertNotContains('external_website', array_keys(session('errors')?->toArray() ?? []));
-    }
+    expect(array_keys(session('errors')?->toArray() ?? []))->not->toContain('external_website');
+});
 
-    /** @test */
-    public function guest_cannot_access_onboarding(): void
-    {
-        $response = $this->get(route('onboarding.show'));
+test('guest cannot access onboarding', function () {
+    $response = get(route('onboarding.show'));
 
-        $response->assertRedirect();
-    }
+    $response->assertRedirect();
+});
 
-    /** @test */
-    public function billing_success_redirects_to_onboarding(): void
-    {
-        $user = User::create([
-            'name' => 'Jane Baker',
-            'email' => 'jane@example.com',
-            'password' => bcrypt('password'),
-        ]);
+test('billing success redirects to onboarding', function () {
+    $user = User::create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'password' => bcrypt('password'),
+    ]);
 
-        $response = $this->actingAs($user)->get(route('billing.success'));
+    $response = actingAs($user)
+        ->get(route('billing.success'));
 
-        $response->assertRedirect(route('onboarding.show'));
-    }
+    $response->assertRedirect(route('onboarding.show'));
+});
 
-    /** @test */
-    public function login_redirects_to_homepage(): void
-    {
-        $response = $this->get(route('login'));
+test('login redirects to homepage', function () {
+    $response = get(route('login'));
 
-        $response->assertRedirect(route('home'));
-    }
-}
+    $response->assertRedirect(route('home'));
+});

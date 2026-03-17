@@ -1,136 +1,114 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Models\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class IngredientTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        config(['database.connections.central' => config('database.connections.sqlite')]);
-        $tenantMigrationPath = database_path('migrations/tenant');
-        if (is_dir($tenantMigrationPath)) {
-            $this->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
-        }
+beforeEach(function () {
+    config(['database.connections.central' => config('database.connections.sqlite')]);
+    $tenantMigrationPath = database_path('migrations/tenant');
+    if (is_dir($tenantMigrationPath)) {
+        test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
+});
 
-    /** @test */
-    public function adjust_stock_creates_stock_adjustment_record(): void
-    {
-        $ingredient = Ingredient::create([
-            'name' => 'Flour',
-            'unit' => 'kg',
-            'current_stock' => 50,
-            'low_stock_threshold' => 10,
-            'cost_per_unit' => 2.50,
-        ]);
+test('adjust stock creates stock adjustment record', function () {
+    $ingredient = Ingredient::create([
+        'name' => 'Flour',
+        'unit' => 'kg',
+        'current_stock' => 50,
+        'low_stock_threshold' => 10,
+        'cost_per_unit' => 2.50,
+    ]);
 
-        $ingredient->adjustStock(10, 'purchase', 'Restocked');
+    $ingredient->adjustStock(10, 'purchase', 'Restocked');
 
-        $this->assertDatabaseHas('stock_adjustments', [
-            'ingredient_id' => $ingredient->id,
-            'quantity' => 10,
-            'type' => 'purchase',
-            'notes' => 'Restocked',
-        ]);
-    }
+    assertDatabaseHas('stock_adjustments', [
+        'ingredient_id' => $ingredient->id,
+        'quantity' => 10,
+        'type' => 'purchase',
+        'notes' => 'Restocked',
+    ]);
+});
 
-    /** @test */
-    public function adjust_stock_updates_current_stock(): void
-    {
-        $ingredient = Ingredient::create([
-            'name' => 'Sugar',
-            'unit' => 'kg',
-            'current_stock' => 20,
-            'low_stock_threshold' => 5,
-            'cost_per_unit' => 1.50,
-        ]);
+test('adjust stock updates current stock', function () {
+    $ingredient = Ingredient::create([
+        'name' => 'Sugar',
+        'unit' => 'kg',
+        'current_stock' => 20,
+        'low_stock_threshold' => 5,
+        'cost_per_unit' => 1.50,
+    ]);
 
-        $ingredient->adjustStock(-5, 'usage', 'Order usage');
+    $ingredient->adjustStock(-5, 'usage', 'Order usage');
 
-        $this->assertEquals(15, $ingredient->fresh()->current_stock);
-    }
+    expect($ingredient->fresh()->current_stock)->toBe(15);
+});
 
-    /** @test */
-    public function stock_can_go_below_zero(): void
-    {
-        $ingredient = Ingredient::create([
-            'name' => 'Butter',
-            'unit' => 'kg',
-            'current_stock' => 2,
-            'low_stock_threshold' => 5,
-            'cost_per_unit' => 4.00,
-        ]);
+test('stock can go below zero', function () {
+    $ingredient = Ingredient::create([
+        'name' => 'Butter',
+        'unit' => 'kg',
+        'current_stock' => 2,
+        'low_stock_threshold' => 5,
+        'cost_per_unit' => 4.00,
+    ]);
 
-        $ingredient->adjustStock(-5, 'usage', 'Over-used');
+    $ingredient->adjustStock(-5, 'usage', 'Over-used');
 
-        $this->assertEquals(-3, (float) $ingredient->fresh()->current_stock);
-    }
+    expect((float) $ingredient->fresh()->current_stock)->toBe(-3.0);
+});
 
-    /** @test */
-    public function low_stock_threshold_detection(): void
-    {
-        $ingredient = Ingredient::create([
-            'name' => 'Eggs',
-            'unit' => 'dozen',
-            'current_stock' => 8,
-            'low_stock_threshold' => 10,
-            'cost_per_unit' => 3.00,
-        ]);
+test('low stock threshold detection', function () {
+    $ingredient = Ingredient::create([
+        'name' => 'Eggs',
+        'unit' => 'dozen',
+        'current_stock' => 8,
+        'low_stock_threshold' => 10,
+        'cost_per_unit' => 3.00,
+    ]);
 
-        $this->assertTrue($ingredient->isLowStock());
-        $this->assertFalse($ingredient->isOutOfStock());
-        $this->assertEquals('low', $ingredient->getStockStatus());
-    }
+    expect($ingredient->isLowStock())->toBeTrue();
+    expect($ingredient->isOutOfStock())->toBeFalse();
+    expect($ingredient->getStockStatus())->toBe('low');
+});
 
-    /** @test */
-    public function out_of_stock_detection(): void
-    {
-        $ingredient = Ingredient::create([
-            'name' => 'Vanilla',
-            'unit' => 'ml',
-            'current_stock' => 0,
-            'low_stock_threshold' => 50,
-            'cost_per_unit' => 0.10,
-        ]);
+test('out of stock detection', function () {
+    $ingredient = Ingredient::create([
+        'name' => 'Vanilla',
+        'unit' => 'ml',
+        'current_stock' => 0,
+        'low_stock_threshold' => 50,
+        'cost_per_unit' => 0.10,
+    ]);
 
-        $this->assertTrue($ingredient->isOutOfStock());
-        $this->assertEquals('out', $ingredient->getStockStatus());
-    }
+    expect($ingredient->isOutOfStock())->toBeTrue();
+    expect($ingredient->getStockStatus())->toBe('out');
+});
 
-    /** @test */
-    public function good_stock_status(): void
-    {
-        $ingredient = Ingredient::create([
-            'name' => 'Milk',
-            'unit' => 'liters',
-            'current_stock' => 100,
-            'low_stock_threshold' => 10,
-            'cost_per_unit' => 1.00,
-        ]);
+test('good stock status', function () {
+    $ingredient = Ingredient::create([
+        'name' => 'Milk',
+        'unit' => 'liters',
+        'current_stock' => 100,
+        'low_stock_threshold' => 10,
+        'cost_per_unit' => 1.00,
+    ]);
 
-        $this->assertFalse($ingredient->isLowStock());
-        $this->assertFalse($ingredient->isOutOfStock());
-        $this->assertEquals('good', $ingredient->getStockStatus());
-    }
+    expect($ingredient->isLowStock())->toBeFalse();
+    expect($ingredient->isOutOfStock())->toBeFalse();
+    expect($ingredient->getStockStatus())->toBe('good');
+});
 
-    /** @test */
-    public function cost_per_unit_is_stored_correctly(): void
-    {
-        $ingredient = Ingredient::create([
-            'name' => 'Cocoa',
-            'unit' => 'kg',
-            'current_stock' => 10,
-            'low_stock_threshold' => 2,
-            'cost_per_unit' => 12.75,
-        ]);
+test('cost per unit is stored correctly', function () {
+    $ingredient = Ingredient::create([
+        'name' => 'Cocoa',
+        'unit' => 'kg',
+        'current_stock' => 10,
+        'low_stock_threshold' => 2,
+        'cost_per_unit' => 12.75,
+    ]);
 
-        $this->assertEquals(12.75, (float) $ingredient->cost_per_unit);
-    }
-}
+    expect((float) $ingredient->cost_per_unit)->toBe(12.75);
+});
