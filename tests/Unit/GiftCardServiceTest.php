@@ -1,11 +1,14 @@
 <?php
 
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\GiftCardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+
+use function Pest\Laravel\assertDatabaseHas;
 
 uses(RefreshDatabase::class);
 
@@ -63,8 +66,8 @@ test('redeem deducts from balance', function () {
     $result = test()->service->redeem($card->code, 20);
 
     expect($result['success'])->toBeTrue();
-    expect($result['amount_applied'])->toBe(20);
-    expect($result['remaining_balance'])->toBe(30);
+    expect($result['amount_applied'])->toBe(20.0);
+    expect($result['remaining_balance'])->toBe(30.0);
 });
 
 test('redeem creates transaction record', function () {
@@ -77,13 +80,13 @@ test('redeem creates transaction record', function () {
     Mail::fake();
     $user = User::create(['name' => 'Test', 'email' => 'u@t.com', 'password' => bcrypt('p')]);
     $customer = Customer::create(['name' => 'C', 'email' => 'c@t.com']);
-    $order = Order::create(['user_id' => $user->id, 'customer_id' => $customer->id, 'status' => 'pending', 'total' => 15, 'subtotal' => 15]);
+    $order = Order::create(['user_id' => $user->id, 'customer_id' => $customer->id, 'status' => OrderStatus::Pending, 'total' => 15, 'subtotal' => 15]);
 
     test()->service->redeem($card->code, 15, $order->id);
 
     assertDatabaseHas('gift_card_transactions', [
         'gift_card_id' => $card->id,
-        'amount' => -15,
+        'amount' => -15.00,
         'type' => 'redemption',
         'order_id' => $order->id,
     ]);
@@ -99,8 +102,8 @@ test('redeem caps at available balance', function () {
     $result = test()->service->redeem($card->code, 50);
 
     expect($result['success'])->toBeTrue();
-    expect($result['amount_applied'])->toBe(20);
-    expect($result['remaining_balance'])->toBe(0);
+    expect($result['amount_applied'])->toBe(20.0);
+    expect($result['remaining_balance'])->toBe(0.0);
 });
 
 test('redeem fails when card inactive', function () {

@@ -3,6 +3,8 @@
 use App\Models\GiftCard;
 use App\Services\GiftCardService;
 
+use function Pest\Laravel\withoutMiddleware;
+
 beforeEach(function () {
     setUpTenantTest();
 });

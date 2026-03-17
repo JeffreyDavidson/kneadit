@@ -3,6 +3,8 @@
 use App\Models\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\assertDatabaseHas;
+
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -26,7 +28,7 @@ test('adjust stock creates stock adjustment record', function () {
 
     assertDatabaseHas('stock_adjustments', [
         'ingredient_id' => $ingredient->id,
-        'quantity' => 10,
+        'quantity' => 10.00,
         'type' => 'purchase',
         'notes' => 'Restocked',
     ]);
@@ -43,7 +45,7 @@ test('adjust stock updates current stock', function () {
 
     $ingredient->adjustStock(-5, 'usage', 'Order usage');
 
-    expect($ingredient->fresh()->current_stock)->toBe(15);
+    expect($ingredient->fresh()->current_stock)->toBe('15.00');
 });
 
 test('stock can go below zero', function () {

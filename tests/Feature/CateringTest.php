@@ -3,6 +3,8 @@
 use App\Models\CateringInquiry;
 use App\Models\Setting;
 
+use function Pest\Laravel\withoutMiddleware;
+
 beforeEach(function () {
     setUpTenantTest();
 });

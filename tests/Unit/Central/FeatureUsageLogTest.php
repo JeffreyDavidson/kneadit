@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\FeatureUsageLog;
+
 beforeEach(fn () => setUpCentralTest());
 
 test('track creates new record', function () {

@@ -5,6 +5,8 @@ use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
 use App\Models\Setting;
 
+use function Pest\Laravel\withoutMiddleware;
+
 beforeEach(function () {
     setUpTenantTest();
 });

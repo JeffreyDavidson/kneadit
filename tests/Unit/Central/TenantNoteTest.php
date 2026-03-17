@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\TenantNote;
+
 beforeEach(fn () => setUpCentralTest());
 
 test('can create note', function () {

@@ -5,6 +5,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 
+use function Pest\Laravel\actingAs;
+
 beforeEach(function () {
     setUpTenantTest();
     $this->user = User::create(['name' => 'Baker Bob', 'email' => 'bob@test.com', 'password' => bcrypt('password')]);

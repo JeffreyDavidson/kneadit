@@ -3,6 +3,8 @@
 use App\Models\Survey;
 use App\Models\SurveyResponse;
 
+use function Pest\Laravel\withoutMiddleware;
+
 beforeEach(function () {
     setUpTenantTest();
 });

@@ -2,8 +2,10 @@
 
 use App\Models\BlogPost;
 
+use function Pest\Laravel\withoutMiddleware;
+
 beforeEach(function () {
-    setUpTenantTest();
+    setUpCentralTest();
 });
 
 test('blog index page loads', function () {

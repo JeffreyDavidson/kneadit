@@ -2,6 +2,7 @@
 
 use App\Models\PlatformActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 beforeEach(fn () => setUpCentralTest());
 
 test('log creates record', function () {

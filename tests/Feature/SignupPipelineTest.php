@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\TestResponse;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+
 beforeEach(function () {
     setUpCentralTest();
     $this->createdSubdomains = [];

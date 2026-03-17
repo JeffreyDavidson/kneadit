@@ -44,9 +44,8 @@ beforeEach(function () {
         'payment_method' => 'cash',
         'subtotal' => 25.00,
         'delivery_fee' => 0,
-        'discount' => 0,
+        'discount_amount' => 0,
         'total' => 25.00,
-        'requested_date' => now()->addDays(3),
     ]);
 });
 

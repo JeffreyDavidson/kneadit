@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
@@ -27,12 +29,12 @@ function makeOrder(array $attrs = []): Order
     return Order::create(array_merge([
         'customer_id' => test()->customer->id,
         'user_id' => test()->user->id,
-        'status' => 'pending',
-        'payment_status' => 'unpaid',
+        'status' => OrderStatus::Pending,
+        'payment_status' => PaymentStatus::Unpaid,
         'subtotal' => 10.00,
         'total' => 10.00,
-        'requested_date' => now()->addDay(),
-        'requested_time' => '10:00',
+        'delivery_date' => now()->addDay(),
+        'delivery_time' => '10:00',
     ], $attrs));
 }
 
@@ -49,6 +51,8 @@ test('order has items relationship', function () {
     $order = makeOrder();
 
     OrderItem::create(['order_id' => $order->id, 'product_id' => $product->id, 'quantity' => 2, 'unit_price' => 5.00]);
+
+    $order->refresh();
 
     expect($order->orderItems)->toHaveCount(1);
     expect($order->orderItems->first()->quantity)->toBe(2);
@@ -68,19 +72,19 @@ test('order number is auto generated', function () {
 });
 
 test('order total is cast to decimal', function () {
-    $order = makeOrder(['subtotal' => 25.50, 'delivery_fee' => 5.00, 'discount' => 2.50, 'total' => 28.00]);
+    $order = makeOrder(['subtotal' => 25.50, 'delivery_fee' => 5.00, 'discount_amount' => 2.50, 'total' => 28.00]);
     $order->refresh();
 
     expect($order->total)->toBe('28.00');
     expect($order->delivery_fee)->toBe('5.00');
-    expect($order->discount)->toBe('2.50');
+    expect($order->discount_amount)->toBe('2.50');
 });
 
 test('order status transitions', function () {
     Mail::fake();
     $order = makeOrder();
 
-    foreach (['confirmed', 'baking', 'ready', 'delivered'] as $status) {
+    foreach ([OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready, OrderStatus::Delivered] as $status) {
         $order->update(['status' => $status]);
         expect($order->fresh()->status)->toBe($status);
     }
@@ -89,9 +93,9 @@ test('order status transitions', function () {
 test('order can be cancelled', function () {
     Mail::fake();
     $order = makeOrder();
-    $order->update(['status' => 'cancelled']);
+    $order->update(['status' => OrderStatus::Cancelled]);
 
-    expect($order->fresh()->status)->toBe('cancelled');
+    expect($order->fresh()->status)->toBe(OrderStatus::Cancelled);
 });
 
 test('order belongs to user', function () {
