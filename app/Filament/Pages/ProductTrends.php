@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 use Livewire\Attributes\Url;
 
@@ -102,7 +103,7 @@ class ProductTrends extends Page
             ->pluck('total_qty', 'product_id')
             ->toArray();
 
-        $categories = Category::with(['products' => fn ($q) => $q->orderBy('sort_order')->orderBy('name')])->orderBy('sort_order')->get();
+        $categories = Category::with(['products' => fn (Builder $q) => $q->orderBy('sort_order')->orderBy('name')])->orderBy('sort_order')->get();
 
         $grouped = [];
         foreach ($categories as $category) {

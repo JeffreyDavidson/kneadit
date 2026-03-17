@@ -12,6 +12,7 @@ use App\Mail\OrderPlaced;
 use App\Mail\OrderReady;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Setting;
 use App\Services\WebhookService;
 use Illuminate\Support\Facades\Log;
@@ -51,7 +52,7 @@ class OrderObserver
                 'status' => $order->status,
                 'payment_status' => $order->payment_status,
                 'delivery_date' => $order->delivery_date?->toDateString(),
-                'items' => $order->orderItems->map(fn ($item) => [
+                'items' => $order->orderItems->map(fn (OrderItem $item) => [
                     'product' => $item->product?->name,
                     'quantity' => $item->quantity,
                     'unit_price' => $item->unit_price,

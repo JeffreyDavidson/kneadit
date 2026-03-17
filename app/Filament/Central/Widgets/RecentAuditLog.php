@@ -4,6 +4,7 @@ namespace App\Filament\Central\Widgets;
 
 use App\Models\AdminAuditLog;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Collection;
 
 class RecentAuditLog extends Widget
 {
@@ -13,7 +14,7 @@ class RecentAuditLog extends Widget
 
     protected string $view = 'filament.central.widgets.recent-audit';
 
-    public function getRecentLogsProperty()
+    public function getRecentLogsProperty(): Collection
     {
         return AdminAuditLog::query()->latest()
             ->limit(5)

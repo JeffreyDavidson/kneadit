@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class BlockedDateForm
@@ -43,12 +44,12 @@ class BlockedDateForm
                             TextInput::make('open_time')
                                 ->label('Open Time')
                                 ->type('time')
-                                ->visible(fn ($get) => ! $get('is_all_day')),
+                                ->visible(fn (Get $get) => ! $get('is_all_day')),
 
                             TextInput::make('close_time')
                                 ->label('Close Time')
                                 ->type('time')
-                                ->visible(fn ($get) => ! $get('is_all_day')),
+                                ->visible(fn (Get $get) => ! $get('is_all_day')),
                         ]),
                     ]),
             ]);

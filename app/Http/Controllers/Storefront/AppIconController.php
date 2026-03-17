@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use Illuminate\Http\Response;
 
 class AppIconController extends Controller
 {
     /**
      * Generate a dynamic PWA app icon for the storefront.
      */
-    public function __invoke($size)
+    public function __invoke(string $size): Response
     {
         $size = in_array($size, ['192', '512']) ? (int) $size : 192;
         $storeName = Setting::get('store_name', 'B');

@@ -28,11 +28,11 @@ class DataExport extends Page
     {
         return Tenant::orderBy('store_name')
             ->get()
-            ->mapWithKeys(fn ($t) => [$t->id => $t->store_name ?: $t->name])
+            ->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])
             ->toArray();
     }
 
-    public function updatedSelectedTenant($value): void
+    public function updatedSelectedTenant(?string $value): void
     {
         if (! $value) {
             $this->counts = [];

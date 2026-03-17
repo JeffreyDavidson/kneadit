@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Customers\Tables;
 
 use App\Enums\OrderStatus;
+use App\Models\Customer;
 use App\Models\Order;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -19,8 +20,8 @@ class CustomersTable
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query
-                ->withCount(['orders' => fn ($q) => $q->where('status', '!=', OrderStatus::Cancelled)])
-                ->withSum(['orders' => fn ($q) => $q->where('status', '!=', OrderStatus::Cancelled)], 'total')
+                ->withCount(['orders' => fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled)])
+                ->withSum(['orders' => fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled)], 'total')
                 ->addSelect([
                     'last_order_date' => Order::select('created_at')
                         ->whereColumn('customer_id', 'customers.id')
@@ -61,8 +62,8 @@ class CustomersTable
                     ->label('Birthday')
                     ->date('M j')
                     ->badge()
-                    ->color(fn ($record) => $record->isBirthdayToday() ? 'success' : 'gray')
-                    ->formatStateUsing(fn ($state, $record) => $record->isBirthdayToday()
+                    ->color(fn (Customer $record) => $record->isBirthdayToday() ? 'success' : 'gray')
+                    ->formatStateUsing(fn ($state, Customer $record) => $record->isBirthdayToday()
                         ? '🎂 Today!'
                         : ($state ? Date::parse($state)->format('M j') : '—'))
                     ->sortable()
@@ -87,7 +88,7 @@ class CustomersTable
 
                 TextColumn::make('average_order_value')
                     ->label('Avg Order')
-                    ->getStateUsing(fn ($record) => $record->orders_count > 0
+                    ->getStateUsing(fn (Customer $record) => $record->orders_count > 0
                         ? ($record->orders_sum_total / $record->orders_count)
                         : 0)
                     ->money('USD')
@@ -96,7 +97,7 @@ class CustomersTable
                 TextColumn::make('is_at_risk')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(function ($record) {
+                    ->getStateUsing(function (Customer $record) {
                         if ($record->orders_count > 0 && $record->last_order_date) {
                             return Date::parse($record->last_order_date)->diffInDays(now()) > 30
                                 ? 'At Risk'
@@ -119,13 +120,13 @@ class CustomersTable
             ->filters([
                 Filter::make('at_risk')
                     ->label('At Risk')
-                    ->query(fn ($query) => $query->whereHas('orders')
-                        ->whereDoesntHave('orders', fn ($q) => $q->where('created_at', '>=', now()->subDays(30)))
+                    ->query(fn (Builder $query) => $query->whereHas('orders')
+                        ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays(30)))
                     ),
 
                 Filter::make('has_birthday_this_month')
                     ->label('Birthday This Month')
-                    ->query(fn ($query) => $query->whereNotNull('birthday')
+                    ->query(fn (Builder $query) => $query->whereNotNull('birthday')
                         ->whereMonth('birthday', now()->month)
                     ),
             ])

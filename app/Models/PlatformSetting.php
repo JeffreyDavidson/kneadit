@@ -15,14 +15,14 @@ class PlatformSetting extends Model
 
     protected static ?array $cache = null;
 
-    public static function get(string $key, $default = null)
+    public static function get(string $key, mixed $default = null): mixed
     {
         static::loadAll();
 
         return static::$cache[$key] ?? $default;
     }
 
-    public static function set(string $key, $value): void
+    public static function set(string $key, mixed $value): void
     {
         static::updateOrCreate(
             ['key' => $key],

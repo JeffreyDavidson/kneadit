@@ -38,18 +38,18 @@ class WeeklyPrepPlanner extends Page
 
     public array $weekDays = [];
 
-    public function mount()
+    public function mount(): void
     {
         $this->selectedWeekStart = now()->startOfWeek()->format('Y-m-d');
         $this->loadWeeklyData();
     }
 
-    public function updatedSelectedWeekStart()
+    public function updatedSelectedWeekStart(): void
     {
         $this->loadWeeklyData();
     }
 
-    public function loadWeeklyData()
+    public function loadWeeklyData(): void
     {
         if (! $this->selectedWeekStart) {
             $this->weeklyOrders = collect();
@@ -73,14 +73,14 @@ class WeeklyPrepPlanner extends Page
             ->oldest('delivery_date')
             ->orderBy('delivery_time')
             ->get()
-            ->groupBy(function ($order) {
+            ->groupBy(function (Order $order) {
                 return Date::parse($order->delivery_date)->format('Y-m-d');
             });
 
         $this->generatePrepSchedule();
     }
 
-    private function generatePrepSchedule()
+    private function generatePrepSchedule(): void
     {
         $prepTasks = collect();
 
@@ -154,7 +154,7 @@ class WeeklyPrepPlanner extends Page
         $timeline = collect();
 
         foreach ($this->prepSchedule as $date => $prepTasks) {
-            $dayTimeline = $prepTasks->sortBy('prep_start_datetime')->map(function ($task) {
+            $dayTimeline = $prepTasks->sortBy('prep_start_datetime')->map(function (array $task) {
                 return [
                     'time' => $task['prep_start_time'],
                     'task' => "Start {$task['product_name']} (x{$task['quantity']}) for {$task['customer_name']}",

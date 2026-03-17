@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
+use Illuminate\Contracts\View\View;
 
 class BlogController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $categories = [
             'all' => 'All Posts',
@@ -29,7 +30,7 @@ class BlogController extends Controller
         return view('blog.index', compact('posts', 'categories', 'activeCategory'));
     }
 
-    public function show(string $slug)
+    public function show(string $slug): View
     {
         $post = BlogPost::published()->where('slug', $slug)->firstOrFail();
 

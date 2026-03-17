@@ -15,13 +15,14 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class WaitlistEntriesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->with(['product']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['product']))
             ->columns([
                 TextColumn::make('customer_name')
                     ->searchable()
@@ -65,15 +66,15 @@ class WaitlistEntriesTable
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
-                    ->query(function ($query, array $data) {
+                    ->query(function (Builder $query, array $data) {
                         return $query
                             ->when(
                                 $data['from'],
-                                fn ($query, $date) => $query->whereDate('requested_date', '>=', $date),
+                                fn (Builder $query, string $date) => $query->whereDate('requested_date', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn ($query, $date) => $query->whereDate('requested_date', '<=', $date),
+                                fn (Builder $query, string $date) => $query->whereDate('requested_date', '<=', $date),
                             );
                     }),
             ])

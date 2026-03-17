@@ -14,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ExpensesTable
 {
@@ -30,7 +31,7 @@ class ExpensesTable
                     ->limit(50),
 
                 BadgeColumn::make('category')
-                    ->formatStateUsing(fn ($state) => Expense::CATEGORIES[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state) => Expense::CATEGORIES[$state] ?? $state)
                     ->colors([
                         'primary' => 'ingredients',
                         'success' => 'packaging',
@@ -45,7 +46,7 @@ class ExpensesTable
 
                 TextColumn::make('business_percentage')
                     ->label('Business %')
-                    ->formatStateUsing(fn ($state) => $state.'%')
+                    ->formatStateUsing(fn (int $state) => $state.'%')
                     ->sortable(),
 
                 TextColumn::make('deductible_amount')
@@ -72,15 +73,15 @@ class ExpensesTable
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
-                    ->query(function ($query, array $data) {
+                    ->query(function (Builder $query, array $data) {
                         return $query
                             ->when(
                                 $data['from'],
-                                fn ($query, $date) => $query->whereDate('date', '>=', $date),
+                                fn (Builder $query, string $date) => $query->whereDate('date', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn ($query, $date) => $query->whereDate('date', '<=', $date),
+                                fn (Builder $query, string $date) => $query->whereDate('date', '<=', $date),
                             );
                     }),
 
@@ -89,15 +90,15 @@ class ExpensesTable
                         TextInput::make('min_amount')->numeric()->prefix('$'),
                         TextInput::make('max_amount')->numeric()->prefix('$'),
                     ])
-                    ->query(function ($query, array $data) {
+                    ->query(function (Builder $query, array $data) {
                         return $query
                             ->when(
                                 $data['min_amount'],
-                                fn ($query, $amount) => $query->where('amount', '>=', $amount),
+                                fn (Builder $query, string $amount) => $query->where('amount', '>=', $amount),
                             )
                             ->when(
                                 $data['max_amount'],
-                                fn ($query, $amount) => $query->where('amount', '<=', $amount),
+                                fn (Builder $query, string $amount) => $query->where('amount', '<=', $amount),
                             );
                     }),
             ])

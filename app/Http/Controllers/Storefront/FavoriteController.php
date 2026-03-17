@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\CustomerFavorite;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
@@ -11,7 +12,7 @@ class FavoriteController extends Controller
     /**
      * Get customer favorites.
      */
-    public function show(Request $request)
+    public function show(Request $request): JsonResponse
     {
         $email = $request->query('email');
 
@@ -29,7 +30,7 @@ class FavoriteController extends Controller
     /**
      * Toggle a product as a customer favorite.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'email' => ['required', 'email'],

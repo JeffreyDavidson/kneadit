@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Setting;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Tenancy;
@@ -20,7 +21,7 @@ class StripeConnectWebhookController extends Controller
      * This endpoint receives events about connected accounts
      * (separate from the Cashier webhook for platform subscriptions).
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Response
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
@@ -70,7 +71,7 @@ class StripeConnectWebhookController extends Controller
     /**
      * When a connected account is updated (e.g., onboarding completed).
      */
-    protected function handleAccountUpdated($account)
+    protected function handleAccountUpdated(mixed $account): void
     {
         $accountId = is_object($account) ? $account->id : ($account['id'] ?? null);
         $chargesEnabled = is_object($account)
@@ -123,7 +124,7 @@ class StripeConnectWebhookController extends Controller
     /**
      * When a checkout session completes on a connected account.
      */
-    protected function handleCheckoutCompleted($session)
+    protected function handleCheckoutCompleted(mixed $session): void
     {
         $sessionId = is_object($session) ? $session->id : ($session['id'] ?? null);
         $metadata = is_object($session) ? ($session->metadata ?? null) : ($session['metadata'] ?? null);

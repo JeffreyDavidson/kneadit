@@ -15,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class SupportTicketResource extends Resource
@@ -55,7 +56,7 @@ class SupportTicketResource extends Resource
             Select::make('tenant_id')
                 ->label('Bakery')
                 ->relationship('tenant', 'store_name')
-                ->getOptionLabelFromRecordUsing(fn ($record) => $record->store_name ?: $record->name)
+                ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->store_name ?: $record->name)
                 ->required()
                 ->searchable(),
             Grid::make(2)->schema([

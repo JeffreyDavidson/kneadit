@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Filament\Traits\RequiresRole;
 use App\Models\ActivityLog;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ActivityLogPage extends Page
 {
@@ -41,7 +42,7 @@ class ActivityLogPage extends Page
 
     public ?int $expandedId = null;
 
-    public function getActivitiesProperty()
+    public function getActivitiesProperty(): LengthAwarePaginator
     {
         $query = ActivityLog::query()->latest();
 
@@ -75,7 +76,7 @@ class ActivityLogPage extends Page
 
     public function getModelTypesProperty(): array
     {
-        return ActivityLog::distinct()->pluck('model_type')->filter()->map(fn ($t) => [
+        return ActivityLog::distinct()->pluck('model_type')->filter()->map(fn (string $t) => [
             'value' => $t,
             'label' => class_basename($t),
         ])->sortBy('label')->values()->toArray();

@@ -16,9 +16,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CapacityLimitResource extends Resource
 {
@@ -70,7 +73,7 @@ class CapacityLimitResource extends Resource
                         ])
                         ->required()
                         ->live()
-                        ->afterStateHydrated(function ($component, $record) {
+                        ->afterStateHydrated(function ($component, ?CapacityLimit $record) {
                             if (! $record) {
                                 return;
                             }
@@ -81,7 +84,7 @@ class CapacityLimitResource extends Resource
                             }
                         })
                         ->dehydrated(false)
-                        ->afterStateUpdated(function ($state, $set) {
+                        ->afterStateUpdated(function (?string $state, Set $set) {
                             if ($state === 'specific') {
                                 $set('day_of_week', null);
                             } else {
@@ -92,8 +95,8 @@ class CapacityLimitResource extends Resource
 
                     DatePicker::make('specific_date')
                         ->label('Date')
-                        ->visible(fn ($get) => $get('day_type') === 'specific')
-                        ->required(fn ($get) => $get('day_type') === 'specific')
+                        ->visible(fn (Get $get) => $get('day_type') === 'specific')
+                        ->required(fn (Get $get) => $get('day_type') === 'specific')
                         ->native(false),
 
                     Hidden::make('day_of_week'),
@@ -131,7 +134,7 @@ class CapacityLimitResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('day_label')
                     ->label('Day / Date')
-                    ->sortable(query: fn ($query, $direction) => $query->orderByRaw('COALESCE(specific_date, day_of_week) '.$direction))
+                    ->sortable(query: fn (Builder $query, string $direction) => $query->orderByRaw('COALESCE(specific_date, day_of_week) '.$direction))
                     ->getStateUsing(function (CapacityLimit $record) use ($dayNames) {
                         if ($record->specific_date) {
                             return $record->specific_date->format('D, M j, Y');
@@ -142,7 +145,7 @@ class CapacityLimitResource extends Resource
 
                 Tables\Columns\TextColumn::make('max_orders')
                     ->label('Max Orders')
-                    ->formatStateUsing(fn ($state) => $state > 0 ? $state : 'Unlimited')
+                    ->formatStateUsing(fn (int $state) => $state > 0 ? $state : 'Unlimited')
                     ->sortable(),
 
                 Tables\Columns\IconColumn::make('is_blocked')

@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\CateringInquiry;
 use App\Models\CustomerPhoto;
 use App\Models\Setting;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class CateringController extends Controller
 {
-    public function show()
+    public function show(): View
     {
         $cateringPhotos = CustomerPhoto::whereLike('caption', '%catering%')
             ->where('is_approved', true)
@@ -21,7 +23,7 @@ class CateringController extends Controller
         return view('catering', compact('cateringPhotos'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $minimumGuests = (int) Setting::get('catering_minimum_guests', '10');
         $leadTimeDays = (int) Setting::get('catering_lead_time_days', '14');

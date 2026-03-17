@@ -50,14 +50,14 @@ class FinanceSummary extends Page
 
     public float $cogsPercentage = 0;
 
-    public function mount()
+    public function mount(): void
     {
         $this->selectedYear = now()->year;
         $this->revenueCap = (float) Setting::get('revenue_cap', 250000);
         $this->loadFinancialData();
     }
 
-    public function loadFinancialData()
+    public function loadFinancialData(): void
     {
         $this->calculateYearlyTotals();
         $this->calculateMonthlyBreakdown();
@@ -66,7 +66,7 @@ class FinanceSummary extends Page
         $this->calculateRevenueCapProgress();
     }
 
-    private function calculateYearlyTotals()
+    private function calculateYearlyTotals(): void
     {
         // Total revenue from paid orders
         $this->totalRevenue = Order::whereYear('delivery_date', $this->selectedYear)
@@ -87,7 +87,7 @@ class FinanceSummary extends Page
         $this->netProfit = $this->totalRevenue - $this->totalExpenses;
     }
 
-    private function calculateMonthlyBreakdown()
+    private function calculateMonthlyBreakdown(): void
     {
         $this->monthlyBreakdown = collect();
 
@@ -117,7 +117,7 @@ class FinanceSummary extends Page
         }
     }
 
-    private function calculateExpenseBreakdown()
+    private function calculateExpenseBreakdown(): void
     {
         $totalExpenses = Expense::whereYear('date', $this->selectedYear)->sum('amount');
 
@@ -131,7 +131,7 @@ class FinanceSummary extends Page
             ->select('category', DB::raw('SUM(amount) as total_amount'))
             ->groupBy('category')
             ->get()
-            ->map(function ($expense) use ($totalExpenses) {
+            ->map(function (Expense $expense) use ($totalExpenses) {
                 $categoryName = Expense::CATEGORIES[$expense->category] ?? ucfirst($expense->category);
 
                 return [
@@ -143,7 +143,7 @@ class FinanceSummary extends Page
             ->sortByDesc('amount');
     }
 
-    private function calculateCOGS()
+    private function calculateCOGS(): void
     {
         // COGS = ingredients + packaging expenses
         $this->cogsAmount = Expense::whereYear('date', $this->selectedYear)
@@ -155,14 +155,14 @@ class FinanceSummary extends Page
         }
     }
 
-    private function calculateRevenueCapProgress()
+    private function calculateRevenueCapProgress(): void
     {
         if ($this->revenueCap > 0) {
             $this->revenueCapProgress = min(($this->totalRevenue / $this->revenueCap) * 100, 100);
         }
     }
 
-    public function updatedSelectedYear()
+    public function updatedSelectedYear(): void
     {
         $this->loadFinancialData();
     }

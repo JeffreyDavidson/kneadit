@@ -29,6 +29,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class CustomerPhotoResource extends Resource
@@ -104,7 +105,7 @@ class CustomerPhotoResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->with(['product']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['product']))
             ->columns([
                 ImageColumn::make('photo_path')
                     ->label('Photo')

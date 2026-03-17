@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Storefront\HomeController;
 use App\Models\Setting;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
+use Symfony\Component\HttpFoundation\Response;
 
 class RootController extends Controller
 {
-    public function index()
+    public function index(): View|Response
     {
         $centralDomains = config('tenancy.central_domains', []);
 
@@ -19,7 +22,7 @@ class RootController extends Controller
         // Tenant subdomain — initialize tenancy and serve storefront or redirect
         $middleware = resolve(InitializeTenancyByDomainOrSubdomain::class);
 
-        return $middleware->handle(request(), function ($request) {
+        return $middleware->handle(request(), function (Request $request) {
             $tenant = tenant();
 
             // If storefront is disabled and they have an external website, redirect there

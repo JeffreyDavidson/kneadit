@@ -19,6 +19,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -46,7 +47,7 @@ class BlogPostResource extends Resource
                         ->required()
                         ->maxLength(255)
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+                        ->afterStateUpdated(fn (string $state, Set $set) => $set('slug', Str::slug($state))),
                     TextInput::make('slug')
                         ->required()
                         ->maxLength(255)

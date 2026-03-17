@@ -16,6 +16,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Select;
 use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Collection;
 
 class SeasonalItems extends Page
 {
@@ -114,17 +115,17 @@ class SeasonalItems extends Page
             ->send();
     }
 
-    public function getCurrentItemsProperty()
+    public function getCurrentItemsProperty(): Collection
     {
         return SeasonalItem::with('product')->current()->get();
     }
 
-    public function getUpcomingItemsProperty()
+    public function getUpcomingItemsProperty(): Collection
     {
         return SeasonalItem::with('product')->upcoming()->orderBy('available_from')->get();
     }
 
-    public function getExpiredItemsProperty()
+    public function getExpiredItemsProperty(): Collection
     {
         return SeasonalItem::with('product')->expired()->orderByDesc('available_until')->get();
     }

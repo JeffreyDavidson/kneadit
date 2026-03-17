@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Setting;
 use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PrintableMenu extends Page
@@ -34,14 +36,14 @@ class PrintableMenu extends Page
 
     public string $menuLayout = 'elegant';
 
-    public function getCategories()
+    public function getCategories(): Collection
     {
         return Category::where('is_active', true)
-            ->with(['products' => fn ($q) => $q->where('is_active', true)->orderBy('name')])
+            ->with(['products' => fn (Builder $q) => $q->where('is_active', true)->orderBy('name')])
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get()
-            ->filter(fn ($cat) => $cat->products->isNotEmpty());
+            ->filter(fn (Category $cat) => $cat->products->isNotEmpty());
     }
 
     public function getStoreInfo(): array

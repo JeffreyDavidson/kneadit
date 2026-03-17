@@ -28,7 +28,7 @@ class OnboardingTracker extends Page
 
         $data = $tenants->map(function (Tenant $tenant) {
             $checks = $this->getOnboardingChecks($tenant);
-            $completed = collect($checks)->filter(fn ($v) => $v)->count();
+            $completed = collect($checks)->filter(fn (bool $v) => $v)->count();
 
             return [
                 'id' => $tenant->id,
@@ -45,7 +45,7 @@ class OnboardingTracker extends Page
             ];
         });
 
-        return $data->sortBy(fn ($t) => [$t['completed'], $t['created_at']])->values();
+        return $data->sortBy(fn (array $t) => [$t['completed'], $t['created_at']])->values();
     }
 
     protected function getOnboardingChecks(Tenant $tenant): array
@@ -81,8 +81,8 @@ class OnboardingTracker extends Page
 
         return [
             'total' => $data->count(),
-            'fully_onboarded' => $data->filter(fn ($t) => $t['completed'] === 7)->count(),
-            'needs_attention' => $data->filter(fn ($t) => $t['completed'] < 6)->count(),
+            'fully_onboarded' => $data->filter(fn (array $t) => $t['completed'] === 7)->count(),
+            'needs_attention' => $data->filter(fn (array $t) => $t['completed'] < 6)->count(),
         ];
     }
 }

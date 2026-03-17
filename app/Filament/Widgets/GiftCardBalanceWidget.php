@@ -31,7 +31,7 @@ class GiftCardBalanceWidget extends Widget
         return GiftCardTransaction::with('giftCard')->latest()
             ->limit(3)
             ->get()
-            ->map(fn ($t) => [
+            ->map(fn (GiftCardTransaction $t) => [
                 'code' => $t->giftCard?->code ?? 'N/A',
                 'amount' => $t->amount ?? 0,
                 'date' => $t->created_at?->diffForHumans() ?? '',

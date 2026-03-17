@@ -7,6 +7,7 @@ use App\Filament\Traits\RequiresRole;
 use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -18,6 +19,7 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TaxExport extends Page
@@ -145,7 +147,7 @@ class TaxExport extends Page
             $allYears = collect([now()->year]);
         }
 
-        return $allYears->mapWithKeys(fn ($y) => [$y => (string) $y])->all();
+        return $allYears->mapWithKeys(fn (int $y) => [$y => (string) $y])->all();
     }
 
     protected function generateExport(array $data): StreamedResponse
@@ -191,6 +193,7 @@ class TaxExport extends Page
         ]);
     }
 
+    /** @param resource $handle */
     protected function writeOrdersCsv($handle, string $from, string $to): void
     {
         fputcsv($handle, ['=== ORDERS ===']);
@@ -198,9 +201,9 @@ class TaxExport extends Page
 
         Order::with(['customer', 'orderItems.product'])
             ->whereBetween('created_at', [$from, $to.' 23:59:59'])->oldest()
-            ->chunk(100, function ($orders) use ($handle) {
+            ->chunk(100, function (Collection $orders) use ($handle) {
                 foreach ($orders as $order) {
-                    $items = $order->orderItems->map(fn ($i) => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
+                    $items = $order->orderItems->map(fn (OrderItem $i) => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
                     fputcsv($handle, [
                         $order->created_at->format('Y-m-d'),
                         $order->order_number,
@@ -217,6 +220,7 @@ class TaxExport extends Page
             });
     }
 
+    /** @param resource $handle */
     protected function writeExpensesCsv($handle, string $from, string $to): void
     {
         fputcsv($handle, ['=== EXPENSES ===']);
@@ -237,7 +241,7 @@ class TaxExport extends Page
 
         Expense::whereBetween('date', [$from, $to])
             ->orderBy('date')
-            ->chunk(100, function ($expenses) use ($handle, $categoryMap) {
+            ->chunk(100, function (Collection $expenses) use ($handle, $categoryMap) {
                 foreach ($expenses as $expense) {
                     fputcsv($handle, [
                         $expense->date->format('Y-m-d'),
@@ -252,6 +256,7 @@ class TaxExport extends Page
             });
     }
 
+    /** @param resource $handle */
     protected function writeIncomeCsv($handle, string $from, string $to): void
     {
         fputcsv($handle, ['=== INCOME ===']);
@@ -259,7 +264,7 @@ class TaxExport extends Page
 
         Income::whereBetween('date', [$from, $to])
             ->orderBy('date')
-            ->chunk(100, function ($incomes) use ($handle) {
+            ->chunk(100, function (Collection $incomes) use ($handle) {
                 foreach ($incomes as $income) {
                     fputcsv($handle, [
                         $income->date->format('Y-m-d'),
@@ -272,6 +277,7 @@ class TaxExport extends Page
             });
     }
 
+    /** @param resource $handle */
     protected function writeSummaryCsv($handle, string $from, string $to): void
     {
         $totalOrderRevenue = Order::whereBetween('created_at', [$from, $to.' 23:59:59'])

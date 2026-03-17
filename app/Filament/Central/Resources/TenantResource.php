@@ -73,7 +73,7 @@ class TenantResource extends Resource
                                 ->alphaDash()
                                 ->placeholder('sweet-bakes')
                                 ->helperText('This becomes their subdomain: sweet-bakes.getkneadit.app')
-                                ->disabled(fn ($record) => $record !== null),
+                                ->disabled(fn (?Tenant $record) => $record !== null),
                             TextInput::make('name')
                                 ->label('Owner Name')
                                 ->required(),

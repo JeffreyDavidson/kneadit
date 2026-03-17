@@ -15,7 +15,7 @@ class PlatformStats extends StatsOverviewWidget
     {
         $planPrices = ['starter' => 9, 'growth' => 19, 'pro' => 29];
         $activeTenants = Tenant::where('is_active', true)->get();
-        $mrr = $activeTenants->sum(fn ($t) => $planPrices[$t->plan] ?? 0);
+        $mrr = $activeTenants->sum(fn (Tenant $t) => $planPrices[$t->plan] ?? 0);
 
         $totalTenants = Tenant::count();
         $trialTenants = Tenant::whereNotNull('trial_ends_at')
@@ -36,7 +36,7 @@ class PlatformStats extends StatsOverviewWidget
             $activeInMonth = Tenant::where('is_active', true)
                 ->where('created_at', '<=', $monthEnd)
                 ->get();
-            $mrrChart[] = (int) $activeInMonth->sum(fn ($t) => $planPrices[$t->plan] ?? 0);
+            $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $planPrices[$t->plan] ?? 0);
 
             // Cumulative bakeries
             $bakeryChart[] = Tenant::where('created_at', '<=', $monthEnd)->count();

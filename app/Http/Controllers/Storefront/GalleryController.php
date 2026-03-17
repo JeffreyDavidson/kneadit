@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Storefront;
 use App\Http\Controllers\Controller;
 use App\Models\CustomerPhoto;
 use App\Models\Product;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
-    public function show()
+    public function show(): View
     {
         $photos = CustomerPhoto::approved()
             ->with('product')
@@ -22,7 +24,7 @@ class GalleryController extends Controller
         return view('gallery', compact('photos', 'products'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],

@@ -5,18 +5,20 @@ namespace App\Http\Controllers\Storefront;
 use App\Http\Controllers\Controller;
 use App\Models\Survey;
 use App\Models\SurveyResponse;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class SurveyController extends Controller
 {
-    public function show(Survey $survey)
+    public function show(Survey $survey): View
     {
         abort_unless($survey->is_active, 404);
 
         return view('survey', compact('survey'));
     }
 
-    public function store(Request $request, Survey $survey)
+    public function store(Request $request, Survey $survey): RedirectResponse
     {
         abort_unless($survey->is_active, 404);
 
@@ -27,7 +29,7 @@ class SurveyController extends Controller
         ]);
 
         $sanitizedAnswers = array_map(
-            fn ($answer) => is_string($answer) ? strip_tags($answer) : $answer,
+            fn (mixed $answer) => is_string($answer) ? strip_tags($answer) : $answer,
             array_values($request->answers)
         );
 

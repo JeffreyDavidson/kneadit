@@ -199,9 +199,9 @@ class BakeryInsights extends Page
     {
         $data = $this->getTenantHealthData();
 
-        $healthy = $data->filter(fn ($t) => $t['health_score'] > 70)->count();
-        $atRisk = $data->filter(fn ($t) => $t['health_score'] >= 40 && $t['health_score'] <= 70)->count();
-        $critical = $data->filter(fn ($t) => $t['health_score'] < 40)->count();
+        $healthy = $data->filter(fn (array $t) => $t['health_score'] > 70)->count();
+        $atRisk = $data->filter(fn (array $t) => $t['health_score'] >= 40 && $t['health_score'] <= 70)->count();
+        $critical = $data->filter(fn (array $t) => $t['health_score'] < 40)->count();
         $avg = $data->count() > 0 ? round($data->avg('health_score')) : 0;
 
         return [
@@ -285,7 +285,7 @@ class BakeryInsights extends Page
             }
         }
 
-        return $alerts->sortByDesc(fn ($a) => $a['severity'] === 'critical' ? 1 : 0)->values();
+        return $alerts->sortByDesc(fn (array $a) => $a['severity'] === 'critical' ? 1 : 0)->values();
     }
 
     protected function getLastLogin(Tenant $tenant): ?string
@@ -460,7 +460,7 @@ class BakeryInsights extends Page
             }
         }
 
-        return $results->sortByDesc(fn ($t) => max($t['product_percent'], $t['order_percent']));
+        return $results->sortByDesc(fn (array $t) => max($t['product_percent'], $t['order_percent']));
     }
 
     public function getNextPlan(string $currentPlan): ?string

@@ -11,6 +11,7 @@ use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -49,12 +50,12 @@ class StaffManagement extends Page
         return 'Team Management';
     }
 
-    public function getTeamMembers()
+    public function getTeamMembers(): Collection
     {
         return User::orderByRaw("FIELD(role, 'owner', 'manager', 'staff')")->get();
     }
 
-    public function getPendingInvitations()
+    public function getPendingInvitations(): Collection
     {
         return StaffInvitation::whereNull('accepted_at')
             ->where('expires_at', '>', now())

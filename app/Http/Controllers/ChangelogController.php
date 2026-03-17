@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
+
 class ChangelogController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $entries = config('changelog', []);
 

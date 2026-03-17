@@ -17,6 +17,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrdersTable
 {
@@ -80,15 +81,15 @@ class OrdersTable
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
-                    ->query(function ($query, array $data) {
+                    ->query(function (Builder $query, array $data) {
                         return $query
                             ->when(
                                 $data['from'],
-                                fn ($query, $date) => $query->whereDate('delivery_date', '>=', $date),
+                                fn (Builder $query, string $date) => $query->whereDate('delivery_date', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn ($query, $date) => $query->whereDate('delivery_date', '<=', $date),
+                                fn (Builder $query, string $date) => $query->whereDate('delivery_date', '<=', $date),
                             );
                     }),
             ])

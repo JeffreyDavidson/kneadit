@@ -45,12 +45,12 @@ class RecipeCostCalculator extends Page
 
     public Collection $recipes;
 
-    public function mount()
+    public function mount(): void
     {
         $this->recipes = Recipe::with('product')->orderBy('name')->get();
     }
 
-    public function updatedSelectedRecipeId()
+    public function updatedSelectedRecipeId(): void
     {
         if ($this->selectedRecipeId) {
             $this->selectedRecipe = Recipe::with('product')->find($this->selectedRecipeId);
@@ -61,14 +61,14 @@ class RecipeCostCalculator extends Page
         }
     }
 
-    public function updatedTargetMarginPercentage()
+    public function updatedTargetMarginPercentage(): void
     {
         if ($this->selectedRecipe) {
             $this->calculateSuggestedPrice();
         }
     }
 
-    public function calculateCosts()
+    public function calculateCosts(): void
     {
         if (! $this->selectedRecipe || ! $this->selectedRecipe->ingredients) {
             $this->resetCalculations();
@@ -88,7 +88,7 @@ class RecipeCostCalculator extends Page
         $this->calculateSuggestedPrice();
     }
 
-    private function calculateCurrentMargin()
+    private function calculateCurrentMargin(): void
     {
         if ($this->selectedRecipe && $this->selectedRecipe->product && $this->selectedRecipe->product->price && $this->totalRecipeCost > 0) {
             $productPrice = $this->selectedRecipe->product->price;
@@ -98,7 +98,7 @@ class RecipeCostCalculator extends Page
         }
     }
 
-    private function calculateSuggestedPrice()
+    private function calculateSuggestedPrice(): void
     {
         if ($this->totalRecipeCost > 0 && $this->targetMarginPercentage > 0) {
             // Price = Cost / (1 - Margin/100)
@@ -108,7 +108,7 @@ class RecipeCostCalculator extends Page
         }
     }
 
-    private function resetCalculations()
+    private function resetCalculations(): void
     {
         $this->totalRecipeCost = 0.0;
         $this->currentMargin = 0.0;
@@ -121,7 +121,7 @@ class RecipeCostCalculator extends Page
             return collect();
         }
 
-        return collect($this->selectedRecipe->ingredients)->map(function ($ingredient) {
+        return collect($this->selectedRecipe->ingredients)->map(function (array $ingredient) {
             $cost = $ingredient['cost'] ?? 0;
             $quantity = $ingredient['quantity'] ?? 0;
             $totalCost = $cost * $quantity;

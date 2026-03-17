@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Response;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class QrCodeGenerator extends Page
 {
@@ -130,7 +131,7 @@ class QrCodeGenerator extends Page
         }
     }
 
-    public function downloadQrCode()
+    public function downloadQrCode(): StreamedResponse
     {
         $baseUrl = 'http://'.tenant()->domains->first()->domain;
         $page = $this->data['page'] ?? '';

@@ -10,6 +10,8 @@ use App\Models\OrderItem;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -23,9 +25,9 @@ class WeeklyDigest extends Mailable implements ShouldQueue
 
     public array $stats;
 
-    public $topProducts;
+    public Collection $topProducts;
 
-    public $atRiskCustomers;
+    public Collection $atRiskCustomers;
 
     public int $upcomingCount;
 
@@ -55,7 +57,7 @@ class WeeklyDigest extends Mailable implements ShouldQueue
         ];
 
         $this->topProducts = OrderItem::select('product_id', DB::raw('SUM(quantity) as total_qty'))
-            ->whereHas('order', fn ($q) => $q->whereBetween('created_at', [$weekStart, $weekEnd]))
+            ->whereHas('order', fn (Builder $q) => $q->whereBetween('created_at', [$weekStart, $weekEnd]))
             ->groupBy('product_id')
             ->orderByDesc('total_qty')
             ->limit(5)
@@ -63,7 +65,7 @@ class WeeklyDigest extends Mailable implements ShouldQueue
             ->get();
 
         $this->atRiskCustomers = Customer::whereHas('orders')
-            ->whereDoesntHave('orders', fn ($q) => $q->where('created_at', '>=', now()->subDays(30)))
+            ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays(30)))
             ->limit(5)
             ->get();
 

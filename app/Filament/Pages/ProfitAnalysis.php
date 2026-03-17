@@ -26,7 +26,7 @@ class ProfitAnalysis extends Page
 
     public string $sortBy = 'margin_desc';
 
-    public function updatedSortBy()
+    public function updatedSortBy(): void
     {
         // This will trigger a re-render with the new sort order
     }
@@ -36,7 +36,7 @@ class ProfitAnalysis extends Page
         $products = Product::with(['recipes'])
             ->where('is_active', true)
             ->get()
-            ->map(function ($product) {
+            ->map(function (Product $product) {
                 $cost = $this->getProductCost($product);
                 $price = $product->price;
                 $margin = null;
@@ -62,7 +62,7 @@ class ProfitAnalysis extends Page
         return $this->sortProducts($products);
     }
 
-    private function getProductCost($product): ?float
+    private function getProductCost(Product $product): ?float
     {
         // Check if product has a direct cost
         if ($product->cost && $product->cost > 0) {

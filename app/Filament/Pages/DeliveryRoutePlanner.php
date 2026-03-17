@@ -37,19 +37,19 @@ class DeliveryRoutePlanner extends Page
 
     public ?string $storeAddress = null;
 
-    public function mount()
+    public function mount(): void
     {
         $this->selectedDate = now()->format('Y-m-d');
         $this->storeAddress = Setting::get('store_address') ?? 'Store address not configured';
         $this->loadOrders();
     }
 
-    public function updatedSelectedDate()
+    public function updatedSelectedDate(): void
     {
         $this->loadOrders();
     }
 
-    public function loadOrders()
+    public function loadOrders(): void
     {
         if (! $this->selectedDate) {
             $this->deliveryOrders = collect();
@@ -63,7 +63,7 @@ class DeliveryRoutePlanner extends Page
             ->where('delivery_address', '!=', '')
             ->orderBy('delivery_time')
             ->get()
-            ->map(function ($order) {
+            ->map(function (Order $order) {
                 return [
                     'id' => $order->id,
                     'order_number' => $order->order_number,
@@ -76,7 +76,7 @@ class DeliveryRoutePlanner extends Page
             });
     }
 
-    private function calculateDistanceTier($deliveryAddress): array
+    private function calculateDistanceTier(string $deliveryAddress): array
     {
         // Simple distance tier calculation without external API
         // Based on postal codes, street numbers, or keywords
@@ -97,7 +97,7 @@ class DeliveryRoutePlanner extends Page
         }
     }
 
-    public function printRoute()
+    public function printRoute(): void
     {
         // This will trigger a print dialog via JavaScript
         $this->dispatch('print-route');
@@ -107,14 +107,14 @@ class DeliveryRoutePlanner extends Page
     {
         $totalOrders = $this->deliveryOrders->count();
         $totalRevenue = $this->deliveryOrders->sum('total');
-        $averageDistance = $this->deliveryOrders->avg(function ($order) {
+        $averageDistance = $this->deliveryOrders->avg(function (array $order) {
             return $order['distance_tier']['estimated_minutes'];
         });
 
         return [
             'total_orders' => $totalOrders,
             'total_revenue' => $totalRevenue,
-            'estimated_total_time' => $this->deliveryOrders->sum(function ($order) {
+            'estimated_total_time' => $this->deliveryOrders->sum(function (array $order) {
                 return $order['distance_tier']['estimated_minutes'];
             }),
             'average_distance_time' => round($averageDistance ?? 0, 1),

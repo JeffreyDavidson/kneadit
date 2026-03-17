@@ -41,7 +41,7 @@ class PriceSuggestionTool extends Page
 
     public Collection $marginComparisons;
 
-    public function mount()
+    public function mount(): void
     {
         $this->recipes = Recipe::with('product')
             ->whereNotNull('cost')
@@ -52,7 +52,7 @@ class PriceSuggestionTool extends Page
         $this->generateMarginComparisons();
     }
 
-    public function updatedSelectedRecipeId()
+    public function updatedSelectedRecipeId(): void
     {
         if ($this->selectedRecipeId) {
             $this->selectedRecipe = Recipe::with('product')->find($this->selectedRecipeId);
@@ -62,12 +62,12 @@ class PriceSuggestionTool extends Page
         $this->generateMarginComparisons();
     }
 
-    public function updatedTargetMarginPercentage()
+    public function updatedTargetMarginPercentage(): void
     {
         $this->generateMarginComparisons();
     }
 
-    public function generateMarginComparisons()
+    public function generateMarginComparisons(): void
     {
         if (! $this->selectedRecipe || ! $this->selectedRecipe->cost) {
             $this->marginComparisons = collect();
@@ -77,7 +77,7 @@ class PriceSuggestionTool extends Page
 
         $margins = [50, 60, 65, 70];
 
-        $this->marginComparisons = collect($margins)->map(function ($margin) {
+        $this->marginComparisons = collect($margins)->map(function (int $margin) {
             $suggestedPrice = $this->calculatePriceForMargin($margin);
             $currentPrice = $this->selectedRecipe->product->price ?? 0;
             $difference = $suggestedPrice - $currentPrice;

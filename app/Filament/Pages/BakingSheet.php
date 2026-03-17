@@ -34,13 +34,13 @@ class BakingSheet extends Page
 
     public Collection $bakingItems;
 
-    public function mount()
+    public function mount(): void
     {
         $this->selectedDate = now()->format('Y-m-d');
         $this->loadBakingSheet();
     }
 
-    public function loadBakingSheet()
+    public function loadBakingSheet(): void
     {
         // Aggregate order items by product for the selected date
         $groupConcat = DB::getDriverName() === 'sqlite'
@@ -63,7 +63,7 @@ class BakingSheet extends Page
             ->get();
     }
 
-    public function updatedSelectedDate()
+    public function updatedSelectedDate(): void
     {
         $this->loadBakingSheet();
     }

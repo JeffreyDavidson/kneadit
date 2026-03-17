@@ -69,13 +69,13 @@ class Coupon extends Model
     protected function valid(Builder $query): void
     {
         $query->active()
-            ->where(function ($q) {
+            ->where(function (Builder $q) {
                 $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
             })
-            ->where(function ($q) {
+            ->where(function (Builder $q) {
                 $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
             })
-            ->where(function ($q) {
+            ->where(function (Builder $q) {
                 $q->whereNull('max_uses')->orWhereColumn('used_count', '<', 'max_uses');
             });
     }

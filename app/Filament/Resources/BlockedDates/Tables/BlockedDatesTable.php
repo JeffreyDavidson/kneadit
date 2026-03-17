@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BlockedDates\Tables;
 
+use App\Models\BlockedDate;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -35,7 +36,7 @@ class BlockedDatesTable
                 TextColumn::make('open_time')
                     ->time()
                     ->placeholder('—')
-                    ->visible(fn ($record) => $record && ! $record->is_all_day),
+                    ->visible(fn (?BlockedDate $record) => $record && ! $record->is_all_day),
 
                 TextColumn::make('close_time')
                     ->time()

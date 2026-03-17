@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
+use Illuminate\Contracts\View\View;
 
 class BlogController extends Controller
 {
     /**
      * Show the storefront blog listing page.
      */
-    public function index()
+    public function index(): View
     {
         $categories = [
             'all' => 'All Posts',
@@ -39,7 +40,7 @@ class BlogController extends Controller
     /**
      * Show a single storefront blog post.
      */
-    public function show($slug)
+    public function show(string $slug): View
     {
         $post = BlogPost::where('slug', $slug)
             ->where('is_published', true)

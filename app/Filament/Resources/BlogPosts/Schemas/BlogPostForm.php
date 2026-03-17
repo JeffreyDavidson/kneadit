@@ -9,6 +9,8 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -21,7 +23,7 @@ class BlogPostForm
                 ->required()
                 ->maxLength(255)
                 ->live(onBlur: true)
-                ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+                ->afterStateUpdated(fn (string $state, Set $set) => $set('slug', Str::slug($state))),
 
             TextInput::make('slug')
                 ->required()
@@ -49,7 +51,7 @@ class BlogPostForm
             Toggle::make('is_published')
                 ->label('Published')
                 ->live()
-                ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                ->afterStateUpdated(function (bool $state, Set $set, Get $get) {
                     if ($state && ! $get('published_at')) {
                         $set('published_at', now()->format('Y-m-d H:i:s'));
                     }

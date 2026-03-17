@@ -32,7 +32,7 @@ class BirthdayWidget extends Widget
                     'is_today' => $daysUntil === 0,
                 ];
             })
-            ->filter(fn ($item) => $item->days_until >= 0 && $item->days_until <= 30)
+            ->filter(fn (object $item) => $item->days_until >= 0 && $item->days_until <= 30)
             ->sortBy('days_until')
             ->take(5);
     }

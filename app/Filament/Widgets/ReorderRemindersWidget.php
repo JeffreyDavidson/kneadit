@@ -28,7 +28,7 @@ class ReorderRemindersWidget extends Widget
             ->orderByRaw('MAX(orders.created_at) DESC')
             ->limit(10)
             ->get()
-            ->map(fn ($c) => [
+            ->map(fn (Customer $c) => [
                 'name' => $c->name,
                 'email' => $c->email,
                 'last_order' => $c->orders()->latest()->value('created_at')?->diffForHumans() ?? 'N/A',

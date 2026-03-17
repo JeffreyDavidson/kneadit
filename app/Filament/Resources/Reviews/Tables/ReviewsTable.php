@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Reviews\Tables;
 
+use App\Models\Review;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -35,11 +36,11 @@ class ReviewsTable
 
                 BadgeColumn::make('rating')
                     ->colors([
-                        'danger' => fn ($state) => $state <= 2,
+                        'danger' => fn (int $state) => $state <= 2,
                         'warning' => 3,
-                        'success' => fn ($state) => $state >= 4,
+                        'success' => fn (int $state) => $state >= 4,
                     ])
-                    ->formatStateUsing(fn ($state) => $state.' ★'),
+                    ->formatStateUsing(fn (int $state) => $state.' ★'),
 
                 TextColumn::make('comment')
                     ->limit(50)
@@ -93,14 +94,14 @@ class ReviewsTable
                 Action::make('approve')
                     ->icon('heroicon-o-check')
                     ->color('success')
-                    ->action(fn ($record) => $record->update(['is_approved' => true]))
-                    ->visible(fn ($record) => ! $record->is_approved),
+                    ->action(fn (Review $record) => $record->update(['is_approved' => true]))
+                    ->visible(fn (Review $record) => ! $record->is_approved),
 
                 Action::make('feature')
                     ->icon('heroicon-o-star')
                     ->color('warning')
-                    ->action(fn ($record) => $record->update(['is_featured' => true]))
-                    ->visible(fn ($record) => ! $record->is_featured && $record->is_approved),
+                    ->action(fn (Review $record) => $record->update(['is_featured' => true]))
+                    ->visible(fn (Review $record) => ! $record->is_featured && $record->is_approved),
 
                 EditAction::make(),
             ])

@@ -4,6 +4,7 @@ namespace App\Filament\Central\Pages;
 
 use App\Models\FeatureUsageLog;
 use BackedEnum;
+use Carbon\Carbon;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -63,7 +64,7 @@ class FeatureUsage extends Page
 
         $max = $data->max('total') ?: 1;
 
-        return $data->map(fn ($row) => [
+        return $data->map(fn (FeatureUsageLog $row) => [
             'feature' => $row->feature,
             'total' => $row->total,
             'percent' => round(($row->total / $max) * 100),
@@ -81,9 +82,9 @@ class FeatureUsage extends Page
 
         $logs = FeatureUsageLog::whereBetween('date', [$days->first()->toDateString(), $days->last()->toDateString()])
             ->get()
-            ->groupBy(fn ($log) => $log->feature.'|'.$log->date->toDateString());
+            ->groupBy(fn (FeatureUsageLog $log) => $log->feature.'|'.$log->date->toDateString());
 
-        $maxCount = $logs->max(fn ($group) => $group->sum('usage_count')) ?: 1;
+        $maxCount = $logs->max(fn (Collection $group) => $group->sum('usage_count')) ?: 1;
 
         $rows = [];
         foreach ($features as $feature) {
@@ -105,7 +106,7 @@ class FeatureUsage extends Page
         }
 
         return [
-            'days' => $days->map(fn ($d) => $d->format('M d'))->toArray(),
+            'days' => $days->map(fn (Carbon $d) => $d->format('M d'))->toArray(),
             'rows' => $rows,
         ];
     }
