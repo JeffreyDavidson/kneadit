@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\PaymentStatus;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Expense;
 use App\Models\Income;
@@ -275,7 +276,7 @@ class TaxExport extends Page
     protected function writeSummaryCsv($handle, string $from, string $to): void
     {
         $totalOrderRevenue = Order::whereBetween('created_at', [$from, $to.' 23:59:59'])
-            ->where('payment_status', 'paid')
+            ->where('payment_status', PaymentStatus::Paid)
             ->sum('total');
 
         $totalIncomeRevenue = Income::whereBetween('date', [$from, $to])->sum('amount');

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\OrderStatus;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Category;
 use App\Models\OrderItem;
@@ -86,7 +87,7 @@ class ProductTrends extends Page
         $prevEnd = $prevStart->copy()->endOfMonth();
 
         $currentCounts = OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->whereNotIn('orders.status', ['cancelled'])
+            ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
             ->whereBetween('orders.created_at', [$currentStart, $currentEnd])
             ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')
             ->groupBy('order_items.product_id')
@@ -94,7 +95,7 @@ class ProductTrends extends Page
             ->toArray();
 
         $prevCounts = OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->whereNotIn('orders.status', ['cancelled'])
+            ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
             ->whereBetween('orders.created_at', [$prevStart, $prevEnd])
             ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')
             ->groupBy('order_items.product_id')

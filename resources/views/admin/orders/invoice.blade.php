@@ -344,7 +344,7 @@
                 @endif
                 <div class="info-item">
                     <span class="info-label">Payment:</span>
-                    <span class="info-value">{{ ucfirst($order->payment_method ?? 'N/A') }}</span>
+                    <span class="info-value">{{ ucfirst($order->payment_method?->value ?? 'N/A') }}</span>
                 </div>
             </div>
         </div>

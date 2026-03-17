@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Orders\Pages;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Mail\NewOrderMessage;
 use App\Models\Setting;
@@ -34,21 +36,21 @@ class ViewOrder extends ViewRecord
                                 TextEntry::make('status')
                                     ->badge()
                                     ->color(fn (string $state): string => match ($state) {
-                                        'pending' => 'gray',
-                                        'confirmed' => 'info',
-                                        'baking' => 'warning',
-                                        'ready' => 'success',
-                                        'delivered' => 'success',
-                                        'cancelled' => 'danger',
+                                        OrderStatus::Pending->value => 'gray',
+                                        OrderStatus::Confirmed->value => 'info',
+                                        OrderStatus::Baking->value => 'warning',
+                                        OrderStatus::Ready->value => 'success',
+                                        OrderStatus::Delivered->value => 'success',
+                                        OrderStatus::Cancelled->value => 'danger',
                                         default => 'gray',
                                     }),
                                 TextEntry::make('payment_status')
                                     ->badge()
                                     ->color(fn (string $state): string => match ($state) {
-                                        'pending' => 'warning',
-                                        'paid' => 'success',
-                                        'failed' => 'danger',
-                                        'refunded' => 'gray',
+                                        PaymentStatus::Unpaid->value => 'warning',
+                                        PaymentStatus::Paid->value => 'success',
+                                        PaymentStatus::Cancelled->value => 'danger',
+                                        PaymentStatus::Refunded->value => 'gray',
                                         default => 'gray',
                                     }),
                             ]),
@@ -133,14 +135,7 @@ class ViewOrder extends ViewRecord
                 ->form([
                     Select::make('status')
                         ->label('New Status')
-                        ->options([
-                            'pending' => 'Pending',
-                            'confirmed' => 'Confirmed',
-                            'baking' => 'Baking',
-                            'ready' => 'Ready for Pickup/Delivery',
-                            'delivered' => 'Delivered',
-                            'cancelled' => 'Cancelled',
-                        ])
+                        ->options(OrderStatus::class)
                         ->default($this->record->status)
                         ->required(),
                 ])

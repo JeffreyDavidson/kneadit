@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\OrderStatus;
 use App\Mail\ReviewRequest;
 use App\Models\Order;
 use App\Models\Setting;
@@ -29,7 +30,7 @@ class SendReviewRequests extends Command
 
                 $delayHours = (int) Setting::get('review_request_delay_hours', '24');
 
-                $orders = Order::where('status', 'delivered')
+                $orders = Order::where('status', OrderStatus::Delivered)
                     ->whereNull('review_request_sent_at')
                     ->where('updated_at', '<=', now()->subHours($delayHours))
                     ->whereHas('customer', fn ($q) => $q->whereNotNull('email'))

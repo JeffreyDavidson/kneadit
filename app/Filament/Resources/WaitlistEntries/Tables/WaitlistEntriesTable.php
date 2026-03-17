@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\WaitlistEntries\Tables;
 
+use App\Enums\WaitlistStatus;
 use App\Models\WaitlistEntry;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -44,10 +45,10 @@ class WaitlistEntriesTable
 
                 BadgeColumn::make('status')
                     ->colors([
-                        'warning' => 'waiting',
-                        'info' => 'notified',
-                        'success' => 'converted',
-                        'danger' => 'removed',
+                        'warning' => WaitlistStatus::Waiting->value,
+                        'info' => WaitlistStatus::Notified->value,
+                        'success' => WaitlistStatus::Converted->value,
+                        'danger' => WaitlistStatus::Removed->value,
                     ]),
 
                 TextColumn::make('created_at')
@@ -57,7 +58,7 @@ class WaitlistEntriesTable
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(WaitlistEntry::STATUSES),
+                    ->options(WaitlistStatus::class),
 
                 Filter::make('requested_date')
                     ->form([
@@ -89,7 +90,7 @@ class WaitlistEntriesTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (WaitlistEntry $record) => $record->status === 'waiting'),
+                    ->visible(fn (WaitlistEntry $record) => $record->status === WaitlistStatus::Waiting),
 
                 Action::make('convert')
                     ->icon('heroicon-o-check')
@@ -103,7 +104,7 @@ class WaitlistEntriesTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (WaitlistEntry $record) => in_array($record->status, ['waiting', 'notified'])),
+                    ->visible(fn (WaitlistEntry $record) => in_array($record->status, [WaitlistStatus::Waiting, WaitlistStatus::Notified])),
 
                 Action::make('remove')
                     ->icon('heroicon-o-x-mark')
@@ -117,7 +118,7 @@ class WaitlistEntriesTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (WaitlistEntry $record) => $record->status !== 'removed'),
+                    ->visible(fn (WaitlistEntry $record) => $record->status !== WaitlistStatus::Removed),
 
                 EditAction::make(),
             ])

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Coupons\Schemas;
 
+use App\Enums\CouponType;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -29,10 +30,7 @@ class CouponForm
 
                                 Select::make('type')
                                     ->required()
-                                    ->options([
-                                        'percentage' => 'Percentage',
-                                        'fixed' => 'Fixed Amount',
-                                    ])
+                                    ->options(CouponType::class)
                                     ->reactive(),
 
                                 TextInput::make('value')
@@ -40,8 +38,8 @@ class CouponForm
                                     ->numeric()
                                     ->minValue(0)
                                     ->step(0.01)
-                                    ->prefix(fn ($get) => $get('type') === 'fixed' ? '$' : '')
-                                    ->suffix(fn ($get) => $get('type') === 'percentage' ? '%' : ''),
+                                    ->prefix(fn ($get) => $get('type') === CouponType::Fixed->value ? '$' : '')
+                                    ->suffix(fn ($get) => $get('type') === CouponType::Percentage->value ? '%' : ''),
 
                                 TextInput::make('min_order_amount')
                                     ->numeric()

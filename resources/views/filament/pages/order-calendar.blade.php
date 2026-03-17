@@ -96,11 +96,11 @@
                                 </div>
                                 <div class="text-right">
                                     <span class="inline-block px-2 py-1 text-xs rounded-full
-                                        {{ $order->status === 'confirmed' ? 'bg-green-100 text-green-800' : '' }}
-                                        {{ $order->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                        {{ $order->status === 'in_progress' ? 'bg-blue-100 text-blue-800' : '' }}
-                                        {{ $order->status === 'completed' ? 'bg-gray-100 text-gray-800' : '' }}">
-                                        {{ ucfirst($order->status) }}
+                                        {{ $order->status === \App\Enums\OrderStatus::Confirmed ? 'bg-green-100 text-green-800' : '' }}
+                                        {{ $order->status === \App\Enums\OrderStatus::Pending ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                        {{ $order->status === \App\Enums\OrderStatus::Baking ? 'bg-blue-100 text-blue-800' : '' }}
+                                        {{ $order->status === \App\Enums\OrderStatus::Delivered ? 'bg-gray-100 text-gray-800' : '' }}">
+                                        {{ ucfirst($order->status->value) }}
                                     </span>
                                     <p class="text-sm font-medium text-gray-900 mt-1">${{ number_format($order->total, 2) }}</p>
                                 </div>

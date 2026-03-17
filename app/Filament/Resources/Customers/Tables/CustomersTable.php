@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Customers\Tables;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use Carbon\Carbon;
 use Filament\Actions\BulkActionGroup;
@@ -18,8 +19,8 @@ class CustomersTable
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query
-                ->withCount(['orders' => fn ($q) => $q->where('status', '!=', 'cancelled')])
-                ->withSum(['orders' => fn ($q) => $q->where('status', '!=', 'cancelled')], 'total')
+                ->withCount(['orders' => fn ($q) => $q->where('status', '!=', OrderStatus::Cancelled)])
+                ->withSum(['orders' => fn ($q) => $q->where('status', '!=', OrderStatus::Cancelled)], 'total')
                 ->addSelect([
                     'last_order_date' => Order::select('created_at')
                         ->whereColumn('customer_id', 'customers.id')

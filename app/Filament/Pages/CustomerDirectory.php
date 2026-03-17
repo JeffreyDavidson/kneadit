@@ -144,7 +144,7 @@ class CustomerDirectory extends Page implements HasForms
                     'id' => $order->id,
                     'order_number' => $order->order_number,
                     'status' => ucfirst($order->status),
-                    'payment_status' => ucfirst($order->payment_status),
+                    'payment_status' => ucfirst($order->payment_status->value),
                     'total' => number_format($order->total, 2),
                     'date' => $order->created_at->format('M j, Y'),
                     'delivery_date' => $order->delivery_date?->format('M j, Y'),

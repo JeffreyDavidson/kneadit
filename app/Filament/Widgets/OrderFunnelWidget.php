@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use Filament\Widgets\Widget;
 
@@ -16,11 +17,11 @@ class OrderFunnelWidget extends Widget
     public function getStages(): array
     {
         $stages = [
-            ['key' => 'pending', 'label' => 'Pending', 'color' => '#F59E0B', 'bg' => '#FEF3C7'],
-            ['key' => 'confirmed', 'label' => 'Confirmed', 'color' => '#3B82F6', 'bg' => '#DBEAFE'],
-            ['key' => 'baking', 'label' => 'Baking', 'color' => '#8B5E3C', 'bg' => '#F5E6D3'],
-            ['key' => 'ready', 'label' => 'Ready', 'color' => '#10B981', 'bg' => '#D1FAE5'],
-            ['key' => 'delivered', 'label' => 'Delivered', 'color' => '#6B7280', 'bg' => '#F3F4F6'],
+            ['key' => OrderStatus::Pending->value, 'label' => 'Pending', 'color' => '#F59E0B', 'bg' => '#FEF3C7'],
+            ['key' => OrderStatus::Confirmed->value, 'label' => 'Confirmed', 'color' => '#3B82F6', 'bg' => '#DBEAFE'],
+            ['key' => OrderStatus::Baking->value, 'label' => 'Baking', 'color' => '#8B5E3C', 'bg' => '#F5E6D3'],
+            ['key' => OrderStatus::Ready->value, 'label' => 'Ready', 'color' => '#10B981', 'bg' => '#D1FAE5'],
+            ['key' => OrderStatus::Delivered->value, 'label' => 'Delivered', 'color' => '#6B7280', 'bg' => '#F3F4F6'],
         ];
 
         foreach ($stages as &$stage) {

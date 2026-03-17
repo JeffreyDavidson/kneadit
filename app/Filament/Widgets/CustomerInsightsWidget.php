@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
 use Carbon\Carbon;
@@ -22,24 +23,24 @@ class CustomerInsightsWidget extends Widget
 
     public function getRepeatCustomerRate(): float
     {
-        $totalWithOrders = Customer::whereHas('orders', fn ($q) => $q->where('status', '!=', 'cancelled'))->count();
+        $totalWithOrders = Customer::whereHas('orders', fn ($q) => $q->where('status', '!=', OrderStatus::Cancelled))->count();
         if ($totalWithOrders === 0) {
             return 0;
         }
 
-        $repeat = Customer::whereHas('orders', fn ($q) => $q->where('status', '!=', 'cancelled'), '>=', 2)->count();
+        $repeat = Customer::whereHas('orders', fn ($q) => $q->where('status', '!=', OrderStatus::Cancelled), '>=', 2)->count();
 
         return round(($repeat / $totalWithOrders) * 100, 1);
     }
 
     public function getAvgOrderValue(): array
     {
-        $thisMonth = (float) Order::where('status', '!=', 'cancelled')
+        $thisMonth = (float) Order::where('status', '!=', OrderStatus::Cancelled)
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->avg('total') ?? 0;
 
-        $lastMonth = (float) Order::where('status', '!=', 'cancelled')
+        $lastMonth = (float) Order::where('status', '!=', OrderStatus::Cancelled)
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
             ->avg('total') ?? 0;

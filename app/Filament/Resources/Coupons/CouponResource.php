@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Coupons;
 
+use App\Enums\CouponType;
 use App\Filament\Resources\Coupons\Pages\CreateCoupon;
 use App\Filament\Resources\Coupons\Pages\EditCoupon;
 use App\Filament\Resources\Coupons\Pages\ListCoupons;
@@ -65,7 +66,7 @@ class CouponResource extends Resource
     {
         return [
             'Type' => ucfirst($record->type ?? 'N/A'),
-            'Value' => $record->type === 'percentage' ? $record->value.'%' : '$'.number_format($record->value, 2),
+            'Value' => $record->type === CouponType::Percentage ? $record->value.'%' : '$'.number_format($record->value, 2),
             'Active' => $record->is_active ? 'Yes' : 'No',
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\OrderItem;
 use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
@@ -30,7 +31,7 @@ class PopularProductsWidget extends BaseWidget
                 OrderItem::query()
                     ->join('orders', 'orders.id', '=', 'order_items.order_id')
                     ->join('products', 'products.id', '=', 'order_items.product_id')
-                    ->where('orders.status', '!=', 'cancelled')
+                    ->where('orders.status', '!=', OrderStatus::Cancelled)
                     ->whereBetween('orders.delivery_date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
                     ->select(
                         'order_items.product_id',

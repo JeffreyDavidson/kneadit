@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
@@ -133,8 +135,8 @@ class StripeCheckoutService
             // Store session ID on the order
             $order->update([
                 'stripe_checkout_session_id' => $session->id,
-                'payment_method' => 'stripe',
-                'payment_status' => 'unpaid',
+                'payment_method' => PaymentMethod::Stripe,
+                'payment_status' => PaymentStatus::Unpaid,
             ]);
 
             Log::info('Stripe checkout session created', [
@@ -186,7 +188,7 @@ class StripeCheckoutService
             }
 
             $order->update([
-                'payment_status' => 'paid',
+                'payment_status' => PaymentStatus::Paid,
                 'stripe_payment_intent_id' => $session->payment_intent->id ?? $session->payment_intent,
             ]);
 

@@ -2,6 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\DeliveryType;
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Customer;
 use App\Models\Order;
@@ -217,17 +221,14 @@ class QuickOrder extends Page
                         Select::make('delivery_type')
                             ->label('Delivery Type')
                             ->required()
-                            ->options([
-                                'pickup' => 'Pickup',
-                                'delivery' => 'Delivery',
-                            ])
+                            ->options(DeliveryType::class)
                             ->live()
-                            ->default('pickup'),
+                            ->default(DeliveryType::Pickup->value),
 
                         TextInput::make('delivery_address')
                             ->label('Delivery Address')
-                            ->visible(fn (Get $get): bool => $get('delivery_type') === 'delivery')
-                            ->required(fn (Get $get): bool => $get('delivery_type') === 'delivery'),
+                            ->visible(fn (Get $get): bool => $get('delivery_type') === DeliveryType::Delivery->value)
+                            ->required(fn (Get $get): bool => $get('delivery_type') === DeliveryType::Delivery->value),
                     ]),
                 ])
                 ->collapsible(),
@@ -238,11 +239,8 @@ class QuickOrder extends Page
                         Select::make('payment_method')
                             ->label('Payment Method')
                             ->required()
-                            ->options([
-                                'cash' => 'Cash',
-                                'paypal' => 'PayPal',
-                            ])
-                            ->default('cash'),
+                            ->options(PaymentMethod::class)
+                            ->default(PaymentMethod::Cash->value),
 
                         Textarea::make('notes')
                             ->label('Order Notes')
@@ -287,19 +285,19 @@ class QuickOrder extends Page
                 // Calculate totals
                 $orderItems = $data['order_items'] ?? [];
                 $subtotal = collect($orderItems)->sum(fn ($item) => $item['quantity'] * $item['unit_price']);
-                $deliveryFee = ($data['delivery_type'] === 'delivery') ? 5.00 : 0.00;
+                $deliveryFee = ($data['delivery_type'] === DeliveryType::Delivery->value) ? 5.00 : 0.00;
                 $total = $subtotal + $deliveryFee;
 
                 // Create order
                 $order = Order::create([
                     'customer_id' => $customer->id,
-                    'status' => 'pending',
-                    'payment_status' => 'pending',
+                    'status' => OrderStatus::Pending,
+                    'payment_status' => PaymentStatus::Unpaid,
                     'payment_method' => $data['payment_method'],
                     'subtotal' => $subtotal,
                     'delivery_fee' => $deliveryFee,
                     'total' => $total,
-                    'delivery_address' => $data['delivery_type'] === 'delivery' ? $data['delivery_address'] : null,
+                    'delivery_address' => $data['delivery_type'] === DeliveryType::Delivery->value ? $data['delivery_address'] : null,
                     'delivery_date' => $data['delivery_date'],
                     'delivery_time' => $data['delivery_time'],
                     'notes' => $data['notes'] ?? null,

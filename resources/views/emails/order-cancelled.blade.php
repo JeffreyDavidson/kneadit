@@ -42,11 +42,11 @@
     </div>
 </div>
 
-@if($order->payment_method !== 'cash')
+@if($order->payment_method->value !== 'cash')
     <div style="background-color: #d1ecf1; border-radius: 6px; padding: 15px; margin: 20px 0; border-left: 4px solid #17a2b8;">
         <div class="info-label">💳 Refund Information</div>
         <p style="margin: 5px 0;">Your payment has been cancelled and you will not be charged.</p>
-        <p style="margin: 5px 0;"><strong>Original Payment Method:</strong> {{ ucfirst($order->payment_method) }}</p>
+        <p style="margin: 5px 0;"><strong>Original Payment Method:</strong> {{ ucfirst($order->payment_method->value) }}</p>
         <p style="margin: 5px 0;"><strong>Refund Amount:</strong> ${{ number_format($order->total, 2) }}</p>
         <p style="margin: 10px 0 5px; color: #0c5460;"><em>If you were already charged, the refund will be processed within 3-5 business days.</em></p>
     </div>

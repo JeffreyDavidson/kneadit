@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Services\PayPalService;
 use Filament\Actions\Action;
@@ -32,21 +34,21 @@ class OrdersTable
 
                 BadgeColumn::make('status')
                     ->colors([
-                        'gray' => 'pending',
-                        'warning' => 'confirmed',
-                        'info' => 'baking',
-                        'success' => 'ready',
-                        'primary' => 'delivered',
-                        'danger' => 'cancelled',
+                        'gray' => OrderStatus::Pending->value,
+                        'warning' => OrderStatus::Confirmed->value,
+                        'info' => OrderStatus::Baking->value,
+                        'success' => OrderStatus::Ready->value,
+                        'primary' => OrderStatus::Delivered->value,
+                        'danger' => OrderStatus::Cancelled->value,
                     ]),
 
                 BadgeColumn::make('payment_status')
                     ->label('Payment')
                     ->colors([
-                        'danger' => 'unpaid',
-                        'success' => 'paid',
-                        'gray' => 'cancelled',
-                        'warning' => 'refunded',
+                        'danger' => PaymentStatus::Unpaid->value,
+                        'success' => PaymentStatus::Paid->value,
+                        'gray' => PaymentStatus::Cancelled->value,
+                        'warning' => PaymentStatus::Refunded->value,
                     ]),
 
                 TextColumn::make('total')
@@ -68,22 +70,10 @@ class OrdersTable
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'confirmed' => 'Confirmed',
-                        'baking' => 'Baking',
-                        'ready' => 'Ready',
-                        'delivered' => 'Delivered',
-                        'cancelled' => 'Cancelled',
-                    ]),
+                    ->options(OrderStatus::class),
 
                 SelectFilter::make('payment_status')
-                    ->options([
-                        'unpaid' => 'Unpaid',
-                        'paid' => 'Paid',
-                        'cancelled' => 'Cancelled',
-                        'refunded' => 'Refunded',
-                    ]),
+                    ->options(PaymentStatus::class),
 
                 Filter::make('delivery_date')
                     ->form([
@@ -110,13 +100,13 @@ class OrdersTable
                     ->modalHeading('Confirm Order')
                     ->modalDescription('Are you sure you want to confirm this order?')
                     ->action(function (Order $record) {
-                        $record->update(['status' => 'confirmed']);
+                        $record->update(['status' => OrderStatus::Confirmed]);
                         Notification::make()
                             ->title('Order confirmed')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => $record->status === 'pending'),
+                    ->visible(fn (Order $record) => $record->status === OrderStatus::Pending),
 
                 Action::make('start_baking')
                     ->label('Start Baking')
@@ -126,13 +116,13 @@ class OrdersTable
                     ->modalHeading('Start Baking')
                     ->modalDescription('Mark this order as currently being baked?')
                     ->action(function (Order $record) {
-                        $record->update(['status' => 'baking']);
+                        $record->update(['status' => OrderStatus::Baking]);
                         Notification::make()
                             ->title('Order marked as baking')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => $record->status === 'confirmed'),
+                    ->visible(fn (Order $record) => $record->status === OrderStatus::Confirmed),
 
                 Action::make('mark_ready')
                     ->label('Mark Ready')
@@ -142,13 +132,13 @@ class OrdersTable
                     ->modalHeading('Mark Ready')
                     ->modalDescription('Mark this order as ready for pickup/delivery?')
                     ->action(function (Order $record) {
-                        $record->update(['status' => 'ready']);
+                        $record->update(['status' => OrderStatus::Ready]);
                         Notification::make()
                             ->title('Order marked as ready')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => $record->status === 'baking'),
+                    ->visible(fn (Order $record) => $record->status === OrderStatus::Baking),
 
                 Action::make('mark_delivered')
                     ->label('Mark Delivered')
@@ -158,13 +148,13 @@ class OrdersTable
                     ->modalHeading('Mark Delivered')
                     ->modalDescription('Mark this order as delivered/completed?')
                     ->action(function (Order $record) {
-                        $record->update(['status' => 'delivered']);
+                        $record->update(['status' => OrderStatus::Delivered]);
                         Notification::make()
                             ->title('Order marked as delivered')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => $record->status === 'ready'),
+                    ->visible(fn (Order $record) => $record->status === OrderStatus::Ready),
 
                 Action::make('cancel')
                     ->icon('heroicon-o-x-circle')
@@ -173,13 +163,13 @@ class OrdersTable
                     ->modalHeading('Cancel Order')
                     ->modalDescription('Are you sure you want to cancel this order? This action cannot be undone.')
                     ->action(function (Order $record) {
-                        $record->update(['status' => 'cancelled']);
+                        $record->update(['status' => OrderStatus::Cancelled]);
                         Notification::make()
                             ->title('Order cancelled')
                             ->warning()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => in_array($record->status, ['pending', 'confirmed', 'baking'])),
+                    ->visible(fn (Order $record) => in_array($record->status, [OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Baking])),
 
                 Action::make('send_paypal_invoice')
                     ->label('Send PayPal Invoice')
@@ -205,9 +195,9 @@ class OrdersTable
                                 ->send();
                         }
                     })
-                    ->visible(fn (Order $record) => $record->payment_status === 'unpaid' &&
+                    ->visible(fn (Order $record) => $record->payment_status === PaymentStatus::Unpaid &&
                         ! $record->paypal_invoice_id &&
-                        in_array($record->status, ['confirmed', 'baking', 'ready'])
+                        in_array($record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready])
                     ),
 
                 EditAction::make(),

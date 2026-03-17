@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\BlockedDate;
 use App\Models\CapacityLimit;
 use App\Models\Order;
@@ -20,7 +21,7 @@ class CapacityTodayWidget extends Widget
     {
         $maxOrders = CapacityLimit::getMaxOrders($date);
         $currentOrders = Order::whereDate('delivery_date', $date)
-            ->whereNotIn('status', ['cancelled', 'refunded'])
+            ->whereNotIn('status', [OrderStatus::Cancelled])
             ->count();
 
         $percentage = $maxOrders > 0 ? min(100, round(($currentOrders / $maxOrders) * 100)) : 0;

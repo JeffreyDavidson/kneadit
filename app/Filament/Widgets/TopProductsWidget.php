@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\OrderItem;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
@@ -27,7 +28,7 @@ class TopProductsWidget extends ChartWidget
         $products = OrderItem::query()
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->join('products', 'products.id', '=', 'order_items.product_id')
-            ->where('orders.status', '!=', 'cancelled')
+            ->where('orders.status', '!=', OrderStatus::Cancelled)
             ->whereBetween('orders.delivery_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
             ->select(
                 'products.name',

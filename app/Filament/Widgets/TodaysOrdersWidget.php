@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
@@ -39,12 +40,12 @@ class TodaysOrdersWidget extends BaseWidget
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state) => match ($state) {
-                        'pending' => 'warning',
-                        'confirmed' => 'info',
-                        'baking' => 'primary',
-                        'ready' => 'success',
-                        'delivered' => 'gray',
-                        'cancelled' => 'danger',
+                        OrderStatus::Pending->value => 'warning',
+                        OrderStatus::Confirmed->value => 'info',
+                        OrderStatus::Baking->value => 'primary',
+                        OrderStatus::Ready->value => 'success',
+                        OrderStatus::Delivered->value => 'gray',
+                        OrderStatus::Cancelled->value => 'danger',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state) => ucfirst($state)),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Setting;
 
@@ -12,7 +13,7 @@ class DriverController extends Controller
         $orders = Order::with(['customer', 'orderItems.product'])
             ->whereNotNull('delivery_address')
             ->where('delivery_address', '!=', '')
-            ->whereIn('status', ['confirmed', 'baking', 'ready'])
+            ->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready])
             ->whereDate('delivery_date', today())
             ->orderBy('delivery_time')
             ->get();
@@ -24,7 +25,7 @@ class DriverController extends Controller
 
     public function markDelivered(Order $order)
     {
-        $order->update(['status' => 'delivered']);
+        $order->update(['status' => OrderStatus::Delivered]);
 
         return back()->with('success', "Order #{$order->order_number} marked as delivered!");
     }

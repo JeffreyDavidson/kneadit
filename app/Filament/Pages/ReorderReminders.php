@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\OrderStatus;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
 use App\Traits\HasPlanGating;
@@ -64,7 +65,7 @@ class ReorderReminders extends Page
                 DB::raw('COUNT(*) as total_orders'),
                 DB::raw('SUM(total) as total_spent'),
             ])
-            ->where('status', '!=', 'cancelled')
+            ->where('status', '!=', OrderStatus::Cancelled)
             ->groupBy('customer_email')
             ->having(DB::raw('MAX(delivery_date)'), '<=', $cutoff->toDateString())
             ->orderBy(DB::raw('MAX(delivery_date)'), 'asc')

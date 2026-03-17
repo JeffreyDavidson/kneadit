@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
@@ -41,7 +42,7 @@ class WelcomeBannerWidget extends Widget
     public function getRevenueToday(): string
     {
         return number_format(
-            (float) Order::where('status', '!=', 'cancelled')
+            (float) Order::where('status', '!=', OrderStatus::Cancelled)
                 ->whereDate('delivery_date', Carbon::today())
                 ->sum('total'),
             2
@@ -50,6 +51,6 @@ class WelcomeBannerWidget extends Widget
 
     public function getPendingOrders(): int
     {
-        return Order::where('status', 'pending')->count();
+        return Order::where('status', OrderStatus::Pending)->count();
     }
 }

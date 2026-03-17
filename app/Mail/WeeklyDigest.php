@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Enums\OrderStatus;
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Customer;
 use App\Models\Order;
@@ -67,7 +68,7 @@ class WeeklyDigest extends Mailable implements ShouldQueue
             ->get();
 
         $this->upcomingCount = Order::whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
-            ->where('status', '!=', 'cancelled')
+            ->where('status', '!=', OrderStatus::Cancelled)
             ->count();
 
         $this->storeName = Setting::get('store_name', 'KneadIt Bakery');

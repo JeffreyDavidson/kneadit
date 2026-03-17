@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Coupons\Tables;
 
+use App\Enums\CouponType;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -24,15 +25,15 @@ class CouponsTable
 
                 BadgeColumn::make('type')
                     ->colors([
-                        'primary' => 'percentage',
-                        'success' => 'fixed',
+                        'primary' => CouponType::Percentage->value,
+                        'success' => CouponType::Fixed->value,
                     ])
                     ->formatStateUsing(fn (string $state): string => ucfirst($state)),
 
                 TextColumn::make('value')
                     ->money('USD')
                     ->formatStateUsing(function ($state, $record) {
-                        if ($record->type === 'percentage') {
+                        if ($record->type === CouponType::Percentage) {
                             return $state.'%';
                         }
 
@@ -61,10 +62,7 @@ class CouponsTable
             ])
             ->filters([
                 SelectFilter::make('type')
-                    ->options([
-                        'percentage' => 'Percentage',
-                        'fixed' => 'Fixed Amount',
-                    ]),
+                    ->options(CouponType::class),
 
                 TernaryFilter::make('is_active'),
 

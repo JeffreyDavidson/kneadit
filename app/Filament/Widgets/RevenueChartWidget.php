@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -70,7 +71,7 @@ class RevenueChartWidget extends ChartWidget
 
     private function getDailyRevenue(Carbon $start, Carbon $end): array
     {
-        $raw = Order::where('status', '!=', 'cancelled')
+        $raw = Order::where('status', '!=', OrderStatus::Cancelled)
             ->whereBetween('delivery_date', [$start, $end])
             ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue')
             ->groupBy('date')

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\WaitlistEntries\Schemas;
 
+use App\Enums\WaitlistStatus;
 use App\Models\Product;
-use App\Models\WaitlistEntry;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -52,9 +52,9 @@ class WaitlistEntryForm
                             ]),
 
                         Select::make('status')
-                            ->options(WaitlistEntry::STATUSES)
+                            ->options(WaitlistStatus::class)
                             ->required()
-                            ->default('waiting'),
+                            ->default(WaitlistStatus::Waiting->value),
 
                         Textarea::make('notes')
                             ->rows(3),

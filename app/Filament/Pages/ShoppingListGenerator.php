@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\OrderStatus;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Ingredient;
 use App\Models\Order;
@@ -54,7 +55,7 @@ class ShoppingListGenerator extends Page
         $orderItems = Order::query()
             ->with(['orderItems.product.recipes'])
             ->whereBetween('delivery_date', [$this->startDate, $this->endDate])
-            ->whereIn('status', ['confirmed', 'in_progress'])
+            ->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking])
             ->get()
             ->flatMap(function ($order) {
                 return $order->orderItems;

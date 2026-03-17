@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
@@ -20,7 +21,7 @@ class ReorderRemindersWidget extends Widget
 
         return Customer::select('customers.id', 'customers.name', 'customers.email')
             ->join('orders', 'orders.customer_id', '=', 'customers.id')
-            ->whereNotIn('orders.status', ['cancelled', 'refunded'])
+            ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
             ->groupBy('customers.id', 'customers.name', 'customers.email')
             ->havingRaw('COUNT(orders.id) >= 2')
             ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
@@ -40,7 +41,7 @@ class ReorderRemindersWidget extends Widget
         $thirtyDaysAgo = Carbon::now()->subDays(30);
 
         return Customer::join('orders', 'orders.customer_id', '=', 'customers.id')
-            ->whereNotIn('orders.status', ['cancelled', 'refunded'])
+            ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
             ->groupBy('customers.id')
             ->havingRaw('COUNT(orders.id) >= 2')
             ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])

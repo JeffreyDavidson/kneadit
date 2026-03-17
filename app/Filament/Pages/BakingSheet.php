@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\OrderStatus;
 use App\Filament\Traits\RequiresRole;
 use App\Models\OrderItem;
 use App\Traits\HasPlanGating;
@@ -51,7 +52,7 @@ class BakingSheet extends Page
             ->join('products', 'order_items.product_id', '=', 'products.id')
             ->join('customers', 'orders.customer_id', '=', 'customers.id')
             ->whereDate('orders.delivery_date', $this->selectedDate)
-            ->whereIn('orders.status', ['confirmed', 'in_progress'])
+            ->whereIn('orders.status', [OrderStatus::Confirmed->value, OrderStatus::Baking->value])
             ->select([
                 'products.name as product_name',
                 DB::raw('SUM(order_items.quantity) as total_quantity'),

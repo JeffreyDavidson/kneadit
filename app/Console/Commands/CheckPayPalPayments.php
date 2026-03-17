@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Models\Tenant;
@@ -49,7 +50,7 @@ class CheckPayPalPayments extends Command
     {
         $paypalService = app(PayPalService::class);
 
-        $orders = Order::where('payment_status', 'unpaid')
+        $orders = Order::where('payment_status', PaymentStatus::Unpaid)
             ->whereNotNull('paypal_invoice_id')
             ->get();
 
@@ -69,11 +70,11 @@ class CheckPayPalPayments extends Command
             }
 
             match ($status) {
-                'PAID' => tap($order, fn ($o) => $o->update(['payment_status' => 'paid']))
+                'PAID' => tap($order, fn ($o) => $o->update(['payment_status' => PaymentStatus::Paid]))
                     && $this->info("  ✓ #{$order->order_number} paid"),
-                'CANCELLED' => tap($order, fn ($o) => $o->update(['payment_status' => 'cancelled']))
+                'CANCELLED' => tap($order, fn ($o) => $o->update(['payment_status' => PaymentStatus::Cancelled]))
                     && $this->warn("  ⚠ #{$order->order_number} cancelled"),
-                'REFUNDED' => tap($order, fn ($o) => $o->update(['payment_status' => 'refunded']))
+                'REFUNDED' => tap($order, fn ($o) => $o->update(['payment_status' => PaymentStatus::Refunded]))
                     && $this->warn("  ⚠ #{$order->order_number} refunded"),
                 default => null,
             };
