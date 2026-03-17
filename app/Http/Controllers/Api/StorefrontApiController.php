@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\CapacityLimit;
 use App\Models\Category;
 use App\Models\ContactMessage;
-use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerFavorite;
 use App\Models\GalleryPhoto;
@@ -15,6 +14,7 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Models\Setting;
 use App\Models\WaitlistEntry;
+use App\Services\CouponService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -175,10 +175,11 @@ class StorefrontApiController extends Controller
 
         $discount = 0;
         if (! empty($validated['coupon_code'])) {
-            $coupon = Coupon::where('code', strtoupper($validated['coupon_code']))->valid()->first();
-            if ($coupon) {
-                $discount = $coupon->calculateDiscount($subtotal);
-                $coupon->increment('used_count');
+            $couponService = new CouponService;
+            $result = $couponService->validate($validated['coupon_code'], $subtotal);
+            if ($result['valid']) {
+                $discount = $result['discount'];
+                $couponService->apply($result['coupon']);
             }
         }
 
@@ -218,19 +219,22 @@ class StorefrontApiController extends Controller
             'subtotal' => 'required|numeric|min:0',
         ]);
 
-        $coupon = Coupon::where('code', strtoupper($validated['code']))->valid()->first();
+        $couponService = new CouponService;
+        $result = $couponService->validate($validated['code'], (float) $validated['subtotal']);
 
-        if (! $coupon) {
+        if (! $result['valid']) {
             return response()->json([
                 'data' => ['valid' => false, 'discount_amount' => 0, 'type' => null, 'value' => null],
-                'message' => 'Invalid or expired coupon.',
+                'message' => $result['error'],
             ]);
         }
+
+        $coupon = $result['coupon'];
 
         return response()->json([
             'data' => [
                 'valid' => true,
-                'discount_amount' => $coupon->calculateDiscount((float) $validated['subtotal']),
+                'discount_amount' => $result['discount'],
                 'type' => $coupon->type,
                 'value' => $coupon->value,
             ],
