@@ -63,7 +63,7 @@ class CustomersTable
                     ->date('M j')
                     ->badge()
                     ->color(fn (Customer $record) => $record->isBirthdayToday() ? 'success' : 'gray')
-                    ->formatStateUsing(fn ($state, Customer $record) => $record->isBirthdayToday()
+                    ->formatStateUsing(fn (mixed $state, Customer $record) => $record->isBirthdayToday()
                         ? '🎂 Today!'
                         : ($state ? Date::parse($state)->format('M j') : '—'))
                     ->sortable()

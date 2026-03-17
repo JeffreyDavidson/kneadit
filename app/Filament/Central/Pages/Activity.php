@@ -41,7 +41,7 @@ class Activity extends Page
     public int $perPage = 20;
 
     /** @var array<string, mixed> */
-    protected $queryString = [
+    protected array $queryString = [
         'filterAction' => ['except' => ''],
         'filterSearch' => ['except' => ''],
         'filterDateFrom' => ['except' => ''],

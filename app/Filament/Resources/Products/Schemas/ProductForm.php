@@ -65,7 +65,7 @@ class ProductForm
                                     ->label('Margin %')
                                     ->disabled()
                                     ->dehydrated(false)
-                                    ->formatStateUsing(function ($state, ?Model $record) {
+                                    ->formatStateUsing(function (mixed $state, ?Model $record) {
                                         if ($record && $record->cost && $record->price) {
                                             return round(($record->price - $record->cost) / $record->price * 100, 2).'%';
                                         }
