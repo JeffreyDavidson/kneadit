@@ -18,7 +18,7 @@ class SendBirthdayDiscounts extends Command
 
     protected $description = 'Send birthday discount coupons to customers with birthdays today across all tenants';
 
-    public function handle()
+    public function handle(): int
     {
         $tenants = Tenant::all();
 

@@ -6,6 +6,7 @@ use App\Models\CheckinLog;
 use App\Models\ScheduledCheckin;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
+use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 
@@ -48,7 +49,7 @@ class SendScheduledCheckins extends Command
                 }
 
                 try {
-                    Mail::raw($checkin->body, function ($message) use ($tenant, $checkin) {
+                    Mail::raw($checkin->body, function (Message $message) use ($tenant, $checkin) {
                         $message->to($tenant->email)
                             ->subject($checkin->subject);
                     });

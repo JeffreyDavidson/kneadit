@@ -10,6 +10,9 @@ use App\Models\Setting;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 
@@ -19,7 +22,7 @@ class SendRepeatOrderReminders extends Command
 
     protected $description = 'Send repeat order reminders to customers across all tenants';
 
-    public function handle()
+    public function handle(): int
     {
         $tenants = Tenant::all();
 
@@ -79,12 +82,12 @@ class SendRepeatOrderReminders extends Command
         }
     }
 
-    private function getCustomersNeedingReminders($cutoffDate, $reminderDays)
+    private function getCustomersNeedingReminders(Carbon $cutoffDate, int $reminderDays): Collection
     {
         return Customer::whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
-            ->with(['orders' => fn ($q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date')])
+            ->with(['orders' => fn (EloquentBuilder $q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date')])
             ->get()
-            ->map(function ($customer) use ($cutoffDate) {
+            ->map(function (Customer $customer) use ($cutoffDate) {
                 $lastOrder = $customer->orders->first();
 
                 if (! $lastOrder || $lastOrder->delivery_date->isAfter($cutoffDate)) {

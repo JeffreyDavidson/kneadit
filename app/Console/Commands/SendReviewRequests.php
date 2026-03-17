@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Setting;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 
 class SendReviewRequests extends Command
@@ -33,7 +34,7 @@ class SendReviewRequests extends Command
                 $orders = Order::where('status', OrderStatus::Delivered)
                     ->whereNull('review_request_sent_at')
                     ->where('updated_at', '<=', now()->subHours($delayHours))
-                    ->whereHas('customer', fn ($q) => $q->whereNotNull('email'))
+                    ->whereHas('customer', fn (Builder $q) => $q->whereNotNull('email'))
                     ->with('customer')
                     ->get();
 
