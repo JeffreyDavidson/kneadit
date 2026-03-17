@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Enums\OrderStatus;
 use App\Mail\NewOrderNotification;
 use App\Mail\OrderBaking;
 use App\Mail\OrderCancelled;
@@ -39,43 +40,81 @@ class OrderObserver
         }
 
         // Dispatch webhook
-        WebhookService::dispatch('order.created', [
-            'order_number' => $order->order_number,
-            'customer_name' => $order->customer?->name,
-            'customer_email' => $order->customer?->email,
-            'total' => $order->total,
-            'status' => $order->status,
-            'payment_status' => $order->payment_status,
-            'delivery_date' => $order->delivery_date?->toDateString(),
-            'items' => ($order->items ?? collect())->map(fn ($item) => [
-                'product' => $item->product?->name,
-                'quantity' => $item->quantity,
-                'unit_price' => $item->unit_price,
-            ])->toArray(),
-        ]);
+        try {
+            $order->loadMissing('orderItems.product');
+
+            WebhookService::dispatch('order.created', [
+                'order_number' => $order->order_number,
+                'customer_name' => $order->customer?->name,
+                'customer_email' => $order->customer?->email,
+                'total' => $order->total,
+                'status' => $order->status,
+                'payment_status' => $order->payment_status,
+                'delivery_date' => $order->delivery_date?->toDateString(),
+                'items' => $order->orderItems->map(fn ($item) => [
+                    'product' => $item->product?->name,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unit_price,
+                ])->toArray(),
+            ]);
+        } catch (\Exception $e) {
+            Log::warning('Order created webhook dispatch failed', [
+                'order' => $order->order_number,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function updated(Order $order): void
     {
         // Check if status field has changed
         if ($order->wasChanged('status')) {
-            $this->sendStatusEmail($order);
-
-            if ($order->status === 'delivered') {
-                $this->awardLoyaltyPoints($order);
+            try {
+                $this->sendStatusEmail($order);
+            } catch (\Exception $e) {
+                Log::warning('Order status email failed', [
+                    'order' => $order->order_number,
+                    'status' => $order->status,
+                    'error' => $e->getMessage(),
+                ]);
             }
 
-            if ($order->status === 'baking') {
-                $this->deductIngredients($order);
+            if ($order->status === OrderStatus::Delivered) {
+                try {
+                    $this->awardLoyaltyPoints($order);
+                } catch (\Exception $e) {
+                    Log::warning('Loyalty points award failed', [
+                        'order' => $order->order_number,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
 
-            WebhookService::dispatch('order.updated', [
-                'order_number' => $order->order_number,
-                'status' => $order->status,
-                'previous_status' => $order->getOriginal('status'),
-                'payment_status' => $order->payment_status,
-                'total' => $order->total,
-            ]);
+            if ($order->status === OrderStatus::Baking) {
+                try {
+                    $this->deductIngredients($order);
+                } catch (\Exception $e) {
+                    Log::warning('Ingredient deduction failed', [
+                        'order' => $order->order_number,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+
+            try {
+                WebhookService::dispatch('order.updated', [
+                    'order_number' => $order->order_number,
+                    'status' => $order->status,
+                    'previous_status' => $order->getOriginal('status'),
+                    'payment_status' => $order->payment_status,
+                    'total' => $order->total,
+                ]);
+            } catch (\Exception $e) {
+                Log::warning('Order updated webhook dispatch failed', [
+                    'order' => $order->order_number,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
     }
 
@@ -89,11 +128,11 @@ class OrderObserver
         $customerEmail = $order->customer->email;
 
         match ($order->status) {
-            'confirmed' => Mail::to($customerEmail)->send(new OrderConfirmed($order)),
-            'baking' => Mail::to($customerEmail)->send(new OrderBaking($order)),
-            'ready' => Mail::to($customerEmail)->send(new OrderReady($order)),
-            'delivered' => Mail::to($customerEmail)->send(new OrderDelivered($order)),
-            'cancelled' => Mail::to($customerEmail)->send(new OrderCancelled($order)),
+            OrderStatus::Confirmed => Mail::to($customerEmail)->send(new OrderConfirmed($order)),
+            OrderStatus::Baking => Mail::to($customerEmail)->send(new OrderBaking($order)),
+            OrderStatus::Ready => Mail::to($customerEmail)->send(new OrderReady($order)),
+            OrderStatus::Delivered => Mail::to($customerEmail)->send(new OrderDelivered($order)),
+            OrderStatus::Cancelled => Mail::to($customerEmail)->send(new OrderCancelled($order)),
             default => null
         };
     }
