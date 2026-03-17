@@ -75,16 +75,20 @@ class TrackPageView
                 if (! $productsTrackedAt || now()->diffInMinutes(Carbon::parse($productsTrackedAt)) >= 60) {
                     $request->session()->put($productThrottleKey, now()->toISOString());
                     $products = Product::where('is_active', true)->pluck('id');
-                    foreach ($products as $productId) {
-                        PageView::create([
-                            'page' => $page,
-                            'product_id' => $productId,
-                            'session_id' => $sessionId,
-                            'ip_address' => $request->ip(),
-                            'user_agent' => substr($request->userAgent() ?? '', 0, 255),
-                            'created_at' => now(),
-                        ]);
-                    }
+                    $ipAddress = $request->ip();
+                    $userAgent = substr($request->userAgent() ?? '', 0, 255);
+                    $timestamp = now();
+
+                    $records = $products->map(fn ($productId) => [
+                        'page' => $page,
+                        'product_id' => $productId,
+                        'session_id' => $sessionId,
+                        'ip_address' => $ipAddress,
+                        'user_agent' => $userAgent,
+                        'created_at' => $timestamp,
+                    ])->toArray();
+
+                    PageView::insert($records);
                 }
             }
         } catch (\Exception $e) {
