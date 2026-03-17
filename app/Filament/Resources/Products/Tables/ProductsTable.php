@@ -16,6 +16,9 @@ class ProductsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->withCount([
+                'waitlistEntries' => fn ($q) => $q->whereNull('notified_at'),
+            ]))
             ->columns([
                 ImageColumn::make('image')
                     ->circular(),
@@ -64,7 +67,7 @@ class ProductsTable
 
                 TextColumn::make('waitlist_count')
                     ->label('Waitlist')
-                    ->getStateUsing(fn ($record) => $record->waitlistEntries()->whereNull('notified_at')->count())
+                    ->getStateUsing(fn ($record) => $record->waitlist_entries_count)
                     ->badge()
                     ->color(fn ($state) => $state > 0 ? 'warning' : 'gray')
                     ->formatStateUsing(fn ($state) => $state > 0 ? "{$state} waiting" : '—'),

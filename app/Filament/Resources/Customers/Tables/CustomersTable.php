@@ -10,12 +10,23 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CustomersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query
+                ->withCount(['orders' => fn ($q) => $q->where('status', '!=', 'cancelled')])
+                ->withSum(['orders' => fn ($q) => $q->where('status', '!=', 'cancelled')], 'total')
+                ->addSelect([
+                    'last_order_date' => Order::select('created_at')
+                        ->whereColumn('customer_id', 'customers.id')
+                        ->latest()
+                        ->limit(1),
+                ])
+            )
             ->columns([
                 TextColumn::make('name')
                     ->sortable()
@@ -56,46 +67,43 @@ class CustomersTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('lifetime_value')
+                TextColumn::make('orders_sum_total')
                     ->label('Lifetime Value')
                     ->money('USD')
-                    ->sortable(query: function ($query, string $direction) {
-                        return $query->withSum(['orders' => fn ($q) => $q->where('status', '!=', 'cancelled')], 'total')
-                            ->orderBy('orders_sum_total', $direction);
-                    })
+                    ->sortable()
                     ->toggleable(),
 
-                TextColumn::make('order_count')
+                TextColumn::make('orders_count')
                     ->label('Orders')
-                    ->sortable(query: function ($query, string $direction) {
-                        return $query->withCount(['orders' => fn ($q) => $q->where('status', '!=', 'cancelled')])
-                            ->orderBy('orders_count', $direction);
-                    })
+                    ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('last_order_date')
                     ->label('Last Order')
                     ->since()
-                    ->sortable(query: function ($query, string $direction) {
-                        return $query->orderBy(
-                            Order::select('created_at')
-                                ->whereColumn('customer_id', 'customers.id')
-                                ->latest()
-                                ->limit(1),
-                            $direction
-                        );
-                    })
+                    ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('average_order_value')
                     ->label('Avg Order')
+                    ->getStateUsing(fn ($record) => $record->orders_count > 0
+                        ? ($record->orders_sum_total / $record->orders_count)
+                        : 0)
                     ->money('USD')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('is_at_risk')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn ($record) => $record->is_at_risk ? 'At Risk' : 'Active')
+                    ->getStateUsing(function ($record) {
+                        if ($record->orders_count > 0 && $record->last_order_date) {
+                            return Carbon::parse($record->last_order_date)->diffInDays(now()) > 30
+                                ? 'At Risk'
+                                : 'Active';
+                        }
+
+                        return 'Active';
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'At Risk' => 'danger',
                         default => 'success',

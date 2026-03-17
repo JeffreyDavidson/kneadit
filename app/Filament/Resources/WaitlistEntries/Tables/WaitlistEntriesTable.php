@@ -20,6 +20,7 @@ class WaitlistEntriesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with(['product']))
             ->columns([
                 TextColumn::make('customer_name')
                     ->searchable()
