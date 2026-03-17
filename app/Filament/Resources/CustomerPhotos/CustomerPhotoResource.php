@@ -104,6 +104,7 @@ class CustomerPhotoResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with(['product']))
             ->columns([
                 ImageColumn::make('photo_path')
                     ->label('Photo')

@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\GiftCards\Schemas;
 
-use Filament\Components\DatePicker;
-use Filament\Components\Textarea;
-use Filament\Components\TextInput;
-use Filament\Layouts\Grid;
-use Filament\Layouts\Section;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class GiftCardForm
