@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function submitReview(Order $order, Request $request)
+    public function show(Order $order, Request $request)
     {
         $order->load(['customer', 'orderItems.product']);
         $storeName = Setting::get('store_name', 'Our Bakery');
@@ -19,7 +19,7 @@ class ReviewController extends Controller
         return view('submit-review', compact('order', 'storeName', 'prefilledRating'));
     }
 
-    public function storeReview(Order $order, Request $request)
+    public function store(Order $order, Request $request)
     {
         $validated = $request->validate([
             'rating' => ['required', 'integer', 'min:1', 'max:5'],

@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BlogFeedController;
 use App\Http\Controllers\Central\ExportController;
 use App\Http\Controllers\ChangelogController;
 use App\Http\Controllers\DirectoryController;
@@ -22,12 +23,12 @@ require __DIR__.'/admin.php';
 
 // Auth routes (central only)
 Route::middleware('web')->group(function () {
-    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register')->middleware('guest');
-    Route::post('/register', [RegisterController::class, 'register'])->middleware('guest');
+    Route::get('/register', [RegisterController::class, 'show'])->name('register')->middleware('guest');
+    Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
     Route::get('/login', function () {
         return redirect('/');
     })->name('login')->middleware('guest');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+    Route::post('/logout', LogoutController::class)->name('logout')->middleware('auth');
 
     // Email verification
     Route::get('/email/verify', fn () => view('auth.verify-email'))->middleware('auth')->name('verification.notice');
@@ -43,14 +44,14 @@ Route::middleware('web')->group(function () {
     })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
     // Password reset
-    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request')->middleware('guest');
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('guest');
-    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset')->middleware('guest');
-    Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update')->middleware('guest');
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'show'])->name('password.request')->middleware('guest');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email')->middleware('guest');
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'show'])->name('password.reset')->middleware('guest');
+    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update')->middleware('guest');
 });
 
 // Data Export (central admin) — uses signed URL to avoid auth middleware redirect issues
-Route::get('/admin/export/{tenant}/{type}', [ExportController::class, 'export'])->name('central.export')->middleware('web');
+Route::get('/admin/export/{tenant}/{type}', ExportController::class)->name('central.export')->middleware('web');
 
 /*
 |--------------------------------------------------------------------------
@@ -63,12 +64,12 @@ Route::get('/admin/export/{tenant}/{type}', [ExportController::class, 'export'])
 */
 
 // Impersonation (central admin → tenant)
-Route::get('/impersonate/{tenant}', [ImpersonateController::class, 'login'])
+Route::get('/impersonate/{tenant}', ImpersonateController::class)
     ->name('tenant.impersonate')
     ->middleware(['auth', 'signed']);
 
 // Referral tracking
-Route::get('/ref/{code}', [ReferralController::class, 'track'])->name('referral.track');
+Route::get('/ref/{code}', ReferralController::class)->name('referral.track');
 
 // Legal pages
 Route::get('/pricing', fn () => view('pricing'))->name('pricing');
@@ -84,7 +85,7 @@ Route::get('/changelog', [ChangelogController::class, 'index'])->name('changelog
 
 // Resources / Blog (central only)
 Route::get('/resources', [BlogController::class, 'index'])->name('blog.index');
-Route::get('/resources/feed.xml', [BlogController::class, 'feed'])->name('blog.feed');
+Route::get('/resources/feed.xml', BlogFeedController::class)->name('blog.feed');
 Route::get('/resources/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // Root route — serves landing page on central domains, storefront on tenant subdomains

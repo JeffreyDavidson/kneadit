@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class CateringController extends Controller
 {
-    public function catering()
+    public function show()
     {
         $cateringPhotos = CustomerPhoto::whereLike('caption', '%catering%')
             ->where('is_approved', true)
@@ -21,7 +21,7 @@ class CateringController extends Controller
         return view('catering', compact('cateringPhotos'));
     }
 
-    public function submitCateringInquiry(Request $request)
+    public function store(Request $request)
     {
         $minimumGuests = (int) Setting::get('catering_minimum_guests', '10');
         $leadTimeDays = (int) Setting::get('catering_lead_time_days', '14');

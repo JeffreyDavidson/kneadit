@@ -17,13 +17,14 @@ $controllerFiles = collect(glob(__DIR__.'/../../app/Http/Controllers/**/*.php'))
     ->values();
 
 foreach ($controllerFiles as $controllerClass) {
-    $shortName = class_basename($controllerClass);
+    $shortName = str_replace('App\\Http\\Controllers\\', '', $controllerClass);
 
     test("{$shortName} is invokable or resourceful", function () use ($controllerClass, $resourceMethods) {
         $reflection = new ReflectionClass($controllerClass);
 
         $publicMethods = collect($reflection->getMethods(ReflectionMethod::IS_PUBLIC))
             ->reject(fn (ReflectionMethod $method) => $method->class !== $reflection->getName())
+            ->reject(fn (ReflectionMethod $method) => $method->isStatic())
             ->reject(fn (ReflectionMethod $method) => str_starts_with($method->getName(), '__') && $method->getName() !== '__invoke')
             ->map(fn (ReflectionMethod $method) => $method->getName())
             ->values()

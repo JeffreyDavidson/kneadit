@@ -23,7 +23,7 @@ class DriverController extends Controller
         return view('driver', compact('orders', 'storeName'));
     }
 
-    public function markDelivered(Order $order)
+    public function update(Order $order)
     {
         $order->update(['status' => OrderStatus::Delivered]);
 

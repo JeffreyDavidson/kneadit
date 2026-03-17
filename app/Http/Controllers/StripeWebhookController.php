@@ -46,7 +46,7 @@ class StripeWebhookController extends WebhookController
      * Handle customer subscription updated.
      * Syncs plan changes from Stripe to tenant record.
      */
-    public function handleCustomerSubscriptionUpdated(array $payload): void
+    protected function handleCustomerSubscriptionUpdated(array $payload): void
     {
         if ($this->alreadyProcessed($payload)) {
             return;
@@ -94,7 +94,7 @@ class StripeWebhookController extends WebhookController
      * Handle invoice payment failed.
      * Alerts the baker and platform.
      */
-    public function handleInvoicePaymentFailed(array $payload): void
+    protected function handleInvoicePaymentFailed(array $payload): void
     {
         if ($this->alreadyProcessed($payload)) {
             return;
@@ -158,7 +158,7 @@ class StripeWebhookController extends WebhookController
     /**
      * Handle customer subscription deleted (fully canceled).
      */
-    public function handleCustomerSubscriptionDeleted(array $payload): void
+    protected function handleCustomerSubscriptionDeleted(array $payload): void
     {
         if ($this->alreadyProcessed($payload)) {
             return;

@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class LoyaltyController extends Controller
 {
-    public function rewards()
+    public function show()
     {
         try {
             $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
@@ -24,7 +24,7 @@ class LoyaltyController extends Controller
         return view('loyalty', compact('rewards', 'programName', 'pointsPerDollar', 'loyaltyEnabled'));
     }
 
-    public function checkRewards(Request $request)
+    public function store(Request $request)
     {
         $request->validate(['email' => ['required', 'email']]);
 

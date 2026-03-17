@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
-    public function gallery()
+    public function show()
     {
         $photos = CustomerPhoto::approved()
             ->with('product')
@@ -22,7 +22,7 @@ class GalleryController extends Controller
         return view('gallery', compact('photos', 'products'));
     }
 
-    public function submitPhoto(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],
