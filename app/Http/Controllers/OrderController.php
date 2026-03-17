@@ -5,22 +5,26 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Category;
 use App\Models\Order;
+use App\Models\Product;
 use App\Services\OrderService;
 use App\Services\StripeCheckoutService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(): View
     {
-        $categories = Category::with(['products' => function ($q) {
+        $categories = Category::with(['products' => function (Builder $q) {
             $q->where('is_active', true)->orderBy('name');
         }, 'products.seasonalItems'])->orderBy('sort_order')->get();
 
         // Filter out products that are seasonal but not currently in season
-        $categories->each(function ($category) {
+        $categories->each(function (Category $category) {
             $category->setRelation(
                 'products',
-                $category->products->filter(fn ($product) => $product->isInSeason())
+                $category->products->filter(fn (Product $product) => $product->isInSeason())
             );
         });
 
@@ -30,7 +34,7 @@ class OrderController extends Controller
     /**
      * Submit an order, delegating business logic to OrderService.
      */
-    public function store(StoreOrderRequest $request, OrderService $orderService)
+    public function store(StoreOrderRequest $request, OrderService $orderService): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -67,7 +71,7 @@ class OrderController extends Controller
     /**
      * Show the order confirmation page.
      */
-    public function show(Order $order)
+    public function show(Order $order): View
     {
         $order->load('orderItems');
 

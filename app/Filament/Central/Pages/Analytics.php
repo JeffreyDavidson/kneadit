@@ -103,7 +103,7 @@ class Analytics extends Page
             return 0;
         }
 
-        $avgDays = $tenants->avg(function ($tenant) {
+        $avgDays = $tenants->avg(function (Tenant $tenant) {
             return Date::parse($tenant->created_at)
                 ->diffInDays(Date::parse($tenant->trial_ends_at));
         });

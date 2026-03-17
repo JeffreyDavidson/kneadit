@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class IngredientsTable
@@ -61,7 +62,7 @@ class IngredientsTable
                         'low' => 'Low Stock',
                         'out' => 'Out of Stock',
                     ])
-                    ->query(function ($query, array $data) {
+                    ->query(function (Builder $query, array $data) {
                         return match ($data['value'] ?? null) {
                             'low' => $query->where('current_stock', '>', 0)
                                 ->whereColumn('current_stock', '<=', 'low_stock_threshold'),

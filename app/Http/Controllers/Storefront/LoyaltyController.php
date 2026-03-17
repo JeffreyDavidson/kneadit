@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\LoyaltyReward;
 use App\Models\Setting;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class LoyaltyController extends Controller
 {
-    public function show()
+    public function show(): View
     {
         try {
             $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
@@ -24,7 +25,7 @@ class LoyaltyController extends Controller
         return view('loyalty', compact('rewards', 'programName', 'pointsPerDollar', 'loyaltyEnabled'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): View
     {
         $request->validate(['email' => ['required', 'email']]);
 

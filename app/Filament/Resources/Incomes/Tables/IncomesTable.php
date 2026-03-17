@@ -13,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class IncomesTable
 {
@@ -29,7 +30,7 @@ class IncomesTable
                     ->limit(50),
 
                 BadgeColumn::make('source')
-                    ->formatStateUsing(fn ($state) => Income::SOURCES[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state) => Income::SOURCES[$state] ?? $state)
                     ->colors([
                         'success' => 'farmers_market',
                         'primary' => 'cash_sale',
@@ -56,15 +57,15 @@ class IncomesTable
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
-                    ->query(function ($query, array $data) {
+                    ->query(function (Builder $query, array $data) {
                         return $query
                             ->when(
                                 $data['from'],
-                                fn ($query, $date) => $query->whereDate('date', '>=', $date),
+                                fn (Builder $query, string $date) => $query->whereDate('date', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn ($query, $date) => $query->whereDate('date', '<=', $date),
+                                fn (Builder $query, string $date) => $query->whereDate('date', '<=', $date),
                             );
                     }),
 
@@ -73,15 +74,15 @@ class IncomesTable
                         TextInput::make('min_amount')->numeric()->prefix('$'),
                         TextInput::make('max_amount')->numeric()->prefix('$'),
                     ])
-                    ->query(function ($query, array $data) {
+                    ->query(function (Builder $query, array $data) {
                         return $query
                             ->when(
                                 $data['min_amount'],
-                                fn ($query, $amount) => $query->where('amount', '>=', $amount),
+                                fn (Builder $query, string $amount) => $query->where('amount', '>=', $amount),
                             )
                             ->when(
                                 $data['max_amount'],
-                                fn ($query, $amount) => $query->where('amount', '<=', $amount),
+                                fn (Builder $query, string $amount) => $query->where('amount', '<=', $amount),
                             );
                     }),
             ])

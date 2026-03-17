@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use App\Models\Product;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -10,14 +11,15 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->withCount([
-                'waitlistEntries' => fn ($q) => $q->whereNull('notified_at'),
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount([
+                'waitlistEntries' => fn (Builder $q) => $q->whereNull('notified_at'),
             ]))
             ->columns([
                 ImageColumn::make('image')
@@ -41,7 +43,7 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('margin')
-                    ->formatStateUsing(function ($state, $record) {
+                    ->formatStateUsing(function ($state, Product $record) {
                         if ($record->cost && $record->price) {
                             return round(($record->price - $record->cost) / $record->price * 100, 2).'%';
                         }
@@ -49,7 +51,7 @@ class ProductsTable
                         return '-';
                     })
                     ->label('Margin %')
-                    ->color(function ($state, $record) {
+                    ->color(function ($state, Product $record) {
                         if ($record->cost && $record->price) {
                             $margin = ($record->price - $record->cost) / $record->price * 100;
 
@@ -67,10 +69,10 @@ class ProductsTable
 
                 TextColumn::make('waitlist_count')
                     ->label('Waitlist')
-                    ->getStateUsing(fn ($record) => $record->waitlist_entries_count)
+                    ->getStateUsing(fn (Product $record) => $record->waitlist_entries_count)
                     ->badge()
-                    ->color(fn ($state) => $state > 0 ? 'warning' : 'gray')
-                    ->formatStateUsing(fn ($state) => $state > 0 ? "{$state} waiting" : '—'),
+                    ->color(fn (int $state) => $state > 0 ? 'warning' : 'gray')
+                    ->formatStateUsing(fn (int $state) => $state > 0 ? "{$state} waiting" : '—'),
 
                 TextColumn::make('created_at')
                     ->dateTime()

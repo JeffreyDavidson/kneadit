@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\NewOrderMessage;
 use App\Models\Order;
 use App\Models\Setting;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -14,7 +15,7 @@ class MessageController extends Controller
     /**
      * Get messages for an order.
      */
-    public function show(Order $order)
+    public function show(Order $order): JsonResponse
     {
         $messages = $order->messages()->oldest()->get();
 
@@ -24,7 +25,7 @@ class MessageController extends Controller
     /**
      * Send a message on an order.
      */
-    public function store(Request $request, Order $order)
+    public function store(Request $request, Order $order): JsonResponse
     {
         $request->validate([
             'message' => ['required', 'string', 'max:2000'],

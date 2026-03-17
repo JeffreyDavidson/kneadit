@@ -127,7 +127,7 @@ class Product extends Model
             return true; // Not seasonal = always available
         }
 
-        return $seasonalItems->contains(fn ($item) => $item->isCurrentlyAvailable());
+        return $seasonalItems->contains(fn (SeasonalItem $item) => $item->isCurrentlyAvailable());
     }
 
     protected function getSeasonalBadgeAttribute(): ?string

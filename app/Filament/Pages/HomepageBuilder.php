@@ -103,7 +103,7 @@ class HomepageBuilder extends Page
         }
     }
 
-    public function updateSectionField(string $key, string $field, $value): void
+    public function updateSectionField(string $key, string $field, mixed $value): void
     {
         $this->sections[$key][$field] = $value;
     }

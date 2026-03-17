@@ -22,7 +22,7 @@ class LoyaltyLeadersWidget extends Widget
             ->orderByRaw('SUM(loyalty_points.points) DESC')
             ->limit(5)
             ->get()
-            ->map(fn ($c) => [
+            ->map(fn (Customer $c) => [
                 'name' => $c->name,
                 'points' => (int) LoyaltyPoint::where('customer_id', $c->id)->sum('points'),
             ])
@@ -40,7 +40,7 @@ class LoyaltyLeadersWidget extends Widget
             ->where('points', '>', 0)->latest()
             ->limit(3)
             ->get()
-            ->map(fn ($lp) => [
+            ->map(fn (LoyaltyPoint $lp) => [
                 'customer' => $lp->customer?->name ?? 'Unknown',
                 'points' => $lp->points,
                 'description' => $lp->description ?? '',

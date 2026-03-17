@@ -99,7 +99,7 @@ class QuickOrder extends Page
                                 ->mapWithKeys(fn (Customer $customer): array => [
                                     $customer->id => "{$customer->name} - {$customer->email}",
                                 ])->all())
-                            ->getOptionLabelUsing(fn ($value): ?string => Customer::find($value)?->name)
+                            ->getOptionLabelUsing(fn (string $value): ?string => Customer::find($value)?->name)
                             ->live()
                             ->afterStateUpdated(function (Set $set, ?string $state) {
                                 if ($state) {
@@ -134,7 +134,7 @@ class QuickOrder extends Page
                 ->description(function (Get $get): string {
                     $items = $get('order_items') ?? [];
                     $totalItems = count($items);
-                    $subtotal = collect($items)->sum(fn ($item) => ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0));
+                    $subtotal = collect($items)->sum(fn (array $item) => ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0));
 
                     return $totalItems.' items · Subtotal: $'.number_format($subtotal, 2);
                 })
@@ -284,7 +284,7 @@ class QuickOrder extends Page
 
                 // Calculate totals
                 $orderItems = $data['order_items'] ?? [];
-                $subtotal = collect($orderItems)->sum(fn ($item) => $item['quantity'] * $item['unit_price']);
+                $subtotal = collect($orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
                 $deliveryFee = ($data['delivery_type'] === DeliveryType::Delivery->value) ? 5.00 : 0.00;
                 $total = $subtotal + $deliveryFee;
 

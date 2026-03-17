@@ -9,13 +9,14 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BlogPostsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->with(['tags']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['tags']))
             ->columns([
                 TextColumn::make('title')
                     ->searchable()

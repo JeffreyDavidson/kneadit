@@ -61,11 +61,11 @@ class Order extends Model
         'delivery_type' => DeliveryType::class,
     ];
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
-        static::creating(function ($order) {
+        static::creating(function (Order $order) {
             if (! $order->order_number) {
                 $order->order_number = 'ORD-'.str_pad(static::count() + 1, 6, '0', STR_PAD_LEFT);
             }

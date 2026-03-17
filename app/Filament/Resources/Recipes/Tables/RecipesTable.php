@@ -8,13 +8,14 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class RecipesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->with(['product']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['product']))
             ->columns([
                 TextColumn::make('name')
                     ->sortable()
@@ -28,7 +29,7 @@ class RecipesTable
 
                 TextColumn::make('prep_time_minutes')
                     ->label('Prep Time')
-                    ->formatStateUsing(fn ($state) => $state ? $state.' min' : '-')
+                    ->formatStateUsing(fn (?int $state) => $state ? $state.' min' : '-')
                     ->sortable(),
 
                 TextColumn::make('cost')
@@ -36,7 +37,7 @@ class RecipesTable
                     ->sortable(),
 
                 TextColumn::make('ingredients')
-                    ->formatStateUsing(function ($state) {
+                    ->formatStateUsing(function (mixed $state) {
                         if (is_array($state)) {
                             return collect($state)->take(3)->pluck('name')->join(', ').
                                    (count($state) > 3 ? '...' : '');

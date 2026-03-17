@@ -7,6 +7,8 @@ use App\Mail\WelcomeBaker;
 use App\Models\Referral;
 use App\Models\Setting;
 use App\Models\Tenant;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,14 +18,14 @@ use Illuminate\Support\Str;
 
 class OnboardingController extends Controller
 {
-    public function show()
+    public function show(): View
     {
         return view('onboarding', [
             'bakeryName' => session('bakery_name', ''),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $rules = [
             'store_name' => 'required|string|max:255',

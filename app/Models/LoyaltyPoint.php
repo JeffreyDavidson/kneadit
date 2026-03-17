@@ -23,7 +23,7 @@ class LoyaltyPoint extends Model
 
     protected static function booted(): void
     {
-        static::creating(function ($model) {
+        static::creating(function (LoyaltyPoint $model) {
             $model->created_at = $model->created_at ?? now();
         });
     }

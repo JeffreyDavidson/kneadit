@@ -100,7 +100,7 @@ class AnnouncementResource extends Resource
                     }),
                 TextColumn::make('target_plans')
                     ->label('Target')
-                    ->formatStateUsing(fn ($state) => empty($state) ? 'All Plans' : (is_array($state) ? implode(', ', $state) : 'All Plans'))
+                    ->formatStateUsing(fn (mixed $state) => empty($state) ? 'All Plans' : (is_array($state) ? implode(', ', $state) : 'All Plans'))
                     ->badge(),
                 ToggleColumn::make('is_active')
                     ->label('Active'),

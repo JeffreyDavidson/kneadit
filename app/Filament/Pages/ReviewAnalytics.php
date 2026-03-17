@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -117,17 +118,17 @@ class ReviewAnalytics extends Page
 
     public function getTopReviewedProducts(): Collection
     {
-        return Product::withCount(['reviews' => function ($query) {
+        return Product::withCount(['reviews' => function (Builder $query) {
             $query->where('is_approved', true);
         }])
-            ->with(['reviews' => function ($query) {
+            ->with(['reviews' => function (Builder $query) {
                 $query->where('is_approved', true);
             }])
             ->having('reviews_count', '>', 0)
             ->orderByDesc('reviews_count')
             ->limit(10)
             ->get()
-            ->map(function ($product) {
+            ->map(function (Product $product) {
                 $averageRating = $product->reviews->avg('rating');
 
                 return [
@@ -144,7 +145,7 @@ class ReviewAnalytics extends Page
         return Review::with('product')->latest()
             ->limit(10)
             ->get()
-            ->map(function ($review) {
+            ->map(function (Review $review) {
                 return [
                     'id' => $review->id,
                     'customer_name' => $review->customer_name,
@@ -184,8 +185,8 @@ class ReviewAnalytics extends Page
             $positiveWords = ['amazing', 'excellent', 'perfect', 'love', 'best', 'wonderful', 'fantastic', 'delicious', 'great'];
             $negativeWords = ['terrible', 'awful', 'bad', 'hate', 'worst', 'disgusting', 'horrible', 'disappointing'];
 
-            $hasPositive = collect($positiveWords)->contains(fn ($word) => str_contains($comment, $word));
-            $hasNegative = collect($negativeWords)->contains(fn ($word) => str_contains($comment, $word));
+            $hasPositive = collect($positiveWords)->contains(fn (string $word) => str_contains($comment, $word));
+            $hasNegative = collect($negativeWords)->contains(fn (string $word) => str_contains($comment, $word));
 
             if ($rating >= 4 && ($hasPositive || ! $hasNegative)) {
                 $positive++;

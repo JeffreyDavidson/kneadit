@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use App\Models\StaffInvitation;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class InvitationController extends Controller
 {
-    public function show(string $token)
+    public function show(string $token): View
     {
         $invitation = StaffInvitation::where('token', $token)
             ->whereNull('accepted_at')
@@ -31,7 +33,7 @@ class InvitationController extends Controller
         ]);
     }
 
-    public function store(Request $request, string $token)
+    public function store(Request $request, string $token): View|RedirectResponse
     {
         $invitation = StaffInvitation::where('token', $token)
             ->whereNull('accepted_at')

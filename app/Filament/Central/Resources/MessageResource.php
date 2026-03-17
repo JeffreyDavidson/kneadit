@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class MessageResource extends Resource
@@ -91,14 +92,14 @@ class MessageResource extends Resource
                     ->placeholder('All'),
                 SelectFilter::make('tenant_id')
                     ->label('Bakery')
-                    ->options(fn () => Tenant::get()->mapWithKeys(fn ($t) => [$t->id => $t->store_name ?: $t->name])->toArray())
+                    ->options(fn () => Tenant::get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->toArray())
                     ->searchable(),
             ])
             ->defaultSort('is_read', 'asc')
-            ->recordUrl(fn ($record) => static::getUrl('view', ['record' => $record->getKey()]))
+            ->recordUrl(fn (Model $record) => static::getUrl('view', ['record' => $record->getKey()]))
             ->actions([
                 Actions\ViewAction::make()
-                    ->url(fn ($record) => static::getUrl('view', ['record' => $record->getKey()])),
+                    ->url(fn (Model $record) => static::getUrl('view', ['record' => $record->getKey()])),
             ]);
     }
 

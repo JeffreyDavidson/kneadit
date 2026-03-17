@@ -66,7 +66,7 @@ class LabelGenerator extends Page
         return Product::where('is_active', true)
             ->orderBy('name')
             ->get()
-            ->map(fn ($p) => ['id' => $p->id, 'name' => $p->name, 'price' => $p->price]);
+            ->map(fn (Product $p) => ['id' => $p->id, 'name' => $p->name, 'price' => $p->price]);
     }
 
     public function getSelectedProductModels(): Collection

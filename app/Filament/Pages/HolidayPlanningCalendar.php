@@ -37,21 +37,21 @@ class HolidayPlanningCalendar extends Page
 
     public Collection $inPrepPeriod;
 
-    public function mount()
+    public function mount(): void
     {
         $this->loadHolidays();
     }
 
-    public function loadHolidays()
+    public function loadHolidays(): void
     {
         $this->holidays = Holiday::orderBy('date')->get();
 
         $this->upcomingHolidays = $this->holidays
-            ->filter(fn ($holiday) => $holiday->is_upcoming)
+            ->filter(fn (Holiday $holiday) => $holiday->is_upcoming)
             ->take(10);
 
         $this->inPrepPeriod = $this->holidays
-            ->filter(fn ($holiday) => $holiday->is_in_prep_period);
+            ->filter(fn (Holiday $holiday) => $holiday->is_in_prep_period);
     }
 
     public function getHolidaysByMonth(): Collection
@@ -60,12 +60,12 @@ class HolidayPlanningCalendar extends Page
         $nextYear = $currentYear + 1;
 
         return $this->holidays
-            ->filter(function ($holiday) use ($currentYear, $nextYear) {
+            ->filter(function (Holiday $holiday) use ($currentYear, $nextYear) {
                 $year = $holiday->date->year;
 
                 return $year === $currentYear || $year === $nextYear;
             })
-            ->groupBy(function ($holiday) {
+            ->groupBy(function (Holiday $holiday) {
                 return $holiday->date->format('Y-m');
             })
             ->sortKeys();

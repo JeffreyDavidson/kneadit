@@ -52,7 +52,7 @@ class LowStockWidget extends BaseWidget
                 TextColumn::make('reorder_qty')
                     ->label('Reorder')
                     ->getStateUsing(fn (Ingredient $record) => max(0, $record->low_stock_threshold - $record->current_stock))
-                    ->formatStateUsing(fn ($state, Ingredient $record) => $state.' '.$record->unit),
+                    ->formatStateUsing(fn (mixed $state, Ingredient $record) => $state.' '.$record->unit),
 
                 TextColumn::make('supplier')
                     ->placeholder('—'),

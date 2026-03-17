@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class ProductController extends Controller
         $query = Product::where('is_active', true)->with('category');
 
         if ($request->has('category')) {
-            $query->whereHas('category', fn ($q) => $q->where('slug', $request->input('category')));
+            $query->whereHas('category', fn (Builder $q) => $q->where('slug', $request->input('category')));
         }
 
         if ($request->boolean('featured')) {

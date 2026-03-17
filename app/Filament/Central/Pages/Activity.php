@@ -6,6 +6,8 @@ use App\Models\AdminAuditLog;
 use App\Models\PlatformActivity;
 use BackedEnum;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
@@ -38,6 +40,7 @@ class Activity extends Page
 
     public int $perPage = 20;
 
+    /** @var array<string, mixed> */
     protected $queryString = [
         'filterAction' => ['except' => ''],
         'filterSearch' => ['except' => ''],
@@ -48,7 +51,7 @@ class Activity extends Page
 
     // ── Platform Events (Activity Log) Methods ──
 
-    public function getActivities()
+    public function getActivities(): Collection
     {
         return PlatformActivity::latest('created_at')->limit(100)->get();
     }
@@ -79,7 +82,7 @@ class Activity extends Page
 
     // ── Admin Actions (Audit Trail) Methods ──
 
-    public function getLogsProperty()
+    public function getLogsProperty(): LengthAwarePaginator
     {
         $query = AdminAuditLog::query()->latest();
 

@@ -24,7 +24,7 @@ class Setting extends Model
         return tenant() ? tenant()->getTenantKey() : 'central';
     }
 
-    public static function get(string $key, $default = null)
+    public static function get(string $key, mixed $default = null): mixed
     {
         static::loadAll();
 
@@ -33,7 +33,7 @@ class Setting extends Model
         return static::$cache[$tenantKey][$key] ?? $default;
     }
 
-    public static function set(string $key, $value): void
+    public static function set(string $key, mixed $value): void
     {
         static::updateOrCreate(
             ['key' => $key],
@@ -67,7 +67,7 @@ class Setting extends Model
      * Get page content for a specific page and key.
      * Usage: Setting::pageContent('menu', 'hero_title', 'Our Menu')
      */
-    public static function pageContent(string $page, string $key, $default = '')
+    public static function pageContent(string $page, string $key, mixed $default = ''): mixed
     {
         $content = json_decode(static::get('page_content', '{}'), true);
 

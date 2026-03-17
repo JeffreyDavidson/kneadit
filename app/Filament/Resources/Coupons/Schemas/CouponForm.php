@@ -9,6 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class CouponForm
@@ -38,8 +39,8 @@ class CouponForm
                                     ->numeric()
                                     ->minValue(0)
                                     ->step(0.01)
-                                    ->prefix(fn ($get) => $get('type') === CouponType::Fixed->value ? '$' : '')
-                                    ->suffix(fn ($get) => $get('type') === CouponType::Percentage->value ? '%' : ''),
+                                    ->prefix(fn (Get $get) => $get('type') === CouponType::Fixed->value ? '$' : '')
+                                    ->suffix(fn (Get $get) => $get('type') === CouponType::Percentage->value ? '%' : ''),
 
                                 TextInput::make('min_order_amount')
                                     ->numeric()

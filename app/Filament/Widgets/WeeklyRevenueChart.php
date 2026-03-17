@@ -39,7 +39,7 @@ class WeeklyRevenueChart extends ChartWidget
                 ->sum('total');
             $expenses[] = (float) Expense::whereDate('date', $date)
                 ->get()
-                ->sum(fn ($e) => $e->deductible_amount);
+                ->sum(fn (Expense $e) => $e->deductible_amount);
         }
 
         return [

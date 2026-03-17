@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 
 class MenuController extends Controller
@@ -13,7 +14,7 @@ class MenuController extends Controller
     {
         $categories = Category::where('is_active', true)
             ->orderBy('sort_order')
-            ->with(['products' => fn ($q) => $q->where('is_active', true)])
+            ->with(['products' => fn (Builder $q) => $q->where('is_active', true)])
             ->get()
             ->map(fn (Category $c) => [
                 'id' => $c->id,

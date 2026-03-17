@@ -106,7 +106,7 @@ class LoyaltyRewardResource extends Resource
                         default => 'gray',
                     }),
                 TextColumn::make('reward_value')
-                    ->formatStateUsing(function ($state, LoyaltyReward $record) {
+                    ->formatStateUsing(function (mixed $state, LoyaltyReward $record) {
                         return match ($record->reward_type) {
                             'percentage_discount' => $state.'%',
                             'fixed_discount' => '$'.number_format((float) $state, 2),

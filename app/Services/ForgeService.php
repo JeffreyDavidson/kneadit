@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -29,7 +30,7 @@ class ForgeService
             && ! empty(config('services.forge.site_id'));
     }
 
-    protected function request()
+    protected function request(): PendingRequest
     {
         return Http::withToken($this->token)
             ->acceptJson()
@@ -130,7 +131,7 @@ class ForgeService
 
             $site = $response->json('site');
             $currentAliases = $site['aliases'] ?? [];
-            $currentAliases = array_values(array_filter($currentAliases, fn ($a) => $a !== $domain));
+            $currentAliases = array_values(array_filter($currentAliases, fn (string $a) => $a !== $domain));
 
             $updateResponse = $this->request()->put(
                 "/servers/{$this->serverId}/sites/{$this->siteId}",

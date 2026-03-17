@@ -91,8 +91,8 @@ class CateringInquiriesTable
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
-                            ->when($data['from'], fn (Builder $q, $date) => $q->whereDate('event_date', '>=', $date))
-                            ->when($data['until'], fn (Builder $q, $date) => $q->whereDate('event_date', '<=', $date));
+                            ->when($data['from'], fn (Builder $q, string $date) => $q->whereDate('event_date', '>=', $date))
+                            ->when($data['until'], fn (Builder $q, string $date) => $q->whereDate('event_date', '<=', $date));
                     }),
             ])
             ->actions([

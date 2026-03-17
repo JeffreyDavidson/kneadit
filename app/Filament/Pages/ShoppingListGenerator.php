@@ -42,14 +42,14 @@ class ShoppingListGenerator extends Page
 
     public array $checkedItems = [];
 
-    public function mount()
+    public function mount(): void
     {
         $this->startDate = now()->format('Y-m-d');
         $this->endDate = now()->addDays(7)->format('Y-m-d');
         $this->shoppingList = collect();
     }
 
-    public function generateShoppingList()
+    public function generateShoppingList(): void
     {
         // Get all order items within the date range
         $orderItems = Order::query()
@@ -57,7 +57,7 @@ class ShoppingListGenerator extends Page
             ->whereBetween('delivery_date', [$this->startDate, $this->endDate])
             ->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking])
             ->get()
-            ->flatMap(function ($order) {
+            ->flatMap(function (Order $order) {
                 return $order->orderItems;
             });
 
@@ -95,9 +95,9 @@ class ShoppingListGenerator extends Page
         }
 
         // Cross-reference with ingredient inventory
-        $inventoryIngredients = Ingredient::all()->keyBy(fn ($i) => strtolower($i->name));
+        $inventoryIngredients = Ingredient::all()->keyBy(fn (Ingredient $i) => strtolower($i->name));
 
-        $aggregatedIngredients = $aggregatedIngredients->map(function ($item) use ($inventoryIngredients) {
+        $aggregatedIngredients = $aggregatedIngredients->map(function (array $item) use ($inventoryIngredients) {
             $key = strtolower($item['name']);
             $tracked = $inventoryIngredients->get($key);
             $item['in_stock'] = $tracked ? (float) $tracked->current_stock : null;
@@ -113,7 +113,7 @@ class ShoppingListGenerator extends Page
         $this->checkedItems = [];
     }
 
-    public function toggleItem(int $index)
+    public function toggleItem(int $index): void
     {
         if (isset($this->checkedItems[$index])) {
             unset($this->checkedItems[$index]);

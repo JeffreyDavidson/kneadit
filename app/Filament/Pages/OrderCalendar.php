@@ -40,7 +40,7 @@ class OrderCalendar extends Page
 
     public ?string $selectedDate = null;
 
-    public function mount()
+    public function mount(): void
     {
         $this->currentYear = now()->year;
         $this->currentMonth = now()->month;
@@ -48,7 +48,7 @@ class OrderCalendar extends Page
         $this->loadOrderCounts();
     }
 
-    public function loadOrderCounts()
+    public function loadOrderCounts(): void
     {
         $startOfMonth = Date::createFromDate($this->currentYear, $this->currentMonth, 1)->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
@@ -59,7 +59,7 @@ class OrderCalendar extends Page
             ->pluck('count', 'date');
     }
 
-    public function previousMonth()
+    public function previousMonth(): void
     {
         $date = Date::createFromDate($this->currentYear, $this->currentMonth, 1)->subMonth();
         $this->currentYear = $date->year;
@@ -69,7 +69,7 @@ class OrderCalendar extends Page
         $this->loadOrderCounts();
     }
 
-    public function nextMonth()
+    public function nextMonth(): void
     {
         $date = Date::createFromDate($this->currentYear, $this->currentMonth, 1)->addMonth();
         $this->currentYear = $date->year;
@@ -79,7 +79,7 @@ class OrderCalendar extends Page
         $this->loadOrderCounts();
     }
 
-    public function selectDay(string $date)
+    public function selectDay(string $date): void
     {
         $this->selectedDate = $date;
         $this->selectedDayOrders = Order::with(['customer', 'orderItems.product'])

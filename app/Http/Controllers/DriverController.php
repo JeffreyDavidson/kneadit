@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Setting;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class DriverController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $orders = Order::with(['customer', 'orderItems.product'])
             ->whereNotNull('delivery_address')
@@ -23,7 +25,7 @@ class DriverController extends Controller
         return view('driver', compact('orders', 'storeName'));
     }
 
-    public function update(Order $order)
+    public function update(Order $order): RedirectResponse
     {
         $order->update(['status' => OrderStatus::Delivered]);
 

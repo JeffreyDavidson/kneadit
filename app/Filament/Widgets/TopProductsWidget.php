@@ -43,7 +43,7 @@ class TopProductsWidget extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Revenue ($)',
-                    'data' => $products->pluck('revenue')->map(fn ($v) => (float) $v)->all(),
+                    'data' => $products->pluck('revenue')->map(fn (mixed $v) => (float) $v)->all(),
                     'backgroundColor' => ['#8B5E3C', '#D4A574', '#F5E6D3', '#A0522D', '#DEB887'],
                     'borderRadius' => 6,
                 ],

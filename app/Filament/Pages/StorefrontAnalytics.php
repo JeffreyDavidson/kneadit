@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Traits\HasPlanGating;
 use Carbon\Carbon;
 use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -46,7 +47,7 @@ class StorefrontAnalytics extends Page
         };
     }
 
-    protected function baseQuery()
+    protected function baseQuery(): Builder
     {
         $query = PageView::query();
         $start = $this->getStartDate();
@@ -132,7 +133,7 @@ class StorefrontAnalytics extends Page
 
         $products = Product::whereIn('id', $data->pluck('product_id'))->pluck('name', 'id');
 
-        return $data->map(fn ($row) => (object) [
+        return $data->map(fn (object $row) => (object) [
             'name' => $products[$row->product_id] ?? 'Unknown',
             'views' => $row->views,
         ]);

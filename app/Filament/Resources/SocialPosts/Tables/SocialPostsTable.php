@@ -12,13 +12,14 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class SocialPostsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->with(['product']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['product']))
             ->columns([
                 BadgeColumn::make('platform')
                     ->colors([

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Order;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class TrackingController extends Controller
@@ -12,7 +13,7 @@ class TrackingController extends Controller
     /**
      * Show the order tracking page.
      */
-    public function show()
+    public function show(): View
     {
         return view('order-tracking');
     }
@@ -20,7 +21,7 @@ class TrackingController extends Controller
     /**
      * Look up orders by customer email.
      */
-    public function store(Request $request)
+    public function store(Request $request): View
     {
         $request->validate(['email' => ['required', 'email']]);
 

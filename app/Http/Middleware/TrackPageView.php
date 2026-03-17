@@ -79,7 +79,7 @@ class TrackPageView
                     $userAgent = substr($request->userAgent() ?? '', 0, 255);
                     $timestamp = now();
 
-                    $records = $products->map(fn ($productId) => [
+                    $records = $products->map(fn (int $productId) => [
                         'page' => $page,
                         'product_id' => $productId,
                         'session_id' => $sessionId,

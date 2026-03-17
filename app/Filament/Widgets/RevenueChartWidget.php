@@ -35,7 +35,7 @@ class RevenueChartWidget extends ChartWidget
         $previous = $this->getDailyRevenue($prevStart, $prevEnd);
 
         $labels = collect(CarbonPeriod::create($start, $end))
-            ->map(fn ($d) => $d->format('M j'))
+            ->map(fn (Carbon $d) => $d->format('M j'))
             ->toArray();
 
         $currentTotal = array_sum($current);
@@ -80,7 +80,7 @@ class RevenueChartWidget extends ChartWidget
             ->toArray();
 
         return collect(CarbonPeriod::create($start, $end))
-            ->map(fn ($d) => (float) ($raw[$d->format('Y-m-d')] ?? 0))
+            ->map(fn (Carbon $d) => (float) ($raw[$d->format('Y-m-d')] ?? 0))
             ->all();
     }
 

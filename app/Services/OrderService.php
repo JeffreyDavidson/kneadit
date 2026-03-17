@@ -112,7 +112,7 @@ class OrderService
                     'name' => $data['customer_name'],
                     'phone' => $data['customer_phone'] ?? null,
                     'birthday' => $data['customer_birthday'] ?? null,
-                ], fn ($v) => $v !== null)
+                ], fn (mixed $v) => $v !== null)
             );
 
             // Create order

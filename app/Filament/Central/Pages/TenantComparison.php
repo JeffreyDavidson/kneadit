@@ -37,7 +37,7 @@ class TenantComparison extends Page
     {
         return Tenant::orderBy('store_name')
             ->get()
-            ->mapWithKeys(fn ($t) => [$t->id => $t->store_name ?: $t->name])
+            ->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])
             ->toArray();
     }
 
@@ -181,7 +181,7 @@ class TenantComparison extends Page
             $results[] = $data;
         }
 
-        usort($results, fn ($a, $b) => $b['total_orders'] <=> $a['total_orders']);
+        usort($results, fn (array $a, array $b) => $b['total_orders'] <=> $a['total_orders']);
 
         return $results;
     }

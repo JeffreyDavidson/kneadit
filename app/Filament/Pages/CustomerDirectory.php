@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Customer;
 use App\Models\CustomerNote;
+use App\Models\Order;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
@@ -15,6 +16,8 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerDirectory extends Page implements HasForms
@@ -53,7 +56,7 @@ class CustomerDirectory extends Page implements HasForms
         $this->noteForm->fill();
     }
 
-    public function loadCustomerDetails($customerId)
+    public function loadCustomerDetails(int $customerId): ?array
     {
         return $this->getCustomerDetails($customerId);
     }
@@ -75,10 +78,10 @@ class CustomerDirectory extends Page implements HasForms
     {
         $customers = Customer::all();
         $totalCustomers = $customers->count();
-        $lifetimeValues = $customers->map(fn ($c) => $c->lifetime_value);
+        $lifetimeValues = $customers->map(fn (Customer $c) => $c->lifetime_value);
         $avgLifetimeValue = $totalCustomers > 0 ? $lifetimeValues->avg() : 0;
-        $atRiskCount = $customers->filter(fn ($c) => $c->is_at_risk)->count();
-        $topCustomer = $customers->sortByDesc(fn ($c) => $c->lifetime_value)->first();
+        $atRiskCount = $customers->filter(fn (Customer $c) => $c->is_at_risk)->count();
+        $topCustomer = $customers->sortByDesc(fn (Customer $c) => $c->lifetime_value)->first();
 
         return [
             'total_customers' => $totalCustomers,
@@ -89,12 +92,12 @@ class CustomerDirectory extends Page implements HasForms
         ];
     }
 
-    public function getCustomers()
+    public function getCustomers(): Collection
     {
         $query = Customer::query()
             ->withCount('orders')
             ->withSum('orders', 'total')
-            ->with(['orders' => function ($query) {
+            ->with(['orders' => function (EloquentBuilder $query) {
                 $query->latest()->take(1);
             }]);
 
@@ -106,7 +109,7 @@ class CustomerDirectory extends Page implements HasForms
             });
         }
 
-        return $query->orderBy('name')->get()->map(function ($customer) {
+        return $query->orderBy('name')->get()->map(function (Customer $customer) {
             return [
                 'id' => $customer->id,
                 'name' => $customer->name,
@@ -119,13 +122,13 @@ class CustomerDirectory extends Page implements HasForms
         });
     }
 
-    public function getCustomerDetails($customerId)
+    public function getCustomerDetails(int $customerId): ?array
     {
         $customer = Customer::with([
-            'orders' => function ($query) {
+            'orders' => function (EloquentBuilder $query) {
                 $query->orderBy('created_at', 'desc');
             },
-            'customerNotes' => function ($query) {
+            'customerNotes' => function (EloquentBuilder $query) {
                 $query->with('createdBy')->orderBy('created_at', 'desc');
             },
         ])->find($customerId);
@@ -140,7 +143,7 @@ class CustomerDirectory extends Page implements HasForms
             'email' => $customer->email,
             'phone' => $customer->phone,
             'address' => $customer->full_address,
-            'orders' => $customer->orders->map(function ($order) {
+            'orders' => $customer->orders->map(function (Order $order) {
                 return [
                     'id' => $order->id,
                     'order_number' => $order->order_number,
@@ -151,7 +154,7 @@ class CustomerDirectory extends Page implements HasForms
                     'delivery_date' => $order->delivery_date?->format('M j, Y'),
                 ];
             }),
-            'notes' => $customer->customerNotes->map(function ($note) {
+            'notes' => $customer->customerNotes->map(function (CustomerNote $note) {
                 return [
                     'id' => $note->id,
                     'note' => $note->note,
@@ -170,7 +173,7 @@ class CustomerDirectory extends Page implements HasForms
         ];
     }
 
-    public function addNote($customerId)
+    public function addNote(int $customerId): void
     {
         $this->noteForm->validate();
 
@@ -192,7 +195,7 @@ class CustomerDirectory extends Page implements HasForms
         $this->dispatch('refreshCustomerDetails');
     }
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         // This will trigger a re-render when search changes
         $this->dispatch('searchUpdated');

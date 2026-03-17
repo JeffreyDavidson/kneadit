@@ -11,6 +11,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class ProductForm
@@ -64,7 +65,7 @@ class ProductForm
                                     ->label('Margin %')
                                     ->disabled()
                                     ->dehydrated(false)
-                                    ->formatStateUsing(function ($state, $record) {
+                                    ->formatStateUsing(function ($state, ?Model $record) {
                                         if ($record && $record->cost && $record->price) {
                                             return round(($record->price - $record->cost) / $record->price * 100, 2).'%';
                                         }

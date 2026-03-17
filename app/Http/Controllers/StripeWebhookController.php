@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -126,7 +127,7 @@ class StripeWebhookController extends WebhookController
                 "Hi {$user->name},\n\nWe couldn't process your KneadIt subscription payment. ".
                 "Please update your payment method to keep your bakery running.\n\n".
                 "Update payment: https://getkneadit.app/billing/portal\n\n— KneadIt",
-                function ($m) use ($user) {
+                function (Message $m) use ($user) {
                     $m->to($user->email)
                         ->subject('⚠️ Payment failed — action needed')
                         ->from(config('mail.from.address'), 'KneadIt');
@@ -142,7 +143,7 @@ class StripeWebhookController extends WebhookController
                 "Payment failed for {$user->name} ({$user->email})".
                 ($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '').
                 "\nAmount: $".number_format(($invoice['amount_due'] ?? 0) / 100, 2),
-                function ($m) {
+                function (Message $m) {
                     $m->to(config('mail.platform_notify'))
                         ->subject('Payment Failed — '.now()->format('M j'))
                         ->from(config('mail.from.address'), 'KneadIt Platform');

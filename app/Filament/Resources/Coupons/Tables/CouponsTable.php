@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Coupons\Tables;
 
 use App\Enums\CouponType;
+use App\Models\Coupon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -12,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CouponsTable
 {
@@ -32,7 +34,7 @@ class CouponsTable
 
                 TextColumn::make('value')
                     ->money('USD')
-                    ->formatStateUsing(function ($state, $record) {
+                    ->formatStateUsing(function ($state, Coupon $record) {
                         if ($record->type === CouponType::Percentage) {
                             return $state.'%';
                         }
@@ -45,7 +47,7 @@ class CouponsTable
                     ->placeholder('No minimum'),
 
                 TextColumn::make('usage')
-                    ->formatStateUsing(function ($record) {
+                    ->formatStateUsing(function ($state, Coupon $record) {
                         if ($record->max_uses) {
                             return "{$record->used_count} / {$record->max_uses}";
                         }
@@ -72,7 +74,7 @@ class CouponsTable
                         'expired' => 'Expired',
                         'maxed_out' => 'Max Uses Reached',
                     ])
-                    ->query(function ($query, $state) {
+                    ->query(function (Builder $query, array $state) {
                         return match ($state) {
                             'valid' => $query->valid(),
                             'expired' => $query->where('expires_at', '<', now()),

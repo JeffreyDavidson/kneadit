@@ -10,6 +10,7 @@ use App\Models\Setting;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Collection;
 
 class LoyaltyDashboard extends Page
 {
@@ -63,7 +64,7 @@ class LoyaltyDashboard extends Page
         return LoyaltyReward::where('is_active', true)->count();
     }
 
-    public function getTopCustomersProperty()
+    public function getTopCustomersProperty(): Collection
     {
         return Customer::select('customers.*')
             ->join('loyalty_points', 'customers.id', '=', 'loyalty_points.customer_id')
@@ -75,7 +76,7 @@ class LoyaltyDashboard extends Page
             ->get();
     }
 
-    public function getRecentActivityProperty()
+    public function getRecentActivityProperty(): Collection
     {
         return LoyaltyPoint::with('customer')
             ->latest('created_at')

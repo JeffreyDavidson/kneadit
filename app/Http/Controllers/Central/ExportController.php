@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Central;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -108,10 +109,13 @@ class ExportController extends Controller
         return $content;
     }
 
+    /**
+     * @param  resource  $handle
+     */
     private function writeProducts($handle): void
     {
         fputcsv($handle, ['ID', 'Name', 'Slug', 'Description', 'Price', 'Status', 'Created At', 'Updated At']);
-        DB::table('products')->orderBy('id')->chunk(500, function ($rows) use ($handle) {
+        DB::table('products')->orderBy('id')->chunk(500, function (Collection $rows) use ($handle) {
             foreach ($rows as $row) {
                 fputcsv($handle, [
                     $row->id, $row->name, $row->slug ?? '', $row->description ?? '',
@@ -121,10 +125,13 @@ class ExportController extends Controller
         });
     }
 
+    /**
+     * @param  resource  $handle
+     */
     private function writeCategories($handle): void
     {
         fputcsv($handle, ['ID', 'Name', 'Slug', 'Description', 'Created At', 'Updated At']);
-        DB::table('categories')->orderBy('id')->chunk(500, function ($rows) use ($handle) {
+        DB::table('categories')->orderBy('id')->chunk(500, function (Collection $rows) use ($handle) {
             foreach ($rows as $row) {
                 fputcsv($handle, [
                     $row->id, $row->name, $row->slug ?? '', $row->description ?? '',
@@ -134,6 +141,9 @@ class ExportController extends Controller
         });
     }
 
+    /**
+     * @param  resource  $handle
+     */
     private function writeOrders($handle): void
     {
         fputcsv($handle, ['Order ID', 'Customer ID', 'Status', 'Total', 'Item Product ID', 'Item Qty', 'Item Unit Price', 'Order Created At']);
@@ -141,7 +151,7 @@ class ExportController extends Controller
             ->leftJoin('order_items', 'orders.id', '=', 'order_items.order_id')
             ->select('orders.*', 'order_items.product_id as item_product_id', 'order_items.quantity as item_qty', 'order_items.unit_price as item_price')
             ->orderBy('orders.id')
-            ->chunk(500, function ($rows) use ($handle) {
+            ->chunk(500, function (Collection $rows) use ($handle) {
                 foreach ($rows as $row) {
                     fputcsv($handle, [
                         $row->id, $row->user_id ?? '', $row->status ?? '', $row->total ?? '',
@@ -152,10 +162,13 @@ class ExportController extends Controller
             });
     }
 
+    /**
+     * @param  resource  $handle
+     */
     private function writeCustomers($handle): void
     {
         fputcsv($handle, ['ID', 'Name', 'Email', 'Created At', 'Updated At']);
-        DB::table('users')->orderBy('id')->chunk(500, function ($rows) use ($handle) {
+        DB::table('users')->orderBy('id')->chunk(500, function (Collection $rows) use ($handle) {
             foreach ($rows as $row) {
                 fputcsv($handle, [
                     $row->id, $row->name, $row->email, $row->created_at, $row->updated_at,
@@ -164,10 +177,13 @@ class ExportController extends Controller
         });
     }
 
+    /**
+     * @param  resource  $handle
+     */
     private function writeReviews($handle): void
     {
         fputcsv($handle, ['ID', 'Product ID', 'User ID', 'Rating', 'Comment', 'Created At', 'Updated At']);
-        DB::table('reviews')->orderBy('id')->chunk(500, function ($rows) use ($handle) {
+        DB::table('reviews')->orderBy('id')->chunk(500, function (Collection $rows) use ($handle) {
             foreach ($rows as $row) {
                 fputcsv($handle, [
                     $row->id, $row->product_id ?? '', $row->user_id ?? '', $row->rating ?? '',
