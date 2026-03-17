@@ -52,9 +52,7 @@ class ImpersonateController extends Controller
             ->where('expires_at', '>', now())
             ->first();
 
-        if (! $record) {
-            abort(403, 'Invalid or expired impersonation token.');
-        }
+        abort_unless($record, 403, 'Invalid or expired impersonation token.');
 
         // Delete the token (one-time use)
         DB::connection('central')->table('impersonation_tokens')
@@ -63,9 +61,7 @@ class ImpersonateController extends Controller
 
         $user = User::first();
 
-        if (! $user) {
-            abort(404, 'No users found for this tenant.');
-        }
+        abort_unless($user, 404, 'No users found for this tenant.');
 
         Auth::login($user);
 

@@ -4,9 +4,9 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
-use Carbon\Carbon;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 
 class WelcomeBannerWidget extends Widget
 {
@@ -36,14 +36,14 @@ class WelcomeBannerWidget extends Widget
 
     public function getOrdersToday(): int
     {
-        return Order::whereDate('delivery_date', Carbon::today())->count();
+        return Order::whereDate('delivery_date', Date::today())->count();
     }
 
     public function getRevenueToday(): string
     {
         return number_format(
             (float) Order::where('status', '!=', OrderStatus::Cancelled)
-                ->whereDate('delivery_date', Carbon::today())
+                ->whereDate('delivery_date', Date::today())
                 ->sum('total'),
             2
         );

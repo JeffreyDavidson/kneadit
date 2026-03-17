@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 
 class FeatureUsageLog extends Model
 {
@@ -33,8 +33,8 @@ class FeatureUsageLog extends Model
      */
     public static function track(string $tenantId, string $feature): self
     {
-        $today = Carbon::today();
-        $now = Carbon::now();
+        $today = Date::today();
+        $now = Date::now();
 
         $log = static::where('tenant_id', $tenantId)
             ->where('feature', $feature)

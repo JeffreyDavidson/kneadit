@@ -6,9 +6,9 @@ use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Traits\HasPlanGating;
-use Carbon\Carbon;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 
 class DeliveryRoutePlanner extends Page
 {
@@ -69,7 +69,7 @@ class DeliveryRoutePlanner extends Page
                     'order_number' => $order->order_number,
                     'customer_name' => $order->customer->name ?? 'Unknown Customer',
                     'delivery_address' => $order->delivery_address,
-                    'delivery_time' => $order->delivery_time ? Carbon::parse($order->delivery_time)->format('H:i') : 'Not specified',
+                    'delivery_time' => $order->delivery_time ? Date::parse($order->delivery_time)->format('H:i') : 'Not specified',
                     'total' => $order->total,
                     'distance_tier' => $this->calculateDistanceTier($order->delivery_address),
                 ];

@@ -61,7 +61,7 @@ class BlogPost extends Model
             ->where('published_at', '<=', now());
     }
 
-    public function getUrlAttribute(): string
+    protected function getUrlAttribute(): string
     {
         return route('blog.show', $this->slug);
     }

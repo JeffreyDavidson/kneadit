@@ -3,8 +3,8 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Coupon;
-use Carbon\Carbon;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Date;
 
 class CouponUsageWidget extends Widget
 {
@@ -34,8 +34,8 @@ class CouponUsageWidget extends Widget
     public function getExpiringSoonCount(): int
     {
         return Coupon::where('is_active', true)
-            ->where('expires_at', '>=', Carbon::now())
-            ->where('expires_at', '<=', Carbon::now()->addDays(7))
+            ->where('expires_at', '>=', Date::now())
+            ->where('expires_at', '<=', Date::now()->addDays(7))
             ->count();
     }
 }

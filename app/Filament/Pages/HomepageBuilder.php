@@ -81,7 +81,7 @@ class HomepageBuilder extends Page
 
     public function moveUp(string $key): void
     {
-        $sorted = collect($this->sections)->sortBy('order')->keys()->values()->toArray();
+        $sorted = collect($this->sections)->sortBy('order')->keys()->values()->all();
         $index = array_search($key, $sorted);
         if ($index > 0) {
             $swapKey = $sorted[$index - 1];
@@ -93,7 +93,7 @@ class HomepageBuilder extends Page
 
     public function moveDown(string $key): void
     {
-        $sorted = collect($this->sections)->sortBy('order')->keys()->values()->toArray();
+        $sorted = collect($this->sections)->sortBy('order')->keys()->values()->all();
         $index = array_search($key, $sorted);
         if ($index < count($sorted) - 1) {
             $swapKey = $sorted[$index + 1];

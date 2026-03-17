@@ -5,8 +5,9 @@ namespace App\Filament\Widgets;
 use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
-use Carbon\Carbon;
 use Filament\Widgets\Widget;
+use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\Date;
 
 class CustomerInsightsWidget extends Widget
 {
@@ -18,17 +19,17 @@ class CustomerInsightsWidget extends Widget
 
     public function getNewCustomersThisWeek(): int
     {
-        return Customer::where('created_at', '>=', Carbon::now()->startOfWeek())->count();
+        return Customer::where('created_at', '>=', Date::now()->startOfWeek())->count();
     }
 
     public function getRepeatCustomerRate(): float
     {
-        $totalWithOrders = Customer::whereHas('orders', fn ($q) => $q->where('status', '!=', OrderStatus::Cancelled))->count();
+        $totalWithOrders = Customer::whereHas('orders', fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled))->count();
         if ($totalWithOrders === 0) {
             return 0;
         }
 
-        $repeat = Customer::whereHas('orders', fn ($q) => $q->where('status', '!=', OrderStatus::Cancelled), '>=', 2)->count();
+        $repeat = Customer::whereHas('orders', fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled), '>=', 2)->count();
 
         return round(($repeat / $totalWithOrders) * 100, 1);
     }

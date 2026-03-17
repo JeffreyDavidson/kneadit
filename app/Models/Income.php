@@ -33,7 +33,7 @@ class Income extends Model
         'other' => 'Other',
     ];
 
-    public function getSourceLabelAttribute(): string
+    protected function getSourceLabelAttribute(): string
     {
         return self::SOURCES[$this->source] ?? ucfirst($this->source);
     }

@@ -6,7 +6,7 @@ use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Setting;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 class GoalTrackerWidget extends Widget
 {
@@ -48,8 +48,8 @@ class GoalTrackerWidget extends Widget
     public function getMonthlyDataProperty(): array
     {
         $goal = (float) Setting::get('monthly_revenue_goal', 5000);
-        $start = Carbon::now()->startOfMonth();
-        $end = Carbon::now()->endOfMonth();
+        $start = Date::now()->startOfMonth();
+        $end = Date::now()->endOfMonth();
 
         $revenue = (float) Order::whereBetween('created_at', [$start, $end])
             ->whereNotIn('status', [OrderStatus::Cancelled])
@@ -68,8 +68,8 @@ class GoalTrackerWidget extends Widget
     public function getYearlyDataProperty(): array
     {
         $goal = (float) Setting::get('yearly_revenue_goal', 50000);
-        $start = Carbon::now()->startOfYear();
-        $end = Carbon::now()->endOfYear();
+        $start = Date::now()->startOfYear();
+        $end = Date::now()->endOfYear();
 
         $revenue = (float) Order::whereBetween('created_at', [$start, $end])
             ->whereNotIn('status', [OrderStatus::Cancelled])

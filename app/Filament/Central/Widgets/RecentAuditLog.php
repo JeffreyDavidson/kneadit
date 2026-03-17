@@ -15,8 +15,7 @@ class RecentAuditLog extends Widget
 
     public function getRecentLogsProperty()
     {
-        return AdminAuditLog::query()
-            ->orderByDesc('created_at')
+        return AdminAuditLog::query()->latest()
             ->limit(5)
             ->get();
     }

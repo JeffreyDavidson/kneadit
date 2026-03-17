@@ -5,8 +5,8 @@ namespace App\Filament\Central\Pages;
 use App\Models\AdminAuditLog;
 use App\Models\PlatformActivity;
 use BackedEnum;
-use Carbon\Carbon;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
@@ -81,22 +81,22 @@ class Activity extends Page
 
     public function getLogsProperty()
     {
-        $query = AdminAuditLog::query()->orderByDesc('created_at');
+        $query = AdminAuditLog::query()->latest();
 
         if ($this->filterAction) {
             $query->forAction($this->filterAction);
         }
 
         if ($this->filterSearch) {
-            $query->where('description', 'like', '%'.$this->filterSearch.'%');
+            $query->whereLike('description', '%'.$this->filterSearch.'%');
         }
 
         if ($this->filterDateFrom) {
-            $query->where('created_at', '>=', Carbon::parse($this->filterDateFrom)->startOfDay());
+            $query->where('created_at', '>=', Date::parse($this->filterDateFrom)->startOfDay());
         }
 
         if ($this->filterDateTo) {
-            $query->where('created_at', '<=', Carbon::parse($this->filterDateTo)->endOfDay());
+            $query->where('created_at', '<=', Date::parse($this->filterDateTo)->endOfDay());
         }
 
         return $query->paginate($this->perPage, ['*'], 'page', $this->page);
@@ -104,7 +104,7 @@ class Activity extends Page
 
     public function getTodayCountProperty(): int
     {
-        return AdminAuditLog::where('created_at', '>=', now()->startOfDay())->count();
+        return AdminAuditLog::where('created_at', '>=', today())->count();
     }
 
     public function getWeekCountProperty(): int

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Date;
 
 class WaitlistEntry extends Model
 {
@@ -32,12 +33,15 @@ class WaitlistEntry extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function getStatusLabelAttribute(): string
+    protected function getStatusLabelAttribute(): string
     {
         return ucfirst($this->status->value);
     }
@@ -51,7 +55,7 @@ class WaitlistEntry extends Model
     #[Scope]
     protected function forDate(Builder $query, Carbon|string $date): void
     {
-        $query->whereDate('requested_date', Carbon::parse($date));
+        $query->whereDate('requested_date', Date::parse($date));
     }
 
     public function markNotified(): void

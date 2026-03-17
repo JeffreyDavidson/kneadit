@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Traits\HasPlanGating;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\TestResponse;
 use Tests\CentralTestCase;
@@ -103,7 +103,7 @@ class SignupPipelineTest extends CentralTestCase
         // The controller validates 'plan' from request body but uses route param in match.
         // An invalid plan hits an unhandled match case → 500 error.
         $response = $this->actingAs($user)->post(route('billing.checkout', 'nonexistent'));
-        $response->assertStatus(404);
+        $response->assertNotFound();
     }
 
     // -------------------------------------------------------
@@ -364,7 +364,7 @@ class SignupPipelineTest extends CentralTestCase
         $this->submitOnboarding($user, ['subdomain' => $sub]);
 
         $tenant = DB::table('tenants')->where('id', $sub)->first();
-        $trialEnds = Carbon::parse($tenant->trial_ends_at);
+        $trialEnds = Date::parse($tenant->trial_ends_at);
 
         $this->assertTrue(
             $trialEnds->isBetween(now()->addDays(29), now()->addDays(31)),

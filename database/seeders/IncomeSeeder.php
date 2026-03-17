@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Income;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 
 class IncomeSeeder extends Seeder
 {
@@ -110,7 +110,7 @@ class IncomeSeeder extends Seeder
         foreach ($incomes as $index => $incomeData) {
             // Spread incomes over the last 60 days, with some concentration on weekends for farmers markets
             $daysAgo = rand(1, 60);
-            $date = Carbon::now()->subDays($daysAgo);
+            $date = Date::now()->subDays($daysAgo);
 
             // If it's a farmers market income, try to put it on a weekend
             if ($incomeData['source'] === 'farmers_market') {

@@ -12,7 +12,7 @@ class CateringController extends Controller
 {
     public function catering()
     {
-        $cateringPhotos = CustomerPhoto::where('caption', 'like', '%catering%')
+        $cateringPhotos = CustomerPhoto::whereLike('caption', '%catering%')
             ->where('is_approved', true)
             ->latest()
             ->take(8)
@@ -52,7 +52,7 @@ class CateringController extends Controller
 
         CateringInquiry::create($validated);
 
-        return redirect()->route('storefront.catering')
+        return to_route('storefront.catering')
             ->with('success', 'Thank you for your inquiry! We\'ll review your request and get back to you with a custom quote soon.');
     }
 }

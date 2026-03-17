@@ -4,8 +4,8 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\Customer;
-use Carbon\Carbon;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Date;
 
 class ReorderRemindersWidget extends Widget
 {
@@ -17,7 +17,7 @@ class ReorderRemindersWidget extends Widget
 
     public function getLapsedCustomers(): array
     {
-        $thirtyDaysAgo = Carbon::now()->subDays(30);
+        $thirtyDaysAgo = Date::now()->subDays(30);
 
         return Customer::select('customers.id', 'customers.name', 'customers.email')
             ->join('orders', 'orders.customer_id', '=', 'customers.id')
@@ -38,7 +38,7 @@ class ReorderRemindersWidget extends Widget
 
     public function getLapsedCount(): int
     {
-        $thirtyDaysAgo = Carbon::now()->subDays(30);
+        $thirtyDaysAgo = Date::now()->subDays(30);
 
         return Customer::join('orders', 'orders.customer_id', '=', 'customers.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])

@@ -7,6 +7,7 @@ use App\Models\Customer;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Contracts\Database\Query\Builder;
 
 class AtRiskCustomersWidget extends BaseWidget
 {
@@ -21,10 +22,10 @@ class AtRiskCustomersWidget extends BaseWidget
         return $table
             ->query(
                 Customer::query()
-                    ->whereHas('orders', function ($query) {
+                    ->whereHas('orders', function (Builder $query) {
                         $query->where('status', '!=', OrderStatus::Cancelled);
                     })
-                    ->whereDoesntHave('orders', function ($query) {
+                    ->whereDoesntHave('orders', function (Builder $query) {
                         $query->where('status', '!=', OrderStatus::Cancelled)
                             ->where('created_at', '>=', now()->subDays(30));
                     })

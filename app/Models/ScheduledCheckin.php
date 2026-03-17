@@ -22,6 +22,9 @@ class ScheduledCheckin extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<CheckinLog, $this>
+     */
     public function logs(): HasMany
     {
         return $this->hasMany(CheckinLog::class, 'checkin_id');

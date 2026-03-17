@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerDirectory extends Page implements HasForms
@@ -98,10 +99,10 @@ class CustomerDirectory extends Page implements HasForms
             }]);
 
         if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('name', 'like', '%'.$this->search.'%')
-                    ->orWhere('email', 'like', '%'.$this->search.'%')
-                    ->orWhere('phone', 'like', '%'.$this->search.'%');
+            $query->where(function (Builder $q) {
+                $q->whereLike('name', '%'.$this->search.'%')
+                    ->orWhereLike('email', '%'.$this->search.'%')
+                    ->orWhereLike('phone', '%'.$this->search.'%');
             });
         }
 

@@ -13,6 +13,7 @@ use App\Traits\HasPlanGating;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
@@ -56,7 +57,7 @@ class SmartShoppingList extends Page
     public function generateList(): void
     {
         // Get ingredients below low stock threshold
-        $lowStockIngredients = Ingredient::where(function ($q) {
+        $lowStockIngredients = Ingredient::where(function (Builder $q) {
             $q->where('current_stock', '<=', 0)
                 ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
         })->with('suppliers')->get();

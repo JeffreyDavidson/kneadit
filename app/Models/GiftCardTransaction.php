@@ -26,11 +26,17 @@ class GiftCardTransaction extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<GiftCard, $this>
+     */
     public function giftCard(): BelongsTo
     {
         return $this->belongsTo(GiftCard::class);
     }
 
+    /**
+     * @return BelongsTo<Order, $this>
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);

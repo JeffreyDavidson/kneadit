@@ -42,7 +42,7 @@ class ReportsCenter extends Page
     public function generateReport(string $type): void
     {
         $this->activeReport = $type;
-        $service = app(ReportService::class);
+        $service = resolve(ReportService::class);
 
         $this->reportData = match ($type) {
             'sales' => $service->salesReport($this->startDate, $this->endDate),

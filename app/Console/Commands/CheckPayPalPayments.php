@@ -48,7 +48,7 @@ class CheckPayPalPayments extends Command
 
     protected function processTenant(Tenant $tenant): void
     {
-        $paypalService = app(PayPalService::class);
+        $paypalService = resolve(PayPalService::class);
 
         $orders = Order::where('payment_status', PaymentStatus::Unpaid)
             ->whereNotNull('paypal_invoice_id')

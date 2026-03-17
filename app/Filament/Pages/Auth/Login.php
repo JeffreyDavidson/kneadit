@@ -137,6 +137,6 @@ class Login extends BaseLogin
         Log::info('=== LOGIN SUCCESS ===');
         session()->regenerate();
 
-        return app(LoginResponse::class);
+        return resolve(LoginResponse::class);
     }
 }

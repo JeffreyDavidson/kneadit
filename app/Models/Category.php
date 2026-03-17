@@ -24,6 +24,9 @@ class Category extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @return HasMany<Product, $this>
+     */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);

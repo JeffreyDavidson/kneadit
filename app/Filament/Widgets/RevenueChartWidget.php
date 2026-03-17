@@ -7,6 +7,7 @@ use App\Models\Order;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Date;
 
 class RevenueChartWidget extends ChartWidget
 {
@@ -25,7 +26,7 @@ class RevenueChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $end = Carbon::today();
+        $end = Date::today();
         $start = $end->copy()->subDays(29);
         $prevEnd = $start->copy()->subDay();
         $prevStart = $prevEnd->copy()->subDays(29);
@@ -80,7 +81,7 @@ class RevenueChartWidget extends ChartWidget
 
         return collect(CarbonPeriod::create($start, $end))
             ->map(fn ($d) => (float) ($raw[$d->format('Y-m-d')] ?? 0))
-            ->toArray();
+            ->all();
     }
 
     private function fmt(float $v): string

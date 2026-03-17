@@ -7,8 +7,8 @@ use App\Models\Product;
 use App\Models\Recipe;
 use App\Models\SeasonalItem;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -55,8 +55,8 @@ class ProductTest extends TestCase
 
         SeasonalItem::create([
             'product_id' => $product->id,
-            'available_from' => Carbon::now()->subMonth(),
-            'available_until' => Carbon::now()->addMonth(),
+            'available_from' => Date::now()->subMonth(),
+            'available_until' => Date::now()->addMonth(),
         ]);
 
         $this->assertCount(1, $product->seasonalItems);
@@ -70,8 +70,8 @@ class ProductTest extends TestCase
 
         SeasonalItem::create([
             'product_id' => $product->id,
-            'available_from' => Carbon::now()->subMonth(),
-            'available_until' => Carbon::now()->addMonth(),
+            'available_from' => Date::now()->subMonth(),
+            'available_until' => Date::now()->addMonth(),
         ]);
 
         $product->load('seasonalItems');
@@ -86,8 +86,8 @@ class ProductTest extends TestCase
 
         SeasonalItem::create([
             'product_id' => $product->id,
-            'available_from' => Carbon::now()->subMonths(6),
-            'available_until' => Carbon::now()->subMonths(3),
+            'available_from' => Date::now()->subMonths(6),
+            'available_until' => Date::now()->subMonths(3),
         ]);
 
         $product->load('seasonalItems');

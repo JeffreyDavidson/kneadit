@@ -36,6 +36,9 @@ class GiftCard extends Model
         ];
     }
 
+    /**
+     * @return HasMany<GiftCardTransaction, $this>
+     */
     public function transactions(): HasMany
     {
         return $this->hasMany(GiftCardTransaction::class);
@@ -56,7 +59,7 @@ class GiftCard extends Model
             ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 
-    public function getStatusAttribute(): GiftCardStatus
+    protected function getStatusAttribute(): GiftCardStatus
     {
         if (! $this->is_active) {
             return GiftCardStatus::Inactive;

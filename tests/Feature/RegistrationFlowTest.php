@@ -13,7 +13,7 @@ class RegistrationFlowTest extends CentralTestCase
     {
         $response = $this->get(route('register'));
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertSee('Start your bakery journey');
     }
 
@@ -109,7 +109,7 @@ class RegistrationFlowTest extends CentralTestCase
 
         $response = $this->actingAs($user)->get(route('billing.plans'));
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertSee('Choose Your Plan');
     }
 
@@ -132,7 +132,7 @@ class RegistrationFlowTest extends CentralTestCase
 
         $response = $this->actingAs($user)->post(route('billing.checkout', ['plan' => 'invalid']));
 
-        $response->assertStatus(404);
+        $response->assertNotFound();
     }
 
     /** @test */
@@ -146,7 +146,7 @@ class RegistrationFlowTest extends CentralTestCase
 
         $response = $this->actingAs($user)->get(route('onboarding.show'));
 
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     /** @test */

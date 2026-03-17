@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Expense;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 
 class ExpenseSeeder extends Seeder
 {
@@ -252,7 +252,7 @@ class ExpenseSeeder extends Seeder
         foreach ($expenses as $index => $expenseData) {
             // Spread expenses over the last 90 days
             $daysAgo = rand(1, 90);
-            $date = Carbon::now()->subDays($daysAgo);
+            $date = Date::now()->subDays($daysAgo);
 
             Expense::create([
                 'description' => $expenseData['description'],

@@ -28,7 +28,7 @@ class TenantStorefrontMetaTest extends CentralTestCase
     {
         $response = $this->get('/this-page-does-not-exist-at-all');
 
-        $response->assertStatus(404);
+        $response->assertNotFound();
     }
 
     // --- #22: OG meta tags ---

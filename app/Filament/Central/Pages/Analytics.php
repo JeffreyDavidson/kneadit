@@ -4,8 +4,8 @@ namespace App\Filament\Central\Pages;
 
 use App\Models\Tenant;
 use BackedEnum;
-use Carbon\Carbon;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
@@ -25,7 +25,7 @@ class Analytics extends Page
     {
         $months = collect();
         for ($i = 11; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
+            $date = Date::now()->subMonths($i);
             $months->push([
                 'label' => $date->format('M Y'),
                 'count' => Tenant::whereYear('created_at', $date->year)
@@ -104,8 +104,8 @@ class Analytics extends Page
         }
 
         $avgDays = $tenants->avg(function ($tenant) {
-            return Carbon::parse($tenant->created_at)
-                ->diffInDays(Carbon::parse($tenant->trial_ends_at));
+            return Date::parse($tenant->created_at)
+                ->diffInDays(Date::parse($tenant->trial_ends_at));
         });
 
         return round($avgDays, 1);

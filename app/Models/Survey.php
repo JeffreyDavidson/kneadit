@@ -21,6 +21,9 @@ class Survey extends Model
         'responses_count' => 'integer',
     ];
 
+    /**
+     * @return HasMany<SurveyResponse, $this>
+     */
     public function responses(): HasMany
     {
         return $this->hasMany(SurveyResponse::class);

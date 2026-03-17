@@ -5,9 +5,9 @@ namespace App\Filament\Widgets;
 use App\Enums\OrderStatus;
 use App\Models\Expense;
 use App\Models\Order;
-use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Date;
 
 class WeeklyRevenueChart extends ChartWidget
 {
@@ -24,8 +24,8 @@ class WeeklyRevenueChart extends ChartWidget
 
     protected function getData(): array
     {
-        $start = Carbon::now()->startOfWeek();
-        $end = Carbon::now()->endOfWeek();
+        $start = Date::now()->startOfWeek();
+        $end = Date::now()->endOfWeek();
         $period = CarbonPeriod::create($start, $end);
 
         $labels = [];

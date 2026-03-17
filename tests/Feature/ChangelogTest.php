@@ -10,7 +10,7 @@ class ChangelogTest extends CentralTestCase
     {
         $response = $this->get('/changelog');
 
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     public function test_changelog_displays_version_entries(): void

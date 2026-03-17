@@ -4,9 +4,9 @@ namespace App\Filament\Central\Pages;
 
 use App\Models\Tenant;
 use BackedEnum;
-use Carbon\Carbon;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
@@ -38,7 +38,7 @@ class OnboardingTracker extends Page
                 'email' => $tenant->email,
                 'plan' => $tenant->plan ?? 'free',
                 'created_at' => $tenant->created_at,
-                'days_since_signup' => $tenant->created_at ? (int) Carbon::parse($tenant->created_at)->diffInDays(now()) : 0,
+                'days_since_signup' => $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0,
                 'checks' => $checks,
                 'completed' => $completed,
                 'total' => 7,

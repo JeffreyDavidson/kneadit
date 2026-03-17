@@ -8,8 +8,9 @@ use App\Models\Customer;
 use App\Models\CustomerReminder;
 use App\Models\Setting;
 use App\Models\Tenant;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 
 class SendRepeatOrderReminders extends Command
@@ -43,7 +44,7 @@ class SendRepeatOrderReminders extends Command
     protected function processTenant(Tenant $tenant): void
     {
         $reminderDays = (int) Setting::get('repeat_reminder_days', 30);
-        $cutoffDate = Carbon::today()->subDays($reminderDays);
+        $cutoffDate = Date::today()->subDays($reminderDays);
 
         $customersToRemind = $this->getCustomersNeedingReminders($cutoffDate, $reminderDays);
 
@@ -66,7 +67,7 @@ class SendRepeatOrderReminders extends Command
                     [
                         'last_order_date' => $data['last_order_date'],
                         'reminder_sent_at' => now(),
-                        'next_reminder_date' => Carbon::today()->addDays($reminderDays),
+                        'next_reminder_date' => Date::today()->addDays($reminderDays),
                     ]
                 );
 
@@ -80,7 +81,7 @@ class SendRepeatOrderReminders extends Command
 
     private function getCustomersNeedingReminders($cutoffDate, $reminderDays)
     {
-        return Customer::whereHas('orders', fn ($q) => $q->where('payment_status', PaymentStatus::Paid))
+        return Customer::whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
             ->with(['orders' => fn ($q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date')])
             ->get()
             ->map(function ($customer) use ($cutoffDate) {
@@ -98,7 +99,7 @@ class SendRepeatOrderReminders extends Command
                 return [
                     'customer' => $customer,
                     'last_order_date' => $lastOrder->delivery_date,
-                    'days_since_last_order' => $lastOrder->delivery_date->diffInDays(Carbon::today()),
+                    'days_since_last_order' => $lastOrder->delivery_date->diffInDays(Date::today()),
                 ];
             })
             ->filter();

@@ -15,7 +15,7 @@ class CheckPlanAccess
         $required = SubscriptionTier::tryFrom($requiredPlan);
 
         if (! $current || ! $required || ! $current->meetsRequirement($required)) {
-            return redirect()->route('filament.admin.pages.upgrade-plan');
+            return to_route('filament.admin.pages.upgrade-plan');
         }
 
         return $next($request);

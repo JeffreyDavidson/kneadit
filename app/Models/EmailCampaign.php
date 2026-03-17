@@ -26,6 +26,9 @@ class EmailCampaign extends Model
         'recipient_count' => 'integer',
     ];
 
+    /**
+     * @return HasMany<EmailCampaignLog, $this>
+     */
     public function logs(): HasMany
     {
         return $this->hasMany(EmailCampaignLog::class, 'campaign_id');

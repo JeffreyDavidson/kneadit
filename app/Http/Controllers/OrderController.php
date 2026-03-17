@@ -18,8 +18,9 @@ use App\Services\CouponService;
 use App\Services\GiftCardService;
 use App\Services\OrderService;
 use App\Services\StripeCheckoutService;
-use Carbon\Carbon;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
@@ -136,7 +137,7 @@ class OrderController extends Controller
             // Stripe session creation failed — fall through to normal confirmation
         }
 
-        return redirect()->route('order.confirmation', $order)
+        return to_route('order.confirmation', $order)
             ->with('success', 'Order submitted successfully!');
     }
 
@@ -152,7 +153,7 @@ class OrderController extends Controller
             $stripeService->handleCheckoutComplete($sessionId);
         }
 
-        return redirect()->route('order.confirmation', $order)
+        return to_route('order.confirmation', $order)
             ->with('success', 'Payment successful! Your order has been placed.');
     }
 
@@ -163,7 +164,7 @@ class OrderController extends Controller
     {
         $order->update(['payment_status' => PaymentStatus::Unpaid]);
 
-        return redirect()->route('order.confirmation', $order)
+        return to_route('order.confirmation', $order)
             ->with('warning', 'Payment was not completed. You can pay later or contact the baker.');
     }
 
@@ -173,7 +174,7 @@ class OrderController extends Controller
     public function availability()
     {
         $dates = [];
-        $today = Carbon::today();
+        $today = Date::today();
 
         for ($i = 0; $i < 30; $i++) {
             $date = $today->copy()->addDays($i);
@@ -230,7 +231,7 @@ class OrderController extends Controller
     public function checkCapacity(string $date)
     {
         try {
-            $carbon = Carbon::parse($date);
+            $carbon = Date::parse($date);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Invalid date'], 422);
         }
@@ -275,7 +276,7 @@ class OrderController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
-        $orders = Order::whereHas('customer', function ($q) use ($request) {
+        $orders = Order::whereHas('customer', function (Builder $q) use ($request) {
             $q->where('email', $request->email);
         })
             ->with(['orderItems.product', 'messages'])

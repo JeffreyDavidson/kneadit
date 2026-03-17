@@ -158,7 +158,7 @@ class OrderTest extends TestCase
             'subtotal' => 50.00,
         ]);
 
-        $response->assertStatus(422);
+        $response->assertUnprocessable();
         $response->assertJsonStructure(['error']);
     }
 

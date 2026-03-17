@@ -19,17 +19,23 @@ class OrderItem extends Model
         'unit_price' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsTo<Order, $this>
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function getTotalPriceAttribute(): float
+    protected function getTotalPriceAttribute(): float
     {
         return $this->quantity * $this->unit_price;
     }

@@ -6,6 +6,7 @@ use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Ingredient extends Model
 {
@@ -27,12 +28,18 @@ class Ingredient extends Model
         'cost_per_unit' => 'decimal:2',
     ];
 
+    /**
+     * @return BelongsToMany<Recipe, $this, Pivot>
+     */
     public function recipes(): BelongsToMany
     {
         return $this->belongsToMany(Recipe::class, 'recipe_ingredients')
             ->withPivot('quantity', 'unit');
     }
 
+    /**
+     * @return BelongsToMany<Supplier, $this, Pivot>
+     */
     public function suppliers(): BelongsToMany
     {
         return $this->belongsToMany(Supplier::class, 'ingredient_supplier')
@@ -40,6 +47,9 @@ class Ingredient extends Model
             ->withTimestamps();
     }
 
+    /**
+     * @return HasMany<StockAdjustment, $this>
+     */
     public function stockAdjustments(): HasMany
     {
         return $this->hasMany(StockAdjustment::class);

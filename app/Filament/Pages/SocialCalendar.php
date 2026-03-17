@@ -6,7 +6,7 @@ use App\Filament\Traits\RequiresRole;
 use App\Models\SocialPost;
 use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
 class SocialCalendar extends Page
@@ -49,7 +49,7 @@ class SocialCalendar extends Page
 
     public function loadPosts(): void
     {
-        $start = Carbon::create($this->year, $this->month, 1)->startOfMonth();
+        $start = Date::create($this->year, $this->month, 1)->startOfMonth();
         $end = $start->copy()->endOfMonth();
 
         $posts = SocialPost::query()
@@ -74,7 +74,7 @@ class SocialCalendar extends Page
 
     public function previousMonth(): void
     {
-        $date = Carbon::create($this->year, $this->month, 1)->subMonth();
+        $date = Date::create($this->year, $this->month, 1)->subMonth();
         $this->year = $date->year;
         $this->month = $date->month;
         $this->selectedDate = null;
@@ -84,7 +84,7 @@ class SocialCalendar extends Page
 
     public function nextMonth(): void
     {
-        $date = Carbon::create($this->year, $this->month, 1)->addMonth();
+        $date = Date::create($this->year, $this->month, 1)->addMonth();
         $this->year = $date->year;
         $this->month = $date->month;
         $this->selectedDate = null;
@@ -100,7 +100,7 @@ class SocialCalendar extends Page
 
     public function getCalendarDaysProperty(): array
     {
-        $start = Carbon::create($this->year, $this->month, 1);
+        $start = Date::create($this->year, $this->month, 1);
         $daysInMonth = $start->daysInMonth;
         $startDayOfWeek = $start->dayOfWeek; // 0 = Sunday
 
@@ -112,7 +112,7 @@ class SocialCalendar extends Page
         }
 
         for ($d = 1; $d <= $daysInMonth; $d++) {
-            $date = Carbon::create($this->year, $this->month, $d)->format('Y-m-d');
+            $date = Date::create($this->year, $this->month, $d)->format('Y-m-d');
             $days[] = [
                 'day' => $d,
                 'date' => $date,
@@ -126,6 +126,6 @@ class SocialCalendar extends Page
 
     public function getMonthLabelProperty(): string
     {
-        return Carbon::create($this->year, $this->month, 1)->format('F Y');
+        return Date::create($this->year, $this->month, 1)->format('F Y');
     }
 }

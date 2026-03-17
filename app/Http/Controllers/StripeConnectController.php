@@ -16,9 +16,7 @@ class StripeConnectController extends Controller
     {
         $tenant = tenant();
 
-        if (! $tenant) {
-            abort(404);
-        }
+        abort_unless($tenant, 404);
 
         // Create a Stripe Connect account for this tenant
         $stripe = new StripeClient(config('cashier.secret'));

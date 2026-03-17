@@ -8,6 +8,7 @@ use App\Models\CapacityLimit;
 use App\Models\Order;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Date;
 
 class CapacityTodayWidget extends Widget
 {
@@ -35,18 +36,18 @@ class CapacityTodayWidget extends Widget
 
     public function getTodayCapacity(): array
     {
-        return $this->getCapacityData(Carbon::today());
+        return $this->getCapacityData(Date::today());
     }
 
     public function getTomorrowCapacity(): array
     {
-        return $this->getCapacityData(Carbon::tomorrow());
+        return $this->getCapacityData(Date::tomorrow());
     }
 
     public function getBlockedDaysWarning(): array
     {
-        return BlockedDate::where('date', '>=', Carbon::today())
-            ->where('date', '<=', Carbon::today()->addDays(7))
+        return BlockedDate::where('date', '>=', Date::today())
+            ->where('date', '<=', Date::today()->addDays(7))
             ->where('is_all_day', true)
             ->orderBy('date')
             ->limit(3)

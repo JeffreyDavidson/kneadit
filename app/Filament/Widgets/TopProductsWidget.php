@@ -4,8 +4,8 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\OrderItem;
-use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class TopProductsWidget extends ChartWidget
@@ -29,7 +29,7 @@ class TopProductsWidget extends ChartWidget
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->join('products', 'products.id', '=', 'order_items.product_id')
             ->where('orders.status', '!=', OrderStatus::Cancelled)
-            ->whereBetween('orders.delivery_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+            ->whereBetween('orders.delivery_date', [Date::now()->startOfMonth(), Date::now()->endOfMonth()])
             ->select(
                 'products.name',
                 DB::raw('SUM(order_items.quantity * order_items.unit_price) as revenue')
@@ -43,7 +43,7 @@ class TopProductsWidget extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Revenue ($)',
-                    'data' => $products->pluck('revenue')->map(fn ($v) => (float) $v)->toArray(),
+                    'data' => $products->pluck('revenue')->map(fn ($v) => (float) $v)->all(),
                     'backgroundColor' => ['#8B5E3C', '#D4A574', '#F5E6D3', '#A0522D', '#DEB887'],
                     'borderRadius' => 6,
                 ],

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class Customer extends Model
@@ -35,83 +36,104 @@ class Customer extends Model
         ];
     }
 
+    /**
+     * @return HasMany<Order, $this>
+     */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
 
+    /**
+     * @return HasMany<CustomerNote, $this>
+     */
     public function customerNotes(): HasMany
     {
         return $this->hasMany(CustomerNote::class);
     }
 
+    /**
+     * @return HasMany<LoyaltyPoint, $this>
+     */
     public function loyaltyPoints(): HasMany
     {
         return $this->hasMany(LoyaltyPoint::class);
     }
 
-    public function getTotalPointsAttribute(): int
+    protected function getTotalPointsAttribute(): int
     {
         return (int) $this->loyaltyPoints()
             ->select(DB::raw("COALESCE(SUM(CASE WHEN type = 'earned' OR type = 'adjusted' THEN points ELSE 0 END) - SUM(CASE WHEN type = 'redeemed' THEN points ELSE 0 END), 0)"))
             ->value(DB::raw("COALESCE(SUM(CASE WHEN type = 'earned' OR type = 'adjusted' THEN points ELSE 0 END) - SUM(CASE WHEN type = 'redeemed' THEN points ELSE 0 END), 0)"));
     }
 
-    public function getLifetimePointsEarnedAttribute(): int
+    protected function getLifetimePointsEarnedAttribute(): int
     {
         return (int) $this->loyaltyPoints()->where('type', 'earned')->sum('points');
     }
 
+    /**
+     * @return HasMany<CustomerReminder, $this>
+     */
     public function customerReminders(): HasMany
     {
         return $this->hasMany(CustomerReminder::class);
     }
 
+    /**
+     * @return HasMany<CustomerPhoto, $this>
+     */
     public function customerPhotos(): HasMany
     {
         return $this->hasMany(CustomerPhoto::class, 'customer_email', 'email');
     }
 
+    /**
+     * @return HasMany<CustomerFavorite, $this>
+     */
     public function customerFavorites(): HasMany
     {
         return $this->hasMany(CustomerFavorite::class, 'customer_email', 'email');
     }
 
+    /**
+     * @return HasOne<CustomerProfile, $this>
+     */
     public function customerProfile(): HasOne
     {
         return $this->hasOne(CustomerProfile::class);
     }
 
-    public function getLifetimeValueAttribute(): float
+    protected function getLifetimeValueAttribute(): float
     {
         return $this->orders()->where('status', '!=', OrderStatus::Cancelled)->sum('total');
     }
 
-    public function getOrderCountAttribute(): int
+    protected function getOrderCountAttribute(): int
     {
         return $this->orders()->where('status', '!=', OrderStatus::Cancelled)->count();
     }
 
-    public function getLastOrderDateAttribute(): ?Carbon
+    protected function getLastOrderDateAttribute(): ?Carbon
     {
         return $this->orders()->latest()->value('created_at');
     }
 
-    public function getAverageOrderValueAttribute(): float
+    protected function getAverageOrderValueAttribute(): float
     {
         return $this->order_count > 0 ? $this->lifetime_value / $this->order_count : 0;
     }
 
-    public function getDaysSinceLastOrderAttribute(): ?int
+    protected function getDaysSinceLastOrderAttribute(): ?int
     {
         if (! $this->last_order_date) {
             return null;
         }
 
-        return (int) Carbon::parse($this->last_order_date)->diffInDays(now());
+        return (int) Date::parse($this->last_order_date)->diffInDays(now());
     }
 
-    public function getIsAtRiskAttribute(): bool
+    protected function getIsAtRiskAttribute(): bool
     {
         return $this->order_count > 0 && $this->days_since_last_order !== null && $this->days_since_last_order > 30;
     }
@@ -144,7 +166,7 @@ class Customer extends Model
         return (int) now()->diffInDays($next, false);
     }
 
-    public function getFullAddressAttribute(): string
+    protected function getFullAddressAttribute(): string
     {
         $address = '';
         if ($this->address) {

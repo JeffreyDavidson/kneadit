@@ -19,6 +19,9 @@ class CheckinLog extends Model
         'sent_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<ScheduledCheckin, $this>
+     */
     public function checkin(): BelongsTo
     {
         return $this->belongsTo(ScheduledCheckin::class, 'checkin_id');

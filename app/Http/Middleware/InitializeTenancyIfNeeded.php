@@ -33,7 +33,7 @@ class InitializeTenancyIfNeeded
 
         // We're on a subdomain — initialize tenancy
         try {
-            return app(InitializeTenancyByDomainOrSubdomain::class)->handle($request, $next);
+            return resolve(InitializeTenancyByDomainOrSubdomain::class)->handle($request, $next);
         } catch (TenantCouldNotBeIdentifiedOnDomainException $e) {
             abort(404, 'Bakery not found.');
         }

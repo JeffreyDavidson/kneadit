@@ -5,9 +5,9 @@ namespace App\Filament\Pages;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
 use App\Traits\HasPlanGating;
-use Carbon\Carbon;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 
 class OrderCalendar extends Page
 {
@@ -50,7 +50,7 @@ class OrderCalendar extends Page
 
     public function loadOrderCounts()
     {
-        $startOfMonth = Carbon::createFromDate($this->currentYear, $this->currentMonth, 1)->startOfDay();
+        $startOfMonth = Date::createFromDate($this->currentYear, $this->currentMonth, 1)->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
         $this->orderCounts = Order::whereBetween('delivery_date', [$startOfMonth, $endOfMonth])
@@ -61,7 +61,7 @@ class OrderCalendar extends Page
 
     public function previousMonth()
     {
-        $date = Carbon::createFromDate($this->currentYear, $this->currentMonth, 1)->subMonth();
+        $date = Date::createFromDate($this->currentYear, $this->currentMonth, 1)->subMonth();
         $this->currentYear = $date->year;
         $this->currentMonth = $date->month;
         $this->selectedDate = null;
@@ -71,7 +71,7 @@ class OrderCalendar extends Page
 
     public function nextMonth()
     {
-        $date = Carbon::createFromDate($this->currentYear, $this->currentMonth, 1)->addMonth();
+        $date = Date::createFromDate($this->currentYear, $this->currentMonth, 1)->addMonth();
         $this->currentYear = $date->year;
         $this->currentMonth = $date->month;
         $this->selectedDate = null;
@@ -90,7 +90,7 @@ class OrderCalendar extends Page
 
     public function getCalendarDays(): Collection
     {
-        $startOfMonth = Carbon::createFromDate($this->currentYear, $this->currentMonth, 1);
+        $startOfMonth = Date::createFromDate($this->currentYear, $this->currentMonth, 1);
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
         $startOfCalendar = $startOfMonth->copy()->startOfWeek();
         $endOfCalendar = $endOfMonth->copy()->endOfWeek();
@@ -134,6 +134,6 @@ class OrderCalendar extends Page
 
     public function getCurrentMonthName(): string
     {
-        return Carbon::createFromDate($this->currentYear, $this->currentMonth, 1)->format('F Y');
+        return Date::createFromDate($this->currentYear, $this->currentMonth, 1)->format('F Y');
     }
 }

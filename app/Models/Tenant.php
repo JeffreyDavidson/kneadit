@@ -74,6 +74,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
     /**
      * Notes for this tenant.
+     *
+     * @return HasMany<TenantNote, $this>
      */
     public function notes(): HasMany
     {
@@ -82,6 +84,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
     /**
      * Referrals made by this tenant.
+     *
+     * @return HasMany<Referral, $this>
      */
     public function referralsMade(): HasMany
     {

@@ -5,9 +5,9 @@ namespace App\Filament\Pages;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
 use App\Traits\HasPlanGating;
-use Carbon\Carbon;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 
 class WeeklyPrepPlanner extends Page
 {
@@ -58,7 +58,7 @@ class WeeklyPrepPlanner extends Page
             return;
         }
 
-        $startDate = Carbon::parse($this->selectedWeekStart);
+        $startDate = Date::parse($this->selectedWeekStart);
         $endDate = $startDate->copy()->endOfWeek();
 
         // Generate week days
@@ -70,11 +70,11 @@ class WeeklyPrepPlanner extends Page
         // Load orders for the week
         $this->weeklyOrders = Order::with(['customer', 'orderItems.product.recipes'])
             ->whereBetween('delivery_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
-            ->orderBy('delivery_date')
+            ->oldest('delivery_date')
             ->orderBy('delivery_time')
             ->get()
             ->groupBy(function ($order) {
-                return Carbon::parse($order->delivery_date)->format('Y-m-d');
+                return Date::parse($order->delivery_date)->format('Y-m-d');
             });
 
         $this->generatePrepSchedule();
@@ -95,7 +95,7 @@ class WeeklyPrepPlanner extends Page
                         $prepTimeMinutes = $recipe->prep_time_minutes ?? 60; // Default 1 hour if not set
 
                         // Calculate when to start prep
-                        $requestedDateTime = Carbon::parse($order->delivery_date);
+                        $requestedDateTime = Date::parse($order->delivery_date);
                         if ($order->delivery_time) {
                             $requestedDateTime->setTimeFromTimeString($order->delivery_time);
                         }
@@ -110,7 +110,7 @@ class WeeklyPrepPlanner extends Page
                             'recipe_name' => $recipe->name,
                             'quantity' => $quantity,
                             'prep_time_minutes' => $prepTimeMinutes,
-                            'delivery_time' => $order->delivery_time ? Carbon::parse($order->delivery_time)->format('H:i') : 'Not specified',
+                            'delivery_time' => $order->delivery_time ? Date::parse($order->delivery_time)->format('H:i') : 'Not specified',
                             'prep_start_time' => $prepStartTime->format('H:i'),
                             'prep_start_datetime' => $prepStartTime,
                         ]);

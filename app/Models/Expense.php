@@ -43,12 +43,12 @@ class Expense extends Model
         'other' => 'Other',
     ];
 
-    public function getCategoryLabelAttribute(): string
+    protected function getCategoryLabelAttribute(): string
     {
         return self::CATEGORIES[$this->category] ?? ucfirst($this->category);
     }
 
-    public function getDeductibleAmountAttribute(): float
+    protected function getDeductibleAmountAttribute(): float
     {
         return round((float) $this->amount * ($this->business_percentage / 100), 2);
     }

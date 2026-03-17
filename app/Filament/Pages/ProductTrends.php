@@ -9,7 +9,7 @@ use App\Models\OrderItem;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Livewire\Attributes\Url;
 
 class ProductTrends extends Page
@@ -67,21 +67,21 @@ class ProductTrends extends Page
 
     public function previousMonth(): void
     {
-        $date = Carbon::create($this->year, $this->month, 1)->subMonth();
+        $date = Date::create($this->year, $this->month, 1)->subMonth();
         $this->month = $date->month;
         $this->year = $date->year;
     }
 
     public function nextMonth(): void
     {
-        $date = Carbon::create($this->year, $this->month, 1)->addMonth();
+        $date = Date::create($this->year, $this->month, 1)->addMonth();
         $this->month = $date->month;
         $this->year = $date->year;
     }
 
     public function getTrendsDataProperty(): array
     {
-        $currentStart = Carbon::create($this->year, $this->month, 1)->startOfMonth();
+        $currentStart = Date::create($this->year, $this->month, 1)->startOfMonth();
         $currentEnd = $currentStart->copy()->endOfMonth();
         $prevStart = $currentStart->copy()->subMonth()->startOfMonth();
         $prevEnd = $prevStart->copy()->endOfMonth();
@@ -143,11 +143,11 @@ class ProductTrends extends Page
 
     public function getMonthLabelProperty(): string
     {
-        return Carbon::create($this->year, $this->month, 1)->format('F Y');
+        return Date::create($this->year, $this->month, 1)->format('F Y');
     }
 
     public function getPrevMonthLabelProperty(): string
     {
-        return Carbon::create($this->year, $this->month, 1)->subMonth()->format('M Y');
+        return Date::create($this->year, $this->month, 1)->subMonth()->format('M Y');
     }
 }

@@ -24,6 +24,9 @@ class LoyaltyReward extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
@@ -35,7 +38,7 @@ class LoyaltyReward extends Model
         $query->where('is_active', true);
     }
 
-    public function getRewardTypeLabelAttribute(): string
+    protected function getRewardTypeLabelAttribute(): string
     {
         return match ($this->reward_type) {
             'percentage_discount' => $this->reward_value.'% Off',

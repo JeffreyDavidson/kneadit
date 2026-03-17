@@ -37,8 +37,7 @@ class LoyaltyLeadersWidget extends Widget
     public function getRecentAwards(): array
     {
         return LoyaltyPoint::with('customer')
-            ->where('points', '>', 0)
-            ->orderByDesc('created_at')
+            ->where('points', '>', 0)->latest()
             ->limit(3)
             ->get()
             ->map(fn ($lp) => [
@@ -47,6 +46,6 @@ class LoyaltyLeadersWidget extends Widget
                 'description' => $lp->description ?? '',
                 'date' => $lp->created_at?->diffForHumans() ?? '',
             ])
-            ->toArray();
+            ->all();
     }
 }

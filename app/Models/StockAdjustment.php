@@ -21,6 +21,9 @@ class StockAdjustment extends Model
         'created_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<Ingredient, $this>
+     */
     public function ingredient(): BelongsTo
     {
         return $this->belongsTo(Ingredient::class);

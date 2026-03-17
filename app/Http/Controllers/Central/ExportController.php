@@ -15,13 +15,9 @@ class ExportController extends Controller
 
     public function export(Request $request, string $tenantId, string $type): StreamedResponse|BinaryFileResponse
     {
-        if (! auth()->check() || auth()->user()->role !== 'platform_admin') {
-            abort(403, 'Unauthorized.');
-        }
+        abort_if(! auth()->check() || auth()->user()->role !== 'platform_admin', 403, 'Unauthorized.');
 
-        if (! in_array($type, self::VALID_TYPES)) {
-            abort(404, 'Invalid export type.');
-        }
+        abort_unless(in_array($type, self::VALID_TYPES), 404, 'Invalid export type.');
 
         $tenant = Tenant::findOrFail($tenantId);
 
