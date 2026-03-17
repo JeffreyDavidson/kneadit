@@ -330,22 +330,49 @@ const customerName = @json($orders->first()->customer->name ?? $email);
 function renderMessages(orderId, messages) {
     const container = document.getElementById('messages-' + orderId);
     if (!messages.length) {
-        container.innerHTML = '<p class="text-sm italic" style="color: var(--warm-600);">No messages yet. Say hello!</p>';
+        container.textContent = '';
+        const emptyP = document.createElement('p');
+        emptyP.className = 'text-sm italic';
+        emptyP.style.color = 'var(--warm-600)';
+        emptyP.textContent = 'No messages yet. Say hello!';
+        container.appendChild(emptyP);
         return;
     }
-    container.innerHTML = messages.map(msg => {
+    container.textContent = '';
+    messages.forEach(msg => {
         const isBaker = msg.sender_type === 'baker';
         const cls = isBaker ? 'track-message-baker' : 'track-message-customer';
         const align = isBaker ? 'items-start' : 'items-end';
         const time = new Date(msg.created_at).toLocaleString([], {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'});
-        return `<div class="flex flex-col ${align}">
-            <div class="${cls} px-4 py-3 max-w-xs text-sm" style="color: var(--warm-200);">
-                <p class="font-medium text-xs mb-1" style="color: var(--warm-500);">${msg.sender_name}</p>
-                <p class="whitespace-pre-wrap">${msg.message.replace(/</g,'&lt;')}</p>
-            </div>
-            <span class="text-xs mt-1" style="color: var(--warm-600);">${time}</span>
-        </div>`;
-    }).join('');
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-col ' + align;
+
+        const bubble = document.createElement('div');
+        bubble.className = cls + ' px-4 py-3 max-w-xs text-sm';
+        bubble.style.color = 'var(--warm-200)';
+
+        const nameP = document.createElement('p');
+        nameP.className = 'font-medium text-xs mb-1';
+        nameP.style.color = 'var(--warm-500)';
+        nameP.textContent = msg.sender_name;
+
+        const msgP = document.createElement('p');
+        msgP.className = 'whitespace-pre-wrap';
+        msgP.textContent = msg.message;
+
+        bubble.appendChild(nameP);
+        bubble.appendChild(msgP);
+
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'text-xs mt-1';
+        timeSpan.style.color = 'var(--warm-600)';
+        timeSpan.textContent = time;
+
+        wrapper.appendChild(bubble);
+        wrapper.appendChild(timeSpan);
+        container.appendChild(wrapper);
+    });
     container.scrollTop = container.scrollHeight;
 }
 
@@ -354,7 +381,13 @@ function loadMessages(orderId) {
         .then(r => r.json())
         .then(data => renderMessages(orderId, data.messages))
         .catch(() => {
-            document.getElementById('messages-' + orderId).innerHTML = '<p class="text-sm italic" style="color: var(--warm-600);">Could not load messages.</p>';
+            const c = document.getElementById('messages-' + orderId);
+            c.textContent = '';
+            const p = document.createElement('p');
+            p.className = 'text-sm italic';
+            p.style.color = 'var(--warm-600)';
+            p.textContent = 'Could not load messages.';
+            c.appendChild(p);
         });
 }
 

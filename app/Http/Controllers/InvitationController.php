@@ -41,6 +41,11 @@ class InvitationController extends Controller
             return view('invitations.expired');
         }
 
+        // If an authenticated user is accepting, verify their email matches the invitation
+        if (Auth::check() && Auth::user()->email !== $invitation->email) {
+            abort(403, 'This invitation was sent to a different email address.');
+        }
+
         $existingUser = User::where('email', $invitation->email)->first();
 
         if ($existingUser) {

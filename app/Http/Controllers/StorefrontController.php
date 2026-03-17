@@ -410,6 +410,9 @@ class StorefrontController extends Controller
         ]);
 
         $validated['details'] = strip_tags($validated['details']);
+        if (isset($validated['budget'])) {
+            $validated['budget'] = strip_tags($validated['budget']);
+        }
         if (isset($validated['dietary_requirements'])) {
             $validated['dietary_requirements'] = strip_tags($validated['dietary_requirements']);
         }
