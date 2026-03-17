@@ -32,7 +32,7 @@ class ReferralProgram extends Page
 
     public function getReferralCode(): string
     {
-        return tenant()->referral_code;
+        return tenant()->findOrCreateReferralCode();
     }
 
     public function getReferralLink(): string

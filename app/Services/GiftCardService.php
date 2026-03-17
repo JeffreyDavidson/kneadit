@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\GiftCard;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class GiftCardService
@@ -39,31 +40,33 @@ class GiftCardService
 
     public function redeem(string $code, float $amount, ?int $orderId = null): array
     {
-        $card = GiftCard::where('code', $code)->firstOrFail();
+        return DB::transaction(function () use ($code, $amount, $orderId) {
+            $card = GiftCard::lockForUpdate()->where('code', $code)->firstOrFail();
 
-        if (! $card->isUsable()) {
-            return ['success' => false, 'error' => 'This gift card is not valid.'];
-        }
+            if (! $card->isUsable()) {
+                return ['success' => false, 'error' => 'This gift card is not valid.'];
+            }
 
-        if ($amount > (float) $card->current_balance) {
-            $amount = (float) $card->current_balance;
-        }
+            if ($amount > (float) $card->current_balance) {
+                $amount = (float) $card->current_balance;
+            }
 
-        $card->decrement('current_balance', $amount);
+            $card->decrement('current_balance', $amount);
 
-        $card->transactions()->create([
-            'amount' => -$amount,
-            'type' => 'redemption',
-            'order_id' => $orderId,
-            'notes' => $orderId ? "Applied to order #{$orderId}" : 'Redemption',
-            'created_at' => now(),
-        ]);
+            $card->transactions()->create([
+                'amount' => -$amount,
+                'type' => 'redemption',
+                'order_id' => $orderId,
+                'notes' => $orderId ? "Applied to order #{$orderId}" : 'Redemption',
+                'created_at' => now(),
+            ]);
 
-        return [
-            'success' => true,
-            'amount_applied' => $amount,
-            'remaining_balance' => (float) $card->fresh()->current_balance,
-        ];
+            return [
+                'success' => true,
+                'amount_applied' => $amount,
+                'remaining_balance' => (float) $card->fresh()->current_balance,
+            ];
+        });
     }
 
     public function addCredit(GiftCard $card, float $amount, string $notes = 'Credit added'): GiftCard
