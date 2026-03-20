@@ -72,7 +72,9 @@ class GiftCardsTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

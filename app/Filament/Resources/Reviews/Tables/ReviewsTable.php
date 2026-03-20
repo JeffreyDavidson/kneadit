@@ -103,7 +103,9 @@ class ReviewsTable
                     ->action(fn (Review $record) => $record->update(['is_featured' => true]))
                     ->visible(fn (Review $record) => ! $record->is_featured && $record->is_approved),
 
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

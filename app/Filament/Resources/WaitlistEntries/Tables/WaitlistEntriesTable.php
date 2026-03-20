@@ -121,7 +121,9 @@ class WaitlistEntriesTable
                     })
                     ->visible(fn (WaitlistEntry $record) => $record->status !== WaitlistStatus::Removed),
 
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

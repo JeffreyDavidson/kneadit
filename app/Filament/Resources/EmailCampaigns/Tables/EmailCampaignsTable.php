@@ -77,7 +77,9 @@ class EmailCampaignsTable
                             'recipient_count' => $emails->count(),
                         ]);
                     }),
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

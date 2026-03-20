@@ -32,7 +32,9 @@ class SurveysTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->defaultSort('created_at', 'desc');
     }

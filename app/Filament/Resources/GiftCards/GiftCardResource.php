@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\GiftCards;
 
-use App\Filament\Resources\GiftCards\Pages\CreateGiftCard;
-use App\Filament\Resources\GiftCards\Pages\EditGiftCard;
 use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
 use App\Filament\Resources\GiftCards\Pages\ViewGiftCard;
 use App\Filament\Resources\GiftCards\Schemas\GiftCardForm;
@@ -77,9 +75,7 @@ class GiftCardResource extends Resource
     {
         return [
             'index' => ListGiftCards::route('/'),
-            'create' => CreateGiftCard::route('/create'),
             'view' => ViewGiftCard::route('/{record}'),
-            'edit' => EditGiftCard::route('/{record}/edit'),
         ];
     }
 }

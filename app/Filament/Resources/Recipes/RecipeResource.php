@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Recipes;
 
-use App\Filament\Resources\Recipes\Pages\CreateRecipe;
-use App\Filament\Resources\Recipes\Pages\EditRecipe;
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Filament\Resources\Recipes\Schemas\RecipeForm;
 use App\Filament\Resources\Recipes\Tables\RecipesTable;
@@ -80,8 +78,6 @@ class RecipeResource extends Resource
     {
         return [
             'index' => ListRecipes::route('/'),
-            'create' => CreateRecipe::route('/create'),
-            'edit' => EditRecipe::route('/{record}/edit'),
         ];
     }
 }

@@ -123,7 +123,9 @@ class SocialPostsTable
                     })
                     ->visible(fn (SocialPost $record) => $record->status === 'scheduled'),
 
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

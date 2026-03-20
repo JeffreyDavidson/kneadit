@@ -201,7 +201,9 @@ class OrdersTable
                         in_array($record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready])
                     ),
 
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

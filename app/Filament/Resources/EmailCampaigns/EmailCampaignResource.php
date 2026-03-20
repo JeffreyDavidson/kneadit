@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\EmailCampaigns;
 
-use App\Filament\Resources\EmailCampaigns\Pages\CreateEmailCampaign;
-use App\Filament\Resources\EmailCampaigns\Pages\EditEmailCampaign;
 use App\Filament\Resources\EmailCampaigns\Pages\ListEmailCampaigns;
 use App\Filament\Resources\EmailCampaigns\Schemas\EmailCampaignForm;
 use App\Filament\Resources\EmailCampaigns\Tables\EmailCampaignsTable;
@@ -72,8 +70,6 @@ class EmailCampaignResource extends Resource
     {
         return [
             'index' => ListEmailCampaigns::route('/'),
-            'create' => CreateEmailCampaign::route('/create'),
-            'edit' => EditEmailCampaign::route('/{record}/edit'),
         ];
     }
 }
