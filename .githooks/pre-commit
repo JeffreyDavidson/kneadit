@@ -1,0 +1,25 @@
+#!/bin/bash
+# Pre-commit hook: lint all staged PHP files
+# Prevents deploying syntax errors, missing traits/classes, etc.
+
+ERRORS=0
+
+for file in $(git diff --cached --name-only --diff-filter=ACM | grep '\.php$'); do
+    if [ -f "$file" ]; then
+        OUTPUT=$(php -l "$file" 2>&1)
+        if [ $? -ne 0 ]; then
+            echo "❌ Syntax error in $file:"
+            echo "$OUTPUT"
+            ERRORS=$((ERRORS + 1))
+        fi
+    fi
+done
+
+if [ $ERRORS -gt 0 ]; then
+    echo ""
+    echo "⛔ Commit blocked: $ERRORS PHP file(s) have syntax errors."
+    echo "Fix them before committing."
+    exit 1
+fi
+
+exit 0
