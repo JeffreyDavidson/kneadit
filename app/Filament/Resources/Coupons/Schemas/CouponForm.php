@@ -85,7 +85,8 @@ class CouponForm
                     ->columnSpanFull()
                     ->components([
                         Toggle::make('is_active')
-                            ->default(true),
+                            ->label('Active')
+                                    ->default(true),
                     ]),
             ]);
     }

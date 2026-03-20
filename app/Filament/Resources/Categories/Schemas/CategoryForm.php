@@ -35,7 +35,8 @@ class CategoryForm
                             ->rows(3),
 
                         Toggle::make('is_active')
-                            ->default(true),
+                            ->label('Active')
+                                    ->default(true),
 
                         TextInput::make('sort_order')
                             ->numeric()

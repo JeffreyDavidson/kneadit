@@ -76,6 +76,7 @@ class LoyaltyRewardResource extends Resource
                 ->searchable()
                 ->visible(fn (Get $get) => $get('reward_type') === 'free_product'),
             Toggle::make('is_active')
+                ->label('Active')
                 ->default(true),
         ]);
     }
