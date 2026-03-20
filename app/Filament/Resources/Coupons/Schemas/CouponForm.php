@@ -19,6 +19,7 @@ class CouponForm
         return $schema
             ->components([
                 Section::make('Coupon Details')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -51,6 +52,7 @@ class CouponForm
                     ]),
 
                 Section::make('Usage Limits')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -67,6 +69,7 @@ class CouponForm
                     ]),
 
                 Section::make('Validity Period')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -79,6 +82,7 @@ class CouponForm
                     ]),
 
                 Section::make('Status')
+                    ->columnSpanFull()
                     ->components([
                         Toggle::make('is_active')
                             ->default(true),

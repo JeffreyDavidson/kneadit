@@ -16,6 +16,7 @@ class GiftCardForm
         return $schema
             ->components([
                 Section::make('Purchaser Information')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -33,6 +34,7 @@ class GiftCardForm
                     ]),
 
                 Section::make('Recipient Information')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -52,6 +54,7 @@ class GiftCardForm
                     ]),
 
                 Section::make('Card Details')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([

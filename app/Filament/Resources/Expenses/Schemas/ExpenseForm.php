@@ -19,6 +19,7 @@ class ExpenseForm
         return $schema
             ->components([
                 Section::make('Expense Details')
+                    ->columnSpanFull()
                     ->components([
                         TextInput::make('description')
                             ->required()

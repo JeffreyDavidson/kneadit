@@ -18,6 +18,7 @@ class IncomeForm
         return $schema
             ->components([
                 Section::make('Income Details')
+                    ->columnSpanFull()
                     ->components([
                         TextInput::make('description')
                             ->required()

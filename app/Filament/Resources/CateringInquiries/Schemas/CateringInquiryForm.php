@@ -15,6 +15,7 @@ class CateringInquiryForm
     {
         return $schema->components([
             Section::make('Customer Information')
+                ->columnSpanFull()
                 ->columns(3)
                 ->schema([
                     TextInput::make('customer_name')
@@ -30,6 +31,7 @@ class CateringInquiryForm
                 ]),
 
             Section::make('Event Details')
+                ->columnSpanFull()
                 ->columns(2)
                 ->schema([
                     Select::make('event_type')
@@ -66,6 +68,7 @@ class CateringInquiryForm
                 ]),
 
             Section::make('Status & Quote')
+                ->columnSpanFull()
                 ->columns(2)
                 ->schema([
                     Select::make('status')

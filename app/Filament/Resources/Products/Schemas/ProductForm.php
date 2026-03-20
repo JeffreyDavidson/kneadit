@@ -21,6 +21,7 @@ class ProductForm
         return $schema
             ->components([
                 Section::make('Product Details')
+                    ->columnSpanFull()
                     ->components([
                         TextInput::make('name')
                             ->required()
@@ -46,6 +47,7 @@ class ProductForm
                     ->columns(2),
 
                 Section::make('Pricing')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(3)
                             ->components([
@@ -76,6 +78,7 @@ class ProductForm
                     ]),
 
                 Section::make('Settings')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([

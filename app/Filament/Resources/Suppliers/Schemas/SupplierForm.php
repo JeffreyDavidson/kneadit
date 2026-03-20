@@ -16,6 +16,7 @@ class SupplierForm
         return $schema
             ->components([
                 Section::make('Supplier Details')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([

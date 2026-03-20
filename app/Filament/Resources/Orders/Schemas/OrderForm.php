@@ -23,6 +23,7 @@ class OrderForm
         return $schema
             ->components([
                 Section::make('Order Details')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -60,6 +61,7 @@ class OrderForm
                     ]),
 
                 Section::make('Pricing')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(4)
                             ->components([
@@ -90,6 +92,7 @@ class OrderForm
                     ]),
 
                 Section::make('Delivery & Timing')
+                    ->columnSpanFull()
                     ->components([
                         Textarea::make('delivery_address')
                             ->rows(2),
