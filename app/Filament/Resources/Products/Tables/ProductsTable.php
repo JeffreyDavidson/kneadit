@@ -44,26 +44,6 @@ class ProductsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('margin')
-                    ->formatStateUsing(function (mixed $state, Product $record) {
-                        if ($record->cost && $record->price) {
-                            return round(($record->price - $record->cost) / $record->price * 100, 2).'%';
-                        }
-
-                        return '-';
-                    })
-                    ->label('Margin %')
-                    ->color(function ($state, Product $record) {
-                        if ($record->cost && $record->price) {
-                            $margin = ($record->price - $record->cost) / $record->price * 100;
-
-                            return $margin > 30 ? 'success' : ($margin > 15 ? 'warning' : 'danger');
-                        }
-
-                        return 'gray';
-                    })
-                    ->toggleable(),
-
                 ToggleColumn::make('is_active')
                     ->label('Active')
                     ->toggleable(),
