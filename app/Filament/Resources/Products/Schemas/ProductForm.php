@@ -58,9 +58,11 @@ class ProductForm
                         Grid::make(2)
                             ->components([
                                 Toggle::make('is_active')
+                                    ->label('Active')
                                     ->default(true),
 
                                 Toggle::make('is_featured')
+                                    ->label('Featured')
                                     ->default(false),
                             ]),
 
