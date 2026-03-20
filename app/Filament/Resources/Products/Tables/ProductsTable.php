@@ -110,6 +110,7 @@ class ProductsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
+            ->deferColumnManager(false)
             ->defaultSort('name')
             ->emptyStateHeading('No products yet')
             ->emptyStateDescription('Add your first product to start building your catalog.');
