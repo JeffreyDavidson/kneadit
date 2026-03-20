@@ -71,7 +71,7 @@ class ProductsTable
                     ->label('Category'),
 
                 SelectFilter::make('is_active')
-                    ->label('Active')
+                    ->label('Status')
                     ->options([
                         1 => 'Active',
                         0 => 'Inactive',
@@ -80,8 +80,8 @@ class ProductsTable
                 SelectFilter::make('is_featured')
                     ->label('Featured')
                     ->options([
-                        1 => 'Featured',
-                        0 => 'Not Featured',
+                        1 => 'Yes',
+                        0 => 'No',
                     ]),
             ])
             ->recordActions([
