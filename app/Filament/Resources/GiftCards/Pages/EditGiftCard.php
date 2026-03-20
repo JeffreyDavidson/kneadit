@@ -11,7 +11,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditGiftCard extends EditRecord
 {
-    use EditRecord\Concerns\HasSlideOverForm;
 
     protected static string $resource = GiftCardResource::class;
 

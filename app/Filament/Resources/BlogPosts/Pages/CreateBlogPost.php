@@ -7,7 +7,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateBlogPost extends CreateRecord
 {
-    use CreateRecord\Concerns\HasSlideOverForm;
 
     protected static string $resource = BlogPostResource::class;
 }

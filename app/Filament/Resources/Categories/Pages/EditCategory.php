@@ -8,7 +8,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCategory extends EditRecord
 {
-    use EditRecord\Concerns\HasSlideOverForm;
 
     protected static string $resource = CategoryResource::class;
 

@@ -8,7 +8,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditWaitlistEntry extends EditRecord
 {
-    use EditRecord\Concerns\HasSlideOverForm;
 
     protected static string $resource = WaitlistEntryResource::class;
 
