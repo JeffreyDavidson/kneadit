@@ -71,12 +71,14 @@ class ProductsTable
                     ->label('Category'),
 
                 SelectFilter::make('is_active')
+                    ->label('Active')
                     ->options([
                         1 => 'Active',
                         0 => 'Inactive',
                     ]),
 
                 SelectFilter::make('is_featured')
+                    ->label('Featured')
                     ->options([
                         1 => 'Featured',
                         0 => 'Not Featured',
