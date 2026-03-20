@@ -39,11 +39,6 @@ class ProductsTable
                     ->sortable()
                     ->toggleable(),
 
-                TextColumn::make('cost')
-                    ->money('USD')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 ToggleColumn::make('is_active')
                     ->label('Active')
                     ->toggleable(),
