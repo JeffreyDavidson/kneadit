@@ -62,6 +62,8 @@ class ProductForm
                             ->relationship('images')
                             ->label('')
                             ->reorderable(true)
+                            ->reorderableWithDragAndDrop(true)
+                            ->reorderableWithButtons(true)
                             ->orderColumn('sort_order')
                             ->defaultItems(0)
                             ->addActionLabel('Add Image')
