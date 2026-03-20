@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -41,6 +42,38 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @return HasMany<ProductImage, $this>
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order');
+    }
+
+    /**
+     * @return HasOne<ProductImage, $this>
+     */
+    public function primaryImage(): HasOne
+    {
+        return $this->hasOne(ProductImage::class)->where('is_primary', true);
+    }
+
+    /**
+     * Get the primary image URL, falling back to legacy `image` field.
+     */
+    public function getPrimaryImageUrl(): ?string
+    {
+        if ($primary = $this->primaryImage) {
+            return Storage::disk('public')->url($primary->path);
+        }
+
+        if ($this->image) {
+            return Storage::disk('public')->url($this->image);
+        }
+
+        return null;
     }
 
     /**
