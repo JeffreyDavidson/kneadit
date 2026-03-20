@@ -153,7 +153,7 @@ class GalleryPhotoResource extends Resource
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()->slideOver(),
             ]);
     }
 
