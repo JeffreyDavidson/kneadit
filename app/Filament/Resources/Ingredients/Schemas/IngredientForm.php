@@ -16,6 +16,7 @@ class IngredientForm
         return $schema
             ->components([
                 Section::make('Ingredient Details')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([

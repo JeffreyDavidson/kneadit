@@ -19,6 +19,7 @@ class RecipeForm
         return $schema
             ->components([
                 Section::make('Recipe Details')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -49,6 +50,7 @@ class RecipeForm
                     ]),
 
                 Section::make('Ingredients')
+                    ->columnSpanFull()
                     ->components([
                         Repeater::make('ingredients')
                             ->schema([
@@ -72,6 +74,7 @@ class RecipeForm
                     ]),
 
                 Section::make('Linked Inventory Ingredients')
+                    ->columnSpanFull()
                     ->description('Link to tracked ingredients for automatic stock management')
                     ->components([
                         Repeater::make('inventoryIngredients')
@@ -114,6 +117,7 @@ class RecipeForm
                     ]),
 
                 Section::make('Instructions')
+                    ->columnSpanFull()
                     ->components([
                         Textarea::make('instructions')
                             ->required()

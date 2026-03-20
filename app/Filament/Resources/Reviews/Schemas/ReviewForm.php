@@ -18,6 +18,7 @@ class ReviewForm
         return $schema
             ->components([
                 Section::make('Customer Information')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -33,6 +34,7 @@ class ReviewForm
                     ]),
 
                 Section::make('Review Details')
+                    ->columnSpanFull()
                     ->components([
                         Select::make('product_id')
                             ->label('Product')
@@ -54,6 +56,7 @@ class ReviewForm
                     ]),
 
                 Section::make('Moderation')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([

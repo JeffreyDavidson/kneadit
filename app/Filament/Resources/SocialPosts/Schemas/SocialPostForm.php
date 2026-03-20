@@ -23,6 +23,7 @@ class SocialPostForm
         return $schema
             ->components([
                 Section::make('Post Details')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -101,6 +102,7 @@ class SocialPostForm
                     ]),
 
                 Section::make('Scheduling')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([

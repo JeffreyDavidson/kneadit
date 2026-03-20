@@ -16,6 +16,7 @@ class CategoryForm
         return $schema
             ->components([
                 Section::make('Category Details')
+                    ->columnSpanFull()
                     ->components([
                         TextInput::make('name')
                             ->required()

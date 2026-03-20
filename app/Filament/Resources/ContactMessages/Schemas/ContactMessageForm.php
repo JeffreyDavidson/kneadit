@@ -16,6 +16,7 @@ class ContactMessageForm
         return $schema
             ->components([
                 Section::make('Contact Information')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([

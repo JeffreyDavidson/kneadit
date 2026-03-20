@@ -15,6 +15,7 @@ class EmailCampaignForm
         return $schema
             ->components([
                 Section::make('Campaign Details')
+                    ->columnSpanFull()
                     ->components([
                         Select::make('template')
                             ->label('Start from template')

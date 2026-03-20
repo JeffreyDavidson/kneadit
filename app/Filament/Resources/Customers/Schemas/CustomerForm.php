@@ -16,6 +16,7 @@ class CustomerForm
         return $schema
             ->components([
                 Section::make('Customer Details')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([
@@ -51,6 +52,7 @@ class CustomerForm
                     ]),
 
                 Section::make('Address')
+                    ->columnSpanFull()
                     ->components([
                         TextInput::make('address')
                             ->maxLength(255),

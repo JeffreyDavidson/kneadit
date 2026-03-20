@@ -18,6 +18,7 @@ class BlockedDateForm
         return $schema
             ->components([
                 Section::make('Block Date')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)->components([
                             DatePicker::make('date')

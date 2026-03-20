@@ -19,6 +19,7 @@ class WaitlistEntryForm
         return $schema
             ->components([
                 Section::make('Customer Information')
+                    ->columnSpanFull()
                     ->components([
                         TextInput::make('customer_name')
                             ->required()
@@ -38,6 +39,7 @@ class WaitlistEntryForm
                     ]),
 
                 Section::make('Request Details')
+                    ->columnSpanFull()
                     ->components([
                         Grid::make(2)
                             ->components([

@@ -14,6 +14,7 @@ class SettingForm
         return $schema
             ->components([
                 Section::make('Setting Details')
+                    ->columnSpanFull()
                     ->components([
                         TextInput::make('key')
                             ->required()
