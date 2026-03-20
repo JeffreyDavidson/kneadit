@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Mail;
 
 class EditProduct extends EditRecord
 {
+    use EditRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = ProductResource::class;
 
     protected function getHeaderActions(): array
