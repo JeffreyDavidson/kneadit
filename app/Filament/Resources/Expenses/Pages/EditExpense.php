@@ -8,6 +8,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditExpense extends EditRecord
 {
+    use EditRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = ExpenseResource::class;
 
     protected function getHeaderActions(): array

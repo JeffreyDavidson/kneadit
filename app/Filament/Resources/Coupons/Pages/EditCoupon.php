@@ -8,6 +8,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCoupon extends EditRecord
 {
+    use EditRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = CouponResource::class;
 
     protected function getHeaderActions(): array

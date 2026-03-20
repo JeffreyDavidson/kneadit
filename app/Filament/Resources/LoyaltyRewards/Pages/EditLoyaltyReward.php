@@ -8,6 +8,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditLoyaltyReward extends EditRecord
 {
+    use EditRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = LoyaltyRewardResource::class;
 
     protected function getHeaderActions(): array

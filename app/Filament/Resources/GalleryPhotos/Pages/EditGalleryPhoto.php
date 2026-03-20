@@ -8,6 +8,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditGalleryPhoto extends EditRecord
 {
+    use EditRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = GalleryPhotoResource::class;
 
     protected function getHeaderActions(): array

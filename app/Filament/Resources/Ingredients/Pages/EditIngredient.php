@@ -8,6 +8,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditIngredient extends EditRecord
 {
+    use EditRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = IngredientResource::class;
 
     protected function getHeaderActions(): array

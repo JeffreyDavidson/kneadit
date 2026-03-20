@@ -7,5 +7,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateWaitlistEntry extends CreateRecord
 {
+    use CreateRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = WaitlistEntryResource::class;
 }

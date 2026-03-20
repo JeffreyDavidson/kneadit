@@ -7,5 +7,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateCateringInquiry extends CreateRecord
 {
+    use CreateRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = CateringInquiryResource::class;
 }
