@@ -8,7 +8,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateGiftCard extends CreateRecord
 {
-    use CreateRecord\Concerns\HasSlideOverForm;
 
     protected static string $resource = GiftCardResource::class;
 

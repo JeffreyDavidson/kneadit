@@ -7,7 +7,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateIngredient extends CreateRecord
 {
-    use CreateRecord\Concerns\HasSlideOverForm;
 
     protected static string $resource = IngredientResource::class;
 }

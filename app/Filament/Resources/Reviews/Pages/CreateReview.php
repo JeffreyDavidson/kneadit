@@ -7,7 +7,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateReview extends CreateRecord
 {
-    use CreateRecord\Concerns\HasSlideOverForm;
 
     protected static string $resource = ReviewResource::class;
 }

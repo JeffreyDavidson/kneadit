@@ -7,7 +7,6 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateEmailCampaign extends CreateRecord
 {
-    use CreateRecord\Concerns\HasSlideOverForm;
 
     protected static string $resource = EmailCampaignResource::class;
 }

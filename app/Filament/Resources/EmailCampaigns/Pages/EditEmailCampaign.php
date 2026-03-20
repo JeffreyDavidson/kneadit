@@ -8,7 +8,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditEmailCampaign extends EditRecord
 {
-    use EditRecord\Concerns\HasSlideOverForm;
 
     protected static string $resource = EmailCampaignResource::class;
 
