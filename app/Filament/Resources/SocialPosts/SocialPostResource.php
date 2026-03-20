@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\SocialPosts;
 
-use App\Filament\Resources\SocialPosts\Pages\CreateSocialPost;
-use App\Filament\Resources\SocialPosts\Pages\EditSocialPost;
 use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
 use App\Filament\Resources\SocialPosts\Schemas\SocialPostForm;
 use App\Filament\Resources\SocialPosts\Tables\SocialPostsTable;
@@ -56,8 +54,6 @@ class SocialPostResource extends Resource
     {
         return [
             'index' => ListSocialPosts::route('/'),
-            'create' => CreateSocialPost::route('/create'),
-            'edit' => EditSocialPost::route('/{record}/edit'),
         ];
     }
 

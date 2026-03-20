@@ -3,8 +3,6 @@
 namespace App\Filament\Resources\Coupons;
 
 use App\Enums\CouponType;
-use App\Filament\Resources\Coupons\Pages\CreateCoupon;
-use App\Filament\Resources\Coupons\Pages\EditCoupon;
 use App\Filament\Resources\Coupons\Pages\ListCoupons;
 use App\Filament\Resources\Coupons\Schemas\CouponForm;
 use App\Filament\Resources\Coupons\Tables\CouponsTable;
@@ -75,8 +73,6 @@ class CouponResource extends Resource
     {
         return [
             'index' => ListCoupons::route('/'),
-            'create' => CreateCoupon::route('/create'),
-            'edit' => EditCoupon::route('/{record}/edit'),
         ];
     }
 }

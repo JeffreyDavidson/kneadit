@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Suppliers;
 
-use App\Filament\Resources\Suppliers\Pages\CreateSupplier;
-use App\Filament\Resources\Suppliers\Pages\EditSupplier;
 use App\Filament\Resources\Suppliers\Pages\ListSuppliers;
 use App\Filament\Resources\Suppliers\RelationManagers\IngredientsRelationManager;
 use App\Filament\Resources\Suppliers\Schemas\SupplierForm;
@@ -62,8 +60,6 @@ class SupplierResource extends Resource
     {
         return [
             'index' => ListSuppliers::route('/'),
-            'create' => CreateSupplier::route('/create'),
-            'edit' => EditSupplier::route('/{record}/edit'),
         ];
     }
 }

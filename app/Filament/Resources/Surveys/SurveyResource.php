@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Surveys;
 
-use App\Filament\Resources\Surveys\Pages\CreateSurvey;
-use App\Filament\Resources\Surveys\Pages\EditSurvey;
 use App\Filament\Resources\Surveys\Pages\ListSurveys;
 use App\Filament\Resources\Surveys\Pages\ViewSurvey;
 use App\Filament\Resources\Surveys\Schemas\SurveyForm;
@@ -73,8 +71,6 @@ class SurveyResource extends Resource
     {
         return [
             'index' => ListSurveys::route('/'),
-            'create' => CreateSurvey::route('/create'),
-            'edit' => EditSurvey::route('/{record}/edit'),
             'view' => ViewSurvey::route('/{record}'),
         ];
     }

@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\GalleryPhotos;
 
-use App\Filament\Resources\GalleryPhotos\Pages\CreateGalleryPhoto;
-use App\Filament\Resources\GalleryPhotos\Pages\EditGalleryPhoto;
 use App\Filament\Resources\GalleryPhotos\Pages\ListGalleryPhotos;
 use App\Filament\Traits\RequiresRole;
 use App\Models\GalleryPhoto;
@@ -144,7 +142,7 @@ class GalleryPhotoResource extends Resource
                     ->native(false),
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make()->slideOver()->modalWidth('md'),
                 DeleteAction::make(),
             ])
             ->bulkActions([
@@ -170,8 +168,6 @@ class GalleryPhotoResource extends Resource
     {
         return [
             'index' => ListGalleryPhotos::route('/'),
-            'create' => CreateGalleryPhoto::route('/create'),
-            'edit' => EditGalleryPhoto::route('/{record}/edit'),
         ];
     }
 }

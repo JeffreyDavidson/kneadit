@@ -49,7 +49,9 @@ class ContactMessagesTable
                 TernaryFilter::make('is_read'),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

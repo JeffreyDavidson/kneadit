@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Ingredients;
 
-use App\Filament\Resources\Ingredients\Pages\CreateIngredient;
-use App\Filament\Resources\Ingredients\Pages\EditIngredient;
 use App\Filament\Resources\Ingredients\Pages\ListIngredients;
 use App\Filament\Resources\Ingredients\Schemas\IngredientForm;
 use App\Filament\Resources\Ingredients\Tables\IngredientsTable;
@@ -73,8 +71,6 @@ class IngredientResource extends Resource
     {
         return [
             'index' => ListIngredients::route('/'),
-            'create' => CreateIngredient::route('/create'),
-            'edit' => EditIngredient::route('/{record}/edit'),
         ];
     }
 }

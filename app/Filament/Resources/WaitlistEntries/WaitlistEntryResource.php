@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\WaitlistEntries;
 
-use App\Filament\Resources\WaitlistEntries\Pages\CreateWaitlistEntry;
-use App\Filament\Resources\WaitlistEntries\Pages\EditWaitlistEntry;
 use App\Filament\Resources\WaitlistEntries\Pages\ListWaitlistEntries;
 use App\Filament\Resources\WaitlistEntries\Schemas\WaitlistEntryForm;
 use App\Filament\Resources\WaitlistEntries\Tables\WaitlistEntriesTable;
@@ -73,8 +71,6 @@ class WaitlistEntryResource extends Resource
     {
         return [
             'index' => ListWaitlistEntries::route('/'),
-            'create' => CreateWaitlistEntry::route('/create'),
-            'edit' => EditWaitlistEntry::route('/{record}/edit'),
         ];
     }
 

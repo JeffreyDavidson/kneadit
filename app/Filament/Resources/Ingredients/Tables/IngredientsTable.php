@@ -99,7 +99,9 @@ class IngredientsTable
                         }
                         $record->adjustStock($qty, $data['type'], $data['notes'] ?? null);
                     }),
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

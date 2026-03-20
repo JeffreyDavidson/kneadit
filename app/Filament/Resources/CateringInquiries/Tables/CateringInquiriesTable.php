@@ -115,7 +115,9 @@ class CateringInquiriesTable
                     ->requiresConfirmation()
                     ->visible(fn (CateringInquiry $record) => $record->status === 'quoted')
                     ->action(fn (CateringInquiry $record) => $record->update(['status' => 'confirmed'])),
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ]);
     }
 }

@@ -43,7 +43,9 @@ class BlockedDatesTable
                     ->placeholder('—'),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

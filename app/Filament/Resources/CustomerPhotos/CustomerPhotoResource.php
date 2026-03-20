@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\CustomerPhotos;
 
-use App\Filament\Resources\CustomerPhotos\Pages\CreateCustomerPhoto;
-use App\Filament\Resources\CustomerPhotos\Pages\EditCustomerPhoto;
 use App\Filament\Resources\CustomerPhotos\Pages\ListCustomerPhotos;
 use App\Filament\Traits\RequiresRole;
 use App\Models\CustomerPhoto;
@@ -155,7 +153,7 @@ class CustomerPhotoResource extends Resource
                     ->native(false),
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make()->slideOver()->modalWidth('md'),
                 DeleteAction::make(),
             ])
             ->bulkActions([
@@ -180,8 +178,6 @@ class CustomerPhotoResource extends Resource
     {
         return [
             'index' => ListCustomerPhotos::route('/'),
-            'create' => CreateCustomerPhoto::route('/create'),
-            'edit' => EditCustomerPhoto::route('/{record}/edit'),
         ];
     }
 }

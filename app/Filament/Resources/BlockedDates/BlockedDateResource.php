@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\BlockedDates;
 
-use App\Filament\Resources\BlockedDates\Pages\CreateBlockedDate;
-use App\Filament\Resources\BlockedDates\Pages\EditBlockedDate;
 use App\Filament\Resources\BlockedDates\Pages\ListBlockedDates;
 use App\Filament\Resources\BlockedDates\Schemas\BlockedDateForm;
 use App\Filament\Resources\BlockedDates\Tables\BlockedDatesTable;
@@ -47,8 +45,6 @@ class BlockedDateResource extends Resource
     {
         return [
             'index' => ListBlockedDates::route('/'),
-            'create' => CreateBlockedDate::route('/create'),
-            'edit' => EditBlockedDate::route('/{record}/edit'),
         ];
     }
 }

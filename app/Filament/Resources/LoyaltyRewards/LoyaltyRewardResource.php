@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\LoyaltyRewards;
 
-use App\Filament\Resources\LoyaltyRewards\Pages\CreateLoyaltyReward;
-use App\Filament\Resources\LoyaltyRewards\Pages\EditLoyaltyReward;
 use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
 use App\Filament\Traits\RequiresRole;
 use App\Models\LoyaltyReward;
@@ -119,6 +117,11 @@ class LoyaltyRewardResource extends Resource
                     ->boolean()
                     ->label('Active'),
             ])
+            ->recordActions([
+                \Filament\Actions\EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('md'),
+            ])
             ->defaultSort('points_required');
     }
 
@@ -144,8 +147,6 @@ class LoyaltyRewardResource extends Resource
     {
         return [
             'index' => ListLoyaltyRewards::route('/'),
-            'create' => CreateLoyaltyReward::route('/create'),
-            'edit' => EditLoyaltyReward::route('/{record}/edit'),
         ];
     }
 }

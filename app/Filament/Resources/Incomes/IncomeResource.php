@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Incomes;
 
-use App\Filament\Resources\Incomes\Pages\CreateIncome;
-use App\Filament\Resources\Incomes\Pages\EditIncome;
 use App\Filament\Resources\Incomes\Pages\ListIncomes;
 use App\Filament\Resources\Incomes\Schemas\IncomeForm;
 use App\Filament\Resources\Incomes\Tables\IncomesTable;
@@ -49,8 +47,6 @@ class IncomeResource extends Resource
     {
         return [
             'index' => ListIncomes::route('/'),
-            'create' => CreateIncome::route('/create'),
-            'edit' => EditIncome::route('/{record}/edit'),
         ];
     }
 
