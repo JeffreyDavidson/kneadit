@@ -52,6 +52,16 @@ class ProductForm
                     ])
                     ->columns(2),
 
+                Section::make('Images')
+                    ->columnSpanFull()
+                    ->components([
+                        FileUpload::make('image')
+                            ->label('Default Image')
+                            ->image()
+                            ->directory('products')
+                            ->visibility('public'),
+                    ]),
+
                 Section::make('Settings')
                     ->columnSpanFull()
                     ->components([
@@ -65,11 +75,6 @@ class ProductForm
                                     ->label('Featured')
                                     ->default(false),
                             ]),
-
-                        FileUpload::make('image')
-                            ->image()
-                            ->directory('products')
-                            ->visibility('public'),
                     ]),
             ]);
     }
