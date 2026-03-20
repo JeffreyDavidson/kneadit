@@ -4,10 +4,12 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use App\Models\Category;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -54,12 +56,25 @@ class ProductForm
 
                 Section::make('Images')
                     ->columnSpanFull()
+                    ->description('First image becomes the primary/default image. Drag to reorder.')
                     ->components([
-                        FileUpload::make('image')
-                            ->label('Default Image')
-                            ->image()
-                            ->directory('products')
-                            ->visibility('public'),
+                        Repeater::make('productImages')
+                            ->relationship('images')
+                            ->label('')
+                            ->reorderable(true)
+                            ->orderColumn('sort_order')
+                            ->defaultItems(0)
+                            ->addActionLabel('Add Image')
+                            ->columns(1)
+                            ->itemLabel(fn (array $state): string => ! empty($state['path']) ? 'Product Image' : 'New Image')
+                            ->components([
+                                FileUpload::make('path')
+                                    ->label('Image')
+                                    ->image()
+                                    ->directory('products')
+                                    ->visibility('public')
+                                    ->required(),
+                            ]),
                     ]),
 
                 Section::make('Settings')
