@@ -31,11 +31,13 @@ class ProductsTable
 
                 TextColumn::make('category.name')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
 
                 TextColumn::make('price')
                     ->money('USD')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('cost')
                     ->money('USD')
@@ -59,20 +61,24 @@ class ProductsTable
                         }
 
                         return 'gray';
-                    }),
+                    })
+                    ->toggleable(),
 
                 ToggleColumn::make('is_active')
-                    ->label('Active'),
+                    ->label('Active')
+                    ->toggleable(),
 
                 ToggleColumn::make('is_featured')
-                    ->label('Featured'),
+                    ->label('Featured')
+                    ->toggleable(),
 
                 TextColumn::make('waitlist_count')
                     ->label('Waitlist')
                     ->getStateUsing(fn (Product $record) => $record->waitlist_entries_count)
                     ->badge()
                     ->color(fn (int $state) => $state > 0 ? 'warning' : 'gray')
-                    ->formatStateUsing(fn (int $state) => $state > 0 ? "{$state} waiting" : '—'),
+                    ->formatStateUsing(fn (int $state) => $state > 0 ? "{$state} waiting" : '—')
+                    ->toggleable(),
 
                 TextColumn::make('created_at')
                     ->dateTime()
