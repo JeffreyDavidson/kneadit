@@ -7,5 +7,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateCustomerPhoto extends CreateRecord
 {
+    use CreateRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = CustomerPhotoResource::class;
 }

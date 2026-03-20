@@ -7,5 +7,7 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditBlogPost extends EditRecord
 {
+    use EditRecord\Concerns\HasSlideOverForm;
+
     protected static string $resource = BlogPostResource::class;
 }
