@@ -1,0 +1,215 @@
+<?php
+
+namespace App\Actions\Orders;
+
+use App\Enums\DeliveryType;
+use App\Enums\OrderStatus;
+use App\Mail\NewOrderNotification;
+use App\Mail\OrderPlaced;
+use App\Models\CapacityLimit;
+use App\Models\Coupon;
+use App\Models\Customer;
+use App\Models\GiftCard;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
+use App\Models\Setting;
+use App\Services\CouponService;
+use App\Services\GiftCardService;
+use App\Services\WebhookService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+
+class CreateOrder
+{
+    public function __construct(
+        protected CouponService $couponService,
+        protected GiftCardService $giftCardService,
+    ) {}
+
+    /**
+     * @param  array{customer_name: string, customer_email: string, delivery_date: string, delivery_type: string, items: array<int, array{product_id: int, quantity: int}>, customer_phone?: string, customer_birthday?: string, delivery_time?: string, delivery_address?: string, delivery_tier?: string, notes?: string}  $data
+     */
+    public function __invoke(array $data, ?int $couponId = null, ?int $giftCardId = null): ?Order
+    {
+        $calculated = $this->calculateOrder(
+            $data['items'],
+            $data['delivery_type'],
+            $data['delivery_tier'] ?? null,
+        );
+
+        if (empty($calculated['items'])) {
+            return null;
+        }
+
+        $order = DB::transaction(function () use ($data, $calculated, $couponId, $giftCardId) {
+            if (! CapacityLimit::isAvailable($data['delivery_date'])) {
+                return null;
+            }
+
+            if ($couponId) {
+                $coupon = Coupon::lockForUpdate()->find($couponId);
+                if ($coupon && $coupon->isValid()) {
+                    $discountAmount = $coupon->calculateDiscount($calculated['subtotal']);
+                    $calculated['discount_amount'] = $discountAmount;
+                    $calculated['coupon_id'] = $coupon->id;
+                    $calculated['total'] = max(0, $calculated['total'] - $discountAmount);
+                }
+            }
+
+            $customer = Customer::updateOrCreate(
+                ['email' => $data['customer_email']],
+                array_filter([
+                    'name' => $data['customer_name'],
+                    'phone' => $data['customer_phone'] ?? null,
+                    'birthday' => $data['customer_birthday'] ?? null,
+                ], fn (mixed $v) => $v !== null)
+            );
+
+            $order = Order::create([
+                'customer_id' => $customer->id,
+                'order_number' => $this->generateOrderNumber(),
+                'delivery_date' => $data['delivery_date'],
+                'delivery_time' => $data['delivery_time'] ?? null,
+                'delivery_type' => $data['delivery_type'],
+                'delivery_address' => $data['delivery_address'] ?? null,
+                'subtotal' => $calculated['subtotal'],
+                'delivery_fee' => $calculated['delivery_fee'],
+                'discount_amount' => $calculated['discount_amount'] ?? 0,
+                'coupon_id' => $calculated['coupon_id'] ?? null,
+                'total' => $calculated['total'],
+                'notes' => $data['notes'] ?? null,
+                'status' => OrderStatus::Pending,
+            ]);
+
+            if (! empty($calculated['coupon_id'])) {
+                $this->couponService->apply($coupon);
+            }
+
+            if ($giftCardId) {
+                $giftCard = GiftCard::lockForUpdate()->find($giftCardId);
+                if ($giftCard && $giftCard->isUsable()) {
+                    $gcAmount = min((float) $giftCard->current_balance, (float) $order->total);
+                    if ($gcAmount > 0) {
+                        $this->giftCardService->redeem($giftCard->code, $gcAmount, $order->id);
+                        $order->update(['total' => max(0, (float) $order->total - $gcAmount)]);
+                    }
+                }
+            }
+
+            foreach ($calculated['items'] as $item) {
+                $order->orderItems()->create($item);
+            }
+
+            return $order;
+        });
+
+        if ($order) {
+            $this->sendCreationNotifications($order);
+        }
+
+        return $order;
+    }
+
+    /**
+     * @param  array<int, array{product_id: int, quantity: int}>  $items
+     * @return array{items: array, subtotal: float, delivery_fee: float, total: float}
+     */
+    private function calculateOrder(array $items, string $deliveryType, ?string $deliveryTier = null): array
+    {
+        $subtotal = 0;
+        $orderItems = [];
+
+        $productIds = array_column($items, 'product_id');
+        $products = Product::findOrFail($productIds)->keyBy('id');
+
+        foreach ($items as $item) {
+            $product = $products->get($item['product_id']);
+            if (! $product || ! $product->is_active) {
+                continue;
+            }
+
+            $lineTotal = $product->price * $item['quantity'];
+            $subtotal += $lineTotal;
+
+            $orderItems[] = [
+                'product_id' => $product->id,
+                'quantity' => $item['quantity'],
+                'unit_price' => $product->price,
+                'total_price' => $lineTotal,
+            ];
+        }
+
+        $deliveryFee = 0;
+        if ($deliveryType === DeliveryType::Delivery->value) {
+            $deliveryFee = match ($deliveryTier) {
+                'under5' => 0,
+                '5to10' => 5.00,
+                '10to15' => 10.00,
+                'over15' => 15.00,
+                default => 0,
+            };
+        }
+
+        return [
+            'items' => $orderItems,
+            'subtotal' => $subtotal,
+            'delivery_fee' => $deliveryFee,
+            'total' => $subtotal + $deliveryFee,
+        ];
+    }
+
+    private function generateOrderNumber(): string
+    {
+        do {
+            $number = 'KN'.date('ymd').strtoupper(Str::random(4));
+        } while (Order::where('order_number', $number)->exists());
+
+        return $number;
+    }
+
+    private function sendCreationNotifications(Order $order): void
+    {
+        try {
+            if ($order->customer?->email) {
+                Mail::to($order->customer->email)->send(new OrderPlaced($order));
+            }
+
+            $bakerEmail = Setting::get('store_email');
+            if ($bakerEmail) {
+                Mail::to($bakerEmail)->send(new NewOrderNotification($order));
+            }
+        } catch (\Exception $e) {
+            Log::warning('Order creation emails failed', [
+                'order' => $order->order_number,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        try {
+            $order->loadMissing('orderItems.product');
+
+            WebhookService::dispatch('order.created', [
+                'order_number' => $order->order_number,
+                'customer_name' => $order->customer?->name,
+                'customer_email' => $order->customer?->email,
+                'total' => $order->total,
+                'status' => $order->status,
+                'payment_status' => $order->payment_status,
+                'delivery_date' => $order->delivery_date?->toDateString(),
+                'items' => $order->orderItems->map(fn (OrderItem $item) => [
+                    'product' => $item->product?->name,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unit_price,
+                ])->toArray(),
+            ]);
+        } catch (\Exception $e) {
+            Log::warning('Order created webhook dispatch failed', [
+                'order' => $order->order_number,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+}
