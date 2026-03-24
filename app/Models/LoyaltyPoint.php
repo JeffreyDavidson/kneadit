@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\LoyaltyPointType;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -17,9 +20,37 @@ class LoyaltyPoint extends Model
         'order_id',
     ];
 
-    protected $casts = [
-        'created_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime',
+            'type' => LoyaltyPointType::class,
+        ];
+    }
+
+    #[Scope]
+    protected function earned(Builder $query): void
+    {
+        $query->where('type', LoyaltyPointType::Earned);
+    }
+
+    #[Scope]
+    protected function redeemed(Builder $query): void
+    {
+        $query->where('type', LoyaltyPointType::Redeemed);
+    }
+
+    #[Scope]
+    protected function adjusted(Builder $query): void
+    {
+        $query->where('type', LoyaltyPointType::Adjusted);
+    }
+
+    #[Scope]
+    protected function forOrder(Builder $query, Order $order): void
+    {
+        $query->where('order_id', $order->id);
+    }
 
     protected static function booted(): void
     {

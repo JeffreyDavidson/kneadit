@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\Orders\Pages;
 
+use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Exceptions\InvalidOrderTransitionException;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Mail\NewOrderMessage;
 use App\Models\Setting;
@@ -128,21 +130,29 @@ class ViewOrder extends ViewRecord
 
     protected function getHeaderActions(): array
     {
+        $allowedTransitions = TransitionOrderStatus::allowedTransitions($this->record);
+        $options = collect($allowedTransitions)
+            ->mapWithKeys(fn (OrderStatus $status) => [$status->value => $status->name])
+            ->all();
+
         return [
             Action::make('changeStatus')
                 ->label('Change Status')
                 ->icon('heroicon-o-arrow-path')
+                ->visible(fn (): bool => ! empty($options))
                 ->form([
                     Select::make('status')
                         ->label('New Status')
-                        ->options(OrderStatus::class)
-                        ->default($this->record->status)
+                        ->options($options)
                         ->required(),
                 ])
                 ->action(function (array $data): void {
-                    $this->record->update(['status' => $data['status']]);
-
-                    $this->notify('success', 'Order status updated successfully.');
+                    try {
+                        app(TransitionOrderStatus::class)($this->record, OrderStatus::from($data['status']));
+                        $this->notify('success', 'Order status updated successfully.');
+                    } catch (InvalidOrderTransitionException $e) {
+                        $this->notify('danger', $e->getMessage());
+                    }
                 }),
 
             Action::make('sendPayPalInvoice')

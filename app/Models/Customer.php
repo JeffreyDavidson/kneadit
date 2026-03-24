@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\OrderStatus;
+use App\Enums\LoyaltyPointType;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 
 class Customer extends Model
 {
@@ -62,14 +61,16 @@ class Customer extends Model
 
     protected function getTotalPointsAttribute(): int
     {
-        return (int) $this->loyaltyPoints()
-            ->select(DB::raw("COALESCE(SUM(CASE WHEN type = 'earned' OR type = 'adjusted' THEN points ELSE 0 END) - SUM(CASE WHEN type = 'redeemed' THEN points ELSE 0 END), 0)"))
-            ->value(DB::raw("COALESCE(SUM(CASE WHEN type = 'earned' OR type = 'adjusted' THEN points ELSE 0 END) - SUM(CASE WHEN type = 'redeemed' THEN points ELSE 0 END), 0)"));
+        $earned = (int) $this->loyaltyPoints()->earned()->sum('points');
+        $adjusted = (int) $this->loyaltyPoints()->where('type', LoyaltyPointType::Adjusted)->sum('points');
+        $redeemed = (int) $this->loyaltyPoints()->redeemed()->sum('points');
+
+        return $earned + $adjusted - $redeemed;
     }
 
     protected function getLifetimePointsEarnedAttribute(): int
     {
-        return (int) $this->loyaltyPoints()->where('type', 'earned')->sum('points');
+        return (int) $this->loyaltyPoints()->earned()->sum('points');
     }
 
     /**
@@ -106,12 +107,12 @@ class Customer extends Model
 
     protected function getLifetimeValueAttribute(): float
     {
-        return $this->orders()->where('status', '!=', OrderStatus::Cancelled)->sum('total');
+        return $this->orders()->active()->sum('total');
     }
 
     protected function getOrderCountAttribute(): int
     {
-        return $this->orders()->where('status', '!=', OrderStatus::Cancelled)->count();
+        return $this->orders()->active()->count();
     }
 
     protected function getLastOrderDateAttribute(): ?Carbon
