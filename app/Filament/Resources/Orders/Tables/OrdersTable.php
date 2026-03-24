@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
@@ -101,13 +102,13 @@ class OrdersTable
                     ->modalHeading('Confirm Order')
                     ->modalDescription('Are you sure you want to confirm this order?')
                     ->action(function (Order $record) {
-                        $record->update(['status' => OrderStatus::Confirmed]);
+                        app(TransitionOrderStatus::class)($record, OrderStatus::Confirmed);
                         Notification::make()
                             ->title('Order confirmed')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => $record->status === OrderStatus::Pending),
+                    ->visible(fn (Order $record) => in_array(OrderStatus::Confirmed, TransitionOrderStatus::allowedTransitions($record))),
 
                 Action::make('start_baking')
                     ->label('Start Baking')
@@ -117,13 +118,13 @@ class OrdersTable
                     ->modalHeading('Start Baking')
                     ->modalDescription('Mark this order as currently being baked?')
                     ->action(function (Order $record) {
-                        $record->update(['status' => OrderStatus::Baking]);
+                        app(TransitionOrderStatus::class)($record, OrderStatus::Baking);
                         Notification::make()
                             ->title('Order marked as baking')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => $record->status === OrderStatus::Confirmed),
+                    ->visible(fn (Order $record) => in_array(OrderStatus::Baking, TransitionOrderStatus::allowedTransitions($record))),
 
                 Action::make('mark_ready')
                     ->label('Mark Ready')
@@ -133,13 +134,13 @@ class OrdersTable
                     ->modalHeading('Mark Ready')
                     ->modalDescription('Mark this order as ready for pickup/delivery?')
                     ->action(function (Order $record) {
-                        $record->update(['status' => OrderStatus::Ready]);
+                        app(TransitionOrderStatus::class)($record, OrderStatus::Ready);
                         Notification::make()
                             ->title('Order marked as ready')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => $record->status === OrderStatus::Baking),
+                    ->visible(fn (Order $record) => in_array(OrderStatus::Ready, TransitionOrderStatus::allowedTransitions($record))),
 
                 Action::make('mark_delivered')
                     ->label('Mark Delivered')
@@ -149,13 +150,13 @@ class OrdersTable
                     ->modalHeading('Mark Delivered')
                     ->modalDescription('Mark this order as delivered/completed?')
                     ->action(function (Order $record) {
-                        $record->update(['status' => OrderStatus::Delivered]);
+                        app(TransitionOrderStatus::class)($record, OrderStatus::Delivered);
                         Notification::make()
                             ->title('Order marked as delivered')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => $record->status === OrderStatus::Ready),
+                    ->visible(fn (Order $record) => in_array(OrderStatus::Delivered, TransitionOrderStatus::allowedTransitions($record))),
 
                 Action::make('cancel')
                     ->icon('heroicon-o-x-circle')
@@ -164,13 +165,13 @@ class OrdersTable
                     ->modalHeading('Cancel Order')
                     ->modalDescription('Are you sure you want to cancel this order? This action cannot be undone.')
                     ->action(function (Order $record) {
-                        $record->update(['status' => OrderStatus::Cancelled]);
+                        app(TransitionOrderStatus::class)($record, OrderStatus::Cancelled);
                         Notification::make()
                             ->title('Order cancelled')
                             ->warning()
                             ->send();
                     })
-                    ->visible(fn (Order $record) => in_array($record->status, [OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Baking])),
+                    ->visible(fn (Order $record) => in_array(OrderStatus::Cancelled, TransitionOrderStatus::allowedTransitions($record))),
 
                 Action::make('send_paypal_invoice')
                     ->label('Send PayPal Invoice')
