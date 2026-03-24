@@ -11,6 +11,10 @@
 /.phpunit.cache
 /.vscode
 /.zed
+/.claude
+/_specs
+/_plans
+/_tasks
 /docs
 /auth.json
 /node_modules
