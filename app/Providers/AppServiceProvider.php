@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Order;
 use App\Models\SupportTicket;
-use App\Observers\OrderObserver;
 use App\Observers\SupportTicketObserver;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Blade;
@@ -56,7 +54,6 @@ class AppServiceProvider extends ServiceProvider
         );
 
         // Register model observers
-        Order::observe(OrderObserver::class);
         SupportTicket::observe(SupportTicketObserver::class);
 
         // Add tenancy middleware to Livewire's update endpoint
