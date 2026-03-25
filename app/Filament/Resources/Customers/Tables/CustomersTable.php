@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Customers\Tables;
 
-use App\Enums\OrderStatus;
 use App\Models\Customer;
-use App\Models\Order;
+use App\Models\Setting;
+use App\Services\CustomerIntelligence;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -19,16 +19,7 @@ class CustomersTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query
-                ->withCount(['orders' => fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled)])
-                ->withSum(['orders' => fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled)], 'total')
-                ->addSelect([
-                    'last_order_date' => Order::select('created_at')
-                        ->whereColumn('customer_id', 'customers.id')
-                        ->latest()
-                        ->limit(1),
-                ])
-            )
+            ->modifyQueryUsing(fn (Builder $query) => CustomerIntelligence::enrichQuery($query))
             ->columns([
                 TextColumn::make('name')
                     ->sortable()
@@ -98,8 +89,10 @@ class CustomersTable
                     ->label('Status')
                     ->badge()
                     ->getStateUsing(function (Customer $record) {
+                        $atRiskDays = (int) Setting::get('at_risk_days', '30');
+
                         if ($record->orders_count > 0 && $record->last_order_date) {
-                            return Date::parse($record->last_order_date)->diffInDays(now()) > 30
+                            return Date::parse($record->last_order_date)->diffInDays(now()) > $atRiskDays
                                 ? 'At Risk'
                                 : 'Active';
                         }
@@ -120,9 +113,12 @@ class CustomersTable
             ->filters([
                 Filter::make('at_risk')
                     ->label('At Risk')
-                    ->query(fn (Builder $query) => $query->whereHas('orders')
-                        ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays(30)))
-                    ),
+                    ->query(function (Builder $query) {
+                        $atRiskDays = (int) Setting::get('at_risk_days', '30');
+
+                        return $query->whereHas('orders')
+                            ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays($atRiskDays)));
+                    }),
 
                 Filter::make('has_birthday_this_month')
                     ->label('Birthday This Month')
