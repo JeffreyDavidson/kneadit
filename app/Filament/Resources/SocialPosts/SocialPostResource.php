@@ -78,7 +78,7 @@ class SocialPostResource extends Resource
     {
         return [
             'Platform' => ucfirst($record->platform ?? 'N/A'),
-            'Status' => ucfirst($record->status ?? 'draft'),
+            'Status' => ucfirst($record->status->value),
         ];
     }
 

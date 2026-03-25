@@ -21,7 +21,7 @@ class AppIconController extends Controller
         $r = hexdec(substr($color, 1, 2));
         $g = hexdec(substr($color, 3, 2));
         $b = hexdec(substr($color, 5, 2));
-        $bgColor = imagecolorallocate($img, (int) $r, (int) $g, (int) $b);
+        $bgColor = imagecolorallocate($img, min(255, max(0, (int) $r)), min(255, max(0, (int) $g)), min(255, max(0, (int) $b)));
         $textColor = imagecolorallocate($img, (int) 255, (int) 255, (int) 255);
         imagefill($img, 0, 0, (int) $bgColor);
 
@@ -36,7 +36,7 @@ class AppIconController extends Controller
         $data = ob_get_clean();
         imagedestroy($img);
 
-        return response($data)
+        return response((string) $data)
             ->header('Content-Type', 'image/png')
             ->header('Cache-Control', 'public, max-age=86400');
     }

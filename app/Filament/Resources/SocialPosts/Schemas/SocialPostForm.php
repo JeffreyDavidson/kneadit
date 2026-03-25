@@ -64,6 +64,7 @@ class SocialPostForm
                                             return;
                                         }
 
+                                        /** @var Product|null $product */
                                         $product = Product::query()->find($productId);
                                         if (! $product) {
                                             return;

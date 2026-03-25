@@ -24,7 +24,7 @@ class CreateOrder
     ) {}
 
     /**
-     * @param  array{customer_name: string, customer_email: string, delivery_date: string, delivery_type: string, items: array<int, array{product_id: int, quantity: int}>, customer_phone?: string, customer_birthday?: string, delivery_time?: string, delivery_address?: string, delivery_tier?: string, notes?: string}  $data
+     * @param  array<string, mixed>  $data
      */
     public function __invoke(array $data, ?int $couponId = null, ?int $giftCardId = null): ?Order
     {
@@ -104,10 +104,6 @@ class CreateOrder
         return $order;
     }
 
-    /**
-     * @param  array<int, array{product_id: int, quantity: int}>  $items
-     * @return array{items: array, subtotal: float, delivery_fee: float, total: float}
-     */
     /**
      * @param  array<int, array{product_id: int, quantity: int}>  $items
      * @return array{items: array<int, mixed>, subtotal: float, delivery_fee: float, total: float}

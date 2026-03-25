@@ -68,7 +68,7 @@ class ProductCsvService
             return ['rows' => [], 'errors' => ['CSV file is empty.']];
         }
 
-        $header = array_map(fn (string $h) => strtolower(trim($h)), $header);
+        $header = array_map(fn (?string $h) => strtolower(trim($h ?? '')), $header);
         $missing = array_diff(['name', 'price'], $header);
 
         if (! empty($missing)) {

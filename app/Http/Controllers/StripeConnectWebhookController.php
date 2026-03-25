@@ -72,10 +72,8 @@ class StripeConnectWebhookController extends Controller
      */
     protected function handleAccountUpdated(mixed $account): void
     {
-        $accountId = is_object($account) ? $account->id : ($account['id'] ?? null);
-        $chargesEnabled = is_object($account)
-            ? ($account->charges_enabled ?? false)
-            : ($account['charges_enabled'] ?? false);
+        $accountId = data_get($account, 'id');
+        $chargesEnabled = (bool) data_get($account, 'charges_enabled', false);
         $tenantId = is_object($account)
             ? ($account->metadata->tenant_id ?? null)
             : ($account['metadata']['tenant_id'] ?? null);
@@ -96,6 +94,7 @@ class StripeConnectWebhookController extends Controller
 
         // Initialize tenancy to update the tenant's settings
         try {
+            /** @var Tenant|null $tenant */
             $tenant = Tenant::query()->find($tenantId);
             if (! $tenant) {
                 Log::warning('Tenant not found for Stripe Connect update', ['tenant_id' => $tenantId]);
@@ -125,10 +124,10 @@ class StripeConnectWebhookController extends Controller
      */
     protected function handleCheckoutCompleted(mixed $session): void
     {
-        $sessionId = is_object($session) ? $session->id : ($session['id'] ?? null);
-        $metadata = is_object($session) ? ($session->metadata ?? null) : ($session['metadata'] ?? null);
-        $orderId = is_object($metadata) ? ($metadata->order_id ?? null) : ($metadata['order_id'] ?? null);
-        $tenantId = is_object($metadata) ? ($metadata->tenant_id ?? null) : ($metadata['tenant_id'] ?? null);
+        $sessionId = data_get($session, 'id');
+        $metadata = data_get($session, 'metadata');
+        $orderId = data_get($metadata, 'order_id');
+        $tenantId = data_get($metadata, 'tenant_id');
 
         if (! $sessionId) {
             return;
@@ -148,6 +147,7 @@ class StripeConnectWebhookController extends Controller
             return;
         }
 
+        /** @var Tenant|null $tenant */
         $tenant = Tenant::query()->find($tenantId);
         if (! $tenant) {
             Log::warning('Tenant not found for checkout session', ['tenant_id' => $tenantId]);

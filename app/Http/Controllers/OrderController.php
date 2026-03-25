@@ -38,6 +38,7 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
+        /** @var array{customer_name: string, customer_email: string, delivery_date: string, delivery_type: string, items: array<int, array{product_id: int, quantity: int}>, customer_phone?: string, customer_birthday?: string, delivery_time?: string, delivery_address?: string, delivery_tier?: string, notes?: string, coupon_id?: int, gift_card_id?: int} $validated */
         $order = $createOrder(
             $validated,
             $validated['coupon_id'] ?? null,
@@ -58,7 +59,7 @@ class OrderController extends Controller
             );
 
             if ($session) {
-                return redirect($session->url);
+                return redirect((string) $session->url);
             }
 
             // Stripe session creation failed — fall through to normal confirmation

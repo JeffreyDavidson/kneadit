@@ -69,7 +69,7 @@ class CouponResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Type' => ucfirst($record->type?->value ?? 'N/A'),
+            'Type' => ucfirst($record->type->value),
             'Value' => $record->type === CouponType::Percentage ? $record->value.'%' : '$'.number_format($record->value, 2),
             'Active' => $record->is_active ? 'Yes' : 'No',
         ];

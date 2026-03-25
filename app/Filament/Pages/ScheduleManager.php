@@ -52,7 +52,7 @@ class ScheduleManager extends Page
     protected static ?string $title = 'Business Schedule';
 
     // Day properties
-    /** @var array<string, mixed> */
+    /** @var array<int|string, mixed> */
     public array $schedule = [];
 
     public function mount(): void

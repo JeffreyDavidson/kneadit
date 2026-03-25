@@ -28,7 +28,7 @@ class WebhookService
             'data' => $payload,
         ];
 
-        $json = json_encode($body);
+        $json = json_encode($body) ?: '';
         $signature = hash_hmac('sha256', $json, $secret);
 
         try {

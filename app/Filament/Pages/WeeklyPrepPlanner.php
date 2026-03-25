@@ -50,7 +50,7 @@ class WeeklyPrepPlanner extends Page
     /** @var Collection<int, mixed> */
     public Collection $prepSchedule;
 
-    /** @var array<string, mixed> */
+    /** @var array<int|string, mixed> */
     public array $weekDays = [];
 
     public function mount(): void
