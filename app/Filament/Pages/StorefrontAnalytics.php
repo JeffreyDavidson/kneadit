@@ -113,7 +113,7 @@ class StorefrontAnalytics extends Page
     {
         $start = now()->subDays(30)->startOfDay();
 
-        return PageView::where('created_at', '>=', $start)
+        return PageView::query()->where('created_at', '>=', $start)
             ->whereNull('product_id')
             ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as views'))
             ->groupBy('date')
@@ -131,7 +131,7 @@ class StorefrontAnalytics extends Page
             ->limit(10)
             ->get();
 
-        $products = Product::whereIn('id', $data->pluck('product_id'))->pluck('name', 'id');
+        $products = Product::query()->whereIn('id', $data->pluck('product_id'))->pluck('name', 'id');
 
         return $data->map(fn (object $row) => (object) [
             'name' => $products[$row->product_id] ?? 'Unknown',

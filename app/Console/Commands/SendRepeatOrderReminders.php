@@ -65,14 +65,11 @@ class SendRepeatOrderReminders extends Command
             }
 
             try {
-                CustomerReminder::updateOrCreate(
-                    ['customer_id' => $customer->id],
-                    [
-                        'last_order_date' => $data['last_order_date'],
-                        'reminder_sent_at' => now(),
-                        'next_reminder_date' => Date::today()->addDays($reminderDays),
-                    ]
-                );
+                CustomerReminder::query()->updateOrCreate(['customer_id' => $customer->id], [
+                    'last_order_date' => $data['last_order_date'],
+                    'reminder_sent_at' => now(),
+                    'next_reminder_date' => Date::today()->addDays($reminderDays),
+                ]);
 
                 Mail::to($customer->email)->send(new RepeatOrderReminder($customer, $data['days_since_last_order']));
                 $this->info("  ✓ {$customer->name}");
@@ -84,7 +81,7 @@ class SendRepeatOrderReminders extends Command
 
     private function getCustomersNeedingReminders(Carbon $cutoffDate, int $reminderDays): Collection
     {
-        return Customer::whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
+        return Customer::query()->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
             ->with(['orders' => fn (EloquentBuilder $q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date')])
             ->get()
             ->map(function (Customer $customer) use ($cutoffDate) {
@@ -94,7 +91,7 @@ class SendRepeatOrderReminders extends Command
                     return null;
                 }
 
-                $existingReminder = CustomerReminder::where('customer_id', $customer->id)->first();
+                $existingReminder = CustomerReminder::query()->where('customer_id', $customer->id)->first();
                 if ($existingReminder && $existingReminder->next_reminder_date?->isFuture()) {
                     return null;
                 }

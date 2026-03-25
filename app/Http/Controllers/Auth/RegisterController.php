@@ -21,7 +21,7 @@ class RegisterController extends Controller
     {
         $validated = $request->validated();
 
-        $user = User::create([
+        $user = User::query()->create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => $validated['password'],

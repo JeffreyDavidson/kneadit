@@ -44,7 +44,7 @@ class BusinessSchedule extends Model
 
     public static function forDay(int $dayOfWeek): ?self
     {
-        return static::where('day_of_week', $dayOfWeek)->first();
+        return static::query()->where('day_of_week', $dayOfWeek)->first();
     }
 
     public static function isOpenOn(int $dayOfWeek): bool

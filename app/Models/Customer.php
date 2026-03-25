@@ -97,7 +97,7 @@ class Customer extends Model
      */
     private function getMetrics(): CustomerMetrics
     {
-        return once(fn () => app(CustomerIntelligence::class)->metrics($this));
+        return once(fn () => resolve(CustomerIntelligence::class)->metrics($this));
     }
 
     protected function getTotalPointsAttribute(): int

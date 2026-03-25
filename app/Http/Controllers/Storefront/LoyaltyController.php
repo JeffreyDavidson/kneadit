@@ -14,7 +14,7 @@ class LoyaltyController extends Controller
     public function show(): View
     {
         try {
-            $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
+            $rewards = LoyaltyReward::query()->where('is_active', true)->orderBy('points_required')->get();
         } catch (\Exception $e) {
             $rewards = collect();
         }
@@ -28,9 +28,9 @@ class LoyaltyController extends Controller
     public function store(RedeemLoyaltyRewardRequest $request): View
     {
 
-        $customer = Customer::where('email', $request->email)->first();
+        $customer = Customer::query()->where('email', $request->email)->first();
         try {
-            $rewards = LoyaltyReward::where('is_active', true)->orderBy('points_required')->get();
+            $rewards = LoyaltyReward::query()->where('is_active', true)->orderBy('points_required')->get();
         } catch (\Exception $e) {
             $rewards = collect();
         }

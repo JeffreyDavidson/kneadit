@@ -22,20 +22,20 @@ class ReportService
         $start = Date::parse($startDate)->startOfDay();
         $end = Date::parse($endDate)->endOfDay();
 
-        $orders = Order::whereBetween('delivery_date', [$start, $end]);
+        $orders = Order::query()->whereBetween('delivery_date', [$start, $end]);
         $paidOrders = (clone $orders)->where('payment_status', PaymentStatus::Paid);
 
         $totalOrders = $orders->count();
         $totalRevenue = $paidOrders->sum('total');
         $avgOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
 
-        $ordersByStatus = Order::whereBetween('delivery_date', [$start, $end])
+        $ordersByStatus = Order::query()->whereBetween('delivery_date', [$start, $end])
             ->select('status', DB::raw('COUNT(*) as count'))
             ->groupBy('status')
             ->pluck('count', 'status')
             ->toArray();
 
-        $topProducts = OrderItem::whereHas('order', fn (Builder $q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))
+        $topProducts = OrderItem::query()->whereHas('order', fn (Builder $q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))
             ->select('product_id', DB::raw('SUM(quantity) as units_sold'), DB::raw('SUM(quantity * unit_price) as revenue'))
             ->groupBy('product_id')
             ->with('product:id,name')
@@ -49,14 +49,14 @@ class ReportService
             ])
             ->toArray();
 
-        $revenueByDay = Order::whereBetween('delivery_date', [$start, $end])
+        $revenueByDay = Order::query()->whereBetween('delivery_date', [$start, $end])
             ->where('payment_status', PaymentStatus::Paid)
             ->select(DB::raw('DATE(delivery_date) as date'), DB::raw('SUM(total) as revenue'))
             ->groupBy('date')
             ->orderBy('date')
             ->get()
             ->map(fn (Order $row) => ['date' => $row->date, 'revenue' => (float) $row->revenue])
-            ->toArray();
+            ->all();
 
         return compact('totalOrders', 'totalRevenue', 'avgOrderValue', 'ordersByStatus', 'topProducts', 'revenueByDay');
     }
@@ -66,15 +66,15 @@ class ReportService
         $start = Date::parse($startDate)->startOfDay();
         $end = Date::parse($endDate)->endOfDay();
 
-        $newCustomers = Customer::whereBetween('created_at', [$start, $end])->count();
+        $newCustomers = Customer::query()->whereBetween('created_at', [$start, $end])->count();
 
-        $totalCustomersWithOrders = Customer::whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', [$start, $end]))->count();
+        $totalCustomersWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', [$start, $end]))->count();
 
-        $repeatCustomers = Customer::whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', [$start, $end]), '>=', 2)->count();
+        $repeatCustomers = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereBetween('delivery_date', [$start, $end]), '>=', 2)->count();
 
         $repeatRate = $totalCustomersWithOrders > 0 ? round(($repeatCustomers / $totalCustomersWithOrders) * 100, 1) : 0;
 
-        $topCustomers = Customer::withSum(['orders as total_spend' => fn (EloquentBuilder $q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid)], 'total')
+        $topCustomers = Customer::query()->withSum(['orders as total_spend' => fn (EloquentBuilder $q) => $q->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid)], 'total')
             ->withCount(['orders as order_count' => fn (EloquentBuilder $q) => $q->whereBetween('delivery_date', [$start, $end])])
             ->having('total_spend', '>', 0)
             ->orderByDesc('total_spend')
@@ -86,9 +86,9 @@ class ReportService
                 'total_spend' => (float) $c->total_spend,
                 'order_count' => (int) $c->order_count,
             ])
-            ->toArray();
+            ->all();
 
-        $acquisitionByMonth = Customer::whereBetween('created_at', [$start, $end])
+        $acquisitionByMonth = Customer::query()->whereBetween('created_at', [$start, $end])
             ->select(DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"), DB::raw('COUNT(*) as count'))
             ->groupBy('month')
             ->orderBy('month')
@@ -103,7 +103,7 @@ class ReportService
         $start = Date::parse($startDate)->startOfDay();
         $end = Date::parse($endDate)->endOfDay();
 
-        $products = Product::withSum(['orderItems as units_sold' => fn (EloquentBuilder $q) => $q->whereHas('order', fn (EloquentBuilder $o) => $o->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))], 'quantity')
+        $products = Product::query()->withSum(['orderItems as units_sold' => fn (EloquentBuilder $q) => $q->whereHas('order', fn (EloquentBuilder $o) => $o->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))], 'quantity')
             ->withSum(['orderItems as revenue' => fn (EloquentBuilder $q) => $q->whereHas('order', fn (EloquentBuilder $o) => $o->whereBetween('delivery_date', [$start, $end])->where('payment_status', PaymentStatus::Paid))], DB::raw('quantity * unit_price'))
             ->get()
             ->map(function (Product $p) {
@@ -120,30 +120,30 @@ class ReportService
             })
             ->sortByDesc('revenue')
             ->values()
-            ->toArray();
+            ->all();
 
         return ['products' => $products];
     }
 
     public function financialSummary(int $year): array
     {
-        $revenue = Order::whereYear('delivery_date', $year)
+        $revenue = Order::query()->whereYear('delivery_date', $year)
             ->where('payment_status', PaymentStatus::Paid)
             ->sum('total');
 
-        $otherIncome = Income::whereYear('date', $year)->sum('amount');
+        $otherIncome = Income::query()->whereYear('date', $year)->sum('amount');
         $totalRevenue = $revenue + $otherIncome;
 
-        $totalExpenses = Expense::whereYear('date', $year)->sum('amount');
+        $totalExpenses = Expense::query()->whereYear('date', $year)->sum('amount');
         $profit = $totalRevenue - $totalExpenses;
 
-        $deductible = Expense::whereYear('date', $year)->sum('deductible_amount');
+        $deductible = Expense::query()->whereYear('date', $year)->sum('deductible_amount');
 
         $monthly = collect();
         for ($m = 1; $m <= 12; $m++) {
-            $mRev = Order::whereYear('delivery_date', $year)->whereMonth('delivery_date', $m)->where('payment_status', PaymentStatus::Paid)->sum('total');
-            $mInc = Income::whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
-            $mExp = Expense::whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
+            $mRev = Order::query()->whereYear('delivery_date', $year)->whereMonth('delivery_date', $m)->where('payment_status', PaymentStatus::Paid)->sum('total');
+            $mInc = Income::query()->whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
+            $mExp = Expense::query()->whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
             $monthly->push([
                 'month' => date('M', mktime(0, 0, 0, $m, 1)),
                 'revenue' => (float) ($mRev + $mInc),
@@ -152,13 +152,13 @@ class ReportService
             ]);
         }
 
-        $expensesByCategory = Expense::whereYear('date', $year)
+        $expensesByCategory = Expense::query()->whereYear('date', $year)
             ->select('category', DB::raw('SUM(amount) as total'))
             ->groupBy('category')
             ->pluck('total', 'category')
             ->map(fn (string $v, string $k) => ['category' => Expense::CATEGORIES[$k] ?? ucfirst($k), 'amount' => (float) $v])
             ->values()
-            ->toArray();
+            ->all();
 
         return compact('totalRevenue', 'totalExpenses', 'profit', 'deductible', 'monthly', 'expensesByCategory');
     }
@@ -176,7 +176,7 @@ class ReportService
             ->groupBy('recipe_ingredients.ingredient_id')
             ->pluck('total_usage', 'ingredient_id');
 
-        $ingredients = Ingredient::orderBy('name')->get()->map(function (Ingredient $i) use ($usageData) {
+        $ingredients = Ingredient::query()->orderBy('name')->get()->map(function (Ingredient $i) use ($usageData) {
             $usageLast30 = (float) ($usageData[$i->id] ?? 0);
             $dailyUsage = $usageLast30 / 30;
             $daysUntilStockout = $dailyUsage > 0 ? round($i->current_stock / $dailyUsage, 0) : null;
@@ -192,7 +192,7 @@ class ReportService
                 'days_until_stockout' => $daysUntilStockout,
                 'cost_per_unit' => (float) $i->cost_per_unit,
             ];
-        })->toArray();
+        })->all();
 
         $totalItems = count($ingredients);
         $lowStockItems = collect($ingredients)->where('is_low', true)->count();

@@ -78,7 +78,7 @@ test('inquiry is saved with default status', function () {
             'details' => 'Corporate event',
         ]);
 
-    $inquiry = CateringInquiry::first();
+    $inquiry = CateringInquiry::query()->first();
 
     expect($inquiry)->not->toBeNull();
 });

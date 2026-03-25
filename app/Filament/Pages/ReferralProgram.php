@@ -43,30 +43,29 @@ class ReferralProgram extends Page
 
     public function getTotalReferrals(): int
     {
-        return Referral::where('referrer_tenant_id', tenant()->id)
+        return Referral::query()->where('referrer_tenant_id', tenant()->id)
             ->whereNotNull('referred_tenant_id')
             ->count();
     }
 
     public function getCompletedReferrals(): int
     {
-        return Referral::where('referrer_tenant_id', tenant()->id)
+        return Referral::query()->where('referrer_tenant_id', tenant()->id)
             ->whereIn('status', [ReferralStatus::Completed, ReferralStatus::Rewarded])
             ->count();
     }
 
     public function getMonthsEarned(): int
     {
-        return Referral::where('referrer_tenant_id', tenant()->id)
+        return Referral::query()->where('referrer_tenant_id', tenant()->id)
             ->where('status', ReferralStatus::Rewarded)
             ->sum('reward_months');
     }
 
     public function getReferrals(): Collection
     {
-        return Referral::where('referrer_tenant_id', tenant()->id)
-            ->whereNotNull('referred_tenant_id')
-            ->orderByDesc('created_at')
+        return Referral::query()->where('referrer_tenant_id', tenant()->id)
+            ->whereNotNull('referred_tenant_id')->latest()
             ->get();
     }
 }

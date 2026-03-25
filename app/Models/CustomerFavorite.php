@@ -33,7 +33,7 @@ class CustomerFavorite extends Model
 
     public static function toggle(string $email, int $productId): bool
     {
-        $favorite = static::where('customer_email', $email)
+        $favorite = static::query()->where('customer_email', $email)
             ->where('product_id', $productId)
             ->first();
 
@@ -42,7 +42,7 @@ class CustomerFavorite extends Model
 
             return false; // removed
         } else {
-            static::create([
+            static::query()->create([
                 'customer_email' => $email,
                 'product_id' => $productId,
             ]);
@@ -53,7 +53,7 @@ class CustomerFavorite extends Model
 
     public static function isFavorite(string $email, int $productId): bool
     {
-        return static::where('customer_email', $email)
+        return static::query()->where('customer_email', $email)
             ->where('product_id', $productId)
             ->exists();
     }

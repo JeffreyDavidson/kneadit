@@ -50,7 +50,7 @@ class CheckPayPalPayments extends Command
     {
         $paypalService = resolve(PayPalService::class);
 
-        $orders = Order::where('payment_status', PaymentStatus::Unpaid)
+        $orders = Order::query()->where('payment_status', PaymentStatus::Unpaid)
             ->whereNotNull('paypal_invoice_id')
             ->get();
 

@@ -29,9 +29,7 @@ class TransitionOrderStatus
         $from = $order->status;
         $allowed = self::TRANSITIONS[$from->value] ?? [];
 
-        if (! in_array($to->value, $allowed)) {
-            throw new InvalidOrderTransitionException($order, $from, $to);
-        }
+        throw_unless(in_array($to->value, $allowed), InvalidOrderTransitionException::class, $order, $from, $to);
 
         DB::transaction(function () use ($order, $to) {
             $order->update(['status' => $to]);
@@ -59,7 +57,7 @@ class TransitionOrderStatus
             }
         });
 
-        OrderStatusChanged::dispatch($order, $from, $to);
+        event(new OrderStatusChanged($order, $from, $to));
 
         return $order;
     }

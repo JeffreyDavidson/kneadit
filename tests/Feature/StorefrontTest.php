@@ -28,14 +28,14 @@ test('menu page shows store name from settings', function () {
 });
 
 test('menu page shows categories and products', function () {
-    $category = Category::create([
+    $category = Category::query()->create([
         'name' => 'Pastries',
         'slug' => 'pastries',
         'is_active' => true,
         'sort_order' => 1,
     ]);
 
-    Product::create([
+    Product::query()->create([
         'name' => 'Croissant',
         'slug' => 'croissant',
         'price' => 4.50,
@@ -52,14 +52,14 @@ test('menu page shows categories and products', function () {
 });
 
 test('menu page shows products with prices', function () {
-    $category = Category::create([
+    $category = Category::query()->create([
         'name' => 'Cakes',
         'slug' => 'cakes',
         'is_active' => true,
         'sort_order' => 1,
     ]);
 
-    Product::create([
+    Product::query()->create([
         'name' => 'Red Velvet Cake',
         'slug' => 'red-velvet-cake',
         'price' => 35.00,
@@ -76,7 +76,7 @@ test('menu page shows products with prices', function () {
 });
 
 test('menu hides inactive categories', function () {
-    Category::create([
+    Category::query()->create([
         'name' => 'Seasonal Only',
         'slug' => 'seasonal-only',
         'is_active' => false,
@@ -91,14 +91,14 @@ test('menu hides inactive categories', function () {
 });
 
 test('menu does not show inactive products', function () {
-    $category = Category::create([
+    $category = Category::query()->create([
         'name' => 'Breads',
         'slug' => 'breads',
         'is_active' => true,
         'sort_order' => 1,
     ]);
 
-    Product::create([
+    Product::query()->create([
         'name' => 'Hidden Bread',
         'slug' => 'hidden-bread',
         'price' => 5.00,

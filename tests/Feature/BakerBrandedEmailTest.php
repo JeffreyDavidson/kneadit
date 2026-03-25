@@ -24,18 +24,18 @@ use App\Models\User;
 beforeEach(function () {
     setUpCentralTest();
 
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Baker',
         'email' => 'baker@test.com',
         'password' => bcrypt('password'),
     ]);
 
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Test Customer',
         'email' => 'customer@test.com',
     ]);
 
-    $this->order = Order::create([
+    $this->order = Order::query()->create([
         'order_number' => 'ORD-001',
         'customer_id' => $customer->id,
         'user_id' => $user->id,

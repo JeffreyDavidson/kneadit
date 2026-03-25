@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function __invoke(): JsonResponse
     {
-        $categories = Category::where('is_active', true)
+        $categories = Category::query()->where('is_active', true)
             ->orderBy('sort_order')
             ->get(['id', 'name', 'slug', 'description', 'sort_order']);
 

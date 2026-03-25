@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\SocialPosts\Schemas;
 
+use App\Enums\SocialPostStatus;
 use App\Models\Product;
 use App\Models\SocialPost;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -63,7 +64,7 @@ class SocialPostForm
                                             return;
                                         }
 
-                                        $product = Product::find($productId);
+                                        $product = Product::query()->find($productId);
                                         if (! $product) {
                                             return;
                                         }
@@ -111,7 +112,7 @@ class SocialPostForm
                                     ->nullable(),
 
                                 Select::make('status')
-                                    ->options(SocialPost::STATUSES)
+                                    ->options(SocialPostStatus::class)
                                     ->required()
                                     ->default('draft'),
                             ]),

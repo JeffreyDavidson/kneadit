@@ -6,7 +6,7 @@ use App\Filament\Resources\GiftCards\GiftCardResource;
 use App\Services\GiftCardService;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\Components\TextInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewGiftCard extends ViewRecord

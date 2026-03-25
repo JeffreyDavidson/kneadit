@@ -92,7 +92,7 @@ class MessageResource extends Resource
                     ->placeholder('All'),
                 SelectFilter::make('tenant_id')
                     ->label('Bakery')
-                    ->options(fn () => Tenant::get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->toArray())
+                    ->options(fn () => Tenant::query()->get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->toArray())
                     ->searchable(),
             ])
             ->defaultSort('is_read', 'asc')

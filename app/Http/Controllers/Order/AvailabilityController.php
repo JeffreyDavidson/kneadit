@@ -30,7 +30,7 @@ class AvailabilityController extends Controller
             $isOpen = $schedule?->is_open ?? false;
 
             // Check blocked dates
-            $blocked = BlockedDate::where('date', $dateStr)->where('is_all_day', true)->first();
+            $blocked = BlockedDate::query()->where('date', $dateStr)->where('is_all_day', true)->first();
 
             if ($blocked) {
                 $dates[] = [
@@ -57,7 +57,7 @@ class AvailabilityController extends Controller
             // Check capacity
             $maxOrders = $schedule->max_orders
                 ?? (int) Setting::get('default_daily_capacity', 100);
-            $currentOrders = Order::whereDate('delivery_date', $dateStr)
+            $currentOrders = Order::query()->whereDate('delivery_date', $dateStr)
                 ->whereNotIn('status', [OrderStatus::Cancelled])
                 ->count();
             $remaining = max(0, $maxOrders - $currentOrders);

@@ -45,7 +45,7 @@ class SendBirthdayDiscounts extends Command
         $today = Date::today();
         $discountPercent = (int) Setting::get('birthday_discount_percent', 15);
 
-        $birthdayCustomers = CustomerProfile::whereMonth('birthday', $today->month)
+        $birthdayCustomers = CustomerProfile::query()->whereMonth('birthday', $today->month)
             ->whereDay('birthday', $today->day)
             ->with('customer')
             ->get();
@@ -66,11 +66,11 @@ class SendBirthdayDiscounts extends Command
             try {
                 $couponCode = 'BDAY-'.$customer->id.'-'.$today->year;
 
-                if (Coupon::where('code', $couponCode)->exists()) {
+                if (Coupon::query()->where('code', $couponCode)->exists()) {
                     continue;
                 }
 
-                $coupon = Coupon::create([
+                $coupon = Coupon::query()->create([
                     'code' => $couponCode,
                     'type' => CouponType::Percentage,
                     'value' => $discountPercent,

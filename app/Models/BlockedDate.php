@@ -28,14 +28,14 @@ class BlockedDate extends Model
 
     public static function isBlocked(Carbon $date): bool
     {
-        return static::where('date', $date->toDateString())
+        return static::query()->where('date', $date->toDateString())
             ->where('is_all_day', true)
             ->exists();
     }
 
     public static function getBlockedReason(Carbon $date): ?string
     {
-        return static::where('date', $date->toDateString())
+        return static::query()->where('date', $date->toDateString())
             ->where('is_all_day', true)
             ->value('reason');
     }

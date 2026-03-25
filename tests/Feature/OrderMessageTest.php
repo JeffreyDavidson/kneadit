@@ -13,9 +13,9 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(function () {
     setUpTenantTest();
 
-    $user = User::create(['name' => 'Baker', 'email' => 'baker@test.com', 'password' => bcrypt('pass')]);
-    $customer = Customer::create(['name' => 'Test', 'email' => 'test@example.com']);
-    $this->order = Order::create([
+    $user = User::query()->create(['name' => 'Baker', 'email' => 'baker@test.com', 'password' => bcrypt('pass')]);
+    $customer = Customer::query()->create(['name' => 'Test', 'email' => 'test@example.com']);
+    $this->order = Order::query()->create([
         'order_number' => 'ORD-MSG-001',
         'customer_id' => $customer->id,
         'user_id' => $user->id,
@@ -26,7 +26,7 @@ beforeEach(function () {
 });
 
 test('messages endpoint returns order messages', function () {
-    OrderMessage::create([
+    OrderMessage::query()->create([
         'order_id' => $this->order->id,
         'sender_type' => 'baker',
         'sender_name' => 'Baker Bob',
@@ -68,7 +68,7 @@ test('message is saved with correct sender type', function () {
             'sender_email' => 'cust@example.com',
         ]);
 
-    $msg = OrderMessage::first();
+    $msg = OrderMessage::query()->first();
     expect($msg->sender_type)->toBe('customer');
 });
 

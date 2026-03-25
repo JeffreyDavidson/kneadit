@@ -32,7 +32,7 @@ class CapacityLimit extends Model
     {
         $date = Date::parse($date);
 
-        return static::whereDate('date', $date)->first();
+        return static::query()->whereDate('date', $date)->first();
     }
 
     /**
@@ -76,7 +76,7 @@ class CapacityLimit extends Model
      */
     protected static function ordersOnDate(Carbon|string $date): int
     {
-        return Order::whereDate('delivery_date', Date::parse($date))
+        return Order::query()->whereDate('delivery_date', Date::parse($date))
             ->where('status', '!=', OrderStatus::Cancelled)
             ->count();
     }

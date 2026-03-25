@@ -27,18 +27,18 @@ class ProductImage extends Model
      */
     public static function syncPrimary(int $productId): void
     {
-        $images = static::where('product_id', $productId)->orderBy('sort_order')->get();
+        $images = static::query()->where('product_id', $productId)->orderBy('sort_order')->get();
 
         if ($images->isEmpty()) {
             return;
         }
 
         // Mark all as not primary, then set first as primary
-        static::where('product_id', $productId)->update(['is_primary' => false]);
+        static::query()->where('product_id', $productId)->update(['is_primary' => false]);
         $images->first()->update(['is_primary' => true]);
 
         // Sync the legacy `image` field on the product
-        $product = Product::find($productId);
+        $product = Product::query()->find($productId);
         if ($product) {
             $product->updateQuietly(['image' => $images->first()->path]);
         }

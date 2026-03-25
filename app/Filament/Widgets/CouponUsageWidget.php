@@ -16,24 +16,24 @@ class CouponUsageWidget extends Widget
 
     public function getActiveCouponsCount(): int
     {
-        return Coupon::where('is_active', true)->count();
+        return Coupon::query()->where('is_active', true)->count();
     }
 
     public function getTotalRedemptions(): int
     {
-        return (int) Coupon::sum('used_count');
+        return (int) Coupon::query()->sum('used_count');
     }
 
     public function getMostUsedCoupon(): ?Coupon
     {
-        return Coupon::where('used_count', '>', 0)
+        return Coupon::query()->where('used_count', '>', 0)
             ->orderByDesc('used_count')
             ->first();
     }
 
     public function getExpiringSoonCount(): int
     {
-        return Coupon::where('is_active', true)
+        return Coupon::query()->where('is_active', true)
             ->where('expires_at', '>=', Date::now())
             ->where('expires_at', '<=', Date::now()->addDays(7))
             ->count();

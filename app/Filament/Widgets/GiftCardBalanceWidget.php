@@ -16,12 +16,12 @@ class GiftCardBalanceWidget extends Widget
 
     public function getTotalOutstandingBalance(): float
     {
-        return (float) GiftCard::where('is_active', true)->sum('current_balance');
+        return (float) GiftCard::query()->where('is_active', true)->sum('current_balance');
     }
 
     public function getActiveCardsCount(): int
     {
-        return GiftCard::where('is_active', true)
+        return GiftCard::query()->where('is_active', true)
             ->where('current_balance', '>', 0)
             ->count();
     }

@@ -29,7 +29,7 @@ class CheckTrialExpirations extends Command
     {
         $targetDate = now()->addDays($daysLeft)->startOfDay();
 
-        $tenants = Tenant::whereDate('trial_ends_at', $targetDate->toDateString())
+        $tenants = Tenant::query()->whereDate('trial_ends_at', $targetDate->toDateString())
             ->where('is_active', true)
             ->get();
 
@@ -40,7 +40,7 @@ class CheckTrialExpirations extends Command
                 continue;
             }
 
-            $user = User::where('email', $tenant->email)->first();
+            $user = User::query()->where('email', $tenant->email)->first();
             if (! $user) {
                 continue;
             }
@@ -86,12 +86,12 @@ class CheckTrialExpirations extends Command
     protected function handleExpired(): void
     {
         // Find tenants whose trial has expired and have no active subscription
-        $expiredTenants = Tenant::where('trial_ends_at', '<', now())
+        $expiredTenants = Tenant::query()->where('trial_ends_at', '<', now())
             ->where('is_active', true)
             ->get();
 
         foreach ($expiredTenants as $tenant) {
-            $user = User::where('email', $tenant->email)->first();
+            $user = User::query()->where('email', $tenant->email)->first();
 
             // Skip if they have an active subscription
             if ($user && $user->subscribed('default')) {

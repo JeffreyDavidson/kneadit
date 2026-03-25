@@ -45,7 +45,7 @@ class HolidayPlanningCalendar extends Page
 
     public function loadHolidays(): void
     {
-        $this->holidays = Holiday::orderBy('date')->get();
+        $this->holidays = Holiday::query()->orderBy('date')->get();
 
         $this->upcomingHolidays = $this->holidays
             ->filter(fn (Holiday $holiday) => $holiday->is_upcoming)

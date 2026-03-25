@@ -53,7 +53,7 @@ class Activity extends Page
 
     public function getActivities(): Collection
     {
-        return PlatformActivity::latest('created_at')->limit(100)->get();
+        return PlatformActivity::query()->latest('created_at')->limit(100)->get();
     }
 
     public static function getEventIcon(string $event): string
@@ -107,17 +107,17 @@ class Activity extends Page
 
     public function getTodayCountProperty(): int
     {
-        return AdminAuditLog::where('created_at', '>=', today())->count();
+        return AdminAuditLog::query()->where('created_at', '>=', today())->count();
     }
 
     public function getWeekCountProperty(): int
     {
-        return AdminAuditLog::where('created_at', '>=', now()->startOfWeek())->count();
+        return AdminAuditLog::query()->where('created_at', '>=', now()->startOfWeek())->count();
     }
 
     public function getMostCommonActionProperty(): string
     {
-        $action = AdminAuditLog::select('action', DB::raw('count(*) as cnt'))
+        $action = AdminAuditLog::query()->select('action', DB::raw('count(*) as cnt'))
             ->where('created_at', '>=', now()->startOfWeek())
             ->groupBy('action')
             ->orderByDesc('cnt')

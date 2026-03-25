@@ -32,7 +32,7 @@ class PlatformActivity extends Model
 
     public static function log(string $event, ?string $tenantId, string $description, ?array $metadata = null): static
     {
-        return static::create([
+        return static::query()->create([
             'event' => $event,
             'tenant_id' => $tenantId,
             'description' => $description,

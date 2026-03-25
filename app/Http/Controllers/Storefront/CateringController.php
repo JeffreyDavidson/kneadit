@@ -14,7 +14,7 @@ class CateringController extends Controller
 {
     public function show(): View
     {
-        $cateringPhotos = CustomerPhoto::whereLike('caption', '%catering%')
+        $cateringPhotos = CustomerPhoto::query()->whereLike('caption', '%catering%')
             ->where('is_approved', true)
             ->latest()
             ->take(8)
@@ -41,7 +41,7 @@ class CateringController extends Controller
             $validated['venue_address'] = strip_tags($validated['venue_address']);
         }
 
-        CateringInquiry::create($validated);
+        CateringInquiry::query()->create($validated);
 
         return to_route('storefront.catering')
             ->with('success', 'Thank you for your inquiry! We\'ll review your request and get back to you with a custom quote soon.');

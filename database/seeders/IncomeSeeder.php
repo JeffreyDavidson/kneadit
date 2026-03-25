@@ -10,7 +10,7 @@ class IncomeSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Income::count() > 0) {
+        if (Income::query()->count() > 0) {
             return;
         }
 
@@ -125,7 +125,7 @@ class IncomeSeeder extends Seeder
                 }
             }
 
-            Income::create([
+            Income::query()->create([
                 'description' => $incomeData['description'],
                 'amount' => $incomeData['amount'],
                 'source' => $incomeData['source'],

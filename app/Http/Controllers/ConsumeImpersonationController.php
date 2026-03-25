@@ -28,7 +28,7 @@ class ConsumeImpersonationController extends Controller
             ->where('token', $hashed)
             ->delete();
 
-        $user = User::first();
+        $user = User::query()->first();
 
         abort_unless($user, 404, 'No users found for this tenant.');
 

@@ -3,12 +3,12 @@
 namespace App\Filament\Resources\GalleryPhotos\Schemas;
 
 use App\Enums\GalleryCategory;
-use Filament\Schemas\Components\FileUpload;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Select;
-use Filament\Schemas\Components\TextInput;
-use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class GalleryPhotoForm

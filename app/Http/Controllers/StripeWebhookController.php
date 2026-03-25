@@ -64,12 +64,12 @@ class StripeWebhookController extends WebhookController
             return;
         }
 
-        $user = User::where('stripe_id', $stripeCustomerId)->first();
+        $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
         if (! $user) {
             return;
         }
 
-        $tenant = Tenant::where('email', $user->email)->first();
+        $tenant = Tenant::query()->where('email', $user->email)->first();
         if (! $tenant) {
             return;
         }
@@ -108,12 +108,12 @@ class StripeWebhookController extends WebhookController
             return;
         }
 
-        $user = User::where('stripe_id', $stripeCustomerId)->first();
+        $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
         if (! $user) {
             return;
         }
 
-        $tenant = Tenant::where('email', $user->email)->first();
+        $tenant = Tenant::query()->where('email', $user->email)->first();
 
         Log::warning('Payment failed', [
             'tenant' => $tenant?->id,
@@ -170,12 +170,12 @@ class StripeWebhookController extends WebhookController
         $subscription = $payload['data']['object'] ?? [];
         $stripeCustomerId = $subscription['customer'] ?? null;
 
-        $user = User::where('stripe_id', $stripeCustomerId)->first();
+        $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
         if (! $user) {
             return;
         }
 
-        $tenant = Tenant::where('email', $user->email)->first();
+        $tenant = Tenant::query()->where('email', $user->email)->first();
         if ($tenant) {
             Log::info("Tenant {$tenant->id} subscription fully canceled");
         }

@@ -44,7 +44,7 @@ class CreateOrder
             }
 
             if ($couponId) {
-                $coupon = Coupon::lockForUpdate()->find($couponId);
+                $coupon = Coupon::query()->lockForUpdate()->find($couponId);
                 if ($coupon && $coupon->isValid()) {
                     $discountAmount = $coupon->calculateDiscount($calculated['subtotal']);
                     $calculated['discount_amount'] = $discountAmount;
@@ -53,16 +53,13 @@ class CreateOrder
                 }
             }
 
-            $customer = Customer::updateOrCreate(
-                ['email' => $data['customer_email']],
-                array_filter([
-                    'name' => $data['customer_name'],
-                    'phone' => $data['customer_phone'] ?? null,
-                    'birthday' => $data['customer_birthday'] ?? null,
-                ], fn (mixed $v) => $v !== null)
-            );
+            $customer = Customer::query()->updateOrCreate(['email' => $data['customer_email']], array_filter([
+                'name' => $data['customer_name'],
+                'phone' => $data['customer_phone'] ?? null,
+                'birthday' => $data['customer_birthday'] ?? null,
+            ], fn (mixed $v) => $v !== null));
 
-            $order = Order::create([
+            $order = Order::query()->create([
                 'customer_id' => $customer->id,
                 'order_number' => $this->generateOrderNumber(),
                 'delivery_date' => $data['delivery_date'],
@@ -83,7 +80,7 @@ class CreateOrder
             }
 
             if ($giftCardId) {
-                $giftCard = GiftCard::lockForUpdate()->find($giftCardId);
+                $giftCard = GiftCard::query()->lockForUpdate()->find($giftCardId);
                 if ($giftCard && $giftCard->isUsable()) {
                     $gcAmount = min((float) $giftCard->current_balance, (float) $order->total);
                     if ($gcAmount > 0) {
@@ -101,7 +98,7 @@ class CreateOrder
         });
 
         if ($order) {
-            OrderCreated::dispatch($order);
+            event(new OrderCreated($order));
         }
 
         return $order;
@@ -117,7 +114,7 @@ class CreateOrder
         $orderItems = [];
 
         $productIds = array_column($items, 'product_id');
-        $products = Product::findOrFail($productIds)->keyBy('id');
+        $products = Product::query()->findOrFail($productIds)->keyBy('id');
 
         foreach ($items as $item) {
             $product = $products->get($item['product_id']);
@@ -159,7 +156,7 @@ class CreateOrder
     {
         do {
             $number = 'KN'.date('ymd').strtoupper(Str::random(4));
-        } while (Order::where('order_number', $number)->exists());
+        } while (Order::query()->where('order_number', $number)->exists());
 
         return $number;
     }

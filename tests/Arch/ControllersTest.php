@@ -13,7 +13,7 @@ $controllerFiles = collect(glob(__DIR__.'/../../app/Http/Controllers/**/*.php'))
     })
     ->reject(fn ($class) => $class === 'App\\Http\\Controllers\\Controller')
     ->filter(fn ($class) => class_exists($class))
-    ->filter(fn ($class) => ! (new ReflectionClass($class))->isAbstract())
+    ->reject(fn ($class): bool => (new ReflectionClass($class))->isAbstract())
     ->values();
 
 foreach ($controllerFiles as $controllerClass) {

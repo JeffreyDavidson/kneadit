@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 beforeEach(fn () => setUpCentralTest());
 
 test('can create ticket', function () {
-    $ticket = SupportTicket::create([
+    $ticket = SupportTicket::query()->create([
         'subject' => 'Help needed',
         'body' => 'Something is broken',
         'status' => 'open',
@@ -17,13 +17,13 @@ test('can create ticket', function () {
         'tenant_id' => 'tenant-1',
     ]);
 
-    $found = SupportTicket::where('subject', 'Help needed')->first();
+    $found = SupportTicket::query()->where('subject', 'Help needed')->first();
     expect($found)->not->toBeNull();
     expect($found->priority)->toBe(SupportTicketPriority::High);
 });
 
 test('status defaults to open', function () {
-    $ticket = SupportTicket::create([
+    $ticket = SupportTicket::query()->create([
         'subject' => 'Test',
         'body' => 'Body',
         'tenant_id' => 't1',
@@ -33,7 +33,7 @@ test('status defaults to open', function () {
 });
 
 test('priority defaults to normal', function () {
-    $ticket = SupportTicket::create([
+    $ticket = SupportTicket::query()->create([
         'subject' => 'Test',
         'body' => 'Body',
         'tenant_id' => 't1',
@@ -43,20 +43,20 @@ test('priority defaults to normal', function () {
 });
 
 test('replies relationship', function () {
-    $ticket = SupportTicket::create([
+    $ticket = SupportTicket::query()->create([
         'subject' => 'Test',
         'body' => 'Body',
         'tenant_id' => 't1',
     ]);
 
-    SupportReply::create(['ticket_id' => $ticket->id, 'body' => 'Reply 1']);
-    SupportReply::create(['ticket_id' => $ticket->id, 'body' => 'Reply 2']);
+    SupportReply::query()->create(['ticket_id' => $ticket->id, 'body' => 'Reply 1']);
+    SupportReply::query()->create(['ticket_id' => $ticket->id, 'body' => 'Reply 2']);
 
     expect($ticket->replies)->toHaveCount(2);
 });
 
 test('tenant relationship exists', function () {
-    $ticket = SupportTicket::create(['subject' => 'T', 'body' => 'B', 'tenant_id' => 't1']);
+    $ticket = SupportTicket::query()->create(['subject' => 'T', 'body' => 'B', 'tenant_id' => 't1']);
 
     expect($ticket->tenant())->toBeInstanceOf(BelongsTo::class);
 });

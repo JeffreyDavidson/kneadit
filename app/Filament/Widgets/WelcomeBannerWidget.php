@@ -36,13 +36,13 @@ class WelcomeBannerWidget extends Widget
 
     public function getOrdersToday(): int
     {
-        return Order::whereDate('delivery_date', Date::today())->count();
+        return Order::query()->whereDate('delivery_date', Date::today())->count();
     }
 
     public function getRevenueToday(): string
     {
         return number_format(
-            (float) Order::where('status', '!=', OrderStatus::Cancelled)
+            (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
                 ->whereDate('delivery_date', Date::today())
                 ->sum('total'),
             2
@@ -51,6 +51,6 @@ class WelcomeBannerWidget extends Widget
 
     public function getPendingOrders(): int
     {
-        return Order::where('status', OrderStatus::Pending)->count();
+        return Order::query()->where('status', OrderStatus::Pending)->count();
     }
 }

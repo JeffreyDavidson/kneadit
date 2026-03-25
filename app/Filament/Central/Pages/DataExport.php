@@ -26,7 +26,7 @@ class DataExport extends Page
 
     public function getTenants(): array
     {
-        return Tenant::orderBy('store_name')
+        return Tenant::query()->orderBy('store_name')
             ->get()
             ->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])
             ->toArray();
@@ -40,7 +40,7 @@ class DataExport extends Page
             return;
         }
 
-        $tenant = Tenant::find($value);
+        $tenant = Tenant::query()->find($value);
         if (! $tenant) {
             $this->counts = [];
 

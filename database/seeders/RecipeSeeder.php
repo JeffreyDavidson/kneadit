@@ -10,12 +10,12 @@ class RecipeSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Recipe::count() > 0) {
+        if (Recipe::query()->count() > 0) {
             return;
         }
 
         // Get specific products to create recipes for
-        $products = Product::whereIn('name', [
+        $products = Product::query()->whereIn('name', [
             'Sourdough Boule',
             'Brown Butter Chocolate Chip',
             'Chocolate Ganache Torte',
@@ -267,7 +267,7 @@ class RecipeSeeder extends Seeder
             if ($product) {
                 $totalCost = collect($recipeData['ingredients'])->sum('cost');
 
-                Recipe::create([
+                Recipe::query()->create([
                     'product_id' => $product->id,
                     'name' => $recipeData['name'],
                     'ingredients' => $recipeData['ingredients'],

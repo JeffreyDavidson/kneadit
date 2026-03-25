@@ -25,7 +25,7 @@ class OrderFunnelWidget extends Widget
         ];
 
         foreach ($stages as &$stage) {
-            $stage['count'] = Order::where('status', $stage['key'])->count();
+            $stage['count'] = Order::query()->where('status', $stage['key'])->count();
         }
 
         return $stages;

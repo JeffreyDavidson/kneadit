@@ -88,7 +88,7 @@ class ProductTrends extends Page
         $prevStart = $currentStart->copy()->subMonth()->startOfMonth();
         $prevEnd = $prevStart->copy()->endOfMonth();
 
-        $currentCounts = OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
+        $currentCounts = OrderItem::query()->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
             ->whereBetween('orders.created_at', [$currentStart, $currentEnd])
             ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')
@@ -96,7 +96,7 @@ class ProductTrends extends Page
             ->pluck('total_qty', 'product_id')
             ->toArray();
 
-        $prevCounts = OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
+        $prevCounts = OrderItem::query()->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
             ->whereBetween('orders.created_at', [$prevStart, $prevEnd])
             ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')

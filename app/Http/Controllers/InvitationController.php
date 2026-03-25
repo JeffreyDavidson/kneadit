@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AcceptInvitationRequest;
 use App\Models\Setting;
 use App\Models\StaffInvitation;
 use App\Models\User;
@@ -13,7 +14,7 @@ class InvitationController extends Controller
 {
     public function show(string $token): View
     {
-        $invitation = StaffInvitation::where('token', $token)
+        $invitation = StaffInvitation::query()->where('token', $token)
             ->whereNull('accepted_at')
             ->firstOrFail();
 
@@ -22,7 +23,7 @@ class InvitationController extends Controller
         }
 
         $storeName = Setting::get('store_name', 'Our Bakery');
-        $existingUser = User::where('email', $invitation->email)->first();
+        $existingUser = User::query()->where('email', $invitation->email)->first();
 
         return view('invitations.show', [
             'invitation' => $invitation,
@@ -33,7 +34,7 @@ class InvitationController extends Controller
 
     public function store(AcceptInvitationRequest $request, string $token): View|RedirectResponse
     {
-        $invitation = StaffInvitation::where('token', $token)
+        $invitation = StaffInvitation::query()->where('token', $token)
             ->whereNull('accepted_at')
             ->firstOrFail();
 
@@ -44,7 +45,7 @@ class InvitationController extends Controller
         // If an authenticated user is accepting, verify their email matches the invitation
         abort_if(Auth::check() && Auth::user()->email !== $invitation->email, 403, 'This invitation was sent to a different email address.');
 
-        $existingUser = User::where('email', $invitation->email)->first();
+        $existingUser = User::query()->where('email', $invitation->email)->first();
 
         if ($existingUser) {
             $existingUser->update(['role' => $invitation->role]);
@@ -52,7 +53,7 @@ class InvitationController extends Controller
         } else {
             $validated = $request->validated();
 
-            $user = User::create([
+            $user = User::query()->create([
                 'name' => $validated['name'],
                 'email' => $invitation->email,
                 'password' => $validated['password'],

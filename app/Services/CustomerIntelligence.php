@@ -8,7 +8,7 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 class CustomerIntelligence
 {
@@ -21,7 +21,7 @@ class CustomerIntelligence
 
         $orderCount = (int) ($orderStats->order_count ?? 0);
         $lifetimeValue = (float) ($orderStats->lifetime_value ?? 0);
-        $lastOrderDate = $orderStats->last_order_date ? Carbon::parse($orderStats->last_order_date) : null;
+        $lastOrderDate = $orderStats->last_order_date ? Date::parse($orderStats->last_order_date) : null;
 
         $daysSinceLastOrder = $lastOrderDate
             ? (int) $lastOrderDate->diffInDays(now())
@@ -61,7 +61,7 @@ class CustomerIntelligence
             ->withCount(['orders' => fn (Builder $q) => $q->active()])
             ->withSum(['orders' => fn (Builder $q) => $q->active()], 'total')
             ->addSelect([
-                'last_order_date' => Order::select('created_at')
+                'last_order_date' => Order::query()->select('created_at')
                     ->whereColumn('customer_id', 'customers.id')
                     ->latest()
                     ->limit(1),

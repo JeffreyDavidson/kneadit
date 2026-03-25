@@ -24,7 +24,7 @@ class TrackingController extends Controller
     public function store(TrackOrderRequest $request): View
     {
 
-        $orders = Order::whereHas('customer', function (Builder $q) use ($request) {
+        $orders = Order::query()->whereHas('customer', function (Builder $q) use ($request) {
             $q->where('email', $request->email);
         })
             ->with(['orderItems.product', 'messages'])

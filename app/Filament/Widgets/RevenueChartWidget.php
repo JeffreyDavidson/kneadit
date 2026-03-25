@@ -36,7 +36,7 @@ class RevenueChartWidget extends ChartWidget
 
         $labels = collect(CarbonPeriod::create($start, $end))
             ->map(fn (Carbon $d) => $d->format('M j'))
-            ->toArray();
+            ->all();
 
         $currentTotal = array_sum($current);
         $previousTotal = array_sum($previous);
@@ -72,7 +72,7 @@ class RevenueChartWidget extends ChartWidget
 
     private function getDailyRevenue(Carbon $start, Carbon $end): array
     {
-        $raw = Order::where('status', '!=', OrderStatus::Cancelled)
+        $raw = Order::query()->where('status', '!=', OrderStatus::Cancelled)
             ->whereBetween('delivery_date', [$start, $end])
             ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue')
             ->groupBy('date')

@@ -34,10 +34,10 @@ class WeeklyRevenueChart extends ChartWidget
 
         foreach ($period as $date) {
             $labels[] = $date->format('D');
-            $revenue[] = (float) Order::where('status', '!=', OrderStatus::Cancelled)
+            $revenue[] = (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
                 ->whereDate('delivery_date', $date)
                 ->sum('total');
-            $expenses[] = (float) Expense::whereDate('date', $date)
+            $expenses[] = (float) Expense::query()->whereDate('date', $date)
                 ->get()
                 ->sum(fn (Expense $e) => $e->deductible_amount);
         }

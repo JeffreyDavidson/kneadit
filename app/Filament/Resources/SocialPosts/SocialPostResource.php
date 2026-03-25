@@ -78,6 +78,6 @@ class SocialPostResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('status', 'scheduled')->count() ?: null;
+        return static::getModel()::query()->where('status', 'scheduled')->count() ?: null;
     }
 }

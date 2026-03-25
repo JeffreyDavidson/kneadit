@@ -39,7 +39,7 @@ afterEach(function () {
 
 function createSignupUser(array $overrides = []): User
 {
-    return User::create(array_merge([
+    return User::query()->create(array_merge([
         'name' => 'Test Baker',
         'email' => 'baker@example.com',
         'password' => bcrypt('password'),
@@ -81,7 +81,7 @@ function submitOnboarding(User $user, array $data = []): TestResponse
 
 function mockTenantWithPlan(string $plan): void
 {
-    $tenant = Tenant::make([
+    $tenant = Tenant::query()->make([
         'id' => "test-{$plan}",
         'name' => 'Test',
         'email' => 'test@example.com',
@@ -158,7 +158,7 @@ test('successful onboarding creates tenant user with same email', function () {
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub]);
 
-    $tenant = Tenant::find($sub);
+    $tenant = Tenant::query()->find($sub);
     $tenant->run(function () use ($user) {
         $this->assertDatabaseHas('users', ['email' => $user->email]);
     });
@@ -169,7 +169,7 @@ test('successful onboarding seeds store name setting in tenant', function () {
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub, 'store_name' => 'Artisan Breads']);
 
-    $tenant = Tenant::find($sub);
+    $tenant = Tenant::query()->find($sub);
     $tenant->run(function () {
         $this->assertDatabaseHas('settings', [
             'key' => 'store_name',
@@ -183,7 +183,7 @@ test('successful onboarding seeds store email setting in tenant', function () {
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub]);
 
-    $tenant = Tenant::find($sub);
+    $tenant = Tenant::query()->find($sub);
     $tenant->run(function () use ($user) {
         $this->assertDatabaseHas('settings', [
             'key' => 'store_email',

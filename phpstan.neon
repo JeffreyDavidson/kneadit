@@ -1,0 +1,14 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+    level: 0
+    scanDirectories:
+        - vendor/filament
+    ignoreErrors:
+        - identifier: staticProperty.notFound
+          path: app/Traits/HasPlanGating.php
+        - identifier: larastan.noUnnecessaryCollectionCall
+          path: app/Filament/Widgets/ReorderRemindersWidget.php

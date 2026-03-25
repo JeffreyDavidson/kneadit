@@ -19,7 +19,7 @@ class ReorderRemindersWidget extends Widget
     {
         $thirtyDaysAgo = Date::now()->subDays(30);
 
-        return Customer::select('customers.id', 'customers.name', 'customers.email')
+        return Customer::query()->select('customers.id', 'customers.name', 'customers.email')
             ->join('orders', 'orders.customer_id', '=', 'customers.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
             ->groupBy('customers.id', 'customers.name', 'customers.email')
@@ -33,14 +33,14 @@ class ReorderRemindersWidget extends Widget
                 'email' => $c->email,
                 'last_order' => $c->orders()->latest()->value('created_at')?->diffForHumans() ?? 'N/A',
             ])
-            ->toArray();
+            ->all();
     }
 
     public function getLapsedCount(): int
     {
         $thirtyDaysAgo = Date::now()->subDays(30);
 
-        return Customer::join('orders', 'orders.customer_id', '=', 'customers.id')
+        return Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
             ->groupBy('customers.id')
             ->havingRaw('COUNT(orders.id) >= 2')

@@ -25,7 +25,7 @@ class BusinessScheduleSeeder extends Seeder
         ];
 
         foreach ($defaults as $day => $data) {
-            BusinessSchedule::updateOrCreate(['day_of_week' => $day], $data);
+            BusinessSchedule::query()->updateOrCreate(['day_of_week' => $day], $data);
         }
 
         // Blocked dates (upcoming holidays)
@@ -37,20 +37,14 @@ class BusinessScheduleSeeder extends Seeder
         ];
 
         foreach ($blockedDates as $data) {
-            BlockedDate::updateOrCreate(['date' => $data['date']], $data);
+            BlockedDate::query()->updateOrCreate(['date' => $data['date']], $data);
         }
 
         // Seasonal items (attach to first couple products if they exist)
-        $products = Product::take(3)->get();
+        $products = Product::query()->take(3)->get();
         if ($products->count() >= 2) {
-            SeasonalItem::updateOrCreate(
-                ['product_id' => $products[0]->id, 'available_from' => '2026-06-01'],
-                ['available_until' => '2026-08-31', 'notes' => 'Summer special']
-            );
-            SeasonalItem::updateOrCreate(
-                ['product_id' => $products[1]->id, 'available_from' => '2026-11-01'],
-                ['available_until' => '2026-12-31', 'notes' => 'Holiday season']
-            );
+            SeasonalItem::query()->updateOrCreate(['product_id' => $products[0]->id, 'available_from' => '2026-06-01'], ['available_until' => '2026-08-31', 'notes' => 'Summer special']);
+            SeasonalItem::query()->updateOrCreate(['product_id' => $products[1]->id, 'available_from' => '2026-11-01'], ['available_until' => '2026-12-31', 'notes' => 'Holiday season']);
         }
     }
 }

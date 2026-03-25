@@ -59,7 +59,7 @@ class TrackPageView
         $request->session()->put($throttleKey, now()->toISOString());
 
         try {
-            PageView::create([
+            PageView::query()->create([
                 'page' => $page,
                 'session_id' => $sessionId,
                 'ip_address' => $request->ip(),
@@ -74,7 +74,7 @@ class TrackPageView
 
                 if (! $productsTrackedAt || now()->diffInMinutes(Date::parse($productsTrackedAt)) >= 60) {
                     $request->session()->put($productThrottleKey, now()->toISOString());
-                    $products = Product::where('is_active', true)->pluck('id');
+                    $products = Product::query()->where('is_active', true)->pluck('id');
                     $ipAddress = $request->ip();
                     $userAgent = substr($request->userAgent() ?? '', 0, 255);
                     $timestamp = now();
@@ -86,9 +86,9 @@ class TrackPageView
                         'ip_address' => $ipAddress,
                         'user_agent' => $userAgent,
                         'created_at' => $timestamp,
-                    ])->toArray();
+                    ])->all();
 
-                    PageView::insert($records);
+                    PageView::query()->insert($records);
                 }
             }
         } catch (\Exception $e) {

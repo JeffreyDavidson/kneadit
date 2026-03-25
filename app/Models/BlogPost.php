@@ -42,7 +42,7 @@ class BlogPost extends Model
                 $slug = Str::slug($post->title);
                 $original = $slug;
                 $i = 2;
-                while (static::where('slug', $slug)->exists()) {
+                while (static::query()->where('slug', $slug)->exists()) {
                     $slug = $original.'-'.$i++;
                 }
                 $post->slug = $slug;

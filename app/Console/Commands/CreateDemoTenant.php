@@ -20,7 +20,7 @@ class CreateDemoTenant extends Command
         $domain = 'demo.kneadit.test';
 
         if ($this->option('fresh')) {
-            $existing = Tenant::find($subdomain);
+            $existing = Tenant::query()->find($subdomain);
             if ($existing) {
                 $this->info('Deleting existing demo tenant...');
                 $existing->delete();
@@ -34,7 +34,7 @@ class CreateDemoTenant extends Command
             }
         }
 
-        if (Tenant::find($subdomain)) {
+        if (Tenant::query()->find($subdomain)) {
             $this->warn('Demo tenant already exists. Use --fresh to recreate.');
 
             return self::SUCCESS;
@@ -43,7 +43,7 @@ class CreateDemoTenant extends Command
         $this->info('Creating demo tenant...');
 
         // Create tenant (this triggers CreateDatabase + MigrateDatabase via events)
-        $tenant = Tenant::create([
+        $tenant = Tenant::query()->create([
             'id' => $subdomain,
             'name' => 'Demo Baker',
             'email' => 'demo@getkneadit.app',
@@ -80,7 +80,7 @@ class CreateDemoTenant extends Command
 
         $tenant->run(function () {
             // Create admin user
-            User::create([
+            User::query()->create([
                 'name' => 'Demo Baker',
                 'email' => 'demo@getkneadit.app',
                 'password' => bcrypt('password'),

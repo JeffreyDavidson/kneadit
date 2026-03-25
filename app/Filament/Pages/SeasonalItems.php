@@ -9,13 +9,13 @@ use App\Models\SeasonalItem;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Select;
-use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -58,7 +58,7 @@ class SeasonalItems extends Page
                     Grid::make(4)->schema([
                         Select::make('product_id')
                             ->label('Product')
-                            ->options(Product::where('is_active', true)->pluck('name', 'id'))
+                            ->options(Product::query()->where('is_active', true)->pluck('name', 'id'))
                             ->required()
                             ->searchable(),
                         TextInput::make('available_from')
@@ -91,7 +91,7 @@ class SeasonalItems extends Page
             'available_until' => 'required|date|after:available_from',
         ]);
 
-        SeasonalItem::create([
+        SeasonalItem::query()->create([
             'product_id' => $this->product_id,
             'available_from' => $this->available_from,
             'available_until' => $this->available_until,
@@ -108,7 +108,7 @@ class SeasonalItems extends Page
 
     public function deleteSeasonalItem(int $id): void
     {
-        SeasonalItem::findOrFail($id)->delete();
+        SeasonalItem::query()->findOrFail($id)->delete();
 
         Notification::make()
             ->title('Seasonal item removed.')

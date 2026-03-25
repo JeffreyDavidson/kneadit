@@ -18,7 +18,7 @@ class ContactController extends Controller
     {
         $validated = $request->validated();
 
-        ContactMessage::create($validated);
+        ContactMessage::query()->create($validated);
 
         return back()->with('success', 'Thank you for your message! We\'ll get back to you soon.');
     }

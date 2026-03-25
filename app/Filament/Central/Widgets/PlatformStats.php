@@ -15,15 +15,15 @@ class PlatformStats extends StatsOverviewWidget
     protected function getStats(): array
     {
         $planPrices = ['starter' => 9, 'growth' => 19, 'pro' => 29];
-        $activeTenants = Tenant::where('is_active', true)->get();
+        $activeTenants = Tenant::query()->where('is_active', true)->get();
         $mrr = $activeTenants->sum(fn (Tenant $t) => $planPrices[$t->plan] ?? 0);
 
-        $totalTenants = Tenant::count();
-        $trialTenants = Tenant::whereNotNull('trial_ends_at')
+        $totalTenants = Tenant::query()->count();
+        $trialTenants = Tenant::query()->whereNotNull('trial_ends_at')
             ->where('trial_ends_at', '>', now())
             ->count();
 
-        $openTickets = SupportTicket::where('status', SupportTicketStatus::Open)->count();
+        $openTickets = SupportTicket::query()->where('status', SupportTicketStatus::Open)->count();
 
         // Sparkline data: last 6 months
         $mrrChart = [];
@@ -34,16 +34,16 @@ class PlatformStats extends StatsOverviewWidget
             $monthEnd = now()->subMonths($i)->endOfMonth();
 
             // MRR for that month
-            $activeInMonth = Tenant::where('is_active', true)
+            $activeInMonth = Tenant::query()->where('is_active', true)
                 ->where('created_at', '<=', $monthEnd)
                 ->get();
             $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $planPrices[$t->plan] ?? 0);
 
             // Cumulative bakeries
-            $bakeryChart[] = Tenant::where('created_at', '<=', $monthEnd)->count();
+            $bakeryChart[] = Tenant::query()->where('created_at', '<=', $monthEnd)->count();
 
             // Trials active at end of that month
-            $trialChart[] = Tenant::whereNotNull('trial_ends_at')
+            $trialChart[] = Tenant::query()->whereNotNull('trial_ends_at')
                 ->where('trial_ends_at', '>', $monthEnd)
                 ->where('created_at', '<=', $monthEnd)
                 ->count();
@@ -53,7 +53,7 @@ class PlatformStats extends StatsOverviewWidget
         $ticketChart = [];
         for ($i = 5; $i >= 0; $i--) {
             $day = now()->subDays($i);
-            $ticketChart[] = SupportTicket::whereDate('created_at', $day->toDateString())->count();
+            $ticketChart[] = SupportTicket::query()->whereDate('created_at', $day->toDateString())->count();
         }
 
         return [

@@ -10,7 +10,7 @@ class ReferralController extends Controller
 {
     public function __invoke(Request $request, string $code): RedirectResponse
     {
-        $referral = Referral::where('referral_code', $code)->first();
+        $referral = Referral::query()->where('referral_code', $code)->first();
 
         if ($referral) {
             session(['referral_code' => $code]);

@@ -12,11 +12,11 @@ use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class ViewOrder extends ViewRecord
@@ -147,7 +147,7 @@ class ViewOrder extends ViewRecord
                 ])
                 ->action(function (array $data): void {
                     try {
-                        app(TransitionOrderStatus::class)($this->record, OrderStatus::from($data['status']));
+                        resolve(TransitionOrderStatus::class)($this->record, OrderStatus::from($data['status']));
                         $this->notify('success', 'Order status updated successfully.');
                     } catch (InvalidOrderTransitionException $e) {
                         $this->notify('danger', $e->getMessage());
@@ -195,7 +195,7 @@ class ViewOrder extends ViewRecord
                         ->where('is_read', false)
                         ->update(['is_read' => true]);
 
-                    OrderMessageSent::dispatch($message);
+                    event(new OrderMessageSent($message));
 
                     $this->notify('success', 'Message sent to customer.');
                 }),

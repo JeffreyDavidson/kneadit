@@ -10,7 +10,7 @@ class ExpenseSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Expense::count() > 0) {
+        if (Expense::query()->count() > 0) {
             return;
         }
 
@@ -254,7 +254,7 @@ class ExpenseSeeder extends Seeder
             $daysAgo = rand(1, 90);
             $date = Date::now()->subDays($daysAgo);
 
-            Expense::create([
+            Expense::query()->create([
                 'description' => $expenseData['description'],
                 'amount' => $expenseData['amount'],
                 'category' => $expenseData['category'],

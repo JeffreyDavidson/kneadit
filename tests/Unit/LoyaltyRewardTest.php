@@ -14,11 +14,11 @@ beforeEach(function () {
     if (is_dir($tenantMigrationPath)) {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
-    User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
 });
 
 test('reward type label for percentage discount', function () {
-    $reward = LoyaltyReward::create([
+    $reward = LoyaltyReward::query()->create([
         'name' => '10% Off',
         'points_required' => 100,
         'reward_type' => 'percentage_discount',
@@ -30,7 +30,7 @@ test('reward type label for percentage discount', function () {
 });
 
 test('reward type label for fixed discount', function () {
-    $reward = LoyaltyReward::create([
+    $reward = LoyaltyReward::query()->create([
         'name' => '$5 Off',
         'points_required' => 50,
         'reward_type' => 'fixed_discount',
@@ -42,10 +42,10 @@ test('reward type label for fixed discount', function () {
 });
 
 test('reward type label for free product', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
 
-    $reward = LoyaltyReward::create([
+    $reward = LoyaltyReward::query()->create([
         'name' => 'Free Sourdough',
         'points_required' => 200,
         'reward_type' => 'free_product',
@@ -58,10 +58,10 @@ test('reward type label for free product', function () {
 });
 
 test('reward belongs to product', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
 
-    $reward = LoyaltyReward::create([
+    $reward = LoyaltyReward::query()->create([
         'name' => 'Free Sourdough',
         'points_required' => 200,
         'reward_type' => 'free_product',
@@ -74,7 +74,7 @@ test('reward belongs to product', function () {
 });
 
 test('is active is cast to boolean', function () {
-    $reward = LoyaltyReward::create([
+    $reward = LoyaltyReward::query()->create([
         'name' => 'Reward',
         'points_required' => 100,
         'reward_type' => 'percentage_discount',

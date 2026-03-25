@@ -26,7 +26,7 @@ test('trial expiring in 48h creates churn alert', function () {
 
     $this->artisan('churn:check')->assertSuccessful();
 
-    $log = AdminAuditLog::where('action', 'churn_alert')
+    $log = AdminAuditLog::query()->where('action', 'churn_alert')
         ->where('target_id', 'expiring-bakery')
         ->first();
 

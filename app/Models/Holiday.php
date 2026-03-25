@@ -86,12 +86,12 @@ class Holiday extends Model
 
     public function orderCount(): int
     {
-        return Order::whereDate('delivery_date', $this->date)->count();
+        return Order::query()->whereDate('delivery_date', $this->date)->count();
     }
 
     public static function nearDate(Carbon $date, int $days = 2): ?self
     {
-        return static::active()
+        return static::query()->active()
             ->whereBetween('date', [
                 $date->copy()->subDays($days),
                 $date->copy()->addDays($days),

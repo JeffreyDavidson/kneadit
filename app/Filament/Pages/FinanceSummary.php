@@ -69,16 +69,16 @@ class FinanceSummary extends Page
     private function calculateYearlyTotals(): void
     {
         // Total revenue from paid orders
-        $this->totalRevenue = Order::whereYear('delivery_date', $this->selectedYear)
+        $this->totalRevenue = Order::query()->whereYear('delivery_date', $this->selectedYear)
             ->where('payment_status', PaymentStatus::Paid)
             ->sum('total');
 
         // Total expenses for the year
-        $this->totalExpenses = Expense::whereYear('date', $this->selectedYear)
+        $this->totalExpenses = Expense::query()->whereYear('date', $this->selectedYear)
             ->sum('amount');
 
         // Add income to revenue
-        $totalIncome = Income::whereYear('date', $this->selectedYear)
+        $totalIncome = Income::query()->whereYear('date', $this->selectedYear)
             ->sum('amount');
 
         $this->totalRevenue += $totalIncome;
@@ -92,16 +92,16 @@ class FinanceSummary extends Page
         $this->monthlyBreakdown = collect();
 
         for ($month = 1; $month <= 12; $month++) {
-            $monthRevenue = Order::whereYear('delivery_date', $this->selectedYear)
+            $monthRevenue = Order::query()->whereYear('delivery_date', $this->selectedYear)
                 ->whereMonth('delivery_date', $month)
                 ->where('payment_status', PaymentStatus::Paid)
                 ->sum('total');
 
-            $monthIncome = Income::whereYear('date', $this->selectedYear)
+            $monthIncome = Income::query()->whereYear('date', $this->selectedYear)
                 ->whereMonth('date', $month)
                 ->sum('amount');
 
-            $monthExpenses = Expense::whereYear('date', $this->selectedYear)
+            $monthExpenses = Expense::query()->whereYear('date', $this->selectedYear)
                 ->whereMonth('date', $month)
                 ->sum('amount');
 
@@ -119,7 +119,7 @@ class FinanceSummary extends Page
 
     private function calculateExpenseBreakdown(): void
     {
-        $totalExpenses = Expense::whereYear('date', $this->selectedYear)->sum('amount');
+        $totalExpenses = Expense::query()->whereYear('date', $this->selectedYear)->sum('amount');
 
         if ($totalExpenses == 0) {
             $this->expenseBreakdown = collect();
@@ -127,7 +127,7 @@ class FinanceSummary extends Page
             return;
         }
 
-        $this->expenseBreakdown = Expense::whereYear('date', $this->selectedYear)
+        $this->expenseBreakdown = Expense::query()->whereYear('date', $this->selectedYear)
             ->select('category', DB::raw('SUM(amount) as total_amount'))
             ->groupBy('category')
             ->get()
@@ -146,7 +146,7 @@ class FinanceSummary extends Page
     private function calculateCOGS(): void
     {
         // COGS = ingredients + packaging expenses
-        $this->cogsAmount = Expense::whereYear('date', $this->selectedYear)
+        $this->cogsAmount = Expense::query()->whereYear('date', $this->selectedYear)
             ->whereIn('category', ['ingredients', 'packaging'])
             ->sum('amount');
 

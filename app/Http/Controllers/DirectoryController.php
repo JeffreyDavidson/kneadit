@@ -10,7 +10,7 @@ class DirectoryController extends Controller
 {
     public function index(Request $request): View
     {
-        $bakeries = Tenant::where('is_active', true)
+        $bakeries = Tenant::query()->where('is_active', true)
             ->where('storefront_enabled', true)
             ->with('domains')
             ->get()

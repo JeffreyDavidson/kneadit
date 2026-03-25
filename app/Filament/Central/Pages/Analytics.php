@@ -28,7 +28,7 @@ class Analytics extends Page
             $date = Date::now()->subMonths($i);
             $months->push([
                 'label' => $date->format('M Y'),
-                'count' => Tenant::whereYear('created_at', $date->year)
+                'count' => Tenant::query()->whereYear('created_at', $date->year)
                     ->whereMonth('created_at', $date->month)
                     ->count(),
             ]);
@@ -39,7 +39,7 @@ class Analytics extends Page
 
     public function getPlanDistribution(): array
     {
-        return Tenant::select('plan', DB::raw('count(*) as count'))
+        return Tenant::query()->select('plan', DB::raw('count(*) as count'))
             ->groupBy('plan')
             ->pluck('count', 'plan')
             ->toArray();
@@ -47,11 +47,11 @@ class Analytics extends Page
 
     public function getTrialConversion(): array
     {
-        $total = Tenant::count();
-        $onTrial = Tenant::whereNotNull('trial_ends_at')
+        $total = Tenant::query()->count();
+        $onTrial = Tenant::query()->whereNotNull('trial_ends_at')
             ->where('trial_ends_at', '>', now())
             ->count();
-        $expired = Tenant::whereNotNull('trial_ends_at')
+        $expired = Tenant::query()->whereNotNull('trial_ends_at')
             ->where('trial_ends_at', '<=', now())
             ->count();
         $converted = $total - $onTrial - $expired;
@@ -83,19 +83,19 @@ class Analytics extends Page
 
     public function getTotalSignups(): int
     {
-        return Tenant::count();
+        return Tenant::query()->count();
     }
 
     public function getThisMonthSignups(): int
     {
-        return Tenant::whereYear('created_at', now()->year)
+        return Tenant::query()->whereYear('created_at', now()->year)
             ->whereMonth('created_at', now()->month)
             ->count();
     }
 
     public function getAvgDaysOnTrial(): float
     {
-        $tenants = Tenant::whereNotNull('trial_ends_at')
+        $tenants = Tenant::query()->whereNotNull('trial_ends_at')
             ->select('trial_ends_at', 'created_at')
             ->get();
 
@@ -113,7 +113,7 @@ class Analytics extends Page
 
     public function getMostPopularPlan(): string
     {
-        return Tenant::select('plan', DB::raw('count(*) as count'))
+        return Tenant::query()->select('plan', DB::raw('count(*) as count'))
             ->groupBy('plan')
             ->orderByDesc('count')
             ->value('plan') ?? 'N/A';

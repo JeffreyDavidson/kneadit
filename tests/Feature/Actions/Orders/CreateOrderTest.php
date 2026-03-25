@@ -19,7 +19,7 @@ beforeEach(function () {
 test('creates order with correct totals and items', function () {
     $product = Product::factory()->create(['price' => 12.50]);
 
-    $order = app(CreateOrder::class)(
+    $order = resolve(CreateOrder::class)(
         data: [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
@@ -49,7 +49,7 @@ test('returns null when capacity is full', function () {
     Setting::set('default_daily_capacity', '1');
     Order::factory()->create(['delivery_date' => $deliveryDate, 'status' => 'confirmed']);
 
-    $order = app(CreateOrder::class)(
+    $order = resolve(CreateOrder::class)(
         data: [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
@@ -67,7 +67,7 @@ test('returns null when capacity is full', function () {
 test('sends order placed email to customer on creation', function () {
     $product = Product::factory()->create(['price' => 10.00]);
 
-    app(CreateOrder::class)(
+    resolve(CreateOrder::class)(
         data: [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',

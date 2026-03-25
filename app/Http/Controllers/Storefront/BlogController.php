@@ -23,7 +23,7 @@ class BlogController extends Controller
 
         $activeCategory = request('category', 'all');
 
-        $query = BlogPost::where('is_published', true)
+        $query = BlogPost::query()->where('is_published', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
             ->latest('published_at');
@@ -42,11 +42,11 @@ class BlogController extends Controller
      */
     public function show(string $slug): View
     {
-        $post = BlogPost::where('slug', $slug)
+        $post = BlogPost::query()->where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
 
-        $related = BlogPost::where('is_published', true)
+        $related = BlogPost::query()->where('is_published', true)
             ->where('id', '!=', $post->id)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())

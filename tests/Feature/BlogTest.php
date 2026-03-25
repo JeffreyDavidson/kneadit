@@ -15,14 +15,14 @@ test('blog index page loads', function () {
 });
 
 test('blog shows only published posts', function () {
-    BlogPost::create([
+    BlogPost::query()->create([
         'title' => 'Published Post',
         'body' => 'Content here',
         'is_published' => true,
         'published_at' => now()->subDay(),
     ]);
 
-    BlogPost::create([
+    BlogPost::query()->create([
         'title' => 'Draft Post',
         'body' => 'Draft content',
         'is_published' => false,
@@ -37,7 +37,7 @@ test('blog shows only published posts', function () {
 });
 
 test('blog hides draft posts', function () {
-    BlogPost::create([
+    BlogPost::query()->create([
         'title' => 'My Draft',
         'body' => 'Not ready yet',
         'is_published' => false,
@@ -51,7 +51,7 @@ test('blog hides draft posts', function () {
 
 test('blog paginates at six per page', function () {
     for ($i = 1; $i <= 8; $i++) {
-        BlogPost::create([
+        BlogPost::query()->create([
             'title' => "Post Number $i",
             'body' => "Body $i",
             'is_published' => true,
@@ -68,7 +68,7 @@ test('blog paginates at six per page', function () {
 });
 
 test('individual blog post loads by slug', function () {
-    BlogPost::create([
+    BlogPost::query()->create([
         'title' => 'Sourdough Tips',
         'slug' => 'sourdough-tips',
         'body' => 'Here are some tips for sourdough.',
@@ -89,7 +89,7 @@ test('returns 404 for nonexistent slug', function () {
 });
 
 test('returns 404 for draft post slug', function () {
-    BlogPost::create([
+    BlogPost::query()->create([
         'title' => 'Secret Draft',
         'slug' => 'secret-draft',
         'body' => 'Hidden content',
@@ -109,7 +109,7 @@ test('rss feed returns xml content type', function () {
 });
 
 test('rss feed contains published posts', function () {
-    BlogPost::create([
+    BlogPost::query()->create([
         'title' => 'Feed Post',
         'body' => 'Feed body',
         'is_published' => true,

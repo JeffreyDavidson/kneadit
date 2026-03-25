@@ -27,7 +27,7 @@ class SurveyController extends Controller
             array_values($request->answers)
         );
 
-        SurveyResponse::create([
+        SurveyResponse::query()->create([
             'survey_id' => $survey->id,
             'customer_name' => $request->customer_name ? strip_tags($request->customer_name) : null,
             'customer_email' => $request->customer_email,

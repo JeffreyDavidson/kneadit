@@ -42,11 +42,11 @@ class WeeklyDigest extends Mailable implements ShouldQueue
         $nextWeekStart = now()->startOfWeek();
         $nextWeekEnd = now()->endOfWeek();
 
-        $weekOrders = Order::whereBetween('created_at', [$weekStart, $weekEnd]);
+        $weekOrders = Order::query()->whereBetween('created_at', [$weekStart, $weekEnd]);
 
         $totalOrders = (clone $weekOrders)->count();
         $totalRevenue = (clone $weekOrders)->sum('total');
-        $newCustomers = Customer::whereBetween('created_at', [$weekStart, $weekEnd])->count();
+        $newCustomers = Customer::query()->whereBetween('created_at', [$weekStart, $weekEnd])->count();
         $avgOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
 
         $this->stats = [
@@ -56,7 +56,7 @@ class WeeklyDigest extends Mailable implements ShouldQueue
             'avg_order_value' => number_format($avgOrderValue, 2),
         ];
 
-        $this->topProducts = OrderItem::select('product_id', DB::raw('SUM(quantity) as total_qty'))
+        $this->topProducts = OrderItem::query()->select('product_id', DB::raw('SUM(quantity) as total_qty'))
             ->whereHas('order', fn (Builder $q) => $q->whereBetween('created_at', [$weekStart, $weekEnd]))
             ->groupBy('product_id')
             ->orderByDesc('total_qty')
@@ -64,12 +64,12 @@ class WeeklyDigest extends Mailable implements ShouldQueue
             ->with('product')
             ->get();
 
-        $this->atRiskCustomers = Customer::whereHas('orders')
+        $this->atRiskCustomers = Customer::query()->whereHas('orders')
             ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays(30)))
             ->limit(5)
             ->get();
 
-        $this->upcomingCount = Order::whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
+        $this->upcomingCount = Order::query()->whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
             ->where('status', '!=', OrderStatus::Cancelled)
             ->count();
 

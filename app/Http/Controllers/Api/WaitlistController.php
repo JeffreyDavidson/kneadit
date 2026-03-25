@@ -18,7 +18,7 @@ class WaitlistController extends Controller
             $validated['notes'] = strip_tags($validated['notes']);
         }
 
-        $entry = WaitlistEntry::create([
+        $entry = WaitlistEntry::query()->create([
             ...$validated,
             'status' => WaitlistStatus::Waiting,
         ]);

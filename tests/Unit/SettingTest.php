@@ -17,7 +17,7 @@ beforeEach(function () {
 });
 
 test('get returns value when exists', function () {
-    Setting::create(['key' => 'store_name', 'value' => 'Test Bakery']);
+    Setting::query()->create(['key' => 'store_name', 'value' => 'Test Bakery']);
 
     expect(Setting::get('store_name'))->toBe('Test Bakery');
 });
@@ -41,5 +41,5 @@ test('set updates existing setting', function () {
     Setting::set('my_key', 'new');
 
     expect(Setting::get('my_key'))->toBe('new');
-    expect(Setting::where('key', 'my_key')->count())->toBe(1);
+    expect(Setting::query()->where('key', 'my_key')->count())->toBe(1);
 });

@@ -16,14 +16,14 @@ beforeEach(function () {
     setUpTenantTest();
 
     Mail::fake();
-    $this->user = User::create(['name' => 'Test', 'email' => 'admin@test.com', 'password' => bcrypt('password')]);
-    $this->customer = Customer::create(['name' => 'Test Customer', 'email' => 'customer@test.com']);
+    $this->user = User::query()->create(['name' => 'Test', 'email' => 'admin@test.com', 'password' => bcrypt('password')]);
+    $this->customer = Customer::query()->create(['name' => 'Test Customer', 'email' => 'customer@test.com']);
     Setting::set('loyalty_enabled', '1');
     Setting::set('loyalty_points_per_dollar', '10');
 });
 
 test('awards points based on order total and points per dollar setting', function () {
-    $order = Order::create([
+    $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
         'status' => 'delivered',
@@ -31,9 +31,9 @@ test('awards points based on order total and points per dollar setting', functio
         'subtotal' => 25.50,
     ]);
 
-    app(AwardLoyaltyPoints::class)($order);
+    resolve(AwardLoyaltyPoints::class)($order);
 
-    $points = LoyaltyPoint::where('order_id', $order->id)->first();
+    $points = LoyaltyPoint::query()->where('order_id', $order->id)->first();
 
     expect($points)
         ->not->toBeNull()
@@ -45,7 +45,7 @@ test('awards points based on order total and points per dollar setting', functio
 test('skips when loyalty is disabled', function () {
     Setting::set('loyalty_enabled', '0');
 
-    $order = Order::create([
+    $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
         'status' => 'delivered',
@@ -53,13 +53,13 @@ test('skips when loyalty is disabled', function () {
         'subtotal' => 25.00,
     ]);
 
-    app(AwardLoyaltyPoints::class)($order);
+    resolve(AwardLoyaltyPoints::class)($order);
 
-    expect(LoyaltyPoint::where('order_id', $order->id)->count())->toBe(0);
+    expect(LoyaltyPoint::query()->where('order_id', $order->id)->count())->toBe(0);
 });
 
 test('does not double award points', function () {
-    $order = Order::create([
+    $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
         'status' => 'delivered',
@@ -67,7 +67,7 @@ test('does not double award points', function () {
         'subtotal' => 25.00,
     ]);
 
-    $action = app(AwardLoyaltyPoints::class);
+    $action = resolve(AwardLoyaltyPoints::class);
     $action($order);
     $action($order);
 
@@ -75,7 +75,7 @@ test('does not double award points', function () {
 });
 
 test('skips when calculated points are zero', function () {
-    $order = Order::create([
+    $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
         'status' => 'delivered',
@@ -83,7 +83,7 @@ test('skips when calculated points are zero', function () {
         'subtotal' => 0.00,
     ]);
 
-    app(AwardLoyaltyPoints::class)($order);
+    resolve(AwardLoyaltyPoints::class)($order);
 
-    expect(LoyaltyPoint::where('order_id', $order->id)->count())->toBe(0);
+    expect(LoyaltyPoint::query()->where('order_id', $order->id)->count())->toBe(0);
 });

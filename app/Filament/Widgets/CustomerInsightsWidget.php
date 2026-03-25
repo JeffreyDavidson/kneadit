@@ -19,29 +19,29 @@ class CustomerInsightsWidget extends Widget
 
     public function getNewCustomersThisWeek(): int
     {
-        return Customer::where('created_at', '>=', Date::now()->startOfWeek())->count();
+        return Customer::query()->where('created_at', '>=', Date::now()->startOfWeek())->count();
     }
 
     public function getRepeatCustomerRate(): float
     {
-        $totalWithOrders = Customer::whereHas('orders', fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled))->count();
+        $totalWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled))->count();
         if ($totalWithOrders === 0) {
             return 0;
         }
 
-        $repeat = Customer::whereHas('orders', fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled), '>=', 2)->count();
+        $repeat = Customer::query()->whereHas('orders', fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled), '>=', 2)->count();
 
         return round(($repeat / $totalWithOrders) * 100, 1);
     }
 
     public function getAvgOrderValue(): array
     {
-        $thisMonth = (float) Order::where('status', '!=', OrderStatus::Cancelled)
+        $thisMonth = (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->avg('total') ?? 0;
 
-        $lastMonth = (float) Order::where('status', '!=', OrderStatus::Cancelled)
+        $lastMonth = (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
             ->avg('total') ?? 0;

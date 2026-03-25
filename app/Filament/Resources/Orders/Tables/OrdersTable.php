@@ -103,7 +103,7 @@ class OrdersTable
                     ->modalHeading('Confirm Order')
                     ->modalDescription('Are you sure you want to confirm this order?')
                     ->action(function (Order $record) {
-                        app(TransitionOrderStatus::class)($record, OrderStatus::Confirmed);
+                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Confirmed);
                         Notification::make()
                             ->title('Order confirmed')
                             ->success()
@@ -119,7 +119,7 @@ class OrdersTable
                     ->modalHeading('Start Baking')
                     ->modalDescription('Mark this order as currently being baked?')
                     ->action(function (Order $record) {
-                        app(TransitionOrderStatus::class)($record, OrderStatus::Baking);
+                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Baking);
                         Notification::make()
                             ->title('Order marked as baking')
                             ->success()
@@ -135,7 +135,7 @@ class OrdersTable
                     ->modalHeading('Mark Ready')
                     ->modalDescription('Mark this order as ready for pickup/delivery?')
                     ->action(function (Order $record) {
-                        app(TransitionOrderStatus::class)($record, OrderStatus::Ready);
+                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Ready);
                         Notification::make()
                             ->title('Order marked as ready')
                             ->success()
@@ -151,7 +151,7 @@ class OrdersTable
                     ->modalHeading('Mark Delivered')
                     ->modalDescription('Mark this order as delivered/completed?')
                     ->action(function (Order $record) {
-                        app(TransitionOrderStatus::class)($record, OrderStatus::Delivered);
+                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Delivered);
                         Notification::make()
                             ->title('Order marked as delivered')
                             ->success()
@@ -166,7 +166,7 @@ class OrdersTable
                     ->modalHeading('Cancel Order')
                     ->modalDescription('Are you sure you want to cancel this order? This action cannot be undone.')
                     ->action(function (Order $record) {
-                        app(TransitionOrderStatus::class)($record, OrderStatus::Cancelled);
+                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Cancelled);
                         Notification::make()
                             ->title('Order cancelled')
                             ->warning()

@@ -19,7 +19,7 @@ class GalleryController extends Controller
             ->latest()
             ->paginate(18);
 
-        $products = Product::where('is_active', true)->orderBy('name')->get();
+        $products = Product::query()->where('is_active', true)->orderBy('name')->get();
 
         return view('gallery', compact('photos', 'products'));
     }
@@ -29,7 +29,7 @@ class GalleryController extends Controller
 
         $path = $request->file('photo')->store('customer-photos', 'public');
 
-        CustomerPhoto::create([
+        CustomerPhoto::query()->create([
             'customer_name' => strip_tags($request->customer_name),
             'customer_email' => $request->customer_email,
             'caption' => $request->caption ? strip_tags($request->caption) : null,

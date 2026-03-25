@@ -60,7 +60,7 @@ class ReviewAnalytics extends Page
 
     public function getRatingDistribution(): array
     {
-        $distribution = Review::select('rating', DB::raw('count(*) as count'))
+        $distribution = Review::query()->select('rating', DB::raw('count(*) as count'))
             ->groupBy('rating')
             ->orderBy('rating', 'desc')
             ->get()
@@ -86,11 +86,7 @@ class ReviewAnalytics extends Page
 
     public function getMonthlyTrend(): array
     {
-        $monthlyData = Review::select(
-            DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
-            DB::raw('COUNT(*) as count'),
-            DB::raw('AVG(rating) as avg_rating')
-        )
+        $monthlyData = Review::query()->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('COUNT(*) as count'), DB::raw('AVG(rating) as avg_rating'))
             ->where('created_at', '>=', now()->subMonths(12))
             ->groupBy('month')
             ->orderBy('month')
@@ -119,7 +115,7 @@ class ReviewAnalytics extends Page
 
     public function getTopReviewedProducts(): Collection
     {
-        return Product::withCount(['reviews' => function (Builder $query) {
+        return Product::query()->withCount(['reviews' => function (Builder $query) {
             $query->where('is_approved', true);
         }])
             ->with(['reviews' => function (Builder $query) {
@@ -162,7 +158,7 @@ class ReviewAnalytics extends Page
 
     public function getSentimentAnalysis(): array
     {
-        $reviews = Review::whereNotNull('comment')
+        $reviews = Review::query()->whereNotNull('comment')
             ->where('comment', '!=', '')
             ->get();
 

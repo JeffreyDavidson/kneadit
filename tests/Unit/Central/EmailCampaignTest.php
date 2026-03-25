@@ -7,18 +7,18 @@ use Carbon\Carbon;
 beforeEach(fn () => setUpCentralTest());
 
 test('can create campaign', function () {
-    $campaign = EmailCampaign::create([
+    $campaign = EmailCampaign::query()->create([
         'name' => 'Test Campaign',
         'subject' => 'Newsletter',
         'body' => 'Content here',
         'status' => 'draft',
     ]);
 
-    expect(EmailCampaign::where('subject', 'Newsletter')->first())->not->toBeNull();
+    expect(EmailCampaign::query()->where('subject', 'Newsletter')->first())->not->toBeNull();
 });
 
 test('sent at is cast to datetime', function () {
-    $campaign = EmailCampaign::create([
+    $campaign = EmailCampaign::query()->create([
         'name' => 'Test',
         'subject' => 'Test',
         'body' => 'Body',
@@ -31,7 +31,7 @@ test('sent at is cast to datetime', function () {
 });
 
 test('status can be updated to sent', function () {
-    $campaign = EmailCampaign::create(['name' => 'T', 'subject' => 'T', 'body' => 'B', 'status' => 'draft']);
+    $campaign = EmailCampaign::query()->create(['name' => 'T', 'subject' => 'T', 'body' => 'B', 'status' => 'draft']);
     $campaign->update(['status' => 'sent', 'sent_at' => now()]);
 
     expect($campaign->fresh()->status)->toBe(EmailCampaignStatus::Sent);

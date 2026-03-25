@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Mail;
 beforeEach(function () {
     setUpTenantTest();
 
-    $this->user = User::create(['name' => 'Test', 'email' => 'admin@test.com', 'password' => bcrypt('password')]);
-    $this->customer = Customer::create(['name' => 'Test Customer', 'email' => 'customer@test.com']);
-    $this->order = Order::create([
+    $this->user = User::query()->create(['name' => 'Test', 'email' => 'admin@test.com', 'password' => bcrypt('password')]);
+    $this->customer = Customer::query()->create(['name' => 'Test Customer', 'email' => 'customer@test.com']);
+    $this->order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
         'status' => 'pending',
@@ -29,7 +29,7 @@ beforeEach(function () {
 test('order confirmed email sent on status change', function () {
     Mail::fake();
 
-    app(TransitionOrderStatus::class)($this->order, OrderStatus::Confirmed);
+    resolve(TransitionOrderStatus::class)($this->order, OrderStatus::Confirmed);
 
     Mail::assertQueued(OrderConfirmed::class, fn ($mail) => $mail->hasTo('customer@test.com'));
 });
@@ -38,8 +38,8 @@ test('order ready email sent on status change', function () {
     Mail::fake();
 
     $this->order->update(['status' => 'confirmed']);
-    app(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Baking);
-    app(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Ready);
+    resolve(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Baking);
+    resolve(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Ready);
 
     Mail::assertQueued(OrderReady::class, fn ($mail) => $mail->hasTo('customer@test.com'));
 });
@@ -47,9 +47,9 @@ test('order ready email sent on status change', function () {
 test('baking status sends baking email', function () {
     Mail::fake();
 
-    app(TransitionOrderStatus::class)($this->order, OrderStatus::Confirmed);
+    resolve(TransitionOrderStatus::class)($this->order, OrderStatus::Confirmed);
     Mail::fake(); // Reset to only capture baking email
-    app(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Baking);
+    resolve(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Baking);
 
     Mail::assertQueued(OrderBaking::class);
     Mail::assertNotQueued(OrderConfirmed::class);

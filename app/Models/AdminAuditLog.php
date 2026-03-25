@@ -46,7 +46,7 @@ class AdminAuditLog extends Model
         ?string $targetId = null,
         ?array $metadata = null,
     ): static {
-        return static::create([
+        return static::query()->create([
             'admin_id' => auth()->id(),
             'action' => $action,
             'description' => $description,

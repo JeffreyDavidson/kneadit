@@ -35,7 +35,7 @@ class TenantComparison extends Page
 
     public function getAllTenants(): array
     {
-        return Tenant::orderBy('store_name')
+        return Tenant::query()->orderBy('store_name')
             ->get()
             ->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])
             ->toArray();
@@ -47,7 +47,7 @@ class TenantComparison extends Page
             return [];
         }
 
-        $tenants = Tenant::whereIn('id', $this->selectedTenants)->get();
+        $tenants = Tenant::query()->whereIn('id', $this->selectedTenants)->get();
         $results = [];
 
         foreach ($tenants as $tenant) {

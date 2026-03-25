@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Holiday;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 /**
  * @extends Factory<Holiday>
@@ -21,8 +21,8 @@ class HolidayFactory extends Factory
         return [
             'name' => fake()->words(2, true),
             'date' => $date,
-            'order_deadline' => Carbon::parse($date)->subDays(3),
-            'prep_start' => Carbon::parse($date)->subDays(5),
+            'order_deadline' => Date::parse($date)->subDays(3),
+            'prep_start' => Date::parse($date)->subDays(5),
             'max_orders' => fake()->optional()->numberBetween(10, 50),
             'is_active' => true,
             'notes' => null,

@@ -68,7 +68,7 @@ class SurveyResults extends Page implements HasForms
     protected function getViewData(): array
     {
         return [
-            'surveys' => Survey::orderBy('title')->pluck('title', 'id'),
+            'surveys' => Survey::query()->orderBy('title')->pluck('title', 'id'),
             'survey' => $this->survey,
         ];
     }

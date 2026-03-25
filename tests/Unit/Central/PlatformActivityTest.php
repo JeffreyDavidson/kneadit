@@ -8,7 +8,7 @@ beforeEach(fn () => setUpCentralTest());
 test('log creates record', function () {
     $activity = PlatformActivity::log('tenant.created', 'tenant-1', 'A new tenant was created', ['plan' => 'pro']);
 
-    $found = PlatformActivity::where('event', 'tenant.created')->first();
+    $found = PlatformActivity::query()->where('event', 'tenant.created')->first();
     expect($found)->not->toBeNull();
     expect($found->tenant_id)->toBe('tenant-1');
     expect($found->description)->toBe('A new tenant was created');
@@ -19,7 +19,7 @@ test('log works with null tenant id', function () {
     $activity = PlatformActivity::log('system.update', null, 'System updated');
 
     expect($activity->tenant_id)->toBeNull();
-    $found = PlatformActivity::where('event', 'system.update')->first();
+    $found = PlatformActivity::query()->where('event', 'system.update')->first();
     expect($found)->not->toBeNull();
     expect($found->tenant_id)->toBeNull();
 });

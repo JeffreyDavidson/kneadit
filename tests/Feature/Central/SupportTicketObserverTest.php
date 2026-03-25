@@ -8,7 +8,7 @@ beforeEach(function () {
 });
 
 test('creating ticket creates audit log with ticket opened action', function () {
-    $ticket = SupportTicket::create([
+    $ticket = SupportTicket::query()->create([
         'tenant_id' => 'test-tenant',
         'subject' => 'Need help with orders',
         'body' => 'My orders are not showing up.',
@@ -16,7 +16,7 @@ test('creating ticket creates audit log with ticket opened action', function () 
         'priority' => 'normal',
     ]);
 
-    $log = AdminAuditLog::where('action', 'ticket_opened')->first();
+    $log = AdminAuditLog::query()->where('action', 'ticket_opened')->first();
 
     expect($log)->not->toBeNull();
     expect($log->target_type)->toBe('support_ticket');
@@ -24,7 +24,7 @@ test('creating ticket creates audit log with ticket opened action', function () 
 });
 
 test('audit log description contains ticket subject', function () {
-    SupportTicket::create([
+    SupportTicket::query()->create([
         'tenant_id' => 'test-tenant',
         'subject' => 'Billing issue with subscription',
         'body' => 'Please help.',
@@ -32,7 +32,7 @@ test('audit log description contains ticket subject', function () {
         'priority' => 'high',
     ]);
 
-    $log = AdminAuditLog::where('action', 'ticket_opened')->first();
+    $log = AdminAuditLog::query()->where('action', 'ticket_opened')->first();
 
     expect($log)->not->toBeNull();
     expect($log->description)->toContain('Billing issue with subscription');

@@ -21,7 +21,7 @@ test('availability endpoint returns json', function () {
 test('blocked dates show as unavailable', function () {
     $tomorrow = today()->addDay();
 
-    BusinessSchedule::create([
+    BusinessSchedule::query()->create([
         'day_of_week' => (int) $tomorrow->dayOfWeek,
         'is_open' => true,
         'open_time' => '08:00',
@@ -58,7 +58,7 @@ test('closed days show as unavailable', function () {
         }
     }
 
-    BusinessSchedule::create([
+    BusinessSchedule::query()->create([
         'day_of_week' => 0,
         'is_open' => false,
     ]);
@@ -76,7 +76,7 @@ test('closed days show as unavailable', function () {
 test('open days show as available', function () {
     $tomorrow = today()->addDay();
 
-    BusinessSchedule::create([
+    BusinessSchedule::query()->create([
         'day_of_week' => (int) $tomorrow->dayOfWeek,
         'is_open' => true,
         'open_time' => '08:00',
@@ -98,7 +98,7 @@ test('open days show as available', function () {
 test('capacity is reflected in availability response', function () {
     $tomorrow = today()->addDay();
 
-    BusinessSchedule::create([
+    BusinessSchedule::query()->create([
         'day_of_week' => (int) $tomorrow->dayOfWeek,
         'is_open' => true,
         'open_time' => '08:00',

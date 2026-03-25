@@ -37,10 +37,7 @@ class Setting extends Model
 
     public static function set(string $key, mixed $value): void
     {
-        static::updateOrCreate(
-            ['key' => $key],
-            ['value' => $value]
-        );
+        static::query()->updateOrCreate(['key' => $key], ['value' => $value]);
 
         // Update in-memory cache
         $tenantKey = static::tenantCacheKey();
@@ -62,7 +59,7 @@ class Setting extends Model
             return;
         }
 
-        static::$cache[$tenantKey] = static::pluck('value', 'key')->all();
+        static::$cache[$tenantKey] = static::query()->pluck('value', 'key')->all();
     }
 
     /**

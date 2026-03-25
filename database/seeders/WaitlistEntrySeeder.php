@@ -11,11 +11,11 @@ class WaitlistEntrySeeder extends Seeder
 {
     public function run(): void
     {
-        if (WaitlistEntry::count() > 0) {
+        if (WaitlistEntry::query()->count() > 0) {
             return;
         }
 
-        $products = Product::whereIn('name', [
+        $products = Product::query()->whereIn('name', [
             'Chocolate Ganache Torte',
             'Classic Vanilla Birthday Cake',
             'Wedding Cake Consultation',
@@ -75,7 +75,7 @@ class WaitlistEntrySeeder extends Seeder
             $product = $products->where('name', $entryData['product_name'])->first();
 
             if ($product) {
-                WaitlistEntry::create([
+                WaitlistEntry::query()->create([
                     'customer_name' => $entryData['customer_name'],
                     'customer_email' => $entryData['customer_email'],
                     'customer_phone' => $entryData['customer_phone'],

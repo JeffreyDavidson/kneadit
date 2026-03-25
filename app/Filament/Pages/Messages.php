@@ -34,7 +34,7 @@ class Messages extends Page
     {
         $tenant = Filament::getTenant();
 
-        return PlatformMessage::where('tenant_id', $tenant->id)
+        return PlatformMessage::query()->where('tenant_id', $tenant->id)
             ->topLevel()
             ->orderByRaw('is_read ASC')
             ->orderBy('created_at', 'desc')
@@ -46,7 +46,7 @@ class Messages extends Page
         $this->viewingMessage = $messageId;
 
         // Mark as read
-        $message = PlatformMessage::find($messageId);
+        $message = PlatformMessage::query()->find($messageId);
         if ($message && ! $message->is_read && $message->sender_type === 'admin') {
             $message->update(['is_read' => true, 'read_at' => now()]);
         }
@@ -58,24 +58,23 @@ class Messages extends Page
             return null;
         }
 
-        return PlatformMessage::where('parent_id', $this->viewingMessage)
-            ->orderBy('created_at', 'asc')
+        return PlatformMessage::query()->where('parent_id', $this->viewingMessage)->oldest()
             ->get();
     }
 
     public function getViewingRecord(): ?PlatformMessage
     {
-        return $this->viewingMessage ? PlatformMessage::find($this->viewingMessage) : null;
+        return $this->viewingMessage ? PlatformMessage::query()->find($this->viewingMessage) : null;
     }
 
     public function sendReply(): void
     {
         $this->validate(['replyBody' => 'required|string|min:1']);
 
-        $parent = PlatformMessage::findOrFail($this->viewingMessage);
+        $parent = PlatformMessage::query()->findOrFail($this->viewingMessage);
         $tenant = Filament::getTenant();
 
-        PlatformMessage::create([
+        PlatformMessage::query()->create([
             'tenant_id' => $tenant->id,
             'sender_type' => 'tenant',
             'subject' => 'Re: '.$parent->subject,
@@ -99,7 +98,7 @@ class Messages extends Page
             return null;
         }
 
-        $count = PlatformMessage::where('tenant_id', $tenant->id)
+        $count = PlatformMessage::query()->where('tenant_id', $tenant->id)
             ->fromAdmin()
             ->topLevel()
             ->unread()

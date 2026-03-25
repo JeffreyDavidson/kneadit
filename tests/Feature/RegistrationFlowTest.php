@@ -52,7 +52,7 @@ test('registration requires all fields', function () {
 });
 
 test('registration requires unique email', function () {
-    User::create([
+    User::query()->create([
         'name' => 'Existing User',
         'email' => 'taken@example.com',
         'password' => bcrypt('password'),
@@ -100,7 +100,7 @@ test('plans page requires authentication', function () {
 });
 
 test('authenticated user can view plans', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => bcrypt('password'),
@@ -120,7 +120,7 @@ test('checkout requires authentication', function () {
 });
 
 test('checkout rejects invalid plan', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => bcrypt('password'),
@@ -133,7 +133,7 @@ test('checkout rejects invalid plan', function () {
 });
 
 test('onboarding page loads', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => bcrypt('password'),
@@ -146,7 +146,7 @@ test('onboarding page loads', function () {
 });
 
 test('onboarding store creates tenant', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => bcrypt('password'),
@@ -167,7 +167,7 @@ test('onboarding store creates tenant', function () {
 });
 
 test('onboarding validates subdomain format', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => bcrypt('password'),
@@ -184,7 +184,7 @@ test('onboarding validates subdomain format', function () {
 });
 
 test('onboarding requires external website when own chosen', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => bcrypt('password'),
@@ -201,7 +201,7 @@ test('onboarding requires external website when own chosen', function () {
 });
 
 test('onboarding does not require external website for kneadit', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => bcrypt('password'),
@@ -224,7 +224,7 @@ test('guest cannot access onboarding', function () {
 });
 
 test('billing success redirects to onboarding', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => bcrypt('password'),

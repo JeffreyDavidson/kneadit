@@ -51,7 +51,7 @@ class GoalTrackerWidget extends Widget
         $start = Date::now()->startOfMonth();
         $end = Date::now()->endOfMonth();
 
-        $revenue = (float) Order::whereBetween('created_at', [$start, $end])
+        $revenue = (float) Order::query()->whereBetween('created_at', [$start, $end])
             ->whereNotIn('status', [OrderStatus::Cancelled])
             ->sum('total');
 
@@ -71,7 +71,7 @@ class GoalTrackerWidget extends Widget
         $start = Date::now()->startOfYear();
         $end = Date::now()->endOfYear();
 
-        $revenue = (float) Order::whereBetween('created_at', [$start, $end])
+        $revenue = (float) Order::query()->whereBetween('created_at', [$start, $end])
             ->whereNotIn('status', [OrderStatus::Cancelled])
             ->sum('total');
 
