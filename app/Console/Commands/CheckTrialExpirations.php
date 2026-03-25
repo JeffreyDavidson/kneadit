@@ -33,6 +33,7 @@ class CheckTrialExpirations extends Command
             ->where('is_active', true)
             ->get();
 
+        /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
             // Check if we already sent this reminder
             $sentKey = "sent_{$reminderKey}_{$tenant->id}";
@@ -90,6 +91,7 @@ class CheckTrialExpirations extends Command
             ->where('is_active', true)
             ->get();
 
+        /** @var Tenant $tenant */
         foreach ($expiredTenants as $tenant) {
             $user = User::query()->where('email', $tenant->email)->first();
 

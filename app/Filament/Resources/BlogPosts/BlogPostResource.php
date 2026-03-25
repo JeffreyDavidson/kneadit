@@ -55,11 +55,13 @@ class BlogPostResource extends Resource
         return ['title', 'excerpt'];
     }
 
+    /** @param BlogPost $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->title;
     }
 
+    /** @param BlogPost $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

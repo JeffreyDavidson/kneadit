@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property-read string $source_label
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income query()
+ *
+ * @property Carbon|null $date
  *
  * @mixin \Eloquent
  */

@@ -55,11 +55,13 @@ class ProductResource extends Resource
         return ['name', 'description', 'category.name'];
     }
 
+    /** @param Product $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->name;
     }
 
+    /** @param Product $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

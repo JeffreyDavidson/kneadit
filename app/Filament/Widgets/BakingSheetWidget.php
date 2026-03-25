@@ -21,7 +21,7 @@ class BakingSheetWidget extends BaseWidget
 
     public function getTableRecordKey(Model|array $record): string
     {
-        return (string) $record->product_id;
+        return (string) (is_array($record) ? $record['product_id'] : $record->getAttribute('product_id'));
     }
 
     public function table(Table $table): Table

@@ -57,11 +57,13 @@ class RecipeResource extends Resource
         return ['name'];
     }
 
+    /** @param Recipe $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->name;
     }
 
+    /** @param Recipe $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

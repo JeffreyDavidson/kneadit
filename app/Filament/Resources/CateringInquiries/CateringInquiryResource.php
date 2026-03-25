@@ -43,11 +43,13 @@ class CateringInquiryResource extends Resource
         return ['customer_name', 'customer_email'];
     }
 
+    /** @param CateringInquiry $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->customer_name;
     }
 
+    /** @param CateringInquiry $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

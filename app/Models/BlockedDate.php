@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate query()
  *
+ * @property \Illuminate\Support\Carbon $date
+ *
  * @mixin \Eloquent
  */
 class BlockedDate extends Model

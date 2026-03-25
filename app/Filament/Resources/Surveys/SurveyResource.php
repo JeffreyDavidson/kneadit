@@ -50,16 +50,18 @@ class SurveyResource extends Resource
         return ['title'];
     }
 
+    /** @param Survey $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->title;
     }
 
+    /** @param Survey $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
             'Status' => $record->is_active ? 'Active' : 'Inactive',
-            'Responses' => $record->responses_count ?? 0,
+            'Responses' => (string) ($record->responses_count ?? 0),
         ];
     }
 

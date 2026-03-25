@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Pages\Messages;
 use App\Models\PlatformMessage;
+use App\Models\Tenant;
 use Filament\Facades\Filament;
 use Filament\Widgets\Widget;
 
@@ -17,6 +18,7 @@ class InboxWidget extends Widget
 
     public function getUnreadCount(): int
     {
+        /** @var Tenant|null $tenant */
         $tenant = Filament::getTenant();
 
         if (! $tenant) {

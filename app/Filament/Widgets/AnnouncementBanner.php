@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\PlatformAnnouncement;
+use App\Models\Tenant;
 use Filament\Facades\Filament;
 use Filament\Widgets\Widget;
 
@@ -16,6 +17,7 @@ class AnnouncementBanner extends Widget
 
     public function getAnnouncements(): array
     {
+        /** @var Tenant|null $tenant */
         $tenant = Filament::getTenant();
         $plan = $tenant?->plan;
 

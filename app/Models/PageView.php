@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PageView newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PageView query()
  *
+ * @property-read int|null $views
+ *
  * @mixin \Eloquent
  */
 class PageView extends Model

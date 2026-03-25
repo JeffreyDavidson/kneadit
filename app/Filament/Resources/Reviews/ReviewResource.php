@@ -58,11 +58,13 @@ class ReviewResource extends Resource
         return ['customer_name', 'customer_email'];
     }
 
+    /** @param Review $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return 'Review by '.$record->customer_name;
     }
 
+    /** @param Review $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

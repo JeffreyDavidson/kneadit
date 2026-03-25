@@ -55,11 +55,13 @@ class IngredientResource extends Resource
         return ['name', 'supplier'];
     }
 
+    /** @param Ingredient $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->name;
     }
 
+    /** @param Ingredient $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
