@@ -86,7 +86,7 @@ class CouponForm
                     ->components([
                         Toggle::make('is_active')
                             ->label('Active')
-                                    ->default(true),
+                            ->default(true),
                     ]),
             ]);
     }

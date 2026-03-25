@@ -137,9 +137,9 @@ class TaxExport extends Page
     {
         $years = collect();
 
-        $orderYears = Order::selectRaw('DISTINCT YEAR(created_at) as year')->pluck('year');
-        $expenseYears = Expense::selectRaw('DISTINCT YEAR(date) as year')->pluck('year');
-        $incomeYears = Income::selectRaw('DISTINCT YEAR(date) as year')->pluck('year');
+        $orderYears = Order::query()->selectRaw('DISTINCT YEAR(created_at) as year')->pluck('year');
+        $expenseYears = Expense::query()->selectRaw('DISTINCT YEAR(date) as year')->pluck('year');
+        $incomeYears = Income::query()->selectRaw('DISTINCT YEAR(date) as year')->pluck('year');
 
         $allYears = $years->merge($orderYears)->merge($expenseYears)->merge($incomeYears)
             ->unique()->sort()->reverse()->values();
@@ -240,7 +240,7 @@ class TaxExport extends Page
             'other' => 'Other Expenses (Line 27a)',
         ];
 
-        Expense::whereBetween('date', [$from, $to])
+        Expense::query()->whereBetween('date', [$from, $to])
             ->orderBy('date')
             ->chunk(100, function (Collection $expenses) use ($handle, $categoryMap) {
                 foreach ($expenses as $expense) {
@@ -263,7 +263,7 @@ class TaxExport extends Page
         fputcsv($handle, ['=== INCOME ===']);
         fputcsv($handle, ['Date', 'Source', 'Description', 'Amount', 'Category']);
 
-        Income::whereBetween('date', [$from, $to])
+        Income::query()->whereBetween('date', [$from, $to])
             ->orderBy('date')
             ->chunk(100, function (Collection $incomes) use ($handle) {
                 foreach ($incomes as $income) {
@@ -281,15 +281,15 @@ class TaxExport extends Page
     /** @param resource $handle */
     protected function writeSummaryCsv(mixed $handle, string $from, string $to): void
     {
-        $totalOrderRevenue = Order::whereBetween('created_at', [$from, $to.' 23:59:59'])
+        $totalOrderRevenue = Order::query()->whereBetween('created_at', [$from, $to.' 23:59:59'])
             ->where('payment_status', PaymentStatus::Paid)
             ->sum('total');
 
-        $totalIncomeRevenue = Income::whereBetween('date', [$from, $to])->sum('amount');
+        $totalIncomeRevenue = Income::query()->whereBetween('date', [$from, $to])->sum('amount');
         $totalRevenue = (float) $totalOrderRevenue + (float) $totalIncomeRevenue;
 
-        $totalExpenses = (float) Expense::whereBetween('date', [$from, $to])->sum('amount');
-        $totalDeductible = (float) Expense::whereBetween('date', [$from, $to])->sum('deductible_amount');
+        $totalExpenses = (float) Expense::query()->whereBetween('date', [$from, $to])->sum('amount');
+        $totalDeductible = (float) Expense::query()->whereBetween('date', [$from, $to])->sum('deductible_amount');
         $netProfit = $totalRevenue - $totalDeductible;
 
         fputcsv($handle, ['=== TAX SUMMARY ===']);

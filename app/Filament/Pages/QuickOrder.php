@@ -100,11 +100,11 @@ class QuickOrder extends Page
                                 ->mapWithKeys(fn (Customer $customer): array => [
                                     $customer->id => "{$customer->name} - {$customer->email}",
                                 ])->all())
-                            ->getOptionLabelUsing(fn (string $value): ?string => Customer::find($value)?->name)
+                            ->getOptionLabelUsing(fn (string $value): ?string => Customer::query()->find($value)?->name)
                             ->live()
                             ->afterStateUpdated(function (Set $set, ?string $state) {
                                 if ($state) {
-                                    $customer = Customer::find($state);
+                                    $customer = Customer::query()->find($state);
                                     if ($customer) {
                                         $set('customer_name', $customer->name);
                                         $set('customer_email', $customer->email);
@@ -157,7 +157,7 @@ class QuickOrder extends Page
                                     ->live()
                                     ->afterStateUpdated(function (Set $set, ?string $state) {
                                         if ($state) {
-                                            $product = Product::find($state);
+                                            $product = Product::query()->find($state);
                                             if ($product) {
                                                 $set('unit_price', $product->price);
                                             }
@@ -272,11 +272,11 @@ class QuickOrder extends Page
                 $customer = null;
 
                 if (! empty($data['customer_email'])) {
-                    $customer = Customer::where('email', $data['customer_email'])->first();
+                    $customer = Customer::query()->where('email', $data['customer_email'])->first();
                 }
 
                 if (! $customer) {
-                    $customer = Customer::create([
+                    $customer = Customer::query()->create([
                         'name' => $data['customer_name'],
                         'email' => $data['customer_email'] ?? null,
                         'phone' => $data['customer_phone'] ?? null,
@@ -290,7 +290,7 @@ class QuickOrder extends Page
                 $total = $subtotal + $deliveryFee;
 
                 // Create order
-                $order = Order::create([
+                $order = Order::query()->create([
                     'customer_id' => $customer->id,
                     'status' => OrderStatus::Pending,
                     'payment_status' => PaymentStatus::Unpaid,
@@ -307,7 +307,7 @@ class QuickOrder extends Page
 
                 // Create order items
                 foreach ($orderItems as $item) {
-                    OrderItem::create([
+                    OrderItem::query()->create([
                         'order_id' => $order->id,
                         'product_id' => $item['product_id'],
                         'quantity' => $item['quantity'],
