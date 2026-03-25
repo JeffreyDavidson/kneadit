@@ -26,15 +26,16 @@ class GalleryController extends Controller
 
     public function store(StoreGalleryPhotoRequest $request): RedirectResponse
     {
+        $validated = $request->validated();
 
         $path = $request->file('photo')->store('customer-photos', 'public');
 
         CustomerPhoto::query()->create([
-            'customer_name' => strip_tags($request->customer_name),
-            'customer_email' => $request->customer_email,
-            'caption' => $request->caption ? strip_tags($request->caption) : null,
+            'customer_name' => strip_tags($validated['customer_name']),
+            'customer_email' => $validated['customer_email'],
+            'caption' => isset($validated['caption']) ? strip_tags($validated['caption']) : null,
             'photo_path' => $path,
-            'product_id' => $request->product_id,
+            'product_id' => $validated['product_id'] ?? null,
         ]);
 
         return to_route('storefront.gallery')

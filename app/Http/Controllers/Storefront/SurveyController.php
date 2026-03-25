@@ -20,17 +20,19 @@ class SurveyController extends Controller
 
     public function store(StoreSurveyResponseRequest $request, Survey $survey): RedirectResponse
     {
+        $validated = $request->validated();
+
         abort_unless($survey->is_active, 404);
 
         $sanitizedAnswers = array_map(
             fn (mixed $answer) => is_string($answer) ? strip_tags($answer) : $answer,
-            array_values($request->answers)
+            array_values($validated['answers'])
         );
 
         SurveyResponse::query()->create([
             'survey_id' => $survey->id,
-            'customer_name' => $request->customer_name ? strip_tags($request->customer_name) : null,
-            'customer_email' => $request->customer_email,
+            'customer_name' => isset($validated['customer_name']) ? strip_tags($validated['customer_name']) : null,
+            'customer_email' => $validated['customer_email'] ?? null,
             'answers' => $sanitizedAnswers,
             'created_at' => now(),
         ]);

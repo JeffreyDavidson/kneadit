@@ -46,9 +46,9 @@ class ReviewAnalytics extends Page
 
     public function getOverallStats(): array
     {
-        $reviews = Review::all();
+        $totalReviews = Review::query()->count();
 
-        if ($reviews->isEmpty()) {
+        if ($totalReviews === 0) {
             return [
                 'total_reviews' => 0,
                 'average_rating' => 0,
@@ -56,10 +56,9 @@ class ReviewAnalytics extends Page
             ];
         }
 
-        $totalReviews = $reviews->count();
-        $averageRating = $reviews->avg('rating');
-        $approvedReviews = $reviews->where('is_approved', true)->count();
-        $approvalRate = $totalReviews > 0 ? ($approvedReviews / $totalReviews) * 100 : 0;
+        $averageRating = (float) Review::query()->avg('rating');
+        $approvedReviews = Review::query()->where('is_approved', true)->count();
+        $approvalRate = ($approvedReviews / $totalReviews) * 100;
 
         return [
             'total_reviews' => $totalReviews,

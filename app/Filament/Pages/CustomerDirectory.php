@@ -2,12 +2,14 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\OrderStatus;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customer;
 use App\Models\CustomerNote;
 use App\Models\Order;
+use App\Models\Setting;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
@@ -83,19 +85,32 @@ class CustomerDirectory extends Page
 
     public function getStats(): array
     {
-        $customers = Customer::all();
-        $totalCustomers = $customers->count();
-        $lifetimeValues = $customers->map(fn (Customer $c) => $c->lifetime_value);
-        $avgLifetimeValue = $totalCustomers > 0 ? $lifetimeValues->avg() : 0;
-        $atRiskCount = $customers->filter(fn (Customer $c) => $c->is_at_risk)->count();
-        $topCustomer = $customers->sortByDesc(fn (Customer $c) => $c->lifetime_value)->first();
+        $totalCustomers = Customer::query()->count();
+        $avgLifetimeValue = (float) Order::query()->active()
+            ->selectRaw('AVG(customer_total) as avg_ltv')
+            ->fromSub(
+                Order::query()->active()->selectRaw('customer_id, SUM(total) as customer_total')->groupBy('customer_id'),
+                'customer_totals'
+            )
+            ->value('avg_ltv');
+
+        $atRiskDays = (int) Setting::get('at_risk_days', '30');
+        $atRiskCount = Customer::query()
+            ->whereHas('orders', fn (EloquentBuilder $q) => $q->where('status', '!=', OrderStatus::Cancelled))
+            ->whereDoesntHave('orders', fn (EloquentBuilder $q) => $q->where('status', '!=', OrderStatus::Cancelled)->where('created_at', '>=', now()->subDays($atRiskDays)))
+            ->count();
+
+        $topCustomer = Customer::query()
+            ->withSum(['orders' => fn ($q) => $q->active()], 'total')
+            ->orderByDesc('orders_sum_total')
+            ->first();
 
         return [
             'total_customers' => $totalCustomers,
             'avg_lifetime_value' => number_format($avgLifetimeValue, 2),
             'at_risk_count' => $atRiskCount,
             'top_customer_name' => $topCustomer->name ?? 'N/A',
-            'top_customer_value' => number_format($topCustomer->lifetime_value ?? 0, 2),
+            'top_customer_value' => number_format($topCustomer->orders_sum_total ?? 0, 2),
         ];
     }
 

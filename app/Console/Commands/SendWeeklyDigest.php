@@ -33,7 +33,7 @@ class SendWeeklyDigest extends Command
                 $users = User::query()->where('role', UserRole::Owner)->get();
 
                 if ($users->isEmpty()) {
-                    $users = User::all();
+                    $users = User::query()->limit(1)->get();
                 }
 
                 foreach ($users as $user) {

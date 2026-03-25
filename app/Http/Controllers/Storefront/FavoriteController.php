@@ -33,9 +33,10 @@ class FavoriteController extends Controller
      */
     public function store(StoreApiFavoriteRequest $request): JsonResponse
     {
+        $validated = $request->validated();
 
-        $existing = CustomerFavorite::query()->where('customer_email', $request->email)
-            ->where('product_id', $request->product_id)
+        $existing = CustomerFavorite::query()->where('customer_email', $validated['email'])
+            ->where('product_id', $validated['product_id'])
             ->first();
 
         if ($existing) {
@@ -45,8 +46,8 @@ class FavoriteController extends Controller
         }
 
         CustomerFavorite::query()->create([
-            'customer_email' => $request->email,
-            'product_id' => $request->product_id,
+            'customer_email' => $validated['email'],
+            'product_id' => $validated['product_id'],
         ]);
 
         return response()->json(['favorited' => true]);
