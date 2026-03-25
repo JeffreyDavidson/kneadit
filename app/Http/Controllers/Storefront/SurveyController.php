@@ -8,7 +8,6 @@ use App\Models\Survey;
 use App\Models\SurveyResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class SurveyController extends Controller
 {
@@ -22,8 +21,6 @@ class SurveyController extends Controller
     public function store(StoreSurveyResponseRequest $request, Survey $survey): RedirectResponse
     {
         abort_unless($survey->is_active, 404);
-
-        // Validation handled by Form Request
 
         $sanitizedAnswers = array_map(
             fn (mixed $answer) => is_string($answer) ? strip_tags($answer) : $answer,

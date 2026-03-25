@@ -8,7 +8,6 @@ use App\Mail\NewOrderMessage;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class MessageController extends Controller
@@ -28,7 +27,6 @@ class MessageController extends Controller
      */
     public function store(StoreOrderMessageRequest $request, Order $order): JsonResponse
     {
-        // Validation handled by Form Request
 
         $message = $order->messages()->create([
             'sender_type' => 'customer',

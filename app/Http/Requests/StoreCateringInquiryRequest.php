@@ -27,9 +27,9 @@ class StoreCateringInquiryRequest extends FormRequest
             'event_date' => ['required', 'date', 'after_or_equal:'.now()->addDays((int) Setting::get('catering_lead_time_days', '14'))->format('Y-m-d')],
             'guest_count' => ['required', 'integer', 'min:'.(int) Setting::get('catering_minimum_guests', '10')],
             'budget' => ['nullable', 'string', 'max:255'],
-            'details' => ['required', 'string'],
-            'dietary_requirements' => ['nullable', 'string'],
-            'venue_address' => ['nullable', 'string'],
+            'details' => ['required', 'string', 'max:5000'],
+            'dietary_requirements' => ['nullable', 'string', 'max:2000'],
+            'venue_address' => ['nullable', 'string', 'max:500'],
         ];
     }
 }

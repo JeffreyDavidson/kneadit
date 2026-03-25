@@ -7,7 +7,6 @@ use App\Http\Requests\TrackOrderRequest;
 use App\Models\Order;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 
 class TrackingController extends Controller
 {
@@ -24,7 +23,6 @@ class TrackingController extends Controller
      */
     public function store(TrackOrderRequest $request): View
     {
-        // Validation handled by Form Request
 
         $orders = Order::whereHas('customer', function (Builder $q) use ($request) {
             $q->where('email', $request->email);

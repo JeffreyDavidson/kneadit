@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ApplyGiftCardRequest;
 use App\Services\GiftCardService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ApplyGiftCardController extends Controller
 {
@@ -15,7 +14,6 @@ class ApplyGiftCardController extends Controller
      */
     public function __invoke(ApplyGiftCardRequest $request): JsonResponse
     {
-        // Validation handled by Form Request
 
         $service = new GiftCardService;
         $card = $service->checkBalance($request->code);
