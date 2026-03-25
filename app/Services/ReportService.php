@@ -139,16 +139,32 @@ class ReportService
 
         $deductible = Expense::query()->whereYear('date', $year)->sum('deductible_amount');
 
+        $monthlyRevenue = Order::query()->whereYear('delivery_date', $year)
+            ->where('payment_status', PaymentStatus::Paid)
+            ->selectRaw("strftime('%m', delivery_date) as m, SUM(total) as total")
+            ->groupBy('m')
+            ->pluck('total', 'm');
+
+        $monthlyIncome = Income::query()->whereYear('date', $year)
+            ->selectRaw("strftime('%m', date) as m, SUM(amount) as total")
+            ->groupBy('m')
+            ->pluck('total', 'm');
+
+        $monthlyExpenses = Expense::query()->whereYear('date', $year)
+            ->selectRaw("strftime('%m', date) as m, SUM(amount) as total")
+            ->groupBy('m')
+            ->pluck('total', 'm');
+
         $monthly = collect();
         for ($m = 1; $m <= 12; $m++) {
-            $mRev = Order::query()->whereYear('delivery_date', $year)->whereMonth('delivery_date', $m)->where('payment_status', PaymentStatus::Paid)->sum('total');
-            $mInc = Income::query()->whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
-            $mExp = Expense::query()->whereYear('date', $year)->whereMonth('date', $m)->sum('amount');
+            $mRev = (float) ($monthlyRevenue[$m] ?? 0);
+            $mInc = (float) ($monthlyIncome[$m] ?? 0);
+            $mExp = (float) ($monthlyExpenses[$m] ?? 0);
             $monthly->push([
                 'month' => date('M', mktime(0, 0, 0, $m, 1)),
-                'revenue' => (float) ($mRev + $mInc),
-                'expenses' => (float) $mExp,
-                'profit' => (float) ($mRev + $mInc - $mExp),
+                'revenue' => $mRev + $mInc,
+                'expenses' => $mExp,
+                'profit' => $mRev + $mInc - $mExp,
             ]);
         }
 

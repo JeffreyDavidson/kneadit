@@ -16,6 +16,11 @@ class OrderFunnelWidget extends Widget
 
     public function getStages(): array
     {
+        $counts = Order::query()
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         $stages = [
             ['key' => OrderStatus::Pending->value, 'label' => 'Pending', 'color' => '#F59E0B', 'bg' => '#FEF3C7'],
             ['key' => OrderStatus::Confirmed->value, 'label' => 'Confirmed', 'color' => '#3B82F6', 'bg' => '#DBEAFE'],
@@ -25,7 +30,7 @@ class OrderFunnelWidget extends Widget
         ];
 
         foreach ($stages as &$stage) {
-            $stage['count'] = Order::query()->where('status', $stage['key'])->count();
+            $stage['count'] = (int) ($counts[$stage['key']] ?? 0);
         }
 
         return $stages;
