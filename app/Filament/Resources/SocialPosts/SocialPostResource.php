@@ -63,11 +63,13 @@ class SocialPostResource extends Resource
         return ['caption'];
     }
 
+    /** @param SocialPost $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return Str::limit($record->caption, 50);
     }
 
+    /** @param SocialPost $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

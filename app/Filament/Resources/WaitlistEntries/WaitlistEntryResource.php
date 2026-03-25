@@ -48,11 +48,13 @@ class WaitlistEntryResource extends Resource
         return ['customer_email', 'customer_name'];
     }
 
+    /** @param WaitlistEntry $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->customer_name ?? $record->customer_email;
     }
 
+    /** @param WaitlistEntry $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

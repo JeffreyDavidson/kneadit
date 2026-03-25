@@ -5,8 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
+ * @property Carbon|null $next_reminder_date
  * @property-read Customer|null $customer
  *
  * @method static \Database\Factories\CustomerReminderFactory factory($count = null, $state = [])

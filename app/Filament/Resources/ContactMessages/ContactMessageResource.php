@@ -55,11 +55,13 @@ class ContactMessageResource extends Resource
         return ['name', 'email', 'subject'];
     }
 
+    /** @param ContactMessage $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->subject ?? 'Message from '.$record->name;
     }
 
+    /** @param ContactMessage $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

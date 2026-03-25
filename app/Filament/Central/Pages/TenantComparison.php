@@ -50,6 +50,7 @@ class TenantComparison extends Page
         $tenants = Tenant::query()->whereIn('id', $this->selectedTenants)->get();
         $results = [];
 
+        /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
             $data = [
                 'id' => $tenant->id,
@@ -150,6 +151,7 @@ class TenantComparison extends Page
         $tenants = Tenant::all();
         $results = [];
 
+        /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
             $data = [
                 'id' => $tenant->id,

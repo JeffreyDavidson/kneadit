@@ -56,17 +56,19 @@ class OrderResource extends Resource
         return ['customer.name', 'customer.email', 'status'];
     }
 
+    /** @param Order $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return 'Order #'.$record->order_number;
     }
 
+    /** @param Order $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
             'Customer' => $record->customer->name ?? 'N/A',
             'Total' => '$'.number_format($record->total, 2),
-            'Status' => ucfirst($record->status),
+            'Status' => ucfirst($record->status->value),
         ];
     }
 

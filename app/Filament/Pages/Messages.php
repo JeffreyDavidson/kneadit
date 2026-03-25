@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\PlatformMessage;
+use App\Models\Tenant;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
@@ -32,6 +33,7 @@ class Messages extends Page
 
     public function getMessages(): Collection
     {
+        /** @var Tenant|null $tenant */
         $tenant = Filament::getTenant();
 
         return PlatformMessage::query()->where('tenant_id', $tenant->id)
@@ -72,6 +74,7 @@ class Messages extends Page
         $this->validate(['replyBody' => ['required', 'string', 'min:1']]);
 
         $parent = PlatformMessage::query()->findOrFail($this->viewingMessage);
+        /** @var Tenant|null $tenant */
         $tenant = Filament::getTenant();
 
         PlatformMessage::query()->create([
@@ -93,6 +96,7 @@ class Messages extends Page
 
     public static function getNavigationBadge(): ?string
     {
+        /** @var Tenant|null $tenant */
         $tenant = Filament::getTenant();
         if (! $tenant) {
             return null;

@@ -5,6 +5,7 @@ namespace App\Filament\Central\Resources;
 use App\Enums\SupportTicketPriority;
 use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
+use App\Models\Tenant;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
@@ -17,7 +18,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class SupportTicketResource extends Resource
@@ -58,7 +58,7 @@ class SupportTicketResource extends Resource
             Select::make('tenant_id')
                 ->label('Bakery')
                 ->relationship('tenant', 'store_name')
-                ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->store_name ?: $record->name)
+                ->getOptionLabelFromRecordUsing(fn (Tenant $record) => $record->store_name ?: $record->name)
                 ->required()
                 ->searchable(),
             Grid::make(2)->schema([

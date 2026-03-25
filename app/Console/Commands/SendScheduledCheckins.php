@@ -33,6 +33,7 @@ class SendScheduledCheckins extends Command
 
             $tenants = Tenant::query()->whereDate('created_at', $targetDate)->get();
 
+            /** @var Tenant $tenant */
             foreach ($tenants as $tenant) {
                 $alreadySent = CheckinLog::query()->where('checkin_id', $checkin->id)
                     ->where('tenant_id', $tenant->id)

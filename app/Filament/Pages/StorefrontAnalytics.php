@@ -133,10 +133,11 @@ class StorefrontAnalytics extends Page
 
         $products = Product::query()->whereIn('id', $data->pluck('product_id'))->pluck('name', 'id');
 
-        return $data->map(fn (object $row) => (object) [
-            'name' => $products[$row->product_id] ?? 'Unknown',
-            'views' => $row->views,
-        ]);
+        return $data->map(
+            fn (PageView $row) => (object) [
+                'name' => $products[$row->product_id] ?? 'Unknown',
+                'views' => $row->views,
+            ]);
     }
 
     public function getConversionFunnel(): array

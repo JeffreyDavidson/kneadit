@@ -51,15 +51,17 @@ class LoyaltyRewardResource extends Resource
         return ['name'];
     }
 
+    /** @param LoyaltyReward $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->name;
     }
 
+    /** @param LoyaltyReward $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Points' => $record->points_required,
+            'Points' => (string) $record->points_required,
             'Type' => $record->reward_type_label,
         ];
     }

@@ -56,11 +56,13 @@ class CouponResource extends Resource
         return ['code'];
     }
 
+    /** @param Coupon $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->code;
     }
 
+    /** @param Coupon $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

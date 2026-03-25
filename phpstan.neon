@@ -5,6 +5,8 @@ parameters:
     paths:
         - app/
     level: 5
+    bootstrapFiles:
+        - phpstan-bootstrap.php
     scanDirectories:
         - vendor/filament
     ignoreErrors:
@@ -39,21 +41,12 @@ parameters:
             message: '#on Illuminate\\Database\\Eloquent\\Model\|int\|string#'
             paths:
                 - app/Filament/
-        # Larastan can't resolve casts() method — dates/enums seen as string
-        - identifier: method.nonObject
-          message: '#Cannot call method .+ on string#'
-        # Tenant model properties via tenant() helper return generic Model
-        -
-            message: '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::#'
         # QrCode return type mismatch
         -
             message: '#SimpleSoftwareIO\\QrCode#'
         # Filament TextInput::uppercase() exists at runtime
         -
             message: '#Call to an undefined method Filament\\Forms\\Components\\TextInput::uppercase#'
-        # Array|Model ambiguity in widgets
-        - identifier: property.nonObject
-          message: '#on array<string, mixed>\|Illuminate\\Database\\Eloquent\\Model#'
         # HasPlanGating method_exists check — needed for classes without RequiresRole trait
         - identifier: function.alreadyNarrowedType
           path: app/Traits/HasPlanGating.php
@@ -89,7 +82,3 @@ parameters:
         -
             identifier: argument.type
             message: '#callback of method Illuminate\\Support\\Collection.+::(sum|avg)\(\) expects#'
-        # TenantComparison expects Tenant, gets Model
-        -
-            identifier: argument.type
-            message: '#expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model given#'

@@ -54,16 +54,18 @@ class EmailCampaignResource extends Resource
         return ['subject'];
     }
 
+    /** @param EmailCampaign $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->subject;
     }
 
+    /** @param EmailCampaign $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
             'Status' => ucfirst($record->status ?? 'draft'),
-            'Recipients' => $record->recipient_count ?? 0,
+            'Recipients' => (string) ($record->recipient_count ?? 0),
         ];
     }
 

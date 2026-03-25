@@ -53,6 +53,7 @@ use Illuminate\Support\Carbon;
  * @property-read float|null $revenue
  * @property-read string|null $date
  * @property Carbon|null $delivery_date
+ * @property Carbon|null $delivery_time
  *
  * @mixin \Eloquent
  */

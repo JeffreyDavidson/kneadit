@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property LoyaltyPointType $type
@@ -22,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder<static>|LoyaltyPoint newQuery()
  * @method static Builder<static>|LoyaltyPoint query()
  * @method static Builder<static>|LoyaltyPoint redeemed()
+ *
+ * @property Carbon|null $created_at
  *
  * @mixin \Eloquent
  */

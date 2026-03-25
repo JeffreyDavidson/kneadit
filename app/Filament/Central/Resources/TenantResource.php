@@ -42,6 +42,7 @@ class TenantResource extends Resource
         return ['store_name', 'name', 'email', 'id'];
     }
 
+    /** @param Tenant $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

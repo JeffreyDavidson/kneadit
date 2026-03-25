@@ -58,11 +58,13 @@ class GiftCardResource extends Resource
         return ['code', 'purchaser_name', 'recipient_name'];
     }
 
+    /** @param GiftCard $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return 'Gift Card: '.$record->code;
     }
 
+    /** @param GiftCard $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

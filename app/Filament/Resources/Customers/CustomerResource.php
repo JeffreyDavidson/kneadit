@@ -55,11 +55,13 @@ class CustomerResource extends Resource
         return ['name', 'email', 'phone'];
     }
 
+    /** @param Customer $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->name;
     }
 
+    /** @param Customer $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

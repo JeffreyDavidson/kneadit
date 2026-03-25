@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property-read GiftCard|null $giftCard
@@ -14,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GiftCardTransaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GiftCardTransaction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GiftCardTransaction query()
+ *
+ * @property Carbon|null $created_at
  *
  * @mixin \Eloquent
  */
