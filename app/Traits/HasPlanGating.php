@@ -11,7 +11,7 @@ trait HasPlanGating
     {
         return property_exists(static::class, 'requiredPlan')
             ? static::$requiredPlan
-            : 'starter';
+            : SubscriptionTier::Starter->value;
     }
 
     public static function canAccess(): bool
@@ -25,7 +25,7 @@ trait HasPlanGating
         }
 
         // Check plan access
-        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? 'starter');
+        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? SubscriptionTier::Starter->value);
         $required = SubscriptionTier::tryFrom(static::getRequiredPlan());
 
         if (! $current || ! $required) {
@@ -37,7 +37,7 @@ trait HasPlanGating
 
     public static function getNavigationBadge(): ?string
     {
-        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? 'starter');
+        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? SubscriptionTier::Starter->value);
         $required = SubscriptionTier::tryFrom(static::getRequiredPlan());
 
         if (! $current || ! $required || $current->meetsRequirement($required)) {
@@ -49,7 +49,7 @@ trait HasPlanGating
 
     public static function getNavigationBadgeColor(): ?string
     {
-        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? 'starter');
+        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? SubscriptionTier::Starter->value);
         $required = SubscriptionTier::tryFrom(static::getRequiredPlan());
 
         if (! $current || ! $required || $current->meetsRequirement($required)) {

@@ -2,36 +2,26 @@
 
 namespace App\Filament\Traits;
 
+use App\Enums\UserRole;
+use App\Models\User;
+
 trait RequiresRole
 {
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'owner';
-    }
-
-    /**
-     * Role hierarchy: owner > manager > staff.
-     * A higher role can access resources requiring a lower role.
-     */
-    protected static function roleLevel(string $role): int
-    {
-        return match ($role) {
-            'owner' => 3,
-            'manager' => 2,
-            'staff' => 1,
-            default => 0,
-        };
+        return UserRole::Owner;
     }
 
     protected static function userMeetsRole(): bool
     {
+        /** @var User|null $user */
         $user = auth()->user();
 
         if (! $user) {
             return false;
         }
 
-        return static::roleLevel($user->role) >= static::roleLevel(static::getRequiredRole());
+        return $user->hasMinRole(static::getRequiredRole());
     }
 
     public static function canCreate(): bool

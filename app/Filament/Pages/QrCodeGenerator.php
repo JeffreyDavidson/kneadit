@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\UserRole;
 use App\Filament\Traits\RequiresRole;
 use App\Traits\HasPlanGating;
 use Filament\Forms\Components\ColorPicker;
@@ -18,9 +19,9 @@ class QrCodeGenerator extends Page
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static string $requiredPlan = 'growth';

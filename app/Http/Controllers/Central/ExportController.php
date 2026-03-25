@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Central;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class ExportController extends Controller
 
     public function __invoke(Request $request, string $tenantId, string $type): StreamedResponse|BinaryFileResponse
     {
-        abort_if(! auth()->check() || auth()->user()->role !== 'platform_admin', 403, 'Unauthorized.');
+        abort_if(! auth()->check() || auth()->user()->role !== UserRole::PlatformAdmin, 403, 'Unauthorized.');
 
         abort_unless(in_array($type, self::VALID_TYPES), 404, 'Invalid export type.');
 

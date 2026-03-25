@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BlockedDates;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\BlockedDates\Pages\ListBlockedDates;
 use App\Filament\Resources\BlockedDates\Schemas\BlockedDateForm;
 use App\Filament\Resources\BlockedDates\Tables\BlockedDatesTable;
@@ -16,9 +17,9 @@ class BlockedDateResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static string $requiredPlan = 'pro';

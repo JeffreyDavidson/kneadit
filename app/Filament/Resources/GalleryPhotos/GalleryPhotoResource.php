@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GalleryPhotos;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\GalleryPhotos\Pages\ListGalleryPhotos;
 use App\Filament\Resources\GalleryPhotos\Schemas\GalleryPhotoForm;
 use App\Filament\Resources\GalleryPhotos\Tables\GalleryPhotosTable;
@@ -18,9 +19,9 @@ class GalleryPhotoResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static string $requiredPlan = 'pro';

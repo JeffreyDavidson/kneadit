@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\UserRole;
 use App\Filament\Traits\RequiresRole;
 use App\Mail\StaffInvitationMail;
 use App\Models\Setting;
@@ -15,15 +16,16 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use UnitEnum;
 
 class StaffManagement extends Page
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'owner';
+        return UserRole::Owner;
     }
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
@@ -38,12 +40,7 @@ class StaffManagement extends Page
 
     public string $inviteEmail = '';
 
-    public string $inviteRole = 'staff';
-
-    public static function canAccess(): bool
-    {
-        return Auth::user()?->isOwner() ?? false;
-    }
+    public string $inviteRole = UserRole::Staff->value;
 
     public function getTitle(): string
     {
@@ -52,7 +49,11 @@ class StaffManagement extends Page
 
     public function getTeamMembers(): Collection
     {
-        return User::orderByRaw("FIELD(role, 'owner', 'manager', 'staff')")->get();
+        $roleOrder = collect([UserRole::Owner, UserRole::Manager, UserRole::Staff])
+            ->map(fn (UserRole $role) => "'{$role->value}'")
+            ->implode(', ');
+
+        return User::orderByRaw("FIELD(role, {$roleOrder})")->get();
     }
 
     public function getPendingInvitations(): Collection
@@ -66,8 +67,8 @@ class StaffManagement extends Page
     public function sendInvitation(): void
     {
         $this->validate([
-            'inviteEmail' => 'required|email',
-            'inviteRole' => 'required|in:manager,staff',
+            'inviteEmail' => ['required', 'email'],
+            'inviteRole' => ['required', Rule::in([UserRole::Manager->value, UserRole::Staff->value])],
         ]);
 
         // Check if already a team member
@@ -111,7 +112,7 @@ class StaffManagement extends Page
         );
 
         $this->inviteEmail = '';
-        $this->inviteRole = 'staff';
+        $this->inviteRole = UserRole::Staff->value;
 
         Notification::make()
             ->title('Invitation sent!')
@@ -131,7 +132,7 @@ class StaffManagement extends Page
 
     public function changeRole(int $userId, string $newRole): void
     {
-        if (! in_array($newRole, ['owner', 'manager', 'staff'])) {
+        if (! UserRole::tryFrom($newRole)) {
             return;
         }
 
@@ -169,7 +170,7 @@ class StaffManagement extends Page
         }
 
         // Don't remove the last owner
-        if ($user->isOwner() && User::where('role', 'owner')->count() <= 1) {
+        if ($user->isOwner() && User::where('role', UserRole::Owner)->count() <= 1) {
             Notification::make()
                 ->title("Can't remove the last owner")
                 ->danger()

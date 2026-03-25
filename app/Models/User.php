@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\SubscriptionTier;
+use App\Enums\UserRole;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -32,13 +33,14 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
         ];
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'central') {
-            return $this->role === 'platform_admin';
+            return $this->role === UserRole::PlatformAdmin;
         }
 
         return true;
@@ -90,23 +92,25 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public function isOwner(): bool
     {
-        return $this->role === 'owner';
+        return $this->role === UserRole::Owner;
     }
 
     public function isManager(): bool
     {
-        return $this->role === 'manager';
+        return $this->role === UserRole::Manager;
     }
 
     public function isStaff(): bool
     {
-        return $this->role === 'staff';
+        return $this->role === UserRole::Staff;
     }
 
-    public function hasMinRole(string $role): bool
+    public function hasMinRole(UserRole $role): bool
     {
-        $hierarchy = ['staff' => 1, 'manager' => 2, 'owner' => 3];
+        if (! $this->role) {
+            return false;
+        }
 
-        return ($hierarchy[$this->role] ?? 0) >= ($hierarchy[$role] ?? 0);
+        return $this->role->meetsRequirement($role);
     }
 }

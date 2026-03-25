@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BlogPosts;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\BlogPosts\Pages\CreateBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
@@ -19,9 +20,9 @@ class BlogPostResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'staff';
+        return UserRole::Staff;
     }
 
     protected static ?string $model = BlogPost::class;

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Models\Tenant;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -12,10 +14,10 @@ class ImpersonateController extends Controller
     /**
      * Central admin: generate a one-time token and redirect to tenant domain.
      */
-    public function __invoke(Request $request, Tenant $tenant)
+    public function __invoke(Request $request, Tenant $tenant): RedirectResponse
     {
         abort_unless(
-            $request->user() && $request->user()->role === 'platform_admin',
+            $request->user() && $request->user()->role === UserRole::PlatformAdmin,
             403,
             'Unauthorized.'
         );
@@ -31,10 +33,9 @@ class ImpersonateController extends Controller
         ]);
 
         $domain = $tenant->domains()->first()?->domain ?? $tenant->id;
-        $host = app()->environment('local')
-            ? $domain.'.kneadit.test'
-            : $domain.'.getkneadit.app';
-        $scheme = app()->environment('local') ? 'http' : 'https';
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $scheme = parse_url(config('app.url'), PHP_URL_SCHEME) ?? 'https';
+        $host = "{$domain}.{$appHost}";
 
         return redirect()->to("{$scheme}://{$host}/impersonate/{$token}");
     }
