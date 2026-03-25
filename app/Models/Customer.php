@@ -91,6 +91,10 @@ class Customer extends Model
         return $this->hasOne(CustomerProfile::class);
     }
 
+    /**
+     * Memoized per-instance. Uses app() because models cannot use constructor injection.
+     * Prefer CustomerIntelligence::enrichQuery() for list views to avoid per-row queries.
+     */
     private function getMetrics(): CustomerMetrics
     {
         return once(fn () => app(CustomerIntelligence::class)->metrics($this));

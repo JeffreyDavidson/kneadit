@@ -18,8 +18,10 @@ class CustomersTable
 {
     public static function configure(Table $table): Table
     {
+        $atRiskDays = (int) Setting::get('at_risk_days', '30');
+
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => CustomerIntelligence::enrichQuery($query))
+            ->modifyQueryUsing(fn (Builder $query) => app(CustomerIntelligence::class)->enrichQuery($query))
             ->columns([
                 TextColumn::make('name')
                     ->sortable()
@@ -88,9 +90,7 @@ class CustomersTable
                 TextColumn::make('is_at_risk')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(function (Customer $record) {
-                        $atRiskDays = (int) Setting::get('at_risk_days', '30');
-
+                    ->getStateUsing(function (Customer $record) use ($atRiskDays) {
                         if ($record->orders_count > 0 && $record->last_order_date) {
                             return Date::parse($record->last_order_date)->diffInDays(now()) > $atRiskDays
                                 ? 'At Risk'
@@ -113,9 +113,7 @@ class CustomersTable
             ->filters([
                 Filter::make('at_risk')
                     ->label('At Risk')
-                    ->query(function (Builder $query) {
-                        $atRiskDays = (int) Setting::get('at_risk_days', '30');
-
+                    ->query(function (Builder $query) use ($atRiskDays) {
                         return $query->whereHas('orders')
                             ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays($atRiskDays)));
                     }),

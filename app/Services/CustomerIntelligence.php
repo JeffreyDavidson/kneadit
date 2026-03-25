@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\DataTransferObjects\CustomerMetrics;
-use App\Enums\OrderStatus;
+use App\Enums\LoyaltyPointType;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Setting;
@@ -14,13 +14,17 @@ class CustomerIntelligence
 {
     public function metrics(Customer $customer): CustomerMetrics
     {
-        $lifetimeValue = (float) $customer->orders()->active()->sum('total');
-        $orderCount = $customer->orders()->active()->count();
-        $lastOrderDate = $customer->orders()->latest()->value('created_at');
-        $lastOrderCarbon = $lastOrderDate ? Carbon::parse($lastOrderDate) : null;
+        // 1 query: order aggregates
+        $orderStats = $customer->orders()->active()
+            ->selectRaw('count(*) as order_count, coalesce(sum(total), 0) as lifetime_value, max(created_at) as last_order_date')
+            ->first();
 
-        $daysSinceLastOrder = $lastOrderCarbon
-            ? (int) $lastOrderCarbon->diffInDays(now())
+        $orderCount = (int) ($orderStats->order_count ?? 0);
+        $lifetimeValue = (float) ($orderStats->lifetime_value ?? 0);
+        $lastOrderDate = $orderStats->last_order_date ? Carbon::parse($orderStats->last_order_date) : null;
+
+        $daysSinceLastOrder = $lastOrderDate
+            ? (int) $lastOrderDate->diffInDays(now())
             : null;
 
         $atRiskDays = (int) Setting::get('at_risk_days', '30');
@@ -28,15 +32,22 @@ class CustomerIntelligence
             && $daysSinceLastOrder !== null
             && $daysSinceLastOrder > $atRiskDays;
 
-        $earned = (int) $customer->loyaltyPoints()->earned()->sum('points');
-        $adjusted = (int) $customer->loyaltyPoints()->adjusted()->sum('points');
-        $redeemed = (int) $customer->loyaltyPoints()->redeemed()->sum('points');
+        // 1 query: loyalty point aggregates
+        $pointStats = $customer->loyaltyPoints()
+            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as earned', [LoyaltyPointType::Earned->value])
+            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as adjusted', [LoyaltyPointType::Adjusted->value])
+            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as redeemed', [LoyaltyPointType::Redeemed->value])
+            ->first();
+
+        $earned = (int) ($pointStats->earned ?? 0);
+        $adjusted = (int) ($pointStats->adjusted ?? 0);
+        $redeemed = (int) ($pointStats->redeemed ?? 0);
 
         return new CustomerMetrics(
             lifetimeValue: $lifetimeValue,
             orderCount: $orderCount,
             averageOrderValue: $orderCount > 0 ? $lifetimeValue / $orderCount : 0,
-            lastOrderDate: $lastOrderCarbon,
+            lastOrderDate: $lastOrderDate,
             daysSinceLastOrder: $daysSinceLastOrder,
             isAtRisk: $isAtRisk,
             totalPoints: $earned + $adjusted - $redeemed,
@@ -44,11 +55,11 @@ class CustomerIntelligence
         );
     }
 
-    public static function enrichQuery(Builder $query): Builder
+    public function enrichQuery(Builder $query): Builder
     {
         return $query
-            ->withCount(['orders' => fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled)])
-            ->withSum(['orders' => fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled)], 'total')
+            ->withCount(['orders' => fn (Builder $q) => $q->active()])
+            ->withSum(['orders' => fn (Builder $q) => $q->active()], 'total')
             ->addSelect([
                 'last_order_date' => Order::select('created_at')
                     ->whereColumn('customer_id', 'customers.id')
