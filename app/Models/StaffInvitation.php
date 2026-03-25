@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property-read User|null $inviter
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation query()
+ *
+ * @property Carbon|null $expires_at
  *
  * @mixin \Eloquent
  */

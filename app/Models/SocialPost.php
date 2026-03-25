@@ -6,6 +6,7 @@ use App\Enums\SocialPostStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property SocialPostStatus $status
@@ -15,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialPost newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialPost newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialPost query()
+ *
+ * @property Carbon|null $scheduled_for
  *
  * @mixin \Eloquent
  */

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
 /**
@@ -19,6 +20,9 @@ use Illuminate\Support\Facades\Date;
  * @method static Builder<static>|SeasonalItem newQuery()
  * @method static Builder<static>|SeasonalItem query()
  * @method static Builder<static>|SeasonalItem upcoming()
+ *
+ * @property Carbon|null $available_from
+ * @property Carbon|null $available_until
  *
  * @mixin \Eloquent
  */

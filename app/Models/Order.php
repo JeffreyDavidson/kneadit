@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property OrderStatus $status
@@ -51,6 +52,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $days_since
  * @property-read float|null $revenue
  * @property-read string|null $date
+ * @property Carbon|null $delivery_date
  *
  * @mixin \Eloquent
  */

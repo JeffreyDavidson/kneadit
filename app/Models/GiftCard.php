@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property-read GiftCardStatus $status
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder<static>|GiftCard newQuery()
  * @method static Builder<static>|GiftCard query()
  * @method static Builder<static>|GiftCard usable()
+ *
+ * @property Carbon|null $expires_at
  *
  * @mixin \Eloquent
  */
