@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreApiReviewRequest;
 use App\Models\Review;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,15 +32,9 @@ class ReviewController extends Controller
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreApiReviewRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'customer_name' => ['required', 'string', 'max:255'],
-            'customer_email' => ['required', 'email', 'max:255'],
-            'product_id' => ['required', 'exists:products,id'],
-            'rating' => ['required', 'integer', 'min:1', 'max:5'],
-            'comment' => ['required', 'string', 'max:2000'],
-        ]);
+        $validated = $request->validated();
 
         $validated['comment'] = strip_tags($validated['comment']);
 

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ApplyGiftCardRequest;
 use App\Services\GiftCardService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ApplyGiftCardController extends Controller
@@ -11,12 +13,9 @@ class ApplyGiftCardController extends Controller
     /**
      * Validate and apply a gift card code via AJAX.
      */
-    public function __invoke(Request $request)
+    public function __invoke(ApplyGiftCardRequest $request): JsonResponse
     {
-        $request->validate([
-            'code' => ['required', 'string'],
-            'subtotal' => ['required', 'numeric', 'min:0'],
-        ]);
+        // Validation handled by Form Request
 
         $service = new GiftCardService;
         $card = $service->checkBalance($request->code);

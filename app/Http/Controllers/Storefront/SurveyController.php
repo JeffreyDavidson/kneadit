@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreSurveyResponseRequest;
 use App\Models\Survey;
 use App\Models\SurveyResponse;
 use Illuminate\Contracts\View\View;
@@ -18,15 +19,11 @@ class SurveyController extends Controller
         return view('survey', compact('survey'));
     }
 
-    public function store(Request $request, Survey $survey): RedirectResponse
+    public function store(StoreSurveyResponseRequest $request, Survey $survey): RedirectResponse
     {
         abort_unless($survey->is_active, 404);
 
-        $request->validate([
-            'customer_name' => ['nullable', 'string', 'max:255'],
-            'customer_email' => ['nullable', 'email', 'max:255'],
-            'answers' => ['required', 'array'],
-        ]);
+        // Validation handled by Form Request
 
         $sanitizedAnswers = array_map(
             fn (mixed $answer) => is_string($answer) ? strip_tags($answer) : $answer,

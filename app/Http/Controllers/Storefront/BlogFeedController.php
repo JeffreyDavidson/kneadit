@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Storefront;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use App\Models\Setting;
+use Illuminate\Http\Response;
 
 class BlogFeedController extends Controller
 {
     /**
      * Generate the RSS feed for the storefront blog.
      */
-    public function __invoke()
+    public function __invoke(): Response
     {
         $posts = BlogPost::where('is_published', true)
             ->whereNotNull('published_at')

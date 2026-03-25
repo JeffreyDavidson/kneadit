@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreContactMessageRequest;
 use App\Models\ContactMessage;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
@@ -14,14 +14,9 @@ class ContactController extends Controller
         return view('contact');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreContactMessageRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'subject' => ['required', 'string', 'max:255'],
-            'message' => ['required', 'string', 'max:2000'],
-        ]);
+        $validated = $request->validated();
 
         ContactMessage::create($validated);
 

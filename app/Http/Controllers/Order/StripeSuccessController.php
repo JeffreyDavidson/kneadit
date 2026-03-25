@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Order;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\StripeCheckoutService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class StripeSuccessController extends Controller
@@ -12,7 +13,7 @@ class StripeSuccessController extends Controller
     /**
      * Stripe checkout success callback.
      */
-    public function __invoke(Request $request, Order $order)
+    public function __invoke(Request $request, Order $order): RedirectResponse
     {
         $sessionId = $request->query('session_id');
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreApiFavoriteRequest;
 use App\Models\CustomerFavorite;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,12 +31,9 @@ class FavoriteController extends Controller
     /**
      * Toggle a product as a customer favorite.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreApiFavoriteRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'product_id' => ['required', 'exists:products,id'],
-        ]);
+        // Validation handled by Form Request
 
         $existing = CustomerFavorite::where('customer_email', $request->email)
             ->where('product_id', $request->product_id)

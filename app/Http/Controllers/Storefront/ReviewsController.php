@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use Illuminate\Contracts\View\View;
 
 class ReviewsController extends Controller
 {
     /**
      * Show the storefront reviews listing page.
      */
-    public function __invoke()
+    public function __invoke(): View
     {
         $reviews = Review::where('is_approved', true)
             ->with('product')

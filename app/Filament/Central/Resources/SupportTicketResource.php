@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Enums\SupportTicketPriority;
 use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
 use BackedEnum;
@@ -62,21 +63,12 @@ class SupportTicketResource extends Resource
                 ->searchable(),
             Grid::make(2)->schema([
                 Select::make('status')
-                    ->options([
-                        'open' => 'Open',
-                        'in_progress' => 'In Progress',
-                        'resolved' => 'Resolved',
-                        'closed' => 'Closed',
-                    ])
-                    ->default('open')
+                    ->options(SupportTicketStatus::class)
+                    ->default(SupportTicketStatus::Open)
                     ->required(),
                 Select::make('priority')
-                    ->options([
-                        'low' => 'Low',
-                        'normal' => 'Normal',
-                        'high' => 'High',
-                    ])
-                    ->default('normal')
+                    ->options(SupportTicketPriority::class)
+                    ->default(SupportTicketPriority::Normal)
                     ->required(),
             ]),
             Textarea::make('body')->required()->rows(5),
@@ -98,18 +90,18 @@ class SupportTicketResource extends Resource
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'open' => 'danger',
-                        'in_progress' => 'warning',
-                        'resolved' => 'success',
-                        'closed' => 'gray',
+                        SupportTicketStatus::Open->value => 'danger',
+                        SupportTicketStatus::InProgress->value => 'warning',
+                        SupportTicketStatus::Resolved->value => 'success',
+                        SupportTicketStatus::Closed->value => 'gray',
                         default => 'gray',
                     }),
                 TextColumn::make('priority')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'high' => 'danger',
-                        'normal' => 'info',
-                        'low' => 'gray',
+                        SupportTicketPriority::High->value => 'danger',
+                        SupportTicketPriority::Normal->value => 'info',
+                        SupportTicketPriority::Low->value => 'gray',
                         default => 'gray',
                     }),
                 TextColumn::make('created_at')
@@ -119,18 +111,9 @@ class SupportTicketResource extends Resource
             ->defaultSort('status', 'asc')
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
-                        'open' => 'Open',
-                        'in_progress' => 'In Progress',
-                        'resolved' => 'Resolved',
-                        'closed' => 'Closed',
-                    ]),
+                    ->options(SupportTicketStatus::class),
                 SelectFilter::make('priority')
-                    ->options([
-                        'low' => 'Low',
-                        'normal' => 'Normal',
-                        'high' => 'High',
-                    ]),
+                    ->options(SupportTicketPriority::class),
             ])
             ->actions([
                 Actions\ViewAction::make(),

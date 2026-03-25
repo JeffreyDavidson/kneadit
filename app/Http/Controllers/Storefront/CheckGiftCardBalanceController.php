@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CheckGiftCardBalanceRequest;
 use App\Services\GiftCardService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CheckGiftCardBalanceController extends Controller
@@ -11,9 +13,9 @@ class CheckGiftCardBalanceController extends Controller
     /**
      * Check the balance of a gift card.
      */
-    public function __invoke(Request $request)
+    public function __invoke(CheckGiftCardBalanceRequest $request): JsonResponse
     {
-        $request->validate(['code' => ['required', 'string']]);
+        // Validation handled by Form Request
 
         $service = new GiftCardService;
         $card = $service->checkBalance($request->code);

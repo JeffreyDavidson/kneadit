@@ -8,6 +8,7 @@ use App\Models\BlockedDate;
 use App\Models\BusinessSchedule;
 use App\Models\Order;
 use App\Models\Setting;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Date;
 
 class AvailabilityController extends Controller
@@ -15,7 +16,7 @@ class AvailabilityController extends Controller
     /**
      * Return availability for the next 30 days.
      */
-    public function __invoke()
+    public function __invoke(): JsonResponse
     {
         $dates = [];
         $today = Date::today();

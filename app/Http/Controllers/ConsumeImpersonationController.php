@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ class ConsumeImpersonationController extends Controller
     /**
      * Tenant side: consume the token and log in as the first user.
      */
-    public function __invoke(Request $request, string $token)
+    public function __invoke(Request $request, string $token): RedirectResponse
     {
         $hashed = hash('sha256', $token);
         $record = DB::connection('central')->table('impersonation_tokens')

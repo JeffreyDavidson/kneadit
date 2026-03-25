@@ -3,18 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ApplyCouponRequest;
 use App\Services\CouponService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class CouponValidationController extends Controller
 {
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(ApplyCouponRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'code' => ['required', 'string'],
-            'subtotal' => ['required', 'numeric', 'min:0'],
-        ]);
+        $validated = $request->validated();
 
         $couponService = new CouponService;
         $result = $couponService->validate($validated['code'], (float) $validated['subtotal']);
