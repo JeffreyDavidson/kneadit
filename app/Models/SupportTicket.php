@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SupportTicketPriority;
 use App\Enums\SupportTicketStatus;
+use Database\Factories\SupportTicketFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -45,6 +46,7 @@ use Illuminate\Support\Carbon;
  */
 class SupportTicket extends Model
 {
+    /** @use HasFactory<SupportTicketFactory> */
     use HasFactory;
 
     protected $connection = 'central';

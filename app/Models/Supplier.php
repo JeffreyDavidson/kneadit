@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
+use Database\Factories\SupplierFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class Supplier extends Model
 {
+    /** @use HasFactory<SupplierFactory> */
     use HasFactory;
+
     use LogsActivity;
 
     protected $fillable = [

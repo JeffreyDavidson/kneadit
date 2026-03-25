@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\FeatureUsageLogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -34,6 +35,7 @@ use Illuminate\Support\Facades\Date;
  */
 class FeatureUsageLog extends Model
 {
+    /** @use HasFactory<FeatureUsageLogFactory> */
     use HasFactory;
 
     protected $connection = 'central';

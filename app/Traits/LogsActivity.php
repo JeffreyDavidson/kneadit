@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\ActivityLog;
+use Illuminate\Database\Eloquent\Model;
 
 trait LogsActivity
 {
@@ -13,7 +14,10 @@ trait LogsActivity
         static::deleted(fn ($model) => static::logAction($model, 'deleted'));
     }
 
-    protected static function logAction($model, string $action, array $changes = []): void
+    /**
+     * @param  array<string, mixed>  $changes
+     */
+    protected static function logAction(Model $model, string $action, array $changes = []): void
     {
         // Prevent recursive logging
         if ($model instanceof ActivityLog) {

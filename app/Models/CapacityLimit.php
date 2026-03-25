@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\OrderStatus;
 use Carbon\Carbon;
+use Database\Factories\CapacityLimitFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\Date;
  */
 class CapacityLimit extends Model
 {
+    /** @use HasFactory<CapacityLimitFactory> */
     use HasFactory;
 
     protected $fillable = [

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\PlatformMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -50,6 +51,7 @@ use Illuminate\Support\Carbon;
  */
 class PlatformMessage extends Model
 {
+    /** @use HasFactory<PlatformMessageFactory> */
     use HasFactory;
 
     protected $connection = 'central';
@@ -95,24 +97,28 @@ class PlatformMessage extends Model
         return $this->belongsTo(self::class, 'parent_id');
     }
 
+    /** @param Builder<PlatformMessage> $query */
     #[Scope]
     protected function unread(Builder $query): void
     {
         $query->where('is_read', false);
     }
 
+    /** @param Builder<PlatformMessage> $query */
     #[Scope]
     protected function fromAdmin(Builder $query): void
     {
         $query->where('sender_type', 'admin');
     }
 
+    /** @param Builder<PlatformMessage> $query */
     #[Scope]
     protected function fromTenant(Builder $query): void
     {
         $query->where('sender_type', 'tenant');
     }
 
+    /** @param Builder<PlatformMessage> $query */
     #[Scope]
     protected function topLevel(Builder $query): void
     {

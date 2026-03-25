@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\IncomeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -20,6 +21,7 @@ use Illuminate\Support\Carbon;
  */
 class Income extends Model
 {
+    /** @use HasFactory<IncomeFactory> */
     use HasFactory;
 
     protected $fillable = [

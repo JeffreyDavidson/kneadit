@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\SocialPostStatus;
+use Database\Factories\SocialPostFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,7 @@ use Illuminate\Support\Carbon;
  */
 class SocialPost extends Model
 {
+    /** @use HasFactory<SocialPostFactory> */
     use HasFactory;
 
     protected $fillable = [

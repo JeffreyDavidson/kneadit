@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\GiftCardStatus;
 use App\Traits\LogsActivity;
+use Database\Factories\GiftCardFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -29,7 +30,9 @@ use Illuminate\Support\Carbon;
  */
 class GiftCard extends Model
 {
+    /** @use HasFactory<GiftCardFactory> */
     use HasFactory;
+
     use LogsActivity;
 
     protected $fillable = [
@@ -70,6 +73,7 @@ class GiftCard extends Model
             && ($this->expires_at === null || $this->expires_at->isFuture());
     }
 
+    /** @param Builder<GiftCard> $query */
     #[Scope]
     protected function usable(Builder $query): void
     {

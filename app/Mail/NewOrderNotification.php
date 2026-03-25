@@ -15,6 +15,7 @@ class NewOrderNotification extends Mailable implements ShouldQueue
 {
     public int $tries = 3;
 
+    /** @var array<int, int> */
     public array $backoff = [10, 60, 300];
 
     use Queueable, SerializesModels;

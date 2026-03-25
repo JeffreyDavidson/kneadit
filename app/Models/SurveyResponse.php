@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\SurveyResponseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class SurveyResponse extends Model
 {
+    /** @use HasFactory<SurveyResponseFactory> */
     use HasFactory;
 
     public $timestamps = false;

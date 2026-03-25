@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\RecipeFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class Recipe extends Model
 {
+    /** @use HasFactory<RecipeFactory> */
     use HasFactory;
 
     protected $fillable = [

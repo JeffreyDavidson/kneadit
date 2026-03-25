@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\PlatformAnnouncementFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,6 +43,7 @@ use Illuminate\Support\Carbon;
  */
 class PlatformAnnouncement extends Model
 {
+    /** @use HasFactory<PlatformAnnouncementFactory> */
     use HasFactory;
 
     protected $connection = 'central';
@@ -68,6 +70,7 @@ class PlatformAnnouncement extends Model
         ];
     }
 
+    /** @param Builder<PlatformAnnouncement> $query */
     #[Scope]
     protected function active(Builder $query): void
     {

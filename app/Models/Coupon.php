@@ -80,12 +80,14 @@ class Coupon extends Model
         return $this->hasMany(Order::class);
     }
 
+    /** @param Builder<Coupon> $query */
     #[Scope]
     protected function active(Builder $query): void
     {
         $query->where('is_active', true);
     }
 
+    /** @param Builder<Coupon> $query */
     /** @param Builder<Coupon> $query */
     #[Scope]
     protected function valid(Builder $query): void

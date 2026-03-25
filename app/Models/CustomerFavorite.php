@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\CustomerFavoriteFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CustomerFavorite extends Model
 {
+    /** @use HasFactory<CustomerFavoriteFactory> */
     use HasFactory;
 
     protected $fillable = [

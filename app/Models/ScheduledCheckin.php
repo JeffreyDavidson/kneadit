@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ScheduledCheckinFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +38,7 @@ use Illuminate\Support\Carbon;
  */
 class ScheduledCheckin extends Model
 {
+    /** @use HasFactory<ScheduledCheckinFactory> */
     use HasFactory;
 
     protected $connection = 'central';

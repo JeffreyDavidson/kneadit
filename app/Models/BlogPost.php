@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\BlogPostFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +25,7 @@ use Illuminate\Support\Str;
  */
 class BlogPost extends Model
 {
+    /** @use HasFactory<BlogPostFactory> */
     use HasFactory;
 
     protected $connection = 'central';
@@ -70,6 +72,7 @@ class BlogPost extends Model
         });
     }
 
+    /** @param Builder<BlogPost> $query */
     #[Scope]
     protected function published(Builder $query): void
     {

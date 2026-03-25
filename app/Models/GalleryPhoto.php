@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GalleryPhotoFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class GalleryPhoto extends Model
 {
+    /** @use HasFactory<GalleryPhotoFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -37,12 +39,14 @@ class GalleryPhoto extends Model
         ];
     }
 
+    /** @param Builder<GalleryPhoto> $query */
     #[Scope]
     protected function visible(Builder $query): void
     {
         $query->where('is_visible', true);
     }
 
+    /** @param Builder<GalleryPhoto> $query */
     #[Scope]
     protected function ordered(Builder $query): void
     {

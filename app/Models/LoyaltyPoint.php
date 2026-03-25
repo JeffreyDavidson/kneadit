@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LoyaltyPointType;
+use Database\Factories\LoyaltyPointFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,6 +31,7 @@ use Illuminate\Support\Carbon;
  */
 class LoyaltyPoint extends Model
 {
+    /** @use HasFactory<LoyaltyPointFactory> */
     use HasFactory;
 
     public $timestamps = false;
@@ -50,18 +52,21 @@ class LoyaltyPoint extends Model
         ];
     }
 
+    /** @param Builder<LoyaltyPoint> $query */
     #[Scope]
     protected function earned(Builder $query): void
     {
         $query->where('type', LoyaltyPointType::Earned);
     }
 
+    /** @param Builder<LoyaltyPoint> $query */
     #[Scope]
     protected function redeemed(Builder $query): void
     {
         $query->where('type', LoyaltyPointType::Redeemed);
     }
 
+    /** @param Builder<LoyaltyPoint> $query */
     #[Scope]
     protected function adjusted(Builder $query): void
     {

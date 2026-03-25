@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ReferralStatus;
+use Database\Factories\ReferralFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,6 +40,7 @@ use Illuminate\Support\Carbon;
  */
 class Referral extends Model
 {
+    /** @use HasFactory<ReferralFactory> */
     use HasFactory;
 
     protected $connection = 'central';

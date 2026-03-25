@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
+use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -53,7 +54,9 @@ use Illuminate\Support\Facades\Storage;
  */
 class Product extends Model
 {
+    /** @use HasFactory<ProductFactory> */
     use HasFactory;
+
     use LogsActivity;
 
     protected $fillable = [
@@ -227,12 +230,14 @@ class Product extends Model
         return null;
     }
 
+    /** @param Builder<Product> $query */
     #[Scope]
     protected function active(Builder $query): void
     {
         $query->where('is_active', true);
     }
 
+    /** @param Builder<Product> $query */
     #[Scope]
     protected function featured(Builder $query): void
     {

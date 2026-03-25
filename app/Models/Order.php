@@ -7,6 +7,7 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Traits\LogsActivity;
+use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -59,7 +60,9 @@ use Illuminate\Support\Carbon;
  */
 class Order extends Model
 {
+    /** @use HasFactory<OrderFactory> */
     use HasFactory;
+
     use LogsActivity;
 
     public function getRouteKeyName(): string
@@ -190,12 +193,14 @@ class Order extends Model
         return $this->hasMany(GiftCardTransaction::class);
     }
 
+    /** @param Builder<Order> $query */
     #[Scope]
     protected function paid(Builder $query): void
     {
         $query->where('payment_status', PaymentStatus::Paid);
     }
 
+    /** @param Builder<Order> $query */
     #[Scope]
     protected function active(Builder $query): void
     {

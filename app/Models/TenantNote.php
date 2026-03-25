@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\TenantNoteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +32,7 @@ use Illuminate\Support\Carbon;
  */
 class TenantNote extends Model
 {
+    /** @use HasFactory<TenantNoteFactory> */
     use HasFactory;
 
     protected $connection = 'central';

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Database\Factories\HolidayFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -48,6 +49,7 @@ use Illuminate\Support\Facades\Date;
  */
 class Holiday extends Model
 {
+    /** @use HasFactory<HolidayFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -91,12 +93,14 @@ class Holiday extends Model
         return now()->isAfter($this->start_prep_by) && $this->date->isFuture();
     }
 
+    /** @param Builder<Holiday> $query */
     #[Scope]
     protected function upcoming(Builder $query): void
     {
         $query->where('date', '>=', Date::today())->orderBy('date');
     }
 
+    /** @param Builder<Holiday> $query */
     #[Scope]
     protected function active(Builder $query): void
     {
