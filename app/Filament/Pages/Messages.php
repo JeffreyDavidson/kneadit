@@ -69,7 +69,7 @@ class Messages extends Page
 
     public function sendReply(): void
     {
-        $this->validate(['replyBody' => 'required|string|min:1']);
+        $this->validate(['replyBody' => ['required', 'string', 'min:1']]);
 
         $parent = PlatformMessage::query()->findOrFail($this->viewingMessage);
         $tenant = Filament::getTenant();

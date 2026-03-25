@@ -3,15 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Models\Survey;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class SurveyResults extends Page implements HasForms
+class SurveyResults extends Page
 {
-    use InteractsWithForms;
-
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';

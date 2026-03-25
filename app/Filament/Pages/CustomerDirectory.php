@@ -10,8 +10,6 @@ use App\Models\Order;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
@@ -21,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
-class CustomerDirectory extends Page implements HasForms
+class CustomerDirectory extends Page
 {
     use HasPlanGating, RequiresRole;
 
@@ -33,8 +31,6 @@ class CustomerDirectory extends Page implements HasForms
     protected static string $requiredPlan = 'growth';
 
     protected static bool $shouldRegisterNavigation = false;
-
-    use InteractsWithForms;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 

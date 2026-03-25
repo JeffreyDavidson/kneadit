@@ -9,13 +9,11 @@ use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class InstagramCaptionGenerator extends Page implements HasForms
+class InstagramCaptionGenerator extends Page
 {
     use HasPlanGating, RequiresRole;
 
@@ -25,8 +23,6 @@ class InstagramCaptionGenerator extends Page implements HasForms
     }
 
     protected static string $requiredPlan = 'pro';
-
-    use InteractsWithForms;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCamera;
 

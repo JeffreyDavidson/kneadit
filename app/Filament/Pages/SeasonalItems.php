@@ -86,9 +86,9 @@ class SeasonalItems extends Page
     public function addSeasonalItem(): void
     {
         $this->validate([
-            'product_id' => 'required|exists:products,id',
-            'available_from' => 'required|date',
-            'available_until' => 'required|date|after:available_from',
+            'product_id' => ['required', 'exists:products,id'],
+            'available_from' => ['required', 'date'],
+            'available_until' => ['required', 'date', 'after:available_from'],
         ]);
 
         SeasonalItem::query()->create([
