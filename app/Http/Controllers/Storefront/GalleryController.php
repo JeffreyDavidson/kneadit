@@ -8,7 +8,6 @@ use App\Models\CustomerPhoto;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
@@ -27,7 +26,6 @@ class GalleryController extends Controller
 
     public function store(StoreGalleryPhotoRequest $request): RedirectResponse
     {
-        // Validation handled by Form Request
 
         $path = $request->file('photo')->store('customer-photos', 'public');
 

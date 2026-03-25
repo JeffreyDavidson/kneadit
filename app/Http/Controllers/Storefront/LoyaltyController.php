@@ -8,7 +8,6 @@ use App\Models\Customer;
 use App\Models\LoyaltyReward;
 use App\Models\Setting;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 
 class LoyaltyController extends Controller
 {
@@ -28,7 +27,6 @@ class LoyaltyController extends Controller
 
     public function store(RedeemLoyaltyRewardRequest $request): View
     {
-        // Validation handled by Form Request
 
         $customer = Customer::where('email', $request->email)->first();
         try {

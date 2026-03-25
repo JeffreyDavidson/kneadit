@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -18,12 +17,10 @@ class LoginController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Validation handled by Form Request
-
-        $credentials = $request->only('email', 'password');
+        $validated = $request->validated();
         $remember = $request->boolean('remember');
 
-        if (! Auth::attempt($credentials, $remember)) {
+        if (! Auth::attempt($validated, $remember)) {
             return back()->withErrors([
                 'email' => 'These credentials do not match our records.',
             ])->onlyInput('email');
@@ -33,17 +30,14 @@ class LoginController extends Controller
 
         $user = Auth::user();
 
-        // If no subscription, go to billing
         if (! $user->subscribed('default')) {
-            return redirect('/billing/plans');
+            return to_route('billing.plans');
         }
 
-        // If subscribed but no tenant (not onboarded), go to onboarding
         if ($user->tenants()->count() === 0) {
-            return redirect('/onboarding');
+            return to_route('onboarding');
         }
 
-        // Fully set up — go to tenant admin
         $tenant = $user->tenants()->first();
 
         return redirect("https://{$tenant->id}.".config('app.central_domain', 'getkneadit.app').'/admin');

@@ -27,18 +27,7 @@ class OnboardingController extends Controller
 
     public function store(StoreOnboardingRequest $request): RedirectResponse
     {
-        $rules = [
-            'store_name' => 'required|string|max:255',
-            'subdomain' => 'required|string|max:63|alpha_dash|not_in:www,mail,admin,api,app,blog,cdn,dev,ftp,help,imap,login,mx,ns,pop,smtp,staging,status,support,test,webmail|unique:domains,domain',
-            'storefront_choice' => 'required|in:kneadit,own',
-        ];
-
-        // Only require external_website when they chose "own"
-        if ($request->input('storefront_choice') === 'own') {
-            $rules['external_website'] = 'required|url|max:255';
-        }
-
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
 
         $subdomain = Str::lower($validated['subdomain']);
         $useKneadItStorefront = $validated['storefront_choice'] === 'kneadit';

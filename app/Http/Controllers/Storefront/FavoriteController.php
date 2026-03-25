@@ -33,7 +33,6 @@ class FavoriteController extends Controller
      */
     public function store(StoreApiFavoriteRequest $request): JsonResponse
     {
-        // Validation handled by Form Request
 
         $existing = CustomerFavorite::where('customer_email', $request->email)
             ->where('product_id', $request->product_id)

@@ -12,7 +12,6 @@ class FavoriteController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        // Validation handled by Form Request
 
         $productIds = CustomerFavorite::forCustomer($request->input('email'))
             ->pluck('product_id');

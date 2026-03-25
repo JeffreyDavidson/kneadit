@@ -7,19 +7,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ApplyCouponRequest;
 use App\Services\CouponService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ApplyCouponController extends Controller
 {
-    /**
-     * Validate and apply a coupon code via AJAX.
-     */
-    public function __invoke(ApplyCouponRequest $request): JsonResponse
+    public function __invoke(ApplyCouponRequest $request, CouponService $couponService): JsonResponse
     {
-        // Validation handled by Form Request
-
-        $couponService = new CouponService;
-        $result = $couponService->validate($request->input('code'), (float) $request->input('subtotal'));
+        $validated = $request->validated();
+        $result = $couponService->validate($validated['code'], (float) $validated['subtotal']);
 
         if (! $result['valid']) {
             return response()->json(['error' => $result['error']], 422);

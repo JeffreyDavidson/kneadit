@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreReviewRequest;
 use App\Models\Order;
 use App\Models\Review;
 use App\Models\Setting;
@@ -20,7 +21,7 @@ class ReviewController extends Controller
         return view('submit-review', compact('order', 'storeName', 'prefilledRating'));
     }
 
-    public function store(Order $order, Request $request): View
+    public function store(Order $order, StoreReviewRequest $request): View
     {
         $validated = $request->validated();
 
