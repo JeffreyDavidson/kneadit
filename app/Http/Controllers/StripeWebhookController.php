@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Cashier\Http\Controllers\WebhookController;
+use Symfony\Component\HttpFoundation\Response;
 
 class StripeWebhookController extends WebhookController
 {
@@ -47,13 +48,13 @@ class StripeWebhookController extends WebhookController
      * Handle customer subscription updated.
      * Syncs plan changes from Stripe to tenant record.
      */
-    protected function handleCustomerSubscriptionUpdated(array $payload): void
+    protected function handleCustomerSubscriptionUpdated(array $payload): ?Response
     {
         if ($this->alreadyProcessed($payload)) {
-            return;
+            return null;
         }
 
-        parent::handleCustomerSubscriptionUpdated($payload);
+        $response = parent::handleCustomerSubscriptionUpdated($payload);
 
         $subscription = $payload['data']['object'] ?? [];
         $stripeCustomerId = $subscription['customer'] ?? null;
@@ -61,17 +62,17 @@ class StripeWebhookController extends WebhookController
         $status = $subscription['status'] ?? null;
 
         if (! $stripeCustomerId || ! $stripePriceId) {
-            return;
+            return null;
         }
 
         $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
         if (! $user) {
-            return;
+            return null;
         }
 
         $tenant = Tenant::query()->where('email', $user->email)->first();
         if (! $tenant) {
-            return;
+            return null;
         }
 
         // Map Stripe price ID back to plan name
@@ -89,6 +90,8 @@ class StripeWebhookController extends WebhookController
         }
 
         $this->markProcessed($payload);
+
+        return $response;
     }
 
     /**
@@ -154,25 +157,26 @@ class StripeWebhookController extends WebhookController
         }
 
         $this->markProcessed($payload);
+
     }
 
     /**
      * Handle customer subscription deleted (fully canceled).
      */
-    protected function handleCustomerSubscriptionDeleted(array $payload): void
+    protected function handleCustomerSubscriptionDeleted(array $payload): ?Response
     {
         if ($this->alreadyProcessed($payload)) {
-            return;
+            return null;
         }
 
-        parent::handleCustomerSubscriptionDeleted($payload);
+        $response = parent::handleCustomerSubscriptionDeleted($payload);
 
         $subscription = $payload['data']['object'] ?? [];
         $stripeCustomerId = $subscription['customer'] ?? null;
 
         $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
         if (! $user) {
-            return;
+            return null;
         }
 
         $tenant = Tenant::query()->where('email', $user->email)->first();
@@ -181,6 +185,8 @@ class StripeWebhookController extends WebhookController
         }
 
         $this->markProcessed($payload);
+
+        return $response;
     }
 
     protected function priceIdToPlan(string $priceId): ?string

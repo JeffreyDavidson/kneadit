@@ -73,7 +73,7 @@ class Holiday extends Model
 
     protected function getDaysAwayAttribute(): int
     {
-        return now()->diffInDays($this->date, false);
+        return (int) now()->diffInDays($this->date, false);
     }
 
     protected function getStartPrepByAttribute(): Carbon

@@ -30,7 +30,7 @@ class MenuController extends Controller
                     'price' => $p->price,
                     'image' => $p->image,
                     'is_featured' => $p->is_featured,
-                ]),
+                ])->all(),
             ]);
 
         return response()->json([
