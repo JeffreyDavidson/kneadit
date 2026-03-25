@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CapacityLimits\Tables;
 
+use App\Enums\DayOfWeek;
 use App\Models\CapacityLimit;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -16,8 +17,6 @@ class CapacityLimitsTable
 {
     public static function configure(Table $table): Table
     {
-        $dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
         return $table
             ->heading('Capacity Limits')
             ->emptyStateHeading('No capacity limits set')
@@ -26,13 +25,17 @@ class CapacityLimitsTable
             ->columns([
                 TextColumn::make('day_label')
                     ->label('Day / Date')
-                    ->sortable(query: fn (Builder $query, string $direction) => $query->orderByRaw('COALESCE(specific_date, day_of_week) '.$direction))
-                    ->getStateUsing(function (CapacityLimit $record) use ($dayNames) {
+                    ->sortable(query: fn (Builder $query, string $direction) => $query
+                        ->orderByRaw('COALESCE(specific_date, day_of_week) '.($direction === 'desc' ? 'desc' : 'asc'))
+                    )
+                    ->getStateUsing(function (CapacityLimit $record) {
                         if ($record->specific_date) {
                             return $record->specific_date->format('D, M j, Y');
                         }
 
-                        return $dayNames[$record->day_of_week] ?? '—';
+                        $day = DayOfWeek::tryFrom($record->day_of_week);
+
+                        return $day?->label() ?? '—';
                     }),
 
                 TextColumn::make('max_orders')

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GalleryPhotos\Schemas;
 
+use App\Enums\GalleryCategory;
 use Filament\Schemas\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -15,24 +16,18 @@ class GalleryPhotoForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Section::make('Photo Information')
-                    ->schema([
+                    ->columnSpanFull()
+                    ->components([
                         Grid::make(2)
-                            ->schema([
+                            ->components([
                                 TextInput::make('title')
                                     ->required()
                                     ->maxLength(255),
 
                                 Select::make('category')
-                                    ->options([
-                                        'products' => 'Products',
-                                        'bakery' => 'Bakery Interior',
-                                        'team' => 'Team',
-                                        'events' => 'Events',
-                                        'process' => 'Baking Process',
-                                        'other' => 'Other',
-                                    ])
+                                    ->options(GalleryCategory::class)
                                     ->placeholder('Select a category')
                                     ->searchable(),
 
