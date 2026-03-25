@@ -3,11 +3,25 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * @property-read Collection<int, Ingredient> $ingredients
+ * @property-read int|null $ingredients_count
+ *
+ * @method static \Database\Factories\SupplierFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier query()
+ *
+ * @property-read Pivot|null $pivot
+ *
+ * @mixin \Eloquent
+ */
 class Supplier extends Model
 {
     use HasFactory;

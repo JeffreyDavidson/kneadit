@@ -8,6 +8,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read Product|null $product
+ *
+ * @method static Builder<static>|CustomerPhoto approved()
+ * @method static \Database\Factories\CustomerPhotoFactory factory($count = null, $state = [])
+ * @method static Builder<static>|CustomerPhoto featured()
+ * @method static Builder<static>|CustomerPhoto newModelQuery()
+ * @method static Builder<static>|CustomerPhoto newQuery()
+ * @method static Builder<static>|CustomerPhoto query()
+ *
+ * @mixin \Eloquent
+ */
 class CustomerPhoto extends Model
 {
     use HasFactory;

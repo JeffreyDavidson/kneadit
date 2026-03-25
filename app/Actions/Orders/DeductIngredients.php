@@ -21,7 +21,9 @@ class DeductIngredients
 
                 foreach ($product->recipes as $recipe) {
                     foreach ($recipe->inventoryIngredients as $ingredient) {
-                        $qty = $ingredient->pivot->quantity * $orderItem->quantity;
+                        /** @var object{quantity: string, unit: string} $pivot */
+                        $pivot = $ingredient->pivot;
+                        $qty = (float) $pivot->quantity * $orderItem->quantity;
                         $ingredient->adjustStock(
                             -$qty,
                             'usage',

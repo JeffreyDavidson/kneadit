@@ -4,8 +4,34 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
+/**
+ * @property int $id
+ * @property string $tenant_id
+ * @property string $feature
+ * @property int $usage_count
+ * @property Carbon|null $last_used_at
+ * @property Carbon $date
+ * @property Carbon|null $created_at
+ *
+ * @method static \Database\Factories\FeatureUsageLogFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog whereFeature($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog whereLastUsedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog whereTenantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog whereUsageCount($value)
+ *
+ * @property-read int|null $total
+ *
+ * @mixin \Eloquent
+ */
 class FeatureUsageLog extends Model
 {
     use HasFactory;

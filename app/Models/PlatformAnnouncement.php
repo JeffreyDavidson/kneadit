@@ -6,7 +6,40 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $body
+ * @property string $type
+ * @property array<array-key, mixed>|null $target_plans
+ * @property bool $is_active
+ * @property Carbon|null $starts_at
+ * @property Carbon|null $ends_at
+ * @property bool $is_dismissable
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @method static Builder<static>|PlatformAnnouncement active()
+ * @method static \Database\Factories\PlatformAnnouncementFactory factory($count = null, $state = [])
+ * @method static Builder<static>|PlatformAnnouncement newModelQuery()
+ * @method static Builder<static>|PlatformAnnouncement newQuery()
+ * @method static Builder<static>|PlatformAnnouncement query()
+ * @method static Builder<static>|PlatformAnnouncement whereBody($value)
+ * @method static Builder<static>|PlatformAnnouncement whereCreatedAt($value)
+ * @method static Builder<static>|PlatformAnnouncement whereEndsAt($value)
+ * @method static Builder<static>|PlatformAnnouncement whereId($value)
+ * @method static Builder<static>|PlatformAnnouncement whereIsActive($value)
+ * @method static Builder<static>|PlatformAnnouncement whereIsDismissable($value)
+ * @method static Builder<static>|PlatformAnnouncement whereStartsAt($value)
+ * @method static Builder<static>|PlatformAnnouncement whereTargetPlans($value)
+ * @method static Builder<static>|PlatformAnnouncement whereTitle($value)
+ * @method static Builder<static>|PlatformAnnouncement whereType($value)
+ * @method static Builder<static>|PlatformAnnouncement whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
+ */
 class PlatformAnnouncement extends Model
 {
     use HasFactory;

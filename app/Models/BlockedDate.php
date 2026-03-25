@@ -6,6 +6,14 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static \Database\Factories\BlockedDateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate query()
+ *
+ * @mixin \Eloquent
+ */
 class BlockedDate extends Model
 {
     use HasFactory;

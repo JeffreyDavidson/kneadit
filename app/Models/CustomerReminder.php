@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read Customer|null $customer
+ *
+ * @method static \Database\Factories\CustomerReminderFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerReminder newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerReminder newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerReminder query()
+ *
+ * @mixin \Eloquent
+ */
 class CustomerReminder extends Model
 {
     use HasFactory;

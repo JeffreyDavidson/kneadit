@@ -4,11 +4,50 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property string $tenant_id
+ * @property string $sender_type
+ * @property string $subject
+ * @property string $body
+ * @property bool $is_read
+ * @property Carbon|null $read_at
+ * @property int|null $parent_id
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read PlatformMessage|null $parent
+ * @property-read Collection<int, PlatformMessage> $replies
+ * @property-read int|null $replies_count
+ * @property-read Tenant $tenant
+ *
+ * @method static \Database\Factories\PlatformMessageFactory factory($count = null, $state = [])
+ * @method static Builder<static>|PlatformMessage fromAdmin()
+ * @method static Builder<static>|PlatformMessage fromTenant()
+ * @method static Builder<static>|PlatformMessage newModelQuery()
+ * @method static Builder<static>|PlatformMessage newQuery()
+ * @method static Builder<static>|PlatformMessage query()
+ * @method static Builder<static>|PlatformMessage topLevel()
+ * @method static Builder<static>|PlatformMessage unread()
+ * @method static Builder<static>|PlatformMessage whereBody($value)
+ * @method static Builder<static>|PlatformMessage whereCreatedAt($value)
+ * @method static Builder<static>|PlatformMessage whereId($value)
+ * @method static Builder<static>|PlatformMessage whereIsRead($value)
+ * @method static Builder<static>|PlatformMessage whereParentId($value)
+ * @method static Builder<static>|PlatformMessage whereReadAt($value)
+ * @method static Builder<static>|PlatformMessage whereSenderType($value)
+ * @method static Builder<static>|PlatformMessage whereSubject($value)
+ * @method static Builder<static>|PlatformMessage whereTenantId($value)
+ * @method static Builder<static>|PlatformMessage whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
+ */
 class PlatformMessage extends Model
 {
     use HasFactory;

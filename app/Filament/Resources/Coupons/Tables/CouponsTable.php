@@ -75,6 +75,7 @@ class CouponsTable
                         'maxed_out' => 'Max Uses Reached',
                     ])
                     ->query(function (Builder $query, array $state) {
+                        /** @var Builder<Coupon> $query */
                         return match ($state) {
                             'valid' => $query->valid(),
                             'expired' => $query->where('expires_at', '<', now()),

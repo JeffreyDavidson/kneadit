@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read Ingredient|null $ingredient
+ *
+ * @method static \Database\Factories\StockAdjustmentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockAdjustment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockAdjustment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StockAdjustment query()
+ *
+ * @mixin \Eloquent
+ */
 class StockAdjustment extends Model
 {
     use HasFactory;

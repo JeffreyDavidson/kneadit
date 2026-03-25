@@ -6,10 +6,24 @@ use App\Enums\GiftCardStatus;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read GiftCardStatus $status
+ * @property-read Collection<int, GiftCardTransaction> $transactions
+ * @property-read int|null $transactions_count
+ *
+ * @method static \Database\Factories\GiftCardFactory factory($count = null, $state = [])
+ * @method static Builder<static>|GiftCard newModelQuery()
+ * @method static Builder<static>|GiftCard newQuery()
+ * @method static Builder<static>|GiftCard query()
+ * @method static Builder<static>|GiftCard usable()
+ *
+ * @mixin \Eloquent
+ */
 class GiftCard extends Model
 {
     use HasFactory;

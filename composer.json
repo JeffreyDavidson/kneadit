@@ -19,6 +19,7 @@
         "stancl/tenancy": "^3.9"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.7",
         "driftingly/rector-laravel": "^2.1",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.9",

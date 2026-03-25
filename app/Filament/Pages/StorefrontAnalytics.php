@@ -164,7 +164,7 @@ class StorefrontAnalytics extends Page
             ['label' => 'Completed Orders', 'count' => $completedOrders],
         ];
 
-        $maxCount = max(array_column($funnel, 'count'), [1]);
+        $maxCount = max(array_column($funnel, 'count')) ?: 1;
         $maxVal = max($maxCount, 1);
 
         foreach ($funnel as $i => &$step) {

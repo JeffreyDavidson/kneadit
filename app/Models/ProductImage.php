@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read Product|null $product
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductImage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductImage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductImage query()
+ *
+ * @mixin \Eloquent
+ */
 class ProductImage extends Model
 {
     use HasFactory;

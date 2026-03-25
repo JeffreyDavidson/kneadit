@@ -8,6 +8,19 @@ use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property CateringInquiryStatus $status
+ * @property CateringEventType $event_type
+ * @property-read string $event_type_label
+ * @property-read string $status_label
+ *
+ * @method static \Database\Factories\CateringInquiryFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry query()
+ *
+ * @mixin \Eloquent
+ */
 class CateringInquiry extends Model
 {
     use HasFactory;

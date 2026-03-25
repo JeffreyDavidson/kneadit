@@ -119,6 +119,7 @@ class IngredientsTable
                                 ->maxLength(255),
                         ])
                         ->action(function (Collection $records, array $data) {
+                            /** @var Collection<int, Ingredient> $records */
                             foreach ($records as $ingredient) {
                                 $ingredient->adjustStock((float) $data['quantity'], 'purchase', $data['notes'] ?? null);
                             }

@@ -8,6 +8,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @property-read string $url
+ *
+ * @method static \Database\Factories\BlogPostFactory factory($count = null, $state = [])
+ * @method static Builder<static>|BlogPost newModelQuery()
+ * @method static Builder<static>|BlogPost newQuery()
+ * @method static Builder<static>|BlogPost published()
+ * @method static Builder<static>|BlogPost query()
+ *
+ * @mixin \Eloquent
+ */
 class BlogPost extends Model
 {
     use HasFactory;

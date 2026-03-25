@@ -3,12 +3,30 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * @property-read Collection<int, Recipe> $recipes
+ * @property-read int|null $recipes_count
+ * @property-read Collection<int, StockAdjustment> $stockAdjustments
+ * @property-read int|null $stock_adjustments_count
+ * @property-read Collection<int, Supplier> $suppliers
+ * @property-read int|null $suppliers_count
+ *
+ * @method static \Database\Factories\IngredientFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient query()
+ *
+ * @property-read Pivot|null $pivot
+ *
+ * @mixin \Eloquent
+ */
 class Ingredient extends Model
 {
     use HasFactory;

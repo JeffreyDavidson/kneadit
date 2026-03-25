@@ -5,6 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property-read string $source_label
+ *
+ * @method static \Database\Factories\IncomeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Income newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Income newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Income query()
+ *
+ * @mixin \Eloquent
+ */
 class Income extends Model
 {
     use HasFactory;

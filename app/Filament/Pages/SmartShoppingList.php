@@ -100,17 +100,20 @@ class SmartShoppingList extends Page
                 ->sortBy('pivot.unit_price')
                 ->first();
 
+            /** @var object{unit_price?: string, minimum_order?: string, lead_time_days?: int, sku?: string}|null $pivot */
+            $pivot = $bestSupplier?->pivot;
+
             $item = [
                 'ingredient_id' => $ingredient->id,
                 'name' => $ingredient->name,
                 'unit' => $ingredient->unit,
                 'current_stock' => $ingredient->current_stock,
                 'needed' => round($neededQty, 2),
-                'unit_price' => $bestSupplier?->pivot->unit_price ?? $ingredient->cost_per_unit ?? 0,
-                'subtotal' => round($neededQty * ($bestSupplier?->pivot->unit_price ?? $ingredient->cost_per_unit ?? 0), 2),
-                'sku' => $bestSupplier?->pivot->sku,
-                'minimum_order' => $bestSupplier?->pivot->minimum_order,
-                'lead_time_days' => $bestSupplier?->pivot->lead_time_days,
+                'unit_price' => $pivot->unit_price ?? $ingredient->cost_per_unit ?? 0,
+                'subtotal' => round($neededQty * ($pivot->unit_price ?? $ingredient->cost_per_unit ?? 0), 2),
+                'sku' => $pivot?->sku,
+                'minimum_order' => $pivot?->minimum_order,
+                'lead_time_days' => $pivot?->lead_time_days,
             ];
 
             if ($bestSupplier) {
