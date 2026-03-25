@@ -30,3 +30,4 @@ Thumbs.db
 database/tenant*
 test_central.sqlite*
 .env.backup-*
+.ai/
