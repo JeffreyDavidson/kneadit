@@ -18,6 +18,7 @@ class PurchaseOrder extends Mailable implements ShouldQueue
 
     use Queueable, SerializesModels;
 
+    /** @param array<int, array<string, mixed>> $items */
     public function __construct(
         public string $supplierName,
         public string $storeName,

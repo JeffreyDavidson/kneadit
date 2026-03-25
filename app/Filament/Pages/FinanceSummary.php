@@ -59,6 +59,7 @@ class FinanceSummary extends Page
 
     public float $revenueCapProgress = 0;
 
+    /** @var Collection<int, mixed> */
     public Collection $monthlyBreakdown;
 
     /** @var Collection<int, mixed> */

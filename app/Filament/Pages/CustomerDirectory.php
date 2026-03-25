@@ -58,6 +58,7 @@ class CustomerDirectory extends Page
 
     public string $search = '';
 
+    /** @var array<string, mixed> */
     public ?array $noteData = [];
 
     public function mount(): void
@@ -65,6 +66,7 @@ class CustomerDirectory extends Page
         $this->noteForm->fill();
     }
 
+    /** @return array<string, mixed> */
     public function loadCustomerDetails(int $customerId): ?array
     {
         return $this->getCustomerDetails($customerId);
@@ -146,6 +148,7 @@ class CustomerDirectory extends Page
         });
     }
 
+    /** @return array<string, mixed> */
     public function getCustomerDetails(int $customerId): ?array
     {
         $customer = Customer::with([

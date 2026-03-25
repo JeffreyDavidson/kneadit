@@ -29,10 +29,13 @@ class WeeklyDigest extends Mailable implements ShouldQueue
     use BakerBranded;
     use Queueable, SerializesModels;
 
+    /** @var array<string, mixed> */
     public array $stats;
 
+    /** @var Collection<int, OrderItem> */
     public Collection $topProducts;
 
+    /** @var Collection<int, Customer> */
     public Collection $atRiskCustomers;
 
     public int $upcomingCount;

@@ -55,6 +55,7 @@ class PlatformActivity extends Model
         ];
     }
 
+    /** @param array<string, mixed> $metadata */
     public static function log(string $event, ?string $tenantId, string $description, ?array $metadata = null): static
     {
         return static::query()->create([

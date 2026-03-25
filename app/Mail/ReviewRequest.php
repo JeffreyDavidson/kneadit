@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,6 +31,7 @@ class ReviewRequest extends Mailable implements ShouldQueue
 
     public string $reviewUrl;
 
+    /** @var Collection<int, OrderItem> */
     public Collection $orderItems;
 
     public function __construct(Order $order)

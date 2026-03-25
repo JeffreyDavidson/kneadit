@@ -38,6 +38,7 @@ class PlatformSetting extends Model
         'value',
     ];
 
+    /** @var array<string, mixed> */
     protected static ?array $cache = null;
 
     public static function get(string $key, mixed $default = null): mixed

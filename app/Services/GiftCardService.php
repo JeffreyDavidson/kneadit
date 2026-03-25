@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 class GiftCardService
 {
+    /** @param array<string, mixed> $data */
     public function create(array $data): GiftCard
     {
         $card = GiftCard::query()->create([

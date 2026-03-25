@@ -56,6 +56,7 @@ class PricingEngine extends Page
 
     public string $positioning = 'standard';
 
+    /** @var array<string, mixed> */
     public ?array $result = null;
 
     public function mount(): void

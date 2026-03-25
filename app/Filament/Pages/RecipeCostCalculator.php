@@ -55,6 +55,7 @@ class RecipeCostCalculator extends Page
 
     public float $suggestedPrice = 0.0;
 
+    /** @var Collection<int, mixed> */
     public Collection $recipes;
 
     public function mount(): void

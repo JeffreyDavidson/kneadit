@@ -207,6 +207,7 @@ class Order extends Model
         $query->whereNotIn('status', [OrderStatus::Cancelled]);
     }
 
+    /** @param Builder<Order> $query */
     #[Scope]
     protected function byStatus(Builder $query, OrderStatus $status): void
     {

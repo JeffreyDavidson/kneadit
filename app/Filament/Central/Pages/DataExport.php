@@ -22,6 +22,7 @@ class DataExport extends Page
 
     public ?string $selectedTenant = null;
 
+    /** @var array<string, mixed> */
     public array $counts = [];
 
     /** @return array<string, mixed> */

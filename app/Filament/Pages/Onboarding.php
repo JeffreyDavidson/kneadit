@@ -79,6 +79,7 @@ class Onboarding extends Page
 
     public ?string $brand_color_secondary = '#d4a574';
 
+    /** @var array<string, mixed> */
     public ?array $store_logo = [];
 
     // Step 4: First Product
@@ -162,6 +163,7 @@ class Onboarding extends Page
     public ?string $pickup_instructions = '';
 
     // Step 8: PayPal Connection
+    /** @var array<int, string>|null */
     public ?array $payment_methods = ['cash'];
 
     public ?string $paypal_client_id = '';

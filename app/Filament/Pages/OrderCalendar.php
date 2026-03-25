@@ -46,8 +46,10 @@ class OrderCalendar extends Page
 
     public int $currentMonth;
 
+    /** @var Collection<int, mixed> */
     public Collection $orderCounts;
 
+    /** @var Collection<int, mixed> */
     public Collection $selectedDayOrders;
 
     public ?string $selectedDate = null;

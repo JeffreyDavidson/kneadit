@@ -45,6 +45,7 @@ class DeliveryRoutePlanner extends Page
 
     public ?string $selectedDate = null;
 
+    /** @var Collection<int, mixed> */
     public Collection $deliveryOrders;
 
     public ?string $storeAddress = null;

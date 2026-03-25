@@ -17,6 +17,7 @@ class StripeWebhookController extends WebhookController
      * Check if a Stripe event has already been processed.
      * Returns true if the event should be skipped.
      */
+    /** @param array<string, mixed> $payload */
     protected function alreadyProcessed(array $payload): bool
     {
         $eventId = $payload['id'] ?? null;
@@ -33,6 +34,7 @@ class StripeWebhookController extends WebhookController
      * Handle customer subscription updated.
      * Syncs plan changes from Stripe to tenant record.
      */
+    /** @param array<string, mixed> $payload */
     protected function handleCustomerSubscriptionUpdated(array $payload): ?Response
     {
         if ($this->alreadyProcessed($payload)) {
@@ -81,6 +83,7 @@ class StripeWebhookController extends WebhookController
      * Handle invoice payment failed.
      * Alerts the baker and platform.
      */
+    /** @param array<string, mixed> $payload */
     protected function handleInvoicePaymentFailed(array $payload): void
     {
         if ($this->alreadyProcessed($payload)) {
@@ -144,6 +147,7 @@ class StripeWebhookController extends WebhookController
     /**
      * Handle customer subscription deleted (fully canceled).
      */
+    /** @param array<string, mixed> $payload */
     protected function handleCustomerSubscriptionDeleted(array $payload): ?Response
     {
         if ($this->alreadyProcessed($payload)) {

@@ -59,6 +59,7 @@ class QuickOrder extends Page
 
     protected static ?int $navigationSort = 7;
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
     public function mount(): void

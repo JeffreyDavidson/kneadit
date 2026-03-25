@@ -56,6 +56,7 @@ class SmartShoppingList extends Page
 
     public bool $includeUpcoming = false;
 
+    /** @var Collection<int|string, mixed> */
     public Collection $supplierGroups;
 
     public function mount(): void

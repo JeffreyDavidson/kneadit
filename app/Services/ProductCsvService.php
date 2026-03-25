@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class ProductCsvService
 {
+    /** @var array<int, string> */
     protected array $headers = [
         'name',
         'category',

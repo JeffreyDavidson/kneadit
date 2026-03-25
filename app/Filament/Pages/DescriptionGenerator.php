@@ -51,6 +51,7 @@ class DescriptionGenerator extends Page
 
     public string $length = 'medium';
 
+    /** @var array<int, string> */
     public array $descriptions = [];
 
     /** @return Collection<int, mixed> */

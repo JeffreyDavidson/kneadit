@@ -94,6 +94,7 @@ class TaxExport extends Page
         ];
     }
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
     /** @return array<int, Component> */
@@ -166,6 +167,7 @@ class TaxExport extends Page
         return $allYears->mapWithKeys(fn (int $y) => [$y => (string) $y])->all();
     }
 
+    /** @param array<string, mixed> $data */
     protected function generateExport(array $data): StreamedResponse
     {
         $year = (int) $data['year'];

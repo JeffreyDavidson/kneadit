@@ -112,6 +112,11 @@ class ProfitAnalysis extends Page
     }
 
     /** @return Collection<int, mixed> */
+    /** @param Collection<int, mixed> $products */
+    /**
+     * @param  Collection<int, mixed>  $products
+     * @return Collection<int, mixed>
+     */
     private function sortProducts(Collection $products): Collection
     {
         switch ($this->sortBy) {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
+use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -61,6 +62,7 @@ use Laravel\Cashier\Subscription;
  */
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
+    /** @use HasFactory<UserFactory> */
     use Billable, HasFactory, Notifiable;
 
     protected $fillable = [

@@ -95,6 +95,7 @@ class HealthCheck extends Command
         return Command::SUCCESS;
     }
 
+    /** @param array<int, string> $issues */
     protected function alertOnIssues(array $issues): void
     {
         $issueText = implode("\n- ", $issues);

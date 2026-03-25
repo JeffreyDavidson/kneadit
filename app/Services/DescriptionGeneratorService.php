@@ -4,6 +4,7 @@ namespace App\Services;
 
 class DescriptionGeneratorService
 {
+    /** @var array<string, mixed> */
     protected array $templates = [
         'professional' => [
             'Our {product} is crafted with precision and the finest ingredients, delivering a {adjective} experience that sets the standard for artisan {category}.',
@@ -47,6 +48,7 @@ class DescriptionGeneratorService
         ],
     ];
 
+    /** @var array<string, mixed> */
     protected array $adjectives = [
         'breads' => ['crusty', 'golden', 'aromatic', 'hearty', 'rustic'],
         'bread' => ['crusty', 'golden', 'aromatic', 'hearty', 'rustic'],
@@ -60,6 +62,7 @@ class DescriptionGeneratorService
         'pie' => ['seasonal', 'fruity', 'golden-crusted', 'homestyle', 'warming'],
     ];
 
+    /** @var array<int, string> */
     protected array $defaultAdjectives = ['fresh', 'handcrafted', 'artisan', 'delicious', 'premium'];
 
     /** @return array<int, string> */
@@ -90,6 +93,7 @@ class DescriptionGeneratorService
         return $descriptions;
     }
 
+    /** @param array<string, mixed> $adjectives */
     protected function adjustLength(string $base, string $length, string $product, string $category, array $adjectives): string
     {
         return match (strtolower($length)) {
@@ -114,6 +118,7 @@ class DescriptionGeneratorService
         return $text;
     }
 
+    /** @param array<string, mixed> $adjectives */
     protected function toLong(string $base, string $product, string $category, array $adjectives): string
     {
         $extras = [
