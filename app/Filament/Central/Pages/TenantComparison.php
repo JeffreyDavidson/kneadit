@@ -23,6 +23,7 @@ class TenantComparison extends Page
 
     public string $activeTab = 'compare';
 
+    /** @var array<string, mixed> */
     public array $selectedTenants = [];
 
     public function mount(): void
@@ -104,6 +105,7 @@ class TenantComparison extends Page
         return $results;
     }
 
+    /** @param array<string, mixed> $data */
     protected function calculateHealthScore(Tenant $tenant, array $data): int
     {
         $score = 0;

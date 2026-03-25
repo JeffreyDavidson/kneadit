@@ -27,6 +27,7 @@ class Setting extends Model
         'value',
     ];
 
+    /** @var array<string, mixed> */
     protected static array $cache = [];
 
     /**

@@ -27,8 +27,10 @@ class BakeryInsights extends Page
 
     public string $activeTab = 'health';
 
+    /** @var array<string, mixed> */
     public array $extendedTrials = [];
 
+    /** @var array<string, mixed> */
     public array $sentNudges = [];
 
     // ── Health Tab Methods ──

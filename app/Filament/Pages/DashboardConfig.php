@@ -20,10 +20,12 @@ class DashboardConfig extends Page
 
     protected string $view = 'filament.pages.dashboard-config';
 
+    /** @var array<int, mixed> */
     public array $widgets = [];
 
     public bool $showPreview = false;
 
+    /** @var array<string, mixed> */
     protected array $widgetMeta = [
         // Core
         'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋', 'defaultSpan' => 3],
@@ -125,7 +127,7 @@ class DashboardConfig extends Page
         $item = $this->widgets[$oldIndex];
         array_splice($this->widgets, $oldIndex, 1);
         array_splice($this->widgets, $newIndex, 0, [$item]);
-        $this->widgets = array_values($this->widgets);
+        // widgets is already a list
     }
 
     public function togglePreview(): void

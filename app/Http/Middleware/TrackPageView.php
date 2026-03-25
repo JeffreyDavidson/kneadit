@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TrackPageView
 {
+    /** @var array<string, mixed> */
     protected array $routePageMap = [
         'storefront.menu' => 'menu',
         'storefront.home' => 'home',

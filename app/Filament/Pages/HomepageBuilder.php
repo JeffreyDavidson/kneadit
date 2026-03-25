@@ -23,8 +23,10 @@ class HomepageBuilder extends Page
 
     protected string $view = 'filament.pages.homepage-builder';
 
+    /** @var array<string, mixed> */
     public array $sections = [];
 
+    /** @var array<string, mixed> */
     protected array $sectionMeta = [
         'hero' => ['label' => 'Hero Banner', 'description' => 'Full-screen welcome banner with store name and tagline'],
         'about' => ['label' => 'About Section', 'description' => 'Brief about text for your bakery'],

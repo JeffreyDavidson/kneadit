@@ -40,6 +40,7 @@ class MaintenanceMode extends Page
 
     public ?string $maintenance_scheduled_end = null;
 
+    /** @var array<string, mixed> */
     public array $affected_services = [];
 
     public function mount(): void

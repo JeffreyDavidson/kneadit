@@ -64,6 +64,7 @@ class StorefrontAnalytics extends Page
         };
     }
 
+    /** @return Builder<PageView> */
     protected function baseQuery(): Builder
     {
         $query = PageView::query();

@@ -59,6 +59,7 @@ class StripeConnectController extends Controller
     /**
      * Check the status of a Stripe Connect account.
      */
+    /** @return array<string, mixed>|null */
     public static function getAccountStatus(): ?array
     {
         $connectId = Setting::get('stripe_connect_id');

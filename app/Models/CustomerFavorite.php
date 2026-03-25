@@ -38,6 +38,7 @@ class CustomerFavorite extends Model
         return $this->belongsTo(Product::class);
     }
 
+    /** @param Builder<CustomerFavorite> $query */
     #[Scope]
     protected function forCustomer(Builder $query, string $email): void
     {

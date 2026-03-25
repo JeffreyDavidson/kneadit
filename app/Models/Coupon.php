@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CouponType;
 use App\Traits\LogsActivity;
+use Database\Factories\CouponFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -33,6 +34,7 @@ use Illuminate\Support\Carbon;
  */
 class Coupon extends Model
 {
+    /** @use HasFactory<CouponFactory> */
     use HasFactory, LogsActivity;
 
     protected $fillable = [

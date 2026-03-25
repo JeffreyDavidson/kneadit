@@ -70,6 +70,7 @@ class WaitlistEntry extends Model
         $query->where('status', WaitlistStatus::Waiting);
     }
 
+    /** @param Builder<WaitlistEntry> $query */
     #[Scope]
     protected function forDate(Builder $query, Carbon|string $date): void
     {

@@ -11,6 +11,7 @@ class WebhookService
     /**
      * Dispatch a webhook event to the baker's configured URL.
      */
+    /** @param array<string, mixed> $payload */
     public static function dispatch(string $event, array $payload): void
     {
         $url = Setting::get('webhook_url');

@@ -43,10 +43,13 @@ class HolidayPlanningCalendar extends Page
 
     protected string $view = 'filament.pages.holiday-planning-calendar';
 
+    /** @var Collection<int, mixed> */
     public Collection $holidays;
 
+    /** @var Collection<int, mixed> */
     public Collection $upcomingHolidays;
 
+    /** @var Collection<int, mixed> */
     public Collection $inPrepPeriod;
 
     public function mount(): void

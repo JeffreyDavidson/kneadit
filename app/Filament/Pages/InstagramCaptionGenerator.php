@@ -47,8 +47,10 @@ class InstagramCaptionGenerator extends Page
 
     protected string $view = 'filament.pages.instagram-caption-generator';
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
+    /** @var array<int, array<string, mixed>> */
     public array $captions = [];
 
     public function mount(): void
@@ -118,7 +120,7 @@ class InstagramCaptionGenerator extends Page
         $this->captions = $this->generateCaptionVariations($product, $style, $tone);
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, array<string, mixed>> */
     private function generateCaptionVariations(Product $product, string $style, string $tone): array
     {
         $hooks = $this->getHooksByStyle($style);
@@ -141,7 +143,7 @@ class InstagramCaptionGenerator extends Page
         return $captions;
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, string> */
     private function getHooksByStyle(string $style): array
     {
         $hooks = [
@@ -266,7 +268,7 @@ class InstagramCaptionGenerator extends Page
         ], $template);
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, string> */
     private function getHashtagsByCategory(string $category): array
     {
         $baseHashtags = [
@@ -300,7 +302,9 @@ class InstagramCaptionGenerator extends Page
         return array_merge($baseHashtags, $categorySpecific, $generalBakeryHashtags);
     }
 
-    /** @return array<string, mixed> */
+    /** @return list<string> */
+    /** @param array<int, string> $hashtags
+     * @return list<string> */
     private function selectRandomHashtags(array $hashtags, int $count): array
     {
         shuffle($hashtags);

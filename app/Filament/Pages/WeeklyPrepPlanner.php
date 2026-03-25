@@ -44,10 +44,13 @@ class WeeklyPrepPlanner extends Page
 
     public ?string $selectedWeekStart = null;
 
+    /** @var Collection<int, mixed> */
     public Collection $weeklyOrders;
 
+    /** @var Collection<int, mixed> */
     public Collection $prepSchedule;
 
+    /** @var array<string, mixed> */
     public array $weekDays = [];
 
     public function mount(): void

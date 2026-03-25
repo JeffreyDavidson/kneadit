@@ -53,12 +53,16 @@ class ProductImportExport extends Page
 
     protected static ?int $navigationSort = 15;
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
+    /** @var array<string, mixed> */
     public ?array $importResults = null;
 
+    /** @var array<string, mixed> */
     public ?array $previewData = null;
 
+    /** @var array<string, mixed> */
     public ?array $previewErrors = null;
 
     public function mount(): void

@@ -73,6 +73,7 @@ class LoyaltyPoint extends Model
         $query->where('type', LoyaltyPointType::Adjusted);
     }
 
+    /** @param Builder<LoyaltyPoint> $query */
     #[Scope]
     protected function forOrder(Builder $query, Order $order): void
     {

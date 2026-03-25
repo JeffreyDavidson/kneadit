@@ -32,6 +32,7 @@ class LabelGenerator extends Page
 
     protected string $view = 'filament.pages.label-generator';
 
+    /** @var array<string, mixed> */
     public array $selectedProducts = [];
 
     public string $labelSize = 'medium';

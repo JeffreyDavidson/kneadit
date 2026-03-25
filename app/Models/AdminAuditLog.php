@@ -72,6 +72,7 @@ class AdminAuditLog extends Model
     /**
      * Log an admin action.
      */
+    /** @param array<string, mixed> $metadata */
     public static function log(
         string $action,
         string $description,
@@ -94,6 +95,7 @@ class AdminAuditLog extends Model
     /**
      * Scope: filter by action.
      */
+    /** @param Builder<AdminAuditLog> $query */
     #[Scope]
     protected function forAction(Builder $query, string $action): void
     {
@@ -103,6 +105,7 @@ class AdminAuditLog extends Model
     /**
      * Scope: filter by target type and id.
      */
+    /** @param Builder<AdminAuditLog> $query */
     #[Scope]
     protected function forTarget(Builder $query, string $type, ?string $id = null): void
     {

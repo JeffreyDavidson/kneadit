@@ -49,8 +49,10 @@ class PriceSuggestionTool extends Page
 
     public float $targetMarginPercentage = 65.0;
 
+    /** @var Collection<int, mixed> */
     public Collection $recipes;
 
+    /** @var Collection<int, mixed> */
     public Collection $marginComparisons;
 
     public function mount(): void
@@ -134,6 +136,7 @@ class PriceSuggestionTool extends Page
         return (($price - $cost) / $price) * 100;
     }
 
+    /** @return array<string, mixed> */
     public function getMarginAtCurrentPrice(): ?array
     {
         $currentMargin = $this->getCurrentMargin();
@@ -151,6 +154,7 @@ class PriceSuggestionTool extends Page
         ];
     }
 
+    /** @return array<string, mixed> */
     public function getPriceDifference(): ?array
     {
         if (! $this->selectedRecipe || ! $this->selectedRecipe->product) {
