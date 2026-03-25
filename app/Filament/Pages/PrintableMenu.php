@@ -10,6 +10,7 @@ use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PrintableMenu extends Page
@@ -66,7 +67,10 @@ class PrintableMenu extends Page
 
     public function getQrCode(): string
     {
-        return QrCode::size(100)->generate($this->getStorefrontUrl())->toHtml();
+        /** @var HtmlString $qr */
+        $qr = QrCode::size(100)->generate($this->getStorefrontUrl());
+
+        return $qr->toHtml();
     }
 
     public function setView(string $view): void

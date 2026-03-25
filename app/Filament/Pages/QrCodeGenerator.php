@@ -12,6 +12,7 @@ use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\HtmlString;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -128,7 +129,9 @@ class QrCodeGenerator extends Page
             $qr = $qr->format('png');
             $this->qrCodeSvg = base64_encode($qr->generate($this->currentUrl));
         } else {
-            $this->qrCodeSvg = $qr->generate($this->currentUrl)->toHtml();
+            /** @var HtmlString $svg */
+            $svg = $qr->generate($this->currentUrl);
+            $this->qrCodeSvg = $svg->toHtml();
         }
     }
 
