@@ -3,20 +3,39 @@
 namespace App\Filament\Pages;
 
 use App\Enums\PaymentStatus;
-use App\Filament\Traits\RequiresRole;
+use App\Enums\SubscriptionTier;
+use App\Enums\UserRole;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Order;
 use App\Models\Setting;
-use App\Traits\HasPlanGating;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Laravel\Pennant\Feature;
 
 class FinanceSummary extends Page
 {
-    use HasPlanGating, RequiresRole;
+    use ShowsUpgradeBadge;
+
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
 
@@ -27,8 +46,6 @@ class FinanceSummary extends Page
     protected static ?int $navigationSort = 3;
 
     protected string $view = 'filament.pages.finance-summary';
-
-    protected static string $requiredPlan = 'growth';
 
     public int $selectedYear;
 

@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources\Products;
 
-use App\Enums\UserRole;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\Schemas\ProductForm;
 use App\Filament\Resources\Products\Tables\ProductsTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Product;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -18,13 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Staff;
-    }
-
     protected static ?string $model = Product::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-bag';

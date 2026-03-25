@@ -2,12 +2,12 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customer;
 use App\Models\CustomerNote;
 use App\Models\Order;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
@@ -18,17 +18,27 @@ use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Pennant\Feature;
 
 class CustomerDirectory extends Page
 {
-    use HasPlanGating, RequiresRole;
+    use ShowsUpgradeBadge;
 
-    protected static function getRequiredRole(): UserRole
+    public static function canAccess(): bool
     {
-        return UserRole::Manager;
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return Feature::active('growth-features');
     }
 
-    protected static string $requiredPlan = 'growth';
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
+    }
 
     protected static bool $shouldRegisterNavigation = false;
 

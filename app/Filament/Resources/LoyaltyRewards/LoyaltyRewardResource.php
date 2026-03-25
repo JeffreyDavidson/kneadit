@@ -2,29 +2,22 @@
 
 namespace App\Filament\Resources\LoyaltyRewards;
 
-use App\Enums\UserRole;
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
 use App\Filament\Resources\LoyaltyRewards\Schemas\LoyaltyRewardForm;
 use App\Filament\Resources\LoyaltyRewards\Tables\LoyaltyRewardsTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\LoyaltyReward;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Pennant\Feature;
 
 class LoyaltyRewardResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
-    protected static string $requiredPlan = 'pro';
+    use ShowsUpgradeBadge;
 
     protected static ?string $model = LoyaltyReward::class;
 
@@ -49,6 +42,16 @@ class LoyaltyRewardResource extends Resource
     public static function getGloballySearchableAttributes(): array
     {
         return ['name'];
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('pro-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Pro;
     }
 
     /** @param LoyaltyReward $record */

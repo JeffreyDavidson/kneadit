@@ -2,27 +2,20 @@
 
 namespace App\Filament\Resources\CapacityLimits;
 
-use App\Enums\UserRole;
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\CapacityLimits\Schemas\CapacityLimitForm;
 use App\Filament\Resources\CapacityLimits\Tables\CapacityLimitsTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\CapacityLimit;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 
 class CapacityLimitResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
-    protected static string $requiredPlan = 'pro';
+    use ShowsUpgradeBadge;
 
     protected static ?string $model = CapacityLimit::class;
 
@@ -48,6 +41,16 @@ class CapacityLimitResource extends Resource
     public static function table(Table $table): Table
     {
         return CapacityLimitsTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('pro-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Pro;
     }
 
     public static function getPages(): array

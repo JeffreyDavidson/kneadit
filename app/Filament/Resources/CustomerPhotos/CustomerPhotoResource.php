@@ -2,29 +2,22 @@
 
 namespace App\Filament\Resources\CustomerPhotos;
 
-use App\Enums\UserRole;
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\CustomerPhotos\Pages\ListCustomerPhotos;
 use App\Filament\Resources\CustomerPhotos\Schemas\CustomerPhotoForm;
 use App\Filament\Resources\CustomerPhotos\Tables\CustomerPhotosTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\CustomerPhoto;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 
 class CustomerPhotoResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
-    protected static string $requiredPlan = 'pro';
+    use ShowsUpgradeBadge;
 
     protected static ?string $model = CustomerPhoto::class;
 
@@ -44,6 +37,16 @@ class CustomerPhotoResource extends Resource
     public static function table(Table $table): Table
     {
         return CustomerPhotosTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('pro-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Pro;
     }
 
     public static function getRelations(): array

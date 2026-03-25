@@ -2,32 +2,25 @@
 
 namespace App\Filament\Resources\Recipes;
 
-use App\Enums\UserRole;
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Filament\Resources\Recipes\Schemas\RecipeForm;
 use App\Filament\Resources\Recipes\Tables\RecipesTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Recipe;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Pennant\Feature;
 
 class RecipeResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
+    use ShowsUpgradeBadge;
 
     protected static ?string $model = Recipe::class;
-
-    protected static string $requiredPlan = 'growth';
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
 
@@ -43,6 +36,16 @@ class RecipeResource extends Resource
     public static function table(Table $table): Table
     {
         return RecipesTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
     }
 
     public static function getRelations(): array

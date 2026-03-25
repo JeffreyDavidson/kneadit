@@ -3,29 +3,40 @@
 namespace App\Filament\Pages;
 
 use App\Enums\OrderStatus;
+use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Category;
 use App\Models\OrderItem;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Laravel\Pennant\Feature;
 use Livewire\Attributes\Url;
 
 class ProductTrends extends Page
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
-    protected static string $requiredPlan = 'pro';
+    use ShowsUpgradeBadge;
 
     protected string $view = 'filament.pages.product-trends';
+
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return Feature::active('pro-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Pro;
+    }
 
     protected static ?string $title = 'Product Trends';
 

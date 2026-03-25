@@ -5,9 +5,7 @@ namespace App\Filament\Resources\Settings;
 use App\Filament\Resources\Settings\Pages\ListSettings;
 use App\Filament\Resources\Settings\Schemas\SettingForm;
 use App\Filament\Resources\Settings\Tables\SettingsTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Setting;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -16,8 +14,6 @@ use Filament\Tables\Table;
 
 class SettingResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
     protected static ?string $model = Setting::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;

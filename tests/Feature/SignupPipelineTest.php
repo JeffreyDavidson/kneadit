@@ -2,7 +2,6 @@
 
 use App\Models\Tenant;
 use App\Models\User;
-use App\Traits\HasPlanGating;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -345,68 +344,3 @@ test('tenant gets trial ends at set to 30 days from now', function () {
 // -------------------------------------------------------
 // Plan Gating (post-signup)
 // -------------------------------------------------------
-
-test('starter plan tenant cannot access growth gated page', function () {
-    mockTenantWithPlan('starter');
-
-    $testClass = new class
-    {
-        use HasPlanGating;
-
-        protected static string $requiredPlan = 'growth';
-    };
-
-    expect($testClass::canAccess())->toBeFalse();
-});
-
-test('growth plan tenant can access growth gated page', function () {
-    mockTenantWithPlan('growth');
-
-    $testClass = new class
-    {
-        use HasPlanGating;
-
-        protected static string $requiredPlan = 'growth';
-    };
-
-    expect($testClass::canAccess())->toBeTrue();
-});
-
-test('pro plan tenant can access all pages', function () {
-    mockTenantWithPlan('pro');
-
-    $testClass = new class
-    {
-        use HasPlanGating;
-
-        protected static string $requiredPlan = 'pro';
-    };
-
-    expect($testClass::canAccess())->toBeTrue();
-});
-
-test('plan gating navigation badge returns plan name when locked', function () {
-    mockTenantWithPlan('starter');
-
-    $testClass = new class
-    {
-        use HasPlanGating;
-
-        protected static string $requiredPlan = 'growth';
-    };
-
-    expect($testClass::getNavigationBadge())->toBe('GROWTH');
-});
-
-test('plan gating navigation badge returns null when unlocked', function () {
-    mockTenantWithPlan('growth');
-
-    $testClass = new class
-    {
-        use HasPlanGating;
-
-        protected static string $requiredPlan = 'growth';
-    };
-
-    expect($testClass::getNavigationBadge())->toBeNull();
-});

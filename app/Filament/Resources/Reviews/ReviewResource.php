@@ -2,13 +2,12 @@
 
 namespace App\Filament\Resources\Reviews;
 
-use App\Enums\UserRole;
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\Reviews\Pages\ListReviews;
 use App\Filament\Resources\Reviews\Schemas\ReviewForm;
 use App\Filament\Resources\Reviews\Tables\ReviewsTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Review;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -16,19 +15,13 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Pennant\Feature;
 
 class ReviewResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
+    use ShowsUpgradeBadge;
 
     protected static ?string $model = Review::class;
-
-    protected static string $requiredPlan = 'growth';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
 
@@ -44,6 +37,16 @@ class ReviewResource extends Resource
     public static function table(Table $table): Table
     {
         return ReviewsTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
     }
 
     public static function getRelations(): array

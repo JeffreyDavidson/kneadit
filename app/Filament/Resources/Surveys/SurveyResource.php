@@ -2,14 +2,11 @@
 
 namespace App\Filament\Resources\Surveys;
 
-use App\Enums\UserRole;
 use App\Filament\Resources\Surveys\Pages\ListSurveys;
 use App\Filament\Resources\Surveys\Pages\ViewSurvey;
 use App\Filament\Resources\Surveys\Schemas\SurveyForm;
 use App\Filament\Resources\Surveys\Tables\SurveysTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Survey;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -18,13 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SurveyResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
     protected static ?string $model = Survey::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';

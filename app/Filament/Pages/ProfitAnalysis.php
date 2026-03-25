@@ -2,17 +2,34 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Traits\RequiresRole;
+use App\Enums\SubscriptionTier;
+use App\Enums\UserRole;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Product;
-use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Pennant\Feature;
 
 class ProfitAnalysis extends Page
 {
-    use HasPlanGating, RequiresRole;
+    use ShowsUpgradeBadge;
 
-    protected static string $requiredPlan = 'pro';
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return Feature::active('pro-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Pro;
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
 

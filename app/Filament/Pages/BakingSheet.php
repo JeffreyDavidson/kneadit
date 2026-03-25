@@ -4,21 +4,24 @@ namespace App\Filament\Pages;
 
 use App\Enums\OrderStatus;
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
 use App\Models\OrderItem;
-use App\Traits\HasPlanGating;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BakingSheet extends Page
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
+    public static function canAccess(): bool
     {
-        return UserRole::Manager;
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return true;
     }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-printer';

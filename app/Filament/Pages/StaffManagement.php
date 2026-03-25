@@ -3,12 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
 use App\Mail\StaffInvitationMail;
 use App\Models\Setting;
 use App\Models\StaffInvitation;
 use App\Models\User;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -21,11 +19,15 @@ use UnitEnum;
 
 class StaffManagement extends Page
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
+    public static function canAccess(): bool
     {
-        return UserRole::Owner;
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Owner)) {
+            return false;
+        }
+
+        return true;
     }
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';

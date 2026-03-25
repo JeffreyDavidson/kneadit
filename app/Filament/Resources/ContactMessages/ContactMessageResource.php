@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources\ContactMessages;
 
-use App\Enums\UserRole;
 use App\Filament\Resources\ContactMessages\Pages\ListContactMessages;
 use App\Filament\Resources\ContactMessages\Schemas\ContactMessageForm;
 use App\Filament\Resources\ContactMessages\Tables\ContactMessagesTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\ContactMessage;
-use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -16,13 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContactMessageResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
     protected static ?string $model = ContactMessage::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-envelope';

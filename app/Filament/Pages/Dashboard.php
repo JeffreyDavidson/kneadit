@@ -31,14 +31,11 @@ use App\Filament\Widgets\UpcomingOrdersWidget;
 use App\Filament\Widgets\WeeklyRevenueChart;
 use App\Filament\Widgets\WelcomeBannerWidget;
 use App\Models\Setting;
-use App\Traits\HasPlanGating;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Dashboard extends BaseDashboard
 {
-    use HasPlanGating;
-
     protected static ?string $navigationLabel = 'Bakery Dashboard';
 
     protected static ?string $title = 'Bakery Dashboard';

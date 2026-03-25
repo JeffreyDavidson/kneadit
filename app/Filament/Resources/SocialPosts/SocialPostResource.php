@@ -3,29 +3,22 @@
 namespace App\Filament\Resources\SocialPosts;
 
 use App\Enums\SocialPostStatus;
-use App\Enums\UserRole;
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
 use App\Filament\Resources\SocialPosts\Schemas\SocialPostForm;
 use App\Filament\Resources\SocialPosts\Tables\SocialPostsTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\SocialPost;
-use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Laravel\Pennant\Feature;
 
 class SocialPostResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
-    protected static string $requiredPlan = 'pro';
+    use ShowsUpgradeBadge;
 
     protected static ?string $model = SocialPost::class;
 
@@ -45,6 +38,16 @@ class SocialPostResource extends Resource
     public static function table(Table $table): Table
     {
         return SocialPostsTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('pro-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Pro;
     }
 
     public static function getRelations(): array
