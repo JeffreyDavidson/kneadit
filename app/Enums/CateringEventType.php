@@ -9,4 +9,15 @@ enum CateringEventType: string
     case Birthday = 'birthday';
     case Holiday = 'holiday';
     case Other = 'other';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::Wedding => '💒 Wedding',
+            self::Corporate => '🏢 Corporate',
+            self::Birthday => '🎂 Birthday',
+            self::Holiday => '🎄 Holiday',
+            self::Other => '🎉 Other',
+        };
+    }
 }

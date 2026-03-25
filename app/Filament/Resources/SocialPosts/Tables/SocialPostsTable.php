@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SocialPosts\Tables;
 
+use App\Enums\SocialPlatform;
 use App\Enums\SocialPostStatus;
 use App\Models\SocialPost;
 use Filament\Actions\Action;
@@ -24,14 +25,14 @@ class SocialPostsTable
             ->columns([
                 BadgeColumn::make('platform')
                     ->colors([
-                        'pink' => 'instagram',
-                        'info' => 'facebook',
-                        'gray' => 'tiktok',
+                        'pink' => SocialPlatform::Instagram->value,
+                        'info' => SocialPlatform::Facebook->value,
+                        'gray' => SocialPlatform::TikTok->value,
                     ])
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'instagram' => '📸 Instagram',
-                        'facebook' => '📘 Facebook',
-                        'tiktok' => '🎵 TikTok',
+                        SocialPlatform::Instagram->value => '📸 Instagram',
+                        SocialPlatform::Facebook->value => '📘 Facebook',
+                        SocialPlatform::TikTok->value => '🎵 TikTok',
                         default => $state,
                     })
                     ->sortable(),
@@ -52,9 +53,9 @@ class SocialPostsTable
 
                 BadgeColumn::make('status')
                     ->colors([
-                        'gray' => 'draft',
-                        'warning' => 'scheduled',
-                        'success' => 'posted',
+                        'gray' => SocialPostStatus::Draft->value,
+                        'warning' => SocialPostStatus::Scheduled->value,
+                        'success' => SocialPostStatus::Posted->value,
                     ]),
 
                 TextColumn::make('created_at')
@@ -64,17 +65,9 @@ class SocialPostsTable
             ])
             ->filters([
                 SelectFilter::make('platform')
-                    ->options([
-                        'instagram' => 'Instagram',
-                        'facebook' => 'Facebook',
-                        'tiktok' => 'TikTok',
-                    ]),
+                    ->options(SocialPlatform::class),
                 SelectFilter::make('status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'scheduled' => 'Scheduled',
-                        'posted' => 'Posted',
-                    ]),
+                    ->options(SocialPostStatus::class),
             ])
             ->recordActions([
                 Action::make('schedule')

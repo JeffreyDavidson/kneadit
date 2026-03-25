@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CateringInquiries\Tables;
 
+use App\Enums\CateringEventType;
 use App\Enums\CateringInquiryStatus;
 use App\Mail\CateringQuote;
 use App\Models\CateringInquiry;
@@ -27,13 +28,13 @@ class CateringInquiriesTable
                 TextColumn::make('event_type')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'wedding' => 'danger',
-                        'corporate' => 'info',
-                        'birthday' => 'warning',
-                        'holiday' => 'success',
+                        CateringEventType::Wedding->value => 'danger',
+                        CateringEventType::Corporate->value => 'info',
+                        CateringEventType::Birthday->value => 'warning',
+                        CateringEventType::Holiday->value => 'success',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state): string => ucfirst($state)),
+                    ->formatStateUsing(fn (string $state): string => CateringEventType::tryFrom($state)?->label() ?? ucfirst($state)),
                 TextColumn::make('event_date')
                     ->date()
                     ->sortable(),
@@ -43,21 +44,14 @@ class CateringInquiriesTable
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'inquiry' => 'gray',
-                        'quoted' => 'info',
-                        'confirmed' => 'success',
-                        'completed' => 'primary',
-                        'cancelled' => 'danger',
+                        CateringInquiryStatus::Inquiry->value => 'gray',
+                        CateringInquiryStatus::Quoted->value => 'info',
+                        CateringInquiryStatus::Confirmed->value => 'success',
+                        CateringInquiryStatus::Completed->value => 'primary',
+                        CateringInquiryStatus::Cancelled->value => 'danger',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'inquiry' => 'New Inquiry',
-                        'quoted' => 'Quote Sent',
-                        'confirmed' => 'Confirmed',
-                        'completed' => 'Completed',
-                        'cancelled' => 'Cancelled',
-                        default => ucfirst($state),
-                    }),
+                    ->formatStateUsing(fn (string $state): string => CateringInquiryStatus::tryFrom($state)?->label() ?? ucfirst($state)),
                 TextColumn::make('quoted_amount')
                     ->money('usd')
                     ->placeholder('—')
@@ -70,21 +64,9 @@ class CateringInquiriesTable
             ->defaultSort('created_at', 'desc')
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
-                        'inquiry' => 'New Inquiry',
-                        'quoted' => 'Quote Sent',
-                        'confirmed' => 'Confirmed',
-                        'completed' => 'Completed',
-                        'cancelled' => 'Cancelled',
-                    ]),
+                    ->options(CateringInquiryStatus::class),
                 SelectFilter::make('event_type')
-                    ->options([
-                        'wedding' => 'Wedding',
-                        'corporate' => 'Corporate',
-                        'birthday' => 'Birthday',
-                        'holiday' => 'Holiday',
-                        'other' => 'Other',
-                    ]),
+                    ->options(CateringEventType::class),
                 Filter::make('event_date')
                     ->form([
                         DatePicker::make('from'),
@@ -96,7 +78,7 @@ class CateringInquiriesTable
                             ->when($data['until'], fn (Builder $q, string $date) => $q->whereDate('event_date', '<=', $date));
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('send_quote')
                     ->label('Send Quote')
                     ->icon('heroicon-o-paper-airplane')
@@ -104,7 +86,7 @@ class CateringInquiriesTable
                     ->requiresConfirmation()
                     ->modalHeading('Send Quote to Customer')
                     ->modalDescription(fn (CateringInquiry $record) => "Send a quote of \${$record->quoted_amount} to {$record->customer_email}?")
-                    ->visible(fn (CateringInquiry $record) => $record->quoted_amount && in_array($record->status, ['inquiry', 'quoted']))
+                    ->visible(fn (CateringInquiry $record) => $record->quoted_amount && in_array($record->status, [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Quoted]))
                     ->action(function (CateringInquiry $record) {
                         Mail::to($record->customer_email)->send(new CateringQuote($record));
                         $record->update(['status' => CateringInquiryStatus::Quoted]);
@@ -114,7 +96,7 @@ class CateringInquiriesTable
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn (CateringInquiry $record) => $record->status === 'quoted')
+                    ->visible(fn (CateringInquiry $record) => $record->status === CateringInquiryStatus::Quoted)
                     ->action(fn (CateringInquiry $record) => $record->update(['status' => CateringInquiryStatus::Confirmed])),
                 EditAction::make()
                     ->slideOver()
