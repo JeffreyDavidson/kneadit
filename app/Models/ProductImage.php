@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -17,8 +16,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ProductImage extends Model
 {
-    use HasFactory;
-
     protected static function booted(): void
     {
         // After any save, ensure the lowest sort_order image is primary

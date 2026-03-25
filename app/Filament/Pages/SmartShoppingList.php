@@ -136,7 +136,7 @@ class SmartShoppingList extends Page
                     'phone' => $bestSupplier->phone,
                 ];
                 $grouped[$bestSupplier->id]['items'][] = $item;
-                $grouped[$bestSupplier->id]['total'] = collect($grouped[$bestSupplier->id]['items'])->sum('subtotal');
+                $grouped[$bestSupplier->id]['total'] = array_sum(array_column($grouped[$bestSupplier->id]['items'], 'subtotal'));
             } else {
                 $noSupplier[] = $item;
             }
@@ -151,11 +151,11 @@ class SmartShoppingList extends Page
                     'phone' => null,
                 ],
                 'items' => $noSupplier,
-                'total' => collect($noSupplier)->sum('subtotal'),
+                'total' => array_sum(array_column($noSupplier, 'subtotal')),
             ];
         }
 
-        $this->supplierGroups = collect($grouped);
+        $this->supplierGroups = new Collection($grouped);
     }
 
     public function toggleUpcoming(): void
@@ -187,8 +187,7 @@ class SmartShoppingList extends Page
                 items: $group['items'],
                 total: $group['total'],
                 requestedDate: now()->addDays(
-                    /** @var Collection<int, mixed> */
-                    collect($group['items'])->max('lead_time_days') ?? 3
+                    (int) (max(array_column($group['items'], 'lead_time_days')) ?: 3)
                 )->format('Y-m-d'),
             ));
 

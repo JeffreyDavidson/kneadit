@@ -140,9 +140,10 @@ class QuickOrder extends Page
 
             Section::make('Order Items')
                 ->description(function (Get $get): string {
+                    /** @var array<int, array{quantity: int, unit_price: float}> $items */
                     $items = $get('order_items') ?? [];
                     $totalItems = count($items);
-                    $subtotal = collect($items)->sum(fn (array $item) => ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0));
+                    $subtotal = collect($items)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
 
                     return $totalItems.' items · Subtotal: $'.number_format($subtotal, 2);
                 })
@@ -291,6 +292,7 @@ class QuickOrder extends Page
                 }
 
                 // Calculate totals
+                /** @var array<int, array<string, mixed>> $orderItems */
                 $orderItems = $data['order_items'] ?? [];
                 $subtotal = collect($orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
                 $deliveryFee = ($data['delivery_type'] === DeliveryType::Delivery->value) ? 5.00 : 0.00;

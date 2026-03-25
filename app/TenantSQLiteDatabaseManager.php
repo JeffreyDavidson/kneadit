@@ -46,8 +46,10 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
     }
 
     /** @return array<string, mixed> */
-    /** @param array<string, mixed> $baseConfig */
-    /** @return array<string, mixed> */
+    /**
+     * @param  array<string, mixed>  $baseConfig
+     * @return array<string, mixed>
+     */
     public function makeConnectionConfig(array $baseConfig, string $databaseName): array
     {
         $baseConfig['database'] = $this->tenantDbPath($databaseName);
