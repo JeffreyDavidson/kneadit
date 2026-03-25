@@ -206,7 +206,7 @@ class CustomerDirectory extends Page
 
         CustomerNote::query()->create([
             'customer_id' => $customerId,
-            'note' => $this->noteData['note'],
+            'note' => ($this->noteData ?? [])['note'] ?? '',
             'created_by' => Auth::id(),
         ]);
 

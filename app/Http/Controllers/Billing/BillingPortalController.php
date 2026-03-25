@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,9 @@ class BillingPortalController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse
     {
-        return $request->user()->redirectToBillingPortal(route('filament.admin.pages.dashboard'));
+        /** @var User $user */
+        $user = $request->user();
+
+        return $user->redirectToBillingPortal(route('filament.admin.pages.dashboard'));
     }
 }

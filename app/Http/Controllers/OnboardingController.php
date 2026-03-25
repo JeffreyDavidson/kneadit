@@ -10,6 +10,7 @@ use App\Mail\WelcomeBaker;
 use App\Models\Referral;
 use App\Models\Setting;
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,9 @@ class OnboardingController extends Controller
 {
     public function show(): View
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         return view('onboarding', [
             'bakeryName' => session('bakery_name', ''),
         ]);
@@ -29,17 +33,20 @@ class OnboardingController extends Controller
 
     public function store(StoreOnboardingRequest $request): RedirectResponse
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         $validated = $request->validated();
 
         $subdomain = Str::lower($validated['subdomain']);
         $useKneadItStorefront = $validated['storefront_choice'] === 'kneadit';
 
         // Create the tenant, domain, and seed initial data
-        $tenant = DB::transaction(function () use ($request, $validated, $subdomain, $useKneadItStorefront) {
+        $tenant = DB::transaction(function () use ($validated, $subdomain, $useKneadItStorefront, $user) {
             $tenant = Tenant::query()->create([
                 'id' => $subdomain,
-                'name' => $request->user()->name,
-                'email' => $request->user()->email,
+                'name' => $user->name,
+                'email' => $user->email,
                 'plan' => SubscriptionTier::Starter->value,
                 'trial_ends_at' => now()->addDays(config('saas.trial_days', 30)),
                 'store_name' => $validated['store_name'],
@@ -56,13 +63,13 @@ class OnboardingController extends Controller
         });
 
         // Create the tenant's database and run migrations
-        $tenant->run(function () use ($request, $validated, $useKneadItStorefront) {
+        $tenant->run(function () use ($validated, $useKneadItStorefront, $user) {
             // Create the owner user in the tenant database
             // Use query builder to avoid the 'hashed' cast double-hashing the password
             DB::table('users')->insert([
-                'name' => $request->user()->name,
-                'email' => $request->user()->email,
-                'password' => $request->user()->password,
+                'name' => $user->name,
+                'email' => $user->email,
+                'password' => $user->password,
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -70,7 +77,7 @@ class OnboardingController extends Controller
 
             // Seed default settings
             Setting::set('store_name', $validated['store_name']);
-            Setting::set('store_email', $request->user()->email);
+            Setting::set('store_email', $user->email);
             Setting::set('storefront_enabled', $useKneadItStorefront ? '1' : '0');
 
             if (! $useKneadItStorefront && isset($validated['external_website'])) {
@@ -89,7 +96,7 @@ class OnboardingController extends Controller
             if ($referral) {
                 $referral->update([
                     'referred_tenant_id' => $tenant->id,
-                    'referred_email' => $request->user()->email,
+                    'referred_email' => $user->email,
                     'status' => ReferralStatus::Completed,
                 ]);
             }
@@ -101,8 +108,8 @@ class OnboardingController extends Controller
         $adminUrl = "{$scheme}://{$subdomain}.{$host}/admin";
 
         try {
-            Mail::to($request->user()->email)->send(new WelcomeBaker(
-                bakerName: $request->user()->name,
+            Mail::to($user->email)->send(new WelcomeBaker(
+                bakerName: $user->name,
                 storeName: $validated['store_name'],
                 adminUrl: $adminUrl,
                 plan: SubscriptionTier::Starter->value,
@@ -111,8 +118,8 @@ class OnboardingController extends Controller
 
             // Notify platform owner
             Mail::to(config('mail.platform_notify'))->send(new NewSubscriberNotification(
-                bakerName: $request->user()->name,
-                bakerEmail: $request->user()->email,
+                bakerName: $user->name,
+                bakerEmail: $user->email,
                 storeName: $validated['store_name'],
                 subdomain: $subdomain,
                 plan: SubscriptionTier::Starter->value,

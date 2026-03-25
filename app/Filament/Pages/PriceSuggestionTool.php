@@ -145,7 +145,11 @@ class PriceSuggestionTool extends Page
             return null;
         }
 
-        $profit = $this->selectedRecipe->product->price - $this?->selectedRecipe->cost;
+        if (! $this->selectedRecipe || ! $this->selectedRecipe->product) {
+            return [];
+        }
+
+        $profit = $this->selectedRecipe->product->price - $this->selectedRecipe->cost;
 
         return [
             'margin' => $currentMargin,

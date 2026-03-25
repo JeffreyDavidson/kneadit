@@ -83,7 +83,7 @@ class ShoppingListGenerator extends Page
             $quantity = $orderItem->quantity;
 
             // Get recipes for this product
-            foreach ($product?->recipes as $recipe) {
+            foreach (($product->recipes ?? collect()) as $recipe) {
                 if ($recipe->ingredients) {
                     foreach ($recipe->ingredients as $ingredient) {
                         $ingredientName = $ingredient['name'] ?? '';

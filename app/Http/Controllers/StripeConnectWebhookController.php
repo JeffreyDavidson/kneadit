@@ -35,7 +35,7 @@ class StripeConnectWebhookController extends Controller
         }
 
         try {
-            $event = Webhook::constructEvent($payload, $sigHeader, $secret);
+            $event = Webhook::constructEvent($payload, (string) $sigHeader, $secret);
         } catch (\Exception $e) {
             Log::warning('Stripe Connect webhook signature verification failed', [
                 'error' => $e->getMessage(),

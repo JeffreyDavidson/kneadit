@@ -206,7 +206,7 @@ class BakeryInsights extends Page
         $healthy = $data->filter(fn (array $t) => $t['health_score'] > 70)->count();
         $atRisk = $data->filter(fn (array $t) => $t['health_score'] >= 40 && $t['health_score'] <= 70)->count();
         $critical = $data->filter(fn (array $t) => $t['health_score'] < 40)->count();
-        $avg = $data->count() > 0 ? round($data->avg('health_score')) : 0;
+        $avg = $data->count() > 0 ? round($data->avg('health_score') ?? 0) : 0;
 
         return [
             'average' => $avg,

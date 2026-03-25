@@ -119,7 +119,7 @@ class ReviewAnalytics extends Page
                 'month' => $monthName,
                 'month_key' => $monthKey,
                 'count' => $monthData ? $monthData->count : 0,
-                'avg_rating' => $monthData ? round($monthData->avg_rating, 1) : 0,
+                'avg_rating' => $monthData ? round($monthData->avg_rating ?? 0, 1) : 0,
             ];
         }
 
@@ -193,7 +193,7 @@ class ReviewAnalytics extends Page
         foreach ($reviews as $review) {
             // Simple sentiment analysis based on rating and keywords
             $rating = $review->rating;
-            $comment = strtolower($review->comment);
+            $comment = strtolower((string) $review->comment);
 
             $positiveWords = ['amazing', 'excellent', 'perfect', 'love', 'best', 'wonderful', 'fantastic', 'delicious', 'great'];
             $negativeWords = ['terrible', 'awful', 'bad', 'hate', 'worst', 'disgusting', 'horrible', 'disappointing'];

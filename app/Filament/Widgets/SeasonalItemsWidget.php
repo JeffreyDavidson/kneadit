@@ -19,7 +19,7 @@ class SeasonalItemsWidget extends Widget
         return SeasonalItem::current()->count();
     }
 
-    /** @return array<int, array<string, string>> */
+    /** @return array<int, array<string, mixed>> */
     public function getComingSoon(): array
     {
         return SeasonalItem::with('product')
@@ -35,7 +35,7 @@ class SeasonalItemsWidget extends Widget
             ->all();
     }
 
-    /** @return array<int, array<string, string>> */
+    /** @return array<int, array<string, mixed>> */
     public function getEndingSoon(): array
     {
         return SeasonalItem::with('product')

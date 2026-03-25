@@ -622,7 +622,7 @@ class Onboarding extends Page
 
     protected function saveProductStep(): void
     {
-        $slug = Str::slug($this->product_name);
+        $slug = Str::slug((string) $this->product_name);
 
         Product::query()->updateOrCreate(['slug' => $slug], [
             'name' => $this->product_name,

@@ -84,7 +84,7 @@ class DeliveryRoutePlanner extends Page
                     'delivery_address' => $order->delivery_address,
                     'delivery_time' => $order->delivery_time ? Date::parse($order->delivery_time)->format('H:i') : 'Not specified',
                     'total' => $order->total,
-                    'distance_tier' => $this->calculateDistanceTier($order->delivery_address),
+                    'distance_tier' => $this->calculateDistanceTier($order->delivery_address ?? ''),
                 ];
             });
     }

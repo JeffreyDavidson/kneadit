@@ -61,6 +61,10 @@ class CheckPayPalPayments extends Command
         $this->info("Tenant {$tenant->store_name}: checking {$orders->count()} orders...");
 
         foreach ($orders as $order) {
+            if (! $order->paypal_invoice_id) {
+                continue;
+            }
+
             $status = $paypalService->getInvoiceStatus($order->paypal_invoice_id);
 
             if (! $status) {

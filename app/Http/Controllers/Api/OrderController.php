@@ -19,7 +19,7 @@ class OrderController extends Controller
         if (! empty($validated['coupon_code'])) {
             $result = $couponService->validate($validated['coupon_code'], 0);
             if ($result['valid']) {
-                $couponId = $result['coupon']->id;
+                $couponId = $result['coupon']?->id;
             }
         }
 

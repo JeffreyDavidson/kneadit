@@ -66,7 +66,7 @@ class GiftCardService
             return [
                 'success' => true,
                 'amount_applied' => $amount,
-                'remaining_balance' => (float) $card->fresh()->current_balance,
+                'remaining_balance' => (float) $card->refresh()->current_balance,
             ];
         });
     }
@@ -82,7 +82,7 @@ class GiftCardService
             'created_at' => now(),
         ]);
 
-        return $card->fresh();
+        return $card->refresh();
     }
 
     public function generateCode(): string
@@ -90,7 +90,7 @@ class GiftCardService
         do {
             $raw = strtoupper(Str::random(16));
             // Ensure only alphanumeric
-            $raw = preg_replace('/[^A-Z0-9]/', '', $raw.Str::random(4));
+            $raw = (string) preg_replace('/[^A-Z0-9]/', '', $raw.Str::random(4));
             $raw = substr($raw, 0, 16);
             $code = implode('-', str_split($raw, 4));
         } while (GiftCard::query()->where('code', $code)->exists());
