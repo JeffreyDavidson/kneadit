@@ -75,7 +75,7 @@ class CreateOrder
                 'status' => OrderStatus::Pending,
             ]);
 
-            if (! empty($calculated['coupon_id'])) {
+            if (! empty($calculated['coupon_id']) && isset($coupon)) {
                 $this->couponService->apply($coupon);
             }
 
