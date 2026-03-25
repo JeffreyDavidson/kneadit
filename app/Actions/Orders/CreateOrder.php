@@ -4,22 +4,16 @@ namespace App\Actions\Orders;
 
 use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
-use App\Mail\NewOrderNotification;
-use App\Mail\OrderPlaced;
+use App\Events\OrderCreated;
 use App\Models\CapacityLimit;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\GiftCard;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\Setting;
 use App\Services\CouponService;
 use App\Services\GiftCardService;
-use App\Services\WebhookService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class CreateOrder
@@ -107,7 +101,7 @@ class CreateOrder
         });
 
         if ($order) {
-            $this->sendCreationNotifications($order);
+            OrderCreated::dispatch($order);
         }
 
         return $order;
@@ -168,48 +162,5 @@ class CreateOrder
         } while (Order::where('order_number', $number)->exists());
 
         return $number;
-    }
-
-    private function sendCreationNotifications(Order $order): void
-    {
-        try {
-            if ($order->customer?->email) {
-                Mail::to($order->customer->email)->send(new OrderPlaced($order));
-            }
-
-            $bakerEmail = Setting::get('store_email');
-            if ($bakerEmail) {
-                Mail::to($bakerEmail)->send(new NewOrderNotification($order));
-            }
-        } catch (\Exception $e) {
-            Log::warning('Order creation emails failed', [
-                'order' => $order->order_number,
-                'error' => $e->getMessage(),
-            ]);
-        }
-
-        try {
-            $order->loadMissing('orderItems.product');
-
-            WebhookService::dispatch('order.created', [
-                'order_number' => $order->order_number,
-                'customer_name' => $order->customer?->name,
-                'customer_email' => $order->customer?->email,
-                'total' => $order->total,
-                'status' => $order->status,
-                'payment_status' => $order->payment_status,
-                'delivery_date' => $order->delivery_date?->toDateString(),
-                'items' => $order->orderItems->map(fn (OrderItem $item) => [
-                    'product' => $item->product?->name,
-                    'quantity' => $item->quantity,
-                    'unit_price' => $item->unit_price,
-                ])->toArray(),
-            ]);
-        } catch (\Exception $e) {
-            Log::warning('Order created webhook dispatch failed', [
-                'order' => $order->order_number,
-                'error' => $e->getMessage(),
-            ]);
-        }
     }
 }
