@@ -157,6 +157,7 @@ class StorefrontAnalytics extends Page
             ]);
     }
 
+    /** @return array<int, array<string, mixed>> */
     public function getConversionFunnel(): array
     {
         $start = $this->getStartDate();

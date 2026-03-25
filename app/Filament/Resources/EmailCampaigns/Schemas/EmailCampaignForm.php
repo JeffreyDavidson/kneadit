@@ -48,6 +48,7 @@ class EmailCampaignForm
             ]);
     }
 
+    /** @return array<string, mixed> */
     protected static function getTemplates(): array
     {
         return [

@@ -115,6 +115,7 @@ class DeliveryRoutePlanner extends Page
         $this->dispatch('print-route');
     }
 
+    /** @return array<string, mixed> */
     public function getRouteStats(): array
     {
         $totalOrders = $this->deliveryOrders->count();

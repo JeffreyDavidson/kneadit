@@ -12,6 +12,7 @@ class BirthdayWidget extends Widget
 
     protected string $view = 'filament.widgets.birthday-widget';
 
+    /** @return Collection<int, mixed> */
     public function getUpcomingBirthdays(): Collection
     {
         $today = now();

@@ -36,6 +36,7 @@ class BakingSheet extends Page
 
     public string $selectedDate = '';
 
+    /** @var Collection<int, mixed> */
     public Collection $bakingItems;
 
     public function mount(): void

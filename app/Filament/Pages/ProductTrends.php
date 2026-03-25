@@ -92,6 +92,7 @@ class ProductTrends extends Page
         $this->year = $date->year;
     }
 
+    /** @return array<int, mixed> */
     public function getTrendsDataProperty(): array
     {
         $currentStart = Date::create($this->year, $this->month, 1)->startOfMonth();

@@ -17,6 +17,7 @@ class ReorderRemindersWidget extends Widget
 
     protected string $view = 'filament.widgets.reorder-reminders-widget';
 
+    /** @return array<int, array<string, string>> */
     public function getLapsedCustomers(): array
     {
         $thirtyDaysAgo = Date::now()->subDays(30);

@@ -193,6 +193,7 @@ class WeeklyPrepPlanner extends Page
         return round($totalMinutes / 60, 1);
     }
 
+    /** @return array<string, mixed> */
     public function getWeekSummary(): array
     {
         $totalOrders = 0;

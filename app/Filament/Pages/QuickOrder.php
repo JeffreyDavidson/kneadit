@@ -30,6 +30,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -288,6 +289,7 @@ class QuickOrder extends Page
 
                 // Calculate totals
                 $orderItems = $data['order_items'] ?? [];
+                /** @var Collection<int, mixed> */
                 $subtotal = collect($orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
                 $deliveryFee = ($data['delivery_type'] === DeliveryType::Delivery->value) ? 5.00 : 0.00;
                 $total = $subtotal + $deliveryFee;

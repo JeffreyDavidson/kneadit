@@ -211,6 +211,7 @@ class CustomDomain extends Page
             ->send();
     }
 
+    /** @return array<int, Action> */
     protected function getFormActions(): array
     {
         return [

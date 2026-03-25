@@ -72,6 +72,7 @@ class ManageSettings extends Page
 
     public ?string $revenue_cap = '250000';
 
+    /** @var array<int, string> */
     public ?array $payment_methods = ['cash'];
 
     public ?string $paypal_client_id = '';

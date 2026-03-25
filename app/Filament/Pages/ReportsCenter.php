@@ -40,6 +40,7 @@ class ReportsCenter extends Page
 
     public int $selectedYear;
 
+    /** @var array<string, mixed> */
     public array $reportData = [];
 
     public function mount(): void

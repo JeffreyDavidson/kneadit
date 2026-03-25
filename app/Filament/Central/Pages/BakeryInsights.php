@@ -404,6 +404,7 @@ class BakeryInsights extends Page
         ],
     ];
 
+    /** @return Collection<int, mixed> */
     public function getTenantUsageData(): Collection
     {
         $tenants = Tenant::all();

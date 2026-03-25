@@ -179,6 +179,7 @@ class ReportService
         return compact('totalRevenue', 'totalExpenses', 'profit', 'deductible', 'monthly', 'expensesByCategory');
     }
 
+    /** @return array<string, mixed> */
     public function inventoryReport(): array
     {
         // Pre-compute usage per ingredient in a single query (avoids N+1)

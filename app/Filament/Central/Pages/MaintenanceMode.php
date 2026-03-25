@@ -127,6 +127,7 @@ class MaintenanceMode extends Page
             ->send();
     }
 
+    /** @return array<int, Action> */
     public function getFormActions(): array
     {
         return [];

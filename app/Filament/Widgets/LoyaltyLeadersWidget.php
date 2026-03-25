@@ -35,6 +35,7 @@ class LoyaltyLeadersWidget extends Widget
         return (int) LoyaltyPoint::query()->sum('points');
     }
 
+    /** @return array<int, array<string, mixed>> */
     public function getRecentAwards(): array
     {
         return LoyaltyPoint::with('customer')

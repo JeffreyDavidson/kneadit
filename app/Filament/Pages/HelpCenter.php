@@ -16,6 +16,7 @@ class HelpCenter extends Page
 
     protected string $view = 'filament.pages.help-center';
 
+    /** @return array<int, mixed> */
     public function getTopics(): array
     {
         return [

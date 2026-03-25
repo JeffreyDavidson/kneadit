@@ -15,6 +15,7 @@ class AnnouncementBanner extends Widget
 
     protected string $view = 'filament.widgets.announcement-banner';
 
+    /** @return array<string, mixed> */
     public function getAnnouncements(): array
     {
         /** @var Tenant|null $tenant */

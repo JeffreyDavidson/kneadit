@@ -48,6 +48,7 @@ class QrCodeGenerator extends Page
 
     protected string $view = 'filament.pages.qr-code-generator';
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
     public string $qrCodeSvg = '';

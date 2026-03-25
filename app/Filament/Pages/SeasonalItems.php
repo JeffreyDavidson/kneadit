@@ -137,6 +137,7 @@ class SeasonalItems extends Page
         return SeasonalItem::with('product')->upcoming()->orderBy('available_from')->get();
     }
 
+    /** @return Collection<int, SeasonalItem> */
     public function getExpiredItemsProperty(): Collection
     {
         return SeasonalItem::with('product')->expired()->orderByDesc('available_until')->get();

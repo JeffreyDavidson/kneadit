@@ -34,6 +34,7 @@ class UpgradePlan extends Page
 
     public string $currentPlan = 'starter';
 
+    /** @var array<string, mixed> */
     public array $plans = [];
 
     public function mount(): void

@@ -12,6 +12,7 @@ class QuickActionsWidget extends Widget
 
     protected string $view = 'filament.widgets.quick-actions';
 
+    /** @return array<int, array<string, string>> */
     public function getActions(): array
     {
         return [

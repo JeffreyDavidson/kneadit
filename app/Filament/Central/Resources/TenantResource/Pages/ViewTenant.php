@@ -53,6 +53,7 @@ class ViewTenant extends ViewRecord
         }
     }
 
+    /** @return array<string, mixed> */
     private function emptyStats(): array
     {
         return [

@@ -145,6 +145,7 @@ class Activity extends Page
         $this->page = 1;
     }
 
+    /** @return array<int, string> */
     public static function getActionTypes(): array
     {
         return [

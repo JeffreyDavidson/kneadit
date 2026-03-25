@@ -34,6 +34,7 @@ class CustomerInsightsWidget extends Widget
         return round(($repeat / $totalWithOrders) * 100, 1);
     }
 
+    /** @return array<string, mixed> */
     public function getAvgOrderValue(): array
     {
         $thisMonth = (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)

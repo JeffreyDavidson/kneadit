@@ -15,6 +15,7 @@ class UpcomingOrdersWidget extends Widget
 
     protected string $view = 'filament.widgets.upcoming-orders';
 
+    /** @return array<string, mixed> */
     public function getUpcomingOrders(): array
     {
         $today = Date::today();

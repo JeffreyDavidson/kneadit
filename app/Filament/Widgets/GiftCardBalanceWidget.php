@@ -26,6 +26,7 @@ class GiftCardBalanceWidget extends Widget
             ->count();
     }
 
+    /** @return array<int, array<string, mixed>> */
     public function getRecentlyRedeemed(): array
     {
         return GiftCardTransaction::with('giftCard')->latest()

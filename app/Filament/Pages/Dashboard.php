@@ -53,6 +53,7 @@ class Dashboard extends BaseDashboard
         return 'Bakery Dashboard';
     }
 
+    /** @return array<string, mixed> */
     protected function getWidgetRegistry(): array
     {
         return [

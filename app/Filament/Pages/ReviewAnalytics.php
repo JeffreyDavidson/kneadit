@@ -166,6 +166,7 @@ class ReviewAnalytics extends Page
             });
     }
 
+    /** @return array<string, mixed> */
     public function getSentimentAnalysis(): array
     {
         $reviews = Review::query()->whereNotNull('comment')

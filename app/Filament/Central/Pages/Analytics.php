@@ -63,6 +63,7 @@ class Analytics extends Page
         ];
     }
 
+    /** @return array<int, array<string, mixed>> */
     public function getMonthlyGrowth(): array
     {
         $signups = $this->getSignupsByMonth();

@@ -177,6 +177,7 @@ class ProfitAnalysis extends Page
             ->sortBy('name');
     }
 
+    /** @return array<string, mixed> */
     public function getTotalRevenuePotential(): array
     {
         $products = $this->getProductAnalysis()->where('has_cost_data', true);

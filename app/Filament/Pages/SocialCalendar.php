@@ -110,6 +110,7 @@ class SocialCalendar extends Page
         $this->selectedDayPosts = $this->posts[$date] ?? [];
     }
 
+    /** @return array<int, mixed> */
     public function getCalendarDaysProperty(): array
     {
         $start = Date::create($this->year, $this->month, 1);

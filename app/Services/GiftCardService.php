@@ -38,6 +38,7 @@ class GiftCardService
             ?? GiftCard::query()->where('code', strtoupper(trim($code)))->first();
     }
 
+    /** @return array<string, mixed> */
     public function redeem(string $code, float $amount, ?int $orderId = null): array
     {
         return DB::transaction(function () use ($code, $amount, $orderId) {

@@ -79,6 +79,7 @@ class ActivityLogPage extends Page
         return ActivityLog::query()->distinct()->pluck('action')->filter()->sort()->values()->toArray();
     }
 
+    /** @return array<int, array<string, string>> */
     public function getModelTypesProperty(): array
     {
         return ActivityLog::query()->distinct()->pluck('model_type')->filter()->map(fn (string $t) => [

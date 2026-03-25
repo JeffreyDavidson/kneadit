@@ -296,6 +296,7 @@ class InstagramCaptionGenerator extends Page
         return array_merge($baseHashtags, $categorySpecific, $generalBakeryHashtags);
     }
 
+    /** @return array<string, mixed> */
     private function selectRandomHashtags(array $hashtags, int $count): array
     {
         shuffle($hashtags);

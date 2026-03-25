@@ -62,6 +62,7 @@ class ReferralProgram extends Page
             ->sum('reward_months');
     }
 
+    /** @return Collection<int, Referral> */
     public function getReferrals(): Collection
     {
         return Referral::query()->where('referrer_tenant_id', tenant()->id)

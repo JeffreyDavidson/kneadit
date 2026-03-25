@@ -34,6 +34,7 @@ class SeasonalItemsWidget extends Widget
             ->all();
     }
 
+    /** @return array<int, array<string, string>> */
     public function getEndingSoon(): array
     {
         return SeasonalItem::with('product')

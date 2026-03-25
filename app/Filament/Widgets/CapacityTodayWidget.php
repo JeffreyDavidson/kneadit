@@ -44,6 +44,7 @@ class CapacityTodayWidget extends Widget
         return $this->getCapacityData(Date::tomorrow());
     }
 
+    /** @return array<int, array<string, string>> */
     public function getBlockedDaysWarning(): array
     {
         return BlockedDate::query()->where('date', '>=', Date::today())

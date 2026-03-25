@@ -14,6 +14,7 @@ class OnboardingProgress extends Widget
 
     protected string $view = 'filament.central.widgets.onboarding-progress';
 
+    /** @return array<string, mixed> */
     public function getOnboardingStats(): array
     {
         $tenants = Tenant::all();

@@ -12,6 +12,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
@@ -83,6 +84,7 @@ class ProductImportExport extends Page
         ];
     }
 
+    /** @return array<int, Component> */
     protected function getFormSchema(): array
     {
         $components = [

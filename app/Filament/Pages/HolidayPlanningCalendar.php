@@ -66,6 +66,7 @@ class HolidayPlanningCalendar extends Page
             ->filter(fn (Holiday $holiday) => $holiday->is_in_prep_period);
     }
 
+    /** @return Collection<int, mixed> */
     public function getHolidaysByMonth(): Collection
     {
         $currentYear = now()->year;
