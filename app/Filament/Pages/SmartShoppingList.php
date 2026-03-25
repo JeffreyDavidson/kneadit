@@ -112,7 +112,7 @@ class SmartShoppingList extends Page
                 ->sortBy('pivot.unit_price')
                 ->first();
 
-            /** @var object{unit_price?: string, minimum_order?: string, lead_time_days?: int, sku?: string}|null $pivot */
+            /** @var object{unit_price: string, minimum_order: string, lead_time_days: int, sku: string}|null $pivot */
             $pivot = $bestSupplier?->pivot;
 
             $item = [
@@ -122,7 +122,7 @@ class SmartShoppingList extends Page
                 'current_stock' => $ingredient->current_stock,
                 'needed' => round($neededQty, 2),
                 'unit_price' => $pivot->unit_price ?? $ingredient->cost_per_unit ?? 0,
-                'subtotal' => round($neededQty * ($pivot->unit_price ?? $ingredient->cost_per_unit ?? 0), 2),
+                'subtotal' => round($neededQty * (float) ($pivot->unit_price ?? $ingredient->cost_per_unit ?? 0), 2),
                 'sku' => $pivot?->sku,
                 'minimum_order' => $pivot?->minimum_order,
                 'lead_time_days' => $pivot?->lead_time_days,
@@ -187,7 +187,7 @@ class SmartShoppingList extends Page
                 items: $group['items'],
                 total: $group['total'],
                 requestedDate: now()->addDays(
-                    (int) (max(array_column($group['items'], 'lead_time_days')) ?: 3)
+                    (int) max(3, ...array_column($group['items'], 'lead_time_days'))
                 )->format('Y-m-d'),
             ));
 

@@ -67,7 +67,7 @@ class EmailCampaignResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Status' => ucfirst($record->status?->value ?? 'draft'),
+            'Status' => ucfirst($record->status->value),
             'Recipients' => (string) ($record->recipient_count ?? 0),
         ];
     }

@@ -139,7 +139,9 @@ class QrCodeGenerator extends Page
 
         if ($format === 'png') {
             $qr = $qr->format('png');
-            $this->qrCodeSvg = base64_encode((string) $qr->generate($this->currentUrl));
+            /** @var string $pngData */
+            $pngData = $qr->generate($this->currentUrl);
+            $this->qrCodeSvg = base64_encode($pngData);
         } else {
             /** @var HtmlString $svg */
             $svg = $qr->generate($this->currentUrl);
@@ -165,17 +167,19 @@ class QrCodeGenerator extends Page
         $qr = QrCode::size($size)->color((int) $r, (int) $g, (int) $b)->margin(1);
 
         if ($format === 'png') {
+            /** @var string $content */
             $content = $qr->format('png')->generate($url);
             $filename = 'qr-code.'.($page ?: 'home').'.png';
 
-            return Response::streamDownload(fn () => print ($content), $filename, [
+            return Response::streamDownload(fn () => print ((string) $content), $filename, [
                 'Content-Type' => 'image/png',
             ]);
         } else {
+            /** @var string $content */
             $content = $qr->generate($url);
             $filename = 'qr-code.'.($page ?: 'home').'.svg';
 
-            return Response::streamDownload(fn () => print ($content), $filename, [
+            return Response::streamDownload(fn () => print ((string) $content), $filename, [
                 'Content-Type' => 'image/svg+xml',
             ]);
         }

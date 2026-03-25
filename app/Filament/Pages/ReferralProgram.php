@@ -57,7 +57,7 @@ class ReferralProgram extends Page
 
     public function getMonthsEarned(): int
     {
-        return Referral::query()->where('referrer_tenant_id', tenant()->id)
+        return (int) Referral::query()->where('referrer_tenant_id', tenant()->id)
             ->where('status', ReferralStatus::Rewarded)
             ->sum('reward_months');
     }

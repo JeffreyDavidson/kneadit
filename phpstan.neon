@@ -53,8 +53,6 @@ parameters:
         -
             identifier: argument.type
             message: '#static method Filament\\Schemas\\Components\\Form::make\(\) expects#'
-        # Collection callback unresolvable types (complex closures)
-        - identifier: argument.unresolvableType
         # Stripe Checkout session create parameter shape
         -
             identifier: argument.type

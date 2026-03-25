@@ -144,7 +144,7 @@ class TenancyServiceProvider extends ServiceProvider
         ];
 
         foreach (array_reverse($tenancyMiddleware) as $middleware) {
-            $this->app[Kernel::class]->prependToMiddlewarePriority($middleware);
+            $this->app->make(Kernel::class)->prependToMiddlewarePriority($middleware);
         }
     }
 }

@@ -88,13 +88,13 @@ class FinanceSummary extends Page
     private function calculateYearlyTotals(): void
     {
         // Total revenue from paid orders
-        $this->totalRevenue = Order::query()->whereYear('delivery_date', $this->selectedYear)
+        $this->totalRevenue = (float) (Order::query()->whereYear('delivery_date', $this->selectedYear)
             ->where('payment_status', PaymentStatus::Paid)
-            ->sum('total');
+            ->sum('total'));
 
         // Total expenses for the year
-        $this->totalExpenses = Expense::query()->whereYear('date', $this->selectedYear)
-            ->sum('amount');
+        $this->totalExpenses = (float) (Expense::query()->whereYear('date', $this->selectedYear)
+            ->sum('amount'));
 
         // Add income to revenue
         $totalIncome = Income::query()->whereYear('date', $this->selectedYear)
@@ -165,9 +165,9 @@ class FinanceSummary extends Page
     private function calculateCOGS(): void
     {
         // COGS = ingredients + packaging expenses
-        $this->cogsAmount = Expense::query()->whereYear('date', $this->selectedYear)
+        $this->cogsAmount = (float) (Expense::query()->whereYear('date', $this->selectedYear)
             ->whereIn('category', ['ingredients', 'packaging'])
-            ->sum('amount');
+            ->sum('amount'));
 
         if ($this->totalExpenses > 0) {
             $this->cogsPercentage = round(($this->cogsAmount / $this->totalExpenses) * 100, 1);
