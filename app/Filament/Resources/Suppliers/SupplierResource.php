@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Suppliers;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\Suppliers\Pages\ListSuppliers;
 use App\Filament\Resources\Suppliers\RelationManagers\IngredientsRelationManager;
 use App\Filament\Resources\Suppliers\Schemas\SupplierForm;
@@ -17,9 +18,9 @@ class SupplierResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static ?string $model = Supplier::class;

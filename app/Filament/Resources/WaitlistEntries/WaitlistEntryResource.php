@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\WaitlistEntries;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\WaitlistEntries\Pages\ListWaitlistEntries;
 use App\Filament\Resources\WaitlistEntries\Schemas\WaitlistEntryForm;
 use App\Filament\Resources\WaitlistEntries\Tables\WaitlistEntriesTable;
@@ -17,9 +18,9 @@ class WaitlistEntryResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static ?string $model = WaitlistEntry::class;

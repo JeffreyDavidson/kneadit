@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CapacityLimits;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\CapacityLimits\Schemas\CapacityLimitForm;
 use App\Filament\Resources\CapacityLimits\Tables\CapacityLimitsTable;
 use App\Filament\Traits\RequiresRole;
@@ -16,9 +17,9 @@ class CapacityLimitResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static string $requiredPlan = 'pro';

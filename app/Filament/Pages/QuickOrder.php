@@ -6,6 +6,7 @@ use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Enums\UserRole;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Customer;
 use App\Models\Order;
@@ -37,9 +38,9 @@ class QuickOrder extends Page
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected string $view = 'filament-panels::pages.simple';

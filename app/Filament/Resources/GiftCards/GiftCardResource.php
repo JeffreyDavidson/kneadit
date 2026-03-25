@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GiftCards;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
 use App\Filament\Resources\GiftCards\Pages\ViewGiftCard;
 use App\Filament\Resources\GiftCards\Schemas\GiftCardForm;
@@ -18,9 +19,9 @@ class GiftCardResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static ?string $model = GiftCard::class;

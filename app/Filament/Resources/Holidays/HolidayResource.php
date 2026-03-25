@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Holidays;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\Holidays\Schemas\HolidayForm;
 use App\Filament\Resources\Holidays\Tables\HolidaysTable;
 use App\Filament\Traits\RequiresRole;
@@ -16,9 +17,9 @@ class HolidayResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static string $requiredPlan = 'pro';

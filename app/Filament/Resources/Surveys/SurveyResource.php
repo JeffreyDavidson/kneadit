@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Surveys;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\Surveys\Pages\ListSurveys;
 use App\Filament\Resources\Surveys\Pages\ViewSurvey;
 use App\Filament\Resources\Surveys\Schemas\SurveyForm;
@@ -19,9 +20,9 @@ class SurveyResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static ?string $model = Survey::class;

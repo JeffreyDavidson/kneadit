@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EmailCampaigns;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\EmailCampaigns\Pages\ListEmailCampaigns;
 use App\Filament\Resources\EmailCampaigns\Schemas\EmailCampaignForm;
 use App\Filament\Resources\EmailCampaigns\Tables\EmailCampaignsTable;
@@ -18,9 +19,9 @@ class EmailCampaignResource extends Resource
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static string $requiredPlan = 'pro';

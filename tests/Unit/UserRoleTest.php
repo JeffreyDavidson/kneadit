@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -20,6 +21,12 @@ test('user model has role methods', function () {
     expect(method_exists($user, 'isManager'))->toBeTrue();
     expect(method_exists($user, 'isStaff'))->toBeTrue();
     expect(method_exists($user, 'hasMinRole'))->toBeTrue();
+});
+
+test('role is cast to UserRole enum', function () {
+    $user = User::factory()->create(['role' => 'owner']);
+
+    expect($user->role)->toBe(UserRole::Owner);
 });
 
 test('is owner returns true for owner role', function () {
@@ -55,20 +62,20 @@ test('is staff returns true for staff', function () {
 test('has min role staff is true for all roles', function () {
     foreach (['staff', 'manager', 'owner'] as $role) {
         $user = User::factory()->create(['role' => $role]);
-        expect($user->hasMinRole('staff'))->toBeTrue("{$role} should have min role staff");
+        expect($user->hasMinRole(UserRole::Staff))->toBeTrue("{$role} should have min role staff");
     }
 });
 
 test('has min role manager is false for staff', function () {
     $user = User::factory()->create(['role' => 'staff']);
 
-    expect($user->hasMinRole('manager'))->toBeFalse();
+    expect($user->hasMinRole(UserRole::Manager))->toBeFalse();
 });
 
 test('has min role manager is true for manager and owner', function () {
     foreach (['manager', 'owner'] as $role) {
         $user = User::factory()->create(['role' => $role]);
-        expect($user->hasMinRole('manager'))->toBeTrue("{$role} should have min role manager");
+        expect($user->hasMinRole(UserRole::Manager))->toBeTrue("{$role} should have min role manager");
     }
 });
 
@@ -77,7 +84,7 @@ test('has min role owner is true only for owner', function () {
     $manager = User::factory()->create(['role' => 'manager']);
     $staff = User::factory()->create(['role' => 'staff']);
 
-    expect($owner->hasMinRole('owner'))->toBeTrue();
-    expect($manager->hasMinRole('owner'))->toBeFalse();
-    expect($staff->hasMinRole('owner'))->toBeFalse();
+    expect($owner->hasMinRole(UserRole::Owner))->toBeTrue();
+    expect($manager->hasMinRole(UserRole::Owner))->toBeFalse();
+    expect($staff->hasMinRole(UserRole::Owner))->toBeFalse();
 });

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Enums\OrderStatus;
+use App\Enums\UserRole;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Category;
 use App\Models\OrderItem;
@@ -17,9 +18,9 @@ class ProductTrends extends Page
 {
     use HasPlanGating, RequiresRole;
 
-    protected static function getRequiredRole(): string
+    protected static function getRequiredRole(): UserRole
     {
-        return 'manager';
+        return UserRole::Manager;
     }
 
     protected static string $requiredPlan = 'pro';
