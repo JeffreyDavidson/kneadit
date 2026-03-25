@@ -31,7 +31,9 @@ class WebhookService
         $signature = hash_hmac('sha256', $json, $secret);
 
         try {
-            Http::timeout(5)
+            $response = Http::connectTimeout(3)
+                ->timeout(5)
+                ->retry(2, 100)
                 ->withHeaders([
                     'Content-Type' => 'application/json',
                     'X-KneadIt-Event' => $event,
@@ -39,6 +41,13 @@ class WebhookService
                 ])
                 ->withBody($json, 'application/json')
                 ->post($url);
+
+            if ($response->failed()) {
+                Log::warning("Webhook returned {$response->status()} for {$event}", [
+                    'url' => $url,
+                    'status' => $response->status(),
+                ]);
+            }
         } catch (\Exception $e) {
             Log::warning("Webhook dispatch failed for {$event}", [
                 'url' => $url,

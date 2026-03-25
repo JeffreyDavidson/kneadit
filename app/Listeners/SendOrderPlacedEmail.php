@@ -4,10 +4,11 @@ namespace App\Listeners;
 
 use App\Events\OrderCreated;
 use App\Mail\OrderPlaced;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendOrderPlacedEmail
+class SendOrderPlacedEmail implements ShouldQueue
 {
     public function handle(OrderCreated $event): void
     {
@@ -17,13 +18,14 @@ class SendOrderPlacedEmail
             return;
         }
 
-        try {
-            Mail::to($order->customer->email)->send(new OrderPlaced($order));
-        } catch (\Exception $e) {
-            Log::warning('Order placed email failed', [
-                'order' => $order->order_number,
-                'error' => $e->getMessage(),
-            ]);
-        }
+        Mail::to($order->customer->email)->send(new OrderPlaced($order));
+    }
+
+    public function failed(OrderCreated $event, \Throwable $exception): void
+    {
+        Log::warning('Order placed email failed', [
+            'order' => $event->order->order_number,
+            'error' => $exception->getMessage(),
+        ]);
     }
 }

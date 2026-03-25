@@ -3,9 +3,10 @@
 namespace App\Events;
 
 use App\Models\Order;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class OrderCreated
+class OrderCreated implements ShouldDispatchAfterCommit
 {
     use Dispatchable;
 

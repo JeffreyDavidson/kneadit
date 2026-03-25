@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Events\OrderStatusChanged;
 use App\Exceptions\InvalidOrderTransitionException;
 use App\Models\Order;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TransitionOrderStatus
@@ -32,29 +33,31 @@ class TransitionOrderStatus
             throw new InvalidOrderTransitionException($order, $from, $to);
         }
 
-        $order->update(['status' => $to]);
+        DB::transaction(function () use ($order, $to) {
+            $order->update(['status' => $to]);
 
-        if ($to === OrderStatus::Baking) {
-            try {
-                ($this->deductIngredients)($order);
-            } catch (\Exception $e) {
-                Log::warning('Ingredient deduction failed', [
-                    'order' => $order->order_number,
-                    'error' => $e->getMessage(),
-                ]);
+            if ($to === OrderStatus::Baking) {
+                try {
+                    ($this->deductIngredients)($order);
+                } catch (\Exception $e) {
+                    Log::warning('Ingredient deduction failed', [
+                        'order' => $order->order_number,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
-        }
 
-        if ($to === OrderStatus::Delivered) {
-            try {
-                ($this->awardLoyaltyPoints)($order);
-            } catch (\Exception $e) {
-                Log::warning('Loyalty points award failed', [
-                    'order' => $order->order_number,
-                    'error' => $e->getMessage(),
-                ]);
+            if ($to === OrderStatus::Delivered) {
+                try {
+                    ($this->awardLoyaltyPoints)($order);
+                } catch (\Exception $e) {
+                    Log::warning('Loyalty points award failed', [
+                        'order' => $order->order_number,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
-        }
+        });
 
         OrderStatusChanged::dispatch($order, $from, $to);
 
