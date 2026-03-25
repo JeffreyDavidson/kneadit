@@ -44,11 +44,11 @@ class StripeConnectWebhookController extends Controller
             return response('Invalid signature', 400);
         }
 
-        $type = is_object($event) ? ($event->type ?? null) : ($event['type'] ?? null);
-        $data = is_object($event) ? ($event->data->object ?? null) : ($event['data']['object'] ?? null);
+        $type = $event->type;
+        $data = $event->data->object ?? null;
 
         // Idempotency: skip already-processed events
-        $eventId = is_object($event) ? ($event->id ?? null) : ($event['id'] ?? null);
+        $eventId = $event->id;
         if ($eventId && Cache::has("stripe_event:{$eventId}")) {
             return response('Already processed', 200);
         }

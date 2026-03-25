@@ -77,7 +77,7 @@ class StorefrontAnalytics extends Page
             ->orderByDesc('views')
             ->first();
 
-        return $page?->page ?? '—';
+        return $page->page ?? '—';
     }
 
     public function getConversionRate(): float
@@ -168,7 +168,7 @@ class StorefrontAnalytics extends Page
         $maxVal = max($maxCount, 1);
 
         foreach ($funnel as $i => &$step) {
-            $step['percentage'] = $maxVal > 0 ? round(($step['count'] / $maxVal) * 100) : 0;
+            $step['percentage'] = round(($step['count'] / $maxVal) * 100);
             $step['dropoff'] = $i > 0 && $funnel[$i - 1]['count'] > 0
                 ? round((1 - $step['count'] / $funnel[$i - 1]['count']) * 100, 1)
                 : null;

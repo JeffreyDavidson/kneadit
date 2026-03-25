@@ -61,7 +61,7 @@ class LoyaltyReward extends Model
         return match ($this->reward_type) {
             'percentage_discount' => $this->reward_value.'% Off',
             'fixed_discount' => '$'.number_format((float) $this->reward_value, 2).' Off',
-            'free_product' => 'Free '.($this->product?->name ?? 'Product'),
+            'free_product' => 'Free '.($this->product->name ?? 'Product'),
             default => $this->reward_type,
         };
     }

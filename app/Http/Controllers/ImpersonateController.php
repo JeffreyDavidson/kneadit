@@ -32,7 +32,7 @@ class ImpersonateController extends Controller
             'created_at' => now(),
         ]);
 
-        $domain = $tenant->domains()->first()?->domain ?? $tenant->id;
+        $domain = $tenant->domains()->first()->domain ?? $tenant->id;
         $appHost = parse_url(config('app.url'), PHP_URL_HOST);
         $scheme = parse_url(config('app.url'), PHP_URL_SCHEME) ?? 'https';
         $host = "{$domain}.{$appHost}";

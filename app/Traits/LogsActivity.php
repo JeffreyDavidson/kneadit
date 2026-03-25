@@ -23,13 +23,13 @@ trait LogsActivity
         try {
             ActivityLog::query()->create([
                 'user_id' => auth()->id(),
-                'user_name' => auth()->user()?->name ?? 'System',
+                'user_name' => auth()->user()->name ?? 'System',
                 'action' => $action,
                 'model_type' => get_class($model),
                 'model_id' => $model->getKey(),
                 'description' => class_basename($model)." #{$model->getKey()} was {$action}",
                 'properties' => ! empty($changes) ? ['changes' => $changes] : null,
-                'ip_address' => request()?->ip(),
+                'ip_address' => request()->ip(),
             ]);
         } catch (\Throwable) {
             // Silently fail — don't break the app if logging fails

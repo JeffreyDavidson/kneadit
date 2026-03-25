@@ -4,7 +4,7 @@ includes:
 parameters:
     paths:
         - app/
-    level: 3
+    level: 4
     scanDirectories:
         - vendor/filament
     ignoreErrors:
@@ -57,3 +57,6 @@ parameters:
         # Customer birthday month accessed on string (cast not resolved)
         -
             message: '#Cannot access property \$month on string#'
+        # HasPlanGating method_exists check — needed for classes without RequiresRole trait
+        - identifier: function.alreadyNarrowedType
+          path: app/Traits/HasPlanGating.php

@@ -40,7 +40,7 @@ class ViewTenant extends ViewRecord
                 $stats = [
                     'products' => DB::table('products')->count(),
                     'orders' => DB::table('orders')->count(),
-                    'revenue' => DB::table('orders')->sum('total') ?? 0,
+                    'revenue' => DB::table('orders')->sum('total'),
                     'customers' => DB::table('users')->count(),
                     'reviews' => DB::table('reviews')->count(),
                     'last_order' => DB::table('orders')->max('created_at'),

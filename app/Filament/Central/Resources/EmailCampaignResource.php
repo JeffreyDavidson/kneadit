@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Enums\EmailCampaignStatus;
 use App\Filament\Central\Resources\EmailCampaignResource\Pages;
 use App\Models\EmailCampaign;
 use App\Models\Tenant;
@@ -106,7 +107,7 @@ class EmailCampaignResource extends Resource
                             'recipient_count' => $recipientCount,
                         ]);
                     })
-                    ->visible(fn (EmailCampaign $record) => $record->status !== 'sent'),
+                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent),
                 Actions\Action::make('schedule')
                     ->label('Schedule')
                     ->icon('heroicon-o-clock')
@@ -122,7 +123,7 @@ class EmailCampaignResource extends Resource
                             'scheduled_at' => $data['scheduled_at'],
                         ]);
                     })
-                    ->visible(fn (EmailCampaign $record) => $record->status !== 'sent'),
+                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent),
                 Actions\Action::make('preview')
                     ->icon('heroicon-o-eye')
                     ->modalHeading(fn (EmailCampaign $record) => 'Preview: '.$record->subject)

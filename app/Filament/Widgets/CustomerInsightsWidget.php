@@ -39,12 +39,12 @@ class CustomerInsightsWidget extends Widget
         $thisMonth = (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
-            ->avg('total') ?? 0;
+            ->avg('total');
 
         $lastMonth = (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
-            ->avg('total') ?? 0;
+            ->avg('total');
 
         return [
             'value' => round($thisMonth, 2),

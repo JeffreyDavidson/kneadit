@@ -88,8 +88,8 @@ class CustomerDirectory extends Page implements HasForms
             'total_customers' => $totalCustomers,
             'avg_lifetime_value' => number_format($avgLifetimeValue, 2),
             'at_risk_count' => $atRiskCount,
-            'top_customer_name' => $topCustomer?->name ?? 'N/A',
-            'top_customer_value' => number_format($topCustomer?->lifetime_value ?? 0, 2),
+            'top_customer_name' => $topCustomer->name ?? 'N/A',
+            'top_customer_value' => number_format($topCustomer->lifetime_value ?? 0, 2),
         ];
     }
 

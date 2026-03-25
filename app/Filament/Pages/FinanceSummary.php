@@ -132,7 +132,7 @@ class FinanceSummary extends Page
             ->groupBy('category')
             ->get()
             ->map(function (Expense $expense) use ($totalExpenses) {
-                $categoryName = Expense::CATEGORIES[$expense->category] ?? ucfirst($expense->category);
+                $categoryName = Expense::CATEGORIES[$expense->category];
 
                 return [
                     'category' => $categoryName,

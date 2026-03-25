@@ -57,7 +57,7 @@ class WaitlistEntryResource extends Resource
     {
         return [
             'Email' => $record->customer_email ?? 'N/A',
-            'Product' => $record->product?->name ?? 'N/A',
+            'Product' => $record->product->name ?? 'N/A',
         ];
     }
 

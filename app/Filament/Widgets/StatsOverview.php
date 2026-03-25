@@ -42,7 +42,7 @@ class StatsOverview extends BaseWidget
             Stat::make('Avg Order Value', '$'.number_format(
                 (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
                     ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
-                    ->avg('total') ?? 0,
+                    ->avg('total'),
                 2
             ))
                 ->icon('heroicon-o-receipt-percent')
@@ -72,7 +72,7 @@ class StatsOverview extends BaseWidget
             ...collect([$today, $today->copy()->addDay()])
                 ->map(function (Carbon $date) {
                     $usage = CapacityLimit::usagePercent($date);
-                    if ($usage === null || $usage < 80) {
+                    if ($usage < 80) {
                         return null;
                     }
                     $label = $date->isToday() ? 'Today' : 'Tomorrow';

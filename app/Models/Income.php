@@ -45,6 +45,6 @@ class Income extends Model
 
     protected function getSourceLabelAttribute(): string
     {
-        return self::SOURCES[$this->source] ?? ucfirst($this->source);
+        return self::SOURCES[$this->source];
     }
 }

@@ -246,7 +246,7 @@ class TaxExport extends Page
                 foreach ($expenses as $expense) {
                     fputcsv($handle, [
                         $expense->date->format('Y-m-d'),
-                        $categoryMap[$expense->category] ?? 'Other Expenses (Line 27a)',
+                        $categoryMap[$expense->category],
                         $expense->description,
                         $expense->amount,
                         $expense->business_percentage,

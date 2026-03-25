@@ -41,7 +41,7 @@ class LoyaltyLeadersWidget extends Widget
             ->limit(3)
             ->get()
             ->map(fn (LoyaltyPoint $lp) => [
-                'customer' => $lp->customer?->name ?? 'Unknown',
+                'customer' => $lp->customer->name ?? 'Unknown',
                 'points' => $lp->points,
                 'description' => $lp->description ?? '',
                 'date' => $lp->created_at?->diffForHumans() ?? '',

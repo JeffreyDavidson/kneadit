@@ -99,10 +99,6 @@ class Analytics extends Page
             ->select('trial_ends_at', 'created_at')
             ->get();
 
-        if ($tenants->isEmpty()) {
-            return 0;
-        }
-
         $avgDays = $tenants->avg(function (Tenant $tenant) {
             return Date::parse($tenant->created_at)
                 ->diffInDays(Date::parse($tenant->trial_ends_at));

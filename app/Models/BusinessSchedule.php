@@ -61,6 +61,6 @@ class BusinessSchedule extends Model
     {
         $schedule = static::forDay($dayOfWeek);
 
-        return $schedule?->is_open ?? false;
+        return $schedule->is_open ?? false;
     }
 }

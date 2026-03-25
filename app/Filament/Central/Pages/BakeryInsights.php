@@ -450,7 +450,7 @@ class BakeryInsights extends Page
                         'order_limit' => $orderLimit,
                         'order_percent' => min($orderPercent, 100),
                         'at_limit' => $atLimit,
-                        'approaching_limit' => $approachingLimit && ! $atLimit,
+                        'approaching_limit' => ! $atLimit,
                     ]);
                 }
             } catch (\Throwable $e) {

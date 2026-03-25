@@ -39,11 +39,13 @@ class IngredientsTable
                         'good' => 'Good',
                         'low' => 'Low',
                         'out' => 'Out of Stock',
+                        default => $state,
                     })
                     ->color(fn (string $state) => match ($state) {
                         'good' => 'success',
                         'low' => 'warning',
                         'out' => 'danger',
+                        default => 'gray',
                     }),
 
                 TextColumn::make('cost_per_unit')
