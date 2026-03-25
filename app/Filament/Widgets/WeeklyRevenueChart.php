@@ -28,18 +28,28 @@ class WeeklyRevenueChart extends ChartWidget
         $end = Date::now()->endOfWeek();
         $period = CarbonPeriod::create($start, $end);
 
+        $revenueByDay = Order::query()
+            ->where('status', '!=', OrderStatus::Cancelled)
+            ->whereBetween('delivery_date', [$start, $end])
+            ->selectRaw('DATE(delivery_date) as day, SUM(total) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
+        $expensesByDay = Expense::query()
+            ->whereBetween('date', [$start, $end])
+            ->selectRaw('DATE(date) as day, SUM(amount * business_percentage / 100) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
         $labels = [];
         $revenue = [];
         $expenses = [];
 
         foreach ($period as $date) {
+            $key = $date->format('Y-m-d');
             $labels[] = $date->format('D');
-            $revenue[] = (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
-                ->whereDate('delivery_date', $date)
-                ->sum('total');
-            $expenses[] = (float) Expense::query()->whereDate('date', $date)
-                ->get()
-                ->sum(fn (Expense $e) => $e->deductible_amount);
+            $revenue[] = round((float) ($revenueByDay[$key] ?? 0), 2);
+            $expenses[] = round((float) ($expensesByDay[$key] ?? 0), 2);
         }
 
         return [

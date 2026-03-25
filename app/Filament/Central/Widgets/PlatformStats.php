@@ -7,6 +7,7 @@ use App\Models\SupportTicket;
 use App\Models\Tenant;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Collection;
 
 class PlatformStats extends StatsOverviewWidget
 {
@@ -25,35 +26,33 @@ class PlatformStats extends StatsOverviewWidget
 
         $openTickets = SupportTicket::query()->where('status', SupportTicketStatus::Open)->count();
 
-        // Sparkline data: last 6 months
+        // Sparkline data: last 6 months (1 query + in-memory filtering)
+        /** @var Collection<int, Tenant> $allTenants */
+        $allTenants = Tenant::query()->select('plan', 'is_active', 'created_at', 'trial_ends_at')->get();
         $mrrChart = [];
         $bakeryChart = [];
         $trialChart = [];
 
         for ($i = 5; $i >= 0; $i--) {
             $monthEnd = now()->subMonths($i)->endOfMonth();
-
-            // MRR for that month
-            $activeInMonth = Tenant::query()->where('is_active', true)
-                ->where('created_at', '<=', $monthEnd)
-                ->get();
+            $activeInMonth = $allTenants->filter(fn (Tenant $t) => $t->is_active && $t->created_at <= $monthEnd);
             $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $planPrices[$t->plan] ?? 0);
-
-            // Cumulative bakeries
-            $bakeryChart[] = Tenant::query()->where('created_at', '<=', $monthEnd)->count();
-
-            // Trials active at end of that month
-            $trialChart[] = Tenant::query()->whereNotNull('trial_ends_at')
-                ->where('trial_ends_at', '>', $monthEnd)
-                ->where('created_at', '<=', $monthEnd)
-                ->count();
+            $bakeryChart[] = $allTenants->filter(fn (Tenant $t) => $t->created_at <= $monthEnd)->count();
+            $trialChart[] = $allTenants->filter(fn (Tenant $t) => $t->trial_ends_at && $t->trial_ends_at > $monthEnd && $t->created_at <= $monthEnd)->count();
         }
 
-        // Ticket sparkline: last 6 days
+        // Ticket sparkline: last 6 days (1 grouped query)
+        $sixDaysAgo = now()->subDays(5)->startOfDay();
+        $ticketCounts = SupportTicket::query()
+            ->where('created_at', '>=', $sixDaysAgo)
+            ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
         $ticketChart = [];
         for ($i = 5; $i >= 0; $i--) {
-            $day = now()->subDays($i);
-            $ticketChart[] = SupportTicket::query()->whereDate('created_at', $day->toDateString())->count();
+            $day = now()->subDays($i)->format('Y-m-d');
+            $ticketChart[] = (int) ($ticketCounts[$day] ?? 0);
         }
 
         return [

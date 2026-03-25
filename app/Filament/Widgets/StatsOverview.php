@@ -18,80 +18,82 @@ class StatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $today = Date::today();
-        $weekStart = Date::now()->startOfWeek();
+        return once(function (): array {
+            $today = Date::today();
+            $weekStart = Date::now()->startOfWeek();
 
-        return [
-            Stat::make("Today's Orders", Order::query()->whereDate('delivery_date', $today)->count())
-                ->icon('heroicon-o-shopping-bag')
-                ->color('primary'),
+            return [
+                Stat::make("Today's Orders", Order::query()->whereDate('delivery_date', $today)->count())
+                    ->icon('heroicon-o-shopping-bag')
+                    ->color('primary'),
 
-            Stat::make('Pending Orders', Order::query()->where('status', OrderStatus::Pending)->count())
-                ->icon('heroicon-o-clock')
-                ->color('warning'),
+                Stat::make('Pending Orders', Order::query()->where('status', OrderStatus::Pending)->count())
+                    ->icon('heroicon-o-clock')
+                    ->color('warning'),
 
-            Stat::make("This Week's Revenue", '$'.number_format(
-                (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
-                    ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
-                    ->sum('total'),
-                2
-            ))
-                ->icon('heroicon-o-currency-dollar')
-                ->color('success'),
+                Stat::make("This Week's Revenue", '$'.number_format(
+                    (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
+                        ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
+                        ->sum('total'),
+                    2
+                ))
+                    ->icon('heroicon-o-currency-dollar')
+                    ->color('success'),
 
-            Stat::make('Avg Order Value', '$'.number_format(
-                (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
-                    ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
-                    ->avg('total'),
-                2
-            ))
-                ->icon('heroicon-o-receipt-percent')
-                ->color('info'),
+                Stat::make('Avg Order Value', '$'.number_format(
+                    (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
+                        ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
+                        ->avg('total'),
+                    2
+                ))
+                    ->icon('heroicon-o-receipt-percent')
+                    ->color('info'),
 
-            Stat::make('Total Customers', Order::query()->distinct('customer_email')->count('customer_email'))
-                ->icon('heroicon-o-users')
-                ->color('info'),
+                Stat::make('Total Customers', Order::query()->distinct('customer_email')->count('customer_email'))
+                    ->icon('heroicon-o-users')
+                    ->color('info'),
 
-            Stat::make('Storefront Views Today', number_format(
-                PageView::query()->whereNull('product_id')
-                    ->where('created_at', '>=', $today)
-                    ->count()
-            ))
-                ->icon('heroicon-o-eye')
-                ->color('primary'),
+                Stat::make('Storefront Views Today', number_format(
+                    PageView::query()->whereNull('product_id')
+                        ->where('created_at', '>=', $today)
+                        ->count()
+                ))
+                    ->icon('heroicon-o-eye')
+                    ->color('primary'),
 
-            ...collect([WaitlistEntry::waiting()->where('requested_date', '>=', $today)->count()])
-                ->filter()
-                ->map(fn (int $count) => Stat::make('Waitlist', $count.' '.str('person')->plural($count))
-                    ->icon('heroicon-o-queue-list')
-                    ->color('warning')
-                    ->description('Waiting for upcoming dates')
-                    ->url(route('filament.admin.resources.waitlist-entries.index')))
-                ->all(),
+                ...collect([WaitlistEntry::waiting()->where('requested_date', '>=', $today)->count()])
+                    ->filter()
+                    ->map(fn (int $count) => Stat::make('Waitlist', $count.' '.str('person')->plural($count))
+                        ->icon('heroicon-o-queue-list')
+                        ->color('warning')
+                        ->description('Waiting for upcoming dates')
+                        ->url(route('filament.admin.resources.waitlist-entries.index')))
+                    ->all(),
 
-            ...collect([$today, $today->copy()->addDay()])
-                ->map(function (Carbon $date) {
-                    $usage = CapacityLimit::usagePercent($date);
-                    if ($usage < 80) {
-                        return null;
-                    }
-                    $label = $date->isToday() ? 'Today' : 'Tomorrow';
-                    $limit = CapacityLimit::forDate($date);
-                    if ($limit?->is_blocked) {
-                        return Stat::make("$label Capacity", 'BLOCKED')
-                            ->icon('heroicon-o-x-circle')
-                            ->color('danger')
-                            ->description('Day is blocked for orders');
-                    }
-                    $remaining = CapacityLimit::remainingSlots($date);
+                ...collect([$today, $today->copy()->addDay()])
+                    ->map(function (Carbon $date) {
+                        $usage = CapacityLimit::usagePercent($date);
+                        if ($usage < 80) {
+                            return null;
+                        }
+                        $label = $date->isToday() ? 'Today' : 'Tomorrow';
+                        $limit = CapacityLimit::forDate($date);
+                        if ($limit?->is_blocked) {
+                            return Stat::make("$label Capacity", 'BLOCKED')
+                                ->icon('heroicon-o-x-circle')
+                                ->color('danger')
+                                ->description('Day is blocked for orders');
+                        }
+                        $remaining = CapacityLimit::remainingSlots($date);
 
-                    return Stat::make("$label Capacity", round($usage).'% full')
-                        ->icon('heroicon-o-exclamation-triangle')
-                        ->color($usage >= 100 ? 'danger' : 'warning')
-                        ->description($remaining.' slots remaining');
-                })
-                ->filter()
-                ->all(),
-        ];
+                        return Stat::make("$label Capacity", round($usage).'% full')
+                            ->icon('heroicon-o-exclamation-triangle')
+                            ->color($usage >= 100 ? 'danger' : 'warning')
+                            ->description($remaining.' slots remaining');
+                    })
+                    ->filter()
+                    ->all(),
+            ];
+        });
     }
 }
