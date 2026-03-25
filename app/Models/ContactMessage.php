@@ -7,6 +7,16 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static \Database\Factories\ContactMessageFactory factory($count = null, $state = [])
+ * @method static Builder<static>|ContactMessage newModelQuery()
+ * @method static Builder<static>|ContactMessage newQuery()
+ * @method static Builder<static>|ContactMessage query()
+ * @method static Builder<static>|ContactMessage read()
+ * @method static Builder<static>|ContactMessage unread()
+ *
+ * @mixin \Eloquent
+ */
 class ContactMessage extends Model
 {
     use HasFactory;

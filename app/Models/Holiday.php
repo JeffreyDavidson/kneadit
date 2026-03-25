@@ -9,6 +9,43 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon $date
+ * @property int $lead_days
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $order_deadline
+ * @property \Illuminate\Support\Carbon|null $prep_start
+ * @property int|null $max_orders
+ * @property bool $is_active
+ * @property-read int $days_away
+ * @property-read bool $is_in_prep_period
+ * @property-read bool $is_upcoming
+ * @property-read Carbon $start_prep_by
+ *
+ * @method static Builder<static>|Holiday active()
+ * @method static \Database\Factories\HolidayFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Holiday newModelQuery()
+ * @method static Builder<static>|Holiday newQuery()
+ * @method static Builder<static>|Holiday query()
+ * @method static Builder<static>|Holiday upcoming()
+ * @method static Builder<static>|Holiday whereCreatedAt($value)
+ * @method static Builder<static>|Holiday whereDate($value)
+ * @method static Builder<static>|Holiday whereId($value)
+ * @method static Builder<static>|Holiday whereIsActive($value)
+ * @method static Builder<static>|Holiday whereLeadDays($value)
+ * @method static Builder<static>|Holiday whereMaxOrders($value)
+ * @method static Builder<static>|Holiday whereName($value)
+ * @method static Builder<static>|Holiday whereNotes($value)
+ * @method static Builder<static>|Holiday whereOrderDeadline($value)
+ * @method static Builder<static>|Holiday wherePrepStart($value)
+ * @method static Builder<static>|Holiday whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
+ */
 class Holiday extends Model
 {
     use HasFactory;

@@ -5,6 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property-read string $category_label
+ * @property-read float $deductible_amount
+ *
+ * @method static \Database\Factories\ExpenseFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense query()
+ *
+ * @property-read float|null $total_amount
+ *
+ * @mixin \Eloquent
+ */
 class Expense extends Model
 {
     use HasFactory;

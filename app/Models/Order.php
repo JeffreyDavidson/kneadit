@@ -9,11 +9,51 @@ use App\Enums\PaymentStatus;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property OrderStatus $status
+ * @property PaymentStatus $payment_status
+ * @property PaymentMethod $payment_method
+ * @property DeliveryType $delivery_type
+ * @property-read Coupon|null $coupon
+ * @property-read Customer|null $customer
+ * @property-read Collection<int, GiftCardTransaction> $giftCardTransactions
+ * @property-read int|null $gift_card_transactions_count
+ * @property-read Collection<int, LoyaltyPoint> $loyaltyPoints
+ * @property-read int|null $loyalty_points_count
+ * @property-read Collection<int, OrderMessage> $messages
+ * @property-read int|null $messages_count
+ * @property-read Collection<int, OrderItem> $orderItems
+ * @property-read int|null $order_items_count
+ * @property-read Collection<int, Review> $reviews
+ * @property-read int|null $reviews_count
+ * @property-read Collection<int, SurveyResponse> $surveyResponses
+ * @property-read int|null $survey_responses_count
+ * @property-read User|null $user
+ *
+ * @method static Builder<static>|Order active()
+ * @method static Builder<static>|Order byStatus(\App\Enums\OrderStatus $status)
+ * @method static \Database\Factories\OrderFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Order newModelQuery()
+ * @method static Builder<static>|Order newQuery()
+ * @method static Builder<static>|Order paid()
+ * @method static Builder<static>|Order query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order paid()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Order byStatus(\App\Enums\OrderStatus $status)
+ *
+ * @property-read string|null $last_order_date
+ * @property int|null $days_since
+ * @property-read float|null $revenue
+ * @property-read string|null $date
+ *
+ * @mixin \Eloquent
+ */
 class Order extends Model
 {
     use HasFactory;

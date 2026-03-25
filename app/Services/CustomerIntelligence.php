@@ -58,8 +58,14 @@ class CustomerIntelligence
     public function enrichQuery(Builder $query): Builder
     {
         return $query
-            ->withCount(['orders' => fn (Builder $q) => $q->active()])
-            ->withSum(['orders' => fn (Builder $q) => $q->active()], 'total')
+            ->withCount(['orders' => function (Builder $q) {
+                /** @var Builder<Order> $q */
+                $q->active();
+            }])
+            ->withSum(['orders' => function (Builder $q) {
+                /** @var Builder<Order> $q */
+                $q->active();
+            }], 'total')
             ->addSelect([
                 'last_order_date' => Order::query()->select('created_at')
                     ->whereColumn('customer_id', 'customers.id')

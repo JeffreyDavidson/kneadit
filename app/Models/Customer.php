@@ -5,12 +5,47 @@ namespace App\Models;
 use App\DataTransferObjects\CustomerMetrics;
 use App\Services\CustomerIntelligence;
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
+/**
+ * @property-read Collection<int, CustomerFavorite> $customerFavorites
+ * @property-read int|null $customer_favorites_count
+ * @property-read Collection<int, CustomerNote> $customerNotes
+ * @property-read int|null $customer_notes_count
+ * @property-read Collection<int, CustomerPhoto> $customerPhotos
+ * @property-read int|null $customer_photos_count
+ * @property-read CustomerProfile|null $customerProfile
+ * @property-read Collection<int, CustomerReminder> $customerReminders
+ * @property-read int|null $customer_reminders_count
+ * @property-read float $average_order_value
+ * @property-read int|null $days_since_last_order
+ * @property-read string $full_address
+ * @property-read bool $is_at_risk
+ * @property-read Carbon|null $last_order_date
+ * @property-read int $lifetime_points_earned
+ * @property-read float $lifetime_value
+ * @property-read int $order_count
+ * @property-read int $total_points
+ * @property-read Collection<int, LoyaltyPoint> $loyaltyPoints
+ * @property-read int|null $loyalty_points_count
+ * @property-read Collection<int, Order> $orders
+ * @property-read int|null $orders_count
+ *
+ * @method static \Database\Factories\CustomerFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer query()
+ *
+ * @property-read float|null $orders_sum_total
+ * @property-read float|null $total_spend
+ *
+ * @mixin \Eloquent
+ */
 class Customer extends Model
 {
     use HasFactory;

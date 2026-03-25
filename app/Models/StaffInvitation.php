@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read User|null $inviter
+ *
+ * @method static \Database\Factories\StaffInvitationFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation query()
+ *
+ * @mixin \Eloquent
+ */
 class StaffInvitation extends Model
 {
     use HasFactory;

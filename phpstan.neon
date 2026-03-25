@@ -4,16 +4,20 @@ includes:
 parameters:
     paths:
         - app/
-    level: 1
+    level: 2
     scanDirectories:
         - vendor/filament
     ignoreErrors:
+        # Trait uses dynamic property_exists check
         - identifier: staticProperty.notFound
           path: app/Traits/HasPlanGating.php
+        # Grouped query requires get()->count()
         - identifier: larastan.noUnnecessaryCollectionCall
           path: app/Filament/Widgets/ReorderRemindersWidget.php
+        # Tenant domains relation from vendor trait
         - identifier: larastan.relationExistence
           path: app/Http/Controllers/DirectoryController.php
+        # Filament page properties provided by traits
         -
             message: '#Access to an undefined property .+::\$form#'
             paths:
@@ -30,3 +34,26 @@ parameters:
             message: '#Call to an undefined method .+::(notify|sendSuccessNotification)\(\)#'
             paths:
                 - app/Filament/
+        # Filament $record typed as Model|int|string
+        -
+            message: '#on Illuminate\\Database\\Eloquent\\Model\|int\|string#'
+            paths:
+                - app/Filament/
+        # Larastan can't resolve casts() method — dates/enums seen as string
+        - identifier: method.nonObject
+          message: '#Cannot call method .+ on string#'
+        # Tenant model properties via tenant() helper return generic Model
+        -
+            message: '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::#'
+        # QrCode return type mismatch
+        -
+            message: '#SimpleSoftwareIO\\QrCode#'
+        # Filament TextInput::uppercase() exists at runtime
+        -
+            message: '#Call to an undefined method Filament\\Forms\\Components\\TextInput::uppercase#'
+        # Array|Model ambiguity in widgets
+        - identifier: property.nonObject
+          message: '#on array<string, mixed>\|Illuminate\\Database\\Eloquent\\Model#'
+        # Customer birthday month accessed on string (cast not resolved)
+        -
+            message: '#Cannot access property \$month on string#'

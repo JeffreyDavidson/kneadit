@@ -9,6 +9,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Date;
 
+/**
+ * @property-read Product|null $product
+ *
+ * @method static Builder<static>|SeasonalItem current()
+ * @method static Builder<static>|SeasonalItem expired()
+ * @method static \Database\Factories\SeasonalItemFactory factory($count = null, $state = [])
+ * @method static Builder<static>|SeasonalItem newModelQuery()
+ * @method static Builder<static>|SeasonalItem newQuery()
+ * @method static Builder<static>|SeasonalItem query()
+ * @method static Builder<static>|SeasonalItem upcoming()
+ *
+ * @mixin \Eloquent
+ */
 class SeasonalItem extends Model
 {
     use HasFactory;

@@ -11,6 +11,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Date;
 
+/**
+ * @property WaitlistStatus $status
+ * @property-read string $status_label
+ * @property-read Product|null $product
+ *
+ * @method static \Database\Factories\WaitlistEntryFactory factory($count = null, $state = [])
+ * @method static Builder<static>|WaitlistEntry forDate(\Carbon\Carbon|string $date)
+ * @method static Builder<static>|WaitlistEntry newModelQuery()
+ * @method static Builder<static>|WaitlistEntry newQuery()
+ * @method static Builder<static>|WaitlistEntry query()
+ * @method static Builder<static>|WaitlistEntry waiting()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry waiting()
+ *
+ * @mixin \Eloquent
+ */
 class WaitlistEntry extends Model
 {
     use HasFactory;

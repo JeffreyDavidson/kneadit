@@ -2,12 +2,14 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Auth\MultiFactor\Contracts\HasBeforeChallengeHook;
 use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Log;
 
@@ -34,6 +36,7 @@ class Login extends BaseLogin
         $data = $this->form->getState();
         Log::info('LOGIN: Form data', ['email' => $data['email'] ?? 'n/a']);
 
+        /** @var SessionGuard $authGuard */
         $authGuard = Filament::auth();
         $authProvider = $authGuard->getProvider();
         $credentials = $this->getCredentialsFromFormData($data);
@@ -44,6 +47,7 @@ class Login extends BaseLogin
             'provider_model' => method_exists($authProvider, 'getModel') ? $authProvider->getModel() : 'n/a',
         ]);
 
+        /** @var User|null $user */
         $user = $authProvider->retrieveByCredentials($credentials);
 
         Log::info('LOGIN: User retrieval', [

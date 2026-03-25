@@ -9,6 +9,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property LoyaltyPointType $type
+ * @property-read Customer|null $customer
+ * @property-read Order|null $order
+ *
+ * @method static Builder<static>|LoyaltyPoint adjusted()
+ * @method static Builder<static>|LoyaltyPoint earned()
+ * @method static \Database\Factories\LoyaltyPointFactory factory($count = null, $state = [])
+ * @method static Builder<static>|LoyaltyPoint forOrder(\App\Models\Order $order)
+ * @method static Builder<static>|LoyaltyPoint newModelQuery()
+ * @method static Builder<static>|LoyaltyPoint newQuery()
+ * @method static Builder<static>|LoyaltyPoint query()
+ * @method static Builder<static>|LoyaltyPoint redeemed()
+ *
+ * @mixin \Eloquent
+ */
 class LoyaltyPoint extends Model
 {
     use HasFactory;

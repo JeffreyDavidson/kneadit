@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,40 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property-read Category|null $category
+ * @property-read Collection<int, CustomerPhoto> $customerPhotos
+ * @property-read int|null $customer_photos_count
+ * @property-read float|null $margin
+ * @property-read string|null $seasonal_badge
+ * @property-read Collection<int, ProductImage> $images
+ * @property-read int|null $images_count
+ * @property-read Collection<int, OrderItem> $orderItems
+ * @property-read int|null $order_items_count
+ * @property-read Collection<int, PageView> $pageViews
+ * @property-read int|null $page_views_count
+ * @property-read ProductImage|null $primaryImage
+ * @property-read Recipe|null $recipe
+ * @property-read Collection<int, Recipe> $recipes
+ * @property-read int|null $recipes_count
+ * @property-read Collection<int, Review> $reviews
+ * @property-read int|null $reviews_count
+ * @property-read Collection<int, SeasonalItem> $seasonalItems
+ * @property-read int|null $seasonal_items_count
+ * @property-read Collection<int, SocialPost> $socialPosts
+ * @property-read int|null $social_posts_count
+ * @property-read Collection<int, ProductWaitlist> $waitlistEntries
+ * @property-read int|null $waitlist_entries_count
+ *
+ * @method static Builder<static>|Product active()
+ * @method static \Database\Factories\ProductFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Product featured()
+ * @method static Builder<static>|Product newModelQuery()
+ * @method static Builder<static>|Product newQuery()
+ * @method static Builder<static>|Product query()
+ *
+ * @mixin \Eloquent
+ */
 class Product extends Model
 {
     use HasFactory;
