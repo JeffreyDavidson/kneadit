@@ -21,7 +21,7 @@ class Analytics extends Page
 
     protected string $view = 'filament.central.pages.analytics';
 
-    /** @return array<string, mixed> */
+    /** @return array<int, array<string, mixed>> */
     public function getSignupsByMonth(): array
     {
         $months = collect();

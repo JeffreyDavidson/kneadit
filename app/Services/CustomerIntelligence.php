@@ -8,7 +8,6 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 
 class CustomerIntelligence
@@ -56,7 +55,6 @@ class CustomerIntelligence
         );
     }
 
-    /** @return Collection<int, mixed> */
     public function enrichQuery(Builder $query): Builder
     {
         return $query

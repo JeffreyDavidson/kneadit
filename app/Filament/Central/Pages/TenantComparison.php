@@ -42,7 +42,7 @@ class TenantComparison extends Page
             ->toArray();
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, array<string, mixed>> */
     public function getComparisonData(): array
     {
         if (empty($this->selectedTenants)) {
@@ -148,7 +148,7 @@ class TenantComparison extends Page
 
     // ── Revenue Leaderboard Methods ──
 
-    /** @return array<string, mixed> */
+    /** @return array<int, array<string, mixed>> */
     public function getLeaderboardData(): array
     {
         $tenants = Tenant::all();

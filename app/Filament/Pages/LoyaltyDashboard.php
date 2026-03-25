@@ -13,7 +13,6 @@ use App\Models\Setting;
 use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 
@@ -83,7 +82,7 @@ class LoyaltyDashboard extends Page
         return LoyaltyReward::query()->where('is_active', true)->count();
     }
 
-    /** @return Collection<int, Model> */
+    /** @return Collection<int, Customer> */
     public function getTopCustomersProperty(): Collection
     {
         return Customer::query()->select('customers.*')

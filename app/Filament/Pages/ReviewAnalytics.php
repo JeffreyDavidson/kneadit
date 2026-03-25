@@ -69,7 +69,7 @@ class ReviewAnalytics extends Page
         ];
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, array<string, mixed>> */
     public function getRatingDistribution(): array
     {
         $distribution = Review::query()->select('rating', DB::raw('count(*) as count'))
@@ -96,7 +96,7 @@ class ReviewAnalytics extends Page
         return $ratingStats;
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, array<string, mixed>> */
     public function getMonthlyTrend(): array
     {
         $monthlyData = Review::query()->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('COUNT(*) as count'), DB::raw('AVG(rating) as avg_rating'))

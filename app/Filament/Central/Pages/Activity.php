@@ -8,7 +8,6 @@ use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
@@ -52,7 +51,7 @@ class Activity extends Page
 
     // ── Platform Events (Activity Log) Methods ──
 
-    /** @return Collection<int, Model> */
+    /** @return Collection<int, PlatformActivity> */
     public function getActivities(): Collection
     {
         return PlatformActivity::query()->latest('created_at')->limit(100)->get();

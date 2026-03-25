@@ -14,7 +14,7 @@ class LoyaltyLeadersWidget extends Widget
 
     protected string $view = 'filament.widgets.loyalty-leaders-widget';
 
-    /** @return array<string, mixed> */
+    /** @return array<int, array<string, mixed>> */
     public function getTopCustomers(): array
     {
         return Customer::query()->select('customers.id', 'customers.name')

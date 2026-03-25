@@ -11,7 +11,6 @@ use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -50,7 +49,7 @@ class StaffManagement extends Page
         return 'Team Management';
     }
 
-    /** @return Collection<int, Model> */
+    /** @return Collection<int, User> */
     public function getTeamMembers(): Collection
     {
         $roleOrder = collect([UserRole::Owner, UserRole::Manager, UserRole::Staff])

@@ -16,6 +16,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
@@ -95,7 +96,7 @@ class TaxExport extends Page
 
     public ?array $data = [];
 
-    /** @return array<string, mixed> */
+    /** @return array<int, Component> */
     protected function getFormSchema(): array
     {
         $years = $this->getAvailableYears();
@@ -146,7 +147,7 @@ class TaxExport extends Page
         ];
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, string> */
     protected function getAvailableYears(): array
     {
         $years = collect();
