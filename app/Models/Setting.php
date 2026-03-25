@@ -88,6 +88,7 @@ class Setting extends Model
      * Get all page content for a specific page.
      * Usage: Setting::pageContentAll('menu')
      */
+    /** @return array<string, mixed> */
     public static function pageContentAll(string $page): array
     {
         $content = json_decode(static::get('page_content', '{}'), true);

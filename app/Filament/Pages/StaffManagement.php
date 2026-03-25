@@ -58,6 +58,7 @@ class StaffManagement extends Page
         return User::query()->orderByRaw("FIELD(role, {$roleOrder})")->get();
     }
 
+    /** @return Collection<int, StaffInvitation> */
     public function getPendingInvitations(): Collection
     {
         return StaffInvitation::query()->whereNull('accepted_at')

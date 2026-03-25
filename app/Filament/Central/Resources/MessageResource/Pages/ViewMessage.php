@@ -39,6 +39,7 @@ class ViewMessage extends ViewRecord
         return $this->record->subject;
     }
 
+    /** @return Collection<int, PlatformMessage> */
     public function getThread(): Collection
     {
         return PlatformMessage::query()->where('parent_id', $this->record->id)->oldest()

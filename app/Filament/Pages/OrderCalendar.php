@@ -100,6 +100,7 @@ class OrderCalendar extends Page
             ->get();
     }
 
+    /** @return Collection<int, mixed> */
     public function getCalendarDays(): Collection
     {
         $startOfMonth = Date::createFromDate($this->currentYear, $this->currentMonth, 1);

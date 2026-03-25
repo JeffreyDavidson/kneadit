@@ -75,6 +75,7 @@ class OnboardingTracker extends Page
         return $checks;
     }
 
+    /** @return array<string, mixed> */
     public function getSummaryStats(): array
     {
         $data = $this->getTenantOnboardingData();

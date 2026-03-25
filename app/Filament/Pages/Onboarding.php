@@ -706,6 +706,7 @@ class Onboarding extends Page
         $this->redirect(url('/admin'));
     }
 
+    /** @return array<string, mixed> */
     public static function usStates(): array
     {
         return [

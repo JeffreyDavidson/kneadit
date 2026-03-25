@@ -14,6 +14,7 @@ class OrderFunnelWidget extends Widget
 
     protected string $view = 'filament.widgets.order-funnel';
 
+    /** @return array<int, array<string, mixed>> */
     public function getStages(): array
     {
         $counts = Order::query()

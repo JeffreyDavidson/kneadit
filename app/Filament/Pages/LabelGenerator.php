@@ -78,6 +78,7 @@ class LabelGenerator extends Page
         return Product::query()->whereIn('id', $this->selectedProducts)->with('recipe')->get();
     }
 
+    /** @return array<string, mixed> */
     public function getLabelDimensions(): array
     {
         return match ($this->labelSize) {

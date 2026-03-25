@@ -79,6 +79,7 @@ class SendRepeatOrderReminders extends Command
         }
     }
 
+    /** @return Collection<int, mixed> */
     private function getCustomersNeedingReminders(Carbon $cutoffDate, int $reminderDays): Collection
     {
         return Customer::query()->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))

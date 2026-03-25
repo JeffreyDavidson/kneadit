@@ -116,6 +116,7 @@ class FeatureUsage extends Page
         $this->selectedFeature = $this->selectedFeature === $feature ? null : $feature;
     }
 
+    /** @return Collection<int, mixed> */
     public function getFeatureTenantBreakdown(): Collection
     {
         if (! $this->selectedFeature) {

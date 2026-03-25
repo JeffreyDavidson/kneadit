@@ -105,6 +105,7 @@ class ProductCsvService
         return ['rows' => $rows, 'errors' => $errors];
     }
 
+    /** @return array<string, mixed> */
     public function import(UploadedFile $file): array
     {
         $parsed = $this->parseForPreview($file);

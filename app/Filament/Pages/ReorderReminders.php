@@ -65,6 +65,7 @@ class ReorderReminders extends Page
         ];
     }
 
+    /** @return Collection<int, mixed> */
     public function getCustomers(): Collection
     {
         $cutoff = Date::now()->subDays($this->threshold);

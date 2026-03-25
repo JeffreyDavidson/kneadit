@@ -29,6 +29,7 @@ class ReviewSummaryWidget extends Widget
             ->first();
     }
 
+    /** @return array<int, array<string, mixed>> */
     public function getRatingDistribution(): array
     {
         $counts = Review::query()->where('is_approved', true)

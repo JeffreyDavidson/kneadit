@@ -94,6 +94,7 @@ class LoyaltyDashboard extends Page
             ->get();
     }
 
+    /** @return Collection<int, LoyaltyPoint> */
     public function getRecentActivityProperty(): Collection
     {
         return LoyaltyPoint::with('customer')

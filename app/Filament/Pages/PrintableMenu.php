@@ -59,6 +59,7 @@ class PrintableMenu extends Page
             ->filter(fn (Category $cat) => $cat->products->isNotEmpty());
     }
 
+    /** @return array<string, mixed> */
     public function getStoreInfo(): array
     {
         return [

@@ -65,6 +65,7 @@ class GoalTrackerWidget extends Widget
         ];
     }
 
+    /** @return array<string, mixed> */
     public function getYearlyDataProperty(): array
     {
         $goal = (float) Setting::get('yearly_revenue_goal', 50000);

@@ -54,6 +54,7 @@ class Messages extends Page
         }
     }
 
+    /** @return Collection<int, PlatformMessage>|null */
     public function getThread(): ?Collection
     {
         if (! $this->viewingMessage) {

@@ -76,6 +76,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     /**
      * Custom columns on the tenants table.
      */
+    /** @return array<int, string> */
     public static function getCustomColumns(): array
     {
         return [

@@ -144,6 +144,7 @@ class HomepageBuilder extends Page
             ->toArray();
     }
 
+    /** @return array<string, mixed> */
     public function getSectionMeta(string $key): array
     {
         return $this->sectionMeta[$key] ?? ['label' => ucfirst($key), 'description' => ''];

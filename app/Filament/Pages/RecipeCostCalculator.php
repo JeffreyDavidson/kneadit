@@ -127,6 +127,7 @@ class RecipeCostCalculator extends Page
         $this->suggestedPrice = 0.0;
     }
 
+    /** @return Collection<int, mixed> */
     public function getFormattedIngredients(): Collection
     {
         if (! $this->selectedRecipe || ! $this->selectedRecipe->ingredients) {

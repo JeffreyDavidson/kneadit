@@ -32,6 +32,7 @@ class ManagePageContent extends Page
 
     protected static ?string $title = 'Page Content';
 
+    /** @var array<string, mixed> */
     public array $pageContent = [];
 
     public function mount(): void

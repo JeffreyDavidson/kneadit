@@ -188,6 +188,7 @@ class TenantComparison extends Page
         return $results;
     }
 
+    /** @return array<string, mixed> */
     public function getLeaderboardSummaryStats(): array
     {
         $data = $this->getLeaderboardData();

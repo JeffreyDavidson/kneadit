@@ -65,6 +65,7 @@ class DataExport extends Page
         }
     }
 
+    /** @return array<string, mixed> */
     public function getExportTypes(): array
     {
         return [

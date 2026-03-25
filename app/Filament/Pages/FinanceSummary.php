@@ -61,6 +61,7 @@ class FinanceSummary extends Page
 
     public Collection $monthlyBreakdown;
 
+    /** @var Collection<int, mixed> */
     public Collection $expenseBreakdown;
 
     public float $cogsAmount = 0;

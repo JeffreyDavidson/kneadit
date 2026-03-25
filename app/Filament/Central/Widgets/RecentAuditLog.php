@@ -14,6 +14,7 @@ class RecentAuditLog extends Widget
 
     protected string $view = 'filament.central.widgets.recent-audit';
 
+    /** @return Collection<int, AdminAuditLog> */
     public function getRecentLogsProperty(): Collection
     {
         return AdminAuditLog::query()->latest()

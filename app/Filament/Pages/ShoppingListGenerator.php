@@ -52,6 +52,8 @@ class ShoppingListGenerator extends Page
 
     public Collection $shoppingList;
 
+    /** @var array<string, mixed> */
+    /** @var array<int, bool> */
     public array $checkedItems = [];
 
     public function mount(): void

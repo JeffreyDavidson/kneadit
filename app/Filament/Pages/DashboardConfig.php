@@ -175,6 +175,7 @@ class DashboardConfig extends Page
             ->send();
     }
 
+    /** @return array<string, mixed> */
     protected function getDefaults(): array
     {
         $defaults = [];
