@@ -44,10 +44,7 @@ class CapacityLimitSeeder extends Seeder
         ];
 
         foreach ($capacityLimits as $limitData) {
-            CapacityLimit::updateOrCreate(
-                ['date' => $limitData['date']],
-                $limitData
-            );
+            CapacityLimit::query()->updateOrCreate(['date' => $limitData['date']], $limitData);
         }
     }
 }

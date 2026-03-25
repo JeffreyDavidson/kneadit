@@ -5,11 +5,11 @@ namespace App\Filament\Pages;
 use App\Services\ForgeService;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\TextInput;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Stancl\Tenancy\Database\Models\Domain;
@@ -97,7 +97,7 @@ class CustomDomain extends Page
         $tenant->update(['custom_domain' => $domain]);
 
         // Add to Stancl domains table if not already there
-        $existingDomain = Domain::where('domain', $domain)->first();
+        $existingDomain = Domain::query()->where('domain', $domain)->first();
         if (! $existingDomain) {
             $tenant->domains()->create(['domain' => $domain]);
         }
@@ -192,7 +192,7 @@ class CustomDomain extends Page
         $oldDomain = $tenant->custom_domain;
 
         if ($oldDomain) {
-            Domain::where('domain', $oldDomain)->where('tenant_id', $tenant->id)->delete();
+            Domain::query()->where('domain', $oldDomain)->where('tenant_id', $tenant->id)->delete();
 
             // Remove from Forge if configured
             if (ForgeService::isConfigured()) {

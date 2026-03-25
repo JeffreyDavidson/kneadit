@@ -25,7 +25,7 @@ class ListMessages extends ListRecords
                 ->form([
                     Select::make('tenant_id')
                         ->label('Bakery')
-                        ->options(fn () => Tenant::get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->toArray())
+                        ->options(fn () => Tenant::query()->get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->toArray())
                         ->searchable()
                         ->required(),
                     TextInput::make('subject')
@@ -36,7 +36,7 @@ class ListMessages extends ListRecords
                         ->rows(6),
                 ])
                 ->action(function (array $data) {
-                    PlatformMessage::create([
+                    PlatformMessage::query()->create([
                         'tenant_id' => $data['tenant_id'],
                         'sender_type' => 'admin',
                         'subject' => $data['subject'],

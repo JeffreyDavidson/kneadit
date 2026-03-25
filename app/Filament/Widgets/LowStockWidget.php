@@ -18,7 +18,7 @@ class LowStockWidget extends BaseWidget
 
     public static function canView(): bool
     {
-        return Ingredient::where(function (Builder $q) {
+        return Ingredient::query()->where(function (Builder $q) {
             $q->where('current_stock', '<=', 0)
                 ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
         })->exists();

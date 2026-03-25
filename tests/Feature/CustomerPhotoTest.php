@@ -17,7 +17,7 @@ test('gallery page loads', function () {
 });
 
 test('gallery shows only approved photos', function () {
-    CustomerPhoto::create([
+    CustomerPhoto::query()->create([
         'customer_name' => 'Alice',
         'customer_email' => 'alice@example.com',
         'caption' => 'My beautiful cake',
@@ -25,7 +25,7 @@ test('gallery shows only approved photos', function () {
         'is_approved' => true,
     ]);
 
-    CustomerPhoto::create([
+    CustomerPhoto::query()->create([
         'customer_name' => 'Bob',
         'customer_email' => 'bob@example.com',
         'caption' => 'Pending photo',
@@ -41,7 +41,7 @@ test('gallery shows only approved photos', function () {
 });
 
 test('gallery hides unapproved photos', function () {
-    CustomerPhoto::create([
+    CustomerPhoto::query()->create([
         'customer_name' => 'Eve',
         'customer_email' => 'eve@example.com',
         'caption' => 'Unapproved shot',
@@ -77,7 +77,7 @@ test('photo submission saves to database as unapproved', function () {
             'photo' => UploadedFile::fake()->image('order.jpg'),
         ]);
 
-    $photo = CustomerPhoto::first();
+    $photo = CustomerPhoto::query()->first();
 
     expect($photo)->not->toBeNull();
     expect($photo->is_approved)->toBeFalse();

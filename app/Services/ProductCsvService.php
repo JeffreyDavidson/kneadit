@@ -130,15 +130,12 @@ class ProductCsvService
                 $categoryName = trim($row['category'] ?? '');
                 if ($categoryName !== '') {
                     if (! isset($categoryCache[$categoryName])) {
-                        $categoryCache[$categoryName] = Category::firstOrCreate(
-                            ['name' => $categoryName],
-                            ['slug' => Str::slug($categoryName)]
-                        )->id;
+                        $categoryCache[$categoryName] = Category::query()->firstOrCreate(['name' => $categoryName], ['slug' => Str::slug($categoryName)])->id;
                     }
                     $categoryId = $categoryCache[$categoryName];
                 }
 
-                $existing = Product::where('name', trim($row['name']))->first();
+                $existing = Product::query()->where('name', trim($row['name']))->first();
 
                 $data = [
                     'name' => trim($row['name']),
@@ -158,7 +155,7 @@ class ProductCsvService
                     $existing->update($data);
                     $updated++;
                 } else {
-                    Product::create($data);
+                    Product::query()->create($data);
                     $created++;
                 }
             } catch (\Throwable $e) {

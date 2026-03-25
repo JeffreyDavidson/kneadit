@@ -84,11 +84,11 @@ test('campaign sent at is cast to datetime', function () {
 });
 
 test('campaign recipient count stored correctly', function () {
-    Customer::create(['name' => 'Customer 1', 'email' => 'c1@example.com']);
-    Customer::create(['name' => 'Customer 2', 'email' => 'c2@example.com']);
-    Customer::create(['name' => 'Customer 3', 'email' => 'c3@example.com']);
+    Customer::query()->create(['name' => 'Customer 1', 'email' => 'c1@example.com']);
+    Customer::query()->create(['name' => 'Customer 2', 'email' => 'c2@example.com']);
+    Customer::query()->create(['name' => 'Customer 3', 'email' => 'c3@example.com']);
 
-    $count = Customer::whereNotNull('email')->count();
+    $count = Customer::query()->whereNotNull('email')->count();
 
     $campaign = EmailCampaign::on('sqlite')->create([
         'subject' => 'To All',

@@ -62,7 +62,7 @@ class EmailCampaignsTable
                     ->action(function (EmailCampaign $record) {
                         $record->update(['status' => EmailCampaignStatus::Sending]);
 
-                        $emails = Customer::whereNotNull('email')
+                        $emails = Customer::query()->whereNotNull('email')
                             ->distinct()
                             ->pluck('email');
 

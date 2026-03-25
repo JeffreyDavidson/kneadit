@@ -2,15 +2,15 @@
 
 namespace App\Enums;
 
-enum DayOfWeek: int
+enum DayOfWeek: string
 {
-    case Monday = 0;
-    case Tuesday = 1;
-    case Wednesday = 2;
-    case Thursday = 3;
-    case Friday = 4;
-    case Saturday = 5;
-    case Sunday = 6;
+    case Monday = 'monday';
+    case Tuesday = 'tuesday';
+    case Wednesday = 'wednesday';
+    case Thursday = 'thursday';
+    case Friday = 'friday';
+    case Saturday = 'saturday';
+    case Sunday = 'sunday';
 
     public function label(): string
     {
@@ -18,12 +18,12 @@ enum DayOfWeek: int
     }
 
     /**
-     * @return array<int, string>
+     * @return array<string, string>
      */
     public static function options(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn (self $day) => [(string) $day->value => $day->label()])
+            ->mapWithKeys(fn (self $day) => [$day->value => $day->label()])
             ->all();
     }
 }

@@ -64,7 +64,7 @@ class LabelGenerator extends Page
 
     public function getProducts(): Collection
     {
-        return Product::where('is_active', true)
+        return Product::query()->where('is_active', true)
             ->orderBy('name')
             ->get()
             ->map(fn (Product $p) => ['id' => $p->id, 'name' => $p->name, 'price' => $p->price]);
@@ -72,7 +72,7 @@ class LabelGenerator extends Page
 
     public function getSelectedProductModels(): Collection
     {
-        return Product::whereIn('id', $this->selectedProducts)->with('recipe')->get();
+        return Product::query()->whereIn('id', $this->selectedProducts)->with('recipe')->get();
     }
 
     public function getLabelDimensions(): array

@@ -21,18 +21,18 @@ test('tracking page loads', function () {
 });
 
 test('tracking with valid email returns orders', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Admin',
         'email' => 'admin@test.com',
         'password' => bcrypt('password'),
     ]);
 
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
     ]);
 
-    Order::create([
+    Order::query()->create([
         'order_number' => 'KN260308A001',
         'customer_id' => $customer->id,
         'status' => 'confirmed',
@@ -60,19 +60,19 @@ test('tracking with no orders shows empty state', function () {
 });
 
 test('tracking shows correct status for each order stage', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Admin',
         'email' => 'admin@test.com',
         'password' => bcrypt('password'),
     ]);
 
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
     ]);
 
     foreach (['pending', 'confirmed', 'baking', 'ready', 'delivered'] as $status) {
-        Order::create([
+        Order::query()->create([
             'order_number' => 'KN'.strtoupper($status),
             'customer_id' => $customer->id,
             'status' => $status,
@@ -88,24 +88,24 @@ test('tracking shows correct status for each order stage', function () {
         ]);
 
     $response->assertOk();
-    expect(Order::where('customer_id', $customer->id)->count())->toBe(5);
+    expect(Order::query()->where('customer_id', $customer->id)->count())->toBe(5);
 });
 
 test('orders display items and totals', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Admin',
         'email' => 'admin@test.com',
         'password' => bcrypt('password'),
     ]);
 
-    $category = Category::create([
+    $category = Category::query()->create([
         'name' => 'Breads',
         'slug' => 'breads',
         'is_active' => true,
         'sort_order' => 1,
     ]);
 
-    $product = Product::create([
+    $product = Product::query()->create([
         'name' => 'Baguette',
         'slug' => 'baguette',
         'price' => 5.00,
@@ -113,12 +113,12 @@ test('orders display items and totals', function () {
         'is_active' => true,
     ]);
 
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
     ]);
 
-    $order = Order::create([
+    $order = Order::query()->create([
         'order_number' => 'KN260308ITEM',
         'customer_id' => $customer->id,
         'status' => 'confirmed',
@@ -127,7 +127,7 @@ test('orders display items and totals', function () {
         'user_id' => $user->id,
     ]);
 
-    OrderItem::create([
+    OrderItem::query()->create([
         'order_id' => $order->id,
         'product_id' => $product->id,
         'quantity' => 3,

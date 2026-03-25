@@ -27,10 +27,7 @@ class PlatformSetting extends Model
 
     public static function set(string $key, mixed $value): void
     {
-        static::updateOrCreate(
-            ['key' => $key],
-            ['value' => $value]
-        );
+        static::query()->updateOrCreate(['key' => $key], ['value' => $value]);
 
         if (static::$cache !== null) {
             static::$cache[$key] = $value;
@@ -43,7 +40,7 @@ class PlatformSetting extends Model
             return;
         }
 
-        static::$cache = static::pluck('value', 'key')->all();
+        static::$cache = static::query()->pluck('value', 'key')->all();
     }
 
     public static function flushCache(): void

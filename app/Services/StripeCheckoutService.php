@@ -179,7 +179,7 @@ class StripeCheckoutService
                 return null;
             }
 
-            $order = Order::where('stripe_checkout_session_id', $sessionId)->first();
+            $order = Order::query()->where('stripe_checkout_session_id', $sessionId)->first();
 
             if (! $order) {
                 Log::warning('No order found for checkout session', ['session_id' => $sessionId]);

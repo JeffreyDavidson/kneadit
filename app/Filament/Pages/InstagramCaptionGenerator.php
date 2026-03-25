@@ -11,8 +11,8 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
 class InstagramCaptionGenerator extends Page implements HasForms
@@ -49,14 +49,14 @@ class InstagramCaptionGenerator extends Page implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
                 Select::make('product_id')
                     ->label('Select Product')
                     ->placeholder('Choose a product...')
-                    ->options(Product::where('is_active', true)->pluck('name', 'id'))
+                    ->options(Product::query()->where('is_active', true)->pluck('name', 'id'))
                     ->searchable()
                     ->required(),
 

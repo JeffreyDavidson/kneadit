@@ -83,7 +83,7 @@ class DescriptionGenerator extends Page
             return;
         }
 
-        $product = Product::find($this->selectedProductId);
+        $product = Product::query()->find($this->selectedProductId);
         if ($product) {
             $product->update(['description' => $this->descriptions[$index]]);
             Notification::make()

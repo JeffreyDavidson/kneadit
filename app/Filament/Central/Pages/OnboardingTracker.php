@@ -24,7 +24,7 @@ class OnboardingTracker extends Page
 
     public function getTenantOnboardingData(): Collection
     {
-        $tenants = Tenant::orderBy('created_at', 'desc')->get();
+        $tenants = Tenant::query()->latest()->get();
 
         $data = $tenants->map(function (Tenant $tenant) {
             $checks = $this->getOnboardingChecks($tenant);

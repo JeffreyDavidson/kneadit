@@ -29,7 +29,7 @@ class AwardLoyaltyPoints
             return;
         }
 
-        LoyaltyPoint::create([
+        LoyaltyPoint::query()->create([
             'customer_id' => $order->customer_id,
             'points' => $points,
             'type' => LoyaltyPointType::Earned,

@@ -27,7 +27,7 @@ class CheckoutSuccessController extends Controller
                 && $checkoutSession->customer
                 && $checkoutSession->created >= now()->subMinutes(30)->getTimestamp()
             ) {
-                $user = User::where('stripe_id', $checkoutSession->customer)->first();
+                $user = User::query()->where('stripe_id', $checkoutSession->customer)->first();
 
                 if ($user) {
                     Auth::login($user);

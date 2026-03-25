@@ -99,7 +99,7 @@ test('depleted gift card cannot be redeemed', function () {
 });
 
 test('expired gift card cannot be redeemed', function () {
-    $card = GiftCard::create([
+    $card = GiftCard::query()->create([
         'code' => 'EXPD-TEST-CODE-1234',
         'initial_balance' => 50.00,
         'current_balance' => 50.00,

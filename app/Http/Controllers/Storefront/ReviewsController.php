@@ -13,13 +13,13 @@ class ReviewsController extends Controller
      */
     public function __invoke(): View
     {
-        $reviews = Review::where('is_approved', true)
+        $reviews = Review::query()->where('is_approved', true)
             ->with('product')
             ->latest()
             ->paginate(12);
 
-        $avgRating = Review::where('is_approved', true)->avg('rating');
-        $totalReviews = Review::where('is_approved', true)->count();
+        $avgRating = Review::query()->where('is_approved', true)->avg('rating');
+        $totalReviews = Review::query()->where('is_approved', true)->count();
 
         return view('reviews', compact('reviews', 'avgRating', 'totalReviews'));
     }

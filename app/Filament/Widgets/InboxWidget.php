@@ -23,7 +23,7 @@ class InboxWidget extends Widget
             return 0;
         }
 
-        return PlatformMessage::where('tenant_id', $tenant->id)
+        return PlatformMessage::query()->where('tenant_id', $tenant->id)
             ->fromAdmin()
             ->topLevel()
             ->unread()

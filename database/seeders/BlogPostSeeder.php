@@ -688,13 +688,10 @@ HTML,
         // Space posts 3 days apart, newest first
         $totalPosts = count($posts);
         foreach ($posts as $index => $post) {
-            BlogPost::updateOrCreate(
-                ['slug' => $post['slug']],
-                array_merge($post, [
-                    'is_published' => true,
-                    'published_at' => now()->subDays($index * 3),
-                ])
-            );
+            BlogPost::query()->updateOrCreate(['slug' => $post['slug']], array_merge($post, [
+                'is_published' => true,
+                'published_at' => now()->subDays($index * 3),
+            ]));
         }
     }
 }

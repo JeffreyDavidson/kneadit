@@ -19,7 +19,7 @@ test('social post model exists', function () {
 });
 
 test('social post can be created', function () {
-    SocialPost::create([
+    SocialPost::query()->create([
         'platform' => 'instagram',
         'caption' => 'Check out our new sourdough! 🍞',
         'status' => 'draft',
@@ -44,7 +44,7 @@ test('platforms are defined', function () {
 });
 
 test('status defaults to draft', function () {
-    $post = SocialPost::create([
+    $post = SocialPost::query()->create([
         'platform' => 'facebook',
         'caption' => 'Test post',
         'status' => 'draft',
@@ -60,7 +60,7 @@ test('status enum has expected cases', function () {
 test('scheduled post has scheduled for date', function () {
     $scheduledDate = now()->addDays(3);
 
-    $post = SocialPost::create([
+    $post = SocialPost::query()->create([
         'platform' => 'instagram',
         'caption' => 'Scheduled post',
         'status' => 'scheduled',
@@ -72,8 +72,8 @@ test('scheduled post has scheduled for date', function () {
 });
 
 test('social post belongs to product', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread', 'sort_order' => 0]);
-    $product = Product::create([
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread', 'sort_order' => 0]);
+    $product = Product::query()->create([
         'name' => 'Sourdough',
         'slug' => 'sourdough',
         'price' => 8.99,
@@ -81,7 +81,7 @@ test('social post belongs to product', function () {
         'is_active' => true,
     ]);
 
-    $post = SocialPost::create([
+    $post = SocialPost::query()->create([
         'platform' => 'instagram',
         'caption' => 'Our famous sourdough',
         'product_id' => $product->id,

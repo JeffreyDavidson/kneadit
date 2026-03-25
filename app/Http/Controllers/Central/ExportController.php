@@ -21,7 +21,7 @@ class ExportController extends Controller
 
         abort_unless(in_array($type, self::VALID_TYPES), 404, 'Invalid export type.');
 
-        $tenant = Tenant::findOrFail($tenantId);
+        $tenant = Tenant::query()->findOrFail($tenantId);
 
         if ($type === 'all') {
             return $this->exportAll($tenant);

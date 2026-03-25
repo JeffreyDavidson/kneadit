@@ -381,10 +381,7 @@ class SettingSeeder extends Seeder
         ];
 
         foreach ($settings as $setting) {
-            Setting::updateOrCreate(
-                ['key' => $setting['key']],
-                ['value' => $setting['value']]
-            );
+            Setting::query()->updateOrCreate(['key' => $setting['key']], ['value' => $setting['value']]);
         }
     }
 }

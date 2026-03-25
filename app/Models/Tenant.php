@@ -3,14 +3,19 @@
 namespace App\Models;
 
 use App\Enums\ReferralStatus;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
+use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
+/**
+ * @property-read Collection<int, Domain> $domains
+ */
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains;
@@ -52,7 +57,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
      */
     public function findOrCreateReferralCode(): string
     {
-        $referral = Referral::where('referrer_tenant_id', $this->id)
+        $referral = Referral::query()->where('referrer_tenant_id', $this->id)
             ->whereNull('referred_tenant_id')
             ->whereNull('referred_email')
             ->first();
@@ -61,11 +66,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             $code = Str::slug($this->store_name ?? $this->name).'-'.Str::lower(Str::random(4));
 
             // Ensure uniqueness
-            while (Referral::where('referral_code', $code)->exists()) {
+            while (Referral::query()->where('referral_code', $code)->exists()) {
                 $code = Str::slug($this->store_name ?? $this->name).'-'.Str::lower(Str::random(4));
             }
 
-            $referral = Referral::create([
+            $referral = Referral::query()->create([
                 'referrer_tenant_id' => $this->id,
                 'referral_code' => $code,
                 'status' => ReferralStatus::Pending,
@@ -100,6 +105,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
      */
     public function referredBy(): ?Referral
     {
-        return Referral::where('referred_tenant_id', $this->id)->first();
+        return Referral::query()->where('referred_tenant_id', $this->id)->first();
     }
 }

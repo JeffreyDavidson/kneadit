@@ -16,7 +16,7 @@ class BirthdayWidget extends Widget
     {
         $today = now();
 
-        return Customer::whereNotNull('birthday')
+        return Customer::query()->whereNotNull('birthday')
             ->get()
             ->map(function (Customer $customer) use ($today) {
                 $next = $customer->birthday->copy()->year($today->year);

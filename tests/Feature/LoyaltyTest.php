@@ -19,7 +19,7 @@ test('rewards page loads', function () {
 });
 
 test('rewards page shows active rewards', function () {
-    LoyaltyReward::create([
+    LoyaltyReward::query()->create([
         'name' => 'Free Cookie',
         'description' => 'Get a free cookie!',
         'points_required' => 100,
@@ -36,12 +36,12 @@ test('rewards page shows active rewards', function () {
 });
 
 test('points balance check works with valid email', function () {
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Loyal Customer',
         'email' => 'loyal@example.com',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 150,
         'type' => 'earned',
@@ -67,19 +67,19 @@ test('points balance check for unknown email shows zero', function () {
 });
 
 test('points are calculated correctly with earned and redeemed', function () {
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Active Customer',
         'email' => 'active@example.com',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 200,
         'type' => 'earned',
         'description' => 'Order 1',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 50,
         'type' => 'redeemed',
@@ -107,19 +107,19 @@ test('rewards check requires email', function () {
 });
 
 test('lifetime points earned only counts earned type', function () {
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Test',
         'email' => 'test@example.com',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 300,
         'type' => 'earned',
         'description' => 'Earned',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 100,
         'type' => 'redeemed',
@@ -130,7 +130,7 @@ test('lifetime points earned only counts earned type', function () {
 });
 
 test('reward type labels are correct', function () {
-    $reward = LoyaltyReward::create([
+    $reward = LoyaltyReward::query()->create([
         'name' => '10% Off',
         'points_required' => 200,
         'reward_type' => 'percentage_discount',
@@ -140,7 +140,7 @@ test('reward type labels are correct', function () {
 
     expect($reward->reward_type_label)->toBe('10.00% Off');
 
-    $fixedReward = LoyaltyReward::create([
+    $fixedReward = LoyaltyReward::query()->create([
         'name' => '$5 Off',
         'points_required' => 100,
         'reward_type' => 'fixed_discount',

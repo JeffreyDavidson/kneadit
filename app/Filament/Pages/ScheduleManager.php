@@ -7,13 +7,13 @@ use App\Models\BusinessSchedule;
 use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\TextInput;
-use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class ScheduleManager extends Page
@@ -96,16 +96,13 @@ class ScheduleManager extends Page
     public function save(): void
     {
         foreach ($this->schedule as $dayOfWeek => $data) {
-            BusinessSchedule::updateOrCreate(
-                ['day_of_week' => $dayOfWeek],
-                [
-                    'is_open' => $data['is_open'] ?? false,
-                    'open_time' => $data['is_open'] ? ($data['open_time'] ?: null) : null,
-                    'close_time' => $data['is_open'] ? ($data['close_time'] ?: null) : null,
-                    'order_cutoff_time' => $data['is_open'] ? ($data['order_cutoff_time'] ?: null) : null,
-                    'max_orders' => $data['is_open'] ? ($data['max_orders'] ?: null) : null,
-                ]
-            );
+            BusinessSchedule::query()->updateOrCreate(['day_of_week' => $dayOfWeek], [
+                'is_open' => $data['is_open'] ?? false,
+                'open_time' => $data['is_open'] ? ($data['open_time'] ?: null) : null,
+                'close_time' => $data['is_open'] ? ($data['close_time'] ?: null) : null,
+                'order_cutoff_time' => $data['is_open'] ? ($data['order_cutoff_time'] ?: null) : null,
+                'max_orders' => $data['is_open'] ? ($data['max_orders'] ?: null) : null,
+            ]);
         }
 
         Notification::make()

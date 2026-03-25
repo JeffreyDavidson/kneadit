@@ -16,7 +16,7 @@ beforeEach(function () {
 });
 
 test('adjust stock creates stock adjustment record', function () {
-    $ingredient = Ingredient::create([
+    $ingredient = Ingredient::query()->create([
         'name' => 'Flour',
         'unit' => 'kg',
         'current_stock' => 50,
@@ -35,7 +35,7 @@ test('adjust stock creates stock adjustment record', function () {
 });
 
 test('adjust stock updates current stock', function () {
-    $ingredient = Ingredient::create([
+    $ingredient = Ingredient::query()->create([
         'name' => 'Sugar',
         'unit' => 'kg',
         'current_stock' => 20,
@@ -49,7 +49,7 @@ test('adjust stock updates current stock', function () {
 });
 
 test('stock can go below zero', function () {
-    $ingredient = Ingredient::create([
+    $ingredient = Ingredient::query()->create([
         'name' => 'Butter',
         'unit' => 'kg',
         'current_stock' => 2,
@@ -63,7 +63,7 @@ test('stock can go below zero', function () {
 });
 
 test('low stock threshold detection', function () {
-    $ingredient = Ingredient::create([
+    $ingredient = Ingredient::query()->create([
         'name' => 'Eggs',
         'unit' => 'dozen',
         'current_stock' => 8,
@@ -77,7 +77,7 @@ test('low stock threshold detection', function () {
 });
 
 test('out of stock detection', function () {
-    $ingredient = Ingredient::create([
+    $ingredient = Ingredient::query()->create([
         'name' => 'Vanilla',
         'unit' => 'ml',
         'current_stock' => 0,
@@ -90,7 +90,7 @@ test('out of stock detection', function () {
 });
 
 test('good stock status', function () {
-    $ingredient = Ingredient::create([
+    $ingredient = Ingredient::query()->create([
         'name' => 'Milk',
         'unit' => 'liters',
         'current_stock' => 100,
@@ -104,7 +104,7 @@ test('good stock status', function () {
 });
 
 test('cost per unit is stored correctly', function () {
-    $ingredient = Ingredient::create([
+    $ingredient = Ingredient::query()->create([
         'name' => 'Cocoa',
         'unit' => 'kg',
         'current_stock' => 10,

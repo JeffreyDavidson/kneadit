@@ -13,7 +13,7 @@ beforeEach(function () {
     if (is_dir($tenantMigrationPath)) {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
-    User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
 });
 
 test('questions are stored as json array', function () {
@@ -22,7 +22,7 @@ test('questions are stored as json array', function () {
         ['text' => 'Any suggestions?', 'type' => 'text'],
     ];
 
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Customer Feedback',
         'questions' => $questions,
         'is_active' => true,
@@ -35,13 +35,13 @@ test('questions are stored as json array', function () {
 });
 
 test('survey has responses relationship', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Feedback',
         'questions' => [['text' => 'Rate us', 'type' => 'rating']],
         'is_active' => true,
     ]);
 
-    SurveyResponse::create([
+    SurveyResponse::query()->create([
         'survey_id' => $survey->id,
         'answers' => ['5'],
     ]);
@@ -50,7 +50,7 @@ test('survey has responses relationship', function () {
 });
 
 test('is active is cast to boolean', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Test Survey',
         'questions' => [],
         'is_active' => true,
@@ -61,7 +61,7 @@ test('is active is cast to boolean', function () {
 });
 
 test('responses count is cast to integer', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Test Survey',
         'questions' => [],
         'is_active' => true,

@@ -10,7 +10,7 @@ beforeEach(function () {
 });
 
 test('survey page loads for active survey', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Customer Satisfaction',
         'description' => 'Tell us how we did',
         'questions' => [
@@ -29,7 +29,7 @@ test('survey page loads for active survey', function () {
 });
 
 test('survey returns 404 for inactive survey', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Old Survey',
         'questions' => [['type' => 'text', 'question' => 'Feedback']],
         'is_active' => false,
@@ -43,7 +43,7 @@ test('survey returns 404 for inactive survey', function () {
 });
 
 test('survey response can be submitted', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Quick Poll',
         'questions' => [['type' => 'rating', 'question' => 'Rate us']],
         'is_active' => true,
@@ -65,7 +65,7 @@ test('survey response can be submitted', function () {
 });
 
 test('survey response saves answers as json', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Detailed Survey',
         'questions' => [
             ['type' => 'rating', 'question' => 'Quality'],
@@ -82,13 +82,13 @@ test('survey response saves answers as json', function () {
             'answers' => ['5', 'Great bread!'],
         ]);
 
-    $surveyResponse = SurveyResponse::first();
+    $surveyResponse = SurveyResponse::query()->first();
     expect($surveyResponse->answers)->toBeArray();
     expect($surveyResponse->answers)->toBe(['5', 'Great bread!']);
 });
 
 test('survey response increments responses count', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Counter Test',
         'questions' => [['type' => 'text', 'question' => 'Feedback']],
         'is_active' => true,
@@ -104,7 +104,7 @@ test('survey response increments responses count', function () {
 });
 
 test('rating questions accept valid values', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Rating Test',
         'questions' => [['type' => 'rating', 'question' => 'Score']],
         'is_active' => true,
@@ -116,12 +116,12 @@ test('rating questions accept valid values', function () {
             'answers' => ['3'],
         ]);
 
-    $surveyResponse = SurveyResponse::first();
+    $surveyResponse = SurveyResponse::query()->first();
     expect($surveyResponse->answers)->toBe(['3']);
 });
 
 test('text questions accept string answers', function () {
-    $survey = Survey::create([
+    $survey = Survey::query()->create([
         'title' => 'Text Test',
         'questions' => [['type' => 'text', 'question' => 'Thoughts']],
         'is_active' => true,
@@ -133,6 +133,6 @@ test('text questions accept string answers', function () {
             'answers' => ['I love your croissants!'],
         ]);
 
-    $surveyResponse = SurveyResponse::first();
+    $surveyResponse = SurveyResponse::query()->first();
     expect($surveyResponse->answers)->toBe(['I love your croissants!']);
 });

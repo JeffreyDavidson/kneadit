@@ -15,9 +15,9 @@ beforeEach(function () {
     $this->customer = Customer::factory()->create();
     $this->order = Order::factory()->create();
 
-    LoyaltyPoint::create(['customer_id' => $this->customer->id, 'points' => 100, 'type' => 'earned', 'description' => 'test', 'order_id' => $this->order->id]);
-    LoyaltyPoint::create(['customer_id' => $this->customer->id, 'points' => 50, 'type' => 'redeemed', 'description' => 'test']);
-    LoyaltyPoint::create(['customer_id' => $this->customer->id, 'points' => 25, 'type' => 'adjusted', 'description' => 'test']);
+    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 100, 'type' => 'earned', 'description' => 'test', 'order_id' => $this->order->id]);
+    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 50, 'type' => 'redeemed', 'description' => 'test']);
+    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 25, 'type' => 'adjusted', 'description' => 'test']);
 });
 
 test('earned scope filters to earned type', function () {

@@ -59,7 +59,7 @@ class CreateDemoBakeries extends Command
 
         if ($this->option('fresh')) {
             foreach ($bakeries as $b) {
-                $existing = Tenant::find($b['id']);
+                $existing = Tenant::query()->find($b['id']);
                 if ($existing) {
                     $this->info("Deleting {$b['store_name']}...");
                     $existing->delete();
@@ -68,7 +68,7 @@ class CreateDemoBakeries extends Command
         }
 
         foreach ($bakeries as $bakery) {
-            if (Tenant::find($bakery['id'])) {
+            if (Tenant::query()->find($bakery['id'])) {
                 $this->warn("{$bakery['store_name']} already exists. Use --fresh to recreate.");
 
                 continue;

@@ -22,7 +22,7 @@ class HolidaysTable
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query
                 ->addSelect([
-                    'order_count' => Order::selectRaw('count(*)')
+                    'order_count' => Order::query()->selectRaw('count(*)')
                         ->whereColumn('delivery_date', 'holidays.date')
                         ->where('status', '!=', OrderStatus::Cancelled),
                 ])

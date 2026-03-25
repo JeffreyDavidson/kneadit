@@ -12,9 +12,9 @@ use BackedEnum;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -62,7 +62,7 @@ class CustomerDirectory extends Page implements HasForms
         return $this->getCustomerDetails($customerId);
     }
 
-    public function noteForm(Form $form): Form
+    public function noteForm(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -127,10 +127,10 @@ class CustomerDirectory extends Page implements HasForms
     {
         $customer = Customer::with([
             'orders' => function (EloquentBuilder $query) {
-                $query->orderBy('created_at', 'desc');
+                $query->latest();
             },
             'customerNotes' => function (EloquentBuilder $query) {
-                $query->with('createdBy')->orderBy('created_at', 'desc');
+                $query->with('createdBy')->latest();
             },
         ])->find($customerId);
 
@@ -178,7 +178,7 @@ class CustomerDirectory extends Page implements HasForms
     {
         $this->noteForm->validate();
 
-        CustomerNote::create([
+        CustomerNote::query()->create([
             'customer_id' => $customerId,
             'note' => $this->noteData['note'],
             'created_by' => Auth::id(),

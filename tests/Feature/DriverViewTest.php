@@ -21,10 +21,10 @@ beforeEach(function () {
 
 function createDeliveryOrder(array $attrs = []): Order
 {
-    $user = User::create(['name' => 'Baker', 'email' => 'baker@test.com', 'password' => bcrypt('pass')]);
-    $customer = Customer::create(['name' => 'Test Customer', 'email' => 'cust@test.com']);
+    $user = User::query()->create(['name' => 'Baker', 'email' => 'baker@test.com', 'password' => bcrypt('pass')]);
+    $customer = Customer::query()->create(['name' => 'Test Customer', 'email' => 'cust@test.com']);
 
-    return Order::create(array_merge([
+    return Order::query()->create(array_merge([
         'order_number' => 'ORD-'.uniqid(),
         'customer_id' => $customer->id,
         'user_id' => $user->id,
@@ -76,7 +76,7 @@ test('driver page hides past orders', function () {
 
 test('mark delivered changes order status', function () {
     $order = createDeliveryOrder(['status' => 'ready']);
-    $user = User::where('email', 'baker@test.com')->first();
+    $user = User::query()->where('email', 'baker@test.com')->first();
 
     $response = actingAs($user)
         ->withoutMiddleware($this->driverMiddleware)
@@ -88,7 +88,7 @@ test('mark delivered changes order status', function () {
 
 test('mark delivered redirects back', function () {
     $order = createDeliveryOrder(['status' => 'ready']);
-    $user = User::where('email', 'baker@test.com')->first();
+    $user = User::query()->where('email', 'baker@test.com')->first();
 
     $response = actingAs($user)
         ->withoutMiddleware($this->driverMiddleware)

@@ -12,14 +12,14 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(function () {
     setUpTenantTest();
 
-    $this->category = Category::create([
+    $this->category = Category::query()->create([
         'name' => 'Breads',
         'slug' => 'breads',
         'is_active' => true,
         'sort_order' => 1,
     ]);
 
-    $this->product = Product::create([
+    $this->product = Product::query()->create([
         'name' => 'Sourdough Loaf',
         'slug' => 'sourdough-loaf',
         'price' => 12.50,
@@ -109,7 +109,7 @@ test('order validation rejects empty cart', function () {
 });
 
 test('coupon application works for valid coupon', function () {
-    $coupon = Coupon::create([
+    $coupon = Coupon::query()->create([
         'code' => 'SAVE10',
         'type' => 'percentage',
         'value' => 10.00,
@@ -150,18 +150,18 @@ test('capacity check endpoint works', function () {
 });
 
 test('order confirmation page shows after successful order', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Admin',
         'email' => 'admin@test.com',
         'password' => bcrypt('password'),
     ]);
 
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'John Baker',
         'email' => 'john@example.com',
     ]);
 
-    $order = Order::create([
+    $order = Order::query()->create([
         'order_number' => 'KN260308TEST',
         'customer_id' => $customer->id,
         'status' => 'pending',

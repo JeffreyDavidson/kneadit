@@ -14,13 +14,13 @@ class OrderSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Order::count() > 0) {
+        if (Order::query()->count() > 0) {
             return;
         }
 
         $customers = Customer::all();
         $products = Product::all();
-        $user = User::first(); // Assuming we have at least one user
+        $user = User::query()->first(); // Assuming we have at least one user
 
         $statuses = ['pending', 'confirmed', 'baking', 'ready', 'delivered', 'cancelled'];
         $paymentStatuses = ['unpaid', 'paid'];
@@ -58,7 +58,7 @@ class OrderSeeder extends Seeder
 
             $isDelivery = rand(0, 100) < 40; // 40% delivery, 60% pickup
 
-            $order = Order::create([
+            $order = Order::query()->create([
                 'order_number' => 'ORD-'.str_pad($i + 1, 6, '0', STR_PAD_LEFT),
                 'customer_id' => $customer->id,
                 'user_id' => $user->id,
@@ -84,7 +84,7 @@ class OrderSeeder extends Seeder
                 $quantity = rand(1, 3);
                 $unitPrice = $product->price;
 
-                OrderItem::create([
+                OrderItem::query()->create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'quantity' => $quantity,

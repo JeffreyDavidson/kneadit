@@ -34,9 +34,9 @@ test('export generates valid csv with headers', function () {
 });
 
 test('export includes all active products', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
-    Product::create(['name' => 'Rye', 'slug' => 'rye', 'price' => 7, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
+    Product::query()->create(['name' => 'Rye', 'slug' => 'rye', 'price' => 7, 'category_id' => $category->id, 'is_active' => true]);
 
     $csv = $this->service->export();
     expect($csv)->toContain('Sourdough');
@@ -44,7 +44,7 @@ test('export includes all active products', function () {
 });
 
 test('import creates new products', function () {
-    Category::create(['name' => 'Cakes', 'slug' => 'cakes']);
+    Category::query()->create(['name' => 'Cakes', 'slug' => 'cakes']);
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nChocolate Cake,Cakes,Rich and moist,25.00,,1,0\n");
 
     $result = $this->service->import($file);
@@ -54,15 +54,15 @@ test('import creates new products', function () {
 });
 
 test('import updates existing products by name', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
 
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nSourdough,Bread,Updated desc,10.00,,1,0\n");
     $result = $this->service->import($file);
 
     expect($result['updated'])->toBe(1);
     expect($result['created'])->toBe(0);
-    expect((float) Product::where('name', 'Sourdough')->first()->price)->toBe(10.00);
+    expect((float) Product::query()->where('name', 'Sourdough')->first()->price)->toBe(10.00);
 });
 
 test('import handles missing required fields', function () {

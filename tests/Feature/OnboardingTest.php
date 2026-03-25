@@ -18,7 +18,7 @@ beforeEach(function () {
         ]);
     }
 
-    $this->user = User::create([
+    $this->user = User::query()->create([
         'name' => 'Test Baker',
         'email' => 'test@testbakery.com',
         'password' => bcrypt('password'),
@@ -81,7 +81,7 @@ test('branding step saves colors', function () {
 });
 
 test('product step creates product in database', function () {
-    $category = Category::create([
+    $category = Category::query()->create([
         'name' => 'Breads',
         'slug' => 'breads',
         'is_active' => true,
@@ -107,7 +107,7 @@ test('product step creates product in database', function () {
 });
 
 test('product step generates slug from name', function () {
-    $category = Category::create([
+    $category = Category::query()->create([
         'name' => 'Cakes',
         'slug' => 'cakes',
         'is_active' => true,
@@ -364,7 +364,7 @@ test('full onboarding flow saves all settings', function () {
     (new ReflectionMethod($page, 'saveBrandingStep'))->invoke($page);
 
     // Step 4: Product
-    $category = Category::create([
+    $category = Category::query()->create([
         'name' => 'Cookies',
         'slug' => 'cookies',
         'is_active' => true,

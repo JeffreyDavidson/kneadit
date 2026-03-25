@@ -58,7 +58,7 @@ class SmartShoppingList extends Page
     public function generateList(): void
     {
         // Get ingredients below low stock threshold
-        $lowStockIngredients = Ingredient::where(function (Builder $q) {
+        $lowStockIngredients = Ingredient::query()->where(function (Builder $q) {
             $q->where('current_stock', '<=', 0)
                 ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
         })->with('suppliers')->get();
@@ -66,15 +66,15 @@ class SmartShoppingList extends Page
         // If including upcoming orders, calculate additional needs
         $upcomingNeeds = collect();
         if ($this->includeUpcoming && $this->startDate && $this->endDate) {
-            $orders = Order::whereBetween('pickup_date', [$this->startDate, $this->endDate])
+            $orders = Order::query()->whereBetween('pickup_date', [$this->startDate, $this->endDate])
                 ->whereNotIn('status', [OrderStatus::Cancelled, OrderStatus::Delivered])
-                ->with('items.product.recipe.ingredients')
+                ->with('orderItems.product.recipe.inventoryIngredients')
                 ->get();
 
             foreach ($orders as $order) {
-                foreach ($order->items as $item) {
+                foreach ($order->orderItems as $item) {
                     if ($item->product?->recipe) {
-                        foreach ($item->product->recipe->ingredients as $ingredient) {
+                        foreach ($item->product->recipe->inventoryIngredients as $ingredient) {
                             $needed = ($ingredient->pivot->quantity ?? 0) * $item->quantity;
                             $upcomingNeeds[$ingredient->id] = ($upcomingNeeds[$ingredient->id] ?? 0) + $needed;
                         }

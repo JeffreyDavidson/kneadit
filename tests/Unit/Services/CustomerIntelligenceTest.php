@@ -27,7 +27,7 @@ test('metrics returns correct values for customer with orders', function () {
         'delivery_date' => now()->subDays(5),
     ]);
 
-    $metrics = app(CustomerIntelligence::class)->metrics($customer);
+    $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
 
     expect($metrics)
         ->lifetimeValue->toBe(150.00)
@@ -40,7 +40,7 @@ test('metrics returns correct values for customer with orders', function () {
 test('metrics returns safe defaults for customer with no orders', function () {
     $customer = Customer::factory()->create();
 
-    $metrics = app(CustomerIntelligence::class)->metrics($customer);
+    $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
 
     expect($metrics)
         ->lifetimeValue->toBe(0.0)
@@ -65,22 +65,22 @@ test('at-risk threshold is configurable via setting', function () {
     ]);
 
     Setting::set('at_risk_days', '30');
-    $metrics = app(CustomerIntelligence::class)->metrics($customer);
+    $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
     expect($metrics->isAtRisk)->toBeTrue();
 
     Setting::set('at_risk_days', '60');
-    $metrics = app(CustomerIntelligence::class)->metrics($customer);
+    $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
     expect($metrics->isAtRisk)->toBeFalse();
 });
 
 test('metrics calculates loyalty points correctly', function () {
     $customer = Customer::factory()->create();
 
-    LoyaltyPoint::create(['customer_id' => $customer->id, 'points' => 500, 'type' => 'earned', 'description' => 'test']);
-    LoyaltyPoint::create(['customer_id' => $customer->id, 'points' => 100, 'type' => 'redeemed', 'description' => 'test']);
-    LoyaltyPoint::create(['customer_id' => $customer->id, 'points' => 50, 'type' => 'adjusted', 'description' => 'test']);
+    LoyaltyPoint::query()->create(['customer_id' => $customer->id, 'points' => 500, 'type' => 'earned', 'description' => 'test']);
+    LoyaltyPoint::query()->create(['customer_id' => $customer->id, 'points' => 100, 'type' => 'redeemed', 'description' => 'test']);
+    LoyaltyPoint::query()->create(['customer_id' => $customer->id, 'points' => 50, 'type' => 'adjusted', 'description' => 'test']);
 
-    $metrics = app(CustomerIntelligence::class)->metrics($customer);
+    $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
 
     expect($metrics)
         ->totalPoints->toBe(450)

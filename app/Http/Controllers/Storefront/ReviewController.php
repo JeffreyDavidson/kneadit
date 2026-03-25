@@ -30,7 +30,7 @@ class ReviewController extends Controller
             $photoPath = $request->file('photo')->store('review-photos', 'public');
         }
 
-        Review::create([
+        Review::query()->create([
             'customer_name' => $order->customer->name ?? 'Customer',
             'customer_email' => $order->customer->email ?? '',
             'order_id' => $order->id,

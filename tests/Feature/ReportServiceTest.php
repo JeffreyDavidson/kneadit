@@ -14,15 +14,15 @@ beforeEach(function () {
     if (is_dir($tenantMigrationPath)) {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
-    $this->user = User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    $this->user = User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
     $this->service = new ReportService;
-    $this->customer = Customer::create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
-    $this->category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
+    $this->customer = Customer::query()->create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
+    $this->category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
 });
 
 function createPaidOrder(float $total, string $date): Order
 {
-    return Order::create([
+    return Order::query()->create([
         'customer_id' => test()->customer->id,
         'user_id' => test()->user->id,
         'status' => 'delivered',
@@ -58,15 +58,15 @@ test('sales report respects date range', function () {
 });
 
 test('customer report counts new customers', function () {
-    $countBefore = Customer::count();
-    Customer::create(['name' => 'New Guy', 'email' => 'new@example.com']);
+    $countBefore = Customer::query()->count();
+    Customer::query()->create(['name' => 'New Guy', 'email' => 'new@example.com']);
 
-    expect(Customer::count())->toBe($countBefore + 1);
+    expect(Customer::query()->count())->toBe($countBefore + 1);
 });
 
 test('financial summary calculates profit', function () {
     createPaidOrder(100.00, '2026-03-15');
-    Expense::create(['description' => 'Flour', 'amount' => 30.00, 'category' => 'supplies', 'date' => '2026-03-15', 'deductible_amount' => 30.00]);
+    Expense::query()->create(['description' => 'Flour', 'amount' => 30.00, 'category' => 'supplies', 'date' => '2026-03-15', 'deductible_amount' => 30.00]);
 
     $report = $this->service->financialSummary(2026);
 
@@ -76,8 +76,8 @@ test('financial summary calculates profit', function () {
 });
 
 test('inventory report flags low stock', function () {
-    Ingredient::create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 5, 'low_stock_threshold' => 10, 'cost_per_unit' => 1.50]);
-    Ingredient::create(['name' => 'Sugar', 'unit' => 'kg', 'current_stock' => 50, 'low_stock_threshold' => 10, 'cost_per_unit' => 2.00]);
+    Ingredient::query()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 5, 'low_stock_threshold' => 10, 'cost_per_unit' => 1.50]);
+    Ingredient::query()->create(['name' => 'Sugar', 'unit' => 'kg', 'current_stock' => 50, 'low_stock_threshold' => 10, 'cost_per_unit' => 2.00]);
 
     $report = $this->service->inventoryReport();
 

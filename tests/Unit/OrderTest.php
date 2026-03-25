@@ -20,13 +20,13 @@ beforeEach(function () {
     if (is_dir($tenantMigrationPath)) {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
-    test()->user = User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
-    test()->customer = Customer::create(['name' => 'John Doe', 'email' => 'john@example.com']);
+    test()->user = User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    test()->customer = Customer::query()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
 });
 
 function makeOrder(array $attrs = []): Order
 {
-    return Order::create(array_merge([
+    return Order::query()->create(array_merge([
         'customer_id' => test()->customer->id,
         'user_id' => test()->user->id,
         'status' => OrderStatus::Pending,
@@ -46,11 +46,11 @@ test('order has customer relationship', function () {
 });
 
 test('order has items relationship', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
     $order = makeOrder();
 
-    OrderItem::create(['order_id' => $order->id, 'product_id' => $product->id, 'quantity' => 2, 'unit_price' => 5.00]);
+    OrderItem::query()->create(['order_id' => $order->id, 'product_id' => $product->id, 'quantity' => 2, 'unit_price' => 5.00]);
 
     $order->refresh();
 
@@ -60,7 +60,7 @@ test('order has items relationship', function () {
 
 test('order has messages relationship', function () {
     $order = makeOrder();
-    OrderMessage::create(['order_id' => $order->id, 'message' => 'Hello', 'sender_type' => 'bakery', 'sender_name' => 'Baker']);
+    OrderMessage::query()->create(['order_id' => $order->id, 'message' => 'Hello', 'sender_type' => 'bakery', 'sender_name' => 'Baker']);
 
     expect($order->messages)->toHaveCount(1);
 });
@@ -105,10 +105,10 @@ test('order belongs to user', function () {
 });
 
 test('order item total price attribute', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
     $order = makeOrder(['subtotal' => 15.00, 'total' => 15.00]);
-    $item = OrderItem::create(['order_id' => $order->id, 'product_id' => $product->id, 'quantity' => 3, 'unit_price' => 5.00]);
+    $item = OrderItem::query()->create(['order_id' => $order->id, 'product_id' => $product->id, 'quantity' => 3, 'unit_price' => 5.00]);
 
     expect($item->total_price)->toBe(15.00);
 });

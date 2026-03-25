@@ -21,7 +21,7 @@ class CapacityTodayWidget extends Widget
     public function getCapacityData(Carbon $date): array
     {
         $maxOrders = CapacityLimit::getMaxOrders($date);
-        $currentOrders = Order::whereDate('delivery_date', $date)
+        $currentOrders = Order::query()->whereDate('delivery_date', $date)
             ->whereNotIn('status', [OrderStatus::Cancelled])
             ->count();
 
@@ -46,7 +46,7 @@ class CapacityTodayWidget extends Widget
 
     public function getBlockedDaysWarning(): array
     {
-        return BlockedDate::where('date', '>=', Date::today())
+        return BlockedDate::query()->where('date', '>=', Date::today())
             ->where('date', '<=', Date::today()->addDays(7))
             ->where('is_all_day', true)
             ->orderBy('date')
@@ -56,6 +56,6 @@ class CapacityTodayWidget extends Widget
                 'date' => $b->date->format('M j'),
                 'reason' => $b->reason ?? 'Closed',
             ])
-            ->toArray();
+            ->all();
     }
 }

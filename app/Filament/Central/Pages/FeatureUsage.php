@@ -26,12 +26,12 @@ class FeatureUsage extends Page
 
     public function getHasData(): bool
     {
-        return FeatureUsageLog::exists();
+        return FeatureUsageLog::query()->exists();
     }
 
     public function getMostUsedFeature(): ?string
     {
-        return FeatureUsageLog::select('feature')
+        return FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
             ->groupBy('feature')
             ->orderByDesc('total')
@@ -40,7 +40,7 @@ class FeatureUsage extends Page
 
     public function getLeastUsedFeature(): ?string
     {
-        return FeatureUsageLog::select('feature')
+        return FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
             ->groupBy('feature')
             ->orderBy('total')
@@ -49,14 +49,14 @@ class FeatureUsage extends Page
 
     public function getTotalInteractionsThisMonth(): int
     {
-        return (int) FeatureUsageLog::whereMonth('date', Date::now()->month)
+        return (int) FeatureUsageLog::query()->whereMonth('date', Date::now()->month)
             ->whereYear('date', Date::now()->year)
             ->sum('usage_count');
     }
 
     public function getFeatureUsageBars(): Collection
     {
-        $data = FeatureUsageLog::select('feature')
+        $data = FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
             ->groupBy('feature')
             ->orderByDesc('total')
@@ -78,9 +78,9 @@ class FeatureUsage extends Page
             $days->push(Date::today()->subDays($i));
         }
 
-        $features = FeatureUsageLog::distinct()->pluck('feature')->sort()->values();
+        $features = FeatureUsageLog::query()->distinct()->pluck('feature')->sort()->values();
 
-        $logs = FeatureUsageLog::whereBetween('date', [$days->first()->toDateString(), $days->last()->toDateString()])
+        $logs = FeatureUsageLog::query()->whereBetween('date', [$days->first()->toDateString(), $days->last()->toDateString()])
             ->get()
             ->groupBy(fn (FeatureUsageLog $log) => $log->feature.'|'.$log->date->toDateString());
 
@@ -122,7 +122,7 @@ class FeatureUsage extends Page
             return collect();
         }
 
-        return FeatureUsageLog::select('tenant_id')
+        return FeatureUsageLog::query()->select('tenant_id')
             ->selectRaw('SUM(usage_count) as total')
             ->where('feature', $this->selectedFeature)
             ->groupBy('tenant_id')

@@ -15,17 +15,14 @@ class ProductWaitlistController extends Controller
     public function __invoke(StoreProductWaitlistRequest $request): JsonResponse
     {
 
-        ProductWaitlist::updateOrCreate(
-            [
-                'product_id' => $request->product_id,
-                'customer_email' => $request->customer_email,
-            ],
-            [
-                'customer_name' => $request->customer_name,
-                'notified_at' => null,
-                'created_at' => now(),
-            ]
-        );
+        ProductWaitlist::query()->updateOrCreate([
+            'product_id' => $request->product_id,
+            'customer_email' => $request->customer_email,
+        ], [
+            'customer_name' => $request->customer_name,
+            'notified_at' => null,
+            'created_at' => now(),
+        ]);
 
         if ($request->wantsJson()) {
             return response()->json(['message' => 'You\'ll be notified when this item is available!']);

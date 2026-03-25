@@ -13,7 +13,7 @@ class OpenTickets extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $count = SupportTicket::where('status', SupportTicketStatus::Open)->count();
+        $count = SupportTicket::query()->where('status', SupportTicketStatus::Open)->count();
 
         return [
             Stat::make('Open Tickets', $count)

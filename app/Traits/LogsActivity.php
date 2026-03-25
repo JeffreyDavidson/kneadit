@@ -21,7 +21,7 @@ trait LogsActivity
         }
 
         try {
-            ActivityLog::create([
+            ActivityLog::query()->create([
                 'user_id' => auth()->id(),
                 'user_name' => auth()->user()?->name ?? 'System',
                 'action' => $action,

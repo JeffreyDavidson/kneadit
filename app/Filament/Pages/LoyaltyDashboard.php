@@ -46,27 +46,27 @@ class LoyaltyDashboard extends Page
 
     public function getTotalPointsIssuedProperty(): int
     {
-        return (int) LoyaltyPoint::where('type', 'earned')->sum('points');
+        return (int) LoyaltyPoint::query()->where('type', 'earned')->sum('points');
     }
 
     public function getTotalPointsRedeemedProperty(): int
     {
-        return (int) LoyaltyPoint::where('type', 'redeemed')->sum('points');
+        return (int) LoyaltyPoint::query()->where('type', 'redeemed')->sum('points');
     }
 
     public function getActiveMembersProperty(): int
     {
-        return LoyaltyPoint::distinct('customer_id')->count('customer_id');
+        return LoyaltyPoint::query()->distinct('customer_id')->count('customer_id');
     }
 
     public function getAvailableRewardsCountProperty(): int
     {
-        return LoyaltyReward::where('is_active', true)->count();
+        return LoyaltyReward::query()->where('is_active', true)->count();
     }
 
     public function getTopCustomersProperty(): Collection
     {
-        return Customer::select('customers.*')
+        return Customer::query()->select('customers.*')
             ->join('loyalty_points', 'customers.id', '=', 'loyalty_points.customer_id')
             ->groupBy('customers.id')
             ->selectRaw("SUM(CASE WHEN loyalty_points.type = 'earned' THEN loyalty_points.points ELSE 0 END) - SUM(CASE WHEN loyalty_points.type = 'redeemed' THEN loyalty_points.points ELSE 0 END) as balance")

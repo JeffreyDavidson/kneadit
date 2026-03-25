@@ -7,7 +7,7 @@ beforeEach(fn () => setUpCentralTest());
 test('log creates record', function () {
     $log = AdminAuditLog::log('tenant.suspend', 'Suspended tenant', 'tenant', 'tenant-1', ['reason' => 'abuse']);
 
-    $found = AdminAuditLog::where('action', 'tenant.suspend')->first();
+    $found = AdminAuditLog::query()->where('action', 'tenant.suspend')->first();
     expect($found)->not->toBeNull();
     expect($found->description)->toBe('Suspended tenant');
     expect($found->target_type)->toBe('tenant');
@@ -18,7 +18,7 @@ test('log creates record', function () {
 test('log works with minimal params', function () {
     $log = AdminAuditLog::log('login', 'Admin logged in');
 
-    expect(AdminAuditLog::where('action', 'login')->first())->not->toBeNull();
+    expect(AdminAuditLog::query()->where('action', 'login')->first())->not->toBeNull();
     expect($log->target_type)->toBeNull();
 });
 

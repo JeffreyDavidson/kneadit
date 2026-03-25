@@ -99,7 +99,7 @@ class EmailCampaignResource extends Resource
                     ->modalHeading('Send Campaign Now')
                     ->modalDescription('Are you sure you want to send this campaign immediately?')
                     ->action(function (EmailCampaign $record) {
-                        $recipientCount = Tenant::count();
+                        $recipientCount = Tenant::query()->count();
                         $record->update([
                             'status' => 'sent',
                             'sent_at' => now(),

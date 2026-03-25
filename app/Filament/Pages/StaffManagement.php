@@ -53,12 +53,12 @@ class StaffManagement extends Page
             ->map(fn (UserRole $role) => "'{$role->value}'")
             ->implode(', ');
 
-        return User::orderByRaw("FIELD(role, {$roleOrder})")->get();
+        return User::query()->orderByRaw("FIELD(role, {$roleOrder})")->get();
     }
 
     public function getPendingInvitations(): Collection
     {
-        return StaffInvitation::whereNull('accepted_at')
+        return StaffInvitation::query()->whereNull('accepted_at')
             ->where('expires_at', '>', now())
             ->latest()
             ->get();
@@ -72,7 +72,7 @@ class StaffManagement extends Page
         ]);
 
         // Check if already a team member
-        if (User::where('email', $this->inviteEmail)->exists()) {
+        if (User::query()->where('email', $this->inviteEmail)->exists()) {
             Notification::make()
                 ->title('This person is already a team member')
                 ->warning()
@@ -82,7 +82,7 @@ class StaffManagement extends Page
         }
 
         // Check for existing pending invitation
-        $existing = StaffInvitation::where('email', $this->inviteEmail)
+        $existing = StaffInvitation::query()->where('email', $this->inviteEmail)
             ->whereNull('accepted_at')
             ->where('expires_at', '>', now())
             ->first();
@@ -96,7 +96,7 @@ class StaffManagement extends Page
             return;
         }
 
-        $invitation = StaffInvitation::create([
+        $invitation = StaffInvitation::query()->create([
             'email' => $this->inviteEmail,
             'role' => $this->inviteRole,
             'token' => Str::random(64),
@@ -122,7 +122,7 @@ class StaffManagement extends Page
 
     public function revokeInvitation(int $id): void
     {
-        StaffInvitation::where('id', $id)->whereNull('accepted_at')->delete();
+        StaffInvitation::query()->where('id', $id)->whereNull('accepted_at')->delete();
 
         Notification::make()
             ->title('Invitation revoked')
@@ -136,7 +136,7 @@ class StaffManagement extends Page
             return;
         }
 
-        $user = User::findOrFail($userId);
+        $user = User::query()->findOrFail($userId);
 
         // Can't change own role
         if ($user->id === Auth::id()) {
@@ -158,7 +158,7 @@ class StaffManagement extends Page
 
     public function removeMember(int $userId): void
     {
-        $user = User::findOrFail($userId);
+        $user = User::query()->findOrFail($userId);
 
         if ($user->id === Auth::id()) {
             Notification::make()
@@ -170,7 +170,7 @@ class StaffManagement extends Page
         }
 
         // Don't remove the last owner
-        if ($user->isOwner() && User::where('role', UserRole::Owner)->count() <= 1) {
+        if ($user->isOwner() && User::query()->where('role', UserRole::Owner)->count() <= 1) {
             Notification::make()
                 ->title("Can't remove the last owner")
                 ->danger()

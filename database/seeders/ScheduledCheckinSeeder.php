@@ -41,10 +41,7 @@ class ScheduledCheckinSeeder extends Seeder
         ];
 
         foreach ($checkins as $checkin) {
-            ScheduledCheckin::firstOrCreate(
-                ['days_after_signup' => $checkin['days_after_signup']],
-                $checkin
-            );
+            ScheduledCheckin::query()->firstOrCreate(['days_after_signup' => $checkin['days_after_signup']], $checkin);
         }
     }
 }

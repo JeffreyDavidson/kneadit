@@ -17,7 +17,7 @@ class MarginAlertWidget extends BaseWidget
 
     public static function canView(): bool
     {
-        return Product::whereHas('recipe')->get()->contains(function (Product $product) {
+        return Product::query()->whereHas('recipe')->get()->contains(function (Product $product) {
             $margin = $product->recipe?->profit_margin;
 
             return $margin !== null && $margin < 30;
@@ -26,7 +26,7 @@ class MarginAlertWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $lowMarginIds = Product::with('recipe.ingredients')
+        $lowMarginIds = Product::with('recipe.inventoryIngredients')
             ->whereHas('recipe')
             ->get()
             ->filter(function (Product $product) {

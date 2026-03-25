@@ -30,15 +30,12 @@ class DatabaseSeeder extends Seeder
      */
     protected function seedCentralData(): void
     {
-        User::updateOrCreate(
-            ['email' => 'jeffrey@getkneadit.app'],
-            [
-                'name' => 'Jeffrey Davidson',
-                'password' => bcrypt('password'),
-                'email_verified_at' => now(),
-                'role' => 'platform_admin',
-            ]
-        );
+        User::query()->updateOrCreate(['email' => 'jeffrey@getkneadit.app'], [
+            'name' => 'Jeffrey Davidson',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+            'role' => 'platform_admin',
+        ]);
 
         $this->call([
             CentralSeeder::class,

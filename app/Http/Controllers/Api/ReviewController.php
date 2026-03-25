@@ -12,7 +12,7 @@ class ReviewController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Review::where('is_approved', true)->with('product');
+        $query = Review::query()->where('is_approved', true)->with('product');
 
         if ($request->boolean('featured')) {
             $query->where('is_featured', true);
@@ -38,7 +38,7 @@ class ReviewController extends Controller
 
         $validated['comment'] = strip_tags($validated['comment']);
 
-        $review = Review::create([
+        $review = Review::query()->create([
             ...$validated,
             'is_approved' => false,
         ]);

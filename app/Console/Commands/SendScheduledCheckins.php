@@ -18,7 +18,7 @@ class SendScheduledCheckins extends Command
 
     public function handle(): int
     {
-        $checkins = ScheduledCheckin::where('is_active', true)->get();
+        $checkins = ScheduledCheckin::query()->where('is_active', true)->get();
 
         if ($checkins->isEmpty()) {
             $this->info('No active check-ins found.');
@@ -31,10 +31,10 @@ class SendScheduledCheckins extends Command
         foreach ($checkins as $checkin) {
             $targetDate = Date::today()->subDays($checkin->days_after_signup);
 
-            $tenants = Tenant::whereDate('created_at', $targetDate)->get();
+            $tenants = Tenant::query()->whereDate('created_at', $targetDate)->get();
 
             foreach ($tenants as $tenant) {
-                $alreadySent = CheckinLog::where('checkin_id', $checkin->id)
+                $alreadySent = CheckinLog::query()->where('checkin_id', $checkin->id)
                     ->where('tenant_id', $tenant->id)
                     ->exists();
 
@@ -54,7 +54,7 @@ class SendScheduledCheckins extends Command
                             ->subject($checkin->subject);
                     });
 
-                    CheckinLog::create([
+                    CheckinLog::query()->create([
                         'checkin_id' => $checkin->id,
                         'tenant_id' => $tenant->id,
                         'sent_at' => now(),

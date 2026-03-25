@@ -16,17 +16,17 @@ class CateringPipelineWidget extends Widget
 
     public function getOpenInquiriesCount(): int
     {
-        return CateringInquiry::whereIn('status', [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Quoted])->count();
+        return CateringInquiry::query()->whereIn('status', [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Quoted])->count();
     }
 
     public function getPendingQuotesCount(): int
     {
-        return CateringInquiry::where('status', CateringInquiryStatus::Quoted)->count();
+        return CateringInquiry::query()->where('status', CateringInquiryStatus::Quoted)->count();
     }
 
     public function getTotalPipelineValue(): float
     {
-        return (float) CateringInquiry::whereNotIn('status', [
+        return (float) CateringInquiry::query()->whereNotIn('status', [
             CateringInquiryStatus::Cancelled,
             CateringInquiryStatus::Completed,
         ])->sum('quoted_amount');
@@ -34,6 +34,6 @@ class CateringPipelineWidget extends Widget
 
     public function getLatestInquiry(): ?CateringInquiry
     {
-        return CateringInquiry::orderByDesc('created_at')->first();
+        return CateringInquiry::query()->latest()->first();
     }
 }

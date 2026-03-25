@@ -34,7 +34,7 @@ test('forgot password page loads', function () {
 test('reset link can be requested', function () {
     Notification::fake();
 
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Test Baker',
         'email' => 'baker@example.com',
         'password' => Hash::make('password'),
@@ -61,7 +61,7 @@ test('reset link requires email', function () {
 });
 
 test('password can be reset', function () {
-    $user = User::create([
+    $user = User::query()->create([
         'name' => 'Test Baker',
         'email' => 'baker@example.com',
         'password' => Hash::make('old-password'),
@@ -88,7 +88,7 @@ test('reset password page loads', function () {
 });
 
 test('reset requires valid token', function () {
-    User::create([
+    User::query()->create([
         'name' => 'Test Baker',
         'email' => 'baker@example.com',
         'password' => Hash::make('password'),

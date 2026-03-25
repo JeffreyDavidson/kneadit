@@ -16,31 +16,31 @@ beforeEach(function () {
     if (is_dir($tenantMigrationPath)) {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
-    User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
 });
 
 test('product belongs to category', function () {
-    $category = Category::create(['name' => 'Cakes', 'slug' => 'cakes']);
-    $product = Product::create(['name' => 'Chocolate Cake', 'slug' => 'chocolate-cake', 'price' => 25.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Cakes', 'slug' => 'cakes']);
+    $product = Product::query()->create(['name' => 'Chocolate Cake', 'slug' => 'chocolate-cake', 'price' => 25.00, 'category_id' => $category->id, 'is_active' => true]);
 
     expect($product->category)->toBeInstanceOf(Category::class);
     expect($product->category->name)->toBe('Cakes');
 });
 
 test('product has recipes relationship', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
 
-    Recipe::create(['product_id' => $product->id, 'name' => 'Sourdough Recipe', 'instructions' => 'Mix and bake', 'ingredients' => json_encode(['flour', 'water', 'salt'])]);
+    Recipe::query()->create(['product_id' => $product->id, 'name' => 'Sourdough Recipe', 'instructions' => 'Mix and bake', 'ingredients' => json_encode(['flour', 'water', 'salt'])]);
 
     expect($product->recipes)->toHaveCount(1);
 });
 
 test('product has seasonal items', function () {
-    $category = Category::create(['name' => 'Pies', 'slug' => 'pies']);
-    $product = Product::create(['name' => 'Pumpkin Pie', 'slug' => 'pumpkin-pie', 'price' => 15.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Pies', 'slug' => 'pies']);
+    $product = Product::query()->create(['name' => 'Pumpkin Pie', 'slug' => 'pumpkin-pie', 'price' => 15.00, 'category_id' => $category->id, 'is_active' => true]);
 
-    SeasonalItem::create([
+    SeasonalItem::query()->create([
         'product_id' => $product->id,
         'available_from' => Date::now()->subMonth(),
         'available_until' => Date::now()->addMonth(),
@@ -50,10 +50,10 @@ test('product has seasonal items', function () {
 });
 
 test('is in season returns true for current seasonal products', function () {
-    $category = Category::create(['name' => 'Pies', 'slug' => 'pies']);
-    $product = Product::create(['name' => 'Pumpkin Pie', 'slug' => 'pumpkin-pie', 'price' => 15.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Pies', 'slug' => 'pies']);
+    $product = Product::query()->create(['name' => 'Pumpkin Pie', 'slug' => 'pumpkin-pie', 'price' => 15.00, 'category_id' => $category->id, 'is_active' => true]);
 
-    SeasonalItem::create([
+    SeasonalItem::query()->create([
         'product_id' => $product->id,
         'available_from' => Date::now()->subMonth(),
         'available_until' => Date::now()->addMonth(),
@@ -65,10 +65,10 @@ test('is in season returns true for current seasonal products', function () {
 });
 
 test('is in season returns false for out of season products', function () {
-    $category = Category::create(['name' => 'Pies', 'slug' => 'pies']);
-    $product = Product::create(['name' => 'Pumpkin Pie', 'slug' => 'pumpkin-pie', 'price' => 15.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Pies', 'slug' => 'pies']);
+    $product = Product::query()->create(['name' => 'Pumpkin Pie', 'slug' => 'pumpkin-pie', 'price' => 15.00, 'category_id' => $category->id, 'is_active' => true]);
 
-    SeasonalItem::create([
+    SeasonalItem::query()->create([
         'product_id' => $product->id,
         'available_from' => Date::now()->subMonths(6),
         'available_until' => Date::now()->subMonths(3),
@@ -80,8 +80,8 @@ test('is in season returns false for out of season products', function () {
 });
 
 test('product with no seasonal entries is always in season', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
 
     $product->load('seasonalItems');
 
@@ -89,15 +89,15 @@ test('product with no seasonal entries is always in season', function () {
 });
 
 test('product margin attribute', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 10.00, 'cost' => 4.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 10.00, 'cost' => 4.00, 'category_id' => $category->id, 'is_active' => true]);
 
     expect($product->margin)->toBe(60.0);
 });
 
 test('product margin is null without cost', function () {
-    $category = Category::create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 10.00, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 10.00, 'category_id' => $category->id, 'is_active' => true]);
 
     expect($product->margin)->toBeNull();
 });

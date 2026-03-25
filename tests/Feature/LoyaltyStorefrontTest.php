@@ -17,26 +17,26 @@ test('loyalty reward model exists', function () {
 });
 
 test('customer total points calculation', function () {
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Test Customer',
         'email' => 'test@example.com',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 100,
         'type' => 'earned',
         'description' => 'Order #1',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 50,
         'type' => 'earned',
         'description' => 'Order #2',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 30,
         'type' => 'redeemed',
@@ -47,7 +47,7 @@ test('customer total points calculation', function () {
 });
 
 test('loyalty reward can be created', function () {
-    $reward = LoyaltyReward::create([
+    $reward = LoyaltyReward::query()->create([
         'name' => 'Free Cookie',
         'description' => 'Get a free cookie!',
         'points_required' => 100,
@@ -61,7 +61,7 @@ test('loyalty reward can be created', function () {
 });
 
 test('loyalty reward type label percentage', function () {
-    $reward = LoyaltyReward::create([
+    $reward = LoyaltyReward::query()->create([
         'name' => '10% Off',
         'points_required' => 50,
         'reward_type' => 'percentage_discount',
@@ -73,7 +73,7 @@ test('loyalty reward type label percentage', function () {
 });
 
 test('loyalty reward type label fixed', function () {
-    $reward = LoyaltyReward::create([
+    $reward = LoyaltyReward::query()->create([
         'name' => '$5 Off',
         'points_required' => 75,
         'reward_type' => 'fixed_discount',
@@ -85,19 +85,19 @@ test('loyalty reward type label fixed', function () {
 });
 
 test('customer lifetime points earned', function () {
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Test Customer',
         'email' => 'lifetime@example.com',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 200,
         'type' => 'earned',
         'description' => 'Big order',
     ]);
 
-    LoyaltyPoint::create([
+    LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 50,
         'type' => 'redeemed',
@@ -108,12 +108,12 @@ test('customer lifetime points earned', function () {
 });
 
 test('loyalty points belong to customer', function () {
-    $customer = Customer::create([
+    $customer = Customer::query()->create([
         'name' => 'Test Customer',
         'email' => 'belong@example.com',
     ]);
 
-    $point = LoyaltyPoint::create([
+    $point = LoyaltyPoint::query()->create([
         'customer_id' => $customer->id,
         'points' => 100,
         'type' => 'earned',

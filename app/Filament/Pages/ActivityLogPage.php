@@ -72,15 +72,15 @@ class ActivityLogPage extends Page
 
     public function getActionTypesProperty(): array
     {
-        return ActivityLog::distinct()->pluck('action')->filter()->sort()->values()->toArray();
+        return ActivityLog::query()->distinct()->pluck('action')->filter()->sort()->values()->toArray();
     }
 
     public function getModelTypesProperty(): array
     {
-        return ActivityLog::distinct()->pluck('model_type')->filter()->map(fn (string $t) => [
+        return ActivityLog::query()->distinct()->pluck('model_type')->filter()->map(fn (string $t) => [
             'value' => $t,
             'label' => class_basename($t),
-        ])->sortBy('label')->values()->toArray();
+        ])->sortBy('label')->values()->all();
     }
 
     public function toggleExpanded(int $id): void

@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
-        $query = Product::where('is_active', true)->with('category');
+        $query = Product::query()->where('is_active', true)->with('category');
 
         if ($request->has('category')) {
             $query->whereHas('category', fn (Builder $q) => $q->where('slug', $request->input('category')));

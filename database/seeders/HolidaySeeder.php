@@ -64,10 +64,7 @@ class HolidaySeeder extends Seeder
         ];
 
         foreach ($holidays as $holiday) {
-            Holiday::updateOrCreate(
-                ['name' => $holiday['name'], 'date' => $holiday['date']],
-                $holiday
-            );
+            Holiday::query()->updateOrCreate(['name' => $holiday['name'], 'date' => $holiday['date']], $holiday);
         }
     }
 }

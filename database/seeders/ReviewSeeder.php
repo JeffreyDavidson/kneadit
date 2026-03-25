@@ -10,7 +10,7 @@ class ReviewSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Review::count() > 0) {
+        if (Review::query()->count() > 0) {
             return;
         }
 
@@ -149,7 +149,7 @@ class ReviewSeeder extends Seeder
                 $isFeatured = true;
             }
 
-            Review::create([
+            Review::query()->create([
                 'customer_name' => $name,
                 'customer_email' => $email,
                 'product_id' => $product->id,

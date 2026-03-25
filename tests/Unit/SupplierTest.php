@@ -13,12 +13,12 @@ beforeEach(function () {
     if (is_dir($tenantMigrationPath)) {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
-    User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
 });
 
 test('supplier has ingredients relationship', function () {
-    $supplier = Supplier::create(['name' => 'Flour Co', 'is_active' => true]);
-    $ingredient = Ingredient::create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 100, 'low_stock_threshold' => 10, 'cost_per_unit' => 1.50]);
+    $supplier = Supplier::query()->create(['name' => 'Flour Co', 'is_active' => true]);
+    $ingredient = Ingredient::query()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 100, 'low_stock_threshold' => 10, 'cost_per_unit' => 1.50]);
 
     $supplier->ingredients()->attach($ingredient->id, ['unit_price' => 1.20]);
 
@@ -27,8 +27,8 @@ test('supplier has ingredients relationship', function () {
 });
 
 test('ingredients pivot has unit price', function () {
-    $supplier = Supplier::create(['name' => 'Flour Co', 'is_active' => true]);
-    $ingredient = Ingredient::create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 100, 'low_stock_threshold' => 10, 'cost_per_unit' => 1.50]);
+    $supplier = Supplier::query()->create(['name' => 'Flour Co', 'is_active' => true]);
+    $ingredient = Ingredient::query()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 100, 'low_stock_threshold' => 10, 'cost_per_unit' => 1.50]);
 
     $supplier->ingredients()->attach($ingredient->id, ['unit_price' => 1.20]);
 
@@ -37,14 +37,14 @@ test('ingredients pivot has unit price', function () {
 });
 
 test('is active is cast to boolean', function () {
-    $supplier = Supplier::create(['name' => 'Flour Co', 'is_active' => true]);
+    $supplier = Supplier::query()->create(['name' => 'Flour Co', 'is_active' => true]);
 
     expect($supplier->is_active)->toBeBool();
     expect($supplier->is_active)->toBeTrue();
 });
 
 test('supplier can be deactivated', function () {
-    $supplier = Supplier::create(['name' => 'Flour Co', 'is_active' => true]);
+    $supplier = Supplier::query()->create(['name' => 'Flour Co', 'is_active' => true]);
     $supplier->update(['is_active' => false]);
 
     expect($supplier->fresh()->is_active)->toBeFalse();

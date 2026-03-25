@@ -49,9 +49,9 @@ class PricingEngine extends Page
 
     public function mount(): void
     {
-        $this->hourlyLaborRate = (float) (Setting::where('key', 'hourly_labor_rate')->value('value') ?? 15);
-        $this->overheadPercentage = (float) (Setting::where('key', 'overhead_percentage')->value('value') ?? 20);
-        $this->targetProfitMargin = (int) (Setting::where('key', 'target_profit_margin')->value('value') ?? 50);
+        $this->hourlyLaborRate = (float) (Setting::query()->where('key', 'hourly_labor_rate')->value('value') ?? 15);
+        $this->overheadPercentage = (float) (Setting::query()->where('key', 'overhead_percentage')->value('value') ?? 20);
+        $this->targetProfitMargin = (int) (Setting::query()->where('key', 'target_profit_margin')->value('value') ?? 50);
     }
 
     public function getProductsProperty(): Collection
@@ -111,7 +111,7 @@ class PricingEngine extends Page
 
         $currentPrice = null;
         if ($this->selectedProductId) {
-            $product = Product::find($this->selectedProductId);
+            $product = Product::query()->find($this->selectedProductId);
             $currentPrice = $product?->price ? (float) $product->price : null;
         }
 

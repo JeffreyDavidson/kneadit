@@ -4,10 +4,10 @@ namespace App\Filament\Resources\Surveys\Pages;
 
 use App\Filament\Resources\Surveys\SurveyResource;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class ViewSurvey extends ViewRecord

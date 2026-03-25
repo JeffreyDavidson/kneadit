@@ -12,14 +12,14 @@ beforeEach(function () {
 
 function createReviewProduct(): Product
 {
-    $category = Category::create([
+    $category = Category::query()->create([
         'name' => 'Breads',
         'slug' => 'breads',
         'is_active' => true,
         'sort_order' => 1,
     ]);
 
-    return Product::create([
+    return Product::query()->create([
         'name' => 'Sourdough',
         'slug' => 'sourdough',
         'price' => 8.00,
@@ -38,7 +38,7 @@ test('reviews page loads', function () {
 test('reviews page shows approved reviews', function () {
     $product = createReviewProduct();
 
-    Review::create([
+    Review::query()->create([
         'customer_name' => 'Happy Customer',
         'customer_email' => 'happy@example.com',
         'product_id' => $product->id,
@@ -58,7 +58,7 @@ test('reviews page shows approved reviews', function () {
 test('reviews page hides unapproved reviews', function () {
     $product = createReviewProduct();
 
-    Review::create([
+    Review::query()->create([
         'customer_name' => 'Pending Reviewer',
         'customer_email' => 'pending@example.com',
         'product_id' => $product->id,
@@ -77,7 +77,7 @@ test('reviews page hides unapproved reviews', function () {
 test('reviews page shows average rating', function () {
     $product = createReviewProduct();
 
-    Review::create([
+    Review::query()->create([
         'customer_name' => 'A',
         'customer_email' => 'a@example.com',
         'product_id' => $product->id,
@@ -86,7 +86,7 @@ test('reviews page shows average rating', function () {
         'is_approved' => true,
     ]);
 
-    Review::create([
+    Review::query()->create([
         'customer_name' => 'B',
         'customer_email' => 'b@example.com',
         'product_id' => $product->id,
@@ -108,13 +108,13 @@ test('empty reviews page shows empty state', function () {
         ->get('/reviews');
 
     $response->assertOk();
-    expect(Review::count())->toBe(0);
+    expect(Review::query()->count())->toBe(0);
 });
 
 test('reviews only counts approved in average', function () {
     $product = createReviewProduct();
 
-    Review::create([
+    Review::query()->create([
         'customer_name' => 'A',
         'customer_email' => 'a@example.com',
         'product_id' => $product->id,
@@ -123,7 +123,7 @@ test('reviews only counts approved in average', function () {
         'is_approved' => true,
     ]);
 
-    Review::create([
+    Review::query()->create([
         'customer_name' => 'Troll',
         'customer_email' => 'troll@example.com',
         'product_id' => $product->id,
@@ -132,6 +132,6 @@ test('reviews only counts approved in average', function () {
         'is_approved' => false,
     ]);
 
-    $avgRating = Review::where('is_approved', true)->avg('rating');
+    $avgRating = Review::query()->where('is_approved', true)->avg('rating');
     expect((float) $avgRating)->toBe(5.0);
 });

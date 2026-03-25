@@ -14,11 +14,11 @@ class StorefrontViewsWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        $today = PageView::whereNull('product_id')
+        $today = PageView::query()->whereNull('product_id')
             ->where('created_at', '>=', today())
             ->count();
 
-        $yesterday = PageView::whereNull('product_id')
+        $yesterday = PageView::query()->whereNull('product_id')
             ->whereBetween('created_at', [now()->subDay()->startOfDay(), today()])
             ->count();
 

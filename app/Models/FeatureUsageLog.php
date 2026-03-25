@@ -42,19 +42,19 @@ class FeatureUsageLog extends Model
         $today = Date::today();
         $now = Date::now();
 
-        $log = static::where('tenant_id', $tenantId)
+        $log = static::query()->where('tenant_id', $tenantId)
             ->where('feature', $feature)
             ->whereDate('date', $today)
             ->first();
 
         if ($log) {
-            static::where('id', $log->id)->update([
+            static::query()->where('id', $log->id)->update([
                 'usage_count' => $log->usage_count + 1,
                 'last_used_at' => $now,
             ]);
             $log->refresh();
         } else {
-            $log = static::create([
+            $log = static::query()->create([
                 'tenant_id' => $tenantId,
                 'feature' => $feature,
                 'usage_count' => 1,

@@ -28,7 +28,7 @@ class CreateOneTenant extends Command
         $domain = $id.'.kneadit.test';
 
         // Create tenant (triggers CreateDatabase + MigrateDatabase via events)
-        $tenant = Tenant::create([
+        $tenant = Tenant::query()->create([
             'id' => $id,
             'name' => $this->argument('name'),
             'email' => $this->argument('email'),

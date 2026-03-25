@@ -16,7 +16,7 @@ class ContactController extends Controller
         $validated['subject'] = strip_tags($validated['subject']);
         $validated['message'] = strip_tags($validated['message']);
 
-        ContactMessage::create($validated);
+        ContactMessage::query()->create($validated);
 
         return response()->json([
             'data' => null,

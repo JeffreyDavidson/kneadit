@@ -16,11 +16,11 @@ beforeEach(function () {
     if (is_dir($tenantMigrationPath)) {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
-    User::create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
 });
 
 test('slug is auto generated from title', function () {
-    $post = BlogPost::create([
+    $post = BlogPost::query()->create([
         'title' => 'My Awesome Blog Post',
         'body' => 'Some content here',
     ]);
@@ -29,7 +29,7 @@ test('slug is auto generated from title', function () {
 });
 
 test('slug is updated when title changes', function () {
-    $post = BlogPost::create([
+    $post = BlogPost::query()->create([
         'title' => 'Original Title',
         'body' => 'Content',
     ]);
@@ -40,14 +40,14 @@ test('slug is updated when title changes', function () {
 });
 
 test('duplicate slugs are made unique', function () {
-    BlogPost::create(['title' => 'Same Title', 'body' => 'First']);
-    $post2 = BlogPost::create(['title' => 'Same Title', 'body' => 'Second']);
+    BlogPost::query()->create(['title' => 'Same Title', 'body' => 'First']);
+    $post2 = BlogPost::query()->create(['title' => 'Same Title', 'body' => 'Second']);
 
     expect($post2->slug)->toBe('same-title-2');
 });
 
 test('published at can be set', function () {
-    $post = BlogPost::create([
+    $post = BlogPost::query()->create([
         'title' => 'Published Post',
         'body' => 'Content',
         'is_published' => true,

@@ -18,7 +18,7 @@ class ViewMessage extends ViewRecord
 
     public function resolveRecord(int|string $key): Model
     {
-        return PlatformMessage::findOrFail($key);
+        return PlatformMessage::query()->findOrFail($key);
     }
 
     public function mount(int|string $record): void
@@ -41,8 +41,7 @@ class ViewMessage extends ViewRecord
 
     public function getThread(): Collection
     {
-        return PlatformMessage::where('parent_id', $this->record->id)
-            ->orderBy('created_at', 'asc')
+        return PlatformMessage::query()->where('parent_id', $this->record->id)->oldest()
             ->get();
     }
 
@@ -52,7 +51,7 @@ class ViewMessage extends ViewRecord
             'replyBody' => 'required|string|min:1',
         ]);
 
-        PlatformMessage::create([
+        PlatformMessage::query()->create([
             'tenant_id' => $this->record->tenant_id,
             'sender_type' => 'admin',
             'subject' => 'Re: '.$this->record->subject,

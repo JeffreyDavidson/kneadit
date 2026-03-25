@@ -78,9 +78,9 @@ test('redeem creates transaction record', function () {
     ]);
 
     Mail::fake();
-    $user = User::create(['name' => 'Test', 'email' => 'u@t.com', 'password' => bcrypt('p')]);
-    $customer = Customer::create(['name' => 'C', 'email' => 'c@t.com']);
-    $order = Order::create(['user_id' => $user->id, 'customer_id' => $customer->id, 'status' => OrderStatus::Pending, 'total' => 15, 'subtotal' => 15]);
+    $user = User::query()->create(['name' => 'Test', 'email' => 'u@t.com', 'password' => bcrypt('p')]);
+    $customer = Customer::query()->create(['name' => 'C', 'email' => 'c@t.com']);
+    $order = Order::query()->create(['user_id' => $user->id, 'customer_id' => $customer->id, 'status' => OrderStatus::Pending, 'total' => 15, 'subtotal' => 15]);
 
     test()->service->redeem($card->code, 15, $order->id);
 

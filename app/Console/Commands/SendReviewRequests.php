@@ -31,7 +31,7 @@ class SendReviewRequests extends Command
 
                 $delayHours = (int) Setting::get('review_request_delay_hours', '24');
 
-                $orders = Order::where('status', OrderStatus::Delivered)
+                $orders = Order::query()->where('status', OrderStatus::Delivered)
                     ->whereNull('review_request_sent_at')
                     ->where('updated_at', '<=', now()->subHours($delayHours))
                     ->whereHas('customer', fn (Builder $q) => $q->whereNotNull('email'))

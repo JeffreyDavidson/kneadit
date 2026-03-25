@@ -10,7 +10,7 @@ class GiftCardService
 {
     public function create(array $data): GiftCard
     {
-        $card = GiftCard::create([
+        $card = GiftCard::query()->create([
             'code' => $this->generateCode(),
             'initial_balance' => $data['initial_balance'],
             'current_balance' => $data['initial_balance'],
@@ -34,14 +34,14 @@ class GiftCardService
 
     public function checkBalance(string $code): ?GiftCard
     {
-        return GiftCard::where('code', strtoupper(str_replace('-', '', $code)))->first()
-            ?? GiftCard::where('code', strtoupper(trim($code)))->first();
+        return GiftCard::query()->where('code', strtoupper(str_replace('-', '', $code)))->first()
+            ?? GiftCard::query()->where('code', strtoupper(trim($code)))->first();
     }
 
     public function redeem(string $code, float $amount, ?int $orderId = null): array
     {
         return DB::transaction(function () use ($code, $amount, $orderId) {
-            $card = GiftCard::lockForUpdate()->where('code', $code)->firstOrFail();
+            $card = GiftCard::query()->lockForUpdate()->where('code', $code)->firstOrFail();
 
             if (! $card->isUsable()) {
                 return ['success' => false, 'error' => 'This gift card is not valid.'];
@@ -91,7 +91,7 @@ class GiftCardService
             $raw = preg_replace('/[^A-Z0-9]/', '', $raw.Str::random(4));
             $raw = substr($raw, 0, 16);
             $code = implode('-', str_split($raw, 4));
-        } while (GiftCard::where('code', $code)->exists());
+        } while (GiftCard::query()->where('code', $code)->exists());
 
         return $code;
     }

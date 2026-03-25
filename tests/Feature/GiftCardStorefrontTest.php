@@ -13,7 +13,7 @@ function makeGiftCard(array $overrides = []): GiftCard
     static $counter = 0;
     $counter++;
 
-    return GiftCard::create(array_merge([
+    return GiftCard::query()->create(array_merge([
         'code' => 'GIFT-TEST-'.str_pad($counter, 4, '0', STR_PAD_LEFT),
         'initial_balance' => 50.00,
         'current_balance' => 50.00,
@@ -80,7 +80,7 @@ test('gift card status attribute', function () {
 test('gift card has transactions relationship', function () {
     $card = makeGiftCard();
 
-    GiftCardTransaction::create([
+    GiftCardTransaction::query()->create([
         'gift_card_id' => $card->id,
         'amount' => 50.00,
         'type' => 'purchase',

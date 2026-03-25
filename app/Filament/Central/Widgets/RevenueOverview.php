@@ -18,7 +18,7 @@ class RevenueOverview extends StatsOverviewWidget
             'pro' => 29,
         ];
 
-        $activeTenants = Tenant::where('is_active', true)->get();
+        $activeTenants = Tenant::query()->where('is_active', true)->get();
 
         $mrr = $activeTenants->sum(function (Tenant $tenant) use ($planPrices) {
             return $planPrices[$tenant->plan] ?? 0;
@@ -26,8 +26,8 @@ class RevenueOverview extends StatsOverviewWidget
 
         $arr = $mrr * 12;
 
-        $totalTrialed = Tenant::whereNotNull('trial_ends_at')->count();
-        $convertedFromTrial = Tenant::whereNotNull('trial_ends_at')
+        $totalTrialed = Tenant::query()->whereNotNull('trial_ends_at')->count();
+        $convertedFromTrial = Tenant::query()->whereNotNull('trial_ends_at')
             ->where('is_active', true)
             ->whereNotNull('plan')
             ->where('trial_ends_at', '<=', now())
@@ -36,8 +36,8 @@ class RevenueOverview extends StatsOverviewWidget
             ? round(($convertedFromTrial / $totalTrialed) * 100, 1)
             : 0;
 
-        $totalEver = Tenant::count();
-        $inactive = Tenant::where('is_active', false)->count();
+        $totalEver = Tenant::query()->count();
+        $inactive = Tenant::query()->where('is_active', false)->count();
         $churnRate = $totalEver > 0
             ? round(($inactive / $totalEver) * 100, 1)
             : 0;

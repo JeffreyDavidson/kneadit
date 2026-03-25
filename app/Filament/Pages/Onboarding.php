@@ -311,7 +311,7 @@ class Onboarding extends Page
                                         ->placeholder('12.00'),
                                     Select::make('product_category_id')
                                         ->label('Category')
-                                        ->options(fn () => Category::pluck('name', 'id')->toArray())
+                                        ->options(fn () => Category::query()->pluck('name', 'id')->toArray())
                                         ->required()
                                         ->createOptionForm([
                                             TextInput::make('name')
@@ -323,7 +323,7 @@ class Onboarding extends Page
                                                 ->rows(2),
                                         ])
                                         ->createOptionUsing(function (array $data): int {
-                                            $category = Category::create([
+                                            $category = Category::query()->create([
                                                 'name' => $data['name'],
                                                 'slug' => Str::slug($data['name']),
                                                 'description' => $data['description'] ?? null,
@@ -611,16 +611,13 @@ class Onboarding extends Page
     {
         $slug = Str::slug($this->product_name);
 
-        Product::updateOrCreate(
-            ['slug' => $slug],
-            [
-                'name' => $this->product_name,
-                'description' => $this->product_description,
-                'price' => $this->product_price,
-                'category_id' => $this->product_category_id,
-                'is_active' => true,
-            ]
-        );
+        Product::query()->updateOrCreate(['slug' => $slug], [
+            'name' => $this->product_name,
+            'description' => $this->product_description,
+            'price' => $this->product_price,
+            'category_id' => $this->product_category_id,
+            'is_active' => true,
+        ]);
     }
 
     protected function saveBusinessHoursStep(): void

@@ -97,7 +97,7 @@ class StripeConnectWebhookController extends Controller
 
         // Initialize tenancy to update the tenant's settings
         try {
-            $tenant = Tenant::find($tenantId);
+            $tenant = Tenant::query()->find($tenantId);
             if (! $tenant) {
                 Log::warning('Tenant not found for Stripe Connect update', ['tenant_id' => $tenantId]);
 
@@ -149,7 +149,7 @@ class StripeConnectWebhookController extends Controller
             return;
         }
 
-        $tenant = Tenant::find($tenantId);
+        $tenant = Tenant::query()->find($tenantId);
         if (! $tenant) {
             Log::warning('Tenant not found for checkout session', ['tenant_id' => $tenantId]);
 
@@ -159,7 +159,7 @@ class StripeConnectWebhookController extends Controller
         try {
             tenancy()->initialize($tenant);
 
-            $order = Order::where('stripe_checkout_session_id', $sessionId)->first();
+            $order = Order::query()->where('stripe_checkout_session_id', $sessionId)->first();
             if ($order) {
                 $order->update([
                     'payment_status' => PaymentStatus::Paid,

@@ -36,7 +36,7 @@ class OnboardingController extends Controller
 
         // Create the tenant, domain, and seed initial data
         $tenant = DB::transaction(function () use ($request, $validated, $subdomain, $useKneadItStorefront) {
-            $tenant = Tenant::create([
+            $tenant = Tenant::query()->create([
                 'id' => $subdomain,
                 'name' => $request->user()->name,
                 'email' => $request->user()->email,
@@ -81,7 +81,7 @@ class OnboardingController extends Controller
         // Complete referral if one exists
         $referralCode = $request->session()->get('referral_code') ?? $request->cookie('referral_code');
         if ($referralCode) {
-            $referral = Referral::where('referral_code', $referralCode)
+            $referral = Referral::query()->where('referral_code', $referralCode)
                 ->where('status', ReferralStatus::Pending)
                 ->whereNull('referred_tenant_id')
                 ->first();

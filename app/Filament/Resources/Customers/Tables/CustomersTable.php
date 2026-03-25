@@ -21,7 +21,7 @@ class CustomersTable
         $atRiskDays = (int) Setting::get('at_risk_days', '30');
 
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => app(CustomerIntelligence::class)->enrichQuery($query))
+            ->modifyQueryUsing(fn (Builder $query) => resolve(CustomerIntelligence::class)->enrichQuery($query))
             ->columns([
                 TextColumn::make('name')
                     ->sortable()

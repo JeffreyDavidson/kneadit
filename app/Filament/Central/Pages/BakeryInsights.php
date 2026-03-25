@@ -328,7 +328,7 @@ class BakeryInsights extends Page
 
     public function extendTrial(string $tenantId): void
     {
-        $tenant = Tenant::find($tenantId);
+        $tenant = Tenant::query()->find($tenantId);
 
         if (! $tenant) {
             Notification::make()->title('Tenant not found.')->danger()->send();
@@ -352,7 +352,7 @@ class BakeryInsights extends Page
 
     public function sendNudge(string $tenantId): void
     {
-        $tenant = Tenant::find($tenantId);
+        $tenant = Tenant::query()->find($tenantId);
 
         if (! $tenant) {
             Notification::make()->title('Tenant not found.')->danger()->send();
@@ -362,7 +362,7 @@ class BakeryInsights extends Page
 
         $storeName = $tenant->store_name ?? $tenant->name;
 
-        PlatformMessage::create([
+        PlatformMessage::query()->create([
             'tenant_id' => $tenant->id,
             'sender_type' => 'admin',
             'subject' => 'We noticed you haven\'t been around lately',

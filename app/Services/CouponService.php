@@ -15,7 +15,7 @@ class CouponService
      */
     public function validate(string $code, float $subtotal): array
     {
-        $coupon = Coupon::where('code', strtoupper(trim($code)))->lockForUpdate()->first();
+        $coupon = Coupon::query()->where('code', strtoupper(trim($code)))->lockForUpdate()->first();
 
         if (! $coupon) {
             return ['valid' => false, 'coupon' => null, 'discount' => 0, 'error' => 'Coupon not found.'];
@@ -44,6 +44,6 @@ class CouponService
      */
     public function apply(Coupon $coupon): void
     {
-        Coupon::where('id', $coupon->id)->increment('used_count');
+        Coupon::query()->where('id', $coupon->id)->increment('used_count');
     }
 }
