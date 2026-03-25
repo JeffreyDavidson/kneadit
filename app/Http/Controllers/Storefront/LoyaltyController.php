@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\LoyaltyReward;
 use App\Models\Setting;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
 
 class LoyaltyController extends Controller
 {
@@ -16,6 +17,7 @@ class LoyaltyController extends Controller
         try {
             $rewards = LoyaltyReward::query()->where('is_active', true)->orderBy('points_required')->get();
         } catch (\Exception $e) {
+            Log::error('Failed to load loyalty rewards', ['error' => $e->getMessage()]);
             $rewards = collect();
         }
         $programName = Setting::get('loyalty_program_name', 'Rewards');
@@ -32,6 +34,7 @@ class LoyaltyController extends Controller
         try {
             $rewards = LoyaltyReward::query()->where('is_active', true)->orderBy('points_required')->get();
         } catch (\Exception $e) {
+            Log::error('Failed to load loyalty rewards', ['error' => $e->getMessage()]);
             $rewards = collect();
         }
         $programName = Setting::get('loyalty_program_name', 'Rewards');
