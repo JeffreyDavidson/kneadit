@@ -10,6 +10,9 @@
     "skills": [
         "laravel-best-practices",
         "pest-testing",
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "laravel-multi-tenancy",
+        "laravel-tdd",
+        "laravel-value-objects"
     ]
 }
