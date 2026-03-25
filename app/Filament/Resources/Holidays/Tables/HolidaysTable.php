@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Holidays\Tables;
 
+use App\Enums\OrderStatus;
 use App\Models\Holiday;
+use App\Models\Order;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -10,6 +12,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 
 class HolidaysTable
@@ -17,6 +20,13 @@ class HolidaysTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query
+                ->addSelect([
+                    'order_count' => Order::selectRaw('count(*)')
+                        ->whereColumn('delivery_date', 'holidays.date')
+                        ->where('status', '!=', OrderStatus::Cancelled),
+                ])
+            )
             ->heading('Holidays')
             ->emptyStateHeading('No holidays planned')
             ->emptyStateDescription('Add upcoming holidays to track order deadlines.')
@@ -41,7 +51,7 @@ class HolidaysTable
                 TextColumn::make('orders_display')
                     ->label('Orders')
                     ->getStateUsing(function (Holiday $record) {
-                        $count = $record->orderCount();
+                        $count = $record->order_count ?? 0;
 
                         return $record->max_orders
                             ? "{$count} / {$record->max_orders}"
