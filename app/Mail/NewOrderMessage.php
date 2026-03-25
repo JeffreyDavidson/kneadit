@@ -29,7 +29,7 @@ class NewOrderMessage extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         $storeName = Setting::get('store_name', 'KneadIt Bakery');
-        $orderNumber = $this->orderMessage->order->order_number;
+        $orderNumber = $this->orderMessage->order?->order_number;
 
         return new Envelope(
             from: $this->bakerFrom(),

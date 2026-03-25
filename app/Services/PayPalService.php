@@ -106,18 +106,18 @@ class PayPalService
                 [
                     'billing_info' => [
                         'name' => [
-                            'given_name' => explode(' ', $order->customer->name)[0],
-                            'surname' => implode(' ', array_slice(explode(' ', $order->customer->name), 1)) ?: '',
+                            'given_name' => explode(' ', $order->customer?->name)[0],
+                            'surname' => implode(' ', array_slice(explode(' ', $order->customer?->name), 1)) ?: '',
                         ],
                         'address' => [
                             'address_line_1' => $order->delivery_address ?: $order->customer->address,
-                            'admin_area_2' => $order->customer->city,
-                            'admin_area_1' => $order->customer->state,
-                            'postal_code' => $order->customer->zip,
+                            'admin_area_2' => $order->customer?->city,
+                            'admin_area_1' => $order->customer?->state,
+                            'postal_code' => $order->customer?->zip,
                             'country_code' => 'US',
                         ],
-                        'email_address' => $order->customer->email,
-                        'phones' => $order->customer->phone ? [
+                        'email_address' => $order->customer?->email,
+                        'phones' => $order->customer?->phone ? [
                             [
                                 'country_code' => '1',
                                 'national_number' => preg_replace('/\D/', '', $order->customer->phone),
@@ -148,7 +148,7 @@ class PayPalService
             $subtotal += $itemTotal;
 
             $invoiceData['items'][] = [
-                'name' => $item->product->name,
+                'name' => $item->product?->name,
                 'description' => $item->product->description ?: $item->product->name,
                 'quantity' => (string) $item->quantity,
                 'unit_amount' => [

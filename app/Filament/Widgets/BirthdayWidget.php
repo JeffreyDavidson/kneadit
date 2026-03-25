@@ -20,7 +20,7 @@ class BirthdayWidget extends Widget
         return Customer::query()->whereNotNull('birthday')
             ->get()
             ->map(function (Customer $customer) use ($today) {
-                $next = $customer->birthday->copy()->year($today->year);
+                $next = $customer->birthday?->copy()->year($today->year);
                 if ($next->lt($today->startOfDay())) {
                     $next->addYear();
                 }
@@ -28,7 +28,7 @@ class BirthdayWidget extends Widget
 
                 return (object) [
                     'customer' => $customer,
-                    'birthday_date' => $customer->birthday->format('M j'),
+                    'birthday_date' => $customer->birthday?->format('M j'),
                     'days_until' => $daysUntil,
                     'is_today' => $daysUntil === 0,
                 ];

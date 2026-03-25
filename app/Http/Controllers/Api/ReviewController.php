@@ -23,7 +23,7 @@ class ReviewController extends Controller
             'rating' => $r->rating,
             'comment' => $r->comment,
             'product_name' => $r->product?->name,
-            'created_at' => $r->created_at->toISOString(),
+            'created_at' => $r->created_at?->toISOString(),
         ]);
 
         return response()->json([
