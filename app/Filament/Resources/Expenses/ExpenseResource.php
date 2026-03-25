@@ -2,23 +2,22 @@
 
 namespace App\Filament\Resources\Expenses;
 
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\Expenses\Pages\ListExpenses;
 use App\Filament\Resources\Expenses\Schemas\ExpenseForm;
 use App\Filament\Resources\Expenses\Tables\ExpensesTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Expense;
-use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 
 class ExpenseResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
+    use ShowsUpgradeBadge;
 
     protected static ?string $model = Expense::class;
-
-    protected static string $requiredPlan = 'growth';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-down';
 
@@ -34,6 +33,16 @@ class ExpenseResource extends Resource
     public static function table(Table $table): Table
     {
         return ExpensesTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
     }
 
     public static function getRelations(): array

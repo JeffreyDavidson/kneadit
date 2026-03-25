@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -19,7 +18,6 @@ use Filament\Schemas\Schema;
 
 class AnnouncementBanner extends Page
 {
-    use HasPlanGating;
     use InteractsWithFormActions;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-megaphone';

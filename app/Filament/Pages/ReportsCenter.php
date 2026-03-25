@@ -2,13 +2,25 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\ReportService;
-use App\Traits\HasPlanGating;
 use Filament\Pages\Page;
+use Laravel\Pennant\Feature;
 
 class ReportsCenter extends Page
 {
-    use HasPlanGating;
+    use ShowsUpgradeBadge;
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-pie';
 
@@ -19,8 +31,6 @@ class ReportsCenter extends Page
     protected static ?int $navigationSort = 14;
 
     protected string $view = 'filament.pages.reports-center';
-
-    protected static string $requiredPlan = 'growth';
 
     public string $activeReport = '';
 

@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources\Categories;
 
-use App\Enums\UserRole;
 use App\Filament\Resources\Categories\Pages\ListCategories;
 use App\Filament\Resources\Categories\Schemas\CategoryForm;
 use App\Filament\Resources\Categories\Tables\CategoriesTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Category;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -16,13 +13,6 @@ use Filament\Tables\Table;
 
 class CategoryResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
     protected static ?string $model = Category::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';

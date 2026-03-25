@@ -2,31 +2,24 @@
 
 namespace App\Filament\Resources\GiftCards;
 
-use App\Enums\UserRole;
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
 use App\Filament\Resources\GiftCards\Pages\ViewGiftCard;
 use App\Filament\Resources\GiftCards\Schemas\GiftCardForm;
 use App\Filament\Resources\GiftCards\Tables\GiftCardsTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\GiftCard;
-use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Pennant\Feature;
 
 class GiftCardResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
+    use ShowsUpgradeBadge;
 
     protected static ?string $model = GiftCard::class;
-
-    protected static string $requiredPlan = 'growth';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-gift-top';
 
@@ -46,6 +39,16 @@ class GiftCardResource extends Resource
     public static function table(Table $table): Table
     {
         return GiftCardsTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
     }
 
     public static function getRelations(): array

@@ -3,13 +3,13 @@
 namespace App\Filament\Pages;
 
 use App\Enums\PaymentStatus;
+use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -21,20 +21,31 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Pennant\Feature;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TaxExport extends Page
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
-    protected static string $requiredPlan = 'pro';
+    use ShowsUpgradeBadge;
 
     protected string $view = 'filament.pages.tax-export';
+
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return Feature::active('pro-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Pro;
+    }
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-arrow-down';
 

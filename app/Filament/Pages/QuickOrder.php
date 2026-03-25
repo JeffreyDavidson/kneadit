@@ -7,12 +7,10 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -32,18 +30,23 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class QuickOrder extends Page
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
     protected string $view = 'filament-panels::pages.simple';
+
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return true;
+    }
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-plus-circle';
 

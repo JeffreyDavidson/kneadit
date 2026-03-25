@@ -3,31 +3,42 @@
 namespace App\Filament\Pages;
 
 use App\Enums\OrderStatus;
+use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Mail\PurchaseOrder;
 use App\Models\Ingredient;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Models\Supplier;
-use App\Traits\HasPlanGating;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Laravel\Pennant\Feature;
 
 class SmartShoppingList extends Page
 {
-    use HasPlanGating, RequiresRole;
+    use ShowsUpgradeBadge;
 
-    protected static function getRequiredRole(): UserRole
+    public static function canAccess(): bool
     {
-        return UserRole::Manager;
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return Feature::active('pro-features');
     }
 
-    protected static string $requiredPlan = 'pro';
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Pro;
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
 

@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources\WaitlistEntries;
 
-use App\Enums\UserRole;
 use App\Filament\Resources\WaitlistEntries\Pages\ListWaitlistEntries;
 use App\Filament\Resources\WaitlistEntries\Schemas\WaitlistEntryForm;
 use App\Filament\Resources\WaitlistEntries\Tables\WaitlistEntriesTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\WaitlistEntry;
-use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -16,13 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class WaitlistEntryResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
     protected static ?string $model = WaitlistEntry::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-queue-list';

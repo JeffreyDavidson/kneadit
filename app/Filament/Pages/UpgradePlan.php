@@ -2,13 +2,22 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Traits\RequiresRole;
-use App\Traits\HasPlanGating;
+use App\Enums\UserRole;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 
 class UpgradePlan extends Page
 {
-    use HasPlanGating, RequiresRole;
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return true;
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-circle';
 

@@ -3,18 +3,22 @@
 namespace App\Filament\Pages;
 
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
 use App\Models\ActivityLog;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityLogPage extends Page
 {
-    use RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
+    public static function canAccess(): bool
     {
-        return UserRole::Manager;
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return true;
     }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';

@@ -3,29 +3,40 @@
 namespace App\Filament\Pages;
 
 use App\Enums\OrderStatus;
+use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Order;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Laravel\Pennant\Feature;
 use Livewire\Attributes\Url;
 
 class ReorderReminders extends Page
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Manager;
-    }
-
-    protected static string $requiredPlan = 'growth';
+    use ShowsUpgradeBadge;
 
     protected string $view = 'filament.pages.reorder-reminders';
+
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
+    }
 
     protected static ?string $title = 'Reorder Reminders';
 

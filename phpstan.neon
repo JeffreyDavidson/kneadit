@@ -10,9 +10,6 @@ parameters:
     scanDirectories:
         - vendor/filament
     ignoreErrors:
-        # Trait uses dynamic property_exists check
-        - identifier: staticProperty.notFound
-          path: app/Traits/HasPlanGating.php
         # Tenant domains relation from vendor trait (HasDomains)
         - identifier: larastan.relationExistence
           path: app/Http/Controllers/DirectoryController.php
@@ -38,9 +35,6 @@ parameters:
             message: '#on Illuminate\\Database\\Eloquent\\Model\|int\|string#'
             paths:
                 - app/Filament/
-        # HasPlanGating method_exists check — needed for classes without RequiresRole trait
-        - identifier: function.alreadyNarrowedType
-          path: app/Traits/HasPlanGating.php
         # Collection<Model> callback type — Larastan resolves to generic Model instead of concrete class
         -
             identifier: argument.type

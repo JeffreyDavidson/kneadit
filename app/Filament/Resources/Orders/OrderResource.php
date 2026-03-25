@@ -2,14 +2,11 @@
 
 namespace App\Filament\Resources\Orders;
 
-use App\Enums\UserRole;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Filament\Resources\Orders\Schemas\OrderForm;
 use App\Filament\Resources\Orders\Tables\OrdersTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Order;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -19,13 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Staff;
-    }
-
     protected static ?string $model = Order::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';

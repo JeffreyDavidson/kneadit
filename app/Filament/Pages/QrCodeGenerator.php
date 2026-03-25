@@ -2,30 +2,41 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
-use App\Filament\Traits\RequiresRole;
-use App\Traits\HasPlanGating;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\HtmlString;
+use Laravel\Pennant\Feature;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class QrCodeGenerator extends Page
 {
-    use HasPlanGating, RequiresRole;
+    use ShowsUpgradeBadge;
 
-    protected static function getRequiredRole(): UserRole
+    public static function canAccess(): bool
     {
-        return UserRole::Manager;
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return Feature::active('growth-features');
     }
 
-    protected static string $requiredPlan = 'growth';
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
+    }
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-qr-code';
 

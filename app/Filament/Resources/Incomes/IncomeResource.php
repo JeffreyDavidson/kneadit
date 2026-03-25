@@ -2,23 +2,22 @@
 
 namespace App\Filament\Resources\Incomes;
 
+use App\Enums\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\Incomes\Pages\ListIncomes;
 use App\Filament\Resources\Incomes\Schemas\IncomeForm;
 use App\Filament\Resources\Incomes\Tables\IncomesTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\Income;
-use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
 
 class IncomeResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
+    use ShowsUpgradeBadge;
 
     protected static ?string $model = Income::class;
-
-    protected static string $requiredPlan = 'growth';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-up';
 
@@ -34,6 +33,16 @@ class IncomeResource extends Resource
     public static function table(Table $table): Table
     {
         return IncomesTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
     }
 
     public static function getRelations(): array

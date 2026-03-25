@@ -2,15 +2,12 @@
 
 namespace App\Filament\Resources\BlogPosts;
 
-use App\Enums\UserRole;
 use App\Filament\Resources\BlogPosts\Pages\CreateBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Filament\Resources\BlogPosts\Schemas\BlogPostForm;
 use App\Filament\Resources\BlogPosts\Tables\BlogPostsTable;
-use App\Filament\Traits\RequiresRole;
 use App\Models\BlogPost;
-use App\Traits\HasPlanGating;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -18,13 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class BlogPostResource extends Resource
 {
-    use HasPlanGating, RequiresRole;
-
-    protected static function getRequiredRole(): UserRole
-    {
-        return UserRole::Staff;
-    }
-
     protected static ?string $model = BlogPost::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-pencil-square';

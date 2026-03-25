@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Policies;
+
+use App\Enums\UserRole;
+use App\Models\GalleryPhoto;
+use App\Models\User;
+
+class GalleryPhotoPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return $user->hasMinRole(UserRole::Manager);
+    }
+
+    public function view(User $user, GalleryPhoto $galleryPhoto): bool
+    {
+        return $user->hasMinRole(UserRole::Manager);
+    }
+
+    public function create(User $user): bool
+    {
+        return $user->hasMinRole(UserRole::Manager);
+    }
+
+    public function update(User $user, GalleryPhoto $galleryPhoto): bool
+    {
+        return $user->hasMinRole(UserRole::Manager);
+    }
+
+    public function delete(User $user, GalleryPhoto $galleryPhoto): bool
+    {
+        return $user->hasMinRole(UserRole::Manager);
+    }
+}

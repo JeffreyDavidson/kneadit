@@ -2,11 +2,10 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Traits\RequiresRole;
+use App\Enums\UserRole;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Setting;
-use App\Traits\HasPlanGating;
 use BackedEnum;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
@@ -26,12 +25,22 @@ use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class Onboarding extends Page
 {
-    use HasPlanGating, RequiresRole;
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return true;
+    }
 
     protected static bool $shouldRegisterNavigation = false;
 
