@@ -128,7 +128,7 @@ class FinanceSummary extends Page
 
             $this->monthlyBreakdown->push([
                 'month' => $month,
-                'month_name' => date('F', mktime(0, 0, 0, $month, 1)),
+                'month_name' => date('F', (int) mktime(0, 0, 0, $month, 1)),
                 'revenue' => $totalMonthRevenue,
                 'expenses' => $monthExpenses,
                 'net' => $totalMonthRevenue - $monthExpenses,

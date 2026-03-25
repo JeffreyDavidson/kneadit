@@ -38,6 +38,9 @@ class ExportController extends Controller
             try {
                 tenancy()->initialize($tenant);
                 $handle = fopen('php://output', 'w');
+                if ($handle === false) {
+                    throw new \RuntimeException('Failed to open file handle');
+                }
 
                 match ($type) {
                     'products' => $this->writeProducts($handle),
@@ -94,6 +97,9 @@ class ExportController extends Controller
     private function generateCsvString(string $type): string
     {
         $handle = fopen('php://temp', 'r+');
+        if ($handle === false) {
+            throw new \RuntimeException('Failed to open file handle');
+        }
 
         match ($type) {
             'products' => $this->writeProducts($handle),

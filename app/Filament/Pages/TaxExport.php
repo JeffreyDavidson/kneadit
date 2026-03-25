@@ -179,6 +179,9 @@ class TaxExport extends Page
 
         return response()->streamDownload(function () use ($type, $dateFrom, $dateTo) {
             $handle = fopen('php://output', 'w');
+            if ($handle === false) {
+                throw new \RuntimeException('Failed to open file handle');
+            }
 
             if (in_array($type, ['all', 'orders'])) {
                 $this->writeOrdersCsv($handle, $dateFrom, $dateTo);
@@ -311,8 +314,8 @@ class TaxExport extends Page
 
         fputcsv($handle, ['=== TAX SUMMARY ===']);
         fputcsv($handle, ['Metric', 'Amount']);
-        fputcsv($handle, ['Total Revenue (Orders)', number_format($totalOrderRevenue, 2)]);
-        fputcsv($handle, ['Total Revenue (Other Income)', number_format($totalIncomeRevenue, 2)]);
+        fputcsv($handle, ['Total Revenue (Orders)', number_format((float) $totalOrderRevenue, 2)]);
+        fputcsv($handle, ['Total Revenue (Other Income)', number_format((float) $totalIncomeRevenue, 2)]);
         fputcsv($handle, ['Total Revenue (Combined)', number_format($totalRevenue, 2)]);
         fputcsv($handle, ['Total Expenses', number_format($totalExpenses, 2)]);
         fputcsv($handle, ['Total Deductible', number_format($totalDeductible, 2)]);

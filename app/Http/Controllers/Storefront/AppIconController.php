@@ -21,15 +21,15 @@ class AppIconController extends Controller
         $r = hexdec(substr($color, 1, 2));
         $g = hexdec(substr($color, 3, 2));
         $b = hexdec(substr($color, 5, 2));
-        $bgColor = imagecolorallocate($img, $r, $g, $b);
-        $textColor = imagecolorallocate($img, 255, 255, 255);
-        imagefill($img, 0, 0, $bgColor);
+        $bgColor = imagecolorallocate($img, (int) $r, (int) $g, (int) $b);
+        $textColor = imagecolorallocate($img, (int) 255, (int) 255, (int) 255);
+        imagefill($img, 0, 0, (int) $bgColor);
 
         $letter = strtoupper(substr($storeName, 0, 1));
         $font = 5;
         $textWidth = imagefontwidth($font) * strlen($letter);
         $textHeight = imagefontheight($font);
-        imagestring($img, $font, (int) (($size - $textWidth) / 2), (int) (($size - $textHeight) / 2), $letter, $textColor);
+        imagestring($img, $font, (int) (($size - $textWidth) / 2), (int) (($size - $textHeight) / 2), $letter, (int) $textColor);
 
         ob_start();
         imagepng($img);
