@@ -1,5 +1,8 @@
 <?php
 
+use App\Actions\Orders\AwardLoyaltyPoints;
+use App\Actions\Orders\TransitionOrderStatus;
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
@@ -21,12 +24,15 @@ test('points awarded when order delivered', function () {
     $order = Order::create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'confirmed',
+        'status' => 'pending',
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);
 
-    $order->update(['status' => 'delivered']);
+    app(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Ready);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
 
     $this->assertDatabaseHas('loyalty_points', [
         'customer_id' => $this->customer->id,
@@ -39,12 +45,15 @@ test('points calculated correctly', function () {
     $order = Order::create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'confirmed',
+        'status' => 'pending',
         'total' => 25.50,
         'subtotal' => 25.50,
     ]);
 
-    $order->update(['status' => 'delivered']);
+    app(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Ready);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
 
     $points = LoyaltyPoint::where('order_id', $order->id)->first();
 
@@ -57,12 +66,15 @@ test('points not awarded when loyalty disabled', function () {
     $order = Order::create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'confirmed',
+        'status' => 'pending',
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);
 
-    $order->update(['status' => 'delivered']);
+    app(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Ready);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
 
     expect(LoyaltyPoint::where('order_id', $order->id)->count())->toBe(0);
 });
@@ -71,13 +83,18 @@ test('points not double awarded', function () {
     $order = Order::create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'confirmed',
+        'status' => 'pending',
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);
 
-    $order->update(['status' => 'delivered']);
-    $order->update(['status' => 'delivered']);
+    app(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Ready);
+    app(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
+
+    // Manually award again to test idempotency
+    app(AwardLoyaltyPoints::class)($order->fresh());
 
     expect(LoyaltyPoint::where('order_id', $order->id)->where('type', 'earned')->count())->toBe(1);
 });

@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Orders\CreateOrder;
 use App\Enums\DeliveryType;
 use App\Http\Controllers\Controller;
 use App\Services\CouponService;
-use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function __invoke(Request $request, OrderService $orderService): JsonResponse
+    public function __invoke(Request $request, CreateOrder $createOrder): JsonResponse
     {
         $validated = $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],
@@ -43,7 +43,7 @@ class OrderController extends Controller
         // Default delivery_type to pickup for API requests that omit it
         $validated['delivery_type'] = $validated['delivery_type'] ?? DeliveryType::Pickup->value;
 
-        $order = $orderService->createOrder($validated, $couponId);
+        $order = $createOrder($validated, $couponId);
 
         if (! $order) {
             return response()->json([

@@ -73,10 +73,12 @@ test('dispatch handles failed request gracefully', function () {
     expect(true)->toBeTrue();
 });
 
-test('order observer dispatches webhook', function () {
-    $source = file_get_contents(app_path('Observers/OrderObserver.php'));
+test('order actions dispatch webhooks', function () {
+    $transitionSource = file_get_contents(app_path('Actions/Orders/TransitionOrderStatus.php'));
+    $createSource = file_get_contents(app_path('Actions/Orders/CreateOrder.php'));
 
-    expect($source)->toContain('WebhookService::dispatch');
-    expect($source)->toContain('order.created');
-    expect($source)->toContain('order.updated');
+    expect($transitionSource)->toContain('WebhookService::dispatch')
+        ->and($transitionSource)->toContain('order.updated')
+        ->and($createSource)->toContain('WebhookService::dispatch')
+        ->and($createSource)->toContain('order.created');
 });

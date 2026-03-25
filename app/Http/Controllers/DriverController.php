@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Setting;
@@ -27,7 +28,7 @@ class DriverController extends Controller
 
     public function update(Order $order): RedirectResponse
     {
-        $order->update(['status' => OrderStatus::Delivered]);
+        app(TransitionOrderStatus::class)($order, OrderStatus::Delivered);
 
         return back()->with('success', "Order #{$order->order_number} marked as delivered!");
     }

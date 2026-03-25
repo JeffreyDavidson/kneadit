@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Orders\CreateOrder;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
-use App\Services\OrderService;
 use App\Services\StripeCheckoutService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -32,13 +32,13 @@ class OrderController extends Controller
     }
 
     /**
-     * Submit an order, delegating business logic to OrderService.
+     * Submit an order, delegating business logic to CreateOrder action.
      */
-    public function store(StoreOrderRequest $request, OrderService $orderService): RedirectResponse
+    public function store(StoreOrderRequest $request, CreateOrder $createOrder): RedirectResponse
     {
         $validated = $request->validated();
 
-        $order = $orderService->createOrder(
+        $order = $createOrder(
             $validated,
             $request->input('coupon_id'),
             $request->input('gift_card_id'),

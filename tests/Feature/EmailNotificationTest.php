@@ -1,5 +1,7 @@
 <?php
 
+use App\Actions\Orders\TransitionOrderStatus;
+use App\Enums\OrderStatus;
 use App\Mail\OrderBaking;
 use App\Mail\OrderConfirmed;
 use App\Mail\OrderReady;
@@ -27,7 +29,7 @@ beforeEach(function () {
 test('order confirmed email sent on status change', function () {
     Mail::fake();
 
-    $this->order->update(['status' => 'confirmed']);
+    app(TransitionOrderStatus::class)($this->order, OrderStatus::Confirmed);
 
     Mail::assertQueued(OrderConfirmed::class, fn ($mail) => $mail->hasTo('customer@test.com'));
 });
@@ -35,7 +37,9 @@ test('order confirmed email sent on status change', function () {
 test('order ready email sent on status change', function () {
     Mail::fake();
 
-    $this->order->update(['status' => 'ready']);
+    $this->order->update(['status' => 'confirmed']);
+    app(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Baking);
+    app(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Ready);
 
     Mail::assertQueued(OrderReady::class, fn ($mail) => $mail->hasTo('customer@test.com'));
 });
@@ -43,7 +47,9 @@ test('order ready email sent on status change', function () {
 test('baking status sends baking email', function () {
     Mail::fake();
 
-    $this->order->update(['status' => 'baking']);
+    app(TransitionOrderStatus::class)($this->order, OrderStatus::Confirmed);
+    Mail::fake(); // Reset to only capture baking email
+    app(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Baking);
 
     Mail::assertQueued(OrderBaking::class);
     Mail::assertNotQueued(OrderConfirmed::class);
