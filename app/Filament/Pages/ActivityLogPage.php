@@ -47,6 +47,7 @@ class ActivityLogPage extends Page
 
     public ?int $expandedId = null;
 
+    /** @return LengthAwarePaginator<int, ActivityLog> */
     public function getActivitiesProperty(): LengthAwarePaginator
     {
         $query = ActivityLog::query()->latest();

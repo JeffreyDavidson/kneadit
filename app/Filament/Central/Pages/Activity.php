@@ -83,6 +83,7 @@ class Activity extends Page
 
     // ── Admin Actions (Audit Trail) Methods ──
 
+    /** @return LengthAwarePaginator<int, AdminAuditLog> */
     public function getLogsProperty(): LengthAwarePaginator
     {
         $query = AdminAuditLog::query()->latest();

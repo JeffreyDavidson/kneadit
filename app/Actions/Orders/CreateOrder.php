@@ -108,8 +108,10 @@ class CreateOrder
      * @param  array<int, array{product_id: int, quantity: int}>  $items
      * @return array{items: array, subtotal: float, delivery_fee: float, total: float}
      */
-    /** @return array<string, mixed> */
-    /** @return array{items: array<int, mixed>, subtotal: float, delivery_fee: float, total: float} */
+    /**
+     * @param  array<int, array{product_id: int, quantity: int}>  $items
+     * @return array{items: array<int, mixed>, subtotal: float, delivery_fee: float, total: float}
+     */
     private function calculateOrder(array $items, string $deliveryType, ?string $deliveryTier = null): array
     {
         $subtotal = 0;
