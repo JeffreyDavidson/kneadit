@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Enums\OrderStatus;
 use App\Models\Customer;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -23,6 +24,7 @@ class ReorderRemindersWidget extends Widget
         return Customer::query()->select('customers.id', 'customers.name', 'customers.email')
             ->join('orders', 'orders.customer_id', '=', 'customers.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
+            ->selectRaw('MAX(orders.created_at) as last_order_at')
             ->groupBy('customers.id', 'customers.name', 'customers.email')
             ->havingRaw('COUNT(orders.id) >= 2')
             ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
@@ -32,7 +34,7 @@ class ReorderRemindersWidget extends Widget
             ->map(fn (Customer $c) => [
                 'name' => $c->name,
                 'email' => $c->email,
-                'last_order' => $c->orders()->latest()->value('created_at')?->diffForHumans() ?? 'N/A',
+                'last_order' => $c->last_order_at ? Carbon::parse($c->last_order_at)->diffForHumans() : 'N/A',
             ])
             ->all();
     }

@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Mail;
 
 class NotifyBakerOfNewOrder implements ShouldQueue
 {
+    public int $tries = 3;
+
+    public array $backoff = [10, 60, 300];
+
     public function handle(OrderCreated $event): void
     {
         $bakerEmail = Setting::get('store_email');

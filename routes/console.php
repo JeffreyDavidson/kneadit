@@ -13,7 +13,8 @@ Schedule::command('paypal:check-payments')
     ->hourly()
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();
 
 // Schedule birthday discount emails daily at 9 AM
 Schedule::command('birthday:send-discounts')
@@ -69,13 +70,15 @@ Schedule::command('backup:databases --keep=7')
     ->twiceDaily(3, 15)
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();
 
 // Health check every 30 minutes
 Schedule::command('health:check')
     ->everyThirtyMinutes()
     ->withoutOverlapping()
-    ->onOneServer();
+    ->onOneServer()
+    ->runInBackground();
 
 // Trial expiration checks daily at 10 AM
 Schedule::command('trial:check')

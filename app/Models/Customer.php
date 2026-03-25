@@ -42,6 +42,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer query()
  *
  * @property-read float|null $orders_sum_total
+ * @property-read string|null $last_order_at
  * @property-read float|null $total_spend
  * @property Carbon|null $birthday
  *

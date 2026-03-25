@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Mail;
 
 class SendOrderMessageEmail implements ShouldQueue
 {
+    public int $tries = 3;
+
+    public array $backoff = [10, 60, 300];
+
     public function handle(OrderMessageSent $event): void
     {
         $message = $event->message;

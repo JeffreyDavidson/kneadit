@@ -27,7 +27,7 @@ test('paypal command loops through tenants', function () {
     $reflection = new ReflectionClass(CheckPayPalPayments::class);
     $source = file_get_contents($reflection->getFileName());
 
-    expect($source)->toContain('Tenant::all()');
+    expect($source)->toContain('Tenant::cursor()');
     expect($source)->toContain('tenancy()->initialize');
     expect($source)->toContain('Setting::flushCache()');
 });
@@ -36,7 +36,7 @@ test('birthday command loops through tenants', function () {
     $reflection = new ReflectionClass(SendBirthdayDiscounts::class);
     $source = file_get_contents($reflection->getFileName());
 
-    expect($source)->toContain('Tenant::all()');
+    expect($source)->toContain('Tenant::cursor()');
     expect($source)->toContain('tenancy()->initialize');
     expect($source)->toContain('Setting::flushCache()');
 });
@@ -45,7 +45,7 @@ test('repeat reminders command loops through tenants', function () {
     $reflection = new ReflectionClass(SendRepeatOrderReminders::class);
     $source = file_get_contents($reflection->getFileName());
 
-    expect($source)->toContain('Tenant::all()');
+    expect($source)->toContain('Tenant::cursor()');
     expect($source)->toContain('tenancy()->initialize');
     expect($source)->toContain('Setting::flushCache()');
 });

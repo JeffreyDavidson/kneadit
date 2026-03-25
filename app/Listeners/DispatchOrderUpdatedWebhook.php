@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Log;
 
 class DispatchOrderUpdatedWebhook implements ShouldQueue
 {
+    public int $tries = 3;
+
+    public array $backoff = [10, 60, 300];
+
     public function handle(OrderStatusChanged $event): void
     {
         WebhookService::dispatch('order.updated', [

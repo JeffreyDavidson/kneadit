@@ -36,7 +36,8 @@ class PayPalService
         }
 
         try {
-            $response = Http::asForm()
+            $response = Http::timeout(10)->connectTimeout(3)->retry(3, 100)
+                ->asForm()
                 ->withBasicAuth($this->clientId, $this->clientSecret)
                 ->post($this->baseUrl.'/v1/oauth2/token', [
                     'grant_type' => 'client_credentials',
@@ -190,7 +191,7 @@ class PayPalService
 
         try {
             // Create the invoice
-            $response = Http::withHeaders([
+            $response = Http::timeout(10)->connectTimeout(3)->retry(3, 100)->withHeaders([
                 'Authorization' => 'Bearer '.$accessToken,
                 'Content-Type' => 'application/json',
                 'PayPal-Request-Id' => 'INVOICE-'.$order->order_number.'-'.time(),
@@ -200,7 +201,7 @@ class PayPalService
                 $invoiceId = $response->json('id');
 
                 // Send the invoice
-                $sendResponse = Http::withHeaders([
+                $sendResponse = Http::timeout(10)->connectTimeout(3)->retry(3, 100)->withHeaders([
                     'Authorization' => 'Bearer '.$accessToken,
                     'Content-Type' => 'application/json',
                 ])->post($this->baseUrl.'/v2/invoicing/invoices/'.$invoiceId.'/send', [
@@ -248,7 +249,7 @@ class PayPalService
         }
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::timeout(10)->connectTimeout(3)->retry(3, 100)->withHeaders([
                 'Authorization' => 'Bearer '.$accessToken,
                 'Content-Type' => 'application/json',
             ])->get($this->baseUrl.'/v2/invoicing/invoices/'.$invoiceId);
@@ -279,7 +280,7 @@ class PayPalService
         }
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::timeout(10)->connectTimeout(3)->retry(3, 100)->withHeaders([
                 'Authorization' => 'Bearer '.$accessToken,
                 'Content-Type' => 'application/json',
             ])->post($this->baseUrl.'/v2/invoicing/invoices/'.$invoiceId.'/cancel', [

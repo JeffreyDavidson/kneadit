@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\SupportTicket;
 use App\Observers\SupportTicketObserver;
 use Filament\Support\Facades\FilamentView;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -25,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::preventLazyLoading(! app()->isProduction());
         FilamentView::registerRenderHook(
             'panels::body.end',
             fn () => Blade::render(<<<'HTML'

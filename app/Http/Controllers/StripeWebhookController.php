@@ -25,23 +25,8 @@ class StripeWebhookController extends WebhookController
             return false;
         }
 
-        if (Cache::has("stripe_event:{$eventId}")) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Mark a Stripe event as processed.
-     */
-    protected function markProcessed(array $payload): void
-    {
-        $eventId = $payload['id'] ?? null;
-
-        if ($eventId) {
-            Cache::put("stripe_event:{$eventId}", true, now()->addHours(24));
-        }
+        // Atomic check-and-lock: returns false if key already exists
+        return ! Cache::add("stripe_event:{$eventId}", true, now()->addHours(24));
     }
 
     /**
@@ -88,8 +73,6 @@ class StripeWebhookController extends WebhookController
         if ($status === 'canceled' || ($subscription['cancel_at_period_end'] ?? false)) {
             Log::info("Tenant {$tenant->id} subscription canceling at period end");
         }
-
-        $this->markProcessed($payload);
 
         return $response;
     }
@@ -156,8 +139,6 @@ class StripeWebhookController extends WebhookController
             Log::error('Failed to send platform payment alert', ['error' => $e->getMessage()]);
         }
 
-        $this->markProcessed($payload);
-
     }
 
     /**
@@ -183,8 +164,6 @@ class StripeWebhookController extends WebhookController
         if ($tenant) {
             Log::info("Tenant {$tenant->id} subscription fully canceled");
         }
-
-        $this->markProcessed($payload);
 
         return $response;
     }

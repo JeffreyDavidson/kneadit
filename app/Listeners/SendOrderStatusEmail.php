@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Mail;
 
 class SendOrderStatusEmail implements ShouldQueue
 {
+    public int $tries = 3;
+
+    public array $backoff = [10, 60, 300];
+
     public function handle(OrderStatusChanged $event): void
     {
         $order = $event->order;

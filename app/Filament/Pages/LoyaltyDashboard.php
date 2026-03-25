@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\LoyaltyPointType;
 use App\Filament\Traits\RequiresRole;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
@@ -46,12 +47,12 @@ class LoyaltyDashboard extends Page
 
     public function getTotalPointsIssuedProperty(): int
     {
-        return (int) LoyaltyPoint::query()->where('type', 'earned')->sum('points');
+        return (int) LoyaltyPoint::query()->where('type', LoyaltyPointType::Earned)->sum('points');
     }
 
     public function getTotalPointsRedeemedProperty(): int
     {
-        return (int) LoyaltyPoint::query()->where('type', 'redeemed')->sum('points');
+        return (int) LoyaltyPoint::query()->where('type', LoyaltyPointType::Redeemed)->sum('points');
     }
 
     public function getActiveMembersProperty(): int

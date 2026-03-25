@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SocialPosts;
 
+use App\Enums\SocialPostStatus;
 use App\Enums\UserRole;
 use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
 use App\Filament\Resources\SocialPosts\Schemas\SocialPostForm;
@@ -80,6 +81,6 @@ class SocialPostResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::query()->where('status', 'scheduled')->count() ?: null;
+        return (string) static::getModel()::query()->where('status', SocialPostStatus::Scheduled)->count() ?: null;
     }
 }
