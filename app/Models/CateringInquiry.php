@@ -43,24 +43,11 @@ class CateringInquiry extends Model
 
     protected function getEventTypeLabelAttribute(): string
     {
-        return match ($this->event_type) {
-            'wedding' => '💒 Wedding',
-            'corporate' => '🏢 Corporate',
-            'birthday' => '🎂 Birthday',
-            'holiday' => '🎄 Holiday',
-            default => '🎉 Other',
-        };
+        return $this->event_type->label();
     }
 
     protected function getStatusLabelAttribute(): string
     {
-        return match ($this->status) {
-            'inquiry' => 'New Inquiry',
-            'quoted' => 'Quote Sent',
-            'confirmed' => 'Confirmed',
-            'completed' => 'Completed',
-            'cancelled' => 'Cancelled',
-            default => ucfirst($this->status),
-        };
+        return $this->status->label();
     }
 }
