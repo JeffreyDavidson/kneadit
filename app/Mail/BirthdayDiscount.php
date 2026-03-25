@@ -14,6 +14,10 @@ use Illuminate\Queue\SerializesModels;
 
 class BirthdayDiscount extends Mailable implements ShouldQueue
 {
+    public int $tries = 3;
+
+    public array $backoff = [10, 60, 300];
+
     use BakerBranded;
     use Queueable, SerializesModels;
 

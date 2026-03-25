@@ -50,7 +50,7 @@ class OrderController extends Controller
 
         // If baker has Stripe Connect enabled and order total > 0, redirect to Stripe Checkout
         if ($order->total > 0 && StripeCheckoutService::isEnabled()) {
-            $stripeService = new StripeCheckoutService;
+            $stripeService = resolve(StripeCheckoutService::class);
             $session = $stripeService->createCheckoutSession(
                 $order,
                 route('order.stripe.success', $order).'?session_id={CHECKOUT_SESSION_ID}',

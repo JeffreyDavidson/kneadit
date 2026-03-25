@@ -23,7 +23,7 @@ class CheckPayPalPayments extends Command
             return Command::SUCCESS;
         }
 
-        $tenants = Tenant::all();
+        $tenants = Tenant::cursor();
 
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);

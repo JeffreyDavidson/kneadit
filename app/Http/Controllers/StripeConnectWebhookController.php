@@ -49,7 +49,7 @@ class StripeConnectWebhookController extends Controller
 
         // Idempotency: skip already-processed events
         $eventId = $event->id;
-        if ($eventId && Cache::has("stripe_event:{$eventId}")) {
+        if ($eventId && ! Cache::add("stripe_event:{$eventId}", true, now()->addHours(24))) {
             return response('Already processed', 200);
         }
 
@@ -62,7 +62,6 @@ class StripeConnectWebhookController extends Controller
         };
 
         if ($eventId) {
-            Cache::put("stripe_event:{$eventId}", true, now()->addHours(24));
         }
 
         return response('OK', 200);

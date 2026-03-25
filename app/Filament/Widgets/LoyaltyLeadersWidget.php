@@ -17,6 +17,7 @@ class LoyaltyLeadersWidget extends Widget
     public function getTopCustomers(): array
     {
         return Customer::query()->select('customers.id', 'customers.name')
+            ->selectRaw('SUM(loyalty_points.points) as total_points')
             ->join('loyalty_points', 'loyalty_points.customer_id', '=', 'customers.id')
             ->groupBy('customers.id', 'customers.name')
             ->orderByRaw('SUM(loyalty_points.points) DESC')
@@ -24,7 +25,7 @@ class LoyaltyLeadersWidget extends Widget
             ->get()
             ->map(fn (Customer $c) => [
                 'name' => $c->name,
-                'points' => (int) LoyaltyPoint::query()->where('customer_id', $c->id)->sum('points'),
+                'points' => (int) $c->total_points,
             ])
             ->all();
     }

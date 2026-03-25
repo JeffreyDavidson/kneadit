@@ -27,7 +27,7 @@ class TrackingController extends Controller
         $orders = Order::query()->whereHas('customer', function (Builder $q) use ($request) {
             $q->where('email', $request->email);
         })
-            ->with(['orderItems.product', 'messages'])
+            ->with(['customer', 'orderItems.product', 'messages'])
             ->latest()
             ->limit(50)
             ->get();

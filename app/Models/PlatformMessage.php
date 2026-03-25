@@ -54,7 +54,14 @@ class PlatformMessage extends Model
 
     protected $connection = 'central';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'tenant_id',
+        'parent_id',
+        'sender_type',
+        'subject',
+        'body',
+        'is_read',
+    ];
 
     protected function casts(): array
     {

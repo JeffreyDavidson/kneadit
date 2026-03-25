@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\UserRole;
 use App\Mail\WeeklyDigest;
 use App\Models\Setting;
 use App\Models\Tenant;
@@ -17,7 +18,7 @@ class SendWeeklyDigest extends Command
 
     public function handle(): int
     {
-        $tenants = Tenant::all();
+        $tenants = Tenant::cursor();
 
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);
@@ -29,7 +30,7 @@ class SendWeeklyDigest extends Command
                     continue;
                 }
 
-                $users = User::query()->where('role', 'owner')->get();
+                $users = User::query()->where('role', UserRole::Owner)->get();
 
                 if ($users->isEmpty()) {
                     $users = User::all();

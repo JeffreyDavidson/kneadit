@@ -24,7 +24,7 @@ class SendRepeatOrderReminders extends Command
 
     public function handle(): int
     {
-        $tenants = Tenant::all();
+        $tenants = Tenant::cursor();
 
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);
@@ -82,7 +82,10 @@ class SendRepeatOrderReminders extends Command
     private function getCustomersNeedingReminders(Carbon $cutoffDate, int $reminderDays): Collection
     {
         return Customer::query()->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
-            ->with(['orders' => fn (EloquentBuilder $q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date')])
+            ->with([
+                'orders' => fn (EloquentBuilder $q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date'),
+                'customerReminders',
+            ])
             ->get()
             ->map(function (Customer $customer) use ($cutoffDate) {
                 $lastOrder = $customer->orders->first();
@@ -91,7 +94,7 @@ class SendRepeatOrderReminders extends Command
                     return null;
                 }
 
-                $existingReminder = CustomerReminder::query()->where('customer_id', $customer->id)->first();
+                $existingReminder = $customer->customerReminders->first();
                 if ($existingReminder && $existingReminder->next_reminder_date?->isFuture()) {
                     return null;
                 }

@@ -71,7 +71,7 @@ class HealthCheck extends Command
 
         // 6. Homepage responds
         try {
-            $response = Http::timeout(10)->get('https://getkneadit.app');
+            $response = Http::timeout(10)->get(config('app.url'));
             if ($response->successful()) {
                 $this->info('✓ Homepage responds ('.$response->status().')');
             } else {

@@ -32,7 +32,7 @@ class ForgeService
 
     protected function request(): PendingRequest
     {
-        return Http::withToken($this->token)
+        return Http::timeout(10)->connectTimeout(3)->retry(3, 100)->withToken($this->token)
             ->acceptJson()
             ->baseUrl($this->baseUrl);
     }

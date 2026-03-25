@@ -19,7 +19,7 @@ class SendReviewRequests extends Command
 
     public function handle(): int
     {
-        $tenants = Tenant::all();
+        $tenants = Tenant::cursor();
 
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);

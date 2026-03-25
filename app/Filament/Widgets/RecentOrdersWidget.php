@@ -21,7 +21,7 @@ class RecentOrdersWidget extends BaseWidget
     {
         return $table
             ->query(
-                Order::query()->latest()->limit(5)
+                Order::with('customer')->latest()->limit(5)
             )
             ->columns([
                 TextColumn::make('order_number')
