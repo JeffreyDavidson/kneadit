@@ -28,6 +28,9 @@ class ProductCsvService
     public function export(): string
     {
         $output = fopen('php://temp', 'r+');
+        if ($output === false) {
+            throw new \RuntimeException('Failed to open file');
+        }
         fputcsv($output, $this->headers);
 
         Product::with('category')->orderBy('name')->each(function (Product $product) use ($output) {
@@ -56,6 +59,9 @@ class ProductCsvService
         $errors = [];
 
         $handle = fopen($file->getRealPath(), 'r');
+        if ($handle === false) {
+            return ['rows' => [], 'errors' => ['Failed to read CSV file.']];
+        }
         $header = fgetcsv($handle);
 
         if (! $header) {

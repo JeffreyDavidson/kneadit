@@ -165,7 +165,7 @@ class ReportService
             $mInc = (float) ($monthlyIncome[$m] ?? 0);
             $mExp = (float) ($monthlyExpenses[$m] ?? 0);
             $monthly->push([
-                'month' => date('M', mktime(0, 0, 0, $m, 1)),
+                'month' => date('M', (int) mktime(0, 0, 0, $m, 1)),
                 'revenue' => $mRev + $mInc,
                 'expenses' => $mExp,
                 'profit' => $mRev + $mInc - $mExp,

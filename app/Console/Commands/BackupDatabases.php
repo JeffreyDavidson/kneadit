@@ -28,7 +28,7 @@ class BackupDatabases extends Command
         if ($centralDb && file_exists($centralDb)) {
             $dest = "{$backupPath}/central.sqlite";
             copy($centralDb, $dest);
-            $this->info('  ✓ Central DB ('.$this->formatSize(filesize($centralDb)).')');
+            $this->info('  ✓ Central DB ('.$this->formatSize((int) filesize($centralDb)).')');
         } else {
             $this->warn("  ⚠ Central DB not found at: {$centralDb}");
         }
@@ -36,7 +36,7 @@ class BackupDatabases extends Command
         // 2. Backup all tenant databases
         $tenantDbDir = config('tenancy.tenant_db_path', database_path());
         if (is_dir($tenantDbDir)) {
-            $tenantFiles = glob("{$tenantDbDir}/*.sqlite");
+            $tenantFiles = glob("{$tenantDbDir}/*.sqlite") ?: [];
             $count = 0;
 
             foreach ($tenantFiles as $tenantDb) {
@@ -87,7 +87,7 @@ class BackupDatabases extends Command
     protected function cleanOldBackups(string $backupDir, int $keepDays): void
     {
         $cutoff = now()->subDays($keepDays)->timestamp;
-        $dirs = glob("{$backupDir}/20*", GLOB_ONLYDIR);
+        $dirs = glob("{$backupDir}/20*", GLOB_ONLYDIR) ?: [];
         $removed = 0;
 
         foreach ($dirs as $dir) {
@@ -104,7 +104,7 @@ class BackupDatabases extends Command
 
     protected function removeDir(string $dir): void
     {
-        $files = glob("{$dir}/*");
+        $files = glob("{$dir}/*") ?: [];
         foreach ($files as $file) {
             unlink($file);
         }
@@ -114,7 +114,7 @@ class BackupDatabases extends Command
     protected function dirSize(string $dir): int
     {
         $size = 0;
-        foreach (glob("{$dir}/*") as $file) {
+        foreach (glob("{$dir}/*") ?: [] as $file) {
             $size += filesize($file);
         }
 

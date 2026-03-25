@@ -40,7 +40,7 @@ class HealthCheck extends Command
         // 3. Tenant DB directory writable
         $tenantDbDir = config('tenancy.tenant_db_path', database_path());
         if (is_dir($tenantDbDir) && is_writable($tenantDbDir)) {
-            $tenantDbs = count(glob("{$tenantDbDir}/*.sqlite"));
+            $tenantDbs = count(glob("{$tenantDbDir}/*.sqlite") ?: []);
             $this->info("✓ Tenant DB directory writable ({$tenantDbs} databases)");
         } else {
             $issues[] = "Tenant DB directory not writable: {$tenantDbDir}";

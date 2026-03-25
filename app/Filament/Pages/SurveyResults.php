@@ -43,6 +43,9 @@ class SurveyResults extends Page
 
         return response()->streamDownload(function () use ($survey) {
             $handle = fopen('php://output', 'w');
+            if ($handle === false) {
+                throw new \RuntimeException('Failed to open file');
+            }
             $questions = $survey->questions;
             $headers = ['Response #', 'Customer Name', 'Customer Email', 'Date'];
             foreach ($questions as $q) {

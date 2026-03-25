@@ -135,11 +135,11 @@ class QrCodeGenerator extends Page
         $g = hexdec(substr($hex, 2, 2));
         $b = hexdec(substr($hex, 4, 2));
 
-        $qr = QrCode::size($size)->color($r, $g, $b)->margin(1);
+        $qr = QrCode::size($size)->color((int) $r, (int) $g, (int) $b)->margin(1);
 
         if ($format === 'png') {
             $qr = $qr->format('png');
-            $this->qrCodeSvg = base64_encode($qr->generate($this->currentUrl));
+            $this->qrCodeSvg = base64_encode((string) $qr->generate($this->currentUrl));
         } else {
             /** @var HtmlString $svg */
             $svg = $qr->generate($this->currentUrl);
@@ -162,7 +162,7 @@ class QrCodeGenerator extends Page
         $g = hexdec(substr($hex, 2, 2));
         $b = hexdec(substr($hex, 4, 2));
 
-        $qr = QrCode::size($size)->color($r, $g, $b)->margin(1);
+        $qr = QrCode::size($size)->color((int) $r, (int) $g, (int) $b)->margin(1);
 
         if ($format === 'png') {
             $content = $qr->format('png')->generate($url);
