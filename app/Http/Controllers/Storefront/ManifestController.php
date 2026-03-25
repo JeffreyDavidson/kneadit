@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use Illuminate\Http\JsonResponse;
 
 class ManifestController extends Controller
 {
     /**
      * Generate the PWA manifest.json for the storefront.
      */
-    public function __invoke()
+    public function __invoke(): JsonResponse
     {
         $storeName = Setting::get('store_name', 'Our Bakery');
         $primaryColor = tenant()->brand_color_primary ?? '#d4920c';

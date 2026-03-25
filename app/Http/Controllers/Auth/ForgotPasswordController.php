@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ForgotPasswordRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,9 +16,9 @@ class ForgotPasswordController extends Controller
         return view('auth.forgot-password');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(ForgotPasswordRequest $request): RedirectResponse
     {
-        $request->validate(['email' => ['required', 'email']]);
+        // Validation handled by Form Request
 
         $status = Password::sendResetLink($request->only('email'));
 

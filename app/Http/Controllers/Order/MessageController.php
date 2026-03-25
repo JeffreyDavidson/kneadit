@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreOrderMessageRequest;
 use App\Mail\NewOrderMessage;
 use App\Models\Order;
 use App\Models\Setting;
@@ -25,13 +26,9 @@ class MessageController extends Controller
     /**
      * Send a message on an order.
      */
-    public function store(Request $request, Order $order): JsonResponse
+    public function store(StoreOrderMessageRequest $request, Order $order): JsonResponse
     {
-        $request->validate([
-            'message' => ['required', 'string', 'max:2000'],
-            'sender_name' => ['required', 'string', 'max:255'],
-            'sender_email' => ['required', 'email'],
-        ]);
+        // Validation handled by Form Request
 
         $message = $order->messages()->create([
             'sender_type' => 'customer',

@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Referral;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ReferralController extends Controller
 {
-    public function __invoke(Request $request, string $code)
+    public function __invoke(Request $request, string $code): RedirectResponse
     {
         $referral = Referral::where('referral_code', $code)->first();
 

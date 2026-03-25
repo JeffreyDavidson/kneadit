@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RedeemLoyaltyRewardRequest;
 use App\Models\Customer;
 use App\Models\LoyaltyReward;
 use App\Models\Setting;
@@ -25,9 +26,9 @@ class LoyaltyController extends Controller
         return view('loyalty', compact('rewards', 'programName', 'pointsPerDollar', 'loyaltyEnabled'));
     }
 
-    public function store(Request $request): View
+    public function store(RedeemLoyaltyRewardRequest $request): View
     {
-        $request->validate(['email' => ['required', 'email']]);
+        // Validation handled by Form Request
 
         $customer = Customer::where('email', $request->email)->first();
         try {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -12,7 +13,7 @@ class SwapPlanController extends Controller
     /**
      * Swap to a different plan.
      */
-    public function __invoke(Request $request, string $plan)
+    public function __invoke(Request $request, string $plan): RedirectResponse
     {
         $priceId = config("saas.stripe_prices.{$plan}");
 

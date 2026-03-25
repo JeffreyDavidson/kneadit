@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TrackOrderRequest;
 use App\Models\Order;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\View\View;
@@ -21,9 +22,9 @@ class TrackingController extends Controller
     /**
      * Look up orders by customer email.
      */
-    public function store(Request $request): View
+    public function store(TrackOrderRequest $request): View
     {
-        $request->validate(['email' => ['required', 'email']]);
+        // Validation handled by Form Request
 
         $orders = Order::whereHas('customer', function (Builder $q) use ($request) {
             $q->where('email', $request->email);

@@ -22,11 +22,7 @@ class ReviewController extends Controller
 
     public function store(Order $order, Request $request): View
     {
-        $validated = $request->validate([
-            'rating' => ['required', 'integer', 'min:1', 'max:5'],
-            'comment' => ['nullable', 'string', 'max:2000'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-        ]);
+        $validated = $request->validated();
 
         $photoPath = null;
         if ($request->hasFile('photo')) {

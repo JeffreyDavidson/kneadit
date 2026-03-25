@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers\Billing;
 
+use App\Enums\SubscriptionTier;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CheckoutController extends Controller
 {
     /**
      * Redirect to Stripe Checkout for the selected plan.
      */
-    public function __invoke(Request $request, string $plan)
+    public function __invoke(Request $request, string $plan): RedirectResponse
     {
-        $request->validate(['plan' => ['in:starter,growth,pro']]);
+        $request->validate(['plan' => [Rule::in(SubscriptionTier::cases())]]);
 
         $priceId = config("saas.stripe_prices.{$plan}");
 

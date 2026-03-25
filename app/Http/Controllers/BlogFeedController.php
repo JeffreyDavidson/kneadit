@@ -9,7 +9,7 @@ class BlogFeedController extends Controller
     /**
      * Generate the RSS feed for the central blog.
      */
-    public function __invoke()
+    public function __invoke(): Response
     {
         $posts = BlogPost::published()
             ->orderByDesc('published_at')

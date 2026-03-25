@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
 use App\Models\CapacityLimit;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Date;
 
 class CapacityController extends Controller
@@ -11,7 +12,7 @@ class CapacityController extends Controller
     /**
      * Check capacity for a specific date.
      */
-    public function __invoke(string $date)
+    public function __invoke(string $date): JsonResponse
     {
         try {
             $carbon = Date::parse($date);

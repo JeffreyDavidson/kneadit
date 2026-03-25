@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProductWaitlistRequest;
 use App\Models\ProductWaitlist;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductWaitlistController extends Controller
@@ -11,13 +13,9 @@ class ProductWaitlistController extends Controller
     /**
      * Join the waitlist for an out-of-season product.
      */
-    public function __invoke(Request $request)
+    public function __invoke(StoreProductWaitlistRequest $request): JsonResponse
     {
-        $request->validate([
-            'product_id' => ['required', 'exists:products,id'],
-            'customer_email' => ['required', 'email', 'max:255'],
-            'customer_name' => ['nullable', 'string', 'max:255'],
-        ]);
+        // Validation handled by Form Request
 
         ProductWaitlist::updateOrCreate(
             [

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreGalleryPhotoRequest;
 use App\Models\CustomerPhoto;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
@@ -24,15 +25,9 @@ class GalleryController extends Controller
         return view('gallery', compact('photos', 'products'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreGalleryPhotoRequest $request): RedirectResponse
     {
-        $request->validate([
-            'customer_name' => ['required', 'string', 'max:255'],
-            'customer_email' => ['required', 'email', 'max:255'],
-            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'caption' => ['nullable', 'string', 'max:1000'],
-            'product_id' => ['nullable', 'exists:products,id'],
-        ]);
+        // Validation handled by Form Request
 
         $path = $request->file('photo')->store('customer-photos', 'public');
 

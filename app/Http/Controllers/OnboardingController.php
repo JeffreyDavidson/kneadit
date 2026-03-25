@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOnboardingRequest;
 use App\Mail\NewSubscriberNotification;
 use App\Mail\WelcomeBaker;
 use App\Models\Referral;
@@ -9,7 +10,6 @@ use App\Models\Setting;
 use App\Models\Tenant;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +25,7 @@ class OnboardingController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreOnboardingRequest $request): RedirectResponse
     {
         $rules = [
             'store_name' => 'required|string|max:255',

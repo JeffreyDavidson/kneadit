@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Services\CouponService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -23,7 +24,7 @@ class OrderController extends Controller
             'items.*.special_instructions' => ['nullable', 'string', 'max:500'],
             'delivery_date' => ['required', 'date', 'after_or_equal:today'],
             'delivery_time' => ['nullable', 'string'],
-            'delivery_type' => ['nullable', 'in:pickup,delivery'],
+            'delivery_type' => ['nullable', Rule::in(DeliveryType::cases())],
             'delivery_address' => ['nullable', 'string', 'max:500'],
             'delivery_tier' => ['nullable', 'in:under5,5to10,10to15,over15'],
             'notes' => ['nullable', 'string', 'max:1000'],

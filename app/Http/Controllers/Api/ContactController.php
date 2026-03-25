@@ -3,20 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreApiContactRequest;
 use App\Models\ContactMessage;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(StoreApiContactRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'subject' => ['required', 'string', 'max:255'],
-            'message' => ['required', 'string', 'max:5000'],
-        ]);
+        $validated = $request->validated();
 
         $validated['subject'] = strip_tags($validated['subject']);
         $validated['message'] = strip_tags($validated['message']);
