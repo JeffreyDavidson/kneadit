@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\PlatformSettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -27,6 +28,7 @@ use Illuminate\Support\Carbon;
  */
 class PlatformSetting extends Model
 {
+    /** @use HasFactory<PlatformSettingFactory> */
     use HasFactory;
 
     protected $connection = 'central';

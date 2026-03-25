@@ -5,6 +5,7 @@ namespace App\Models;
 use App\DataTransferObjects\CustomerMetrics;
 use App\Services\CustomerIntelligence;
 use App\Traits\LogsActivity;
+use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -50,7 +51,9 @@ use Illuminate\Support\Carbon;
  */
 class Customer extends Model
 {
+    /** @use HasFactory<CustomerFactory> */
     use HasFactory;
+
     use LogsActivity;
 
     protected $fillable = [

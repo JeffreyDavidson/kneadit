@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\EmailCampaignLogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -37,6 +38,7 @@ use Illuminate\Support\Carbon;
  */
 class EmailCampaignLog extends Model
 {
+    /** @use HasFactory<EmailCampaignLogFactory> */
     use HasFactory;
 
     protected $connection = 'central';

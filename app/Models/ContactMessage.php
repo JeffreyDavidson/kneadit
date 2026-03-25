@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ContactMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ContactMessage extends Model
 {
+    /** @use HasFactory<ContactMessageFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -36,12 +38,14 @@ class ContactMessage extends Model
         ];
     }
 
+    /** @param Builder<ContactMessage> $query */
     #[Scope]
     protected function unread(Builder $query): void
     {
         $query->where('is_read', false);
     }
 
+    /** @param Builder<ContactMessage> $query */
     #[Scope]
     protected function read(Builder $query): void
     {

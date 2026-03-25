@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\CustomerProfileFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CustomerProfile extends Model
 {
+    /** @use HasFactory<CustomerProfileFactory> */
     use HasFactory;
 
     protected $fillable = [

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\CustomerPhotoFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CustomerPhoto extends Model
 {
+    /** @use HasFactory<CustomerPhotoFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -50,12 +52,14 @@ class CustomerPhoto extends Model
         return $this->belongsTo(Product::class);
     }
 
+    /** @param Builder<CustomerPhoto> $query */
     #[Scope]
     protected function approved(Builder $query): void
     {
         $query->where('is_approved', true);
     }
 
+    /** @param Builder<CustomerPhoto> $query */
     #[Scope]
     protected function featured(Builder $query): void
     {

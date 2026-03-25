@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
+use Database\Factories\SettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +17,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Setting extends Model
 {
+    /** @use HasFactory<SettingFactory> */
     use HasFactory;
+
     use LogsActivity;
 
     protected $fillable = [

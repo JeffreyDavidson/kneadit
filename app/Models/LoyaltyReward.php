@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\LoyaltyRewardFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class LoyaltyReward extends Model
 {
+    /** @use HasFactory<LoyaltyRewardFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -50,6 +52,7 @@ class LoyaltyReward extends Model
         return $this->belongsTo(Product::class);
     }
 
+    /** @param Builder<LoyaltyReward> $query */
     #[Scope]
     protected function active(Builder $query): void
     {

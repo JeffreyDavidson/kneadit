@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\StaffInvitationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ use Illuminate\Support\Carbon;
  */
 class StaffInvitation extends Model
 {
+    /** @use HasFactory<StaffInvitationFactory> */
     use HasFactory;
 
     protected $fillable = [

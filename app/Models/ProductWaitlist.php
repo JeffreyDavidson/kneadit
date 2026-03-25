@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ProductWaitlistFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ProductWaitlist extends Model
 {
+    /** @use HasFactory<ProductWaitlistFactory> */
     use HasFactory;
 
     public $timestamps = false;

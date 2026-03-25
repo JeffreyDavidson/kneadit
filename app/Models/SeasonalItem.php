@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\SeasonalItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\Date;
  */
 class SeasonalItem extends Model
 {
+    /** @use HasFactory<SeasonalItemFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -53,6 +55,7 @@ class SeasonalItem extends Model
         return $this->belongsTo(Product::class);
     }
 
+    /** @param Builder<SeasonalItem> $query */
     #[Scope]
     protected function current(Builder $query): void
     {
@@ -62,12 +65,14 @@ class SeasonalItem extends Model
             ->where('available_until', '>=', $today);
     }
 
+    /** @param Builder<SeasonalItem> $query */
     #[Scope]
     protected function upcoming(Builder $query): void
     {
         $query->where('available_from', '>', Date::today());
     }
 
+    /** @param Builder<SeasonalItem> $query */
     #[Scope]
     protected function expired(Builder $query): void
     {

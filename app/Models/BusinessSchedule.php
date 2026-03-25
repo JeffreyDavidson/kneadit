@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\BusinessScheduleFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BusinessSchedule extends Model
 {
+    /** @use HasFactory<BusinessScheduleFactory> */
     use HasFactory;
 
     protected $fillable = [

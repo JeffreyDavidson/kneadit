@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\AdminAuditLogFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,6 +41,7 @@ use Illuminate\Support\Carbon;
  */
 class AdminAuditLog extends Model
 {
+    /** @use HasFactory<AdminAuditLogFactory> */
     use HasFactory;
 
     protected $connection = 'central';
@@ -114,6 +116,7 @@ class AdminAuditLog extends Model
     /**
      * Scope: last 30 days.
      */
+    /** @param Builder<AdminAuditLog> $query */
     #[Scope]
     protected function recent(Builder $query): void
     {

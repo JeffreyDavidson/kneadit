@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\WaitlistStatus;
 use Carbon\Carbon;
+use Database\Factories\WaitlistEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\Date;
  */
 class WaitlistEntry extends Model
 {
+    /** @use HasFactory<WaitlistEntryFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -61,6 +63,7 @@ class WaitlistEntry extends Model
         return ucfirst($this->status->value);
     }
 
+    /** @param Builder<WaitlistEntry> $query */
     #[Scope]
     protected function waiting(Builder $query): void
     {

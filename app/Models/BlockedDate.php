@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Database\Factories\BlockedDateFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BlockedDate extends Model
 {
+    /** @use HasFactory<BlockedDateFactory> */
     use HasFactory;
 
     protected $fillable = [

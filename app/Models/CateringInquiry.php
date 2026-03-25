@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\CateringEventType;
 use App\Enums\CateringInquiryStatus;
 use App\Traits\LogsActivity;
+use Database\Factories\CateringInquiryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,7 +24,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CateringInquiry extends Model
 {
+    /** @use HasFactory<CateringInquiryFactory> */
     use HasFactory;
+
     use LogsActivity;
 
     protected $fillable = [

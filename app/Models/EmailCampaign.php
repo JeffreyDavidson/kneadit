@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\EmailCampaignStatus;
+use Database\Factories\EmailCampaignFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,6 +45,7 @@ use Illuminate\Support\Carbon;
  */
 class EmailCampaign extends Model
 {
+    /** @use HasFactory<EmailCampaignFactory> */
     use HasFactory;
 
     protected $connection = 'central';

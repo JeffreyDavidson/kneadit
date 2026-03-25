@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ReferralStatus;
+use Database\Factories\TenantFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -68,6 +69,8 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains;
+
+    /** @use HasFactory<TenantFactory> */
     use HasFactory;
 
     /**
