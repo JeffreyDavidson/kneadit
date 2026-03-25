@@ -4,15 +4,15 @@ namespace App\Http\Controllers\Billing;
 
 use App\Enums\SubscriptionTier;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Laravel\Cashier\Checkout;
 
 class CheckoutController extends Controller
 {
     /**
      * Redirect to Stripe Checkout for the selected plan.
      */
-    public function __invoke(Request $request, string $plan): RedirectResponse
+    public function __invoke(Request $request, string $plan): Checkout
     {
         $tier = SubscriptionTier::tryFrom($plan);
 

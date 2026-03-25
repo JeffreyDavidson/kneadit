@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductWaitlistRequest;
 use App\Models\ProductWaitlist;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 
 class ProductWaitlistController extends Controller
 {
     /**
      * Join the waitlist for an out-of-season product.
      */
-    public function __invoke(StoreProductWaitlistRequest $request): JsonResponse
+    public function __invoke(StoreProductWaitlistRequest $request): JsonResponse|RedirectResponse
     {
 
         ProductWaitlist::query()->updateOrCreate([

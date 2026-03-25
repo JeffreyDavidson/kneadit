@@ -43,8 +43,6 @@ class CapacityLimit extends Model
     {
         return [
             'date' => 'date',
-            'specific_date',
-            'day_of_week',
             'max_orders' => 'integer',
             'specific_date' => 'date',
             'is_blocked' => 'boolean',

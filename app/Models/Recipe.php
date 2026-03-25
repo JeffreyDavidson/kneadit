@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
+ * @property array<int, array{cost?: float, quantity?: float}> $ingredients
  * @property-read float|null $profit_margin
  * @property-read Collection<int, Ingredient> $inventoryIngredients
  * @property-read int|null $inventory_ingredients_count
