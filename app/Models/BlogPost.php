@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
@@ -16,6 +17,8 @@ use Illuminate\Support\Str;
  * @method static Builder<static>|BlogPost newQuery()
  * @method static Builder<static>|BlogPost published()
  * @method static Builder<static>|BlogPost query()
+ *
+ * @property Carbon|null $published_at
  *
  * @mixin \Eloquent
  */

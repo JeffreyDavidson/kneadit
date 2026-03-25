@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property CouponType $type
@@ -24,6 +25,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder<static>|Coupon valid()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Coupon active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Coupon valid()
+ *
+ * @property Carbon|null $starts_at
+ * @property Carbon|null $expires_at
  *
  * @mixin \Eloquent
  */

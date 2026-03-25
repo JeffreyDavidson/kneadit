@@ -43,6 +43,7 @@ use Illuminate\Support\Carbon;
  *
  * @property-read float|null $orders_sum_total
  * @property-read float|null $total_spend
+ * @property Carbon|null $birthday
  *
  * @mixin \Eloquent
  */
