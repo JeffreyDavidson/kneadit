@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\CateringEventType;
+use App\Enums\CateringInquiryStatus;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,12 +29,17 @@ class CateringInquiry extends Model
         'notes',
     ];
 
-    protected $casts = [
-        'event_date' => 'date',
-        'guest_count' => 'integer',
-        'budget' => 'decimal:2',
-        'quoted_amount' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => CateringInquiryStatus::class,
+            'event_type' => CateringEventType::class,
+            'event_date' => 'date',
+            'guest_count' => 'integer',
+            'budget' => 'decimal:2',
+            'quoted_amount' => 'decimal:2',
+        ];
+    }
 
     protected function getEventTypeLabelAttribute(): string
     {

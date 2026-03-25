@@ -51,10 +51,13 @@ class ProductImage extends Model
         'is_primary',
     ];
 
-    protected $casts = [
-        'is_primary' => 'boolean',
-        'sort_order' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_primary' => 'boolean',
+            'sort_order' => 'integer',
+        ];
+    }
 
     /**
      * @return BelongsTo<Product, $this>

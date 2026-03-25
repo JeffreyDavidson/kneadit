@@ -29,12 +29,15 @@ class Product extends Model
         'cost',
     ];
 
-    protected $casts = [
-        'price' => 'decimal:2',
-        'cost' => 'decimal:2',
-        'is_active' => 'boolean',
-        'is_featured' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'price' => 'decimal:2',
+            'cost' => 'decimal:2',
+            'is_active' => 'boolean',
+            'is_featured' => 'boolean',
+        ];
+    }
 
     /**
      * @return BelongsTo<Category, $this>

@@ -24,13 +24,16 @@ class PlatformAnnouncement extends Model
         'is_dismissable',
     ];
 
-    protected $casts = [
-        'target_plans' => 'array',
-        'is_active' => 'boolean',
-        'is_dismissable' => 'boolean',
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'target_plans' => 'array',
+            'is_active' => 'boolean',
+            'is_dismissable' => 'boolean',
+            'starts_at' => 'datetime',
+            'ends_at' => 'datetime',
+        ];
+    }
 
     #[Scope]
     protected function active(Builder $query): void

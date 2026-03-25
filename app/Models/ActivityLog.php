@@ -24,10 +24,13 @@ class ActivityLog extends Model
         'created_at',
     ];
 
-    protected $casts = [
-        'properties' => 'array',
-        'created_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'properties' => 'array',
+            'created_at' => 'datetime',
+        ];
+    }
 
     protected static function booted(): void
     {

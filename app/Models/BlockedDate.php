@@ -18,10 +18,13 @@ class BlockedDate extends Model
         'close_time',
     ];
 
-    protected $casts = [
-        'date' => 'date',
-        'is_all_day' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'date' => 'date',
+            'is_all_day' => 'boolean',
+        ];
+    }
 
     public static function isBlocked(Carbon $date): bool
     {

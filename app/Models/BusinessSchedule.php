@@ -18,11 +18,14 @@ class BusinessSchedule extends Model
         'max_orders',
     ];
 
-    protected $casts = [
-        'day_of_week' => 'integer',
-        'is_open' => 'boolean',
-        'max_orders' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'day_of_week' => 'integer',
+            'is_open' => 'boolean',
+            'max_orders' => 'integer',
+        ];
+    }
 
     public const DAYS = [
         0 => 'Sunday',

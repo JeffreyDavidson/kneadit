@@ -18,9 +18,12 @@ class OrderItem extends Model
         'special_instructions',
     ];
 
-    protected $casts = [
-        'unit_price' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'unit_price' => 'decimal:2',
+        ];
+    }
 
     /**
      * @return BelongsTo<Order, $this>

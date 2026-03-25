@@ -20,9 +20,12 @@ class Category extends Model
         'sort_order',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+        ];
+    }
 
     /**
      * @return HasMany<Product, $this>

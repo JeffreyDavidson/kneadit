@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\EmailCampaignStatus;
 use App\Models\Customer;
 use App\Models\EmailCampaign;
 use Illuminate\Support\Carbon;
@@ -48,7 +49,7 @@ test('campaign status defaults to draft', function () {
         'status' => 'draft',
     ]);
 
-    expect($campaign->status)->toBe('draft');
+    expect($campaign->status)->toBe(EmailCampaignStatus::Draft);
 });
 
 test('campaign can be marked as sent', function () {
@@ -66,7 +67,7 @@ test('campaign can be marked as sent', function () {
 
     $campaign->refresh();
 
-    expect($campaign->status)->toBe('sent');
+    expect($campaign->status)->toBe(EmailCampaignStatus::Sent);
     expect($campaign->sent_at)->not->toBeNull();
     expect($campaign->recipient_count)->toBe(42);
 });

@@ -20,10 +20,13 @@ class SeasonalItem extends Model
         'notes',
     ];
 
-    protected $casts = [
-        'available_from' => 'date',
-        'available_until' => 'date',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'available_from' => 'date',
+            'available_until' => 'date',
+        ];
+    }
 
     /**
      * @return BelongsTo<Product, $this>

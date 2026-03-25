@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Widgets;
 
+use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -12,7 +13,7 @@ class OpenTickets extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $count = SupportTicket::where('status', 'open')->count();
+        $count = SupportTicket::where('status', SupportTicketStatus::Open)->count();
 
         return [
             Stat::make('Open Tickets', $count)

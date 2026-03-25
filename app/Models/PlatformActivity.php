@@ -22,10 +22,13 @@ class PlatformActivity extends Model
         'created_at',
     ];
 
-    protected $casts = [
-        'metadata' => 'array',
-        'created_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'metadata' => 'array',
+            'created_at' => 'datetime',
+        ];
+    }
 
     public static function log(string $event, ?string $tenantId, string $description, ?array $metadata = null): static
     {

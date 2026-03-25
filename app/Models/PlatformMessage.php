@@ -17,10 +17,13 @@ class PlatformMessage extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'is_read' => 'boolean',
-        'read_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_read' => 'boolean',
+            'read_at' => 'datetime',
+        ];
+    }
 
     /**
      * @return BelongsTo<Tenant, $this>

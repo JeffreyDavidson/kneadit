@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\EmailCampaignStatus;
 use App\Models\EmailCampaign;
 use Carbon\Carbon;
 
@@ -33,5 +34,5 @@ test('status can be updated to sent', function () {
     $campaign = EmailCampaign::create(['name' => 'T', 'subject' => 'T', 'body' => 'B', 'status' => 'draft']);
     $campaign->update(['status' => 'sent', 'sent_at' => now()]);
 
-    expect($campaign->fresh()->status)->toBe('sent');
+    expect($campaign->fresh()->status)->toBe(EmailCampaignStatus::Sent);
 });

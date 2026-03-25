@@ -21,10 +21,13 @@ class EmailCampaignLog extends Model
         'opened_at',
     ];
 
-    protected $casts = [
-        'sent_at' => 'datetime',
-        'opened_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'sent_at' => 'datetime',
+            'opened_at' => 'datetime',
+        ];
+    }
 
     /**
      * @return BelongsTo<EmailCampaign, $this>

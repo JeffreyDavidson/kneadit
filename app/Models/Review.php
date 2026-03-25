@@ -24,10 +24,13 @@ class Review extends Model
         'is_featured',
     ];
 
-    protected $casts = [
-        'is_approved' => 'boolean',
-        'is_featured' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_approved' => 'boolean',
+            'is_featured' => 'boolean',
+        ];
+    }
 
     /**
      * @return BelongsTo<Product, $this>

@@ -21,10 +21,13 @@ class SurveyResponse extends Model
         'created_at',
     ];
 
-    protected $casts = [
-        'answers' => 'array',
-        'created_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'answers' => 'array',
+            'created_at' => 'datetime',
+        ];
+    }
 
     /**
      * @return BelongsTo<Survey, $this>
