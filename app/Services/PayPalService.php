@@ -105,7 +105,7 @@ class PayPalService
                 [
                     'billing_info' => [
                         'name' => [
-                            'given_name' => explode(' ', $order->customer->name)[0] ?? '',
+                            'given_name' => explode(' ', $order->customer->name)[0],
                             'surname' => implode(' ', array_slice(explode(' ', $order->customer->name), 1)) ?: '',
                         ],
                         'address' => [

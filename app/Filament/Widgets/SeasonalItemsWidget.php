@@ -28,7 +28,7 @@ class SeasonalItemsWidget extends Widget
             ->limit(5)
             ->get()
             ->map(fn (SeasonalItem $s) => [
-                'name' => $s->product?->name ?? 'Unknown',
+                'name' => $s->product->name ?? 'Unknown',
                 'date' => $s->available_from->format('M j'),
             ])
             ->all();
@@ -43,7 +43,7 @@ class SeasonalItemsWidget extends Widget
             ->limit(5)
             ->get()
             ->map(fn (SeasonalItem $s) => [
-                'name' => $s->product?->name ?? 'Unknown',
+                'name' => $s->product->name ?? 'Unknown',
                 'date' => $s->available_until->format('M j'),
             ])
             ->all();

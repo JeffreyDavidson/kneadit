@@ -32,7 +32,7 @@ class ProductCsvService
         Product::with('category')->orderBy('name')->each(function (Product $product) use ($output) {
             fputcsv($output, [
                 $product->name,
-                $product->category?->name ?? '',
+                $product->category->name ?? '',
                 $product->description ?? '',
                 $product->price,
                 $product->cost ?? '',

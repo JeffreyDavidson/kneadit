@@ -40,7 +40,7 @@ class UpcomingOrdersWidget extends Widget
             $grouped[$date]['orders'][] = [
                 'id' => $order->id,
                 'number' => $order->order_number,
-                'customer' => $order->customer?->name ?? 'Walk-in',
+                'customer' => $order->customer->name ?? 'Walk-in',
                 'items' => $order->orderItems()->count(),
                 'total' => number_format($order->total, 2),
                 'time' => $order->delivery_time?->format('g:i A') ?? '',

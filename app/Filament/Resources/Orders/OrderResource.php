@@ -64,7 +64,7 @@ class OrderResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Customer' => $record->customer?->name ?? 'N/A',
+            'Customer' => $record->customer->name ?? 'N/A',
             'Total' => '$'.number_format($record->total, 2),
             'Status' => ucfirst($record->status),
         ];

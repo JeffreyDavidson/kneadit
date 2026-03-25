@@ -32,9 +32,9 @@ class GiftCardBalanceWidget extends Widget
             ->limit(3)
             ->get()
             ->map(fn (GiftCardTransaction $t) => [
-                'code' => $t->giftCard?->code ?? 'N/A',
+                'code' => $t->giftCard->code ?? 'N/A',
                 'amount' => $t->amount ?? 0,
-                'date' => $t->created_at?->diffForHumans() ?? '',
+                'date' => $t->created_at->diffForHumans() ?? '',
             ])
             ->all();
     }

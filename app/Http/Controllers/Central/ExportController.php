@@ -101,6 +101,7 @@ class ExportController extends Controller
             'orders' => $this->writeOrders($handle),
             'customers' => $this->writeCustomers($handle),
             'reviews' => $this->writeReviews($handle),
+            default => null,
         };
 
         rewind($handle);

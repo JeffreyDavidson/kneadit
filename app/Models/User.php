@@ -162,10 +162,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public function hasMinRole(UserRole $role): bool
     {
-        if (! $this->role) {
-            return false;
-        }
-
         return $this->role->meetsRequirement($role);
     }
 }

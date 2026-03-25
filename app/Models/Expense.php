@@ -58,7 +58,7 @@ class Expense extends Model
 
     protected function getCategoryLabelAttribute(): string
     {
-        return self::CATEGORIES[$this->category] ?? ucfirst($this->category);
+        return self::CATEGORIES[$this->category];
     }
 
     protected function getDeductibleAmountAttribute(): float
@@ -69,9 +69,6 @@ class Expense extends Model
     protected static function booted(): void
     {
         static::saving(function (Expense $expense) {
-            if ($expense->business_percentage === null) {
-                $expense->business_percentage = 100;
-            }
             $expense->deductible_amount = $expense->getDeductibleAmountAttribute();
         });
     }

@@ -54,7 +54,7 @@ class Login extends BaseLogin
             'user_found' => $user ? 'YES' : 'NO',
             'user_id' => $user?->id,
             'user_email' => $user?->email,
-            'user_role' => $user?->role ?? 'n/a',
+            'user_role' => $user->role ?? 'n/a',
             'db_after_retrieve' => \DB::connection()->getDatabaseName(),
         ]);
 
@@ -107,11 +107,11 @@ class Login extends BaseLogin
         }
 
         $panel = Filament::getCurrentOrDefaultPanel();
-        $canAccess = ($user instanceof FilamentUser) ? $user->canAccessPanel($panel) : true;
+        $canAccess = $user->canAccessPanel($panel);
 
         Log::info('LOGIN: Panel access check', [
             'panel_id' => $panel?->getId(),
-            'user_is_filament_user' => $user instanceof FilamentUser ? 'YES' : 'NO',
+            'user_is_filament_user' => 'YES',
             'can_access_panel' => $canAccess ? 'YES' : 'NO',
         ]);
 

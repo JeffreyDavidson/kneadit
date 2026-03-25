@@ -65,7 +65,7 @@ class RecipeResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Product' => $record->product?->name ?? 'N/A',
+            'Product' => $record->product->name ?? 'N/A',
             'Prep Time' => ($record->prep_time_minutes ?? 0).' min',
         ];
     }

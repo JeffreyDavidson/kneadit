@@ -11,7 +11,7 @@ class CheckPlanAccess
 {
     public function handle(Request $request, Closure $next, string $requiredPlan = 'starter'): Response
     {
-        $current = SubscriptionTier::tryFrom(tenant()?->plan ?? 'starter');
+        $current = SubscriptionTier::tryFrom(tenant()->plan ?? 'starter');
         $required = SubscriptionTier::tryFrom($requiredPlan);
 
         if (! $current || ! $required || ! $current->meetsRequirement($required)) {

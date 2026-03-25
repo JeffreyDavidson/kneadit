@@ -596,7 +596,7 @@ class Onboarding extends Page
         }
 
         if (! empty($this->store_logo)) {
-            $logoPath = is_array($this->store_logo) ? collect($this->store_logo)->first() : $this->store_logo;
+            $logoPath = collect($this->store_logo)->first();
             if ($logoPath) {
                 Setting::set('store_logo', $logoPath);
                 if ($tenant) {

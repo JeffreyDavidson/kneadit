@@ -123,7 +123,7 @@ class Activity extends Page
             ->orderByDesc('cnt')
             ->first();
 
-        return $action?->action ?? '—';
+        return $action->action ?? '—';
     }
 
     public function previousPage(): void

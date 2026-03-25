@@ -43,7 +43,7 @@ class ReportService
             ->limit(10)
             ->get()
             ->map(fn (OrderItem $item) => [
-                'name' => $item->product?->name ?? 'Deleted Product',
+                'name' => $item->product->name ?? 'Deleted Product',
                 'units_sold' => (int) $item->units_sold,
                 'revenue' => (float) $item->revenue,
             ])

@@ -16,7 +16,7 @@ class ReorderController extends Controller
     {
         $items = $order->orderItems->map(fn (OrderItem $item) => [
             'product_id' => $item->product_id,
-            'product_name' => $item->product?->name ?? 'Unknown',
+            'product_name' => $item->product->name ?? 'Unknown',
             'price' => $item->unit_price,
             'quantity' => $item->quantity,
         ]);

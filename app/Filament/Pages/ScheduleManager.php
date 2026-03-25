@@ -48,11 +48,11 @@ class ScheduleManager extends Page
         for ($day = 0; $day <= 6; $day++) {
             $record = BusinessSchedule::forDay($day);
             $this->schedule[$day] = [
-                'is_open' => $record?->is_open ?? false,
-                'open_time' => $record?->open_time ?? '07:00',
-                'close_time' => $record?->close_time ?? '18:00',
-                'order_cutoff_time' => $record?->order_cutoff_time ?? null,
-                'max_orders' => $record?->max_orders ?? null,
+                'is_open' => $record->is_open ?? false,
+                'open_time' => $record->open_time ?? '07:00',
+                'close_time' => $record->close_time ?? '18:00',
+                'order_cutoff_time' => $record->order_cutoff_time ?? null,
+                'max_orders' => $record->max_orders ?? null,
             ];
         }
     }

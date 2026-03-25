@@ -22,8 +22,7 @@ class CheckoutSuccessController extends Controller
         if (! $request->user() && $request->has('session_id')) {
             $checkoutSession = Cashier::stripe()->checkout->sessions->retrieve($request->get('session_id'));
 
-            if ($checkoutSession
-                && $checkoutSession->status === 'complete'
+            if ($checkoutSession->status === 'complete'
                 && $checkoutSession->customer
                 && $checkoutSession->created >= now()->subMinutes(30)->getTimestamp()
             ) {

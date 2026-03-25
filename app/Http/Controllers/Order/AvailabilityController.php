@@ -27,7 +27,7 @@ class AvailabilityController extends Controller
             $dateStr = $date->toDateString();
 
             $schedule = BusinessSchedule::forDay($dayOfWeek);
-            $isOpen = $schedule?->is_open ?? false;
+            $isOpen = $schedule->is_open ?? false;
 
             // Check blocked dates
             $blocked = BlockedDate::query()->where('date', $dateStr)->where('is_all_day', true)->first();

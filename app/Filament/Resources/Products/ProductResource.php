@@ -63,7 +63,7 @@ class ProductResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Category' => $record->category?->name ?? 'N/A',
+            'Category' => $record->category->name ?? 'N/A',
             'Price' => '$'.number_format($record->price, 2),
         ];
     }

@@ -67,7 +67,7 @@ class ReviewResource extends Resource
     {
         return [
             'Rating' => str_repeat('⭐', $record->rating ?? 0),
-            'Product' => $record->product?->name ?? 'N/A',
+            'Product' => $record->product->name ?? 'N/A',
         ];
     }
 
