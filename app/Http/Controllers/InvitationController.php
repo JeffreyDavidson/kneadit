@@ -7,9 +7,7 @@ use App\Models\StaffInvitation;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class InvitationController extends Controller
 {
@@ -33,7 +31,7 @@ class InvitationController extends Controller
         ]);
     }
 
-    public function store(Request $request, string $token): View|RedirectResponse
+    public function store(AcceptInvitationRequest $request, string $token): View|RedirectResponse
     {
         $invitation = StaffInvitation::where('token', $token)
             ->whereNull('accepted_at')
@@ -52,15 +50,12 @@ class InvitationController extends Controller
             $existingUser->update(['role' => $invitation->role]);
             $user = $existingUser;
         } else {
-            $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'password' => ['required', 'string', 'min:8', 'confirmed'],
-            ]);
+            $validated = $request->validated();
 
             $user = User::create([
-                'name' => $request->name,
+                'name' => $validated['name'],
                 'email' => $invitation->email,
-                'password' => Hash::make($request->password),
+                'password' => $validated['password'],
                 'role' => $invitation->role,
                 'email_verified_at' => now(),
             ]);

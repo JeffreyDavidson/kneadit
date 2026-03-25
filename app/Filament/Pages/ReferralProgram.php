@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\ReferralStatus;
 use App\Models\Referral;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -50,14 +51,14 @@ class ReferralProgram extends Page
     public function getCompletedReferrals(): int
     {
         return Referral::where('referrer_tenant_id', tenant()->id)
-            ->whereIn('status', ['completed', 'rewarded'])
+            ->whereIn('status', [ReferralStatus::Completed, ReferralStatus::Rewarded])
             ->count();
     }
 
     public function getMonthsEarned(): int
     {
         return Referral::where('referrer_tenant_id', tenant()->id)
-            ->where('status', 'rewarded')
+            ->where('status', ReferralStatus::Rewarded)
             ->sum('reward_months');
     }
 
