@@ -35,6 +35,7 @@ class CustomerPhotoForm
                         FileUpload::make('photo_path')
                             ->label('Photo')
                             ->image()
+                            ->maxSize(5120)
                             ->directory('customer-photos')
                             ->disk('public')
                             ->imagePreviewHeight('200')
