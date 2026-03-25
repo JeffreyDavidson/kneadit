@@ -110,7 +110,7 @@ class Order extends Model
 
         static::creating(function (Order $order) {
             if (! $order->order_number) {
-                $order->order_number = 'ORD-'.str_pad(static::query()->count() + 1, 6, '0', STR_PAD_LEFT);
+                $order->order_number = 'ORD-'.str_pad((string) (static::query()->count() + 1), 6, '0', STR_PAD_LEFT);
             }
         });
     }

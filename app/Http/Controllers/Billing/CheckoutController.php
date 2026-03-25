@@ -16,11 +16,11 @@ class CheckoutController extends Controller
     {
         $tier = SubscriptionTier::tryFrom($plan);
 
-        abort_unless($tier, 404, 'Plan not found.');
+        abort_unless((bool) $tier, 404, 'Plan not found.');
 
         $priceId = config("saas.stripe_prices.{$tier->value}");
 
-        abort_unless($priceId, 404, 'Plan not found.');
+        abort_unless((bool) $priceId, 404, 'Plan not found.');
 
         return $request->user()
             ->newSubscription('default', $priceId)

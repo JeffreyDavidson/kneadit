@@ -214,8 +214,8 @@ class TaxExport extends Page
                         $order->delivery_fee,
                         $order->discount_amount,
                         $order->total,
-                        $order->payment_status,
-                        $order->payment_method,
+                        $order->payment_status->value,
+                        $order->payment_method->value,
                     ]);
                 }
             });

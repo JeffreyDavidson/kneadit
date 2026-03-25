@@ -21,7 +21,7 @@ class ConsumeImpersonationController extends Controller
             ->where('expires_at', '>', now())
             ->first();
 
-        abort_unless($record, 403, 'Invalid or expired impersonation token.');
+        abort_unless((bool) $record, 403, 'Invalid or expired impersonation token.');
 
         // Delete the token (one-time use)
         DB::connection('central')->table('impersonation_tokens')
@@ -30,7 +30,7 @@ class ConsumeImpersonationController extends Controller
 
         $user = User::query()->first();
 
-        abort_unless($user, 404, 'No users found for this tenant.');
+        abort_unless((bool) $user, 404, 'No users found for this tenant.');
 
         Auth::login($user);
 

@@ -98,9 +98,9 @@ class InstagramCaptionGenerator extends Page implements HasForms
     public function generateCaptions(): void
     {
         $this->validate([
-            'data.product_id' => 'required|exists:products,id',
-            'data.style' => 'required|in:playful,professional,seasonal,storytelling',
-            'data.tone' => 'required|in:warm,excited,casual,elegant',
+            'data.product_id' => ['required', 'exists:products,id'],
+            'data.style' => ['required', 'in:playful,professional,seasonal,storytelling'],
+            'data.tone' => ['required', 'in:warm,excited,casual,elegant'],
         ]);
 
         $product = Product::with('category')->find($this->data['product_id']);
