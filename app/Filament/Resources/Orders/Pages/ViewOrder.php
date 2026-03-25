@@ -5,9 +5,9 @@ namespace App\Filament\Resources\Orders\Pages;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Events\OrderMessageSent;
 use App\Exceptions\InvalidOrderTransitionException;
 use App\Filament\Resources\Orders\OrderResource;
-use App\Mail\NewOrderMessage;
 use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -18,7 +18,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Mail;
 
 class ViewOrder extends ViewRecord
 {
@@ -196,11 +195,7 @@ class ViewOrder extends ViewRecord
                         ->where('is_read', false)
                         ->update(['is_read' => true]);
 
-                    // Email customer
-                    $customerEmail = $this->record->customer?->email;
-                    if ($customerEmail) {
-                        Mail::to($customerEmail)->send(new NewOrderMessage($message));
-                    }
+                    OrderMessageSent::dispatch($message);
 
                     $this->notify('success', 'Message sent to customer.');
                 }),

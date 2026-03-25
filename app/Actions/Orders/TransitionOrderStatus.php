@@ -3,16 +3,10 @@
 namespace App\Actions\Orders;
 
 use App\Enums\OrderStatus;
+use App\Events\OrderStatusChanged;
 use App\Exceptions\InvalidOrderTransitionException;
-use App\Mail\OrderBaking;
-use App\Mail\OrderCancelled;
-use App\Mail\OrderConfirmed;
-use App\Mail\OrderDelivered;
-use App\Mail\OrderReady;
 use App\Models\Order;
-use App\Services\WebhookService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class TransitionOrderStatus
 {
@@ -40,16 +34,6 @@ class TransitionOrderStatus
 
         $order->update(['status' => $to]);
 
-        try {
-            $this->sendStatusEmail($order);
-        } catch (\Exception $e) {
-            Log::warning('Order status email failed', [
-                'order' => $order->order_number,
-                'status' => $order->status,
-                'error' => $e->getMessage(),
-            ]);
-        }
-
         if ($to === OrderStatus::Baking) {
             try {
                 ($this->deductIngredients)($order);
@@ -72,20 +56,7 @@ class TransitionOrderStatus
             }
         }
 
-        try {
-            WebhookService::dispatch('order.updated', [
-                'order_number' => $order->order_number,
-                'status' => $order->status,
-                'previous_status' => $from,
-                'payment_status' => $order->payment_status,
-                'total' => $order->total,
-            ]);
-        } catch (\Exception $e) {
-            Log::warning('Order updated webhook dispatch failed', [
-                'order' => $order->order_number,
-                'error' => $e->getMessage(),
-            ]);
-        }
+        OrderStatusChanged::dispatch($order, $from, $to);
 
         return $order;
     }
@@ -98,23 +69,5 @@ class TransitionOrderStatus
         $allowed = self::TRANSITIONS[$order->status->value] ?? [];
 
         return array_map(fn (string $s) => OrderStatus::from($s), $allowed);
-    }
-
-    private function sendStatusEmail(Order $order): void
-    {
-        if (! $order->customer?->email) {
-            return;
-        }
-
-        $email = $order->customer->email;
-
-        match ($order->status) {
-            OrderStatus::Confirmed => Mail::to($email)->send(new OrderConfirmed($order)),
-            OrderStatus::Baking => Mail::to($email)->send(new OrderBaking($order)),
-            OrderStatus::Ready => Mail::to($email)->send(new OrderReady($order)),
-            OrderStatus::Delivered => Mail::to($email)->send(new OrderDelivered($order)),
-            OrderStatus::Cancelled => Mail::to($email)->send(new OrderCancelled($order)),
-            default => null,
-        };
     }
 }
