@@ -30,11 +30,11 @@ class UpcomingOrdersWidget extends Widget
 
         $grouped = [];
         foreach ($orders as $order) {
-            $date = $order->delivery_date->format('Y-m-d');
+            $date = $order->delivery_date?->format('Y-m-d');
             $label = match (true) {
-                $order->delivery_date->isToday() => 'Today',
-                $order->delivery_date->isTomorrow() => 'Tomorrow',
-                default => $order->delivery_date->format('l, M j'),
+                $order->delivery_date?->isToday() => 'Today',
+                $order->delivery_date?->isTomorrow() => 'Tomorrow',
+                default => $order->delivery_date?->format('l, M j'),
             };
 
             $grouped[$date] ??= ['label' => $label, 'orders' => []];

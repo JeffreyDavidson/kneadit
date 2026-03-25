@@ -30,7 +30,7 @@ class LoginController extends Controller
 
         $user = Auth::user();
 
-        if (! $user->subscribed('default')) {
+        if (! $user?->subscribed('default')) {
             return to_route('billing.plans');
         }
 
@@ -40,6 +40,6 @@ class LoginController extends Controller
 
         $tenant = $user->tenants()->first();
 
-        return redirect("https://{$tenant->id}.".config('app.central_domain', 'getkneadit.app').'/admin');
+        return redirect("https://{$tenant?->id}.".config('app.central_domain', 'getkneadit.app').'/admin');
     }
 }

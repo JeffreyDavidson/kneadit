@@ -21,7 +21,7 @@ class CustomerIntelligence
 
         $orderCount = (int) ($orderStats->order_count ?? 0);
         $lifetimeValue = (float) ($orderStats->lifetime_value ?? 0);
-        $lastOrderDate = $orderStats->last_order_date ? Date::parse($orderStats->last_order_date) : null;
+        $lastOrderDate = $orderStats->last_order_date ? Date::parse($orderStats?->last_order_date) : null;
 
         $daysSinceLastOrder = $lastOrderDate
             ? (int) $lastOrderDate->diffInDays(now())

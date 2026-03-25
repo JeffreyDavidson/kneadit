@@ -29,8 +29,8 @@ class CouponValidationController extends Controller
             'data' => [
                 'valid' => true,
                 'discount_amount' => $result['discount'],
-                'type' => $coupon->type,
-                'value' => $coupon->value,
+                'type' => $coupon?->type,
+                'value' => $coupon?->value,
             ],
             'message' => 'Coupon is valid.',
         ]);

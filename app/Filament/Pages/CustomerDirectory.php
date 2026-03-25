@@ -177,7 +177,7 @@ class CustomerDirectory extends Page
                     'status' => ucfirst($order->status->value),
                     'payment_status' => ucfirst($order->payment_status->value),
                     'total' => number_format($order->total, 2),
-                    'date' => $order->created_at->format('M j, Y'),
+                    'date' => $order->created_at?->format('M j, Y'),
                     'delivery_date' => $order->delivery_date?->format('M j, Y'),
                 ];
             }),
@@ -186,7 +186,7 @@ class CustomerDirectory extends Page
                     'id' => $note->id,
                     'note' => $note->note,
                     'created_by' => $note->createdBy->name ?? 'Unknown',
-                    'created_at' => $note->created_at->format('M j, Y g:i A'),
+                    'created_at' => $note->created_at?->format('M j, Y g:i A'),
                 ];
             }),
             'stats' => [

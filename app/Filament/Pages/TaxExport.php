@@ -226,7 +226,7 @@ class TaxExport extends Page
                 foreach ($orders as $order) {
                     $items = $order->orderItems->map(fn (OrderItem $i) => ($i->product->name ?? 'Item').' x'.$i->quantity)->implode('; ');
                     fputcsv($handle, [
-                        $order->created_at->format('Y-m-d'),
+                        $order->created_at?->format('Y-m-d'),
                         $order->order_number,
                         $order->customer->name ?? 'N/A',
                         $items,
@@ -265,7 +265,7 @@ class TaxExport extends Page
             ->chunk(100, function (Collection $expenses) use ($handle, $categoryMap) {
                 foreach ($expenses as $expense) {
                     fputcsv($handle, [
-                        $expense->date->format('Y-m-d'),
+                        $expense->date?->format('Y-m-d'),
                         $categoryMap[$expense->category],
                         $expense->description,
                         $expense->amount,
@@ -288,7 +288,7 @@ class TaxExport extends Page
             ->chunk(100, function (Collection $incomes) use ($handle) {
                 foreach ($incomes as $income) {
                     fputcsv($handle, [
-                        $income->date->format('Y-m-d'),
+                        $income->date?->format('Y-m-d'),
                         $income->source_label,
                         $income->description,
                         $income->amount,

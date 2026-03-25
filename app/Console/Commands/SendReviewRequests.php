@@ -39,7 +39,7 @@ class SendReviewRequests extends Command
                     ->get();
 
                 foreach ($orders as $order) {
-                    Mail::to($order->customer->email)->send(new ReviewRequest($order));
+                    Mail::to($order->customer?->email)->send(new ReviewRequest($order));
 
                     $order->update(['review_request_sent_at' => now()]);
 

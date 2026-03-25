@@ -91,7 +91,7 @@ class SendRepeatOrderReminders extends Command
             ->map(function (Customer $customer) use ($cutoffDate) {
                 $lastOrder = $customer->orders->first();
 
-                if (! $lastOrder || $lastOrder->delivery_date->isAfter($cutoffDate)) {
+                if (! $lastOrder || $lastOrder->delivery_date?->isAfter($cutoffDate)) {
                     return null;
                 }
 
@@ -103,7 +103,7 @@ class SendRepeatOrderReminders extends Command
                 return [
                     'customer' => $customer,
                     'last_order_date' => $lastOrder->delivery_date,
-                    'days_since_last_order' => $lastOrder->delivery_date->diffInDays(Date::today()),
+                    'days_since_last_order' => $lastOrder->delivery_date?->diffInDays(Date::today()),
                 ];
             })
             ->filter();

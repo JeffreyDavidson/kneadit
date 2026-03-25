@@ -37,7 +37,7 @@ class Messages extends Page
         /** @var Tenant|null $tenant */
         $tenant = Filament::getTenant();
 
-        return PlatformMessage::query()->where('tenant_id', $tenant->id)
+        return PlatformMessage::query()->where('tenant_id', $tenant?->id)
             ->topLevel()
             ->orderByRaw('is_read ASC')
             ->orderBy('created_at', 'desc')
@@ -80,7 +80,7 @@ class Messages extends Page
         $tenant = Filament::getTenant();
 
         PlatformMessage::query()->create([
-            'tenant_id' => $tenant->id,
+            'tenant_id' => $tenant?->id,
             'sender_type' => 'tenant',
             'subject' => 'Re: '.$parent->subject,
             'body' => $this->replyBody,

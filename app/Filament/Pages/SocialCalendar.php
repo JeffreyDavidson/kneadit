@@ -74,13 +74,13 @@ class SocialCalendar extends Page
 
         $this->posts = [];
         foreach ($posts as $post) {
-            $day = $post->scheduled_for->format('Y-m-d');
+            $day = $post->scheduled_for?->format('Y-m-d');
             $this->posts[$day][] = [
                 'id' => $post->id,
                 'platform' => $post->platform,
                 'caption' => Str::limit($post->caption, 60),
                 'status' => $post->status,
-                'time' => $post->scheduled_for->format('g:i A'),
+                'time' => $post->scheduled_for?->format('g:i A'),
                 'product' => $post->product?->name,
             ];
         }

@@ -32,7 +32,7 @@ class BlogFeedController extends Controller
             $xml .= '<link>'.url("/resources/{$post->slug}").'</link>';
             $xml .= '<guid isPermaLink="true">'.url("/resources/{$post->slug}").'</guid>';
             $xml .= '<description>'.htmlspecialchars($post->excerpt ?? strip_tags(substr($post->body, 0, 300))).'</description>';
-            $xml .= '<pubDate>'.$post->published_at->toRfc2822String().'</pubDate>';
+            $xml .= '<pubDate>'.$post->published_at?->toRfc2822String().'</pubDate>';
             $xml .= '<category>'.htmlspecialchars($post->category).'</category>';
             $xml .= '</item>';
         }

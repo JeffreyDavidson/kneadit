@@ -354,7 +354,7 @@ class ManageSettings extends Page
             // Payment Methods
             Setting::set('payment_methods', json_encode($this->payment_methods));
             Setting::set('payment_method', $this->payment_methods[0] ?? 'cash');
-            if (in_array('paypal', $this->payment_methods)) {
+            if (in_array('paypal', $this->payment_methods ?? [])) {
                 Setting::set('paypal_client_id', $this->paypal_client_id);
                 Setting::set('paypal_client_secret', $this->paypal_client_secret);
                 Setting::set('paypal_sandbox', $this->paypal_sandbox ? '1' : '0');

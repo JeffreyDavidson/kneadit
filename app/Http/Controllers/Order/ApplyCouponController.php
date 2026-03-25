@@ -23,12 +23,12 @@ class ApplyCouponController extends Controller
 
         return response()->json([
             'success' => true,
-            'coupon_id' => $coupon->id,
-            'code' => $coupon->code,
+            'coupon_id' => $coupon?->id,
+            'code' => $coupon?->code,
             'discount_amount' => $result['discount'],
-            'label' => $coupon->type === CouponType::Percentage
+            'label' => $coupon?->type === CouponType::Percentage
                 ? number_format($coupon->value, 0).'% off'
-                : '$'.number_format($coupon->value, 2).' off',
+                : '$'.number_format($coupon?->value, 2).' off',
         ]);
     }
 }

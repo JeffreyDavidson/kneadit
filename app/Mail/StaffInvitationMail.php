@@ -41,7 +41,7 @@ class StaffInvitationMail extends Mailable implements ShouldQueue
                 'storeName' => $this->storeName,
                 'acceptUrl' => $this->acceptUrl,
                 'role' => ucfirst($this->invitation->role),
-                'expiresAt' => $this->invitation->expires_at->format('F j, Y'),
+                'expiresAt' => $this->invitation->expires_at?->format('F j, Y'),
             ],
         );
     }
