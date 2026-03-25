@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TenantNote extends Model
 {
+    use HasFactory;
+
     protected $connection = 'central';
 
     protected $fillable = ['tenant_id', 'body', 'author'];

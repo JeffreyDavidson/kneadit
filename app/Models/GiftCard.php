@@ -6,11 +6,13 @@ use App\Enums\GiftCardStatus;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GiftCard extends Model
 {
+    use HasFactory;
     use LogsActivity;
 
     protected $fillable = [

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BusinessSchedule extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'day_of_week',
         'is_open',

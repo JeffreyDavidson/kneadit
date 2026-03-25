@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Ingredient extends Model
 {
+    use HasFactory;
     use LogsActivity;
 
     protected $fillable = [
@@ -22,11 +24,14 @@ class Ingredient extends Model
         'notes',
     ];
 
-    protected $casts = [
-        'current_stock' => 'decimal:2',
-        'low_stock_threshold' => 'decimal:2',
-        'cost_per_unit' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'current_stock' => 'decimal:2',
+            'low_stock_threshold' => 'decimal:2',
+            'cost_per_unit' => 'decimal:2',
+        ];
+    }
 
     /**
      * @return BelongsToMany<Recipe, $this, Pivot>

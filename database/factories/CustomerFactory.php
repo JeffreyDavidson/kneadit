@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class CustomerFactory extends Factory
 {
     /**
-     * Define the model's default state.
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
@@ -26,12 +24,23 @@ class CustomerFactory extends Factory
     }
 
     /**
-     * Indicate that the customer has a birthday.
+     * Customer has a birthday set.
      */
     public function withBirthday(): static
     {
+        return $this->state(fn (array $attributes) => ['birthday' => fake()->date()]);
+    }
+
+    /**
+     * Customer has a full address.
+     */
+    public function withAddress(): static
+    {
         return $this->state(fn (array $attributes) => [
-            'birthday' => fake()->date(),
+            'address' => fake()->streetAddress(),
+            'city' => fake()->city(),
+            'state' => fake()->stateAbbr(),
+            'zip' => fake()->postcode(),
         ]);
     }
 }
