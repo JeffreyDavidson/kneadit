@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CapacityLimits\Schemas;
 
+use App\Enums\DayOfWeek;
 use App\Models\CapacityLimit;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
@@ -27,16 +28,7 @@ class CapacityLimitForm
                 ->components([
                     Select::make('day_type')
                         ->label('Day')
-                        ->options([
-                            '0' => 'Monday',
-                            '1' => 'Tuesday',
-                            '2' => 'Wednesday',
-                            '3' => 'Thursday',
-                            '4' => 'Friday',
-                            '5' => 'Saturday',
-                            '6' => 'Sunday',
-                            'specific' => 'Specific Date',
-                        ])
+                        ->options(DayOfWeek::options() + ['specific' => 'Specific Date'])
                         ->required()
                         ->live()
                         ->afterStateHydrated(function (mixed $component, ?CapacityLimit $record) {

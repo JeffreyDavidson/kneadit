@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\LoyaltyRewards\Tables;
 
+use App\Enums\RewardType;
 use App\Models\LoyaltyReward;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
@@ -23,24 +24,16 @@ class LoyaltyRewardsTable
                     ->label('Points Required'),
                 TextColumn::make('reward_type')
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => match ($state) {
-                        'percentage_discount' => 'Percentage Off',
-                        'fixed_discount' => 'Fixed Discount',
-                        'free_product' => 'Free Product',
-                        default => $state,
-                    })
-                    ->color(fn (string $state) => match ($state) {
-                        'percentage_discount' => 'info',
-                        'fixed_discount' => 'success',
-                        'free_product' => 'warning',
-                        default => 'gray',
-                    }),
+                    ->formatStateUsing(fn (string $state) => RewardType::tryFrom($state)?->label() ?? $state)
+                    ->color(fn (string $state) => RewardType::tryFrom($state)?->color() ?? 'gray'),
                 TextColumn::make('reward_value')
                     ->formatStateUsing(function (mixed $state, LoyaltyReward $record) {
-                        return match ($record->reward_type) {
-                            'percentage_discount' => $state.'%',
-                            'fixed_discount' => '$'.number_format((float) $state, 2),
-                            'free_product' => $record->product?->name ?? '-',
+                        $type = RewardType::tryFrom($record->reward_type);
+
+                        return match ($type) {
+                            RewardType::PercentageDiscount => $state.'%',
+                            RewardType::FixedDiscount => '$'.number_format((float) $state, 2),
+                            RewardType::FreeProduct => $record->product?->name ?? '-',
                             default => $state,
                         };
                     })

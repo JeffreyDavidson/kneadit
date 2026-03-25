@@ -16,10 +16,11 @@ class CustomerPhotoForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Section::make('Customer Information')
-                    ->schema([
-                        Grid::make(2)->schema([
+                    ->columnSpanFull()
+                    ->components([
+                        Grid::make(2)->components([
                             TextInput::make('customer_name')
                                 ->required()
                                 ->maxLength(255),
@@ -31,7 +32,8 @@ class CustomerPhotoForm
                     ]),
 
                 Section::make('Photo')
-                    ->schema([
+                    ->columnSpanFull()
+                    ->components([
                         FileUpload::make('photo_path')
                             ->label('Photo')
                             ->image()
@@ -52,8 +54,9 @@ class CustomerPhotoForm
                     ]),
 
                 Section::make('Status')
-                    ->schema([
-                        Grid::make(2)->schema([
+                    ->columnSpanFull()
+                    ->components([
+                        Grid::make(2)->components([
                             Toggle::make('is_approved')
                                 ->label('Approved'),
                             Toggle::make('is_featured')
