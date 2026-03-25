@@ -20,7 +20,7 @@ class StripeConnectController extends Controller
         abort_unless($tenant, 404);
 
         // Create a Stripe Connect account for this tenant
-        $stripe = new StripeClient(config('cashier.secret'));
+        $stripe = static::stripeClient();
 
         // Check if tenant already has a connect account
         $connectId = Setting::get('stripe_connect_id');
@@ -51,6 +51,11 @@ class StripeConnectController extends Controller
         return redirect($accountLink->url);
     }
 
+    protected static function stripeClient(): StripeClient
+    {
+        return new StripeClient(config('cashier.secret'));
+    }
+
     /**
      * Check the status of a Stripe Connect account.
      */
@@ -63,7 +68,7 @@ class StripeConnectController extends Controller
         }
 
         try {
-            $stripe = new StripeClient(config('cashier.secret'));
+            $stripe = static::stripeClient();
             $account = $stripe->accounts->retrieve($connectId);
 
             return [

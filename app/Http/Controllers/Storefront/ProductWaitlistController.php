@@ -15,12 +15,13 @@ class ProductWaitlistController extends Controller
      */
     public function __invoke(StoreProductWaitlistRequest $request): JsonResponse|RedirectResponse
     {
+        $validated = $request->validated();
 
         ProductWaitlist::query()->updateOrCreate([
-            'product_id' => $request->product_id,
-            'customer_email' => $request->customer_email,
+            'product_id' => $validated['product_id'],
+            'customer_email' => $validated['customer_email'],
         ], [
-            'customer_name' => $request->customer_name,
+            'customer_name' => $validated['customer_name'] ?? null,
             'notified_at' => null,
             'created_at' => now(),
         ]);
