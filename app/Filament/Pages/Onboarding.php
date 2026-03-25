@@ -18,6 +18,7 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -554,7 +555,7 @@ class Onboarding extends Page
         ]);
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, Component> */
     protected function buildDayFields(string $day, string $label): array
     {
         return [

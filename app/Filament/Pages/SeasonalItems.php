@@ -18,7 +18,6 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 
@@ -128,13 +127,13 @@ class SeasonalItems extends Page
             ->send();
     }
 
-    /** @return Collection<int, Model> */
+    /** @return Collection<int, SeasonalItem> */
     public function getCurrentItemsProperty(): Collection
     {
         return SeasonalItem::with('product')->current()->get();
     }
 
-    /** @return Collection<int, Model> */
+    /** @return Collection<int, SeasonalItem> */
     public function getUpcomingItemsProperty(): Collection
     {
         return SeasonalItem::with('product')->upcoming()->orderBy('available_from')->get();

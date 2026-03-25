@@ -7,7 +7,6 @@ use App\Models\Order;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 
 class RevenueChartWidget extends ChartWidget
@@ -71,7 +70,7 @@ class RevenueChartWidget extends ChartWidget
         ];
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, float> */
     private function getDailyRevenue(Carbon $start, Carbon $end): array
     {
         $raw = Order::query()->where('status', '!=', OrderStatus::Cancelled)
@@ -81,7 +80,6 @@ class RevenueChartWidget extends ChartWidget
             ->pluck('revenue', 'date')
             ->toArray();
 
-        /** @var Collection<int, mixed> */
         return collect(CarbonPeriod::create($start, $end))
             ->map(fn (Carbon $d) => (float) ($raw[$d->format('Y-m-d')] ?? 0))
             ->all();

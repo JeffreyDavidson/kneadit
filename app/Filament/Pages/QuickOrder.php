@@ -22,6 +22,7 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Grid;
@@ -30,7 +31,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -87,7 +87,7 @@ class QuickOrder extends Page
         ];
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, Component> */
     protected function getFormSchema(): array
     {
         return [
@@ -291,7 +291,6 @@ class QuickOrder extends Page
 
                 // Calculate totals
                 $orderItems = $data['order_items'] ?? [];
-                /** @var Collection<int, mixed> */
                 $subtotal = collect($orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
                 $deliveryFee = ($data['delivery_type'] === DeliveryType::Delivery->value) ? 5.00 : 0.00;
                 $total = $subtotal + $deliveryFee;

@@ -90,7 +90,7 @@ class InstagramCaptionGenerator extends Page
             ->statePath('data');
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<int, Action> */
     protected function getFormActions(): array
     {
         return [
