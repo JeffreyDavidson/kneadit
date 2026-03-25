@@ -62,6 +62,7 @@ class DescriptionGeneratorService
 
     protected array $defaultAdjectives = ['fresh', 'handcrafted', 'artisan', 'delicious', 'premium'];
 
+    /** @return array<string, mixed> */
     public function generate(string $product, string $tone, string $length, ?string $category = null, ?float $price = null, int $count = 3): array
     {
         $tone = strtolower($tone);

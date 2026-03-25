@@ -134,6 +134,7 @@ class WeeklyPrepPlanner extends Page
         $this->prepSchedule = $prepTasks->groupBy('date');
     }
 
+    /** @return Collection<int, mixed> */
     public function getProductSummary(): Collection
     {
         $productSummary = collect();
@@ -161,6 +162,7 @@ class WeeklyPrepPlanner extends Page
         return $productSummary->sortByDesc('total_quantity');
     }
 
+    /** @return Collection<int, mixed> */
     public function getTimelineView(): Collection
     {
         $timeline = collect();

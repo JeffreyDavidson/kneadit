@@ -19,6 +19,7 @@ class SeasonalItemsWidget extends Widget
         return SeasonalItem::current()->count();
     }
 
+    /** @return array<string, mixed> */
     public function getComingSoon(): array
     {
         return SeasonalItem::with('product')

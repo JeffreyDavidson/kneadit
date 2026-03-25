@@ -88,6 +88,7 @@ class DeliveryRoutePlanner extends Page
             });
     }
 
+    /** @return array<string, mixed> */
     private function calculateDistanceTier(string $deliveryAddress): array
     {
         // Simple distance tier calculation without external API

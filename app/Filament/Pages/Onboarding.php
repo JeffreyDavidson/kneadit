@@ -554,6 +554,7 @@ class Onboarding extends Page
         ]);
     }
 
+    /** @return array<string, mixed> */
     protected function buildDayFields(string $day, string $label): array
     {
         return [

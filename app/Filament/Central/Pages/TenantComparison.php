@@ -33,6 +33,7 @@ class TenantComparison extends Page
         }
     }
 
+    /** @return array<string, mixed> */
     public function getAllTenants(): array
     {
         return Tenant::query()->orderBy('store_name')
@@ -41,6 +42,7 @@ class TenantComparison extends Page
             ->toArray();
     }
 
+    /** @return array<string, mixed> */
     public function getComparisonData(): array
     {
         if (empty($this->selectedTenants)) {
@@ -146,6 +148,7 @@ class TenantComparison extends Page
 
     // ── Revenue Leaderboard Methods ──
 
+    /** @return array<string, mixed> */
     public function getLeaderboardData(): array
     {
         $tenants = Tenant::all();

@@ -33,6 +33,7 @@ class ViewTenant extends ViewRecord
         ];
     }
 
+    /** @return array<string, mixed> */
     public function getTenantStats(): array
     {
         try {

@@ -82,6 +82,7 @@ class TaxExport extends Page
         ]);
     }
 
+    /** @return array<string, mixed> */
     protected function getForms(): array
     {
         return [
@@ -94,6 +95,7 @@ class TaxExport extends Page
 
     public ?array $data = [];
 
+    /** @return array<string, mixed> */
     protected function getFormSchema(): array
     {
         $years = $this->getAvailableYears();
@@ -144,6 +146,7 @@ class TaxExport extends Page
         ];
     }
 
+    /** @return array<string, mixed> */
     protected function getAvailableYears(): array
     {
         $years = collect();

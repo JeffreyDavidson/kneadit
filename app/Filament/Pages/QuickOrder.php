@@ -74,6 +74,7 @@ class QuickOrder extends Page
         ]);
     }
 
+    /** @return array<string, mixed> */
     protected function getForms(): array
     {
         return [
@@ -86,6 +87,7 @@ class QuickOrder extends Page
         ];
     }
 
+    /** @return array<string, mixed> */
     protected function getFormSchema(): array
     {
         return [

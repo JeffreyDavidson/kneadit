@@ -71,6 +71,7 @@ class RevenueChartWidget extends ChartWidget
         ];
     }
 
+    /** @return array<string, mixed> */
     private function getDailyRevenue(Carbon $start, Carbon $end): array
     {
         $raw = Order::query()->where('status', '!=', OrderStatus::Cancelled)

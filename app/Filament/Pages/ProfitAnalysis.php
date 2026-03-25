@@ -48,6 +48,7 @@ class ProfitAnalysis extends Page
         // This will trigger a re-render with the new sort order
     }
 
+    /** @return Collection<int, mixed> */
     public function getProductAnalysis(): Collection
     {
         $products = Product::with(['recipes'])
@@ -110,6 +111,7 @@ class ProfitAnalysis extends Page
         }
     }
 
+    /** @return Collection<int, mixed> */
     private function sortProducts(Collection $products): Collection
     {
         switch ($this->sortBy) {
@@ -128,6 +130,7 @@ class ProfitAnalysis extends Page
         }
     }
 
+    /** @return array<string, mixed> */
     public function getOverallStats(): array
     {
         $products = $this->getProductAnalysis();
@@ -152,6 +155,7 @@ class ProfitAnalysis extends Page
         ];
     }
 
+    /** @return Collection<int, mixed> */
     public function getTopProfitableProducts(): Collection
     {
         return $this->getProductAnalysis()
@@ -161,6 +165,7 @@ class ProfitAnalysis extends Page
             ->take(5);
     }
 
+    /** @return Collection<int, mixed> */
     public function getLowestMarginProducts(): Collection
     {
         return $this->getProductAnalysis()
@@ -170,6 +175,7 @@ class ProfitAnalysis extends Page
             ->take(5);
     }
 
+    /** @return Collection<int, mixed> */
     public function getMissingCostProducts(): Collection
     {
         return $this->getProductAnalysis()

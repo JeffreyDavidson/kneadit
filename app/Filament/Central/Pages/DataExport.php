@@ -24,6 +24,7 @@ class DataExport extends Page
 
     public array $counts = [];
 
+    /** @return array<string, mixed> */
     public function getTenants(): array
     {
         return Tenant::query()->orderBy('store_name')

@@ -42,6 +42,7 @@ class HomepageBuilder extends Page
         $this->loadSections();
     }
 
+    /** @return array<string, mixed> */
     protected function getDefaults(): array
     {
         return [
@@ -137,6 +138,7 @@ class HomepageBuilder extends Page
             ->send();
     }
 
+    /** @return array<string, mixed> */
     public function getSortedSections(): array
     {
         return collect($this->sections)

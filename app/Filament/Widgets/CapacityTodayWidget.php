@@ -18,6 +18,7 @@ class CapacityTodayWidget extends Widget
 
     protected string $view = 'filament.widgets.capacity-today-widget';
 
+    /** @return array<string, mixed> */
     public function getCapacityData(Carbon $date): array
     {
         $maxOrders = CapacityLimit::getMaxOrders($date);
@@ -34,11 +35,13 @@ class CapacityTodayWidget extends Widget
         ];
     }
 
+    /** @return array<string, mixed> */
     public function getTodayCapacity(): array
     {
         return $this->getCapacityData(Date::today());
     }
 
+    /** @return array<string, mixed> */
     public function getTomorrowCapacity(): array
     {
         return $this->getCapacityData(Date::tomorrow());
