@@ -48,7 +48,7 @@ class ViewMessage extends ViewRecord
     public function sendReply(): void
     {
         $this->validate([
-            'replyBody' => 'required|string|min:1',
+            'replyBody' => ['required', 'string', 'min:1'],
         ]);
 
         PlatformMessage::query()->create([
