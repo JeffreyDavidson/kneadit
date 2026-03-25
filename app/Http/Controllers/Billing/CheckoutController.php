@@ -6,7 +6,6 @@ use App\Enums\SubscriptionTier;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class CheckoutController extends Controller
 {
@@ -15,9 +14,11 @@ class CheckoutController extends Controller
      */
     public function __invoke(Request $request, string $plan): RedirectResponse
     {
-        $request->validate(['plan' => [Rule::in(SubscriptionTier::cases())]]);
+        $tier = SubscriptionTier::tryFrom($plan);
 
-        $priceId = config("saas.stripe_prices.{$plan}");
+        abort_unless($tier, 404, 'Plan not found.');
+
+        $priceId = config("saas.stripe_prices.{$tier->value}");
 
         abort_unless($priceId, 404, 'Plan not found.');
 

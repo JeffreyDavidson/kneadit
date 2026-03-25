@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ReferralStatus;
+use App\Enums\SubscriptionTier;
 use App\Http\Requests\StoreOnboardingRequest;
 use App\Mail\NewSubscriberNotification;
 use App\Mail\WelcomeBaker;
@@ -38,7 +40,7 @@ class OnboardingController extends Controller
                 'id' => $subdomain,
                 'name' => $request->user()->name,
                 'email' => $request->user()->email,
-                'plan' => 'starter',
+                'plan' => SubscriptionTier::Starter->value,
                 'trial_ends_at' => now()->addDays(config('saas.trial_days', 30)),
                 'store_name' => $validated['store_name'],
                 'storefront_enabled' => $useKneadItStorefront,
@@ -80,7 +82,7 @@ class OnboardingController extends Controller
         $referralCode = $request->session()->get('referral_code') ?? $request->cookie('referral_code');
         if ($referralCode) {
             $referral = Referral::where('referral_code', $referralCode)
-                ->where('status', 'pending')
+                ->where('status', ReferralStatus::Pending)
                 ->whereNull('referred_tenant_id')
                 ->first();
 
@@ -88,7 +90,7 @@ class OnboardingController extends Controller
                 $referral->update([
                     'referred_tenant_id' => $tenant->id,
                     'referred_email' => $request->user()->email,
-                    'status' => 'completed',
+                    'status' => ReferralStatus::Completed,
                 ]);
             }
         }
@@ -103,7 +105,7 @@ class OnboardingController extends Controller
                 bakerName: $request->user()->name,
                 storeName: $validated['store_name'],
                 adminUrl: $adminUrl,
-                plan: 'starter',
+                plan: SubscriptionTier::Starter->value,
                 trialEndsAt: now()->addDays(config('saas.trial_days', 30))->format('F j, Y'),
             ));
 
@@ -113,7 +115,7 @@ class OnboardingController extends Controller
                 bakerEmail: $request->user()->email,
                 storeName: $validated['store_name'],
                 subdomain: $subdomain,
-                plan: 'starter',
+                plan: SubscriptionTier::Starter->value,
             ));
         } catch (\Exception $e) {
             Log::warning('Signup emails failed', ['error' => $e->getMessage()]);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ReferralStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -67,7 +68,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             $referral = Referral::create([
                 'referrer_tenant_id' => $this->id,
                 'referral_code' => $code,
-                'status' => 'pending',
+                'status' => ReferralStatus::Pending,
             ]);
         }
 

@@ -40,8 +40,8 @@ class OrderController extends Controller
 
         $order = $createOrder(
             $validated,
-            $request->input('coupon_id'),
-            $request->input('gift_card_id'),
+            $validated['coupon_id'] ?? null,
+            $validated['gift_card_id'] ?? null,
         );
 
         if (! $order) {

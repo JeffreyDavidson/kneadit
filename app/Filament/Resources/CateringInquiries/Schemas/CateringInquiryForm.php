@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CateringInquiries\Schemas;
 
+use App\Enums\CateringInquiryStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -72,14 +73,8 @@ class CateringInquiryForm
                 ->columns(2)
                 ->schema([
                     Select::make('status')
-                        ->options([
-                            'inquiry' => 'New Inquiry',
-                            'quoted' => 'Quote Sent',
-                            'confirmed' => 'Confirmed',
-                            'completed' => 'Completed',
-                            'cancelled' => 'Cancelled',
-                        ])
-                        ->default('inquiry')
+                        ->options(CateringInquiryStatus::class)
+                        ->default(CateringInquiryStatus::Inquiry)
                         ->required(),
                     TextInput::make('quoted_amount')
                         ->numeric()
