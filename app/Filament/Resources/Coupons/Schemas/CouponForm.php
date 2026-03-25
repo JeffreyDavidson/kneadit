@@ -28,7 +28,8 @@ class CouponForm
                                     ->maxLength(50)
                                     ->unique(ignoreRecord: true)
                                     ->alphaNum()
-                                    ->uppercase(),
+                                    ->formatStateUsing(fn (?string $state): ?string => $state ? strtoupper($state) : $state)
+                                    ->dehydrateStateUsing(fn (?string $state): ?string => $state ? strtoupper($state) : $state),
 
                                 Select::make('type')
                                     ->required()

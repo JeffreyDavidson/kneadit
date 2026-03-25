@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Models\Customer;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 
 class ReorderRemindersWidget extends Widget
 {
@@ -40,12 +41,14 @@ class ReorderRemindersWidget extends Widget
     {
         $thirtyDaysAgo = Date::now()->subDays(30);
 
-        return Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
-            ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-            ->groupBy('customers.id')
-            ->havingRaw('COUNT(orders.id) >= 2')
-            ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
-            ->get()
-            ->count();
+        return (int) DB::table(
+            Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')
+                ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
+                ->groupBy('customers.id')
+                ->havingRaw('COUNT(orders.id) >= 2')
+                ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
+                ->select('customers.id')->toBase(),
+            'lapsed'
+        )->count();
     }
 }

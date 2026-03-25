@@ -17,7 +17,7 @@ class ViewTicket extends ViewRecord
 
     public function addReply(): void
     {
-        $this->validate(['replyBody' => 'required|min:3']);
+        $this->validate(['replyBody' => ['required', 'min:3']]);
 
         $this->record->replies()->create([
             'author_type' => 'admin',

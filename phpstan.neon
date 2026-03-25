@@ -13,10 +13,7 @@ parameters:
         # Trait uses dynamic property_exists check
         - identifier: staticProperty.notFound
           path: app/Traits/HasPlanGating.php
-        # Grouped query requires get()->count()
-        - identifier: larastan.noUnnecessaryCollectionCall
-          path: app/Filament/Widgets/ReorderRemindersWidget.php
-        # Tenant domains relation from vendor trait
+        # Tenant domains relation from vendor trait (HasDomains)
         - identifier: larastan.relationExistence
           path: app/Http/Controllers/DirectoryController.php
         # Filament page properties provided by traits
@@ -41,12 +38,6 @@ parameters:
             message: '#on Illuminate\\Database\\Eloquent\\Model\|int\|string#'
             paths:
                 - app/Filament/
-        # QrCode return type mismatch
-        -
-            message: '#SimpleSoftwareIO\\QrCode#'
-        # Filament TextInput::uppercase() exists at runtime
-        -
-            message: '#Call to an undefined method Filament\\Forms\\Components\\TextInput::uppercase#'
         # HasPlanGating method_exists check — needed for classes without RequiresRole trait
         - identifier: function.alreadyNarrowedType
           path: app/Traits/HasPlanGating.php
@@ -70,10 +61,6 @@ parameters:
             message: '#static method Filament\\Schemas\\Components\\Form::make\(\) expects#'
         # Collection callback unresolvable types (complex closures)
         - identifier: argument.unresolvableType
-        # Filament validate() string rules vs array rules
-        -
-            identifier: argument.type
-            message: '#of method .*::validate\(\) expects array<string, array<mixed>>#'
         # Stripe Checkout session create parameter shape
         -
             identifier: argument.type
