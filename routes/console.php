@@ -21,49 +21,56 @@ Schedule::command('birthday:send-discounts')
     ->dailyAt('09:00')
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();
 
 // Schedule happy birthday emails daily at 8 AM
 Schedule::command('birthday:send-emails')
     ->dailyAt('08:00')
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();
 
 // Schedule repeat order reminders daily at 10 AM
 Schedule::command('orders:send-repeat-reminders')
     ->dailyAt('10:00')
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();
 
 // Weekly digest email every Monday at 8 AM
 Schedule::command('digest:weekly')
     ->weeklyOn(1, '8:00')
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();
 
 // Review request emails every hour
 Schedule::command('reviews:send-requests')
     ->hourly()
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();
 
 // Scheduled check-in emails daily at 9 AM
 Schedule::command('checkins:send')
     ->dailyAt('09:00')
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();
 
 // Churn alert checks daily at 7 AM
 Schedule::command('churn:check')
     ->dailyAt('07:00')
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();
 
 // Database backups twice daily, keep 7 days
 Schedule::command('backup:databases --keep=7')
@@ -85,4 +92,5 @@ Schedule::command('trial:check')
     ->dailyAt('10:00')
     ->withoutOverlapping()
     ->onOneServer()
-    ->environments(['production']);
+    ->environments(['production'])
+    ->runInBackground();

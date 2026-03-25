@@ -79,5 +79,5 @@ test('sends order placed email to customer on creation', function () {
         ],
     );
 
-    Mail::assertSent(OrderPlaced::class);
+    Mail::assertQueued(OrderPlaced::class);
 });

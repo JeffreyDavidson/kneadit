@@ -17,25 +17,17 @@ class MarginAlertWidget extends BaseWidget
 
     public static function canView(): bool
     {
-        return Product::query()->whereHas('recipe')->get()->contains(function (Product $product) {
-            $margin = $product->recipe?->profit_margin;
-
-            return $margin !== null && $margin < 30;
-        });
+        return Product::query()->whereHas('recipe')->exists();
     }
 
     public function table(Table $table): Table
     {
-        $lowMarginIds = Product::with('recipe.inventoryIngredients')
+        $lowMarginIds = once(fn () => Product::with('recipe.inventoryIngredients')
             ->whereHas('recipe')
             ->get()
-            ->filter(function (Product $product) {
-                $margin = $product->recipe?->profit_margin;
-
-                return $margin !== null && $margin < 30;
-            })
+            ->filter(fn (Product $product) => ($product->recipe->profit_margin ?? 100) < 30)
             ->pluck('id')
-            ->toArray();
+            ->all());
 
         return $table
             ->query(
