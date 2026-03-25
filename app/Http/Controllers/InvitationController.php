@@ -43,7 +43,7 @@ class InvitationController extends Controller
         }
 
         // If an authenticated user is accepting, verify their email matches the invitation
-        abort_if(Auth::check() && Auth::user()->email !== $invitation->email, 403, 'This invitation was sent to a different email address.');
+        abort_if(Auth::check() && Auth::user()?->email !== $invitation->email, 403, 'This invitation was sent to a different email address.');
 
         $existingUser = User::query()->where('email', $invitation->email)->first();
 

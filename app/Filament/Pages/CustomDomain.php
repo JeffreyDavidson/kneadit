@@ -73,7 +73,7 @@ class CustomDomain extends Page
             return;
         }
 
-        $domain = trim($this->custom_domain);
+        $domain = trim((string) $this->custom_domain);
 
         if (empty($domain)) {
             $this->removeCustomDomain();
@@ -136,7 +136,7 @@ class CustomDomain extends Page
                 ->send();
 
             // Auto-provision SSL when DNS is verified
-            $this->provisionSsl($this->custom_domain);
+            $this->provisionSsl((string) $this->custom_domain);
         } else {
             Notification::make()
                 ->title('DNS Not Configured')

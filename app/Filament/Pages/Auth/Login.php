@@ -107,7 +107,7 @@ class Login extends BaseLogin
         }
 
         $panel = Filament::getCurrentOrDefaultPanel();
-        $canAccess = $user->canAccessPanel($panel);
+        $canAccess = $panel && $user->canAccessPanel($panel);
 
         Log::info('LOGIN: Panel access check', [
             'panel_id' => $panel?->getId(),
@@ -118,7 +118,7 @@ class Login extends BaseLogin
         $attemptResult = $authGuard->attemptWhen($credentials, function (Authenticatable $attemptUser) use ($panel) {
             $canAccess = true;
             if ($attemptUser instanceof FilamentUser) {
-                $canAccess = $attemptUser->canAccessPanel($panel);
+                $canAccess = $panel ? $attemptUser->canAccessPanel($panel) : true;
             }
             Log::info('LOGIN: attemptWhen callback', [
                 'user_id' => $attemptUser->getAuthIdentifier(),

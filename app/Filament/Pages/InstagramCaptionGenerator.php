@@ -113,10 +113,10 @@ class InstagramCaptionGenerator extends Page
             'data.tone' => ['required', 'in:warm,excited,casual,elegant'],
         ]);
 
-        /** @var Product|null $product */
-        $product = Product::with('category')->find($this->data['product_id']);
-        $style = $this->data['style'];
-        $tone = $this->data['tone'];
+        $formData = $this->data ?? [];
+        $product = Product::with('category')->where('id', $formData['product_id'] ?? null)->first();
+        $style = ($formData['style'] ?? 'playful');
+        $tone = ($formData['tone'] ?? 'warm');
 
         if (! $product) {
             return;

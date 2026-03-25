@@ -108,7 +108,7 @@ class Analytics extends Page
                 ->diffInDays(Date::parse($tenant->trial_ends_at));
         });
 
-        return round($avgDays, 1);
+        return round($avgDays ?? 0, 1);
     }
 
     public function getMostPopularPlan(): string

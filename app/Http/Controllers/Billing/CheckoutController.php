@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Billing;
 
 use App\Enums\SubscriptionTier;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Checkout;
 
@@ -14,6 +15,9 @@ class CheckoutController extends Controller
      */
     public function __invoke(Request $request, string $plan): Checkout
     {
+        /** @var User $user */
+        $user = $request->user();
+
         $tier = SubscriptionTier::tryFrom($plan);
 
         abort_unless((bool) $tier, 404, 'Plan not found.');
@@ -22,7 +26,7 @@ class CheckoutController extends Controller
 
         abort_unless((bool) $priceId, 404, 'Plan not found.');
 
-        return $request->user()
+        return $user
             ->newSubscription('default', $priceId)
             ->trialDays(config('saas.trial_days', 30))
             ->allowPromotionCodes()

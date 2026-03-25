@@ -38,7 +38,7 @@ class PayPalService
         try {
             $response = Http::timeout(10)->connectTimeout(3)->retry(3, 100)
                 ->asForm()
-                ->withBasicAuth($this->clientId, $this->clientSecret)
+                ->withBasicAuth((string) $this->clientId, (string) $this->clientSecret)
                 ->post($this->baseUrl.'/v1/oauth2/token', [
                     'grant_type' => 'client_credentials',
                 ]);
@@ -106,11 +106,11 @@ class PayPalService
                 [
                     'billing_info' => [
                         'name' => [
-                            'given_name' => explode(' ', $order->customer?->name)[0],
-                            'surname' => implode(' ', array_slice(explode(' ', $order->customer?->name), 1)) ?: '',
+                            'given_name' => explode(' ', $order->customer->name ?? '')[0],
+                            'surname' => implode(' ', array_slice(explode(' ', $order->customer->name ?? ''), 1)) ?: '',
                         ],
                         'address' => [
-                            'address_line_1' => $order->delivery_address ?: $order->customer->address,
+                            'address_line_1' => $order->delivery_address ?: $order->customer?->address,
                             'admin_area_2' => $order->customer?->city,
                             'admin_area_1' => $order->customer?->state,
                             'postal_code' => $order->customer?->zip,
@@ -149,7 +149,7 @@ class PayPalService
 
             $invoiceData['items'][] = [
                 'name' => $item->product?->name,
-                'description' => $item->product->description ?: $item->product->name,
+                'description' => $item->product?->description ?: $item->product->name ?? 'Item',
                 'quantity' => (string) $item->quantity,
                 'unit_amount' => [
                     'currency_code' => 'USD',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,12 +16,15 @@ class SwapPlanController extends Controller
      */
     public function __invoke(Request $request, string $plan): RedirectResponse
     {
+        /** @var User $user */
+        $user = $request->user();
+
         $priceId = config("saas.stripe_prices.{$plan}");
 
         abort_unless($priceId, 404, 'Plan not found.');
 
         try {
-            $request->user()->subscription('default')->swap($priceId);
+            $user->subscription('default')?->swap($priceId);
         } catch (Exception $e) {
             Log::error('Plan swap failed', ['error' => $e->getMessage()]);
 

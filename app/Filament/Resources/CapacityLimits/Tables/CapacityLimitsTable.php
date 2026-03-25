@@ -33,7 +33,7 @@ class CapacityLimitsTable
                             return $record->specific_date->format('D, M j, Y');
                         }
 
-                        $day = DayOfWeek::tryFrom($record->day_of_week);
+                        $day = DayOfWeek::tryFrom($record->day_of_week ?? '');
 
                         return $day?->label() ?? '—';
                     }),
