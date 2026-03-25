@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Enums\LoyaltyPointType;
+use App\DataTransferObjects\CustomerMetrics;
+use App\Services\CustomerIntelligence;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 
 class Customer extends Model
 {
@@ -59,20 +59,6 @@ class Customer extends Model
         return $this->hasMany(LoyaltyPoint::class);
     }
 
-    protected function getTotalPointsAttribute(): int
-    {
-        $earned = (int) $this->loyaltyPoints()->earned()->sum('points');
-        $adjusted = (int) $this->loyaltyPoints()->where('type', LoyaltyPointType::Adjusted)->sum('points');
-        $redeemed = (int) $this->loyaltyPoints()->redeemed()->sum('points');
-
-        return $earned + $adjusted - $redeemed;
-    }
-
-    protected function getLifetimePointsEarnedAttribute(): int
-    {
-        return (int) $this->loyaltyPoints()->earned()->sum('points');
-    }
-
     /**
      * @return HasMany<CustomerReminder, $this>
      */
@@ -105,38 +91,49 @@ class Customer extends Model
         return $this->hasOne(CustomerProfile::class);
     }
 
+    private function getMetrics(): CustomerMetrics
+    {
+        return once(fn () => app(CustomerIntelligence::class)->metrics($this));
+    }
+
+    protected function getTotalPointsAttribute(): int
+    {
+        return $this->getMetrics()->totalPoints;
+    }
+
+    protected function getLifetimePointsEarnedAttribute(): int
+    {
+        return $this->getMetrics()->lifetimePointsEarned;
+    }
+
     protected function getLifetimeValueAttribute(): float
     {
-        return $this->orders()->active()->sum('total');
+        return $this->getMetrics()->lifetimeValue;
     }
 
     protected function getOrderCountAttribute(): int
     {
-        return $this->orders()->active()->count();
+        return $this->getMetrics()->orderCount;
     }
 
     protected function getLastOrderDateAttribute(): ?Carbon
     {
-        return $this->orders()->latest()->value('created_at');
+        return $this->getMetrics()->lastOrderDate;
     }
 
     protected function getAverageOrderValueAttribute(): float
     {
-        return $this->order_count > 0 ? $this->lifetime_value / $this->order_count : 0;
+        return $this->getMetrics()->averageOrderValue;
     }
 
     protected function getDaysSinceLastOrderAttribute(): ?int
     {
-        if (! $this->last_order_date) {
-            return null;
-        }
-
-        return (int) Date::parse($this->last_order_date)->diffInDays(now());
+        return $this->getMetrics()->daysSinceLastOrder;
     }
 
     protected function getIsAtRiskAttribute(): bool
     {
-        return $this->order_count > 0 && $this->days_since_last_order !== null && $this->days_since_last_order > 30;
+        return $this->getMetrics()->isAtRisk;
     }
 
     public function hasBirthday(): bool
@@ -169,20 +166,8 @@ class Customer extends Model
 
     protected function getFullAddressAttribute(): string
     {
-        $address = '';
-        if ($this->address) {
-            $address .= $this->address;
-        }
-        if ($this->city) {
-            $address .= ($address ? ', ' : '').$this->city;
-        }
-        if ($this->state) {
-            $address .= ($address ? ', ' : '').$this->state;
-        }
-        if ($this->zip) {
-            $address .= ($address ? ' ' : '').$this->zip;
-        }
-
-        return $address;
+        return collect([$this->address, $this->city, $this->state])
+            ->filter()
+            ->implode(', ').($this->zip ? " {$this->zip}" : '');
     }
 }
