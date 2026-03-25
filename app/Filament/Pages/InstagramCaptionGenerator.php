@@ -90,6 +90,7 @@ class InstagramCaptionGenerator extends Page
             ->statePath('data');
     }
 
+    /** @return array<string, mixed> */
     protected function getFormActions(): array
     {
         return [
@@ -117,6 +118,7 @@ class InstagramCaptionGenerator extends Page
         $this->captions = $this->generateCaptionVariations($product, $style, $tone);
     }
 
+    /** @return array<string, mixed> */
     private function generateCaptionVariations(Product $product, string $style, string $tone): array
     {
         $hooks = $this->getHooksByStyle($style);
@@ -139,6 +141,7 @@ class InstagramCaptionGenerator extends Page
         return $captions;
     }
 
+    /** @return array<string, mixed> */
     private function getHooksByStyle(string $style): array
     {
         $hooks = [
@@ -263,6 +266,7 @@ class InstagramCaptionGenerator extends Page
         ], $template);
     }
 
+    /** @return array<string, mixed> */
     private function getHashtagsByCategory(string $category): array
     {
         $baseHashtags = [

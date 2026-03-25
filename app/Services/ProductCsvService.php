@@ -48,6 +48,7 @@ class ProductCsvService
         return $csv;
     }
 
+    /** @return array<string, mixed> */
     public function parseForPreview(UploadedFile $file): array
     {
         $rows = [];

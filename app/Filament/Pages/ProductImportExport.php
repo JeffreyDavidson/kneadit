@@ -74,6 +74,7 @@ class ProductImportExport extends Page
         ]);
     }
 
+    /** @return array<string, mixed> */
     protected function getForms(): array
     {
         return [

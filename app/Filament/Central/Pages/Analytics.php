@@ -21,6 +21,7 @@ class Analytics extends Page
 
     protected string $view = 'filament.central.pages.analytics';
 
+    /** @return array<string, mixed> */
     public function getSignupsByMonth(): array
     {
         $months = collect();
@@ -37,6 +38,7 @@ class Analytics extends Page
         return $months->toArray();
     }
 
+    /** @return array<string, mixed> */
     public function getPlanDistribution(): array
     {
         return Tenant::query()->select('plan', DB::raw('count(*) as count'))
@@ -45,6 +47,7 @@ class Analytics extends Page
             ->toArray();
     }
 
+    /** @return array<string, mixed> */
     public function getTrialConversion(): array
     {
         $total = Tenant::query()->count();

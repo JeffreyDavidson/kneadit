@@ -49,6 +49,7 @@ class PrintableMenu extends Page
 
     public string $menuLayout = 'elegant';
 
+    /** @return Collection<int, mixed> */
     public function getCategories(): Collection
     {
         return Category::query()->where('is_active', true)

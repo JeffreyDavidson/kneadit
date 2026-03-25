@@ -9,6 +9,7 @@ use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class Messages extends Page
 {
@@ -31,6 +32,7 @@ class Messages extends Page
         return 'Messages';
     }
 
+    /** @return Collection<int, Model> */
     public function getMessages(): Collection
     {
         /** @var Tenant|null $tenant */

@@ -22,6 +22,7 @@ class OnboardingTracker extends Page
 
     protected string $view = 'filament.central.pages.onboarding-tracker';
 
+    /** @return Collection<int, mixed> */
     public function getTenantOnboardingData(): Collection
     {
         $tenants = Tenant::query()->latest()->get();
@@ -48,6 +49,7 @@ class OnboardingTracker extends Page
         return $data->sortBy(fn (array $t) => [$t['completed'], $t['created_at']])->values();
     }
 
+    /** @return array<string, mixed> */
     protected function getOnboardingChecks(Tenant $tenant): array
     {
         $checks = [

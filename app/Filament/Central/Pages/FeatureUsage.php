@@ -54,6 +54,7 @@ class FeatureUsage extends Page
             ->sum('usage_count');
     }
 
+    /** @return Collection<int, mixed> */
     public function getFeatureUsageBars(): Collection
     {
         $data = FeatureUsageLog::query()->select('feature')
@@ -71,6 +72,7 @@ class FeatureUsage extends Page
         ]);
     }
 
+    /** @return array<string, mixed> */
     public function getHeatmapData(): array
     {
         $days = collect();

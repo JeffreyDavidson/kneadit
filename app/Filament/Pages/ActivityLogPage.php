@@ -74,6 +74,7 @@ class ActivityLogPage extends Page
         return $query->paginate($this->perPage, ['*'], 'page', $this->page);
     }
 
+    /** @return array<string, mixed> */
     public function getActionTypesProperty(): array
     {
         return ActivityLog::query()->distinct()->pluck('action')->filter()->sort()->values()->toArray();

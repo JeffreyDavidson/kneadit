@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReportService
 {
+    /** @return array<string, mixed> */
     public function salesReport(string $startDate, string $endDate): array
     {
         $start = Date::parse($startDate)->startOfDay();
@@ -61,6 +62,7 @@ class ReportService
         return compact('totalOrders', 'totalRevenue', 'avgOrderValue', 'ordersByStatus', 'topProducts', 'revenueByDay');
     }
 
+    /** @return array<string, mixed> */
     public function customerReport(string $startDate, string $endDate): array
     {
         $start = Date::parse($startDate)->startOfDay();
@@ -98,6 +100,7 @@ class ReportService
         return compact('newCustomers', 'repeatRate', 'repeatCustomers', 'totalCustomersWithOrders', 'topCustomers', 'acquisitionByMonth');
     }
 
+    /** @return array<string, mixed> */
     public function productPerformanceReport(string $startDate, string $endDate): array
     {
         $start = Date::parse($startDate)->startOfDay();
@@ -125,6 +128,7 @@ class ReportService
         return ['products' => $products];
     }
 
+    /** @return array<string, mixed> */
     public function financialSummary(int $year): array
     {
         $revenue = Order::query()->whereYear('delivery_date', $year)

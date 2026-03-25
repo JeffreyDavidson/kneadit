@@ -33,6 +33,7 @@ class BakeryInsights extends Page
 
     // ── Health Tab Methods ──
 
+    /** @return Collection<int, mixed> */
     public function getTenantHealthData(): Collection
     {
         $tenants = Tenant::all();
@@ -195,6 +196,7 @@ class BakeryInsights extends Page
         return (int) round($completed * $pointsPer);
     }
 
+    /** @return array<string, mixed> */
     public function getHealthSummaryStats(): array
     {
         $data = $this->getTenantHealthData();
@@ -215,6 +217,7 @@ class BakeryInsights extends Page
 
     // ── Churn Alerts Tab Methods ──
 
+    /** @return Collection<int, mixed> */
     public function getAlerts(): Collection
     {
         $tenants = Tenant::all();

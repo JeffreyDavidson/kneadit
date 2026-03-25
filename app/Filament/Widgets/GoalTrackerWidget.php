@@ -45,6 +45,7 @@ class GoalTrackerWidget extends Widget
         $this->showEditModal = false;
     }
 
+    /** @return array<string, mixed> */
     public function getMonthlyDataProperty(): array
     {
         $goal = (float) Setting::get('monthly_revenue_goal', 5000);

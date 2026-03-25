@@ -83,6 +83,7 @@ class CustomerDirectory extends Page
             ->statePath('noteData');
     }
 
+    /** @return array<string, mixed> */
     public function getStats(): array
     {
         $totalCustomers = Customer::query()->count();
@@ -114,6 +115,7 @@ class CustomerDirectory extends Page
         ];
     }
 
+    /** @return Collection<int, mixed> */
     public function getCustomers(): Collection
     {
         $query = Customer::query()

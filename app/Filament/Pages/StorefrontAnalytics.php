@@ -64,6 +64,7 @@ class StorefrontAnalytics extends Page
         };
     }
 
+    /** @return Collection<int, mixed> */
     protected function baseQuery(): Builder
     {
         $query = PageView::query();
@@ -114,6 +115,7 @@ class StorefrontAnalytics extends Page
         return round(($completedOrders / $orderPageViews) * 100, 1);
     }
 
+    /** @return Collection<int, mixed> */
     public function getPageViewsChart(): Collection
     {
         $data = $this->baseQuery()
@@ -126,6 +128,7 @@ class StorefrontAnalytics extends Page
         return $data;
     }
 
+    /** @return Collection<int, mixed> */
     public function getDailyTrend(): Collection
     {
         $start = now()->subDays(30)->startOfDay();
@@ -138,6 +141,7 @@ class StorefrontAnalytics extends Page
             ->get();
     }
 
+    /** @return Collection<int, mixed> */
     public function getTopProducts(): Collection
     {
         $data = $this->baseQuery()
