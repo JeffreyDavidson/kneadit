@@ -25,11 +25,14 @@ class FeatureUsageLog extends Model
         'created_at',
     ];
 
-    protected $casts = [
-        'last_used_at' => 'datetime',
-        'date' => 'date',
-        'created_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'last_used_at' => 'datetime',
+            'date' => 'date',
+            'created_at' => 'datetime',
+        ];
+    }
 
     /**
      * Track a feature usage for a tenant. Upserts for today's date.

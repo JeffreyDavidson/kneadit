@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SocialPosts\Tables;
 
+use App\Enums\SocialPostStatus;
 use App\Models\SocialPost;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -83,13 +84,13 @@ class SocialPostsTable
                     ->modalHeading('Schedule Post')
                     ->modalDescription('Mark this post as scheduled?')
                     ->action(function (SocialPost $record) {
-                        $record->update(['status' => 'scheduled']);
+                        $record->update(['status' => SocialPostStatus::Scheduled]);
                         Notification::make()
                             ->title('Post scheduled')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (SocialPost $record) => $record->status === 'draft'),
+                    ->visible(fn (SocialPost $record) => $record->status === SocialPostStatus::Draft),
 
                 Action::make('mark_posted')
                     ->label('Mark Posted')
@@ -99,13 +100,13 @@ class SocialPostsTable
                     ->modalHeading('Mark as Posted')
                     ->modalDescription('Mark this post as posted?')
                     ->action(function (SocialPost $record) {
-                        $record->update(['status' => 'posted']);
+                        $record->update(['status' => SocialPostStatus::Posted]);
                         Notification::make()
                             ->title('Post marked as posted')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (SocialPost $record) => $record->status === 'scheduled'),
+                    ->visible(fn (SocialPost $record) => $record->status === SocialPostStatus::Scheduled),
 
                 Action::make('revert_to_draft')
                     ->label('Revert to Draft')
@@ -115,13 +116,13 @@ class SocialPostsTable
                     ->modalHeading('Revert to Draft')
                     ->modalDescription('Move this post back to draft status?')
                     ->action(function (SocialPost $record) {
-                        $record->update(['status' => 'draft']);
+                        $record->update(['status' => SocialPostStatus::Draft]);
                         Notification::make()
                             ->title('Post reverted to draft')
                             ->warning()
                             ->send();
                     })
-                    ->visible(fn (SocialPost $record) => $record->status === 'scheduled'),
+                    ->visible(fn (SocialPost $record) => $record->status === SocialPostStatus::Scheduled),
 
                 EditAction::make()
                     ->slideOver()

@@ -25,6 +25,7 @@ class OrdersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['customer', 'user']))
             ->columns([
                 TextColumn::make('order_number')
                     ->sortable()

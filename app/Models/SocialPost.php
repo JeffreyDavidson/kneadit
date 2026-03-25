@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SocialPostStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,20 +21,18 @@ class SocialPost extends Model
         'notes',
     ];
 
-    protected $casts = [
-        'scheduled_for' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => SocialPostStatus::class,
+            'scheduled_for' => 'datetime',
+        ];
+    }
 
     public const PLATFORMS = [
         'instagram' => 'Instagram',
         'facebook' => 'Facebook',
         'tiktok' => 'TikTok',
-    ];
-
-    public const STATUSES = [
-        'draft' => 'Draft',
-        'scheduled' => 'Scheduled',
-        'posted' => 'Posted',
     ];
 
     public const PLATFORM_MAX_CHARS = [

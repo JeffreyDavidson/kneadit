@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\CateringInquiryStatus;
 use App\Models\CateringInquiry;
 use Filament\Widgets\Widget;
 
@@ -20,7 +21,7 @@ class CateringPipelineWidget extends Widget
 
     public function getPendingQuotesCount(): int
     {
-        return CateringInquiry::where('status', 'quoted')->count();
+        return CateringInquiry::where('status', CateringInquiryStatus::Quoted)->count();
     }
 
     public function getTotalPipelineValue(): float

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
 use BackedEnum;
 use Filament\Actions;
@@ -39,7 +40,7 @@ class SupportTicketResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $count = SupportTicket::where('status', 'open')->count();
+        $count = SupportTicket::where('status', SupportTicketStatus::Open)->count();
 
         return $count > 0 ? (string) $count : null;
     }

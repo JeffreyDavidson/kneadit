@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\SupportTicketPriority;
+use App\Enums\SupportTicketStatus;
 use App\Models\SupportReply;
 use App\Models\SupportTicket;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +19,7 @@ test('can create ticket', function () {
 
     $found = SupportTicket::where('subject', 'Help needed')->first();
     expect($found)->not->toBeNull();
-    expect($found->priority)->toBe('high');
+    expect($found->priority)->toBe(SupportTicketPriority::High);
 });
 
 test('status defaults to open', function () {
@@ -27,7 +29,7 @@ test('status defaults to open', function () {
         'tenant_id' => 't1',
     ]);
 
-    expect($ticket->fresh()->status)->toBe('open');
+    expect($ticket->fresh()->status)->toBe(SupportTicketStatus::Open);
 });
 
 test('priority defaults to normal', function () {
@@ -37,7 +39,7 @@ test('priority defaults to normal', function () {
         'tenant_id' => 't1',
     ]);
 
-    expect($ticket->fresh()->priority)->toBe('normal');
+    expect($ticket->fresh()->priority)->toBe(SupportTicketPriority::Normal);
 });
 
 test('replies relationship', function () {

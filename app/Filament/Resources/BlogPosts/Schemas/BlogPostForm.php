@@ -40,6 +40,7 @@ class BlogPostForm
 
             FileUpload::make('featured_image')
                 ->image()
+                ->maxSize(5120)
                 ->directory('blog-images')
                 ->disk('public'),
 

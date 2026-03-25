@@ -19,10 +19,13 @@ class StockAdjustment extends Model
         'notes',
     ];
 
-    protected $casts = [
-        'quantity' => 'decimal:2',
-        'created_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'quantity' => 'decimal:2',
+            'created_at' => 'datetime',
+        ];
+    }
 
     /**
      * @return BelongsTo<Ingredient, $this>

@@ -21,10 +21,13 @@ class Recipe extends Model
         'cost',
     ];
 
-    protected $casts = [
-        'ingredients' => 'json',
-        'cost' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'ingredients' => 'json',
+            'cost' => 'decimal:2',
+        ];
+    }
 
     /**
      * @return BelongsTo<Product, $this>

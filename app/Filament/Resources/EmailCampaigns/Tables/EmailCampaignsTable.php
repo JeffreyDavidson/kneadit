@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EmailCampaigns\Tables;
 
+use App\Enums\EmailCampaignStatus;
 use App\Mail\CustomerBlast;
 use App\Models\Customer;
 use App\Models\EmailCampaign;
@@ -27,9 +28,9 @@ class EmailCampaignsTable
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'gray',
-                        'sending' => 'warning',
-                        'sent' => 'success',
+                        EmailCampaignStatus::Draft->value => 'gray',
+                        EmailCampaignStatus::Sending->value => 'warning',
+                        EmailCampaignStatus::Sent->value => 'success',
                         default => 'gray',
                     }),
 
@@ -57,9 +58,9 @@ class EmailCampaignsTable
                     ->requiresConfirmation()
                     ->modalHeading('Send Campaign')
                     ->modalDescription('This will send this email to all customers. Are you sure?')
-                    ->visible(fn (EmailCampaign $record) => $record->status === 'draft')
+                    ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Draft)
                     ->action(function (EmailCampaign $record) {
-                        $record->update(['status' => 'sending']);
+                        $record->update(['status' => EmailCampaignStatus::Sending]);
 
                         $emails = Customer::whereNotNull('email')
                             ->distinct()
@@ -72,7 +73,7 @@ class EmailCampaignsTable
                         }
 
                         $record->update([
-                            'status' => 'sent',
+                            'status' => EmailCampaignStatus::Sent,
                             'sent_at' => now(),
                             'recipient_count' => $emails->count(),
                         ]);

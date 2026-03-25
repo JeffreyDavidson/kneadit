@@ -20,10 +20,13 @@ class ScheduledCheckin extends Model
         'is_active',
     ];
 
-    protected $casts = [
-        'days_after_signup' => 'integer',
-        'is_active' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'days_after_signup' => 'integer',
+            'is_active' => 'boolean',
+        ];
+    }
 
     /**
      * @return HasMany<CheckinLog, $this>

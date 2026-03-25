@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SocialPostStatus;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\SocialPost;
@@ -49,13 +50,11 @@ test('status defaults to draft', function () {
         'status' => 'draft',
     ]);
 
-    expect($post->status)->toBe('draft');
+    expect($post->status)->toBe(SocialPostStatus::Draft);
 });
 
-test('statuses are defined', function () {
-    expect(SocialPost::STATUSES)->toHaveKey('draft');
-    expect(SocialPost::STATUSES)->toHaveKey('scheduled');
-    expect(SocialPost::STATUSES)->toHaveKey('posted');
+test('status enum has expected cases', function () {
+    expect(SocialPostStatus::cases())->toHaveCount(3);
 });
 
 test('scheduled post has scheduled for date', function () {

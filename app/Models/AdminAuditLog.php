@@ -28,10 +28,13 @@ class AdminAuditLog extends Model
         'created_at',
     ];
 
-    protected $casts = [
-        'metadata' => 'array',
-        'created_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'metadata' => 'array',
+            'created_at' => 'datetime',
+        ];
+    }
 
     /**
      * Log an admin action.

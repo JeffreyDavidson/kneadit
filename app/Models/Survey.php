@@ -18,11 +18,14 @@ class Survey extends Model
         'responses_count',
     ];
 
-    protected $casts = [
-        'questions' => 'array',
-        'is_active' => 'boolean',
-        'responses_count' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'questions' => 'array',
+            'is_active' => 'boolean',
+            'responses_count' => 'integer',
+        ];
+    }
 
     /**
      * @return HasMany<SurveyResponse, $this>

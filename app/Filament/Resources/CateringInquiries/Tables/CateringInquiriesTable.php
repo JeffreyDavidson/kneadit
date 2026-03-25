@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CateringInquiries\Tables;
 
+use App\Enums\CateringInquiryStatus;
 use App\Mail\CateringQuote;
 use App\Models\CateringInquiry;
 use Filament\Actions\Action;
@@ -106,7 +107,7 @@ class CateringInquiriesTable
                     ->visible(fn (CateringInquiry $record) => $record->quoted_amount && in_array($record->status, ['inquiry', 'quoted']))
                     ->action(function (CateringInquiry $record) {
                         Mail::to($record->customer_email)->send(new CateringQuote($record));
-                        $record->update(['status' => 'quoted']);
+                        $record->update(['status' => CateringInquiryStatus::Quoted]);
                     }),
                 Action::make('confirm')
                     ->label('Confirm')
@@ -114,7 +115,7 @@ class CateringInquiriesTable
                     ->color('success')
                     ->requiresConfirmation()
                     ->visible(fn (CateringInquiry $record) => $record->status === 'quoted')
-                    ->action(fn (CateringInquiry $record) => $record->update(['status' => 'confirmed'])),
+                    ->action(fn (CateringInquiry $record) => $record->update(['status' => CateringInquiryStatus::Confirmed])),
                 EditAction::make()
                     ->slideOver()
                     ->modalWidth('md'),

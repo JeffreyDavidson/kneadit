@@ -19,10 +19,13 @@ class GalleryPhoto extends Model
         'is_visible',
     ];
 
-    protected $casts = [
-        'is_visible' => 'boolean',
-        'sort_order' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_visible' => 'boolean',
+            'sort_order' => 'integer',
+        ];
+    }
 
     #[Scope]
     protected function visible(Builder $query): void

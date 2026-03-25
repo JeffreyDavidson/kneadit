@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\SupportTicketPriority;
+use App\Enums\SupportTicketStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,9 +25,14 @@ class SupportTicket extends Model
         'resolved_at',
     ];
 
-    protected $casts = [
-        'resolved_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => SupportTicketStatus::class,
+            'priority' => SupportTicketPriority::class,
+            'resolved_at' => 'datetime',
+        ];
+    }
 
     /**
      * @return HasMany<SupportReply, $this>

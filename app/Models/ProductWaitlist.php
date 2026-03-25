@@ -20,10 +20,13 @@ class ProductWaitlist extends Model
         'created_at',
     ];
 
-    protected $casts = [
-        'notified_at' => 'datetime',
-        'created_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'notified_at' => 'datetime',
+            'created_at' => 'datetime',
+        ];
+    }
 
     protected $table = 'product_waitlists';
 

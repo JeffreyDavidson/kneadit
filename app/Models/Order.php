@@ -47,19 +47,22 @@ class Order extends Model
         'stripe_payment_intent_id',
     ];
 
-    protected $casts = [
-        'subtotal' => 'decimal:2',
-        'delivery_fee' => 'decimal:2',
-        'discount_amount' => 'decimal:2',
-        'total' => 'decimal:2',
-        'delivery_date' => 'date',
-        'delivery_time' => 'datetime:H:i',
-        'review_request_sent_at' => 'datetime',
-        'status' => OrderStatus::class,
-        'payment_status' => PaymentStatus::class,
-        'payment_method' => PaymentMethod::class,
-        'delivery_type' => DeliveryType::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'subtotal' => 'decimal:2',
+            'delivery_fee' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
+            'total' => 'decimal:2',
+            'delivery_date' => 'date',
+            'delivery_time' => 'datetime:H:i',
+            'review_request_sent_at' => 'datetime',
+            'status' => OrderStatus::class,
+            'payment_status' => PaymentStatus::class,
+            'payment_method' => PaymentMethod::class,
+            'delivery_type' => DeliveryType::class,
+        ];
+    }
 
     protected static function boot(): void
     {

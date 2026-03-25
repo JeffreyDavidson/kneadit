@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Widgets;
 
+use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
 use App\Models\Tenant;
 use Filament\Widgets\StatsOverviewWidget;
@@ -22,7 +23,7 @@ class PlatformStats extends StatsOverviewWidget
             ->where('trial_ends_at', '>', now())
             ->count();
 
-        $openTickets = SupportTicket::where('status', 'open')->count();
+        $openTickets = SupportTicket::where('status', SupportTicketStatus::Open)->count();
 
         // Sparkline data: last 6 months
         $mrrChart = [];

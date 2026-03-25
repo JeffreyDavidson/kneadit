@@ -22,10 +22,13 @@ class LoyaltyReward extends Model
         'is_active',
     ];
 
-    protected $casts = [
-        'reward_value' => 'decimal:2',
-        'is_active' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'reward_value' => 'decimal:2',
+            'is_active' => 'boolean',
+        ];
+    }
 
     /**
      * @return BelongsTo<Product, $this>
