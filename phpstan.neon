@@ -4,7 +4,7 @@ includes:
 parameters:
     paths:
         - app/
-    level: 0
+    level: 1
     scanDirectories:
         - vendor/filament
     ignoreErrors:
@@ -12,3 +12,21 @@ parameters:
           path: app/Traits/HasPlanGating.php
         - identifier: larastan.noUnnecessaryCollectionCall
           path: app/Filament/Widgets/ReorderRemindersWidget.php
+        - identifier: larastan.relationExistence
+          path: app/Http/Controllers/DirectoryController.php
+        -
+            message: '#Access to an undefined property .+::\$form#'
+            paths:
+                - app/Filament/Pages/
+        -
+            message: '#Access to an undefined property .+::\$(noteForm|survey)#'
+            paths:
+                - app/Filament/Pages/
+        -
+            message: '#Static method Filament\\Schemas\\Components\\Form::make\(\) invoked with 2 parameters#'
+            paths:
+                - app/Filament/Pages/
+        -
+            message: '#Call to an undefined method .+::(notify|sendSuccessNotification)\(\)#'
+            paths:
+                - app/Filament/
