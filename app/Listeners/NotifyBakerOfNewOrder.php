@@ -5,10 +5,11 @@ namespace App\Listeners;
 use App\Events\OrderCreated;
 use App\Mail\NewOrderNotification;
 use App\Models\Setting;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class NotifyBakerOfNewOrder
+class NotifyBakerOfNewOrder implements ShouldQueue
 {
     public function handle(OrderCreated $event): void
     {
@@ -18,13 +19,14 @@ class NotifyBakerOfNewOrder
             return;
         }
 
-        try {
-            Mail::to($bakerEmail)->send(new NewOrderNotification($event->order));
-        } catch (\Exception $e) {
-            Log::warning('Baker notification email failed', [
-                'order' => $event->order->order_number,
-                'error' => $e->getMessage(),
-            ]);
-        }
+        Mail::to($bakerEmail)->send(new NewOrderNotification($event->order));
+    }
+
+    public function failed(OrderCreated $event, \Throwable $exception): void
+    {
+        Log::warning('Baker notification email failed', [
+            'order' => $event->order->order_number,
+            'error' => $exception->getMessage(),
+        ]);
     }
 }

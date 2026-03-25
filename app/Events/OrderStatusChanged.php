@@ -4,9 +4,10 @@ namespace App\Events;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class OrderStatusChanged
+class OrderStatusChanged implements ShouldDispatchAfterCommit
 {
     use Dispatchable;
 
