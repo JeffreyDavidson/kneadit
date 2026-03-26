@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\HealthAlertMail;
+use App\Mail\PaymentFailedMail;
 use App\Models\Tenant;
 use App\Models\User;
-use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -112,32 +113,17 @@ class StripeWebhookController extends WebhookController
 
         // Notify the baker
         try {
-            Mail::raw(
-                "Hi {$user->name},\n\nWe couldn't process your KneadIt subscription payment. ".
-                "Please update your payment method to keep your bakery running.\n\n".
-                "Update payment: https://getkneadit.app/billing/portal\n\n— KneadIt",
-                function (Message $m) use ($user) {
-                    $m->to($user->email)
-                        ->subject('⚠️ Payment failed — action needed')
-                        ->from(config('mail.from.address'), 'KneadIt');
-                }
-            );
+            Mail::to($user->email)->queue(new PaymentFailedMail($user));
         } catch (\Exception $e) {
             Log::error('Failed to send payment failure email', ['error' => $e->getMessage()]);
         }
 
         // Notify platform
         try {
-            Mail::raw(
-                "Payment failed for {$user->name} ({$user->email})".
-                ($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '').
-                "\nAmount: $".number_format(($invoice['amount_due'] ?? 0) / 100, 2),
-                function (Message $m) {
-                    $m->to(config('mail.platform_notify'))
-                        ->subject('Payment Failed — '.now()->format('M j'))
-                        ->from(config('mail.from.address'), 'KneadIt Platform');
-                }
-            );
+            $alertMsg = "Payment failed for {$user->name} ({$user->email})"
+                .($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '')
+                ."\nAmount: $".number_format(($invoice['amount_due'] ?? 0) / 100, 2);
+            Mail::to(config('mail.platform_notify'))->queue(new HealthAlertMail($alertMsg));
         } catch (\Exception $e) {
             Log::error('Failed to send platform payment alert', ['error' => $e->getMessage()]);
         }

@@ -2,6 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Actions\ChangeStaffRole;
+use App\Actions\RemoveStaffMember;
+use App\Actions\RevokeStaffInvitation;
 use App\Actions\SendStaffInvitation;
 use App\Enums\UserRole;
 use App\Exceptions\StaffInvitationException;
@@ -96,7 +99,7 @@ class StaffManagement extends Page
 
     public function revokeInvitation(int $id): void
     {
-        StaffInvitation::query()->where('id', $id)->whereNull('accepted_at')->delete();
+        resolve(RevokeStaffInvitation::class)($id);
 
         Notification::make()
             ->title('Invitation revoked')
@@ -106,58 +109,40 @@ class StaffManagement extends Page
 
     public function changeRole(int $userId, string $newRole): void
     {
-        if (! UserRole::tryFrom($newRole)) {
+        $role = UserRole::tryFrom($newRole);
+        if (! $role) {
             return;
         }
 
-        $user = User::query()->findOrFail($userId);
+        try {
+            resolve(ChangeStaffRole::class)($userId, $role, (int) Auth::id());
 
-        // Can't change own role
-        if ($user->id === Auth::id()) {
             Notification::make()
-                ->title("You can't change your own role")
+                ->title("Role updated to {$newRole}")
+                ->success()
+                ->send();
+        } catch (\RuntimeException $e) {
+            Notification::make()
+                ->title($e->getMessage())
                 ->warning()
                 ->send();
-
-            return;
         }
-
-        $user->update(['role' => $newRole]);
-
-        Notification::make()
-            ->title("Role updated to {$newRole}")
-            ->success()
-            ->send();
     }
 
     public function removeMember(int $userId): void
     {
-        $user = User::query()->findOrFail($userId);
+        try {
+            resolve(RemoveStaffMember::class)($userId, (int) Auth::id());
 
-        if ($user->id === Auth::id()) {
             Notification::make()
-                ->title("You can't remove yourself")
-                ->warning()
+                ->title('Team member removed')
+                ->success()
                 ->send();
-
-            return;
-        }
-
-        // Don't remove the last owner
-        if ($user->isOwner() && User::query()->where('role', UserRole::Owner)->count() <= 1) {
+        } catch (\RuntimeException $e) {
             Notification::make()
-                ->title("Can't remove the last owner")
+                ->title($e->getMessage())
                 ->danger()
                 ->send();
-
-            return;
         }
-
-        $user->delete();
-
-        Notification::make()
-            ->title('Team member removed')
-            ->success()
-            ->send();
     }
 }
