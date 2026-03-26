@@ -7,6 +7,7 @@ use App\Mail\WeeklyDigest;
 use App\Models\Setting;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Services\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
@@ -16,36 +17,34 @@ class SendWeeklyDigest extends Command
 
     protected $description = 'Send weekly digest email to bakery owners';
 
-    public function handle(): int
+    public function handle(TenancyManager $tenancyManager): int
     {
         $tenants = Tenant::cursor();
 
         foreach ($tenants as $tenant) {
-            tenancy()->initialize($tenant);
-
             try {
-                if (Setting::get('weekly_digest_enabled', '1') !== '1') {
-                    $this->info("Skipping {$tenant->id} — digest disabled");
+                $tenancyManager->withinTenant($tenant, function () use ($tenant) {
+                    if (Setting::get('weekly_digest_enabled', '1') !== '1') {
+                        $this->info("Skipping {$tenant->id} — digest disabled");
 
-                    continue;
-                }
+                        return;
+                    }
 
-                $users = User::query()->where('role', UserRole::Owner)->get();
+                    $users = User::query()->where('role', UserRole::Owner)->get();
 
-                if ($users->isEmpty()) {
-                    $users = User::query()->limit(1)->get();
-                }
+                    if ($users->isEmpty()) {
+                        $users = User::query()->limit(1)->get();
+                    }
 
-                foreach ($users as $user) {
-                    Mail::to($user->email)->queue(new WeeklyDigest);
-                }
+                    foreach ($users as $user) {
+                        Mail::to($user->email)->queue(new WeeklyDigest);
+                    }
 
-                $this->info("Sent digest for {$tenant->id} to {$users->count()} user(s)");
+                    $this->info("Sent digest for {$tenant->id} to {$users->count()} user(s)");
+                });
             } catch (\Throwable $e) {
                 $this->error("Failed for {$tenant->id}: {$e->getMessage()}");
             }
-
-            tenancy()->end();
         }
 
         return self::SUCCESS;

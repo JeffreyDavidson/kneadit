@@ -5,8 +5,8 @@ namespace App\Filament\Widgets;
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Setting;
+use App\ValueObjects\DateRange;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Date;
 
 class GoalTrackerWidget extends Widget
 {
@@ -49,10 +49,9 @@ class GoalTrackerWidget extends Widget
     public function getMonthlyDataProperty(): array
     {
         $goal = (float) Setting::get('monthly_revenue_goal', 5000);
-        $start = Date::now()->startOfMonth();
-        $end = Date::now()->endOfMonth();
+        $range = DateRange::thisMonth();
 
-        $revenue = (float) Order::query()->whereBetween('created_at', [$start, $end])
+        $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
             ->whereNotIn('status', [OrderStatus::Cancelled])
             ->sum('total');
 
@@ -70,10 +69,9 @@ class GoalTrackerWidget extends Widget
     public function getYearlyDataProperty(): array
     {
         $goal = (float) Setting::get('yearly_revenue_goal', 50000);
-        $start = Date::now()->startOfYear();
-        $end = Date::now()->endOfYear();
+        $range = DateRange::thisYear();
 
-        $revenue = (float) Order::query()->whereBetween('created_at', [$start, $end])
+        $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
             ->whereNotIn('status', [OrderStatus::Cancelled])
             ->sum('total');
 

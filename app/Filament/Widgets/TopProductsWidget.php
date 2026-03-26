@@ -4,8 +4,8 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\OrderItem;
+use App\ValueObjects\DateRange;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class TopProductsWidget extends ChartWidget
@@ -25,11 +25,13 @@ class TopProductsWidget extends ChartWidget
 
     protected function getData(): array
     {
+        $range = DateRange::thisMonth();
+
         $products = OrderItem::query()
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->join('products', 'products.id', '=', 'order_items.product_id')
             ->where('orders.status', '!=', OrderStatus::Cancelled)
-            ->whereBetween('orders.delivery_date', [Date::now()->startOfMonth(), Date::now()->endOfMonth()])
+            ->whereBetween('orders.delivery_date', $range->toArray())
             ->select(
                 'products.name',
                 DB::raw('SUM(order_items.quantity * order_items.unit_price) as revenue')

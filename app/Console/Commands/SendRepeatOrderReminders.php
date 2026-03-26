@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\CustomerReminder;
 use App\Models\Setting;
 use App\Models\Tenant;
+use App\Services\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -22,20 +23,19 @@ class SendRepeatOrderReminders extends Command
 
     protected $description = 'Send repeat order reminders to customers across all tenants';
 
-    public function handle(): int
+    public function handle(TenancyManager $tenancyManager): int
     {
         $tenants = Tenant::cursor();
 
         foreach ($tenants as $tenant) {
-            tenancy()->initialize($tenant);
-            Setting::flushCache();
-
             try {
-                if (Setting::get('repeat_reminders_enabled', true) != true) {
-                    continue;
-                }
+                $tenancyManager->withinTenant($tenant, function () use ($tenant) {
+                    if (Setting::get('repeat_reminders_enabled', true) != true) {
+                        return;
+                    }
 
-                $this->processTenant($tenant);
+                    $this->processTenant($tenant);
+                });
             } catch (\Exception $e) {
                 $this->error("Error processing {$tenant->id}: {$e->getMessage()}");
             }

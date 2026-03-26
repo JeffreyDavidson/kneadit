@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\CouponType;
 use App\Mail\BirthdayDiscount;
-use App\Models\Coupon;
 use App\Models\CustomerProfile;
 use App\Models\Setting;
 use App\Models\Tenant;
+use App\Services\BirthdayService;
+use App\Services\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
@@ -18,20 +18,19 @@ class SendBirthdayDiscounts extends Command
 
     protected $description = 'Send birthday discount coupons to customers with birthdays today across all tenants';
 
-    public function handle(): int
+    public function handle(TenancyManager $tenancyManager, BirthdayService $birthdayService): int
     {
         $tenants = Tenant::cursor();
 
         foreach ($tenants as $tenant) {
-            tenancy()->initialize($tenant);
-            Setting::flushCache();
-
             try {
-                if (Setting::get('birthday_program_enabled', '1') !== '1') {
-                    continue;
-                }
+                $tenancyManager->withinTenant($tenant, function () use ($tenant, $birthdayService) {
+                    if (Setting::get('birthday_program_enabled', '1') !== '1') {
+                        return;
+                    }
 
-                $this->processTenant($tenant);
+                    $this->processTenant($tenant, $birthdayService);
+                });
             } catch (\Exception $e) {
                 $this->error("Error processing {$tenant->id}: {$e->getMessage()}");
             }
@@ -40,7 +39,7 @@ class SendBirthdayDiscounts extends Command
         return Command::SUCCESS;
     }
 
-    protected function processTenant(Tenant $tenant): void
+    protected function processTenant(Tenant $tenant, BirthdayService $birthdayService): void
     {
         $today = Date::today();
         $discountPercent = (int) Setting::get('birthday_discount_percent', 15);
@@ -64,22 +63,10 @@ class SendBirthdayDiscounts extends Command
             }
 
             try {
-                $couponCode = 'BDAY-'.$customer->id.'-'.$today->year;
-
-                if (Coupon::query()->where('code', $couponCode)->exists()) {
+                $coupon = $birthdayService->findOrCreateBirthdayCoupon($customer, $discountPercent);
+                if (! $coupon) {
                     continue;
                 }
-
-                $coupon = Coupon::query()->create([
-                    'code' => $couponCode,
-                    'type' => CouponType::Percentage,
-                    'value' => $discountPercent,
-                    'max_uses' => 1,
-                    'used_count' => 0,
-                    'starts_at' => $today,
-                    'expires_at' => $today->copy()->addDays(7),
-                    'is_active' => true,
-                ]);
 
                 Mail::to($customer->email)->send(new BirthdayDiscount($customer, $coupon));
                 $this->info("  ✓ {$customer->name}");

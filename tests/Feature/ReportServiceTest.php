@@ -15,7 +15,7 @@ beforeEach(function () {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
     $this->user = User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
-    $this->service = new ReportService;
+    $this->service = resolve(ReportService::class);
     $this->customer = Customer::query()->create(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
     $this->category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
 });
