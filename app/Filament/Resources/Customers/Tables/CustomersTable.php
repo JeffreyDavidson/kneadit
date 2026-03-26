@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Customers\Tables;
 
 use App\Models\Customer;
+use App\Services\BirthdayCalculator;
 use App\Services\CustomerIntelligence;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -54,8 +55,8 @@ class CustomersTable
                     ->label('Birthday')
                     ->date('M j')
                     ->badge()
-                    ->color(fn (Customer $record) => $record->isBirthdayToday() ? 'success' : 'gray')
-                    ->formatStateUsing(fn (mixed $state, Customer $record) => $record->isBirthdayToday()
+                    ->color(fn (Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? 'success' : 'gray')
+                    ->formatStateUsing(fn (mixed $state, Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday)
                         ? '🎂 Today!'
                         : ($state ? Date::parse($state)->format('M j') : '—'))
                     ->sortable()
