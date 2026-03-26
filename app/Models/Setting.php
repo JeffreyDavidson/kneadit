@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\SettingsManager;
 use App\Traits\LogsActivity;
 use Database\Factories\SettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,81 +28,45 @@ class Setting extends Model
         'value',
     ];
 
-    /** @var array<string, mixed> */
-    protected static array $cache = [];
-
     /**
-     * Get the cache key for the current tenant context.
+     * @deprecated Use SettingsManager service via DI instead.
      */
-    protected static function tenantCacheKey(): string
-    {
-        return tenant() ? tenant()->getTenantKey() : 'central';
-    }
-
     public static function get(string $key, mixed $default = null): mixed
     {
-        static::loadAll();
-
-        $tenantKey = static::tenantCacheKey();
-
-        return static::$cache[$tenantKey][$key] ?? $default;
+        return resolve(SettingsManager::class)->get($key, $default);
     }
 
+    /**
+     * @deprecated Use SettingsManager service via DI instead.
+     */
     public static function set(string $key, mixed $value): void
     {
-        static::query()->updateOrCreate(['key' => $key], ['value' => $value]);
-
-        // Update in-memory cache
-        $tenantKey = static::tenantCacheKey();
-
-        if (isset(static::$cache[$tenantKey])) {
-            static::$cache[$tenantKey][$key] = $value;
-        }
+        resolve(SettingsManager::class)->set($key, $value);
     }
 
     /**
-     * Load all settings into memory with a single query.
-     * Called once per tenant per request, then serves from memory.
-     */
-    public static function loadAll(): void
-    {
-        $tenantKey = static::tenantCacheKey();
-
-        if (isset(static::$cache[$tenantKey])) {
-            return;
-        }
-
-        static::$cache[$tenantKey] = static::query()->pluck('value', 'key')->all();
-    }
-
-    /**
-     * Get page content for a specific page and key.
-     * Usage: Setting::pageContent('menu', 'hero_title', 'Our Menu')
-     */
-    public static function pageContent(string $page, string $key, mixed $default = ''): mixed
-    {
-        $content = json_decode(static::get('page_content', '{}'), true);
-
-        return $content[$page][$key] ?? $default;
-    }
-
-    /**
-     * Get all page content for a specific page.
-     * Usage: Setting::pageContentAll('menu')
-     */
-    /** @return array<string, mixed> */
-    public static function pageContentAll(string $page): array
-    {
-        $content = json_decode(static::get('page_content', '{}'), true);
-
-        return $content[$page] ?? [];
-    }
-
-    /**
-     * Clear the in-memory cache for all tenants (useful for testing or after bulk updates).
+     * @deprecated Use SettingsManager service via DI instead.
      */
     public static function flushCache(): void
     {
-        static::$cache = [];
+        resolve(SettingsManager::class)->flushCache();
+    }
+
+    /**
+     * @deprecated Use SettingsManager service via DI instead.
+     */
+    public static function pageContent(string $page, string $key, mixed $default = ''): mixed
+    {
+        return resolve(SettingsManager::class)->pageContent($page, $key, $default);
+    }
+
+    /**
+     * @deprecated Use SettingsManager service via DI instead.
+     *
+     * @return array<string, mixed>
+     */
+    public static function pageContentAll(string $page): array
+    {
+        return resolve(SettingsManager::class)->pageContentAll($page);
     }
 }
