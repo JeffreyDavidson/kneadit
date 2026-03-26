@@ -93,7 +93,7 @@ class Activity extends Page
         }
 
         if ($this->filterSearch) {
-            $query->whereLike('description', '%'.$this->filterSearch.'%');
+            $query->whereLike('description', '%' . $this->filterSearch . '%');
         }
 
         if ($this->filterDateFrom) {

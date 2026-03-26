@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         );
 
         // Seed all tenant tables in dependency order

@@ -8,13 +8,13 @@ use App\Models\SurveyResponse;
 class SubmitSurveyResponse
 {
     /**
-     * @param  array<int, mixed>  $answers
+     * @param array<int, mixed> $answers
      */
     public function __invoke(Survey $survey, array $answers, ?string $customerName = null, ?string $customerEmail = null): SurveyResponse
     {
         $sanitizedAnswers = array_map(
             fn (mixed $answer) => is_string($answer) ? strip_tags($answer) : $answer,
-            array_values($answers)
+            array_values($answers),
         );
 
         $response = SurveyResponse::query()->create([

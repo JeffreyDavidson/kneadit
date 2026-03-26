@@ -1,0 +1,68 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "array_syntax": {
+            "syntax": "short"
+        },
+        "binary_operator_spaces": {
+            "default": "single_space"
+        },
+        "blank_line_before_statement": {
+            "statements": ["return"]
+        },
+        "braces_position": {
+            "control_structures_opening_brace": "same_line",
+            "functions_opening_brace": "next_line_unless_newline_at_signature_end",
+            "anonymous_functions_opening_brace": "same_line",
+            "anonymous_classes_opening_brace": "same_line",
+            "classes_opening_brace": "next_line_unless_newline_at_signature_end"
+        },
+        "cast_spaces": {
+            "space": "single"
+        },
+        "class_attributes_separation": {
+            "elements": {
+                "const": "one",
+                "method": "one",
+                "property": "one",
+                "trait_import": "none"
+            }
+        },
+        "concat_space": {
+            "spacing": "one"
+        },
+        "fully_qualified_strict_types": true,
+        "no_unused_imports": true,
+        "not_operator_with_successor_space": true,
+        "nullable_type_declaration_for_default_null_value": {
+            "use_nullable_type_declaration": true
+        },
+        "ordered_imports": {
+            "sort_algorithm": "alpha",
+            "imports_order": ["const", "class", "function"]
+        },
+        "phpdoc_align": {
+            "align": "left"
+        },
+        "phpdoc_separation": {
+            "groups": [
+                ["deprecated", "link", "see", "since"],
+                ["author", "copyright", "license"],
+                ["category", "package", "subpackage"],
+                ["property", "property-read", "property-write"],
+                ["param", "return", "throws"]
+            ]
+        },
+        "phpdoc_trim": true,
+        "return_type_declaration": {
+            "space_before": "none"
+        },
+        "single_line_empty_body": true,
+        "single_quote": true,
+        "trailing_comma_in_multiline": {
+            "elements": ["arguments", "arrays", "match", "parameters"]
+        },
+        "unary_operator_spaces": true,
+        "yoda_style": false
+    }
+}

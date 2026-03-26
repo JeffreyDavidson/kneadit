@@ -87,8 +87,8 @@ class LoyaltyDashboard extends Page
         return Customer::query()->select('customers.*')
             ->join('loyalty_points', 'customers.id', '=', 'loyalty_points.customer_id')
             ->groupBy('customers.id')
-            ->selectRaw("SUM(CASE WHEN loyalty_points.type = '".LoyaltyPointType::Earned->value."' THEN loyalty_points.points ELSE 0 END) - SUM(CASE WHEN loyalty_points.type = '".LoyaltyPointType::Redeemed->value."' THEN loyalty_points.points ELSE 0 END) as balance")
-            ->selectRaw("SUM(CASE WHEN loyalty_points.type = '".LoyaltyPointType::Earned->value."' THEN loyalty_points.points ELSE 0 END) as total_earned")
+            ->selectRaw("SUM(CASE WHEN loyalty_points.type = '" . LoyaltyPointType::Earned->value . "' THEN loyalty_points.points ELSE 0 END) - SUM(CASE WHEN loyalty_points.type = '" . LoyaltyPointType::Redeemed->value . "' THEN loyalty_points.points ELSE 0 END) as balance")
+            ->selectRaw("SUM(CASE WHEN loyalty_points.type = '" . LoyaltyPointType::Earned->value . "' THEN loyalty_points.points ELSE 0 END) as total_earned")
             ->orderByDesc('balance')
             ->limit(10)
             ->get();

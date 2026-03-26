@@ -140,7 +140,7 @@ class InstagramCaptionGenerator extends Page
             $selectedHashtags = $this->selectRandomHashtags($hashtags, rand(8, 15));
 
             $captions[] = [
-                'text' => $hook."\n\n".$body."\n\n".implode(' ', $selectedHashtags),
+                'text' => $hook . "\n\n" . $body . "\n\n" . implode(' ', $selectedHashtags),
                 'variation' => $i + 1,
             ];
         }

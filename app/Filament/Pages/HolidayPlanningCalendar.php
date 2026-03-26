@@ -92,13 +92,13 @@ class HolidayPlanningCalendar extends Page
         $daysAway = $holiday->days_away;
 
         if ($daysAway < 0) {
-            return 'Passed '.abs($daysAway).' days ago';
+            return 'Passed ' . abs($daysAway) . ' days ago';
         } elseif ($daysAway === 0) {
             return 'Today!';
         } elseif ($daysAway === 1) {
             return 'Tomorrow';
         } else {
-            return $daysAway.' days away';
+            return $daysAway . ' days away';
         }
     }
 

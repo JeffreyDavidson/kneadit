@@ -62,7 +62,7 @@ class DeliveryRouteService
     /**
      * Calculate route statistics from loaded orders.
      *
-     * @param  Collection<int, mixed>  $deliveryOrders
+     * @param Collection<int, mixed> $deliveryOrders
      * @return array<string, mixed>
      */
     public function getRouteStats(Collection $deliveryOrders): array

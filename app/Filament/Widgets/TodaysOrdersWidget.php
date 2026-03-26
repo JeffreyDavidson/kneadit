@@ -23,7 +23,7 @@ class TodaysOrdersWidget extends BaseWidget
             ->query(
                 Order::query()
                     ->whereDate('delivery_date', Date::today())
-                    ->orderBy('delivery_time')
+                    ->orderBy('delivery_time'),
             )
             ->columns([
                 TextColumn::make('order_number')

@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     config(['database.connections.central' => config('database.connections.sqlite')]);
     DB::connection('central')->setPdo(
-        DB::connection('sqlite')->getPdo()
+        DB::connection('sqlite')->getPdo(),
     );
     $tenantMigrationPath = database_path('migrations/tenant');
     if (is_dir($tenantMigrationPath)) {

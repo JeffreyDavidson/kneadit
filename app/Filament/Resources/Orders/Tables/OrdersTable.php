@@ -200,7 +200,7 @@ class OrdersTable
                     })
                     ->visible(fn (Order $record) => $record->payment_status === PaymentStatus::Unpaid &&
                         ! $record->paypal_invoice_id &&
-                        in_array($record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready])
+                        in_array($record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready]),
                     ),
 
                 EditAction::make()

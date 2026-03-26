@@ -24,7 +24,7 @@ class CreateOrder
     ) {}
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     public function __invoke(array $data, ?int $couponId = null, ?int $giftCardId = null): ?Order
     {
@@ -105,7 +105,7 @@ class CreateOrder
     }
 
     /**
-     * @param  array<int, array{product_id: int, quantity: int}>  $items
+     * @param array<int, array{product_id: int, quantity: int}> $items
      * @return array{items: array<int, mixed>, subtotal: float, delivery_fee: float, total: float}
      */
     private function calculateOrder(array $items, string $deliveryType, ?string $deliveryTier = null): array
@@ -155,7 +155,7 @@ class CreateOrder
     private function generateOrderNumber(): string
     {
         do {
-            $number = 'KN'.date('ymd').strtoupper(Str::random(4));
+            $number = 'KN' . date('ymd') . strtoupper(Str::random(4));
         } while (Order::query()->where('order_number', $number)->exists());
 
         return $number;

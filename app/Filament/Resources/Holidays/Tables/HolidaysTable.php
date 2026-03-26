@@ -25,7 +25,7 @@ class HolidaysTable
                     'order_count' => Order::query()->selectRaw('count(*)')
                         ->whereColumn('delivery_date', 'holidays.date')
                         ->where('status', '!=', OrderStatus::Cancelled),
-                ])
+                ]),
             )
             ->heading('Holidays')
             ->emptyStateHeading('No holidays planned')

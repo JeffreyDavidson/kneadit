@@ -49,7 +49,7 @@ class OrderResource extends Resource
     /** @param Order $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return 'Order #'.$record->order_number;
+        return 'Order #' . $record->order_number;
     }
 
     /** @param Order $record */
@@ -57,7 +57,7 @@ class OrderResource extends Resource
     {
         return [
             'Customer' => $record->customer->name ?? 'N/A',
-            'Total' => '$'.number_format($record->total, 2),
+            'Total' => '$' . number_format($record->total, 2),
             'Status' => ucfirst($record->status->value),
         ];
     }

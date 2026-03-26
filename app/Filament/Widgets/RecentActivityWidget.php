@@ -19,7 +19,7 @@ class RecentActivityWidget extends BaseWidget
     {
         return $table
             ->query(
-                ActivityLog::query()->latest()->limit(5)
+                ActivityLog::query()->latest()->limit(5),
             )
             ->columns([
                 TextColumn::make('created_at')

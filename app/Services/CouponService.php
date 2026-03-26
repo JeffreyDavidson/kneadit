@@ -30,7 +30,7 @@ class CouponService
                 'valid' => false,
                 'coupon' => null,
                 'discount' => 0,
-                'error' => 'Minimum order of $'.number_format($coupon->min_order_amount, 2).' required for this coupon.',
+                'error' => 'Minimum order of $' . number_format($coupon->min_order_amount, 2) . ' required for this coupon.',
             ];
         }
 

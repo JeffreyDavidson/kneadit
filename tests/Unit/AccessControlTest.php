@@ -18,8 +18,7 @@ beforeEach(function () {
 
 function setTenantPlanForAccess(string $plan): void
 {
-    $tenant = new class($plan) implements Tenant
-    {
+    $tenant = new class($plan) implements Tenant {
         public string $plan;
 
         public function __construct(string $plan)

@@ -64,7 +64,7 @@ class ReviewResource extends Resource
     /** @param Review $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return 'Review by '.$record->customer_name;
+        return 'Review by ' . $record->customer_name;
     }
 
     /** @param Review $record */

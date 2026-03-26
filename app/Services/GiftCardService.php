@@ -90,7 +90,7 @@ class GiftCardService
         do {
             $raw = strtoupper(Str::random(16));
             // Ensure only alphanumeric
-            $raw = (string) preg_replace('/[^A-Z0-9]/', '', $raw.Str::random(4));
+            $raw = (string) preg_replace('/[^A-Z0-9]/', '', $raw . Str::random(4));
             $raw = substr($raw, 0, 16);
             $code = implode('-', str_split($raw, 4));
         } while (GiftCard::query()->where('code', $code)->exists());

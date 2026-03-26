@@ -47,7 +47,7 @@ class CentralPanelProvider extends PanelProvider
             ])
             ->font('Inter')
             ->renderHook('panels::head.end', fn () => new HtmlString(
-                '<link rel="stylesheet" href="'.asset('css/central-admin.css').'?v='.time().'">'
+                '<link rel="stylesheet" href="' . asset('css/central-admin.css') . '?v=' . time() . '">',
             ))
             ->renderHook('panels::body.end', fn () => new HtmlString('
                 <script>

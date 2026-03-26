@@ -55,7 +55,7 @@ class StripeCheckoutService
 
             $session = $this->stripe->checkout->sessions->create(
                 $sessionParams,
-                ['stripe_account' => $connectId]
+                ['stripe_account' => $connectId],
             );
 
             $order->update([
@@ -93,7 +93,7 @@ class StripeCheckoutService
             $session = $this->stripe->checkout->sessions->retrieve(
                 $sessionId,
                 ['expand' => ['payment_intent']],
-                ['stripe_account' => $connectId]
+                ['stripe_account' => $connectId],
             );
 
             if ($session->payment_status !== 'paid') {
@@ -178,8 +178,8 @@ class StripeCheckoutService
     }
 
     /**
-     * @param  array<int, array<string, mixed>>  $lineItems
-     * @param  array<int, array<string, string>>  $discounts
+     * @param array<int, array<string, mixed>> $lineItems
+     * @param array<int, array<string, string>> $discounts
      * @return array<string, mixed>
      */
     private function buildSessionParams(Order $order, array $lineItems, array $discounts, string $successUrl, string $cancelUrl): array

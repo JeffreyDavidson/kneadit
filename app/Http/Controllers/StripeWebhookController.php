@@ -121,8 +121,8 @@ class StripeWebhookController extends WebhookController
         // Notify platform
         try {
             $alertMsg = "Payment failed for {$user->name} ({$user->email})"
-                .($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '')
-                ."\nAmount: $".number_format(($invoice['amount_due'] ?? 0) / 100, 2);
+                . ($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '')
+                . "\nAmount: $" . number_format(($invoice['amount_due'] ?? 0) / 100, 2);
             Mail::to(config('mail.platform_notify'))->queue(new HealthAlertMail($alertMsg));
         } catch (\Exception $e) {
             Log::error('Failed to send platform payment alert', ['error' => $e->getMessage()]);

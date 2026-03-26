@@ -14,7 +14,7 @@ class RepeatOrderReminder extends BaseMailable
 
     public function __construct(
         public Customer $customer,
-        public int $daysSinceLastOrder
+        public int $daysSinceLastOrder,
     ) {
         //
     }

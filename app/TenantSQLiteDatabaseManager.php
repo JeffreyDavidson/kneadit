@@ -11,7 +11,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
         $sharedBase = config('tenancy.tenant_db_path');
 
         if ($sharedBase) {
-            return $sharedBase.'/'.$name;
+            return $sharedBase . '/' . $name;
         }
 
         return database_path($name);
@@ -47,7 +47,7 @@ class TenantSQLiteDatabaseManager extends SQLiteDatabaseManager
 
     /** @return array<string, mixed> */
     /**
-     * @param  array<string, mixed>  $baseConfig
+     * @param array<string, mixed> $baseConfig
      * @return array<string, mixed>
      */
     public function makeConnectionConfig(array $baseConfig, string $databaseName): array

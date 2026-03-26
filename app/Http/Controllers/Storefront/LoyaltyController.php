@@ -46,7 +46,7 @@ class LoyaltyController extends Controller
 
         return view('loyalty', compact(
             'rewards', 'programName', 'pointsPerDollar', 'loyaltyEnabled',
-            'customer', 'totalPoints', 'lifetimeEarned', 'history'
+            'customer', 'totalPoints', 'lifetimeEarned', 'history',
         ));
     }
 }

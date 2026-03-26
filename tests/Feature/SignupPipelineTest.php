@@ -49,7 +49,7 @@ function createSignupUser(array $overrides = []): User
 function uniqueSubdomain(): string
 {
     test()->subdomainCounter++;
-    $sub = 'testbakery'.test()->subdomainCounter;
+    $sub = 'testbakery' . test()->subdomainCounter;
     $subs = test()->createdSubdomains;
     $subs[] = $sub;
     test()->createdSubdomains = $subs;
@@ -234,7 +234,7 @@ test('onboarding redirects to tenant admin url', function () {
     $response = submitOnboarding($user, ['subdomain' => $sub]);
 
     $host = parse_url(config('app.url'), PHP_URL_HOST);
-    $response->assertRedirect('http://'.$sub.'.'.$host.'/admin');
+    $response->assertRedirect('http://' . $sub . '.' . $host . '/admin');
 });
 
 test('duplicate subdomain returns validation error', function () {
@@ -308,7 +308,7 @@ test('storefront choice own without external website returns validation error', 
 test('subdomain is lowercased', function () {
     $user = createSignupUser();
     $this->subdomainCounter++;
-    $sub = 'MyBaKeRy'.$this->subdomainCounter;
+    $sub = 'MyBaKeRy' . $this->subdomainCounter;
     $lower = strtolower($sub);
     $this->createdSubdomains[] = $lower;
 
@@ -337,7 +337,7 @@ test('tenant gets trial ends at set to 30 days from now', function () {
     $trialEnds = Date::parse($tenant->trial_ends_at);
 
     expect(
-        $trialEnds->isBetween(now()->addDays(29), now()->addDays(31))
+        $trialEnds->isBetween(now()->addDays(29), now()->addDays(31)),
     )->toBeTrue("Trial ends at {$trialEnds} is not approximately 30 days from now");
 });
 

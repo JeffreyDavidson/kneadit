@@ -56,7 +56,7 @@ class ProductResource extends Resource
     {
         return [
             'Category' => $record->category->name ?? 'N/A',
-            'Price' => '$'.number_format($record->price, 2),
+            'Price' => '$' . number_format($record->price, 2),
         ];
     }
 

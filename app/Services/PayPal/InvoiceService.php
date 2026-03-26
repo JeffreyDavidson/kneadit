@@ -28,7 +28,7 @@ class InvoiceService
             $response = Http::timeout(10)->connectTimeout(3)->retry(3, 100)->withHeaders([
                 'Authorization' => "Bearer {$accessToken}",
                 'Content-Type' => 'application/json',
-                'PayPal-Request-Id' => "INVOICE-{$order->order_number}-".time(),
+                'PayPal-Request-Id' => "INVOICE-{$order->order_number}-" . time(),
             ])->post("{$baseUrl}/v2/invoicing/invoices", $invoiceData);
 
             if (! $response->successful()) {

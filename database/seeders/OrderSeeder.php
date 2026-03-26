@@ -59,7 +59,7 @@ class OrderSeeder extends Seeder
             $isDelivery = rand(0, 100) < 40; // 40% delivery, 60% pickup
 
             $order = Order::query()->create([
-                'order_number' => 'ORD-'.str_pad($i + 1, 6, '0', STR_PAD_LEFT),
+                'order_number' => 'ORD-' . str_pad($i + 1, 6, '0', STR_PAD_LEFT),
                 'customer_id' => $customer->id,
                 'user_id' => $user->id,
                 'status' => $status,

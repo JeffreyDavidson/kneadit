@@ -16,7 +16,7 @@ class DirectoryController extends Controller
             ->get()
             ->map(fn (Tenant $t) => [
                 'name' => $t->store_name ?? $t->name,
-                'url' => 'http://'.$t->domains->first()?->domain,
+                'url' => 'http://' . $t->domains->first()?->domain,
                 'color' => $t->brand_color_primary ?? '#d4920c',
             ]);
 

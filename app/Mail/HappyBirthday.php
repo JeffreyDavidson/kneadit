@@ -17,7 +17,7 @@ class HappyBirthday extends BaseMailable
 
     public function __construct(
         public Customer $customer,
-        public ?Coupon $coupon = null
+        public ?Coupon $coupon = null,
     ) {
         $this->storeName = settings('store_name', 'Our Bakery');
     }

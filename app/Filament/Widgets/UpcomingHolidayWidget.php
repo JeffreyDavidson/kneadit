@@ -30,7 +30,7 @@ class UpcomingHolidayWidget extends BaseWidget
             ? 'Deadline passed'
             : "Deadline in {$daysUntil}d";
 
-        $description = $orders.' orders';
+        $description = $orders . ' orders';
         if ($holiday->max_orders) {
             $description .= " / {$holiday->max_orders} max";
         }

@@ -16,7 +16,7 @@ class PageViewFactory extends Factory
     public function definition(): array
     {
         return [
-            'page' => '/'.fake()->slug(2),
+            'page' => '/' . fake()->slug(2),
             'product_id' => Product::factory(),
             'session_id' => fake()->uuid(),
             'ip_address' => fake()->ipv4(),

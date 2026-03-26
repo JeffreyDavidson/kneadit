@@ -91,7 +91,7 @@ class ShoppingListGenerator extends Page
                         $ingredientUnit = $ingredient['unit'] ?? '';
 
                         if ($ingredientName) {
-                            $key = $ingredientName.'|'.$ingredientUnit;
+                            $key = $ingredientName . '|' . $ingredientUnit;
                             $totalQuantity = ($ingredientQuantity * $quantity);
 
                             if ($aggregatedIngredients->has($key)) {

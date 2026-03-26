@@ -64,14 +64,14 @@ class GiftCardResource extends Resource
     /** @param GiftCard $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return 'Gift Card: '.$record->code;
+        return 'Gift Card: ' . $record->code;
     }
 
     /** @param GiftCard $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Balance' => '$'.number_format($record->current_balance, 2),
+            'Balance' => '$' . number_format($record->current_balance, 2),
             'Recipient' => $record->recipient_name ?? 'N/A',
             'Active' => $record->is_active ? 'Yes' : 'No',
         ];

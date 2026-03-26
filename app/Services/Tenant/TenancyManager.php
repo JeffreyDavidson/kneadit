@@ -12,7 +12,7 @@ class TenancyManager
      *
      * @template TReturn
      *
-     * @param  callable(Tenant): TReturn  $callback
+     * @param callable(Tenant): TReturn $callback
      * @return TReturn
      */
     public function withinTenant(Tenant $tenant, callable $callback): mixed

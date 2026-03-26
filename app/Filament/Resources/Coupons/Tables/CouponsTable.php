@@ -36,10 +36,10 @@ class CouponsTable
                     ->money('USD')
                     ->formatStateUsing(function (mixed $state, Coupon $record) {
                         if ($record->type === CouponType::Percentage) {
-                            return $state.'%';
+                            return $state . '%';
                         }
 
-                        return '$'.number_format($state, 2);
+                        return '$' . number_format($state, 2);
                     }),
 
                 TextColumn::make('min_order_amount')

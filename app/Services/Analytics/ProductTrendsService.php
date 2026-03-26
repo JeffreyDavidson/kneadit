@@ -37,8 +37,8 @@ class ProductTrendsService
     }
 
     /**
-     * @param  array<int, int>  $currentCounts
-     * @param  array<int, int>  $prevCounts
+     * @param array<int, int> $currentCounts
+     * @param array<int, int> $prevCounts
      * @return array<int, array<string, mixed>>
      */
     private function groupByCategory(array $currentCounts, array $prevCounts): array

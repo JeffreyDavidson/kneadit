@@ -58,7 +58,7 @@ class CreateDemoTenant extends Command
         $tenant->domains()->create(['domain' => $subdomain]);
 
         // Verify tenant database was created
-        $dbName = 'tenant'.$subdomain;
+        $dbName = 'tenant' . $subdomain;
         $dbPath = database_path($dbName);
 
         if (! file_exists($dbPath)) {

@@ -13,7 +13,7 @@ class OrderConfirmed extends BaseMailable
     use BakerBranded;
 
     public function __construct(
-        public Order $order
+        public Order $order,
     ) {}
 
     public function envelope(): Envelope

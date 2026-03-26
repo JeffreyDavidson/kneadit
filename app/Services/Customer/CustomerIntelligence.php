@@ -56,7 +56,7 @@ class CustomerIntelligence
     }
 
     /**
-     * @param  Builder<Customer>  $query
+     * @param Builder<Customer> $query
      * @return Builder<Customer>
      */
     public function enrichQuery(Builder $query): Builder

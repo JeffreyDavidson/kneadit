@@ -30,7 +30,7 @@ class IngredientsTable
 
                 TextColumn::make('current_stock')
                     ->label('Stock')
-                    ->formatStateUsing(fn (Ingredient $record) => $record->current_stock.' '.$record->unit)
+                    ->formatStateUsing(fn (Ingredient $record) => $record->current_stock . ' ' . $record->unit)
                     ->sortable(),
 
                 TextColumn::make('stock_status')

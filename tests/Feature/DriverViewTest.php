@@ -24,7 +24,7 @@ function createDeliveryOrder(array $attrs = []): Order
     $customer = Customer::query()->create(['name' => 'Test Customer', 'email' => 'cust@test.com']);
 
     return Order::query()->create(array_merge([
-        'order_number' => 'ORD-'.uniqid(),
+        'order_number' => 'ORD-' . uniqid(),
         'customer_id' => $customer->id,
         'user_id' => $user->id,
         'status' => 'confirmed',

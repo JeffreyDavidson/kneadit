@@ -15,7 +15,7 @@ trait LogsActivity
     }
 
     /**
-     * @param  array<string, mixed>  $changes
+     * @param array<string, mixed> $changes
      */
     protected static function logAction(Model $model, string $action, array $changes = []): void
     {
@@ -31,7 +31,7 @@ trait LogsActivity
                 'action' => $action,
                 'model_type' => get_class($model),
                 'model_id' => $model->getKey(),
-                'description' => class_basename($model)." #{$model->getKey()} was {$action}",
+                'description' => class_basename($model) . " #{$model->getKey()} was {$action}",
                 'properties' => ! empty($changes) ? ['changes' => $changes] : null,
                 'ip_address' => request()->ip(),
             ]);

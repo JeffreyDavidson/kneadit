@@ -16,7 +16,7 @@ class GalleryPhotoFactory extends Factory
     {
         return [
             'title' => fake()->sentence(3),
-            'image_path' => 'gallery/'.fake()->uuid().'.jpg',
+            'image_path' => 'gallery/' . fake()->uuid() . '.jpg',
             'category' => fake()->randomElement(['products', 'bakery', 'team', 'events', 'process', 'other']),
             'sort_order' => fake()->numberBetween(0, 100),
             'is_visible' => true,

@@ -74,7 +74,7 @@ class PrintableMenu extends Page
 
     public function getStorefrontUrl(): string
     {
-        return 'http://'.tenant()->domains->first()->domain;
+        return 'http://' . tenant()->domains->first()->domain;
     }
 
     public function getQrCode(): string

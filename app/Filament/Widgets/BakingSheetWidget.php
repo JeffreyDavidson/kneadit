@@ -41,7 +41,7 @@ class BakingSheetWidget extends BaseWidget
                                     });
                             });
                     })
-                    ->groupBy('order_items.product_id', 'products.name')
+                    ->groupBy('order_items.product_id', 'products.name'),
             )
             ->columns([
                 TextColumn::make('product_name')
