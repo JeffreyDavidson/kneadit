@@ -45,11 +45,22 @@
 - Controllers and Filament pages are thin callers — delegate business logic to actions
 - Do NOT put write logic in observers, services (for writes), or controller methods
 
+### Models
+- Models should ONLY contain: relationships, casts, scopes, and `Attribute`-style accessors
+- No business logic, static helpers, or complex calculations — extract to Services or Actions
+- Use Laravel 12 `Attribute::make(get: fn () => ...)` syntax, NOT legacy `get*Attribute()` methods
+- Use `#[ObservedBy]` attribute for observers, NOT `booted()` hooks
+- Use `#[UseEloquentBuilder]` attribute for custom query builders
+
 ### Scopes & Enums
-- Use `#[Scope]` attribute scopes for reusable query constraints — never repeat `where()` conditions inline
+- Use `#[Scope]` attribute scopes or custom query builders for reusable query constraints — never repeat `where()` conditions inline
 - Use PHP backed enums for any column with a fixed set of values (statuses, types, roles)
 - Cast enum columns in the model's `casts()` method
 - Use the `casts()` method (not `$casts` property) for consistency
+- Never use hardcoded strings when an enum exists — use the enum value/case directly
+
+### Code Reviews
+- Reviews must check both macro (architecture, extraction patterns) AND micro (dead code, missing enum casts, string-vs-enum mismatches, unreachable default arms, redundant `tryFrom()` on already-cast values)
 
 ### Exceptions
 - Custom exceptions should store relevant context as `public readonly` constructor-promoted properties
