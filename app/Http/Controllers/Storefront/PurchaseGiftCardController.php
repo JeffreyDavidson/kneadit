@@ -16,10 +16,6 @@ class PurchaseGiftCardController extends Controller
     {
         $validated = $request->validated();
 
-        if (isset($validated['message'])) {
-            $validated['message'] = strip_tags($validated['message']);
-        }
-
         $service = new GiftCardService;
         $card = $service->create($validated);
 

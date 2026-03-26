@@ -95,7 +95,7 @@ class FinancialCalculator
             ->groupBy('category')
             ->get()
             ->map(fn (Expense $expense) => [
-                'category' => Expense::CATEGORIES[$expense->category],
+                'category' => $expense->category->label(),
                 'amount' => $expense->total_amount,
                 'percentage' => round(($expense->total_amount / $totalExpenses) * 100, 1),
             ])

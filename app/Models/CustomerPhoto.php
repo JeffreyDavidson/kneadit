@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\StripTagsCast;
 use Database\Factories\CustomerPhotoFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,6 +42,8 @@ class CustomerPhoto extends Model
         return [
             'is_approved' => 'boolean',
             'is_featured' => 'boolean',
+            'customer_name' => StripTagsCast::class,
+            'caption' => StripTagsCast::class,
         ];
     }
 

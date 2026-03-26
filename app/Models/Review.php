@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\StripTagsCast;
 use App\Traits\LogsActivity;
 use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -48,6 +49,7 @@ class Review extends Model
         return [
             'is_approved' => 'boolean',
             'is_featured' => 'boolean',
+            'comment' => StripTagsCast::class,
         ];
     }
 

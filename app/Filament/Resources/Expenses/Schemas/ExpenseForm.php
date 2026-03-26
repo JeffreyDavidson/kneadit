@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Expenses\Schemas;
 
-use App\Models\Expense;
+use App\Enums\ExpenseCategory;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -34,7 +34,7 @@ class ExpenseForm
                                     ->step(0.01),
 
                                 Select::make('category')
-                                    ->options(Expense::CATEGORIES)
+                                    ->options(ExpenseCategory::class)
                                     ->required(),
                             ]),
 

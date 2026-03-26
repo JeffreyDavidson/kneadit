@@ -10,10 +10,10 @@ class SubmitContactMessage
     public function __invoke(array $data): ContactMessage
     {
         return ContactMessage::query()->create([
-            'name' => strip_tags($data['name'] ?? ''),
+            'name' => $data['name'] ?? '',
             'email' => $data['email'] ?? '',
-            'subject' => isset($data['subject']) ? strip_tags($data['subject']) : null,
-            'message' => strip_tags($data['message'] ?? ''),
+            'subject' => $data['subject'] ?? null,
+            'message' => $data['message'] ?? '',
             'phone' => $data['phone'] ?? null,
         ]);
     }

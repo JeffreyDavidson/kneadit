@@ -2,6 +2,7 @@
 
 namespace App\Reports;
 
+use App\Enums\ExpenseCategory;
 use App\Enums\PaymentStatus;
 use App\Models\Expense;
 use App\Models\Income;
@@ -58,7 +59,7 @@ class FinancialReport
             ->select('category', DB::raw('SUM(amount) as total'))
             ->groupBy('category')
             ->pluck('total', 'category')
-            ->map(fn (string $v, string $k) => ['category' => Expense::CATEGORIES[$k] ?? ucfirst($k), 'amount' => (float) $v])
+            ->map(fn (string $v, string $k) => ['category' => ExpenseCategory::tryFrom($k)?->label() ?? ucfirst($k), 'amount' => (float) $v])
             ->values()
             ->all();
 

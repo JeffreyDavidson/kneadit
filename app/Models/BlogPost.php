@@ -85,4 +85,18 @@ class BlogPost extends Model
     {
         return route('blog.show', $this->slug);
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /** @param mixed $value */
+    public function resolveRouteBinding($value, $field = null): ?self
+    {
+        return static::query()
+            ->where($field ?? $this->getRouteKeyName(), $value)
+            ->published()
+            ->first();
+    }
 }

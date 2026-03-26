@@ -152,7 +152,7 @@ Route::middleware([
         // Blog
         Route::get('/blog', [StorefrontBlogController::class, 'index'])->name('storefront.blog');
         Route::get('/blog/feed.xml', StorefrontBlogFeedController::class)->name('storefront.blog.feed');
-        Route::get('/blog/{slug}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
+        Route::get('/blog/{post}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
 
         // Review submission (from email link)
         Route::get('/review/{order}', [ReviewController::class, 'show'])->name('storefront.submit-review');

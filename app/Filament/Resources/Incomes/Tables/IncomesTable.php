@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Incomes\Tables;
 
-use App\Models\Income;
+use App\Enums\IncomeSource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -30,7 +30,7 @@ class IncomesTable
                     ->limit(50),
 
                 BadgeColumn::make('source')
-                    ->formatStateUsing(fn (string $state) => Income::SOURCES[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state) => IncomeSource::tryFrom($state)?->label() ?? $state)
                     ->colors([
                         'success' => 'farmers_market',
                         'primary' => 'cash_sale',
@@ -50,7 +50,7 @@ class IncomesTable
             ])
             ->filters([
                 SelectFilter::make('source')
-                    ->options(Income::SOURCES),
+                    ->options(IncomeSource::class),
 
                 Filter::make('date')
                     ->form([

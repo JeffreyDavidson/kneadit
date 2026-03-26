@@ -28,9 +28,6 @@ class ReviewController extends Controller
     public function store(StoreApiReviewRequest $request): JsonResponse
     {
         $validated = $request->validated();
-
-        $validated['comment'] = strip_tags($validated['comment']);
-
         $review = Review::query()->create([
             ...$validated,
             'is_approved' => false,

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SenderType;
 use Database\Factories\OrderMessageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderMessage query()
+ *
+ * @property SenderType $sender_type
  *
  * @mixin \Eloquent
  */
@@ -34,6 +37,7 @@ class OrderMessage extends Model
     {
         return [
             'is_read' => 'boolean',
+            'sender_type' => SenderType::class,
         ];
     }
 
@@ -47,11 +51,11 @@ class OrderMessage extends Model
 
     public function isBaker(): bool
     {
-        return $this->sender_type === 'baker';
+        return $this->sender_type === SenderType::Baker;
     }
 
     public function isCustomer(): bool
     {
-        return $this->sender_type === 'customer';
+        return $this->sender_type === SenderType::Customer;
     }
 }

@@ -15,7 +15,7 @@ class MenuController extends Controller
      */
     public function __invoke(): View
     {
-        $categories = Category::query()->where('is_active', true)
+        $categories = Category::query()->active()
             ->with(['products' => fn (HasMany $q) => $q->where('is_active', true)->orderBy('name'), 'products.seasonalItems'])
             ->orderBy('sort_order')
             ->get();

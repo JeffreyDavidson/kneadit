@@ -52,7 +52,7 @@ class PrintableMenu extends Page
     /** @return Collection<int, mixed> */
     public function getCategories(): Collection
     {
-        return Category::query()->where('is_active', true)
+        return Category::query()->active()
             ->with(['products' => fn (Builder $q) => $q->where('is_active', true)->orderBy('name')])
             ->orderBy('sort_order')
             ->orderBy('name')

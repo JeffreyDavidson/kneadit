@@ -17,7 +17,7 @@ class CreateReview
             'customer_email' => $order->customer->email ?? '',
             'order_id' => $order->id,
             'rating' => $rating,
-            'comment' => $comment ? strip_tags($comment) : null,
+            'comment' => $comment,
             'photo_path' => $photoPath,
             'is_approved' => false,
         ]);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\IncomeSource;
 use Database\Factories\IncomeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income query()
  *
  * @property Carbon|null $date
+ * @property IncomeSource $source
  *
  * @mixin \Eloquent
  */
@@ -37,19 +39,12 @@ class Income extends Model
         return [
             'date' => 'date',
             'amount' => 'decimal:2',
+            'source' => IncomeSource::class,
         ];
     }
 
-    public const SOURCES = [
-        'farmers_market' => 'Farmers Market',
-        'cash_sale' => 'Cash Sale',
-        'paypal_direct' => 'PayPal Direct',
-        'catering' => 'Catering',
-        'other' => 'Other',
-    ];
-
     protected function getSourceLabelAttribute(): string
     {
-        return self::SOURCES[$this->source];
+        return $this->source->label();
     }
 }

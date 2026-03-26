@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Expenses\Tables;
 
-use App\Models\Expense;
+use App\Enums\ExpenseCategory;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -31,7 +31,7 @@ class ExpensesTable
                     ->limit(50),
 
                 BadgeColumn::make('category')
-                    ->formatStateUsing(fn (string $state) => Expense::CATEGORIES[$state] ?? $state)
+                    ->formatStateUsing(fn (string $state) => ExpenseCategory::tryFrom($state)?->label() ?? $state)
                     ->colors([
                         'primary' => 'ingredients',
                         'success' => 'packaging',
@@ -66,7 +66,7 @@ class ExpensesTable
             ])
             ->filters([
                 SelectFilter::make('category')
-                    ->options(Expense::CATEGORIES),
+                    ->options(ExpenseCategory::class),
 
                 Filter::make('date')
                     ->form([

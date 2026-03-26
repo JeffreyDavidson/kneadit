@@ -60,7 +60,7 @@ test('order has items relationship', function () {
 
 test('order has messages relationship', function () {
     $order = makeOrder();
-    OrderMessage::query()->create(['order_id' => $order->id, 'message' => 'Hello', 'sender_type' => 'bakery', 'sender_name' => 'Baker']);
+    OrderMessage::query()->create(['order_id' => $order->id, 'message' => 'Hello', 'sender_type' => 'baker', 'sender_name' => 'Baker']);
 
     expect($order->messages)->toHaveCount(1);
 });

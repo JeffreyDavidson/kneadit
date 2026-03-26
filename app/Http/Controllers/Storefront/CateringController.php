@@ -30,17 +30,6 @@ class CateringController extends Controller
 
         $validated = $request->validated();
 
-        $validated['details'] = strip_tags($validated['details']);
-        if (isset($validated['budget'])) {
-            $validated['budget'] = strip_tags($validated['budget']);
-        }
-        if (isset($validated['dietary_requirements'])) {
-            $validated['dietary_requirements'] = strip_tags($validated['dietary_requirements']);
-        }
-        if (isset($validated['venue_address'])) {
-            $validated['venue_address'] = strip_tags($validated['venue_address']);
-        }
-
         CateringInquiry::query()->create($validated);
 
         return to_route('storefront.catering')
