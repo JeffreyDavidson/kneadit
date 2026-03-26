@@ -2,7 +2,7 @@
 
 @section('content')
     <div style="color: {{ $secondaryColor }}; font-size: 16px; line-height: 1.6;">
-        {!! $body !!}
+        {!! clean($body) !!}
     </div>
 
     @if(!empty($unsubscribeNote))

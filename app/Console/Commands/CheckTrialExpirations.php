@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\TrialExpiredMail;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -110,20 +111,7 @@ class CheckTrialExpirations extends Command
                 // Send expiration email
                 if ($user) {
                     try {
-                        Mail::raw(
-                            "Hi {$user->name},\n\n".
-                            "Your KneadIt free trial has expired. Your storefront has been paused.\n\n".
-                            "Don't worry — your data is safe. Subscribe to reactivate:\n".
-                            "https://getkneadit.app/billing/plans\n\n".
-                            "Your admin panel is still accessible at:\n".
-                            "https://{$tenant->id}.getkneadit.app/admin\n\n".
-                            '— The KneadIt Team',
-                            function (Message $m) use ($user) {
-                                $m->to($user->email)
-                                    ->subject('Your KneadIt trial has expired')
-                                    ->from(config('mail.from.address'), 'KneadIt');
-                            }
-                        );
+                        Mail::to($user->email)->queue(new TrialExpiredMail($user, $tenant->id));
                     } catch (\Exception $e) {
                         Log::error("Trial expiration email failed for {$tenant->id}", ['error' => $e->getMessage()]);
                     }

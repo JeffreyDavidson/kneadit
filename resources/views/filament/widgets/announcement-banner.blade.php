@@ -45,7 +45,7 @@
                     {{ $announcement['title'] }}
                 </div>
                 <div style="font-size: 0.85rem; line-height: 1.5;">
-                    {!! $announcement['body'] !!}
+                    {!! clean($announcement['body']) !!}
                 </div>
             </div>
             @if($announcement['is_dismissable'])
