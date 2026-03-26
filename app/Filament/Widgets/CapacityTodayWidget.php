@@ -4,7 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\BlockedDate;
 use App\Models\Order;
-use App\Services\CapacityCalculator;
+use App\Services\Inventory\CapacityCalculator;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;

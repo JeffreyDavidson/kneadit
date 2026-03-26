@@ -1,9 +1,9 @@
 <?php
 
-use App\Actions\ImportProducts;
+use App\Actions\Inventory\ImportProducts;
 use App\Models\Category;
 use App\Models\Product;
-use App\Services\ProductCsvExporter;
+use App\Services\Export\ProductCsvExporter;
 use Illuminate\Http\UploadedFile;
 
 beforeEach(function () {

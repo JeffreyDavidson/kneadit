@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\PageViewTracker;
+use App\Services\Analytics\PageViewTracker;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

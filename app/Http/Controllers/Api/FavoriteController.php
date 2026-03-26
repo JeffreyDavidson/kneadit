@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Actions\ToggleCustomerFavorite;
+use App\Actions\Customers\ToggleCustomerFavorite;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiFavoriteRequest;
 use App\Models\CustomerFavorite;

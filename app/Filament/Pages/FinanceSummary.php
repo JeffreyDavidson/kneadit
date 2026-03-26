@@ -5,7 +5,7 @@ namespace App\Filament\Pages;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Services\FinancialCalculator;
+use App\Services\Financial\FinancialCalculator;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
-use App\Services\CapacityCalculator;
+use App\Services\Inventory\CapacityCalculator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Date;
 

@@ -6,7 +6,7 @@ use App\Models\Expense;
 use App\Models\Ingredient;
 use App\Models\Order;
 use App\Models\User;
-use App\Services\ReportService;
+use App\Services\Reporting\ReportService;
 
 beforeEach(function () {
     config(['database.connections.central' => config('database.connections.sqlite')]);

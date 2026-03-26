@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\CompleteReferral;
+use App\Actions\Tenants\CompleteReferral;
 use App\Enums\ReferralStatus;
 use App\Models\Referral;
 use Illuminate\Support\Facades\DB;

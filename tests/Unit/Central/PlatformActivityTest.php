@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\LogPlatformActivity;
+use App\Actions\Platform\LogPlatformActivity;
 use App\Models\PlatformActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

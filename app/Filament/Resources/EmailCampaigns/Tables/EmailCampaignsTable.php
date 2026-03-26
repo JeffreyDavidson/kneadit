@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\EmailCampaigns\Tables;
 
-use App\Actions\SendEmailCampaign;
+use App\Actions\Platform\SendEmailCampaign;
 use App\Enums\EmailCampaignStatus;
 use App\Models\EmailCampaign;
 use Filament\Actions\Action;

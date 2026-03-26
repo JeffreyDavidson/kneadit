@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\AcceptStaffInvitation;
+use App\Actions\Staff\AcceptStaffInvitation;
 use App\Http\Requests\AcceptInvitationRequest;
 use App\Models\StaffInvitation;
 use App\Models\User;

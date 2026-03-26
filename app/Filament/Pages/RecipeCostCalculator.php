@@ -6,7 +6,7 @@ use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Recipe;
-use App\Services\RecipeCostService;
+use App\Services\Financial\RecipeCostService;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;

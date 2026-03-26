@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\CapacityCalculator;
+use App\Services\Inventory\CapacityCalculator;
 use Illuminate\Http\JsonResponse;
 
 class CapacityController extends Controller

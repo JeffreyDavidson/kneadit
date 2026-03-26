@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\AdjustIngredientStock;
+use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\StockStatus;
 use App\Models\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;

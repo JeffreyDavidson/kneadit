@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Order;
-use App\Services\TaxCsvExporter;
+use App\Services\Financial\TaxCsvExporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

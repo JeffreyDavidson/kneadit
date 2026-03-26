@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Setting;
-use App\Services\SettingsManager;
+use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\assertDatabaseHas;

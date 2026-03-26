@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\LogPlatformActivity;
+use App\Actions\Platform\LogPlatformActivity;
 use App\Models\PlatformActivity;
 
 beforeEach(fn () => setUpCentralTest());

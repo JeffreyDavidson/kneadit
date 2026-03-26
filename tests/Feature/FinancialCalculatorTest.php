@@ -4,7 +4,7 @@ use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\Order;
 use App\Models\User;
-use App\Services\FinancialCalculator;
+use App\Services\Financial\FinancialCalculator;
 
 beforeEach(function () {
     config(['database.connections.central' => config('database.connections.sqlite')]);

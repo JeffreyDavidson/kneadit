@@ -3,7 +3,7 @@
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Services\PrepScheduleService;
+use App\Services\Production\PrepScheduleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

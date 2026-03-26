@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use App\Services\WeeklyDigestDataCollector;
+use App\Services\Reporting\WeeklyDigestDataCollector;
 
 beforeEach(function () {
     config(['database.connections.central' => config('database.connections.sqlite')]);

@@ -2,7 +2,7 @@
 
 namespace App\Actions\Orders;
 
-use App\Actions\AdjustIngredientStock;
+use App\Actions\Inventory\AdjustIngredientStock;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 

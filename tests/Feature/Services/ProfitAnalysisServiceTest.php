@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Product;
-use App\Services\ProfitAnalysisService;
+use App\Services\Financial\ProfitAnalysisService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\AcceptStaffInvitation;
+use App\Actions\Staff\AcceptStaffInvitation;
 use App\Enums\UserRole;
 use App\Models\StaffInvitation;
 use App\Models\User;

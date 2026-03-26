@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\UpdateWaitlistEntryStatus;
+use App\Actions\Customers\UpdateWaitlistEntryStatus;
 use App\Enums\WaitlistStatus;
 use App\Models\WaitlistEntry;
 use Illuminate\Foundation\Testing\RefreshDatabase;

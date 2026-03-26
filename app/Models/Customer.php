@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Builders\CustomerQueryBuilder;
 use App\DataTransferObjects\CustomerMetrics;
-use App\Services\CustomerIntelligence;
+use App\Services\Customer\CustomerIntelligence;
 use App\Traits\LogsActivity;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;

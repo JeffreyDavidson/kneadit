@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\ToggleCustomerFavorite;
+use App\Actions\Customers\ToggleCustomerFavorite;
 use App\Models\CustomerFavorite;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;

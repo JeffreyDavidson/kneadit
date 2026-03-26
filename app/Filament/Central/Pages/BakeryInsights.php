@@ -6,7 +6,7 @@ use App\Actions\Tenants\ExtendTenantTrial;
 use App\Actions\Tenants\SendTenantNudge;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Tenant;
-use App\Services\TenantHealthService;
+use App\Services\Tenant\TenantHealthService;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;

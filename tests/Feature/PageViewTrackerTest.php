@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\PageViewTracker;
+use App\Services\Analytics\PageViewTracker;
 
 it('detects page from route name', function () {
     $tracker = new PageViewTracker;

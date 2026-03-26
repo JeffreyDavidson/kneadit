@@ -7,7 +7,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
-use App\Services\StripeCheckoutService;
+use App\Services\Stripe\StripeCheckoutService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;

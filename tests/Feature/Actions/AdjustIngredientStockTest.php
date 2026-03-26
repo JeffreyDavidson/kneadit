@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\AdjustIngredientStock;
+use App\Actions\Inventory\AdjustIngredientStock;
 use App\Models\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
