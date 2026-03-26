@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SubscriptionTier;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -243,7 +244,7 @@ test('duplicate subdomain returns validation error', function () {
         'id' => $sub,
         'name' => 'Existing',
         'email' => 'existing@example.com',
-        'plan' => 'starter',
+        'plan' => SubscriptionTier::Starter,
         'is_active' => true,
         'storefront_enabled' => true,
         'brand_color_primary' => '#d4920c',
@@ -324,7 +325,7 @@ test('tenant gets starter plan by default', function () {
 
     $this->assertDatabaseHas('tenants', [
         'id' => $sub,
-        'plan' => 'starter',
+        'plan' => SubscriptionTier::Starter,
     ]);
 });
 

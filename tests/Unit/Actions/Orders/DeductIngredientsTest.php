@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Orders\DeductIngredients;
+use App\Enums\OrderStatus;
 use App\Models\Ingredient;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -28,7 +29,7 @@ test('deducts ingredient stock based on recipe quantities and order item quantit
 
     $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 0.5, 'unit' => 'kg']);
 
-    $order = Order::factory()->create(['status' => 'baking']);
+    $order = Order::factory()->create(['status' => OrderStatus::Baking]);
 
     OrderItem::query()->create([
         'order_id' => $order->id,

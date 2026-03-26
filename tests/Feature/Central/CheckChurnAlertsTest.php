@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SubscriptionTier;
 use App\Models\AdminAuditLog;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ test('trial expiring in 48h creates churn alert', function () {
         'id' => 'expiring-bakery',
         'name' => 'Expiring Bakery',
         'email' => 'expiring@example.com',
-        'plan' => 'starter',
+        'plan' => SubscriptionTier::Starter,
         'trial_ends_at' => Date::now()->addHours(24),
         'data' => '{}',
         'created_at' => now(),

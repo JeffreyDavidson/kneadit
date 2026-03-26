@@ -23,7 +23,7 @@ test('points awarded when order delivered', function () {
     $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'pending',
+        'status' => OrderStatus::Pending,
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);
@@ -44,7 +44,7 @@ test('points calculated correctly', function () {
     $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'pending',
+        'status' => OrderStatus::Pending,
         'total' => 25.50,
         'subtotal' => 25.50,
     ]);
@@ -65,7 +65,7 @@ test('points not awarded when loyalty disabled', function () {
     $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'pending',
+        'status' => OrderStatus::Pending,
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);
@@ -82,7 +82,7 @@ test('points not double awarded', function () {
     $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'pending',
+        'status' => OrderStatus::Pending,
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);

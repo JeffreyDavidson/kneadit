@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatus;
 use App\Enums\SenderType;
 use App\Mail\NewOrderMessage;
 use App\Models\Customer;
@@ -19,7 +20,7 @@ beforeEach(function () {
         'order_number' => 'ORD-MSG-001',
         'customer_id' => $customer->id,
         'user_id' => $user->id,
-        'status' => 'confirmed',
+        'status' => OrderStatus::Confirmed,
         'subtotal' => 50.00,
         'total' => 50.00,
     ]);
@@ -28,7 +29,7 @@ beforeEach(function () {
 test('messages endpoint returns order messages', function () {
     OrderMessage::query()->create([
         'order_id' => $this->order->id,
-        'sender_type' => 'baker',
+        'sender_type' => SenderType::Baker,
         'sender_name' => 'Baker Bob',
         'message' => 'Your order is being prepared!',
     ]);

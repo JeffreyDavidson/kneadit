@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
@@ -19,8 +21,8 @@ test('metrics returns correct values for customer with orders', function () {
 
     Order::factory()->count(3)->create([
         'customer_id' => $customer->id,
-        'status' => 'delivered',
-        'payment_status' => 'paid',
+        'status' => OrderStatus::Delivered,
+        'payment_status' => PaymentStatus::Paid,
         'total' => 50.00,
         'subtotal' => 50.00,
         'delivery_date' => now()->subDays(5),
@@ -57,7 +59,7 @@ test('at-risk threshold is configurable via setting', function () {
 
     Order::factory()->create([
         'customer_id' => $customer->id,
-        'status' => 'delivered',
+        'status' => OrderStatus::Delivered,
         'total' => 25.00,
         'subtotal' => 25.00,
         'created_at' => now()->subDays(45),

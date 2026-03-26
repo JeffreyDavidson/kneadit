@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatus;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
@@ -35,7 +36,7 @@ test('tracking with valid email returns orders', function () {
     Order::query()->create([
         'order_number' => 'KN260308A001',
         'customer_id' => $customer->id,
-        'status' => 'confirmed',
+        'status' => OrderStatus::Confirmed,
         'subtotal' => 25.00,
         'total' => 25.00,
         'user_id' => $user->id,
@@ -121,7 +122,7 @@ test('orders display items and totals', function () {
     $order = Order::query()->create([
         'order_number' => 'KN260308ITEM',
         'customer_id' => $customer->id,
-        'status' => 'confirmed',
+        'status' => OrderStatus::Confirmed,
         'subtotal' => 15.00,
         'total' => 15.00,
         'user_id' => $user->id,

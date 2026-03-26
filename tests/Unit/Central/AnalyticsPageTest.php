@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SubscriptionTier;
 use App\Filament\Central\Pages\Analytics;
 
 beforeEach(function () {
@@ -16,9 +17,9 @@ test('get signups by month returns 12 months', function () {
 });
 
 test('get plan distribution', function () {
-    createTenant(['id' => 'b1', 'name' => 'B1', 'email' => 'b1@test.com', 'plan' => 'starter']);
-    createTenant(['id' => 'b2', 'name' => 'B2', 'email' => 'b2@test.com', 'plan' => 'starter']);
-    createTenant(['id' => 'b3', 'name' => 'B3', 'email' => 'b3@test.com', 'plan' => 'growth']);
+    createTenant(['id' => 'b1', 'name' => 'B1', 'email' => 'b1@test.com', 'plan' => SubscriptionTier::Starter]);
+    createTenant(['id' => 'b2', 'name' => 'B2', 'email' => 'b2@test.com', 'plan' => SubscriptionTier::Starter]);
+    createTenant(['id' => 'b3', 'name' => 'B3', 'email' => 'b3@test.com', 'plan' => SubscriptionTier::Growth]);
 
     $result = test()->page->getPlanDistribution();
 
@@ -27,9 +28,9 @@ test('get plan distribution', function () {
 });
 
 test('get trial conversion', function () {
-    createTenant(['id' => 't1', 'name' => 'T1', 'email' => 't1@test.com', 'plan' => 'starter', 'trial_ends_at' => now()->addDays(7)]);
-    createTenant(['id' => 't2', 'name' => 'T2', 'email' => 't2@test.com', 'plan' => 'starter', 'trial_ends_at' => now()->subDays(7)]);
-    createTenant(['id' => 't3', 'name' => 'T3', 'email' => 't3@test.com', 'plan' => 'growth']);
+    createTenant(['id' => 't1', 'name' => 'T1', 'email' => 't1@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->addDays(7)]);
+    createTenant(['id' => 't2', 'name' => 'T2', 'email' => 't2@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->subDays(7)]);
+    createTenant(['id' => 't3', 'name' => 'T3', 'email' => 't3@test.com', 'plan' => SubscriptionTier::Growth]);
 
     $result = test()->page->getTrialConversion();
 
@@ -42,22 +43,22 @@ test('get trial conversion', function () {
 });
 
 test('get total signups', function () {
-    createTenant(['id' => 's1', 'name' => 'S1', 'email' => 's1@test.com', 'plan' => 'starter']);
-    createTenant(['id' => 's2', 'name' => 'S2', 'email' => 's2@test.com', 'plan' => 'growth']);
+    createTenant(['id' => 's1', 'name' => 'S1', 'email' => 's1@test.com', 'plan' => SubscriptionTier::Starter]);
+    createTenant(['id' => 's2', 'name' => 'S2', 'email' => 's2@test.com', 'plan' => SubscriptionTier::Growth]);
 
     expect(test()->page->getTotalSignups())->toBe(2);
 });
 
 test('get this month signups', function () {
-    createTenant(['id' => 'm1', 'name' => 'M1', 'email' => 'm1@test.com', 'plan' => 'starter']);
-    createTenant(['id' => 'm2', 'name' => 'M2', 'email' => 'm2@test.com', 'plan' => 'starter']);
+    createTenant(['id' => 'm1', 'name' => 'M1', 'email' => 'm1@test.com', 'plan' => SubscriptionTier::Starter]);
+    createTenant(['id' => 'm2', 'name' => 'M2', 'email' => 'm2@test.com', 'plan' => SubscriptionTier::Starter]);
 
     expect(test()->page->getThisMonthSignups())->toBe(2);
 });
 
 test('get avg days on trial', function () {
-    createTenant(['id' => 'a1', 'name' => 'A1', 'email' => 'a1@test.com', 'plan' => 'starter', 'trial_ends_at' => now()->addDays(14)]);
-    createTenant(['id' => 'a2', 'name' => 'A2', 'email' => 'a2@test.com', 'plan' => 'starter', 'trial_ends_at' => now()->addDays(14)]);
+    createTenant(['id' => 'a1', 'name' => 'A1', 'email' => 'a1@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->addDays(14)]);
+    createTenant(['id' => 'a2', 'name' => 'A2', 'email' => 'a2@test.com', 'plan' => SubscriptionTier::Starter, 'trial_ends_at' => now()->addDays(14)]);
 
     $result = test()->page->getAvgDaysOnTrial();
 
@@ -70,9 +71,9 @@ test('get avg days on trial returns zero when no trials', function () {
 });
 
 test('get most popular plan', function () {
-    createTenant(['id' => 'p1', 'name' => 'P1', 'email' => 'p1@test.com', 'plan' => 'starter']);
-    createTenant(['id' => 'p2', 'name' => 'P2', 'email' => 'p2@test.com', 'plan' => 'starter']);
-    createTenant(['id' => 'p3', 'name' => 'P3', 'email' => 'p3@test.com', 'plan' => 'growth']);
+    createTenant(['id' => 'p1', 'name' => 'P1', 'email' => 'p1@test.com', 'plan' => SubscriptionTier::Starter]);
+    createTenant(['id' => 'p2', 'name' => 'P2', 'email' => 'p2@test.com', 'plan' => SubscriptionTier::Starter]);
+    createTenant(['id' => 'p3', 'name' => 'P3', 'email' => 'p3@test.com', 'plan' => SubscriptionTier::Growth]);
 
     expect(test()->page->getMostPopularPlan())->toBe('starter');
 });

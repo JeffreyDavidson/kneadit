@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ExpenseCategory;
 use App\Models\Expense;
 
 beforeEach(function () {
@@ -7,7 +8,7 @@ beforeEach(function () {
 });
 
 test('expense category_label accessor returns category label', function () {
-    $expense = Expense::factory()->create(['category' => 'ingredients']);
+    $expense = Expense::factory()->create(['category' => ExpenseCategory::Ingredients]);
 
     expect($expense->category_label)->toBe('Ingredients');
 });

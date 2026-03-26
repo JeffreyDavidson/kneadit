@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\StaffInvitation;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -17,10 +18,10 @@ test('staff invitation model exists', function () {
 });
 
 test('invitation can be created', function () {
-    $owner = User::factory()->create(['role' => 'owner']);
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
     StaffInvitation::query()->create([
         'email' => 'staff@example.com',
-        'role' => 'staff',
+        'role' => UserRole::Staff,
         'token' => Str::random(32),
         'expires_at' => now()->addDays(7),
         'invited_by' => $owner->id,
@@ -32,10 +33,10 @@ test('invitation can be created', function () {
 test('invitation is expired when past expiry', function () {
     $invitation = StaffInvitation::query()->create([
         'email' => 'staff@example.com',
-        'role' => 'staff',
+        'role' => UserRole::Staff,
         'token' => Str::random(32),
         'expires_at' => now()->subDay(),
-        'invited_by' => User::factory()->create(['role' => 'owner'])->id,
+        'invited_by' => User::factory()->create(['role' => UserRole::Owner])->id,
     ]);
 
     expect($invitation->isExpired())->toBeTrue();
@@ -44,10 +45,10 @@ test('invitation is expired when past expiry', function () {
 test('invitation is pending when not accepted and not expired', function () {
     $invitation = StaffInvitation::query()->create([
         'email' => 'staff@example.com',
-        'role' => 'staff',
+        'role' => UserRole::Staff,
         'token' => Str::random(32),
         'expires_at' => now()->addDays(7),
-        'invited_by' => User::factory()->create(['role' => 'owner'])->id,
+        'invited_by' => User::factory()->create(['role' => UserRole::Owner])->id,
     ]);
 
     expect($invitation->isPending())->toBeTrue();
@@ -56,21 +57,21 @@ test('invitation is pending when not accepted and not expired', function () {
 test('invitation is not pending when accepted', function () {
     $invitation = StaffInvitation::query()->create([
         'email' => 'staff@example.com',
-        'role' => 'staff',
+        'role' => UserRole::Staff,
         'token' => Str::random(32),
         'expires_at' => now()->addDays(7),
         'accepted_at' => now(),
-        'invited_by' => User::factory()->create(['role' => 'owner'])->id,
+        'invited_by' => User::factory()->create(['role' => UserRole::Owner])->id,
     ]);
 
     expect($invitation->isPending())->toBeFalse();
 });
 
 test('invitation belongs to inviter', function () {
-    $owner = User::factory()->create(['role' => 'owner']);
+    $owner = User::factory()->create(['role' => UserRole::Owner]);
     $invitation = StaffInvitation::query()->create([
         'email' => 'staff@example.com',
-        'role' => 'staff',
+        'role' => UserRole::Staff,
         'token' => Str::random(32),
         'expires_at' => now()->addDays(7),
         'invited_by' => $owner->id,

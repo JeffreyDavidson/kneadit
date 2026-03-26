@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\SubscriptionTier;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +13,7 @@ uses(RefreshDatabase::class);
 
 function createAdmin(): User
 {
-    return User::factory()->create(['role' => 'platform_admin']);
+    return User::factory()->create(['role' => UserRole::PlatformAdmin]);
 }
 
 function insertTenant(string $id = 'test-bakery'): string
@@ -20,7 +22,7 @@ function insertTenant(string $id = 'test-bakery'): string
         'id' => $id,
         'name' => 'Test Owner',
         'email' => 'test@example.com',
-        'plan' => 'starter',
+        'plan' => SubscriptionTier::Starter,
         'data' => '{}',
         'created_at' => now(),
         'updated_at' => now(),

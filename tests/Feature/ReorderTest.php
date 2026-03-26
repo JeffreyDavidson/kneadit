@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatus;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
@@ -25,7 +26,7 @@ function createOrderWithItems(string $productName = 'Sourdough', float $price = 
         'order_number' => 'ORD-RE-' . uniqid(),
         'customer_id' => $customer->id,
         'user_id' => $user->id,
-        'status' => 'delivered',
+        'status' => OrderStatus::Delivered,
         'subtotal' => $price * 2,
         'total' => $price * 2,
     ]);

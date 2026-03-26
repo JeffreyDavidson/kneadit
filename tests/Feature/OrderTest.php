@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\CouponType;
+use App\Enums\DeliveryType;
+use App\Enums\OrderStatus;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
@@ -43,7 +46,7 @@ test('order validation passes with valid data', function () {
             'customer_name' => 'John Baker',
             'customer_email' => 'john@example.com',
             'customer_phone' => '555-1234',
-            'delivery_type' => 'pickup',
+            'delivery_type' => DeliveryType::Pickup->value,
             'delivery_date' => $deliveryDate,
             'items' => [
                 ['product_id' => $this->product->id, 'quantity' => 2],
@@ -57,7 +60,7 @@ test('order validation rejects missing customer name', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->post(route('order.store', [], false), [
             'customer_email' => 'john@example.com',
-            'delivery_type' => 'pickup',
+            'delivery_type' => DeliveryType::Pickup->value,
             'delivery_date' => now()->addDays(3)->toDateString(),
             'items' => [
                 ['product_id' => $this->product->id, 'quantity' => 1],
@@ -71,7 +74,7 @@ test('order validation rejects missing email', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
-            'delivery_type' => 'pickup',
+            'delivery_type' => DeliveryType::Pickup->value,
             'delivery_date' => now()->addDays(3)->toDateString(),
             'items' => [
                 ['product_id' => $this->product->id, 'quantity' => 1],
@@ -86,7 +89,7 @@ test('order validation rejects missing delivery date', function () {
         ->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'customer_email' => 'john@example.com',
-            'delivery_type' => 'pickup',
+            'delivery_type' => DeliveryType::Pickup->value,
             'items' => [
                 ['product_id' => $this->product->id, 'quantity' => 1],
             ],
@@ -100,7 +103,7 @@ test('order validation rejects empty cart', function () {
         ->post(route('order.store', [], false), [
             'customer_name' => 'John Baker',
             'customer_email' => 'john@example.com',
-            'delivery_type' => 'pickup',
+            'delivery_type' => DeliveryType::Pickup->value,
             'delivery_date' => now()->addDays(3)->toDateString(),
             'items' => [],
         ]);
@@ -111,7 +114,7 @@ test('order validation rejects empty cart', function () {
 test('coupon application works for valid coupon', function () {
     $coupon = Coupon::query()->create([
         'code' => 'SAVE10',
-        'type' => 'percentage',
+        'type' => CouponType::Percentage,
         'value' => 10.00,
         'is_active' => true,
         'starts_at' => now()->subDay(),
@@ -164,7 +167,7 @@ test('order confirmation page shows after successful order', function () {
     $order = Order::query()->create([
         'order_number' => 'KN260308TEST',
         'customer_id' => $customer->id,
-        'status' => 'pending',
+        'status' => OrderStatus::Pending,
         'subtotal' => 25.00,
         'total' => 25.00,
         'user_id' => $user->id,
