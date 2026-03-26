@@ -29,15 +29,16 @@ class ImportProducts
         $categoryCache = [];
 
         foreach ($parsed['rows'] as $row) {
+            /** @var array<string, mixed> $row */
             if (! empty($row['_errors'])) {
-                $errors[] = "Row {$row['_line']}: ".implode(', ', $row['_errors']);
+                $errors[] = 'Row '.(int) $row['_line'].': '.implode(', ', (array) $row['_errors']);
 
                 continue;
             }
 
             try {
                 $categoryId = null;
-                $categoryName = trim($row['category'] ?? '');
+                $categoryName = trim((string) ($row['category'] ?? ''));
                 if ($categoryName !== '') {
                     if (! isset($categoryCache[$categoryName])) {
                         $categoryCache[$categoryName] = Category::query()->firstOrCreate(
@@ -48,20 +49,20 @@ class ImportProducts
                     $categoryId = $categoryCache[$categoryName];
                 }
 
-                $existing = Product::query()->where('name', trim($row['name']))->first();
+                $existing = Product::query()->where('name', trim((string) ($row['name'] ?? '')))->first();
 
                 $data = [
-                    'name' => trim($row['name']),
-                    'slug' => Str::slug(trim($row['name'])),
-                    'description' => trim($row['description'] ?? ''),
-                    'price' => (float) $row['price'],
+                    'name' => trim((string) ($row['name'] ?? '')),
+                    'slug' => Str::slug(trim((string) ($row['name'] ?? ''))),
+                    'description' => trim((string) ($row['description'] ?? '')),
+                    'price' => (float) ($row['price'] ?? 0),
                     'category_id' => $categoryId,
                     'is_active' => (bool) ($row['is_active'] ?? true),
                     'is_featured' => (bool) ($row['is_featured'] ?? false),
                 ];
 
                 if (isset($row['cost']) && $row['cost'] !== '') {
-                    $data['cost'] = (float) $row['cost'];
+                    $data['cost'] = (float) ($row['cost'] ?? 0);
                 }
 
                 if ($existing) {
@@ -72,7 +73,7 @@ class ImportProducts
                     $created++;
                 }
             } catch (\Throwable $e) {
-                $errors[] = "Row {$row['_line']}: {$e->getMessage()}";
+                $errors[] = 'Row '.(int) $row['_line'].': '.$e->getMessage();
             }
         }
 

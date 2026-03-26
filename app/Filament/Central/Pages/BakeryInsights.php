@@ -40,7 +40,7 @@ class BakeryInsights extends Page
 
     // ── Health Tab Methods ──
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array<string, mixed>> */
     public function getTenantHealthData(): Collection
     {
         return $this->service()->getTenantHealthData();
@@ -54,7 +54,7 @@ class BakeryInsights extends Page
 
     // ── Churn Alerts Tab Methods ──
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array<string, mixed>> */
     public function getAlerts(): Collection
     {
         return $this->service()->getAlerts();
@@ -110,7 +110,7 @@ class BakeryInsights extends Page
 
     // ── Upgrade Triggers Tab Methods ──
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array<string, mixed>> */
     public function getTenantUsageData(): Collection
     {
         return $this->service()->getTenantUsageData();

@@ -14,7 +14,7 @@ class FavoriteController extends Controller
     public function index(Request $request): JsonResponse
     {
 
-        $productIds = CustomerFavorite::forCustomer($request->input('email'))
+        $productIds = CustomerFavorite::forCustomer((string) $request->input('email'))
             ->pluck('product_id');
 
         return response()->json([
@@ -27,7 +27,7 @@ class FavoriteController extends Controller
     {
         $validated = $request->validated();
 
-        $favorited = app(ToggleCustomerFavorite::class)($validated['email'], $validated['product_id']);
+        $favorited = app(ToggleCustomerFavorite::class)((string) $validated['email'], (int) $validated['product_id']);
 
         return response()->json([
             'data' => ['favorited' => $favorited],

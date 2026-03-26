@@ -22,7 +22,7 @@ class CreateTenant
                 'name' => $user->name,
                 'email' => $user->email,
                 'plan' => SubscriptionTier::Starter->value,
-                'trial_ends_at' => now()->addDays(config('saas.trial_days', 30)),
+                'trial_ends_at' => now()->addDays((int) config('saas.trial_days', 30)),
                 'store_name' => $storeName,
                 'storefront_enabled' => $useKneadItStorefront,
                 'external_website' => $useKneadItStorefront ? null : $externalWebsite,

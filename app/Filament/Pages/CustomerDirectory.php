@@ -116,7 +116,7 @@ class CustomerDirectory extends Page
         ];
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array<string, mixed>> */
     public function getCustomers(): Collection
     {
         $query = Customer::query()
@@ -192,7 +192,7 @@ class CustomerDirectory extends Page
                 'total_orders' => $customer->orders->count(),
                 'total_spent' => $customer->orders->sum('total'),
                 'avg_order_value' => $customer->orders->count() > 0
-                    ? $customer->orders->sum('total') / $customer->orders->count()
+                    ? (float) $customer->orders->sum('total') / $customer->orders->count()
                     : 0,
                 'last_order' => $customer->orders->first()?->created_at?->format('M j, Y'),
             ],

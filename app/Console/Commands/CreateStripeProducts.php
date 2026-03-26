@@ -14,7 +14,8 @@ class CreateStripeProducts extends Command
     public function handle(): int
     {
         $stripe = Cashier::stripe();
-        $plans = config('saas.plans');
+        /** @var array<string, array{name: string, description: string, founding_price_monthly: int}> $plans */
+        $plans = config('saas.plans', []);
 
         foreach ($plans as $key => $plan) {
             $this->info("Creating product: {$plan['name']}...");

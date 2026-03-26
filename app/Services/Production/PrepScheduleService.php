@@ -12,7 +12,7 @@ class PrepScheduleService
     /**
      * Load orders for the given week and generate day list.
      *
-     * @return array{weeklyOrders: Collection<int, mixed>, weekDays: array<int, Carbon>, prepSchedule: Collection<int, mixed>}
+     * @return array{weeklyOrders: Collection<string, Collection<int, Order>>, weekDays: list<Carbon>, prepSchedule: Collection<string, Collection<int, array<string, mixed>>>}
      */
     public function loadWeeklyData(string $weekStart): array
     {
@@ -43,8 +43,8 @@ class PrepScheduleService
     }
 
     /**
-     * @param  Collection<int, mixed>  $weeklyOrders
-     * @return Collection<int, mixed>
+     * @param  Collection<string, Collection<int, Order>>  $weeklyOrders
+     * @return Collection<string, Collection<int, array<string, mixed>>>
      */
     public function generatePrepSchedule(Collection $weeklyOrders): Collection
     {
@@ -88,8 +88,8 @@ class PrepScheduleService
     }
 
     /**
-     * @param  Collection<int, mixed>  $weeklyOrders
-     * @return Collection<int, mixed>
+     * @param  Collection<string, Collection<int, Order>>  $weeklyOrders
+     * @return Collection<string, array<string, mixed>>
      */
     public function getProductSummary(Collection $weeklyOrders): Collection
     {
@@ -119,8 +119,8 @@ class PrepScheduleService
     }
 
     /**
-     * @param  Collection<int, mixed>  $prepSchedule
-     * @return Collection<int, mixed>
+     * @param  Collection<string, Collection<int, array<string, mixed>>>  $prepSchedule
+     * @return Collection<string, Collection<int, array<string, mixed>>>
      */
     public function getTimelineView(Collection $prepSchedule): Collection
     {
@@ -144,7 +144,7 @@ class PrepScheduleService
     }
 
     /**
-     * @param  Collection<int, mixed>  $prepSchedule
+     * @param  Collection<string, Collection<int, array<string, mixed>>>  $prepSchedule
      */
     public function getTotalPrepHours(Collection $prepSchedule): float
     {
@@ -158,8 +158,8 @@ class PrepScheduleService
     }
 
     /**
-     * @param  Collection<int, mixed>  $weeklyOrders
-     * @param  Collection<int, mixed>  $prepSchedule
+     * @param  Collection<string, Collection<int, Order>>  $weeklyOrders
+     * @param  Collection<string, Collection<int, array<string, mixed>>>  $prepSchedule
      * @return array<string, mixed>
      */
     public function getWeekSummary(Collection $weeklyOrders, Collection $prepSchedule): array

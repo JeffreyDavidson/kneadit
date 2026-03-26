@@ -43,6 +43,9 @@ class CustomersTable
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
+                        if (! is_string($state)) {
+                            return null;
+                        }
 
                         if (strlen($state) <= $column->getCharacterLimit()) {
                             return null;
@@ -58,7 +61,7 @@ class CustomersTable
                     ->color(fn (Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday) ? 'success' : 'gray')
                     ->formatStateUsing(fn (mixed $state, Customer $record) => resolve(BirthdayCalculator::class)->isToday($record->birthday)
                         ? '🎂 Today!'
-                        : ($state ? Date::parse($state)->format('M j') : '—'))
+                        : (is_string($state) ? Date::parse($state)->format('M j') : '—'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 

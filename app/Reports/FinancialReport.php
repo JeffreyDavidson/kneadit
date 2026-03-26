@@ -59,7 +59,7 @@ class FinancialReport
             ->select('category', DB::raw('SUM(amount) as total'))
             ->groupBy('category')
             ->pluck('total', 'category')
-            ->map(fn (string $v, string $k) => ['category' => ExpenseCategory::tryFrom($k)?->label() ?? ucfirst($k), 'amount' => (float) $v])
+            ->map(fn (mixed $v, mixed $k) => ['category' => ExpenseCategory::tryFrom((string) $k)?->label() ?? ucfirst((string) $k), 'amount' => (float) $v])
             ->values()
             ->all();
 

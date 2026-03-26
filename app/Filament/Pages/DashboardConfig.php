@@ -19,12 +19,12 @@ class DashboardConfig extends Page
 
     protected string $view = 'filament.pages.dashboard-config';
 
-    /** @var array<int, mixed> */
+    /** @var list<array<string, mixed>> */
     public array $widgets = [];
 
     public bool $showPreview = false;
 
-    /** @var array<string, mixed> */
+    /** @var array<string, array{name: string, description: string, icon: string, defaultSpan: int}> */
     protected array $widgetMeta = [
         // Core
         'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋', 'defaultSpan' => 3],
@@ -83,23 +83,30 @@ class DashboardConfig extends Page
     protected function loadWidgets(): void
     {
         $saved = settings('dashboard_widgets');
-        $config = $saved ? json_decode($saved, true) : null;
+        /** @var array<string, array<string, mixed>>|null $config */
+        $config = $saved ? json_decode((string) $saved, true) : null;
 
         if (! $config) {
             $config = $this->getDefaults();
         }
 
-        uasort($config, fn (array $a, array $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
+        uasort($config, static function (mixed $a, mixed $b): int {
+            $aOrder = is_array($a) ? ($a['order'] ?? 99) : 99;
+            $bOrder = is_array($b) ? ($b['order'] ?? 99) : 99;
+
+            return $aOrder <=> $bOrder;
+        });
 
         $this->widgets = [];
         foreach ($config as $key => $settings) {
+            /** @var array<string, mixed> $settings */
             if (! isset($this->widgetMeta[$key])) {
                 continue;
             }
             $this->widgets[] = [
                 'key' => $key,
                 'visible' => $settings['visible'] ?? true,
-                'span' => $settings['span'] ?? $this->widgetMeta[$key]['defaultSpan'] ?? 1,
+                'span' => $settings['span'] ?? $this->widgetMeta[$key]['defaultSpan'],
                 'name' => $this->widgetMeta[$key]['name'],
                 'description' => $this->widgetMeta[$key]['description'],
                 'icon' => $this->widgetMeta[$key]['icon'],
@@ -112,7 +119,7 @@ class DashboardConfig extends Page
                 $this->widgets[] = [
                     'key' => $key,
                     'visible' => true,
-                    'span' => $meta['defaultSpan'] ?? 1,
+                    'span' => $meta['defaultSpan'],
                     'name' => $meta['name'],
                     'description' => $meta['description'],
                     'icon' => $meta['icon'],
@@ -148,7 +155,7 @@ class DashboardConfig extends Page
     {
         $config = [];
         foreach ($this->widgets as $i => $widget) {
-            $config[$widget['key']] = [
+            $config[(string) $widget['key']] = [
                 'visible' => $widget['visible'],
                 'order' => $i + 1,
                 'span' => $widget['span'] ?? 1,

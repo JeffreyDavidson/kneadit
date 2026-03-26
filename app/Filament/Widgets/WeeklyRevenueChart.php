@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\ValueObjects\DateRange;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Carbon;
 
 class WeeklyRevenueChart extends ChartWidget
 {
@@ -43,6 +44,7 @@ class WeeklyRevenueChart extends ChartWidget
         $revenue = [];
         $expenses = [];
 
+        /** @var Carbon $date */
         foreach ($period as $date) {
             $key = $date->format('Y-m-d');
             $labels[] = $date->format('D');

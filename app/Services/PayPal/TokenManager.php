@@ -17,8 +17,8 @@ class TokenManager
 
     public function __construct()
     {
-        $this->clientId = config('services.paypal.client_id');
-        $this->clientSecret = config('services.paypal.client_secret');
+        $this->clientId = config('services.paypal.client_id') !== null ? (string) config('services.paypal.client_id') : null;
+        $this->clientSecret = config('services.paypal.client_secret') !== null ? (string) config('services.paypal.client_secret') : null;
         $this->baseUrl = config('services.paypal.sandbox', true)
             ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';
@@ -39,7 +39,7 @@ class TokenManager
                 ]);
 
             if ($response->successful()) {
-                $this->accessToken = $response->json('access_token');
+                $this->accessToken = is_string($token = $response->json('access_token')) ? $token : null;
 
                 return $this->accessToken;
             }

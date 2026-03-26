@@ -48,7 +48,9 @@ class MaintenanceMode extends Page
         $this->maintenance_message = platformSettings('maintenance_message', '');
         $this->maintenance_scheduled_start = platformSettings('maintenance_scheduled_start');
         $this->maintenance_scheduled_end = platformSettings('maintenance_scheduled_end');
-        $this->affected_services = json_decode(platformSettings('affected_services', '[]'), true) ?: [];
+        /** @var array<string, mixed> $decoded */
+        $decoded = json_decode((string) platformSettings('affected_services', '[]'), true) ?: [];
+        $this->affected_services = $decoded;
     }
 
     public function content(Schema $schema): Schema
