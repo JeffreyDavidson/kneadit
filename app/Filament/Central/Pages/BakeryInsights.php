@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use UnitEnum;
 
 class BakeryInsights extends Page
@@ -91,7 +92,8 @@ class BakeryInsights extends Page
         } catch (\Throwable $e) {
             try {
                 tenancy()->end();
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                Log::warning('BakeryInsights error', ['error' => $e->getMessage()]);
             }
 
             return 0;
@@ -121,7 +123,8 @@ class BakeryInsights extends Page
         } catch (\Throwable $e) {
             try {
                 tenancy()->end();
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                Log::warning('BakeryInsights error', ['error' => $e->getMessage()]);
             }
 
             return 0;
@@ -149,7 +152,8 @@ class BakeryInsights extends Page
         } catch (\Throwable $e) {
             try {
                 tenancy()->end();
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                Log::warning('BakeryInsights error', ['error' => $e->getMessage()]);
             }
 
             return 0;
@@ -191,7 +195,8 @@ class BakeryInsights extends Page
         } catch (\Throwable $e) {
             try {
                 tenancy()->end();
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                Log::warning('BakeryInsights error', ['error' => $e->getMessage()]);
             }
         }
 
@@ -304,7 +309,8 @@ class BakeryInsights extends Page
         } catch (\Throwable $e) {
             try {
                 tenancy()->end();
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                Log::warning('BakeryInsights error', ['error' => $e->getMessage()]);
             }
 
             return null;
@@ -324,7 +330,8 @@ class BakeryInsights extends Page
         } catch (\Throwable $e) {
             try {
                 tenancy()->end();
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                Log::warning('BakeryInsights error', ['error' => $e->getMessage()]);
             }
 
             return 0;

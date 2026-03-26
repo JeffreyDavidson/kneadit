@@ -8,6 +8,7 @@ use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendScheduledCheckins extends Command
@@ -63,6 +64,7 @@ class SendScheduledCheckins extends Command
 
                     $sentCount++;
                 } catch (\Exception $e) {
+                    Log::error('Failed to send checkin to tenant', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
                     $this->error("Failed to send checkin to {$tenant->id}: {$e->getMessage()}");
                 }
             }

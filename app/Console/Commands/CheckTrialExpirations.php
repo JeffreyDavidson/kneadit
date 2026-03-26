@@ -31,7 +31,7 @@ class CheckTrialExpirations extends Command
 
         $tenants = Tenant::query()->whereDate('trial_ends_at', $targetDate->toDateString())
             ->where('is_active', true)
-            ->get();
+            ->cursor();
 
         /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
@@ -79,6 +79,7 @@ class CheckTrialExpirations extends Command
                 cache()->put($sentKey, true, now()->addDays(30));
                 $this->info("  ✓ {$daysLeft}d reminder → {$user->email} ({$tenant->store_name})");
             } catch (\Exception $e) {
+                Log::error('Trial check failed', ['email' => $user->email, 'error' => $e->getMessage()]);
                 $this->error("  ✗ Failed: {$user->email} — {$e->getMessage()}");
             }
         }
@@ -89,7 +90,7 @@ class CheckTrialExpirations extends Command
         // Find tenants whose trial has expired and have no active subscription
         $expiredTenants = Tenant::query()->where('trial_ends_at', '<', now())
             ->where('is_active', true)
-            ->get();
+            ->cursor();
 
         /** @var Tenant $tenant */
         foreach ($expiredTenants as $tenant) {
