@@ -96,7 +96,7 @@ class CustomerDirectory extends Page
             )
             ->value('avg_ltv');
 
-        $atRiskDays = (int) settings('at_risk_days', '30');
+        $atRiskDays = (int) (string) config('analytics.at_risk_threshold_days', 30);
         $atRiskCount = Customer::query()
             ->whereHas('orders', fn (EloquentBuilder $q) => $q->where('status', '!=', OrderStatus::Cancelled))
             ->whereDoesntHave('orders', fn (EloquentBuilder $q) => $q->where('status', '!=', OrderStatus::Cancelled)->where('created_at', '>=', now()->subDays($atRiskDays)))

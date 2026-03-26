@@ -27,7 +27,7 @@ class CustomerIntelligence
             ? (int) $lastOrderDate->diffInDays(now())
             : null;
 
-        $atRiskDays = (int) settings('at_risk_days', '30');
+        $atRiskDays = (int) (string) config('analytics.at_risk_threshold_days', 30);
         $isAtRisk = $orderCount > 0
             && $daysSinceLastOrder !== null
             && $daysSinceLastOrder > $atRiskDays;

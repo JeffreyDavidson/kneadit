@@ -63,11 +63,11 @@ test('at-risk threshold is configurable via setting', function () {
         'created_at' => now()->subDays(45),
     ]);
 
-    settings(['at_risk_days' => '30']);
+    config(['analytics.at_risk_threshold_days' => 30]);
     $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
     expect($metrics->isAtRisk)->toBeTrue();
 
-    settings(['at_risk_days' => '60']);
+    config(['analytics.at_risk_threshold_days' => 60]);
     $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
     expect($metrics->isAtRisk)->toBeFalse();
 });

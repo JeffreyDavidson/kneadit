@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\StorefrontTheme;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -48,7 +49,7 @@ class ThemeSelector extends Page
 
     public function selectTheme(string $theme): void
     {
-        if (! in_array($theme, ['classic', 'modern', 'rustic', 'elegant'])) {
+        if (! StorefrontTheme::tryFrom($theme)) {
             return;
         }
 

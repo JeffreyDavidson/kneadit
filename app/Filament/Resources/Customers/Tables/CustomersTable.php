@@ -18,7 +18,7 @@ class CustomersTable
 {
     public static function configure(Table $table): Table
     {
-        $atRiskDays = (int) settings('at_risk_days', '30');
+        $atRiskDays = (int) (string) config('analytics.at_risk_threshold_days', 30);
 
         return $table
             ->modifyQueryUsing(fn (Builder $query) => resolve(CustomerIntelligence::class)->enrichQuery($query))
