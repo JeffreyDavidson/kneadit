@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
-use App\Models\Setting;
 use Illuminate\Http\Response;
 
 class BlogFeedController extends Controller
@@ -21,7 +20,7 @@ class BlogFeedController extends Controller
             ->take(20)
             ->get();
 
-        $storeName = Setting::get('store_name', 'Our Bakery');
+        $storeName = settings('store_name', 'Our Bakery');
 
         return response()
             ->view('blog.feed', compact('posts', 'storeName'))

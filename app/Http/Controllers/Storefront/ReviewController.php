@@ -6,7 +6,6 @@ use App\Actions\CreateReview;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReviewRequest;
 use App\Models\Order;
-use App\Models\Setting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -15,7 +14,7 @@ class ReviewController extends Controller
     public function show(Order $order, Request $request): View
     {
         $order->load(['customer', 'orderItems.product']);
-        $storeName = Setting::get('store_name', 'Our Bakery');
+        $storeName = settings('store_name', 'Our Bakery');
         $prefilledRating = $request->query('rating');
 
         return view('submit-review', compact('order', 'storeName', 'prefilledRating'));
@@ -32,7 +31,7 @@ class ReviewController extends Controller
             photo: $request->file('photo'),
         );
 
-        $storeName = Setting::get('store_name', 'Our Bakery');
+        $storeName = settings('store_name', 'Our Bakery');
 
         return view('submit-review', [
             'order' => $order,

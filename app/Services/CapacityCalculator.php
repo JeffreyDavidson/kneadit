@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\CapacityLimit;
 use App\Models\Order;
-use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
 
@@ -23,7 +22,7 @@ class CapacityCalculator
             return $limit->max_orders;
         }
 
-        return (int) Setting::get('default_daily_capacity', 20);
+        return (int) settings('default_daily_capacity', 20);
     }
 
     public function isAvailable(Carbon|string $date): bool

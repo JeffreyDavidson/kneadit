@@ -2,13 +2,13 @@
 
 @section('content')
 @php
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-    $minimumGuests = \App\Models\Setting::get('catering_minimum_guests', '10');
-    $leadTimeDays = \App\Models\Setting::get('catering_lead_time_days', '14');
-    $heroImage = \App\Models\Setting::get('catering_hero_image');
+    $storeName = settings('store_name', 'Our Bakery');
+    $minimumGuests = settings('catering_minimum_guests', '10');
+    $leadTimeDays = settings('catering_lead_time_days', '14');
+    $heroImage = settings('catering_hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1555244162-803834f70033?w=1920&q=80';
 
-    $content = \App\Models\Setting::pageContentAll('catering');
+    $content = settingsPageContent('catering');
 @endphp
 
 <style>

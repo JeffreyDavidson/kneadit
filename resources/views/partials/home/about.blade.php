@@ -1,7 +1,7 @@
 @php
-    $aboutUs = \App\Models\Setting::get('about_us_text');
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-    $storePhoto = \App\Models\Setting::get('store_photo');
+    $aboutUs = settings('about_us_text');
+    $storeName = settings('store_name', 'Our Bakery');
+    $storePhoto = settings('store_photo');
 @endphp
 @if($aboutUs)
 <section class="relative py-24 px-4 overflow-hidden" style="background: var(--warm-50);">

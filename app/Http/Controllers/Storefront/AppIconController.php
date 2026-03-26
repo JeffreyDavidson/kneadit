@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\Setting;
 use Illuminate\Http\Response;
 
 class AppIconController extends Controller
@@ -14,7 +13,7 @@ class AppIconController extends Controller
     public function __invoke(string $size): Response
     {
         $size = in_array($size, ['192', '512']) ? (int) $size : 192;
-        $storeName = Setting::get('store_name', 'B');
+        $storeName = settings('store_name', 'B');
         $color = tenant()->brand_color_primary ?? '#d4920c';
 
         $img = imagecreatetruecolor($size, $size);

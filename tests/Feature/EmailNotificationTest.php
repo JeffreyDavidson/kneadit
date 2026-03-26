@@ -7,7 +7,6 @@ use App\Mail\OrderConfirmed;
 use App\Mail\OrderReady;
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,7 +22,7 @@ beforeEach(function () {
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);
-    Setting::set('loyalty_enabled', '0');
+    settings(['loyalty_enabled' => '0']);
 });
 
 test('order confirmed email sent on status change', function () {
@@ -72,7 +71,7 @@ test('email contains correct order details', function () {
 });
 
 test('email contains store name from settings', function () {
-    Setting::set('store_name', 'Sweet Sunrise Bakery');
+    settings(['store_name' => 'Sweet Sunrise Bakery']);
 
     $mail = new OrderConfirmed($this->order);
     $envelope = $mail->envelope();

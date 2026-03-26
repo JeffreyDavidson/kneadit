@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Enums\UserRole;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Setting;
 use BackedEnum;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
@@ -175,7 +174,7 @@ class Onboarding extends Page
     public function mount(): void
     {
         // If onboarding is already complete, redirect to dashboard
-        if (Setting::get('onboarding_completed_at')) {
+        if (settings('onboarding_completed_at')) {
             $this->redirect(url('/admin'));
 
             return;
@@ -192,16 +191,16 @@ class Onboarding extends Page
         }
 
         // Pre-fill from settings if available
-        $this->bakery_name = Setting::get('store_name', $this->bakery_name);
-        $this->contact_email = Setting::get('store_email', $this->contact_email);
-        $this->contact_phone = Setting::get('store_phone', '');
-        $this->contact_address = Setting::get('store_address', '');
+        $this->bakery_name = settings('store_name', $this->bakery_name);
+        $this->contact_email = settings('store_email', $this->contact_email);
+        $this->contact_phone = settings('store_phone', '');
+        $this->contact_address = settings('store_address', '');
 
         // Load existing allergy disclaimer if set, otherwise leave blank
-        $this->allergy_disclaimer = Setting::get('allergy_disclaimer', '');
+        $this->allergy_disclaimer = settings('allergy_disclaimer', '');
 
         // Pre-fill operating hours from settings if available
-        $existingHours = Setting::get('operating_hours');
+        $existingHours = settings('operating_hours');
         if ($existingHours) {
             $hours = json_decode($existingHours, true);
             if (is_array($hours)) {
@@ -579,7 +578,7 @@ class Onboarding extends Page
 
     protected function saveWelcomeStep(): void
     {
-        Setting::set('store_name', $this->bakery_name);
+        settings(['store_name' => $this->bakery_name]);
 
         $tenant = tenant();
         if ($tenant) {
@@ -591,15 +590,15 @@ class Onboarding extends Page
 
     protected function saveContactStep(): void
     {
-        Setting::set('store_email', $this->contact_email);
-        Setting::set('store_phone', $this->contact_phone);
-        Setting::set('store_address', $this->contact_address);
+        settings(['store_email' => $this->contact_email]);
+        settings(['store_phone' => $this->contact_phone]);
+        settings(['store_address' => $this->contact_address]);
     }
 
     protected function saveBrandingStep(): void
     {
-        Setting::set('brand_color_primary', $this->brand_color_primary);
-        Setting::set('brand_color_secondary', $this->brand_color_secondary);
+        settings(['brand_color_primary' => $this->brand_color_primary]);
+        settings(['brand_color_secondary' => $this->brand_color_secondary]);
 
         $tenant = tenant();
         if ($tenant) {
@@ -611,7 +610,7 @@ class Onboarding extends Page
         if (! empty($this->store_logo)) {
             $logoPath = collect($this->store_logo)->first();
             if ($logoPath) {
-                Setting::set('store_logo', $logoPath);
+                settings(['store_logo' => $logoPath]);
                 if ($tenant) {
                     $tenant->store_logo = $logoPath;
                     $tenant->save();
@@ -647,39 +646,39 @@ class Onboarding extends Page
             }
         }
 
-        Setting::set('operating_hours', json_encode($hours));
+        settings(['operating_hours' => json_encode($hours)]);
     }
 
     protected function saveComplianceStep(): void
     {
-        Setting::set('cottage_food_state', $this->cottage_food_state);
-        Setting::set('revenue_cap', $this->revenue_cap);
-        Setting::set('license_number', $this->license_number);
-        Setting::set('allergy_disclaimer', $this->allergy_disclaimer);
-        Setting::set('compliance_acknowledged', $this->compliance_acknowledged ? '1' : '0');
+        settings(['cottage_food_state' => $this->cottage_food_state]);
+        settings(['revenue_cap' => $this->revenue_cap]);
+        settings(['license_number' => $this->license_number]);
+        settings(['allergy_disclaimer' => $this->allergy_disclaimer]);
+        settings(['compliance_acknowledged' => $this->compliance_acknowledged ? '1' : '0']);
     }
 
     protected function saveDeliveryStep(): void
     {
-        Setting::set('delivery_enabled', $this->delivery_enabled ? '1' : '0');
-        Setting::set('delivery_radius', $this->delivery_radius);
-        Setting::set('delivery_fee', $this->delivery_fee);
-        Setting::set('free_delivery_threshold', $this->free_delivery_over ? $this->free_delivery_threshold : null);
-        Setting::set('delivery_minimum_order', $this->delivery_minimum_order);
-        Setting::set('pickup_enabled', $this->pickup_enabled ? '1' : '0');
-        Setting::set('pickup_instructions', $this->pickup_instructions);
+        settings(['delivery_enabled' => $this->delivery_enabled ? '1' : '0']);
+        settings(['delivery_radius' => $this->delivery_radius]);
+        settings(['delivery_fee' => $this->delivery_fee]);
+        settings(['free_delivery_threshold' => $this->free_delivery_over ? $this->free_delivery_threshold : null]);
+        settings(['delivery_minimum_order' => $this->delivery_minimum_order]);
+        settings(['pickup_enabled' => $this->pickup_enabled ? '1' : '0']);
+        settings(['pickup_instructions' => $this->pickup_instructions]);
     }
 
     protected function savePaymentStep(): void
     {
-        Setting::set('payment_methods', json_encode($this->payment_methods));
+        settings(['payment_methods' => json_encode($this->payment_methods)]);
         // Keep legacy single value for backward compatibility
-        Setting::set('payment_method', $this->payment_methods[0] ?? 'cash');
+        settings(['payment_method' => $this->payment_methods[0] ?? 'cash']);
 
         if (in_array('paypal', $this->payment_methods ?? [])) {
-            Setting::set('paypal_client_id', $this->paypal_client_id);
-            Setting::set('paypal_client_secret', $this->paypal_client_secret);
-            Setting::set('paypal_sandbox', $this->paypal_sandbox ? '1' : '0');
+            settings(['paypal_client_id' => $this->paypal_client_id]);
+            settings(['paypal_client_secret' => $this->paypal_client_secret]);
+            settings(['paypal_sandbox' => $this->paypal_sandbox ? '1' : '0']);
 
             $tenant = tenant();
             if ($tenant) {
@@ -699,7 +698,7 @@ class Onboarding extends Page
 
     public function completeOnboarding(): void
     {
-        Setting::set('onboarding_completed_at', now()->toISOString());
+        settings(['onboarding_completed_at' => now()->toISOString()]);
 
         Notification::make()
             ->title('Welcome aboard!')

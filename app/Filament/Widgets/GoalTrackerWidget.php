@@ -4,7 +4,6 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
-use App\Models\Setting;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\Widget;
 
@@ -29,7 +28,7 @@ class GoalTrackerWidget extends Widget
         $this->editingType = $type;
         $key = $type === 'monthly' ? 'monthly_revenue_goal' : 'yearly_revenue_goal';
         $default = $type === 'monthly' ? '5000' : '50000';
-        $this->editingGoal = Setting::get($key, $default);
+        $this->editingGoal = settings($key, $default);
         $this->showEditModal = true;
     }
 
@@ -41,14 +40,14 @@ class GoalTrackerWidget extends Widget
     public function saveGoal(): void
     {
         $key = $this->editingType === 'monthly' ? 'monthly_revenue_goal' : 'yearly_revenue_goal';
-        Setting::set($key, $this->editingGoal);
+        settings([$key => $this->editingGoal]);
         $this->showEditModal = false;
     }
 
     /** @return array<string, mixed> */
     public function getMonthlyDataProperty(): array
     {
-        $goal = (float) Setting::get('monthly_revenue_goal', 5000);
+        $goal = (float) settings('monthly_revenue_goal', 5000);
         $range = DateRange::thisMonth();
 
         $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
@@ -68,7 +67,7 @@ class GoalTrackerWidget extends Widget
     /** @return array<string, mixed> */
     public function getYearlyDataProperty(): array
     {
-        $goal = (float) Setting::get('yearly_revenue_goal', 50000);
+        $goal = (float) settings('yearly_revenue_goal', 50000);
         $range = DateRange::thisYear();
 
         $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())

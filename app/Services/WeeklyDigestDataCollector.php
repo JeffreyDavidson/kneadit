@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -51,7 +50,7 @@ class WeeklyDigestDataCollector
                 ->whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
                 ->active()
                 ->count(),
-            'storeName' => Setting::get('store_name', 'KneadIt Bakery'),
+            'storeName' => settings('store_name', 'KneadIt Bakery'),
             'adminUrl' => url('/admin'),
         ];
     }

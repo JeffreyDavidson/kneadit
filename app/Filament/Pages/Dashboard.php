@@ -30,7 +30,6 @@ use App\Filament\Widgets\UpcomingHolidayWidget;
 use App\Filament\Widgets\UpcomingOrdersWidget;
 use App\Filament\Widgets\WeeklyRevenueChart;
 use App\Filament\Widgets\WelcomeBannerWidget;
-use App\Models\Setting;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -94,13 +93,13 @@ class Dashboard extends BaseDashboard
 
         // Dashboard customization disabled until config page is finalized
         // When ready, set 'dashboard_config_enabled' to 'true' in Settings
-        $enabled = Setting::get('dashboard_config_enabled') === 'true';
+        $enabled = settings('dashboard_config_enabled') === 'true';
 
         if (! $enabled) {
             return array_values($registry);
         }
 
-        $saved = Setting::get('dashboard_widgets');
+        $saved = settings('dashboard_widgets');
         $config = $saved ? json_decode($saved, true) : null;
 
         if (! $config) {

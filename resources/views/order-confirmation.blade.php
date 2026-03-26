@@ -1,13 +1,13 @@
 @extends('layouts.storefront')
 
 @php
-    $heroImage = \App\Models\Setting::get('hero_image');
+    $heroImage = settings('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 @endphp
 
 @section('content')
 @php
-    $content = \App\Models\Setting::pageContentAll('order_confirmation');
+    $content = settingsPageContent('order_confirmation');
     $journeySteps = $content['journey_steps'] ?? [
         ['title' => 'Confirmation', 'description' => 'You\'ll receive an email confirmation with your order details shortly.'],
         ['title' => 'Preparation', 'description' => 'Our bakers will craft your items fresh on your scheduled date.'],
@@ -192,7 +192,7 @@
                         Track Your Order
                     </a>
                     <a href="{{ url('/') }}" class="inline-flex items-center gap-2 px-6 py-3 font-semibold transition-all" style="color: var(--warm-400);">
-                        Back to {{ \App\Models\Setting::get('store_name', 'Home') }}
+                        Back to {{ settings('store_name', 'Home') }}
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                     <button onclick="window.print()" class="inline-flex items-center gap-2 px-6 py-3 font-semibold transition-all" style="color: var(--warm-500);">

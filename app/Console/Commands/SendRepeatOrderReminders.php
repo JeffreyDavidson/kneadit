@@ -6,7 +6,6 @@ use App\Enums\PaymentStatus;
 use App\Mail\RepeatOrderReminder;
 use App\Models\Customer;
 use App\Models\CustomerReminder;
-use App\Models\Setting;
 use App\Models\Tenant;
 use App\Services\TenancyManager;
 use Illuminate\Console\Command;
@@ -30,7 +29,7 @@ class SendRepeatOrderReminders extends Command
         foreach ($tenants as $tenant) {
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($tenant) {
-                    if (Setting::get('repeat_reminders_enabled', true) != true) {
+                    if (settings('repeat_reminders_enabled', true) != true) {
                         return;
                     }
 
@@ -46,7 +45,7 @@ class SendRepeatOrderReminders extends Command
 
     protected function processTenant(Tenant $tenant): void
     {
-        $reminderDays = (int) Setting::get('repeat_reminder_days', 30);
+        $reminderDays = (int) settings('repeat_reminder_days', 30);
         $cutoffDate = Date::today()->subDays($reminderDays);
 
         $customersToRemind = $this->getCustomersNeedingReminders($cutoffDate, $reminderDays);

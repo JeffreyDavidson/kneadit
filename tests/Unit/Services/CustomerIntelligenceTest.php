@@ -3,7 +3,6 @@
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Services\CustomerIntelligence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -64,11 +63,11 @@ test('at-risk threshold is configurable via setting', function () {
         'created_at' => now()->subDays(45),
     ]);
 
-    Setting::set('at_risk_days', '30');
+    settings(['at_risk_days' => '30']);
     $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
     expect($metrics->isAtRisk)->toBeTrue();
 
-    Setting::set('at_risk_days', '60');
+    settings(['at_risk_days' => '60']);
     $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
     expect($metrics->isAtRisk)->toBeFalse();
 });

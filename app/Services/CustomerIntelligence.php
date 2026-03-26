@@ -7,7 +7,6 @@ use App\Enums\LoyaltyPointType;
 use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 
@@ -28,7 +27,7 @@ class CustomerIntelligence
             ? (int) $lastOrderDate->diffInDays(now())
             : null;
 
-        $atRiskDays = (int) Setting::get('at_risk_days', '30');
+        $atRiskDays = (int) settings('at_risk_days', '30');
         $isAtRisk = $orderCount > 0
             && $daysSinceLastOrder !== null
             && $daysSinceLastOrder > $atRiskDays;

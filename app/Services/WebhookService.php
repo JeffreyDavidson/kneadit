@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -14,13 +13,13 @@ class WebhookService
     /** @param array<string, mixed> $payload */
     public static function dispatch(string $event, array $payload): void
     {
-        $url = Setting::get('webhook_url');
+        $url = settings('webhook_url');
 
         if (! $url) {
             return;
         }
 
-        $secret = Setting::get('webhook_secret', '');
+        $secret = settings('webhook_secret', '');
 
         $body = [
             'event' => $event,

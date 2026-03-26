@@ -5,13 +5,12 @@ namespace App\Actions\Orders;
 use App\Enums\LoyaltyPointType;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
-use App\Models\Setting;
 
 class AwardLoyaltyPoints
 {
     public function __invoke(Order $order): void
     {
-        if (Setting::get('loyalty_enabled') !== '1') {
+        if (settings('loyalty_enabled') !== '1') {
             return;
         }
 
@@ -40,7 +39,7 @@ class AwardLoyaltyPoints
 
     private function calculatePoints(Order $order): int
     {
-        $pointsPerDollar = (int) Setting::get('loyalty_points_per_dollar', '10');
+        $pointsPerDollar = (int) settings('loyalty_points_per_dollar', '10');
 
         return (int) floor((float) $order->total * $pointsPerDollar);
     }

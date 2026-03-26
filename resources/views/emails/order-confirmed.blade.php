@@ -38,7 +38,7 @@
         <p style="margin: 0 0 5px; font-weight: 600;">🏪 Pickup Details</p>
         <p style="margin: 0 0 3px;"><strong>Date:</strong> {{ $order->delivery_date->format('M j, Y') }}</p>
         <p style="margin: 0 0 3px;"><strong>Time:</strong> {{ $order->delivery_time->format('g:i A') }}</p>
-        <p style="margin: 0;"><strong>Location:</strong> {{ \App\Models\Setting::get('store_address', '') }}</p>
+        <p style="margin: 0;"><strong>Location:</strong> {{ settings('store_address', '') }}</p>
     </div>
 @endif
 
@@ -54,11 +54,11 @@
 
 @php
     $emailPolicies = array_filter([
-        'Cancellation Policy' => \App\Models\Setting::get('cancellation_policy', ''),
-        'Deposit Policy' => \App\Models\Setting::get('deposit_policy', ''),
-        'Refund Policy' => \App\Models\Setting::get('refund_policy', ''),
-        'Pickup Policy' => \App\Models\Setting::get('pickup_policy', ''),
-        'Additional Terms' => \App\Models\Setting::get('additional_terms', ''),
+        'Cancellation Policy' => settings('cancellation_policy', ''),
+        'Deposit Policy' => settings('deposit_policy', ''),
+        'Refund Policy' => settings('refund_policy', ''),
+        'Pickup Policy' => settings('pickup_policy', ''),
+        'Additional Terms' => settings('additional_terms', ''),
     ]);
 @endphp
 

@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Order;
-use App\Models\Setting;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -19,7 +18,7 @@ class OrderReady extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $storeName = Setting::get('store_name', 'KneadIt Bakery');
+        $storeName = settings('store_name', 'KneadIt Bakery');
 
         return new Envelope(
             from: $this->bakerFrom(),

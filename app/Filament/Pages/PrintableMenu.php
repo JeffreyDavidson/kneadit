@@ -6,7 +6,6 @@ use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Category;
-use App\Models\Setting;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -64,12 +63,12 @@ class PrintableMenu extends Page
     public function getStoreInfo(): array
     {
         return [
-            'name' => Setting::get('store_name', 'My Bakery'),
-            'tagline' => Setting::get('business_tagline', ''),
-            'phone' => Setting::get('store_phone', ''),
-            'email' => Setting::get('store_email', ''),
-            'address' => Setting::get('store_address', ''),
-            'disclaimer' => Setting::get('allergy_disclaimer', ''),
+            'name' => settings('store_name', 'My Bakery'),
+            'tagline' => settings('business_tagline', ''),
+            'phone' => settings('store_phone', ''),
+            'email' => settings('store_email', ''),
+            'address' => settings('store_address', ''),
+            'disclaimer' => settings('allergy_disclaimer', ''),
         ];
     }
 

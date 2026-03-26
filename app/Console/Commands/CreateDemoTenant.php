@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Setting;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -88,11 +87,11 @@ class CreateDemoTenant extends Command
             ]);
 
             // Seed settings
-            Setting::set('store_name', 'Sweet Dreams Bakery');
-            Setting::set('store_email', 'demo@getkneadit.app');
-            Setting::set('store_phone', '(863) 555-0123');
-            Setting::set('store_address', '123 Main Street, Davenport, FL 33837');
-            Setting::set('default_daily_capacity', '15');
+            settings(['store_name' => 'Sweet Dreams Bakery']);
+            settings(['store_email' => 'demo@getkneadit.app']);
+            settings(['store_phone' => '(863) 555-0123']);
+            settings(['store_address' => '123 Main Street, Davenport, FL 33837']);
+            settings(['default_daily_capacity' => '15']);
 
             // Run seeders
             Artisan::call('db:seed', ['--force' => true]);

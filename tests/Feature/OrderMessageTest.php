@@ -5,7 +5,6 @@ use App\Mail\NewOrderMessage;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderMessage;
-use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
@@ -86,7 +85,7 @@ test('messages require content', function () {
 
 test('notification email is sent to baker', function () {
     Mail::fake();
-    Setting::set('store_email', 'baker@bakery.com');
+    settings(['store_email' => 'baker@bakery.com']);
 
     withoutMiddleware(tenantMiddleware())
         ->postJson("/order/{$this->order->order_number}/messages", [

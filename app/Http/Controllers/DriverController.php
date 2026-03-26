@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Models\Order;
-use App\Models\Setting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -21,7 +20,7 @@ class DriverController extends Controller
             ->orderBy('delivery_time')
             ->get();
 
-        $storeName = Setting::get('store_name', 'Our Bakery');
+        $storeName = settings('store_name', 'Our Bakery');
 
         return view('driver', compact('orders', 'storeName'));
     }

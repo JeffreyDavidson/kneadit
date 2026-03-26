@@ -2,10 +2,10 @@
 
 @section('content')
 @php
-    $heroImage = \App\Models\Setting::get('gift_cards_hero_image');
+    $heroImage = settings('gift_cards_hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
-    $content = \App\Models\Setting::pageContentAll('gift_cards');
+    $content = settingsPageContent('gift_cards');
 @endphp
 
 <style>
@@ -86,7 +86,7 @@
                             <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(-30%, 30%);"></div>
                             <div class="relative z-10">
                                 <p class="font-script text-2xl" style="color: var(--warm-500);">Gift Card</p>
-                                <p class="font-display text-lg mt-1" style="color: var(--warm-400);">{{ \App\Models\Setting::get('store_name', 'Our Bakery') }}</p>
+                                <p class="font-display text-lg mt-1" style="color: var(--warm-400);">{{ settings('store_name', 'Our Bakery') }}</p>
                             </div>
                             <div class="relative z-10 text-right">
                                 <p class="font-display text-5xl font-bold" style="color: white;" x-text="'$' + parseFloat(form.initial_balance || 0).toFixed(2)"></p>

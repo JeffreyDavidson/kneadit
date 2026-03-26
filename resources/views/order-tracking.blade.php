@@ -3,9 +3,9 @@
 
 @section('content')
 @php
-    $content = \App\Models\Setting::pageContentAll('order_tracking');
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-    $heroImage = \App\Models\Setting::get('hero_image');
+    $content = settingsPageContent('order_tracking');
+    $storeName = settings('store_name', 'Our Bakery');
+    $heroImage = settings('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 @endphp
 

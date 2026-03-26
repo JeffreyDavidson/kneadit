@@ -2,7 +2,6 @@
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Setting;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -18,7 +17,7 @@ test('menu page loads successfully', function () {
 });
 
 test('menu page shows store name from settings', function () {
-    Setting::set('store_name', 'Sweet Dreams Bakery');
+    settings(['store_name' => 'Sweet Dreams Bakery']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.menu', [], false));

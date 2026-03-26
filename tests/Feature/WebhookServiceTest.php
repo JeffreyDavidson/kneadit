@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Setting;
 use App\Services\WebhookService;
 use Illuminate\Support\Facades\Http;
 
@@ -18,7 +17,7 @@ test('dispatch does nothing without webhook url', function () {
 
 test('dispatch sends to configured url', function () {
     Http::fake(['*' => Http::response('ok', 200)]);
-    Setting::set('webhook_url', 'https://hooks.example.com/test');
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
 
     WebhookService::dispatch('order.created', ['order_number' => 'ORD-001']);
 
@@ -27,7 +26,7 @@ test('dispatch sends to configured url', function () {
 
 test('dispatch includes event header', function () {
     Http::fake(['*' => Http::response('ok', 200)]);
-    Setting::set('webhook_url', 'https://hooks.example.com/test');
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
 
     WebhookService::dispatch('order.updated', ['status' => 'delivered']);
 
@@ -38,8 +37,8 @@ test('dispatch includes event header', function () {
 
 test('dispatch includes signature header', function () {
     Http::fake(['*' => Http::response('ok', 200)]);
-    Setting::set('webhook_url', 'https://hooks.example.com/test');
-    Setting::set('webhook_secret', 'my-secret');
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
+    settings(['webhook_secret' => 'my-secret']);
 
     WebhookService::dispatch('order.created', ['test' => true]);
 
@@ -50,7 +49,7 @@ test('dispatch includes signature header', function () {
 
 test('dispatch body contains event and data', function () {
     Http::fake(['*' => Http::response('ok', 200)]);
-    Setting::set('webhook_url', 'https://hooks.example.com/test');
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
 
     WebhookService::dispatch('order.created', ['order_number' => 'ORD-001']);
 
@@ -65,7 +64,7 @@ test('dispatch body contains event and data', function () {
 
 test('dispatch handles failed request gracefully', function () {
     Http::fake(['*' => Http::response('error', 500)]);
-    Setting::set('webhook_url', 'https://hooks.example.com/test');
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
 
     // Should not throw
     WebhookService::dispatch('order.created', ['test' => true]);

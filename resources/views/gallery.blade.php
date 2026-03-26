@@ -64,10 +64,10 @@
 </style>
 
 @php
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-    $heroImage = \App\Models\Setting::get('hero_image');
+    $storeName = settings('store_name', 'Our Bakery');
+    $heroImage = settings('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-    $content = \App\Models\Setting::pageContentAll('gallery');
+    $content = settingsPageContent('gallery');
 @endphp
 
 {{-- Photo-Forward Hero --}}

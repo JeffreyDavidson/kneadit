@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Mail\TrialExpiredMail;
+use App\Mail\TrialReminderMail;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -56,26 +56,7 @@ class CheckTrialExpirations extends Command
                 $storeName = $tenant->store_name ?: $tenant->name;
                 $daysText = $daysLeft === 1 ? 'tomorrow' : "in {$daysLeft} days";
 
-                Mail::raw(
-                    "Hi {$user->name},\n\n".
-                    "Your KneadIt free trial for {$storeName} ends {$daysText}.\n\n".
-                    "Subscribe now to keep your bakery running without interruption:\n".
-                    "https://getkneadit.app/billing/plans\n\n".
-                    ($daysLeft <= 3
-                        ? "After your trial expires, your storefront will be paused until you subscribe.\n\n"
-                        : '').
-                    "Questions? Just reply to this email.\n\n— The KneadIt Team",
-                    function (Message $m) use ($user, $daysLeft) {
-                        $subjects = [
-                            7 => 'Your KneadIt trial ends in 7 days',
-                            3 => '⏰ 3 days left on your KneadIt trial',
-                            1 => '🚨 Your KneadIt trial ends tomorrow',
-                        ];
-                        $m->to($user->email)
-                            ->subject($subjects[$daysLeft] ?? 'Trial ending soon')
-                            ->from(config('mail.from.address'), 'KneadIt');
-                    }
-                );
+                Mail::to($user->email)->queue(new TrialReminderMail($user, $storeName, $daysLeft));
 
                 cache()->put($sentKey, true, now()->addDays(30));
                 $this->info("  ✓ {$daysLeft}d reminder → {$user->email} ({$tenant->store_name})");

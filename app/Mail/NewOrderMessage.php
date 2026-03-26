@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
 use App\Models\OrderMessage;
-use App\Models\Setting;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -18,7 +17,7 @@ class NewOrderMessage extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $storeName = Setting::get('store_name', 'KneadIt Bakery');
+        $storeName = settings('store_name', 'KneadIt Bakery');
         $orderNumber = $this->orderMessage->order?->order_number;
 
         return new Envelope(
@@ -35,7 +34,7 @@ class NewOrderMessage extends BaseMailable
             with: [
                 'orderMessage' => $this->orderMessage,
                 'order' => $this->orderMessage->order,
-                'storeName' => Setting::get('store_name', 'KneadIt Bakery'),
+                'storeName' => settings('store_name', 'KneadIt Bakery'),
             ],
         );
     }

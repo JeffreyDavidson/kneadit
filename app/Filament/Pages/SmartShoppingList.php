@@ -6,7 +6,6 @@ use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Mail\PurchaseOrder;
-use App\Models\Setting;
 use App\Services\ShoppingListService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -92,7 +91,7 @@ class SmartShoppingList extends Page
             return;
         }
 
-        $storeName = Setting::get('store_name', config('app.name'));
+        $storeName = settings('store_name', config('app.name'));
 
         Mail::to($group['supplier']['email'])
             ->send(new PurchaseOrder(

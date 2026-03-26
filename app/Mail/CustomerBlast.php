@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Setting;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -31,7 +30,7 @@ class CustomerBlast extends BaseMailable
             view: 'emails.customer-blast',
             with: [
                 'body' => $this->campaignBody,
-                'storeName' => Setting::get('store_name', 'Our Bakery'),
+                'storeName' => settings('store_name', 'Our Bakery'),
             ],
         );
     }

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\Setting;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -40,9 +39,9 @@ class AnnouncementBanner extends Page
 
     public function mount(): void
     {
-        $this->announcement_enabled = Setting::get('announcement_enabled', '0') === '1';
-        $this->announcement_text = Setting::get('announcement_text', '');
-        $this->announcement_type = Setting::get('announcement_type', 'info');
+        $this->announcement_enabled = settings('announcement_enabled', '0') === '1';
+        $this->announcement_text = settings('announcement_text', '');
+        $this->announcement_type = settings('announcement_type', 'info');
     }
 
     public function content(Schema $schema): Schema
@@ -93,9 +92,9 @@ class AnnouncementBanner extends Page
 
     public function save(): void
     {
-        Setting::set('announcement_enabled', $this->announcement_enabled ? '1' : '0');
-        Setting::set('announcement_text', $this->announcement_text ?? '');
-        Setting::set('announcement_type', $this->announcement_type ?? 'info');
+        settings(['announcement_enabled' => $this->announcement_enabled ? '1' : '0']);
+        settings(['announcement_text' => $this->announcement_text ?? '']);
+        settings(['announcement_type' => $this->announcement_type ?? 'info']);
 
         Notification::make()
             ->title('Announcement banner settings saved!')

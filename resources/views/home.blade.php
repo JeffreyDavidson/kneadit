@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $homepageSections = json_decode(\App\Models\Setting::get('homepage_sections', '{}'), true);
+    $homepageSections = json_decode(settings('homepage_sections', '{}'), true);
     $sections = collect($homepageSections)->filter(fn($s) => $s['visible'] ?? true)->sortBy('order');
 @endphp
 

@@ -3,7 +3,6 @@
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
-use App\Models\Setting;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -90,7 +89,7 @@ test('points are calculated correctly with earned and redeemed', function () {
 });
 
 test('loyalty program name is configurable', function () {
-    Setting::set('loyalty_program_name', 'Baker Bucks');
+    settings(['loyalty_program_name' => 'Baker Bucks']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.rewards', [], false));

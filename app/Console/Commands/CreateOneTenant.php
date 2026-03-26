@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Setting;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -62,8 +61,8 @@ class CreateOneTenant extends Command
                 'updated_at' => now(),
             ]);
 
-            Setting::set('store_name', $tenant->store_name);
-            Setting::set('store_email', $tenant->email);
+            settings(['store_name' => $tenant->store_name]);
+            settings(['store_email' => $tenant->email]);
 
             Artisan::call('db:seed', ['--force' => true]);
         });

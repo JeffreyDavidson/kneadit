@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\Setting;
 use Illuminate\View\View;
 
 class InvoiceController extends Controller
@@ -15,11 +14,11 @@ class InvoiceController extends Controller
 
         // Get store information from settings
         $storeInfo = [
-            'name' => Setting::get('store_name') ?? config('app.name'),
-            'address' => Setting::get('store_address') ?? 'Address not configured',
-            'phone' => Setting::get('store_phone') ?? 'Phone not configured',
-            'email' => Setting::get('store_email') ?? 'Email not configured',
-            'website' => Setting::get('store_website') ?? url('/'),
+            'name' => settings('store_name') ?? config('app.name'),
+            'address' => settings('store_address') ?? 'Address not configured',
+            'phone' => settings('store_phone') ?? 'Phone not configured',
+            'email' => settings('store_email') ?? 'Email not configured',
+            'website' => settings('store_website') ?? url('/'),
         ];
 
         return view('admin.orders.invoice', compact('order', 'storeInfo'));

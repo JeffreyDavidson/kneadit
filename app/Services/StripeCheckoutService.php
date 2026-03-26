@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
-use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
@@ -21,22 +20,22 @@ class StripeCheckoutService
 
     public static function isEnabled(): bool
     {
-        $methods = Setting::get('payment_methods');
+        $methods = settings('payment_methods');
         $methods = $methods ? json_decode($methods, true) : [];
 
         if (! in_array('stripe', $methods)) {
             return false;
         }
 
-        $connectId = Setting::get('stripe_connect_id');
-        $chargesEnabled = Setting::get('stripe_connect_charges_enabled', '0');
+        $connectId = settings('stripe_connect_id');
+        $chargesEnabled = settings('stripe_connect_charges_enabled', '0');
 
         return $connectId && $chargesEnabled === '1';
     }
 
     public static function getConnectId(): ?string
     {
-        return Setting::get('stripe_connect_id');
+        return settings('stripe_connect_id');
     }
 
     public function createCheckoutSession(Order $order, string $successUrl, string $cancelUrl): ?Session

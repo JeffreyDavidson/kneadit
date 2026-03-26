@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\Setting;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -62,7 +61,7 @@ class HomepageBuilder extends Page
 
     protected function loadSections(): void
     {
-        $saved = json_decode(Setting::get('homepage_sections', '{}'), true);
+        $saved = json_decode(settings('homepage_sections', '{}'), true);
         $defaults = $this->getDefaults();
 
         // Merge saved with defaults to ensure all sections exist
@@ -114,7 +113,7 @@ class HomepageBuilder extends Page
     public function save(): void
     {
         try {
-            Setting::set('homepage_sections', json_encode($this->sections));
+            settings(['homepage_sections' => json_encode($this->sections)]);
 
             Notification::make()
                 ->title('Homepage sections saved!')
@@ -132,7 +131,7 @@ class HomepageBuilder extends Page
     public function resetToDefaults(): void
     {
         $this->sections = $this->getDefaults();
-        Setting::set('homepage_sections', json_encode($this->sections));
+        settings(['homepage_sections' => json_encode($this->sections)]);
 
         Notification::make()
             ->title('Homepage reset to defaults')

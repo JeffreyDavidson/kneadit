@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\StripeConnectController;
-use App\Models\Setting;
 
 beforeEach(function () {
     $tenantMigrationPath = database_path('migrations/tenant');
@@ -15,13 +14,13 @@ test('get account status returns null when no connect id', function () {
 });
 
 test('get account status returns null when connect id is empty', function () {
-    Setting::set('stripe_connect_id', '');
+    settings(['stripe_connect_id' => '']);
 
     expect(StripeConnectController::getAccountStatus())->toBeNull();
 });
 
 test('get account status returns null when stripe api fails', function () {
-    Setting::set('stripe_connect_id', 'acct_invalid_12345');
+    settings(['stripe_connect_id' => 'acct_invalid_12345']);
 
     config(['cashier.secret' => 'sk_test_fake_key']);
 

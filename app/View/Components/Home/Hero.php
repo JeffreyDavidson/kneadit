@@ -4,7 +4,6 @@ namespace App\View\Components\Home;
 
 use App\Models\Customer;
 use App\Models\Review;
-use App\Models\Setting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Component;
@@ -29,12 +28,12 @@ class Hero extends Component
 
     public function __construct()
     {
-        $this->storeName = Setting::get('store_name', 'Our Bakery');
-        $this->tagline = Setting::get('business_tagline');
-        $this->aboutUs = Setting::get('about_us_text');
-        $this->heroStyle = Setting::get('hero_style', 'split');
+        $this->storeName = settings('store_name', 'Our Bakery');
+        $this->tagline = settings('business_tagline');
+        $this->aboutUs = settings('about_us_text');
+        $this->heroStyle = settings('hero_style', 'split');
 
-        $heroImage = Setting::get('hero_image');
+        $heroImage = settings('hero_image');
         $this->heroImageUrl = $heroImage
             ? Storage::url($heroImage)
             : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';

@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use App\Models\Order;
-use App\Models\Setting;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -26,7 +25,7 @@ class NewOrderNotification extends BaseMailable
             view: 'emails.new-order-notification',
             with: [
                 'order' => $this->order,
-                'storeName' => Setting::get('store_name', 'KneadIt Bakery'),
+                'storeName' => settings('store_name', 'KneadIt Bakery'),
             ],
         );
     }

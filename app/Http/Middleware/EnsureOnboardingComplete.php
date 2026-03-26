@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Setting;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +37,7 @@ class EnsureOnboardingComplete
 
         // Check if onboarding is complete
         try {
-            if (Setting::get('onboarding_completed_at') === null) {
+            if (settings('onboarding_completed_at') === null) {
                 return redirect()->to(url('/admin/onboarding'));
             }
         } catch (\Throwable $e) {

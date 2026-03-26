@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Actions\AcceptStaffInvitation;
 use App\Http\Requests\AcceptInvitationRequest;
-use App\Models\Setting;
 use App\Models\StaffInvitation;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -23,7 +22,7 @@ class InvitationController extends Controller
             return view('invitations.expired');
         }
 
-        $storeName = Setting::get('store_name', 'Our Bakery');
+        $storeName = settings('store_name', 'Our Bakery');
         $existingUser = User::query()->where('email', $invitation->email)->first();
 
         return view('invitations.show', [

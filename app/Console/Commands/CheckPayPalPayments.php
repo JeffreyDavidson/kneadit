@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Enums\PaymentStatus;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Models\Tenant;
 use App\Services\PayPalService;
 use App\Services\TenancyManager;
@@ -30,7 +29,7 @@ class CheckPayPalPayments extends Command
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($tenant) {
                     // Skip tenants without PayPal configured
-                    $clientId = Setting::get('paypal_client_id');
+                    $clientId = settings('paypal_client_id');
                     if (! $clientId) {
                         return;
                     }
