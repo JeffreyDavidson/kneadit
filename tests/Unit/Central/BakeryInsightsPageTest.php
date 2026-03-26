@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Central\Pages\BakeryInsights;
+use App\Services\TenantHealthService;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -28,11 +29,11 @@ test('get next plan', function () {
 });
 
 test('plan limits constant exists', function () {
-    expect(BakeryInsights::PLAN_LIMITS)->toHaveKey('starter');
-    expect(BakeryInsights::PLAN_LIMITS)->toHaveKey('growth');
-    expect(BakeryInsights::PLAN_LIMITS)->toHaveKey('pro');
-    expect(BakeryInsights::PLAN_LIMITS['pro']['products'])->toBeNull();
-    expect(BakeryInsights::PLAN_LIMITS['starter']['products'])->toBe(15);
+    expect(TenantHealthService::PLAN_LIMITS)->toHaveKey('starter');
+    expect(TenantHealthService::PLAN_LIMITS)->toHaveKey('growth');
+    expect(TenantHealthService::PLAN_LIMITS)->toHaveKey('pro');
+    expect(TenantHealthService::PLAN_LIMITS['pro']['products'])->toBeNull();
+    expect(TenantHealthService::PLAN_LIMITS['starter']['products'])->toBe(15);
 });
 
 test('get health summary stats returns expected keys', function () {
