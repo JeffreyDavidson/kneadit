@@ -6,7 +6,7 @@ use App\Enums\OrderStatus;
 use App\Mail\ReviewRequest;
 use App\Models\Order;
 use App\Models\Tenant;
-use App\Services\TenancyManager;
+use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;

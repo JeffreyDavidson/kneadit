@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\LogAuditEntry;
+use App\Actions\Platform\LogAuditEntry;
 use App\Models\AdminAuditLog;
 
 beforeEach(fn () => setUpCentralTest());

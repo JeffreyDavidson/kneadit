@@ -1,7 +1,7 @@
 <?php
 
-use App\Services\PlatformSettingsManager;
-use App\Services\SettingsManager;
+use App\Services\Settings\PlatformSettingsManager;
+use App\Services\Settings\SettingsManager;
 
 if (! function_exists('settings')) {
     /**

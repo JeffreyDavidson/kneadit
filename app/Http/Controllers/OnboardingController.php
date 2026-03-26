@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\CompleteReferral;
+use App\Actions\Tenants\CompleteReferral;
 use App\Actions\Tenants\CreateTenant;
 use App\Enums\SubscriptionTier;
 use App\Http\Requests\StoreOnboardingRequest;

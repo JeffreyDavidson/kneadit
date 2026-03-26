@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Actions\LogAuditEntry;
+use App\Actions\Platform\LogAuditEntry;
 use App\Models\Tenant;
-use App\Services\TenancyManager;
+use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;

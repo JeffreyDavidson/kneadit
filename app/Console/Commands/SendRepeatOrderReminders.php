@@ -7,7 +7,7 @@ use App\Mail\RepeatOrderReminder;
 use App\Models\Customer;
 use App\Models\CustomerReminder;
 use App\Models\Tenant;
-use App\Services\TenancyManager;
+use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;

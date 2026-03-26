@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Ingredients\Tables;
 
-use App\Actions\AdjustIngredientStock;
+use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\StockStatus;
 use App\Models\Ingredient;
 use Filament\Actions\Action;

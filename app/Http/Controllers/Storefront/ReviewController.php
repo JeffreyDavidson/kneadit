@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Storefront;
 
-use App\Actions\CreateReview;
+use App\Actions\Customers\CreateReview;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReviewRequest;
 use App\Models\Order;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\SubmitContactMessage;
+use App\Actions\Customers\SubmitContactMessage;
 use App\Http\Requests\StoreContactMessageRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;

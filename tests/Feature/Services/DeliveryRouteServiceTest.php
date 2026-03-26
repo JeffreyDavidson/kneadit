@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Order;
-use App\Services\DeliveryRouteService;
+use App\Services\Delivery\DeliveryRouteService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

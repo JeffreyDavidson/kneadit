@@ -2,7 +2,7 @@
 
 use App\Models\Coupon;
 use App\Models\Customer;
-use App\Services\BirthdayService;
+use App\Services\Customer\BirthdayService;
 use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {

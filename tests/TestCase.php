@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\Services\SettingsManager;
+use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase

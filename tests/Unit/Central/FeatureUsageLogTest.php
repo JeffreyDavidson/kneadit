@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\TrackFeatureUsage;
+use App\Actions\Platform\TrackFeatureUsage;
 use App\Models\FeatureUsageLog;
 
 beforeEach(fn () => setUpCentralTest());

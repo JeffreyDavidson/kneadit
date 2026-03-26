@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\BirthdayCalculator;
+use App\Services\Customer\BirthdayCalculator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 

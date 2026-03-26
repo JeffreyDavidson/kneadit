@@ -6,7 +6,7 @@ use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Mail\PurchaseOrder;
-use App\Services\ShoppingListService;
+use App\Services\Inventory\ShoppingListService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;

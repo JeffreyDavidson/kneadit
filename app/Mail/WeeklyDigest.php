@@ -5,7 +5,7 @@ namespace App\Mail;
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Customer;
 use App\Models\OrderItem;
-use App\Services\WeeklyDigestDataCollector;
+use App\Services\Reporting\WeeklyDigestDataCollector;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;

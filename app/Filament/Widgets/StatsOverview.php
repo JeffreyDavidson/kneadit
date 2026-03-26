@@ -6,7 +6,7 @@ use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\PageView;
 use App\Models\WaitlistEntry;
-use App\Services\CapacityCalculator;
+use App\Services\Inventory\CapacityCalculator;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;

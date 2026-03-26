@@ -6,7 +6,7 @@ use App\Enums\UserRole;
 use App\Mail\WeeklyDigest;
 use App\Models\Tenant;
 use App\Models\User;
-use App\Services\TenancyManager;
+use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 

@@ -3,7 +3,7 @@
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
-use App\Services\CustomerIntelligence;
+use App\Services\Customer\CustomerIntelligence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

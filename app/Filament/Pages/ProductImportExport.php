@@ -2,11 +2,11 @@
 
 namespace App\Filament\Pages;
 
-use App\Actions\ImportProducts;
+use App\Actions\Inventory\ImportProducts;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Services\ProductCsvExporter;
+use App\Services\Export\ProductCsvExporter;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;

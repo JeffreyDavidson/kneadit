@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Actions\LogAuditEntry;
+use App\Actions\Platform\LogAuditEntry;
 use App\Models\SupportTicket;
 
 class SupportTicketObserver

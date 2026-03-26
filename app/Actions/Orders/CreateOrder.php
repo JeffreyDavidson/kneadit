@@ -10,9 +10,9 @@ use App\Models\Customer;
 use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\Product;
-use App\Services\CapacityCalculator;
 use App\Services\CouponService;
 use App\Services\GiftCardService;
+use App\Services\Inventory\CapacityCalculator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 

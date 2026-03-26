@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\CapacityCalculator;
+use App\Services\Inventory\CapacityCalculator;
 
 beforeEach(function () {
     config(['database.connections.central' => config('database.connections.sqlite')]);

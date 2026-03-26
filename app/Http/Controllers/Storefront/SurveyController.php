@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Storefront;
 
-use App\Actions\SubmitSurveyResponse;
+use App\Actions\Customers\SubmitSurveyResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSurveyResponseRequest;
 use App\Models\Survey;

@@ -1,7 +1,7 @@
 <?php
 
 use App\Filament\Central\Pages\BakeryInsights;
-use App\Services\TenantHealthService;
+use App\Services\Tenant\TenantHealthService;
 
 beforeEach(function () {
     setUpCentralTest();

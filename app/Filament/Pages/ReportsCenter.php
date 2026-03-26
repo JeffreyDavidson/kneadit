@@ -4,7 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Enums\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Services\ReportService;
+use App\Services\Reporting\ReportService;
 use Filament\Pages\Page;
 use Laravel\Pennant\Feature;
 

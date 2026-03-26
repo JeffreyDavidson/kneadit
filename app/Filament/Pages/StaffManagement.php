@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages;
 
-use App\Actions\ChangeStaffRole;
-use App\Actions\RemoveStaffMember;
-use App\Actions\RevokeStaffInvitation;
-use App\Actions\SendStaffInvitation;
+use App\Actions\Staff\ChangeStaffRole;
+use App\Actions\Staff\RemoveStaffMember;
+use App\Actions\Staff\RevokeStaffInvitation;
+use App\Actions\Staff\SendStaffInvitation;
 use App\Enums\UserRole;
 use App\Exceptions\StaffInvitationException;
 use App\Models\StaffInvitation;

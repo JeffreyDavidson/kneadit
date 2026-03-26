@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\SendStaffInvitation;
+use App\Actions\Staff\SendStaffInvitation;
 use App\Enums\UserRole;
 use App\Mail\StaffInvitationMail;
 use App\Models\StaffInvitation;

@@ -2,7 +2,7 @@
 
 use App\Models\Product;
 use App\Models\Recipe;
-use App\Services\RecipeCostService;
+use App\Services\Financial\RecipeCostService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

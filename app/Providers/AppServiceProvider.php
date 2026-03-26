@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Enums\SubscriptionTier;
-use App\Services\PlatformSettingsManager;
-use App\Services\SettingsManager;
+use App\Services\Settings\PlatformSettingsManager;
+use App\Services\Settings\SettingsManager;
 use App\View\Composers\StorefrontComposer;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Database\Eloquent\Model;
