@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StockStatus;
 use App\Traits\LogsActivity;
 use Database\Factories\IngredientFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -91,15 +92,15 @@ class Ingredient extends Model
         return $this->current_stock <= 0;
     }
 
-    public function getStockStatus(): string
+    public function getStockStatus(): StockStatus
     {
         if ($this->isOutOfStock()) {
-            return 'out';
+            return StockStatus::Out;
         }
         if ($this->isLowStock()) {
-            return 'low';
+            return StockStatus::Low;
         }
 
-        return 'good';
+        return StockStatus::Good;
     }
 }
