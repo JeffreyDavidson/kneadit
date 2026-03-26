@@ -12,10 +12,10 @@ trait BakerBranded
      */
     protected function bakerFrom(): Address
     {
-        $storeName = settings('store_name', 'KneadIt Bakery');
+        $storeName = (string) settings('store_name', 'KneadIt Bakery');
 
         return new Address(
-            address: config('mail.from.address', 'hello@getkneadit.app'),
+            address: (string) config('mail.from.address', 'hello@getkneadit.app'),
             name: "{$storeName} via KneadIt",
         );
     }
@@ -25,8 +25,8 @@ trait BakerBranded
      */
     protected function bakerReplyTo(): ?Address
     {
-        $email = settings('store_email');
-        $storeName = settings('store_name', 'KneadIt Bakery');
+        $email = (string) settings('store_email');
+        $storeName = (string) settings('store_name', 'KneadIt Bakery');
 
         if (! $email) {
             return null;

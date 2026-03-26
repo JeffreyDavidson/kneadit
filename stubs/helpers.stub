@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @return ($key is array ? null : string|null)
+ */
+function settings(string|array $key, mixed $default = null): mixed {}
+
+/**
+ * @return ($key is array ? null : string|null)
+ */
+function platformSettings(string|array $key, mixed $default = null): mixed {}
+
+/**
+ * @return array<string, mixed>
+ */
+function settingsPageContent(string $page): array {}

@@ -4,9 +4,12 @@ includes:
 parameters:
     paths:
         - app/
-    level: 8
+    level: 9
     bootstrapFiles:
         - phpstan-bootstrap.php
+    stubFiles:
+        - stubs/tenant.stub
+        - stubs/helpers.stub
     scanDirectories:
         - vendor/filament
     ignoreErrors:
