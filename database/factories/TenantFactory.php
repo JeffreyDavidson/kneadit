@@ -53,4 +53,19 @@ class TenantFactory extends Factory
     {
         return $this->state(fn (array $attributes) => ['plan' => $tier->value]);
     }
+
+    public function starter(): static
+    {
+        return $this->withPlan(SubscriptionTier::Starter);
+    }
+
+    public function growth(): static
+    {
+        return $this->withPlan(SubscriptionTier::Growth);
+    }
+
+    public function pro(): static
+    {
+        return $this->withPlan(SubscriptionTier::Pro);
+    }
 }

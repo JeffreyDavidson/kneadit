@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\SocialPlatform;
+use App\Enums\SocialPostStatus;
 use App\Models\SocialPost;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,11 +17,26 @@ class SocialPostFactory extends Factory
     public function definition(): array
     {
         return [
-            'platform' => fake()->randomElement(['instagram', 'facebook', 'twitter']),
+            'platform' => fake()->randomElement(SocialPlatform::cases()),
             'caption' => fake()->paragraph(),
             'product_id' => null,
             'scheduled_at' => fake()->optional()->dateTimeBetween('+1 day', '+14 days'),
-            'status' => 'draft',
+            'status' => SocialPostStatus::Draft,
         ];
+    }
+
+    public function scheduled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => SocialPostStatus::Scheduled,
+            'scheduled_at' => fake()->dateTimeBetween('+1 day', '+14 days'),
+        ]);
+    }
+
+    public function published(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => SocialPostStatus::Posted,
+        ]);
     }
 }

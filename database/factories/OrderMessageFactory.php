@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SenderType;
 use App\Models\Order;
 use App\Models\OrderMessage;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,7 +19,7 @@ class OrderMessageFactory extends Factory
     {
         return [
             'order_id' => Order::factory(),
-            'sender_type' => 'customer',
+            'sender_type' => SenderType::Customer,
             'sender_name' => fake()->name(),
             'message' => fake()->paragraph(),
             'is_read' => false,
@@ -30,7 +31,9 @@ class OrderMessageFactory extends Factory
      */
     public function fromBaker(): static
     {
-        return $this->state(fn (array $attributes) => ['sender_type' => 'baker']);
+        return $this->state(fn (array $attributes) => [
+            'sender_type' => SenderType::Baker,
+        ]);
     }
 
     /**
@@ -38,6 +41,8 @@ class OrderMessageFactory extends Factory
      */
     public function fromCustomer(): static
     {
-        return $this->state(fn (array $attributes) => ['sender_type' => 'customer']);
+        return $this->state(fn (array $attributes) => [
+            'sender_type' => SenderType::Customer,
+        ]);
     }
 }

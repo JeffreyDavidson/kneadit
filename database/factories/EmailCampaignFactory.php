@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\EmailCampaignStatus;
 use App\Models\EmailCampaign;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,8 +20,22 @@ class EmailCampaignFactory extends Factory
             'subject' => fake()->sentence(),
             'body' => fake()->paragraphs(3, true),
             'target_segment' => 'all',
-            'status' => 'draft',
+            'status' => EmailCampaignStatus::Draft,
             'recipient_count' => 0,
         ];
+    }
+
+    public function sending(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => EmailCampaignStatus::Sending,
+        ]);
+    }
+
+    public function sent(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => EmailCampaignStatus::Sent,
+        ]);
     }
 }
