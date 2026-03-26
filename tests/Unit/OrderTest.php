@@ -2,6 +2,7 @@
 
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\SenderType;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
@@ -60,7 +61,7 @@ test('order has items relationship', function () {
 
 test('order has messages relationship', function () {
     $order = makeOrder();
-    OrderMessage::query()->create(['order_id' => $order->id, 'message' => 'Hello', 'sender_type' => 'baker', 'sender_name' => 'Baker']);
+    OrderMessage::query()->create(['order_id' => $order->id, 'message' => 'Hello', 'sender_type' => SenderType::Baker, 'sender_name' => 'Baker']);
 
     expect($order->messages)->toHaveCount(1);
 });

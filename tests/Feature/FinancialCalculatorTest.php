@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\ExpenseCategory;
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\Order;
@@ -19,8 +22,8 @@ beforeEach(function () {
 it('calculates yearly totals from orders and expenses', function () {
     Order::query()->create([
         'customer_id' => $this->customer->id,
-        'status' => 'delivered',
-        'payment_status' => 'paid',
+        'status' => OrderStatus::Delivered,
+        'payment_status' => PaymentStatus::Paid,
         'subtotal' => 100,
         'total' => 100,
         'delivery_date' => '2026-03-15',
@@ -29,7 +32,7 @@ it('calculates yearly totals from orders and expenses', function () {
     Expense::query()->create([
         'description' => 'Flour',
         'amount' => 30,
-        'category' => 'ingredients',
+        'category' => ExpenseCategory::Ingredients,
         'date' => '2026-03-15',
         'deductible_amount' => 30,
     ]);

@@ -27,7 +27,7 @@ function createDeliveryOrder(array $attrs = []): Order
         'order_number' => 'ORD-' . uniqid(),
         'customer_id' => $customer->id,
         'user_id' => $user->id,
-        'status' => 'confirmed',
+        'status' => OrderStatus::Confirmed,
         'subtotal' => 25.00,
         'total' => 25.00,
         'delivery_address' => '123 Main St',
@@ -74,7 +74,7 @@ test('driver page hides past orders', function () {
 });
 
 test('mark delivered changes order status', function () {
-    $order = createDeliveryOrder(['status' => 'ready']);
+    $order = createDeliveryOrder(['status' => OrderStatus::Ready]);
     $user = User::query()->where('email', 'baker@test.com')->first();
 
     $response = actingAs($user)
@@ -86,7 +86,7 @@ test('mark delivered changes order status', function () {
 });
 
 test('mark delivered redirects back', function () {
-    $order = createDeliveryOrder(['status' => 'ready']);
+    $order = createDeliveryOrder(['status' => OrderStatus::Ready]);
     $user = User::query()->where('email', 'baker@test.com')->first();
 
     $response = actingAs($user)

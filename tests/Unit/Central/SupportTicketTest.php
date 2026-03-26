@@ -12,7 +12,7 @@ test('can create ticket', function () {
     $ticket = SupportTicket::query()->create([
         'subject' => 'Help needed',
         'body' => 'Something is broken',
-        'status' => 'open',
+        'status' => SupportTicketStatus::Open,
         'priority' => 'high',
         'tenant_id' => 'tenant-1',
     ]);

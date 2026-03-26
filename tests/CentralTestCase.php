@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Enums\SubscriptionTier;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -184,7 +185,7 @@ abstract class CentralTestCase extends TestCase
             'id' => 'test-bakery',
             'name' => 'Test Owner',
             'email' => 'test@example.com',
-            'plan' => 'starter',
+            'plan' => SubscriptionTier::Starter,
             'is_active' => true,
             'storefront_enabled' => true,
             'brand_color_primary' => '#d4920c',

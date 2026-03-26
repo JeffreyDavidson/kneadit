@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SubscriptionTier;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -114,7 +115,7 @@ test('authenticated user can view plans', function () {
 });
 
 test('checkout requires authentication', function () {
-    $response = post(route('billing.checkout', ['plan' => 'starter']));
+    $response = post(route('billing.checkout', ['plan' => SubscriptionTier::Starter]));
 
     $response->assertRedirect();
 });

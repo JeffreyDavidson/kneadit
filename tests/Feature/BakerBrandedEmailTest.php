@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Mail\BirthdayDiscount;
 use App\Mail\CateringQuote;
 use App\Mail\Concerns\BakerBranded;
@@ -38,9 +41,9 @@ beforeEach(function () {
         'order_number' => 'ORD-001',
         'customer_id' => $customer->id,
         'user_id' => $user->id,
-        'status' => 'pending',
-        'payment_status' => 'unpaid',
-        'payment_method' => 'cash',
+        'status' => OrderStatus::Pending,
+        'payment_status' => PaymentStatus::Unpaid,
+        'payment_method' => PaymentMethod::Cash,
         'subtotal' => 25.00,
         'delivery_fee' => 0,
         'discount_amount' => 0,

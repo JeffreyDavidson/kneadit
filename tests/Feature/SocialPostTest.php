@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SocialPlatform;
 use App\Enums\SocialPostStatus;
 use App\Models\Category;
 use App\Models\Product;
@@ -20,13 +21,13 @@ test('social post model exists', function () {
 
 test('social post can be created', function () {
     SocialPost::query()->create([
-        'platform' => 'instagram',
+        'platform' => SocialPlatform::Instagram,
         'caption' => 'Check out our new sourdough! 🍞',
-        'status' => 'draft',
+        'status' => SocialPostStatus::Draft,
     ]);
 
     $this->assertDatabaseHas('social_posts', [
-        'platform' => 'instagram',
+        'platform' => SocialPlatform::Instagram,
         'caption' => 'Check out our new sourdough! 🍞',
     ]);
 });
@@ -45,9 +46,9 @@ test('platforms are defined', function () {
 
 test('status defaults to draft', function () {
     $post = SocialPost::query()->create([
-        'platform' => 'facebook',
+        'platform' => SocialPlatform::Facebook,
         'caption' => 'Test post',
-        'status' => 'draft',
+        'status' => SocialPostStatus::Draft,
     ]);
 
     expect($post->status)->toBe(SocialPostStatus::Draft);
@@ -61,9 +62,9 @@ test('scheduled post has scheduled for date', function () {
     $scheduledDate = now()->addDays(3);
 
     $post = SocialPost::query()->create([
-        'platform' => 'instagram',
+        'platform' => SocialPlatform::Instagram,
         'caption' => 'Scheduled post',
-        'status' => 'scheduled',
+        'status' => SocialPostStatus::Scheduled,
         'scheduled_for' => $scheduledDate,
     ]);
 
@@ -82,10 +83,10 @@ test('social post belongs to product', function () {
     ]);
 
     $post = SocialPost::query()->create([
-        'platform' => 'instagram',
+        'platform' => SocialPlatform::Instagram,
         'caption' => 'Our famous sourdough',
         'product_id' => $product->id,
-        'status' => 'draft',
+        'status' => SocialPostStatus::Draft,
     ]);
 
     expect($post->product->id)->toBe($product->id);

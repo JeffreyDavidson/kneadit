@@ -18,7 +18,7 @@ beforeEach(function () {
     $this->order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'pending',
+        'status' => OrderStatus::Pending,
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);
@@ -36,7 +36,7 @@ test('order confirmed email sent on status change', function () {
 test('order ready email sent on status change', function () {
     Mail::fake();
 
-    $this->order->update(['status' => 'confirmed']);
+    $this->order->update(['status' => OrderStatus::Confirmed]);
     resolve(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Baking);
     resolve(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Ready);
 

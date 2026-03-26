@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +24,7 @@ test('referral tracking route stores code in session', function () {
     DB::table('referrals')->insert([
         'referrer_tenant_id' => 'referrer-bakery',
         'referral_code' => 'sweet-abc1',
-        'status' => 'pending',
+        'status' => OrderStatus::Pending,
         'reward_months' => 1,
         'created_at' => now(),
         'updated_at' => now(),

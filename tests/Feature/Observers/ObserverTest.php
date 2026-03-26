@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\CouponType;
 use App\Models\Coupon;
 use App\Models\User;
 
@@ -15,7 +16,7 @@ beforeEach(function () {
 it('uppercases coupon code on creation via observer', function () {
     $coupon = Coupon::query()->create([
         'code' => 'summer25',
-        'type' => 'percentage',
+        'type' => CouponType::Percentage,
         'value' => 25,
         'is_active' => true,
     ]);

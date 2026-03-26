@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SubscriptionTier;
 use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Http\Middleware\TrackPageView;
 use Illuminate\Support\Facades\DB;
@@ -214,7 +215,7 @@ function createTenant(array $attributes = []): object
         'id' => 'test-bakery',
         'name' => 'Test Owner',
         'email' => 'test@example.com',
-        'plan' => 'starter',
+        'plan' => SubscriptionTier::Starter,
         'is_active' => true,
         'storefront_enabled' => true,
         'brand_color_primary' => '#d4920c',

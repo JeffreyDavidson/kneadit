@@ -33,7 +33,7 @@ test('campaign can be created with subject and body', function () {
     $campaign = EmailCampaign::on('sqlite')->create([
         'subject' => 'Spring Sale!',
         'body' => '<h1>Spring Sale</h1><p>20% off all pastries</p>',
-        'status' => 'draft',
+        'status' => EmailCampaignStatus::Draft,
     ]);
 
     $this->assertDatabaseHas('email_campaigns', [
@@ -46,7 +46,7 @@ test('campaign status defaults to draft', function () {
     $campaign = EmailCampaign::on('sqlite')->create([
         'subject' => 'Test Campaign',
         'body' => 'Test body',
-        'status' => 'draft',
+        'status' => EmailCampaignStatus::Draft,
     ]);
 
     expect($campaign->status)->toBe(EmailCampaignStatus::Draft);
@@ -56,11 +56,11 @@ test('campaign can be marked as sent', function () {
     $campaign = EmailCampaign::on('sqlite')->create([
         'subject' => 'Sent Campaign',
         'body' => 'Body content',
-        'status' => 'draft',
+        'status' => EmailCampaignStatus::Draft,
     ]);
 
     $campaign->update([
-        'status' => 'sent',
+        'status' => EmailCampaignStatus::Sent,
         'sent_at' => now(),
         'recipient_count' => 42,
     ]);
@@ -76,7 +76,7 @@ test('campaign sent at is cast to datetime', function () {
     $campaign = EmailCampaign::on('sqlite')->create([
         'subject' => 'Date Test',
         'body' => 'Body',
-        'status' => 'sent',
+        'status' => EmailCampaignStatus::Sent,
         'sent_at' => '2026-03-08 12:00:00',
     ]);
 
@@ -93,7 +93,7 @@ test('campaign recipient count stored correctly', function () {
     $campaign = EmailCampaign::on('sqlite')->create([
         'subject' => 'To All',
         'body' => 'Hello everyone',
-        'status' => 'sent',
+        'status' => EmailCampaignStatus::Sent,
         'sent_at' => now(),
         'recipient_count' => $count,
     ]);

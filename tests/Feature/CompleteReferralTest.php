@@ -2,6 +2,7 @@
 
 use App\Actions\Tenants\CompleteReferral;
 use App\Enums\ReferralStatus;
+use App\Enums\SubscriptionTier;
 use App\Models\Referral;
 use Illuminate\Support\Facades\DB;
 
@@ -11,8 +12,8 @@ beforeEach(function () {
 
 it('completes a pending referral for a tenant', function () {
     DB::table('tenants')->insert([
-        ['id' => 'existing-bakery', 'name' => 'Existing Bakery', 'email' => 'existing@test.com', 'plan' => 'starter', 'data' => '{}', 'created_at' => now(), 'updated_at' => now()],
-        ['id' => 'new-bakery', 'name' => 'New Bakery', 'email' => 'new@test.com', 'plan' => 'starter', 'data' => '{}', 'created_at' => now(), 'updated_at' => now()],
+        ['id' => 'existing-bakery', 'name' => 'Existing Bakery', 'email' => 'existing@test.com', 'plan' => SubscriptionTier::Starter, 'data' => '{}', 'created_at' => now(), 'updated_at' => now()],
+        ['id' => 'new-bakery', 'name' => 'New Bakery', 'email' => 'new@test.com', 'plan' => SubscriptionTier::Starter, 'data' => '{}', 'created_at' => now(), 'updated_at' => now()],
     ]);
 
     $referral = Referral::query()->create([

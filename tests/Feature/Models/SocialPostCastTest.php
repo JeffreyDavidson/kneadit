@@ -1,15 +1,16 @@
 <?php
 
 use App\Enums\SocialPlatform;
+use App\Enums\SocialPostStatus;
 use App\Models\SocialPost;
 
 beforeEach(fn () => setUpTenantTest());
 
 it('casts platform to SocialPlatform enum', function () {
     $post = SocialPost::query()->create([
-        'platform' => 'instagram',
+        'platform' => SocialPlatform::Instagram,
         'caption' => 'Test post',
-        'status' => 'draft',
+        'status' => SocialPostStatus::Draft,
     ]);
 
     $post->refresh();

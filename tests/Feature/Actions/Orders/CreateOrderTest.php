@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Orders\CreateOrder;
+use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
 use App\Mail\OrderPlaced;
 use App\Models\Order;
@@ -23,7 +24,7 @@ test('creates order with correct totals and items', function () {
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'delivery_date' => now()->addDays(5)->toDateString(),
-            'delivery_type' => 'pickup',
+            'delivery_type' => DeliveryType::Pickup->value,
             'items' => [
                 ['product_id' => $product->id, 'quantity' => 2],
             ],
@@ -46,14 +47,14 @@ test('returns null when capacity is full', function () {
     $deliveryDate = now()->addDays(5)->toDateString();
 
     settings(['default_daily_capacity' => '1']);
-    Order::factory()->create(['delivery_date' => $deliveryDate, 'status' => 'confirmed']);
+    Order::factory()->create(['delivery_date' => $deliveryDate, 'status' => OrderStatus::Confirmed]);
 
     $order = resolve(CreateOrder::class)(
         data: [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'delivery_date' => $deliveryDate,
-            'delivery_type' => 'pickup',
+            'delivery_type' => DeliveryType::Pickup->value,
             'items' => [
                 ['product_id' => $product->id, 'quantity' => 1],
             ],
@@ -71,7 +72,7 @@ test('sends order placed email to customer on creation', function () {
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'delivery_date' => now()->addDays(5)->toDateString(),
-            'delivery_type' => 'pickup',
+            'delivery_type' => DeliveryType::Pickup->value,
             'items' => [
                 ['product_id' => $product->id, 'quantity' => 1],
             ],

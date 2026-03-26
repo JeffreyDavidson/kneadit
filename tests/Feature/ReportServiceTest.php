@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\ExpenseCategory;
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Expense;
@@ -25,8 +28,8 @@ function createPaidOrder(float $total, string $date): Order
     return Order::query()->create([
         'customer_id' => test()->customer->id,
         'user_id' => test()->user->id,
-        'status' => 'delivered',
-        'payment_status' => 'paid',
+        'status' => OrderStatus::Delivered,
+        'payment_status' => PaymentStatus::Paid,
         'subtotal' => $total,
         'total' => $total,
         'delivery_date' => $date,
@@ -66,7 +69,7 @@ test('customer report counts new customers', function () {
 
 test('financial summary calculates profit', function () {
     createPaidOrder(100.00, '2026-03-15');
-    Expense::query()->create(['description' => 'Flour', 'amount' => 30.00, 'category' => 'supplies', 'date' => '2026-03-15', 'deductible_amount' => 30.00]);
+    Expense::query()->create(['description' => 'Flour', 'amount' => 30.00, 'category' => ExpenseCategory::Supplies, 'date' => '2026-03-15', 'deductible_amount' => 30.00]);
 
     $report = $this->service->financialSummary(2026);
 

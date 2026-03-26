@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatus;
 use App\Services\WebhookService;
 use Illuminate\Support\Facades\Http;
 
@@ -28,7 +29,7 @@ test('dispatch includes event header', function () {
     Http::fake(['*' => Http::response('ok', 200)]);
     settings(['webhook_url' => 'https://hooks.example.com/test']);
 
-    WebhookService::dispatch('order.updated', ['status' => 'delivered']);
+    WebhookService::dispatch('order.updated', ['status' => OrderStatus::Delivered]);
 
     Http::assertSent(function ($request) {
         return $request->hasHeader('X-KneadIt-Event', 'order.updated');

@@ -2,6 +2,7 @@
 
 use App\Actions\Orders\AwardLoyaltyPoints;
 use App\Enums\LoyaltyPointType;
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
@@ -25,7 +26,7 @@ test('awards points based on order total and points per dollar setting', functio
     $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'delivered',
+        'status' => OrderStatus::Delivered,
         'total' => 25.50,
         'subtotal' => 25.50,
     ]);
@@ -47,7 +48,7 @@ test('skips when loyalty is disabled', function () {
     $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'delivered',
+        'status' => OrderStatus::Delivered,
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);
@@ -61,7 +62,7 @@ test('does not double award points', function () {
     $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'delivered',
+        'status' => OrderStatus::Delivered,
         'total' => 25.00,
         'subtotal' => 25.00,
     ]);
@@ -77,7 +78,7 @@ test('skips when calculated points are zero', function () {
     $order = Order::query()->create([
         'user_id' => $this->user->id,
         'customer_id' => $this->customer->id,
-        'status' => 'delivered',
+        'status' => OrderStatus::Delivered,
         'total' => 0.00,
         'subtotal' => 0.00,
     ]);
