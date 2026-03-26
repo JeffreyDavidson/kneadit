@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ExpenseCategory;
 use Database\Factories\ExpenseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,7 @@ use Illuminate\Support\Carbon;
  *
  * @property-read float|null $total_amount
  * @property Carbon|null $date
+ * @property ExpenseCategory $category
  *
  * @mixin \Eloquent
  */
@@ -44,25 +46,13 @@ class Expense extends Model
             'amount' => 'decimal:2',
             'business_percentage' => 'integer',
             'deductible_amount' => 'decimal:2',
+            'category' => ExpenseCategory::class,
         ];
     }
 
-    public const CATEGORIES = [
-        'supplies' => 'Supplies',
-        'ingredients' => 'Ingredients',
-        'packaging' => 'Packaging',
-        'booth_fees' => 'Booth Fees',
-        'delivery' => 'Delivery',
-        'marketing' => 'Marketing',
-        'insurance' => 'Insurance',
-        'education' => 'Education',
-        'equipment' => 'Equipment',
-        'other' => 'Other',
-    ];
-
     protected function getCategoryLabelAttribute(): string
     {
-        return self::CATEGORIES[$this->category];
+        return $this->category->label();
     }
 
     protected function getDeductibleAmountAttribute(): float

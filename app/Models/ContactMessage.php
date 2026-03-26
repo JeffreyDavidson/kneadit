@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\StripTagsCast;
 use Database\Factories\ContactMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,6 +36,9 @@ class ContactMessage extends Model
     {
         return [
             'is_read' => 'boolean',
+            'name' => StripTagsCast::class,
+            'subject' => StripTagsCast::class,
+            'message' => StripTagsCast::class,
         ];
     }
 

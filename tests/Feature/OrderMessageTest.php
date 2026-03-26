@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SenderType;
 use App\Mail\NewOrderMessage;
 use App\Models\Customer;
 use App\Models\Order;
@@ -69,7 +70,7 @@ test('message is saved with correct sender type', function () {
         ]);
 
     $msg = OrderMessage::query()->first();
-    expect($msg->sender_type)->toBe('customer');
+    expect($msg->sender_type)->toBe(SenderType::Customer);
 });
 
 test('messages require content', function () {

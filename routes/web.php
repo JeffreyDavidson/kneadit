@@ -86,7 +86,7 @@ Route::get('/changelog', [ChangelogController::class, 'index'])->name('changelog
 // Resources / Blog (central only)
 Route::get('/resources', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/resources/feed.xml', BlogFeedController::class)->name('blog.feed');
-Route::get('/resources/{slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/resources/{post}', [BlogController::class, 'show'])->name('blog.show');
 
 // Root route — serves landing page on central domains, storefront on tenant subdomains
 Route::get('/', [RootController::class, 'index'])->name('home');

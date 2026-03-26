@@ -31,9 +31,9 @@ class GalleryController extends Controller
         $path = $request->file('photo')->store('customer-photos', 'public');
 
         CustomerPhoto::query()->create([
-            'customer_name' => strip_tags($validated['customer_name']),
+            'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'],
-            'caption' => isset($validated['caption']) ? strip_tags($validated['caption']) : null,
+            'caption' => $validated['caption'] ?? null,
             'photo_path' => $path,
             'product_id' => $validated['product_id'] ?? null,
         ]);

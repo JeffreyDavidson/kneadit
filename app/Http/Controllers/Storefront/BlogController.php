@@ -8,9 +8,6 @@ use Illuminate\Contracts\View\View;
 
 class BlogController extends Controller
 {
-    /**
-     * Show the storefront blog listing page.
-     */
     public function index(): View
     {
         $categories = [
@@ -23,10 +20,7 @@ class BlogController extends Controller
 
         $activeCategory = request('category', 'all');
 
-        $query = BlogPost::query()->where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
-            ->latest('published_at');
+        $query = BlogPost::query()->published()->latest('published_at');
 
         if ($activeCategory !== 'all') {
             $query->where('category', $activeCategory);
@@ -37,19 +31,10 @@ class BlogController extends Controller
         return view('blog.index', compact('posts', 'categories', 'activeCategory'));
     }
 
-    /**
-     * Show a single storefront blog post.
-     */
-    public function show(string $slug): View
+    public function show(BlogPost $post): View
     {
-        $post = BlogPost::query()->where('slug', $slug)
-            ->where('is_published', true)
-            ->firstOrFail();
-
-        $related = BlogPost::query()->where('is_published', true)
+        $related = BlogPost::query()->published()
             ->where('id', '!=', $post->id)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
             ->latest('published_at')
             ->take(3)
             ->get();

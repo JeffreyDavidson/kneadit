@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Incomes\Schemas;
 
-use App\Models\Income;
+use App\Enums\IncomeSource;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -33,7 +33,7 @@ class IncomeForm
                                     ->step(0.01),
 
                                 Select::make('source')
-                                    ->options(Income::SOURCES)
+                                    ->options(IncomeSource::class)
                                     ->required(),
                             ]),
 

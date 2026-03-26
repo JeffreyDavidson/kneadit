@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\StripTagsCast;
 use App\Enums\WaitlistStatus;
 use Carbon\Carbon;
 use Database\Factories\WaitlistEntryFactory;
@@ -47,6 +48,7 @@ class WaitlistEntry extends Model
         return [
             'requested_date' => 'date',
             'status' => WaitlistStatus::class,
+            'notes' => StripTagsCast::class,
         ];
     }
 

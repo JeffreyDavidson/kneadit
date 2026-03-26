@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\StripTagsCast;
 use App\Enums\GiftCardStatus;
 use App\Traits\LogsActivity;
 use Database\Factories\GiftCardFactory;
@@ -55,6 +56,7 @@ class GiftCard extends Model
             'current_balance' => 'decimal:2',
             'is_active' => 'boolean',
             'expires_at' => 'date',
+            'message' => StripTagsCast::class,
         ];
     }
 

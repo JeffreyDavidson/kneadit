@@ -2,16 +2,12 @@
 
 namespace App\Filament\Pages;
 
-use App\Enums\OrderStatus;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Category;
-use App\Models\OrderItem;
-use App\ValueObjects\DateRange;
+use App\Services\ProductTrendsService;
 use BackedEnum;
 use Filament\Pages\Page;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
@@ -96,63 +92,7 @@ class ProductTrends extends Page
     /** @return array<int, mixed> */
     public function getTrendsDataProperty(): array
     {
-        $currentRange = DateRange::forMonth($this->year, $this->month);
-        $prevDate = Date::create($this->year, $this->month, 1)->subMonth();
-        $prevRange = DateRange::forMonth($prevDate->year, $prevDate->month);
-
-        $currentCounts = OrderItem::query()->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-            ->whereBetween('orders.created_at', $currentRange->toArray())
-            ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')
-            ->groupBy('order_items.product_id')
-            ->pluck('total_qty', 'product_id')
-            ->toArray();
-
-        $prevCounts = OrderItem::query()->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-            ->whereBetween('orders.created_at', $prevRange->toArray())
-            ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')
-            ->groupBy('order_items.product_id')
-            ->pluck('total_qty', 'product_id')
-            ->toArray();
-
-        $categories = Category::with(['products' => fn (Builder $q) => $q->orderBy('sort_order')->orderBy('name')])->orderBy('sort_order')->get();
-
-        $grouped = [];
-        foreach ($categories as $category) {
-            $products = [];
-            foreach ($category->products as $product) {
-                $current = (int) ($currentCounts[$product->id] ?? 0);
-                $previous = (int) ($prevCounts[$product->id] ?? 0);
-
-                if ($current === 0 && $previous === 0) {
-                    continue;
-                }
-
-                $change = $previous > 0
-                    ? round(($current - $previous) / $previous * 100, 1)
-                    : ($current > 0 ? 100 : 0);
-
-                $trend = $current > $previous ? 'up' : ($current < $previous ? 'down' : 'flat');
-
-                $products[] = [
-                    'name' => $product->name,
-                    'current' => $current,
-                    'previous' => $previous,
-                    'change' => $change,
-                    'trend' => $trend,
-                ];
-            }
-
-            if (! empty($products)) {
-                $grouped[] = [
-                    'category' => $category->name,
-                    'products' => $products,
-                ];
-            }
-        }
-
-        return $grouped;
+        return resolve(ProductTrendsService::class)->calculate($this->year, $this->month);
     }
 
     public function getMonthLabelProperty(): string

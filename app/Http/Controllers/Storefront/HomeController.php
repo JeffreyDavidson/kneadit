@@ -15,7 +15,7 @@ class HomeController extends Controller
      */
     public function __invoke(): View
     {
-        $categories = Category::query()->where('is_active', true)
+        $categories = Category::query()->active()
             ->with(['products' => fn (Builder $q) => $q->where('is_active', true)->where('is_featured', true)])
             ->orderBy('sort_order')
             ->get();

@@ -19,7 +19,7 @@ class SubmitSurveyResponse
 
         $response = SurveyResponse::query()->create([
             'survey_id' => $survey->id,
-            'customer_name' => $customerName ? strip_tags($customerName) : null,
+            'customer_name' => $customerName,
             'customer_email' => $customerEmail,
             'answers' => $sanitizedAnswers,
             'created_at' => now(),
