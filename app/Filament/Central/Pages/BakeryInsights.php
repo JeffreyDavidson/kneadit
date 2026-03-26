@@ -2,15 +2,15 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\Actions\Tenants\ExtendTenantTrial;
+use App\Actions\Tenants\SendTenantNudge;
 use App\Filament\Central\Resources\TenantResource;
-use App\Models\PlatformMessage;
 use App\Models\Tenant;
 use App\Services\TenantHealthService;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Date;
 use UnitEnum;
 
 class BakeryInsights extends Page
@@ -70,10 +70,7 @@ class BakeryInsights extends Page
             return;
         }
 
-        $currentEnd = $tenant->trial_ends_at ? Date::parse($tenant->trial_ends_at) : now();
-        $newEnd = $currentEnd->isPast() ? now()->addDays(30) : $currentEnd->addDays(30);
-
-        $tenant->update(['trial_ends_at' => $newEnd]);
+        $newEnd = resolve(ExtendTenantTrial::class)($tenant);
 
         $this->extendedTrials[] = $tenantId;
 
@@ -94,16 +91,9 @@ class BakeryInsights extends Page
             return;
         }
 
+        resolve(SendTenantNudge::class)($tenant);
+
         $storeName = $tenant->store_name ?? $tenant->name;
-
-        PlatformMessage::query()->create([
-            'tenant_id' => $tenant->id,
-            'sender_type' => 'admin',
-            'subject' => "We noticed you haven't been around lately",
-            'body' => "Hi {$storeName}!\n\nWe noticed it's been a little quiet on your end. Just wanted to check in — is there anything we can help with?\n\nWhether you need help setting up your storefront, adding products, or just have questions, we're here for you.\n\nThe KneadIt Team",
-            'is_read' => false,
-        ]);
-
         $this->sentNudges[] = $tenantId;
 
         Notification::make()

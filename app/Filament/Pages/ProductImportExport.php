@@ -2,10 +2,11 @@
 
 namespace App\Filament\Pages;
 
+use App\Actions\ImportProducts;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Services\ProductCsvService;
+use App\Services\ProductCsvExporter;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -59,10 +60,10 @@ class ProductImportExport extends Page
     /** @var array<string, mixed> */
     public ?array $importResults = null;
 
-    /** @var array<string, mixed> */
+    /** @var array<int, array<string, mixed>>|null */
     public ?array $previewData = null;
 
-    /** @var array<string, mixed> */
+    /** @var array<int, string>|null */
     public ?array $previewErrors = null;
 
     public function mount(): void
@@ -102,8 +103,7 @@ class ProductImportExport extends Page
                             ->icon('heroicon-o-arrow-down-tray')
                             ->color('success')
                             ->action(function () {
-                                $service = new ProductCsvService;
-                                $csv = $service->export();
+                                $csv = resolve(ProductCsvExporter::class)->export();
                                 $filename = 'products-'.now()->format('Y-m-d').'.csv';
 
                                 return response()->streamDownload(function () use ($csv) {
@@ -115,8 +115,7 @@ class ProductImportExport extends Page
                             ->icon('heroicon-o-document-arrow-down')
                             ->color('gray')
                             ->action(function () {
-                                $service = new ProductCsvService;
-                                $csv = $service->getTemplateContent();
+                                $csv = resolve(ProductCsvExporter::class)->getTemplateContent();
 
                                 return response()->streamDownload(function () use ($csv) {
                                     echo $csv;
@@ -162,8 +161,7 @@ class ProductImportExport extends Page
                                 }
 
                                 $file = new UploadedFile($fullPath, basename($fullPath));
-                                $service = new ProductCsvService;
-                                $result = $service->parseForPreview($file);
+                                $result = resolve(ProductCsvExporter::class)->parseForPreview($file);
 
                                 $this->previewData = $result['rows'];
                                 $this->previewErrors = $result['errors'];
@@ -209,8 +207,7 @@ class ProductImportExport extends Page
                                 }
 
                                 $file = new UploadedFile($fullPath, basename($fullPath));
-                                $service = new ProductCsvService;
-                                $this->importResults = $service->import($file);
+                                $this->importResults = resolve(ImportProducts::class)($file);
 
                                 if (empty($this->importResults['errors'])) {
                                     Notification::make()

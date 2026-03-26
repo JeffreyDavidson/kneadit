@@ -1,8 +1,9 @@
 <?php
 
+use App\Actions\ImportProducts;
 use App\Models\Category;
 use App\Models\Product;
-use App\Services\ProductCsvService;
+use App\Services\ProductCsvExporter;
 use Illuminate\Http\UploadedFile;
 
 beforeEach(function () {
@@ -12,7 +13,7 @@ beforeEach(function () {
         test()->artisan('migrate', ['--path' => $tenantMigrationPath, '--realpath' => true]);
     }
 
-    $this->service = new ProductCsvService;
+    $this->service = new ProductCsvExporter;
 });
 
 function createCsvFile(string $content): UploadedFile
@@ -47,7 +48,7 @@ test('import creates new products', function () {
     Category::query()->create(['name' => 'Cakes', 'slug' => 'cakes']);
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nChocolate Cake,Cakes,Rich and moist,25.00,,1,0\n");
 
-    $result = $this->service->import($file);
+    $result = resolve(ImportProducts::class)($file);
 
     expect($result['created'])->toBe(1);
     $this->assertDatabaseHas('products', ['name' => 'Chocolate Cake', 'price' => 25.00]);
@@ -58,7 +59,7 @@ test('import updates existing products by name', function () {
     Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
 
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nSourdough,Bread,Updated desc,10.00,,1,0\n");
-    $result = $this->service->import($file);
+    $result = resolve(ImportProducts::class)($file);
 
     expect($result['updated'])->toBe(1);
     expect($result['created'])->toBe(0);
@@ -67,7 +68,7 @@ test('import updates existing products by name', function () {
 
 test('import handles missing required fields', function () {
     $file = createCsvFile("name,category\nTest,Bread\n");
-    $result = $this->service->import($file);
+    $result = resolve(ImportProducts::class)($file);
 
     expect($result['errors'])->not->toBeEmpty();
     expect($result['created'])->toBe(0);
@@ -75,7 +76,7 @@ test('import handles missing required fields', function () {
 
 test('import handles invalid prices', function () {
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nBad Item,Bread,desc,notanumber,,1,0\n");
-    $result = $this->service->import($file);
+    $result = resolve(ImportProducts::class)($file);
 
     expect($result['errors'])->not->toBeEmpty();
     expect($result['created'])->toBe(0);
