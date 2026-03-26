@@ -66,7 +66,7 @@ class PricingEngine extends Page
         $this->targetProfitMargin = (int) (Setting::query()->where('key', 'target_profit_margin')->value('value') ?? 50);
     }
 
-    /** @return Collection<int, Product> */
+    /** @return Collection<int, mixed> */
     public function getProductsProperty(): Collection
     {
         return Product::query()->with(['category', 'recipes'])->orderBy('name')->get();

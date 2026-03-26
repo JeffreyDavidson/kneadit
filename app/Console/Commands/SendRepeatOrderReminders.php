@@ -57,7 +57,6 @@ class SendRepeatOrderReminders extends Command
         $this->info("Tenant {$tenant->store_name}: {$customersToRemind->count()} reminder(s)");
 
         foreach ($customersToRemind as $data) {
-            /** @var array{customer: Customer, last_order_date: Carbon|null, days_since_last_order: float|null} $data */
             $customer = $data['customer'];
 
             if (! $customer->email) {
@@ -71,7 +70,7 @@ class SendRepeatOrderReminders extends Command
                     'next_reminder_date' => Date::today()->addDays($reminderDays),
                 ]);
 
-                Mail::to($customer->email)->send(new RepeatOrderReminder($customer, (int) ($data['days_since_last_order'] ?? 0)));
+                Mail::to($customer->email)->send(new RepeatOrderReminder($customer, $data['days_since_last_order']));
                 $this->info("  ✓ {$customer->name}");
             } catch (\Exception $e) {
                 $this->error("  ✗ {$customer->name}: {$e->getMessage()}");
@@ -79,7 +78,7 @@ class SendRepeatOrderReminders extends Command
         }
     }
 
-    /** @return Collection<int, array{customer: Customer, last_order_date: Carbon|null, days_since_last_order: float|null}> */
+    /** @return Collection<int, mixed> */
     private function getCustomersNeedingReminders(Carbon $cutoffDate, int $reminderDays): Collection
     {
         return Customer::query()->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))

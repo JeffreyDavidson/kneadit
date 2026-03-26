@@ -24,7 +24,7 @@ class StripeConnectWebhookController extends Controller
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        $secret = (string) config('saas.stripe_connect.webhook_secret', '');
+        $secret = config('saas.stripe_connect.webhook_secret');
 
         // Webhook signature verification is mandatory
         if (! $secret) {
@@ -75,7 +75,7 @@ class StripeConnectWebhookController extends Controller
         $chargesEnabled = (bool) data_get($account, 'charges_enabled', false);
         $tenantId = is_object($account)
             ? ($account->metadata->tenant_id ?? null)
-            : (is_array($account) && isset($account['metadata']) && is_array($account['metadata']) ? ($account['metadata']['tenant_id'] ?? null) : null);
+            : ($account['metadata']['tenant_id'] ?? null);
 
         if (! $tenantId) {
             Log::warning('Stripe Connect account.updated missing tenant_id', [

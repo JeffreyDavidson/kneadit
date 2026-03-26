@@ -31,24 +31,20 @@ class FeatureUsage extends Page
 
     public function getMostUsedFeature(): ?string
     {
-        $value = FeatureUsageLog::query()->select('feature')
+        return FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
             ->groupBy('feature')
             ->orderByDesc('total')
             ->value('feature');
-
-        return is_string($value) ? $value : null;
     }
 
     public function getLeastUsedFeature(): ?string
     {
-        $value = FeatureUsageLog::query()->select('feature')
+        return FeatureUsageLog::query()->select('feature')
             ->selectRaw('SUM(usage_count) as total')
             ->groupBy('feature')
             ->orderBy('total')
             ->value('feature');
-
-        return is_string($value) ? $value : null;
     }
 
     public function getTotalInteractionsThisMonth(): int
@@ -71,8 +67,8 @@ class FeatureUsage extends Page
 
         return $data->map(fn (FeatureUsageLog $row) => [
             'feature' => $row->feature,
-            'total' => (int) $row->total,
-            'percent' => round(((int) $row->total / $max) * 100),
+            'total' => $row->total,
+            'percent' => round(($row->total / $max) * 100),
         ]);
     }
 
@@ -96,9 +92,9 @@ class FeatureUsage extends Page
         foreach ($features as $feature) {
             $cells = [];
             foreach ($days as $day) {
-                $key = (string) $feature.'|'.$day->toDateString();
+                $key = $feature.'|'.$day->toDateString();
                 $count = isset($logs[$key]) ? $logs[$key]->sum('usage_count') : 0;
-                $intensity = (int) $maxCount > 0 ? $count / (int) $maxCount : 0;
+                $intensity = $maxCount > 0 ? $count / $maxCount : 0;
                 $cells[] = [
                     'date' => $day->format('M d'),
                     'count' => $count,

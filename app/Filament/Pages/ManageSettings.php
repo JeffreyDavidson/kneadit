@@ -107,22 +107,20 @@ class ManageSettings extends Page
         $this->store_email = settings('store_email', '');
         $this->store_phone = settings('store_phone', '');
         $this->store_address = settings('store_address', '');
-        $this->default_daily_capacity = ($val = settings('default_daily_capacity')) !== null ? (int) $val : null;
-        $this->minimum_order_lead_hours = (int) settings('minimum_order_lead_hours', 48);
+        $this->default_daily_capacity = settings('default_daily_capacity', null);
+        $this->minimum_order_lead_hours = settings('minimum_order_lead_hours', 48);
         $this->delivery_fee_tiers = settings('delivery_fee_tiers', '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}');
-        $this->repeat_reminders_enabled = (bool) settings('repeat_reminders_enabled', false);
-        $this->birthday_program_enabled = (bool) settings('birthday_program_enabled', false);
+        $this->repeat_reminders_enabled = settings('repeat_reminders_enabled', false);
+        $this->birthday_program_enabled = settings('birthday_program_enabled', false);
         $this->allergy_disclaimer = settings('allergy_disclaimer', 'Please inform us of any allergies or dietary restrictions when placing your order.');
         $this->revenue_cap = settings('revenue_cap', '250000');
         $methods = settings('payment_methods');
-        /** @var array<int, string>|null $decoded */
-        $decoded = $methods ? json_decode((string) $methods, true) : null;
-        $this->payment_methods = $decoded ?? ['cash'];
+        $this->payment_methods = $methods ? json_decode($methods, true) : ['cash'];
         $this->paypal_client_id = settings('paypal_client_id', '');
         $this->paypal_client_secret = settings('paypal_client_secret', '');
         $this->paypal_sandbox = (bool) settings('paypal_sandbox', true);
-        $this->webhook_url = (string) settings('webhook_url', '');
-        $this->webhook_secret = (string) settings('webhook_secret', '');
+        $this->webhook_url = settings('webhook_url', '');
+        $this->webhook_secret = settings('webhook_secret', '');
 
         $this->cancellation_policy = settings('cancellation_policy', '');
         $this->deposit_policy = settings('deposit_policy', '');
@@ -223,7 +221,7 @@ class ManageSettings extends Page
                             ->columnSpanFull(),
 
                         View::make('filament.pages.stripe-connect-status')
-                            ->visible(fn (Get $get) => in_array('stripe', (array) ($get('payment_methods') ?? []))),
+                            ->visible(fn (Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
 
                         Grid::make(2)
                             ->schema([
@@ -234,7 +232,7 @@ class ManageSettings extends Page
                                     ->label('PayPal Client Secret')
                                     ->password(),
                             ])
-                            ->visible(fn (Get $get) => in_array('paypal', (array) ($get('payment_methods') ?? []))),
+                            ->visible(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
 
                         Toggle::make('paypal_sandbox')
                             ->label('PayPal Sandbox Mode')

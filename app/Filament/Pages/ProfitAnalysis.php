@@ -48,7 +48,7 @@ class ProfitAnalysis extends Page
         // This will trigger a re-render with the new sort order
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, mixed> */
     public function getProductAnalysis(): Collection
     {
         return resolve(ProfitAnalysisService::class)->getProductAnalysis($this->sortBy);

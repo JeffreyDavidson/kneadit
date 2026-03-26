@@ -169,9 +169,9 @@ class TaxExport extends Page
     protected function generateExport(array $data): StreamedResponse
     {
         $year = (int) $data['year'];
-        $type = (string) $data['export_type'];
-        $dateFrom = (string) ($data['date_from'] ?? "{$year}-01-01");
-        $dateTo = (string) ($data['date_to'] ?? "{$year}-12-31");
+        $type = $data['export_type'];
+        $dateFrom = $data['date_from'] ?? "{$year}-01-01";
+        $dateTo = $data['date_to'] ?? "{$year}-12-31";
 
         $filename = "tax-export-{$year}-{$type}.csv";
 

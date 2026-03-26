@@ -75,13 +75,13 @@ class FinanceSummary extends Page
     {
         $data = resolve(FinancialCalculator::class)->calculate($this->selectedYear);
 
-        $this->totalRevenue = (float) $data['totalRevenue'];
-        $this->totalExpenses = (float) $data['totalExpenses'];
-        $this->netProfit = (float) $data['netProfit'];
-        $this->monthlyBreakdown = $data['monthlyBreakdown'] instanceof Collection ? $data['monthlyBreakdown'] : collect();
-        $this->expenseBreakdown = $data['expenseBreakdown'] instanceof Collection ? $data['expenseBreakdown'] : collect();
-        $this->cogsAmount = (float) $data['cogsAmount'];
-        $this->cogsPercentage = (float) $data['cogsPercentage'];
+        $this->totalRevenue = $data['totalRevenue'];
+        $this->totalExpenses = $data['totalExpenses'];
+        $this->netProfit = $data['netProfit'];
+        $this->monthlyBreakdown = $data['monthlyBreakdown'];
+        $this->expenseBreakdown = $data['expenseBreakdown'];
+        $this->cogsAmount = $data['cogsAmount'];
+        $this->cogsPercentage = $data['cogsPercentage'];
 
         $this->revenueCapProgress = $this->revenueCap > 0
             ? min(($this->totalRevenue / $this->revenueCap) * 100, 100)

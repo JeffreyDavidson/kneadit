@@ -47,8 +47,7 @@ class SettingsManager
 
     public function pageContent(string $page, string $key, mixed $default = ''): mixed
     {
-        /** @var array<string, array<string, mixed>> $content */
-        $content = json_decode((string) $this->get('page_content', '{}'), true);
+        $content = json_decode($this->get('page_content', '{}'), true);
 
         return $content[$page][$key] ?? $default;
     }
@@ -56,8 +55,7 @@ class SettingsManager
     /** @return array<string, mixed> */
     public function pageContentAll(string $page): array
     {
-        /** @var array<string, array<string, mixed>> $content */
-        $content = json_decode((string) $this->get('page_content', '{}'), true);
+        $content = json_decode($this->get('page_content', '{}'), true);
 
         return $content[$page] ?? [];
     }

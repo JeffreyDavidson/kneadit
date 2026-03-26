@@ -10,7 +10,7 @@ trait ShowsUpgradeBadge
 
     public static function getNavigationBadge(): ?string
     {
-        $current = SubscriptionTier::tryFrom(tenant() ? tenant()->plan : '');
+        $current = SubscriptionTier::tryFrom(tenant()?->plan);
 
         if ($current?->meetsRequirement(static::requiredTier()) ?? false) {
             return null;
@@ -21,7 +21,7 @@ trait ShowsUpgradeBadge
 
     public static function getNavigationBadgeColor(): ?string
     {
-        $current = SubscriptionTier::tryFrom(tenant() ? tenant()->plan : '');
+        $current = SubscriptionTier::tryFrom(tenant()?->plan);
 
         if ($current?->meetsRequirement(static::requiredTier()) ?? false) {
             return null;

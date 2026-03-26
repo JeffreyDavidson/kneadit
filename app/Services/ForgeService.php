@@ -18,9 +18,9 @@ class ForgeService
 
     public function __construct()
     {
-        $this->token = (string) config('services.forge.token', '');
-        $this->serverId = (string) config('services.forge.server_id', '');
-        $this->siteId = (string) config('services.forge.site_id', '');
+        $this->token = config('services.forge.token', '');
+        $this->serverId = config('services.forge.server_id', '');
+        $this->siteId = config('services.forge.site_id', '');
     }
 
     public static function isConfigured(): bool
@@ -52,9 +52,7 @@ class ForgeService
                 return false;
             }
 
-            /** @var array<string, mixed> $site */
-            $site = $response->json('site') ?? [];
-            /** @var list<string> $currentAliases */
+            $site = $response->json('site');
             $currentAliases = $site['aliases'] ?? [];
 
             if (in_array($domain, $currentAliases)) {
@@ -131,11 +129,9 @@ class ForgeService
                 return false;
             }
 
-            /** @var array<string, mixed> $site */
-            $site = $response->json('site') ?? [];
-            /** @var list<string> $aliases */
-            $aliases = $site['aliases'] ?? [];
-            $currentAliases = array_values(array_filter($aliases, fn (string $a) => $a !== $domain));
+            $site = $response->json('site');
+            $currentAliases = $site['aliases'] ?? [];
+            $currentAliases = array_values(array_filter($currentAliases, fn (string $a) => $a !== $domain));
 
             $updateResponse = $this->request()->put(
                 "/servers/{$this->serverId}/sites/{$this->siteId}",

@@ -49,7 +49,7 @@ class OrderCalendar extends Page
     /** @var Collection<int, mixed> */
     public Collection $orderCounts;
 
-    /** @var Collection<int, Order>|Collection<int, mixed> */
+    /** @var Collection<int, mixed> */
     public Collection $selectedDayOrders;
 
     public ?string $selectedDate = null;

@@ -100,7 +100,6 @@ class Dashboard extends BaseDashboard
         }
 
         $saved = settings('dashboard_widgets');
-        /** @var array<string, array<string, mixed>>|null $config */
         $config = $saved ? json_decode($saved, true) : null;
 
         if (! $config) {
@@ -108,12 +107,7 @@ class Dashboard extends BaseDashboard
         }
 
         // Sort by order
-        uasort($config, static function (mixed $a, mixed $b): int {
-            $aOrder = is_array($a) ? ($a['order'] ?? 99) : 99;
-            $bOrder = is_array($b) ? ($b['order'] ?? 99) : 99;
-
-            return $aOrder <=> $bOrder;
-        });
+        uasort($config, fn (array $a, array $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
 
         $widgets = [];
         foreach ($config as $key => $settings) {

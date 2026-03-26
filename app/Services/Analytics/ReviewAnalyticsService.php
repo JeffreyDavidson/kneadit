@@ -46,7 +46,7 @@ class ReviewAnalyticsService
 
         for ($i = 5; $i >= 1; $i--) {
             $count = $distribution[$i] ?? 0;
-            $percentage = $totalReviews > 0 ? ((int) $count / $totalReviews) * 100 : 0;
+            $percentage = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
 
             $ratingStats[] = [
                 'rating' => $i,
@@ -87,7 +87,7 @@ class ReviewAnalyticsService
         return $trend;
     }
 
-    /** @return Collection<int, Product> */
+    /** @return Collection<int, mixed> */
     public function getTopReviewedProducts(): Collection
     {
         return Product::query()->withCount(['reviews' => function (Builder $query) {
@@ -112,7 +112,7 @@ class ReviewAnalyticsService
             });
     }
 
-    /** @return Collection<int, Review> */
+    /** @return Collection<int, mixed> */
     public function getRecentReviews(): Collection
     {
         return Review::with('product')->latest()

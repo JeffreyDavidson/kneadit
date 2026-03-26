@@ -35,7 +35,7 @@ class Analytics extends Page
             ]);
         }
 
-        return $months->values()->all();
+        return $months->toArray();
     }
 
     /** @return array<string, mixed> */
@@ -73,8 +73,8 @@ class Analytics extends Page
         $growth = [];
 
         for ($i = 1; $i < count($signups); $i++) {
-            $prev = (int) $signups[$i - 1]['count'];
-            $curr = (int) $signups[$i]['count'];
+            $prev = $signups[$i - 1]['count'];
+            $curr = $signups[$i]['count'];
             $rate = $prev > 0 ? round((($curr - $prev) / $prev) * 100, 1) : 0;
             $growth[] = [
                 'label' => $signups[$i]['label'],
@@ -113,11 +113,9 @@ class Analytics extends Page
 
     public function getMostPopularPlan(): string
     {
-        $value = Tenant::query()->select('plan', DB::raw('count(*) as count'))
+        return Tenant::query()->select('plan', DB::raw('count(*) as count'))
             ->groupBy('plan')
             ->orderByDesc('count')
-            ->value('plan');
-
-        return is_string($value) ? $value : 'N/A';
+            ->value('plan') ?? 'N/A';
     }
 }

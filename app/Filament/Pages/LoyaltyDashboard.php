@@ -52,7 +52,7 @@ class LoyaltyDashboard extends Page
     public function mount(): void
     {
         $this->loyaltyEnabled = settings('loyalty_enabled', '1') === '1';
-        $this->programName = (string) settings('loyalty_program_name', 'Rewards');
+        $this->programName = settings('loyalty_program_name', 'Rewards');
     }
 
     public function toggleLoyalty(): void

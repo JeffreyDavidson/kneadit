@@ -109,7 +109,7 @@ class SocialCalendar extends Page
     public function selectDay(string $date): void
     {
         $this->selectedDate = $date;
-        $this->selectedDayPosts = is_array($this->posts[$date] ?? null) ? $this->posts[$date] : [];
+        $this->selectedDayPosts = $this->posts[$date] ?? [];
     }
 
     /** @return array<int, mixed> */

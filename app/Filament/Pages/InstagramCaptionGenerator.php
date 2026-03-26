@@ -115,8 +115,8 @@ class InstagramCaptionGenerator extends Page
 
         $formData = $this->data ?? [];
         $product = Product::with('category')->where('id', $formData['product_id'] ?? null)->first();
-        $style = (string) ($formData['style'] ?? 'playful');
-        $tone = (string) ($formData['tone'] ?? 'warm');
+        $style = ($formData['style'] ?? 'playful');
+        $tone = ($formData['tone'] ?? 'warm');
 
         if (! $product) {
             return;

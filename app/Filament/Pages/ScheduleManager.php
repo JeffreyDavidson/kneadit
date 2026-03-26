@@ -53,7 +53,7 @@ class ScheduleManager extends Page
     protected static ?string $title = 'Business Schedule';
 
     // Day properties
-    /** @var array<int|string, array{is_open: bool, open_time: string|null, close_time: string|null, order_cutoff_time: string|null, max_orders: int|null}> */
+    /** @var array<int|string, mixed> */
     public array $schedule = [];
 
     public function mount(): void
@@ -118,7 +118,7 @@ class ScheduleManager extends Page
     {
         foreach ($this->schedule as $dayOfWeek => $data) {
             BusinessSchedule::query()->updateOrCreate(['day_of_week' => $dayOfWeek], [
-                'is_open' => $data['is_open'],
+                'is_open' => $data['is_open'] ?? false,
                 'open_time' => $data['is_open'] ? ($data['open_time'] ?: null) : null,
                 'close_time' => $data['is_open'] ? ($data['close_time'] ?: null) : null,
                 'order_cutoff_time' => $data['is_open'] ? ($data['order_cutoff_time'] ?: null) : null,

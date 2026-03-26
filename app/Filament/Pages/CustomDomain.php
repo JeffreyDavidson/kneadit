@@ -92,9 +92,6 @@ class CustomDomain extends Page
         }
 
         $tenant = tenant();
-        if (! $tenant) {
-            return;
-        }
 
         // Update tenant custom_domain
         $tenant->update(['custom_domain' => $domain]);
@@ -192,9 +189,6 @@ class CustomDomain extends Page
     protected function removeCustomDomain(): void
     {
         $tenant = tenant();
-        if (! $tenant) {
-            return;
-        }
         $oldDomain = $tenant->custom_domain;
 
         if ($oldDomain) {

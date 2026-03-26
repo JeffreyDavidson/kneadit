@@ -65,7 +65,7 @@ class LabelGenerator extends Page
         $this->showPreview = true;
     }
 
-    /** @return Collection<int, array{id: int, name: string, price: float}> */
+    /** @return Collection<int, mixed> */
     public function getProducts(): Collection
     {
         return Product::query()->where('is_active', true)
@@ -74,7 +74,7 @@ class LabelGenerator extends Page
             ->map(fn (Product $p) => ['id' => $p->id, 'name' => $p->name, 'price' => $p->price]);
     }
 
-    /** @return Collection<int, Product> */
+    /** @return Collection<int, mixed> */
     public function getSelectedProductModels(): Collection
     {
         return Product::query()->whereIn('id', $this->selectedProducts)->with('recipe')->get();
@@ -93,11 +93,11 @@ class LabelGenerator extends Page
 
     public function getStoreName(): string
     {
-        return (string) settings('store_name', 'Our Bakery');
+        return settings('store_name', 'Our Bakery');
     }
 
     public function getAllergyDisclaimer(): string
     {
-        return (string) settings('allergy_disclaimer', 'May contain allergens.');
+        return settings('allergy_disclaimer', 'May contain allergens.');
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 class ProfitAnalysisService
 {
     /**
-     * @return Collection<int, array<string, mixed>>
+     * @return Collection<int, mixed>
      */
     public function getProductAnalysis(string $sortBy = 'margin_desc'): Collection
     {
@@ -73,8 +73,8 @@ class ProfitAnalysisService
     }
 
     /**
-     * @param  Collection<int, array<string, mixed>>  $products
-     * @return Collection<int, array<string, mixed>>
+     * @param  Collection<int, mixed>  $products
+     * @return Collection<int, mixed>
      */
     public function sortProducts(Collection $products, string $sortBy): Collection
     {
@@ -157,8 +157,8 @@ class ProfitAnalysisService
 
         $totalRevenue = $products->sum('price');
         $totalCosts = $products->sum('cost');
-        $totalProfit = (float) $totalRevenue - (float) $totalCosts;
-        $overallMargin = (float) $totalRevenue > 0 ? (($totalProfit / (float) $totalRevenue) * 100) : 0;
+        $totalProfit = $totalRevenue - $totalCosts;
+        $overallMargin = $totalRevenue > 0 ? (($totalProfit / $totalRevenue) * 100) : 0;
 
         return [
             'total_revenue_potential' => $totalRevenue,

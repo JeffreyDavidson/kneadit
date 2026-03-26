@@ -10,7 +10,7 @@ class StripTagsCast implements CastsAttributes
 {
     public function get(Model $model, string $key, mixed $value, array $attributes): ?string
     {
-        return is_string($value) ? $value : null;
+        return $value;
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
