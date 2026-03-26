@@ -70,29 +70,6 @@ class AdminAuditLog extends Model
     }
 
     /**
-     * Log an admin action.
-     */
-    /** @param array<string, mixed> $metadata */
-    public static function log(
-        string $action,
-        string $description,
-        ?string $targetType = null,
-        ?string $targetId = null,
-        ?array $metadata = null,
-    ): static {
-        return static::query()->create([
-            'admin_id' => auth()->id(),
-            'action' => $action,
-            'description' => $description,
-            'target_type' => $targetType,
-            'target_id' => $targetId,
-            'metadata' => $metadata,
-            'ip_address' => request()->ip(),
-            'created_at' => now(),
-        ]);
-    }
-
-    /**
      * Scope: filter by action.
      */
     /** @param Builder<AdminAuditLog> $query */

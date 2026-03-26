@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AdminAuditLog;
+use App\Actions\LogAuditEntry;
 use App\Models\Tenant;
 use App\Services\TenancyManager;
 use Illuminate\Console\Command;
@@ -34,7 +34,7 @@ class CheckChurnAlerts extends Command
                         $setupScore = 0;
                     }
                     if ($setupScore < config('monitoring.churn_low_setup_threshold')) {
-                        AdminAuditLog::log(
+                        resolve(LogAuditEntry::class)(
                             action: 'churn_alert',
                             description: "Trial expiring soon with low setup: {$name} (ends {$trialEnds->diffForHumans()})",
                             targetType: 'tenant',
@@ -54,7 +54,7 @@ class CheckChurnAlerts extends Command
             }
             if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= config('monitoring.churn_no_login_days')) {
                 $days = (int) Date::parse($lastLogin)->diffInDays(now());
-                AdminAuditLog::log(
+                resolve(LogAuditEntry::class)(
                     action: 'churn_alert',
                     description: "No login in {$days} days: {$name}",
                     targetType: 'tenant',
@@ -74,7 +74,7 @@ class CheckChurnAlerts extends Command
                     $recentOrders = 0;
                 }
                 if ($recentOrders === 0) {
-                    AdminAuditLog::log(
+                    resolve(LogAuditEntry::class)(
                         action: 'churn_alert',
                         description: "Zero orders in 30 days: {$name}",
                         targetType: 'tenant',
