@@ -45,8 +45,8 @@ class SocialPostForm
                         Textarea::make('caption')
                             ->required()
                             ->rows(4)
-                            ->maxLength(fn (Get $get): int => SocialPost::PLATFORM_MAX_CHARS[(string) ($get('platform') ?? 'instagram')] ?? 2200)
-                            ->helperText(fn (Get $get): string => 'Max '.number_format(SocialPost::PLATFORM_MAX_CHARS[(string) ($get('platform') ?? 'instagram')] ?? 2200).' characters for '.(SocialPost::PLATFORMS[(string) ($get('platform') ?? 'instagram')] ?? 'Instagram'))
+                            ->maxLength(fn (Get $get): int => SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200)
+                            ->helperText(fn (Get $get): string => 'Max '.number_format(SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200).' characters for '.(SocialPost::PLATFORMS[$get('platform') ?? 'instagram'] ?? 'Instagram'))
                             ->hintAction(
                                 Action::make('generateCaption')
                                     ->label('Generate Caption')

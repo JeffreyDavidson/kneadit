@@ -21,9 +21,9 @@ class StripeWebhookController extends WebhookController
     /** @param array<string, mixed> $payload */
     protected function alreadyProcessed(array $payload): bool
     {
-        $eventId = (string) ($payload['id'] ?? '');
+        $eventId = $payload['id'] ?? null;
 
-        if ($eventId === '') {
+        if (! $eventId) {
             return false;
         }
 
@@ -44,23 +44,12 @@ class StripeWebhookController extends WebhookController
 
         $response = parent::handleCustomerSubscriptionUpdated($payload);
 
-        /** @var array<string, mixed> $payloadData */
-        $payloadData = $payload['data'] ?? [];
-        /** @var array<string, mixed> $subscription */
-        $subscription = $payloadData['object'] ?? [];
-        $stripeCustomerId = (string) ($subscription['customer'] ?? '');
-        /** @var array<string, mixed> $items */
-        $items = $subscription['items'] ?? [];
-        /** @var list<array<string, mixed>> $itemsData */
-        $itemsData = $items['data'] ?? [];
-        /** @var array<string, mixed> $firstItem */
-        $firstItem = $itemsData[0] ?? [];
-        /** @var array<string, mixed> $price */
-        $price = $firstItem['price'] ?? [];
-        $stripePriceId = (string) ($price['id'] ?? '');
-        $status = (string) ($subscription['status'] ?? '');
+        $subscription = $payload['data']['object'] ?? [];
+        $stripeCustomerId = $subscription['customer'] ?? null;
+        $stripePriceId = $subscription['items']['data'][0]['price']['id'] ?? null;
+        $status = $subscription['status'] ?? null;
 
-        if ($stripeCustomerId === '' || $stripePriceId === '') {
+        if (! $stripeCustomerId || ! $stripePriceId) {
             return null;
         }
 
@@ -84,7 +73,7 @@ class StripeWebhookController extends WebhookController
         }
 
         // Handle subscription cancellation (status becomes 'canceled' at period end)
-        if ($status === 'canceled' || ((bool) ($subscription['cancel_at_period_end'] ?? false))) {
+        if ($status === 'canceled' || ($subscription['cancel_at_period_end'] ?? false)) {
             Log::info("Tenant {$tenant->id} subscription canceling at period end");
         }
 
@@ -102,13 +91,10 @@ class StripeWebhookController extends WebhookController
             return;
         }
 
-        /** @var array<string, mixed> $invoiceData */
-        $invoiceData = $payload['data'] ?? [];
-        /** @var array<string, mixed> $invoice */
-        $invoice = $invoiceData['object'] ?? [];
-        $stripeCustomerId = (string) ($invoice['customer'] ?? '');
+        $invoice = $payload['data']['object'] ?? [];
+        $stripeCustomerId = $invoice['customer'] ?? null;
 
-        if ($stripeCustomerId === '') {
+        if (! $stripeCustomerId) {
             return;
         }
 
@@ -122,7 +108,7 @@ class StripeWebhookController extends WebhookController
         Log::warning('Payment failed', [
             'tenant' => $tenant?->id,
             'email' => $user->email,
-            'amount' => ((int) ($invoice['amount_due'] ?? 0)) / 100,
+            'amount' => ($invoice['amount_due'] ?? 0) / 100,
         ]);
 
         // Notify the baker
@@ -136,7 +122,7 @@ class StripeWebhookController extends WebhookController
         try {
             $alertMsg = "Payment failed for {$user->name} ({$user->email})"
                 .($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '')
-                ."\nAmount: $".number_format(((int) ($invoice['amount_due'] ?? 0)) / 100, 2);
+                ."\nAmount: $".number_format(($invoice['amount_due'] ?? 0) / 100, 2);
             Mail::to(config('mail.platform_notify'))->queue(new HealthAlertMail($alertMsg));
         } catch (\Exception $e) {
             Log::error('Failed to send platform payment alert', ['error' => $e->getMessage()]);
@@ -156,11 +142,8 @@ class StripeWebhookController extends WebhookController
 
         $response = parent::handleCustomerSubscriptionDeleted($payload);
 
-        /** @var array<string, mixed> $deletedData */
-        $deletedData = $payload['data'] ?? [];
-        /** @var array<string, mixed> $subscription */
-        $subscription = $deletedData['object'] ?? [];
-        $stripeCustomerId = (string) ($subscription['customer'] ?? '');
+        $subscription = $payload['data']['object'] ?? [];
+        $stripeCustomerId = $subscription['customer'] ?? null;
 
         $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
         if (! $user) {
@@ -177,12 +160,11 @@ class StripeWebhookController extends WebhookController
 
     protected function priceIdToPlan(string $priceId): ?string
     {
-        /** @var array<string, string> $prices */
         $prices = config('saas.stripe_prices', []);
 
         foreach ($prices as $plan => $id) {
             if ($id === $priceId) {
-                return (string) $plan;
+                return $plan;
             }
         }
 

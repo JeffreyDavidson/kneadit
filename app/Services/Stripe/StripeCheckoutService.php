@@ -15,16 +15,15 @@ class StripeCheckoutService
 
     public function __construct()
     {
-        $this->stripe = new StripeClient((string) config('cashier.secret'));
+        $this->stripe = new StripeClient(config('cashier.secret'));
     }
 
     public static function isEnabled(): bool
     {
         $methods = settings('payment_methods');
-        /** @var list<string> $decoded */
-        $decoded = $methods ? json_decode($methods, true) : [];
+        $methods = $methods ? json_decode($methods, true) : [];
 
-        if (! in_array('stripe', $decoded)) {
+        if (! in_array('stripe', $methods)) {
             return false;
         }
 
@@ -194,13 +193,13 @@ class StripeCheckoutService
             'metadata' => [
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
-                'tenant_id' => (string) tenant()?->getTenantKey(),
+                'tenant_id' => tenant()->getTenantKey(),
             ],
             'payment_intent_data' => [
                 'metadata' => [
                     'order_id' => $order->id,
                     'order_number' => $order->order_number,
-                    'tenant_id' => (string) tenant()?->getTenantKey(),
+                    'tenant_id' => tenant()->getTenantKey(),
                 ],
             ],
         ];

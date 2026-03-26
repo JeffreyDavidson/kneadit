@@ -36,9 +36,7 @@ class ManagePageContent extends Page
 
     public function mount(): void
     {
-        /** @var array<string, mixed> $decoded */
-        $decoded = json_decode((string) settings('page_content', '{}'), true) ?: [];
-        $this->pageContent = $decoded;
+        $this->pageContent = json_decode(settings('page_content', '{}'), true) ?: [];
     }
 
     public function content(Schema $schema): Schema

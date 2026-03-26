@@ -13,7 +13,7 @@ class TenantHealthService
         protected TenancyManager $tenancyManager,
     ) {}
 
-    /** @return Collection<int, array{id: string, name: string, owner: string, email: string, plan: string, health_score: int, login_score: int, order_score: int, product_score: int, setup_score: int}> */
+    /** @return Collection<int, mixed> */
     public function getTenantHealthData(): Collection
     {
         return Tenant::all()->map(function (Tenant $tenant) {
@@ -60,15 +60,14 @@ class TenantHealthService
 
         foreach ($tenants as $tenant) {
             $daysSinceSignup = $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0;
-            /** @var array{health_score: int, setup_score: int}|null $health */
             $health = $healthData->get($tenant->id);
             $healthScore = $health ? $health['health_score'] : 0;
 
             if ($tenant->trial_ends_at) {
                 $trialEnds = Date::parse($tenant->trial_ends_at);
-                if ($trialEnds->isFuture() && $trialEnds->diffInHours(now()) <= (int) config('monitoring.churn_trial_alert_hours', 48)) {
+                if ($trialEnds->isFuture() && $trialEnds->diffInHours(now()) <= config('monitoring.churn_trial_alert_hours', 48)) {
                     $setupScore = $health ? $health['setup_score'] : 0;
-                    if ($setupScore < (int) config('monitoring.churn_low_setup_threshold', 15)) {
+                    if ($setupScore < config('monitoring.churn_low_setup_threshold', 15)) {
                         $alerts->push([
                             'tenant_id' => $tenant->id,
                             'name' => $tenant->store_name ?? $tenant->name,
@@ -83,7 +82,7 @@ class TenantHealthService
             }
 
             $lastLogin = $this->getLastLogin($tenant);
-            if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= (int) config('monitoring.churn_no_login_days', 7)) {
+            if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= config('monitoring.churn_no_login_days', 7)) {
                 $days = (int) Date::parse($lastLogin)->diffInDays(now());
                 $alerts->push([
                     'tenant_id' => $tenant->id,
@@ -96,15 +95,15 @@ class TenantHealthService
                 ]);
             }
 
-            if ($daysSinceSignup > (int) config('monitoring.churn_min_tenant_age_days', 14)) {
-                $recentOrders = $this->getRecentOrderCount($tenant, (int) config('monitoring.churn_no_orders_days', 30));
+            if ($daysSinceSignup > config('monitoring.churn_min_tenant_age_days', 14)) {
+                $recentOrders = $this->getRecentOrderCount($tenant, config('monitoring.churn_no_orders_days', 30));
                 if ($recentOrders === 0) {
                     $alerts->push([
                         'tenant_id' => $tenant->id,
                         'name' => $tenant->store_name ?? $tenant->name,
                         'type' => 'no_orders',
                         'type_label' => 'No Orders',
-                        'description' => 'Zero orders in the last '.(int) config('monitoring.churn_no_orders_days', 30).' days.',
+                        'description' => 'Zero orders in the last '.config('monitoring.churn_no_orders_days', 30).' days.',
                         'days_since_signup' => $daysSinceSignup,
                         'severity' => 'warning',
                     ]);
@@ -207,7 +206,7 @@ class TenantHealthService
             return 0;
         }
 
-        $days = Date::parse((string) $lastLogin)->diffInDays(now());
+        $days = Date::parse($lastLogin)->diffInDays(now());
 
         if ($days <= 7) {
             return 25;
@@ -309,10 +308,7 @@ class TenantHealthService
     protected function getLastLogin(Tenant $tenant): ?string
     {
         try {
-            /** @var string|null $lastLogin */
-            $lastLogin = $this->tenancyManager->withinTenant($tenant, fn () => DB::table('users')->max('updated_at'));
-
-            return $lastLogin;
+            return $this->tenancyManager->withinTenant($tenant, fn () => DB::table('users')->max('updated_at'));
         } catch (\Throwable) {
             return null;
         }

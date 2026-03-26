@@ -2,15 +2,11 @@
 
 use App\Models\Tenant;
 
-// PHPStan type overrides for global helpers that return mixed
+// PHPStan type overrides for global helpers
 
 if (false) {
     /**
-     * Override Stancl's tenant() to return our concrete Tenant model.
-     *
      * @return Tenant|null
      */
-    function tenant(?string $key = null): ?Tenant
-    {
-    }
+    function tenant(?string $key = null) {}
 }

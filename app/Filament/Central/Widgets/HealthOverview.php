@@ -16,13 +16,13 @@ class HealthOverview extends StatsOverviewWidget
         $stats = $healthPage->getHealthSummaryStats();
 
         return [
-            Stat::make('Healthy', (int) $stats['healthy'])
+            Stat::make('Healthy', $stats['healthy'])
                 ->description('Score > 70')
                 ->color('success'),
-            Stat::make('At Risk', (int) $stats['at_risk'])
+            Stat::make('At Risk', $stats['at_risk'])
                 ->description('Score 40–70')
                 ->color('warning'),
-            Stat::make('Critical', (int) $stats['critical'])
+            Stat::make('Critical', $stats['critical'])
                 ->description('Score < 40')
                 ->color('danger'),
         ];

@@ -34,12 +34,7 @@ class ReferralProgram extends Page
 
     public function getReferralCode(): string
     {
-        $tenant = tenant();
-        if (! $tenant) {
-            return '';
-        }
-
-        return app(GenerateReferralCode::class)($tenant);
+        return app(GenerateReferralCode::class)(tenant());
     }
 
     public function getReferralLink(): string
@@ -49,21 +44,21 @@ class ReferralProgram extends Page
 
     public function getTotalReferrals(): int
     {
-        return Referral::query()->where('referrer_tenant_id', (string) tenant()?->id)
+        return Referral::query()->where('referrer_tenant_id', tenant()->id)
             ->whereNotNull('referred_tenant_id')
             ->count();
     }
 
     public function getCompletedReferrals(): int
     {
-        return Referral::query()->where('referrer_tenant_id', (string) tenant()?->id)
+        return Referral::query()->where('referrer_tenant_id', tenant()->id)
             ->whereIn('status', [ReferralStatus::Completed, ReferralStatus::Rewarded])
             ->count();
     }
 
     public function getMonthsEarned(): int
     {
-        return (int) Referral::query()->where('referrer_tenant_id', (string) tenant()?->id)
+        return (int) Referral::query()->where('referrer_tenant_id', tenant()->id)
             ->where('status', ReferralStatus::Rewarded)
             ->sum('reward_months');
     }
@@ -71,7 +66,7 @@ class ReferralProgram extends Page
     /** @return Collection<int, Referral> */
     public function getReferrals(): Collection
     {
-        return Referral::query()->where('referrer_tenant_id', (string) tenant()?->id)
+        return Referral::query()->where('referrer_tenant_id', tenant()->id)
             ->whereNotNull('referred_tenant_id')->latest()
             ->get();
     }

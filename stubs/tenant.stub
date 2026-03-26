@@ -1,6 +1,0 @@
-<?php
-
-/**
- * @return \App\Models\Tenant|null
- */
-function tenant(?string $key = null) {}

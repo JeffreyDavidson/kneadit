@@ -27,11 +27,11 @@ trait LogsActivity
         try {
             ActivityLog::query()->create([
                 'user_id' => auth()->id(),
-                'user_name' => (string) (auth()->user() ? auth()->user()->name : 'System'),
+                'user_name' => auth()->user()->name ?? 'System',
                 'action' => $action,
                 'model_type' => get_class($model),
-                'model_id' => (string) $model->getKey(),
-                'description' => class_basename($model).' #'.(string) $model->getKey()." was {$action}",
+                'model_id' => $model->getKey(),
+                'description' => class_basename($model)." #{$model->getKey()} was {$action}",
                 'properties' => ! empty($changes) ? ['changes' => $changes] : null,
                 'ip_address' => request()->ip(),
             ]);

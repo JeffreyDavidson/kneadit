@@ -38,7 +38,7 @@ class SendStaffInvitation
             'invited_by' => $invitedBy,
         ]);
 
-        $storeName = (string) settings('store_name', 'Our Bakery');
+        $storeName = settings('store_name', 'Our Bakery');
         $acceptUrl = route('invitation.show', $invitation->token);
 
         Mail::to($email)->send(new StaffInvitationMail($invitation, $storeName, $acceptUrl));

@@ -207,8 +207,8 @@ class Onboarding extends Page
                 foreach ($hours as $day => $times) {
                     $prop = "hours_{$day}";
                     $this->{$prop} = true;
-                    $this->{"hours_{$day}_open"} = (is_array($times) ? $times['open'] : null) ?? '07:00';
-                    $this->{"hours_{$day}_close"} = (is_array($times) ? $times['close'] : null) ?? '18:00';
+                    $this->{"hours_{$day}_open"} = $times['open'] ?? '07:00';
+                    $this->{"hours_{$day}_close"} = $times['close'] ?? '18:00';
                 }
             }
         }
@@ -503,7 +503,7 @@ class Onboarding extends Page
                                     ->schema([
                                         View::make('filament.pages.stripe-connect-status'),
                                     ])
-                                    ->visible(fn (Get $get) => in_array('stripe', (array) ($get('payment_methods') ?? []))),
+                                    ->visible(fn (Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
 
                                 Section::make('PayPal Connection')
                                     ->description('Connect your PayPal Business account.')
@@ -513,19 +513,19 @@ class Onboarding extends Page
                                             ->placeholder('Your PayPal Client ID')
                                             ->maxLength(255)
                                             ->helperText('Find this in your PayPal Developer Dashboard under Apps & Credentials.')
-                                            ->required(fn (Get $get) => in_array('paypal', (array) ($get('payment_methods') ?? []))),
+                                            ->required(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
                                         TextInput::make('paypal_client_secret')
                                             ->label('PayPal Client Secret')
                                             ->password()
                                             ->placeholder('Your PayPal Client Secret')
                                             ->maxLength(255)
-                                            ->required(fn (Get $get) => in_array('paypal', (array) ($get('payment_methods') ?? []))),
+                                            ->required(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
                                         Toggle::make('paypal_sandbox')
                                             ->label('Sandbox Mode (Testing)')
                                             ->helperText('Enable this to test payments without real money. Disable when you\'re ready to go live.')
                                             ->default(true),
                                     ])
-                                    ->visible(fn (Get $get) => in_array('paypal', (array) ($get('payment_methods') ?? []))),
+                                    ->visible(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
                             ])
                             ->footerActions([])
                             ->footerActionsAlignment(null),
@@ -582,7 +582,7 @@ class Onboarding extends Page
 
         $tenant = tenant();
         if ($tenant) {
-            $tenant->name = (string) $this->owner_name;
+            $tenant->name = $this->owner_name;
             $tenant->store_name = $this->bakery_name;
             $tenant->save();
         }
@@ -602,8 +602,8 @@ class Onboarding extends Page
 
         $tenant = tenant();
         if ($tenant) {
-            $tenant->brand_color_primary = (string) $this->brand_color_primary;
-            $tenant->brand_color_secondary = (string) $this->brand_color_secondary;
+            $tenant->brand_color_primary = $this->brand_color_primary;
+            $tenant->brand_color_secondary = $this->brand_color_secondary;
             $tenant->save();
         }
 
@@ -612,7 +612,7 @@ class Onboarding extends Page
             if ($logoPath) {
                 settings(['store_logo' => $logoPath]);
                 if ($tenant) {
-                    $tenant->store_logo = (string) $logoPath;
+                    $tenant->store_logo = $logoPath;
                     $tenant->save();
                 }
             }

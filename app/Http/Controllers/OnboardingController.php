@@ -36,7 +36,6 @@ class OnboardingController extends Controller
         /** @var User $user */
         $user = auth()->user();
 
-        /** @var array{store_name: string, subdomain: string, storefront_choice: string, external_website: string|null} $validated */
         $validated = $request->validated();
 
         $subdomain = Str::lower($validated['subdomain']);
@@ -51,8 +50,8 @@ class OnboardingController extends Controller
         );
 
         // Complete referral if one exists
-        $referralCode = (string) ($request->session()->get('referral_code') ?? $request->cookie('referral_code') ?? '');
-        if ($referralCode !== '') {
+        $referralCode = $request->session()->get('referral_code') ?? $request->cookie('referral_code');
+        if ($referralCode) {
             $completeReferral(
                 referralCode: $referralCode,
                 tenantId: (string) $tenant->id,
@@ -71,7 +70,7 @@ class OnboardingController extends Controller
                 storeName: $validated['store_name'],
                 adminUrl: $adminUrl,
                 plan: SubscriptionTier::Starter->value,
-                trialEndsAt: now()->addDays((int) config('saas.trial_days', 30))->format('F j, Y'),
+                trialEndsAt: now()->addDays(config('saas.trial_days', 30))->format('F j, Y'),
             ));
 
             Mail::to(config('mail.platform_notify'))->send(new NewSubscriberNotification(

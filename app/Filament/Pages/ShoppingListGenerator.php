@@ -50,7 +50,7 @@ class ShoppingListGenerator extends Page
 
     public string $endDate = '';
 
-    /** @var Collection<int, array<string, mixed>> */
+    /** @var Collection<int, mixed> */
     public Collection $shoppingList;
 
     /** @var array<string, mixed> */
