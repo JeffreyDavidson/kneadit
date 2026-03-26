@@ -27,13 +27,13 @@ class CheckChurnAlerts extends Command
             // Trial expiring in 48h with low setup (setup score requires tenant DB)
             if ($tenant->trial_ends_at) {
                 $trialEnds = Date::parse($tenant->trial_ends_at);
-                if ($trialEnds->isFuture() && $trialEnds->diffInHours(now()) <= 48) {
+                if ($trialEnds->isFuture() && $trialEnds->diffInHours(now()) <= config('monitoring.churn_trial_alert_hours')) {
                     try {
                         $setupScore = $tenancyManager->withinTenant($tenant, fn () => $this->getSetupScore());
                     } catch (\Throwable) {
                         $setupScore = 0;
                     }
-                    if ($setupScore < 15) {
+                    if ($setupScore < config('monitoring.churn_low_setup_threshold')) {
                         AdminAuditLog::log(
                             action: 'churn_alert',
                             description: "Trial expiring soon with low setup: {$name} (ends {$trialEnds->diffForHumans()})",
@@ -52,7 +52,7 @@ class CheckChurnAlerts extends Command
             } catch (\Throwable) {
                 $lastLogin = null;
             }
-            if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= 7) {
+            if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= config('monitoring.churn_no_login_days')) {
                 $days = (int) Date::parse($lastLogin)->diffInDays(now());
                 AdminAuditLog::log(
                     action: 'churn_alert',
@@ -64,11 +64,11 @@ class CheckChurnAlerts extends Command
                 $alertCount++;
             }
 
-            // Zero orders in 30 days (tenants older than 14 days, requires tenant DB)
-            if ($daysSinceSignup > 14) {
+            // Zero orders in configured period (tenants older than 14 days, requires tenant DB)
+            if ($daysSinceSignup > config('monitoring.churn_min_tenant_age_days')) {
                 try {
                     $recentOrders = $tenancyManager->withinTenant($tenant, fn () => DB::table('orders')
-                        ->where('created_at', '>=', now()->subDays(30))
+                        ->where('created_at', '>=', now()->subDays(config('monitoring.churn_no_orders_days')))
                         ->count());
                 } catch (\Throwable) {
                     $recentOrders = 0;

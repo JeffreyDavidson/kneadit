@@ -2,9 +2,8 @@
 
 namespace App\Filament\Resources\EmailCampaigns\Tables;
 
+use App\Actions\SendEmailCampaign;
 use App\Enums\EmailCampaignStatus;
-use App\Mail\CustomerBlast;
-use App\Models\Customer;
 use App\Models\EmailCampaign;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -12,7 +11,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Mail;
 
 class EmailCampaignsTable
 {
@@ -59,25 +57,7 @@ class EmailCampaignsTable
                     ->modalHeading('Send Campaign')
                     ->modalDescription('This will send this email to all customers. Are you sure?')
                     ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Draft)
-                    ->action(function (EmailCampaign $record) {
-                        $record->update(['status' => EmailCampaignStatus::Sending]);
-
-                        $emails = Customer::query()->whereNotNull('email')
-                            ->distinct()
-                            ->pluck('email');
-
-                        foreach ($emails as $email) {
-                            Mail::to($email)->queue(
-                                new CustomerBlast($record->subject, $record->body)
-                            );
-                        }
-
-                        $record->update([
-                            'status' => EmailCampaignStatus::Sent,
-                            'sent_at' => now(),
-                            'recipient_count' => $emails->count(),
-                        ]);
-                    }),
+                    ->action(fn (EmailCampaign $record) => resolve(SendEmailCampaign::class)($record)),
                 EditAction::make()
                     ->slideOver()
                     ->modalWidth('md'),

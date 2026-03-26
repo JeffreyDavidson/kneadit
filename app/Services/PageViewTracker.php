@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\PageType;
 use App\Models\PageView;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -9,22 +10,22 @@ use Illuminate\Support\Facades\Date;
 
 class PageViewTracker
 {
-    /** @var array<string, string> */
+    /** @var array<string, PageType> */
     protected array $routePageMap = [
-        'storefront.menu' => 'menu',
-        'storefront.home' => 'home',
-        'storefront.about' => 'about',
-        'storefront.reviews' => 'reviews',
-        'order.create' => 'order',
-        'order.confirmation' => 'order',
-        'order.track' => 'track',
-        'contact.show' => 'contact',
+        'storefront.menu' => PageType::Menu,
+        'storefront.home' => PageType::Home,
+        'storefront.about' => PageType::About,
+        'storefront.reviews' => PageType::Reviews,
+        'order.create' => PageType::Order,
+        'order.confirmation' => PageType::Order,
+        'order.track' => PageType::Track,
+        'contact.show' => PageType::Contact,
     ];
 
     public function detectPage(?string $routeName, string $path): ?string
     {
         if ($routeName && isset($this->routePageMap[$routeName])) {
-            return $this->routePageMap[$routeName];
+            return $this->routePageMap[$routeName]->value;
         }
 
         $trimmedPath = trim($path, '/');

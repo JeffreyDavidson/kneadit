@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Enums\SubscriptionTier;
 use App\Models\SupportTicket;
 use App\Observers\SupportTicketObserver;
+use App\View\Composers\StorefrontComposer;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -29,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::preventLazyLoading(! app()->isProduction());
+
+        View::composer('layouts.storefront', StorefrontComposer::class);
 
         Feature::define('growth-features', fn (): bool => SubscriptionTier::tryFrom(tenant()?->plan)?->meetsRequirement(SubscriptionTier::Growth) ?? false);
         Feature::define('pro-features', fn (): bool => SubscriptionTier::tryFrom(tenant()?->plan)?->meetsRequirement(SubscriptionTier::Pro) ?? false);

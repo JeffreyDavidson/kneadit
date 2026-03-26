@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -22,20 +23,8 @@ class ProductController extends Controller
             $query->where('is_featured', true);
         }
 
-        $products = $query->get()->map(fn (Product $p) => [
-            'id' => $p->id,
-            'name' => $p->name,
-            'slug' => $p->slug,
-            'description' => $p->description,
-            'price' => $p->price,
-            'image' => $p->image,
-            'category_id' => $p->category_id,
-            'category_name' => $p->category?->name,
-            'is_featured' => $p->is_featured,
-        ]);
-
         return response()->json([
-            'data' => $products,
+            'data' => ProductResource::collection($query->get()),
             'message' => 'Products retrieved successfully.',
         ]);
     }

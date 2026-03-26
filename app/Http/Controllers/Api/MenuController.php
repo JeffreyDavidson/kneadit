@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
-use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 
@@ -15,26 +15,10 @@ class MenuController extends Controller
         $categories = Category::query()->where('is_active', true)
             ->orderBy('sort_order')
             ->with(['products' => fn (Builder $q) => $q->where('is_active', true)])
-            ->get()
-            ->map(fn (Category $c) => [
-                'id' => $c->id,
-                'name' => $c->name,
-                'slug' => $c->slug,
-                'description' => $c->description,
-                'sort_order' => $c->sort_order,
-                'products' => $c->products->map(fn (Product $p) => [
-                    'id' => $p->id,
-                    'name' => $p->name,
-                    'slug' => $p->slug,
-                    'description' => $p->description,
-                    'price' => $p->price,
-                    'image' => $p->image,
-                    'is_featured' => $p->is_featured,
-                ])->all(),
-            ]);
+            ->get();
 
         return response()->json([
-            'data' => $categories,
+            'data' => CategoryResource::collection($categories),
             'message' => 'Menu retrieved successfully.',
         ]);
     }
