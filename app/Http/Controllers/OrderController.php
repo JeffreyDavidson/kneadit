@@ -6,9 +6,9 @@ use App\Actions\Orders\CreateOrder;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Category;
 use App\Models\Order;
-use App\Models\Product;
 use App\Services\Stripe\StripeCheckoutService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
 
@@ -17,16 +17,13 @@ class OrderController extends Controller
     public function index(): View
     {
         $categories = Category::with(['products' => function (HasMany $q) {
-            $q->where('is_active', true)->orderBy('name');
-        }, 'products.seasonalItems'])->orderBy('sort_order')->get();
-
-        // Filter out products that are seasonal but not currently in season
-        $categories->each(function (Category $category) {
-            $category->setRelation(
-                'products',
-                $category->products->filter(fn (Product $product) => $product->isInSeason()),
-            );
-        });
+            $q->where('is_active', true)
+                ->where(function (Builder $query) {
+                    $query->whereDoesntHave('seasonalItems')
+                        ->orWhereHas('seasonalItems', fn (Builder $sq) => $sq->where('start_date', '<=', now())->where('end_date', '>=', now()));
+                })
+                ->orderBy('name');
+        }])->orderBy('sort_order')->get();
 
         return view('order', compact('categories'));
     }
