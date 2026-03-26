@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\SupportTicketPriority;
+use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,18 +20,43 @@ class SupportTicketFactory extends Factory
             'tenant_id' => null,
             'subject' => fake()->sentence(),
             'body' => fake()->paragraph(),
-            'status' => 'open',
-            'priority' => 'normal',
+            'status' => SupportTicketStatus::Open,
+            'priority' => SupportTicketPriority::Normal,
         ];
     }
 
     public function open(): static
     {
-        return $this->state(fn (array $attributes) => ['status' => 'open']);
+        return $this->state(fn (array $attributes) => [
+            'status' => SupportTicketStatus::Open,
+        ]);
+    }
+
+    public function inProgress(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => SupportTicketStatus::InProgress,
+        ]);
+    }
+
+    public function resolved(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => SupportTicketStatus::Resolved,
+        ]);
     }
 
     public function closed(): static
     {
-        return $this->state(fn (array $attributes) => ['status' => 'closed']);
+        return $this->state(fn (array $attributes) => [
+            'status' => SupportTicketStatus::Closed,
+        ]);
+    }
+
+    public function highPriority(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'priority' => SupportTicketPriority::High,
+        ]);
     }
 }
