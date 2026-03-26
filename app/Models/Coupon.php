@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Enums\CouponType;
+use App\Observers\CouponObserver;
 use App\Traits\LogsActivity;
 use Database\Factories\CouponFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -32,6 +34,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy(CouponObserver::class)]
 class Coupon extends Model
 {
     /** @use HasFactory<CouponFactory> */
@@ -61,17 +64,6 @@ class Coupon extends Model
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (Coupon $coupon) {
-            $coupon->code = strtoupper($coupon->code);
-        });
-
-        static::updating(function (Coupon $coupon) {
-            $coupon->code = strtoupper($coupon->code);
-        });
     }
 
     /**

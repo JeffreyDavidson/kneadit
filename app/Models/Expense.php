@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Builders\ExpenseQueryBuilder;
 use App\Enums\ExpenseCategory;
+use App\Observers\ExpenseObserver;
 use Database\Factories\ExpenseFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[UseEloquentBuilder(ExpenseQueryBuilder::class)]
+#[ObservedBy(ExpenseObserver::class)]
 class Expense extends Model
 {
     /** @use HasFactory<ExpenseFactory> */
@@ -61,12 +64,5 @@ class Expense extends Model
     protected function getDeductibleAmountAttribute(): float
     {
         return round((float) $this->amount * ($this->business_percentage / 100), 2);
-    }
-
-    protected static function booted(): void
-    {
-        static::saving(function (Expense $expense) {
-            $expense->deductible_amount = $expense->getDeductibleAmountAttribute();
-        });
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Observers\BlogPostObserver;
 use Database\Factories\BlogPostFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 /**
  * @property-read string $url
@@ -23,6 +24,7 @@ use Illuminate\Support\Str;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy(BlogPostObserver::class)]
 class BlogPost extends Model
 {
     /** @use HasFactory<BlogPostFactory> */
@@ -49,27 +51,6 @@ class BlogPost extends Model
             'is_published' => 'boolean',
             'published_at' => 'datetime',
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (BlogPost $post) {
-            if (empty($post->slug)) {
-                $slug = Str::slug($post->title);
-                $original = $slug;
-                $i = 2;
-                while (static::query()->where('slug', $slug)->exists()) {
-                    $slug = $original.'-'.$i++;
-                }
-                $post->slug = $slug;
-            }
-        });
-
-        static::updating(function (BlogPost $post) {
-            if ($post->isDirty('title')) {
-                $post->slug = Str::slug($post->title);
-            }
-        });
     }
 
     /** @param Builder<BlogPost> $query */
