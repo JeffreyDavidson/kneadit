@@ -48,7 +48,7 @@ class TokenManager
 
             return null;
         } catch (\Exception $e) {
-            Log::error("PayPal authentication error: {$e->getMessage()}");
+            Log::error('PayPal authentication error', ['error' => $e->getMessage()]);
 
             return null;
         }

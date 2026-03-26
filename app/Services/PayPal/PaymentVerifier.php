@@ -35,7 +35,7 @@ class PaymentVerifier
                 'response' => $response->json(),
             ]);
         } catch (\Exception $e) {
-            Log::error("PayPal invoice status check error: {$e->getMessage()}");
+            Log::error('PayPal invoice status check error', ['invoice_id' => $invoiceId, 'error' => $e->getMessage()]);
         }
 
         return null;

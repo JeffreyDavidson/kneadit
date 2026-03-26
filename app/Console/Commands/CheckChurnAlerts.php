@@ -8,6 +8,7 @@ use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CheckChurnAlerts extends Command
 {
@@ -30,7 +31,8 @@ class CheckChurnAlerts extends Command
                 if ($trialEnds->isFuture() && $trialEnds->diffInHours(now()) <= config('monitoring.churn_trial_alert_hours')) {
                     try {
                         $setupScore = $tenancyManager->withinTenant($tenant, fn () => $this->getSetupScore());
-                    } catch (\Throwable) {
+                    } catch (\Throwable $e) {
+                        Log::warning('Churn check: setup score query failed', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
                         $setupScore = 0;
                     }
                     if ($setupScore < config('monitoring.churn_low_setup_threshold')) {
@@ -49,7 +51,8 @@ class CheckChurnAlerts extends Command
             // No login in 7+ days (requires tenant DB)
             try {
                 $lastLogin = $tenancyManager->withinTenant($tenant, fn () => DB::table('users')->max('updated_at'));
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                Log::warning('Churn check: last login query failed', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
                 $lastLogin = null;
             }
             if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= config('monitoring.churn_no_login_days')) {
@@ -70,7 +73,8 @@ class CheckChurnAlerts extends Command
                     $recentOrders = $tenancyManager->withinTenant($tenant, fn () => DB::table('orders')
                         ->where('created_at', '>=', now()->subDays(config('monitoring.churn_no_orders_days')))
                         ->count());
-                } catch (\Throwable) {
+                } catch (\Throwable $e) {
+                    Log::warning('Churn check: recent orders query failed', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
                     $recentOrders = 0;
                 }
                 if ($recentOrders === 0) {

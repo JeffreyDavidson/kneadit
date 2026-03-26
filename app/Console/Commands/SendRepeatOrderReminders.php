@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendRepeatOrderReminders extends Command
@@ -25,6 +26,7 @@ class SendRepeatOrderReminders extends Command
     public function handle(TenancyManager $tenancyManager): int
     {
         $tenants = Tenant::cursor();
+        $failures = 0;
 
         foreach ($tenants as $tenant) {
             try {
@@ -37,10 +39,12 @@ class SendRepeatOrderReminders extends Command
                 });
             } catch (\Exception $e) {
                 $this->error("Error processing {$tenant->id}: {$e->getMessage()}");
+                Log::warning('Repeat order reminder processing failed', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
+                $failures++;
             }
         }
 
-        return Command::SUCCESS;
+        return $failures > 0 ? self::FAILURE : self::SUCCESS;
     }
 
     protected function processTenant(Tenant $tenant): void
@@ -74,6 +78,7 @@ class SendRepeatOrderReminders extends Command
                 $this->info("  ✓ {$customer->name}");
             } catch (\Exception $e) {
                 $this->error("  ✗ {$customer->name}: {$e->getMessage()}");
+                Log::warning('Repeat order reminder send failed', ['customer' => $customer->name, 'error' => $e->getMessage()]);
             }
         }
     }
