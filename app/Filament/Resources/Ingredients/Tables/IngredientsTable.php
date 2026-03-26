@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Ingredients\Tables;
 
 use App\Actions\AdjustIngredientStock;
+use App\Enums\StockStatus;
 use App\Models\Ingredient;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -37,15 +38,15 @@ class IngredientsTable
                     ->badge()
                     ->getStateUsing(fn (Ingredient $record) => $record->getStockStatus())
                     ->formatStateUsing(fn (string $state) => match ($state) {
-                        'good' => 'Good',
-                        'low' => 'Low',
-                        'out' => 'Out of Stock',
+                        StockStatus::Good->value => 'Good',
+                        StockStatus::Low->value => 'Low',
+                        StockStatus::Out->value => 'Out of Stock',
                         default => $state,
                     })
                     ->color(fn (string $state) => match ($state) {
-                        'good' => 'success',
-                        'low' => 'warning',
-                        'out' => 'danger',
+                        StockStatus::Good->value => 'success',
+                        StockStatus::Low->value => 'warning',
+                        StockStatus::Out->value => 'danger',
                         default => 'gray',
                     }),
 

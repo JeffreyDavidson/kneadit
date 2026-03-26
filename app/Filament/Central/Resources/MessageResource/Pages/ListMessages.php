@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources\MessageResource\Pages;
 
+use App\Enums\PlatformSenderType;
 use App\Filament\Central\Resources\MessageResource;
 use App\Models\PlatformMessage;
 use App\Models\Tenant;
@@ -38,7 +39,7 @@ class ListMessages extends ListRecords
                 ->action(function (array $data) {
                     PlatformMessage::query()->create([
                         'tenant_id' => $data['tenant_id'],
-                        'sender_type' => 'admin',
+                        'sender_type' => PlatformSenderType::Admin,
                         'subject' => $data['subject'],
                         'body' => $data['body'],
                     ]);

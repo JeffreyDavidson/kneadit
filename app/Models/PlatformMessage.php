@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PlatformSenderType;
 use Database\Factories\PlatformMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +16,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property string $tenant_id
- * @property string $sender_type
+ * @property PlatformSenderType $sender_type
  * @property string $subject
  * @property string $body
  * @property bool $is_read
@@ -70,6 +71,7 @@ class PlatformMessage extends Model
         return [
             'is_read' => 'boolean',
             'read_at' => 'datetime',
+            'sender_type' => PlatformSenderType::class,
         ];
     }
 
@@ -108,14 +110,14 @@ class PlatformMessage extends Model
     #[Scope]
     protected function fromAdmin(Builder $query): void
     {
-        $query->where('sender_type', 'admin');
+        $query->where('sender_type', PlatformSenderType::Admin);
     }
 
     /** @param Builder<PlatformMessage> $query */
     #[Scope]
     protected function fromTenant(Builder $query): void
     {
-        $query->where('sender_type', 'tenant');
+        $query->where('sender_type', PlatformSenderType::Tenant);
     }
 
     /** @param Builder<PlatformMessage> $query */

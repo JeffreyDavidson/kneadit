@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\PlatformSenderType;
 use App\Models\PlatformMessage;
 use App\Models\Tenant;
 use BackedEnum;
@@ -50,7 +51,7 @@ class Messages extends Page
 
         // Mark as read
         $message = PlatformMessage::query()->find($messageId);
-        if ($message && ! $message->is_read && $message->sender_type === 'admin') {
+        if ($message && ! $message->is_read && $message->sender_type === PlatformSenderType::Admin) {
             $message->update(['is_read' => true, 'read_at' => now()]);
         }
     }
@@ -81,7 +82,7 @@ class Messages extends Page
 
         PlatformMessage::query()->create([
             'tenant_id' => $tenant?->id,
-            'sender_type' => 'tenant',
+            'sender_type' => PlatformSenderType::Tenant,
             'subject' => 'Re: '.$parent->subject,
             'body' => $this->replyBody,
             'parent_id' => $parent->id,
