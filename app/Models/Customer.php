@@ -208,34 +208,6 @@ class Customer extends Model
         );
     }
 
-    public function hasBirthday(): bool
-    {
-        return $this->birthday !== null;
-    }
-
-    public function isBirthdayThisMonth(): bool
-    {
-        return $this->birthday?->month === now()->month;
-    }
-
-    public function isBirthdayToday(): bool
-    {
-        return $this->birthday?->format('m-d') === now()->format('m-d');
-    }
-
-    public function daysUntilBirthday(): ?int
-    {
-        if (! $this->birthday) {
-            return null;
-        }
-        $next = $this->birthday->copy()->year(now()->year);
-        if ($next->isPast()) {
-            $next->addYear();
-        }
-
-        return (int) now()->diffInDays($next, false);
-    }
-
     /** @return Attribute<string, never> */
     protected function fullAddress(): Attribute
     {
