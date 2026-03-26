@@ -8,6 +8,7 @@ use App\Services\CustomerIntelligence;
 use App\Traits\LogsActivity;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -143,44 +144,68 @@ class Customer extends Model
         return once(fn () => resolve(CustomerIntelligence::class)->metrics($this));
     }
 
-    protected function getTotalPointsAttribute(): int
+    /** @return Attribute<int, never> */
+    protected function totalPoints(): Attribute
     {
-        return $this->getMetrics()->totalPoints;
+        return Attribute::make(
+            get: fn () => $this->getMetrics()->totalPoints,
+        );
     }
 
-    protected function getLifetimePointsEarnedAttribute(): int
+    /** @return Attribute<int, never> */
+    protected function lifetimePointsEarned(): Attribute
     {
-        return $this->getMetrics()->lifetimePointsEarned;
+        return Attribute::make(
+            get: fn () => $this->getMetrics()->lifetimePointsEarned,
+        );
     }
 
-    protected function getLifetimeValueAttribute(): float
+    /** @return Attribute<float, never> */
+    protected function lifetimeValue(): Attribute
     {
-        return $this->getMetrics()->lifetimeValue;
+        return Attribute::make(
+            get: fn () => $this->getMetrics()->lifetimeValue,
+        );
     }
 
-    protected function getOrderCountAttribute(): int
+    /** @return Attribute<int, never> */
+    protected function orderCount(): Attribute
     {
-        return $this->getMetrics()->orderCount;
+        return Attribute::make(
+            get: fn () => $this->getMetrics()->orderCount,
+        );
     }
 
-    protected function getLastOrderDateAttribute(): ?Carbon
+    /** @return Attribute<Carbon|null, never> */
+    protected function lastOrderDate(): Attribute
     {
-        return $this->getMetrics()->lastOrderDate;
+        return Attribute::make(
+            get: fn () => $this->getMetrics()->lastOrderDate,
+        );
     }
 
-    protected function getAverageOrderValueAttribute(): float
+    /** @return Attribute<float, never> */
+    protected function averageOrderValue(): Attribute
     {
-        return $this->getMetrics()->averageOrderValue;
+        return Attribute::make(
+            get: fn () => $this->getMetrics()->averageOrderValue,
+        );
     }
 
-    protected function getDaysSinceLastOrderAttribute(): ?int
+    /** @return Attribute<int|null, never> */
+    protected function daysSinceLastOrder(): Attribute
     {
-        return $this->getMetrics()->daysSinceLastOrder;
+        return Attribute::make(
+            get: fn () => $this->getMetrics()->daysSinceLastOrder,
+        );
     }
 
-    protected function getIsAtRiskAttribute(): bool
+    /** @return Attribute<bool, never> */
+    protected function isAtRisk(): Attribute
     {
-        return $this->getMetrics()->isAtRisk;
+        return Attribute::make(
+            get: fn () => $this->getMetrics()->isAtRisk,
+        );
     }
 
     public function hasBirthday(): bool
@@ -211,10 +236,13 @@ class Customer extends Model
         return (int) now()->diffInDays($next, false);
     }
 
-    protected function getFullAddressAttribute(): string
+    /** @return Attribute<string, never> */
+    protected function fullAddress(): Attribute
     {
-        return collect([$this->address, $this->city, $this->state])
-            ->filter()
-            ->implode(', ').($this->zip ? " {$this->zip}" : '');
+        return Attribute::make(
+            get: fn () => collect([$this->address, $this->city, $this->state])
+                ->filter()
+                ->implode(', ').($this->zip ? " {$this->zip}" : ''),
+        );
     }
 }

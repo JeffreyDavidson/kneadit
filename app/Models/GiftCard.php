@@ -8,6 +8,7 @@ use App\Traits\LogsActivity;
 use Database\Factories\GiftCardFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -84,18 +85,23 @@ class GiftCard extends Model
             ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 
-    protected function getStatusAttribute(): GiftCardStatus
+    /** @return Attribute<GiftCardStatus, never> */
+    protected function status(): Attribute
     {
-        if (! $this->is_active) {
-            return GiftCardStatus::Inactive;
-        }
-        if ($this->expires_at && $this->expires_at->isPast()) {
-            return GiftCardStatus::Expired;
-        }
-        if ((float) $this->current_balance <= 0) {
-            return GiftCardStatus::Depleted;
-        }
+        return Attribute::make(
+            get: function () {
+                if (! $this->is_active) {
+                    return GiftCardStatus::Inactive;
+                }
+                if ($this->expires_at && $this->expires_at->isPast()) {
+                    return GiftCardStatus::Expired;
+                }
+                if ((float) $this->current_balance <= 0) {
+                    return GiftCardStatus::Depleted;
+                }
 
-        return GiftCardStatus::Active;
+                return GiftCardStatus::Active;
+            },
+        );
     }
 }

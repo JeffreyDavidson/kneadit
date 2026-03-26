@@ -7,6 +7,7 @@ use App\Enums\CateringEventType;
 use App\Enums\CateringInquiryStatus;
 use App\Traits\LogsActivity;
 use Database\Factories\CateringInquiryFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -61,13 +62,19 @@ class CateringInquiry extends Model
         ];
     }
 
-    protected function getEventTypeLabelAttribute(): string
+    /** @return Attribute<mixed, never> */
+    protected function eventTypeLabel(): Attribute
     {
-        return $this->event_type->label();
+        return Attribute::make(
+            get: fn () => $this->event_type->label(),
+        );
     }
 
-    protected function getStatusLabelAttribute(): string
+    /** @return Attribute<mixed, never> */
+    protected function statusLabel(): Attribute
     {
-        return $this->status->label();
+        return Attribute::make(
+            get: fn () => $this->status->label(),
+        );
     }
 }

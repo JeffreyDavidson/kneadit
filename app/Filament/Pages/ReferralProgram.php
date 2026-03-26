@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Actions\Tenants\GenerateReferralCode;
 use App\Enums\ReferralStatus;
 use App\Models\Referral;
 use BackedEnum;
@@ -33,7 +34,7 @@ class ReferralProgram extends Page
 
     public function getReferralCode(): string
     {
-        return tenant()->findOrCreateReferralCode();
+        return app(GenerateReferralCode::class)(tenant());
     }
 
     public function getReferralLink(): string

@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use App\Enums\ReferralStatus;
 use Database\Factories\TenantFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
@@ -45,22 +43,6 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereBrandColorPrimary($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereBrandColorSecondary($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereCustomDomain($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereData($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereExternalWebsite($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant wherePlan($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereStoreLogo($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereStoreName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereStorefrontEnabled($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereTrialEndsAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant whereUpdatedAt($value)
  *
  * @property Carbon|null $last_login_at
  *
@@ -105,34 +87,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
         ];
-    }
-
-    /**
-     * Find an existing referral code or create a new one for this tenant.
-     */
-    public function findOrCreateReferralCode(): string
-    {
-        $referral = Referral::query()->where('referrer_tenant_id', $this->id)
-            ->whereNull('referred_tenant_id')
-            ->whereNull('referred_email')
-            ->first();
-
-        if (! $referral) {
-            $code = Str::slug($this->store_name ?? $this->name).'-'.Str::lower(Str::random(4));
-
-            // Ensure uniqueness
-            while (Referral::query()->where('referral_code', $code)->exists()) {
-                $code = Str::slug($this->store_name ?? $this->name).'-'.Str::lower(Str::random(4));
-            }
-
-            $referral = Referral::query()->create([
-                'referrer_tenant_id' => $this->id,
-                'referral_code' => $code,
-                'status' => ReferralStatus::Pending,
-            ]);
-        }
-
-        return $referral->referral_code;
     }
 
     /**

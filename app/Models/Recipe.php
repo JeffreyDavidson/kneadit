@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\RecipeFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -54,13 +55,18 @@ class Recipe extends Model
         return $this->belongsTo(Product::class);
     }
 
-    protected function getProfitMarginAttribute(): ?float
+    /** @return Attribute<mixed, never> */
+    protected function profitMargin(): Attribute
     {
-        if (! $this->product || ! $this->cost || $this->product->price <= 0) {
-            return null;
-        }
+        return Attribute::make(
+            get: function () {
+                if (! $this->product || ! $this->cost || $this->product->price <= 0) {
+                    return null;
+                }
 
-        return round((($this->product->price - $this->cost) / $this->product->price) * 100, 1);
+                return round((($this->product->price - $this->cost) / $this->product->price) * 100, 1);
+            },
+        );
     }
 
     /**

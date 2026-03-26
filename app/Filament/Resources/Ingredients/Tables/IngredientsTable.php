@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Ingredients\Tables;
 
+use App\Actions\AdjustIngredientStock;
 use App\Models\Ingredient;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -99,7 +100,7 @@ class IngredientsTable
                         if (in_array($data['type'], ['usage', 'waste'])) {
                             $qty = -$qty;
                         }
-                        $record->adjustStock($qty, $data['type'], $data['notes'] ?? null);
+                        app(AdjustIngredientStock::class)($record, $qty, $data['type'], $data['notes'] ?? null);
                     }),
                 EditAction::make()
                     ->slideOver()
@@ -123,7 +124,7 @@ class IngredientsTable
                         ->action(function (Collection $records, array $data) {
                             /** @var Collection<int, Ingredient> $records */
                             foreach ($records as $ingredient) {
-                                $ingredient->adjustStock((float) $data['quantity'], 'purchase', $data['notes'] ?? null);
+                                app(AdjustIngredientStock::class)($ingredient, (float) $data['quantity'], 'purchase', $data['notes'] ?? null);
                             }
                         })
                         ->deselectRecordsAfterCompletion(),
