@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Builders\OrderQueryBuilder;
 use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Traits\LogsActivity;
 use Database\Factories\OrderFactory;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,13 +38,7 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $survey_responses_count
  * @property-read User|null $user
  *
- * @method static Builder<static>|Order active()
- * @method static Builder<static>|Order byStatus(\App\Enums\OrderStatus $status)
  * @method static \Database\Factories\OrderFactory factory($count = null, $state = [])
- * @method static Builder<static>|Order newModelQuery()
- * @method static Builder<static>|Order newQuery()
- * @method static Builder<static>|Order paid()
- * @method static Builder<static>|Order query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order paid()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order byStatus(\App\Enums\OrderStatus $status)
@@ -58,6 +52,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[UseEloquentBuilder(OrderQueryBuilder::class)]
 class Order extends Model
 {
     /** @use HasFactory<OrderFactory> */
@@ -191,26 +186,5 @@ class Order extends Model
     public function giftCardTransactions(): HasMany
     {
         return $this->hasMany(GiftCardTransaction::class);
-    }
-
-    /** @param Builder<Order> $query */
-    #[Scope]
-    protected function paid(Builder $query): void
-    {
-        $query->where('payment_status', PaymentStatus::Paid);
-    }
-
-    /** @param Builder<Order> $query */
-    #[Scope]
-    protected function active(Builder $query): void
-    {
-        $query->whereNotIn('status', [OrderStatus::Cancelled]);
-    }
-
-    /** @param Builder<Order> $query */
-    #[Scope]
-    protected function byStatus(Builder $query, OrderStatus $status): void
-    {
-        $query->where('status', $status);
     }
 }

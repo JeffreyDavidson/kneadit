@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Builders\ExpenseQueryBuilder;
 use App\Enums\ExpenseCategory;
 use Database\Factories\ExpenseFactory;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -23,6 +25,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[UseEloquentBuilder(ExpenseQueryBuilder::class)]
 class Expense extends Model
 {
     /** @use HasFactory<ExpenseFactory> */
