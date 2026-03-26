@@ -6,6 +6,7 @@ use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Recipe;
+use App\Services\RecipeCostService;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -77,48 +78,25 @@ class RecipeCostCalculator extends Page
     public function updatedTargetMarginPercentage(): void
     {
         if ($this->selectedRecipe) {
-            $this->calculateSuggestedPrice();
+            $service = resolve(RecipeCostService::class);
+            $this->suggestedPrice = $service->calculateSuggestedPrice($this->totalRecipeCost, $this->targetMarginPercentage);
         }
     }
 
     public function calculateCosts(): void
     {
-        if (! $this->selectedRecipe || ! $this->selectedRecipe->ingredients) {
+        $service = resolve(RecipeCostService::class);
+
+        $this->totalRecipeCost = $service->calculateCosts($this->selectedRecipe);
+
+        if ($this->totalRecipeCost <= 0) {
             $this->resetCalculations();
 
             return;
         }
 
-        $this->totalRecipeCost = 0.0;
-
-        foreach ($this->selectedRecipe->ingredients as $ingredient) {
-            $cost = $ingredient['cost'] ?? 0;
-            $quantity = $ingredient['quantity'] ?? 0;
-            $this->totalRecipeCost += ($cost * $quantity);
-        }
-
-        $this->calculateCurrentMargin();
-        $this->calculateSuggestedPrice();
-    }
-
-    private function calculateCurrentMargin(): void
-    {
-        if ($this->selectedRecipe && $this->selectedRecipe->product && $this->selectedRecipe->product->price && $this->totalRecipeCost > 0) {
-            $productPrice = $this->selectedRecipe->product->price;
-            $this->currentMargin = (($productPrice - $this->totalRecipeCost) / $productPrice) * 100;
-        } else {
-            $this->currentMargin = 0.0;
-        }
-    }
-
-    private function calculateSuggestedPrice(): void
-    {
-        if ($this->totalRecipeCost > 0 && $this->targetMarginPercentage > 0) {
-            // Price = Cost / (1 - Margin/100)
-            $this->suggestedPrice = $this->totalRecipeCost / (1 - ($this->targetMarginPercentage / 100));
-        } else {
-            $this->suggestedPrice = 0.0;
-        }
+        $this->currentMargin = $service->calculateCurrentMargin($this->selectedRecipe, $this->totalRecipeCost);
+        $this->suggestedPrice = $service->calculateSuggestedPrice($this->totalRecipeCost, $this->targetMarginPercentage);
     }
 
     private function resetCalculations(): void
@@ -131,22 +109,6 @@ class RecipeCostCalculator extends Page
     /** @return Collection<int, mixed> */
     public function getFormattedIngredients(): Collection
     {
-        if (! $this->selectedRecipe || ! $this->selectedRecipe->ingredients) {
-            return collect();
-        }
-
-        return collect($this->selectedRecipe->ingredients)->map(function (array $ingredient) {
-            $cost = $ingredient['cost'] ?? 0;
-            $quantity = $ingredient['quantity'] ?? 0;
-            $totalCost = $cost * $quantity;
-
-            return [
-                'name' => $ingredient['name'] ?? '',
-                'quantity' => $quantity,
-                'unit' => $ingredient['unit'] ?? '',
-                'cost_per_unit' => $cost,
-                'total_cost' => $totalCost,
-            ];
-        });
+        return resolve(RecipeCostService::class)->getFormattedIngredients($this->selectedRecipe);
     }
 }
