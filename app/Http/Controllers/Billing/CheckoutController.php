@@ -22,13 +22,13 @@ class CheckoutController extends Controller
 
         abort_unless((bool) $tier, 404, 'Plan not found.');
 
-        $priceId = config("saas.stripe_prices.{$tier->value}");
+        $priceId = config("kneadit.stripe_prices.{$tier->value}");
 
         abort_unless((bool) $priceId, 404, 'Plan not found.');
 
         return $user
             ->newSubscription('default', $priceId)
-            ->trialDays(config('saas.trial_days', 30))
+            ->trialDays(config('kneadit.trial_days', 30))
             ->allowPromotionCodes()
             ->checkout([
                 'success_url' => route('billing.success') . '?session_id={CHECKOUT_SESSION_ID}',

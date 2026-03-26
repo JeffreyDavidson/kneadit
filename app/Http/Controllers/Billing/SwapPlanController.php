@@ -19,7 +19,7 @@ class SwapPlanController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $priceId = config("saas.stripe_prices.{$plan}");
+        $priceId = config("kneadit.stripe_prices.{$plan}");
 
         abort_unless($priceId, 404, 'Plan not found.');
 

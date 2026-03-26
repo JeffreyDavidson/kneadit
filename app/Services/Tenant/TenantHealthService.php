@@ -126,12 +126,6 @@ class TenantHealthService
         return $alerts->sortByDesc(fn (array $a) => $a['severity'] === 'critical' ? 1 : 0)->values();
     }
 
-    public const PLAN_LIMITS = [
-        'starter' => ['products' => 15, 'orders_per_month' => 50, 'label' => 'Starter'],
-        'growth' => ['products' => 50, 'orders_per_month' => 200, 'label' => 'Growth'],
-        'pro' => ['products' => null, 'orders_per_month' => null, 'label' => 'Pro'],
-    ];
-
     /** @return Collection<int, array<string, mixed>> */
     public function getTenantUsageData(): Collection
     {
@@ -139,7 +133,7 @@ class TenantHealthService
 
         foreach (Tenant::all() as $tenant) {
             $plan = strtolower($tenant->plan ?? 'starter');
-            $limits = self::PLAN_LIMITS[$plan] ?? self::PLAN_LIMITS['starter'];
+            $limits = config('kneadit.plans.' . $plan . '.limits', config('kneadit.plans.starter.limits'));
 
             if ($plan === 'pro') {
                 continue;
@@ -165,7 +159,7 @@ class TenantHealthService
                     $results->push([
                         'tenant' => $tenant,
                         'name' => $tenant->store_name ?? $tenant->name ?? $tenant->id,
-                        'plan' => $limits['label'],
+                        'plan' => config('kneadit.plans.' . $plan . '.name', ucfirst($plan)),
                         'plan_key' => $plan,
                         'product_count' => $productCount,
                         'product_limit' => $productLimit,

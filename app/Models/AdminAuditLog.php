@@ -100,6 +100,6 @@ class AdminAuditLog extends Model
     #[Scope]
     protected function recent(Builder $query): void
     {
-        $query->where('created_at', '>=', now()->subDays(30));
+        $query->where('created_at', '>=', now()->subDays(config('analytics.recent_days', 30)));
     }
 }

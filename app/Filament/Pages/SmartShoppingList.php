@@ -57,7 +57,7 @@ class SmartShoppingList extends Page
     public function mount(): void
     {
         $this->startDate = now()->format('Y-m-d');
-        $this->endDate = now()->addDays(7)->format('Y-m-d');
+        $this->endDate = now()->addDays(config('orders.default_planning_days', 7))->format('Y-m-d');
         $this->supplierGroups = collect();
         $this->generateList();
     }

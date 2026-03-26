@@ -24,7 +24,7 @@ test('webhook controller handles subscription deleted', function () {
 });
 
 test('price id to plan mapping', function () {
-    config(['saas.stripe_prices' => [
+    config(['kneadit.stripe_prices' => [
         'starter' => 'price_test_starter',
         'growth' => 'price_test_growth',
         'pro' => 'price_test_pro',

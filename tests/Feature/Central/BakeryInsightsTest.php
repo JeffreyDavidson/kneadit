@@ -1,7 +1,6 @@
 <?php
 
 use App\Filament\Central\Pages\BakeryInsights;
-use App\Services\Tenant\TenantHealthService;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -36,7 +35,7 @@ test('get next plan returns correct upgrades', function () {
 });
 
 test('plan limits constant exists', function () {
-    expect(TenantHealthService::PLAN_LIMITS)->toHaveKey('starter');
-    expect(TenantHealthService::PLAN_LIMITS)->toHaveKey('growth');
-    expect(TenantHealthService::PLAN_LIMITS)->toHaveKey('pro');
+    expect(config('kneadit.plans'))->toHaveKey('starter');
+    expect(config('kneadit.plans'))->toHaveKey('growth');
+    expect(config('kneadit.plans'))->toHaveKey('pro');
 });

@@ -71,7 +71,9 @@ return [
         ],
     ],
 
-    'trial_days' => 30,
+    'trial_days' => (int) env('TRIAL_DAYS', 30),
+
+    'invitation_expiry_days' => (int) env('INVITATION_EXPIRY_DAYS', 7),
 
     'stripe_prices' => [
         'starter' => env('STRIPE_PRICE_STARTER'),

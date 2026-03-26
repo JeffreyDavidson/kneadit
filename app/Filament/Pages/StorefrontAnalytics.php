@@ -131,7 +131,7 @@ class StorefrontAnalytics extends Page
     /** @return Collection<int, mixed> */
     public function getDailyTrend(): Collection
     {
-        $start = now()->subDays(30)->startOfDay();
+        $start = now()->subDays(config('analytics.trend_days', 30))->startOfDay();
 
         return PageView::query()->where('created_at', '>=', $start)
             ->whereNull('product_id')

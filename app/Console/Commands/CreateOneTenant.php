@@ -32,7 +32,7 @@ class CreateOneTenant extends Command
             'name' => $this->argument('name'),
             'email' => $this->argument('email'),
             'plan' => 'pro',
-            'trial_ends_at' => now()->addDays(30),
+            'trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30)),
             'store_name' => $this->argument('store_name'),
             'brand_color_primary' => $this->argument('brand_primary'),
             'brand_color_secondary' => $this->argument('brand_secondary'),

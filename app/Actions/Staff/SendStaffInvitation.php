@@ -34,7 +34,7 @@ class SendStaffInvitation
             'email' => $email,
             'role' => $role->value,
             'token' => Str::random(64),
-            'expires_at' => now()->addDays(7),
+            'expires_at' => now()->addDays(config('kneadit.invitation_expiry_days', 7)),
             'invited_by' => $invitedBy,
         ]);
 

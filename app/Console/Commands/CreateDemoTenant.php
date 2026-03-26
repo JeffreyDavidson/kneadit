@@ -47,7 +47,7 @@ class CreateDemoTenant extends Command
             'name' => 'Demo Baker',
             'email' => 'demo@getkneadit.app',
             'plan' => 'pro',
-            'trial_ends_at' => now()->addDays(30),
+            'trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30)),
             'store_name' => 'Sweet Dreams Bakery',
             'brand_color_primary' => '#d4920c',
             'brand_color_secondary' => '#1c1410',

@@ -259,7 +259,7 @@ class TenantResource extends Resource
                     ->label('Extend Trial 30 Days')
                     ->icon('heroicon-o-clock')
                     ->requiresConfirmation()
-                    ->action(fn (Collection $records) => $records->each->update(['trial_ends_at' => now()->addDays(30)]))
+                    ->action(fn (Collection $records) => $records->each->update(['trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30))]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('change_plan')
                     ->label('Change Plan')

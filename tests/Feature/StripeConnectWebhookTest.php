@@ -19,7 +19,7 @@ beforeEach(function () {
 });
 
 test('webhook returns 400 for invalid signature when secret configured', function () {
-    config(['saas.stripe_connect.webhook_secret' => 'whsec_test_secret']);
+    config(['kneadit.stripe_connect.webhook_secret' => 'whsec_test_secret']);
 
     $response = postJson('/stripe/connect-webhook', [
         'type' => 'account.updated',
@@ -32,7 +32,7 @@ test('webhook returns 400 for invalid signature when secret configured', functio
 });
 
 test('webhook returns 500 when secret not configured', function () {
-    config(['saas.stripe_connect.webhook_secret' => null]);
+    config(['kneadit.stripe_connect.webhook_secret' => null]);
 
     $payload = json_encode([
         'type' => 'account.updated',
@@ -54,7 +54,7 @@ test('webhook returns 500 when secret not configured', function () {
 });
 
 test('webhook returns 500 for unknown event type without secret', function () {
-    config(['saas.stripe_connect.webhook_secret' => null]);
+    config(['kneadit.stripe_connect.webhook_secret' => null]);
 
     $payload = json_encode([
         'type' => 'some.unknown.event',
