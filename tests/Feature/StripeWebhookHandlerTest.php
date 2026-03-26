@@ -51,6 +51,6 @@ test('payment failed handler sends emails', function () {
     $source = file_get_contents(app_path('Http/Controllers/StripeWebhookController.php'));
 
     expect($source)->toContain('Payment failed');
-    expect($source)->toContain('Mail::raw');
+    expect($source)->toContain('PaymentFailedMail');
     expect($source)->toContain('platform_notify');
 });
