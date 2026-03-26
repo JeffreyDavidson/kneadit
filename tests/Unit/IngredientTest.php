@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\AdjustIngredientStock;
+use App\Enums\StockStatus;
 use App\Models\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -74,7 +75,7 @@ test('low stock threshold detection', function () {
 
     expect($ingredient->isLowStock())->toBeTrue();
     expect($ingredient->isOutOfStock())->toBeFalse();
-    expect($ingredient->getStockStatus())->toBe('low');
+    expect($ingredient->getStockStatus())->toBe(StockStatus::Low);
 });
 
 test('out of stock detection', function () {
@@ -87,7 +88,7 @@ test('out of stock detection', function () {
     ]);
 
     expect($ingredient->isOutOfStock())->toBeTrue();
-    expect($ingredient->getStockStatus())->toBe('out');
+    expect($ingredient->getStockStatus())->toBe(StockStatus::Out);
 });
 
 test('good stock status', function () {
@@ -101,7 +102,7 @@ test('good stock status', function () {
 
     expect($ingredient->isLowStock())->toBeFalse();
     expect($ingredient->isOutOfStock())->toBeFalse();
-    expect($ingredient->getStockStatus())->toBe('good');
+    expect($ingredient->getStockStatus())->toBe(StockStatus::Good);
 });
 
 test('cost per unit is stored correctly', function () {
