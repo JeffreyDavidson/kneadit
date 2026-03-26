@@ -20,12 +20,10 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
  *
- * @method static Builder<static>|Coupon active()
  * @method static \Database\Factories\CouponFactory factory($count = null, $state = [])
  * @method static Builder<static>|Coupon newModelQuery()
  * @method static Builder<static>|Coupon newQuery()
  * @method static Builder<static>|Coupon query()
- * @method static Builder<static>|Coupon valid()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Coupon active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Coupon valid()
  *
@@ -81,7 +79,6 @@ class Coupon extends Model
         $query->where('is_active', true);
     }
 
-    /** @param Builder<Coupon> $query */
     /** @param Builder<Coupon> $query */
     #[Scope]
     protected function valid(Builder $query): void

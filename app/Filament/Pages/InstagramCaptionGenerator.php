@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\CaptionStyle;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -109,7 +110,7 @@ class InstagramCaptionGenerator extends Page
     {
         $this->validate([
             'data.product_id' => ['required', 'exists:products,id'],
-            'data.style' => ['required', 'in:playful,professional,seasonal,storytelling'],
+            'data.style' => ['required', new \Illuminate\Validation\Rules\Enum(CaptionStyle::class)],
             'data.tone' => ['required', 'in:warm,excited,casual,elegant'],
         ]);
 

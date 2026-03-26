@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Enums\SubscriptionTier;
+use App\Enums\TaxExportType;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Expense;
@@ -113,13 +114,7 @@ class TaxExport extends Page
 
                     Select::make('export_type')
                         ->label('What to Export')
-                        ->options([
-                            'all' => 'All (Orders + Expenses + Income + Summary)',
-                            'orders' => 'Orders Only',
-                            'expenses' => 'Expenses Only',
-                            'income' => 'Income Only',
-                            'summary' => 'Summary Only',
-                        ])
+                        ->options(TaxExportType::class)
                         ->default('all')
                         ->required(),
 
