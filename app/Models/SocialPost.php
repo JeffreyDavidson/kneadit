@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SocialPlatform;
 use App\Enums\SocialPostStatus;
 use Database\Factories\SocialPostFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
+ * @property SocialPlatform $platform
  * @property SocialPostStatus $status
  * @property-read Product|null $product
  *
@@ -40,6 +42,7 @@ class SocialPost extends Model
     protected function casts(): array
     {
         return [
+            'platform' => SocialPlatform::class,
             'status' => SocialPostStatus::class,
             'scheduled_for' => 'datetime',
         ];

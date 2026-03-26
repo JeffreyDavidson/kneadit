@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Enums\PlatformSenderType;
 use App\Filament\Central\Resources\MessageResource\Pages\ListMessages;
 use App\Filament\Central\Resources\MessageResource\Pages\ViewMessage;
 use App\Models\PlatformMessage;
@@ -75,8 +76,8 @@ class MessageResource extends Resource
                     ->label('From')
                     ->badge()
                     ->color(fn (string $state) => match ($state) {
-                        'admin' => 'info',
-                        'tenant' => 'warning',
+                        PlatformSenderType::Admin->value => 'info',
+                        PlatformSenderType::Tenant->value => 'warning',
                         default => 'gray',
                     }),
                 TextColumn::make('created_at')

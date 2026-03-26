@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\GalleryCategory;
 use Database\Factories\GalleryPhotoFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @property GalleryCategory $category
+ *
  * @method static \Database\Factories\GalleryPhotoFactory factory($count = null, $state = [])
  * @method static Builder<static>|GalleryPhoto newModelQuery()
  * @method static Builder<static>|GalleryPhoto newQuery()
@@ -36,6 +39,7 @@ class GalleryPhoto extends Model
         return [
             'is_visible' => 'boolean',
             'sort_order' => 'integer',
+            'category' => GalleryCategory::class,
         ];
     }
 

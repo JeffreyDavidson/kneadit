@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources\MessageResource\Pages;
 
+use App\Enums\PlatformSenderType;
 use App\Filament\Central\Resources\MessageResource;
 use App\Models\PlatformMessage;
 use Filament\Resources\Pages\ViewRecord;
@@ -54,7 +55,7 @@ class ViewMessage extends ViewRecord
 
         PlatformMessage::query()->create([
             'tenant_id' => $this->record->tenant_id,
-            'sender_type' => 'admin',
+            'sender_type' => PlatformSenderType::Admin,
             'subject' => 'Re: '.$this->record->subject,
             'body' => $this->replyBody,
             'parent_id' => $this->record->id,
