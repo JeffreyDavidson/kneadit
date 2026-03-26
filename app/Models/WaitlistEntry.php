@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Database\Factories\WaitlistEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,7 +25,6 @@ use Illuminate\Support\Facades\Date;
  * @method static Builder<static>|WaitlistEntry newQuery()
  * @method static Builder<static>|WaitlistEntry query()
  * @method static Builder<static>|WaitlistEntry waiting()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry waiting()
  *
  * @mixin \Eloquent
  */
@@ -60,9 +60,12 @@ class WaitlistEntry extends Model
         return $this->belongsTo(Product::class);
     }
 
-    protected function getStatusLabelAttribute(): string
+    /** @return Attribute<string, never> */
+    protected function statusLabel(): Attribute
     {
-        return ucfirst($this->status->value);
+        return Attribute::make(
+            get: fn () => ucfirst($this->status->value),
+        );
     }
 
     /** @param Builder<WaitlistEntry> $query */
@@ -77,26 +80,5 @@ class WaitlistEntry extends Model
     protected function forDate(Builder $query, Carbon|string $date): void
     {
         $query->whereDate('requested_date', Date::parse($date));
-    }
-
-    public function markNotified(): void
-    {
-        $this->update([
-            'status' => WaitlistStatus::Notified,
-        ]);
-    }
-
-    public function markConverted(): void
-    {
-        $this->update([
-            'status' => WaitlistStatus::Converted,
-        ]);
-    }
-
-    public function markRemoved(): void
-    {
-        $this->update([
-            'status' => WaitlistStatus::Removed,
-        ]);
     }
 }

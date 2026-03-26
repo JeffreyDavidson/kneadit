@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\LoyaltyRewardFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -59,13 +60,16 @@ class LoyaltyReward extends Model
         $query->where('is_active', true);
     }
 
-    protected function getRewardTypeLabelAttribute(): string
+    /** @return Attribute<mixed, never> */
+    protected function rewardTypeLabel(): Attribute
     {
-        return match ($this->reward_type) {
-            'percentage_discount' => $this->reward_value.'% Off',
-            'fixed_discount' => '$'.number_format((float) $this->reward_value, 2).' Off',
-            'free_product' => 'Free '.($this->product->name ?? 'Product'),
-            default => $this->reward_type,
-        };
+        return Attribute::make(
+            get: fn () => match ($this->reward_type) {
+                'percentage_discount' => $this->reward_value.'% Off',
+                'fixed_discount' => '$'.number_format((float) $this->reward_value, 2).' Off',
+                'free_product' => 'Free '.($this->product->name ?? 'Product'),
+                default => $this->reward_type,
+            },
+        );
     }
 }

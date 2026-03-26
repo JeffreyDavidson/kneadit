@@ -6,6 +6,7 @@ use App\Traits\LogsActivity;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -208,26 +209,36 @@ class Product extends Model
         return $seasonalItems->contains(fn (SeasonalItem $item) => $item->isCurrentlyAvailable());
     }
 
-    protected function getSeasonalBadgeAttribute(): ?string
+    /** @return Attribute<string|null, never> */
+    protected function seasonalBadge(): Attribute
     {
-        $seasonal = $this->seasonalItems->first();
-        if (! $seasonal) {
-            return null;
-        }
-        if ($seasonal->isCurrentlyAvailable()) {
-            return 'Limited Time';
-        }
+        return Attribute::make(
+            get: function () {
+                $seasonal = $this->seasonalItems->first();
+                if (! $seasonal) {
+                    return null;
+                }
+                if ($seasonal->isCurrentlyAvailable()) {
+                    return 'Limited Time';
+                }
 
-        return 'Available '.$seasonal->available_from?->format('M').' - '.$seasonal->available_until?->format('M');
+                return 'Available '.$seasonal->available_from?->format('M').' - '.$seasonal->available_until?->format('M');
+            },
+        );
     }
 
-    protected function getMarginAttribute(): ?float
+    /** @return Attribute<float|null, never> */
+    protected function margin(): Attribute
     {
-        if ($this->cost && $this->price) {
-            return round(($this->price - $this->cost) / $this->price * 100, 2);
-        }
+        return Attribute::make(
+            get: function () {
+                if ($this->cost && $this->price) {
+                    return round(($this->price - $this->cost) / $this->price * 100, 2);
+                }
 
-        return null;
+                return null;
+            },
+        );
     }
 
     /** @param Builder<Product> $query */

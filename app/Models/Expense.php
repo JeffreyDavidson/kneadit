@@ -8,13 +8,14 @@ use App\Observers\ExpenseObserver;
 use Database\Factories\ExpenseFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
  * @property-read string $category_label
- * @property-read float $deductible_amount
+ * @property float $deductible_amount
  *
  * @method static \Database\Factories\ExpenseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newModelQuery()
@@ -56,13 +57,11 @@ class Expense extends Model
         ];
     }
 
-    protected function getCategoryLabelAttribute(): string
+    /** @return Attribute<mixed, never> */
+    protected function categoryLabel(): Attribute
     {
-        return $this->category->label();
-    }
-
-    protected function getDeductibleAmountAttribute(): float
-    {
-        return round((float) $this->amount * ($this->business_percentage / 100), 2);
+        return Attribute::make(
+            get: fn () => $this->category->label(),
+        );
     }
 }

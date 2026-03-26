@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @method static \Database\Factories\CustomerFavoriteFactory factory($count = null, $state = [])
  * @method static Builder<static>|CustomerFavorite forCustomer(string $email)
+ * @method static Builder<static>|CustomerFavorite forProduct(int $productId)
  * @method static Builder<static>|CustomerFavorite newModelQuery()
  * @method static Builder<static>|CustomerFavorite newQuery()
  * @method static Builder<static>|CustomerFavorite query()
@@ -45,30 +46,10 @@ class CustomerFavorite extends Model
         $query->where('customer_email', $email);
     }
 
-    public static function toggle(string $email, int $productId): bool
+    /** @param Builder<CustomerFavorite> $query */
+    #[Scope]
+    protected function forProduct(Builder $query, int $productId): void
     {
-        $favorite = static::query()->where('customer_email', $email)
-            ->where('product_id', $productId)
-            ->first();
-
-        if ($favorite) {
-            $favorite->delete();
-
-            return false; // removed
-        } else {
-            static::query()->create([
-                'customer_email' => $email,
-                'product_id' => $productId,
-            ]);
-
-            return true; // added
-        }
-    }
-
-    public static function isFavorite(string $email, int $productId): bool
-    {
-        return static::query()->where('customer_email', $email)
-            ->where('product_id', $productId)
-            ->exists();
+        $query->where('product_id', $productId);
     }
 }

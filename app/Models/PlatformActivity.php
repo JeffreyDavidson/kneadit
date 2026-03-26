@@ -21,12 +21,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity whereEvent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity whereMetadata($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity whereTenantId($value)
  *
  * @mixin \Eloquent
  */
@@ -53,18 +47,6 @@ class PlatformActivity extends Model
             'metadata' => 'array',
             'created_at' => 'datetime',
         ];
-    }
-
-    /** @param array<string, mixed> $metadata */
-    public static function log(string $event, ?string $tenantId, string $description, ?array $metadata = null): static
-    {
-        return static::query()->create([
-            'event' => $event,
-            'tenant_id' => $tenantId,
-            'description' => $description,
-            'metadata' => $metadata,
-            'created_at' => now(),
-        ]);
     }
 
     /**

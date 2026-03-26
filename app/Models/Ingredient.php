@@ -102,15 +102,4 @@ class Ingredient extends Model
 
         return 'good';
     }
-
-    public function adjustStock(float $quantity, string $type, ?string $notes = null): void
-    {
-        $this->increment('current_stock', $quantity);
-
-        $this->stockAdjustments()->create([
-            'quantity' => $quantity,
-            'type' => $type,
-            'notes' => $notes,
-        ]);
-    }
 }

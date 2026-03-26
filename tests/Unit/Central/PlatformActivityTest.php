@@ -1,12 +1,13 @@
 <?php
 
+use App\Actions\LogPlatformActivity;
 use App\Models\PlatformActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 beforeEach(fn () => setUpCentralTest());
 
 test('log creates record', function () {
-    $activity = PlatformActivity::log('tenant.created', 'tenant-1', 'A new tenant was created', ['plan' => 'pro']);
+    $activity = app(LogPlatformActivity::class)('tenant.created', 'tenant-1', 'A new tenant was created', ['plan' => 'pro']);
 
     $found = PlatformActivity::query()->where('event', 'tenant.created')->first();
     expect($found)->not->toBeNull();
@@ -16,7 +17,7 @@ test('log creates record', function () {
 });
 
 test('log works with null tenant id', function () {
-    $activity = PlatformActivity::log('system.update', null, 'System updated');
+    $activity = app(LogPlatformActivity::class)('system.update', null, 'System updated');
 
     expect($activity->tenant_id)->toBeNull();
     $found = PlatformActivity::query()->where('event', 'system.update')->first();
@@ -25,7 +26,7 @@ test('log works with null tenant id', function () {
 });
 
 test('metadata is cast to array', function () {
-    $activity = PlatformActivity::log('test', 't1', 'desc', ['key' => 'value']);
+    $activity = app(LogPlatformActivity::class)('test', 't1', 'desc', ['key' => 'value']);
     $activity->refresh();
 
     expect($activity->metadata)->toBeArray();
@@ -33,7 +34,7 @@ test('metadata is cast to array', function () {
 });
 
 test('tenant relationship exists', function () {
-    $activity = PlatformActivity::log('test', null, 'desc');
+    $activity = app(LogPlatformActivity::class)('test', null, 'desc');
 
     expect($activity->tenant())->toBeInstanceOf(BelongsTo::class);
 });

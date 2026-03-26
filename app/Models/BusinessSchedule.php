@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\BusinessScheduleFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,20 +50,11 @@ class BusinessSchedule extends Model
         6 => 'Saturday',
     ];
 
-    protected function getDayNameAttribute(): string
+    /** @return Attribute<string, never> */
+    protected function dayName(): Attribute
     {
-        return self::DAYS[$this->day_of_week] ?? 'Unknown';
-    }
-
-    public static function forDay(int $dayOfWeek): ?self
-    {
-        return static::query()->where('day_of_week', $dayOfWeek)->first();
-    }
-
-    public static function isOpenOn(int $dayOfWeek): bool
-    {
-        $schedule = static::forDay($dayOfWeek);
-
-        return $schedule->is_open ?? false;
+        return Attribute::make(
+            get: fn () => self::DAYS[$this->day_of_week] ?? 'Unknown',
+        );
     }
 }

@@ -6,6 +6,7 @@ use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\BusinessSchedule;
+use App\Services\ScheduleService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
@@ -62,9 +63,11 @@ class ScheduleManager extends Page
 
     protected function loadSchedule(): void
     {
+        $scheduleService = app(ScheduleService::class);
+
         $this->schedule = [];
         for ($day = 0; $day <= 6; $day++) {
-            $record = BusinessSchedule::forDay($day);
+            $record = $scheduleService->forDay($day);
             $this->schedule[$day] = [
                 'is_open' => $record->is_open ?? false,
                 'open_time' => $record->open_time ?? '07:00',

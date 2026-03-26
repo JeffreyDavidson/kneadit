@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Database\Factories\BlockedDateFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @method static \Database\Factories\BlockedDateFactory factory($count = null, $state = [])
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate query()
  *
- * @property \Illuminate\Support\Carbon $date
+ * @property Carbon $date
  *
  * @mixin \Eloquent
  */
@@ -36,19 +36,5 @@ class BlockedDate extends Model
             'date' => 'date',
             'is_all_day' => 'boolean',
         ];
-    }
-
-    public static function isBlocked(Carbon $date): bool
-    {
-        return static::query()->where('date', $date->toDateString())
-            ->where('is_all_day', true)
-            ->exists();
-    }
-
-    public static function getBlockedReason(Carbon $date): ?string
-    {
-        return static::query()->where('date', $date->toDateString())
-            ->where('is_all_day', true)
-            ->value('reason');
     }
 }

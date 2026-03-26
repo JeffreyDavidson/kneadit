@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Database\Factories\HolidayFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
@@ -33,17 +34,6 @@ use Illuminate\Support\Facades\Date;
  * @method static Builder<static>|Holiday newQuery()
  * @method static Builder<static>|Holiday query()
  * @method static Builder<static>|Holiday upcoming()
- * @method static Builder<static>|Holiday whereCreatedAt($value)
- * @method static Builder<static>|Holiday whereDate($value)
- * @method static Builder<static>|Holiday whereId($value)
- * @method static Builder<static>|Holiday whereIsActive($value)
- * @method static Builder<static>|Holiday whereLeadDays($value)
- * @method static Builder<static>|Holiday whereMaxOrders($value)
- * @method static Builder<static>|Holiday whereName($value)
- * @method static Builder<static>|Holiday whereNotes($value)
- * @method static Builder<static>|Holiday whereOrderDeadline($value)
- * @method static Builder<static>|Holiday wherePrepStart($value)
- * @method static Builder<static>|Holiday whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
@@ -73,24 +63,36 @@ class Holiday extends Model
         ];
     }
 
-    protected function getDaysAwayAttribute(): int
+    /** @return Attribute<int, never> */
+    protected function daysAway(): Attribute
     {
-        return (int) now()->diffInDays($this->date, false);
+        return Attribute::make(
+            get: fn () => (int) now()->diffInDays($this->date, false),
+        );
     }
 
-    protected function getStartPrepByAttribute(): Carbon
+    /** @return Attribute<Carbon, never> */
+    protected function startPrepBy(): Attribute
     {
-        return $this->date->subDays($this->lead_days ?? 7);
+        return Attribute::make(
+            get: fn () => $this->date->subDays($this->lead_days ?? 7),
+        );
     }
 
-    protected function getIsUpcomingAttribute(): bool
+    /** @return Attribute<bool, never> */
+    protected function isUpcoming(): Attribute
     {
-        return $this->date->isFuture();
+        return Attribute::make(
+            get: fn () => $this->date->isFuture(),
+        );
     }
 
-    protected function getIsInPrepPeriodAttribute(): bool
+    /** @return Attribute<bool, never> */
+    protected function isInPrepPeriod(): Attribute
     {
-        return now()->isAfter($this->start_prep_by) && $this->date->isFuture();
+        return Attribute::make(
+            get: fn () => now()->isAfter($this->start_prep_by) && $this->date->isFuture(),
+        );
     }
 
     /** @param Builder<Holiday> $query */
@@ -123,20 +125,5 @@ class Holiday extends Model
         }
 
         return $this->order_deadline->isPast();
-    }
-
-    public function orderCount(): int
-    {
-        return Order::query()->whereDate('delivery_date', $this->date)->count();
-    }
-
-    public static function nearDate(Carbon $date, int $days = 2): ?self
-    {
-        return static::query()->active()
-            ->whereBetween('date', [
-                $date->copy()->subDays($days),
-                $date->copy()->addDays($days),
-            ])
-            ->first();
     }
 }

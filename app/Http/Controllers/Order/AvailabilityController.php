@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Order;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\BlockedDate;
-use App\Models\BusinessSchedule;
 use App\Models\Order;
 use App\Models\Setting;
+use App\Services\ScheduleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Date;
 
@@ -16,7 +16,7 @@ class AvailabilityController extends Controller
     /**
      * Return availability for the next 30 days.
      */
-    public function __invoke(): JsonResponse
+    public function __invoke(ScheduleService $scheduleService): JsonResponse
     {
         $dates = [];
         $today = Date::today();
@@ -26,7 +26,7 @@ class AvailabilityController extends Controller
             $dayOfWeek = (int) $date->dayOfWeek;
             $dateStr = $date->toDateString();
 
-            $schedule = BusinessSchedule::forDay($dayOfWeek);
+            $schedule = $scheduleService->forDay($dayOfWeek);
             $isOpen = $schedule->is_open ?? false;
 
             // Check blocked dates

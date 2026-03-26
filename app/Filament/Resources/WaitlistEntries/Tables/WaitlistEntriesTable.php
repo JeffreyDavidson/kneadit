@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\WaitlistEntries\Tables;
 
+use App\Actions\UpdateWaitlistEntryStatus;
 use App\Enums\WaitlistStatus;
 use App\Models\WaitlistEntry;
 use Filament\Actions\Action;
@@ -84,7 +85,7 @@ class WaitlistEntriesTable
                     ->color('info')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
-                        $record->markNotified();
+                        app(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Notified);
                         Notification::make()
                             ->title('Customer notified')
                             ->body('The customer has been marked as notified.')
@@ -98,7 +99,7 @@ class WaitlistEntriesTable
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
-                        $record->markConverted();
+                        app(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Converted);
                         Notification::make()
                             ->title('Customer converted')
                             ->body('The customer has been marked as converted.')
@@ -112,7 +113,7 @@ class WaitlistEntriesTable
                     ->color('danger')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
-                        $record->markRemoved();
+                        app(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Removed);
                         Notification::make()
                             ->title('Customer removed')
                             ->body('The customer has been removed from the waitlist.')

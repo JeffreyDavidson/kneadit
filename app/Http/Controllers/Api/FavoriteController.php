@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\ToggleCustomerFavorite;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiFavoriteRequest;
 use App\Models\CustomerFavorite;
@@ -26,7 +27,7 @@ class FavoriteController extends Controller
     {
         $validated = $request->validated();
 
-        $favorited = CustomerFavorite::toggle($validated['email'], $validated['product_id']);
+        $favorited = app(ToggleCustomerFavorite::class)($validated['email'], $validated['product_id']);
 
         return response()->json([
             'data' => ['favorited' => $favorited],

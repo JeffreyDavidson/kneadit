@@ -2,6 +2,7 @@
 
 namespace App\Actions\Orders;
 
+use App\Actions\AdjustIngredientStock;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +25,8 @@ class DeductIngredients
                         /** @var object{quantity: string, unit: string} $pivot */
                         $pivot = $ingredient->pivot;
                         $qty = (float) $pivot->quantity * $orderItem->quantity;
-                        $ingredient->adjustStock(
+                        app(AdjustIngredientStock::class)(
+                            $ingredient,
                             -$qty,
                             'usage',
                             "Order #{$order->order_number}"
