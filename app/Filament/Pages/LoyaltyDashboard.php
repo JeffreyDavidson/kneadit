@@ -79,7 +79,7 @@ class LoyaltyDashboard extends Page
 
     public function getAvailableRewardsCountProperty(): int
     {
-        return LoyaltyReward::query()->where('is_active', true)->count();
+        return LoyaltyReward::query()->active()->count();
     }
 
     /** @return Collection<int, Customer> */

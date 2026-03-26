@@ -2,9 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Actions\SendStaffInvitation;
 use App\Enums\UserRole;
-use App\Mail\StaffInvitationMail;
-use App\Models\Setting;
+use App\Exceptions\StaffInvitationException;
 use App\Models\StaffInvitation;
 use App\Models\User;
 use BackedEnum;
@@ -12,8 +12,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use UnitEnum;
 
@@ -74,53 +72,26 @@ class StaffManagement extends Page
             'inviteRole' => ['required', Rule::in([UserRole::Manager->value, UserRole::Staff->value])],
         ]);
 
-        // Check if already a team member
-        if (User::query()->where('email', $this->inviteEmail)->exists()) {
+        try {
+            resolve(SendStaffInvitation::class)(
+                email: $this->inviteEmail,
+                role: UserRole::from($this->inviteRole),
+                invitedBy: (int) Auth::id(),
+            );
+
+            $this->inviteEmail = '';
+            $this->inviteRole = UserRole::Staff->value;
+
             Notification::make()
-                ->title('This person is already a team member')
+                ->title('Invitation sent!')
+                ->success()
+                ->send();
+        } catch (StaffInvitationException $e) {
+            Notification::make()
+                ->title($e->getMessage())
                 ->warning()
                 ->send();
-
-            return;
         }
-
-        // Check for existing pending invitation
-        $existing = StaffInvitation::query()->where('email', $this->inviteEmail)
-            ->whereNull('accepted_at')
-            ->where('expires_at', '>', now())
-            ->first();
-
-        if ($existing) {
-            Notification::make()
-                ->title('An invitation is already pending for this email')
-                ->warning()
-                ->send();
-
-            return;
-        }
-
-        $invitation = StaffInvitation::query()->create([
-            'email' => $this->inviteEmail,
-            'role' => $this->inviteRole,
-            'token' => Str::random(64),
-            'expires_at' => now()->addDays(7),
-            'invited_by' => Auth::id(),
-        ]);
-
-        $storeName = Setting::get('store_name', 'Our Bakery');
-        $acceptUrl = route('invitation.show', $invitation->token);
-
-        Mail::to($this->inviteEmail)->send(
-            new StaffInvitationMail($invitation, $storeName, $acceptUrl)
-        );
-
-        $this->inviteEmail = '';
-        $this->inviteRole = UserRole::Staff->value;
-
-        Notification::make()
-            ->title('Invitation sent!')
-            ->success()
-            ->send();
     }
 
     public function revokeInvitation(int $id): void

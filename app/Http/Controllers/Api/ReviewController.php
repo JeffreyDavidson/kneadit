@@ -12,7 +12,7 @@ class ReviewController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Review::query()->where('is_approved', true)->with('product');
+        $query = Review::query()->approved()->with('product');
 
         if ($request->boolean('featured')) {
             $query->where('is_featured', true);

@@ -37,12 +37,12 @@ class CustomerInsightsWidget extends Widget
     /** @return array<string, mixed> */
     public function getAvgOrderValue(): array
     {
-        $thisMonth = (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
+        $thisMonth = (float) Order::query()->active()
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->avg('total');
 
-        $lastMonth = (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
+        $lastMonth = (float) Order::query()->active()
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
             ->avg('total');

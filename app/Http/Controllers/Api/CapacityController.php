@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\CapacityLimit;
+use App\Services\CapacityCalculator;
 use Illuminate\Http\JsonResponse;
 
 class CapacityController extends Controller
@@ -12,9 +12,9 @@ class CapacityController extends Controller
     {
         return response()->json([
             'data' => [
-                'available' => CapacityLimit::isAvailable($date),
-                'remaining' => CapacityLimit::remainingSlots($date),
-                'max' => CapacityLimit::getMaxOrders($date),
+                'available' => resolve(CapacityCalculator::class)->isAvailable($date),
+                'remaining' => resolve(CapacityCalculator::class)->remainingSlots($date),
+                'max' => resolve(CapacityCalculator::class)->getMaxOrders($date),
             ],
             'message' => 'Capacity retrieved successfully.',
         ]);

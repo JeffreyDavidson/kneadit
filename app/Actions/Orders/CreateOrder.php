@@ -5,12 +5,12 @@ namespace App\Actions\Orders;
 use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
 use App\Events\OrderCreated;
-use App\Models\CapacityLimit;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\CapacityCalculator;
 use App\Services\CouponService;
 use App\Services\GiftCardService;
 use Illuminate\Support\Facades\DB;
@@ -39,7 +39,7 @@ class CreateOrder
         }
 
         $order = DB::transaction(function () use ($data, $calculated, $couponId, $giftCardId) {
-            if (! CapacityLimit::isAvailable($data['delivery_date'])) {
+            if (! resolve(CapacityCalculator::class)->isAvailable($data['delivery_date'])) {
                 return null;
             }
 

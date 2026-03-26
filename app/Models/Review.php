@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Traits\LogsActivity;
 use Database\Factories\ReviewFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -63,5 +65,12 @@ class Review extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    /** @param Builder<Review> $query */
+    #[Scope]
+    protected function approved(Builder $query): void
+    {
+        $query->where('is_approved', true);
     }
 }

@@ -2,22 +2,11 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
 
-class PurchaseOrder extends Mailable implements ShouldQueue
+class PurchaseOrder extends BaseMailable
 {
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
-
-    use Queueable, SerializesModels;
-
     /** @param array<int, array<string, mixed>> $items */
     public function __construct(
         public string $supplierName,

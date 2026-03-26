@@ -23,10 +23,10 @@ class AtRiskCustomersWidget extends BaseWidget
             ->query(
                 Customer::query()
                     ->whereHas('orders', function (Builder $query) {
-                        $query->where('status', '!=', OrderStatus::Cancelled);
+                        $query->whereNotIn('status', [OrderStatus::Cancelled]);
                     })
                     ->whereDoesntHave('orders', function (Builder $query) {
-                        $query->where('status', '!=', OrderStatus::Cancelled)
+                        $query->whereNotIn('status', [OrderStatus::Cancelled])
                             ->where('created_at', '>=', now()->subDays(30));
                     })
                     ->limit(5)

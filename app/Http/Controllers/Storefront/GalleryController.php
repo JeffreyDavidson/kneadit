@@ -19,7 +19,7 @@ class GalleryController extends Controller
             ->latest()
             ->paginate(18);
 
-        $products = Product::query()->where('is_active', true)->orderBy('name')->get();
+        $products = Product::query()->active()->orderBy('name')->get();
 
         return view('gallery', compact('photos', 'products'));
     }
