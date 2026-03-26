@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Builders\IncomeQueryBuilder;
 use App\Enums\IncomeSource;
 use Database\Factories\IncomeFactory;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -21,6 +23,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[UseEloquentBuilder(IncomeQueryBuilder::class)]
 class Income extends Model
 {
     /** @use HasFactory<IncomeFactory> */

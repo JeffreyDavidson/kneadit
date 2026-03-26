@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DataTransferObjects\CustomerMetrics;
 use App\Enums\LoyaltyPointType;
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Setting;
@@ -63,12 +64,10 @@ class CustomerIntelligence
     {
         return $query
             ->withCount(['orders' => function (Builder $q) {
-                /** @var Builder<Order> $q */
-                $q->active();
+                $q->whereNotIn('status', [OrderStatus::Cancelled]);
             }])
             ->withSum(['orders' => function (Builder $q) {
-                /** @var Builder<Order> $q */
-                $q->active();
+                $q->whereNotIn('status', [OrderStatus::Cancelled]);
             }], 'total')
             ->addSelect([
                 'last_order_date' => Order::query()->select('created_at')

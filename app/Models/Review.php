@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Builders\ReviewQueryBuilder;
 use App\Casts\StripTagsCast;
 use App\Traits\LogsActivity;
 use Database\Factories\ReviewFactory;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[UseEloquentBuilder(ReviewQueryBuilder::class)]
 class Review extends Model
 {
     /** @use HasFactory<ReviewFactory> */
@@ -67,12 +68,5 @@ class Review extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
-    }
-
-    /** @param Builder<Review> $query */
-    #[Scope]
-    protected function approved(Builder $query): void
-    {
-        $query->where('is_approved', true);
     }
 }

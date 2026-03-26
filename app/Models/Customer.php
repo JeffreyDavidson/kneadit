@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Builders\CustomerQueryBuilder;
 use App\DataTransferObjects\CustomerMetrics;
 use App\Services\CustomerIntelligence;
 use App\Traits\LogsActivity;
 use Database\Factories\CustomerFactory;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +51,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[UseEloquentBuilder(CustomerQueryBuilder::class)]
 class Customer extends Model
 {
     /** @use HasFactory<CustomerFactory> */
