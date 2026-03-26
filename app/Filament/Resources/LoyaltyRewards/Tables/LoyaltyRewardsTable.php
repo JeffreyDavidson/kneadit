@@ -28,13 +28,12 @@ class LoyaltyRewardsTable
                     ->color(fn (string $state) => RewardType::tryFrom($state)?->color() ?? 'gray'),
                 TextColumn::make('reward_value')
                     ->formatStateUsing(function (mixed $state, LoyaltyReward $record) {
-                        $type = RewardType::tryFrom($record->reward_type);
+                        $type = $record->reward_type;
 
                         return match ($type) {
                             RewardType::PercentageDiscount => $state.'%',
                             RewardType::FixedDiscount => '$'.number_format((float) $state, 2),
                             RewardType::FreeProduct => $record->product->name ?? '-',
-                            default => $state,
                         };
                     })
                     ->label('Value'),
