@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Actions\CreateReview;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReviewRequest;
 use App\Models\Order;
-use App\Models\Review;
 use App\Models\Setting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -21,24 +21,16 @@ class ReviewController extends Controller
         return view('submit-review', compact('order', 'storeName', 'prefilledRating'));
     }
 
-    public function store(Order $order, StoreReviewRequest $request): View
+    public function store(Order $order, StoreReviewRequest $request, CreateReview $createReview): View
     {
         $validated = $request->validated();
 
-        $photoPath = null;
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('review-photos', 'public');
-        }
-
-        Review::query()->create([
-            'customer_name' => $order->customer->name ?? 'Customer',
-            'customer_email' => $order->customer->email ?? '',
-            'order_id' => $order->id,
-            'rating' => $validated['rating'],
-            'comment' => isset($validated['comment']) ? strip_tags($validated['comment']) : null,
-            'photo_path' => $photoPath,
-            'is_approved' => false,
-        ]);
+        $createReview(
+            order: $order,
+            rating: (int) $validated['rating'],
+            comment: $validated['comment'] ?? null,
+            photo: $request->file('photo'),
+        );
 
         $storeName = Setting::get('store_name', 'Our Bakery');
 

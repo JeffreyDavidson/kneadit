@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiReviewRequest;
+use App\Http\Resources\ReviewResource;
 use App\Models\Review;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,16 +19,8 @@ class ReviewController extends Controller
             $query->where('is_featured', true);
         }
 
-        $reviews = $query->latest()->get()->map(fn (Review $r) => [
-            'customer_name' => $r->customer_name,
-            'rating' => $r->rating,
-            'comment' => $r->comment,
-            'product_name' => $r->product?->name,
-            'created_at' => $r->created_at?->toISOString(),
-        ]);
-
         return response()->json([
-            'data' => $reviews,
+            'data' => ReviewResource::collection($query->latest()->get()),
             'message' => 'Reviews retrieved successfully.',
         ]);
     }

@@ -13,19 +13,17 @@ parameters:
         # Tenant domains relation from vendor trait (HasDomains)
         - identifier: larastan.relationExistence
           path: app/Http/Controllers/DirectoryController.php
-        # Filament page properties provided by traits
+        # Filament page properties provided by traits ($form, $noteForm, $survey)
         -
-            message: '#Access to an undefined property .+::\$form#'
+            message: '#Access to an undefined property .+::\$(form|noteForm|survey)#'
             paths:
                 - app/Filament/Pages/
-        -
-            message: '#Access to an undefined property .+::\$(noteForm|survey)#'
-            paths:
-                - app/Filament/Pages/
+        # Filament Form::make() invoked with 2 parameters (Filament 5 internal)
         -
             message: '#Static method Filament\\Schemas\\Components\\Form::make\(\) invoked with 2 parameters#'
             paths:
                 - app/Filament/Pages/
+        # Filament notify/sendSuccessNotification methods from traits
         -
             message: '#Call to an undefined method .+::(notify|sendSuccessNotification)\(\)#'
             paths:
@@ -35,15 +33,7 @@ parameters:
             message: '#on Illuminate\\Database\\Eloquent\\Model\|int\|string#'
             paths:
                 - app/Filament/
-        # Collection<Model> callback type — Larastan resolves to generic Model instead of concrete class
-        -
-            identifier: argument.type
-            message: '#callback of method Illuminate\\(Database\\Eloquent\\|Support\\)Collection.+::(map|mapWithKeys|sum|avg|filter|sortBy)\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model#'
-        # with() eager loading closure typed as Relation instead of Builder
-        -
-            identifier: argument.type
-            message: '#of method Illuminate\\Database\\Eloquent\\Builder.+::with\(\) expects#'
-        # Filament $record typed as Model|int|string|null in actions
+        # Filament $record typed as Model|int|string|null given in actions
         -
             identifier: argument.type
             message: '#Illuminate\\Database\\Eloquent\\Model\|int\|string(\|null)? given#'
@@ -53,7 +43,15 @@ parameters:
         -
             identifier: argument.type
             message: '#static method Filament\\Schemas\\Components\\Form::make\(\) expects#'
-        # Collection<Model> sum/avg callback — Larastan generic issue
+        # Collection<Model> callback type — Larastan resolves to generic Model instead of concrete class
+        -
+            identifier: argument.type
+            message: '#callback of method Illuminate\\(Database\\Eloquent\\|Support\\)Collection.+::(map|mapWithKeys|sum|avg|filter|sortBy)\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model#'
+        # with() eager loading closure typed as Relation instead of Builder
+        -
+            identifier: argument.type
+            message: '#of method Illuminate\\Database\\Eloquent\\Builder.+::with\(\) expects#'
+        # Collection sum/avg callback — Larastan generic issue
         -
             identifier: argument.type
             message: '#callback of method Illuminate\\Support\\Collection.+::(sum|avg)\(\) expects#'

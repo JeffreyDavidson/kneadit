@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @php
-        $ogStoreName = \App\Models\Setting::get('store_name', 'Artisan Bakery');
-        $ogDescription = \App\Models\Setting::get('store_tagline', $ogStoreName . ' — Fresh baked goods made with love');
-        $ogLogo = \App\Models\Setting::get('store_logo') ? asset('storage/' . \App\Models\Setting::get('store_logo')) : null;
-    @endphp
+
     <title>{{ $title ?? $ogStoreName }}</title>
     <meta name="description" content="{{ $metaDescription ?? $ogDescription }}">
     <meta property="og:title" content="{{ $title ?? $ogStoreName }}">
@@ -26,7 +22,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Dancing+Script:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
     
-    @php $storefrontTheme = \App\Models\Setting::get('storefront_theme', 'classic'); @endphp
+
     <style>
         /* ===== Base / Classic Theme (default) ===== */
         :root {

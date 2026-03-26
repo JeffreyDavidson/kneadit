@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Actions\SubmitSurveyResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSurveyResponseRequest;
 use App\Models\Survey;
-use App\Models\SurveyResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -18,26 +18,18 @@ class SurveyController extends Controller
         return view('survey', compact('survey'));
     }
 
-    public function store(StoreSurveyResponseRequest $request, Survey $survey): RedirectResponse
+    public function store(StoreSurveyResponseRequest $request, Survey $survey, SubmitSurveyResponse $submitResponse): RedirectResponse
     {
-        $validated = $request->validated();
-
         abort_unless($survey->is_active, 404);
 
-        $sanitizedAnswers = array_map(
-            fn (mixed $answer) => is_string($answer) ? strip_tags($answer) : $answer,
-            array_values($validated['answers'])
+        $validated = $request->validated();
+
+        $submitResponse(
+            survey: $survey,
+            answers: $validated['answers'],
+            customerName: $validated['customer_name'] ?? null,
+            customerEmail: $validated['customer_email'] ?? null,
         );
-
-        SurveyResponse::query()->create([
-            'survey_id' => $survey->id,
-            'customer_name' => isset($validated['customer_name']) ? strip_tags($validated['customer_name']) : null,
-            'customer_email' => $validated['customer_email'] ?? null,
-            'answers' => $sanitizedAnswers,
-            'created_at' => now(),
-        ]);
-
-        $survey->increment('responses_count');
 
         return to_route('storefront.survey', $survey)->with('survey_submitted', true);
     }
