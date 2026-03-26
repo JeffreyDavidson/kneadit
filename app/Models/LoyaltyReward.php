@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\RewardType;
 use Database\Factories\LoyaltyRewardFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * @property RewardType $reward_type
  * @property-read string $reward_type_label
  * @property-read Product|null $product
  *
@@ -42,6 +44,7 @@ class LoyaltyReward extends Model
         return [
             'reward_value' => 'decimal:2',
             'is_active' => 'boolean',
+            'reward_type' => RewardType::class,
         ];
     }
 
@@ -65,10 +68,9 @@ class LoyaltyReward extends Model
     {
         return Attribute::make(
             get: fn () => match ($this->reward_type) {
-                'percentage_discount' => $this->reward_value.'% Off',
-                'fixed_discount' => '$'.number_format((float) $this->reward_value, 2).' Off',
-                'free_product' => 'Free '.($this->product->name ?? 'Product'),
-                default => $this->reward_type,
+                RewardType::PercentageDiscount => $this->reward_value.'% Off',
+                RewardType::FixedDiscount => '$'.number_format((float) $this->reward_value, 2).' Off',
+                RewardType::FreeProduct => 'Free '.($this->product->name ?? 'Product'),
             },
         );
     }
