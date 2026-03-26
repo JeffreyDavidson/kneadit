@@ -2,10 +2,10 @@
 
 @section('content')
 @php
-    $heroImage = \App\Models\Setting::get('loyalty_hero_image');
+    $heroImage = settings('loyalty_hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
-    $content = \App\Models\Setting::pageContentAll('loyalty');
+    $content = settingsPageContent('loyalty');
 @endphp
 
 <style>
@@ -32,7 +32,7 @@
             <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
         </div>
         <h1 class="loyalty-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
-            {{ \App\Models\Setting::get('store_name', 'Our') }} {{ $programName }}
+            {{ settings('store_name', 'Our') }} {{ $programName }}
         </h1>
         <p class="loyalty-fade-3 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
             {{ $content['hero_subtitle'] ?? 'Earn points with every order, unlock delicious rewards' }}

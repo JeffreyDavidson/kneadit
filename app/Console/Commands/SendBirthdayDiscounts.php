@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Mail\BirthdayDiscount;
 use App\Models\CustomerProfile;
-use App\Models\Setting;
 use App\Models\Tenant;
 use App\Services\BirthdayService;
 use App\Services\TenancyManager;
@@ -25,7 +24,7 @@ class SendBirthdayDiscounts extends Command
         foreach ($tenants as $tenant) {
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($tenant, $birthdayService) {
-                    if (Setting::get('birthday_program_enabled', '1') !== '1') {
+                    if (settings('birthday_program_enabled', '1') !== '1') {
                         return;
                     }
 
@@ -42,7 +41,7 @@ class SendBirthdayDiscounts extends Command
     protected function processTenant(Tenant $tenant, BirthdayService $birthdayService): void
     {
         $today = Date::today();
-        $discountPercent = (int) Setting::get('birthday_discount_percent', 15);
+        $discountPercent = (int) settings('birthday_discount_percent', 15);
 
         $birthdayCustomers = CustomerProfile::query()->whereMonth('birthday', $today->month)
             ->whereDay('birthday', $today->day)

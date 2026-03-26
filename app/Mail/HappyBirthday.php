@@ -5,7 +5,6 @@ namespace App\Mail;
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Coupon;
 use App\Models\Customer;
-use App\Models\Setting;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -20,7 +19,7 @@ class HappyBirthday extends BaseMailable
         public Customer $customer,
         public ?Coupon $coupon = null
     ) {
-        $this->storeName = Setting::get('store_name', 'Our Bakery');
+        $this->storeName = settings('store_name', 'Our Bakery');
     }
 
     public function envelope(): Envelope

@@ -1,13 +1,13 @@
 @extends('layouts.storefront')
 
 @php
-    $heroImage = \App\Models\Setting::get('hero_image');
+    $heroImage = settings('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 @endphp
 
 @section('content')
 @php
-    $content = \App\Models\Setting::pageContentAll('submit_review');
+    $content = settingsPageContent('submit_review');
     $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
 @endphp
 @if(isset($success) && $success)

@@ -5,7 +5,6 @@ namespace App\Actions;
 use App\Enums\UserRole;
 use App\Exceptions\StaffInvitationException;
 use App\Mail\StaffInvitationMail;
-use App\Models\Setting;
 use App\Models\StaffInvitation;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -39,7 +38,7 @@ class SendStaffInvitation
             'invited_by' => $invitedBy,
         ]);
 
-        $storeName = Setting::get('store_name', 'Our Bakery');
+        $storeName = settings('store_name', 'Our Bakery');
         $acceptUrl = route('invitation.show', $invitation->token);
 
         Mail::to($email)->send(new StaffInvitationMail($invitation, $storeName, $acceptUrl));

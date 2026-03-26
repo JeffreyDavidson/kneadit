@@ -2,20 +2,20 @@
 
 @section('content')
 @php
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-    $tagline = \App\Models\Setting::get('business_tagline');
-    $aboutUs = \App\Models\Setting::get('about_us_text');
-    $address = \App\Models\Setting::get('store_address');
-    $allergyDisclaimer = \App\Models\Setting::get('allergy_disclaimer');
-    $socialLinks = json_decode(\App\Models\Setting::get('social_media_links', '{}'), true);
-    $heroImage = \App\Models\Setting::get('hero_image');
+    $storeName = settings('store_name', 'Our Bakery');
+    $tagline = settings('business_tagline');
+    $aboutUs = settings('about_us_text');
+    $address = settings('store_address');
+    $allergyDisclaimer = settings('allergy_disclaimer');
+    $socialLinks = json_decode(settings('social_media_links', '{}'), true);
+    $heroImage = settings('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
     $customerCount = \App\Models\Customer::count();
     $avgRating = \App\Models\Review::where('is_approved', true)->avg('rating');
     $orderCount = \App\Models\Order::count();
 
-    $content = \App\Models\Setting::pageContentAll('about');
+    $content = settingsPageContent('about');
 @endphp
 
 <style>

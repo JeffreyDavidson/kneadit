@@ -1,7 +1,6 @@
 <?php
 
 use App\Filament\Pages\Onboarding;
-use App\Models\Setting;
 
 beforeEach(function () {
     $tenantMigrationPath = database_path('migrations/tenant');
@@ -20,7 +19,7 @@ test('payment step stores payment methods as json array', function () {
     $reflection = new ReflectionMethod($page, 'savePaymentStep');
     $reflection->invoke($page);
 
-    $stored = Setting::get('payment_methods');
+    $stored = settings('payment_methods');
     expect($stored)->not->toBeNull();
 
     $decoded = json_decode($stored, true);
@@ -40,7 +39,7 @@ test('payment step sets legacy payment method to first value', function () {
     $reflection = new ReflectionMethod($page, 'savePaymentStep');
     $reflection->invoke($page);
 
-    expect(Setting::get('payment_method'))->toBe('stripe');
+    expect(settings('payment_method'))->toBe('stripe');
 });
 
 test('payment step defaults to cash when empty', function () {
@@ -53,7 +52,7 @@ test('payment step defaults to cash when empty', function () {
     $reflection = new ReflectionMethod($page, 'savePaymentStep');
     $reflection->invoke($page);
 
-    expect(Setting::get('payment_method'))->toBe('cash');
+    expect(settings('payment_method'))->toBe('cash');
 });
 
 test('payment methods property defaults to cash', function () {

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Setting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -20,7 +19,7 @@ class MenuController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        $storeName = Setting::get('store_name', 'Our Bakery');
+        $storeName = settings('store_name', 'Our Bakery');
 
         return view('menu', compact('categories', 'storeName'));
     }

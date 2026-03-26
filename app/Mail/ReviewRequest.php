@@ -5,7 +5,6 @@ namespace App\Mail;
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Setting;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -27,7 +26,7 @@ class ReviewRequest extends BaseMailable
     public function __construct(Order $order)
     {
         $this->order = $order;
-        $this->storeName = Setting::get('store_name', 'KneadIt Bakery');
+        $this->storeName = settings('store_name', 'KneadIt Bakery');
         $this->reviewUrl = url("/review/{$order->id}");
         $this->orderItems = $order->orderItems()->with('product')->get();
     }

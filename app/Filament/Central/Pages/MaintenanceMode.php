@@ -2,7 +2,6 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\Models\PlatformSetting;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -45,11 +44,11 @@ class MaintenanceMode extends Page
 
     public function mount(): void
     {
-        $this->maintenance_mode = PlatformSetting::get('maintenance_mode', '0') === '1';
-        $this->maintenance_message = PlatformSetting::get('maintenance_message', '');
-        $this->maintenance_scheduled_start = PlatformSetting::get('maintenance_scheduled_start');
-        $this->maintenance_scheduled_end = PlatformSetting::get('maintenance_scheduled_end');
-        $this->affected_services = json_decode(PlatformSetting::get('affected_services', '[]'), true) ?: [];
+        $this->maintenance_mode = platformSettings('maintenance_mode', '0') === '1';
+        $this->maintenance_message = platformSettings('maintenance_message', '');
+        $this->maintenance_scheduled_start = platformSettings('maintenance_scheduled_start');
+        $this->maintenance_scheduled_end = platformSettings('maintenance_scheduled_end');
+        $this->affected_services = json_decode(platformSettings('affected_services', '[]'), true) ?: [];
     }
 
     public function content(Schema $schema): Schema
@@ -116,11 +115,11 @@ class MaintenanceMode extends Page
 
     public function save(): void
     {
-        PlatformSetting::set('maintenance_mode', $this->maintenance_mode ? '1' : '0');
-        PlatformSetting::set('maintenance_message', $this->maintenance_message ?? '');
-        PlatformSetting::set('maintenance_scheduled_start', $this->maintenance_scheduled_start);
-        PlatformSetting::set('maintenance_scheduled_end', $this->maintenance_scheduled_end);
-        PlatformSetting::set('affected_services', json_encode($this->affected_services));
+        platformSettings(['maintenance_mode' => $this->maintenance_mode ? '1' : '0']);
+        platformSettings(['maintenance_message' => $this->maintenance_message ?? '']);
+        platformSettings(['maintenance_scheduled_start' => $this->maintenance_scheduled_start]);
+        platformSettings(['maintenance_scheduled_end' => $this->maintenance_scheduled_end]);
+        platformSettings(['affected_services' => json_encode($this->affected_services)]);
 
         Notification::make()
             ->title($this->maintenance_mode ? 'Maintenance mode activated' : 'Maintenance mode deactivated')

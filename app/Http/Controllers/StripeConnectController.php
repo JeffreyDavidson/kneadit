@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -23,7 +22,7 @@ class StripeConnectController extends Controller
         $stripe = static::stripeClient();
 
         // Check if tenant already has a connect account
-        $connectId = Setting::get('stripe_connect_id');
+        $connectId = settings('stripe_connect_id');
 
         if (! $connectId) {
             $account = $stripe->accounts->create([
@@ -37,7 +36,7 @@ class StripeConnectController extends Controller
             ]);
 
             $connectId = $account->id;
-            Setting::set('stripe_connect_id', $connectId);
+            settings(['stripe_connect_id' => $connectId]);
         }
 
         // Create an account link for onboarding
@@ -62,7 +61,7 @@ class StripeConnectController extends Controller
     /** @return array<string, mixed>|null */
     public static function getAccountStatus(): ?array
     {
-        $connectId = Setting::get('stripe_connect_id');
+        $connectId = settings('stripe_connect_id');
 
         if (! $connectId) {
             return null;

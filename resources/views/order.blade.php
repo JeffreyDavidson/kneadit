@@ -8,13 +8,13 @@
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 py-16 md:py-24">
         @php
-            $leadTimeHours = \App\Models\Setting::get('order_lead_time_hours', '24');
+            $leadTimeHours = settings('order_lead_time_hours', '24');
             $leadTimeDays = ceil($leadTimeHours / 24);
-            $deliveryEnabled = \App\Models\Setting::get('delivery_enabled', '1') === '1';
-            $deliveryTiers = json_decode(\App\Models\Setting::get('delivery_fee_tiers', '[]'), true);
-            $allergyDisclaimer = \App\Models\Setting::get('allergy_disclaimer');
-            $paymentMethods = json_decode(\App\Models\Setting::get('payment_methods_accepted', '[]'), true);
-            $freeDeliveryMin = \App\Models\Setting::get('free_delivery_minimum', '50');
+            $deliveryEnabled = settings('delivery_enabled', '1') === '1';
+            $deliveryTiers = json_decode(settings('delivery_fee_tiers', '[]'), true);
+            $allergyDisclaimer = settings('allergy_disclaimer');
+            $paymentMethods = json_decode(settings('payment_methods_accepted', '[]'), true);
+            $freeDeliveryMin = settings('free_delivery_minimum', '50');
         @endphp
 
         <div class="flex items-center gap-3 mb-6">

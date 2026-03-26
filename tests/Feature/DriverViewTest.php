@@ -3,7 +3,6 @@
 use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Models\User;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -37,7 +36,7 @@ function createDeliveryOrder(array $attrs = []): Order
 }
 
 test('driver page loads', function () {
-    Setting::set('store_name', 'Test Bakery');
+    settings(['store_name' => 'Test Bakery']);
 
     $response = withoutMiddleware($this->driverMiddleware)->get('/driver');
 
@@ -45,7 +44,7 @@ test('driver page loads', function () {
 });
 
 test('driver page shows todays delivery orders', function () {
-    Setting::set('store_name', 'Test Bakery');
+    settings(['store_name' => 'Test Bakery']);
     $order = createDeliveryOrder(['order_number' => 'ORD-001']);
 
     $response = withoutMiddleware($this->driverMiddleware)->get('/driver');
@@ -55,7 +54,7 @@ test('driver page shows todays delivery orders', function () {
 });
 
 test('driver page hides pickup orders', function () {
-    Setting::set('store_name', 'Test Bakery');
+    settings(['store_name' => 'Test Bakery']);
     createDeliveryOrder(['order_number' => 'ORD-PICKUP', 'delivery_address' => '']);
 
     $response = withoutMiddleware($this->driverMiddleware)->get('/driver');
@@ -65,7 +64,7 @@ test('driver page hides pickup orders', function () {
 });
 
 test('driver page hides past orders', function () {
-    Setting::set('store_name', 'Test Bakery');
+    settings(['store_name' => 'Test Bakery']);
     createDeliveryOrder(['order_number' => 'ORD-OLD', 'delivery_date' => today()->subDay()]);
 
     $response = withoutMiddleware($this->driverMiddleware)->get('/driver');

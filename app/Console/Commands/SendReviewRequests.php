@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Enums\OrderStatus;
 use App\Mail\ReviewRequest;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Models\Tenant;
 use App\Services\TenancyManager;
 use Illuminate\Console\Command;
@@ -25,11 +24,11 @@ class SendReviewRequests extends Command
         foreach ($tenants as $tenant) {
             try {
                 $tenancyManager->withinTenant($tenant, function () {
-                    if (Setting::get('review_requests_enabled', '1') !== '1') {
+                    if (settings('review_requests_enabled', '1') !== '1') {
                         return;
                     }
 
-                    $delayHours = (int) Setting::get('review_request_delay_hours', '24');
+                    $delayHours = (int) settings('review_request_delay_hours', '24');
 
                     $orders = Order::query()->where('status', OrderStatus::Delivered)
                         ->whereNull('review_request_sent_at')

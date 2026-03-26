@@ -1,9 +1,9 @@
 @php
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-    $tagline = \App\Models\Setting::get('business_tagline');
-    $heroImage = \App\Models\Setting::get('hero_image');
-    $heroStyle = \App\Models\Setting::get('hero_style', 'split');
-    $aboutUs = \App\Models\Setting::get('about_us_text');
+    $storeName = settings('store_name', 'Our Bakery');
+    $tagline = settings('business_tagline');
+    $heroImage = settings('hero_image');
+    $heroStyle = settings('hero_style', 'split');
+    $aboutUs = settings('about_us_text');
 
     // Trust badge data
     $customerCount = \App\Models\Customer::count();

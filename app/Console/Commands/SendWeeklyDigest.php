@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Enums\UserRole;
 use App\Mail\WeeklyDigest;
-use App\Models\Setting;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\TenancyManager;
@@ -24,7 +23,7 @@ class SendWeeklyDigest extends Command
         foreach ($tenants as $tenant) {
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($tenant) {
-                    if (Setting::get('weekly_digest_enabled', '1') !== '1') {
+                    if (settings('weekly_digest_enabled', '1') !== '1') {
                         $this->info("Skipping {$tenant->id} — digest disabled");
 
                         return;

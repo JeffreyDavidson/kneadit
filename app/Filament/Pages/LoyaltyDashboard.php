@@ -9,7 +9,6 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
-use App\Models\Setting;
 use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Collection;
@@ -52,14 +51,14 @@ class LoyaltyDashboard extends Page
 
     public function mount(): void
     {
-        $this->loyaltyEnabled = Setting::get('loyalty_enabled', '1') === '1';
-        $this->programName = Setting::get('loyalty_program_name', 'Rewards');
+        $this->loyaltyEnabled = settings('loyalty_enabled', '1') === '1';
+        $this->programName = settings('loyalty_program_name', 'Rewards');
     }
 
     public function toggleLoyalty(): void
     {
         $this->loyaltyEnabled = ! $this->loyaltyEnabled;
-        Setting::set('loyalty_enabled', $this->loyaltyEnabled ? '1' : '0');
+        settings(['loyalty_enabled' => $this->loyaltyEnabled ? '1' : '0']);
     }
 
     public function getTotalPointsIssuedProperty(): int

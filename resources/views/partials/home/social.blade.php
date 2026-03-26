@@ -1,6 +1,6 @@
 @php
-    $socialLinks = json_decode(\App\Models\Setting::get('social_media_links', '{}'), true);
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
+    $socialLinks = json_decode(settings('social_media_links', '{}'), true);
+    $storeName = settings('store_name', 'Our Bakery');
 @endphp
 @if(!empty(array_filter($socialLinks ?? [])))
 <section class="py-16 px-4" style="background: var(--warm-200);">

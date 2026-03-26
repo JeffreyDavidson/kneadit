@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\CateringInquiry;
-use App\Models\Setting;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -16,8 +15,8 @@ test('catering page loads', function () {
 });
 
 test('catering inquiry can be submitted with valid data', function () {
-    Setting::set('catering_lead_time_days', '1');
-    Setting::set('catering_minimum_guests', '5');
+    settings(['catering_lead_time_days' => '1']);
+    settings(['catering_minimum_guests' => '5']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->post('/catering', [
@@ -48,8 +47,8 @@ test('catering validation rejects missing required fields', function () {
 });
 
 test('catering validation rejects past event dates', function () {
-    Setting::set('catering_lead_time_days', '1');
-    Setting::set('catering_minimum_guests', '5');
+    settings(['catering_lead_time_days' => '1']);
+    settings(['catering_minimum_guests' => '5']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->post('/catering', [
@@ -65,8 +64,8 @@ test('catering validation rejects past event dates', function () {
 });
 
 test('inquiry is saved with default status', function () {
-    Setting::set('catering_lead_time_days', '1');
-    Setting::set('catering_minimum_guests', '5');
+    settings(['catering_lead_time_days' => '1']);
+    settings(['catering_minimum_guests' => '5']);
 
     withoutMiddleware(tenantMiddleware())
         ->post('/catering', [

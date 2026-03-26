@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\Setting;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
@@ -83,7 +82,7 @@ class DashboardConfig extends Page
 
     protected function loadWidgets(): void
     {
-        $saved = Setting::get('dashboard_widgets');
+        $saved = settings('dashboard_widgets');
         $config = $saved ? json_decode($saved, true) : null;
 
         if (! $config) {
@@ -156,7 +155,7 @@ class DashboardConfig extends Page
             ];
         }
 
-        Setting::set('dashboard_widgets', json_encode($config));
+        settings(['dashboard_widgets' => json_encode($config)]);
 
         Notification::make()
             ->title('Dashboard layout saved!')
@@ -167,8 +166,8 @@ class DashboardConfig extends Page
 
     public function resetDefaults(): void
     {
-        Setting::set('dashboard_widgets', json_encode($this->getDefaults()));
-        Setting::set('dashboard_grid_layout', null);
+        settings(['dashboard_widgets' => json_encode($this->getDefaults())]);
+        settings(['dashboard_grid_layout' => null]);
         $this->loadWidgets();
 
         Notification::make()

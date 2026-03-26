@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\PaymentStatus;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -104,7 +103,7 @@ class StripeConnectWebhookController extends Controller
 
             tenancy()->initialize($tenant);
 
-            Setting::set('stripe_connect_charges_enabled', $chargesEnabled ? '1' : '0');
+            settings(['stripe_connect_charges_enabled' => $chargesEnabled ? '1' : '0']);
 
             if ($chargesEnabled) {
                 Log::info('Stripe Connect fully enabled for tenant', ['tenant_id' => $tenantId]);

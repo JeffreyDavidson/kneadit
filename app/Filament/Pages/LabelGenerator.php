@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Enums\UserRole;
 use App\Models\Product;
-use App\Models\Setting;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -51,7 +50,7 @@ class LabelGenerator extends Page
 
     public function mount(): void
     {
-        $shelfLifeDays = (int) Setting::get('default_shelf_life_days', '3');
+        $shelfLifeDays = (int) settings('default_shelf_life_days', '3');
         $this->bestByDate = now()->addDays($shelfLifeDays)->format('Y-m-d');
     }
 
@@ -94,11 +93,11 @@ class LabelGenerator extends Page
 
     public function getStoreName(): string
     {
-        return Setting::get('store_name', 'Our Bakery');
+        return settings('store_name', 'Our Bakery');
     }
 
     public function getAllergyDisclaimer(): string
     {
-        return Setting::get('allergy_disclaimer', 'May contain allergens.');
+        return settings('allergy_disclaimer', 'May contain allergens.');
     }
 }

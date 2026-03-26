@@ -45,5 +45,5 @@
 </div>
 
 <p style="margin: 0 0 5px;">We look forward to making your event special! 🎂</p>
-<p style="margin: 0; font-weight: 600;">— {{ \App\Models\Setting::get('store_name', 'KneadIt Bakery') }}</p>
+<p style="margin: 0; font-weight: 600;">— {{ settings('store_name', 'KneadIt Bakery') }}</p>
 @endsection

@@ -59,10 +59,10 @@
 </style>
 
 @php
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-    $heroImage = \App\Models\Setting::get('hero_image');
+    $storeName = settings('store_name', 'Our Bakery');
+    $heroImage = settings('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-    $content = \App\Models\Setting::pageContentAll('menu');
+    $content = settingsPageContent('menu');
 @endphp
 
 {{-- Photo-Forward Hero --}}
@@ -214,7 +214,7 @@
             {{ $content['cta_heading'] ?? 'Let\'s get baking.' }}
         </h2>
         <p class="text-lg mb-10" style="color: var(--warm-400);">
-            @php $ctaDesc = str_replace('{{lead_time}}', \App\Models\Setting::get('order_lead_time_hours', '24'), $content['cta_description'] ?? 'All orders need ' . \App\Models\Setting::get('order_lead_time_hours', '24') . ' hours notice. Place yours now.'); @endphp
+            @php $ctaDesc = str_replace('{{lead_time}}', settings('order_lead_time_hours', '24'), $content['cta_description'] ?? 'All orders need ' . settings('order_lead_time_hours', '24') . ' hours notice. Place yours now.'); @endphp
             {{ $ctaDesc }}
         </p>
         <a href="{{ route('order.create') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">

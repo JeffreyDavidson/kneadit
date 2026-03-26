@@ -5,7 +5,6 @@ use App\Enums\LoyaltyPointType;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -18,8 +17,8 @@ beforeEach(function () {
     Mail::fake();
     $this->user = User::query()->create(['name' => 'Test', 'email' => 'admin@test.com', 'password' => bcrypt('password')]);
     $this->customer = Customer::query()->create(['name' => 'Test Customer', 'email' => 'customer@test.com']);
-    Setting::set('loyalty_enabled', '1');
-    Setting::set('loyalty_points_per_dollar', '10');
+    settings(['loyalty_enabled' => '1']);
+    settings(['loyalty_points_per_dollar' => '10']);
 });
 
 test('awards points based on order total and points per dollar setting', function () {
@@ -43,7 +42,7 @@ test('awards points based on order total and points per dollar setting', functio
 });
 
 test('skips when loyalty is disabled', function () {
-    Setting::set('loyalty_enabled', '0');
+    settings(['loyalty_enabled' => '0']);
 
     $order = Order::query()->create([
         'user_id' => $this->user->id,

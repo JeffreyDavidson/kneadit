@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Setting;
 use App\Services\CapacityCalculator;
 
 beforeEach(function () {
@@ -12,7 +11,7 @@ beforeEach(function () {
 });
 
 it('returns default capacity when no limit exists for a date', function () {
-    Setting::set('default_daily_capacity', 25);
+    settings(['default_daily_capacity' => 25]);
 
     $calculator = new CapacityCalculator;
     $max = $calculator->getMaxOrders('2026-04-01');

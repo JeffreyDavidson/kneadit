@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\PlatformSettingsManager;
 use Database\Factories\PlatformSettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,28 +32,4 @@ class PlatformSetting extends Model
         'key',
         'value',
     ];
-
-    /**
-     * @deprecated Use PlatformSettingsManager service via DI instead.
-     */
-    public static function get(string $key, mixed $default = null): mixed
-    {
-        return resolve(PlatformSettingsManager::class)->get($key, $default);
-    }
-
-    /**
-     * @deprecated Use PlatformSettingsManager service via DI instead.
-     */
-    public static function set(string $key, mixed $value): void
-    {
-        resolve(PlatformSettingsManager::class)->set($key, $value);
-    }
-
-    /**
-     * @deprecated Use PlatformSettingsManager service via DI instead.
-     */
-    public static function flushCache(): void
-    {
-        resolve(PlatformSettingsManager::class)->flushCache();
-    }
 }

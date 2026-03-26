@@ -9,7 +9,6 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customer;
 use App\Models\CustomerNote;
 use App\Models\Order;
-use App\Models\Setting;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
@@ -97,7 +96,7 @@ class CustomerDirectory extends Page
             )
             ->value('avg_ltv');
 
-        $atRiskDays = (int) Setting::get('at_risk_days', '30');
+        $atRiskDays = (int) settings('at_risk_days', '30');
         $atRiskCount = Customer::query()
             ->whereHas('orders', fn (EloquentBuilder $q) => $q->where('status', '!=', OrderStatus::Cancelled))
             ->whereDoesntHave('orders', fn (EloquentBuilder $q) => $q->where('status', '!=', OrderStatus::Cancelled)->where('created_at', '>=', now()->subDays($atRiskDays)))

@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use App\Enums\UserRole;
-use App\Models\Setting;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -104,31 +103,31 @@ class ManageSettings extends Page
 
     protected function loadSettings(): void
     {
-        $this->store_name = Setting::get('store_name', '');
-        $this->store_email = Setting::get('store_email', '');
-        $this->store_phone = Setting::get('store_phone', '');
-        $this->store_address = Setting::get('store_address', '');
-        $this->default_daily_capacity = Setting::get('default_daily_capacity', null);
-        $this->minimum_order_lead_hours = Setting::get('minimum_order_lead_hours', 48);
-        $this->delivery_fee_tiers = Setting::get('delivery_fee_tiers', '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}');
-        $this->repeat_reminders_enabled = Setting::get('repeat_reminders_enabled', false);
-        $this->birthday_program_enabled = Setting::get('birthday_program_enabled', false);
-        $this->allergy_disclaimer = Setting::get('allergy_disclaimer', 'Please inform us of any allergies or dietary restrictions when placing your order.');
-        $this->revenue_cap = Setting::get('revenue_cap', '250000');
-        $methods = Setting::get('payment_methods');
+        $this->store_name = settings('store_name', '');
+        $this->store_email = settings('store_email', '');
+        $this->store_phone = settings('store_phone', '');
+        $this->store_address = settings('store_address', '');
+        $this->default_daily_capacity = settings('default_daily_capacity', null);
+        $this->minimum_order_lead_hours = settings('minimum_order_lead_hours', 48);
+        $this->delivery_fee_tiers = settings('delivery_fee_tiers', '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}');
+        $this->repeat_reminders_enabled = settings('repeat_reminders_enabled', false);
+        $this->birthday_program_enabled = settings('birthday_program_enabled', false);
+        $this->allergy_disclaimer = settings('allergy_disclaimer', 'Please inform us of any allergies or dietary restrictions when placing your order.');
+        $this->revenue_cap = settings('revenue_cap', '250000');
+        $methods = settings('payment_methods');
         $this->payment_methods = $methods ? json_decode($methods, true) : ['cash'];
-        $this->paypal_client_id = Setting::get('paypal_client_id', '');
-        $this->paypal_client_secret = Setting::get('paypal_client_secret', '');
-        $this->paypal_sandbox = (bool) Setting::get('paypal_sandbox', true);
-        $this->webhook_url = Setting::get('webhook_url', '');
-        $this->webhook_secret = Setting::get('webhook_secret', '');
+        $this->paypal_client_id = settings('paypal_client_id', '');
+        $this->paypal_client_secret = settings('paypal_client_secret', '');
+        $this->paypal_sandbox = (bool) settings('paypal_sandbox', true);
+        $this->webhook_url = settings('webhook_url', '');
+        $this->webhook_secret = settings('webhook_secret', '');
 
-        $this->cancellation_policy = Setting::get('cancellation_policy', '');
-        $this->deposit_policy = Setting::get('deposit_policy', '');
-        $this->refund_policy = Setting::get('refund_policy', '');
-        $this->pickup_policy = Setting::get('pickup_policy', '');
-        $this->additional_terms = Setting::get('additional_terms', '');
-        $this->show_policies_on_storefront = (bool) Setting::get('show_policies_on_storefront', false);
+        $this->cancellation_policy = settings('cancellation_policy', '');
+        $this->deposit_policy = settings('deposit_policy', '');
+        $this->refund_policy = settings('refund_policy', '');
+        $this->pickup_policy = settings('pickup_policy', '');
+        $this->additional_terms = settings('additional_terms', '');
+        $this->show_policies_on_storefront = (bool) settings('show_policies_on_storefront', false);
     }
 
     public function content(Schema $schema): Schema
@@ -337,40 +336,40 @@ class ManageSettings extends Page
     {
         try {
             // Store Information
-            Setting::set('store_name', $this->store_name);
-            Setting::set('store_email', $this->store_email);
-            Setting::set('store_phone', $this->store_phone);
-            Setting::set('store_address', $this->store_address);
+            settings(['store_name' => $this->store_name]);
+            settings(['store_email' => $this->store_email]);
+            settings(['store_phone' => $this->store_phone]);
+            settings(['store_address' => $this->store_address]);
 
             // Order Settings
-            Setting::set('default_daily_capacity', $this->default_daily_capacity);
-            Setting::set('minimum_order_lead_hours', $this->minimum_order_lead_hours);
-            Setting::set('delivery_fee_tiers', $this->delivery_fee_tiers);
+            settings(['default_daily_capacity' => $this->default_daily_capacity]);
+            settings(['minimum_order_lead_hours' => $this->minimum_order_lead_hours]);
+            settings(['delivery_fee_tiers' => $this->delivery_fee_tiers]);
 
             // Notification Settings
-            Setting::set('repeat_reminders_enabled', $this->repeat_reminders_enabled);
-            Setting::set('birthday_program_enabled', $this->birthday_program_enabled);
+            settings(['repeat_reminders_enabled' => $this->repeat_reminders_enabled]);
+            settings(['birthday_program_enabled' => $this->birthday_program_enabled]);
 
             // Payment Methods
-            Setting::set('payment_methods', json_encode($this->payment_methods));
-            Setting::set('payment_method', $this->payment_methods[0] ?? 'cash');
+            settings(['payment_methods' => json_encode($this->payment_methods)]);
+            settings(['payment_method' => $this->payment_methods[0] ?? 'cash']);
             if (in_array('paypal', $this->payment_methods ?? [])) {
-                Setting::set('paypal_client_id', $this->paypal_client_id);
-                Setting::set('paypal_client_secret', $this->paypal_client_secret);
-                Setting::set('paypal_sandbox', $this->paypal_sandbox ? '1' : '0');
-                Setting::set('webhook_url', $this->webhook_url);
-                Setting::set('webhook_secret', $this->webhook_secret);
+                settings(['paypal_client_id' => $this->paypal_client_id]);
+                settings(['paypal_client_secret' => $this->paypal_client_secret]);
+                settings(['paypal_sandbox' => $this->paypal_sandbox ? '1' : '0']);
+                settings(['webhook_url' => $this->webhook_url]);
+                settings(['webhook_secret' => $this->webhook_secret]);
             }
 
             // Compliance
-            Setting::set('allergy_disclaimer', $this->allergy_disclaimer);
-            Setting::set('revenue_cap', $this->revenue_cap);
-            Setting::set('cancellation_policy', $this->cancellation_policy);
-            Setting::set('deposit_policy', $this->deposit_policy);
-            Setting::set('refund_policy', $this->refund_policy);
-            Setting::set('pickup_policy', $this->pickup_policy);
-            Setting::set('additional_terms', $this->additional_terms);
-            Setting::set('show_policies_on_storefront', $this->show_policies_on_storefront ? '1' : '0');
+            settings(['allergy_disclaimer' => $this->allergy_disclaimer]);
+            settings(['revenue_cap' => $this->revenue_cap]);
+            settings(['cancellation_policy' => $this->cancellation_policy]);
+            settings(['deposit_policy' => $this->deposit_policy]);
+            settings(['refund_policy' => $this->refund_policy]);
+            settings(['pickup_policy' => $this->pickup_policy]);
+            settings(['additional_terms' => $this->additional_terms]);
+            settings(['show_policies_on_storefront' => $this->show_policies_on_storefront ? '1' : '0']);
 
             Notification::make()
                 ->title('Settings saved successfully!')

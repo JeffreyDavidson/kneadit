@@ -3,7 +3,6 @@
 namespace App\Actions\Tenants;
 
 use App\Enums\SubscriptionTier;
-use App\Models\Setting;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -47,12 +46,12 @@ class CreateTenant
                 'updated_at' => now(),
             ]);
 
-            Setting::set('store_name', $storeName);
-            Setting::set('store_email', $user->email);
-            Setting::set('storefront_enabled', $useKneadItStorefront ? '1' : '0');
+            settings(['store_name' => $storeName]);
+            settings(['store_email' => $user->email]);
+            settings(['storefront_enabled' => $useKneadItStorefront ? '1' : '0']);
 
             if (! $useKneadItStorefront && $externalWebsite) {
-                Setting::set('external_website', $externalWebsite);
+                settings(['external_website' => $externalWebsite]);
             }
         });
 

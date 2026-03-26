@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrderMessageRequest;
 use App\Mail\NewOrderMessage;
 use App\Models\Order;
-use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 
@@ -35,7 +34,7 @@ class MessageController extends Controller
         ]);
 
         // Email the baker
-        $storeEmail = Setting::get('store_email');
+        $storeEmail = settings('store_email');
         if ($storeEmail) {
             Mail::to($storeEmail)
                 ->send(new NewOrderMessage($message));

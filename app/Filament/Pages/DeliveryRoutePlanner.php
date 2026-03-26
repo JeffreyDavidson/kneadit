@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Setting;
 use App\Services\DeliveryRouteService;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
@@ -52,7 +51,7 @@ class DeliveryRoutePlanner extends Page
     public function mount(): void
     {
         $this->selectedDate = now()->format('Y-m-d');
-        $this->storeAddress = Setting::get('store_address') ?? 'Store address not configured';
+        $this->storeAddress = settings('store_address') ?? 'Store address not configured';
         $this->loadOrders();
     }
 

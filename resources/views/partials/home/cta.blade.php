@@ -3,9 +3,9 @@
     $subtext = $config['subtext'] ?? null;
     $buttonText = $config['button_text'] ?? 'Start Your Order';
     $buttonLink = $config['button_link'] ?? 'order';
-    $leadTimeHours = \App\Models\Setting::get('order_lead_time_hours', '24');
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-    $heroImage = \App\Models\Setting::get('hero_image');
+    $leadTimeHours = settings('order_lead_time_hours', '24');
+    $storeName = settings('store_name', 'Our Bakery');
+    $heroImage = settings('hero_image');
 
     $linkMap = [
         'order' => route('order.create'),

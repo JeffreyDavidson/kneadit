@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Customers\Tables;
 
 use App\Models\Customer;
-use App\Models\Setting;
 use App\Services\CustomerIntelligence;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -18,7 +17,7 @@ class CustomersTable
 {
     public static function configure(Table $table): Table
     {
-        $atRiskDays = (int) Setting::get('at_risk_days', '30');
+        $atRiskDays = (int) settings('at_risk_days', '30');
 
         return $table
             ->modifyQueryUsing(fn (Builder $query) => resolve(CustomerIntelligence::class)->enrichQuery($query))

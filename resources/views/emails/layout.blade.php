@@ -6,13 +6,13 @@
     <title>@yield('title', 'KneadIt Bakery')</title>
 </head>
 @php
-    $storeName = \App\Models\Setting::get('store_name', 'KneadIt Bakery');
-    $storeEmail = \App\Models\Setting::get('store_email', '');
-    $storePhone = \App\Models\Setting::get('store_phone', '');
-    $storeAddress = \App\Models\Setting::get('store_address', '');
-    $primaryColor = \App\Models\Setting::get('brand_color_primary', '#d4920c');
-    $secondaryColor = \App\Models\Setting::get('brand_color_secondary', '#1c1410');
-    $logoPath = \App\Models\Setting::get('store_logo');
+    $storeName = settings('store_name', 'KneadIt Bakery');
+    $storeEmail = settings('store_email', '');
+    $storePhone = settings('store_phone', '');
+    $storeAddress = settings('store_address', '');
+    $primaryColor = settings('brand_color_primary', '#d4920c');
+    $secondaryColor = settings('brand_color_secondary', '#1c1410');
+    $logoPath = settings('store_logo');
     $logoUrl = $logoPath ? \Illuminate\Support\Facades\Storage::url($logoPath) : null;
 @endphp
 <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #1c1410; background-color: #f5f0e8; margin: 0; padding: 20px;">

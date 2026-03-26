@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Events\OrderCreated;
 use App\Mail\NewOrderNotification;
-use App\Models\Setting;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -18,7 +17,7 @@ class NotifyBakerOfNewOrder implements ShouldQueue
 
     public function handle(OrderCreated $event): void
     {
-        $bakerEmail = Setting::get('store_email');
+        $bakerEmail = settings('store_email');
 
         if (! $bakerEmail) {
             return;

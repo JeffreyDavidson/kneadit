@@ -310,10 +310,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="/icons/icon-192.png">
-    @if(\App\Models\Setting::get('store_logo'))
-    <link rel="icon" href="{{ asset('storage/' . \App\Models\Setting::get('store_logo')) }}" type="image/png">
+    @if(settings('store_logo'))
+    <link rel="icon" href="{{ asset('storage/' . settings('store_logo')) }}" type="image/png">
     @else
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ urlencode(tenant()->brand_color_primary ?? '#d4920c') }}'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-family='serif' font-weight='bold'>{{ substr(\App\Models\Setting::get('store_name', 'B'), 0, 1) }}</text></svg>" type="image/svg+xml">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ urlencode(tenant()->brand_color_primary ?? '#d4920c') }}'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-family='serif' font-weight='bold'>{{ substr(settings('store_name', 'B'), 0, 1) }}</text></svg>" type="image/svg+xml">
     @endif
 
     @yield('styles')
@@ -322,10 +322,10 @@
 <body data-theme="{{ $storefrontTheme }}" @yield('body_attrs')>
 
     @php
-        $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-        $cateringEnabled = \App\Models\Setting::get('catering_enabled', '0') === '1';
-        $loyaltyEnabled = \App\Models\Setting::get('loyalty_enabled', '1') === '1';
-        $loyaltyName = \App\Models\Setting::get('loyalty_program_name', 'Rewards');
+        $storeName = settings('store_name', 'Our Bakery');
+        $cateringEnabled = settings('catering_enabled', '0') === '1';
+        $loyaltyEnabled = settings('loyalty_enabled', '1') === '1';
+        $loyaltyName = settings('loyalty_program_name', 'Rewards');
         $exploreActive = request()->routeIs('storefront.blog*', 'storefront.gallery', 'storefront.reviews', 'storefront.about', 'storefront.catering');
         $accountActive = request()->routeIs('order.track', 'storefront.gift-cards', 'storefront.rewards');
     @endphp
@@ -435,9 +435,9 @@
 
     <main class="min-h-screen pt-24">
         @php
-            $announcementEnabled = \App\Models\Setting::get('announcement_enabled', '0');
-            $announcementText = \App\Models\Setting::get('announcement_text', '');
-            $announcementType = \App\Models\Setting::get('announcement_type', 'info');
+            $announcementEnabled = settings('announcement_enabled', '0');
+            $announcementText = settings('announcement_text', '');
+            $announcementType = settings('announcement_type', 'info');
         @endphp
 
         @if($announcementEnabled === '1' && $announcementText)
@@ -469,13 +469,13 @@
 
     <!-- Policies -->
     @php
-        $showPolicies = \App\Models\Setting::get('show_policies_on_storefront', '0') === '1';
+        $showPolicies = settings('show_policies_on_storefront', '0') === '1';
         $policies = $showPolicies ? array_filter([
-            'Cancellation Policy' => \App\Models\Setting::get('cancellation_policy', ''),
-            'Deposit Policy' => \App\Models\Setting::get('deposit_policy', ''),
-            'Refund Policy' => \App\Models\Setting::get('refund_policy', ''),
-            'Pickup Policy' => \App\Models\Setting::get('pickup_policy', ''),
-            'Additional Terms' => \App\Models\Setting::get('additional_terms', ''),
+            'Cancellation Policy' => settings('cancellation_policy', ''),
+            'Deposit Policy' => settings('deposit_policy', ''),
+            'Refund Policy' => settings('refund_policy', ''),
+            'Pickup Policy' => settings('pickup_policy', ''),
+            'Additional Terms' => settings('additional_terms', ''),
         ]) : [];
     @endphp
 
@@ -500,17 +500,17 @@
         <div class="max-w-6xl mx-auto px-4 text-center">
             <div class="h-1 mb-12" style="background: linear-gradient(to right, transparent, var(--warm-500), transparent);"></div>
             
-            <h3 class="font-display text-2xl mb-2">{{ \App\Models\Setting::get('store_name', 'Our Bakery') }}</h3>
+            <h3 class="font-display text-2xl mb-2">{{ settings('store_name', 'Our Bakery') }}</h3>
             <p class="font-script text-xl mb-6" style="color: var(--warm-400);">Baked with love, served with care</p>
             
             @php
-                $footerAddress = \App\Models\Setting::get('store_address');
-                $footerPhone = \App\Models\Setting::get('store_phone');
-                $footerEmail = \App\Models\Setting::get('store_email');
+                $footerAddress = settings('store_address');
+                $footerPhone = settings('store_phone');
+                $footerEmail = settings('store_email');
             @endphp
             
             @php
-                $footerSocial = json_decode(\App\Models\Setting::get('social_media_links', '{}'), true);
+                $footerSocial = json_decode(settings('social_media_links', '{}'), true);
             @endphp
 
             @if(!empty(array_filter($footerSocial ?? [])))
@@ -548,7 +548,7 @@
             @endif
             
             <div class="text-sm leading-relaxed space-y-3" style="color: var(--warm-400);">
-                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::get('store_name', 'Our Bakery') }}. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} {{ settings('store_name', 'Our Bakery') }}. All rights reserved.</p>
                 <p class="text-xs opacity-60">Powered by KneadIt</p>
             </div>
         </div>

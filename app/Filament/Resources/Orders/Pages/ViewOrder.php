@@ -8,7 +8,6 @@ use App\Enums\PaymentStatus;
 use App\Events\OrderMessageSent;
 use App\Exceptions\InvalidOrderTransitionException;
 use App\Filament\Resources\Orders\OrderResource;
-use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -181,7 +180,7 @@ class ViewOrder extends ViewRecord
                         ->rows(3),
                 ])
                 ->action(function (array $data): void {
-                    $bakerName = auth()->user()->name ?? Setting::get('store_name', 'Baker');
+                    $bakerName = auth()->user()->name ?? settings('store_name', 'Baker');
 
                     $message = $this->record->messages()->create([
                         'sender_type' => 'baker',

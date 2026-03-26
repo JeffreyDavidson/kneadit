@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 
 class ManifestController extends Controller
@@ -13,13 +12,13 @@ class ManifestController extends Controller
      */
     public function __invoke(): JsonResponse
     {
-        $storeName = Setting::get('store_name', 'Our Bakery');
+        $storeName = settings('store_name', 'Our Bakery');
         $primaryColor = tenant()->brand_color_primary ?? '#d4920c';
 
         return response()->json([
             'name' => $storeName,
             'short_name' => $storeName,
-            'description' => Setting::get('business_tagline', 'Fresh baked goods made with love'),
+            'description' => settings('business_tagline', 'Fresh baked goods made with love'),
             'start_url' => '/',
             'display' => 'standalone',
             'background_color' => '#fef9ef',

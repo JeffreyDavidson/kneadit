@@ -1,6 +1,6 @@
 @php
     $isTenant = !in_array(request()->getHost(), config('tenancy.central_domains', []));
-    $storeName = $isTenant ? (\App\Models\Setting::get('store_name', 'This Bakery') ?? 'This Bakery') : 'KneadIt';
+    $storeName = $isTenant ? (settings('store_name', 'This Bakery') ?? 'This Bakery') : 'KneadIt';
     $homeUrl = '/';
 @endphp
 <!DOCTYPE html>

@@ -44,17 +44,17 @@
 </style>
 
 @php
-    $storeName = \App\Models\Setting::get('store_name', 'Our Bakery');
-    $heroImage = \App\Models\Setting::get('hero_image');
+    $storeName = settings('store_name', 'Our Bakery');
+    $heroImage = settings('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-    $storeAddress = \App\Models\Setting::get('store_address');
-    $storePhone = \App\Models\Setting::get('store_phone');
-    $storeEmail = \App\Models\Setting::get('store_email');
-    $operatingHours = json_decode(\App\Models\Setting::get('operating_hours', '{}'), true);
-    $faqItems = json_decode(\App\Models\Setting::get('faq_items', '[]'), true);
-    $leadTimeHours = \App\Models\Setting::get('order_lead_time_hours', '24');
-    $allergyDisclaimer = \App\Models\Setting::get('allergy_disclaimer');
-    $content = \App\Models\Setting::pageContentAll('contact');
+    $storeAddress = settings('store_address');
+    $storePhone = settings('store_phone');
+    $storeEmail = settings('store_email');
+    $operatingHours = json_decode(settings('operating_hours', '{}'), true);
+    $faqItems = json_decode(settings('faq_items', '[]'), true);
+    $leadTimeHours = settings('order_lead_time_hours', '24');
+    $allergyDisclaimer = settings('allergy_disclaimer');
+    $content = settingsPageContent('contact');
 @endphp
 
 {{-- Photo-Forward Hero --}}

@@ -55,7 +55,7 @@ test('storefront layout has favicon', function () {
 test('favicon uses store logo when available', function () {
     $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    expect($layout)->toContain("Setting::get('store_logo')");
+    expect($layout)->toContain("settings('store_logo')");
 });
 
 test('favicon falls back to svg with brand color', function () {

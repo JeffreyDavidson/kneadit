@@ -5,7 +5,6 @@ use App\Enums\OrderStatus;
 use App\Mail\OrderPlaced;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
@@ -46,7 +45,7 @@ test('returns null when capacity is full', function () {
     $product = Product::factory()->create(['price' => 10.00]);
     $deliveryDate = now()->addDays(5)->toDateString();
 
-    Setting::set('default_daily_capacity', '1');
+    settings(['default_daily_capacity' => '1']);
     Order::factory()->create(['delivery_date' => $deliveryDate, 'status' => 'confirmed']);
 
     $order = resolve(CreateOrder::class)(

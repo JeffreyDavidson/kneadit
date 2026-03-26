@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\Models\Setting;
+use App\Services\SettingsManager;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -12,6 +12,6 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $this->withoutVite();
-        Setting::flushCache();
+        resolve(SettingsManager::class)->flushCache();
     }
 }

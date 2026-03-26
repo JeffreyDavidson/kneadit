@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     @php
-        $currentTheme = \App\Models\Setting::get('storefront_theme', 'classic');
+        $currentTheme = settings('storefront_theme', 'classic');
         $themes = [
             'classic' => [
                 'name' => 'Classic',

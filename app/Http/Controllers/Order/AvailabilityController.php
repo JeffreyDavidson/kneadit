@@ -6,7 +6,6 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\BlockedDate;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Services\ScheduleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Date;
@@ -56,7 +55,7 @@ class AvailabilityController extends Controller
 
             // Check capacity
             $maxOrders = $schedule->max_orders
-                ?? (int) Setting::get('default_daily_capacity', 100);
+                ?? (int) settings('default_daily_capacity', 100);
             $currentOrders = Order::query()->whereDate('delivery_date', $dateStr)
                 ->whereNotIn('status', [OrderStatus::Cancelled])
                 ->count();

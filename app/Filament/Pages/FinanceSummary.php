@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Setting;
 use App\Services\FinancialCalculator;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
@@ -68,7 +67,7 @@ class FinanceSummary extends Page
     public function mount(): void
     {
         $this->selectedYear = now()->year;
-        $this->revenueCap = (float) Setting::get('revenue_cap', 250000);
+        $this->revenueCap = (float) settings('revenue_cap', 250000);
         $this->loadFinancialData();
     }
 

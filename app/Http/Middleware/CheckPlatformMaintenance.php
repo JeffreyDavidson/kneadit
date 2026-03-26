@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\PlatformSetting;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,11 +19,11 @@ class CheckPlatformMaintenance
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (PlatformSetting::get('maintenance_mode') !== '1') {
+        if (platformSettings('maintenance_mode') !== '1') {
             return $next($request);
         }
 
-        $affectedServices = json_decode(PlatformSetting::get('affected_services', '[]'), true) ?: [];
+        $affectedServices = json_decode(platformSettings('affected_services', '[]'), true) ?: [];
 
         $currentService = $this->detectService($request);
 
@@ -32,8 +31,8 @@ class CheckPlatformMaintenance
             return $next($request);
         }
 
-        $message = PlatformSetting::get('maintenance_message', 'We are currently performing scheduled maintenance.');
-        $scheduledEnd = PlatformSetting::get('maintenance_scheduled_end');
+        $message = platformSettings('maintenance_message', 'We are currently performing scheduled maintenance.');
+        $scheduledEnd = platformSettings('maintenance_scheduled_end');
 
         return response()
             ->view('maintenance', [

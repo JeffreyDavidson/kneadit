@@ -18,7 +18,6 @@ use App\Mail\ReviewRequest;
 use App\Mail\WeeklyDigest;
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Models\User;
 
 beforeEach(function () {
@@ -50,7 +49,7 @@ beforeEach(function () {
 });
 
 test('order placed email has baker branded from', function () {
-    Setting::set('store_name', 'Sweet Treats');
+    settings(['store_name' => 'Sweet Treats']);
 
     $mail = new OrderPlaced($this->order);
     $envelope = $mail->envelope();
@@ -66,8 +65,8 @@ test('order placed email sends from platform domain', function () {
 });
 
 test('order placed email has reply to baker', function () {
-    Setting::set('store_email', 'baker@sweetreats.com');
-    Setting::set('store_name', 'Sweet Treats');
+    settings(['store_email' => 'baker@sweetreats.com']);
+    settings(['store_name' => 'Sweet Treats']);
 
     $mail = new OrderPlaced($this->order);
     $envelope = $mail->envelope();
@@ -91,7 +90,7 @@ test('from name defaults when no store name', function () {
 });
 
 test('order confirmed uses baker branded from', function () {
-    Setting::set('store_name', 'Flour Power');
+    settings(['store_name' => 'Flour Power']);
 
     $mail = new OrderConfirmed($this->order);
     $envelope = $mail->envelope();

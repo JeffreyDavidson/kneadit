@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\BusinessSchedule;
-use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\withoutMiddleware;
@@ -84,7 +83,7 @@ test('open days show as available', function () {
         'max_orders' => 50,
     ]);
 
-    Setting::set('default_daily_capacity', '100');
+    settings(['default_daily_capacity' => '100']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/availability');

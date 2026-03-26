@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Setting;
 use App\Models\Tenant;
 
 class TenancyManager
@@ -18,7 +17,7 @@ class TenancyManager
     public function withinTenant(Tenant $tenant, callable $callback): mixed
     {
         tenancy()->initialize($tenant);
-        Setting::flushCache();
+        resolve(SettingsManager::class)->flushCache();
 
         try {
             return $callback($tenant);

@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Setting;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -53,7 +52,7 @@ class ThemeSelector extends Page
             return;
         }
 
-        Setting::set('storefront_theme', $theme);
+        settings(['storefront_theme' => $theme]);
 
         $this->dispatch('$refresh');
 
