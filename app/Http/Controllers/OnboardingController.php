@@ -70,7 +70,7 @@ class OnboardingController extends Controller
                 storeName: $validated['store_name'],
                 adminUrl: $adminUrl,
                 plan: SubscriptionTier::Starter->value,
-                trialEndsAt: now()->addDays(config('saas.trial_days', 30))->format('F j, Y'),
+                trialEndsAt: now()->addDays(config('kneadit.trial_days', 30))->format('F j, Y'),
             ));
 
             Mail::to(config('mail.platform_notify'))->send(new NewSubscriberNotification(

@@ -20,7 +20,7 @@ class ReorderRemindersWidget extends Widget
     /** @return array<int, array<string, string>> */
     public function getLapsedCustomers(): array
     {
-        $thirtyDaysAgo = Date::now()->subDays(30);
+        $thirtyDaysAgo = Date::now()->subDays(config('analytics.at_risk_threshold_days', 30));
 
         return Customer::query()->select('customers.id', 'customers.name', 'customers.email')
             ->join('orders', 'orders.customer_id', '=', 'customers.id')
@@ -42,7 +42,7 @@ class ReorderRemindersWidget extends Widget
 
     public function getLapsedCount(): int
     {
-        $thirtyDaysAgo = Date::now()->subDays(30);
+        $thirtyDaysAgo = Date::now()->subDays(config('analytics.at_risk_threshold_days', 30));
 
         return (int) DB::table(
             Customer::query()->join('orders', 'orders.customer_id', '=', 'customers.id')

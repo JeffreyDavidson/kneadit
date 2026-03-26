@@ -14,7 +14,7 @@ class ShowPlansController extends Controller
     public function __invoke(Request $request): View
     {
         return view('billing.plans', [
-            'plans' => config('saas.plans'),
+            'plans' => config('kneadit.plans'),
             'currentPlan' => $request->user()?->currentPlan(),
             'bakeryName' => session('bakery_name'),
         ]);

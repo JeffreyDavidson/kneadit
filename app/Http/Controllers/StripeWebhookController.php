@@ -160,7 +160,7 @@ class StripeWebhookController extends WebhookController
 
     protected function priceIdToPlan(string $priceId): ?string
     {
-        $prices = config('saas.stripe_prices', []);
+        $prices = config('kneadit.stripe_prices', []);
 
         foreach ($prices as $plan => $id) {
             if ($id === $priceId) {

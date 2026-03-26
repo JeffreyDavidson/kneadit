@@ -15,7 +15,7 @@ class InventoryReport
             ->join('recipes', 'recipes.id', '=', 'recipe_ingredients.recipe_id')
             ->join('order_items', 'order_items.product_id', '=', 'recipes.product_id')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.delivery_date', '>=', now()->subDays(30))
+            ->where('orders.delivery_date', '>=', now()->subDays(config('analytics.inventory_usage_window_days', 30)))
             ->where('orders.payment_status', PaymentStatus::Paid->value)
             ->selectRaw('recipe_ingredients.ingredient_id, SUM(recipe_ingredients.quantity * order_items.quantity) as total_usage')
             ->groupBy('recipe_ingredients.ingredient_id')

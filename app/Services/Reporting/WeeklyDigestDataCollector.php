@@ -43,7 +43,7 @@ class WeeklyDigestDataCollector
                 ->get(),
             'atRiskCustomers' => Customer::query()
                 ->whereHas('orders')
-                ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays(30)))
+                ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays(config('analytics.at_risk_threshold_days', 30))))
                 ->limit(5)
                 ->get(),
             'upcomingCount' => Order::query()

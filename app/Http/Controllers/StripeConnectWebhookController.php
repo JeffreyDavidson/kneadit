@@ -24,7 +24,7 @@ class StripeConnectWebhookController extends Controller
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        $secret = config('saas.stripe_connect.webhook_secret');
+        $secret = config('kneadit.stripe_connect.webhook_secret');
 
         // Webhook signature verification is mandatory
         if (! $secret) {

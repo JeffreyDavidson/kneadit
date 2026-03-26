@@ -27,7 +27,7 @@ class AtRiskCustomersWidget extends BaseWidget
                     })
                     ->whereDoesntHave('orders', function (Builder $query) {
                         $query->whereNotIn('status', [OrderStatus::Cancelled])
-                            ->where('created_at', '>=', now()->subDays(30));
+                            ->where('created_at', '>=', now()->subDays(config('analytics.at_risk_threshold_days', 30)));
                     })
                     ->limit(5),
             )

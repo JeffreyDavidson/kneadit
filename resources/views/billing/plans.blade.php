@@ -81,11 +81,11 @@
     <div class="container">
         <div class="header">
             <h1>Choose Your Plan</h1>
-            <p>All plans include a {{ config('saas.trial_days') }}-day free trial. No credit card required to start.</p>
+            <p>All plans include a {{ config('kneadit.trial_days') }}-day free trial. No credit card required to start.</p>
         </div>
 
         <div class="plans-grid">
-            @foreach(config('saas.plans') as $key => $plan)
+            @foreach(config('kneadit.plans') as $key => $plan)
                 <div class="plan-card {{ $key === 'growth' ? 'featured' : '' }}">
                     @if($key === 'growth')
                         <div class="badge">Most Popular</div>
@@ -131,7 +131,7 @@
         </div>
 
         <div class="trial-note">
-            <strong>{{ config('saas.trial_days') }}-day free trial</strong> on all plans. Cancel anytime. No questions asked.
+            <strong>{{ config('kneadit.trial_days') }}-day free trial</strong> on all plans. Cancel anytime. No questions asked.
         </div>
 
         @if($currentPlan)

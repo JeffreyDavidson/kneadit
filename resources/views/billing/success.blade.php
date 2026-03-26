@@ -21,7 +21,7 @@
     <div class="card">
         <div class="icon">🎉</div>
         <h1>Welcome to KneadIt!</h1>
-        <p>Your subscription is set up and your {{ config('saas.trial_days') }}-day free trial has started. Time to get baking!</p>
+        <p>Your subscription is set up and your {{ config('kneadit.trial_days') }}-day free trial has started. Time to get baking!</p>
         <a href="{{ route('filament.admin.pages.dashboard') }}">Go to Dashboard →</a>
     </div>
 </body>

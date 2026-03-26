@@ -109,9 +109,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         $priceId = $subscription->stripe_price;
 
         return match ($priceId) {
-            config('saas.stripe_prices.starter') => 'starter',
-            config('saas.stripe_prices.growth') => 'growth',
-            config('saas.stripe_prices.pro') => 'pro',
+            config('kneadit.stripe_prices.starter') => 'starter',
+            config('kneadit.stripe_prices.growth') => 'growth',
+            config('kneadit.stripe_prices.pro') => 'pro',
             default => null,
         };
     }
