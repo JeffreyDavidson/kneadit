@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedOnDomainException;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +36,7 @@ class InitializeTenancyIfNeeded
         try {
             return resolve(InitializeTenancyByDomainOrSubdomain::class)->handle($request, $next);
         } catch (TenantCouldNotBeIdentifiedOnDomainException $e) {
+            Log::warning('Tenant not found for domain', ['domain' => $request->getHost()]);
             abort(404, 'Bakery not found.');
         }
     }

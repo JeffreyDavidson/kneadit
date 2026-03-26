@@ -9,6 +9,7 @@ use App\Services\Customer\BirthdayService;
 use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendBirthdayDiscounts extends Command
@@ -20,6 +21,7 @@ class SendBirthdayDiscounts extends Command
     public function handle(TenancyManager $tenancyManager, BirthdayService $birthdayService): int
     {
         $tenants = Tenant::cursor();
+        $failures = 0;
 
         foreach ($tenants as $tenant) {
             try {
@@ -32,10 +34,12 @@ class SendBirthdayDiscounts extends Command
                 });
             } catch (\Exception $e) {
                 $this->error("Error processing {$tenant->id}: {$e->getMessage()}");
+                Log::warning('Birthday discount processing failed', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
+                $failures++;
             }
         }
 
-        return Command::SUCCESS;
+        return $failures > 0 ? self::FAILURE : self::SUCCESS;
     }
 
     protected function processTenant(Tenant $tenant, BirthdayService $birthdayService): void
@@ -71,6 +75,7 @@ class SendBirthdayDiscounts extends Command
                 $this->info("  ✓ {$customer->name}");
             } catch (\Exception $e) {
                 $this->error("  ✗ {$customer->name}: {$e->getMessage()}");
+                Log::warning('Birthday discount send failed', ['customer' => $customer->name, 'error' => $e->getMessage()]);
             }
         }
     }

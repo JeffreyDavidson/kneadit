@@ -9,6 +9,7 @@ use App\Models\Tenant;
 use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendReviewRequests extends Command
@@ -20,6 +21,7 @@ class SendReviewRequests extends Command
     public function handle(TenancyManager $tenancyManager): int
     {
         $tenants = Tenant::cursor();
+        $failures = 0;
 
         foreach ($tenants as $tenant) {
             try {
@@ -47,9 +49,11 @@ class SendReviewRequests extends Command
                 });
             } catch (\Throwable $e) {
                 $this->error("Failed for {$tenant->id}: {$e->getMessage()}");
+                Log::warning('Review request processing failed', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
+                $failures++;
             }
         }
 
-        return self::SUCCESS;
+        return $failures > 0 ? self::FAILURE : self::SUCCESS;
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendWeeklyDigest extends Command
@@ -19,6 +20,7 @@ class SendWeeklyDigest extends Command
     public function handle(TenancyManager $tenancyManager): int
     {
         $tenants = Tenant::cursor();
+        $failures = 0;
 
         foreach ($tenants as $tenant) {
             try {
@@ -43,9 +45,11 @@ class SendWeeklyDigest extends Command
                 });
             } catch (\Throwable $e) {
                 $this->error("Failed for {$tenant->id}: {$e->getMessage()}");
+                Log::warning('Weekly digest processing failed', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
+                $failures++;
             }
         }
 
-        return self::SUCCESS;
+        return $failures > 0 ? self::FAILURE : self::SUCCESS;
     }
 }

@@ -68,7 +68,7 @@ class InvoiceService
 
             return $invoiceId;
         } catch (\Exception $e) {
-            Log::error("PayPal invoice creation error: {$e->getMessage()}");
+            Log::error('PayPal invoice creation error', ['order_id' => $order->id, 'error' => $e->getMessage()]);
 
             return null;
         }
@@ -105,7 +105,7 @@ class InvoiceService
                 'response' => $response->json(),
             ]);
         } catch (\Exception $e) {
-            Log::error("PayPal invoice cancellation error: {$e->getMessage()}");
+            Log::error('PayPal invoice cancellation error', ['invoice_id' => $invoiceId, 'error' => $e->getMessage()]);
         }
 
         return false;
