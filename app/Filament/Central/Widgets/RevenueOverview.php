@@ -43,23 +43,23 @@ class RevenueOverview extends StatsOverviewWidget
             : 0;
 
         return [
-            Stat::make('Monthly Recurring Revenue', '$'.number_format($mrr))
+            Stat::make('Monthly Recurring Revenue', '$' . number_format($mrr))
                 ->description('Active subscriptions')
                 ->color('success')
                 ->icon('heroicon-o-currency-dollar'),
 
-            Stat::make('Annual Recurring Revenue', '$'.number_format($arr))
+            Stat::make('Annual Recurring Revenue', '$' . number_format($arr))
                 ->description('MRR × 12')
                 ->color('success')
                 ->icon('heroicon-o-banknotes'),
 
-            Stat::make('Trial Conversion', $trialConversion.'%')
-                ->description($convertedFromTrial.' of '.$totalTrialed.' converted')
+            Stat::make('Trial Conversion', $trialConversion . '%')
+                ->description($convertedFromTrial . ' of ' . $totalTrialed . ' converted')
                 ->color($trialConversion >= 50 ? 'success' : 'warning')
                 ->icon('heroicon-o-arrow-path'),
 
-            Stat::make('Churn Rate', $churnRate.'%')
-                ->description($inactive.' inactive of '.$totalEver)
+            Stat::make('Churn Rate', $churnRate . '%')
+                ->description($inactive . ' inactive of ' . $totalEver)
                 ->color($churnRate <= 10 ? 'success' : 'danger')
                 ->icon('heroicon-o-arrow-trending-down'),
         ];

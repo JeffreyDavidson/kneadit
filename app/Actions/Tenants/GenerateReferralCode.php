@@ -18,10 +18,10 @@ class GenerateReferralCode
             ->first();
 
         if (! $referral) {
-            $code = Str::slug($tenant->store_name ?? $tenant->name).'-'.Str::lower(Str::random(4));
+            $code = Str::slug($tenant->store_name ?? $tenant->name) . '-' . Str::lower(Str::random(4));
 
             while (Referral::query()->where('referral_code', $code)->exists()) {
-                $code = Str::slug($tenant->store_name ?? $tenant->name).'-'.Str::lower(Str::random(4));
+                $code = Str::slug($tenant->store_name ?? $tenant->name) . '-' . Str::lower(Str::random(4));
             }
 
             $referral = Referral::query()->create([

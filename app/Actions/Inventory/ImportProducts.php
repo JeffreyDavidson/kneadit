@@ -30,7 +30,7 @@ class ImportProducts
 
         foreach ($parsed['rows'] as $row) {
             if (! empty($row['_errors'])) {
-                $errors[] = "Row {$row['_line']}: ".implode(', ', $row['_errors']);
+                $errors[] = "Row {$row['_line']}: " . implode(', ', $row['_errors']);
 
                 continue;
             }
@@ -42,7 +42,7 @@ class ImportProducts
                     if (! isset($categoryCache[$categoryName])) {
                         $categoryCache[$categoryName] = Category::query()->firstOrCreate(
                             ['name' => $categoryName],
-                            ['slug' => Str::slug($categoryName)]
+                            ['slug' => Str::slug($categoryName)],
                         )->id;
                     }
                     $categoryId = $categoryCache[$categoryName];

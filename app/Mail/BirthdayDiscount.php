@@ -15,7 +15,7 @@ class BirthdayDiscount extends BaseMailable
 
     public function __construct(
         public Customer $customer,
-        public Coupon $coupon
+        public Coupon $coupon,
     ) {
         //
     }

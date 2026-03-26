@@ -19,7 +19,7 @@ class ImpersonateController extends Controller
         abort_unless(
             $request->user() && $request->user()->role === UserRole::PlatformAdmin,
             403,
-            'Unauthorized.'
+            'Unauthorized.',
         );
 
         $token = Str::random(64);

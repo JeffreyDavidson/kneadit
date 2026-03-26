@@ -29,7 +29,7 @@ class AtRiskCustomersWidget extends BaseWidget
                         $query->whereNotIn('status', [OrderStatus::Cancelled])
                             ->where('created_at', '>=', now()->subDays(30));
                     })
-                    ->limit(5)
+                    ->limit(5),
             )
             ->columns([
                 TextColumn::make('name')

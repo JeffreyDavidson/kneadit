@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 $resourceMethods = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
 
-$controllerFiles = collect(glob(__DIR__.'/../../app/Http/Controllers/**/*.php'))
-    ->merge(glob(__DIR__.'/../../app/Http/Controllers/*.php'))
+$controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php'))
+    ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php'))
     ->map(function ($file) {
-        $relative = str_replace(__DIR__.'/../../app/', '', $file);
+        $relative = str_replace(__DIR__ . '/../../app/', '', $file);
 
-        return str_replace(['/', '.php'], ['\\', ''], 'App\\'.$relative);
+        return str_replace(['/', '.php'], ['\\', ''], 'App\\' . $relative);
     })
     ->reject(fn ($class) => $class === 'App\\Http\\Controllers\\Controller')
     ->filter(fn ($class) => class_exists($class))
@@ -34,7 +34,7 @@ foreach ($controllerFiles as $controllerClass) {
         $isResourceful = empty(array_diff($publicMethods, $resourceMethods));
 
         expect($isInvokable || $isResourceful)->toBeTrue(
-            'Must be invokable or resourceful. Found: '.implode(', ', $publicMethods)
+            'Must be invokable or resourceful. Found: ' . implode(', ', $publicMethods),
         );
     });
 }

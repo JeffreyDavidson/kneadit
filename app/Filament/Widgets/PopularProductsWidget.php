@@ -39,11 +39,11 @@ class PopularProductsWidget extends BaseWidget
                         'order_items.product_id',
                         'products.name as product_name',
                         DB::raw('SUM(order_items.quantity) as total_qty'),
-                        DB::raw('SUM(order_items.quantity * order_items.unit_price) as total_revenue')
+                        DB::raw('SUM(order_items.quantity * order_items.unit_price) as total_revenue'),
                     )
                     ->groupBy('order_items.product_id', 'products.name')
                     ->orderByDesc('total_qty')
-                    ->limit(5)
+                    ->limit(5),
             )
             ->columns([
                 TextColumn::make('product_name')

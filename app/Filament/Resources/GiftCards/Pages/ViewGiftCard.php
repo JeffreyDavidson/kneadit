@@ -43,7 +43,7 @@ class ViewGiftCard extends ViewRecord
                     $service->addCredit(
                         $this->record,
                         (float) $data['amount'],
-                        $data['notes'] ?? 'Credit added by admin'
+                        $data['notes'] ?? 'Credit added by admin',
                     );
                 }),
 

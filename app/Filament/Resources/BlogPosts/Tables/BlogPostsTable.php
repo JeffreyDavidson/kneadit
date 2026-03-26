@@ -90,7 +90,7 @@ class BlogPostsTable
                         ->whereNotNull('category')
                         ->distinct()
                         ->pluck('category', 'category')
-                        ->toArray()
+                        ->toArray(),
                     ),
             ]);
     }

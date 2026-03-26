@@ -19,7 +19,7 @@ class StatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        return Cache::flexible('stats_overview_'.(tenant()?->getTenantKey() ?? 'none'), [60, 120], function (): array {
+        return Cache::flexible('stats_overview_' . (tenant()?->getTenantKey() ?? 'none'), [60, 120], function (): array {
             $today = Date::today();
             $weekStart = Date::now()->startOfWeek();
 
@@ -32,20 +32,20 @@ class StatsOverview extends BaseWidget
                     ->icon('heroicon-o-clock')
                     ->color('warning'),
 
-                Stat::make("This Week's Revenue", '$'.number_format(
+                Stat::make("This Week's Revenue", '$' . number_format(
                     (float) Order::query()->active()
                         ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                         ->sum('total'),
-                    2
+                    2,
                 ))
                     ->icon('heroicon-o-currency-dollar')
                     ->color('success'),
 
-                Stat::make('Avg Order Value', '$'.number_format(
+                Stat::make('Avg Order Value', '$' . number_format(
                     (float) Order::query()->active()
                         ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                         ->avg('total'),
-                    2
+                    2,
                 ))
                     ->icon('heroicon-o-receipt-percent')
                     ->color('info'),
@@ -57,14 +57,14 @@ class StatsOverview extends BaseWidget
                 Stat::make('Storefront Views Today', number_format(
                     PageView::query()->whereNull('product_id')
                         ->where('created_at', '>=', $today)
-                        ->count()
+                        ->count(),
                 ))
                     ->icon('heroicon-o-eye')
                     ->color('primary'),
 
                 ...collect([WaitlistEntry::waiting()->where('requested_date', '>=', $today)->count()])
                     ->filter()
-                    ->map(fn (int $count) => Stat::make('Waitlist', $count.' '.str('person')->plural($count))
+                    ->map(fn (int $count) => Stat::make('Waitlist', $count . ' ' . str('person')->plural($count))
                         ->icon('heroicon-o-queue-list')
                         ->color('warning')
                         ->description('Waiting for upcoming dates')
@@ -87,10 +87,10 @@ class StatsOverview extends BaseWidget
                         }
                         $remaining = resolve(CapacityCalculator::class)->remainingSlots($date);
 
-                        return Stat::make("$label Capacity", round($usage).'% full')
+                        return Stat::make("$label Capacity", round($usage) . '% full')
                             ->icon('heroicon-o-exclamation-triangle')
                             ->color($usage >= 100 ? 'danger' : 'warning')
-                            ->description($remaining.' slots remaining');
+                            ->description($remaining . ' slots remaining');
                     })
                     ->filter()
                     ->all(),

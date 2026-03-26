@@ -73,7 +73,7 @@ class ProfitAnalysisService
     }
 
     /**
-     * @param  Collection<int, mixed>  $products
+     * @param Collection<int, mixed> $products
      * @return Collection<int, mixed>
      */
     public function sortProducts(Collection $products, string $sortBy): Collection

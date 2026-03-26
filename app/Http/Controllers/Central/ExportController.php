@@ -38,7 +38,7 @@ class ExportController extends Controller
 
     private function streamCsv(Tenant $tenant, string $type, CsvExportService $csvExport, TenancyManager $tenancyManager): StreamedResponse
     {
-        $filename = "{$tenant->id}_{$type}_".now()->format('Y-m-d_His').'.csv';
+        $filename = "{$tenant->id}_{$type}_" . now()->format('Y-m-d_His') . '.csv';
 
         return response()->streamDownload(function () use ($tenant, $type, $csvExport, $tenancyManager) {
             $tenancyManager->withinTenant($tenant, function () use ($type, $csvExport) {
@@ -57,7 +57,7 @@ class ExportController extends Controller
 
     private function exportAll(Tenant $tenant, CsvExportService $csvExport, TenancyManager $tenancyManager): StreamedResponse
     {
-        $filename = "{$tenant->id}_all_data_".now()->format('Y-m-d_His').'.zip';
+        $filename = "{$tenant->id}_all_data_" . now()->format('Y-m-d_His') . '.zip';
 
         return response()->streamDownload(function () use ($tenant, $csvExport, $tenancyManager) {
             $tmpFile = tempnam(sys_get_temp_dir(), 'export_');

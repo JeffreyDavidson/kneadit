@@ -31,7 +31,7 @@ class MarginAlertWidget extends BaseWidget
 
         return $table
             ->query(
-                Product::query()->whereIn('id', $lowMarginIds ?: [0])
+                Product::query()->whereIn('id', $lowMarginIds ?: [0]),
             )
             ->columns([
                 TextColumn::make('name')
@@ -43,7 +43,7 @@ class MarginAlertWidget extends BaseWidget
                     ->money('usd'),
                 TextColumn::make('recipe.profit_margin')
                     ->label('Margin')
-                    ->formatStateUsing(fn (mixed $state) => $state !== null ? number_format($state, 1).'%' : '—')
+                    ->formatStateUsing(fn (mixed $state) => $state !== null ? number_format($state, 1) . '%' : '—')
                     ->badge()
                     ->color('danger'),
             ])

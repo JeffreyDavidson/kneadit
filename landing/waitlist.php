@@ -32,7 +32,7 @@ $ch = curl_init('https://api.resend.com/audiences');
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer '.$apiKey,
+        'Authorization: Bearer ' . $apiKey,
         'Content-Type: application/json',
     ],
 ]);
@@ -51,7 +51,7 @@ if (! $audienceId) {
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
         CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer '.$apiKey,
+            'Authorization: Bearer ' . $apiKey,
             'Content-Type: application/json',
         ],
         CURLOPT_POSTFIELDS => json_encode(['name' => 'Waitlist']),
@@ -73,7 +73,7 @@ curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
     CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer '.$apiKey,
+        'Authorization: Bearer ' . $apiKey,
         'Content-Type: application/json',
     ],
     CURLOPT_POSTFIELDS => json_encode([

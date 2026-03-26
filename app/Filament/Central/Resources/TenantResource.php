@@ -147,7 +147,7 @@ class TenantResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->copyable()
-                    ->description(fn (Tenant $record) => $record->id.'.getkneadit.app'),
+                    ->description(fn (Tenant $record) => $record->id . '.getkneadit.app'),
 
                 TextColumn::make('store_name')
                     ->label('Bakery')
@@ -223,7 +223,7 @@ class TenantResource extends Resource
                     Actions\Action::make('visit')
                         ->label('Visit Storefront')
                         ->icon('heroicon-o-arrow-top-right-on-square')
-                        ->url(fn (Tenant $record) => 'https://'.$record->id.'.getkneadit.app')
+                        ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
                         ->openUrlInNewTab(),
                 ]),
             ])
@@ -294,8 +294,8 @@ class TenantResource extends Resource
                                 ->placeholder('Not set'),
                             TextEntry::make('id')
                                 ->label('Subdomain URL')
-                                ->formatStateUsing(fn (string $state) => $state.'.getkneadit.app')
-                                ->url(fn (Tenant $record) => 'https://'.$record->id.'.getkneadit.app')
+                                ->formatStateUsing(fn (string $state) => $state . '.getkneadit.app')
+                                ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
                                 ->openUrlInNewTab(),
                             TextEntry::make('custom_domain')
                                 ->label('Custom Domain')

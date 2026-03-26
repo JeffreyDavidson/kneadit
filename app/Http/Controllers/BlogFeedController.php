@@ -24,16 +24,16 @@ class BlogFeedController extends Controller
         $xml .= '<link>https://getkneadit.app/resources</link>';
         $xml .= '<description>Guides, tips, and resources for cottage food bakers.</description>';
         $xml .= '<language>en-us</language>';
-        $xml .= '<atom:link href="'.url('/resources/feed.xml').'" rel="self" type="application/rss+xml"/>';
+        $xml .= '<atom:link href="' . url('/resources/feed.xml') . '" rel="self" type="application/rss+xml"/>';
 
         foreach ($posts as $post) {
             $xml .= '<item>';
-            $xml .= '<title>'.htmlspecialchars($post->title).'</title>';
-            $xml .= '<link>'.url("/resources/{$post->slug}").'</link>';
-            $xml .= '<guid isPermaLink="true">'.url("/resources/{$post->slug}").'</guid>';
-            $xml .= '<description>'.htmlspecialchars($post->excerpt ?? strip_tags(substr($post->body, 0, 300))).'</description>';
-            $xml .= '<pubDate>'.$post->published_at?->toRfc2822String().'</pubDate>';
-            $xml .= '<category>'.htmlspecialchars($post->category).'</category>';
+            $xml .= '<title>' . htmlspecialchars($post->title) . '</title>';
+            $xml .= '<link>' . url("/resources/{$post->slug}") . '</link>';
+            $xml .= '<guid isPermaLink="true">' . url("/resources/{$post->slug}") . '</guid>';
+            $xml .= '<description>' . htmlspecialchars($post->excerpt ?? strip_tags(substr($post->body, 0, 300))) . '</description>';
+            $xml .= '<pubDate>' . $post->published_at?->toRfc2822String() . '</pubDate>';
+            $xml .= '<category>' . htmlspecialchars($post->category) . '</category>';
             $xml .= '</item>';
         }
 

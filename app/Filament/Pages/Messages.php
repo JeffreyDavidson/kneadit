@@ -83,7 +83,7 @@ class Messages extends Page
         PlatformMessage::query()->create([
             'tenant_id' => $tenant?->id,
             'sender_type' => PlatformSenderType::Tenant,
-            'subject' => 'Re: '.$parent->subject,
+            'subject' => 'Re: ' . $parent->subject,
             'body' => $this->replyBody,
             'parent_id' => $parent->id,
         ]);

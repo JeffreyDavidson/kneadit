@@ -84,7 +84,7 @@ class FeatureUsage extends Page
 
         $logs = FeatureUsageLog::query()->whereBetween('date', [$days->first()->toDateString(), $days->last()->toDateString()])
             ->get()
-            ->groupBy(fn (FeatureUsageLog $log) => $log->feature.'|'.$log->date->toDateString());
+            ->groupBy(fn (FeatureUsageLog $log) => $log->feature . '|' . $log->date->toDateString());
 
         $maxCount = $logs->max(fn (Collection $group) => $group->sum('usage_count')) ?: 1;
 
@@ -92,7 +92,7 @@ class FeatureUsage extends Page
         foreach ($features as $feature) {
             $cells = [];
             foreach ($days as $day) {
-                $key = $feature.'|'.$day->toDateString();
+                $key = $feature . '|' . $day->toDateString();
                 $count = isset($logs[$key]) ? $logs[$key]->sum('usage_count') : 0;
                 $intensity = $maxCount > 0 ? $count / $maxCount : 0;
                 $cells[] = [

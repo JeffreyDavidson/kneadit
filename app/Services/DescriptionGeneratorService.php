@@ -84,8 +84,8 @@ class DescriptionGeneratorService
             $adjective = $adjectivePool[array_rand($adjectivePool)];
             $text = str_replace(
                 ['{product}', '{category}', '{adjective}', '{price}'],
-                [$product, $category ?: 'baked goods', $adjective, $price ? '$'.number_format($price, 2) : ''],
-                $templates[$key]
+                [$product, $category ?: 'baked goods', $adjective, $price ? '$' . number_format($price, 2) : ''],
+                $templates[$key],
             );
             $descriptions[] = $this->adjustLength($text, $length, $product, $category ?: 'baked goods', $adjectivePool);
         }
@@ -135,6 +135,6 @@ class DescriptionGeneratorService
 
         $replace = fn (string $s) => str_replace(['{product}', '{category}', '{adjective}'], [$product, $category, $adj], $s);
 
-        return $base.' '.$replace($extra1).' '.$replace($extra2);
+        return $base . ' ' . $replace($extra1) . ' ' . $replace($extra2);
     }
 }

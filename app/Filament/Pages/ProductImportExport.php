@@ -104,7 +104,7 @@ class ProductImportExport extends Page
                             ->color('success')
                             ->action(function () {
                                 $csv = resolve(ProductCsvExporter::class)->export();
-                                $filename = 'products-'.now()->format('Y-m-d').'.csv';
+                                $filename = 'products-' . now()->format('Y-m-d') . '.csv';
 
                                 return response()->streamDownload(function () use ($csv) {
                                     echo $csv;
@@ -147,11 +147,11 @@ class ProductImportExport extends Page
                                     return;
                                 }
 
-                                $fullPath = storage_path('app/private/'.$filePath);
+                                $fullPath = storage_path('app/private/' . $filePath);
 
                                 if (! file_exists($fullPath)) {
                                     // Try public disk
-                                    $fullPath = storage_path('app/public/'.$filePath);
+                                    $fullPath = storage_path('app/public/' . $filePath);
                                 }
 
                                 if (! file_exists($fullPath)) {
@@ -168,12 +168,12 @@ class ProductImportExport extends Page
 
                                 if (empty($result['errors'])) {
                                     Notification::make()
-                                        ->title('Preview ready: '.count($result['rows']).' rows found.')
+                                        ->title('Preview ready: ' . count($result['rows']) . ' rows found.')
                                         ->success()
                                         ->send();
                                 } else {
                                     Notification::make()
-                                        ->title('Preview has '.count($result['errors']).' error(s). Fix before importing.')
+                                        ->title('Preview has ' . count($result['errors']) . ' error(s). Fix before importing.')
                                         ->danger()
                                         ->send();
                                 }
@@ -194,10 +194,10 @@ class ProductImportExport extends Page
                                     return;
                                 }
 
-                                $fullPath = storage_path('app/private/'.$filePath);
+                                $fullPath = storage_path('app/private/' . $filePath);
 
                                 if (! file_exists($fullPath)) {
-                                    $fullPath = storage_path('app/public/'.$filePath);
+                                    $fullPath = storage_path('app/public/' . $filePath);
                                 }
 
                                 if (! file_exists($fullPath)) {
@@ -218,7 +218,7 @@ class ProductImportExport extends Page
                                 } else {
                                     Notification::make()
                                         ->title('Import finished with errors')
-                                        ->body("{$this->importResults['created']} created, {$this->importResults['updated']} updated, ".count($this->importResults['errors']).' errors.')
+                                        ->body("{$this->importResults['created']} created, {$this->importResults['updated']} updated, " . count($this->importResults['errors']) . ' errors.')
                                         ->warning()
                                         ->send();
                                 }

@@ -22,7 +22,7 @@ class OrderFactory extends Factory
         $subtotal = fake()->randomFloat(2, 10, 200);
 
         return [
-            'order_number' => 'ORD-'.str_pad((string) fake()->unique()->randomNumber(6), 6, '0', STR_PAD_LEFT),
+            'order_number' => 'ORD-' . str_pad((string) fake()->unique()->randomNumber(6), 6, '0', STR_PAD_LEFT),
             'customer_id' => Customer::factory(),
             'user_id' => User::factory(),
             'status' => OrderStatus::Pending,

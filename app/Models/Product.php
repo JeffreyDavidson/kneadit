@@ -222,7 +222,7 @@ class Product extends Model
                     return 'Limited Time';
                 }
 
-                return 'Available '.$seasonal->available_from?->format('M').' - '.$seasonal->available_until?->format('M');
+                return 'Available ' . $seasonal->available_from?->format('M') . ' - ' . $seasonal->available_until?->format('M');
             },
         );
     }

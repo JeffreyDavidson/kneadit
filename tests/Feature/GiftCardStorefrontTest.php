@@ -14,7 +14,7 @@ function makeGiftCard(array $overrides = []): GiftCard
     $counter++;
 
     return GiftCard::query()->create(array_merge([
-        'code' => 'GIFT-TEST-'.str_pad($counter, 4, '0', STR_PAD_LEFT),
+        'code' => 'GIFT-TEST-' . str_pad($counter, 4, '0', STR_PAD_LEFT),
         'initial_balance' => 50.00,
         'current_balance' => 50.00,
         'purchaser_name' => 'John Doe',

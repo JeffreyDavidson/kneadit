@@ -121,13 +121,13 @@ class QrCodeGenerator extends Page
 
     public function generateQrCode(): void
     {
-        $baseUrl = 'http://'.tenant()->domains->first()->domain;
+        $baseUrl = 'http://' . tenant()->domains->first()->domain;
         $page = $this->data['page'] ?? '';
         $size = (int) ($this->data['size'] ?? 300);
         $color = $this->data['color'] ?? '#3E2723';
         $format = $this->data['format'] ?? 'svg';
 
-        $this->currentUrl = $baseUrl.($page ? '/'.$page : '');
+        $this->currentUrl = $baseUrl . ($page ? '/' . $page : '');
 
         // Parse hex color to RGB
         $hex = ltrim($color, '#');
@@ -151,13 +151,13 @@ class QrCodeGenerator extends Page
 
     public function downloadQrCode(): StreamedResponse
     {
-        $baseUrl = 'http://'.tenant()->domains->first()->domain;
+        $baseUrl = 'http://' . tenant()->domains->first()->domain;
         $page = $this->data['page'] ?? '';
         $size = (int) ($this->data['size'] ?? 300);
         $color = $this->data['color'] ?? '#3E2723';
         $format = $this->data['format'] ?? 'svg';
 
-        $url = $baseUrl.($page ? '/'.$page : '');
+        $url = $baseUrl . ($page ? '/' . $page : '');
 
         $hex = ltrim($color, '#');
         $r = hexdec(substr($hex, 0, 2));
@@ -169,7 +169,7 @@ class QrCodeGenerator extends Page
         if ($format === 'png') {
             /** @var string $content */
             $content = $qr->format('png')->generate($url);
-            $filename = 'qr-code.'.($page ?: 'home').'.png';
+            $filename = 'qr-code.' . ($page ?: 'home') . '.png';
 
             return Response::streamDownload(fn () => print ((string) $content), $filename, [
                 'Content-Type' => 'image/png',
@@ -177,7 +177,7 @@ class QrCodeGenerator extends Page
         } else {
             /** @var string $content */
             $content = $qr->generate($url);
-            $filename = 'qr-code.'.($page ?: 'home').'.svg';
+            $filename = 'qr-code.' . ($page ?: 'home') . '.svg';
 
             return Response::streamDownload(fn () => print ((string) $content), $filename, [
                 'Content-Type' => 'image/svg+xml',

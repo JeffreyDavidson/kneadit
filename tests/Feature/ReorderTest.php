@@ -18,11 +18,11 @@ function createOrderWithItems(string $productName = 'Sourdough', float $price = 
 {
     $user = User::query()->create(['name' => 'Baker', 'email' => 'baker@test.com', 'password' => bcrypt('pass')]);
     $customer = Customer::query()->create(['name' => 'Test', 'email' => 'test@example.com']);
-    $category = Category::query()->create(['name' => $productName.' Cat', 'slug' => 'cat-'.uniqid()]);
-    $product = Product::query()->create(['name' => $productName, 'slug' => Str::slug($productName).'-'.uniqid(), 'price' => $price, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::query()->create(['name' => $productName . ' Cat', 'slug' => 'cat-' . uniqid()]);
+    $product = Product::query()->create(['name' => $productName, 'slug' => Str::slug($productName) . '-' . uniqid(), 'price' => $price, 'category_id' => $category->id, 'is_active' => true]);
 
     $order = Order::query()->create([
-        'order_number' => 'ORD-RE-'.uniqid(),
+        'order_number' => 'ORD-RE-' . uniqid(),
         'customer_id' => $customer->id,
         'user_id' => $user->id,
         'status' => 'delivered',

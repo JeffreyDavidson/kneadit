@@ -24,7 +24,7 @@ class OrderController extends Controller
         $categories->each(function (Category $category) {
             $category->setRelation(
                 'products',
-                $category->products->filter(fn (Product $product) => $product->isInSeason())
+                $category->products->filter(fn (Product $product) => $product->isInSeason()),
             );
         });
 
@@ -54,7 +54,7 @@ class OrderController extends Controller
             $stripeService = resolve(StripeCheckoutService::class);
             $session = $stripeService->createCheckoutSession(
                 $order,
-                route('order.stripe.success', $order).'?session_id={CHECKOUT_SESSION_ID}',
+                route('order.stripe.success', $order) . '?session_id={CHECKOUT_SESSION_ID}',
                 route('order.stripe.cancel', $order),
             );
 

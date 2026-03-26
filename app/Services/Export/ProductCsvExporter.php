@@ -12,7 +12,7 @@ class ProductCsvExporter
 
     public function getTemplateContent(): string
     {
-        return implode(',', $this->headers)."\n";
+        return implode(',', $this->headers) . "\n";
     }
 
     public function export(): string
@@ -64,7 +64,7 @@ class ProductCsvExporter
         if (! empty($missing)) {
             fclose($handle);
 
-            return ['rows' => [], 'errors' => ['Missing required columns: '.implode(', ', $missing)]];
+            return ['rows' => [], 'errors' => ['Missing required columns: ' . implode(', ', $missing)]];
         }
 
         $line = 1;
@@ -94,7 +94,7 @@ class ProductCsvExporter
             $rows[] = $mapped;
 
             if (! empty($rowErrors)) {
-                $errors[] = "Row {$line}: ".implode(', ', $rowErrors);
+                $errors[] = "Row {$line}: " . implode(', ', $rowErrors);
             }
         }
 

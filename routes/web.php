@@ -18,8 +18,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-require __DIR__.'/billing.php';
-require __DIR__.'/admin.php';
+require __DIR__ . '/billing.php';
+require __DIR__ . '/admin.php';
 
 // Auth routes (central only)
 Route::middleware('web')->group(function () {

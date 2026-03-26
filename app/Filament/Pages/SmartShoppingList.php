@@ -100,7 +100,7 @@ class SmartShoppingList extends Page
                 items: $group['items'],
                 total: $group['total'],
                 requestedDate: now()->addDays(
-                    (int) max(3, ...array_column($group['items'], 'lead_time_days'))
+                    (int) max(3, ...array_column($group['items'], 'lead_time_days')),
                 )->format('Y-m-d'),
             ));
 

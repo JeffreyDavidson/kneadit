@@ -18,7 +18,7 @@ class CustomerPhotoFactory extends Factory
             'customer_name' => fake()->name(),
             'customer_email' => fake()->safeEmail(),
             'caption' => fake()->optional()->sentence(),
-            'photo_path' => 'customer-photos/'.fake()->uuid().'.jpg',
+            'photo_path' => 'customer-photos/' . fake()->uuid() . '.jpg',
             'product_id' => null,
             'is_approved' => false,
             'is_featured' => false,

@@ -51,7 +51,7 @@ class ReorderRemindersWidget extends Widget
                 ->havingRaw('COUNT(orders.id) >= 2')
                 ->havingRaw('MAX(orders.created_at) < ?', [$thirtyDaysAgo])
                 ->select('customers.id')->toBase(),
-            'lapsed'
+            'lapsed',
         )->count();
     }
 }

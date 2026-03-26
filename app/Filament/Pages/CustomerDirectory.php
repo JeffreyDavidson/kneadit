@@ -92,7 +92,7 @@ class CustomerDirectory extends Page
             ->selectRaw('AVG(customer_total) as avg_ltv')
             ->fromSub(
                 Order::query()->active()->selectRaw('customer_id, SUM(total) as customer_total')->groupBy('customer_id'),
-                'customer_totals'
+                'customer_totals',
             )
             ->value('avg_ltv');
 
@@ -128,9 +128,9 @@ class CustomerDirectory extends Page
 
         if ($this->search) {
             $query->where(function (Builder $q) {
-                $q->whereLike('name', '%'.$this->search.'%')
-                    ->orWhereLike('email', '%'.$this->search.'%')
-                    ->orWhereLike('phone', '%'.$this->search.'%');
+                $q->whereLike('name', '%' . $this->search . '%')
+                    ->orWhereLike('email', '%' . $this->search . '%')
+                    ->orWhereLike('phone', '%' . $this->search . '%');
             });
         }
 

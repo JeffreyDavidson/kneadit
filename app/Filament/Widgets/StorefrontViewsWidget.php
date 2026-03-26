@@ -26,7 +26,7 @@ class StorefrontViewsWidget extends BaseWidget
             ? round((($today - $yesterday) / $yesterday) * 100)
             : ($today > 0 ? 100 : 0);
 
-        $description = $trend >= 0 ? "{$trend}% increase vs yesterday" : abs($trend).'% decrease vs yesterday';
+        $description = $trend >= 0 ? "{$trend}% increase vs yesterday" : abs($trend) . '% decrease vs yesterday';
         $icon = $trend >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down';
         $color = $trend >= 0 ? 'success' : 'danger';
 

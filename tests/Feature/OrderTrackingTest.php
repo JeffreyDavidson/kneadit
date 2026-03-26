@@ -73,7 +73,7 @@ test('tracking shows correct status for each order stage', function () {
 
     foreach (['pending', 'confirmed', 'baking', 'ready', 'delivered'] as $status) {
         Order::query()->create([
-            'order_number' => 'KN'.strtoupper($status),
+            'order_number' => 'KN' . strtoupper($status),
             'customer_id' => $customer->id,
             'status' => $status,
             'subtotal' => 10.00,

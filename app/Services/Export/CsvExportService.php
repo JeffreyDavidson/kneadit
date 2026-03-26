@@ -63,7 +63,7 @@ class CsvExportService
     /**
      * Write CSV data to a file handle.
      *
-     * @param  resource  $handle
+     * @param resource $handle
      */
     public function writeTo(mixed $handle, string $type): void
     {

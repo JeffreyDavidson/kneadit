@@ -145,7 +145,7 @@ class QuickOrder extends Page
                     $totalItems = count($items);
                     $subtotal = collect($items)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
 
-                    return $totalItems.' items · Subtotal: $'.number_format($subtotal, 2);
+                    return $totalItems . ' items · Subtotal: $' . number_format($subtotal, 2);
                 })
                 ->schema([
                     Repeater::make('order_items')
@@ -160,7 +160,7 @@ class QuickOrder extends Page
                                         ->orderBy('name')
                                         ->get()
                                         ->mapWithKeys(fn (Product $product): array => [
-                                            $product->id => $product->name.' - $'.number_format($product->price, 2),
+                                            $product->id => $product->name . ' - $' . number_format($product->price, 2),
                                         ]))
                                     ->live()
                                     ->afterStateUpdated(function (Set $set, ?string $state) {

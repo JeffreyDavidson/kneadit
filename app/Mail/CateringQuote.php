@@ -13,7 +13,7 @@ class CateringQuote extends BaseMailable
     use BakerBranded;
 
     public function __construct(
-        public CateringInquiry $inquiry
+        public CateringInquiry $inquiry,
     ) {}
 
     public function envelope(): Envelope

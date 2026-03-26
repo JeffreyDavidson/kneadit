@@ -57,7 +57,7 @@ class ThemeSelector extends Page
         $this->dispatch('$refresh');
 
         Notification::make()
-            ->title('Theme updated to '.ucfirst($theme))
+            ->title('Theme updated to ' . ucfirst($theme))
             ->success()
             ->send();
     }

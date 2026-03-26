@@ -29,7 +29,7 @@ class RecipesTable
 
                 TextColumn::make('prep_time_minutes')
                     ->label('Prep Time')
-                    ->formatStateUsing(fn (?int $state) => $state ? $state.' min' : '-')
+                    ->formatStateUsing(fn (?int $state) => $state ? $state . ' min' : '-')
                     ->sortable(),
 
                 TextColumn::make('cost')
@@ -39,7 +39,7 @@ class RecipesTable
                 TextColumn::make('ingredients')
                     ->formatStateUsing(function (mixed $state) {
                         if (is_array($state)) {
-                            return collect($state)->take(3)->pluck('name')->join(', ').
+                            return collect($state)->take(3)->pluck('name')->join(', ') .
                                    (count($state) > 3 ? '...' : '');
                         }
 

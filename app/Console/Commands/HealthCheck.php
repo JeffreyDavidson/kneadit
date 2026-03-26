@@ -73,7 +73,7 @@ class HealthCheck extends Command
         try {
             $response = Http::timeout(10)->get(config('app.url'));
             if ($response->successful()) {
-                $this->info('✓ Homepage responds ('.$response->status().')');
+                $this->info('✓ Homepage responds (' . $response->status() . ')');
             } else {
                 $issues[] = "Homepage returned status {$response->status()}";
                 $this->error("✗ Homepage returned {$response->status()}");
@@ -99,7 +99,7 @@ class HealthCheck extends Command
     protected function alertOnIssues(array $issues): void
     {
         $issueText = implode("\n- ", $issues);
-        $message = "KneadIt Health Check Alert\n\nIssues detected:\n- {$issueText}\n\nTime: ".now()->toDateTimeString();
+        $message = "KneadIt Health Check Alert\n\nIssues detected:\n- {$issueText}\n\nTime: " . now()->toDateTimeString();
 
         Log::critical('Health check failed', ['issues' => $issues]);
 
@@ -107,10 +107,10 @@ class HealthCheck extends Command
         try {
             $alertEmail = config('mail.platform_notify');
             Mail::to($alertEmail)->queue(new HealthAlertMail($message));
-            $this->info('Alert email sent to '.$alertEmail);
+            $this->info('Alert email sent to ' . $alertEmail);
         } catch (\Exception $e) {
             Log::error('Failed to send health check alert email', ['error' => $e->getMessage()]);
-            $this->error('Failed to send alert email: '.$e->getMessage());
+            $this->error('Failed to send alert email: ' . $e->getMessage());
         }
     }
 }

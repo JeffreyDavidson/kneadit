@@ -34,7 +34,7 @@ class TopProductsWidget extends ChartWidget
             ->whereBetween('orders.delivery_date', $range->toArray())
             ->select(
                 'products.name',
-                DB::raw('SUM(order_items.quantity * order_items.unit_price) as revenue')
+                DB::raw('SUM(order_items.quantity * order_items.unit_price) as revenue'),
             )
             ->groupBy('products.name')
             ->orderByDesc('revenue')

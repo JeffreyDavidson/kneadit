@@ -12,7 +12,7 @@ class NewOrderMessage extends BaseMailable
     use BakerBranded;
 
     public function __construct(
-        public OrderMessage $orderMessage
+        public OrderMessage $orderMessage,
     ) {}
 
     public function envelope(): Envelope

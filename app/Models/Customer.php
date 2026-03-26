@@ -214,7 +214,7 @@ class Customer extends Model
         return Attribute::make(
             get: fn () => collect([$this->address, $this->city, $this->state])
                 ->filter()
-                ->implode(', ').($this->zip ? " {$this->zip}" : ''),
+                ->implode(', ') . ($this->zip ? " {$this->zip}" : ''),
         );
     }
 }

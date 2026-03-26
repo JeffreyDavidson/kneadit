@@ -211,9 +211,9 @@ class ViewOrder extends ViewRecord
                 ->action(function (array $data): void {
                     $currentNotes = $this->record->notes;
                     $timestamp = now()->format('Y-m-d H:i:s');
-                    $newNote = "[{$timestamp}] ".$data['note'];
+                    $newNote = "[{$timestamp}] " . $data['note'];
 
-                    $updatedNotes = $currentNotes ? $currentNotes."\n\n".$newNote : $newNote;
+                    $updatedNotes = $currentNotes ? $currentNotes . "\n\n" . $newNote : $newNote;
 
                     $this->record->update(['notes' => $updatedNotes]);
 

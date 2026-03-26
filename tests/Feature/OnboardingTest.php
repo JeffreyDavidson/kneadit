@@ -338,7 +338,7 @@ test('complete onboarding timestamp is valid iso date', function () {
 test('onboarding page is hidden from navigation', function () {
     expect(
         (new ReflectionClass(Onboarding::class))
-            ->getStaticPropertyValue('shouldRegisterNavigation')
+            ->getStaticPropertyValue('shouldRegisterNavigation'),
     )->toBeFalse();
 });
 

@@ -69,7 +69,7 @@ class ActivityLogPage extends Page
         }
 
         if ($this->filterDateTo) {
-            $query->where('created_at', '<=', $this->filterDateTo.' 23:59:59');
+            $query->where('created_at', '<=', $this->filterDateTo . ' 23:59:59');
         }
 
         return $query->paginate($this->perPage, ['*'], 'page', $this->page);

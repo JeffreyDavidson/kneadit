@@ -26,8 +26,8 @@ test('backup creates backup directory', function () {
     $this->artisan('backup:databases');
 
     $possibleDirs = [
-        dirname(base_path()).'/backups',
-        base_path().'/../backups',
+        dirname(base_path()) . '/backups',
+        base_path() . '/../backups',
     ];
 
     $found = false;

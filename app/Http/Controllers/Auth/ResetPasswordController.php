@@ -36,7 +36,7 @@ class ResetPasswordController extends Controller
                 $user->save();
 
                 event(new PasswordReset($user));
-            }
+            },
         );
 
         return $status === Password::PASSWORD_RESET

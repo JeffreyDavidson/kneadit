@@ -43,7 +43,7 @@ $entry = [
     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
 ];
 
-$file = __DIR__.'/data/contacts.json';
+$file = __DIR__ . '/data/contacts.json';
 $dir = dirname($file);
 if (! is_dir($dir)) {
     mkdir($dir, 0755, true);

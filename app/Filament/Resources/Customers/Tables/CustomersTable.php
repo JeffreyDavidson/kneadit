@@ -121,7 +121,7 @@ class CustomersTable
                 Filter::make('has_birthday_this_month')
                     ->label('Birthday This Month')
                     ->query(fn (Builder $query) => $query->whereNotNull('birthday')
-                        ->whereMonth('birthday', now()->month)
+                        ->whereMonth('birthday', now()->month),
                     ),
             ])
             ->recordActions([

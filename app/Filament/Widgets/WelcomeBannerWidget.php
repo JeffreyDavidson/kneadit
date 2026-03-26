@@ -45,7 +45,7 @@ class WelcomeBannerWidget extends Widget
             (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
                 ->whereDate('delivery_date', Date::today())
                 ->sum('total'),
-            2
+            2,
         );
     }
 

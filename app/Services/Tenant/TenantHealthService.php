@@ -103,7 +103,7 @@ class TenantHealthService
                         'name' => $tenant->store_name ?? $tenant->name,
                         'type' => 'no_orders',
                         'type_label' => 'No Orders',
-                        'description' => 'Zero orders in the last '.config('monitoring.churn_no_orders_days', 30).' days.',
+                        'description' => 'Zero orders in the last ' . config('monitoring.churn_no_orders_days', 30) . ' days.',
                         'days_since_signup' => $daysSinceSignup,
                         'severity' => 'warning',
                     ]);

@@ -69,7 +69,7 @@ class IngredientResource extends Resource
     {
         return [
             'Supplier' => $record->supplier ?? 'N/A',
-            'Stock' => $record->current_stock.' '.($record->unit ?? ''),
+            'Stock' => $record->current_stock . ' ' . ($record->unit ?? ''),
         ];
     }
 

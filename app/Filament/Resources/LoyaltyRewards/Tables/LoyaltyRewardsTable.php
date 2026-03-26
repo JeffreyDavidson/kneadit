@@ -31,8 +31,8 @@ class LoyaltyRewardsTable
                         $type = $record->reward_type;
 
                         return match ($type) {
-                            RewardType::PercentageDiscount => $state.'%',
-                            RewardType::FixedDiscount => '$'.number_format((float) $state, 2),
+                            RewardType::PercentageDiscount => $state . '%',
+                            RewardType::FixedDiscount => '$' . number_format((float) $state, 2),
                             RewardType::FreeProduct => $record->product->name ?? '-',
                         };
                     })

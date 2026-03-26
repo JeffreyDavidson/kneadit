@@ -42,7 +42,7 @@ class ReviewsTable
                         'warning' => 3,
                         'success' => fn (int $state) => $state >= 4,
                     ])
-                    ->formatStateUsing(fn (int $state) => $state.' ★'),
+                    ->formatStateUsing(fn (int $state) => $state . ' ★'),
 
                 TextColumn::make('comment')
                     ->limit(50)

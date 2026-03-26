@@ -68,9 +68,9 @@ class LoyaltyReward extends Model
     {
         return Attribute::make(
             get: fn () => match ($this->reward_type) {
-                RewardType::PercentageDiscount => $this->reward_value.'% Off',
-                RewardType::FixedDiscount => '$'.number_format((float) $this->reward_value, 2).' Off',
-                RewardType::FreeProduct => 'Free '.($this->product->name ?? 'Product'),
+                RewardType::PercentageDiscount => $this->reward_value . '% Off',
+                RewardType::FixedDiscount => '$' . number_format((float) $this->reward_value, 2) . ' Off',
+                RewardType::FreeProduct => 'Free ' . ($this->product->name ?? 'Product'),
             },
         );
     }

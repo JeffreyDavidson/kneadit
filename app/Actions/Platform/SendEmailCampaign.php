@@ -20,7 +20,7 @@ class SendEmailCampaign
 
         foreach ($emails as $email) {
             Mail::to($email)->queue(
-                new CustomerBlast($campaign->subject, $campaign->body)
+                new CustomerBlast($campaign->subject, $campaign->body),
             );
         }
 

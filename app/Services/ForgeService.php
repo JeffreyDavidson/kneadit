@@ -64,7 +64,7 @@ class ForgeService
             // Update site aliases
             $updateResponse = $this->request()->put(
                 "/servers/{$this->serverId}/sites/{$this->siteId}",
-                ['aliases' => $currentAliases]
+                ['aliases' => $currentAliases],
             );
 
             if (! $updateResponse->successful()) {
@@ -94,7 +94,7 @@ class ForgeService
         try {
             $response = $this->request()->post(
                 "/servers/{$this->serverId}/sites/{$this->siteId}/certificates/letsencrypt",
-                ['domains' => [$domain]]
+                ['domains' => [$domain]],
             );
 
             if (! $response->successful()) {
@@ -135,7 +135,7 @@ class ForgeService
 
             $updateResponse = $this->request()->put(
                 "/servers/{$this->serverId}/sites/{$this->siteId}",
-                ['aliases' => $currentAliases]
+                ['aliases' => $currentAliases],
             );
 
             return $updateResponse->successful();

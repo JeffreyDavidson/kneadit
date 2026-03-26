@@ -26,7 +26,7 @@ class CapacityLimitsTable
                 TextColumn::make('day_label')
                     ->label('Day / Date')
                     ->sortable(query: fn (Builder $query, string $direction) => $query
-                        ->orderByRaw('COALESCE(specific_date, day_of_week) '.($direction === 'desc' ? 'desc' : 'asc'))
+                        ->orderByRaw('COALESCE(specific_date, day_of_week) ' . ($direction === 'desc' ? 'desc' : 'asc')),
                     )
                     ->getStateUsing(function (CapacityLimit $record) {
                         if ($record->specific_date) {
