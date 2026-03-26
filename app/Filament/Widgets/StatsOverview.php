@@ -10,6 +10,7 @@ use App\Models\WaitlistEntry;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 
 class StatsOverview extends BaseWidget
@@ -18,7 +19,7 @@ class StatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        return once(function (): array {
+        return Cache::flexible('stats_overview_'.(tenant()?->getTenantKey() ?? 'none'), [60, 120], function (): array {
             $today = Date::today();
             $weekStart = Date::now()->startOfWeek();
 

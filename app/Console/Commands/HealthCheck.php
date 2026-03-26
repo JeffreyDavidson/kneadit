@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\HealthAlertMail;
 use Illuminate\Console\Command;
-use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -106,11 +106,7 @@ class HealthCheck extends Command
         // Send email alert
         try {
             $alertEmail = config('mail.platform_notify');
-            Mail::raw($message, function (Message $m) use ($alertEmail) {
-                $m->to($alertEmail)
-                    ->subject('⚠️ KneadIt Health Check Alert')
-                    ->from(config('mail.from.address'), 'KneadIt Platform');
-            });
+            Mail::to($alertEmail)->queue(new HealthAlertMail($message));
             $this->info('Alert email sent to '.$alertEmail);
         } catch (\Exception $e) {
             Log::error('Failed to send health check alert email', ['error' => $e->getMessage()]);

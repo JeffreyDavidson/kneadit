@@ -56,7 +56,7 @@
 
 <div class="post-body">
     <div class="prose">
-        {!! $post->body !!}
+        {!! clean($post->body) !!}
     </div>
 
     {{-- CTA --}}

@@ -142,6 +142,6 @@ test('command source sends at three intervals', function () {
 test('expired handler sends expiration email', function () {
     $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirations.php'));
 
-    expect($source)->toContain('trial has expired');
-    expect($source)->toContain('storefront has been paused');
+    expect(file_get_contents(resource_path('views/emails/trial-expired-text.blade.php')))->toContain('trial has expired');
+    expect(file_get_contents(resource_path('views/emails/trial-expired-text.blade.php')))->toContain('storefront has been paused');
 });
