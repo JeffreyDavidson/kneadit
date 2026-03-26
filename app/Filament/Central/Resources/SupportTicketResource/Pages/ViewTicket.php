@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources\SupportTicketResource\Pages;
 
+use App\Enums\SupportTicketStatus;
 use App\Filament\Central\Resources\SupportTicketResource;
 use Filament\Resources\Pages\ViewRecord;
 use Livewire\Attributes\Rule;
@@ -12,7 +13,7 @@ class ViewTicket extends ViewRecord
 
     protected string $view = 'filament.central.pages.view-ticket';
 
-    #[Rule('required|min:3')]
+    #[Rule(['required', 'min:3'])]
     public string $replyBody = '';
 
     public function addReply(): void
@@ -33,7 +34,7 @@ class ViewTicket extends ViewRecord
     {
         $data = ['status' => $status];
 
-        if ($status === 'resolved') {
+        if ($status === SupportTicketStatus::Resolved->value) {
             $data['resolved_at'] = now();
         }
 

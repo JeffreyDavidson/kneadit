@@ -37,7 +37,7 @@ class SendWeeklyDigest extends Command
                 }
 
                 foreach ($users as $user) {
-                    Mail::to($user->email)->send(new WeeklyDigest);
+                    Mail::to($user->email)->queue(new WeeklyDigest);
                 }
 
                 $this->info("Sent digest for {$tenant->id} to {$users->count()} user(s)");
