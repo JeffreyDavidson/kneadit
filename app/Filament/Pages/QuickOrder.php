@@ -294,7 +294,7 @@ class QuickOrder extends Page
                 // Calculate totals
                 /** @var array<int, array<string, mixed>> $orderItems */
                 $orderItems = $data['order_items'] ?? [];
-                $subtotal = collect($orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
+                $subtotal = collect($orderItems)->sum(fn (array $item) => (float) ($item['quantity'] ?? 0) * (float) ($item['unit_price'] ?? 0));
                 $deliveryFee = ($data['delivery_type'] === DeliveryType::Delivery->value) ? 5.00 : 0.00;
                 $total = $subtotal + $deliveryFee;
 

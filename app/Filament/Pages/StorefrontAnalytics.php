@@ -115,7 +115,7 @@ class StorefrontAnalytics extends Page
         return round(($completedOrders / $orderPageViews) * 100, 1);
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, PageView> */
     public function getPageViewsChart(): Collection
     {
         $data = $this->baseQuery()
@@ -128,7 +128,7 @@ class StorefrontAnalytics extends Page
         return $data;
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, PageView> */
     public function getDailyTrend(): Collection
     {
         $start = now()->subDays(30)->startOfDay();
@@ -141,7 +141,7 @@ class StorefrontAnalytics extends Page
             ->get();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, object> */
     public function getTopProducts(): Collection
     {
         $data = $this->baseQuery()

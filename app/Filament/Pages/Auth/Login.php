@@ -66,7 +66,7 @@ class Login extends BaseLogin
         $passwordValid = $authProvider->validateCredentials($user, $credentials);
         Log::info('LOGIN: Password validation', [
             'valid' => $passwordValid ? 'YES' : 'NO',
-            'hash_check' => \Hash::check($credentials['password'], $user->password) ? 'YES' : 'NO',
+            'hash_check' => \Hash::check((string) ($credentials['password'] ?? ''), $user->password) ? 'YES' : 'NO',
         ]);
 
         if (! $passwordValid) {
@@ -128,7 +128,7 @@ class Login extends BaseLogin
             ]);
 
             return $canAccess;
-        }, $data['remember'] ?? false);
+        }, (bool) ($data['remember'] ?? false));
 
         Log::info('LOGIN: attemptWhen result', ['success' => $attemptResult ? 'YES' : 'NO']);
 

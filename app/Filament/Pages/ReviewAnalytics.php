@@ -5,6 +5,8 @@ namespace App\Filament\Pages;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
+use App\Models\Product;
+use App\Models\Review;
 use App\Services\Analytics\ReviewAnalyticsService;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
@@ -64,13 +66,13 @@ class ReviewAnalytics extends Page
         return $this->service()->getMonthlyTrend();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, Product> */
     public function getTopReviewedProducts(): Collection
     {
         return $this->service()->getTopReviewedProducts();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, Review> */
     public function getRecentReviews(): Collection
     {
         return $this->service()->getRecentReviews();

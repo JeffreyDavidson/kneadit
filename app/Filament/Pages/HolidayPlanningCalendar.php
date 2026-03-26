@@ -43,13 +43,13 @@ class HolidayPlanningCalendar extends Page
 
     protected string $view = 'filament.pages.holiday-planning-calendar';
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, Holiday> */
     public Collection $holidays;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, Holiday> */
     public Collection $upcomingHolidays;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, Holiday> */
     public Collection $inPrepPeriod;
 
     public function mount(): void
@@ -69,7 +69,7 @@ class HolidayPlanningCalendar extends Page
             ->filter(fn (Holiday $holiday) => $holiday->is_in_prep_period);
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<string, Collection<int, Holiday>> */
     public function getHolidaysByMonth(): Collection
     {
         $currentYear = now()->year;

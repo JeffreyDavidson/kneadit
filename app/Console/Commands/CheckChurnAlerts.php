@@ -52,8 +52,8 @@ class CheckChurnAlerts extends Command
             } catch (\Throwable) {
                 $lastLogin = null;
             }
-            if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= config('monitoring.churn_no_login_days')) {
-                $days = (int) Date::parse($lastLogin)->diffInDays(now());
+            if ($lastLogin && Date::parse((string) $lastLogin)->diffInDays(now()) >= (int) config('monitoring.churn_no_login_days', 7)) {
+                $days = (int) Date::parse((string) $lastLogin)->diffInDays(now());
                 resolve(LogAuditEntry::class)(
                     action: 'churn_alert',
                     description: "No login in {$days} days: {$name}",
@@ -65,10 +65,10 @@ class CheckChurnAlerts extends Command
             }
 
             // Zero orders in configured period (tenants older than 14 days, requires tenant DB)
-            if ($daysSinceSignup > config('monitoring.churn_min_tenant_age_days')) {
+            if ($daysSinceSignup > (int) config('monitoring.churn_min_tenant_age_days', 14)) {
                 try {
                     $recentOrders = $tenancyManager->withinTenant($tenant, fn () => DB::table('orders')
-                        ->where('created_at', '>=', now()->subDays(config('monitoring.churn_no_orders_days')))
+                        ->where('created_at', '>=', now()->subDays((int) config('monitoring.churn_no_orders_days', 30)))
                         ->count());
                 } catch (\Throwable) {
                     $recentOrders = 0;

@@ -52,6 +52,7 @@ class SmartShoppingList extends Page
     public bool $includeUpcoming = false;
 
     /** @var Collection<int|string, mixed> */
+    /** @var Collection<int|string, mixed> */
     public Collection $supplierGroups;
 
     public function mount(): void
@@ -79,6 +80,7 @@ class SmartShoppingList extends Page
 
     public function sendPurchaseOrder(int $supplierId): void
     {
+        /** @var array{supplier: array{name: string, email: string|null}, items: list<array<string, mixed>>, total: float}|null $group */
         $group = $this->supplierGroups->get($supplierId);
 
         if (! $group || ! $group['supplier']['email']) {
@@ -91,7 +93,7 @@ class SmartShoppingList extends Page
             return;
         }
 
-        $storeName = settings('store_name', config('app.name'));
+        $storeName = (string) settings('store_name', config('app.name'));
 
         Mail::to($group['supplier']['email'])
             ->send(new PurchaseOrder(

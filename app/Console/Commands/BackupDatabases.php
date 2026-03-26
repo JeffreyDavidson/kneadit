@@ -24,7 +24,7 @@ class BackupDatabases extends Command
         $this->info("Backing up to: {$backupPath}");
 
         // 1. Backup central database
-        $centralDb = config('database.connections.sqlite.database');
+        $centralDb = (string) config('database.connections.sqlite.database', '');
         if ($centralDb && file_exists($centralDb)) {
             $dest = "{$backupPath}/central.sqlite";
             copy($centralDb, $dest);
@@ -34,7 +34,7 @@ class BackupDatabases extends Command
         }
 
         // 2. Backup all tenant databases
-        $tenantDbDir = config('tenancy.tenant_db_path', database_path());
+        $tenantDbDir = (string) config('tenancy.tenant_db_path', database_path());
         if (is_dir($tenantDbDir)) {
             $tenantFiles = glob("{$tenantDbDir}/*.sqlite") ?: [];
             $count = 0;

@@ -48,7 +48,7 @@ class PrintableMenu extends Page
 
     public string $menuLayout = 'elegant';
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, Category> */
     public function getCategories(): Collection
     {
         return Category::query()->active()
@@ -74,7 +74,10 @@ class PrintableMenu extends Page
 
     public function getStorefrontUrl(): string
     {
-        return 'http://'.tenant()->domains->first()->domain;
+        $tenant = tenant();
+        $domain = $tenant?->domains->first();
+
+        return 'http://'.($domain->domain ?? 'localhost');
     }
 
     public function getQrCode(): string

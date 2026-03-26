@@ -22,7 +22,7 @@ class OnboardingTracker extends Page
 
     protected string $view = 'filament.central.pages.onboarding-tracker';
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, array<string, mixed>> */
     public function getTenantOnboardingData(): Collection
     {
         $tenants = Tenant::query()->latest()->get();

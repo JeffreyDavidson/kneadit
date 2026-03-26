@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
+use App\Models\Order;
 use App\Services\Production\PrepScheduleService;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
@@ -43,10 +44,10 @@ class WeeklyPrepPlanner extends Page
 
     public ?string $selectedWeekStart = null;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<string, Collection<int, Order>> */
     public Collection $weeklyOrders;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<string, Collection<int, array<string, mixed>>> */
     public Collection $prepSchedule;
 
     /** @var array<int|string, mixed> */
@@ -79,13 +80,13 @@ class WeeklyPrepPlanner extends Page
         $this->prepSchedule = $data['prepSchedule'];
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<string, array<string, mixed>> */
     public function getProductSummary(): Collection
     {
         return resolve(PrepScheduleService::class)->getProductSummary($this->weeklyOrders);
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<string, Collection<int, array<string, mixed>>> */
     public function getTimelineView(): Collection
     {
         return resolve(PrepScheduleService::class)->getTimelineView($this->prepSchedule);

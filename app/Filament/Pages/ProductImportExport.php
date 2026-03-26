@@ -139,9 +139,9 @@ class ProductImportExport extends Page
                             ->icon('heroicon-o-eye')
                             ->color('warning')
                             ->action(function () {
-                                $filePath = $this->data['csv_file'] ?? null;
+                                $filePath = (string) ($this->data['csv_file'] ?? '');
 
-                                if (! $filePath) {
+                                if ($filePath === '') {
                                     Notification::make()->title('Please upload a CSV file first.')->danger()->send();
 
                                     return;
@@ -186,9 +186,9 @@ class ProductImportExport extends Page
                             ->modalHeading('Confirm Import')
                             ->modalDescription('This will create new products and update existing ones matched by name. Continue?')
                             ->action(function () {
-                                $filePath = $this->data['csv_file'] ?? null;
+                                $filePath = (string) ($this->data['csv_file'] ?? '');
 
-                                if (! $filePath) {
+                                if ($filePath === '') {
                                     Notification::make()->title('Please upload a CSV file first.')->danger()->send();
 
                                     return;

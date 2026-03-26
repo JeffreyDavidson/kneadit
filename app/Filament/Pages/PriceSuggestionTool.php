@@ -49,10 +49,10 @@ class PriceSuggestionTool extends Page
 
     public float $targetMarginPercentage = 65.0;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, Recipe> */
     public Collection $recipes;
 
-    /** @var Collection<int, mixed> */
+    /** @var Collection<int, array<string, mixed>> */
     public Collection $marginComparisons;
 
     public function mount(): void

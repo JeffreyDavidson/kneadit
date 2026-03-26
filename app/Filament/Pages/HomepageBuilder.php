@@ -22,10 +22,10 @@ class HomepageBuilder extends Page
 
     protected string $view = 'filament.pages.homepage-builder';
 
-    /** @var array<string, mixed> */
+    /** @var array<string, array<string, mixed>> */
     public array $sections = [];
 
-    /** @var array<string, mixed> */
+    /** @var array<string, array<string, string>> */
     protected array $sectionMeta = [
         'hero' => ['label' => 'Hero Banner', 'description' => 'Full-screen welcome banner with store name and tagline'],
         'about' => ['label' => 'About Section', 'description' => 'Brief about text for your bakery'],
@@ -61,13 +61,18 @@ class HomepageBuilder extends Page
 
     protected function loadSections(): void
     {
-        $saved = json_decode(settings('homepage_sections', '{}'), true);
+        /** @var array<string, array<string, mixed>> $saved */
+        $saved = json_decode((string) settings('homepage_sections', '{}'), true);
         $defaults = $this->getDefaults();
 
         // Merge saved with defaults to ensure all sections exist
         $this->sections = [];
         foreach ($defaults as $key => $default) {
-            $this->sections[$key] = array_merge($default, $saved[$key] ?? []);
+            if (isset($saved[$key])) {
+                $this->sections[$key] = array_merge($default, $saved[$key]);
+            } else {
+                $this->sections[$key] = $default;
+            }
         }
     }
 
@@ -150,6 +155,7 @@ class HomepageBuilder extends Page
     /** @return array<string, mixed> */
     public function getSectionMeta(string $key): array
     {
+        /** @var array<string, mixed> */
         return $this->sectionMeta[$key] ?? ['label' => ucfirst($key), 'description' => ''];
     }
 }

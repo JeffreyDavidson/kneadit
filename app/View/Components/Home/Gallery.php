@@ -19,9 +19,9 @@ class Gallery extends Component
     /** @param array<string, mixed> $config */
     public function __construct(public array $config = [])
     {
-        $this->title = $config['title'] ?? 'From Our Customers';
-        $this->subtitle = $config['subtitle'] ?? 'Shared by our community';
-        $count = $config['count'] ?? 6;
+        $this->title = is_string($config['title'] ?? null) ? $config['title'] : 'From Our Customers';
+        $this->subtitle = is_string($config['subtitle'] ?? null) ? $config['subtitle'] : 'Shared by our community';
+        $count = is_int($config['count'] ?? null) ? $config['count'] : 6;
 
         try {
             $this->customerPhotos = CustomerPhoto::query()

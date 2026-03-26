@@ -38,7 +38,7 @@ class HealthCheck extends Command
         }
 
         // 3. Tenant DB directory writable
-        $tenantDbDir = config('tenancy.tenant_db_path', database_path());
+        $tenantDbDir = (string) config('tenancy.tenant_db_path', database_path());
         if (is_dir($tenantDbDir) && is_writable($tenantDbDir)) {
             $tenantDbs = count(glob("{$tenantDbDir}/*.sqlite") ?: []);
             $this->info("✓ Tenant DB directory writable ({$tenantDbs} databases)");
@@ -71,7 +71,7 @@ class HealthCheck extends Command
 
         // 6. Homepage responds
         try {
-            $response = Http::timeout(10)->get(config('app.url'));
+            $response = Http::timeout(10)->get((string) config('app.url'));
             if ($response->successful()) {
                 $this->info('✓ Homepage responds ('.$response->status().')');
             } else {
@@ -105,7 +105,7 @@ class HealthCheck extends Command
 
         // Send email alert
         try {
-            $alertEmail = config('mail.platform_notify');
+            $alertEmail = (string) config('mail.platform_notify');
             Mail::to($alertEmail)->queue(new HealthAlertMail($message));
             $this->info('Alert email sent to '.$alertEmail);
         } catch (\Exception $e) {
