@@ -4,11 +4,11 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\OrderItem;
+use App\ValueObjects\DateRange;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class PopularProductsWidget extends BaseWidget
@@ -26,13 +26,15 @@ class PopularProductsWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
+        $range = DateRange::thisWeek();
+
         return $table
             ->query(
                 OrderItem::query()
                     ->join('orders', 'orders.id', '=', 'order_items.order_id')
                     ->join('products', 'products.id', '=', 'order_items.product_id')
                     ->where('orders.status', '!=', OrderStatus::Cancelled)
-                    ->whereBetween('orders.delivery_date', [Date::now()->startOfWeek(), Date::now()->endOfWeek()])
+                    ->whereBetween('orders.delivery_date', $range->toArray())
                     ->select(
                         'order_items.product_id',
                         'products.name as product_name',

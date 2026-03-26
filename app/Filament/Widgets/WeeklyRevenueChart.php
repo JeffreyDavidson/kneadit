@@ -2,12 +2,11 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\OrderStatus;
 use App\Models\Expense;
 use App\Models\Order;
+use App\ValueObjects\DateRange;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\Date;
 
 class WeeklyRevenueChart extends ChartWidget
 {
@@ -24,19 +23,18 @@ class WeeklyRevenueChart extends ChartWidget
 
     protected function getData(): array
     {
-        $start = Date::now()->startOfWeek();
-        $end = Date::now()->endOfWeek();
-        $period = CarbonPeriod::create($start, $end);
+        $range = DateRange::thisWeek();
+        $period = CarbonPeriod::create($range->start, $range->end);
 
         $revenueByDay = Order::query()
-            ->where('status', '!=', OrderStatus::Cancelled)
-            ->whereBetween('delivery_date', [$start, $end])
+            ->active()
+            ->whereBetween('delivery_date', $range->toArray())
             ->selectRaw('DATE(delivery_date) as day, SUM(total) as total')
             ->groupBy('day')
             ->pluck('total', 'day');
 
         $expensesByDay = Expense::query()
-            ->whereBetween('date', [$start, $end])
+            ->whereBetween('date', $range->toArray())
             ->selectRaw('DATE(date) as day, SUM(amount * business_percentage / 100) as total')
             ->groupBy('day')
             ->pluck('total', 'day');

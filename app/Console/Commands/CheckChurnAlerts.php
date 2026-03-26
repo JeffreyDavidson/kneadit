@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\AdminAuditLog;
 use App\Models\Tenant;
+use App\Services\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ class CheckChurnAlerts extends Command
 
     protected $description = 'Check for churn risk indicators and log alerts';
 
-    public function handle(): int
+    public function handle(TenancyManager $tenancyManager): int
     {
         $tenants = Tenant::cursor();
         $alertCount = 0;
@@ -23,11 +24,15 @@ class CheckChurnAlerts extends Command
             $name = $tenant->store_name ?? $tenant->name;
             $daysSinceSignup = $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0;
 
-            // Trial expiring in 48h with low setup
+            // Trial expiring in 48h with low setup (setup score requires tenant DB)
             if ($tenant->trial_ends_at) {
                 $trialEnds = Date::parse($tenant->trial_ends_at);
                 if ($trialEnds->isFuture() && $trialEnds->diffInHours(now()) <= 48) {
-                    $setupScore = $this->getSetupScore($tenant);
+                    try {
+                        $setupScore = $tenancyManager->withinTenant($tenant, fn () => $this->getSetupScore());
+                    } catch (\Throwable) {
+                        $setupScore = 0;
+                    }
                     if ($setupScore < 15) {
                         AdminAuditLog::log(
                             action: 'churn_alert',
@@ -41,10 +46,14 @@ class CheckChurnAlerts extends Command
                 }
             }
 
-            // No login in 7+ days
-            $lastLogin = $this->getLastLogin($tenant);
+            // No login in 7+ days (requires tenant DB)
+            try {
+                $lastLogin = $tenancyManager->withinTenant($tenant, fn () => DB::table('users')->max('updated_at'));
+            } catch (\Throwable) {
+                $lastLogin = null;
+            }
             if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= 7) {
-                $days = Date::parse($lastLogin)->diffInDays(now());
+                $days = (int) Date::parse($lastLogin)->diffInDays(now());
                 AdminAuditLog::log(
                     action: 'churn_alert',
                     description: "No login in {$days} days: {$name}",
@@ -55,9 +64,15 @@ class CheckChurnAlerts extends Command
                 $alertCount++;
             }
 
-            // Zero orders in 30 days (tenants older than 14 days)
+            // Zero orders in 30 days (tenants older than 14 days, requires tenant DB)
             if ($daysSinceSignup > 14) {
-                $recentOrders = $this->getRecentOrderCount($tenant, 30);
+                try {
+                    $recentOrders = $tenancyManager->withinTenant($tenant, fn () => DB::table('orders')
+                        ->where('created_at', '>=', now()->subDays(30))
+                        ->count());
+                } catch (\Throwable) {
+                    $recentOrders = 0;
+                }
                 if ($recentOrders === 0) {
                     AdminAuditLog::log(
                         action: 'churn_alert',
@@ -76,66 +91,16 @@ class CheckChurnAlerts extends Command
         return self::SUCCESS;
     }
 
-    protected function getLastLogin(Tenant $tenant): ?string
+    protected function getSetupScore(): int
     {
-        try {
-            tenancy()->initialize($tenant);
-            $lastLogin = DB::table('users')->max('updated_at');
-            tenancy()->end();
+        $score = 0;
+        $score += DB::table('products')->exists() ? 5 : 0;
+        $score += DB::table('users')->count() > 1 ? 5 : 0;
+        $score += DB::table('orders')->exists() ? 5 : 0;
+        $score += DB::table('settings')->exists() ? 5 : 0;
+        $score += DB::table('categories')->exists() ? 5 : 0;
+        $score += DB::table('media')->exists() ? 5 : 0;
 
-            return $lastLogin;
-        } catch (\Throwable) {
-            try {
-                tenancy()->end();
-            } catch (\Throwable) {
-            }
-
-            return null;
-        }
-    }
-
-    protected function getRecentOrderCount(Tenant $tenant, int $days): int
-    {
-        try {
-            tenancy()->initialize($tenant);
-            $count = DB::table('orders')
-                ->where('created_at', '>=', now()->subDays($days))
-                ->count();
-            tenancy()->end();
-
-            return $count;
-        } catch (\Throwable) {
-            try {
-                tenancy()->end();
-            } catch (\Throwable) {
-            }
-
-            return 0;
-        }
-    }
-
-    protected function getSetupScore(Tenant $tenant): int
-    {
-        try {
-            tenancy()->initialize($tenant);
-            $score = 0;
-            $score += DB::table('products')->exists() ? 5 : 0;
-            $score += DB::table('users')->count() > 1 ? 5 : 0;
-            $score += DB::table('orders')->exists() ? 5 : 0;
-            // Check for store customization
-            $score += DB::table('settings')->exists() ? 5 : 0;
-            $score += DB::table('categories')->exists() ? 5 : 0;
-            $score += DB::table('media')->exists() ? 5 : 0;
-            tenancy()->end();
-
-            return $score;
-        } catch (\Throwable) {
-            try {
-                tenancy()->end();
-            } catch (\Throwable) {
-            }
-
-            return 0;
-        }
+        return $score;
     }
 }

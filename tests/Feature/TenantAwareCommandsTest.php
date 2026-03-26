@@ -23,31 +23,28 @@ test('send repeat order reminders command exists', function () {
         ->assertSuccessful();
 });
 
-test('paypal command loops through tenants', function () {
+test('paypal command uses TenancyManager for tenant context', function () {
     $reflection = new ReflectionClass(CheckPayPalPayments::class);
     $source = file_get_contents($reflection->getFileName());
 
     expect($source)->toContain('Tenant::cursor()');
-    expect($source)->toContain('tenancy()->initialize');
-    expect($source)->toContain('Setting::flushCache()');
+    expect($source)->toContain('TenancyManager');
 });
 
-test('birthday command loops through tenants', function () {
+test('birthday command uses TenancyManager for tenant context', function () {
     $reflection = new ReflectionClass(SendBirthdayDiscounts::class);
     $source = file_get_contents($reflection->getFileName());
 
     expect($source)->toContain('Tenant::cursor()');
-    expect($source)->toContain('tenancy()->initialize');
-    expect($source)->toContain('Setting::flushCache()');
+    expect($source)->toContain('TenancyManager');
 });
 
-test('repeat reminders command loops through tenants', function () {
+test('repeat reminders command uses TenancyManager for tenant context', function () {
     $reflection = new ReflectionClass(SendRepeatOrderReminders::class);
     $source = file_get_contents($reflection->getFileName());
 
     expect($source)->toContain('Tenant::cursor()');
-    expect($source)->toContain('tenancy()->initialize');
-    expect($source)->toContain('Setting::flushCache()');
+    expect($source)->toContain('TenancyManager');
 });
 
 test('commands handle empty tenant list', function () {

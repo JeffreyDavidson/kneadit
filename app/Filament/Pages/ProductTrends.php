@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Category;
 use App\Models\OrderItem;
+use App\ValueObjects\DateRange;
 use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
@@ -95,14 +96,13 @@ class ProductTrends extends Page
     /** @return array<int, mixed> */
     public function getTrendsDataProperty(): array
     {
-        $currentStart = Date::create($this->year, $this->month, 1)->startOfMonth();
-        $currentEnd = $currentStart->copy()->endOfMonth();
-        $prevStart = $currentStart->copy()->subMonth()->startOfMonth();
-        $prevEnd = $prevStart->copy()->endOfMonth();
+        $currentRange = DateRange::forMonth($this->year, $this->month);
+        $prevDate = Date::create($this->year, $this->month, 1)->subMonth();
+        $prevRange = DateRange::forMonth($prevDate->year, $prevDate->month);
 
         $currentCounts = OrderItem::query()->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-            ->whereBetween('orders.created_at', [$currentStart, $currentEnd])
+            ->whereBetween('orders.created_at', $currentRange->toArray())
             ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')
             ->groupBy('order_items.product_id')
             ->pluck('total_qty', 'product_id')
@@ -110,7 +110,7 @@ class ProductTrends extends Page
 
         $prevCounts = OrderItem::query()->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->whereNotIn('orders.status', [OrderStatus::Cancelled->value])
-            ->whereBetween('orders.created_at', [$prevStart, $prevEnd])
+            ->whereBetween('orders.created_at', $prevRange->toArray())
             ->selectRaw('order_items.product_id, SUM(order_items.quantity) as total_qty')
             ->groupBy('order_items.product_id')
             ->pluck('total_qty', 'product_id')
