@@ -4,23 +4,13 @@ namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Customer;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
 
-class RepeatOrderReminder extends Mailable implements ShouldQueue
+class RepeatOrderReminder extends BaseMailable
 {
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
-
     use BakerBranded;
-    use Queueable, SerializesModels;
 
     public function __construct(
         public Customer $customer,

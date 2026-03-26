@@ -58,7 +58,7 @@ class ReviewAnalytics extends Page
         }
 
         $averageRating = (float) Review::query()->avg('rating');
-        $approvedReviews = Review::query()->where('is_approved', true)->count();
+        $approvedReviews = Review::query()->approved()->count();
         $approvalRate = ($approvedReviews / $totalReviews) * 100;
 
         return [

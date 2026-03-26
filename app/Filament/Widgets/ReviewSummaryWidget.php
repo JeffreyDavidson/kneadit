@@ -15,24 +15,24 @@ class ReviewSummaryWidget extends Widget
 
     public function getAverageRating(): float
     {
-        return round((float) Review::query()->where('is_approved', true)->avg('rating'), 1);
+        return round((float) Review::query()->approved()->avg('rating'), 1);
     }
 
     public function getTotalReviews(): int
     {
-        return Review::query()->where('is_approved', true)->count();
+        return Review::query()->approved()->count();
     }
 
     public function getRecentReview(): ?Review
     {
-        return Review::query()->where('is_approved', true)->latest()
+        return Review::query()->approved()->latest()
             ->first();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getRatingDistribution(): array
     {
-        $counts = Review::query()->where('is_approved', true)
+        $counts = Review::query()->approved()
             ->selectRaw('rating, count(*) as count')
             ->groupBy('rating')
             ->pluck('count', 'rating')

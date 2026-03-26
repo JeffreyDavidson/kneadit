@@ -15,7 +15,7 @@ class LoyaltyController extends Controller
     public function show(): View
     {
         try {
-            $rewards = LoyaltyReward::query()->where('is_active', true)->orderBy('points_required')->get();
+            $rewards = LoyaltyReward::query()->active()->orderBy('points_required')->get();
         } catch (\Exception $e) {
             Log::error('Failed to load loyalty rewards', ['error' => $e->getMessage()]);
             $rewards = collect();
@@ -32,7 +32,7 @@ class LoyaltyController extends Controller
 
         $customer = Customer::query()->where('email', $request->email)->first();
         try {
-            $rewards = LoyaltyReward::query()->where('is_active', true)->orderBy('points_required')->get();
+            $rewards = LoyaltyReward::query()->active()->orderBy('points_required')->get();
         } catch (\Exception $e) {
             Log::error('Failed to load loyalty rewards', ['error' => $e->getMessage()]);
             $rewards = collect();

@@ -3,10 +3,10 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
-use App\Models\CapacityLimit;
 use App\Models\Order;
 use App\Models\PageView;
 use App\Models\WaitlistEntry;
+use App\Services\CapacityCalculator;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -33,7 +33,7 @@ class StatsOverview extends BaseWidget
                     ->color('warning'),
 
                 Stat::make("This Week's Revenue", '$'.number_format(
-                    (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
+                    (float) Order::query()->active()
                         ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                         ->sum('total'),
                     2
@@ -42,7 +42,7 @@ class StatsOverview extends BaseWidget
                     ->color('success'),
 
                 Stat::make('Avg Order Value', '$'.number_format(
-                    (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
+                    (float) Order::query()->active()
                         ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                         ->avg('total'),
                     2
@@ -73,19 +73,19 @@ class StatsOverview extends BaseWidget
 
                 ...collect([$today, $today->copy()->addDay()])
                     ->map(function (Carbon $date) {
-                        $usage = CapacityLimit::usagePercent($date);
+                        $usage = resolve(CapacityCalculator::class)->usagePercent($date);
                         if ($usage < 80) {
                             return null;
                         }
                         $label = $date->isToday() ? 'Today' : 'Tomorrow';
-                        $limit = CapacityLimit::forDate($date);
+                        $limit = resolve(CapacityCalculator::class)->forDate($date);
                         if ($limit?->is_blocked) {
                             return Stat::make("$label Capacity", 'BLOCKED')
                                 ->icon('heroicon-o-x-circle')
                                 ->color('danger')
                                 ->description('Day is blocked for orders');
                         }
-                        $remaining = CapacityLimit::remainingSlots($date);
+                        $remaining = resolve(CapacityCalculator::class)->remainingSlots($date);
 
                         return Stat::make("$label Capacity", round($usage).'% full')
                             ->icon('heroicon-o-exclamation-triangle')

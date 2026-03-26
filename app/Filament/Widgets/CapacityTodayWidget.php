@@ -2,10 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\OrderStatus;
 use App\Models\BlockedDate;
-use App\Models\CapacityLimit;
 use App\Models\Order;
+use App\Services\CapacityCalculator;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
@@ -21,9 +20,9 @@ class CapacityTodayWidget extends Widget
     /** @return array<string, mixed> */
     public function getCapacityData(Carbon $date): array
     {
-        $maxOrders = CapacityLimit::getMaxOrders($date);
+        $maxOrders = resolve(CapacityCalculator::class)->getMaxOrders($date);
         $currentOrders = Order::query()->whereDate('delivery_date', $date)
-            ->whereNotIn('status', [OrderStatus::Cancelled])
+            ->active()
             ->count();
 
         $percentage = $maxOrders > 0 ? min(100, round(($currentOrders / $maxOrders) * 100)) : 0;

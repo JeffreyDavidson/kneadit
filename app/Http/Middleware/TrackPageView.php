@@ -2,99 +2,26 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\PageView;
-use App\Models\Product;
+use App\Services\PageViewTracker;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
 use Symfony\Component\HttpFoundation\Response;
 
 class TrackPageView
 {
-    /** @var array<string, mixed> */
-    protected array $routePageMap = [
-        'storefront.menu' => 'menu',
-        'storefront.home' => 'home',
-        'storefront.about' => 'about',
-        'storefront.reviews' => 'reviews',
-        'order.create' => 'order',
-        'order.confirmation' => 'order',
-        'order.track' => 'track',
-        'contact.show' => 'contact',
-    ];
+    public function __construct(
+        protected PageViewTracker $tracker,
+    ) {}
 
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
 
-        // Only track GET requests that return HTML
         if (! $request->isMethod('GET') || $request->ajax()) {
             return $response;
         }
 
-        $routeName = $request->route()?->getName();
-        $page = $this->routePageMap[$routeName] ?? null;
-
-        // If no route name matched, try to detect from path
-        if (! $page) {
-            $path = trim($request->path(), '/');
-            if ($path === '' || $path === '/') {
-                $page = 'home';
-            }
-        }
-
-        if (! $page) {
-            return $response;
-        }
-
-        $sessionId = $request->session()->getId();
-
-        // Throttle: one view per session per page per hour (using session to avoid cache tagging issues with Stancl)
-        $throttleKey = "pv_tracked:{$page}";
-        $trackedAt = $request->session()->get($throttleKey);
-
-        if ($trackedAt && now()->diffInMinutes(Date::parse($trackedAt)) < 60) {
-            return $response;
-        }
-
-        $request->session()->put($throttleKey, now()->toISOString());
-
-        try {
-            PageView::query()->create([
-                'page' => $page,
-                'session_id' => $sessionId,
-                'ip_address' => $request->ip(),
-                'user_agent' => substr($request->userAgent() ?? '', 0, 255),
-                'created_at' => now(),
-            ]);
-
-            // Track product views on menu/home pages
-            if (in_array($page, ['menu', 'home'])) {
-                $productThrottleKey = "pv_products_tracked:{$page}";
-                $productsTrackedAt = $request->session()->get($productThrottleKey);
-
-                if (! $productsTrackedAt || now()->diffInMinutes(Date::parse($productsTrackedAt)) >= 60) {
-                    $request->session()->put($productThrottleKey, now()->toISOString());
-                    $products = Product::query()->where('is_active', true)->pluck('id');
-                    $ipAddress = $request->ip();
-                    $userAgent = substr($request->userAgent() ?? '', 0, 255);
-                    $timestamp = now();
-
-                    $records = $products->map(fn (int $productId) => [
-                        'page' => $page,
-                        'product_id' => $productId,
-                        'session_id' => $sessionId,
-                        'ip_address' => $ipAddress,
-                        'user_agent' => $userAgent,
-                        'created_at' => $timestamp,
-                    ])->all();
-
-                    PageView::query()->insert($records);
-                }
-            }
-        } catch (\Exception $e) {
-            // Silently fail if page_views table doesn't exist yet
-        }
+        $this->tracker->track($request);
 
         return $response;
     }

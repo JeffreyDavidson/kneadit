@@ -53,10 +53,6 @@ parameters:
         -
             identifier: argument.type
             message: '#static method Filament\\Schemas\\Components\\Form::make\(\) expects#'
-        # Stripe Checkout session create parameter shape
-        -
-            identifier: argument.type
-            path: app/Services/StripeCheckoutService.php
         # Collection<Model> sum/avg callback — Larastan generic issue
         -
             identifier: argument.type

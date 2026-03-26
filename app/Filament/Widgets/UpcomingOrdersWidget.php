@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\OrderStatus;
 use App\Models\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
@@ -22,7 +21,7 @@ class UpcomingOrdersWidget extends Widget
         $endDate = $today->copy()->addDays(3);
 
         $orders = Order::with('customer')
-            ->where('status', '!=', OrderStatus::Cancelled)
+            ->active()
             ->whereBetween('delivery_date', [$today, $endDate])
             ->oldest('delivery_date')
             ->orderBy('delivery_time')

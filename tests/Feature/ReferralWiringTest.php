@@ -45,6 +45,5 @@ test('onboarding wires referral completion', function () {
     $source = file_get_contents(app_path('Http/Controllers/OnboardingController.php'));
 
     expect($source)->toContain('referral_code');
-    expect($source)->toContain('ReferralStatus::Completed');
-    expect($source)->toContain('referred_tenant_id');
+    expect($source)->toContain('CompleteReferral');
 });
