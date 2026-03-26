@@ -7,8 +7,10 @@ use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Observers\OrderObserver;
 use App\Traits\LogsActivity;
 use Database\Factories\OrderFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,6 +54,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy(OrderObserver::class)]
 #[UseEloquentBuilder(OrderQueryBuilder::class)]
 class Order extends Model
 {
@@ -103,17 +106,6 @@ class Order extends Model
             'payment_method' => PaymentMethod::class,
             'delivery_type' => DeliveryType::class,
         ];
-    }
-
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::creating(function (Order $order) {
-            if (! $order->order_number) {
-                $order->order_number = 'ORD-'.str_pad((string) (static::query()->count() + 1), 6, '0', STR_PAD_LEFT);
-            }
-        });
     }
 
     /**

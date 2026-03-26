@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\LoyaltyPointType;
+use App\Observers\LoyaltyPointObserver;
 use Database\Factories\LoyaltyPointFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +31,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy(LoyaltyPointObserver::class)]
 class LoyaltyPoint extends Model
 {
     /** @use HasFactory<LoyaltyPointFactory> */
@@ -78,13 +81,6 @@ class LoyaltyPoint extends Model
     protected function forOrder(Builder $query, Order $order): void
     {
         $query->where('order_id', $order->id);
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (LoyaltyPoint $model) {
-            $model->created_at = $model->created_at ?? now();
-        });
     }
 
     /**

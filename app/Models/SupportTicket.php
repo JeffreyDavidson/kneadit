@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Enums\SupportTicketPriority;
 use App\Enums\SupportTicketStatus;
+use App\Observers\SupportTicketObserver;
 use Database\Factories\SupportTicketFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,6 +46,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy(SupportTicketObserver::class)]
 class SupportTicket extends Model
 {
     /** @use HasFactory<SupportTicketFactory> */

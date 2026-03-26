@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use App\Enums\SubscriptionTier;
-use App\Models\SupportTicket;
-use App\Observers\SupportTicketObserver;
 use App\View\Composers\StorefrontComposer;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Database\Eloquent\Model;
@@ -63,9 +61,6 @@ class AppServiceProvider extends ServiceProvider
                 </script>
             HTML),
         );
-
-        // Register model observers
-        SupportTicket::observe(SupportTicketObserver::class);
 
         // Add tenancy middleware to Livewire's update endpoint
         // Without this, Livewire POSTs (login, forms) hit the central DB

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Observers\ActivityLogObserver;
 use Database\Factories\ActivityLogFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[ObservedBy(ActivityLogObserver::class)]
 class ActivityLog extends Model
 {
     /** @use HasFactory<ActivityLogFactory> */
@@ -42,13 +45,6 @@ class ActivityLog extends Model
             'properties' => 'array',
             'created_at' => 'datetime',
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (ActivityLog $log) {
-            $log->created_at = $log->created_at ?? now();
-        });
     }
 
     /**
