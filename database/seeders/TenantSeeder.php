@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -26,8 +25,8 @@ class TenantSeeder extends Seeder
         ]);
 
         // Set store identity from tenant data
-        Setting::set('store_name', $tenant->store_name);
-        Setting::set('store_email', $tenant->email);
+        settings(['store_name' => $tenant->store_name]);
+        settings(['store_email' => $tenant->email]);
 
         // Run the standard seeders
         $this->call([
