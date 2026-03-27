@@ -17,6 +17,13 @@ beforeEach(function () {
     Feature::define('pro-features', fn () => true);
 });
 
+test('can list loyalty rewards in the table', function () {
+    $rewards = LoyaltyReward::factory()->count(3)->create();
+
+    Livewire::test(ListLoyaltyRewards::class)
+        ->assertCanSeeTableRecords($rewards);
+});
+
 test('can create a loyalty reward via slide-over', function () {
     Livewire::test(ListLoyaltyRewards::class)
         ->callAction(CreateAction::class, data: [

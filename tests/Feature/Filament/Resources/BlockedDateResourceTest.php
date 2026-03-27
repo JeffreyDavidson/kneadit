@@ -16,6 +16,13 @@ beforeEach(function () {
     Feature::define('pro-features', fn () => true);
 });
 
+test('can list blocked dates in the table', function () {
+    $dates = BlockedDate::factory()->count(3)->create();
+
+    Livewire::test(ListBlockedDates::class)
+        ->assertCanSeeTableRecords($dates);
+});
+
 test('can create a blocked date via slide-over', function () {
     Livewire::test(ListBlockedDates::class)
         ->callAction(CreateAction::class, data: [
