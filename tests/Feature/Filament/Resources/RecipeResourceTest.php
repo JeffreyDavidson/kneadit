@@ -38,3 +38,16 @@ test('can search recipes by name', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can edit a recipe via table action', function () {
+    $recipe = Recipe::factory()->create();
+
+    Livewire::test(ListRecipes::class)
+        ->callTableAction('edit', $recipe, data: [
+            'name' => 'Updated Recipe',
+            'prep_time_minutes' => $recipe->prep_time_minutes,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($recipe->fresh()->name)->toBe('Updated Recipe');
+});
