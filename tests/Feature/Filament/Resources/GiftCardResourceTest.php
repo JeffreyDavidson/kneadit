@@ -63,3 +63,20 @@ test('can sort gift cards by current balance', function () {
         ->sortTable('current_balance', 'desc')
         ->assertCanSeeTableRecords(collect([$high, $low]), inOrder: true);
 });
+
+test('edit gift card validates required fields', function (array $data, array $errors) {
+    $giftCard = GiftCard::factory()->create();
+
+    Livewire::test(ListGiftCards::class)
+        ->callTableAction('edit', $giftCard, data: [
+            'purchaser_name' => $giftCard->purchaser_name,
+            'purchaser_email' => $giftCard->purchaser_email,
+            'initial_balance' => $giftCard->initial_balance,
+            ...$data,
+        ])
+        ->assertHasTableActionErrors($errors);
+})->with([
+    'purchaser name is required' => [['purchaser_name' => null], ['purchaser_name' => 'required']],
+    'purchaser email is required' => [['purchaser_email' => null], ['purchaser_email' => 'required']],
+    'initial balance is required' => [['initial_balance' => null], ['initial_balance' => 'required']],
+]);

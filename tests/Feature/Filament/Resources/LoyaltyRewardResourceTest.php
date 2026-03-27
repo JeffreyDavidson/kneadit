@@ -71,3 +71,13 @@ test('can render loyalty reward table columns', function (string $column) {
     Livewire::test(ListLoyaltyRewards::class)
         ->assertCanRenderTableColumn($column);
 })->with(['name', 'points_required', 'reward_type', 'reward_value']);
+
+test('can search loyalty rewards by name', function () {
+    $target = LoyaltyReward::factory()->create(['name' => 'Free Cookie']);
+    $other = LoyaltyReward::factory()->create(['name' => 'Discount Bread']);
+
+    Livewire::test(ListLoyaltyRewards::class)
+        ->searchTable('Cookie')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

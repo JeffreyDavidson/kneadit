@@ -76,3 +76,14 @@ test('can search holidays by name', function () {
         ->assertCanSeeTableRecords(collect([$christmas]))
         ->assertCanNotSeeTableRecords(collect([$easter]));
 });
+
+test('can sort holidays by date', function () {
+    $early = Holiday::factory()->create(['date' => '2026-03-01']);
+    $late = Holiday::factory()->create(['date' => '2026-12-25']);
+
+    Livewire::test(ListHolidays::class)
+        ->sortTable('date')
+        ->assertCanSeeTableRecords(collect([$early, $late]), inOrder: true)
+        ->sortTable('date', 'desc')
+        ->assertCanSeeTableRecords(collect([$late, $early]), inOrder: true);
+});

@@ -56,3 +56,24 @@ test('can render category table columns', function (string $column) {
     Livewire::test(ListCategories::class)
         ->assertCanRenderTableColumn($column);
 })->with(['name', 'slug', 'is_active']);
+
+test('can search categories by name', function () {
+    $bread = Category::factory()->create(['name' => 'Bread']);
+    $pastry = Category::factory()->create(['name' => 'Pastries']);
+
+    Livewire::test(ListCategories::class)
+        ->searchTable('Bread')
+        ->assertCanSeeTableRecords(collect([$bread]))
+        ->assertCanNotSeeTableRecords(collect([$pastry]));
+});
+
+test('can sort categories by name', function () {
+    $alpha = Category::factory()->create(['name' => 'Alpha']);
+    $zeta = Category::factory()->create(['name' => 'Zeta']);
+
+    Livewire::test(ListCategories::class)
+        ->sortTable('name')
+        ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
+        ->sortTable('name', 'desc')
+        ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
+});
