@@ -30,7 +30,7 @@ class CouponsTable
                         'primary' => CouponType::Percentage->value,
                         'success' => CouponType::Fixed->value,
                     ])
-                    ->formatStateUsing(fn (string $state): string => ucfirst($state)),
+                    ->formatStateUsing(fn (mixed $state): string => ucfirst($state instanceof CouponType ? $state->value : $state)),
 
                 TextColumn::make('value')
                     ->money('USD')

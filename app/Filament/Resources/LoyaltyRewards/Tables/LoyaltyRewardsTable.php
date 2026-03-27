@@ -24,8 +24,8 @@ class LoyaltyRewardsTable
                     ->label('Points Required'),
                 TextColumn::make('reward_type')
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => RewardType::tryFrom($state)?->label() ?? $state)
-                    ->color(fn (string $state) => RewardType::tryFrom($state)?->color() ?? 'gray'),
+                    ->formatStateUsing(fn (mixed $state) => $state instanceof RewardType ? $state->label() : (RewardType::tryFrom($state)?->label() ?? $state))
+                    ->color(fn (mixed $state) => $state instanceof RewardType ? $state->color() : (RewardType::tryFrom($state)?->color() ?? 'gray')),
                 TextColumn::make('reward_value')
                     ->formatStateUsing(function (mixed $state, LoyaltyReward $record) {
                         $type = $record->reward_type;

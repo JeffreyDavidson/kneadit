@@ -31,7 +31,7 @@ class ExpensesTable
                     ->limit(50),
 
                 BadgeColumn::make('category')
-                    ->formatStateUsing(fn (string $state) => ExpenseCategory::tryFrom($state)?->label() ?? $state)
+                    ->formatStateUsing(fn (mixed $state) => $state instanceof ExpenseCategory ? $state->label() : (ExpenseCategory::tryFrom($state)?->label() ?? $state))
                     ->colors([
                         'primary' => 'ingredients',
                         'success' => 'packaging',

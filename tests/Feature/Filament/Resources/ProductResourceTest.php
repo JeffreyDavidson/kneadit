@@ -1,0 +1,82 @@
+<?php
+
+use App\Filament\Resources\Products\Pages\ListProducts;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\User;
+use Filament\Actions\CreateAction;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    setUpTenantTest();
+    $this->actingAs(User::factory()->owner()->create());
+});
+
+test('can render products list page', function () {
+    Livewire::test(ListProducts::class)
+        ->assertOk();
+});
+
+test('can list products in the table', function () {
+    $products = Product::factory()->count(3)->create();
+
+    Livewire::test(ListProducts::class)
+        ->assertCanSeeTableRecords($products);
+});
+
+test('can search products by name', function () {
+    $sourdough = Product::factory()->create(['name' => 'Sourdough Loaf']);
+    $baguette = Product::factory()->create(['name' => 'Baguette']);
+
+    Livewire::test(ListProducts::class)
+        ->searchTable('Sourdough')
+        ->assertCanSeeTableRecords(collect([$sourdough]))
+        ->assertCanNotSeeTableRecords(collect([$baguette]));
+});
+
+test('can render product table columns', function (string $column) {
+    Product::factory()->create();
+
+    Livewire::test(ListProducts::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['name', 'category.name', 'price', 'is_active', 'is_featured']);
+
+test('can create a product via slide-over', function () {
+    $category = Category::factory()->create();
+
+    Livewire::test(ListProducts::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Ciabatta Roll',
+            'slug' => 'ciabatta-roll',
+            'price' => 4.50,
+            'category_id' => $category->id,
+        ])
+        ->assertHasNoActionErrors();
+
+    $this->assertDatabaseHas(Product::class, [
+        'name' => 'Ciabatta Roll',
+        'slug' => 'ciabatta-roll',
+    ]);
+});
+
+test('create product validates required fields', function (array $data, array $errors) {
+    $category = Category::factory()->create();
+
+    Livewire::test(ListProducts::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Test',
+            'slug' => 'test',
+            'price' => 5.00,
+            'category_id' => $category->id,
+            ...$data,
+        ])
+        ->assertHasActionErrors($errors);
+})->with([
+    'name is required' => [['name' => null], ['name' => 'required']],
+    'slug is required' => [['slug' => null], ['slug' => 'required']],
+    'price is required' => [['price' => null], ['price' => 'required']],
+    'category is required' => [['category_id' => null], ['category_id' => 'required']],
+]);

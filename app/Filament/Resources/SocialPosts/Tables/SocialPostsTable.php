@@ -29,7 +29,7 @@ class SocialPostsTable
                         'info' => SocialPlatform::Facebook->value,
                         'gray' => SocialPlatform::TikTok->value,
                     ])
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
                         SocialPlatform::Instagram->value => '📸 Instagram',
                         SocialPlatform::Facebook->value => '📘 Facebook',
                         SocialPlatform::TikTok->value => '🎵 TikTok',

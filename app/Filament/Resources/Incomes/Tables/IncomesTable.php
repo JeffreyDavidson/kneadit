@@ -30,7 +30,7 @@ class IncomesTable
                     ->limit(50),
 
                 BadgeColumn::make('source')
-                    ->formatStateUsing(fn (string $state) => IncomeSource::tryFrom($state)?->label() ?? $state)
+                    ->formatStateUsing(fn (mixed $state) => $state instanceof IncomeSource ? $state->label() : (IncomeSource::tryFrom($state)?->label() ?? $state))
                     ->colors([
                         'success' => 'farmers_market',
                         'primary' => 'cash_sale',

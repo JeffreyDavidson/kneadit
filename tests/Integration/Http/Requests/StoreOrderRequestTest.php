@@ -1,0 +1,69 @@
+<?php
+
+use App\Http\Requests\StoreOrderRequest;
+use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    setUpTenantTest();
+    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    test()->product = Product::query()->create([
+        'name' => 'Sourdough',
+        'slug' => 'sourdough',
+        'price' => 5.00,
+        'category_id' => $category->id,
+        'is_active' => true,
+    ]);
+});
+
+test('store order request requires essential fields', function (string $field) {
+    $request = new StoreOrderRequest;
+    $data = validOrderData();
+    unset($data[$field]);
+
+    $validator = validator($data, $request->rules());
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->errors()->has($field))->toBeTrue();
+})->with(['customer_name', 'customer_email', 'delivery_type', 'delivery_date', 'items']);
+
+test('store order request requires delivery address for delivery orders', function () {
+    $request = new StoreOrderRequest;
+    $data = array_merge(validOrderData(), [
+        'delivery_type' => 'delivery',
+        'delivery_address' => null,
+    ]);
+
+    $validator = validator($data, $request->rules());
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->errors()->has('delivery_address'))->toBeTrue();
+});
+
+test('store order request rejects delivery date too soon', function () {
+    $request = new StoreOrderRequest;
+    $data = array_merge(validOrderData(), [
+        'delivery_date' => now()->toDateString(),
+    ]);
+
+    $validator = validator($data, $request->rules());
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->errors()->has('delivery_date'))->toBeTrue();
+});
+
+function validOrderData(): array
+{
+    return [
+        'customer_name' => 'John Doe',
+        'customer_email' => 'john@example.com',
+        'delivery_type' => 'pickup',
+        'delivery_date' => now()->addDays(3)->toDateString(),
+        'items' => [
+            ['product_id' => 1, 'quantity' => 2],
+        ],
+    ];
+}
