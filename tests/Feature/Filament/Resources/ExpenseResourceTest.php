@@ -32,3 +32,10 @@ test('can create an expense via slide-over', function () {
         'description' => 'Flour delivery',
     ]);
 });
+
+test('can render expense table columns', function (string $column) {
+    Expense::factory()->create();
+
+    Livewire::test(ListExpenses::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['date', 'description', 'category', 'amount']);

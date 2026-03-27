@@ -31,3 +31,10 @@ test('can create an income via slide-over', function () {
         'description' => 'Farmers market sales',
     ]);
 });
+
+test('can render income table columns', function (string $column) {
+    Income::factory()->create();
+
+    Livewire::test(ListIncomes::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['date', 'description', 'source', 'amount']);

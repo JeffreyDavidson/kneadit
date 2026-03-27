@@ -49,3 +49,10 @@ test('can edit a category via table action', function () {
 
     expect($category->fresh()->name)->toBe('Updated Category');
 });
+
+test('can render category table columns', function (string $column) {
+    Category::factory()->create();
+
+    Livewire::test(ListCategories::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['name', 'slug', 'is_active']);
