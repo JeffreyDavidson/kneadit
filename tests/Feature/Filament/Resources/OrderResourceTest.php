@@ -49,3 +49,23 @@ test('can search orders by order number', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can filter orders by status', function () {
+    $pending = Order::factory()->create();
+    $delivered = Order::factory()->delivered()->create();
+
+    Livewire::test(ListOrders::class)
+        ->filterTable('status', App\Enums\OrderStatus::Delivered->value)
+        ->assertCanSeeTableRecords(collect([$delivered]))
+        ->assertCanNotSeeTableRecords(collect([$pending]));
+});
+
+test('can filter orders by payment status', function () {
+    $unpaid = Order::factory()->create();
+    $paid = Order::factory()->paid()->create();
+
+    Livewire::test(ListOrders::class)
+        ->filterTable('payment_status', App\Enums\PaymentStatus::Paid->value)
+        ->assertCanSeeTableRecords(collect([$paid]))
+        ->assertCanNotSeeTableRecords(collect([$unpaid]));
+});

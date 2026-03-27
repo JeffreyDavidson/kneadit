@@ -16,7 +16,7 @@ class ReviewAnalyticsService
         $totalReviews = Review::query()->count();
 
         if ($totalReviews === 0) {
-            return ['total_reviews' => 0, 'average_rating' => 0, 'approval_rate' => 0];
+            return ['total_reviews' => 0, 'average_rating' => 0, 'approval_rate' => 0, 'approved_reviews' => 0];
         }
 
         $averageRating = (float) Review::query()->avg('rating');

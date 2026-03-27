@@ -62,3 +62,13 @@ test('can edit a coupon via table action', function () {
 
     expect($coupon->fresh()->code)->toBe('UPDATED01');
 });
+
+test('can search coupons by code', function () {
+    $target = Coupon::factory()->create(['code' => 'SPRING20']);
+    $other = Coupon::factory()->create(['code' => 'WINTER10']);
+
+    Livewire::test(ListCoupons::class)
+        ->searchTable('SPRING')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});
