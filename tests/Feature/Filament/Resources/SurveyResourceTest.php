@@ -48,3 +48,13 @@ test('can edit a survey via table action', function () {
 
     expect($survey->fresh()->title)->toBe('Updated Survey');
 });
+
+test('edit survey validates title is required', function () {
+    $survey = Survey::factory()->create();
+
+    Livewire::test(ListSurveys::class)
+        ->callTableAction('edit', $survey, data: [
+            'title' => null,
+        ])
+        ->assertHasTableActionErrors(['title' => 'required']);
+});

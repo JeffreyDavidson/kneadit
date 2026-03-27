@@ -51,3 +51,14 @@ test('can edit a recipe via table action', function () {
 
     expect($recipe->fresh()->name)->toBe('Updated Recipe');
 });
+
+test('edit recipe validates name is required', function () {
+    $recipe = Recipe::factory()->create();
+
+    Livewire::test(ListRecipes::class)
+        ->callTableAction('edit', $recipe, data: [
+            'name' => null,
+            'prep_time_minutes' => $recipe->prep_time_minutes,
+        ])
+        ->assertHasTableActionErrors(['name' => 'required']);
+});

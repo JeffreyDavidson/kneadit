@@ -72,3 +72,14 @@ test('can search settings by key', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can sort settings by key', function () {
+    $alpha = Setting::factory()->create(['key' => 'alpha_setting']);
+    $zeta = Setting::factory()->create(['key' => 'zeta_setting']);
+
+    Livewire::test(ListSettings::class)
+        ->sortTable('key')
+        ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
+        ->sortTable('key', 'desc')
+        ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
+});

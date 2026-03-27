@@ -66,3 +66,16 @@ test('can create a social post via slide-over', function () {
         'caption' => 'Fresh bread straight from the oven!',
     ]);
 });
+
+test('create social post validates required fields', function (array $data, array $errors) {
+    Livewire::test(ListSocialPosts::class)
+        ->callAction(CreateAction::class, data: [
+            'platform' => SocialPlatform::Instagram->value,
+            'caption' => 'Test caption',
+            ...$data,
+        ])
+        ->assertHasActionErrors($errors);
+})->with([
+    'platform is required' => [['platform' => null], ['platform' => 'required']],
+    'caption is required' => [['caption' => null], ['caption' => 'required']],
+]);

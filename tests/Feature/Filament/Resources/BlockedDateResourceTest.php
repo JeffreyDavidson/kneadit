@@ -65,3 +65,14 @@ test('can render blocked date table columns', function (string $column) {
     Livewire::test(ListBlockedDates::class)
         ->assertCanRenderTableColumn($column);
 })->with(['date', 'reason']);
+
+test('can sort blocked dates by date', function () {
+    $early = BlockedDate::factory()->create(['date' => '2026-01-01']);
+    $late = BlockedDate::factory()->create(['date' => '2026-12-31']);
+
+    Livewire::test(ListBlockedDates::class)
+        ->sortTable('date')
+        ->assertCanSeeTableRecords(collect([$early, $late]), inOrder: true)
+        ->sortTable('date', 'desc')
+        ->assertCanSeeTableRecords(collect([$late, $early]), inOrder: true);
+});
