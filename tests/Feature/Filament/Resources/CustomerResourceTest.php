@@ -84,3 +84,13 @@ test('can sort customers by name', function () {
         ->sortTable('name', 'desc')
         ->assertCanSeeTableRecords(collect([$zach, $alice]), inOrder: true);
 });
+
+test('can filter customers with birthday this month', function () {
+    $birthday = Customer::factory()->create(['birthday' => now()->format('Y-m-d')]);
+    $noBirthday = Customer::factory()->create(['birthday' => null]);
+
+    Livewire::test(ListCustomers::class)
+        ->filterTable('has_birthday_this_month')
+        ->assertCanSeeTableRecords(collect([$birthday]))
+        ->assertCanNotSeeTableRecords(collect([$noBirthday]));
+});

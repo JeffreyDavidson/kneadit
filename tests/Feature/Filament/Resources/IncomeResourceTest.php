@@ -88,3 +88,13 @@ test('can sort incomes by amount', function () {
         ->sortTable('amount', 'desc')
         ->assertCanSeeTableRecords(collect([$large, $small]), inOrder: true);
 });
+
+test('can filter incomes by source', function () {
+    $market = Income::factory()->create(['source' => IncomeSource::FarmersMarket]);
+    $cash = Income::factory()->create(['source' => IncomeSource::CashSale]);
+
+    Livewire::test(ListIncomes::class)
+        ->filterTable('source', IncomeSource::FarmersMarket->value)
+        ->assertCanSeeTableRecords(collect([$market]))
+        ->assertCanNotSeeTableRecords(collect([$cash]));
+});

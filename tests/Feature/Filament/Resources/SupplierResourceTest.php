@@ -67,3 +67,14 @@ test('can render supplier table columns', function (string $column) {
     Livewire::test(ListSuppliers::class)
         ->assertCanRenderTableColumn($column);
 })->with(['name', 'contact_name', 'email', 'phone']);
+
+test('can sort suppliers by name', function () {
+    $alpha = Supplier::factory()->create(['name' => 'Alpha Mills']);
+    $zeta = Supplier::factory()->create(['name' => 'Zeta Supply']);
+
+    Livewire::test(ListSuppliers::class)
+        ->sortTable('name')
+        ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
+        ->sortTable('name', 'desc')
+        ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
+});
