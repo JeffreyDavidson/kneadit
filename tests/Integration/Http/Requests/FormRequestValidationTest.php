@@ -62,6 +62,12 @@ dataset('requestsWithEmailFields', [
     'StoreApiContactRequest' => [StoreApiContactRequest::class, 'email'],
     'StoreOrderMessageRequest' => [StoreOrderMessageRequest::class, 'sender_email'],
     'PurchaseGiftCardRequest' => [PurchaseGiftCardRequest::class, 'purchaser_email'],
+    'StoreApiReviewRequest' => [App\Http\Requests\StoreApiReviewRequest::class, 'customer_email'],
+    'StoreApiWaitlistRequest' => [App\Http\Requests\StoreApiWaitlistRequest::class, 'customer_email'],
+    'StoreApiOrderRequest' => [App\Http\Requests\StoreApiOrderRequest::class, 'customer_email'],
+    'StoreProductWaitlistRequest' => [App\Http\Requests\StoreProductWaitlistRequest::class, 'customer_email'],
+    'StoreGalleryPhotoRequest' => [App\Http\Requests\StoreGalleryPhotoRequest::class, 'customer_email'],
+    'StoreApiFavoriteRequest' => [App\Http\Requests\StoreApiFavoriteRequest::class, 'email'],
 ]);
 
 test('form request rejects invalid email', function (string $requestClass, string $emailField) {
