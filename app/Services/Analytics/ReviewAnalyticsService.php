@@ -62,11 +62,16 @@ class ReviewAnalyticsService
     public function getMonthlyTrend(): array
     {
         $monthlyData = Review::query()
-            ->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('COUNT(*) as count'), DB::raw('AVG(rating) as avg_rating'))
             ->where('created_at', '>=', now()->subMonths(12))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+            ->get()
+            ->groupBy(fn ($review) => $review->created_at->format('Y-m'))
+            ->map(fn ($reviews, $month) => (object) [
+                'month' => $month,
+                'count' => $reviews->count(),
+                'avg_rating' => $reviews->avg('rating'),
+            ])
+            ->sortKeys()
+            ->values();
 
         $trend = [];
         $startDate = now()->subMonths(11)->startOfMonth();
@@ -96,7 +101,7 @@ class ReviewAnalyticsService
             ->with(['reviews' => function (Builder $query) {
                 $query->where('is_approved', true);
             }])
-            ->having('reviews_count', '>', 0)
+            ->whereHas('reviews', fn (Builder $q) => $q->where('is_approved', true))
             ->orderByDesc('reviews_count')
             ->limit(10)
             ->get()
