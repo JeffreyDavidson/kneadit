@@ -15,6 +15,7 @@ class CapacityLimitFactory extends Factory
     public function definition(): array
     {
         return [
+            'date' => fake()->dateTimeBetween('+1 day', '+30 days'),
             'day_of_week' => fake()->numberBetween(0, 6),
             'max_orders' => fake()->numberBetween(5, 30),
         ];
