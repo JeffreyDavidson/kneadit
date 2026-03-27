@@ -80,3 +80,13 @@ test('edit gift card validates required fields', function (array $data, array $e
     'purchaser email is required' => [['purchaser_email' => null], ['purchaser_email' => 'required']],
     'initial balance is required' => [['initial_balance' => null], ['initial_balance' => 'required']],
 ]);
+
+test('can filter gift cards by depleted status', function () {
+    $active = GiftCard::factory()->create();
+    $depleted = GiftCard::factory()->depleted()->create();
+
+    Livewire::test(ListGiftCards::class)
+        ->filterTable('status', App\Enums\GiftCardStatus::Depleted->value)
+        ->assertCanSeeTableRecords(collect([$depleted]))
+        ->assertCanNotSeeTableRecords(collect([$active]));
+});
