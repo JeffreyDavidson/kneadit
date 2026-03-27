@@ -7,7 +7,6 @@ use App\Models\Customer;
 use App\ValueObjects\DateRange;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Support\Facades\DB;
 
 class CustomerReport
 {
@@ -24,10 +23,11 @@ class CustomerReport
 
         $topCustomers = Customer::query()->withSum(['orders as total_spend' => fn (EloquentBuilder $q) => $q->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid)], 'total')
             ->withCount(['orders as order_count' => fn (EloquentBuilder $q) => $q->whereBetween('delivery_date', $range->toArray())])
-            ->having('total_spend', '>', 0)
             ->orderByDesc('total_spend')
-            ->limit(10)
             ->get()
+            ->filter(fn (Customer $c) => ((float) $c->total_spend) > 0)
+            ->take(10)
+            ->values()
             ->map(fn (Customer $c) => [
                 'name' => $c->name,
                 'email' => $c->email,
@@ -37,10 +37,10 @@ class CustomerReport
             ->all();
 
         $acquisitionByMonth = Customer::query()->whereBetween('created_at', $range->toArray())
-            ->select(DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"), DB::raw('COUNT(*) as count'))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('count', 'month')
+            ->get()
+            ->groupBy(fn (Customer $c) => $c->created_at->format('Y-m'))
+            ->map(fn ($customers) => $customers->count())
+            ->sortKeys()
             ->toArray();
 
         return compact('newCustomers', 'repeatRate', 'repeatCustomers', 'totalCustomersWithOrders', 'topCustomers', 'acquisitionByMonth');
