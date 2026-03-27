@@ -85,3 +85,14 @@ test('can search contact messages by name', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can sort contact messages by name', function () {
+    $alice = ContactMessage::factory()->create(['name' => 'Alice']);
+    $zach = ContactMessage::factory()->create(['name' => 'Zach']);
+
+    Livewire::test(ListContactMessages::class)
+        ->sortTable('name')
+        ->assertCanSeeTableRecords(collect([$alice, $zach]), inOrder: true)
+        ->sortTable('name', 'desc')
+        ->assertCanSeeTableRecords(collect([$zach, $alice]), inOrder: true);
+});

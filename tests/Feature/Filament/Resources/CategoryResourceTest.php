@@ -84,3 +84,13 @@ test('can sort categories by name', function () {
         ->sortTable('name', 'desc')
         ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
 });
+
+test('can filter categories by active status', function () {
+    $active = Category::factory()->create();
+    $inactive = Category::factory()->inactive()->create();
+
+    Livewire::test(ListCategories::class)
+        ->filterTable('is_active', 1)
+        ->assertCanSeeTableRecords(collect([$active]))
+        ->assertCanNotSeeTableRecords(collect([$inactive]));
+});
