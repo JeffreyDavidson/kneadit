@@ -16,7 +16,7 @@
                 {{ $this->form }}
                 
                 <div class="mt-6 flex justify-center">
-                    {{ $this->generateAction }}
+                    <x-filament::button type="submit" icon="heroicon-o-sparkles" size="lg">Generate Captions</x-filament::button>
                 </div>
             </form>
         </div>
