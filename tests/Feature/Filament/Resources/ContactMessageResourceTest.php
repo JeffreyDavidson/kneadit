@@ -96,3 +96,13 @@ test('can sort contact messages by name', function () {
         ->sortTable('name', 'desc')
         ->assertCanSeeTableRecords(collect([$zach, $alice]), inOrder: true);
 });
+
+test('can filter contact messages by read status', function () {
+    $read = ContactMessage::factory()->create(['is_read' => true]);
+    $unread = ContactMessage::factory()->create(['is_read' => false]);
+
+    Livewire::test(ListContactMessages::class)
+        ->filterTable('is_read', true)
+        ->assertCanSeeTableRecords(collect([$read]))
+        ->assertCanNotSeeTableRecords(collect([$unread]));
+});

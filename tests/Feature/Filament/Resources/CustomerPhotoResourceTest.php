@@ -21,3 +21,10 @@ test('can list customer photos in the table', function () {
     Livewire::test(ListCustomerPhotos::class)
         ->assertCanSeeTableRecords($photos);
 });
+
+test('can render customer photo table columns', function (string $column) {
+    CustomerPhoto::factory()->create();
+
+    Livewire::test(ListCustomerPhotos::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['customer_name', 'caption']);

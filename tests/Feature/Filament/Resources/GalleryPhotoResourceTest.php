@@ -21,3 +21,10 @@ test('can list gallery photos in the table', function () {
     Livewire::test(ListGalleryPhotos::class)
         ->assertCanSeeTableRecords($photos);
 });
+
+test('can render gallery photo table columns', function (string $column) {
+    GalleryPhoto::factory()->create();
+
+    Livewire::test(ListGalleryPhotos::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['title', 'category', 'sort_order']);
