@@ -60,3 +60,10 @@ test('create supplier validates name is required', function () {
         ])
         ->assertHasActionErrors(['name' => 'required']);
 });
+
+test('can render supplier table columns', function (string $column) {
+    Supplier::factory()->create();
+
+    Livewire::test(ListSuppliers::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['name', 'contact_name', 'email', 'phone']);

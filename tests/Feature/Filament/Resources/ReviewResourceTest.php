@@ -86,3 +86,13 @@ test('create review validates required fields', function (array $data, array $er
     'customer email is required' => [['customer_email' => null], ['customer_email' => 'required']],
     'rating is required' => [['rating' => null], ['rating' => 'required']],
 ]);
+
+test('can search reviews by customer name', function () {
+    $target = Review::factory()->create(['customer_name' => 'Alice Baker']);
+    $other = Review::factory()->create(['customer_name' => 'Bob Smith']);
+
+    Livewire::test(ListReviews::class)
+        ->searchTable('Alice')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});
