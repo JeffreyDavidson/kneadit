@@ -80,3 +80,13 @@ test('create product validates required fields', function (array $data, array $e
     'price is required' => [['price' => null], ['price' => 'required']],
     'category is required' => [['category_id' => null], ['category_id' => 'required']],
 ]);
+
+test('can filter products by active status', function () {
+    $active = Product::factory()->create(['is_active' => true]);
+    $inactive = Product::factory()->inactive()->create();
+
+    Livewire::test(ListProducts::class)
+        ->filterTable('is_active', 1)
+        ->assertCanSeeTableRecords(collect([$active]))
+        ->assertCanNotSeeTableRecords(collect([$inactive]));
+});

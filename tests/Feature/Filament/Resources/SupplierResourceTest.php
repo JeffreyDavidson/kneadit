@@ -42,3 +42,13 @@ test('can edit a supplier via table action', function () {
 
     expect($supplier->fresh()->name)->toBe('Updated Supplier');
 });
+
+test('can search suppliers by name', function () {
+    $target = Supplier::factory()->create(['name' => 'Flour Mill Co.']);
+    $other = Supplier::factory()->create(['name' => 'Sugar Supply Inc.']);
+
+    Livewire::test(ListSuppliers::class)
+        ->searchTable('Flour')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

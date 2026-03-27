@@ -55,3 +55,13 @@ test('create ingredient validates required fields', function (array $data, array
     'unit is required' => [['unit' => null], ['unit' => 'required']],
     'current stock is required' => [['current_stock' => null], ['current_stock' => 'required']],
 ]);
+
+test('can search ingredients by name', function () {
+    $flour = Ingredient::factory()->create(['name' => 'Bread Flour']);
+    $sugar = Ingredient::factory()->create(['name' => 'Brown Sugar']);
+
+    Livewire::test(ListIngredients::class)
+        ->searchTable('Flour')
+        ->assertCanSeeTableRecords(collect([$flour]))
+        ->assertCanNotSeeTableRecords(collect([$sugar]));
+});
