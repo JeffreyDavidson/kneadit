@@ -26,7 +26,7 @@ class ProductImageObserver
         }
 
         ProductImage::query()->where('product_id', $productId)->update(['is_primary' => false]);
-        $images->first()->update(['is_primary' => true]);
+        $images->first()->updateQuietly(['is_primary' => true]);
 
         $product = Product::query()->find($productId);
         if ($product) {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -7,8 +8,34 @@ uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-// Bug #32: ProductImageObserver.syncPrimary() calls update() on ProductImage
-// which triggers the saved observer again, causing infinite recursion.
-// Fix: use updateQuietly() instead of update() in syncPrimary().
-test('first image is set as primary on save')
-    ->todo();
+test('first image is set as primary on save', function () {
+    $product = Product::factory()->create();
+    $image = ProductImage::query()->create([
+        'product_id' => $product->id,
+        'path' => 'products/test.jpg',
+        'sort_order' => 1,
+    ]);
+
+    expect($image->fresh()->is_primary)->toBeTrue()
+        ->and($product->fresh()->image)->toBe('products/test.jpg');
+});
+
+test('lowest sort order image becomes primary when new image added', function () {
+    $product = Product::factory()->create();
+
+    $first = ProductImage::query()->create([
+        'product_id' => $product->id,
+        'path' => 'products/first.jpg',
+        'sort_order' => 2,
+    ]);
+
+    $second = ProductImage::query()->create([
+        'product_id' => $product->id,
+        'path' => 'products/second.jpg',
+        'sort_order' => 1,
+    ]);
+
+    expect($second->fresh()->is_primary)->toBeTrue()
+        ->and($first->fresh()->is_primary)->toBeFalse()
+        ->and($product->fresh()->image)->toBe('products/second.jpg');
+});
