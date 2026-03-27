@@ -39,3 +39,12 @@ test('can edit a setting via table action', function () {
 
     expect($setting->fresh()->value)->toBe('Updated value');
 });
+
+test('create setting validates key is required', function () {
+    Livewire::test(ListSettings::class)
+        ->callAction(CreateAction::class, data: [
+            'key' => null,
+            'value' => 'test',
+        ])
+        ->assertHasActionErrors(['key' => 'required']);
+});

@@ -42,3 +42,12 @@ test('can edit a blocked date via table action', function () {
 
     expect($blockedDate->fresh()->reason)->toBe('Vacation');
 });
+
+test('create blocked date validates date is required', function () {
+    Livewire::test(ListBlockedDates::class)
+        ->callAction(CreateAction::class, data: [
+            'date' => null,
+            'is_all_day' => true,
+        ])
+        ->assertHasActionErrors(['date' => 'required']);
+});

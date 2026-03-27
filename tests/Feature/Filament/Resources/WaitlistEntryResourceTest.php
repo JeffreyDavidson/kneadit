@@ -26,3 +26,13 @@ test('can render waitlist entry table columns', function (string $column) {
     Livewire::test(ListWaitlistEntries::class)
         ->assertCanRenderTableColumn($column);
 })->with(['customer_name', 'customer_email', 'requested_date', 'status']);
+
+test('can search waitlist entries by customer name', function () {
+    $target = WaitlistEntry::factory()->create(['customer_name' => 'Alice Baker']);
+    $other = WaitlistEntry::factory()->create(['customer_name' => 'Bob Smith']);
+
+    Livewire::test(ListWaitlistEntries::class)
+        ->searchTable('Alice')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

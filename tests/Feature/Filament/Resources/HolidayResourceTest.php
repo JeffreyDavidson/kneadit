@@ -51,3 +51,28 @@ test('can render holiday table columns', function (string $column) {
     Livewire::test(ListHolidays::class)
         ->assertCanRenderTableColumn($column);
 })->with(['name', 'date', 'order_deadline']);
+
+test('create holiday validates required fields', function (array $data, array $errors) {
+    Livewire::test(ListHolidays::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Test',
+            'date' => '2026-12-25',
+            'order_deadline' => '2026-12-20',
+            ...$data,
+        ])
+        ->assertHasActionErrors($errors);
+})->with([
+    'name is required' => [['name' => null], ['name' => 'required']],
+    'date is required' => [['date' => null], ['date' => 'required']],
+    'order deadline is required' => [['order_deadline' => null], ['order_deadline' => 'required']],
+]);
+
+test('can search holidays by name', function () {
+    $christmas = Holiday::factory()->create(['name' => 'Christmas']);
+    $easter = Holiday::factory()->create(['name' => 'Easter']);
+
+    Livewire::test(ListHolidays::class)
+        ->searchTable('Christmas')
+        ->assertCanSeeTableRecords(collect([$christmas]))
+        ->assertCanNotSeeTableRecords(collect([$easter]));
+});

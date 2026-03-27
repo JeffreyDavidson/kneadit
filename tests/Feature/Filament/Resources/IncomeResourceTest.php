@@ -77,3 +77,14 @@ test('can search incomes by description', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can sort incomes by amount', function () {
+    $small = Income::factory()->create(['amount' => 25]);
+    $large = Income::factory()->create(['amount' => 800]);
+
+    Livewire::test(ListIncomes::class)
+        ->sortTable('amount')
+        ->assertCanSeeTableRecords(collect([$small, $large]), inOrder: true)
+        ->sortTable('amount', 'desc')
+        ->assertCanSeeTableRecords(collect([$large, $small]), inOrder: true);
+});
