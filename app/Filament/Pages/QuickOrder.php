@@ -23,7 +23,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -36,7 +35,7 @@ use Illuminate\Support\Facades\DB;
 
 class QuickOrder extends Page
 {
-    protected string $view = 'filament-panels::pages.simple';
+    protected string $view = 'filament-panels::pages.page';
 
     public static function canAccess(): bool
     {
@@ -67,25 +66,20 @@ class QuickOrder extends Page
         $this->form->fill();
     }
 
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components($this->getFormSchema())
+            ->statePath('data')
+            ->model(Order::class);
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema->components([
-            EmbeddedSchema::make('form')
-                ->schema($this->getFormSchema()),
+            Form::make($this->getFormSchema())
+                ->livewireSubmitHandler('submit'),
         ]);
-    }
-
-    /** @return array<string, mixed> */
-    protected function getForms(): array
-    {
-        return [
-            'form' => Form::make($this, [
-                EmbeddedSchema::make('form')
-                    ->schema($this->getFormSchema()),
-            ])
-                ->statePath('data')
-                ->model(Order::class),
-        ];
     }
 
     /** @return array<int, Component> */

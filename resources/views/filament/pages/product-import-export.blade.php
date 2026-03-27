@@ -1,7 +1,6 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         {{-- Form sections (Export & Import) --}}
-        @livewire('filament.core.page', [], key('form'))
         {{ $this->form }}
 
         {{-- Preview Section --}}

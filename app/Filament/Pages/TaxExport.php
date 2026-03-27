@@ -17,7 +17,6 @@ use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -74,23 +73,18 @@ class TaxExport extends Page
         ]);
     }
 
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components($this->getFormSchema())
+            ->statePath('data');
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema->components([
-            EmbeddedSchema::make('form')
-                ->schema($this->getFormSchema()),
+            Form::make($this->getFormSchema()),
         ]);
-    }
-
-    /** @return array<string, mixed> */
-    protected function getForms(): array
-    {
-        return [
-            'form' => Form::make($this, [
-                EmbeddedSchema::make('form')
-                    ->schema($this->getFormSchema()),
-            ])->statePath('data'),
-        ];
     }
 
     /** @var array<string, mixed> */
