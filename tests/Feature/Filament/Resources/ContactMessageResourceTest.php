@@ -68,3 +68,20 @@ test('create contact message validates required fields', function (array $data, 
     'subject is required' => [['subject' => null], ['subject' => 'required']],
     'message is required' => [['message' => null], ['message' => 'required']],
 ]);
+
+test('can render contact message table columns', function (string $column) {
+    ContactMessage::factory()->create();
+
+    Livewire::test(ListContactMessages::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['name', 'email', 'subject']);
+
+test('can search contact messages by name', function () {
+    $target = ContactMessage::factory()->create(['name' => 'Alice']);
+    $other = ContactMessage::factory()->create(['name' => 'Bob']);
+
+    Livewire::test(ListContactMessages::class)
+        ->searchTable('Alice')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

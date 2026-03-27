@@ -30,3 +30,17 @@ test('can create a holiday via slide-over', function () {
         'name' => 'Christmas',
     ]);
 });
+
+test('can edit a holiday via table action', function () {
+    $holiday = Holiday::factory()->create();
+
+    Livewire::test(ListHolidays::class)
+        ->callTableAction('edit', $holiday, data: [
+            'name' => 'Updated Holiday',
+            'date' => $holiday->date->format('Y-m-d'),
+            'order_deadline' => $holiday->order_deadline->format('Y-m-d'),
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($holiday->fresh()->name)->toBe('Updated Holiday');
+});

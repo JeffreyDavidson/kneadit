@@ -26,3 +26,16 @@ test('can create a setting via slide-over', function () {
         'key' => 'bakery_tagline',
     ]);
 });
+
+test('can edit a setting via table action', function () {
+    $setting = Setting::factory()->create();
+
+    Livewire::test(ListSettings::class)
+        ->callTableAction('edit', $setting, data: [
+            'key' => $setting->key,
+            'value' => 'Updated value',
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($setting->fresh()->value)->toBe('Updated value');
+});
