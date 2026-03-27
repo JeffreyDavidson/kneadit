@@ -62,3 +62,13 @@ test('can render setting table columns', function (string $column) {
     Livewire::test(ListSettings::class)
         ->assertCanRenderTableColumn($column);
 })->with(['key', 'value']);
+
+test('can search settings by key', function () {
+    $target = Setting::factory()->create(['key' => 'store_name']);
+    $other = Setting::factory()->create(['key' => 'brand_color']);
+
+    Livewire::test(ListSettings::class)
+        ->searchTable('store_name')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

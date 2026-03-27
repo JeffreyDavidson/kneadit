@@ -29,4 +29,12 @@ test('can render customer photo table columns', function (string $column) {
         ->assertCanRenderTableColumn($column);
 })->with(['customer_name', 'caption']);
 
-// Edit test skipped — photo_path FileUpload requires actual uploaded file
+test('can search customer photos by customer name', function () {
+    $target = CustomerPhoto::factory()->create(['customer_name' => 'Alice Baker']);
+    $other = CustomerPhoto::factory()->create(['customer_name' => 'Bob Smith']);
+
+    Livewire::test(ListCustomerPhotos::class)
+        ->searchTable('Alice')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

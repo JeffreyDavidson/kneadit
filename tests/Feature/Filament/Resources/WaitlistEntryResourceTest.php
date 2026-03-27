@@ -3,6 +3,7 @@
 use App\Filament\Resources\WaitlistEntries\Pages\ListWaitlistEntries;
 use App\Models\User;
 use App\Models\WaitlistEntry;
+use Filament\Actions\CreateAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -46,3 +47,36 @@ test('can filter waitlist entries by status', function () {
         ->assertCanSeeTableRecords(collect([$waiting]))
         ->assertCanNotSeeTableRecords(collect([$notified]));
 });
+
+test('can create a waitlist entry via slide-over', function () {
+    Livewire::test(ListWaitlistEntries::class)
+        ->callAction(CreateAction::class, data: [
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'customer_phone' => '555-0100',
+            'requested_date' => now()->addDays(5)->format('Y-m-d'),
+            'status' => App\Enums\WaitlistStatus::Waiting->value,
+        ])
+        ->assertHasNoActionErrors();
+
+    $this->assertDatabaseHas(WaitlistEntry::class, [
+        'customer_name' => 'Jane Doe',
+    ]);
+});
+
+test('create waitlist entry validates required fields', function (array $data, array $errors) {
+    Livewire::test(ListWaitlistEntries::class)
+        ->callAction(CreateAction::class, data: [
+            'customer_name' => 'Test',
+            'customer_email' => 'test@example.com',
+            'requested_date' => now()->addDay()->format('Y-m-d'),
+            'status' => App\Enums\WaitlistStatus::Waiting->value,
+            ...$data,
+        ])
+        ->assertHasActionErrors($errors);
+})->with([
+    'customer name is required' => [['customer_name' => null], ['customer_name' => 'required']],
+    'customer email is required' => [['customer_email' => null], ['customer_email' => 'required']],
+    'requested date is required' => [['requested_date' => null], ['requested_date' => 'required']],
+    'status is required' => [['status' => null], ['status' => 'required']],
+]);

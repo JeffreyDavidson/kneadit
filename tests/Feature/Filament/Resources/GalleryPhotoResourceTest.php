@@ -42,3 +42,13 @@ test('can edit a gallery photo via table action', function () {
 
     expect($photo->fresh()->title)->toBe('Updated Photo Title');
 });
+
+test('can search gallery photos by title', function () {
+    $target = GalleryPhoto::factory()->create(['title' => 'Sourdough Display']);
+    $other = GalleryPhoto::factory()->create(['title' => 'Cookie Arrangement']);
+
+    Livewire::test(ListGalleryPhotos::class)
+        ->searchTable('Sourdough')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});
