@@ -35,7 +35,7 @@ class ViewOrder extends ViewRecord
                                     ->badge(),
                                 TextEntry::make('status')
                                     ->badge()
-                                    ->color(fn (string $state): string => match ($state) {
+                                    ->color(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
                                         OrderStatus::Pending->value => 'gray',
                                         OrderStatus::Confirmed->value => 'info',
                                         OrderStatus::Baking->value => 'warning',
@@ -46,7 +46,7 @@ class ViewOrder extends ViewRecord
                                     }),
                                 TextEntry::make('payment_status')
                                     ->badge()
-                                    ->color(fn (string $state): string => match ($state) {
+                                    ->color(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
                                         PaymentStatus::Unpaid->value => 'warning',
                                         PaymentStatus::Paid->value => 'success',
                                         PaymentStatus::Cancelled->value => 'danger',
