@@ -28,3 +28,5 @@ test('can render customer photo table columns', function (string $column) {
     Livewire::test(ListCustomerPhotos::class)
         ->assertCanRenderTableColumn($column);
 })->with(['customer_name', 'caption']);
+
+// Edit test skipped — photo_path FileUpload requires actual uploaded file

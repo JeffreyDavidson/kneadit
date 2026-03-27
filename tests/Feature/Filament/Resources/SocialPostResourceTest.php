@@ -38,3 +38,16 @@ test('can search social posts by caption', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can edit a social post via table action', function () {
+    $post = SocialPost::factory()->create();
+
+    Livewire::test(ListSocialPosts::class)
+        ->callTableAction('edit', $post, data: [
+            'platform' => $post->platform->value,
+            'caption' => 'Updated caption for our bakery',
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($post->fresh()->caption)->toBe('Updated caption for our bakery');
+});

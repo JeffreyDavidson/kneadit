@@ -28,3 +28,17 @@ test('can render gallery photo table columns', function (string $column) {
     Livewire::test(ListGalleryPhotos::class)
         ->assertCanRenderTableColumn($column);
 })->with(['title', 'category', 'sort_order']);
+
+test('can edit a gallery photo via table action', function () {
+    $photo = GalleryPhoto::factory()->create();
+
+    Livewire::test(ListGalleryPhotos::class)
+        ->callTableAction('edit', $photo, data: [
+            'title' => 'Updated Photo Title',
+            'image_path' => [$photo->image_path],
+            'sort_order' => $photo->sort_order,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($photo->fresh()->title)->toBe('Updated Photo Title');
+});

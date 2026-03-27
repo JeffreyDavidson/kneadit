@@ -36,3 +36,15 @@ test('can search surveys by title', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can edit a survey via table action', function () {
+    $survey = Survey::factory()->create();
+
+    Livewire::test(ListSurveys::class)
+        ->callTableAction('edit', $survey, data: [
+            'title' => 'Updated Survey',
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($survey->fresh()->title)->toBe('Updated Survey');
+});
