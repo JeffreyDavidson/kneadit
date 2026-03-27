@@ -73,3 +73,14 @@ test('can render customer table columns', function (string $column) {
     Livewire::test(ListCustomers::class)
         ->assertCanRenderTableColumn($column);
 })->with(['name', 'email', 'phone', 'orders_count']);
+
+test('can sort customers by name', function () {
+    $alice = Customer::factory()->create(['name' => 'Alice']);
+    $zach = Customer::factory()->create(['name' => 'Zach']);
+
+    Livewire::test(ListCustomers::class)
+        ->sortTable('name')
+        ->assertCanSeeTableRecords(collect([$alice, $zach]), inOrder: true)
+        ->sortTable('name', 'desc')
+        ->assertCanSeeTableRecords(collect([$zach, $alice]), inOrder: true);
+});

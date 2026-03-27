@@ -69,3 +69,14 @@ test('can filter orders by payment status', function () {
         ->assertCanSeeTableRecords(collect([$paid]))
         ->assertCanNotSeeTableRecords(collect([$unpaid]));
 });
+
+test('can sort orders by total', function () {
+    $cheap = Order::factory()->create(['subtotal' => 10, 'total' => 10]);
+    $expensive = Order::factory()->create(['subtotal' => 100, 'total' => 100]);
+
+    Livewire::test(ListOrders::class)
+        ->sortTable('total')
+        ->assertCanSeeTableRecords(collect([$cheap, $expensive]), inOrder: true)
+        ->sortTable('total', 'desc')
+        ->assertCanSeeTableRecords(collect([$expensive, $cheap]), inOrder: true);
+});
