@@ -52,3 +52,21 @@ test('can edit a blog post', function () {
 
     expect($post->fresh()->title)->toBe('Updated Title');
 });
+
+test('create blog post validates required fields', function (array $data, array $errors) {
+    Livewire::test(CreateBlogPost::class)
+        ->fillForm([
+            'title' => 'Test',
+            'slug' => 'test',
+            'body' => '<p>Content</p>',
+            ...$data,
+        ])
+        ->call('create')
+        ->assertHasFormErrors($errors);
+})->with([
+    'title is required' => [['title' => null], ['title' => 'required']],
+    'slug is required' => [['slug' => null], ['slug' => 'required']],
+]);
+
+test('can list blog posts in the table')
+    ->todo();

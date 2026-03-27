@@ -101,3 +101,18 @@ test('can sort products by name', function () {
         ->sortTable('name', 'desc')
         ->assertCanSeeTableRecords(collect([$zucchini, $apple]), inOrder: true);
 });
+
+test('can edit a product via table action', function () {
+    $product = Product::factory()->create();
+
+    Livewire::test(ListProducts::class)
+        ->callTableAction('edit', $product, data: [
+            'name' => 'Updated Bread',
+            'slug' => $product->slug,
+            'price' => $product->price,
+            'category_id' => $product->category_id,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($product->fresh()->name)->toBe('Updated Bread');
+});
