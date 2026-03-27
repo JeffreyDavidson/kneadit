@@ -88,3 +88,14 @@ test('can search loyalty rewards by name', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can sort loyalty rewards by points required', function () {
+    $low = LoyaltyReward::factory()->create(['points_required' => 50]);
+    $high = LoyaltyReward::factory()->create(['points_required' => 500]);
+
+    Livewire::test(ListLoyaltyRewards::class)
+        ->sortTable('points_required')
+        ->assertCanSeeTableRecords(collect([$low, $high]), inOrder: true)
+        ->sortTable('points_required', 'desc')
+        ->assertCanSeeTableRecords(collect([$high, $low]), inOrder: true);
+});
