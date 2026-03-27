@@ -47,3 +47,20 @@ test('can edit a loyalty reward via table action', function () {
 
     expect($reward->fresh()->name)->toBe('Updated Reward');
 });
+
+test('create loyalty reward validates required fields', function (array $data, array $errors) {
+    Livewire::test(ListLoyaltyRewards::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Test',
+            'points_required' => 100,
+            'reward_type' => RewardType::PercentageDiscount->value,
+            'reward_value' => 10,
+            ...$data,
+        ])
+        ->assertHasActionErrors($errors);
+})->with([
+    'name is required' => [['name' => null], ['name' => 'required']],
+    'points required is required' => [['points_required' => null], ['points_required' => 'required']],
+    'reward type is required' => [['reward_type' => null], ['reward_type' => 'required']],
+    'reward value is required' => [['reward_value' => null], ['reward_value' => 'required']],
+]);

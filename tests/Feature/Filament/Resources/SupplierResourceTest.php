@@ -52,3 +52,11 @@ test('can search suppliers by name', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('create supplier validates name is required', function () {
+    Livewire::test(ListSuppliers::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => null,
+        ])
+        ->assertHasActionErrors(['name' => 'required']);
+});

@@ -51,3 +51,20 @@ test('can edit a contact message via table action', function () {
 
     expect($message->fresh()->subject)->toBe('Updated subject');
 });
+
+test('create contact message validates required fields', function (array $data, array $errors) {
+    Livewire::test(ListContactMessages::class)
+        ->callAction(CreateAction::class, data: [
+            'name' => 'Test',
+            'email' => 'test@example.com',
+            'subject' => 'Test',
+            'message' => 'Test message',
+            ...$data,
+        ])
+        ->assertHasActionErrors($errors);
+})->with([
+    'name is required' => [['name' => null], ['name' => 'required']],
+    'email is required' => [['email' => null], ['email' => 'required']],
+    'subject is required' => [['subject' => null], ['subject' => 'required']],
+    'message is required' => [['message' => null], ['message' => 'required']],
+]);

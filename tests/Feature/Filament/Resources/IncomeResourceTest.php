@@ -52,3 +52,18 @@ test('can edit an income via table action', function () {
 
     expect($income->fresh()->description)->toBe('Updated income');
 });
+
+test('create income validates required fields', function (array $data, array $errors) {
+    Livewire::test(ListIncomes::class)
+        ->callAction(CreateAction::class, data: [
+            'description' => 'Test',
+            'amount' => 100,
+            'source' => IncomeSource::FarmersMarket->value,
+            ...$data,
+        ])
+        ->assertHasActionErrors($errors);
+})->with([
+    'description is required' => [['description' => null], ['description' => 'required']],
+    'amount is required' => [['amount' => null], ['amount' => 'required']],
+    'source is required' => [['source' => null], ['source' => 'required']],
+]);
