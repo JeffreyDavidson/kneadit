@@ -67,3 +67,13 @@ test('create income validates required fields', function (array $data, array $er
     'amount is required' => [['amount' => null], ['amount' => 'required']],
     'source is required' => [['source' => null], ['source' => 'required']],
 ]);
+
+test('can search incomes by description', function () {
+    $target = Income::factory()->create(['description' => 'Market sales']);
+    $other = Income::factory()->create(['description' => 'Online order']);
+
+    Livewire::test(ListIncomes::class)
+        ->searchTable('Market')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

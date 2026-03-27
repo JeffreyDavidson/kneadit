@@ -21,3 +21,20 @@ test('can list recipes in the table', function () {
     Livewire::test(ListRecipes::class)
         ->assertCanSeeTableRecords($recipes);
 });
+
+test('can render recipe table columns', function (string $column) {
+    Recipe::factory()->create();
+
+    Livewire::test(ListRecipes::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['name', 'prep_time_minutes']);
+
+test('can search recipes by name', function () {
+    $target = Recipe::factory()->create(['name' => 'Sourdough Starter']);
+    $other = Recipe::factory()->create(['name' => 'Chocolate Cake']);
+
+    Livewire::test(ListRecipes::class)
+        ->searchTable('Sourdough')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

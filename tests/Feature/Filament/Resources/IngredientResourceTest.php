@@ -97,3 +97,14 @@ test('can filter ingredients by low stock', function () {
         ->assertCanSeeTableRecords(collect([$lowStock]))
         ->assertCanNotSeeTableRecords(collect([$normalStock]));
 });
+
+test('can sort ingredients by name', function () {
+    $butter = Ingredient::factory()->create(['name' => 'Butter']);
+    $yeast = Ingredient::factory()->create(['name' => 'Yeast']);
+
+    Livewire::test(ListIngredients::class)
+        ->sortTable('name')
+        ->assertCanSeeTableRecords(collect([$butter, $yeast]), inOrder: true)
+        ->sortTable('name', 'desc')
+        ->assertCanSeeTableRecords(collect([$yeast, $butter]), inOrder: true);
+});

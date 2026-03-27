@@ -96,3 +96,14 @@ test('can search reviews by customer name', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can sort reviews by customer name', function () {
+    $alice = Review::factory()->create(['customer_name' => 'Alice']);
+    $zach = Review::factory()->create(['customer_name' => 'Zach']);
+
+    Livewire::test(ListReviews::class)
+        ->sortTable('customer_name')
+        ->assertCanSeeTableRecords(collect([$alice, $zach]), inOrder: true)
+        ->sortTable('customer_name', 'desc')
+        ->assertCanSeeTableRecords(collect([$zach, $alice]), inOrder: true);
+});
