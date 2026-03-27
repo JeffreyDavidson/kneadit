@@ -90,3 +90,18 @@ test('NewOrderMessage has correct subject with order number', function () {
 
     expect($mail->envelope()->subject)->toContain($order->order_number);
 });
+
+test('CateringQuote has correct subject with store name', function () {
+    $inquiry = App\Models\CateringInquiry::factory()->create();
+    $mail = new App\Mail\CateringQuote($inquiry);
+
+    expect($mail->envelope()->subject)->toContain('Catering Quote')
+        ->and($mail->envelope()->subject)->toContain('Test Bakery');
+});
+
+test('WeeklyDigest has correct subject with store name', function () {
+    $mail = new App\Mail\WeeklyDigest;
+
+    expect($mail->envelope()->subject)->toContain('Weekly Digest')
+        ->and($mail->envelope()->subject)->toContain('Test Bakery');
+});
