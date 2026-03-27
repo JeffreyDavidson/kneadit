@@ -93,3 +93,14 @@ test('can search expenses by description', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can sort expenses by amount', function () {
+    $small = Expense::factory()->create(['amount' => 10]);
+    $large = Expense::factory()->create(['amount' => 500]);
+
+    Livewire::test(ListExpenses::class)
+        ->sortTable('amount')
+        ->assertCanSeeTableRecords(collect([$small, $large]), inOrder: true)
+        ->sortTable('amount', 'desc')
+        ->assertCanSeeTableRecords(collect([$large, $small]), inOrder: true);
+});

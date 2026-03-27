@@ -52,3 +52,14 @@ test('can render gift card table columns', function (string $column) {
     Livewire::test(ListGiftCards::class)
         ->assertCanRenderTableColumn($column);
 })->with(['code', 'purchaser_name', 'current_balance']);
+
+test('can sort gift cards by current balance', function () {
+    $low = GiftCard::factory()->create(['initial_balance' => 10, 'current_balance' => 10]);
+    $high = GiftCard::factory()->create(['initial_balance' => 100, 'current_balance' => 100]);
+
+    Livewire::test(ListGiftCards::class)
+        ->sortTable('current_balance')
+        ->assertCanSeeTableRecords(collect([$low, $high]), inOrder: true)
+        ->sortTable('current_balance', 'desc')
+        ->assertCanSeeTableRecords(collect([$high, $low]), inOrder: true);
+});
