@@ -74,16 +74,26 @@ test('can render ingredient table columns', function (string $column) {
 })->with(['name', 'current_stock', 'stock_status', 'cost_per_unit']);
 
 test('can edit an ingredient via table action', function () {
-    $ingredient = Ingredient::factory()->create();
+    $ingredient = Ingredient::factory()->create(['unit' => 'lbs']);
 
     Livewire::test(ListIngredients::class)
         ->callTableAction('edit', $ingredient, data: [
             'name' => 'Updated Flour',
-            'unit' => $ingredient->unit,
+            'unit' => 'lbs',
             'current_stock' => $ingredient->current_stock,
             'low_stock_threshold' => $ingredient->low_stock_threshold,
         ])
         ->assertHasNoTableActionErrors();
 
     expect($ingredient->fresh()->name)->toBe('Updated Flour');
+});
+
+test('can filter ingredients by low stock', function () {
+    $lowStock = Ingredient::factory()->lowStock()->create();
+    $normalStock = Ingredient::factory()->create(['current_stock' => 50]);
+
+    Livewire::test(ListIngredients::class)
+        ->filterTable('stock_status', 'low')
+        ->assertCanSeeTableRecords(collect([$lowStock]))
+        ->assertCanNotSeeTableRecords(collect([$normalStock]));
 });
