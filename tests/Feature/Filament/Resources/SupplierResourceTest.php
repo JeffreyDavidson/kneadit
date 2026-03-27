@@ -85,3 +85,13 @@ test('can sort suppliers by name', function () {
         ->sortTable('name', 'desc')
         ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
 });
+
+test('can filter suppliers by active status', function () {
+    $active = Supplier::factory()->create(['is_active' => true]);
+    $inactive = Supplier::factory()->create(['is_active' => false]);
+
+    Livewire::test(ListSuppliers::class)
+        ->filterTable('is_active', 1)
+        ->assertCanSeeTableRecords(collect([$active]))
+        ->assertCanNotSeeTableRecords(collect([$inactive]));
+});

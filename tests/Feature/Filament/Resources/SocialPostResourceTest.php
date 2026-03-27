@@ -21,3 +21,20 @@ test('can list social posts in the table', function () {
     Livewire::test(ListSocialPosts::class)
         ->assertCanSeeTableRecords($posts);
 });
+
+test('can render social post table columns', function (string $column) {
+    SocialPost::factory()->create();
+
+    Livewire::test(ListSocialPosts::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['platform', 'caption']);
+
+test('can search social posts by caption', function () {
+    $target = SocialPost::factory()->create(['caption' => 'Fresh sourdough baked today']);
+    $other = SocialPost::factory()->create(['caption' => 'Holiday special cookies']);
+
+    Livewire::test(ListSocialPosts::class)
+        ->searchTable('sourdough')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

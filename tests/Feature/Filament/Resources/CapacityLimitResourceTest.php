@@ -21,3 +21,10 @@ test('can list capacity limits in the table', function () {
     Livewire::test(ListCapacityLimits::class)
         ->assertCanSeeTableRecords($limits);
 });
+
+test('can render capacity limit table columns', function (string $column) {
+    CapacityLimit::factory()->create();
+
+    Livewire::test(ListCapacityLimits::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['max_orders']);

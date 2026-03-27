@@ -19,3 +19,20 @@ test('can list surveys in the table', function () {
     Livewire::test(ListSurveys::class)
         ->assertCanSeeTableRecords($surveys);
 });
+
+test('can render survey table columns', function (string $column) {
+    Survey::factory()->create();
+
+    Livewire::test(ListSurveys::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['title']);
+
+test('can search surveys by title', function () {
+    $target = Survey::factory()->create(['title' => 'Customer Satisfaction']);
+    $other = Survey::factory()->create(['title' => 'Product Feedback']);
+
+    Livewire::test(ListSurveys::class)
+        ->searchTable('Satisfaction')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});
