@@ -39,3 +39,10 @@ test('can create a review via slide-over', function () {
         'rating' => 5,
     ]);
 });
+
+test('can render review table columns', function (string $column) {
+    Review::factory()->create();
+
+    Livewire::test(ListReviews::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['customer_name', 'product.name', 'rating', 'is_approved', 'is_featured']);

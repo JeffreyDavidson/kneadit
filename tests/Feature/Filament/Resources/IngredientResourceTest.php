@@ -65,3 +65,10 @@ test('can search ingredients by name', function () {
         ->assertCanSeeTableRecords(collect([$flour]))
         ->assertCanNotSeeTableRecords(collect([$sugar]));
 });
+
+test('can render ingredient table columns', function (string $column) {
+    Ingredient::factory()->create();
+
+    Livewire::test(ListIngredients::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['name', 'current_stock', 'stock_status', 'cost_per_unit']);
