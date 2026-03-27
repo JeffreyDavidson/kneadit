@@ -28,6 +28,15 @@ dataset('requestsWithRequiredFields', [
     'StoreOrderMessageRequest' => [StoreOrderMessageRequest::class, ['message', 'sender_name', 'sender_email']],
     'StoreSurveyResponseRequest' => [StoreSurveyResponseRequest::class, ['answers']],
     'PurchaseGiftCardRequest' => [PurchaseGiftCardRequest::class, ['purchaser_name', 'purchaser_email', 'initial_balance']],
+    'StoreApiReviewRequest' => [App\Http\Requests\StoreApiReviewRequest::class, ['customer_name', 'customer_email', 'product_id', 'rating', 'comment']],
+    'StoreApiWaitlistRequest' => [App\Http\Requests\StoreApiWaitlistRequest::class, ['customer_name', 'customer_email', 'customer_phone', 'delivery_date']],
+    'StoreReviewRequest' => [App\Http\Requests\StoreReviewRequest::class, ['rating']],
+    'StoreProductWaitlistRequest' => [App\Http\Requests\StoreProductWaitlistRequest::class, ['product_id', 'customer_email']],
+    'StoreApiFavoriteRequest' => [App\Http\Requests\StoreApiFavoriteRequest::class, ['email', 'product_id']],
+    'StoreApiOrderRequest' => [App\Http\Requests\StoreApiOrderRequest::class, ['customer_name', 'customer_email', 'customer_phone', 'items', 'delivery_date']],
+    'StoreOnboardingRequest' => [App\Http\Requests\StoreOnboardingRequest::class, ['store_name', 'subdomain', 'storefront_choice']],
+    'StoreGalleryPhotoRequest' => [App\Http\Requests\StoreGalleryPhotoRequest::class, ['customer_name', 'customer_email', 'photo']],
+    // StoreCateringInquiry excluded — rules() calls settings() which needs tenant DB
 ]);
 
 test('form request rejects empty data for required fields', function (string $requestClass, array $requiredFields) {
