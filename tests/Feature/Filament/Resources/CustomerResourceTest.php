@@ -66,3 +66,10 @@ test('can search customers by name', function () {
         ->assertCanSeeTableRecords(collect([$alice]))
         ->assertCanNotSeeTableRecords(collect([$bob]));
 });
+
+test('can render customer table columns', function (string $column) {
+    Customer::factory()->create();
+
+    Livewire::test(ListCustomers::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['name', 'email', 'phone', 'orders_count']);

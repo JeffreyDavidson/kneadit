@@ -45,3 +45,10 @@ test('can edit a gift card via table action', function () {
 
     expect($giftCard->fresh()->purchaser_name)->toBe('Updated Name');
 });
+
+test('can render gift card table columns', function (string $column) {
+    GiftCard::factory()->create();
+
+    Livewire::test(ListGiftCards::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['code', 'purchaser_name', 'current_balance']);

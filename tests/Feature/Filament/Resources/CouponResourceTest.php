@@ -72,3 +72,10 @@ test('can search coupons by code', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can render coupon table columns', function (string $column) {
+    Coupon::factory()->create();
+
+    Livewire::test(ListCoupons::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['code', 'type', 'value', 'is_active']);
