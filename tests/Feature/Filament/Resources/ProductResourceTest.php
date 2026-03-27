@@ -90,3 +90,14 @@ test('can filter products by active status', function () {
         ->assertCanSeeTableRecords(collect([$active]))
         ->assertCanNotSeeTableRecords(collect([$inactive]));
 });
+
+test('can sort products by name', function () {
+    $apple = Product::factory()->create(['name' => 'Apple Tart']);
+    $zucchini = Product::factory()->create(['name' => 'Zucchini Bread']);
+
+    Livewire::test(ListProducts::class)
+        ->sortTable('name')
+        ->assertCanSeeTableRecords(collect([$apple, $zucchini]), inOrder: true)
+        ->sortTable('name', 'desc')
+        ->assertCanSeeTableRecords(collect([$zucchini, $apple]), inOrder: true);
+});
