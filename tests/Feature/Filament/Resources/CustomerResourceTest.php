@@ -19,6 +19,13 @@ test('can render customers list page', function () {
         ->assertOk();
 });
 
+test('can list customers in the table', function () {
+    $customers = Customer::factory()->count(3)->create();
+
+    Livewire::test(ListCustomers::class)
+        ->assertCanSeeTableRecords($customers);
+});
+
 test('can create a customer via slide-over', function () {
     Livewire::test(ListCustomers::class)
         ->callAction(CreateAction::class, data: [

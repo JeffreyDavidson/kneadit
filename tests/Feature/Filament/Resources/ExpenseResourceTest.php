@@ -17,6 +17,13 @@ beforeEach(function () {
     Feature::define('growth-features', fn () => true);
 });
 
+test('can list expenses in the table', function () {
+    $expenses = Expense::factory()->count(3)->create();
+
+    Livewire::test(ListExpenses::class)
+        ->assertCanSeeTableRecords($expenses);
+});
+
 test('can create an expense via slide-over', function () {
     Livewire::test(ListExpenses::class)
         ->callAction(CreateAction::class, data: [

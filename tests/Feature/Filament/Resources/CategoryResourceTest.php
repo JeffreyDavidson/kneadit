@@ -14,6 +14,13 @@ beforeEach(function () {
     $this->actingAs(User::factory()->owner()->create());
 });
 
+test('can list categories in the table', function () {
+    $categories = Category::factory()->count(3)->create();
+
+    Livewire::test(ListCategories::class)
+        ->assertCanSeeTableRecords($categories);
+});
+
 test('can create a category via slide-over', function () {
     Livewire::test(ListCategories::class)
         ->callAction(CreateAction::class, data: [

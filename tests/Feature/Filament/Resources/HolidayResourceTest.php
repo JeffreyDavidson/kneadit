@@ -16,6 +16,13 @@ beforeEach(function () {
     Feature::define('pro-features', fn () => true);
 });
 
+test('can list holidays in the table', function () {
+    $holidays = Holiday::factory()->count(3)->create();
+
+    Livewire::test(ListHolidays::class)
+        ->assertCanSeeTableRecords($holidays);
+});
+
 test('can create a holiday via slide-over', function () {
     Livewire::test(ListHolidays::class)
         ->callAction(CreateAction::class, data: [

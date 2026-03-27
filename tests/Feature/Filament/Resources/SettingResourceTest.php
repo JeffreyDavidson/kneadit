@@ -14,6 +14,13 @@ beforeEach(function () {
     $this->actingAs(User::factory()->owner()->create());
 });
 
+test('can list settings in the table', function () {
+    $settings = Setting::factory()->count(3)->create();
+
+    Livewire::test(ListSettings::class)
+        ->assertCanSeeTableRecords($settings);
+});
+
 test('can create a setting via slide-over', function () {
     Livewire::test(ListSettings::class)
         ->callAction(CreateAction::class, data: [

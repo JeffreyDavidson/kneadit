@@ -16,6 +16,13 @@ beforeEach(function () {
     Feature::define('pro-features', fn () => true);
 });
 
+test('can list suppliers in the table', function () {
+    $suppliers = Supplier::factory()->count(3)->create();
+
+    Livewire::test(ListSuppliers::class)
+        ->assertCanSeeTableRecords($suppliers);
+});
+
 test('can create a supplier via slide-over', function () {
     Livewire::test(ListSuppliers::class)
         ->callAction(CreateAction::class, data: [

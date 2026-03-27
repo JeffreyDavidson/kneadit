@@ -17,6 +17,13 @@ beforeEach(function () {
     Feature::define('growth-features', fn () => true);
 });
 
+test('can list incomes in the table', function () {
+    $incomes = Income::factory()->count(3)->create();
+
+    Livewire::test(ListIncomes::class)
+        ->assertCanSeeTableRecords($incomes);
+});
+
 test('can create an income via slide-over', function () {
     Livewire::test(ListIncomes::class)
         ->callAction(CreateAction::class, data: [
