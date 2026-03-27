@@ -71,3 +71,18 @@ test('can filter reviews by approval status', function () {
         ->assertCanSeeTableRecords(collect([$approved]))
         ->assertCanNotSeeTableRecords(collect([$pending]));
 });
+
+test('create review validates required fields', function (array $data, array $errors) {
+    Livewire::test(ListReviews::class)
+        ->callAction(CreateAction::class, data: [
+            'customer_name' => 'Test',
+            'customer_email' => 'test@example.com',
+            'rating' => 5,
+            ...$data,
+        ])
+        ->assertHasActionErrors($errors);
+})->with([
+    'customer name is required' => [['customer_name' => null], ['customer_name' => 'required']],
+    'customer email is required' => [['customer_email' => null], ['customer_email' => 'required']],
+    'rating is required' => [['rating' => null], ['rating' => 'required']],
+]);
