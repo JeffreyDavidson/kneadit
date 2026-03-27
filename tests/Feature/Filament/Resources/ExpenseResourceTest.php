@@ -73,3 +73,13 @@ test('create expense validates required fields', function (array $data, array $e
     'category is required' => [['category' => null], ['category' => 'required']],
     'date is required' => [['date' => null], ['date' => 'required']],
 ]);
+
+test('can filter expenses by category', function () {
+    $ingredients = Expense::factory()->create(['category' => ExpenseCategory::Ingredients]);
+    $packaging = Expense::factory()->create(['category' => ExpenseCategory::Packaging]);
+
+    Livewire::test(ListExpenses::class)
+        ->filterTable('category', ExpenseCategory::Ingredients->value)
+        ->assertCanSeeTableRecords(collect([$ingredients]))
+        ->assertCanNotSeeTableRecords(collect([$packaging]));
+});

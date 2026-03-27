@@ -64,3 +64,10 @@ test('create loyalty reward validates required fields', function (array $data, a
     'reward type is required' => [['reward_type' => null], ['reward_type' => 'required']],
     'reward value is required' => [['reward_value' => null], ['reward_value' => 'required']],
 ]);
+
+test('can render loyalty reward table columns', function (string $column) {
+    LoyaltyReward::factory()->create();
+
+    Livewire::test(ListLoyaltyRewards::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['name', 'points_required', 'reward_type', 'reward_value']);

@@ -44,3 +44,10 @@ test('can edit a holiday via table action', function () {
 
     expect($holiday->fresh()->name)->toBe('Updated Holiday');
 });
+
+test('can render holiday table columns', function (string $column) {
+    Holiday::factory()->create();
+
+    Livewire::test(ListHolidays::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['name', 'date', 'order_deadline']);

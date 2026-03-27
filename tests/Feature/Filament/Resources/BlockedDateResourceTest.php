@@ -28,3 +28,17 @@ test('can create a blocked date via slide-over', function () {
     expect(BlockedDate::query()->count())->toBe(1)
         ->and(BlockedDate::query()->first()->reason)->toBe('Holiday');
 });
+
+test('can edit a blocked date via table action', function () {
+    $blockedDate = BlockedDate::factory()->create();
+
+    Livewire::test(ListBlockedDates::class)
+        ->callTableAction('edit', $blockedDate, data: [
+            'date' => $blockedDate->date->format('Y-m-d'),
+            'reason' => 'Vacation',
+            'is_all_day' => true,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($blockedDate->fresh()->reason)->toBe('Vacation');
+});
