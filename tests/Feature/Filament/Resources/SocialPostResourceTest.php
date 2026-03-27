@@ -1,8 +1,10 @@
 <?php
 
+use App\Enums\SocialPlatform;
 use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
 use App\Models\SocialPost;
 use App\Models\User;
+use Filament\Actions\CreateAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -50,4 +52,17 @@ test('can edit a social post via table action', function () {
         ->assertHasNoTableActionErrors();
 
     expect($post->fresh()->caption)->toBe('Updated caption for our bakery');
+});
+
+test('can create a social post via slide-over', function () {
+    Livewire::test(ListSocialPosts::class)
+        ->callAction(CreateAction::class, data: [
+            'platform' => SocialPlatform::Instagram->value,
+            'caption' => 'Fresh bread straight from the oven!',
+        ])
+        ->assertHasNoActionErrors();
+
+    $this->assertDatabaseHas(SocialPost::class, [
+        'caption' => 'Fresh bread straight from the oven!',
+    ]);
 });
