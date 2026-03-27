@@ -38,3 +38,17 @@ test('can render income table columns', function (string $column) {
     Livewire::test(ListIncomes::class)
         ->assertCanRenderTableColumn($column);
 })->with(['date', 'description', 'source', 'amount']);
+
+test('can edit an income via table action', function () {
+    $income = Income::factory()->create();
+
+    Livewire::test(ListIncomes::class)
+        ->callTableAction('edit', $income, data: [
+            'description' => 'Updated income',
+            'amount' => $income->amount,
+            'source' => $income->source->value,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($income->fresh()->description)->toBe('Updated income');
+});

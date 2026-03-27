@@ -39,3 +39,19 @@ test('can render expense table columns', function (string $column) {
     Livewire::test(ListExpenses::class)
         ->assertCanRenderTableColumn($column);
 })->with(['date', 'description', 'category', 'amount']);
+
+test('can edit an expense via table action', function () {
+    $expense = Expense::factory()->create();
+
+    Livewire::test(ListExpenses::class)
+        ->callTableAction('edit', $expense, data: [
+            'description' => 'Updated expense',
+            'amount' => $expense->amount,
+            'category' => $expense->category->value,
+            'date' => $expense->date->format('Y-m-d'),
+            'business_percentage' => 100,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($expense->fresh()->description)->toBe('Updated expense');
+});

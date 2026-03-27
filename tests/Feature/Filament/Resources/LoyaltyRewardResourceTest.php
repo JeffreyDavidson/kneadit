@@ -32,3 +32,18 @@ test('can create a loyalty reward via slide-over', function () {
         'points_required' => 100,
     ]);
 });
+
+test('can edit a loyalty reward via table action', function () {
+    $reward = LoyaltyReward::factory()->create();
+
+    Livewire::test(ListLoyaltyRewards::class)
+        ->callTableAction('edit', $reward, data: [
+            'name' => 'Updated Reward',
+            'points_required' => $reward->points_required,
+            'reward_type' => $reward->reward_type->value,
+            'reward_value' => $reward->reward_value,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($reward->fresh()->name)->toBe('Updated Reward');
+});

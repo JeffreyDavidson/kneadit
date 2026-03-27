@@ -72,3 +72,18 @@ test('can render ingredient table columns', function (string $column) {
     Livewire::test(ListIngredients::class)
         ->assertCanRenderTableColumn($column);
 })->with(['name', 'current_stock', 'stock_status', 'cost_per_unit']);
+
+test('can edit an ingredient via table action', function () {
+    $ingredient = Ingredient::factory()->create();
+
+    Livewire::test(ListIngredients::class)
+        ->callTableAction('edit', $ingredient, data: [
+            'name' => 'Updated Flour',
+            'unit' => $ingredient->unit,
+            'current_stock' => $ingredient->current_stock,
+            'low_stock_threshold' => $ingredient->low_stock_threshold,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($ingredient->fresh()->name)->toBe('Updated Flour');
+});
