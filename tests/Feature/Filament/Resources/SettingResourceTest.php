@@ -55,3 +55,10 @@ test('create setting validates key is required', function () {
         ])
         ->assertHasActionErrors(['key' => 'required']);
 });
+
+test('can render setting table columns', function (string $column) {
+    Setting::factory()->create();
+
+    Livewire::test(ListSettings::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['key', 'value']);

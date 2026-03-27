@@ -36,3 +36,13 @@ test('can search waitlist entries by customer name', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('can filter waitlist entries by status', function () {
+    $waiting = WaitlistEntry::factory()->create(['status' => App\Enums\WaitlistStatus::Waiting]);
+    $notified = WaitlistEntry::factory()->create(['status' => App\Enums\WaitlistStatus::Notified]);
+
+    Livewire::test(ListWaitlistEntries::class)
+        ->filterTable('status', App\Enums\WaitlistStatus::Waiting->value)
+        ->assertCanSeeTableRecords(collect([$waiting]))
+        ->assertCanNotSeeTableRecords(collect([$notified]));
+});

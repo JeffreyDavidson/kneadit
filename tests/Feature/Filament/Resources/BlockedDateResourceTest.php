@@ -58,3 +58,10 @@ test('create blocked date validates date is required', function () {
         ])
         ->assertHasActionErrors(['date' => 'required']);
 });
+
+test('can render blocked date table columns', function (string $column) {
+    BlockedDate::factory()->create();
+
+    Livewire::test(ListBlockedDates::class)
+        ->assertCanRenderTableColumn($column);
+})->with(['date', 'reason']);
