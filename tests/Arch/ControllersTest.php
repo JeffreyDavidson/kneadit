@@ -42,3 +42,11 @@ foreach ($controllerFiles as $controllerClass) {
 arch('controllers should be classes')
     ->expect('App\Http\Controllers')
     ->toBeClasses();
+
+arch('controllers should not use DB facade directly')
+    ->expect('Illuminate\Support\Facades\DB')
+    ->not->toBeUsedIn('App\Http\Controllers')
+    ->ignoring([
+        'App\Http\Controllers\ImpersonateController',
+        'App\Http\Controllers\ConsumeImpersonationController',
+    ]);

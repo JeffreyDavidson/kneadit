@@ -37,16 +37,16 @@ class IngredientsTable
                     ->label('Status')
                     ->badge()
                     ->getStateUsing(fn (Ingredient $record) => $record->getStockStatus())
-                    ->formatStateUsing(fn (string $state) => match ($state) {
-                        StockStatus::Good->value => 'Good',
-                        StockStatus::Low->value => 'Low',
-                        StockStatus::Out->value => 'Out of Stock',
+                    ->formatStateUsing(fn (mixed $state) => match ($state) {
+                        StockStatus::Good => 'Good',
+                        StockStatus::Low => 'Low',
+                        StockStatus::Out => 'Out of Stock',
                         default => $state,
                     })
-                    ->color(fn (string $state) => match ($state) {
-                        StockStatus::Good->value => 'success',
-                        StockStatus::Low->value => 'warning',
-                        StockStatus::Out->value => 'danger',
+                    ->color(fn (mixed $state) => match ($state) {
+                        StockStatus::Good => 'success',
+                        StockStatus::Low => 'warning',
+                        StockStatus::Out => 'danger',
                         default => 'gray',
                     }),
 

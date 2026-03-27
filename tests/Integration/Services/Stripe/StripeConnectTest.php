@@ -1,0 +1,25 @@
+<?php
+
+use App\Http\Controllers\StripeConnectController;
+
+beforeEach(fn () => setUpTenantTest());
+
+test('get account status returns null when no connect id', function () {
+    expect(StripeConnectController::getAccountStatus())->toBeNull();
+});
+
+test('get account status returns null when connect id is empty', function () {
+    settings(['stripe_connect_id' => '']);
+
+    expect(StripeConnectController::getAccountStatus())->toBeNull();
+});
+
+test('get account status returns null when stripe api fails', function () {
+    settings(['stripe_connect_id' => 'acct_invalid_12345']);
+
+    config(['cashier.secret' => 'sk_test_fake_key']);
+
+    $result = StripeConnectController::getAccountStatus();
+
+    expect($result)->toBeNull();
+});

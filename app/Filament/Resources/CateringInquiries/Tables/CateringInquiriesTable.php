@@ -27,14 +27,14 @@ class CateringInquiriesTable
                     ->sortable(),
                 TextColumn::make('event_type')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
                         CateringEventType::Wedding->value => 'danger',
                         CateringEventType::Corporate->value => 'info',
                         CateringEventType::Birthday->value => 'warning',
                         CateringEventType::Holiday->value => 'success',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state): string => CateringEventType::tryFrom($state)?->label() ?? ucfirst($state)),
+                    ->formatStateUsing(fn (mixed $state): string => ($state instanceof CateringEventType ? $state->label() : CateringEventType::tryFrom($state)?->label()) ?? ucfirst($state)),
                 TextColumn::make('event_date')
                     ->date()
                     ->sortable(),
@@ -43,7 +43,7 @@ class CateringInquiriesTable
                     ->sortable(),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
                         CateringInquiryStatus::Inquiry->value => 'gray',
                         CateringInquiryStatus::Quoted->value => 'info',
                         CateringInquiryStatus::Confirmed->value => 'success',
@@ -51,7 +51,7 @@ class CateringInquiriesTable
                         CateringInquiryStatus::Cancelled->value => 'danger',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state): string => CateringInquiryStatus::tryFrom($state)?->label() ?? ucfirst($state)),
+                    ->formatStateUsing(fn (mixed $state): string => ($state instanceof CateringInquiryStatus ? $state->label() : CateringInquiryStatus::tryFrom($state)?->label()) ?? ucfirst($state)),
                 TextColumn::make('quoted_amount')
                     ->money('usd')
                     ->placeholder('—')

@@ -20,7 +20,7 @@ class SocialPostFactory extends Factory
             'platform' => fake()->randomElement(SocialPlatform::cases()),
             'caption' => fake()->paragraph(),
             'product_id' => null,
-            'scheduled_at' => fake()->optional()->dateTimeBetween('+1 day', '+14 days'),
+            'scheduled_for' => fake()->optional()->dateTimeBetween('+1 day', '+14 days'),
             'status' => SocialPostStatus::Draft,
         ];
     }
@@ -29,7 +29,7 @@ class SocialPostFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => SocialPostStatus::Scheduled,
-            'scheduled_at' => fake()->dateTimeBetween('+1 day', '+14 days'),
+            'scheduled_for' => fake()->dateTimeBetween('+1 day', '+14 days'),
         ]);
     }
 
