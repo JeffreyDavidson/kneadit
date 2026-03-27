@@ -52,3 +52,15 @@ test('can search gallery photos by title', function () {
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
 });
+
+test('edit gallery photo validates title is required', function () {
+    $photo = GalleryPhoto::factory()->create();
+
+    Livewire::test(ListGalleryPhotos::class)
+        ->callTableAction('edit', $photo, data: [
+            'title' => null,
+            'image_path' => [$photo->image_path],
+            'sort_order' => $photo->sort_order,
+        ])
+        ->assertHasTableActionErrors(['title' => 'required']);
+});
