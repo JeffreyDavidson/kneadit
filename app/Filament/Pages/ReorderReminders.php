@@ -71,19 +71,20 @@ class ReorderReminders extends Page
         $cutoff = Date::now()->subDays($this->threshold);
 
         return Order::query()
+            ->join('customers', 'orders.customer_id', '=', 'customers.id')
             ->select([
-                'customer_email',
-                DB::raw('MAX(customer_name) as customer_name'),
-                DB::raw('MAX(delivery_date) as last_order_date'),
+                'customers.email as customer_email',
+                DB::raw('MAX(customers.name) as customer_name'),
+                DB::raw('MAX(orders.delivery_date) as last_order_date'),
                 DB::raw('COUNT(*) as total_orders'),
-                DB::raw('SUM(total) as total_spent'),
+                DB::raw('SUM(orders.total) as total_spent'),
             ])
-            ->where('status', '!=', OrderStatus::Cancelled)
-            ->groupBy('customer_email')
-            ->having(DB::raw('MAX(delivery_date)'), '<=', $cutoff->toDateString())
-            ->orderBy(DB::raw('MAX(delivery_date)'), 'asc')
+            ->where('orders.status', '!=', OrderStatus::Cancelled)
+            ->groupBy('customers.email')
+            ->having(DB::raw('MAX(orders.delivery_date)'), '<=', $cutoff->toDateString())
+            ->orderBy(DB::raw('MAX(orders.delivery_date)'), 'asc')
             ->get()
-            ->map(function (Order $customer) {
+            ->map(function ($customer) {
                 $customer->days_since = (int) floor(Date::parse($customer->last_order_date)->diffInDays(now()));
 
                 return $customer;

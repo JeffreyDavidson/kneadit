@@ -33,7 +33,7 @@
                         <div>
                             <p class="font-medium text-gray-900 dark:text-white">{{ $invitation->email }}</p>
                             <p class="text-sm text-gray-500">
-                                {{ ucfirst($invitation->role) }} · Expires {{ $invitation->expires_at->diffForHumans() }}
+                                {{ ucfirst($invitation->role instanceof \BackedEnum ? $invitation->role->value : $invitation->role) }} · Expires {{ $invitation->expires_at->diffForHumans() }}
                             </p>
                         </div>
                         <x-filament::button color="danger" size="sm" wire:click="revokeInvitation({{ $invitation->id }})">
@@ -69,7 +69,7 @@
                             </x-filament::button>
                         @else
                             <span class="inline-flex items-center rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700 dark:bg-primary-400/10 dark:text-primary-400">
-                                {{ ucfirst($member->role) }} (You)
+                                {{ ucfirst($member->role instanceof \BackedEnum ? $member->role->value : $member->role) }} (You)
                             </span>
                         @endif
                     </div>

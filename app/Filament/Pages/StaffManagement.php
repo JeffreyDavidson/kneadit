@@ -53,10 +53,13 @@ class StaffManagement extends Page
     /** @return Collection<int, User> */
     public function getTeamMembers(): Collection
     {
-        $roles = [UserRole::Owner->value, UserRole::Manager->value, UserRole::Staff->value];
-        $placeholders = implode(',', array_fill(0, count($roles), '?'));
-
-        return User::query()->orderByRaw("FIELD(role, {$placeholders})", $roles)->get();
+        return User::query()
+            ->orderByRaw('CASE role WHEN ? THEN 1 WHEN ? THEN 2 WHEN ? THEN 3 ELSE 4 END', [
+                UserRole::Owner->value,
+                UserRole::Manager->value,
+                UserRole::Staff->value,
+            ])
+            ->get();
     }
 
     /** @return Collection<int, StaffInvitation> */

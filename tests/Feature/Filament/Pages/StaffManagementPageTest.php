@@ -1,0 +1,18 @@
+<?php
+
+use App\Filament\Pages\StaffManagement;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    setUpTenantTest();
+    $this->actingAs(User::factory()->owner()->create());
+});
+
+test('staff management page can render', function () {
+    Livewire::test(StaffManagement::class)
+        ->assertOk();
+});
