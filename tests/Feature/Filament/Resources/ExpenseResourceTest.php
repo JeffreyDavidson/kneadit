@@ -83,3 +83,13 @@ test('can filter expenses by category', function () {
         ->assertCanSeeTableRecords(collect([$ingredients]))
         ->assertCanNotSeeTableRecords(collect([$packaging]));
 });
+
+test('can search expenses by description', function () {
+    $target = Expense::factory()->create(['description' => 'Flour delivery']);
+    $other = Expense::factory()->create(['description' => 'Oven repair']);
+
+    Livewire::test(ListExpenses::class)
+        ->searchTable('Flour')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});

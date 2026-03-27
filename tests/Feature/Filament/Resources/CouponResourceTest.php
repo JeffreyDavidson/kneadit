@@ -89,3 +89,14 @@ test('can filter coupons by type', function () {
         ->assertCanSeeTableRecords(collect([$percentage]))
         ->assertCanNotSeeTableRecords(collect([$fixed]));
 });
+
+test('can sort coupons by code', function () {
+    $alpha = Coupon::factory()->create(['code' => 'ALPHA01']);
+    $zeta = Coupon::factory()->create(['code' => 'ZETA99']);
+
+    Livewire::test(ListCoupons::class)
+        ->sortTable('code')
+        ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
+        ->sortTable('code', 'desc')
+        ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
+});
