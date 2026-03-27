@@ -46,3 +46,28 @@ test('can render review table columns', function (string $column) {
     Livewire::test(ListReviews::class)
         ->assertCanRenderTableColumn($column);
 })->with(['customer_name', 'product.name', 'rating', 'is_approved', 'is_featured']);
+
+test('can edit a review via table action', function () {
+    $review = Review::factory()->create();
+
+    Livewire::test(ListReviews::class)
+        ->callTableAction('edit', $review, data: [
+            'customer_name' => 'Updated Reviewer',
+            'customer_email' => $review->customer_email,
+            'rating' => $review->rating,
+            'is_approved' => true,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($review->fresh()->customer_name)->toBe('Updated Reviewer');
+});
+
+test('can filter reviews by approval status', function () {
+    $approved = Review::factory()->approved()->create();
+    $pending = Review::factory()->create();
+
+    Livewire::test(ListReviews::class)
+        ->filterTable('is_approved', 1)
+        ->assertCanSeeTableRecords(collect([$approved]))
+        ->assertCanNotSeeTableRecords(collect([$pending]));
+});

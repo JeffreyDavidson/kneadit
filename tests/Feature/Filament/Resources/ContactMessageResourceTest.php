@@ -36,3 +36,18 @@ test('can create a contact message via slide-over', function () {
         'subject' => 'Custom cake inquiry',
     ]);
 });
+
+test('can edit a contact message via table action', function () {
+    $message = ContactMessage::factory()->create();
+
+    Livewire::test(ListContactMessages::class)
+        ->callTableAction('edit', $message, data: [
+            'name' => $message->name,
+            'email' => $message->email,
+            'subject' => 'Updated subject',
+            'message' => $message->message,
+        ])
+        ->assertHasNoTableActionErrors();
+
+    expect($message->fresh()->subject)->toBe('Updated subject');
+});

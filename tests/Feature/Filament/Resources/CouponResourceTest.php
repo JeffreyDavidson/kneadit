@@ -79,3 +79,13 @@ test('can render coupon table columns', function (string $column) {
     Livewire::test(ListCoupons::class)
         ->assertCanRenderTableColumn($column);
 })->with(['code', 'type', 'value', 'is_active']);
+
+test('can filter coupons by type', function () {
+    $percentage = Coupon::factory()->percentage()->create();
+    $fixed = Coupon::factory()->fixed()->create();
+
+    Livewire::test(ListCoupons::class)
+        ->filterTable('type', CouponType::Percentage->value)
+        ->assertCanSeeTableRecords(collect([$percentage]))
+        ->assertCanNotSeeTableRecords(collect([$fixed]));
+});
