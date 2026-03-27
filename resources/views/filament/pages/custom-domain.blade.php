@@ -6,6 +6,8 @@
     </div>
 
     <form wire:submit="save">
-        {{ $this->getFormActionsComponent() }}
+            <div class="fi-form-actions">
+            <x-filament::actions :actions="$this->getCachedFormActions()" />
+        </div>
     </form>
 </x-filament-panels::page>
