@@ -5,6 +5,7 @@ namespace App\Filament\Central\Widgets;
 use App\Models\Tenant;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Number;
 
 class RevenueOverview extends StatsOverviewWidget
 {
@@ -43,12 +44,12 @@ class RevenueOverview extends StatsOverviewWidget
             : 0;
 
         return [
-            Stat::make('Monthly Recurring Revenue', '$' . number_format($mrr))
+            Stat::make('Monthly Recurring Revenue', Number::currency($mrr))
                 ->description('Active subscriptions')
                 ->color('success')
                 ->icon('heroicon-o-currency-dollar'),
 
-            Stat::make('Annual Recurring Revenue', '$' . number_format($arr))
+            Stat::make('Annual Recurring Revenue', Number::currency($arr))
                 ->description('MRR × 12')
                 ->color('success')
                 ->icon('heroicon-o-banknotes'),

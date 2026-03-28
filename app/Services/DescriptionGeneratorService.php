@@ -84,7 +84,7 @@ class DescriptionGeneratorService
             $adjective = $adjectivePool[array_rand($adjectivePool)];
             $text = str_replace(
                 ['{product}', '{category}', '{adjective}', '{price}'],
-                [$product, $category ?: 'baked goods', $adjective, $price ? '$' . number_format($price, 2) : ''],
+                [$product, $category ?: 'baked goods', $adjective, $price ? Number::currency($price) : ''],
                 $templates[$key],
             );
             $descriptions[] = $this->adjustLength($text, $length, $product, $category ?: 'baked goods', $adjectivePool);
