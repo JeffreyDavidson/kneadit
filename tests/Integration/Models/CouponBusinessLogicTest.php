@@ -38,3 +38,22 @@ test('fixed discount does not exceed subtotal', function () {
     expect($coupon->calculateDiscount(100.00))->toBe(25.00)
         ->and($coupon->calculateDiscount(15.00))->toBe(15.00);
 });
+
+test('isValid returns false for future start date coupon', function () {
+    $coupon = Coupon::factory()->create([
+        'starts_at' => now()->addWeek(),
+        'expires_at' => now()->addMonth(),
+    ]);
+
+    expect($coupon->isValid())->toBeFalse();
+});
+
+test('discount returns zero when below minimum order amount', function () {
+    $coupon = Coupon::factory()->percentage()->create([
+        'value' => 20,
+        'min_order_amount' => 50,
+    ]);
+
+    expect($coupon->calculateDiscount(30.00))->toBe(0.0)
+        ->and($coupon->calculateDiscount(60.00))->toBe(12.00);
+});

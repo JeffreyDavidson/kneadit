@@ -31,3 +31,15 @@ test('inactive gift card has Inactive status', function () {
 
     expect($card->status)->toBe(GiftCardStatus::Inactive);
 });
+
+test('isUsable returns true for active card with balance', function () {
+    $card = GiftCard::factory()->create();
+
+    expect($card->isUsable())->toBeTrue();
+});
+
+test('isUsable returns false for depleted card', function () {
+    $card = GiftCard::factory()->depleted()->create();
+
+    expect($card->isUsable())->toBeFalse();
+});

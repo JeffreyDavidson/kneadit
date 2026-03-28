@@ -34,3 +34,15 @@ test('stock status returns Out when stock is zero', function () {
 
     expect($ingredient->getStockStatus())->toBe(StockStatus::Out);
 });
+
+test('isLowStock and isOutOfStock return correct booleans', function () {
+    $normal = Ingredient::factory()->create(['current_stock' => 50, 'low_stock_threshold' => 10]);
+    $low = Ingredient::factory()->lowStock()->create();
+    $out = Ingredient::factory()->outOfStock()->create();
+
+    expect($normal->isLowStock())->toBeFalse()
+        ->and($normal->isOutOfStock())->toBeFalse()
+        ->and($low->isLowStock())->toBeTrue()
+        ->and($low->isOutOfStock())->toBeFalse()
+        ->and($out->isOutOfStock())->toBeTrue();
+});
