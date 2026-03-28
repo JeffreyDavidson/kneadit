@@ -1,7 +1,9 @@
 <?php
 
+use App\Filament\Central\Widgets\OpenTickets;
 use App\Models\User;
 use Filament\Facades\Filament;
+use Livewire\Livewire;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -10,6 +12,7 @@ beforeEach(function () {
     Filament::bootCurrentPanel();
 });
 
-// Central panel routes not fully registered in test context
-test('open tickets widget can render')
-    ->todo();
+test('open tickets widget can render', function () {
+    Livewire::test(OpenTickets::class)
+        ->assertOk();
+});

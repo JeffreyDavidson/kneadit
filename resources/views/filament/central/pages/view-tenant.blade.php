@@ -1,16 +1,6 @@
 <x-filament-panels::page>
     {{ $this->infolist }}
 
-    @if($this->record->relationManagers ?? true)
-        <x-filament-panels::resources.relation-managers
-            :active-manager="$this->activeRelationManager"
-            :content-tab-label="$this->getContentTabLabel()"
-            :managers="$this->getRelationManagers()"
-            :owner-record="$this->record"
-            :page-class="static::class"
-        />
-    @endif
-
     @php $stats = $this->getTenantStats(); @endphp
 
     <div style="margin-top: 1.5rem;">

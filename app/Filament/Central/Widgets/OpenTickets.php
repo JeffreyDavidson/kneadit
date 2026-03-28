@@ -20,7 +20,7 @@ class OpenTickets extends StatsOverviewWidget
                 ->description('Awaiting response')
                 ->color('danger')
                 ->icon('heroicon-o-inbox')
-                ->url(route('filament.central.resources.support-tickets.index', ['tableFilters[status][value]' => 'open'])),
+                ->url(rescue(fn () => route('filament.central.resources.support-tickets.index', ['tableFilters[status][value]' => 'open']), report: false)),
         ];
     }
 }
