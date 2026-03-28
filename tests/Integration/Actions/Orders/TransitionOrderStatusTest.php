@@ -47,3 +47,17 @@ test('sends status email on transition', function () {
 
     Mail::assertQueued(OrderConfirmed::class);
 });
+
+test('allowedTransitions returns valid next statuses', function () {
+    $pending = Order::factory()->create(['status' => OrderStatus::Pending]);
+    $confirmed = Order::factory()->create(['status' => OrderStatus::Confirmed]);
+    $delivered = Order::factory()->delivered()->create();
+
+    expect(TransitionOrderStatus::allowedTransitions($pending))
+        ->toContain(OrderStatus::Confirmed)
+        ->toContain(OrderStatus::Cancelled)
+        ->and(TransitionOrderStatus::allowedTransitions($confirmed))
+        ->toContain(OrderStatus::Baking)
+        ->and(TransitionOrderStatus::allowedTransitions($delivered))
+        ->toBeEmpty();
+});
