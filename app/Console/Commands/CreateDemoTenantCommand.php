@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-class CreateDemoTenant extends Command
+class CreateDemoTenantCommand extends Command
 {
     protected $signature = 'tenant:demo {--fresh : Drop and recreate the demo tenant}';
 

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendReviewRequests extends Command
+class SendReviewRequestsCommand extends Command
 {
     protected $signature = 'reviews:send-requests';
 

@@ -6,7 +6,7 @@ use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;
 
-class CreateDemoBakeries extends Command
+class CreateDemoBakeriesCommand extends Command
 {
     protected $signature = 'tenant:bakeries {--fresh : Drop and recreate all demo tenants}';
 

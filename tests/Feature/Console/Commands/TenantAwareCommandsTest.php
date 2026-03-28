@@ -1,8 +1,8 @@
 <?php
 
-use App\Console\Commands\CheckPayPalPayments;
-use App\Console\Commands\SendBirthdayDiscounts;
-use App\Console\Commands\SendRepeatOrderReminders;
+use App\Console\Commands\CheckPayPalPaymentsCommand;
+use App\Console\Commands\SendBirthdayDiscountsCommand;
+use App\Console\Commands\SendRepeatOrderRemindersCommand;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -24,7 +24,7 @@ test('send repeat order reminders command exists', function () {
 });
 
 test('paypal command uses TenancyManager for tenant context', function () {
-    $reflection = new ReflectionClass(CheckPayPalPayments::class);
+    $reflection = new ReflectionClass(CheckPayPalPaymentsCommand::class);
     $source = file_get_contents($reflection->getFileName());
 
     expect($source)->toContain('Tenant::cursor()');
@@ -32,7 +32,7 @@ test('paypal command uses TenancyManager for tenant context', function () {
 });
 
 test('birthday command uses TenancyManager for tenant context', function () {
-    $reflection = new ReflectionClass(SendBirthdayDiscounts::class);
+    $reflection = new ReflectionClass(SendBirthdayDiscountsCommand::class);
     $source = file_get_contents($reflection->getFileName());
 
     expect($source)->toContain('Tenant::cursor()');
@@ -40,7 +40,7 @@ test('birthday command uses TenancyManager for tenant context', function () {
 });
 
 test('repeat reminders command uses TenancyManager for tenant context', function () {
-    $reflection = new ReflectionClass(SendRepeatOrderReminders::class);
+    $reflection = new ReflectionClass(SendRepeatOrderRemindersCommand::class);
     $source = file_get_contents($reflection->getFileName());
 
     expect($source)->toContain('Tenant::cursor()');

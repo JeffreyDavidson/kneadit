@@ -10,7 +10,7 @@ use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class CheckPayPalPayments extends Command
+class CheckPayPalPaymentsCommand extends Command
 {
     protected $signature = 'paypal:check-payments';
 

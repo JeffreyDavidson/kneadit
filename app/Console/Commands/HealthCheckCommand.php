@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class HealthCheck extends Command
+class HealthCheckCommand extends Command
 {
     protected $signature = 'health:check';
 
