@@ -8,13 +8,13 @@ use Illuminate\Http\JsonResponse;
 
 class CapacityController extends Controller
 {
-    public function __invoke(string $date): JsonResponse
+    public function __invoke(string $date, CapacityCalculator $calculator): JsonResponse
     {
         return response()->json([
             'data' => [
-                'available' => resolve(CapacityCalculator::class)->isAvailable($date),
-                'remaining' => resolve(CapacityCalculator::class)->remainingSlots($date),
-                'max' => resolve(CapacityCalculator::class)->getMaxOrders($date),
+                'available' => $calculator->isAvailable($date),
+                'remaining' => $calculator->remainingSlots($date),
+                'max' => $calculator->getMaxOrders($date),
             ],
             'message' => 'Capacity retrieved successfully.',
         ]);
