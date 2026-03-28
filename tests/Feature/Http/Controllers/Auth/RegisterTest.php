@@ -22,3 +22,8 @@ test('user can register with valid data', function () {
     $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
     $this->assertAuthenticated();
 });
+
+test('register validates required fields', function () {
+    $this->post('/register', [])
+        ->assertSessionHasErrors(['name', 'email', 'password', 'bakery_name', 'terms']);
+});

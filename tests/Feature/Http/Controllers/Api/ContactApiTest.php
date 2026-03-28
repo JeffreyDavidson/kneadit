@@ -21,3 +21,11 @@ test('contact endpoint creates a message', function () {
         'email' => 'jane@example.com',
     ]);
 });
+
+test('contact endpoint validates required fields', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/api/contact', []);
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors(['name', 'email', 'subject', 'message']);
+});

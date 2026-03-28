@@ -19,3 +19,14 @@ test('apply coupon returns discount for valid coupon', function () {
         ->assertJsonPath('success', true)
         ->assertJsonPath('code', 'SAVE10');
 });
+
+test('apply coupon returns error for invalid code', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/coupon/apply', [
+            'code' => 'FAKECODE',
+            'subtotal' => 50.00,
+        ]);
+
+    $response->assertUnprocessable()
+        ->assertJsonPath('error', 'Coupon not found.');
+});
