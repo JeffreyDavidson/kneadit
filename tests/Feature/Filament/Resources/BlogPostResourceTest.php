@@ -68,5 +68,9 @@ test('create blog post validates required fields', function (array $data, array 
     'slug is required' => [['slug' => null], ['slug' => 'required']],
 ]);
 
-test('can list blog posts in the table')
-    ->todo();
+test('can list blog posts in the table', function () {
+    $posts = BlogPost::factory()->count(3)->create();
+
+    Livewire::test(ListBlogPosts::class)
+        ->assertCanSeeTableRecords($posts);
+});

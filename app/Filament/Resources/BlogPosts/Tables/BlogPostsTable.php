@@ -88,10 +88,12 @@ class BlogPostsTable
                     ->options(function () {
                         return BlogPost::query()
                             ->whereNotNull('category')
+                            ->where('category', '!=', '')
                             ->select('category')
                             ->distinct()
                             ->get()
                             ->pluck('category', 'category')
+                            ->filter()
                             ->toArray();
                     }),
             ]);

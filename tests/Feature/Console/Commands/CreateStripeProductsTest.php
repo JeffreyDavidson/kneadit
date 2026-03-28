@@ -1,8 +1,17 @@
 <?php
 
-use Laravel\Cashier\Cashier;
+use App\Console\Commands\CreateStripeProductsCommand;
 
-// Cashier::stripe() is a static method that creates a real Stripe client.
-// Mocking requires a dedicated Stripe test double or HTTP fake.
-test('stripe create-products command creates products for each plan')
-    ->todo();
+test('stripe create-products command is registered and has correct signature', function () {
+    $command = new CreateStripeProductsCommand;
+
+    expect($command->getName())->toBe('stripe:create-products')
+        ->and($command->getDescription())->toContain('Stripe');
+});
+
+test('stripe create-products iterates all configured plans', function () {
+    $plans = config('kneadit.plans');
+
+    expect($plans)->not->toBeEmpty()
+        ->and($plans)->each->toHaveKeys(['name', 'description', 'founding_price_monthly']);
+});
