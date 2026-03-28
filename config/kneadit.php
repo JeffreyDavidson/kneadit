@@ -81,6 +81,13 @@ return [
         'pro' => env('STRIPE_PRICE_PRO'),
     ],
 
+    'delivery_fees' => [
+        'under5' => 0,
+        '5to10' => 5.00,
+        '10to15' => 10.00,
+        'over15' => 15.00,
+    ],
+
     'stripe_connect' => [
         'client_id' => env('STRIPE_CONNECT_CLIENT_ID'),
         'webhook_secret' => env('STRIPE_CONNECT_WEBHOOK_SECRET'),

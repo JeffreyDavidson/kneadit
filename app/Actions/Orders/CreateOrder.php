@@ -135,13 +135,8 @@ class CreateOrder
 
         $deliveryFee = 0;
         if ($deliveryType === DeliveryType::Delivery->value) {
-            $deliveryFee = match ($deliveryTier) {
-                'under5' => 0,
-                '5to10' => 5.00,
-                '10to15' => 10.00,
-                'over15' => 15.00,
-                default => 0,
-            };
+            $fees = config('kneadit.delivery_fees', []);
+            $deliveryFee = $fees[$deliveryTier] ?? 0;
         }
 
         return [
