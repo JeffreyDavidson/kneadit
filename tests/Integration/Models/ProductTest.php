@@ -57,7 +57,7 @@ test('is in season returns true for current seasonal products', function () {
 
     $product->load('seasonalItems');
 
-    expect($product->isInSeason())->toBeTrue();
+    expect($product->is_in_season)->toBeTrue();
 });
 
 test('is in season returns false for out of season products', function () {
@@ -72,7 +72,7 @@ test('is in season returns false for out of season products', function () {
 
     $product->load('seasonalItems');
 
-    expect($product->isInSeason())->toBeFalse();
+    expect($product->is_in_season)->toBeFalse();
 });
 
 test('product with no seasonal entries is always in season', function () {
@@ -81,7 +81,7 @@ test('product with no seasonal entries is always in season', function () {
 
     $product->load('seasonalItems');
 
-    expect($product->isInSeason())->toBeTrue();
+    expect($product->is_in_season)->toBeTrue();
 });
 
 test('product margin attribute', function () {

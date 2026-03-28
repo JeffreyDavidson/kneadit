@@ -106,20 +106,22 @@ class Product extends Model
         return $this->hasOne(ProductImage::class)->where('is_primary', true);
     }
 
-    /**
-     * Get the primary image URL, falling back to legacy `image` field.
-     */
-    public function getPrimaryImageUrl(): ?string
+    /** @return Attribute<string|null, never> */
+    protected function primaryImageUrl(): Attribute
     {
-        if ($primary = $this->primaryImage) {
-            return Storage::disk('public')->url($primary->path);
-        }
+        return Attribute::make(
+            get: function () {
+                if ($primary = $this->primaryImage) {
+                    return Storage::disk('public')->url($primary->path);
+                }
 
-        if ($this->image) {
-            return Storage::disk('public')->url($this->image);
-        }
+                if ($this->image) {
+                    return Storage::disk('public')->url($this->image);
+                }
 
-        return null;
+                return null;
+            },
+        );
     }
 
     /**
@@ -194,19 +196,19 @@ class Product extends Model
         return $this->hasMany(ProductWaitlist::class);
     }
 
-    public function pendingWaitlistCount(): int
+    /** @return Attribute<bool, never> */
+    protected function isInSeason(): Attribute
     {
-        return $this->waitlistEntries()->whereNull('notified_at')->count();
-    }
+        return Attribute::make(
+            get: function () {
+                $seasonalItems = $this->seasonalItems;
+                if ($seasonalItems->isEmpty()) {
+                    return true;
+                }
 
-    public function isInSeason(): bool
-    {
-        $seasonalItems = $this->seasonalItems;
-        if ($seasonalItems->isEmpty()) {
-            return true; // Not seasonal = always available
-        }
-
-        return $seasonalItems->contains(fn (SeasonalItem $item) => $item->isCurrentlyAvailable());
+                return $seasonalItems->contains(fn (SeasonalItem $item) => $item->isCurrentlyAvailable());
+            },
+        );
     }
 
     /** @return Attribute<string|null, never> */
