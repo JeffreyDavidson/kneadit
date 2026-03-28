@@ -12,7 +12,7 @@ class CapacityController extends Controller
     /**
      * Check capacity for a specific date.
      */
-    public function __invoke(string $date): JsonResponse
+    public function __invoke(string $date, CapacityCalculator $calculator): JsonResponse
     {
         try {
             $carbon = Date::parse($date);
@@ -20,15 +20,11 @@ class CapacityController extends Controller
             return response()->json(['error' => 'Invalid date'], 422);
         }
 
-        $available = resolve(CapacityCalculator::class)->isAvailable($carbon);
-        $remaining = resolve(CapacityCalculator::class)->remainingSlots($carbon);
-        $maxOrders = resolve(CapacityCalculator::class)->getMaxOrders($carbon);
-
         return response()->json([
-            'available' => $available,
-            'remaining' => $remaining,
-            'max_orders' => $maxOrders,
-            'usage_percent' => resolve(CapacityCalculator::class)->usagePercent($carbon),
+            'available' => $calculator->isAvailable($carbon),
+            'remaining' => $calculator->remainingSlots($carbon),
+            'max_orders' => $calculator->getMaxOrders($carbon),
+            'usage_percent' => $calculator->usagePercent($carbon),
         ]);
     }
 }

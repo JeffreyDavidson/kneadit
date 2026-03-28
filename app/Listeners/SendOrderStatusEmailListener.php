@@ -9,16 +9,22 @@ use App\Mail\OrderCancelledMail;
 use App\Mail\OrderConfirmedMail;
 use App\Mail\OrderDeliveredMail;
 use App\Mail\OrderReadyMail;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendOrderStatusEmailListener implements ShouldQueue
+class SendOrderStatusEmailListener implements ShouldBeUnique, ShouldQueue
 {
     public int $tries = 3;
 
     /** @var array<int, int> */
     public array $backoff = [10, 60, 300];
+
+    public function uniqueId(): string
+    {
+        return 'order-status-email';
+    }
 
     public function handle(OrderStatusChanged $event): void
     {

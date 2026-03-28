@@ -10,6 +10,7 @@ it('fetches and caches an access token', function () {
         'services.paypal.sandbox' => true,
     ]);
 
+    Http::preventStrayRequests();
     Http::fake([
         'api-m.sandbox.paypal.com/v1/oauth2/token' => Http::response([
             'access_token' => 'test-token-123',
