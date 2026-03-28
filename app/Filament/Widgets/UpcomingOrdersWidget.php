@@ -20,7 +20,7 @@ class UpcomingOrdersWidget extends Widget
         $today = Date::today();
         $endDate = $today->copy()->addDays(3);
 
-        $orders = Order::with('customer')
+        $orders = Order::with('customer')->withCount('orderItems')
             ->active()
             ->whereBetween('delivery_date', [$today, $endDate])
             ->oldest('delivery_date')
@@ -41,7 +41,7 @@ class UpcomingOrdersWidget extends Widget
                 'id' => $order->id,
                 'number' => $order->order_number,
                 'customer' => $order->customer->name ?? 'Walk-in',
-                'items' => $order->orderItems()->count(),
+                'items' => $order->order_items_count,
                 'total' => number_format($order->total, 2),
                 'time' => $order->delivery_time?->format('g:i A') ?? '',
                 'status' => $order->status,

@@ -24,8 +24,6 @@ class CateringController extends Controller
 
     public function store(StoreCateringInquiryRequest $request): RedirectResponse
     {
-        $minimumGuests = (int) settings('catering_minimum_guests', '10');
-        $leadTimeDays = (int) settings('catering_lead_time_days', '14');
 
         $validated = $request->validated();
 

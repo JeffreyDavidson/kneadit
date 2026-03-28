@@ -60,9 +60,6 @@ class StripeConnectWebhookController extends Controller
             default => null,
         };
 
-        if ($eventId) {
-        }
-
         return response('OK', 200);
     }
 
