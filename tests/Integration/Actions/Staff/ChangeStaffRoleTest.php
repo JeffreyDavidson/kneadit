@@ -1,0 +1,26 @@
+<?php
+
+use App\Actions\Staff\ChangeStaffRole;
+use App\Enums\UserRole;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
+
+beforeEach(fn () => setUpTenantTest());
+
+test('changes staff member role', function () {
+    $owner = User::factory()->owner()->create();
+    $staff = User::factory()->staff()->create();
+
+    app(ChangeStaffRole::class)($staff->id, UserRole::Manager, $owner->id);
+
+    expect($staff->fresh()->role)->toBe(UserRole::Manager);
+});
+
+test('prevents changing own role', function () {
+    $owner = User::factory()->owner()->create();
+
+    expect(fn () => app(ChangeStaffRole::class)($owner->id, UserRole::Staff, $owner->id))
+        ->toThrow(RuntimeException::class, "You can't change your own role.");
+});
