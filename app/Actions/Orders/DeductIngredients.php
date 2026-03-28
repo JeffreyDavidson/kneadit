@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class DeductIngredients
 {
+    public function __construct(
+        protected AdjustIngredientStock $adjustStock,
+    ) {}
+
     public function __invoke(Order $order): void
     {
         $order->loadMissing('orderItems.product.recipes.inventoryIngredients');
@@ -25,7 +29,7 @@ class DeductIngredients
                         /** @var object{quantity: string, unit: string} $pivot */
                         $pivot = $ingredient->pivot;
                         $qty = (float) $pivot->quantity * $orderItem->quantity;
-                        app(AdjustIngredientStock::class)(
+                        ($this->adjustStock)(
                             $ingredient,
                             -$qty,
                             'usage',

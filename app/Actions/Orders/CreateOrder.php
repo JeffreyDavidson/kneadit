@@ -21,6 +21,7 @@ class CreateOrder
     public function __construct(
         protected CouponService $couponService,
         protected GiftCardService $giftCardService,
+        protected CapacityCalculator $capacityCalculator,
     ) {}
 
     /**
@@ -39,7 +40,7 @@ class CreateOrder
         }
 
         $order = DB::transaction(function () use ($data, $calculated, $couponId, $giftCardId) {
-            if (! resolve(CapacityCalculator::class)->isAvailable($data['delivery_date'])) {
+            if (! $this->capacityCalculator->isAvailable($data['delivery_date'])) {
                 return null;
             }
 
