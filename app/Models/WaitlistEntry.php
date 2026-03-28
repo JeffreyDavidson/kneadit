@@ -64,7 +64,7 @@ class WaitlistEntry extends Model
     protected function statusLabel(): Attribute
     {
         return Attribute::make(
-            get: fn () => ucfirst($this->status->value),
+            get: fn () => $this->status->label(),
         );
     }
 

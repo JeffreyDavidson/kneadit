@@ -8,4 +8,9 @@ enum PaymentStatus: string
     case Paid = 'paid';
     case Cancelled = 'cancelled';
     case Refunded = 'refunded';
+
+    public function label(): string
+    {
+        return ucfirst($this->value);
+    }
 }

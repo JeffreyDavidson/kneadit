@@ -77,8 +77,8 @@ class SocialPostResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Platform' => ucfirst($record->platform->value),
-            'Status' => ucfirst($record->status->value),
+            'Platform' => $record->platform->label(),
+            'Status' => $record->status->label(),
         ];
     }
 
