@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\PageView;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Number;
 
 class StorefrontViewsWidget extends BaseWidget
 {
@@ -31,7 +32,7 @@ class StorefrontViewsWidget extends BaseWidget
         $color = $trend >= 0 ? 'success' : 'danger';
 
         return [
-            Stat::make('Storefront Views Today', number_format($today))
+            Stat::make('Storefront Views Today', Number::format($today))
                 ->description($description)
                 ->descriptionIcon($icon)
                 ->color($color)
