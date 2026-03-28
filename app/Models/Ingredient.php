@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\StockStatus;
 use App\Traits\LogsActivity;
 use Database\Factories\IngredientFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -82,25 +83,36 @@ class Ingredient extends Model
         return $this->hasMany(StockAdjustment::class);
     }
 
-    public function isLowStock(): bool
+    /** @return Attribute<bool, never> */
+    protected function isLowStock(): Attribute
     {
-        return $this->current_stock > 0 && $this->current_stock <= $this->low_stock_threshold;
+        return Attribute::make(
+            get: fn () => $this->current_stock > 0 && $this->current_stock <= $this->low_stock_threshold,
+        );
     }
 
-    public function isOutOfStock(): bool
+    /** @return Attribute<bool, never> */
+    protected function isOutOfStock(): Attribute
     {
-        return $this->current_stock <= 0;
+        return Attribute::make(
+            get: fn () => $this->current_stock <= 0,
+        );
     }
 
-    public function getStockStatus(): StockStatus
+    /** @return Attribute<StockStatus, never> */
+    protected function stockStatus(): Attribute
     {
-        if ($this->isOutOfStock()) {
-            return StockStatus::Out;
-        }
-        if ($this->isLowStock()) {
-            return StockStatus::Low;
-        }
+        return Attribute::make(
+            get: function () {
+                if ($this->is_out_of_stock) {
+                    return StockStatus::Out;
+                }
+                if ($this->is_low_stock) {
+                    return StockStatus::Low;
+                }
 
-        return StockStatus::Good;
+                return StockStatus::Good;
+            },
+        );
     }
 }

@@ -43,7 +43,7 @@ class LowStockWidget extends BaseWidget
                     ->label('In Stock')
                     ->formatStateUsing(fn (Ingredient $record) => $record->current_stock . ' ' . $record->unit)
                     ->badge()
-                    ->color(fn (Ingredient $record) => $record->isOutOfStock() ? 'danger' : 'warning'),
+                    ->color(fn (Ingredient $record) => $record->is_out_of_stock ? 'danger' : 'warning'),
 
                 TextColumn::make('low_stock_threshold')
                     ->label('Threshold')

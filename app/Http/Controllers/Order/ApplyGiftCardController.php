@@ -22,7 +22,7 @@ class ApplyGiftCardController extends Controller
             return response()->json(['error' => 'Gift card not found.'], 422);
         }
 
-        if (! $card->isUsable()) {
+        if (! $card->is_usable) {
             return response()->json(['error' => 'This gift card is no longer valid.'], 422);
         }
 

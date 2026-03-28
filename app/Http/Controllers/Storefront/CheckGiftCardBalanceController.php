@@ -26,7 +26,7 @@ class CheckGiftCardBalanceController extends Controller
             'success' => true,
             'current_balance' => $card->current_balance,
             'expires_at' => $card->expires_at?->format('M j, Y'),
-            'is_usable' => $card->isUsable(),
+            'is_usable' => $card->is_usable,
         ]);
     }
 }

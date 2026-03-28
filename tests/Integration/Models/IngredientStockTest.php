@@ -14,7 +14,7 @@ test('stock status returns Good when above threshold', function () {
         'low_stock_threshold' => 10,
     ]);
 
-    expect($ingredient->getStockStatus())->toBe(StockStatus::Good);
+    expect($ingredient->stock_status)->toBe(StockStatus::Good);
 });
 
 test('stock status returns Low when at or below threshold', function () {
@@ -23,7 +23,7 @@ test('stock status returns Low when at or below threshold', function () {
         'low_stock_threshold' => 10,
     ]);
 
-    expect($ingredient->getStockStatus())->toBe(StockStatus::Low);
+    expect($ingredient->stock_status)->toBe(StockStatus::Low);
 });
 
 test('stock status returns Out when stock is zero', function () {
@@ -32,7 +32,7 @@ test('stock status returns Out when stock is zero', function () {
         'low_stock_threshold' => 10,
     ]);
 
-    expect($ingredient->getStockStatus())->toBe(StockStatus::Out);
+    expect($ingredient->stock_status)->toBe(StockStatus::Out);
 });
 
 test('isLowStock and isOutOfStock return correct booleans', function () {
@@ -40,9 +40,9 @@ test('isLowStock and isOutOfStock return correct booleans', function () {
     $low = Ingredient::factory()->lowStock()->create();
     $out = Ingredient::factory()->outOfStock()->create();
 
-    expect($normal->isLowStock())->toBeFalse()
-        ->and($normal->isOutOfStock())->toBeFalse()
-        ->and($low->isLowStock())->toBeTrue()
-        ->and($low->isOutOfStock())->toBeFalse()
-        ->and($out->isOutOfStock())->toBeTrue();
+    expect($normal->is_low_stock)->toBeFalse()
+        ->and($normal->is_out_of_stock)->toBeFalse()
+        ->and($low->is_low_stock)->toBeTrue()
+        ->and($low->is_out_of_stock)->toBeFalse()
+        ->and($out->is_out_of_stock)->toBeTrue();
 });

@@ -69,11 +69,14 @@ class GiftCard extends Model
         return $this->hasMany(GiftCardTransaction::class);
     }
 
-    public function isUsable(): bool
+    /** @return Attribute<bool, never> */
+    protected function isUsable(): Attribute
     {
-        return $this->is_active
-            && $this->current_balance > 0
-            && ($this->expires_at === null || $this->expires_at->isFuture());
+        return Attribute::make(
+            get: fn () => $this->is_active
+                && $this->current_balance > 0
+                && ($this->expires_at === null || $this->expires_at->isFuture()),
+        );
     }
 
     /** @param Builder<GiftCard> $query */

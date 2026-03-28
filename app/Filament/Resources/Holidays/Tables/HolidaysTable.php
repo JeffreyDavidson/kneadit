@@ -65,10 +65,10 @@ class HolidaysTable
                         if ($record->date->isPast()) {
                             return 'Past';
                         }
-                        if ($record->isDeadlinePassed()) {
+                        if ($record->is_deadline_passed) {
                             return 'Deadline passed';
                         }
-                        $days = $record->daysUntilDeadline();
+                        $days = $record->days_until_deadline;
                         if ($days <= 3) {
                             return 'Urgent';
                         }

@@ -36,7 +36,7 @@ class IngredientsTable
                 TextColumn::make('stock_status')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn (Ingredient $record) => $record->getStockStatus())
+                    ->getStateUsing(fn (Ingredient $record) => $record->stock_status)
                     ->formatStateUsing(fn (mixed $state) => match ($state) {
                         StockStatus::Good => 'Good',
                         StockStatus::Low => 'Low',

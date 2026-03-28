@@ -44,25 +44,25 @@ test('gift card can be created with correct balance', function () {
 test('gift card is usable when active with balance', function () {
     $card = makeGiftCard();
 
-    expect($card->isUsable())->toBeTrue();
+    expect($card->is_usable)->toBeTrue();
 });
 
 test('gift card is not usable when inactive', function () {
     $card = makeGiftCard(['is_active' => false]);
 
-    expect($card->isUsable())->toBeFalse();
+    expect($card->is_usable)->toBeFalse();
 });
 
 test('gift card is not usable when depleted', function () {
     $card = makeGiftCard(['current_balance' => 0.00]);
 
-    expect($card->isUsable())->toBeFalse();
+    expect($card->is_usable)->toBeFalse();
 });
 
 test('gift card is not usable when expired', function () {
     $card = makeGiftCard(['expires_at' => now()->subDay()]);
 
-    expect($card->isUsable())->toBeFalse();
+    expect($card->is_usable)->toBeFalse();
 });
 
 test('gift card status attribute', function () {

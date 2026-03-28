@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Date;
  * @property-read int $days_away
  * @property-read bool $is_in_prep_period
  * @property-read bool $is_upcoming
- * @property-read Carbon $start_prep_by
+ * @property-read Carbon $start_prep_by\n * @property-read int $days_until_deadline\n * @property-read bool $is_deadline_passed
  *
  * @method static Builder<static>|Holiday active()
  * @method static \Database\Factories\HolidayFactory factory($count = null, $state = [])
@@ -109,21 +109,23 @@ class Holiday extends Model
         $query->where('is_active', true);
     }
 
-    public function daysUntilDeadline(): int
+    /** @return Attribute<int, never> */
+    protected function daysUntilDeadline(): Attribute
     {
-        if (! $this->order_deadline) {
-            return $this->days_away;
-        }
-
-        return (int) Date::today()->diffInDays($this->order_deadline, false);
+        return Attribute::make(
+            get: fn () => $this->order_deadline
+                ? (int) Date::today()->diffInDays($this->order_deadline, false)
+                : $this->days_away,
+        );
     }
 
-    public function isDeadlinePassed(): bool
+    /** @return Attribute<bool, never> */
+    protected function isDeadlinePassed(): Attribute
     {
-        if (! $this->order_deadline) {
-            return $this->date->isPast();
-        }
-
-        return $this->order_deadline->isPast();
+        return Attribute::make(
+            get: fn () => $this->order_deadline
+                ? $this->order_deadline->isPast()
+                : $this->date->isPast(),
+        );
     }
 }
