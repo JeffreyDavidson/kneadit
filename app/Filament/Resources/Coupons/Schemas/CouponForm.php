@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class CouponForm
 {
@@ -28,8 +29,8 @@ class CouponForm
                                     ->maxLength(50)
                                     ->unique(ignoreRecord: true)
                                     ->alphaNum()
-                                    ->formatStateUsing(fn (?string $state): ?string => $state ? strtoupper($state) : $state)
-                                    ->dehydrateStateUsing(fn (?string $state): ?string => $state ? strtoupper($state) : $state),
+                                    ->formatStateUsing(fn (?string $state): ?string => $state ? Str::upper($state) : $state)
+                                    ->dehydrateStateUsing(fn (?string $state): ?string => $state ? Str::upper($state) : $state),
 
                                 Select::make('type')
                                     ->required()

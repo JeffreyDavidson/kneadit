@@ -3,6 +3,7 @@
 namespace App\Filament\Concerns;
 
 use App\Enums\SubscriptionTier;
+use Illuminate\Support\Str;
 
 trait ShowsUpgradeBadge
 {
@@ -16,7 +17,7 @@ trait ShowsUpgradeBadge
             return null;
         }
 
-        return strtoupper(static::requiredTier()->value);
+        return Str::upper(static::requiredTier()->value);
     }
 
     public static function getNavigationBadgeColor(): ?string

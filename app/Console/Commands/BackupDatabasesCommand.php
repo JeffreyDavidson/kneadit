@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class BackupDatabasesCommand extends Command
 {
@@ -71,7 +72,7 @@ class BackupDatabasesCommand extends Command
         $sharedDir = dirname(base_path()) . '/backups';
 
         // Fallback for local dev
-        if (str_contains(base_path(), '/current/') || str_contains(base_path(), '/releases/')) {
+        if (Str::contains(base_path(), '/current/') || Str::contains(base_path(), '/releases/')) {
             // Forge zero-downtime deploy — go up to project root
             $projectRoot = preg_replace('#/(current|releases/\d+)$#', '', base_path());
             $sharedDir = "{$projectRoot}/backups";

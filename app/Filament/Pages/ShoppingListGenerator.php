@@ -12,6 +12,7 @@ use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
 
 class ShoppingListGenerator extends Page
@@ -110,10 +111,10 @@ class ShoppingListGenerator extends Page
         }
 
         // Cross-reference with ingredient inventory
-        $inventoryIngredients = Ingredient::all()->keyBy(fn (Ingredient $i) => strtolower($i->name));
+        $inventoryIngredients = Ingredient::all()->keyBy(fn (Ingredient $i) => Str::lower($i->name));
 
         $aggregatedIngredients = $aggregatedIngredients->map(function (array $item) use ($inventoryIngredients) {
-            $key = strtolower($item['name']);
+            $key = Str::lower($item['name']);
             $tracked = $inventoryIngredients->get($key);
             $item['in_stock'] = $tracked ? (float) $tracked->current_stock : null;
             $item['stock_unit'] = $tracked?->unit;

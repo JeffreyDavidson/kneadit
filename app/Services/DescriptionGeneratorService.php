@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Str;
+
 class DescriptionGeneratorService
 {
     /** @var array<string, mixed> */
@@ -68,9 +70,9 @@ class DescriptionGeneratorService
     /** @return array<int, string> */
     public function generate(string $product, string $tone, string $length, ?string $category = null, ?float $price = null, int $count = 3): array
     {
-        $tone = strtolower($tone);
+        $tone = Str::lower($tone);
         $templates = $this->templates[$tone] ?? $this->templates['professional'];
-        $categoryKey = strtolower($category ?? 'default');
+        $categoryKey = Str::lower($category ?? 'default');
         $adjectivePool = $this->adjectives[$categoryKey] ?? $this->defaultAdjectives;
 
         // Pick $count random templates
@@ -82,7 +84,7 @@ class DescriptionGeneratorService
         $descriptions = [];
         foreach ($selectedKeys as $key) {
             $adjective = $adjectivePool[array_rand($adjectivePool)];
-            $text = str_replace(
+            $text = Str::replace(
                 ['{product}', '{category}', '{adjective}', '{price}'],
                 [$product, $category ?: 'baked goods', $adjective, $price ? Number::currency($price) : ''],
                 $templates[$key],
@@ -96,7 +98,7 @@ class DescriptionGeneratorService
     /** @param array<string, mixed> $adjectives */
     protected function adjustLength(string $base, string $length, string $product, string $category, array $adjectives): string
     {
-        return match (strtolower($length)) {
+        return match (Str::lower($length)) {
             'short' => $this->toShort($base),
             'long' => $this->toLong($base, $product, $category, $adjectives),
             default => $base, // medium = single template as-is
@@ -133,7 +135,7 @@ class DescriptionGeneratorService
         $extra1 = $extras[array_rand($extras)];
         $extra2 = $extras[array_rand(array_diff_key($extras, [$extra1]))];
 
-        $replace = fn (string $s) => str_replace(['{product}', '{category}', '{adjective}'], [$product, $category, $adj], $s);
+        $replace = fn (string $s) => Str::replace(['{product}', '{category}', '{adjective}'], [$product, $category, $adj], $s);
 
         return $base . ' ' . $replace($extra1) . ' ' . $replace($extra2);
     }

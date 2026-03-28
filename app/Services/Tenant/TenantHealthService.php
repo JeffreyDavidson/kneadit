@@ -6,6 +6,7 @@ use App\Models\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class TenantHealthService
 {
@@ -132,7 +133,7 @@ class TenantHealthService
         $results = collect();
 
         foreach (Tenant::all() as $tenant) {
-            $plan = strtolower($tenant->plan ?? 'starter');
+            $plan = Str::lower($tenant->plan ?? 'starter');
             $limits = config('kneadit.plans.' . $plan . '.limits', config('kneadit.plans.starter.limits'));
 
             if ($plan === 'pro') {

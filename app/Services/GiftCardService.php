@@ -35,8 +35,8 @@ class GiftCardService
 
     public function checkBalance(string $code): ?GiftCard
     {
-        return GiftCard::query()->where('code', strtoupper(str_replace('-', '', $code)))->first()
-            ?? GiftCard::query()->where('code', strtoupper(trim($code)))->first();
+        return GiftCard::query()->where('code', Str::upper(Str::replace('-', '', $code)))->first()
+            ?? GiftCard::query()->where('code', Str::upper(trim($code)))->first();
     }
 
     /** @return array<string, mixed> */
@@ -88,7 +88,7 @@ class GiftCardService
     public function generateCode(): string
     {
         do {
-            $raw = strtoupper(Str::random(16));
+            $raw = Str::upper(Str::random(16));
             // Ensure only alphanumeric
             $raw = (string) preg_replace('/[^A-Z0-9]/', '', $raw . Str::random(4));
             $raw = substr($raw, 0, 16);

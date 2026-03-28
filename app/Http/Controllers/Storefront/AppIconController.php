@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 class AppIconController extends Controller
 {
@@ -24,7 +25,7 @@ class AppIconController extends Controller
         $textColor = imagecolorallocate($img, (int) 255, (int) 255, (int) 255);
         imagefill($img, 0, 0, (int) $bgColor);
 
-        $letter = strtoupper(substr($storeName, 0, 1));
+        $letter = Str::upper(substr($storeName, 0, 1));
         $font = 5;
         $textWidth = imagefontwidth($font) * strlen($letter);
         $textHeight = imagefontheight($font);

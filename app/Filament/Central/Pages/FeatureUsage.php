@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 use UnitEnum;
 
 class FeatureUsage extends Page
@@ -136,6 +137,6 @@ class FeatureUsage extends Page
 
     public function formatFeatureName(string $feature): string
     {
-        return str_replace('_', ' ', ucfirst($feature));
+        return Str::replace('_', ' ', ucfirst($feature));
     }
 }

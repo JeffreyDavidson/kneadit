@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -45,11 +46,11 @@ class CheckPlatformMaintenance
     {
         $path = $request->path();
 
-        if (str_starts_with($path, 'api/') || $request->is('api/*')) {
+        if (Str::startsWith($path, 'api/') || $request->is('api/*')) {
             return 'api';
         }
 
-        if (str_starts_with($path, 'admin') || $request->is('admin/*')) {
+        if (Str::startsWith($path, 'admin') || $request->is('admin/*')) {
             return 'admin';
         }
 

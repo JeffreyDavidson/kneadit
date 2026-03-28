@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Storefront\HomeController;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,7 +27,7 @@ class RootController extends Controller
 
             // If storefront is disabled and they have an external website, redirect there
             $externalUrl = $tenant?->external_website;
-            if ($tenant && ! $tenant->storefront_enabled && $externalUrl && (str_starts_with($externalUrl, 'https://') || str_starts_with($externalUrl, 'http://')) && filter_var($externalUrl, FILTER_VALIDATE_URL)) {
+            if ($tenant && ! $tenant->storefront_enabled && $externalUrl && (Str::startsWith($externalUrl, 'https://') || Str::startsWith($externalUrl, 'http://')) && filter_var($externalUrl, FILTER_VALIDATE_URL)) {
                 return redirect()->away($externalUrl);
             }
 

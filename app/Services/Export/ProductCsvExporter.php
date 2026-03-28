@@ -4,6 +4,7 @@ namespace App\Services\Export;
 
 use App\Models\Product;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 
 class ProductCsvExporter
 {
@@ -58,7 +59,7 @@ class ProductCsvExporter
             return ['rows' => [], 'errors' => ['CSV file is empty.']];
         }
 
-        $header = array_map(fn (?string $h) => strtolower(trim($h ?? '')), $header);
+        $header = array_map(fn (?string $h) => Str::lower(trim($h ?? '')), $header);
         $missing = array_diff(['name', 'price'], $header);
 
         if (! empty($missing)) {
