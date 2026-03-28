@@ -12,6 +12,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Number;
 
 class StatsOverview extends BaseWidget
 {
@@ -32,20 +33,18 @@ class StatsOverview extends BaseWidget
                     ->icon('heroicon-o-clock')
                     ->color('warning'),
 
-                Stat::make("This Week's Revenue", '$' . number_format(
+                Stat::make("This Week's Revenue", Number::currency(
                     (float) Order::query()->active()
                         ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                         ->sum('total'),
-                    2,
                 ))
                     ->icon('heroicon-o-currency-dollar')
                     ->color('success'),
 
-                Stat::make('Avg Order Value', '$' . number_format(
+                Stat::make('Avg Order Value', Number::currency(
                     (float) Order::query()->active()
                         ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                         ->avg('total'),
-                    2,
                 ))
                     ->icon('heroicon-o-receipt-percent')
                     ->color('info'),

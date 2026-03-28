@@ -13,6 +13,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
 
 class OrderResource extends Resource
 {
@@ -57,7 +58,7 @@ class OrderResource extends Resource
     {
         return [
             'Customer' => $record->customer->name ?? 'N/A',
-            'Total' => '$' . number_format($record->total, 2),
+            'Total' => Number::currency($record->total),
             'Status' => $record->status->label(),
         ];
     }

@@ -16,6 +16,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Number;
 
 class SocialPostForm
 {
@@ -83,7 +84,7 @@ class SocialPostForm
 
                                         $caption = str_replace(
                                             ['{product}', '{price}', '{store_hashtag}'],
-                                            [$product->name, '$' . number_format($product->price, 2), $storeHashtag],
+                                            [$product->name, Number::currency($product->price), $storeHashtag],
                                             $template,
                                         );
 

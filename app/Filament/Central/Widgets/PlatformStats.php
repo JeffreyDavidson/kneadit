@@ -8,6 +8,7 @@ use App\Models\Tenant;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Number;
 
 class PlatformStats extends StatsOverviewWidget
 {
@@ -56,7 +57,7 @@ class PlatformStats extends StatsOverviewWidget
         }
 
         return [
-            Stat::make('MRR', '$' . number_format($mrr))
+            Stat::make('MRR', Number::currency($mrr))
                 ->description($activeTenants->count() . ' paying')
                 ->color('success')
                 ->icon('heroicon-o-currency-dollar')

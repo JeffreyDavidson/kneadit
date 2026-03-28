@@ -9,6 +9,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Number;
 
 class LoyaltyRewardsTable
 {
@@ -32,7 +33,7 @@ class LoyaltyRewardsTable
 
                         return match ($type) {
                             RewardType::PercentageDiscount => $state . '%',
-                            RewardType::FixedDiscount => '$' . number_format((float) $state, 2),
+                            RewardType::FixedDiscount => Number::currency((float) $state),
                             RewardType::FreeProduct => $record->product->name ?? '-',
                         };
                     })

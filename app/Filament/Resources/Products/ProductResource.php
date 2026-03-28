@@ -12,6 +12,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
 
 class ProductResource extends Resource
 {
@@ -56,7 +57,7 @@ class ProductResource extends Resource
     {
         return [
             'Category' => $record->category->name ?? 'N/A',
-            'Price' => '$' . number_format($record->price, 2),
+            'Price' => Number::currency($record->price),
         ];
     }
 

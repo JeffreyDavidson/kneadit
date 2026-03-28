@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ApplyCouponRequest;
 use App\Services\CouponService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Number;
 
 class ApplyCouponController extends Controller
 {
@@ -28,7 +29,7 @@ class ApplyCouponController extends Controller
             'discount_amount' => $result['discount'],
             'label' => $coupon?->type === CouponType::Percentage
                 ? number_format($coupon->value ?? 0, 0) . '% off'
-                : '$' . number_format((float) ($coupon->value ?? 0), 2) . ' off',
+                : Number::currency((float) ($coupon->value ?? 0)) . ' off',
         ]);
     }
 }
