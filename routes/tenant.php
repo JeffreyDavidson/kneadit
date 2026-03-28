@@ -107,15 +107,15 @@ Route::middleware([
         Route::get('/about', AboutController::class)->name('storefront.about');
         Route::get('/reviews', ReviewsController::class)->name('storefront.reviews');
         Route::get('/gallery', [GalleryController::class, 'show'])->name('storefront.gallery');
-        Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.submit');
+        Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.submit')->middleware('throttle:10,1');
         Route::get('/track', [TrackingController::class, 'show'])->name('order.track');
-        Route::post('/track', [TrackingController::class, 'store'])->name('order.track.lookup');
+        Route::post('/track', [TrackingController::class, 'store'])->name('order.track.lookup')->middleware('throttle:10,1');
 
         // Order messages
         Route::get('/order/{order}/messages', [MessageController::class, 'show'])->name('order.messages');
-        Route::post('/order/{order}/messages', [MessageController::class, 'store'])->name('order.messages.send');
+        Route::post('/order/{order}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:10,1');
         Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
-        Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+        Route::post('/contact', [ContactController::class, 'store'])->name('contact.store')->middleware('throttle:10,1');
 
         // Reorder data (AJAX)
         Route::get('/order/reorder/{order}', ReorderController::class)->name('order.reorder');
@@ -128,26 +128,26 @@ Route::middleware([
 
         // Loyalty rewards
         Route::get('/rewards', [LoyaltyController::class, 'show'])->name('storefront.rewards');
-        Route::post('/rewards/check', [LoyaltyController::class, 'store'])->name('rewards.check');
+        Route::post('/rewards/check', [LoyaltyController::class, 'store'])->name('rewards.check')->middleware('throttle:10,1');
 
         // Gift Cards
         Route::get('/gift-cards', ShowGiftCardsController::class)->name('storefront.gift-cards');
         Route::post('/gift-cards/purchase', PurchaseGiftCardController::class)->name('gift-cards.purchase')->middleware('throttle:5,1');
-        Route::post('/gift-cards/balance', CheckGiftCardBalanceController::class)->name('gift-cards.balance');
+        Route::post('/gift-cards/balance', CheckGiftCardBalanceController::class)->name('gift-cards.balance')->middleware('throttle:10,1');
 
         // Coupon validation (AJAX)
-        Route::post('/coupon/apply', ApplyCouponController::class)->name('coupon.apply');
+        Route::post('/coupon/apply', ApplyCouponController::class)->name('coupon.apply')->middleware('throttle:10,1');
 
         // Gift card validation (AJAX)
-        Route::post('/gift-card/apply', ApplyGiftCardController::class)->name('gift-card.apply');
+        Route::post('/gift-card/apply', ApplyGiftCardController::class)->name('gift-card.apply')->middleware('throttle:10,1');
 
         // Customer favorites (AJAX)
         Route::get('/favorites', [FavoriteController::class, 'show'])->name('favorites.get');
-        Route::post('/favorites/toggle', [FavoriteController::class, 'store'])->name('favorites.toggle');
+        Route::post('/favorites/toggle', [FavoriteController::class, 'store'])->name('favorites.toggle')->middleware('throttle:10,1');
 
         // Catering
         Route::get('/catering', [CateringController::class, 'show'])->name('storefront.catering');
-        Route::post('/catering', [CateringController::class, 'store'])->name('catering.submit');
+        Route::post('/catering', [CateringController::class, 'store'])->name('catering.submit')->middleware('throttle:10,1');
 
         // Blog
         Route::get('/blog', [StorefrontBlogController::class, 'index'])->name('storefront.blog');
@@ -156,14 +156,14 @@ Route::middleware([
 
         // Review submission (from email link)
         Route::get('/review/{order}', [ReviewController::class, 'show'])->name('storefront.submit-review');
-        Route::post('/review/{order}', [ReviewController::class, 'store'])->name('storefront.store-review');
+        Route::post('/review/{order}', [ReviewController::class, 'store'])->name('storefront.store-review')->middleware('throttle:10,1');
 
         // Surveys
         Route::get('/survey/{survey}', [SurveyController::class, 'show'])->name('storefront.survey');
-        Route::post('/survey/{survey}', [SurveyController::class, 'store'])->name('survey.submit');
+        Route::post('/survey/{survey}', [SurveyController::class, 'store'])->name('survey.submit')->middleware('throttle:10,1');
 
         // Product waitlist
-        Route::post('/waitlist/product', ProductWaitlistController::class)->name('product-waitlist.join');
+        Route::post('/waitlist/product', ProductWaitlistController::class)->name('product-waitlist.join')->middleware('throttle:10,1');
     });
 
     // Tenant Storefront API (JSON, no CSRF)
