@@ -173,8 +173,8 @@ class CustomerDirectory extends Page
                 return [
                     'id' => $order->id,
                     'order_number' => $order->order_number,
-                    'status' => ucfirst($order->status->value),
-                    'payment_status' => ucfirst($order->payment_status->value),
+                    'status' => $order->status->label(),
+                    'payment_status' => $order->payment_status->label(),
                     'total' => number_format($order->total, 2),
                     'date' => $order->created_at?->format('M j, Y'),
                     'delivery_date' => $order->delivery_date?->format('M j, Y'),

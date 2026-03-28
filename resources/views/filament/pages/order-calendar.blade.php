@@ -100,7 +100,7 @@
                                         {{ $order->status === \App\Enums\OrderStatus::Pending ? 'bg-yellow-100 text-yellow-800' : '' }}
                                         {{ $order->status === \App\Enums\OrderStatus::Baking ? 'bg-blue-100 text-blue-800' : '' }}
                                         {{ $order->status === \App\Enums\OrderStatus::Delivered ? 'bg-gray-100 text-gray-800' : '' }}">
-                                        {{ ucfirst($order->status->value) }}
+                                        {{ $order->status->label() }}
                                     </span>
                                     <p class="text-sm font-medium text-gray-900 mt-1">${{ number_format($order->total, 2) }}</p>
                                 </div>

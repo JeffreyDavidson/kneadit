@@ -58,7 +58,7 @@ class OrderResource extends Resource
         return [
             'Customer' => $record->customer->name ?? 'N/A',
             'Total' => '$' . number_format($record->total, 2),
-            'Status' => ucfirst($record->status->value),
+            'Status' => $record->status->label(),
         ];
     }
 

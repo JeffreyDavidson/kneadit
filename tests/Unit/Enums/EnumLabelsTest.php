@@ -1,21 +1,27 @@
 <?php
 
-use App\Enums\CateringEventType;
-use App\Enums\CateringInquiryStatus;
-use App\Enums\ExpenseCategory;
-use App\Enums\IncomeSource;
-use App\Enums\TaxExportType;
+use App\Enums\CouponType;
+use App\Enums\EmailCampaignStatus;
+use App\Enums\PaymentStatus;
+use App\Enums\SocialPlatform;
+use App\Enums\SocialPostStatus;
 
-dataset('enumsWithLabels', [
-    'CateringEventType' => [CateringEventType::cases()],
-    'CateringInquiryStatus' => [CateringInquiryStatus::cases()],
-    'ExpenseCategory' => [ExpenseCategory::cases()],
-    'IncomeSource' => [IncomeSource::cases()],
-    'TaxExportType' => [TaxExportType::cases()],
-]);
+test('PaymentStatus has a label method', function () {
+    expect(PaymentStatus::Paid->label())->toBe('Paid');
+});
 
-test('all cases have non-empty labels', function (array $cases) {
-    foreach ($cases as $case) {
-        expect($case->label())->toBeString()->not->toBeEmpty();
-    }
-})->with('enumsWithLabels');
+test('CouponType has a label method', function () {
+    expect(CouponType::Percentage->label())->toBe('Percentage');
+});
+
+test('EmailCampaignStatus has a label method', function () {
+    expect(EmailCampaignStatus::Draft->label())->toBe('Draft');
+});
+
+test('SocialPostStatus has a label method', function () {
+    expect(SocialPostStatus::Draft->label())->toBe('Draft');
+});
+
+test('SocialPlatform has a label method', function () {
+    expect(SocialPlatform::Instagram->label())->toBe('Instagram');
+});

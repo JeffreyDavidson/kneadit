@@ -31,7 +31,7 @@
                     <span style="padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;
                         background: {{ $order->payment_status->value === 'paid' ? '#d4f5d4' : '#fef3c7' }};
                         color: {{ $order->payment_status->value === 'paid' ? '#065f46' : '#92400e' }};">
-                        {{ ucfirst($order->payment_status->value) }} ({{ ucfirst($order->payment_method->value) }})
+                        {{ $order->payment_status->label() }} ({{ $order->payment_method->label() }})
                     </span>
                 </td>
             </tr>
