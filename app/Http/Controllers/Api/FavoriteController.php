@@ -26,11 +26,11 @@ class FavoriteController extends Controller
         ]);
     }
 
-    public function store(StoreApiFavoriteRequest $request): JsonResponse
+    public function store(StoreApiFavoriteRequest $request, ToggleCustomerFavorite $toggleFavorite): JsonResponse
     {
         $validated = $request->validated();
 
-        $favorited = app(ToggleCustomerFavorite::class)($validated['email'], $validated['product_id']);
+        $favorited = $toggleFavorite($validated['email'], $validated['product_id']);
 
         return response()->json([
             'data' => ['favorited' => $favorited],
