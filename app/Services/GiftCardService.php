@@ -45,7 +45,7 @@ class GiftCardService
         return DB::transaction(function () use ($code, $amount, $orderId) {
             $card = GiftCard::query()->lockForUpdate()->where('code', $code)->firstOrFail();
 
-            if (! $card->isUsable()) {
+            if (! $card->is_usable) {
                 return ['success' => false, 'error' => 'This gift card is not valid.'];
             }
 

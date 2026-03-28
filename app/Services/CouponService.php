@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\CouponType;
 use App\Models\Coupon;
 
 class CouponService
@@ -34,9 +35,25 @@ class CouponService
             ];
         }
 
-        $discount = $coupon->calculateDiscount($subtotal);
+        $discount = $this->calculateDiscount($coupon, $subtotal);
 
         return ['valid' => true, 'coupon' => $coupon, 'discount' => $discount, 'error' => null];
+    }
+
+    /**
+     * Calculate the discount amount for a coupon against the given subtotal.
+     */
+    public function calculateDiscount(Coupon $coupon, float $subtotal): float
+    {
+        if ($coupon->min_order_amount && $subtotal < (float) $coupon->min_order_amount) {
+            return 0;
+        }
+
+        if ($coupon->type === CouponType::Percentage) {
+            return round($subtotal * ((float) $coupon->value / 100), 2);
+        }
+
+        return round(min((float) $coupon->value, $subtotal), 2);
     }
 
     /**

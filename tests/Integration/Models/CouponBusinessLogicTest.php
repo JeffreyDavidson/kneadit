@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Coupon;
+use App\Services\CouponService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -28,15 +29,15 @@ test('isValid returns false when max uses reached', function () {
 test('percentage discount calculates correctly', function () {
     $coupon = Coupon::factory()->percentage()->create(['value' => 20]);
 
-    expect($coupon->calculateDiscount(100.00))->toBe(20.00)
-        ->and($coupon->calculateDiscount(50.00))->toBe(10.00);
+    expect(resolve(CouponService::class)->calculateDiscount($coupon, 100.00))->toBe(20.00)
+        ->and(resolve(CouponService::class)->calculateDiscount($coupon, 50.00))->toBe(10.00);
 });
 
 test('fixed discount does not exceed subtotal', function () {
     $coupon = Coupon::factory()->fixed()->create(['value' => 25]);
 
-    expect($coupon->calculateDiscount(100.00))->toBe(25.00)
-        ->and($coupon->calculateDiscount(15.00))->toBe(15.00);
+    expect(resolve(CouponService::class)->calculateDiscount($coupon, 100.00))->toBe(25.00)
+        ->and(resolve(CouponService::class)->calculateDiscount($coupon, 15.00))->toBe(15.00);
 });
 
 test('isValid returns false for future start date coupon', function () {
@@ -54,6 +55,6 @@ test('discount returns zero when below minimum order amount', function () {
         'min_order_amount' => 50,
     ]);
 
-    expect($coupon->calculateDiscount(30.00))->toBe(0.0)
-        ->and($coupon->calculateDiscount(60.00))->toBe(12.00);
+    expect(resolve(CouponService::class)->calculateDiscount($coupon, 30.00))->toBe(0.0)
+        ->and(resolve(CouponService::class)->calculateDiscount($coupon, 60.00))->toBe(12.00);
 });

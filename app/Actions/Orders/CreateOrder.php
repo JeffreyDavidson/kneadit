@@ -81,7 +81,7 @@ class CreateOrder
 
             if ($giftCardId) {
                 $giftCard = GiftCard::query()->lockForUpdate()->find($giftCardId);
-                if ($giftCard && $giftCard->isUsable()) {
+                if ($giftCard && $giftCard->is_usable) {
                     $gcAmount = min((float) $giftCard->current_balance, (float) $order->total);
                     if ($gcAmount > 0) {
                         $this->giftCardService->redeem($giftCard->code, $gcAmount, $order->id);

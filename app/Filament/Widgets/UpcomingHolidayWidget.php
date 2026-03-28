@@ -25,8 +25,8 @@ class UpcomingHolidayWidget extends BaseWidget
         }
 
         $orders = Order::query()->whereDate('delivery_date', $holiday->date)->count();
-        $daysUntil = $holiday->daysUntilDeadline();
-        $deadlineLabel = $holiday->isDeadlinePassed()
+        $daysUntil = $holiday->days_until_deadline;
+        $deadlineLabel = $holiday->is_deadline_passed
             ? 'Deadline passed'
             : "Deadline in {$daysUntil}d";
 
@@ -39,7 +39,7 @@ class UpcomingHolidayWidget extends BaseWidget
         return [
             Stat::make("Next Holiday: {$holiday->name}", $holiday->date->format('M j'))
                 ->icon('heroicon-o-calendar-days')
-                ->color($daysUntil <= 3 && ! $holiday->isDeadlinePassed() ? 'warning' : 'primary')
+                ->color($daysUntil <= 3 && ! $holiday->is_deadline_passed ? 'warning' : 'primary')
                 ->description($description),
         ];
     }
