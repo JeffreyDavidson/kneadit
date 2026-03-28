@@ -16,6 +16,7 @@ beforeEach(function () {
 it('logs structured context on authentication exception', function () {
     Log::spy();
 
+    Http::preventStrayRequests();
     Http::fake([
         'api-m.sandbox.paypal.com/v1/oauth2/token' => function () {
             throw new Exception('DNS resolution failed');
@@ -36,6 +37,7 @@ it('logs structured context on authentication exception', function () {
 it('logs structured context on invoice status check exception', function () {
     Log::spy();
 
+    Http::preventStrayRequests();
     Http::fake([
         'api-m.sandbox.paypal.com/v1/oauth2/token' => Http::response([
             'access_token' => 'test-token',

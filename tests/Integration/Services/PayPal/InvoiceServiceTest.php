@@ -11,6 +11,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('creates and sends invoice successfully', function () {
+    Http::preventStrayRequests();
     Http::fake([
         '*/v2/invoicing/invoices' => Http::response(['id' => 'INV-123'], 200),
         '*/v2/invoicing/invoices/INV-123/send' => Http::response([], 200),
@@ -42,6 +43,7 @@ test('returns null when no access token', function () {
 });
 
 test('cancels an invoice successfully', function () {
+    Http::preventStrayRequests();
     Http::fake([
         '*/v2/invoicing/invoices/INV-456/cancel' => Http::response([], 200),
     ]);

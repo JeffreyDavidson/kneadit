@@ -22,6 +22,7 @@ afterEach(function () {
 });
 
 test('health check command exists', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
     $this->artisan('health:check')
@@ -29,6 +30,7 @@ test('health check command exists', function () {
 });
 
 test('health check verifies database connection', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
     $this->artisan('health:check')
@@ -37,6 +39,7 @@ test('health check verifies database connection', function () {
 });
 
 test('health check verifies users table', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
     $this->artisan('health:check')
@@ -45,6 +48,7 @@ test('health check verifies users table', function () {
 });
 
 test('health check verifies disk space', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
     $this->artisan('health:check')
@@ -53,6 +57,7 @@ test('health check verifies disk space', function () {
 });
 
 test('health check verifies storage writable', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('OK', 200)]);
 
     $this->artisan('health:check')
@@ -61,6 +66,7 @@ test('health check verifies storage writable', function () {
 });
 
 test('health check detects homepage failure', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('Server Error', 500)]);
 
     $this->artisan('health:check')

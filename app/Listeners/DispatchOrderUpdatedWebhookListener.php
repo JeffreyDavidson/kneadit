@@ -4,10 +4,11 @@ namespace App\Listeners;
 
 use App\Events\OrderStatusChanged;
 use App\Services\WebhookService;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
-class DispatchOrderUpdatedWebhookListener implements ShouldQueue
+class DispatchOrderUpdatedWebhookListener implements ShouldBeUnique, ShouldQueue
 {
     public int $tries = 3;
 

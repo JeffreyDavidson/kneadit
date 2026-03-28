@@ -9,6 +9,7 @@ beforeEach(function () {
 });
 
 test('dispatch does nothing without webhook url', function () {
+    Http::preventStrayRequests();
     Http::fake();
 
     WebhookService::dispatch('order.created', ['test' => true]);
@@ -17,6 +18,7 @@ test('dispatch does nothing without webhook url', function () {
 });
 
 test('dispatch sends to configured url', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('ok', 200)]);
     settings(['webhook_url' => 'https://hooks.example.com/test']);
 
@@ -26,6 +28,7 @@ test('dispatch sends to configured url', function () {
 });
 
 test('dispatch includes event header', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('ok', 200)]);
     settings(['webhook_url' => 'https://hooks.example.com/test']);
 
@@ -37,6 +40,7 @@ test('dispatch includes event header', function () {
 });
 
 test('dispatch includes signature header', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('ok', 200)]);
     settings(['webhook_url' => 'https://hooks.example.com/test']);
     settings(['webhook_secret' => 'my-secret']);
@@ -49,6 +53,7 @@ test('dispatch includes signature header', function () {
 });
 
 test('dispatch body contains event and data', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('ok', 200)]);
     settings(['webhook_url' => 'https://hooks.example.com/test']);
 
@@ -64,6 +69,7 @@ test('dispatch body contains event and data', function () {
 });
 
 test('dispatch handles failed request gracefully', function () {
+    Http::preventStrayRequests();
     Http::fake(['*' => Http::response('error', 500)]);
     settings(['webhook_url' => 'https://hooks.example.com/test']);
 
