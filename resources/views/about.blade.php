@@ -11,9 +11,6 @@
     $heroImage = settings('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
-    $customerCount = \App\Models\Customer::count();
-    $avgRating = \App\Models\Review::where('is_approved', true)->avg('rating');
-    $orderCount = \App\Models\Order::count();
 
     $content = settingsPageContent('about');
 @endphp
