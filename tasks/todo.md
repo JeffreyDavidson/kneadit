@@ -1,11 +1,11 @@
-# Best Practices Fixes
+# Best Practices Fixes — ALL COMPLETE
 
 ## Security
 - [x] Add throttle to auth routes (register, password reset)
 - [x] Add rate limiting to storefront POST routes (13 routes)
 
 ## Data Integrity
-- [ ] Fix order number race condition with Cache::lock (deferred — needs careful testing)
+- [x] Fix order number race condition with Cache::lock + MAX()
 - [x] Add FK constraint on coupon_id in orders table
 
 ## Validation
@@ -28,14 +28,10 @@
 - [x] Fix N+1 in UpcomingOrdersWidget (withCount)
 - [x] Fix N+1 in ReorderController (eager load)
 - [x] Move queries out of Blade templates (deleted 6 dead partials, moved about queries to controller)
-- [ ] Add caching for expensive queries (deferred — needs cache invalidation strategy)
+- [x] Add caching for storefront stat queries (Hero, AboutController — 1h TTL)
 
 ## Architecture
 - [x] Extract AvailabilityController logic → AvailabilityService
 - [x] Remove dead StripeConnectController::getAccountStatus (never called)
-- [x] Clean OnboardingController::store — reviewed, acceptable as-is (sequential, each step depends on previous)
-- [x] Remove dead code (StripeConnectWebhook empty if, CateringController unused vars)
-
-## Deferred Items
-- Order number race condition — needs Cache::lock with careful testing around concurrent order creation
-- Caching layer — needs cache invalidation strategy per tenant; best added when performance monitoring shows it's needed
+- [x] OnboardingController::store — reviewed, acceptable as-is
+- [x] Remove dead code (StripeConnectWebhook empty if, CateringController unused vars, 6 dead Blade partials)
