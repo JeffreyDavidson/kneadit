@@ -14,6 +14,8 @@ class ReorderController extends Controller
      */
     public function __invoke(Order $order): JsonResponse
     {
+        $order->load('orderItems.product');
+
         $items = $order->orderItems->map(fn (OrderItem $item) => [
             'product_id' => $item->product_id,
             'product_name' => $item->product->name ?? 'Unknown',
