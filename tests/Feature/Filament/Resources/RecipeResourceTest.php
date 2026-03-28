@@ -52,6 +52,35 @@ test('can edit a recipe via table action', function () {
     expect($recipe->fresh()->name)->toBe('Updated Recipe');
 });
 
+test('can create a recipe with ingredients', function () {
+    $component = Livewire::test(ListRecipes::class)
+        ->mountAction('create')
+        ->setActionData([
+            'name' => 'Sourdough Bread',
+            'prep_time_minutes' => 120,
+            'instructions' => 'Mix, knead, proof, bake.',
+        ]);
+
+    // Get the default ingredient item key and fill it
+    $state = $component->get('mountedActions.0.data.ingredients');
+    $keys = array_keys($state);
+    $component->setActionData([
+        'ingredients' => [
+            $keys[0] => ['name' => 'Bread Flour', 'quantity' => '500', 'unit' => 'g'],
+        ],
+        'inventoryIngredients' => [],
+    ]);
+
+    $component->callMountedAction()
+        ->assertHasNoActionErrors();
+
+    $recipe = Recipe::query()->first();
+    expect($recipe)
+        ->name->toBe('Sourdough Bread')
+        ->prep_time_minutes->toBe(120)
+        ->ingredients->toHaveCount(1);
+});
+
 test('edit recipe validates name is required', function () {
     $recipe = Recipe::factory()->create();
 

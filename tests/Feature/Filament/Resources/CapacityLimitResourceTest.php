@@ -29,5 +29,17 @@ test('can render capacity limit table columns', function (string $column) {
         ->assertCanRenderTableColumn($column);
 })->with(['max_orders']);
 
-test('can edit a capacity limit via table action')
-    ->todo();
+test('can create a capacity limit for a weekday', function () {
+    Livewire::test(ListCapacityLimits::class)
+        ->callAction('create', data: [
+            'day_type' => 'monday',
+            'day_of_week' => 'monday',
+            'max_orders' => 25,
+            'is_blocked' => false,
+        ])
+        ->assertHasNoActionErrors();
+
+    expect(CapacityLimit::query()->first())
+        ->max_orders->toBe(25)
+        ->is_blocked->toBeFalse();
+});

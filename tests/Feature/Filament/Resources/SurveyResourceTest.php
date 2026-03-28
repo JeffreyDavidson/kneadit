@@ -49,6 +49,33 @@ test('can edit a survey via table action', function () {
     expect($survey->fresh()->title)->toBe('Updated Survey');
 });
 
+test('can create a survey with questions repeater', function () {
+    $component = Livewire::test(ListSurveys::class)
+        ->mountAction('create')
+        ->setActionData([
+            'title' => 'Customer Satisfaction',
+            'description' => 'How did we do?',
+            'is_active' => true,
+        ]);
+
+    $state = $component->get('mountedActions.0.data.questions');
+    $keys = array_keys($state);
+    $component->setActionData([
+        'questions' => [
+            $keys[0] => ['type' => 'rating', 'question' => 'How was your experience?'],
+        ],
+    ]);
+
+    $component->callMountedAction()
+        ->assertHasNoActionErrors();
+
+    $survey = Survey::query()->first();
+    expect($survey)
+        ->title->toBe('Customer Satisfaction')
+        ->questions->toHaveCount(1);
+    expect($survey->questions[0]['question'])->toBe('How was your experience?');
+});
+
 test('edit survey validates title is required', function () {
     $survey = Survey::factory()->create();
 
