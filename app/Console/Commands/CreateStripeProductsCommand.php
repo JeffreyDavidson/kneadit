@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Laravel\Cashier\Cashier;
 
-class CreateStripeProducts extends Command
+class CreateStripeProductsCommand extends Command
 {
     protected $signature = 'stripe:create-products';
 

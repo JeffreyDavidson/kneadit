@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class CheckChurnAlerts extends Command
+class CheckChurnAlertsCommand extends Command
 {
     protected $signature = 'churn:check';
 

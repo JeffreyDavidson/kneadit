@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendScheduledCheckins extends Command
+class SendScheduledCheckinsCommand extends Command
 {
     protected $signature = 'checkins:send';
 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Console\Commands\BackupDatabases;
+use App\Console\Commands\BackupDatabasesCommand;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -17,7 +17,7 @@ test('backup command accepts keep option', function () {
 });
 
 test('backup command class has correct signature', function () {
-    $command = new BackupDatabases;
+    $command = new BackupDatabasesCommand;
 
     expect($command->getName())->toContain('backup:databases');
 });

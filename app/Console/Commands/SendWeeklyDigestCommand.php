@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendWeeklyDigest extends Command
+class SendWeeklyDigestCommand extends Command
 {
     protected $signature = 'digest:weekly';
 

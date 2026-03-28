@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendBirthdayDiscounts extends Command
+class SendBirthdayDiscountsCommand extends Command
 {
     protected $signature = 'birthday:send-discounts';
 

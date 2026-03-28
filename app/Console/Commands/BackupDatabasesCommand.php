@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class BackupDatabases extends Command
+class BackupDatabasesCommand extends Command
 {
     protected $signature = 'backup:databases {--keep=7 : Number of days to retain backups}';
 

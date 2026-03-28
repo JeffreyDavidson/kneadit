@@ -132,7 +132,7 @@ test('no action when trial far away', function () {
 });
 
 test('command source sends at three intervals', function () {
-    $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirations.php'));
+    $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirationsCommand.php'));
 
     expect($source)->toContain('trial_reminder_7d');
     expect($source)->toContain('trial_reminder_3d');
@@ -140,7 +140,7 @@ test('command source sends at three intervals', function () {
 });
 
 test('expired handler sends expiration email', function () {
-    $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirations.php'));
+    $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirationsCommand.php'));
 
     expect(file_get_contents(resource_path('views/emails/trial-expired-text.blade.php')))->toContain('trial has expired');
     expect(file_get_contents(resource_path('views/emails/trial-expired-text.blade.php')))->toContain('storefront has been paused');

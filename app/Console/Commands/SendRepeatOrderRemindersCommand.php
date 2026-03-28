@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendRepeatOrderReminders extends Command
+class SendRepeatOrderRemindersCommand extends Command
 {
     protected $signature = 'orders:send-repeat-reminders';
 
