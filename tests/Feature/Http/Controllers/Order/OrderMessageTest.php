@@ -2,7 +2,7 @@
 
 use App\Enums\OrderStatus;
 use App\Enums\SenderType;
-use App\Mail\NewOrderMessage;
+use App\Mail\NewOrderMessageMail;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderMessage;
@@ -95,5 +95,5 @@ test('notification email is sent to baker', function () {
             'sender_email' => 'cust@example.com',
         ]);
 
-    Mail::assertQueued(NewOrderMessage::class);
+    Mail::assertQueued(NewOrderMessageMail::class);
 });

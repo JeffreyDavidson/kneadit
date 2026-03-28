@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderCreated;
-use App\Mail\NewOrderNotification;
+use App\Mail\NewOrderNotificationMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -23,7 +23,7 @@ class NotifyBakerOfNewOrder implements ShouldQueue
             return;
         }
 
-        Mail::to($bakerEmail)->send(new NewOrderNotification($event->order));
+        Mail::to($bakerEmail)->send(new NewOrderNotificationMail($event->order));
     }
 
     public function failed(OrderCreated $event, \Throwable $exception): void

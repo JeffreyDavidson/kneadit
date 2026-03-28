@@ -3,38 +3,39 @@
 namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Coupon;
-use App\Models\Customer;
+use App\Models\Order;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class HappyBirthday extends BaseMailable
+class OrderReadyMail extends BaseMailable
 {
     use BakerBranded;
 
-    public string $storeName;
-
     public function __construct(
-        public Customer $customer,
-        public ?Coupon $coupon = null,
-    ) {
-        $this->storeName = settings('store_name', 'Our Bakery');
-    }
+        public Order $order,
+    ) {}
 
     public function envelope(): Envelope
     {
+        $storeName = settings('store_name', 'KneadIt Bakery');
+
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: "🎂 Happy Birthday, {$this->customer->name}! A Sweet Gift From {$this->storeName}",
+            subject: "Order #{$this->order->order_number} is Ready! — {$storeName}",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.happy-birthday',
+            html: 'emails.order-ready',
+            with: [
+                'order' => $this->order,
+                'customer' => $this->order->customer,
+                'orderItems' => $this->order->orderItems()->with('product')->get(),
+            ],
         );
     }
 

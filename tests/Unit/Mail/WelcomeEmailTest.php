@@ -1,10 +1,10 @@
 <?php
 
-use App\Mail\NewSubscriberNotification;
-use App\Mail\WelcomeBaker;
+use App\Mail\NewSubscriberNotificationMail;
+use App\Mail\WelcomeBakerMail;
 
 test('welcome baker email has correct subject', function () {
-    $mail = new WelcomeBaker(
+    $mail = new WelcomeBakerMail(
         bakerName: 'Jane',
         storeName: 'Sunrise Bakery',
         adminUrl: 'https://sunrise.kneadit.test/admin',
@@ -16,7 +16,7 @@ test('welcome baker email has correct subject', function () {
 });
 
 test('welcome baker email has correct properties', function () {
-    $mail = new WelcomeBaker(
+    $mail = new WelcomeBakerMail(
         bakerName: 'Jane',
         storeName: 'Sunrise Bakery',
         adminUrl: 'https://sunrise.kneadit.test/admin',
@@ -32,7 +32,7 @@ test('welcome baker email has correct properties', function () {
 });
 
 test('new subscriber notification has correct subject', function () {
-    $mail = new NewSubscriberNotification(
+    $mail = new NewSubscriberNotificationMail(
         bakerName: 'Jane',
         bakerEmail: 'jane@example.com',
         storeName: 'Sunrise Bakery',
@@ -44,7 +44,7 @@ test('new subscriber notification has correct subject', function () {
 });
 
 test('new subscriber notification has correct properties', function () {
-    $mail = new NewSubscriberNotification(
+    $mail = new NewSubscriberNotificationMail(
         bakerName: 'Jane',
         bakerEmail: 'jane@example.com',
         storeName: 'Sunrise Bakery',

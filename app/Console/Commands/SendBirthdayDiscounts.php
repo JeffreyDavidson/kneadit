@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\BirthdayDiscount;
+use App\Mail\BirthdayDiscountMail;
 use App\Models\CustomerProfile;
 use App\Models\Tenant;
 use App\Services\Customer\BirthdayService;
@@ -71,7 +71,7 @@ class SendBirthdayDiscounts extends Command
                     continue;
                 }
 
-                Mail::to($customer->email)->send(new BirthdayDiscount($customer, $coupon));
+                Mail::to($customer->email)->send(new BirthdayDiscountMail($customer, $coupon));
                 $this->info("  ✓ {$customer->name}");
             } catch (\Exception $e) {
                 $this->error("  ✗ {$customer->name}: {$e->getMessage()}");

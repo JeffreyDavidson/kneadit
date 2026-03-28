@@ -1,0 +1,25 @@
+# Round 6: Clean Models — Accessor Conversion + Business Logic Extraction
+
+## Models to clean (by extraction count)
+
+- [ ] Customer (9 legacy accessors + birthday methods)
+- [ ] Holiday (4 legacy accessors + 4 business logic methods)
+- [ ] Product (2 legacy accessors + 3 business logic methods)
+- [ ] Coupon (2 business logic methods: isValid, calculateDiscount)
+- [ ] GiftCard (1 legacy accessor + 1 business logic method)
+- [ ] Ingredient (3 business logic methods including adjustStock mutation)
+- [ ] Tenant (1 mutation method: findOrCreateReferralCode)
+- [ ] CustomerFavorite (2 static methods: toggle, isFavorite)
+- [ ] WaitlistEntry (1 legacy accessor + 3 mutation methods)
+- [ ] BlockedDate (2 static query methods)
+- [ ] BusinessSchedule (1 legacy accessor + 2 static query methods)
+- [ ] FeatureUsageLog (1 static mutation: track)
+- [ ] PlatformActivity (1 static mutation: log)
+- [ ] Expense (2 legacy accessors)
+- [ ] Income (1 legacy accessor)
+- [ ] CateringInquiry (2 legacy accessors)
+- [ ] LoyaltyReward (1 legacy accessor)
+- [ ] OrderItem (1 legacy accessor)
+- [ ] Recipe (1 legacy accessor)
+- [ ] BlogPost (1 legacy accessor)
+- [ ] Run verification suite

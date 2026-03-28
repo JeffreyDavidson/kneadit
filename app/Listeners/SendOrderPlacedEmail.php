@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderCreated;
-use App\Mail\OrderPlaced;
+use App\Mail\OrderPlacedMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -23,7 +23,7 @@ class SendOrderPlacedEmail implements ShouldQueue
             return;
         }
 
-        Mail::to($order->customer->email)->send(new OrderPlaced($order));
+        Mail::to($order->customer->email)->send(new OrderPlacedMail($order));
     }
 
     public function failed(OrderCreated $event, \Throwable $exception): void

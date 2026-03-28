@@ -2,34 +2,27 @@
 
 namespace App\Mail;
 
-use App\Mail\Concerns\BakerBranded;
 use App\Models\Order;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class OrderPlaced extends BaseMailable
+class NewOrderNotificationMail extends BaseMailable
 {
-    use BakerBranded;
-
     public function __construct(
         public Order $order,
     ) {}
 
     public function envelope(): Envelope
     {
-        $storeName = settings('store_name', 'KneadIt Bakery');
-
         return new Envelope(
-            from: $this->bakerFrom(),
-            replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: "Order #{$this->order->order_number} Received — {$storeName}",
+            subject: "New Order #{$this->order->order_number} — \${$this->order->total}",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.order-placed',
+            view: 'emails.new-order-notification',
             with: [
                 'order' => $this->order,
                 'storeName' => settings('store_name', 'KneadIt Bakery'),

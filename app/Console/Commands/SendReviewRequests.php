@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Enums\OrderStatus;
-use App\Mail\ReviewRequest;
 use App\Models\Order;
 use App\Models\Tenant;
 use App\Services\Tenant\TenancyManager;
@@ -40,7 +39,7 @@ class SendReviewRequests extends Command
                         ->get();
 
                     foreach ($orders as $order) {
-                        Mail::to($order->customer?->email)->send(new ReviewRequest($order));
+                        Mail::to($order->customer?->email)->send(new ReviewRequestMail($order));
 
                         $order->update(['review_request_sent_at' => now()]);
 

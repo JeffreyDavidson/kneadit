@@ -5,7 +5,7 @@ namespace App\Filament\Pages;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Mail\PurchaseOrder;
+use App\Mail\PurchaseOrderMail;
 use App\Services\Inventory\ShoppingListService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -94,7 +94,7 @@ class SmartShoppingList extends Page
         $storeName = settings('store_name', config('app.name'));
 
         Mail::to($group['supplier']['email'])
-            ->send(new PurchaseOrder(
+            ->send(new PurchaseOrderMail(
                 supplierName: $group['supplier']['name'],
                 storeName: $storeName,
                 items: $group['items'],

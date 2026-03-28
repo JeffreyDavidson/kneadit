@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class ReviewRequest extends BaseMailable
+class ReviewRequestMail extends BaseMailable
 {
     use BakerBranded;
 

@@ -6,8 +6,8 @@ use App\Actions\Tenants\CompleteReferral;
 use App\Actions\Tenants\CreateTenant;
 use App\Enums\SubscriptionTier;
 use App\Http\Requests\StoreOnboardingRequest;
-use App\Mail\NewSubscriberNotification;
-use App\Mail\WelcomeBaker;
+use App\Mail\NewSubscriberNotificationMail;
+use App\Mail\WelcomeBakerMail;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -65,7 +65,7 @@ class OnboardingController extends Controller
         $adminUrl = "{$scheme}://{$subdomain}.{$host}/admin";
 
         try {
-            Mail::to($user->email)->send(new WelcomeBaker(
+            Mail::to($user->email)->send(new WelcomeBakerMail(
                 bakerName: $user->name,
                 storeName: $validated['store_name'],
                 adminUrl: $adminUrl,
@@ -73,7 +73,7 @@ class OnboardingController extends Controller
                 trialEndsAt: now()->addDays(config('kneadit.trial_days', 30))->format('F j, Y'),
             ));
 
-            Mail::to(config('mail.platform_notify'))->send(new NewSubscriberNotification(
+            Mail::to(config('mail.platform_notify'))->send(new NewSubscriberNotificationMail(
                 bakerName: $user->name,
                 bakerEmail: $user->email,
                 storeName: $validated['store_name'],

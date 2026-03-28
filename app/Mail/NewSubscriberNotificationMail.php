@@ -5,28 +5,27 @@ namespace App\Mail;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class PurchaseOrder extends BaseMailable
+class NewSubscriberNotificationMail extends BaseMailable
 {
-    /** @param array<int, array<string, mixed>> $items */
     public function __construct(
-        public string $supplierName,
+        public string $bakerName,
+        public string $bakerEmail,
         public string $storeName,
-        public array $items,
-        public float $total,
-        public string $requestedDate,
+        public string $subdomain,
+        public string $plan,
     ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Purchase Order from {$this->storeName}",
+            subject: "New KneadIt Signup — {$this->storeName}",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.purchase-order',
+            view: 'emails.new-subscriber-notification',
         );
     }
 }

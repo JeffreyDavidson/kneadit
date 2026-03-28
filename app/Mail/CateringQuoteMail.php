@@ -3,36 +3,37 @@
 namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Coupon;
-use App\Models\Customer;
+use App\Models\CateringInquiry;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class BirthdayDiscount extends BaseMailable
+class CateringQuoteMail extends BaseMailable
 {
     use BakerBranded;
 
     public function __construct(
-        public Customer $customer,
-        public Coupon $coupon,
-    ) {
-        //
-    }
+        public CateringInquiry $inquiry,
+    ) {}
 
     public function envelope(): Envelope
     {
+        $storeName = settings('store_name', 'KneadIt Bakery');
+
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: '🎂 Happy Birthday! Your Special Treat Awaits!',
+            subject: "Your Catering Quote — {$storeName}",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.birthday-discount',
+            html: 'emails.catering-quote',
+            with: [
+                'inquiry' => $this->inquiry,
+            ],
         );
     }
 

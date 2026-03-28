@@ -4,11 +4,11 @@ namespace App\Listeners;
 
 use App\Enums\OrderStatus;
 use App\Events\OrderStatusChanged;
-use App\Mail\OrderBaking;
-use App\Mail\OrderCancelled;
-use App\Mail\OrderConfirmed;
-use App\Mail\OrderDelivered;
-use App\Mail\OrderReady;
+use App\Mail\OrderBakingMail;
+use App\Mail\OrderCancelledMail;
+use App\Mail\OrderConfirmedMail;
+use App\Mail\OrderDeliveredMail;
+use App\Mail\OrderReadyMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -31,11 +31,11 @@ class SendOrderStatusEmail implements ShouldQueue
         $email = $order->customer->email;
 
         match ($event->to) {
-            OrderStatus::Confirmed => Mail::to($email)->send(new OrderConfirmed($order)),
-            OrderStatus::Baking => Mail::to($email)->send(new OrderBaking($order)),
-            OrderStatus::Ready => Mail::to($email)->send(new OrderReady($order)),
-            OrderStatus::Delivered => Mail::to($email)->send(new OrderDelivered($order)),
-            OrderStatus::Cancelled => Mail::to($email)->send(new OrderCancelled($order)),
+            OrderStatus::Confirmed => Mail::to($email)->send(new OrderConfirmedMail($order)),
+            OrderStatus::Baking => Mail::to($email)->send(new OrderBakingMail($order)),
+            OrderStatus::Ready => Mail::to($email)->send(new OrderReadyMail($order)),
+            OrderStatus::Delivered => Mail::to($email)->send(new OrderDeliveredMail($order)),
+            OrderStatus::Cancelled => Mail::to($email)->send(new OrderCancelledMail($order)),
             default => null,
         };
     }

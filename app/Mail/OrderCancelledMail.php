@@ -3,39 +3,36 @@
 namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Product;
+use App\Models\Order;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class ProductAvailable extends BaseMailable
+class OrderCancelledMail extends BaseMailable
 {
     use BakerBranded;
 
     public function __construct(
-        public Product $product,
-        public string $customerName = '',
+        public Order $order,
     ) {}
 
     public function envelope(): Envelope
     {
-        $storeName = settings('store_name', 'KneadIt Bakery');
-
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: "{$this->product->name} is back at {$storeName}!",
+            subject: "Order #{$this->order->order_number} Cancelled - KneadIt Bakery",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            html: 'emails.product-available',
+            html: 'emails.order-cancelled',
             with: [
-                'product' => $this->product,
-                'customerName' => $this->customerName,
-                'storeName' => settings('store_name', 'KneadIt Bakery'),
+                'order' => $this->order,
+                'customer' => $this->order->customer,
+                'orderItems' => $this->order->orderItems()->with('product')->get(),
             ],
         );
     }
