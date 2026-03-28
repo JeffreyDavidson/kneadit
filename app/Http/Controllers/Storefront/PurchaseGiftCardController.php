@@ -12,11 +12,10 @@ class PurchaseGiftCardController extends Controller
     /**
      * Purchase a new gift card.
      */
-    public function __invoke(PurchaseGiftCardRequest $request): JsonResponse
+    public function __invoke(PurchaseGiftCardRequest $request, GiftCardService $service): JsonResponse
     {
         $validated = $request->validated();
 
-        $service = new GiftCardService;
         $card = $service->create($validated);
 
         return response()->json([

@@ -1,58 +1,37 @@
-# Session Summary — 2026-03-28
+# Best Practices Fixes
 
-## Completed
+## Security
+- [ ] Add throttle to auth routes (register, password reset)
+- [ ] Add rate limiting to storefront POST routes
 
-### Naming Convention Fixes (40 classes)
-- [x] Phase 1: Rename 19 Mail classes → `*Mail` suffix
-- [x] Phase 2: Rename 6 Listener classes → `*Listener` suffix
-- [x] Phase 3: Rename 15 Command classes → `*Command` suffix
-- [x] Phase 4: Add 3 arch tests enforcing naming conventions
+## Data Integrity
+- [ ] Fix order number race condition with Cache::lock
+- [ ] Add FK constraint on coupon_id in orders table
 
-### Model Cleanup
-- [x] Holiday: `daysUntilDeadline()`, `isDeadlinePassed()` → Attributes
-- [x] Ingredient: `isLowStock()`, `isOutOfStock()`, `getStockStatus()` → Attributes
-- [x] GiftCard: `isUsable()` → Attribute
-- [x] Coupon: `calculateDiscount()` → moved to CouponService
-- [x] Product: `getPrimaryImageUrl()`, `isInSeason()` → Attributes, removed dead `pendingWaitlistCount()`
+## Validation
+- [ ] Fix unvalidated email in FavoriteController index
+- [ ] Switch to $request->validated() in ForgotPassword/ResetPassword controllers
 
-### Filament Resource Test Gaps
-- [x] GiftCards: fix create bug (code + balance), add create test
-- [x] CustomerPhotos: add create/edit/validation with file upload
-- [x] Recipes: add create test with ingredients repeater
-- [x] Surveys: add create test with questions repeater
-- [x] CapacityLimits: fix create bug (date column), add weekday create test
+## Config
+- [ ] Extract hardcoded URLs (ReferralProgram, BlogFeedController)
+- [ ] Extract hardcoded PayPal values to config/settings
 
-### Todo Tests Resolved (all 5)
-- [x] BlogPosts: fix category filter null label crash, replace todo with working test
-- [x] CreateStripeProducts: replace todo with signature + config tests
-- [x] ViewTenant: remove broken Filament 5 relation-managers Blade component
-- [x] OpenTickets widget: wrap route() in rescue() for missing routes
-- [x] ReferralProgram: use real Tenant model instead of Mockery mock
+## DI Consistency
+- [ ] Replace new Service() with injection in 5 controllers
 
-### Controller Tests Added
-- [x] 10 API controller tests (store info, categories, products, menu, gallery, reviews, contact, coupon validation, capacity, favorites)
-- [x] 8 storefront page render tests (home, about, menu, gallery, contact, reviews, gift cards, catering)
-- [x] 6 order controller tests (capacity check, availability, tracking, apply coupon, apply gift card, reorder)
-- [x] 7 central page tests (changelog, blog index, directory, blog feed, billing plans, register, forgot password)
-- [x] 3 auth tests (register flow, logout, forgot password)
-- [x] 2 billing tests (checkout success)
-- [x] 4 misc controller tests (referral, onboarding, invoice, driver, order form + confirmation)
+## Enum Usage
+- [ ] Replace hardcoded 'customer'/'baker' strings with SenderType enum
+- [ ] Add label() to enums missing it, replace ucfirst($enum->value)
+- [ ] Extract delivery fee tiers to config or enum
 
-## Bugs Found & Fixed This Session: 7
-1. GiftCard create: missing auto-generated code and current_balance
-2. CapacityLimit create: missing required date column
-3. BlogPosts: SelectFilter null label crash on empty categories
-4. MenuController: Builder type-hint should be HasMany for eager load constraint
-5. ViewTenant: Blade view used non-existent Filament 5 component
-6. OpenTickets widget: route() crash when central panel routes unavailable
-7. Invoice: Blade view passing OrderStatus enum to ucfirst() instead of string
+## Performance
+- [ ] Fix N+1 in UpcomingOrdersWidget
+- [ ] Fix N+1 in ReorderController
+- [ ] Move queries out of Blade templates into controllers/components
+- [ ] Add caching for expensive queries (Hero, dashboard stats)
 
-## Remaining (Stripe-dependent, not testable without API mocking)
-- BillingPortalController — calls redirectToBillingPortal (Stripe API)
-- CheckoutController — creates Stripe Checkout session
-- SwapPlanController — swaps Stripe subscription
-- StripeConnectController — Stripe Connect setup
-- StripeWebhookController — Stripe webhook handling
-- StripeConnectWebhookController — Stripe Connect webhook handling
-
-## Test Suite: 1,439 tests, 3,830 assertions, 0 todos, 0 failures
+## Architecture
+- [ ] Extract AvailabilityController logic to CapacityCalculator
+- [ ] Extract StripeConnectController::getAccountStatus to service
+- [ ] Clean OnboardingController::store (extract email logic)
+- [ ] Remove dead code (StripeConnectWebhook empty if, CateringController unused vars)

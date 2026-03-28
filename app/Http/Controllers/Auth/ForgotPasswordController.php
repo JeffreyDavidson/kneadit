@@ -18,7 +18,7 @@ class ForgotPasswordController extends Controller
     public function store(ForgotPasswordRequest $request): RedirectResponse
     {
 
-        $status = Password::sendResetLink($request->only('email'));
+        $status = Password::sendResetLink($request->validated());
 
         return $status === Password::RESET_LINK_SENT
             ? back()->with('status', __($status))

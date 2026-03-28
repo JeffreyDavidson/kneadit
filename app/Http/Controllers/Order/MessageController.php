@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Order;
 
+use App\Enums\SenderType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrderMessageRequest;
 use App\Mail\NewOrderMessageMail;
@@ -28,7 +29,7 @@ class MessageController extends Controller
     {
 
         $message = $order->messages()->create([
-            'sender_type' => 'customer',
+            'sender_type' => SenderType::Customer,
             'sender_name' => $request->sender_name,
             'message' => $request->message,
         ]);

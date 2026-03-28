@@ -12,10 +12,9 @@ class CheckGiftCardBalanceController extends Controller
     /**
      * Check the balance of a gift card.
      */
-    public function __invoke(CheckGiftCardBalanceRequest $request): JsonResponse
+    public function __invoke(CheckGiftCardBalanceRequest $request, GiftCardService $service): JsonResponse
     {
 
-        $service = new GiftCardService;
         $card = $service->checkBalance($request->code);
 
         if (! $card) {

@@ -21,6 +21,14 @@ test('favorites index returns product ids for customer email', function () {
         ->assertJsonPath('data', [$product->id]);
 });
 
+test('favorites index validates email is required', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->getJson('/api/favorites');
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors(['email']);
+});
+
 test('favorites toggle adds product to favorites', function () {
     $product = Product::factory()->create();
 
