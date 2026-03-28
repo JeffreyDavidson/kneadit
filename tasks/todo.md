@@ -22,19 +22,37 @@
 - [x] Surveys: add create test with questions repeater
 - [x] CapacityLimits: fix create bug (date column), add weekday create test
 
-### Remaining Todos Resolved
+### Todo Tests Resolved (all 5)
 - [x] BlogPosts: fix category filter null label crash, replace todo with working test
 - [x] CreateStripeProducts: replace todo with signature + config tests
+- [x] ViewTenant: remove broken Filament 5 relation-managers Blade component
+- [x] OpenTickets widget: wrap route() in rescue() for missing routes
+- [x] ReferralProgram: use real Tenant model instead of Mockery mock
 
-## Remaining (infrastructure-limited, 3 todos)
-- [ ] OpenTicketsWidget — central panel routes not registered in tests
-- [ ] ViewTenant — Filament 5 component issue
-- [ ] ReferralProgram — needs real tenancy initialization
+### Controller Tests Added
+- [x] 10 API controller tests (store info, categories, products, menu, gallery, reviews, contact, coupon validation, capacity, favorites)
+- [x] 8 storefront page render tests (home, about, menu, gallery, contact, reviews, gift cards, catering)
+- [x] 6 order controller tests (capacity check, availability, tracking, apply coupon, apply gift card, reorder)
+- [x] 7 central page tests (changelog, blog index, directory, blog feed, billing plans, register, forgot password)
+- [x] 3 auth tests (register flow, logout, forgot password)
+- [x] 2 billing tests (checkout success)
+- [x] 4 misc controller tests (referral, onboarding, invoice, driver, order form + confirmation)
 
-## Bugs Found & Fixed This Session: 4
-- GiftCard create: missing auto-generated code and current_balance
-- CapacityLimit create: missing required date column
-- BlogPosts: SelectFilter null label crash on empty categories
-- Product: dead `pendingWaitlistCount()` method removed
+## Bugs Found & Fixed This Session: 7
+1. GiftCard create: missing auto-generated code and current_balance
+2. CapacityLimit create: missing required date column
+3. BlogPosts: SelectFilter null label crash on empty categories
+4. MenuController: Builder type-hint should be HasMany for eager load constraint
+5. ViewTenant: Blade view used non-existent Filament 5 component
+6. OpenTickets widget: route() crash when central panel routes unavailable
+7. Invoice: Blade view passing OrderStatus enum to ucfirst() instead of string
 
-## Test Suite: 1,396 tests, 3,750 assertions, 3 todos
+## Remaining (Stripe-dependent, not testable without API mocking)
+- BillingPortalController — calls redirectToBillingPortal (Stripe API)
+- CheckoutController — creates Stripe Checkout session
+- SwapPlanController — swaps Stripe subscription
+- StripeConnectController — Stripe Connect setup
+- StripeWebhookController — Stripe webhook handling
+- StripeConnectWebhookController — Stripe Connect webhook handling
+
+## Test Suite: 1,439 tests, 3,830 assertions, 0 todos, 0 failures
