@@ -81,6 +81,23 @@ test('edit gift card validates required fields', function (array $data, array $e
     'initial balance is required' => [['initial_balance' => null], ['initial_balance' => 'required']],
 ]);
 
+test('can create a gift card via header action', function () {
+    Livewire::test(ListGiftCards::class)
+        ->callAction('create', data: [
+            'purchaser_name' => 'Jane Doe',
+            'purchaser_email' => 'jane@example.com',
+            'initial_balance' => 50.00,
+        ])
+        ->assertHasNoActionErrors();
+
+    $giftCard = GiftCard::query()->first();
+    expect($giftCard)
+        ->purchaser_name->toBe('Jane Doe')
+        ->purchaser_email->toBe('jane@example.com')
+        ->initial_balance->toBe('50.00')
+        ->code->not->toBeNull();
+});
+
 test('can filter gift cards by depleted status', function () {
     $active = GiftCard::factory()->create();
     $depleted = GiftCard::factory()->depleted()->create();
