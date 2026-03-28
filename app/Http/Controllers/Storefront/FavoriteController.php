@@ -13,7 +13,7 @@ class FavoriteController extends Controller
     /**
      * Get customer favorites.
      */
-    public function show(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $email = $request->query('email');
 
