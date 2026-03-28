@@ -17,7 +17,7 @@ class ListGiftCards extends ListRecords
             CreateAction::make()
                 ->slideOver()
                 ->mutateFormDataUsing(function (array $data): array {
-                    $data['code'] = strtoupper(Str::random(4) . '-' . Str::random(4) . '-' . Str::random(4) . '-' . Str::random(4));
+                    $data['code'] = Str::upper(Str::random(4) . '-' . Str::random(4) . '-' . Str::random(4) . '-' . Str::random(4));
                     $data['current_balance'] = $data['initial_balance'];
 
                     return $data;

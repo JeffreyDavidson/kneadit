@@ -14,6 +14,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
 
 class InstagramCaptionGenerator extends Page
@@ -259,7 +260,7 @@ class InstagramCaptionGenerator extends Page
         $template = $bodyTemplates[array_rand($bodyTemplates)];
         $adjective = $toneWords[$tone][array_rand($toneWords[$tone])];
 
-        return str_replace([
+        return Str::replace([
             '{adjective}',
             '{product}',
             '{ingredient_focus}',
@@ -267,7 +268,7 @@ class InstagramCaptionGenerator extends Page
             '{occasion}',
         ], [
             $adjective,
-            strtolower($product->name),
+            Str::lower($product->name),
             $ingredients[array_rand($ingredients)],
             $callToActions[array_rand($callToActions)],
             $occasions[array_rand($occasions)],
@@ -303,7 +304,7 @@ class InstagramCaptionGenerator extends Page
             '#CommunityBakery', '#BakeryCrafted', '#GoodnessBaked', '#FlavorTown',
         ];
 
-        $categorySpecific = $categoryHashtags[strtolower($category)] ?? [];
+        $categorySpecific = $categoryHashtags[Str::lower($category)] ?? [];
 
         return array_merge($baseHashtags, $categorySpecific, $generalBakeryHashtags);
     }

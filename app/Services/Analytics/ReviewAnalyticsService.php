@@ -7,6 +7,7 @@ use App\Models\Review;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ReviewAnalyticsService
 {
@@ -154,9 +155,9 @@ class ReviewAnalyticsService
         $negativeWords = ['terrible', 'awful', 'bad', 'hate', 'worst', 'disgusting', 'horrible', 'disappointing'];
 
         foreach ($reviews as $review) {
-            $comment = strtolower((string) $review->comment);
-            $hasPositive = collect($positiveWords)->contains(fn (string $word) => str_contains($comment, $word));
-            $hasNegative = collect($negativeWords)->contains(fn (string $word) => str_contains($comment, $word));
+            $comment = Str::lower((string) $review->comment);
+            $hasPositive = collect($positiveWords)->contains(fn (string $word) => Str::contains($comment, $word));
+            $hasNegative = collect($negativeWords)->contains(fn (string $word) => Str::contains($comment, $word));
 
             if ($review->rating >= 4 && ($hasPositive || ! $hasNegative)) {
                 $positive++;

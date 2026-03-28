@@ -5,6 +5,7 @@ namespace App\Services\Delivery;
 use App\Models\Order;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 
 class DeliveryRouteService
 {
@@ -41,18 +42,18 @@ class DeliveryRouteService
      */
     public function calculateDistanceTier(string $deliveryAddress): array
     {
-        $address = strtolower($deliveryAddress);
+        $address = Str::lower($deliveryAddress);
 
-        if (str_contains($address, 'downtown') ||
-            str_contains($address, 'center') ||
-            str_contains($address, 'main st')) {
+        if (Str::contains($address, 'downtown') ||
+            Str::contains($address, 'center') ||
+            Str::contains($address, 'main st')) {
             return ['tier' => 'Close', 'color' => 'green', 'estimated_minutes' => 10];
         }
 
-        if (str_contains($address, 'west') ||
-            str_contains($address, 'east') ||
-            str_contains($address, 'north') ||
-            str_contains($address, 'south')) {
+        if (Str::contains($address, 'west') ||
+            Str::contains($address, 'east') ||
+            Str::contains($address, 'north') ||
+            Str::contains($address, 'south')) {
             return ['tier' => 'Medium', 'color' => 'yellow', 'estimated_minutes' => 20];
         }
 

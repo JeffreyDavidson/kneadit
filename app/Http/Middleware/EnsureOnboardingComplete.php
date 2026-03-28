@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureOnboardingComplete
@@ -26,12 +27,12 @@ class EnsureOnboardingComplete
         }
 
         // Skip if already on the onboarding page
-        if ($request->routeIs('filament.admin.pages.onboarding') || str_contains($request->path(), 'onboarding')) {
+        if ($request->routeIs('filament.admin.pages.onboarding') || Str::contains($request->path(), 'onboarding')) {
             return $next($request);
         }
 
         // Skip for livewire/filament update requests (hashed paths use livewire-* not livewire/*)
-        if ($request->routeIs('livewire.*') || $request->is('livewire/*') || str_starts_with($request->path(), 'livewire-')) {
+        if ($request->routeIs('livewire.*') || $request->is('livewire/*') || Str::startsWith($request->path(), 'livewire-')) {
             return $next($request);
         }
 

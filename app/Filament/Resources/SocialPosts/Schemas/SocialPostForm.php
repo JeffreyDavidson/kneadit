@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 
 class SocialPostForm
 {
@@ -72,7 +73,7 @@ class SocialPostForm
                                         }
 
                                         $storeName = tenant()->store_name ?? tenant()->name ?? 'Our Bakery';
-                                        $storeHashtag = str_replace(' ', '', ucwords($storeName));
+                                        $storeHashtag = Str::replace(' ', '', ucwords($storeName));
 
                                         $templates = [
                                             'Fresh from the oven! Our {product} is made with love and the finest ingredients. Order yours today! 🍞✨ #{store_hashtag}',
@@ -82,7 +83,7 @@ class SocialPostForm
 
                                         $template = $templates[array_rand($templates)];
 
-                                        $caption = str_replace(
+                                        $caption = Str::replace(
                                             ['{product}', '{price}', '{store_hashtag}'],
                                             [$product->name, Number::currency($product->price), $storeHashtag],
                                             $template,

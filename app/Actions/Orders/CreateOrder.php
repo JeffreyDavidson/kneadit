@@ -151,7 +151,7 @@ class CreateOrder
     private function generateOrderNumber(): string
     {
         do {
-            $number = 'KN' . date('ymd') . strtoupper(Str::random(4));
+            $number = 'KN' . date('ymd') . Str::upper(Str::random(4));
         } while (Order::query()->where('order_number', $number)->exists());
 
         return $number;

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\CouponType;
 use App\Models\Coupon;
 use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 
 class CouponService
 {
@@ -17,7 +18,7 @@ class CouponService
      */
     public function validate(string $code, float $subtotal): array
     {
-        $coupon = Coupon::query()->where('code', strtoupper(trim($code)))->lockForUpdate()->first();
+        $coupon = Coupon::query()->where('code', Str::upper(trim($code)))->lockForUpdate()->first();
 
         if (! $coupon) {
             return ['valid' => false, 'coupon' => null, 'discount' => 0, 'error' => 'Coupon not found.'];
