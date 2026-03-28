@@ -31,7 +31,7 @@ class OrderController extends Controller
     /**
      * Submit an order, delegating business logic to CreateOrder action.
      */
-    public function store(StoreOrderRequest $request, CreateOrder $createOrder): RedirectResponse
+    public function store(StoreOrderRequest $request, CreateOrder $createOrder, StripeCheckoutService $stripeService): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -48,7 +48,7 @@ class OrderController extends Controller
 
         // If baker has Stripe Connect enabled and order total > 0, redirect to Stripe Checkout
         if ($order->total > 0 && StripeCheckoutService::isEnabled()) {
-            $stripeService = resolve(StripeCheckoutService::class);
+
             $session = $stripeService->createCheckoutSession(
                 $order,
                 route('order.stripe.success', $order) . '?session_id={CHECKOUT_SESSION_ID}',

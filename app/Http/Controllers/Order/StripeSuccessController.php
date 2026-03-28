@@ -13,12 +13,11 @@ class StripeSuccessController extends Controller
     /**
      * Stripe checkout success callback.
      */
-    public function __invoke(Request $request, Order $order): RedirectResponse
+    public function __invoke(Request $request, Order $order, StripeCheckoutService $stripeService): RedirectResponse
     {
         $sessionId = $request->query('session_id');
 
         if ($sessionId) {
-            $stripeService = new StripeCheckoutService;
             $stripeService->handleCheckoutComplete($sessionId);
         }
 

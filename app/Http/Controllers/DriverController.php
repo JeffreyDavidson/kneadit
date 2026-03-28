@@ -25,9 +25,9 @@ class DriverController extends Controller
         return view('driver', compact('orders', 'storeName'));
     }
 
-    public function update(Order $order): RedirectResponse
+    public function update(Order $order, TransitionOrderStatus $transitionStatus): RedirectResponse
     {
-        resolve(TransitionOrderStatus::class)($order, OrderStatus::Delivered);
+        $transitionStatus($order, OrderStatus::Delivered);
 
         return back()->with('success', "Order #{$order->order_number} marked as delivered!");
     }

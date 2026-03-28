@@ -142,7 +142,7 @@ Route::middleware([
         Route::post('/gift-card/apply', ApplyGiftCardController::class)->name('gift-card.apply')->middleware('throttle:10,1');
 
         // Customer favorites (AJAX)
-        Route::get('/favorites', [FavoriteController::class, 'show'])->name('favorites.get');
+        Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.get');
         Route::post('/favorites/toggle', [FavoriteController::class, 'store'])->name('favorites.toggle')->middleware('throttle:10,1');
 
         // Catering
