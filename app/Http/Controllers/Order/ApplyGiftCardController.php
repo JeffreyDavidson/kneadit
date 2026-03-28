@@ -12,10 +12,9 @@ class ApplyGiftCardController extends Controller
     /**
      * Validate and apply a gift card code via AJAX.
      */
-    public function __invoke(ApplyGiftCardRequest $request): JsonResponse
+    public function __invoke(ApplyGiftCardRequest $request, GiftCardService $service): JsonResponse
     {
 
-        $service = new GiftCardService;
         $card = $service->checkBalance($request->code);
 
         if (! $card) {

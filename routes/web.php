@@ -24,7 +24,7 @@ require __DIR__ . '/admin.php';
 // Auth routes (central only)
 Route::middleware('web')->group(function () {
     Route::get('/register', [RegisterController::class, 'show'])->name('register')->middleware('guest');
-    Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
+    Route::post('/register', [RegisterController::class, 'store'])->middleware(['guest', 'throttle:5,1']);
     Route::get('/login', function () {
         return redirect('/');
     })->name('login')->middleware('guest');
@@ -45,9 +45,9 @@ Route::middleware('web')->group(function () {
 
     // Password reset
     Route::get('/forgot-password', [ForgotPasswordController::class, 'show'])->name('password.request')->middleware('guest');
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email')->middleware('guest');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email')->middleware(['guest', 'throttle:5,1']);
     Route::get('/reset-password/{token}', [ResetPasswordController::class, 'show'])->name('password.reset')->middleware('guest');
-    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update')->middleware('guest');
+    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update')->middleware(['guest', 'throttle:5,1']);
 });
 
 // Data Export (central admin) — uses signed URL to avoid auth middleware redirect issues

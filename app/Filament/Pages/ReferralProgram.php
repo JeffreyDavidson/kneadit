@@ -39,7 +39,7 @@ class ReferralProgram extends Page
 
     public function getReferralLink(): string
     {
-        return 'https://getkneadit.app/ref/' . $this->getReferralCode();
+        return config('app.url') . '/ref/' . $this->getReferralCode();
     }
 
     public function getTotalReferrals(): int

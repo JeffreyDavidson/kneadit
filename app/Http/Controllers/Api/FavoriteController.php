@@ -13,8 +13,11 @@ class FavoriteController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $request->validate([
+            'email' => ['required', 'email'],
+        ]);
 
-        $productIds = CustomerFavorite::forCustomer($request->input('email'))
+        $productIds = CustomerFavorite::forCustomer($request->string('email'))
             ->pluck('product_id');
 
         return response()->json([

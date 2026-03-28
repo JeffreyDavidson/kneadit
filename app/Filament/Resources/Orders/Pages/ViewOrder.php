@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Orders\Pages;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\SenderType;
 use App\Events\OrderMessageSent;
 use App\Exceptions\InvalidOrderTransitionException;
 use App\Filament\Resources\Orders\OrderResource;
@@ -183,14 +184,14 @@ class ViewOrder extends ViewRecord
                     $bakerName = auth()->user()->name ?? settings('store_name', 'Baker');
 
                     $message = $this->record->messages()->create([
-                        'sender_type' => 'baker',
+                        'sender_type' => SenderType::Baker,
                         'sender_name' => $bakerName,
                         'message' => $data['message'],
                     ]);
 
                     // Mark customer messages as read
                     $this->record->messages()
-                        ->where('sender_type', 'customer')
+                        ->where('sender_type', SenderType::Customer)
                         ->where('is_read', false)
                         ->update(['is_read' => true]);
 

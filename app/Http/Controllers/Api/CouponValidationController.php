@@ -9,11 +9,10 @@ use Illuminate\Http\JsonResponse;
 
 class CouponValidationController extends Controller
 {
-    public function __invoke(ApplyCouponRequest $request): JsonResponse
+    public function __invoke(ApplyCouponRequest $request, CouponService $couponService): JsonResponse
     {
         $validated = $request->validated();
 
-        $couponService = new CouponService;
         $result = $couponService->validate($validated['code'], (float) $validated['subtotal']);
 
         if (! $result['valid']) {

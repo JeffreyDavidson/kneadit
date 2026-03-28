@@ -21,7 +21,7 @@ class BlogFeedController extends Controller
         $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">';
         $xml .= '<channel>';
         $xml .= '<title>KneadIt — Resources for Cottage Food Bakers</title>';
-        $xml .= '<link>https://getkneadit.app/resources</link>';
+        $xml .= '<link>' . url('/resources') . '</link>';
         $xml .= '<description>Guides, tips, and resources for cottage food bakers.</description>';
         $xml .= '<language>en-us</language>';
         $xml .= '<atom:link href="' . url('/resources/feed.xml') . '" rel="self" type="application/rss+xml"/>';
