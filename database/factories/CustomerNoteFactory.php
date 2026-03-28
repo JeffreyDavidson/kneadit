@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Customer;
 use App\Models\CustomerNote;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,7 @@ class CustomerNoteFactory extends Factory
         return [
             'customer_id' => Customer::factory(),
             'note' => fake()->paragraph(),
-            'created_by' => fake()->name(),
+            'created_by' => User::factory(),
         ];
     }
 }
