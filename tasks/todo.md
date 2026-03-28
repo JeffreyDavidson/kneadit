@@ -1,37 +1,41 @@
 # Best Practices Fixes
 
 ## Security
-- [ ] Add throttle to auth routes (register, password reset)
-- [ ] Add rate limiting to storefront POST routes
+- [x] Add throttle to auth routes (register, password reset)
+- [x] Add rate limiting to storefront POST routes (13 routes)
 
 ## Data Integrity
-- [ ] Fix order number race condition with Cache::lock
-- [ ] Add FK constraint on coupon_id in orders table
+- [ ] Fix order number race condition with Cache::lock (deferred — needs careful testing)
+- [x] Add FK constraint on coupon_id in orders table
 
 ## Validation
-- [ ] Fix unvalidated email in FavoriteController index
-- [ ] Switch to $request->validated() in ForgotPassword/ResetPassword controllers
+- [x] Fix unvalidated email in FavoriteController index
+- [x] Switch to $request->validated() in ForgotPassword/ResetPassword controllers
 
 ## Config
-- [ ] Extract hardcoded URLs (ReferralProgram, BlogFeedController)
-- [ ] Extract hardcoded PayPal values to config/settings
+- [x] Extract hardcoded URLs (ReferralProgram, BlogFeedController)
+- [x] Extract hardcoded PayPal values to tenant settings
 
 ## DI Consistency
-- [ ] Replace new Service() with injection in 5 controllers
+- [x] Replace new Service() with injection in 4 controllers
 
 ## Enum Usage
-- [ ] Replace hardcoded 'customer'/'baker' strings with SenderType enum
-- [ ] Add label() to enums missing it, replace ucfirst($enum->value)
-- [ ] Extract delivery fee tiers to config or enum
+- [x] Replace hardcoded 'customer'/'baker' strings with SenderType enum
+- [x] Add label() to 8 enums, replace ucfirst($enum->value) across codebase
+- [x] Extract delivery fee tiers to config('kneadit.delivery_fees')
 
 ## Performance
-- [ ] Fix N+1 in UpcomingOrdersWidget
-- [ ] Fix N+1 in ReorderController
-- [ ] Move queries out of Blade templates into controllers/components
-- [ ] Add caching for expensive queries (Hero, dashboard stats)
+- [x] Fix N+1 in UpcomingOrdersWidget (withCount)
+- [x] Fix N+1 in ReorderController (eager load)
+- [x] Move queries out of Blade templates (deleted 6 dead partials, moved about queries to controller)
+- [ ] Add caching for expensive queries (deferred — needs cache invalidation strategy)
 
 ## Architecture
-- [ ] Extract AvailabilityController logic to CapacityCalculator
-- [ ] Extract StripeConnectController::getAccountStatus to service
-- [ ] Clean OnboardingController::store (extract email logic)
-- [ ] Remove dead code (StripeConnectWebhook empty if, CateringController unused vars)
+- [x] Extract AvailabilityController logic → AvailabilityService
+- [x] Remove dead StripeConnectController::getAccountStatus (never called)
+- [x] Clean OnboardingController::store — reviewed, acceptable as-is (sequential, each step depends on previous)
+- [x] Remove dead code (StripeConnectWebhook empty if, CateringController unused vars)
+
+## Deferred Items
+- Order number race condition — needs Cache::lock with careful testing around concurrent order creation
+- Caching layer — needs cache invalidation strategy per tenant; best added when performance monitoring shows it's needed
