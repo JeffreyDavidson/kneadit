@@ -59,3 +59,28 @@ test('storefront catering page renders', function () {
 
     $response->assertOk();
 });
+
+test('storefront rewards page renders', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get('/rewards');
+
+    $response->assertOk();
+});
+
+test('storefront survey page renders', function () {
+    $survey = App\Models\Survey::factory()->create(['is_active' => true]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get("/survey/{$survey->id}");
+
+    $response->assertOk();
+});
+
+test('storefront review submission page renders', function () {
+    $order = App\Models\Order::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get("/review/{$order->order_number}");
+
+    $response->assertOk();
+});
