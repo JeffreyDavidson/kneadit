@@ -104,7 +104,7 @@ class CustomDomain extends Page
 
         // Add domain alias to Forge if configured
         if (ForgeService::isConfigured()) {
-            $forge = new ForgeService;
+            $forge = resolve(ForgeService::class);
             $forge->addDomainAlias($domain);
         }
 
@@ -154,7 +154,7 @@ class CustomDomain extends Page
             return;
         }
 
-        $forge = new ForgeService;
+        $forge = resolve(ForgeService::class);
         $success = $forge->obtainSslCertificate($domain);
 
         $this->ssl_status = $success ? 'provisioning' : 'failed';
@@ -196,7 +196,7 @@ class CustomDomain extends Page
 
             // Remove from Forge if configured
             if (ForgeService::isConfigured()) {
-                $forge = new ForgeService;
+                $forge = resolve(ForgeService::class);
                 $forge->removeDomainAlias($oldDomain);
             }
         }
