@@ -13,7 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendOrderStatusEmail implements ShouldQueue
+class SendOrderStatusEmailListener implements ShouldQueue
 {
     public int $tries = 3;
 

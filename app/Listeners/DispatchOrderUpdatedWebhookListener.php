@@ -7,7 +7,7 @@ use App\Services\WebhookService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
-class DispatchOrderUpdatedWebhook implements ShouldQueue
+class DispatchOrderUpdatedWebhookListener implements ShouldQueue
 {
     public int $tries = 3;
 

@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendOrderPlacedEmail implements ShouldQueue
+class SendOrderPlacedEmailListener implements ShouldQueue
 {
     public int $tries = 3;
 

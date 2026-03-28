@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class NotifyBakerOfNewOrder implements ShouldQueue
+class NotifyBakerOfNewOrderListener implements ShouldQueue
 {
     public int $tries = 3;
 

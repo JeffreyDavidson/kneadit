@@ -1,14 +1,14 @@
 <?php
 
 use App\Events\OrderCreated;
-use App\Listeners\DispatchOrderCreatedWebhook;
-use App\Listeners\NotifyBakerOfNewOrder;
-use App\Listeners\SendOrderPlacedEmail;
+use App\Listeners\DispatchOrderCreatedWebhookListener;
+use App\Listeners\NotifyBakerOfNewOrderListener;
+use App\Listeners\SendOrderPlacedEmailListener;
 use Illuminate\Support\Facades\Event;
 
 test('OrderCreated event has correct listeners', function () {
     Event::fake();
-    Event::assertListening(OrderCreated::class, DispatchOrderCreatedWebhook::class);
-    Event::assertListening(OrderCreated::class, NotifyBakerOfNewOrder::class);
-    Event::assertListening(OrderCreated::class, SendOrderPlacedEmail::class);
+    Event::assertListening(OrderCreated::class, DispatchOrderCreatedWebhookListener::class);
+    Event::assertListening(OrderCreated::class, NotifyBakerOfNewOrderListener::class);
+    Event::assertListening(OrderCreated::class, SendOrderPlacedEmailListener::class);
 });
