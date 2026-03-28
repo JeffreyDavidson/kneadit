@@ -39,7 +39,7 @@ class ViewGiftCard extends ViewRecord
                         ->placeholder('Reason for credit'),
                 ])
                 ->action(function (array $data) {
-                    $service = new GiftCardService;
+                    $service = resolve(GiftCardService::class);
                     $service->addCredit(
                         $this->record,
                         (float) $data['amount'],

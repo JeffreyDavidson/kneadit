@@ -65,7 +65,7 @@ class DescriptionGenerator extends Page
 
     public function generate(): void
     {
-        $service = new DescriptionGeneratorService;
+        $service = resolve(DescriptionGeneratorService::class);
 
         $product = null;
         $productName = $this->manualProductName;
