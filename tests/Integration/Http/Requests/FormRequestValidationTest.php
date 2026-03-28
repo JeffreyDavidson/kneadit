@@ -4,7 +4,6 @@ use App\Http\Requests\ApplyCouponRequest;
 use App\Http\Requests\ApplyGiftCardRequest;
 use App\Http\Requests\CheckGiftCardBalanceRequest;
 use App\Http\Requests\ForgotPasswordRequest;
-use App\Http\Requests\LoginRequest;
 use App\Http\Requests\PurchaseGiftCardRequest;
 use App\Http\Requests\RedeemLoyaltyRewardRequest;
 use App\Http\Requests\ResetPasswordRequest;
@@ -15,7 +14,6 @@ use App\Http\Requests\StoreSurveyResponseRequest;
 use App\Http\Requests\TrackOrderRequest;
 
 dataset('requestsWithRequiredFields', [
-    'LoginRequest' => [LoginRequest::class, ['email', 'password']],
     'ForgotPasswordRequest' => [ForgotPasswordRequest::class, ['email']],
     'ResetPasswordRequest' => [ResetPasswordRequest::class, ['token', 'email', 'password']],
     'ApplyCouponRequest' => [ApplyCouponRequest::class, ['code', 'subtotal']],
@@ -53,7 +51,6 @@ test('form request rejects empty data for required fields', function (string $re
 })->with('requestsWithRequiredFields');
 
 dataset('requestsWithEmailFields', [
-    'LoginRequest' => [LoginRequest::class, 'email'],
     'ForgotPasswordRequest' => [ForgotPasswordRequest::class, 'email'],
     'ResetPasswordRequest' => [ResetPasswordRequest::class, 'email'],
     'RedeemLoyaltyRewardRequest' => [RedeemLoyaltyRewardRequest::class, 'email'],
