@@ -25,11 +25,11 @@
                             'normal' => ['bg' => '#1e3a5f', 'text' => '#93c5fd'],
                             'low' => ['bg' => '#374151', 'text' => '#d1d5db'],
                         ];
-                        $sc = $statusColors[$record->status] ?? $statusColors['open'];
-                        $pc = $priorityColors[$record->priority] ?? $priorityColors['normal'];
+                        $sc = $statusColors[$record->status instanceof \BackedEnum ? $record->status->value : $record->status] ?? $statusColors['open'];
+                        $pc = $priorityColors[$record->priority instanceof \BackedEnum ? $record->priority->value : $record->priority] ?? $priorityColors['normal'];
                     @endphp
                     <span style="background: {{ $sc['bg'] }}; color: {{ $sc['text'] }}; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">
-                        {{ str_replace('_', ' ', $record->status) }}
+                        {{ str_replace('_', ' ', $record->status instanceof \BackedEnum ? $record->status->value : $record->status) }}
                     </span>
                     <span style="background: {{ $pc['bg'] }}; color: {{ $pc['text'] }}; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">
                         {{ $record->priority }}
