@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Number;
 
 class WeeklyDigestDataCollector
 {
@@ -29,9 +30,9 @@ class WeeklyDigestDataCollector
         return [
             'stats' => [
                 'total_orders' => $totalOrders,
-                'total_revenue' => number_format((float) $totalRevenue, 2),
+                'total_revenue' => Number::currency((float) $totalRevenue),
                 'new_customers' => $newCustomers,
-                'avg_order_value' => number_format($avgOrderValue, 2),
+                'avg_order_value' => Number::currency($avgOrderValue),
             ],
             'topProducts' => OrderItem::query()
                 ->select('product_id', DB::raw('SUM(quantity) as total_qty'))

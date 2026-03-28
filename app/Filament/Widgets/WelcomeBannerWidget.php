@@ -7,6 +7,7 @@ use App\Models\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Number;
 
 class WelcomeBannerWidget extends Widget
 {
@@ -41,11 +42,10 @@ class WelcomeBannerWidget extends Widget
 
     public function getRevenueToday(): string
     {
-        return number_format(
+        return Number::currency(
             (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
                 ->whereDate('delivery_date', Date::today())
                 ->sum('total'),
-            2,
         );
     }
 

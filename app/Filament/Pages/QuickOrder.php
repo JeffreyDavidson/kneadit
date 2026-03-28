@@ -32,6 +32,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Number;
 
 class QuickOrder extends Page
 {
@@ -139,7 +140,7 @@ class QuickOrder extends Page
                     $totalItems = count($items);
                     $subtotal = collect($items)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
 
-                    return $totalItems . ' items · Subtotal: $' . number_format($subtotal, 2);
+                    return $totalItems . ' items · Subtotal: $' . Number::currency($subtotal);
                 })
                 ->schema([
                     Repeater::make('order_items')
@@ -154,7 +155,7 @@ class QuickOrder extends Page
                                         ->orderBy('name')
                                         ->get()
                                         ->mapWithKeys(fn (Product $product): array => [
-                                            $product->id => $product->name . ' - $' . number_format($product->price, 2),
+                                            $product->id => $product->name . ' - ' . Number::currency($product->price),
                                         ]))
                                     ->live()
                                     ->afterStateUpdated(function (Set $set, ?string $state) {
@@ -190,7 +191,7 @@ class QuickOrder extends Page
                                         $quantity = (float) $get('quantity');
                                         $price = (float) $get('unit_price');
 
-                                        return number_format($quantity * $price, 2);
+                                        return Number::currency($quantity * $price);
                                     }),
                             ]),
 

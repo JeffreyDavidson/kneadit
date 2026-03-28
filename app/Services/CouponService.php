@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\CouponType;
 use App\Models\Coupon;
+use Illuminate\Support\Number;
 
 class CouponService
 {
@@ -31,7 +32,7 @@ class CouponService
                 'valid' => false,
                 'coupon' => null,
                 'discount' => 0,
-                'error' => 'Minimum order of $' . number_format($coupon->min_order_amount, 2) . ' required for this coupon.',
+                'error' => 'Minimum order of ' . Number::currency($coupon->min_order_amount) . ' required for this coupon.',
             ];
         }
 
