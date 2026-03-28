@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Number;
 
 class UpcomingOrdersWidget extends Widget
 {
@@ -42,7 +43,7 @@ class UpcomingOrdersWidget extends Widget
                 'number' => $order->order_number,
                 'customer' => $order->customer->name ?? 'Walk-in',
                 'items' => $order->order_items_count,
-                'total' => number_format($order->total, 2),
+                'total' => Number::currency($order->total),
                 'time' => $order->delivery_time?->format('g:i A') ?? '',
                 'status' => $order->status,
             ];
