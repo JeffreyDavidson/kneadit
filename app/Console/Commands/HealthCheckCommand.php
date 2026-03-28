@@ -71,7 +71,7 @@ class HealthCheckCommand extends Command
 
         // 6. Homepage responds
         try {
-            $response = Http::timeout(10)->get(config('app.url'));
+            $response = Http::timeout(10)->connectTimeout(3)->retry(2, 100)->get(config('app.url'));
             if ($response->successful()) {
                 $this->info('✓ Homepage responds (' . $response->status() . ')');
             } else {
