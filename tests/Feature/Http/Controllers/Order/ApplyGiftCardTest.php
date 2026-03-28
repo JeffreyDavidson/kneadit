@@ -22,3 +22,14 @@ test('apply gift card returns balance for valid card', function () {
         ->assertJsonPath('success', true)
         ->assertJsonPath('applicable_amount', 30);
 });
+
+test('apply gift card returns error for unknown code', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/gift-card/apply', [
+            'code' => 'NONEXISTENT',
+            'subtotal' => 30.00,
+        ]);
+
+    $response->assertUnprocessable()
+        ->assertJsonPath('error', 'Gift card not found.');
+});

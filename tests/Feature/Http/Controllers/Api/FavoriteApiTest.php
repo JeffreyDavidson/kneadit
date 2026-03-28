@@ -20,3 +20,21 @@ test('favorites index returns product ids for customer email', function () {
     $response->assertOk()
         ->assertJsonPath('data', [$product->id]);
 });
+
+test('favorites toggle adds product to favorites', function () {
+    $product = Product::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/api/favorites/toggle', [
+            'email' => 'alice@test.com',
+            'product_id' => $product->id,
+        ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.favorited', true);
+
+    $this->assertDatabaseHas('customer_favorites', [
+        'customer_email' => 'alice@test.com',
+        'product_id' => $product->id,
+    ]);
+});
