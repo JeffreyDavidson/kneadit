@@ -53,7 +53,7 @@ class StatsOverview extends BaseWidget
                     ->icon('heroicon-o-users')
                     ->color('info'),
 
-                Stat::make('Storefront Views Today', number_format(
+                Stat::make('Storefront Views Today', Number::format(
                     PageView::query()->whereNull('product_id')
                         ->where('created_at', '>=', $today)
                         ->count(),

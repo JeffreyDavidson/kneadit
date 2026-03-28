@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Number;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -122,7 +123,7 @@ class StripeWebhookController extends WebhookController
         try {
             $alertMsg = "Payment failed for {$user->name} ({$user->email})"
                 . ($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '')
-                . "\nAmount: $" . number_format(($invoice['amount_due'] ?? 0) / 100, 2);
+                . "\nAmount: " . Number::currency(($invoice['amount_due'] ?? 0) / 100);
             Mail::to(config('mail.platform_notify'))->queue(new HealthAlertMail($alertMsg));
         } catch (\Exception $e) {
             Log::error('Failed to send platform payment alert', ['error' => $e->getMessage()]);

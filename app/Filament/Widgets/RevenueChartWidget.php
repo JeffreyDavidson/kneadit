@@ -8,6 +8,7 @@ use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Number;
 
 class RevenueChartWidget extends ChartWidget
 {
@@ -92,6 +93,6 @@ class RevenueChartWidget extends ChartWidget
 
     private function fmt(float $v): string
     {
-        return number_format($v, 0);
+        return Number::format($v);
     }
 }

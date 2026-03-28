@@ -19,6 +19,7 @@ use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Number;
 use Laravel\Pennant\Feature;
 
 class CustomerDirectory extends Page
@@ -109,10 +110,10 @@ class CustomerDirectory extends Page
 
         return [
             'total_customers' => $totalCustomers,
-            'avg_lifetime_value' => number_format($avgLifetimeValue, 2),
+            'avg_lifetime_value' => Number::currency($avgLifetimeValue),
             'at_risk_count' => $atRiskCount,
             'top_customer_name' => $topCustomer->name ?? 'N/A',
-            'top_customer_value' => number_format($topCustomer->orders_sum_total ?? 0, 2),
+            'top_customer_value' => Number::currency($topCustomer->orders_sum_total ?? 0),
         ];
     }
 
@@ -141,7 +142,7 @@ class CustomerDirectory extends Page
                 'email' => $customer->email,
                 'phone' => $customer->phone ?? 'N/A',
                 'total_orders' => $customer->orders_count,
-                'total_spent' => number_format($customer->orders_sum_total ?? 0, 2),
+                'total_spent' => Number::currency($customer->orders_sum_total ?? 0),
                 'last_order_date' => $customer->orders->first()?->created_at?->format('M j, Y') ?? 'Never',
             ];
         });
@@ -175,7 +176,7 @@ class CustomerDirectory extends Page
                     'order_number' => $order->order_number,
                     'status' => $order->status->label(),
                     'payment_status' => $order->payment_status->label(),
-                    'total' => number_format($order->total, 2),
+                    'total' => Number::currency($order->total),
                     'date' => $order->created_at?->format('M j, Y'),
                     'delivery_date' => $order->delivery_date?->format('M j, Y'),
                 ];

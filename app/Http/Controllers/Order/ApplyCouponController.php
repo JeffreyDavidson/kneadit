@@ -28,7 +28,7 @@ class ApplyCouponController extends Controller
             'code' => $coupon?->code,
             'discount_amount' => $result['discount'],
             'label' => $coupon?->type === CouponType::Percentage
-                ? number_format($coupon->value ?? 0, 0) . '% off'
+                ? Number::format($coupon->value ?? 0) . '% off'
                 : Number::currency((float) ($coupon->value ?? 0)) . ' off',
         ]);
     }

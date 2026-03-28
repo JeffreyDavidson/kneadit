@@ -47,7 +47,7 @@ class SocialPostForm
                             ->required()
                             ->rows(4)
                             ->maxLength(fn (Get $get): int => SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200)
-                            ->helperText(fn (Get $get): string => 'Max ' . number_format(SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200) . ' characters for ' . (SocialPost::PLATFORMS[$get('platform') ?? 'instagram'] ?? 'Instagram'))
+                            ->helperText(fn (Get $get): string => 'Max ' . Number::format(SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200) . ' characters for ' . (SocialPost::PLATFORMS[$get('platform') ?? 'instagram'] ?? 'Instagram'))
                             ->hintAction(
                                 Action::make('generateCaption')
                                     ->label('Generate Caption')
