@@ -12,9 +12,23 @@ beforeEach(function () {
     Filament::setCurrentPanel(Filament::getPanel('central'));
 });
 
-// ViewTenant has a custom view referencing a missing Filament 5 component
-test('can render the view tenant page')
-    ->todo();
+test('can render the view tenant page', function () {
+    $tenant = DB::table('tenants')->where('id', 'test-bakery')->first();
+    if (! $tenant) {
+        DB::table('tenants')->insert([
+            'id' => 'test-bakery',
+            'name' => 'Test Baker',
+            'email' => 'baker@test.com',
+            'plan' => 'pro',
+            'store_name' => 'Test Bakery',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    Livewire::test(ViewTenant::class, ['record' => 'test-bakery'])
+        ->assertOk();
+});
 
 test('can render the view ticket page', function () {
     $ticket = DB::table('support_tickets')->insertGetId([
