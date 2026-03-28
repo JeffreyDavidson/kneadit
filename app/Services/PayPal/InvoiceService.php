@@ -119,22 +119,22 @@ class InvoiceService
                 'invoice_number' => $order->order_number,
                 'reference' => "Order #{$order->order_number}",
                 'invoice_date' => Date::now()->toISOString(),
-                'currency_code' => 'USD',
-                'note' => 'Thank you for your order with KneadIt Bakery!',
-                'terms' => 'Payment due within 30 days.',
-                'memo' => 'KneadIt Bakery - Fresh Baked Goods',
+                'currency_code' => config('kneadit.paypal.currency', 'USD'),
+                'note' => 'Thank you for your order with ' . settings('store_name', 'our bakery') . '!',
+                'terms' => settings('paypal_invoice_terms', 'Payment due within 30 days.'),
+                'memo' => settings('store_name', 'KneadIt Bakery') . ' - Fresh Baked Goods',
             ],
             'invoicer' => [
-                'name' => ['given_name' => 'KneadIt', 'surname' => 'Bakery'],
+                'name' => ['given_name' => settings('store_name', 'KneadIt Bakery'), 'surname' => ''],
                 'address' => [
-                    'address_line_1' => '123 Baker Street',
-                    'admin_area_2' => 'Your City',
-                    'admin_area_1' => 'Your State',
-                    'postal_code' => '12345',
+                    'address_line_1' => settings('store_address', ''),
+                    'admin_area_2' => settings('store_city', ''),
+                    'admin_area_1' => settings('store_state', ''),
+                    'postal_code' => settings('store_zip', ''),
                     'country_code' => 'US',
                 ],
                 'email_address' => config('mail.from.address', 'noreply@kneadit.com'),
-                'phones' => [['country_code' => '1', 'national_number' => '5551234567', 'phone_type' => 'MOBILE']],
+                'phones' => [['country_code' => '1', 'national_number' => settings('store_phone', ''), 'phone_type' => 'MOBILE']],
             ],
             'primary_recipients' => [[
                 'billing_info' => [
@@ -171,7 +171,7 @@ class InvoiceService
                 'description' => $item->product?->description ?: $item->product->name ?? 'Item',
                 'quantity' => (string) $item->quantity,
                 'unit_amount' => [
-                    'currency_code' => 'USD',
+                    'currency_code' => config('kneadit.paypal.currency', 'USD'),
                     'value' => number_format($item->unit_price, 2, '.', ''),
                 ],
                 'unit_of_measure' => 'QUANTITY',
@@ -184,7 +184,7 @@ class InvoiceService
                 'description' => 'Delivery service',
                 'quantity' => '1',
                 'unit_amount' => [
-                    'currency_code' => 'USD',
+                    'currency_code' => config('kneadit.paypal.currency', 'USD'),
                     'value' => number_format($order->delivery_fee, 2, '.', ''),
                 ],
                 'unit_of_measure' => 'QUANTITY',
@@ -193,7 +193,7 @@ class InvoiceService
 
         $invoiceData['amount']['breakdown'] = [
             'item_total' => [
-                'currency_code' => 'USD',
+                'currency_code' => config('kneadit.paypal.currency', 'USD'),
                 'value' => number_format($order->subtotal + $order->delivery_fee, 2, '.', ''),
             ],
         ];
