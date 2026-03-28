@@ -32,7 +32,7 @@
 
         {{-- Quick actions --}}
         <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; position: relative; z-index: 1;">
-            <a href="{{ route('filament.admin.resources.orders.create') }}" style="background: rgba(255,255,255,0.22); color: white; text-decoration: none; padding: 8px 18px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px;">
+            <a href="{{ route('filament.admin.pages.quick-order') }}" style="background: rgba(255,255,255,0.22); color: white; text-decoration: none; padding: 8px 18px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px;">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 16px; height: 16px;"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" /></svg> New Order
             </a>
             <a href="{{ route('filament.admin.resources.orders.index') }}" style="background: rgba(255,255,255,0.22); color: white; text-decoration: none; padding: 8px 18px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px;">

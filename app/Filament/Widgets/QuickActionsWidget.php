@@ -19,7 +19,7 @@ class QuickActionsWidget extends Widget
             [
                 'label' => 'Quick Order',
                 'icon' => 'heroicon-o-plus-circle',
-                'url' => route('filament.admin.resources.orders.create'),
+                'url' => route('filament.admin.pages.quick-order'),
                 'color' => '#8B5E3C',
                 'bg' => '#FDF2E9',
             ],
