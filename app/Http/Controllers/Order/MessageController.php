@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrderMessageRequest;
-use App\Mail\NewOrderMessage;
+use App\Mail\NewOrderMessageMail;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
@@ -37,7 +37,7 @@ class MessageController extends Controller
         $storeEmail = settings('store_email');
         if ($storeEmail) {
             Mail::to($storeEmail)
-                ->send(new NewOrderMessage($message));
+                ->send(new NewOrderMessageMail($message));
         }
 
         return response()->json(['success' => true, 'message' => $message]);

@@ -3,35 +3,39 @@
 namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Customer;
+use App\Models\Order;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class RepeatOrderReminder extends BaseMailable
+class OrderConfirmedMail extends BaseMailable
 {
     use BakerBranded;
 
     public function __construct(
-        public Customer $customer,
-        public int $daysSinceLastOrder,
-    ) {
-        //
-    }
+        public Order $order,
+    ) {}
 
     public function envelope(): Envelope
     {
+        $storeName = settings('store_name', 'KneadIt Bakery');
+
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: 'We Miss You! 🥖 Your Favorite Treats Are Waiting',
+            subject: "Order #{$this->order->order_number} Confirmed — {$storeName}",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.repeat-order-reminder',
+            html: 'emails.order-confirmed',
+            with: [
+                'order' => $this->order,
+                'customer' => $this->order->customer,
+                'orderItems' => $this->order->orderItems()->with('product')->get(),
+            ],
         );
     }
 

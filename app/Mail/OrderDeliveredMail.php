@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class OrderBaking extends BaseMailable
+class OrderDeliveredMail extends BaseMailable
 {
     use BakerBranded;
 
@@ -21,14 +21,14 @@ class OrderBaking extends BaseMailable
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: "Your Order #{$this->order->order_number} is Being Prepared - KneadIt Bakery",
+            subject: "Order #{$this->order->order_number} Delivered - KneadIt Bakery",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            html: 'emails.order-baking',
+            html: 'emails.order-delivered',
             with: [
                 'order' => $this->order,
                 'customer' => $this->order->customer,

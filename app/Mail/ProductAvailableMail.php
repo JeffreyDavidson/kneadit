@@ -3,17 +3,18 @@
 namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class OrderConfirmed extends BaseMailable
+class ProductAvailableMail extends BaseMailable
 {
     use BakerBranded;
 
     public function __construct(
-        public Order $order,
+        public Product $product,
+        public string $customerName = '',
     ) {}
 
     public function envelope(): Envelope
@@ -23,18 +24,18 @@ class OrderConfirmed extends BaseMailable
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: "Order #{$this->order->order_number} Confirmed — {$storeName}",
+            subject: "{$this->product->name} is back at {$storeName}!",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            html: 'emails.order-confirmed',
+            html: 'emails.product-available',
             with: [
-                'order' => $this->order,
-                'customer' => $this->order->customer,
-                'orderItems' => $this->order->orderItems()->with('product')->get(),
+                'product' => $this->product,
+                'customerName' => $this->customerName,
+                'storeName' => settings('store_name', 'KneadIt Bakery'),
             ],
         );
     }

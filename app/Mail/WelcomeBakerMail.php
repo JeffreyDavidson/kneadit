@@ -5,7 +5,7 @@ namespace App\Mail;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class WelcomeBaker extends BaseMailable
+class WelcomeBakerMail extends BaseMailable
 {
     public function __construct(
         public string $bakerName,

@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class WeeklyDigest extends BaseMailable
+class WeeklyDigestMail extends BaseMailable
 {
     use BakerBranded;
 

@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\UserRole;
-use App\Mail\WeeklyDigest;
+use App\Mail\WeeklyDigestMail;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Tenant\TenancyManager;
@@ -38,7 +38,7 @@ class SendWeeklyDigest extends Command
                     }
 
                     foreach ($users as $user) {
-                        Mail::to($user->email)->queue(new WeeklyDigest);
+                        Mail::to($user->email)->queue(new WeeklyDigestMail);
                     }
 
                     $this->info("Sent digest for {$tenant->id} to {$users->count()} user(s)");

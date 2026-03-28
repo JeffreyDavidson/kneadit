@@ -3,22 +3,22 @@
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
-use App\Mail\BirthdayDiscount;
-use App\Mail\CateringQuote;
+use App\Mail\BirthdayDiscountMail;
+use App\Mail\CateringQuoteMail;
 use App\Mail\Concerns\BakerBranded;
-use App\Mail\CustomerBlast;
-use App\Mail\HappyBirthday;
-use App\Mail\NewOrderMessage;
-use App\Mail\OrderBaking;
-use App\Mail\OrderCancelled;
-use App\Mail\OrderConfirmed;
-use App\Mail\OrderDelivered;
-use App\Mail\OrderPlaced;
-use App\Mail\OrderReady;
-use App\Mail\ProductAvailable;
-use App\Mail\RepeatOrderReminder;
-use App\Mail\ReviewRequest;
-use App\Mail\WeeklyDigest;
+use App\Mail\CustomerBlastMail;
+use App\Mail\HappyBirthdayMail;
+use App\Mail\NewOrderMessageMail;
+use App\Mail\OrderBakingMail;
+use App\Mail\OrderCancelledMail;
+use App\Mail\OrderConfirmedMail;
+use App\Mail\OrderDeliveredMail;
+use App\Mail\OrderPlacedMail;
+use App\Mail\OrderReadyMail;
+use App\Mail\ProductAvailableMail;
+use App\Mail\RepeatOrderReminderMail;
+use App\Mail\ReviewRequestMail;
+use App\Mail\WeeklyDigestMail;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
@@ -54,14 +54,14 @@ beforeEach(function () {
 test('order placed email has baker branded from', function () {
     settings(['store_name' => 'Sweet Treats']);
 
-    $mail = new OrderPlaced($this->order);
+    $mail = new OrderPlacedMail($this->order);
     $envelope = $mail->envelope();
 
     expect($envelope->from->name)->toContain('Sweet Treats via KneadIt');
 });
 
 test('order placed email sends from platform domain', function () {
-    $mail = new OrderPlaced($this->order);
+    $mail = new OrderPlacedMail($this->order);
     $envelope = $mail->envelope();
 
     expect($envelope->from->address)->toBe(config('mail.from.address', 'hello@getkneadit.app'));
@@ -71,7 +71,7 @@ test('order placed email has reply to baker', function () {
     settings(['store_email' => 'baker@sweetreats.com']);
     settings(['store_name' => 'Sweet Treats']);
 
-    $mail = new OrderPlaced($this->order);
+    $mail = new OrderPlacedMail($this->order);
     $envelope = $mail->envelope();
 
     expect($envelope->replyTo)->not->toBeEmpty();
@@ -79,14 +79,14 @@ test('order placed email has reply to baker', function () {
 });
 
 test('reply to is empty when no store email', function () {
-    $mail = new OrderPlaced($this->order);
+    $mail = new OrderPlacedMail($this->order);
     $envelope = $mail->envelope();
 
     expect($envelope->replyTo)->toBeEmpty();
 });
 
 test('from name defaults when no store name', function () {
-    $mail = new OrderPlaced($this->order);
+    $mail = new OrderPlacedMail($this->order);
     $envelope = $mail->envelope();
 
     expect($envelope->from->name)->toContain('KneadIt Bakery via KneadIt');
@@ -95,7 +95,7 @@ test('from name defaults when no store name', function () {
 test('order confirmed uses baker branded from', function () {
     settings(['store_name' => 'Flour Power']);
 
-    $mail = new OrderConfirmed($this->order);
+    $mail = new OrderConfirmedMail($this->order);
     $envelope = $mail->envelope();
 
     expect($envelope->from->name)->toContain('Flour Power via KneadIt');
@@ -103,21 +103,21 @@ test('order confirmed uses baker branded from', function () {
 
 test('all customer mailables use baker branded trait', function () {
     $mailables = [
-        OrderPlaced::class,
-        OrderConfirmed::class,
-        OrderReady::class,
-        OrderBaking::class,
-        OrderCancelled::class,
-        OrderDelivered::class,
-        ReviewRequest::class,
-        HappyBirthday::class,
-        BirthdayDiscount::class,
-        CustomerBlast::class,
-        ProductAvailable::class,
-        WeeklyDigest::class,
-        CateringQuote::class,
-        NewOrderMessage::class,
-        RepeatOrderReminder::class,
+        OrderPlacedMail::class,
+        OrderConfirmedMail::class,
+        OrderReadyMail::class,
+        OrderBakingMail::class,
+        OrderCancelledMail::class,
+        OrderDeliveredMail::class,
+        ReviewRequestMail::class,
+        HappyBirthdayMail::class,
+        BirthdayDiscountMail::class,
+        CustomerBlastMail::class,
+        ProductAvailableMail::class,
+        WeeklyDigestMail::class,
+        CateringQuoteMail::class,
+        NewOrderMessageMail::class,
+        RepeatOrderReminderMail::class,
     ];
 
     foreach ($mailables as $mailable) {

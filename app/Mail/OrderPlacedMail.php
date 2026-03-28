@@ -3,34 +3,36 @@
 namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
+use App\Models\Order;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class CustomerBlast extends BaseMailable
+class OrderPlacedMail extends BaseMailable
 {
     use BakerBranded;
 
     public function __construct(
-        public string $campaignSubject,
-        public string $campaignBody,
+        public Order $order,
     ) {}
 
     public function envelope(): Envelope
     {
+        $storeName = settings('store_name', 'KneadIt Bakery');
+
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: $this->campaignSubject,
+            subject: "Order #{$this->order->order_number} Received — {$storeName}",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.customer-blast',
+            view: 'emails.order-placed',
             with: [
-                'body' => $this->campaignBody,
-                'storeName' => settings('store_name', 'Our Bakery'),
+                'order' => $this->order,
+                'storeName' => settings('store_name', 'KneadIt Bakery'),
             ],
         );
     }

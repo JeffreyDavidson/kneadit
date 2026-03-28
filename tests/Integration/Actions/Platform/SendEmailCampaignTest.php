@@ -2,7 +2,7 @@
 
 use App\Actions\Platform\SendEmailCampaign;
 use App\Enums\EmailCampaignStatus;
-use App\Mail\CustomerBlast;
+use App\Mail\CustomerBlastMail;
 use App\Models\Customer;
 use App\Models\EmailCampaign;
 use Illuminate\Support\Facades\Mail;
@@ -23,7 +23,7 @@ test('sends campaign to all customers and updates status', function () {
 
     app(SendEmailCampaign::class)($campaign);
 
-    Mail::assertQueued(CustomerBlast::class, 3);
+    Mail::assertQueued(CustomerBlastMail::class, 3);
     expect($campaign->fresh()->status)->toBe(EmailCampaignStatus::Sent)
         ->and($campaign->fresh()->recipient_count)->toBe(3)
         ->and($campaign->fresh()->sent_at)->not->toBeNull();

@@ -7,7 +7,7 @@ use App\Models\OrderMessage;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class NewOrderMessage extends BaseMailable
+class NewOrderMessageMail extends BaseMailable
 {
     use BakerBranded;
 

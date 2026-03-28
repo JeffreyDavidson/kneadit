@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderMessageSent;
-use App\Mail\NewOrderMessage;
+use App\Mail\NewOrderMessageMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -24,7 +24,7 @@ class SendOrderMessageEmail implements ShouldQueue
             return;
         }
 
-        Mail::to($customerEmail)->send(new NewOrderMessage($message));
+        Mail::to($customerEmail)->send(new NewOrderMessageMail($message));
     }
 
     public function failed(OrderMessageSent $event, \Throwable $exception): void

@@ -3,7 +3,7 @@
 namespace App\Actions\Platform;
 
 use App\Enums\EmailCampaignStatus;
-use App\Mail\CustomerBlast;
+use App\Mail\CustomerBlastMail;
 use App\Models\Customer;
 use App\Models\EmailCampaign;
 use Illuminate\Support\Facades\Mail;
@@ -20,7 +20,7 @@ class SendEmailCampaign
 
         foreach ($emails as $email) {
             Mail::to($email)->queue(
-                new CustomerBlast($campaign->subject, $campaign->body),
+                new CustomerBlastMail($campaign->subject, $campaign->body),
             );
         }
 

@@ -3,7 +3,7 @@
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Exceptions\InvalidOrderTransitionException;
-use App\Mail\OrderConfirmed;
+use App\Mail\OrderConfirmedMail;
 use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -45,7 +45,7 @@ test('sends status email on transition', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
 
-    Mail::assertQueued(OrderConfirmed::class);
+    Mail::assertQueued(OrderConfirmedMail::class);
 });
 
 test('allowedTransitions returns valid next statuses', function () {

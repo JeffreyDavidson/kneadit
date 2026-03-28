@@ -1,12 +1,12 @@
 <?php
 
-use App\Mail\NewOrderNotification;
-use App\Mail\OrderBaking;
-use App\Mail\OrderCancelled;
-use App\Mail\OrderConfirmed;
-use App\Mail\OrderDelivered;
-use App\Mail\OrderPlaced;
-use App\Mail\OrderReady;
+use App\Mail\NewOrderNotificationMail;
+use App\Mail\OrderBakingMail;
+use App\Mail\OrderCancelledMail;
+use App\Mail\OrderConfirmedMail;
+use App\Mail\OrderDeliveredMail;
+use App\Mail\OrderPlacedMail;
+use App\Mail\OrderReadyMail;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -28,11 +28,11 @@ test('order mailables have correct envelope subjects', function (string $mailCla
 
     expect($subject)->toContain($expectedSubjectFragment);
 })->with([
-    'OrderPlaced' => [OrderPlaced::class, 'Received — Test Bakery'],
-    'OrderConfirmed' => [OrderConfirmed::class, 'Confirmed — Test Bakery'],
-    'OrderReady' => [OrderReady::class, 'is Ready!'],
-    'OrderBaking' => [OrderBaking::class, 'is Being Prepared'],
-    'OrderDelivered' => [OrderDelivered::class, 'Delivered'],
-    'OrderCancelled' => [OrderCancelled::class, 'Cancelled'],
-    'NewOrderNotification' => [NewOrderNotification::class, 'New Order #'],
+    'OrderPlacedMail' => [OrderPlacedMail::class, 'Received — Test Bakery'],
+    'OrderConfirmedMail' => [OrderConfirmedMail::class, 'Confirmed — Test Bakery'],
+    'OrderReadyMail' => [OrderReadyMail::class, 'is Ready!'],
+    'OrderBakingMail' => [OrderBakingMail::class, 'is Being Prepared'],
+    'OrderDeliveredMail' => [OrderDeliveredMail::class, 'Delivered'],
+    'OrderCancelledMail' => [OrderCancelledMail::class, 'Cancelled'],
+    'NewOrderNotificationMail' => [NewOrderNotificationMail::class, 'New Order #'],
 ]);

@@ -3,7 +3,7 @@
 use App\Actions\Orders\CreateOrder;
 use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
-use App\Mail\OrderPlaced;
+use App\Mail\OrderPlacedMail;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -79,5 +79,5 @@ test('sends order placed email to customer on creation', function () {
         ],
     );
 
-    Mail::assertQueued(OrderPlaced::class);
+    Mail::assertQueued(OrderPlacedMail::class);
 });

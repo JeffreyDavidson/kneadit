@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\PaymentStatus;
-use App\Mail\RepeatOrderReminder;
+use App\Mail\RepeatOrderReminderMail;
 use App\Models\Customer;
 use App\Models\CustomerReminder;
 use App\Models\Tenant;
@@ -74,7 +74,7 @@ class SendRepeatOrderReminders extends Command
                     'next_reminder_date' => Date::today()->addDays($reminderDays),
                 ]);
 
-                Mail::to($customer->email)->send(new RepeatOrderReminder($customer, $data['days_since_last_order']));
+                Mail::to($customer->email)->send(new RepeatOrderReminderMail($customer, $data['days_since_last_order']));
                 $this->info("  ✓ {$customer->name}");
             } catch (\Exception $e) {
                 $this->error("  ✗ {$customer->name}: {$e->getMessage()}");

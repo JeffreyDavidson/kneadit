@@ -1,12 +1,12 @@
 <?php
 
 use App\Mail\HealthAlertMail;
-use App\Mail\NewSubscriberNotification;
+use App\Mail\NewSubscriberNotificationMail;
 use App\Mail\PaymentFailedMail;
 use App\Mail\ScheduledCheckinMail;
 use App\Mail\TrialExpiredMail;
 use App\Mail\TrialReminderMail;
-use App\Mail\WelcomeBaker;
+use App\Mail\WelcomeBakerMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -52,14 +52,14 @@ test('TrialReminderMail has correct subject for 7 days and renders', function ()
 });
 
 test('WelcomeBaker has correct subject and renders', function () {
-    $mail = new WelcomeBaker('Jane', 'Jane\'s Bakery', 'https://example.test/admin', 'starter', '2026-04-26');
+    $mail = new WelcomeBakerMail('Jane', 'Jane\'s Bakery', 'https://example.test/admin', 'starter', '2026-04-26');
 
     $mail->assertHasSubject("Welcome to KneadIt — Jane's Bakery is ready!");
     expect($mail->render())->toBeString();
 });
 
 test('NewSubscriberNotification has correct subject and renders', function () {
-    $mail = new NewSubscriberNotification('Jane', 'jane@test.com', 'Jane\'s Bakery', 'janes-bakery', 'starter');
+    $mail = new NewSubscriberNotificationMail('Jane', 'jane@test.com', 'Jane\'s Bakery', 'janes-bakery', 'starter');
 
     $mail->assertHasSubject("New KneadIt Signup — Jane's Bakery");
     expect($mail->render())->toBeString();
