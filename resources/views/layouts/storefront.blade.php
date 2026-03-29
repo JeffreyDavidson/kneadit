@@ -316,7 +316,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ urlencode(tenant()->brand_color_primary ?? '#d4920c') }}'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-family='serif' font-weight='bold'>{{ substr(settings('store_name', 'B'), 0, 1) }}</text></svg>" type="image/svg+xml">
     @endif
 
-    @yield('styles')
+        @yield('styles')\n    @stack('styles')
 @include('partials.fathom')
 </head>
 <body data-theme="{{ $storefrontTheme }}" @yield('body_attrs')>
@@ -590,5 +590,6 @@
     </script>
 
     @yield('scripts')
+@stack('scripts')
 </body>
 </html>
