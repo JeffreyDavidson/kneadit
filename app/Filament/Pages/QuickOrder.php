@@ -2,14 +2,12 @@
 
 namespace App\Filament\Pages;
 
+use App\Actions\Orders\CreateQuickOrder;
 use App\Enums\DeliveryType;
-use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
-use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -31,7 +29,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class QuickOrder extends Page
@@ -270,66 +267,15 @@ class QuickOrder extends Page
         $data = $this->form->getState();
 
         try {
-            DB::transaction(function () use ($data) {
-                // Create or find customer
-                $customer = null;
+            $order = resolve(CreateQuickOrder::class)($data);
 
-                if (! empty($data['customer_email'])) {
-                    $customer = Customer::query()->where('email', $data['customer_email'])->first();
-                }
+            Notification::make()
+                ->title('Order Created Successfully!')
+                ->body("Order #{$order->order_number} has been created.")
+                ->success()
+                ->send();
 
-                if (! $customer) {
-                    $customer = Customer::query()->create([
-                        'name' => $data['customer_name'],
-                        'email' => $data['customer_email'] ?? null,
-                        'phone' => $data['customer_phone'] ?? null,
-                    ]);
-                }
-
-                // Calculate totals
-                /** @var array<int, array<string, mixed>> $orderItems */
-                $orderItems = $data['order_items'] ?? [];
-                $subtotal = collect($orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
-                $deliveryFee = ($data['delivery_type'] === DeliveryType::Delivery->value) ? 5.00 : 0.00;
-                $total = $subtotal + $deliveryFee;
-
-                // Create order
-                $order = Order::query()->create([
-                    'customer_id' => $customer->id,
-                    'status' => OrderStatus::Pending,
-                    'payment_status' => PaymentStatus::Unpaid,
-                    'payment_method' => $data['payment_method'],
-                    'subtotal' => $subtotal,
-                    'delivery_fee' => $deliveryFee,
-                    'total' => $total,
-                    'delivery_address' => $data['delivery_type'] === DeliveryType::Delivery->value ? $data['delivery_address'] : null,
-                    'delivery_date' => $data['delivery_date'],
-                    'delivery_time' => $data['delivery_time'],
-                    'notes' => $data['notes'] ?? null,
-                    'user_id' => auth()->id(),
-                ]);
-
-                // Create order items
-                foreach ($orderItems as $item) {
-                    OrderItem::query()->create([
-                        'order_id' => $order->id,
-                        'product_id' => $item['product_id'],
-                        'quantity' => $item['quantity'],
-                        'unit_price' => $item['unit_price'],
-                        'special_instructions' => $item['special_instructions'] ?? null,
-                    ]);
-                }
-
-                Notification::make()
-                    ->title('Order Created Successfully!')
-                    ->body("Order #{$order->order_number} has been created for {$customer->name}.")
-                    ->success()
-                    ->send();
-
-                // Clear the form
-                $this->form->fill();
-            });
-
+            $this->form->fill();
         } catch (\Exception $e) {
             Notification::make()
                 ->title('Error Creating Order')
