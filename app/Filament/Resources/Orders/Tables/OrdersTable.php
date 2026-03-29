@@ -94,6 +94,17 @@ class OrdersTable
                                 $data['until'],
                                 fn (Builder $query, string $date) => $query->whereDate('delivery_date', '<=', $date),
                             );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['from'] ?? null) {
+                            $indicators[] = 'From ' . \Carbon\Carbon::parse($data['from'])->toFormattedDateString();
+                        }
+                        if ($data['until'] ?? null) {
+                            $indicators[] = 'Until ' . \Carbon\Carbon::parse($data['until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
                     }),
             ])
             ->recordActions([
