@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DataTransferObjects\GiftCardRedemptionResult;
+use App\Enums\GiftCardTransactionType;
 use App\Models\GiftCard;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -25,7 +27,7 @@ class GiftCardService
 
         $card->transactions()->create([
             'amount' => $data['initial_balance'],
-            'type' => 'purchase',
+            'type' => GiftCardTransactionType::Purchase,
             'notes' => 'Initial purchase',
             'created_at' => now(),
         ]);
@@ -39,14 +41,13 @@ class GiftCardService
             ?? GiftCard::query()->where('code', Str::upper(trim($code)))->first();
     }
 
-    /** @return array<string, mixed> */
-    public function redeem(string $code, float $amount, ?int $orderId = null): array
+    public function redeem(string $code, float $amount, ?int $orderId = null): GiftCardRedemptionResult
     {
         return DB::transaction(function () use ($code, $amount, $orderId) {
             $card = GiftCard::query()->lockForUpdate()->where('code', $code)->firstOrFail();
 
             if (! $card->is_usable) {
-                return ['success' => false, 'error' => 'This gift card is not valid.'];
+                return GiftCardRedemptionResult::failed('This gift card is not valid.');
             }
 
             if ($amount > (float) $card->current_balance) {
@@ -57,17 +58,13 @@ class GiftCardService
 
             $card->transactions()->create([
                 'amount' => -$amount,
-                'type' => 'redemption',
+                'type' => GiftCardTransactionType::Redemption,
                 'order_id' => $orderId,
                 'notes' => $orderId ? "Applied to order #{$orderId}" : 'Redemption',
                 'created_at' => now(),
             ]);
 
-            return [
-                'success' => true,
-                'amount_applied' => $amount,
-                'remaining_balance' => (float) $card->refresh()->current_balance,
-            ];
+            return GiftCardRedemptionResult::redeemed($amount, (float) $card->refresh()->current_balance);
         });
     }
 

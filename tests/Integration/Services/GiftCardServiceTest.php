@@ -60,7 +60,7 @@ test('redeem deducts from balance', function () {
 
     $result = test()->service->redeem($card->code, 20);
 
-    expect($result['success'])->toBeTrue()->and($result)->toMatchArray(['amount_applied' => 20.0, 'remaining_balance' => 30.0]);
+    expect($result->success)->toBeTrue()->and($result->amountApplied)->toBe(20.0)->and($result->remainingBalance)->toBe(30.0);
 });
 
 test('redeem creates transaction record', function () {
@@ -94,7 +94,7 @@ test('redeem caps at available balance', function () {
 
     $result = test()->service->redeem($card->code, 50);
 
-    expect($result['success'])->toBeTrue()->and($result)->toMatchArray(['amount_applied' => 20.0, 'remaining_balance' => 0.0]);
+    expect($result->success)->toBeTrue()->and($result->amountApplied)->toBe(20.0)->and($result->remainingBalance)->toBe(0.0);
 });
 
 test('redeem fails when card inactive', function () {
@@ -107,7 +107,7 @@ test('redeem fails when card inactive', function () {
 
     $result = test()->service->redeem($card->code, 10);
 
-    expect($result['success'])->toBeFalse();
+    expect($result->success)->toBeFalse();
 });
 
 test('redeem fails when card expired', function () {
@@ -120,5 +120,5 @@ test('redeem fails when card expired', function () {
 
     $result = test()->service->redeem($card->code, 10);
 
-    expect($result['success'])->toBeFalse();
+    expect($result->success)->toBeFalse();
 });
