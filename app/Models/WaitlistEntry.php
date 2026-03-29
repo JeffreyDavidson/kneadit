@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\WaitlistStatus;
 use Carbon\Carbon;
@@ -49,6 +50,7 @@ class WaitlistEntry extends Model
             'requested_date' => 'date',
             'status' => WaitlistStatus::class,
             'notes' => StripTagsCast::class,
+            'customer_phone' => PhoneNumberCast::class,
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\PhoneNumberCast;
 use App\Traits\LogsActivity;
 use Database\Factories\SupplierFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -45,6 +46,7 @@ class Supplier extends Model
     {
         return [
             'is_active' => 'boolean',
+            'phone' => PhoneNumberCast::class,
         ];
     }
 
