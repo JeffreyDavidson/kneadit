@@ -1,62 +1,7 @@
 @extends('layouts.storefront')
 
 @section('content')
-<style>
-    .menu-card {
-        position: relative;
-        border-radius: 20px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .menu-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 25px 60px rgba(28, 20, 16, 0.4);
-    }
-    .menu-card:hover img {
-        transform: scale(1.08);
-    }
-    .menu-card img {
-        transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .menu-card:hover .menu-card-overlay {
-        opacity: 1;
-    }
-    .menu-card:hover .menu-card-cta {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    .menu-card-overlay {
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
-    .menu-card-cta {
-        transform: translateY(10px);
-        opacity: 0;
-        transition: all 0.4s ease 0.1s;
-    }
-    .category-tab {
-        transition: all 0.3s ease;
-    }
-    .category-tab.active {
-        background: var(--warm-500) !important;
-        color: var(--warm-900) !important;
-    }
-    @keyframes menuFadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    .menu-fade-1 { animation: menuFadeUp 0.7s ease-out 0.3s both; }
-    .menu-fade-2 { animation: menuFadeUp 0.7s ease-out 0.5s both; }
-    .menu-fade-3 { animation: menuFadeUp 0.7s ease-out 0.7s both; }
-    @keyframes menuKenBurns {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.06); }
-    }
-    .menu-hero-img {
-        animation: menuKenBurns 25s ease-in-out infinite alternate;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/menu.css') }}">
 
 @php
     $storeName = settings('store_name', 'Our Bakery');
