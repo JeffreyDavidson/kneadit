@@ -8,6 +8,11 @@ enum SubscriptionTier: string
     case Growth = 'growth';
     case Pro = 'pro';
 
+    public function label(): string
+    {
+        return ucfirst($this->value);
+    }
+
     public function level(): int
     {
         return match ($this) {
