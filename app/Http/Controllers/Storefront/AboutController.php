@@ -17,9 +17,9 @@ class AboutController extends Controller
     public function __invoke(): View
     {
         return view('about', [
-            'customerCount' => Cache::remember('about_customer_count', 3600, fn () => Customer::query()->count()),
-            'avgRating' => Cache::remember('about_avg_rating', 3600, fn () => Review::query()->where('is_approved', true)->avg('rating')),
-            'orderCount' => Cache::remember('about_order_count', 3600, fn () => Order::query()->count()),
+            'customerCount' => Cache::flexible('about_customer_count', [3600, 7200], fn () => Customer::query()->count()),
+            'avgRating' => Cache::flexible('about_avg_rating', [3600, 7200], fn () => Review::query()->where('is_approved', true)->avg('rating')),
+            'orderCount' => Cache::flexible('about_order_count', [3600, 7200], fn () => Order::query()->count()),
         ]);
     }
 }
