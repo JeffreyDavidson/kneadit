@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\PageView;
 use App\Models\WaitlistEntry;
+use App\Queries\RevenueQuery;
 use App\Services\Inventory\CapacityCalculator;
 use Carbon\Carbon;
 use Filament\Support\Icons\Heroicon;
@@ -37,9 +38,7 @@ class StatsOverview extends BaseWidget
                     ->color('warning'),
 
                 Stat::make("This Week's Revenue", Number::currency(
-                    (float) Order::query()->active()
-                        ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
-                        ->sum('total'),
+                    RevenueQuery::total([$weekStart, Date::now()->endOfWeek()]),
                 ))
                     ->icon(Heroicon::OutlinedCurrencyDollar)
                     ->color('success'),

@@ -3,7 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Expense;
-use App\Models\Order;
+use App\Queries\RevenueQuery;
 use App\ValueObjects\DateRange;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
@@ -26,12 +26,7 @@ class WeeklyRevenueChart extends ChartWidget
         $range = DateRange::thisWeek();
         $period = CarbonPeriod::create($range->start, $range->end);
 
-        $revenueByDay = Order::query()
-            ->active()
-            ->whereBetween('delivery_date', $range->toArray())
-            ->selectRaw('DATE(delivery_date) as day, SUM(total) as total')
-            ->groupBy('day')
-            ->pluck('total', 'day');
+        $revenueByDay = collect(RevenueQuery::dailyBreakdown($range));
 
         $expensesByDay = Expense::query()
             ->whereBetween('date', $range->toArray())
