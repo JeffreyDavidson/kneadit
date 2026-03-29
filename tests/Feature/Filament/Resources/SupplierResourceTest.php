@@ -31,7 +31,7 @@ test('can create a supplier via slide-over', function () {
             'email' => 'john@flourmill.com',
             'phone' => '555-0100',
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Supplier::class, [
         'name' => 'Flour Mill Co.',
@@ -45,7 +45,7 @@ test('can edit a supplier via table action', function () {
         ->callTableAction('edit', $supplier, data: [
             'name' => 'Updated Supplier',
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($supplier->fresh()->name)->toBe('Updated Supplier');
 });
@@ -65,7 +65,7 @@ test('create supplier validates name is required', function () {
         ->callAction(CreateAction::class, data: [
             'name' => null,
         ])
-        ->assertHasActionErrors(['name' => 'required']);
+        ->assertHasFormErrors(['name' => 'required']);
 });
 
 test('can render supplier table columns', function (string $column) {

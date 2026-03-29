@@ -8,6 +8,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Financial\FinancialCalculator;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
@@ -32,7 +33,7 @@ class FinanceSummary extends Page
         return SubscriptionTier::Growth;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
     protected static ?string $navigationLabel = 'Finance Summary';
 
@@ -98,7 +99,7 @@ class FinanceSummary extends Page
         return [
             Action::make('export')
                 ->label('Export PDF')
-                ->icon('heroicon-o-document-arrow-down')
+                ->icon(Heroicon::OutlinedDocumentArrowDown)
                 ->action(fn () => $this->dispatch('export-finance-summary')),
         ];
     }

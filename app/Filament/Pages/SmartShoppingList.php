@@ -10,6 +10,7 @@ use App\Services\Inventory\ShoppingListService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -35,7 +36,7 @@ class SmartShoppingList extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingCart;
 
     protected static ?string $navigationLabel = 'Shopping List';
 
@@ -116,7 +117,7 @@ class SmartShoppingList extends Page
         return [
             Action::make('refresh')
                 ->label('Refresh')
-                ->icon('heroicon-o-arrow-path')
+                ->icon(Heroicon::OutlinedArrowPath)
                 ->action(fn () => $this->generateList()),
         ];
     }

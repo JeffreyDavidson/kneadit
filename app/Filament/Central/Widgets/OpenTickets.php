@@ -4,11 +4,14 @@ namespace App\Filament\Central\Widgets;
 
 use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class OpenTickets extends StatsOverviewWidget
 {
+    protected ?string $pollingInterval = null;
+
     protected static ?int $sort = 1;
 
     protected function getStats(): array
@@ -19,8 +22,8 @@ class OpenTickets extends StatsOverviewWidget
             Stat::make('Open Tickets', $count)
                 ->description('Awaiting response')
                 ->color('danger')
-                ->icon('heroicon-o-inbox')
-                ->url(rescue(fn () => route('filament.central.resources.support-tickets.index', ['tableFilters[status][value]' => 'open']), report: false)),
+                ->icon(Heroicon::OutlinedInbox)
+                ->url(rescue(fn () => route('filament.central.resources.support-tickets.index', ['filters[status][value]' => 'open']), report: false)),
         ];
     }
 }

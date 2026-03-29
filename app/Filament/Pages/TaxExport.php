@@ -20,6 +20,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -46,7 +47,7 @@ class TaxExport extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-arrow-down';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentArrowDown;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 
@@ -98,7 +99,7 @@ class TaxExport extends Page
         return [
             Section::make('Tax Season Export')
                 ->description('Generate CSV exports of your financial data for tax preparation.')
-                ->icon('heroicon-o-document-arrow-down')
+                ->icon(Heroicon::OutlinedDocumentArrowDown)
                 ->schema([
                     Select::make('year')
                         ->label('Tax Year')
@@ -123,7 +124,7 @@ class TaxExport extends Page
                     Actions::make([
                         Action::make('exportCsv')
                             ->label('Download CSV Export')
-                            ->icon('heroicon-o-arrow-down-tray')
+                            ->icon(Heroicon::OutlinedArrowDownTray)
                             ->color('primary')
                             ->action(function () {
                                 $data = $this->form->getState();

@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\HtmlString;
@@ -38,7 +39,7 @@ class QrCodeGenerator extends Page
         return SubscriptionTier::Growth;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-qr-code';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedQrCode;
 
     protected static ?string $navigationLabel = 'QR Code';
 

@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Enums\UserRole;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 
 class UpgradePlan extends Page
@@ -19,7 +20,7 @@ class UpgradePlan extends Page
         return true;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-circle';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpCircle;
 
     protected static ?string $navigationLabel = 'Upgrade Plan';
 

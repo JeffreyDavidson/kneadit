@@ -30,7 +30,7 @@ test('can create a blocked date via slide-over', function () {
             'reason' => 'Holiday',
             'is_all_day' => true,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect(BlockedDate::query()->count())->toBe(1)
         ->and(BlockedDate::query()->first()->reason)->toBe('Holiday');
@@ -45,7 +45,7 @@ test('can edit a blocked date via table action', function () {
             'reason' => 'Vacation',
             'is_all_day' => true,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($blockedDate->fresh()->reason)->toBe('Vacation');
 });
@@ -56,7 +56,7 @@ test('create blocked date validates date is required', function () {
             'date' => null,
             'is_all_day' => true,
         ])
-        ->assertHasActionErrors(['date' => 'required']);
+        ->assertHasFormErrors(['date' => 'required']);
 });
 
 test('can render blocked date table columns', function (string $column) {

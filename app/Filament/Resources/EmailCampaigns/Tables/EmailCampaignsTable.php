@@ -9,6 +9,7 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -51,7 +52,7 @@ class EmailCampaignsTable
             ->actions([
                 Action::make('send')
                     ->label('Send Campaign')
-                    ->icon('heroicon-o-paper-airplane')
+                    ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Send Campaign')
@@ -62,7 +63,7 @@ class EmailCampaignsTable
                     ->slideOver()
                     ->modalWidth('md'),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

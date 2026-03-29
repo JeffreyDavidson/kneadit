@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Models\OrderItem;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,7 @@ class BakingSheet extends Page
         return true;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-printer';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedPrinter;
 
     protected static ?string $navigationLabel = 'Baking Sheet';
 
@@ -78,7 +79,7 @@ class BakingSheet extends Page
         return [
             Action::make('print')
                 ->label('Print')
-                ->icon('heroicon-o-printer')
+                ->icon(Heroicon::OutlinedPrinter)
                 ->action(fn () => $this->dispatch('print-page')),
         ];
     }

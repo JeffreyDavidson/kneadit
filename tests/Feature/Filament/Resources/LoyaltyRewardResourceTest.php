@@ -32,7 +32,7 @@ test('can create a loyalty reward via slide-over', function () {
             'reward_type' => RewardType::PercentageDiscount->value,
             'reward_value' => 15,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(LoyaltyReward::class, [
         'name' => 'Free Cookie',
@@ -50,7 +50,7 @@ test('can edit a loyalty reward via table action', function () {
             'reward_type' => $reward->reward_type->value,
             'reward_value' => $reward->reward_value,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($reward->fresh()->name)->toBe('Updated Reward');
 });
@@ -64,7 +64,7 @@ test('create loyalty reward validates required fields', function (array $data, a
             'reward_value' => 10,
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'name is required' => [['name' => null], ['name' => 'required']],
     'points required is required' => [['points_required' => null], ['points_required' => 'required']],

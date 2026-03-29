@@ -43,7 +43,7 @@ test('can create a customer photo via header action', function () {
             'is_approved' => true,
             'is_featured' => false,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect(CustomerPhoto::query()->first())
         ->customer_name->toBe('Alice Baker')
@@ -59,7 +59,7 @@ test('create customer photo validates required fields', function (array $data, a
             'customer_email' => 'alice@example.com',
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'name is required' => [['customer_name' => null], ['customer_name' => 'required']],
     'email is required' => [['customer_email' => null], ['customer_email' => 'required']],
@@ -78,7 +78,7 @@ test('can edit a customer photo via table action', function () {
             'is_approved' => true,
             'is_featured' => true,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($photo->fresh())
         ->customer_name->toBe('Updated Name')

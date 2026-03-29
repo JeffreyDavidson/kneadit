@@ -57,7 +57,7 @@ test('can create a waitlist entry via slide-over', function () {
             'requested_date' => now()->addDays(5)->format('Y-m-d'),
             'status' => App\Enums\WaitlistStatus::Waiting->value,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(WaitlistEntry::class, [
         'customer_name' => 'Jane Doe',
@@ -73,7 +73,7 @@ test('create waitlist entry validates required fields', function (array $data, a
             'status' => App\Enums\WaitlistStatus::Waiting->value,
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'customer name is required' => [['customer_name' => null], ['customer_name' => 'required']],
     'customer email is required' => [['customer_email' => null], ['customer_email' => 'required']],

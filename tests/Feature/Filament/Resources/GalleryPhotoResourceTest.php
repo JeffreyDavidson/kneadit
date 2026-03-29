@@ -38,7 +38,7 @@ test('can edit a gallery photo via table action', function () {
             'image_path' => [$photo->image_path],
             'sort_order' => $photo->sort_order,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($photo->fresh()->title)->toBe('Updated Photo Title');
 });
@@ -62,5 +62,5 @@ test('edit gallery photo validates title is required', function () {
             'image_path' => [$photo->image_path],
             'sort_order' => $photo->sort_order,
         ])
-        ->assertHasTableActionErrors(['title' => 'required']);
+        ->assertHasFormErrors(['title' => 'required']);
 });

@@ -8,6 +8,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -21,7 +22,7 @@ class CapacityLimitsTable
             ->heading('Capacity Limits')
             ->emptyStateHeading('No capacity limits set')
             ->emptyStateDescription('All days are open for orders.')
-            ->emptyStateIcon('heroicon-o-clock')
+            ->emptyStateIcon(Heroicon::OutlinedClock)
             ->columns([
                 TextColumn::make('day_label')
                     ->label('Day / Date')
@@ -46,8 +47,8 @@ class CapacityLimitsTable
                 IconColumn::make('is_blocked')
                     ->label('Blocked')
                     ->boolean()
-                    ->trueIcon('heroicon-o-x-circle')
-                    ->falseIcon('heroicon-o-check-circle')
+                    ->trueIcon(Heroicon::OutlinedXCircle)
+                    ->falseIcon(Heroicon::OutlinedCheckCircle)
                     ->trueColor('danger')
                     ->falseColor('success'),
 

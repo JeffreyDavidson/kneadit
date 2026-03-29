@@ -27,7 +27,7 @@ test('can create a category via slide-over', function () {
             'name' => 'Pastries',
             'slug' => 'pastries',
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Category::class, [
         'name' => 'Pastries',
@@ -41,7 +41,7 @@ test('create category validates name is required', function () {
             'name' => null,
             'slug' => 'test',
         ])
-        ->assertHasActionErrors(['name' => 'required']);
+        ->assertHasFormErrors(['name' => 'required']);
 });
 
 test('can edit a category via table action', function () {
@@ -52,7 +52,7 @@ test('can edit a category via table action', function () {
             'name' => 'Updated Category',
             'slug' => $category->slug,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($category->fresh()->name)->toBe('Updated Category');
 });

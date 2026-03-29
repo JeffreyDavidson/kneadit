@@ -11,6 +11,7 @@ use App\Filament\Resources\GiftCards\Tables\GiftCardsTable;
 use App\Models\GiftCard;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
@@ -22,7 +23,7 @@ class GiftCardResource extends Resource
 
     protected static ?string $model = GiftCard::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-gift-top';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedGiftTop;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 

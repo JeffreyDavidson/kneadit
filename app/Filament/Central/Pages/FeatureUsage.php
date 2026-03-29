@@ -6,6 +6,7 @@ use App\Models\FeatureUsageLog;
 use BackedEnum;
 use Carbon\Carbon;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
@@ -13,7 +14,7 @@ use UnitEnum;
 
 class FeatureUsage extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cursor-arrow-rays';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCursorArrowRays;
 
     protected static string|UnitEnum|null $navigationGroup = 'Insights';
 

@@ -9,6 +9,7 @@ use App\Models\CateringInquiry;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -68,7 +69,7 @@ class CateringInquiriesTable
                 SelectFilter::make('event_type')
                     ->options(CateringEventType::class),
                 Filter::make('event_date')
-                    ->form([
+                    ->schema([
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
@@ -81,7 +82,7 @@ class CateringInquiriesTable
             ->recordActions([
                 Action::make('send_quote')
                     ->label('Send Quote')
-                    ->icon('heroicon-o-paper-airplane')
+                    ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('info')
                     ->requiresConfirmation()
                     ->modalHeading('Send Quote to Customer')
@@ -93,7 +94,7 @@ class CateringInquiriesTable
                     }),
                 Action::make('confirm')
                     ->label('Confirm')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
                     ->requiresConfirmation()
                     ->visible(fn (CateringInquiry $record) => $record->status === CateringInquiryStatus::Quoted)

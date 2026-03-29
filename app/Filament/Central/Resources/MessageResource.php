@@ -10,6 +10,7 @@ use App\Models\Tenant;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -60,7 +61,7 @@ class MessageResource extends Resource
                 TextColumn::make('subject')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold'),
+                    ->weight(FontWeight::Bold),
                 TextColumn::make('body')
                     ->label('Preview')
                     ->limit(60)
@@ -68,8 +69,8 @@ class MessageResource extends Resource
                 IconColumn::make('is_read')
                     ->label('Read')
                     ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-envelope')
+                    ->trueIcon(Heroicon::OutlinedCheckCircle)
+                    ->falseIcon(Heroicon::OutlinedEnvelope)
                     ->trueColor('success')
                     ->falseColor('warning'),
                 TextColumn::make('sender_type')

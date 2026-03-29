@@ -10,6 +10,7 @@ use App\Filament\Resources\BlockedDates\Tables\BlockedDatesTable;
 use App\Models\BlockedDate;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Laravel\Pennant\Feature;
 
@@ -19,7 +20,7 @@ class BlockedDateResource extends Resource
 
     protected static ?string $model = BlockedDate::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendar;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 

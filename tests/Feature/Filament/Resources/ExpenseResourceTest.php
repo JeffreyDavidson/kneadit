@@ -33,7 +33,7 @@ test('can create an expense via slide-over', function () {
             'date' => '2026-03-26',
             'business_percentage' => 100,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Expense::class, [
         'description' => 'Flour delivery',
@@ -58,7 +58,7 @@ test('can edit an expense via table action', function () {
             'date' => $expense->date->format('Y-m-d'),
             'business_percentage' => 100,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($expense->fresh()->description)->toBe('Updated expense');
 });
@@ -73,7 +73,7 @@ test('create expense validates required fields', function (array $data, array $e
             'business_percentage' => 100,
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'description is required' => [['description' => null], ['description' => 'required']],
     'amount is required' => [['amount' => null], ['amount' => 'required']],

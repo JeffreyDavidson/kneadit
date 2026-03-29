@@ -31,7 +31,7 @@ test('can create a holiday via slide-over', function () {
             'order_deadline' => '2026-12-20',
             'is_closed' => true,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Holiday::class, [
         'name' => 'Christmas',
@@ -47,7 +47,7 @@ test('can edit a holiday via table action', function () {
             'date' => $holiday->date->format('Y-m-d'),
             'order_deadline' => $holiday->order_deadline->format('Y-m-d'),
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($holiday->fresh()->name)->toBe('Updated Holiday');
 });
@@ -67,7 +67,7 @@ test('create holiday validates required fields', function (array $data, array $e
             'order_deadline' => '2026-12-20',
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'name is required' => [['name' => null], ['name' => 'required']],
     'date is required' => [['date' => null], ['date' => 'required']],

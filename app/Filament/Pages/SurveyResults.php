@@ -4,11 +4,12 @@ namespace App\Filament\Pages;
 
 use App\Models\Survey;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SurveyResults extends Page
 {
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 

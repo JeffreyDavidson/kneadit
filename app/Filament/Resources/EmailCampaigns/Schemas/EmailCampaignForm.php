@@ -6,6 +6,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class EmailCampaignForm
@@ -27,7 +28,7 @@ class EmailCampaignForm
                             ])
                             ->default('custom')
                             ->live()
-                            ->afterStateUpdated(function (string $state, callable $set) {
+                            ->afterStateUpdated(function (string $state, Set $set) {
                                 $templates = self::getTemplates();
 
                                 if (isset($templates[$state])) {

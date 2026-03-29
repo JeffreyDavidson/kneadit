@@ -11,6 +11,7 @@ use App\Filament\Resources\SocialPosts\Tables\SocialPostsTable;
 use App\Models\SocialPost;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -22,7 +23,7 @@ class SocialPostResource extends Resource
 
     protected static ?string $model = SocialPost::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-share';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedShare;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 

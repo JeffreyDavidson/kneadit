@@ -76,7 +76,7 @@ class ScheduledCheckinResource extends Resource
                 Actions\EditAction::make()
                     ->slideOver(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 Actions\DeleteBulkAction::make(),
             ]);
     }

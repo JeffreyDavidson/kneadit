@@ -5,6 +5,7 @@ namespace App\Filament\Central\Resources\TenantResource\Pages;
 use App\Filament\Central\Resources\TenantResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 
@@ -19,13 +20,13 @@ class ViewTenant extends ViewRecord
         return [
             Actions\Action::make('impersonate')
                 ->label('Login as Baker')
-                ->icon('heroicon-o-finger-print')
+                ->icon(Heroicon::OutlinedFingerPrint)
                 ->color('warning')
                 ->url(fn () => URL::signedRoute('tenant.impersonate', ['tenant' => $this->record->id]))
                 ->openUrlInNewTab(),
             Actions\Action::make('visit')
                 ->label('Visit Storefront')
-                ->icon('heroicon-o-arrow-top-right-on-square')
+                ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                 ->color('info')
                 ->url(fn () => 'https://' . $this->record->id . '.getkneadit.app')
                 ->openUrlInNewTab(),

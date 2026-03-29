@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
@@ -43,7 +44,7 @@ class ProductImportExport extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrow-up-tray';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpTray;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
@@ -94,7 +95,7 @@ class ProductImportExport extends Page
                     Actions::make([
                         Action::make('exportCsv')
                             ->label('Export Products CSV')
-                            ->icon('heroicon-o-arrow-down-tray')
+                            ->icon(Heroicon::OutlinedArrowDownTray)
                             ->color('success')
                             ->action(function () {
                                 $csv = resolve(ProductCsvExporter::class)->export();
@@ -106,7 +107,7 @@ class ProductImportExport extends Page
                             }),
                         Action::make('downloadTemplate')
                             ->label('Download CSV Template')
-                            ->icon('heroicon-o-document-arrow-down')
+                            ->icon(Heroicon::OutlinedDocumentArrowDown)
                             ->color('gray')
                             ->action(function () {
                                 $csv = resolve(ProductCsvExporter::class)->getTemplateContent();
@@ -130,7 +131,7 @@ class ProductImportExport extends Page
                     Actions::make([
                         Action::make('previewImport')
                             ->label('Preview Import')
-                            ->icon('heroicon-o-eye')
+                            ->icon(Heroicon::OutlinedEye)
                             ->color('warning')
                             ->action(function () {
                                 $filePath = $this->data['csv_file'] ?? null;
@@ -174,7 +175,7 @@ class ProductImportExport extends Page
                             }),
                         Action::make('importCsv')
                             ->label('Import Products')
-                            ->icon('heroicon-o-arrow-up-tray')
+                            ->icon(Heroicon::OutlinedArrowUpTray)
                             ->color('primary')
                             ->requiresConfirmation()
                             ->modalHeading('Confirm Import')

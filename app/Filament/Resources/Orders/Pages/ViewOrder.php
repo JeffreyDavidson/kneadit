@@ -18,6 +18,8 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Icons\Heroicon;
 
 class ViewOrder extends ViewRecord
 {
@@ -98,7 +100,7 @@ class ViewOrder extends ViewRecord
                                     ->money('USD'),
                                 TextEntry::make('total')
                                     ->money('USD')
-                                    ->weight('bold'),
+                                    ->weight(FontWeight::Bold),
                             ]),
                     ]),
 
@@ -118,7 +120,7 @@ class ViewOrder extends ViewRecord
                     ]),
 
                 Section::make('Messages')
-                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->icon(Heroicon::OutlinedChatBubbleLeftRight)
                     ->schema([
                         ViewEntry::make('messages_view')
                             ->view('filament.resources.orders.view-order-messages')
@@ -137,9 +139,9 @@ class ViewOrder extends ViewRecord
         return [
             Action::make('changeStatus')
                 ->label('Change Status')
-                ->icon('heroicon-o-arrow-path')
+                ->icon(Heroicon::OutlinedArrowPath)
                 ->visible(fn (): bool => ! empty($options))
-                ->form([
+                ->schema([
                     Select::make('status')
                         ->label('New Status')
                         ->options($options)
@@ -156,7 +158,7 @@ class ViewOrder extends ViewRecord
 
             Action::make('sendPayPalInvoice')
                 ->label('Send PayPal Invoice')
-                ->icon('heroicon-o-paper-airplane')
+                ->icon(Heroicon::OutlinedPaperAirplane)
                 ->color('info')
                 ->visible(fn (): bool => ! $this->record->paypal_invoice_id)
                 ->action(function (): void {
@@ -166,15 +168,15 @@ class ViewOrder extends ViewRecord
 
             Action::make('printInvoice')
                 ->label('Print Invoice')
-                ->icon('heroicon-o-printer')
+                ->icon(Heroicon::OutlinedPrinter)
                 ->url(fn (): string => route('admin.orders.invoice', $this->record))
                 ->openUrlInNewTab(),
 
             Action::make('sendMessage')
                 ->label('Send Message')
-                ->icon('heroicon-o-chat-bubble-left-right')
+                ->icon(Heroicon::OutlinedChatBubbleLeftRight)
                 ->color('success')
-                ->form([
+                ->schema([
                     Textarea::make('message')
                         ->label('Message to Customer')
                         ->required()
@@ -202,8 +204,8 @@ class ViewOrder extends ViewRecord
 
             Action::make('addNote')
                 ->label('Add Note')
-                ->icon('heroicon-o-chat-bubble-left-ellipsis')
-                ->form([
+                ->icon(Heroicon::OutlinedChatBubbleLeftEllipsis)
+                ->schema([
                     Textarea::make('note')
                         ->label('Note')
                         ->required()

@@ -49,7 +49,7 @@ class QuickOrder extends Page
         return true;
     }
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-plus-circle';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPlusCircle;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 
@@ -144,7 +144,7 @@ class QuickOrder extends Page
                 })
                 ->schema([
                     Repeater::make('order_items')
-                        ->label('')
+                        ->hiddenLabel()
                         ->schema([
                             Grid::make(4)->schema([
                                 Select::make('product_id')

@@ -11,6 +11,7 @@ use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
@@ -35,7 +36,7 @@ class LoyaltyDashboard extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-trophy';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrophy;
 
     protected static ?string $navigationLabel = 'Loyalty Program';
 

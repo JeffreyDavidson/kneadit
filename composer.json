@@ -29,6 +29,8 @@
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
+        "laraveldaily/filacheck": "^1.1",
+        "laraveldaily/filacheck-pro": "^1.1",
         "mockery/mockery": "^1.6",
         "mrpunyapal/pest-annotator-plugin": "^0.0.4",
         "mrpunyapal/peststan": "^0.1.5",
@@ -79,6 +81,8 @@
         "test:annotate-methods": "herd coverage vendor/bin/pest --coverage --annotate-methods -d memory_limit=1G",
         "lint": "vendor/bin/pint --dirty --format agent",
         "analyse": "vendor/bin/phpstan analyse --no-progress --memory-limit=512M",
+        "filacheck": "vendor/bin/filacheck",
+        "filacheck:fix": "vendor/bin/filacheck --fix",
         "rector": "vendor/bin/rector process --dry-run",
         "rector:fix": "vendor/bin/rector process",
         "check": [
@@ -122,5 +126,10 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [{
+        "name": "filacheck",
+        "type": "composer",
+        "url": "https://satis.filamentexamples.com"
+    }]
 }

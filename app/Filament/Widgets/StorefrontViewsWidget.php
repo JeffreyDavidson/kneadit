@@ -3,12 +3,15 @@
 namespace App\Filament\Widgets;
 
 use App\Models\PageView;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Number;
 
 class StorefrontViewsWidget extends BaseWidget
 {
+    protected ?string $pollingInterval = null;
+
     protected static ?int $sort = 2;
 
     protected int|string|array $columnSpan = 1;
@@ -28,7 +31,7 @@ class StorefrontViewsWidget extends BaseWidget
             : ($today > 0 ? 100 : 0);
 
         $description = $trend >= 0 ? "{$trend}% increase vs yesterday" : abs($trend) . '% decrease vs yesterday';
-        $icon = $trend >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down';
+        $icon = $trend >= 0 ? Heroicon::ArrowTrendingUp : Heroicon::ArrowTrendingDown;
         $color = $trend >= 0 ? 'success' : 'danger';
 
         return [

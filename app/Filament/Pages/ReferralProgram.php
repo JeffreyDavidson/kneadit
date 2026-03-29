@@ -9,11 +9,12 @@ use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 
 class ReferralProgram extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-plus';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserPlus;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 

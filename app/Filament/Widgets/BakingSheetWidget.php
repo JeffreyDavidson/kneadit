@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\OrderItem;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -55,7 +56,7 @@ class BakingSheetWidget extends BaseWidget
             ])
             ->defaultSort('total_quantity', 'desc')
             ->emptyStateHeading('Nothing to bake!')
-            ->emptyStateIcon('heroicon-o-cake')
+            ->emptyStateIcon(Heroicon::OutlinedCake)
             ->paginated(false);
     }
 }

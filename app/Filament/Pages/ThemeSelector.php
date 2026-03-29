@@ -9,6 +9,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 
@@ -32,7 +33,7 @@ class ThemeSelector extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-paint-brush';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPaintBrush;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 

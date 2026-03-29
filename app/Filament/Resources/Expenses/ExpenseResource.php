@@ -10,6 +10,7 @@ use App\Filament\Resources\Expenses\Tables\ExpensesTable;
 use App\Models\Expense;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Laravel\Pennant\Feature;
 
@@ -19,7 +20,7 @@ class ExpenseResource extends Resource
 
     protected static ?string $model = Expense::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-down';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowTrendingDown;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 

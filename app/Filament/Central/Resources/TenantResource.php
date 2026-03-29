@@ -21,6 +21,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -70,7 +71,7 @@ class TenantResource extends Resource
                             TextInput::make('id')
                                 ->label('Subdomain / ID')
                                 ->required()
-                                ->unique(ignoreRecord: true)
+                                ->unique()
                                 ->alphaDash()
                                 ->placeholder('sweet-bakes')
                                 ->helperText('This becomes their subdomain: sweet-bakes.getkneadit.app')
@@ -216,55 +217,55 @@ class TenantResource extends Resource
                     EditAction::make()->slideOver(),
                     Actions\Action::make('impersonate')
                         ->label('Login as Baker')
-                        ->icon('heroicon-o-finger-print')
+                        ->icon(Heroicon::OutlinedFingerPrint)
                         ->color('warning')
                         ->url(fn (Tenant $record) => URL::signedRoute('tenant.impersonate', ['tenant' => $record->id]))
                         ->openUrlInNewTab(),
                     Actions\Action::make('visit')
                         ->label('Visit Storefront')
-                        ->icon('heroicon-o-arrow-top-right-on-square')
+                        ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                         ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
                         ->openUrlInNewTab(),
                 ]),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
                 BulkAction::make('activate')
                     ->label('Activate')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon(Heroicon::OutlinedCheckCircle)
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['is_active' => true]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('deactivate')
                     ->label('Deactivate')
-                    ->icon('heroicon-o-x-circle')
+                    ->icon(Heroicon::OutlinedXCircle)
                     ->color('danger')
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['is_active' => false]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('enable_storefront')
                     ->label('Enable Storefront')
-                    ->icon('heroicon-o-building-storefront')
+                    ->icon(Heroicon::OutlinedBuildingStorefront)
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['storefront_enabled' => true]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('disable_storefront')
                     ->label('Disable Storefront')
-                    ->icon('heroicon-o-building-storefront')
+                    ->icon(Heroicon::OutlinedBuildingStorefront)
                     ->color('danger')
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['storefront_enabled' => false]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('extend_trial')
                     ->label('Extend Trial 30 Days')
-                    ->icon('heroicon-o-clock')
+                    ->icon(Heroicon::OutlinedClock)
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30))]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('change_plan')
                     ->label('Change Plan')
-                    ->icon('heroicon-o-arrow-path')
-                    ->form([
+                    ->icon(Heroicon::OutlinedArrowPath)
+                    ->schema([
                         Select::make('plan')
                             ->label('New Plan')
                             ->options([
@@ -290,7 +291,7 @@ class TenantResource extends Resource
                             TextEntry::make('store_name')
                                 ->label('Bakery Name')
                                 ->size('lg')
-                                ->weight('bold')
+                                ->weight(FontWeight::Bold)
                                 ->placeholder('Not set'),
                             TextEntry::make('id')
                                 ->label('Subdomain URL')

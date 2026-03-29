@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class HolidayForm
 {
@@ -15,7 +16,7 @@ class HolidayForm
     {
         return $schema->columns(1)->components([
             Section::make('Holiday Details')
-                ->icon('heroicon-o-calendar-days')
+                ->icon(Heroicon::OutlinedCalendarDays)
                 ->description('Plan for upcoming holiday orders')
                 ->columns(1)
                 ->columnSpanFull()
@@ -46,7 +47,7 @@ class HolidayForm
                         ->label('Max Orders')
                         ->numeric()
                         ->minValue(1)
-                        ->prefixIcon('heroicon-o-shopping-bag')
+                        ->prefixIcon(Heroicon::OutlinedShoppingBag)
                         ->helperText('Leave blank for no limit'),
 
                     Toggle::make('is_active')

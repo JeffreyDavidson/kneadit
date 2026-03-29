@@ -10,6 +10,7 @@ use App\Filament\Resources\Ingredients\Tables\IngredientsTable;
 use App\Models\Ingredient;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Pennant\Feature;
@@ -20,7 +21,7 @@ class IngredientResource extends Resource
 
     protected static ?string $model = Ingredient::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 

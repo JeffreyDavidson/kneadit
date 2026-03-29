@@ -94,7 +94,7 @@ class EmailCampaignResource extends Resource
                 Actions\EditAction::make()->slideOver(),
                 Actions\Action::make('send_now')
                     ->label('Send Now')
-                    ->icon('heroicon-o-paper-airplane')
+                    ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Send Campaign Now')
@@ -110,9 +110,9 @@ class EmailCampaignResource extends Resource
                     ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent),
                 Actions\Action::make('schedule')
                     ->label('Schedule')
-                    ->icon('heroicon-o-clock')
+                    ->icon(Heroicon::OutlinedClock)
                     ->color('info')
-                    ->form([
+                    ->schema([
                         DateTimePicker::make('scheduled_at')
                             ->label('Schedule At')
                             ->required(),
@@ -125,14 +125,14 @@ class EmailCampaignResource extends Resource
                     })
                     ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent),
                 Actions\Action::make('preview')
-                    ->icon('heroicon-o-eye')
+                    ->icon(Heroicon::OutlinedEye)
                     ->modalHeading(fn (EmailCampaign $record) => 'Preview: ' . $record->subject)
                     ->modalContent(fn (EmailCampaign $record) => view('filament.central.partials.email-preview', ['campaign' => $record]))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close'),
                 Actions\ViewAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 Actions\DeleteBulkAction::make(),
             ]);
     }

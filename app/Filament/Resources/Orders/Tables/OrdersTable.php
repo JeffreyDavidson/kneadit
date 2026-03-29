@@ -13,6 +13,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -79,7 +80,7 @@ class OrdersTable
                     ->options(PaymentStatus::class),
 
                 Filter::make('delivery_date')
-                    ->form([
+                    ->schema([
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
@@ -97,7 +98,7 @@ class OrdersTable
             ])
             ->recordActions([
                 Action::make('confirm')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('warning')
                     ->requiresConfirmation()
                     ->modalHeading('Confirm Order')
@@ -113,7 +114,7 @@ class OrdersTable
 
                 Action::make('start_baking')
                     ->label('Start Baking')
-                    ->icon('heroicon-o-fire')
+                    ->icon(Heroicon::OutlinedFire)
                     ->color('info')
                     ->requiresConfirmation()
                     ->modalHeading('Start Baking')
@@ -129,7 +130,7 @@ class OrdersTable
 
                 Action::make('mark_ready')
                     ->label('Mark Ready')
-                    ->icon('heroicon-o-clock')
+                    ->icon(Heroicon::OutlinedClock)
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Mark Ready')
@@ -145,7 +146,7 @@ class OrdersTable
 
                 Action::make('mark_delivered')
                     ->label('Mark Delivered')
-                    ->icon('heroicon-o-truck')
+                    ->icon(Heroicon::OutlinedTruck)
                     ->color('primary')
                     ->requiresConfirmation()
                     ->modalHeading('Mark Delivered')
@@ -160,7 +161,7 @@ class OrdersTable
                     ->visible(fn (Order $record) => in_array(OrderStatus::Delivered, TransitionOrderStatus::allowedTransitions($record))),
 
                 Action::make('cancel')
-                    ->icon('heroicon-o-x-circle')
+                    ->icon(Heroicon::OutlinedXCircle)
                     ->color('danger')
                     ->requiresConfirmation()
                     ->modalHeading('Cancel Order')
@@ -176,7 +177,7 @@ class OrdersTable
 
                 Action::make('send_paypal_invoice')
                     ->label('Send PayPal Invoice')
-                    ->icon('heroicon-o-credit-card')
+                    ->icon(Heroicon::OutlinedCreditCard)
                     ->color('warning')
                     ->requiresConfirmation()
                     ->modalHeading('Send PayPal Invoice')

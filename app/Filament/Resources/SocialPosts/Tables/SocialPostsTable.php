@@ -10,6 +10,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -71,7 +72,7 @@ class SocialPostsTable
             ])
             ->recordActions([
                 Action::make('schedule')
-                    ->icon('heroicon-o-calendar')
+                    ->icon(Heroicon::OutlinedCalendar)
                     ->color('warning')
                     ->requiresConfirmation()
                     ->modalHeading('Schedule Post')
@@ -87,7 +88,7 @@ class SocialPostsTable
 
                 Action::make('mark_posted')
                     ->label('Mark Posted')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Mark as Posted')
@@ -103,7 +104,7 @@ class SocialPostsTable
 
                 Action::make('revert_to_draft')
                     ->label('Revert to Draft')
-                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->icon(Heroicon::OutlinedArrowUturnLeft)
                     ->color('gray')
                     ->requiresConfirmation()
                     ->modalHeading('Revert to Draft')

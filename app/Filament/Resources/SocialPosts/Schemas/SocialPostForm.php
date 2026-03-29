@@ -16,6 +16,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
@@ -52,7 +53,7 @@ class SocialPostForm
                             ->hintAction(
                                 Action::make('generateCaption')
                                     ->label('Generate Caption')
-                                    ->icon('heroicon-o-sparkles')
+                                    ->icon(Heroicon::OutlinedSparkles)
                                     ->action(function (Get $get, Set $set) {
                                         $productId = $get('product_id');
 
