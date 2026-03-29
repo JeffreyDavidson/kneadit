@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DataTransferObjects\CreateGiftCardData;
 use App\DataTransferObjects\GiftCardRedemptionResult;
 use App\Enums\GiftCardTransactionType;
 use App\Models\GiftCard;
@@ -10,23 +11,22 @@ use Illuminate\Support\Str;
 
 class GiftCardService
 {
-    /** @param array<string, mixed> $data */
-    public function create(array $data): GiftCard
+    public function create(CreateGiftCardData $data): GiftCard
     {
         $card = GiftCard::query()->create([
             'code' => $this->generateCode(),
-            'initial_balance' => $data['initial_balance'],
-            'current_balance' => $data['initial_balance'],
-            'purchaser_name' => $data['purchaser_name'],
-            'purchaser_email' => $data['purchaser_email'],
-            'recipient_name' => $data['recipient_name'] ?? null,
-            'recipient_email' => $data['recipient_email'] ?? null,
-            'message' => $data['message'] ?? null,
-            'expires_at' => $data['expires_at'] ?? null,
+            'initial_balance' => $data->initialBalance,
+            'current_balance' => $data->initialBalance,
+            'purchaser_name' => $data->purchaserName,
+            'purchaser_email' => $data->purchaserEmail,
+            'recipient_name' => $data->recipientName,
+            'recipient_email' => $data->recipientEmail,
+            'message' => $data->message,
+            'expires_at' => $data->expiresAt,
         ]);
 
         $card->transactions()->create([
-            'amount' => $data['initial_balance'],
+            'amount' => $data->initialBalance,
             'type' => GiftCardTransactionType::Purchase,
             'notes' => 'Initial purchase',
             'created_at' => now(),

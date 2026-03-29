@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\CreateGiftCardData;
 use App\Models\GiftCard;
 use App\Services\GiftCardService;
 
@@ -36,11 +37,11 @@ test('gift card can be purchased with valid data', function () {
 
 test('gift card balance check works', function () {
     $service = new GiftCardService;
-    $card = $service->create([
+    $card = $service->create(CreateGiftCardData::fromArray([
         'purchaser_name' => 'John',
         'purchaser_email' => 'john@example.com',
         'initial_balance' => 25.00,
-    ]);
+    ]));
 
     $response = withoutMiddleware(tenantMiddleware())
         ->postJson('/gift-cards/balance', [
@@ -70,11 +71,11 @@ test('gift card code is generated in correct format', function () {
 
 test('gift card redemption deducts balance', function () {
     $service = new GiftCardService;
-    $card = $service->create([
+    $card = $service->create(CreateGiftCardData::fromArray([
         'purchaser_name' => 'John',
         'purchaser_email' => 'john@example.com',
         'initial_balance' => 100.00,
-    ]);
+    ]));
 
     $result = $service->redeem($card->code, 30.00);
 
@@ -83,11 +84,11 @@ test('gift card redemption deducts balance', function () {
 
 test('depleted gift card cannot be redeemed', function () {
     $service = new GiftCardService;
-    $card = $service->create([
+    $card = $service->create(CreateGiftCardData::fromArray([
         'purchaser_name' => 'John',
         'purchaser_email' => 'john@example.com',
         'initial_balance' => 10.00,
-    ]);
+    ]));
 
     $service->redeem($card->code, 10.00);
 
