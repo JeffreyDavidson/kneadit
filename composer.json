@@ -74,6 +74,20 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
+        "test:coverage": "herd coverage vendor/bin/pest --coverage --compact",
+        "test:annotate": "herd coverage vendor/bin/pest --coverage --annotate",
+        "test:annotate-methods": "herd coverage vendor/bin/pest --coverage --annotate-methods",
+        "test:baseline": "herd coverage vendor/bin/pest --coverage --annotate-save-baseline",
+        "test:diff": "herd coverage vendor/bin/pest --coverage --annotate-diff",
+        "lint": "vendor/bin/pint --dirty --format agent",
+        "analyse": "vendor/bin/phpstan analyse --no-progress --memory-limit=512M",
+        "rector": "vendor/bin/rector process --dry-run",
+        "rector:fix": "vendor/bin/rector process",
+        "check": [
+            "@lint",
+            "@analyse",
+            "@test"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
