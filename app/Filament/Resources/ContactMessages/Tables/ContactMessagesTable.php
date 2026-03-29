@@ -9,6 +9,7 @@ use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class ContactMessagesTable
 {
@@ -32,7 +33,7 @@ class ContactMessagesTable
                     ->limit(100)
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
-                        if (strlen($state) <= 100) {
+                        if (Str::length($state) <= 100) {
                             return null;
                         }
 

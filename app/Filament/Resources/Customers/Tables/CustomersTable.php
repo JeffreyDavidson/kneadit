@@ -13,6 +13,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 
 class CustomersTable
 {
@@ -44,7 +45,7 @@ class CustomersTable
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
 
-                        if (strlen($state) <= $column->getCharacterLimit()) {
+                        if (Str::length($state) <= $column->getCharacterLimit()) {
                             return null;
                         }
 
