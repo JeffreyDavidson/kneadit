@@ -6,7 +6,6 @@ use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\ValueObjects\DateRange;
-use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 class SalesReport
@@ -27,7 +26,7 @@ class SalesReport
             ->pluck('count', 'status')
             ->toArray();
 
-        $topProducts = OrderItem::query()->whereHas('order', fn (Builder $q) => $q->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid))
+        $topProducts = OrderItem::query()->whereIn('order_id', Order::query()->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid)->select('id'))
             ->select('product_id', DB::raw('SUM(quantity) as units_sold'), DB::raw('SUM(quantity * unit_price) as revenue'))
             ->groupBy('product_id')
             ->with('product:id,name')
