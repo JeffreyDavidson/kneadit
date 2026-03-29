@@ -207,27 +207,5 @@
 @endsection
 
 @section('styles')
-<style>
-@keyframes confirmationKenBurns {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.06); }
-}
-@keyframes confirmationFadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.confirmation-hero-img {
-    animation: confirmationKenBurns 25s ease-out forwards;
-}
-.confirmation-fade-up {
-    opacity: 0;
-    animation: confirmationFadeUp 0.8s ease-out forwards;
-}
-@media print {
-    nav, footer, button, a[href] { display: none !important; }
-    body { background: white !important; }
-    section { background: white !important; }
-    * { color: #1a1a1a !important; border-color: #ddd !important; }
-}
-</style>
+<link rel="stylesheet" href="{{ asset('css/order-confirmation.css') }}">
 @endsection

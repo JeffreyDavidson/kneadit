@@ -15,26 +15,7 @@
     $content = settingsPageContent('about');
 @endphp
 
-<style>
-    @keyframes aboutFadeUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes aboutKenBurns {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.06); }
-    }
-    .about-fade-1 { animation: aboutFadeUp 0.8s ease-out 0.3s both; }
-    .about-fade-2 { animation: aboutFadeUp 0.8s ease-out 0.5s both; }
-    .about-fade-3 { animation: aboutFadeUp 0.8s ease-out 0.7s both; }
-    .about-hero-img { animation: aboutKenBurns 20s ease-in-out infinite alternate; }
-    .stat-card {
-        transition: all 0.3s ease;
-    }
-    .stat-card:hover {
-        transform: translateY(-4px);
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/about.css') }}">
 
 {{-- Photo-Forward Hero with Dark Overlay --}}
 <section class="relative overflow-hidden" style="min-height: 70vh;">
