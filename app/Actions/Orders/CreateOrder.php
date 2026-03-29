@@ -45,7 +45,7 @@ class CreateOrder
             if ($data->couponId) {
                 $coupon = Coupon::query()->lockForUpdate()->find($data->couponId);
                 if ($coupon && $coupon->isValid()) {
-                    $discountAmount = $coupon->calculateDiscount($calculated['subtotal']);
+                    $discountAmount = $this->couponService->calculateDiscount($coupon, $calculated['subtotal']);
                     $calculated['discount_amount'] = $discountAmount;
                     $calculated['coupon_id'] = $coupon->id;
                     $calculated['total'] = max(0, $calculated['total'] - $discountAmount);
