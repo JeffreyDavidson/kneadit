@@ -7,6 +7,7 @@ use App\Casts\PhoneNumberCast;
 use App\DataTransferObjects\CustomerMetrics;
 use App\Services\Customer\CustomerIntelligence;
 use App\Traits\LogsActivity;
+use App\ValueObjects\Address;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -210,13 +211,24 @@ class Customer extends Model
         );
     }
 
+    /** @return Attribute<Address, never> */
+    protected function addressObject(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => new Address(
+                street: $this->address,
+                city: $this->city,
+                state: $this->state,
+                zip: $this->zip,
+            ),
+        );
+    }
+
     /** @return Attribute<string, never> */
     protected function fullAddress(): Attribute
     {
         return Attribute::make(
-            get: fn () => collect([$this->address, $this->city, $this->state])
-                ->filter()
-                ->implode(', ') . ($this->zip ? " {$this->zip}" : ''),
+            get: fn () => $this->address_object->formatted(),
         );
     }
 }
