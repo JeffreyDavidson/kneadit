@@ -12,7 +12,15 @@ class ProfitAnalysisService
      */
     public function getProductAnalysis(string $sortBy = 'margin_desc'): Collection
     {
-        $products = Product::with(['recipes'])
+        $products = once(fn () => $this->loadProductAnalysis());
+
+        return $this->sortProducts($products, $sortBy);
+    }
+
+    /** @return Collection<int, mixed> */
+    private function loadProductAnalysis(): Collection
+    {
+        return Product::with(['recipes'])
             ->where('is_active', true)
             ->get()
             ->map(function (Product $product) {
@@ -38,7 +46,7 @@ class ProfitAnalysisService
                 ];
             });
 
-        return $this->sortProducts($products, $sortBy);
+        return $products;
     }
 
     public function getProductCost(Product $product): ?float

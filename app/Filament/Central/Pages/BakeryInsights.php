@@ -6,7 +6,9 @@ use App\Actions\Tenants\ExtendTenantTrial;
 use App\Actions\Tenants\SendTenantNudge;
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Tenant;
+use App\Services\Tenant\ChurnAlertService;
 use App\Services\Tenant\TenantHealthService;
+use App\Services\Tenant\TenantUsageService;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -58,7 +60,7 @@ class BakeryInsights extends Page
     /** @return Collection<int, mixed> */
     public function getAlerts(): Collection
     {
-        return $this->service()->getAlerts();
+        return resolve(ChurnAlertService::class)->getAlerts();
     }
 
     public function extendTrial(string $tenantId): void
@@ -114,12 +116,12 @@ class BakeryInsights extends Page
     /** @return Collection<int, mixed> */
     public function getTenantUsageData(): Collection
     {
-        return $this->service()->getTenantUsageData();
+        return resolve(TenantUsageService::class)->getTenantUsageData();
     }
 
     public function getNextPlan(string $currentPlan): ?string
     {
-        return $this->service()->getNextPlan($currentPlan);
+        return resolve(TenantUsageService::class)->getNextPlan($currentPlan);
     }
 
     public function suggestUpgrade(string $tenantId): void
