@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Mail;
 
 class SendOrderStatusEmailListener implements ShouldBeUnique, ShouldQueue
 {
+    public int $timeout = 60;
+
     public int $tries = 3;
 
     /** @var array<int, int> */

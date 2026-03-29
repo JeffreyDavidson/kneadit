@@ -7,14 +7,23 @@ use App\Models\OrderItem;
 use App\Services\WebhookService;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Log;
 
 class DispatchOrderCreatedWebhookListener implements ShouldBeUnique, ShouldQueue
 {
+    public int $timeout = 30;
+
     public int $tries = 3;
 
     /** @var array<int, int> */
     public array $backoff = [10, 60, 300];
+
+    /** @return array<int, object> */
+    public function middleware(): array
+    {
+        return [new RateLimited('webhooks')];
+    }
 
     public function handle(OrderCreated $event): void
     {

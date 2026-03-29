@@ -7,8 +7,10 @@ use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\View\Composers\StorefrontComposer;
 use Filament\Support\Facades\FilamentView;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pennant\Feature;
@@ -32,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::preventLazyLoading(! app()->isProduction());
+
+        RateLimiter::for('webhooks', fn () => Limit::perMinute(30));
 
         View::composer('layouts.storefront', StorefrontComposer::class);
 

@@ -2,9 +2,10 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Contracts\Debug\ShouldntReport;
 use RuntimeException;
 
-class StaffInvitationException extends RuntimeException
+class StaffInvitationException extends RuntimeException implements ShouldntReport
 {
     public function __construct(
         string $message,

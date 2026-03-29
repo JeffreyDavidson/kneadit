@@ -4,9 +4,10 @@ namespace App\Exceptions;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
+use Illuminate\Contracts\Debug\ShouldntReport;
 use RuntimeException;
 
-class InvalidOrderTransitionException extends RuntimeException
+class InvalidOrderTransitionException extends RuntimeException implements ShouldntReport
 {
     public function __construct(
         public readonly Order $order,

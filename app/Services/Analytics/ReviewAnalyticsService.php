@@ -96,26 +96,19 @@ class ReviewAnalyticsService
     /** @return Collection<int, mixed> */
     public function getTopReviewedProducts(): Collection
     {
-        return Product::query()->withCount(['reviews' => function (Builder $query) {
-            $query->where('is_approved', true);
-        }])
-            ->with(['reviews' => function (Builder $query) {
-                $query->where('is_approved', true);
-            }])
+        return Product::query()
+            ->withCount(['reviews' => fn (Builder $q) => $q->where('is_approved', true)])
+            ->withAvg(['reviews' => fn (Builder $q) => $q->where('is_approved', true)], 'rating')
             ->whereHas('reviews', fn (Builder $q) => $q->where('is_approved', true))
             ->orderByDesc('reviews_count')
             ->limit(10)
             ->get()
-            ->map(function (Product $product) {
-                $averageRating = $product->reviews->avg('rating');
-
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'reviews_count' => $product->reviews_count,
-                    'average_rating' => $averageRating ? round($averageRating, 1) : 0,
-                ];
-            });
+            ->map(fn (Product $product) => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'reviews_count' => $product->reviews_count,
+                'average_rating' => $product->reviews_avg_rating ? round((float) $product->reviews_avg_rating, 1) : 0,
+            ]);
     }
 
     /** @return Collection<int, mixed> */
