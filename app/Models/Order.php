@@ -63,6 +63,15 @@ class Order extends Model
 
     use LogsActivity;
 
+    protected $attributes = [
+        'status' => 'pending',
+        'payment_status' => 'unpaid',
+        'payment_method' => 'cash',
+        'delivery_type' => 'pickup',
+        'delivery_fee' => 0,
+        'discount_amount' => 0,
+    ];
+
     public function getRouteKeyName(): string
     {
         return 'order_number';
