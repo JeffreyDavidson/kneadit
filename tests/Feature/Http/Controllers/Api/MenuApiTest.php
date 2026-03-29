@@ -9,8 +9,8 @@ beforeEach(fn () => setUpTenantTest());
 
 test('menu endpoint returns categories with active products', function () {
     $category = Category::factory()->create(['is_active' => true]);
-    Product::factory()->count(2)->create(['category_id' => $category->id, 'is_active' => true]);
-    Product::factory()->create(['category_id' => $category->id, 'is_active' => false]);
+    Product::factory()->recycle($category)->count(2)->create(['is_active' => true]);
+    Product::factory()->recycle($category)->create(['is_active' => false]);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/api/menu');

@@ -16,31 +16,28 @@ beforeEach(fn () => setUpTenantTest());
 test('customer note belongs to customer', function () {
     $customer = Customer::factory()->create();
     $user = User::factory()->create();
-    $note = CustomerNote::factory()->create([
-        'customer_id' => $customer->id,
-        'created_by' => $user->id,
-    ]);
+    $note = CustomerNote::factory()->recycle($customer)->recycle($user)->create();
 
     expect($note->customer->id)->toBe($customer->id);
 });
 
 test('customer profile belongs to customer', function () {
     $customer = Customer::factory()->create();
-    $profile = CustomerProfile::factory()->create(['customer_id' => $customer->id]);
+    $profile = CustomerProfile::factory()->recycle($customer)->create();
 
     expect($profile->customer->id)->toBe($customer->id);
 });
 
 test('stock adjustment belongs to ingredient', function () {
     $ingredient = Ingredient::factory()->create();
-    $adjustment = StockAdjustment::factory()->create(['ingredient_id' => $ingredient->id]);
+    $adjustment = StockAdjustment::factory()->recycle($ingredient)->create();
 
     expect($adjustment->ingredient->id)->toBe($ingredient->id);
 });
 
 test('customer reminder belongs to customer', function () {
     $customer = Customer::factory()->create();
-    $reminder = CustomerReminder::factory()->create(['customer_id' => $customer->id]);
+    $reminder = CustomerReminder::factory()->recycle($customer)->create();
 
     expect($reminder->customer->id)->toBe($customer->id);
 });

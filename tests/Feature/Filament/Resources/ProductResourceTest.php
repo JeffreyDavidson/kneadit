@@ -13,6 +13,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     setUpTenantTest();
     $this->actingAs(User::factory()->owner()->create());
+    $this->category = Category::factory()->create();
 });
 
 test('can render products list page', function () {
@@ -21,7 +22,7 @@ test('can render products list page', function () {
 });
 
 test('can list products in the table', function () {
-    $products = Product::factory()->count(3)->create();
+    $products = Product::factory()->recycle($this->category)->count(3)->create();
 
     Livewire::test(ListProducts::class)
         ->assertCanSeeTableRecords($products);
@@ -38,7 +39,7 @@ test('can search products by name', function () {
 });
 
 test('can render product table columns', function (string $column) {
-    Product::factory()->create();
+    Product::factory()->recycle($this->category)->create();
 
     Livewire::test(ListProducts::class)
         ->assertCanRenderTableColumn($column);
@@ -103,7 +104,7 @@ test('can sort products by name', function () {
 });
 
 test('can edit a product via table action', function () {
-    $product = Product::factory()->create();
+    $product = Product::factory()->recycle($this->category)->create();
 
     Livewire::test(ListProducts::class)
         ->callTableAction('edit', $product, data: [

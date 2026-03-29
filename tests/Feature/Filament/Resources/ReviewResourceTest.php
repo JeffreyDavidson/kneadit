@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\Reviews\Pages\ListReviews;
+use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -14,10 +15,11 @@ beforeEach(function () {
     setUpTenantTest();
     $this->actingAs(User::factory()->owner()->create());
     Feature::define('growth-features', fn () => true);
+    $this->product = Product::factory()->create();
 });
 
 test('can list reviews in the table', function () {
-    $reviews = Review::factory()->count(3)->create();
+    $reviews = Review::factory()->recycle($this->product)->count(3)->create();
 
     Livewire::test(ListReviews::class)
         ->assertCanSeeTableRecords($reviews);
@@ -41,14 +43,14 @@ test('can create a review via slide-over', function () {
 });
 
 test('can render review table columns', function (string $column) {
-    Review::factory()->create();
+    Review::factory()->recycle($this->product)->create();
 
     Livewire::test(ListReviews::class)
         ->assertCanRenderTableColumn($column);
 })->with(['customer_name', 'product.name', 'rating', 'is_approved', 'is_featured']);
 
 test('can edit a review via table action', function () {
-    $review = Review::factory()->create();
+    $review = Review::factory()->recycle($this->product)->create();
 
     Livewire::test(ListReviews::class)
         ->callTableAction('edit', $review, data: [
@@ -64,7 +66,7 @@ test('can edit a review via table action', function () {
 
 test('can filter reviews by approval status', function () {
     $approved = Review::factory()->approved()->create();
-    $pending = Review::factory()->create();
+    $pending = Review::factory()->recycle($this->product)->create();
 
     Livewire::test(ListReviews::class)
         ->filterTable('is_approved', 1)

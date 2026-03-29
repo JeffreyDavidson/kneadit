@@ -36,7 +36,7 @@ test('gift card can be created with correct balance', function () {
         'message' => 'Happy birthday!',
     ]);
 
-    $this->assertDatabaseHas('gift_cards', ['id' => $card->id]);
+    $this->assertModelExists($card);
     expect($card->current_balance)->toBe('50.00');
     expect($card->initial_balance)->toBe('50.00');
 });
