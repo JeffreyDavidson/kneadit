@@ -2,13 +2,15 @@
 
 namespace App\Enums;
 
-enum SocialPostStatus: string
+use Filament\Support\Contracts\HasLabel;
+
+enum SocialPostStatus: string implements HasLabel
 {
     case Draft = 'draft';
     case Scheduled = 'scheduled';
     case Posted = 'posted';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return ucfirst($this->value);
     }

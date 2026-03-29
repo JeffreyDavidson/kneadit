@@ -2,13 +2,15 @@
 
 namespace App\Enums;
 
-enum SocialPlatform: string
+use Filament\Support\Contracts\HasLabel;
+
+enum SocialPlatform: string implements HasLabel
 {
     case Instagram = 'instagram';
     case Facebook = 'facebook';
     case TikTok = 'tiktok';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return ucfirst($this->value);
     }

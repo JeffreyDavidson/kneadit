@@ -57,7 +57,7 @@
                 <div class="section-title">Order Details</div>
                 <div class="info-item">
                     <span class="info-label">Status:</span>
-                    <span class="status-badge status-{{ $order->status->value }}">{{ $order->status->label() }}</span>
+                    <span class="status-badge status-{{ $order->status->value }}">{{ $order->status->getLabel() }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Order Date:</span>

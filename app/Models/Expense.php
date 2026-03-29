@@ -61,7 +61,7 @@ class Expense extends Model
     protected function categoryLabel(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->category->label(),
+            get: fn () => $this->category->getLabel(),
         );
     }
 }

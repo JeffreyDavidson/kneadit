@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum ExpenseCategory: string
+use Filament\Support\Contracts\HasLabel;
+
+enum ExpenseCategory: string implements HasLabel
 {
     case Supplies = 'supplies';
     case Ingredients = 'ingredients';
@@ -15,7 +17,7 @@ enum ExpenseCategory: string
     case Equipment = 'equipment';
     case Other = 'other';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Supplies => 'Supplies',

@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum OrderStatus: string
+use Filament\Support\Contracts\HasLabel;
+
+enum OrderStatus: string implements HasLabel
 {
     case Pending = 'pending';
     case Confirmed = 'confirmed';
@@ -11,7 +13,7 @@ enum OrderStatus: string
     case Delivered = 'delivered';
     case Cancelled = 'cancelled';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return ucfirst($this->value);
     }

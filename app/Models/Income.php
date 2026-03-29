@@ -51,7 +51,7 @@ class Income extends Model
     protected function sourceLabel(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->source->label(),
+            get: fn () => $this->source->getLabel(),
         );
     }
 }

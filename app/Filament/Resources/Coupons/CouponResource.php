@@ -71,7 +71,7 @@ class CouponResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Type' => $record->type->label(),
+            'Type' => $record->type->getLabel(),
             'Value' => $record->type === CouponType::Percentage ? $record->value . '%' : Number::currency($record->value),
             'Active' => $record->is_active ? 'Yes' : 'No',
         ];

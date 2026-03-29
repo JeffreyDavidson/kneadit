@@ -140,7 +140,7 @@
                     <div>
                         <span class="block text-xs uppercase tracking-wider font-medium mb-1" style="color: var(--warm-500);">Status</span>
                         <span class="inline-block px-4 py-1.5 rounded-full text-sm font-semibold" style="background: rgba(212,146,12,0.15); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.3);">
-                            {{ $order->status->label() }}
+                            {{ $order->status->getLabel() }}
                         </span>
                     </div>
                 </div>

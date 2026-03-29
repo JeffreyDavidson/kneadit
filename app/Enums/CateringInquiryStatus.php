@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum CateringInquiryStatus: string
+use Filament\Support\Contracts\HasLabel;
+
+enum CateringInquiryStatus: string implements HasLabel
 {
     case Inquiry = 'inquiry';
     case Quoted = 'quoted';
@@ -10,7 +12,7 @@ enum CateringInquiryStatus: string
     case Completed = 'completed';
     case Cancelled = 'cancelled';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Inquiry => 'New Inquiry',

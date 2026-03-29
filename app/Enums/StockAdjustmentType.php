@@ -2,14 +2,16 @@
 
 namespace App\Enums;
 
-enum StockAdjustmentType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum StockAdjustmentType: string implements HasLabel
 {
     case Purchase = 'purchase';
     case Usage = 'usage';
     case Adjustment = 'adjustment';
     case Waste = 'waste';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return ucfirst($this->value);
     }

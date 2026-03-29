@@ -2,13 +2,15 @@
 
 namespace App\Enums;
 
-enum SubscriptionTier: string
+use Filament\Support\Contracts\HasLabel;
+
+enum SubscriptionTier: string implements HasLabel
 {
     case Starter = 'starter';
     case Growth = 'growth';
     case Pro = 'pro';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return ucfirst($this->value);
     }

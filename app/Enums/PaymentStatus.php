@@ -2,14 +2,16 @@
 
 namespace App\Enums;
 
-enum PaymentStatus: string
+use Filament\Support\Contracts\HasLabel;
+
+enum PaymentStatus: string implements HasLabel
 {
     case Unpaid = 'unpaid';
     case Paid = 'paid';
     case Cancelled = 'cancelled';
     case Refunded = 'refunded';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return ucfirst($this->value);
     }

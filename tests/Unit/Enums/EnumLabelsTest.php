@@ -7,21 +7,21 @@ use App\Enums\SocialPlatform;
 use App\Enums\SocialPostStatus;
 
 test('PaymentStatus has a label method', function () {
-    expect(PaymentStatus::Paid->label())->toBe('Paid');
+    expect(PaymentStatus::Paid->getLabel())->toBe('Paid');
 });
 
 test('CouponType has a label method', function () {
-    expect(CouponType::Percentage->label())->toBe('Percentage');
+    expect(CouponType::Percentage->getLabel())->toBe('Percentage');
 });
 
 test('EmailCampaignStatus has a label method', function () {
-    expect(EmailCampaignStatus::Draft->label())->toBe('Draft');
+    expect(EmailCampaignStatus::Draft->getLabel())->toBe('Draft');
 });
 
 test('SocialPostStatus has a label method', function () {
-    expect(SocialPostStatus::Draft->label())->toBe('Draft');
+    expect(SocialPostStatus::Draft->getLabel())->toBe('Draft');
 });
 
 test('SocialPlatform has a label method', function () {
-    expect(SocialPlatform::Instagram->label())->toBe('Instagram');
+    expect(SocialPlatform::Instagram->getLabel())->toBe('Instagram');
 });

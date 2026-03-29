@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum DayOfWeek: string
+use Filament\Support\Contracts\HasLabel;
+
+enum DayOfWeek: string implements HasLabel
 {
     case Monday = 'monday';
     case Tuesday = 'tuesday';
@@ -12,7 +14,7 @@ enum DayOfWeek: string
     case Saturday = 'saturday';
     case Sunday = 'sunday';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return $this->name;
     }
@@ -23,7 +25,7 @@ enum DayOfWeek: string
     public static function options(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn (self $day) => [$day->value => $day->label()])
+            ->mapWithKeys(fn (self $day) => [$day->value => $day->getLabel()])
             ->all();
     }
 }
