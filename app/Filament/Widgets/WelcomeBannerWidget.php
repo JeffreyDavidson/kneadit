@@ -42,7 +42,7 @@ class WelcomeBannerWidget extends Widget
 
     public function getRevenueToday(): string
     {
-        return Number::currency(
+        return (string) Number::currency(
             (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
                 ->whereDate('delivery_date', Date::today())
                 ->sum('total'),

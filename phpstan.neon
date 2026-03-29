@@ -1,5 +1,6 @@
 includes:
     - vendor/larastan/larastan/extension.neon
+    - vendor/mrpunyapal/peststan/extension.neon
 
 parameters:
     paths:
@@ -18,11 +19,6 @@ parameters:
             message: '#Access to an undefined property .+::\$(form|noteForm|survey)#'
             paths:
                 - app/Filament/Pages/
-        # Filament Form::make() invoked with 2 parameters (Filament 5 internal)
-        -
-            message: '#Static method Filament\\Schemas\\Components\\Form::make\(\) invoked with 2 parameters#'
-            paths:
-                - app/Filament/Pages/
         # Filament notify/sendSuccessNotification methods from traits
         -
             message: '#Call to an undefined method .+::(notify|sendSuccessNotification)\(\)#'
@@ -39,10 +35,6 @@ parameters:
             message: '#Illuminate\\Database\\Eloquent\\Model\|int\|string(\|null)? given#'
             paths:
                 - app/Filament/
-        # Filament Form::make() parameter mismatch
-        -
-            identifier: argument.type
-            message: '#static method Filament\\Schemas\\Components\\Form::make\(\) expects#'
         # Collection<Model> callback type — Larastan resolves to generic Model instead of concrete class
         -
             identifier: argument.type

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\OrderStatus;
+use App\Mail\ReviewRequestMail;
 use App\Models\Order;
 use App\Models\Tenant;
 use App\Services\Tenant\TenancyManager;
