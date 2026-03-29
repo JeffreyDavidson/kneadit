@@ -5,6 +5,7 @@ namespace App\Services\Reporting;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Queries\AtRiskCustomersQuery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -42,11 +43,7 @@ class WeeklyDigestDataCollector
                 ->limit(5)
                 ->with('product')
                 ->get(),
-            'atRiskCustomers' => Customer::query()
-                ->whereHas('orders')
-                ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays(config('analytics.at_risk_threshold_days', 30))))
-                ->limit(5)
-                ->get(),
+            'atRiskCustomers' => AtRiskCustomersQuery::get(config('analytics.at_risk_threshold_days', 30), 5),
             'upcomingCount' => Order::query()
                 ->whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
                 ->active()
