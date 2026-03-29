@@ -1,47 +1,7 @@
 @extends('layouts.storefront')
 
 @section('content')
-<style>
-    .contact-input {
-        width: 100%;
-        padding: 0.875rem 1.25rem;
-        border-radius: 0.75rem;
-        border: 1.5px solid var(--warm-200);
-        background: white;
-        font-family: var(--font-body);
-        font-size: 1rem;
-        color: var(--warm-900);
-        transition: border-color 0.3s, box-shadow 0.3s;
-        outline: none;
-    }
-    .contact-input:focus {
-        border-color: var(--warm-500);
-        box-shadow: 0 0 0 3px rgba(212,146,12,0.1);
-    }
-    .contact-input::placeholder {
-        color: var(--warm-400);
-    }
-    .info-card {
-        transition: all 0.3s ease;
-    }
-    .info-card:hover {
-        transform: translateY(-2px);
-    }
-    @keyframes contactFadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    .contact-fade-1 { animation: contactFadeUp 0.7s ease-out 0.3s both; }
-    .contact-fade-2 { animation: contactFadeUp 0.7s ease-out 0.5s both; }
-    .contact-fade-3 { animation: contactFadeUp 0.7s ease-out 0.7s both; }
-    @keyframes contactKenBurns {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.06); }
-    }
-    .contact-hero-img {
-        animation: contactKenBurns 25s ease-in-out infinite alternate;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/contact.css') }}">
 
 @php
     $storeName = settings('store_name', 'Our Bakery');

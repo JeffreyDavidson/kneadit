@@ -8,64 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --warm-900: #1c1410;
-            --warm-800: #2a1f18;
-            --warm-700: #4a3728;
-            --warm-600: #8b6844;
-            --warm-500: #d4920c;
-            --warm-400: #e8b04a;
-            --warm-300: #f5d88e;
-            --warm-200: #faf4e8;
-            --warm-100: #fef9ef;
-            --warm-50: #fffdf7;
-        }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: #111; }
-        .font-display { font-family: 'Playfair Display', serif; }
-        .font-script { font-family: 'Dancing Script', cursive; }
-
-        /* Lookbook navigation */
-        .lookbook-nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
-            padding: 16px 32px; display: flex; align-items: center; gap: 16px;
-            border-bottom: 1px solid rgba(212,146,12,0.3);
-        }
-        .lookbook-nav h1 { color: var(--warm-400); font-family: 'Playfair Display', serif; font-size: 1.2rem; margin: 0; white-space: nowrap; }
-        .lookbook-nav a {
-            color: var(--warm-300); text-decoration: none; font-size: 0.8rem; padding: 6px 14px;
-            border: 1px solid rgba(212,146,12,0.3); border-radius: 100px; white-space: nowrap;
-            transition: all 0.2s;
-        }
-        .lookbook-nav a:hover { background: var(--warm-500); color: var(--warm-900); border-color: var(--warm-500); }
-        .lookbook-links { display: flex; gap: 8px; overflow-x: auto; }
-
-        /* Section label */
-        .concept-label {
-            position: absolute; top: 20px; left: 20px; z-index: 50;
-            background: rgba(0,0,0,0.8); color: var(--warm-400); padding: 8px 20px;
-            border-radius: 100px; font-size: 0.85rem; font-weight: 600;
-            border: 1px solid rgba(212,146,12,0.3); backdrop-filter: blur(8px);
-        }
-
-        /* Shared animations */
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
-        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes kenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.08); } }
-        @keyframes slideRight { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes textReveal { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-
-        .fade-up-1 { animation: fadeUp 0.8s ease-out 0.2s both; }
-        .fade-up-2 { animation: fadeUp 0.8s ease-out 0.5s both; }
-        .fade-up-3 { animation: fadeUp 0.8s ease-out 0.8s both; }
-        .fade-up-4 { animation: fadeUp 0.8s ease-out 1.1s both; }
-    </style>
+<link rel="stylesheet" href="{{ asset('css/hero-lookbook.css') }}">
 </head>
 <body>
 

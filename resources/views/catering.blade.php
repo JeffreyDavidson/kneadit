@@ -11,14 +11,7 @@
     $content = settingsPageContent('catering');
 @endphp
 
-<style>
-    @keyframes cateringKenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
-    @keyframes cateringFadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .catering-hero-img { animation: cateringKenBurns 25s ease-in-out infinite alternate; }
-    .catering-fade-1 { animation: cateringFadeUp 0.8s ease-out 0.3s both; }
-    .catering-fade-2 { animation: cateringFadeUp 0.8s ease-out 0.5s both; }
-    .catering-fade-3 { animation: cateringFadeUp 0.8s ease-out 0.7s both; }
-</style>
+<link rel="stylesheet" href="{{ asset('css/catering.css') }}">
 
 {{-- Photo-Forward Hero --}}
 <section class="relative overflow-hidden" style="min-height: 55vh;">
