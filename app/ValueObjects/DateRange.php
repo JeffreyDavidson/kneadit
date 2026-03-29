@@ -62,6 +62,26 @@ final readonly class DateRange
         );
     }
 
+    /**
+     * Check if the current moment falls within this date range.
+     */
+    public function isActive(): bool
+    {
+        $now = Date::now();
+
+        return $now->greaterThanOrEqualTo($this->start) && $now->lessThanOrEqualTo($this->end);
+    }
+
+    /**
+     * Check if a given date falls within this range.
+     */
+    public function contains(Carbon|string $date): bool
+    {
+        $date = $date instanceof Carbon ? $date : Date::parse($date);
+
+        return $date->greaterThanOrEqualTo($this->start) && $date->lessThanOrEqualTo($this->end);
+    }
+
     /** @return array{0: Carbon, 1: Carbon} */
     public function toArray(): array
     {

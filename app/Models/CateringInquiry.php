@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\CateringEventType;
 use App\Enums\CateringInquiryStatus;
@@ -56,6 +57,7 @@ class CateringInquiry extends Model
             'guest_count' => 'integer',
             'budget' => 'decimal:2',
             'quoted_amount' => 'decimal:2',
+            'customer_phone' => PhoneNumberCast::class,
             'details' => StripTagsCast::class,
             'dietary_requirements' => StripTagsCast::class,
             'venue_address' => StripTagsCast::class,

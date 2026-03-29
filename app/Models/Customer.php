@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Builders\CustomerQueryBuilder;
+use App\Casts\PhoneNumberCast;
 use App\DataTransferObjects\CustomerMetrics;
 use App\Services\Customer\CustomerIntelligence;
 use App\Traits\LogsActivity;
@@ -76,6 +77,7 @@ class Customer extends Model
     {
         return [
             'birthday' => 'date',
+            'phone' => PhoneNumberCast::class,
         ];
     }
 
