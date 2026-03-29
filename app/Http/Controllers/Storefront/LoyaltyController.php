@@ -7,18 +7,12 @@ use App\Http\Requests\RedeemLoyaltyRewardRequest;
 use App\Models\Customer;
 use App\Models\LoyaltyReward;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Log;
 
 class LoyaltyController extends Controller
 {
     public function show(): View
     {
-        try {
-            $rewards = LoyaltyReward::query()->active()->orderBy('points_required')->get();
-        } catch (\Exception $e) {
-            Log::error('Failed to load loyalty rewards', ['error' => $e->getMessage()]);
-            $rewards = collect();
-        }
+        $rewards = LoyaltyReward::query()->active()->orderBy('points_required')->get();
         $programName = settings('loyalty_program_name', 'Rewards');
         $pointsPerDollar = settings('loyalty_points_per_dollar', '10');
         $loyaltyEnabled = settings('loyalty_enabled', '1') === '1';
@@ -30,12 +24,7 @@ class LoyaltyController extends Controller
     {
 
         $customer = Customer::query()->where('email', $request->email)->first();
-        try {
-            $rewards = LoyaltyReward::query()->active()->orderBy('points_required')->get();
-        } catch (\Exception $e) {
-            Log::error('Failed to load loyalty rewards', ['error' => $e->getMessage()]);
-            $rewards = collect();
-        }
+        $rewards = LoyaltyReward::query()->active()->orderBy('points_required')->get();
         $programName = settings('loyalty_program_name', 'Rewards');
         $pointsPerDollar = settings('loyalty_points_per_dollar', '10');
         $loyaltyEnabled = settings('loyalty_enabled', '1') === '1';

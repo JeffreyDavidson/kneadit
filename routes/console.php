@@ -85,7 +85,8 @@ Schedule::command('health:check')
     ->everyThirtyMinutes()
     ->withoutOverlapping()
     ->onOneServer()
-    ->runInBackground();
+    ->runInBackground()
+    ->environments(['production']);
 
 // Trial expiration checks daily at 10 AM
 Schedule::command('trial:check')

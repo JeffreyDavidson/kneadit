@@ -19,7 +19,7 @@ class SupplierFactory extends Factory
             'name' => fake()->company(),
             'contact_name' => fake()->name(),
             'email' => fake()->unique()->companyEmail(),
-            'phone' => fake()->phoneNumber(),
+            'phone' => fake()->numerify('###-###-####'),
             'website' => fake()->optional()->url(),
             'address' => fake()->optional()->address(),
             'notes' => null,
