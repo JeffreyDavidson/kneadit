@@ -2,6 +2,7 @@
 
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,6 +13,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     setUpTenantTest();
     $this->actingAs(User::factory()->owner()->create());
+    $this->customer = Customer::factory()->create();
 });
 
 test('can render the orders list page', function () {
@@ -20,29 +22,29 @@ test('can render the orders list page', function () {
 });
 
 test('can list orders in the table', function () {
-    $orders = Order::factory()->count(3)->create();
+    $orders = Order::factory()->recycle($this->customer)->count(3)->create();
 
     Livewire::test(ListOrders::class)
         ->assertCanSeeTableRecords($orders);
 });
 
 test('can render table columns', function (string $column) {
-    Order::factory()->create();
+    Order::factory()->recycle($this->customer)->create();
 
     Livewire::test(ListOrders::class)
         ->assertCanRenderTableColumn($column);
 })->with(['order_number', 'customer.name', 'status', 'payment_status', 'total', 'delivery_date']);
 
 test('can render the view order page', function () {
-    $order = Order::factory()->create();
+    $order = Order::factory()->recycle($this->customer)->create();
 
     Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk();
 });
 
 test('can search orders by order number', function () {
-    $target = Order::factory()->create();
-    $other = Order::factory()->create();
+    $target = Order::factory()->recycle($this->customer)->create();
+    $other = Order::factory()->recycle($this->customer)->create();
 
     Livewire::test(ListOrders::class)
         ->searchTable($target->order_number)
@@ -51,8 +53,8 @@ test('can search orders by order number', function () {
 });
 
 test('can filter orders by status', function () {
-    $pending = Order::factory()->create();
-    $delivered = Order::factory()->delivered()->create();
+    $pending = Order::factory()->recycle($this->customer)->create();
+    $delivered = Order::factory()->recycle($this->customer)->delivered()->create();
 
     Livewire::test(ListOrders::class)
         ->filterTable('status', App\Enums\OrderStatus::Delivered->value)
@@ -61,8 +63,8 @@ test('can filter orders by status', function () {
 });
 
 test('can filter orders by payment status', function () {
-    $unpaid = Order::factory()->create();
-    $paid = Order::factory()->paid()->create();
+    $unpaid = Order::factory()->recycle($this->customer)->create();
+    $paid = Order::factory()->recycle($this->customer)->paid()->create();
 
     Livewire::test(ListOrders::class)
         ->filterTable('payment_status', App\Enums\PaymentStatus::Paid->value)
@@ -71,8 +73,8 @@ test('can filter orders by payment status', function () {
 });
 
 test('can sort orders by total', function () {
-    $cheap = Order::factory()->create(['subtotal' => 10, 'total' => 10]);
-    $expensive = Order::factory()->create(['subtotal' => 100, 'total' => 100]);
+    $cheap = Order::factory()->recycle($this->customer)->create(['subtotal' => 10, 'total' => 10]);
+    $expensive = Order::factory()->recycle($this->customer)->create(['subtotal' => 100, 'total' => 100]);
 
     Livewire::test(ListOrders::class)
         ->sortTable('total')

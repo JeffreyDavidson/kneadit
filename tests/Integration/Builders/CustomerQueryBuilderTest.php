@@ -20,11 +20,11 @@ test('newThisWeek returns customers created this week', function () {
 
 test('atRisk returns customers with orders but none recent', function () {
     $atRisk = Customer::factory()->create();
-    $order = Order::factory()->create(['customer_id' => $atRisk->id]);
+    $order = Order::factory()->recycle($atRisk)->create();
     Order::query()->where('id', $order->id)->update(['created_at' => now()->subDays(45)]);
 
     $active = Customer::factory()->create();
-    Order::factory()->create(['customer_id' => $active->id]);
+    Order::factory()->recycle($active)->create();
 
     $results = Customer::query()->atRisk(30)->get();
 
