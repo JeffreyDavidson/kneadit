@@ -20,7 +20,7 @@ class WaitlistEntryFactory extends Factory
         return [
             'customer_name' => fake()->name(),
             'customer_email' => fake()->safeEmail(),
-            'customer_phone' => fake()->optional()->phoneNumber(),
+            'customer_phone' => fake()->optional()->passthrough(fake()->numerify('###-###-####')),
             'product_id' => Product::factory(),
             'requested_date' => fake()->dateTimeBetween('+1 day', '+30 days'),
             'status' => WaitlistStatus::Waiting,

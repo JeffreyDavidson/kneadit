@@ -168,7 +168,7 @@ class StripeConnectWebhookController extends Controller
             tenancy()->end();
         } catch (\Exception $e) {
             tenancy()->end();
-            Log::warning('Error processing checkout session for tenant', [
+            Log::error('Error processing checkout session for tenant', [
                 'tenant' => $tenant->id,
                 'error' => $e->getMessage(),
             ]);
