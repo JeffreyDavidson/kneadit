@@ -6,7 +6,6 @@ use App\Models\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class TenantHealthService
 {
@@ -50,143 +49,6 @@ class TenantHealthService
             'critical' => $data->filter(fn (array $t) => $t['health_score'] < 40)->count(),
             'total' => $data->count(),
         ];
-    }
-
-    /** @return Collection<int, array<string, mixed>> */
-    public function getAlerts(): Collection
-    {
-        $tenants = Tenant::all();
-        $healthData = $this->getTenantHealthData()->keyBy('id');
-        $alerts = collect();
-
-        foreach ($tenants as $tenant) {
-            $daysSinceSignup = $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0;
-            $health = $healthData->get($tenant->id);
-            $healthScore = $health ? $health['health_score'] : 0;
-
-            if ($tenant->trial_ends_at) {
-                $trialEnds = Date::parse($tenant->trial_ends_at);
-                if ($trialEnds->isFuture() && $trialEnds->diffInHours(now()) <= config('monitoring.churn_trial_alert_hours', 48)) {
-                    $setupScore = $health ? $health['setup_score'] : 0;
-                    if ($setupScore < config('monitoring.churn_low_setup_threshold', 15)) {
-                        $alerts->push([
-                            'tenant_id' => $tenant->id,
-                            'name' => $tenant->store_name ?? $tenant->name,
-                            'type' => 'trial_expiring',
-                            'type_label' => 'Trial Expiring',
-                            'description' => "Trial ends {$trialEnds->diffForHumans()} with less than 50% setup complete.",
-                            'days_since_signup' => $daysSinceSignup,
-                            'severity' => 'critical',
-                        ]);
-                    }
-                }
-            }
-
-            $lastLogin = $this->getLastLogin($tenant);
-            if ($lastLogin && Date::parse($lastLogin)->diffInDays(now()) >= config('monitoring.churn_no_login_days', 7)) {
-                $days = (int) Date::parse($lastLogin)->diffInDays(now());
-                $alerts->push([
-                    'tenant_id' => $tenant->id,
-                    'name' => $tenant->store_name ?? $tenant->name,
-                    'type' => 'no_login',
-                    'type_label' => 'No Recent Login',
-                    'description' => "No login activity in {$days} days.",
-                    'days_since_signup' => $daysSinceSignup,
-                    'severity' => 'warning',
-                ]);
-            }
-
-            if ($daysSinceSignup > config('monitoring.churn_min_tenant_age_days', 14)) {
-                $recentOrders = $this->getRecentOrderCount($tenant, config('monitoring.churn_no_orders_days', 30));
-                if ($recentOrders === 0) {
-                    $alerts->push([
-                        'tenant_id' => $tenant->id,
-                        'name' => $tenant->store_name ?? $tenant->name,
-                        'type' => 'no_orders',
-                        'type_label' => 'No Orders',
-                        'description' => 'Zero orders in the last ' . config('monitoring.churn_no_orders_days', 30) . ' days.',
-                        'days_since_signup' => $daysSinceSignup,
-                        'severity' => 'warning',
-                    ]);
-                }
-            }
-
-            if ($healthScore < 40) {
-                $alerts->push([
-                    'tenant_id' => $tenant->id,
-                    'name' => $tenant->store_name ?? $tenant->name,
-                    'type' => 'low_health',
-                    'type_label' => 'Critical Health',
-                    'description' => "Health score is {$healthScore}/100.",
-                    'days_since_signup' => $daysSinceSignup,
-                    'severity' => 'critical',
-                ]);
-            }
-        }
-
-        return $alerts->sortByDesc(fn (array $a) => $a['severity'] === 'critical' ? 1 : 0)->values();
-    }
-
-    /** @return Collection<int, array<string, mixed>> */
-    public function getTenantUsageData(): Collection
-    {
-        $results = collect();
-
-        foreach (Tenant::all() as $tenant) {
-            $plan = Str::lower($tenant->plan ?? 'starter');
-            $limits = config('kneadit.plans.' . $plan . '.limits', config('kneadit.plans.starter.limits'));
-
-            if ($plan === 'pro') {
-                continue;
-            }
-
-            try {
-                [$productCount, $orderCount] = $this->tenancyManager->withinTenant($tenant, function () {
-                    return [
-                        DB::table('products')->count(),
-                        DB::table('orders')
-                            ->whereMonth('created_at', Date::now()->month)
-                            ->whereYear('created_at', Date::now()->year)
-                            ->count(),
-                    ];
-                });
-
-                $productLimit = $limits['products'];
-                $orderLimit = $limits['orders_per_month'];
-                $productPercent = $productLimit ? round(($productCount / $productLimit) * 100) : 0;
-                $orderPercent = $orderLimit ? round(($orderCount / $orderLimit) * 100) : 0;
-
-                if ($productPercent >= 80 || $orderPercent >= 80) {
-                    $results->push([
-                        'tenant' => $tenant,
-                        'name' => $tenant->store_name ?? $tenant->name ?? $tenant->id,
-                        'plan' => config('kneadit.plans.' . $plan . '.name', ucfirst($plan)),
-                        'plan_key' => $plan,
-                        'product_count' => $productCount,
-                        'product_limit' => $productLimit,
-                        'product_percent' => min($productPercent, 100),
-                        'order_count' => $orderCount,
-                        'order_limit' => $orderLimit,
-                        'order_percent' => min($orderPercent, 100),
-                        'at_limit' => $productPercent >= 100 || $orderPercent >= 100,
-                        'approaching_limit' => ! ($productPercent >= 100 || $orderPercent >= 100),
-                    ]);
-                }
-            } catch (\Throwable) {
-                continue;
-            }
-        }
-
-        return $results->sortByDesc(fn (array $t) => max($t['product_percent'], $t['order_percent']));
-    }
-
-    public function getNextPlan(string $currentPlan): ?string
-    {
-        return match ($currentPlan) {
-            'starter' => 'Growth',
-            'growth' => 'Pro',
-            default => null,
-        };
     }
 
     protected function getLoginScore(Tenant $tenant): int
@@ -300,7 +162,7 @@ class TenantHealthService
         return (int) round($completed * $pointsPer);
     }
 
-    protected function getLastLogin(Tenant $tenant): ?string
+    public function getLastLogin(Tenant $tenant): ?string
     {
         try {
             return $this->tenancyManager->withinTenant($tenant, fn () => DB::table('users')->max('updated_at'));
@@ -309,7 +171,7 @@ class TenantHealthService
         }
     }
 
-    protected function getRecentOrderCount(Tenant $tenant, int $days): int
+    public function getRecentOrderCount(Tenant $tenant, int $days): int
     {
         try {
             return $this->tenancyManager->withinTenant($tenant, fn () => DB::table('orders')
