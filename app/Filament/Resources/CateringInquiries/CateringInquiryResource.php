@@ -9,6 +9,7 @@ use App\Models\CateringInquiry;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +17,7 @@ class CateringInquiryResource extends Resource
 {
     protected static ?string $model = CateringInquiry::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cake';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCake;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 

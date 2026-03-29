@@ -49,7 +49,7 @@ test('can edit a social post via table action', function () {
             'platform' => $post->platform->value,
             'caption' => 'Updated caption for our bakery',
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($post->fresh()->caption)->toBe('Updated caption for our bakery');
 });
@@ -60,7 +60,7 @@ test('can create a social post via slide-over', function () {
             'platform' => SocialPlatform::Instagram->value,
             'caption' => 'Fresh bread straight from the oven!',
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(SocialPost::class, [
         'caption' => 'Fresh bread straight from the oven!',
@@ -74,7 +74,7 @@ test('create social post validates required fields', function (array $data, arra
             'caption' => 'Test caption',
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'platform is required' => [['platform' => null], ['platform' => 'required']],
     'caption is required' => [['caption' => null], ['caption' => 'required']],

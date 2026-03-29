@@ -9,6 +9,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Order;
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -46,7 +47,7 @@ class ReorderReminders extends Page
 
     public static function getNavigationIcon(): string|BackedEnum|null
     {
-        return 'heroicon-o-bell-alert';
+        return Heroicon::OutlinedBellAlert;
     }
 
     public static function getNavigationGroup(): string|\UnitEnum|null

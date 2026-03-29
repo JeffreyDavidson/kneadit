@@ -2,6 +2,7 @@
 
 use App\Filament\Central\Pages\Activity;
 use App\Models\PlatformActivity;
+use Filament\Support\Icons\Heroicon;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -28,7 +29,7 @@ test('get action color returns hex for known actions', function () {
 });
 
 test('get event icon returns string', function () {
-    expect(Activity::getEventIcon('tenant_created'))->toStartWith('heroicon-')->and(Activity::getEventIcon('unknown'))->toStartWith('heroicon-');
+    expect(Activity::getEventIcon('tenant_created'))->toBeInstanceOf(Heroicon::class)->and(Activity::getEventIcon('unknown'))->toBeInstanceOf(Heroicon::class);
 });
 
 test('get event color returns hex', function () {

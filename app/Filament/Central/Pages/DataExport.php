@@ -5,12 +5,13 @@ namespace App\Filament\Central\Pages;
 use App\Models\Tenant;
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 class DataExport extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrow-down-tray';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowDownTray;
 
     protected static string|UnitEnum|null $navigationGroup = 'Operations';
 
@@ -72,27 +73,27 @@ class DataExport extends Page
     {
         return [
             'products' => [
-                'icon' => 'heroicon-o-cube',
+                'icon' => Heroicon::OutlinedCube,
                 'name' => 'Products',
                 'description' => 'All products with prices, descriptions, and status.',
             ],
             'categories' => [
-                'icon' => 'heroicon-o-tag',
+                'icon' => Heroicon::OutlinedTag,
                 'name' => 'Categories',
                 'description' => 'Product categories and their hierarchy.',
             ],
             'orders' => [
-                'icon' => 'heroicon-o-shopping-bag',
+                'icon' => Heroicon::OutlinedShoppingBag,
                 'name' => 'Orders & Items',
                 'description' => 'All orders with line items and totals.',
             ],
             'customers' => [
-                'icon' => 'heroicon-o-users',
+                'icon' => Heroicon::OutlinedUsers,
                 'name' => 'Customers',
                 'description' => 'Customer accounts and contact details.',
             ],
             'reviews' => [
-                'icon' => 'heroicon-o-star',
+                'icon' => Heroicon::OutlinedStar,
                 'name' => 'Reviews',
                 'description' => 'Product reviews and ratings.',
             ],

@@ -6,6 +6,7 @@ use App\Enums\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Reporting\ReportService;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Laravel\Pennant\Feature;
 
 class ReportsCenter extends Page
@@ -22,7 +23,7 @@ class ReportsCenter extends Page
         return SubscriptionTier::Growth;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-pie';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartPie;
 
     protected static ?string $navigationLabel = 'Reports';
 

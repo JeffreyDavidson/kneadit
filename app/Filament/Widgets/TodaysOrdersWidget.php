@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -54,6 +55,6 @@ class TodaysOrdersWidget extends BaseWidget
             ])
             ->emptyStateHeading('No orders today — enjoy the quiet!')
             ->emptyStateDescription('Orders scheduled for today will appear here.')
-            ->emptyStateIcon('heroicon-o-shopping-bag');
+            ->emptyStateIcon(Heroicon::OutlinedShoppingBag);
     }
 }

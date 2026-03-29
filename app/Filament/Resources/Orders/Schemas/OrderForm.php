@@ -29,7 +29,7 @@ class OrderForm
                             ->components([
                                 TextInput::make('order_number')
                                     ->required()
-                                    ->unique(ignoreRecord: true)
+                                    ->unique()
                                     ->maxLength(255),
 
                                 Select::make('customer_id')

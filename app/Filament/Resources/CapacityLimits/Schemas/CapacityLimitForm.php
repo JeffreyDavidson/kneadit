@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class CapacityLimitForm
 {
@@ -21,7 +22,7 @@ class CapacityLimitForm
     {
         return $schema->columns(1)->components([
             Section::make('Capacity Limit')
-                ->icon('heroicon-o-clock')
+                ->icon(Heroicon::OutlinedClock)
                 ->description('Set order limits for a specific day or recurring weekday')
                 ->columns(1)
                 ->columnSpanFull()
@@ -64,7 +65,7 @@ class CapacityLimitForm
                         ->numeric()
                         ->default(0)
                         ->minValue(0)
-                        ->prefixIcon('heroicon-o-shopping-bag')
+                        ->prefixIcon(Heroicon::OutlinedShoppingBag)
                         ->helperText('0 = unlimited (unless blocked)'),
 
                     Toggle::make('is_blocked')

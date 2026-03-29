@@ -44,7 +44,7 @@ test('can edit a survey via table action', function () {
         ->callTableAction('edit', $survey, data: [
             'title' => 'Updated Survey',
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($survey->fresh()->title)->toBe('Updated Survey');
 });
@@ -52,7 +52,7 @@ test('can edit a survey via table action', function () {
 test('can create a survey with questions repeater', function () {
     $component = Livewire::test(ListSurveys::class)
         ->mountAction('create')
-        ->setActionData([
+        ->fillForm([
             'title' => 'Customer Satisfaction',
             'description' => 'How did we do?',
             'is_active' => true,
@@ -60,14 +60,14 @@ test('can create a survey with questions repeater', function () {
 
     $state = $component->get('mountedActions.0.data.questions');
     $keys = array_keys($state);
-    $component->setActionData([
+    $component->fillForm([
         'questions' => [
             $keys[0] => ['type' => 'rating', 'question' => 'How was your experience?'],
         ],
     ]);
 
     $component->callMountedAction()
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $survey = Survey::query()->first();
     expect($survey)
@@ -82,5 +82,5 @@ test('edit survey validates title is required', function () {
         ->callTableAction('edit', $survey, data: [
             'title' => null,
         ])
-        ->assertHasTableActionErrors(['title' => 'required']);
+        ->assertHasFormErrors(['title' => 'required']);
 });

@@ -11,6 +11,7 @@ use App\Models\EmailCampaign;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Pennant\Feature;
@@ -21,7 +22,7 @@ class EmailCampaignResource extends Resource
 
     protected static ?string $model = EmailCampaign::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-megaphone';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 

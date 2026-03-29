@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -27,14 +28,14 @@ class ProductForm
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function (?string $state, callable $set) {
+                            ->afterStateUpdated(function (?string $state, Set $set) {
                                 $set('slug', Str::slug($state ?? ''));
                             }),
 
                         TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
-                            ->unique(ignoreRecord: true),
+                            ->unique(),
 
                         TextInput::make('price')
                             ->required()
@@ -59,7 +60,7 @@ class ProductForm
                     ->components([
                         Repeater::make('productImages')
                             ->relationship('images')
-                            ->label('')
+                            ->hiddenLabel()
                             ->reorderable(true)
                             ->reorderableWithDragAndDrop(true)
                             ->reorderableWithButtons(true)

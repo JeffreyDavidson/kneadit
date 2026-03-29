@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
@@ -41,7 +42,7 @@ class SeasonalItems extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-sparkles';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 

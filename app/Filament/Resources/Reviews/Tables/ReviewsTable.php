@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -95,13 +96,13 @@ class ReviewsTable
             ])
             ->recordActions([
                 Action::make('approve')
-                    ->icon('heroicon-o-check')
+                    ->icon(Heroicon::OutlinedCheck)
                     ->color('success')
                     ->action(fn (Review $record) => $record->update(['is_approved' => true]))
                     ->visible(fn (Review $record) => ! $record->is_approved),
 
                 Action::make('feature')
-                    ->icon('heroicon-o-star')
+                    ->icon(Heroicon::OutlinedStar)
                     ->color('warning')
                     ->action(fn (Review $record) => $record->update(['is_featured' => true]))
                     ->visible(fn (Review $record) => ! $record->is_featured && $record->is_approved),

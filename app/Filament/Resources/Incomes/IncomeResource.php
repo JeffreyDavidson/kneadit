@@ -10,6 +10,7 @@ use App\Filament\Resources\Incomes\Tables\IncomesTable;
 use App\Models\Income;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Laravel\Pennant\Feature;
 
@@ -19,7 +20,7 @@ class IncomeResource extends Resource
 
     protected static ?string $model = Income::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-up';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowTrendingUp;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';
 

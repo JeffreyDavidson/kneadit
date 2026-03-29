@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Enums\UserRole;
 use App\Models\Product;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,7 +22,7 @@ class LabelGenerator extends Page
         return true;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
     protected static ?string $navigationLabel = 'Labels';
 

@@ -47,7 +47,7 @@ test('can edit a recipe via table action', function () {
             'name' => 'Updated Recipe',
             'prep_time_minutes' => $recipe->prep_time_minutes,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($recipe->fresh()->name)->toBe('Updated Recipe');
 });
@@ -55,7 +55,7 @@ test('can edit a recipe via table action', function () {
 test('can create a recipe with ingredients', function () {
     $component = Livewire::test(ListRecipes::class)
         ->mountAction('create')
-        ->setActionData([
+        ->fillForm([
             'name' => 'Sourdough Bread',
             'prep_time_minutes' => 120,
             'instructions' => 'Mix, knead, proof, bake.',
@@ -64,7 +64,7 @@ test('can create a recipe with ingredients', function () {
     // Get the default ingredient item key and fill it
     $state = $component->get('mountedActions.0.data.ingredients');
     $keys = array_keys($state);
-    $component->setActionData([
+    $component->fillForm([
         'ingredients' => [
             $keys[0] => ['name' => 'Bread Flour', 'quantity' => '500', 'unit' => 'g'],
         ],
@@ -72,7 +72,7 @@ test('can create a recipe with ingredients', function () {
     ]);
 
     $component->callMountedAction()
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $recipe = Recipe::query()->first();
     expect($recipe)
@@ -89,5 +89,5 @@ test('edit recipe validates name is required', function () {
             'name' => null,
             'prep_time_minutes' => $recipe->prep_time_minutes,
         ])
-        ->assertHasTableActionErrors(['name' => 'required']);
+        ->assertHasFormErrors(['name' => 'required']);
 });

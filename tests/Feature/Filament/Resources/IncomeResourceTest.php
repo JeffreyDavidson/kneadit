@@ -32,7 +32,7 @@ test('can create an income via slide-over', function () {
             'source' => IncomeSource::FarmersMarket->value,
             'date' => '2026-03-26',
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Income::class, [
         'description' => 'Farmers market sales',
@@ -55,7 +55,7 @@ test('can edit an income via table action', function () {
             'amount' => $income->amount,
             'source' => $income->source->value,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($income->fresh()->description)->toBe('Updated income');
 });
@@ -68,7 +68,7 @@ test('create income validates required fields', function (array $data, array $er
             'source' => IncomeSource::FarmersMarket->value,
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'description is required' => [['description' => null], ['description' => 'required']],
     'amount is required' => [['amount' => null], ['amount' => 'required']],

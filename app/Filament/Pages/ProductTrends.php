@@ -8,6 +8,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Analytics\ProductTrendsService;
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
@@ -43,7 +44,7 @@ class ProductTrends extends Page
 
     public static function getNavigationIcon(): string|BackedEnum|null
     {
-        return 'heroicon-o-arrow-trending-up';
+        return Heroicon::OutlinedArrowTrendingUp;
     }
 
     public static function getNavigationGroup(): string|\UnitEnum|null

@@ -3,10 +3,11 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 
 class HelpCenter extends Page
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-question-mark-circle';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedQuestionMarkCircle;
 
     protected static ?string $navigationLabel = 'Help';
 
@@ -22,7 +23,7 @@ class HelpCenter extends Page
         return [
             [
                 'title' => 'Getting Started',
-                'icon' => 'heroicon-o-rocket-launch',
+                'icon' => Heroicon::OutlinedRocketLaunch,
                 'articles' => [
                     [
                         'title' => 'Setting Up Your Store',
@@ -40,7 +41,7 @@ class HelpCenter extends Page
             ],
             [
                 'title' => 'Managing Orders',
-                'icon' => 'heroicon-o-clipboard-document-list',
+                'icon' => Heroicon::OutlinedClipboardDocumentList,
                 'articles' => [
                     [
                         'title' => 'Order Workflow',
@@ -58,7 +59,7 @@ class HelpCenter extends Page
             ],
             [
                 'title' => 'Storefront',
-                'icon' => 'heroicon-o-building-storefront',
+                'icon' => Heroicon::OutlinedBuildingStorefront,
                 'articles' => [
                     [
                         'title' => 'Customizing Your Theme',
@@ -76,7 +77,7 @@ class HelpCenter extends Page
             ],
             [
                 'title' => 'Finances',
-                'icon' => 'heroicon-o-banknotes',
+                'icon' => Heroicon::OutlinedBanknotes,
                 'articles' => [
                     [
                         'title' => 'Tracking Expenses',
@@ -94,7 +95,7 @@ class HelpCenter extends Page
             ],
             [
                 'title' => 'Marketing',
-                'icon' => 'heroicon-o-megaphone',
+                'icon' => Heroicon::OutlinedMegaphone,
                 'articles' => [
                     [
                         'title' => 'Email Campaigns',
@@ -112,7 +113,7 @@ class HelpCenter extends Page
             ],
             [
                 'title' => 'Tools',
-                'icon' => 'heroicon-o-wrench-screwdriver',
+                'icon' => Heroicon::OutlinedWrenchScrewdriver,
                 'articles' => [
                     [
                         'title' => 'Baking Sheet',
@@ -130,7 +131,7 @@ class HelpCenter extends Page
             ],
             [
                 'title' => 'Billing',
-                'icon' => 'heroicon-o-credit-card',
+                'icon' => Heroicon::OutlinedCreditCard,
                 'articles' => [
                     [
                         'title' => 'Plans & Pricing',
@@ -148,7 +149,7 @@ class HelpCenter extends Page
             ],
             [
                 'title' => 'FAQ',
-                'icon' => 'heroicon-o-chat-bubble-left-right',
+                'icon' => Heroicon::OutlinedChatBubbleLeftRight,
                 'articles' => [
                     [
                         'title' => 'Can I use KneadIt for a food truck or catering business?',

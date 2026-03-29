@@ -15,7 +15,7 @@ class ListCapacityLimits extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->slideOver()->slideOver()->modalWidth('md')
-                ->mutateFormDataUsing(function (array $data): array {
+                ->mutateDataUsing(function (array $data): array {
                     $data['date'] = $data['specific_date'] ?? now()->toDateString();
 
                     return $data;

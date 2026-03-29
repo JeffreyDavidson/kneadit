@@ -25,7 +25,7 @@ test('can create a coupon via slide-over', function () {
             'value' => 20,
             'is_active' => true,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Coupon::class, [
         'code' => 'SPRING20',
@@ -41,7 +41,7 @@ test('create coupon validates required fields', function (array $data, array $er
             'value' => 10,
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'code is required' => [['code' => null], ['code' => 'required']],
     'type is required' => [['type' => null], ['type' => 'required']],
@@ -58,7 +58,7 @@ test('can edit a coupon via table action', function () {
             'value' => $coupon->value,
             'is_active' => true,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($coupon->fresh()->code)->toBe('UPDATED01');
 });

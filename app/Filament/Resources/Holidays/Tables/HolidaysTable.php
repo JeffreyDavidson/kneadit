@@ -9,6 +9,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -30,7 +31,7 @@ class HolidaysTable
             ->heading('Holidays')
             ->emptyStateHeading('No holidays planned')
             ->emptyStateDescription('Add upcoming holidays to track order deadlines.')
-            ->emptyStateIcon('heroicon-o-calendar-days')
+            ->emptyStateIcon(Heroicon::OutlinedCalendarDays)
             ->defaultSort('date')
             ->columns([
                 TextColumn::make('name')

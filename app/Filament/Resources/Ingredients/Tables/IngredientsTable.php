@@ -12,6 +12,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -78,8 +79,8 @@ class IngredientsTable
             ->recordActions([
                 Action::make('record_stock')
                     ->label('Record Stock')
-                    ->icon('heroicon-o-plus-circle')
-                    ->form([
+                    ->icon(Heroicon::OutlinedPlusCircle)
+                    ->schema([
                         Select::make('type')
                             ->options([
                                 'purchase' => 'Purchase (add)',
@@ -111,8 +112,8 @@ class IngredientsTable
                 BulkActionGroup::make([
                     BulkAction::make('record_purchase')
                         ->label('Record Purchase')
-                        ->icon('heroicon-o-shopping-cart')
-                        ->form([
+                        ->icon(Heroicon::OutlinedShoppingCart)
+                        ->schema([
                             TextInput::make('quantity')
                                 ->numeric()
                                 ->required()

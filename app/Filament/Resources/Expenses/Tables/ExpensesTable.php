@@ -69,7 +69,7 @@ class ExpensesTable
                     ->options(ExpenseCategory::class),
 
                 Filter::make('date')
-                    ->form([
+                    ->schema([
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
@@ -86,7 +86,7 @@ class ExpensesTable
                     }),
 
                 Filter::make('amount')
-                    ->form([
+                    ->schema([
                         TextInput::make('min_amount')->numeric()->prefix('$'),
                         TextInput::make('max_amount')->numeric()->prefix('$'),
                     ])

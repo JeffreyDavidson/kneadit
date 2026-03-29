@@ -15,13 +15,14 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
 class MaintenanceMode extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-wrench-screwdriver';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;
 
     protected static string|UnitEnum|null $navigationGroup = 'Operations';
 
@@ -107,7 +108,7 @@ class MaintenanceMode extends Page
                     Action::make('save')
                         ->label('Save Settings')
                         ->action('save')
-                        ->icon('heroicon-o-check')
+                        ->icon(Heroicon::OutlinedCheck)
                         ->color('primary'),
                 ]),
             ]);

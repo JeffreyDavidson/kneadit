@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Enums\OrderStatus;
 use App\Models\OrderItem;
 use App\ValueObjects\DateRange;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -56,6 +57,6 @@ class PopularProductsWidget extends BaseWidget
                     ->money('usd'),
             ])
             ->emptyStateHeading('No orders this week yet')
-            ->emptyStateIcon('heroicon-o-cake');
+            ->emptyStateIcon(Heroicon::OutlinedCake);
     }
 }

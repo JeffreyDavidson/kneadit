@@ -5,6 +5,7 @@ namespace App\Filament\Central\Pages;
 use App\Models\Tenant;
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ use UnitEnum;
 
 class OnboardingTracker extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 

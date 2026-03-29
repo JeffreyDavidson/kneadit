@@ -51,7 +51,7 @@ class BlogPostResource extends Resource
                     TextInput::make('slug')
                         ->required()
                         ->maxLength(255)
-                        ->unique(ignoreRecord: true),
+                        ->unique(),
                     Select::make('category')
                         ->options([
                             'guides' => 'Getting Started',
@@ -130,7 +130,7 @@ class BlogPostResource extends Resource
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 DeleteBulkAction::make(),
             ]);
     }

@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Category;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +35,7 @@ class PrintableMenu extends Page
         return SubscriptionTier::Growth;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static ?string $navigationLabel = 'Printable Menu';
 

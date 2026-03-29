@@ -39,7 +39,7 @@ class BlockedDateForm
                         Toggle::make('is_all_day')
                             ->label('All Day')
                             ->default(true)
-                            ->reactive(),
+                            ->live(),
 
                         Grid::make(2)->components([
                             TextInput::make('open_time')

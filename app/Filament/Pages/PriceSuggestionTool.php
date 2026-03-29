@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Recipe;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
@@ -31,7 +32,7 @@ class PriceSuggestionTool extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
 
     protected static ?string $navigationLabel = 'Price Suggestion';
 

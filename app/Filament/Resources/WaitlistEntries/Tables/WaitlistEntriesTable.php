@@ -11,6 +11,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -63,7 +64,7 @@ class WaitlistEntriesTable
                     ->options(WaitlistStatus::class),
 
                 Filter::make('requested_date')
-                    ->form([
+                    ->schema([
                         DatePicker::make('from'),
                         DatePicker::make('until'),
                     ])
@@ -81,7 +82,7 @@ class WaitlistEntriesTable
             ])
             ->recordActions([
                 Action::make('notify')
-                    ->icon('heroicon-o-bell')
+                    ->icon(Heroicon::OutlinedBell)
                     ->color('info')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
@@ -95,7 +96,7 @@ class WaitlistEntriesTable
                     ->visible(fn (WaitlistEntry $record) => $record->status === WaitlistStatus::Waiting),
 
                 Action::make('convert')
-                    ->icon('heroicon-o-check')
+                    ->icon(Heroicon::OutlinedCheck)
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
@@ -109,7 +110,7 @@ class WaitlistEntriesTable
                     ->visible(fn (WaitlistEntry $record) => in_array($record->status, [WaitlistStatus::Waiting, WaitlistStatus::Notified])),
 
                 Action::make('remove')
-                    ->icon('heroicon-o-x-mark')
+                    ->icon(Heroicon::OutlinedXMark)
                     ->color('danger')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {

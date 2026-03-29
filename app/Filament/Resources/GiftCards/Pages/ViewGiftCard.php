@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Icons\Heroicon;
 
 class ViewGiftCard extends ViewRecord
 {
@@ -26,9 +27,9 @@ class ViewGiftCard extends ViewRecord
 
             Action::make('add_credit')
                 ->label('Add Credit')
-                ->icon('heroicon-o-plus-circle')
+                ->icon(Heroicon::OutlinedPlusCircle)
                 ->color('success')
-                ->form([
+                ->schema([
                     TextInput::make('amount')
                         ->required()
                         ->numeric()

@@ -5,6 +5,7 @@ namespace App\Filament\Central\Widgets;
 use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
 use App\Models\Tenant;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Collection;
@@ -12,6 +13,8 @@ use Illuminate\Support\Number;
 
 class PlatformStats extends StatsOverviewWidget
 {
+    protected ?string $pollingInterval = null;
+
     protected static ?int $sort = 0;
 
     protected function getStats(): array
@@ -60,28 +63,28 @@ class PlatformStats extends StatsOverviewWidget
             Stat::make('MRR', Number::currency($mrr))
                 ->description($activeTenants->count() . ' paying')
                 ->color('success')
-                ->icon('heroicon-o-currency-dollar')
+                ->icon(Heroicon::OutlinedCurrencyDollar)
                 ->chart($mrrChart)
                 ->chartColor('success'),
 
             Stat::make('Total Bakeries', $totalTenants)
                 ->description($activeTenants->count() . ' active')
                 ->color('success')
-                ->icon('heroicon-o-building-storefront')
+                ->icon(Heroicon::OutlinedBuildingStorefront)
                 ->chart($bakeryChart)
                 ->chartColor('success'),
 
             Stat::make('On Trial', $trialTenants)
                 ->description('Free trial')
                 ->color('warning')
-                ->icon('heroicon-o-clock')
+                ->icon(Heroicon::OutlinedClock)
                 ->chart($trialChart)
                 ->chartColor('warning'),
 
             Stat::make('Open Tickets', $openTickets)
                 ->description($openTickets > 0 ? 'Needs attention' : 'All clear')
                 ->color($openTickets > 0 ? 'danger' : 'success')
-                ->icon('heroicon-o-inbox')
+                ->icon(Heroicon::OutlinedInbox)
                 ->chart($ticketChart)
                 ->chartColor($openTickets > 0 ? 'danger' : 'success'),
         ];

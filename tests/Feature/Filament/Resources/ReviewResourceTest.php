@@ -34,7 +34,7 @@ test('can create a review via slide-over', function () {
             'comment' => 'Best bread ever!',
             'is_approved' => true,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Review::class, [
         'customer_name' => 'Happy Customer',
@@ -59,7 +59,7 @@ test('can edit a review via table action', function () {
             'rating' => $review->rating,
             'is_approved' => true,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($review->fresh()->customer_name)->toBe('Updated Reviewer');
 });
@@ -82,7 +82,7 @@ test('create review validates required fields', function (array $data, array $er
             'rating' => 5,
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'customer name is required' => [['customer_name' => null], ['customer_name' => 'required']],
     'customer email is required' => [['customer_email' => null], ['customer_email' => 'required']],

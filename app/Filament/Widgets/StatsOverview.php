@@ -8,6 +8,7 @@ use App\Models\PageView;
 use App\Models\WaitlistEntry;
 use App\Services\Inventory\CapacityCalculator;
 use Carbon\Carbon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Cache;
@@ -16,6 +17,8 @@ use Illuminate\Support\Number;
 
 class StatsOverview extends BaseWidget
 {
+    protected ?string $pollingInterval = null;
+
     protected static ?int $sort = 1;
 
     protected function getStats(): array
@@ -26,11 +29,11 @@ class StatsOverview extends BaseWidget
 
             return [
                 Stat::make("Today's Orders", Order::query()->whereDate('delivery_date', $today)->count())
-                    ->icon('heroicon-o-shopping-bag')
+                    ->icon(Heroicon::OutlinedShoppingBag)
                     ->color('primary'),
 
                 Stat::make('Pending Orders', Order::query()->where('status', OrderStatus::Pending)->count())
-                    ->icon('heroicon-o-clock')
+                    ->icon(Heroicon::OutlinedClock)
                     ->color('warning'),
 
                 Stat::make("This Week's Revenue", Number::currency(
@@ -38,7 +41,7 @@ class StatsOverview extends BaseWidget
                         ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                         ->sum('total'),
                 ))
-                    ->icon('heroicon-o-currency-dollar')
+                    ->icon(Heroicon::OutlinedCurrencyDollar)
                     ->color('success'),
 
                 Stat::make('Avg Order Value', Number::currency(
@@ -46,11 +49,11 @@ class StatsOverview extends BaseWidget
                         ->whereBetween('delivery_date', [$weekStart, Date::now()->endOfWeek()])
                         ->avg('total'),
                 ))
-                    ->icon('heroicon-o-receipt-percent')
+                    ->icon(Heroicon::OutlinedReceiptPercent)
                     ->color('info'),
 
                 Stat::make('Total Customers', Order::query()->distinct('customer_email')->count('customer_email'))
-                    ->icon('heroicon-o-users')
+                    ->icon(Heroicon::OutlinedUsers)
                     ->color('info'),
 
                 Stat::make('Storefront Views Today', Number::format(
@@ -58,13 +61,13 @@ class StatsOverview extends BaseWidget
                         ->where('created_at', '>=', $today)
                         ->count(),
                 ))
-                    ->icon('heroicon-o-eye')
+                    ->icon(Heroicon::OutlinedEye)
                     ->color('primary'),
 
                 ...collect([WaitlistEntry::waiting()->where('requested_date', '>=', $today)->count()])
                     ->filter()
                     ->map(fn (int $count) => Stat::make('Waitlist', $count . ' ' . str('person')->plural($count))
-                        ->icon('heroicon-o-queue-list')
+                        ->icon(Heroicon::OutlinedQueueList)
                         ->color('warning')
                         ->description('Waiting for upcoming dates')
                         ->url(route('filament.admin.resources.waitlist-entries.index')))
@@ -80,14 +83,14 @@ class StatsOverview extends BaseWidget
                         $limit = resolve(CapacityCalculator::class)->forDate($date);
                         if ($limit?->is_blocked) {
                             return Stat::make("$label Capacity", 'BLOCKED')
-                                ->icon('heroicon-o-x-circle')
+                                ->icon(Heroicon::OutlinedXCircle)
                                 ->color('danger')
                                 ->description('Day is blocked for orders');
                         }
                         $remaining = resolve(CapacityCalculator::class)->remainingSlots($date);
 
                         return Stat::make("$label Capacity", round($usage) . '% full')
-                            ->icon('heroicon-o-exclamation-triangle')
+                            ->icon(Heroicon::OutlinedExclamationTriangle)
                             ->color($usage >= 100 ? 'danger' : 'warning')
                             ->description($remaining . ' slots remaining');
                     })

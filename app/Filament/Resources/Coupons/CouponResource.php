@@ -11,6 +11,7 @@ use App\Filament\Resources\Coupons\Tables\CouponsTable;
 use App\Models\Coupon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
@@ -22,7 +23,7 @@ class CouponResource extends Resource
 
     protected static ?string $model = Coupon::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-ticket';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 

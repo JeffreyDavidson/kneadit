@@ -5,13 +5,14 @@ namespace App\Filament\Central\Pages;
 use App\Models\Tenant;
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 class Analytics extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 

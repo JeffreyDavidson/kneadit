@@ -55,7 +55,7 @@ test('can create a product via slide-over', function () {
             'price' => 4.50,
             'category_id' => $category->id,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Product::class, [
         'name' => 'Ciabatta Roll',
@@ -74,7 +74,7 @@ test('create product validates required fields', function (array $data, array $e
             'category_id' => $category->id,
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'name is required' => [['name' => null], ['name' => 'required']],
     'slug is required' => [['slug' => null], ['slug' => 'required']],
@@ -113,7 +113,7 @@ test('can edit a product via table action', function () {
             'price' => $product->price,
             'category_id' => $product->category_id,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($product->fresh()->name)->toBe('Updated Bread');
 });

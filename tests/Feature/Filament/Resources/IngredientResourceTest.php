@@ -32,7 +32,7 @@ test('can create an ingredient via slide-over', function () {
             'low_stock_threshold' => 10.00,
             'cost_per_unit' => 2.50,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Ingredient::class, [
         'name' => 'Bread Flour',
@@ -49,7 +49,7 @@ test('create ingredient validates required fields', function (array $data, array
             'low_stock_threshold' => 5,
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'name is required' => [['name' => null], ['name' => 'required']],
     'unit is required' => [['unit' => null], ['unit' => 'required']],
@@ -83,7 +83,7 @@ test('can edit an ingredient via table action', function () {
             'current_stock' => $ingredient->current_stock,
             'low_stock_threshold' => $ingredient->low_stock_threshold,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($ingredient->fresh()->name)->toBe('Updated Flour');
 });

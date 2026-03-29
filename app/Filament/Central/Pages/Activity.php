@@ -6,6 +6,7 @@ use App\Models\AdminAuditLog;
 use App\Models\PlatformActivity;
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Date;
@@ -14,7 +15,7 @@ use UnitEnum;
 
 class Activity extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
@@ -57,15 +58,15 @@ class Activity extends Page
         return PlatformActivity::query()->latest('created_at')->limit(100)->get();
     }
 
-    public static function getEventIcon(string $event): string
+    public static function getEventIcon(string $event): Heroicon
     {
         return match ($event) {
-            'tenant_created' => 'heroicon-o-plus-circle',
-            'tenant_deactivated' => 'heroicon-o-x-circle',
-            'plan_changed' => 'heroicon-o-arrow-path',
-            'storefront_toggled' => 'heroicon-o-globe-alt',
-            'trial_expired' => 'heroicon-o-clock',
-            default => 'heroicon-o-information-circle',
+            'tenant_created' => Heroicon::OutlinedPlusCircle,
+            'tenant_deactivated' => Heroicon::OutlinedXCircle,
+            'plan_changed' => Heroicon::OutlinedArrowPath,
+            'storefront_toggled' => Heroicon::OutlinedGlobeAlt,
+            'trial_expired' => Heroicon::OutlinedClock,
+            default => Heroicon::OutlinedInformationCircle,
         };
     }
 

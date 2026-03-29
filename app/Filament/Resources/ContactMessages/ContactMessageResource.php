@@ -8,6 +8,7 @@ use App\Filament\Resources\ContactMessages\Tables\ContactMessagesTable;
 use App\Models\ContactMessage;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,7 +16,7 @@ class ContactMessageResource extends Resource
 {
     protected static ?string $model = ContactMessage::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-envelope';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';
 

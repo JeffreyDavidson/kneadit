@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Product;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -48,7 +49,7 @@ class MarginAlertWidget extends BaseWidget
                     ->color('danger'),
             ])
             ->emptyStateHeading('No low-margin products')
-            ->emptyStateIcon('heroicon-o-check-circle')
+            ->emptyStateIcon(Heroicon::OutlinedCheckCircle)
             ->paginated(false);
     }
 }

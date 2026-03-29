@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Ingredient;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -60,6 +61,6 @@ class LowStockWidget extends BaseWidget
             ->paginated(false)
             ->defaultPaginationPageOption(5)
             ->emptyStateHeading('All stocked up!')
-            ->emptyStateIcon('heroicon-o-check-circle');
+            ->emptyStateIcon(Heroicon::OutlinedCheckCircle);
     }
 }

@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Icons\Heroicon;
 
 class ListMessages extends ListRecords
 {
@@ -21,9 +22,9 @@ class ListMessages extends ListRecords
         return [
             Actions\Action::make('compose')
                 ->label('Compose Message')
-                ->icon('heroicon-o-pencil-square')
+                ->icon(Heroicon::OutlinedPencilSquare)
                 ->slideOver()
-                ->form([
+                ->schema([
                     Select::make('tenant_id')
                         ->label('Bakery')
                         ->options(fn () => Tenant::query()->get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->toArray())

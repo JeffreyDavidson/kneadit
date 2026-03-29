@@ -29,7 +29,7 @@ test('can create a contact message via slide-over', function () {
             'subject' => 'Custom cake inquiry',
             'message' => 'I would like to order a custom cake.',
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(ContactMessage::class, [
         'name' => 'Jane Customer',
@@ -47,7 +47,7 @@ test('can edit a contact message via table action', function () {
             'subject' => 'Updated subject',
             'message' => $message->message,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($message->fresh()->subject)->toBe('Updated subject');
 });
@@ -61,7 +61,7 @@ test('create contact message validates required fields', function (array $data, 
             'message' => 'Test message',
             ...$data,
         ])
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'name is required' => [['name' => null], ['name' => 'required']],
     'email is required' => [['email' => null], ['email' => 'required']],

@@ -27,7 +27,7 @@ test('can create a setting via slide-over', function () {
             'key' => 'bakery_tagline',
             'value' => 'Fresh bread daily',
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Setting::class, [
         'key' => 'bakery_tagline',
@@ -42,7 +42,7 @@ test('can edit a setting via table action', function () {
             'key' => $setting->key,
             'value' => 'Updated value',
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($setting->fresh()->value)->toBe('Updated value');
 });
@@ -53,7 +53,7 @@ test('create setting validates key is required', function () {
             'key' => null,
             'value' => 'test',
         ])
-        ->assertHasActionErrors(['key' => 'required']);
+        ->assertHasFormErrors(['key' => 'required']);
 });
 
 test('can render setting table columns', function (string $column) {

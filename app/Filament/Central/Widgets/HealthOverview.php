@@ -8,6 +8,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class HealthOverview extends StatsOverviewWidget
 {
+    protected ?string $pollingInterval = null;
+
     protected static ?int $sort = 2;
 
     protected function getStats(): array

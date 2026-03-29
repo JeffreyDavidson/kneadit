@@ -12,13 +12,14 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Stancl\Tenancy\Database\Models\Domain;
 
 class CustomDomain extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-globe-alt';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 

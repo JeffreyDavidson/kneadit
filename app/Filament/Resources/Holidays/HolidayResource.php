@@ -10,6 +10,7 @@ use App\Models\Holiday;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Laravel\Pennant\Feature;
 
@@ -25,7 +26,7 @@ class HolidayResource extends Resource
 
     public static function getNavigationIcon(): string|BackedEnum|null
     {
-        return 'heroicon-o-sun';
+        return Heroicon::OutlinedSun;
     }
 
     public static function getNavigationGroup(): ?string

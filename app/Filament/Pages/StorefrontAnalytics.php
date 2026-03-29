@@ -10,6 +10,7 @@ use App\Models\PageView;
 use App\Models\Product;
 use Carbon\Carbon;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +37,7 @@ class StorefrontAnalytics extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     protected static ?string $navigationLabel = 'Storefront Analytics';
 

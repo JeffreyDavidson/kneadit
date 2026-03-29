@@ -25,6 +25,7 @@ use Filament\Schemas\Components\View;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -219,7 +220,7 @@ class Onboarding extends Page
         return $schema->components([
             Wizard::make([
                 Step::make('Welcome')
-                    ->icon('heroicon-o-hand-raised')
+                    ->icon(Heroicon::OutlinedHandRaised)
                     ->description('Tell us about your bakery')
                     ->schema([
                         Section::make('Welcome to KneadIt!')
@@ -242,7 +243,7 @@ class Onboarding extends Page
                     }),
 
                 Step::make('Contact Info')
-                    ->icon('heroicon-o-envelope')
+                    ->icon(Heroicon::OutlinedEnvelope)
                     ->description('How customers can reach you')
                     ->schema([
                         Section::make('Contact Information')
@@ -270,7 +271,7 @@ class Onboarding extends Page
                     }),
 
                 Step::make('Branding')
-                    ->icon('heroicon-o-paint-brush')
+                    ->icon(Heroicon::OutlinedPaintBrush)
                     ->description('Make it yours')
                     ->schema([
                         Section::make('Brand Your Bakery')
@@ -298,7 +299,7 @@ class Onboarding extends Page
                     }),
 
                 Step::make('First Product')
-                    ->icon('heroicon-o-cake')
+                    ->icon(Heroicon::OutlinedCake)
                     ->description('Add something delicious')
                     ->schema([
                         Section::make('Create Your First Product')
@@ -351,7 +352,7 @@ class Onboarding extends Page
                     }),
 
                 Step::make('Business Hours')
-                    ->icon('heroicon-o-clock')
+                    ->icon(Heroicon::OutlinedClock)
                     ->description('When are you open?')
                     ->schema([
                         Section::make('Set Your Business Hours')
@@ -371,7 +372,7 @@ class Onboarding extends Page
                     }),
 
                 Step::make('Compliance')
-                    ->icon('heroicon-o-shield-check')
+                    ->icon(Heroicon::OutlinedShieldCheck)
                     ->description('Cottage food compliance')
                     ->schema([
                         Section::make('Cottage Food Compliance')
@@ -410,7 +411,7 @@ class Onboarding extends Page
                     }),
 
                 Step::make('Delivery')
-                    ->icon('heroicon-o-truck')
+                    ->icon(Heroicon::OutlinedTruck)
                     ->description('Delivery & pickup options')
                     ->schema([
                         Section::make('Delivery Settings')
@@ -475,7 +476,7 @@ class Onboarding extends Page
                     }),
 
                 Step::make('Payments')
-                    ->icon('heroicon-o-credit-card')
+                    ->icon(Heroicon::OutlinedCreditCard)
                     ->description('How you get paid')
                     ->schema([
                         Section::make('Payment Collection')
@@ -535,7 +536,7 @@ class Onboarding extends Page
                     }),
 
                 Step::make('Preview')
-                    ->icon('heroicon-o-eye')
+                    ->icon(Heroicon::OutlinedEye)
                     ->description('Review your storefront')
                     ->schema([
                         View::make('filament.pages.onboarding-preview')
@@ -545,7 +546,7 @@ class Onboarding extends Page
                     ]),
 
                 Step::make('Complete')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon(Heroicon::OutlinedCheckCircle)
                     ->description('You\'re all set!')
                     ->schema([
                         View::make('filament.pages.onboarding-complete'),

@@ -8,6 +8,7 @@ use App\Filament\Resources\WaitlistEntries\Tables\WaitlistEntriesTable;
 use App\Models\WaitlistEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,7 +16,7 @@ class WaitlistEntryResource extends Resource
 {
     protected static ?string $model = WaitlistEntry::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-queue-list';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedQueueList;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 

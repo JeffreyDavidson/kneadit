@@ -35,7 +35,7 @@ class SurveyForm
                             'multiple_choice' => 'Multiple Choice',
                         ])
                         ->required()
-                        ->reactive(),
+                        ->live(),
 
                     TextInput::make('question')
                         ->required()

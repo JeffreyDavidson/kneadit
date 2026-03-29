@@ -8,6 +8,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Product;
 use App\Models\Setting;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
@@ -32,7 +33,7 @@ class PricingEngine extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyDollar;
 
     protected static ?string $navigationLabel = 'Pricing';
 

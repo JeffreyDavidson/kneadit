@@ -14,12 +14,13 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class AnnouncementBanner extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-megaphone';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 

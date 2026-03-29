@@ -5,6 +5,7 @@ namespace App\Filament\Resources\BlogPosts\Tables;
 use App\Models\BlogPost;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -40,7 +41,7 @@ class BlogPostsTable
             ->defaultSort('created_at', 'desc')
             ->recordActions([
                 Action::make('publish')
-                    ->icon('heroicon-o-arrow-up-circle')
+                    ->icon(Heroicon::OutlinedArrowUpCircle)
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Publish Post')
@@ -58,7 +59,7 @@ class BlogPostsTable
                     ->visible(fn (BlogPost $record) => ! $record->is_published),
 
                 Action::make('unpublish')
-                    ->icon('heroicon-o-arrow-down-circle')
+                    ->icon(Heroicon::OutlinedArrowDownCircle)
                     ->color('warning')
                     ->requiresConfirmation()
                     ->modalHeading('Unpublish Post')

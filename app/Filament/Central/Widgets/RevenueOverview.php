@@ -3,12 +3,15 @@
 namespace App\Filament\Central\Widgets;
 
 use App\Models\Tenant;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Number;
 
 class RevenueOverview extends StatsOverviewWidget
 {
+    protected ?string $pollingInterval = null;
+
     protected static ?int $sort = 1;
 
     protected function getStats(): array
@@ -47,22 +50,22 @@ class RevenueOverview extends StatsOverviewWidget
             Stat::make('Monthly Recurring Revenue', Number::currency($mrr))
                 ->description('Active subscriptions')
                 ->color('success')
-                ->icon('heroicon-o-currency-dollar'),
+                ->icon(Heroicon::OutlinedCurrencyDollar),
 
             Stat::make('Annual Recurring Revenue', Number::currency($arr))
                 ->description('MRR × 12')
                 ->color('success')
-                ->icon('heroicon-o-banknotes'),
+                ->icon(Heroicon::OutlinedBanknotes),
 
             Stat::make('Trial Conversion', $trialConversion . '%')
                 ->description($convertedFromTrial . ' of ' . $totalTrialed . ' converted')
                 ->color($trialConversion >= 50 ? 'success' : 'warning')
-                ->icon('heroicon-o-arrow-path'),
+                ->icon(Heroicon::OutlinedArrowPath),
 
             Stat::make('Churn Rate', $churnRate . '%')
                 ->description($inactive . ' inactive of ' . $totalEver)
                 ->color($churnRate <= 10 ? 'success' : 'danger')
-                ->icon('heroicon-o-arrow-trending-down'),
+                ->icon(Heroicon::OutlinedArrowTrendingDown),
         ];
     }
 }

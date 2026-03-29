@@ -13,6 +13,7 @@ use App\Models\User;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -31,7 +32,7 @@ class StaffManagement extends Page
         return true;
     }
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     protected static string|UnitEnum|null $navigationGroup = 'Admin';
 

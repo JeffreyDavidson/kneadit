@@ -11,6 +11,7 @@ use App\Filament\Resources\Suppliers\Tables\SuppliersTable;
 use App\Models\Supplier;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Laravel\Pennant\Feature;
 
@@ -20,7 +21,7 @@ class SupplierResource extends Resource
 
     protected static ?string $model = Supplier::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-truck';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';
 

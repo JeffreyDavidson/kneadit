@@ -8,6 +8,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Recipe;
 use App\Services\Financial\RecipeCostService;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
@@ -34,7 +35,7 @@ class RecipeCostCalculator extends Page
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calculator';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
 
     protected static ?string $navigationLabel = 'Recipe Cost Calculator';
 

@@ -41,7 +41,7 @@ test('can edit a gift card via table action', function () {
             'purchaser_email' => $giftCard->purchaser_email,
             'initial_balance' => $giftCard->initial_balance,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($giftCard->fresh()->purchaser_name)->toBe('Updated Name');
 });
@@ -74,7 +74,7 @@ test('edit gift card validates required fields', function (array $data, array $e
             'initial_balance' => $giftCard->initial_balance,
             ...$data,
         ])
-        ->assertHasTableActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'purchaser name is required' => [['purchaser_name' => null], ['purchaser_name' => 'required']],
     'purchaser email is required' => [['purchaser_email' => null], ['purchaser_email' => 'required']],
@@ -88,7 +88,7 @@ test('can create a gift card via header action', function () {
             'purchaser_email' => 'jane@example.com',
             'initial_balance' => 50.00,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $giftCard = GiftCard::query()->first();
     expect($giftCard)

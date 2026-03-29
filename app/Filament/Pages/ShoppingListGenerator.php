@@ -10,6 +10,7 @@ use App\Models\Ingredient;
 use App\Models\Order;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -35,7 +36,7 @@ class ShoppingListGenerator extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingCart;
 
     protected static ?string $navigationLabel = 'Shopping List';
 
@@ -143,11 +144,11 @@ class ShoppingListGenerator extends Page
         return [
             Action::make('generate')
                 ->label('Generate Shopping List')
-                ->icon('heroicon-o-list-bullet')
+                ->icon(Heroicon::OutlinedListBullet)
                 ->action('generateShoppingList'),
             Action::make('print')
                 ->label('Print')
-                ->icon('heroicon-o-printer')
+                ->icon(Heroicon::OutlinedPrinter)
                 ->action(fn () => $this->dispatch('print-shopping-list'))
                 ->visible(fn () => $this->shoppingList->isNotEmpty()),
         ];

@@ -33,7 +33,7 @@ test('can create a customer via slide-over', function () {
             'email' => 'jane@example.com',
             'phone' => '555-1234',
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Customer::class, [
         'name' => 'Jane Doe',
@@ -44,7 +44,7 @@ test('can create a customer via slide-over', function () {
 test('create customer validates required fields', function (array $data, array $errors) {
     Livewire::test(ListCustomers::class)
         ->callAction(CreateAction::class, data: $data)
-        ->assertHasActionErrors($errors);
+        ->assertHasFormErrors($errors);
 })->with([
     'name is required' => [['name' => null, 'email' => 'test@test.com'], ['name' => 'required']],
     'email is required' => [['name' => 'Test', 'email' => null], ['email' => 'required']],
@@ -59,7 +59,7 @@ test('can edit a customer via table action', function () {
             'name' => 'Updated Name',
             'email' => $customer->email,
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($customer->fresh()->name)->toBe('Updated Name');
 });
