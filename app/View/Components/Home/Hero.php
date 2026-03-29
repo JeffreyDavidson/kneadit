@@ -39,13 +39,13 @@ class Hero extends Component
             ? Storage::url($heroImage)
             : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
-        $this->customerCount = Cache::remember('hero_customer_count', 3600, fn () => Customer::query()->count());
-        $this->avgRating = Cache::remember('hero_avg_rating', 3600, function () {
+        $this->customerCount = Cache::flexible('hero_customer_count', [3600, 7200], fn () => Customer::query()->count());
+        $this->avgRating = Cache::flexible('hero_avg_rating', [3600, 7200], function () {
             $avg = Review::query()->approved()->avg('rating');
 
             return $avg !== null ? (float) $avg : null;
         });
-        $this->topReview = Cache::remember('hero_top_review', 3600, fn () => Review::query()
+        $this->topReview = Cache::flexible('hero_top_review', [3600, 7200], fn () => Review::query()
             ->approved()
             ->where('rating', '>=', 4)
             ->latest()
