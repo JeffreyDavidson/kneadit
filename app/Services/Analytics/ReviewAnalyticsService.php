@@ -134,11 +134,8 @@ class ReviewAnalyticsService
     {
         $reviews = Review::query()->whereNotNull('comment')
             ->where('comment', '!=', '')
-            ->get();
-
-        if ($reviews->isEmpty()) {
-            return ['positive' => 0, 'neutral' => 0, 'negative' => 0];
-        }
+            ->select(['id', 'comment', 'rating'])
+            ->cursor();
 
         $positive = 0;
         $neutral = 0;
