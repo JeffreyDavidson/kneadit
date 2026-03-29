@@ -1,5 +1,7 @@
 <?php
 
+use App\Actions\GiftCards\CreateGiftCard;
+use App\Actions\GiftCards\RedeemGiftCard;
 use App\DataTransferObjects\CreateGiftCardData;
 use App\Models\GiftCard;
 use App\Services\GiftCardService;
@@ -37,7 +39,7 @@ test('gift card can be purchased with valid data', function () {
 
 test('gift card balance check works', function () {
     $service = new GiftCardService;
-    $card = $service->create(CreateGiftCardData::fromArray([
+    $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'purchaser_name' => 'John',
         'purchaser_email' => 'john@example.com',
         'initial_balance' => 25.00,
@@ -71,28 +73,28 @@ test('gift card code is generated in correct format', function () {
 
 test('gift card redemption deducts balance', function () {
     $service = new GiftCardService;
-    $card = $service->create(CreateGiftCardData::fromArray([
+    $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'purchaser_name' => 'John',
         'purchaser_email' => 'john@example.com',
         'initial_balance' => 100.00,
     ]));
 
-    $result = $service->redeem($card->code, 30.00);
+    $result = resolve(RedeemGiftCard::class)($card->code, 30.00);
 
     expect($result->success)->toBeTrue()->and($result->amountApplied)->toBe(30.0)->and($result->remainingBalance)->toBe(70.0);
 });
 
 test('depleted gift card cannot be redeemed', function () {
     $service = new GiftCardService;
-    $card = $service->create(CreateGiftCardData::fromArray([
+    $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'purchaser_name' => 'John',
         'purchaser_email' => 'john@example.com',
         'initial_balance' => 10.00,
     ]));
 
-    $service->redeem($card->code, 10.00);
+    resolve(RedeemGiftCard::class)($card->code, 10.00);
 
-    $result = $service->redeem($card->code, 5.00);
+    $result = resolve(RedeemGiftCard::class)($card->code, 5.00);
 
     expect($result->success)->toBeFalse();
 });
@@ -109,7 +111,7 @@ test('expired gift card cannot be redeemed', function () {
     ]);
 
     $service = new GiftCardService;
-    $result = $service->redeem($card->code, 10.00);
+    $result = resolve(RedeemGiftCard::class)($card->code, 10.00);
 
     expect($result->success)->toBeFalse();
 });
