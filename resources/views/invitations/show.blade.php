@@ -15,7 +15,7 @@
         <div class="p-8">
             <h2 class="text-xl font-semibold text-gray-800 mb-2">Join {{ $storeName }}</h2>
             <p class="text-gray-600 mb-6">
-                You've been invited as a <strong class="text-amber-700">{{ ucfirst($invitation->role) }}</strong>.
+                You've been invited as a <strong class="text-amber-700">{{ $invitation->role->label() }}</strong>.
             </p>
 
             @if($existingUser)

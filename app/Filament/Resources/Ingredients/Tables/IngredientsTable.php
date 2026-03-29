@@ -126,7 +126,7 @@ class IngredientsTable
                         ->action(function (Collection $records, array $data) {
                             /** @var Collection<int, Ingredient> $records */
                             foreach ($records as $ingredient) {
-                                app(AdjustIngredientStock::class)($ingredient, (float) $data['quantity'], 'purchase', $data['notes'] ?? null);
+                                app(AdjustIngredientStock::class)($ingredient, (float) $data['quantity'], StockAdjustmentType::Purchase, $data['notes'] ?? null);
                             }
                         })
                         ->deselectRecordsAfterCompletion(),

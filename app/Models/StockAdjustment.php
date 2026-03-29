@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StockAdjustmentType;
 use Database\Factories\StockAdjustmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,6 +37,7 @@ class StockAdjustment extends Model
         return [
             'quantity' => 'decimal:2',
             'created_at' => 'datetime',
+            'type' => StockAdjustmentType::class,
         ];
     }
 

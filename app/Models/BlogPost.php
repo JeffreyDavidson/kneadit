@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BlogPostCategory;
 use App\Observers\BlogPostObserver;
 use Database\Factories\BlogPostFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -51,6 +52,7 @@ class BlogPost extends Model
         return [
             'is_published' => 'boolean',
             'published_at' => 'datetime',
+            'category' => BlogPostCategory::class,
         ];
     }
 

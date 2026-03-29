@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Database\Factories\StaffInvitationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,7 @@ class StaffInvitation extends Model
         return [
             'accepted_at' => 'datetime',
             'expires_at' => 'datetime',
+            'role' => UserRole::class,
         ];
     }
 

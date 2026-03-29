@@ -9,6 +9,16 @@ enum UserRole: string
     case Owner = 'owner';
     case PlatformAdmin = 'platform_admin';
 
+    public function label(): string
+    {
+        return match ($this) {
+            self::Staff => 'Staff',
+            self::Manager => 'Manager',
+            self::Owner => 'Owner',
+            self::PlatformAdmin => 'Platform Admin',
+        };
+    }
+
     public function level(): int
     {
         return match ($this) {
