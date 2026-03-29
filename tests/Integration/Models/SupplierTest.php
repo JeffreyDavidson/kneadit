@@ -18,8 +18,7 @@ test('supplier has ingredients relationship', function () {
 
     $supplier->ingredients()->attach($ingredient->id, ['unit_price' => 1.20]);
 
-    expect($supplier->fresh()->ingredients)->toHaveCount(1);
-    expect($supplier->fresh()->ingredients->first()->name)->toBe('Flour');
+    expect($supplier->fresh()->ingredients)->toHaveCount(1)->and($supplier->fresh()->ingredients->first()->name)->toBe('Flour');
 });
 
 test('ingredients pivot has unit price', function () {
@@ -35,8 +34,7 @@ test('ingredients pivot has unit price', function () {
 test('is active is cast to boolean', function () {
     $supplier = Supplier::query()->create(['name' => 'Flour Co', 'is_active' => true]);
 
-    expect($supplier->is_active)->toBeBool();
-    expect($supplier->is_active)->toBeTrue();
+    expect($supplier->is_active)->toBeBool()->toBeTrue();
 });
 
 test('supplier can be deactivated', function () {

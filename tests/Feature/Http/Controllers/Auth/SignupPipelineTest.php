@@ -144,8 +144,7 @@ test('successful onboarding creates domain record with correct subdomain', funct
     $domain = DB::connection('central')->table('domains')
         ->where('tenant_id', $sub)->first();
 
-    expect($domain)->not->toBeNull();
-    expect($domain->domain)->toBe($sub);
+    expect($domain)->not->toBeNull()->and($domain->domain)->toBe($sub);
 });
 
 test('successful onboarding creates tenant user with same email', function () {

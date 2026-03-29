@@ -31,6 +31,5 @@ test('trial expiring in 48h creates churn alert', function () {
         ->where('target_id', 'expiring-bakery')
         ->first();
 
-    expect($log)->not->toBeNull('Expected a churn_alert audit log for expiring tenant');
-    expect($log->description)->toContain('Trial expiring soon');
+    expect($log)->not->toBeNull('Expected a churn_alert audit log for expiring tenant')->and($log->description)->toContain('Trial expiring soon');
 });

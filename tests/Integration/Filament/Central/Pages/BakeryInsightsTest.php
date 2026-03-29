@@ -9,33 +9,22 @@ beforeEach(function () {
 test('page class has required methods', function () {
     $page = new BakeryInsights;
 
-    expect(method_exists($page, 'getTenantHealthData'))->toBeTrue();
-    expect(method_exists($page, 'getAlerts'))->toBeTrue();
-    expect(method_exists($page, 'getTenantUsageData'))->toBeTrue();
-    expect(method_exists($page, 'getHealthSummaryStats'))->toBeTrue();
+    expect(method_exists($page, 'getTenantHealthData'))->toBeTrue()->and(method_exists($page, 'getAlerts'))->toBeTrue()->and(method_exists($page, 'getTenantUsageData'))->toBeTrue()->and(method_exists($page, 'getHealthSummaryStats'))->toBeTrue();
 });
 
 test('health summary returns expected keys', function () {
     $page = new BakeryInsights;
     $stats = $page->getHealthSummaryStats();
 
-    expect($stats)->toHaveKey('average');
-    expect($stats)->toHaveKey('healthy');
-    expect($stats)->toHaveKey('at_risk');
-    expect($stats)->toHaveKey('critical');
-    expect($stats)->toHaveKey('total');
+    expect($stats)->toHaveKeys(['average', 'healthy', 'at_risk', 'critical', 'total']);
 });
 
 test('get next plan returns correct upgrades', function () {
     $page = new BakeryInsights;
 
-    expect($page->getNextPlan('starter'))->toBe('Growth');
-    expect($page->getNextPlan('growth'))->toBe('Pro');
-    expect($page->getNextPlan('pro'))->toBeNull();
+    expect($page->getNextPlan('starter'))->toBe('Growth')->and($page->getNextPlan('growth'))->toBe('Pro')->and($page->getNextPlan('pro'))->toBeNull();
 });
 
 test('plan limits constant exists', function () {
-    expect(config('kneadit.plans'))->toHaveKey('starter');
-    expect(config('kneadit.plans'))->toHaveKey('growth');
-    expect(config('kneadit.plans'))->toHaveKey('pro');
+    expect(config('kneadit.plans'))->toHaveKeys(['starter', 'growth', 'pro']);
 });

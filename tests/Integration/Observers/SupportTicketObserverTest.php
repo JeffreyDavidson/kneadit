@@ -19,9 +19,7 @@ test('creating ticket creates audit log with ticket opened action', function () 
 
     $log = AdminAuditLog::query()->where('action', 'ticket_opened')->first();
 
-    expect($log)->not->toBeNull();
-    expect($log->target_type)->toBe('support_ticket');
-    expect($log->target_id)->toBe((string) $ticket->id);
+    expect($log)->not->toBeNull()->and($log->target_type)->toBe('support_ticket')->and($log->target_id)->toBe((string) $ticket->id);
 });
 
 test('audit log description contains ticket subject', function () {
@@ -35,6 +33,5 @@ test('audit log description contains ticket subject', function () {
 
     $log = AdminAuditLog::query()->where('action', 'ticket_opened')->first();
 
-    expect($log)->not->toBeNull();
-    expect($log->description)->toContain('Billing issue with subscription');
+    expect($log)->not->toBeNull()->and($log->description)->toContain('Billing issue with subscription');
 });

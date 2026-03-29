@@ -12,6 +12,5 @@ it('returns expected data keys', function () {
     $collector = new WeeklyDigestDataCollector;
     $data = $collector->collect();
 
-    expect($data)->toHaveKeys(['stats', 'topProducts', 'atRiskCustomers', 'upcomingCount', 'storeName', 'adminUrl']);
-    expect($data['stats'])->toHaveKeys(['total_orders', 'total_revenue', 'new_customers', 'avg_order_value']);
+    expect($data)->toHaveKeys(['stats', 'topProducts', 'atRiskCustomers', 'upcomingCount', 'storeName', 'adminUrl'])->and($data['stats'])->toHaveKeys(['total_orders', 'total_revenue', 'new_customers', 'avg_order_value']);
 });

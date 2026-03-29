@@ -43,8 +43,7 @@ test('blocked dates show as unavailable', function () {
 
     $dates = collect($response->json());
     $blockedEntry = $dates->firstWhere('date', $tomorrow->toDateString());
-    expect($blockedEntry)->not->toBeNull();
-    expect($blockedEntry['available'])->toBeFalse();
+    expect($blockedEntry)->not->toBeNull()->and($blockedEntry['available'])->toBeFalse();
 });
 
 test('closed days show as unavailable', function () {
@@ -67,9 +66,7 @@ test('closed days show as unavailable', function () {
 
     $dates = collect($response->json());
     $entry = $dates->firstWhere('date', $target->toDateString());
-    expect($entry)->not->toBeNull();
-    expect($entry['available'])->toBeFalse();
-    expect($entry['reason'])->toBe('Closed');
+    expect($entry)->not->toBeNull()->and($entry['available'])->toBeFalse()->and($entry['reason'])->toBe('Closed');
 });
 
 test('open days show as available', function () {
@@ -90,8 +87,7 @@ test('open days show as available', function () {
 
     $dates = collect($response->json());
     $entry = $dates->firstWhere('date', $tomorrow->toDateString());
-    expect($entry)->not->toBeNull();
-    expect($entry['available'])->toBeTrue();
+    expect($entry)->not->toBeNull()->and($entry['available'])->toBeTrue();
 });
 
 test('capacity is reflected in availability response', function () {
@@ -110,6 +106,5 @@ test('capacity is reflected in availability response', function () {
 
     $dates = collect($response->json());
     $entry = $dates->firstWhere('date', $tomorrow->toDateString());
-    expect($entry)->toHaveKey('remaining_capacity');
-    expect($entry['remaining_capacity'])->toBe(10);
+    expect($entry)->toHaveKey('remaining_capacity')->and($entry['remaining_capacity'])->toBe(10);
 });

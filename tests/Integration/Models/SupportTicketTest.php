@@ -18,8 +18,7 @@ test('can create ticket', function () {
     ]);
 
     $found = SupportTicket::query()->where('subject', 'Help needed')->first();
-    expect($found)->not->toBeNull();
-    expect($found->priority)->toBe(SupportTicketPriority::High);
+    expect($found)->not->toBeNull()->and($found->priority)->toBe(SupportTicketPriority::High);
 });
 
 test('status defaults to open', function () {

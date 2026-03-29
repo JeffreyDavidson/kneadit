@@ -21,7 +21,7 @@ test('sends campaign to all customers and updates status', function () {
 
     Customer::factory()->count(3)->create();
 
-    app(SendEmailCampaign::class)($campaign);
+    resolve(SendEmailCampaign::class)($campaign);
 
     Mail::assertQueued(CustomerBlastMail::class, 3);
     expect($campaign->fresh()->status)->toBe(EmailCampaignStatus::Sent)

@@ -7,7 +7,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('all named routes can be generated without errors', function () {
-    $routes = collect(app('router')->getRoutes()->getRoutesByName());
+    $routes = collect(resolve('router')->getRoutes()->getRoutesByName());
     $failures = [];
 
     foreach ($routes as $name => $route) {

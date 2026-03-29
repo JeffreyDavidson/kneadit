@@ -29,11 +29,5 @@ it('creates a tenant with domain and seeds the tenant database', function () {
         useKneadItStorefront: true,
     );
 
-    expect($tenant)->toBeInstanceOf(Tenant::class);
-    expect($tenant->id)->toBe('testbakery');
-    expect($tenant->store_name)->toBe('Test Bakery');
-    expect($tenant->storefront_enabled)->toBeTrue();
-    expect($tenant->is_active)->toBeTrue();
-    expect($tenant->domains)->toHaveCount(1);
-    expect($tenant->domains->first()->domain)->toBe('testbakery');
+    expect($tenant)->toBeInstanceOf(Tenant::class)->and($tenant->id)->toBe('testbakery')->and($tenant->store_name)->toBe('Test Bakery')->and($tenant->storefront_enabled)->toBeTrue()->and($tenant->is_active)->toBeTrue()->and($tenant->domains)->toHaveCount(1)->and($tenant->domains->first()->domain)->toBe('testbakery');
 });

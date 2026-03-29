@@ -15,7 +15,7 @@ beforeEach(function () {
 test('it adjusts stock and creates adjustment record', function () {
     $ingredient = Ingredient::factory()->create(['current_stock' => 50]);
 
-    app(AdjustIngredientStock::class)($ingredient, 10, 'purchase', 'Restocked');
+    resolve(AdjustIngredientStock::class)($ingredient, 10, 'purchase', 'Restocked');
 
     assertDatabaseHas('stock_adjustments', [
         'ingredient_id' => $ingredient->id,

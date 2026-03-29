@@ -75,15 +75,13 @@ test('pro-features is inactive for growth plan', function () {
 test('pro plan has access to both growth and pro features', function () {
     setTenantPlanForAccess('pro');
 
-    expect(Feature::active('growth-features'))->toBeTrue();
-    expect(Feature::active('pro-features'))->toBeTrue();
+    expect(Feature::active('growth-features'))->toBeTrue()->and(Feature::active('pro-features'))->toBeTrue();
 });
 
 test('starter plan has no access to growth or pro features', function () {
     setTenantPlanForAccess('starter');
 
-    expect(Feature::active('growth-features'))->toBeFalse();
-    expect(Feature::active('pro-features'))->toBeFalse();
+    expect(Feature::active('growth-features'))->toBeFalse()->and(Feature::active('pro-features'))->toBeFalse();
 });
 
 // --- ShowsUpgradeBadge tests ---
@@ -91,8 +89,7 @@ test('starter plan has no access to growth or pro features', function () {
 test('navigation badge shows tier name for locked features', function () {
     setTenantPlanForAccess('starter');
 
-    expect(GrowthBadgeStub::getNavigationBadge())->toBe('GROWTH');
-    expect(ProBadgeStub::getNavigationBadge())->toBe('PRO');
+    expect(GrowthBadgeStub::getNavigationBadge())->toBe('GROWTH')->and(ProBadgeStub::getNavigationBadge())->toBe('PRO');
 });
 
 test('navigation badge is null for accessible features', function () {

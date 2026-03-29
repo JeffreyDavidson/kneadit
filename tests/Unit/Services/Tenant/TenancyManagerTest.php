@@ -23,8 +23,7 @@ it('initializes tenancy, runs callback, and ends tenancy', function () {
         return 'result';
     });
 
-    expect($callbackExecuted)->toBeTrue();
-    expect($result)->toBe('result');
+    expect($callbackExecuted)->toBeTrue()->and($result)->toBe('result');
 });
 
 it('ends tenancy even when callback throws an exception', function () {

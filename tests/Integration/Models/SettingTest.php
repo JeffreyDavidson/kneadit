@@ -37,6 +37,5 @@ test('set updates existing setting', function () {
     settings(['my_key' => 'old']);
     settings(['my_key' => 'new']);
 
-    expect(settings('my_key'))->toBe('new');
-    expect(Setting::query()->where('key', 'my_key')->count())->toBe(1);
+    expect(settings('my_key'))->toBe('new')->and(Setting::query()->where('key', 'my_key')->count())->toBe(1);
 });

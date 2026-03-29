@@ -38,8 +38,7 @@ test('creates order with correct totals and items', function () {
         ->total->toBe('25.00');
 
     $order->load('orderItems', 'customer');
-    expect($order->orderItems)->toHaveCount(1);
-    expect($order->customer->email)->toBe('jane@example.com');
+    expect($order->orderItems)->toHaveCount(1)->and($order->customer->email)->toBe('jane@example.com');
 });
 
 test('returns null when capacity is full', function () {

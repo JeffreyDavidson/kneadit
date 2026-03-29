@@ -48,8 +48,7 @@ test('check balance returns correct card', function () {
 
     $found = test()->service->checkBalance($card->code);
 
-    expect($found)->not->toBeNull();
-    expect((float) $found->current_balance)->toBe(100.0);
+    expect($found)->not->toBeNull()->and((float) $found->current_balance)->toBe(100.0);
 });
 
 test('redeem deducts from balance', function () {
@@ -61,9 +60,7 @@ test('redeem deducts from balance', function () {
 
     $result = test()->service->redeem($card->code, 20);
 
-    expect($result['success'])->toBeTrue();
-    expect($result['amount_applied'])->toBe(20.0);
-    expect($result['remaining_balance'])->toBe(30.0);
+    expect($result['success'])->toBeTrue()->and($result)->toMatchArray(['amount_applied' => 20.0, 'remaining_balance' => 30.0]);
 });
 
 test('redeem creates transaction record', function () {
@@ -97,9 +94,7 @@ test('redeem caps at available balance', function () {
 
     $result = test()->service->redeem($card->code, 50);
 
-    expect($result['success'])->toBeTrue();
-    expect($result['amount_applied'])->toBe(20.0);
-    expect($result['remaining_balance'])->toBe(0.0);
+    expect($result['success'])->toBeTrue()->and($result)->toMatchArray(['amount_applied' => 20.0, 'remaining_balance' => 0.0]);
 });
 
 test('redeem fails when card inactive', function () {

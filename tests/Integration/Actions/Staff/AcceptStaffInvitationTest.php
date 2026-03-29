@@ -29,8 +29,5 @@ it('creates a new user and marks invitation as accepted', function () {
         password: 'password123',
     );
 
-    expect($user)->toBeInstanceOf(User::class);
-    expect($user->email)->toBe('new@test.com');
-    expect($user->role)->toBe(UserRole::Staff);
-    expect($invitation->refresh()->accepted_at)->not->toBeNull();
+    expect($user)->toBeInstanceOf(User::class)->and($user->email)->toBe('new@test.com')->and($user->role)->toBe(UserRole::Staff)->and($invitation->refresh()->accepted_at)->not->toBeNull();
 });

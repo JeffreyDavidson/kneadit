@@ -11,10 +11,7 @@ beforeEach(fn () => setUpTenantTest());
 test('user model has role methods', function () {
     $user = new User;
 
-    expect(method_exists($user, 'isOwner'))->toBeTrue();
-    expect(method_exists($user, 'isManager'))->toBeTrue();
-    expect(method_exists($user, 'isStaff'))->toBeTrue();
-    expect(method_exists($user, 'hasMinRole'))->toBeTrue();
+    expect(method_exists($user, 'isOwner'))->toBeTrue()->and(method_exists($user, 'isManager'))->toBeTrue()->and(method_exists($user, 'isStaff'))->toBeTrue()->and(method_exists($user, 'hasMinRole'))->toBeTrue();
 });
 
 test('role is cast to UserRole enum', function () {
@@ -78,7 +75,5 @@ test('has min role owner is true only for owner', function () {
     $manager = User::factory()->create(['role' => UserRole::Manager]);
     $staff = User::factory()->create(['role' => UserRole::Staff]);
 
-    expect($owner->hasMinRole(UserRole::Owner))->toBeTrue();
-    expect($manager->hasMinRole(UserRole::Owner))->toBeFalse();
-    expect($staff->hasMinRole(UserRole::Owner))->toBeFalse();
+    expect($owner->hasMinRole(UserRole::Owner))->toBeTrue()->and($manager->hasMinRole(UserRole::Owner))->toBeFalse()->and($staff->hasMinRole(UserRole::Owner))->toBeFalse();
 });

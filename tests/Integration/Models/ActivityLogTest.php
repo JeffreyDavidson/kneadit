@@ -18,8 +18,7 @@ test('creating a product logs created activity', function () {
 
     $log = ActivityLog::query()->where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'created')->first();
 
-    expect($log)->not->toBeNull();
-    expect($log->description)->toContain('created');
+    expect($log)->not->toBeNull()->and($log->description)->toContain('created');
 });
 
 test('updating a product logs updated activity', function () {
@@ -60,8 +59,7 @@ test('changes are captured in properties', function () {
 
     $log = ActivityLog::query()->where('action', 'updated')->where('model_type', Product::class)->where('model_id', $product->id)->first();
 
-    expect($log->properties)->not->toBeNull();
-    expect($log->properties)->toHaveKey('changes');
+    expect($log->properties)->not->toBeNull()->toHaveKey('changes');
 });
 
 test('system user name when not authenticated', function () {

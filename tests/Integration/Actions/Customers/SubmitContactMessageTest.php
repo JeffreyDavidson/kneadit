@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('creates contact message from data', function () {
-    $message = app(SubmitContactMessage::class)([
+    $message = resolve(SubmitContactMessage::class)([
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'subject' => 'Custom order',

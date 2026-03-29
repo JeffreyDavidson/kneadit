@@ -17,8 +17,7 @@ test('mrr calculation with different plans', function () {
     $activeTenants = Tenant::query()->where('is_active', true)->get();
     $mrr = $activeTenants->sum(fn ($t) => $planPrices[$t->plan] ?? 0);
 
-    expect($mrr)->toBe(57);
-    expect($activeTenants)->toHaveCount(3);
+    expect($mrr)->toBe(57)->and($activeTenants)->toHaveCount(3);
 });
 
 test('trial count', function () {

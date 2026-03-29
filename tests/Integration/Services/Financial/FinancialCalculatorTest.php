@@ -40,8 +40,5 @@ it('calculates yearly totals from orders and expenses', function () {
         'totalRevenue', 'totalExpenses', 'netProfit',
         'monthlyBreakdown', 'expenseBreakdown',
         'cogsAmount', 'cogsPercentage',
-    ]);
-    expect((float) $result['totalRevenue'])->toBe(100.0);
-    expect((float) $result['totalExpenses'])->toBe(30.0);
-    expect((float) $result['netProfit'])->toBe(70.0);
+    ])->and((float) $result['totalRevenue'])->toBe(100.0)->and((float) $result['totalExpenses'])->toBe(30.0)->and((float) $result['netProfit'])->toBe(70.0);
 });

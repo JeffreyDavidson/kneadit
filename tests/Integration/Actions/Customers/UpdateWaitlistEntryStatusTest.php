@@ -14,7 +14,7 @@ beforeEach(function () {
 test('it updates a waitlist entry status', function () {
     $entry = WaitlistEntry::factory()->create();
 
-    app(UpdateWaitlistEntryStatus::class)($entry, WaitlistStatus::Notified);
+    resolve(UpdateWaitlistEntryStatus::class)($entry, WaitlistStatus::Notified);
 
     expect($entry->fresh()->status)->toBe(WaitlistStatus::Notified);
 });

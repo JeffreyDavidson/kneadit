@@ -13,16 +13,13 @@ test('service exists', function () {
 test('generate returns array of 3 descriptions', function () {
     $result = $this->service->generate('Sourdough Bread', 'professional', 'medium', 'bread');
 
-    expect($result)->toBeArray();
-    expect($result)->toHaveCount(3);
+    expect($result)->toBeArray()->toHaveCount(3);
 });
 
 test('each description contains product name', function () {
     $result = $this->service->generate('Sourdough Bread', 'professional', 'medium', 'bread');
 
-    foreach ($result as $description) {
-        expect($description)->toContain('Sourdough Bread');
-    }
+    expect($result)->each->toContain('Sourdough Bread');
 });
 
 test('different tones produce different text', function () {
@@ -51,14 +48,11 @@ test('custom count returns requested number', function () {
 test('unknown tone falls back to professional', function () {
     $result = $this->service->generate('Bread', 'nonexistent_tone', 'medium');
 
-    expect($result)->toBeArray();
-    expect($result)->toHaveCount(3);
+    expect($result)->toBeArray()->toHaveCount(3);
 });
 
 test('null category uses default', function () {
     $result = $this->service->generate('Mystery Item', 'casual', 'medium');
 
-    foreach ($result as $description) {
-        expect($description)->toContain('Mystery Item');
-    }
+    expect($result)->each->toContain('Mystery Item');
 });

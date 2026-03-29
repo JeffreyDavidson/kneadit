@@ -79,7 +79,5 @@ test('photo submission saves to database as unapproved', function () {
 
     $photo = CustomerPhoto::query()->first();
 
-    expect($photo)->not->toBeNull();
-    expect($photo->is_approved)->toBeFalse();
-    expect($photo->customer_name)->toBe('Carol');
+    expect($photo)->not->toBeNull()->and($photo->is_approved)->toBeFalse()->and($photo->customer_name)->toBe('Carol');
 });

@@ -24,21 +24,19 @@ beforeEach(function () {
 
 test('it creates a new referral code for a tenant', function () {
     $row = createTenant(['store_name' => 'Test Bakery']);
-    $tenant = Tenant::find($row->id);
+    $tenant = Tenant::query()->find($row->id);
 
-    $code = app(GenerateReferralCode::class)($tenant);
+    $code = resolve(GenerateReferralCode::class)($tenant);
 
-    expect($code)->toBeString();
-    expect(Referral::query()->where('referrer_tenant_id', $tenant->id)->count())->toBe(1);
+    expect($code)->toBeString()->and(Referral::query()->where('referrer_tenant_id', $tenant->id)->count())->toBe(1);
 });
 
 test('it returns existing referral code if one exists', function () {
     $row = createTenant(['store_name' => 'Test Bakery']);
-    $tenant = Tenant::find($row->id);
+    $tenant = Tenant::query()->find($row->id);
 
-    $code1 = app(GenerateReferralCode::class)($tenant);
-    $code2 = app(GenerateReferralCode::class)($tenant);
+    $code1 = resolve(GenerateReferralCode::class)($tenant);
+    $code2 = resolve(GenerateReferralCode::class)($tenant);
 
-    expect($code1)->toBe($code2);
-    expect(Referral::query()->where('referrer_tenant_id', $tenant->id)->count())->toBe(1);
+    expect($code1)->toBe($code2)->and(Referral::query()->where('referrer_tenant_id', $tenant->id)->count())->toBe(1);
 });

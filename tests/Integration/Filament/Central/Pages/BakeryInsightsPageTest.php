@@ -12,44 +12,30 @@ test('active tab defaults to health', function () {
 });
 
 test('extended trials is empty array', function () {
-    expect(test()->page->extendedTrials)->toBeArray();
-    expect(test()->page->extendedTrials)->toBeEmpty();
+    expect(test()->page->extendedTrials)->toBeArray()->toBeEmpty();
 });
 
 test('sent nudges is empty array', function () {
-    expect(test()->page->sentNudges)->toBeArray();
-    expect(test()->page->sentNudges)->toBeEmpty();
+    expect(test()->page->sentNudges)->toBeArray()->toBeEmpty();
 });
 
 test('get next plan', function () {
-    expect(test()->page->getNextPlan('starter'))->toBe('Growth');
-    expect(test()->page->getNextPlan('growth'))->toBe('Pro');
-    expect(test()->page->getNextPlan('pro'))->toBeNull();
+    expect(test()->page->getNextPlan('starter'))->toBe('Growth')->and(test()->page->getNextPlan('growth'))->toBe('Pro')->and(test()->page->getNextPlan('pro'))->toBeNull();
 });
 
 test('plan limits constant exists', function () {
-    expect(config('kneadit.plans'))->toHaveKey('starter');
-    expect(config('kneadit.plans'))->toHaveKey('growth');
-    expect(config('kneadit.plans'))->toHaveKey('pro');
-    expect(config('kneadit.plans.pro.limits.products'))->toBeNull();
-    expect(config('kneadit.plans.starter.limits.products'))->toBe(25);
+    expect(config('kneadit.plans'))->toHaveKeys(['starter', 'growth', 'pro'])->and(config('kneadit.plans.pro.limits.products'))->toBeNull()->and(config('kneadit.plans.starter.limits.products'))->toBe(25);
 });
 
 test('get health summary stats returns expected keys', function () {
     $result = test()->page->getHealthSummaryStats();
 
-    expect($result)->toHaveKey('average');
-    expect($result)->toHaveKey('healthy');
-    expect($result)->toHaveKey('at_risk');
-    expect($result)->toHaveKey('critical');
-    expect($result)->toHaveKey('total');
+    expect($result)->toHaveKeys(['average', 'healthy', 'at_risk', 'critical', 'total']);
 });
 
 test('get health summary stats with no tenants', function () {
     $result = test()->page->getHealthSummaryStats();
-
-    expect($result['average'])->toBe(0);
-    expect($result['total'])->toBe(0);
+    expect($result)->toMatchArray(['average' => 0, 'total' => 0]);
 });
 
 // Note: getHealthSummaryStats with tenants triggers tenancy()->initialize()

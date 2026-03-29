@@ -37,8 +37,7 @@ test('gift card can be created with correct balance', function () {
     ]);
 
     $this->assertModelExists($card);
-    expect($card->current_balance)->toBe('50.00');
-    expect($card->initial_balance)->toBe('50.00');
+    expect($card->current_balance)->toBe('50.00')->and($card->initial_balance)->toBe('50.00');
 });
 
 test('gift card is usable when active with balance', function () {
@@ -71,10 +70,7 @@ test('gift card status attribute', function () {
     $depleted = makeGiftCard(['current_balance' => 0.00]);
     $expired = makeGiftCard(['expires_at' => now()->subDay()]);
 
-    expect($active->status)->toBe(GiftCardStatus::Active);
-    expect($inactive->status)->toBe(GiftCardStatus::Inactive);
-    expect($depleted->status)->toBe(GiftCardStatus::Depleted);
-    expect($expired->status)->toBe(GiftCardStatus::Expired);
+    expect($active->status)->toBe(GiftCardStatus::Active)->and($inactive->status)->toBe(GiftCardStatus::Inactive)->and($depleted->status)->toBe(GiftCardStatus::Depleted)->and($expired->status)->toBe(GiftCardStatus::Expired);
 });
 
 test('gift card has transactions relationship', function () {
@@ -88,6 +84,5 @@ test('gift card has transactions relationship', function () {
         'created_at' => now(),
     ]);
 
-    expect($card->transactions)->toHaveCount(1);
-    expect($card->transactions->first()->amount)->toBe('50.00');
+    expect($card->transactions)->toHaveCount(1)->and($card->transactions->first()->amount)->toBe('50.00');
 });

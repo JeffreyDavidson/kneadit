@@ -22,7 +22,7 @@ beforeEach(function () {
         'updated_at' => now(),
     ]);
 
-    $tenant = Tenant::find('test-bakery');
+    $tenant = Tenant::query()->find('test-bakery');
     app()->instance(TenantContract::class, $tenant);
 
     Feature::define('pro-features', fn () => true);

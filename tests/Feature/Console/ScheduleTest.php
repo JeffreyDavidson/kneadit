@@ -3,7 +3,7 @@
 use Illuminate\Console\Scheduling\Schedule;
 
 test('all expected commands are scheduled', function () {
-    $schedule = app(Schedule::class);
+    $schedule = resolve(Schedule::class);
     $commands = collect($schedule->events())
         ->map(fn ($event) => $event->command)
         ->implode('|');

@@ -15,6 +15,5 @@ test('service worker route returns 404', function () {
 test('storefront layout does not register service worker', function () {
     $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    expect($layout)->not->toContain('serviceWorker');
-    expect($layout)->not->toContain('service-worker.js');
+    expect($layout)->not->toContain('serviceWorker')->not->toContain('service-worker.js');
 });

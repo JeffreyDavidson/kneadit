@@ -6,6 +6,7 @@ use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\MethodCall\WhereToWhereLikeRector;
 use RectorLaravel\Rector\StaticCall\RouteActionCallableRector;
 use RectorLaravel\Set\LaravelSetList;
+use RectorPest\Set\PestSetList;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -29,6 +30,8 @@ return RectorConfig::configure()
         LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL,
         LaravelSetList::LARAVEL_COLLECTION,
         LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER,
+        PestSetList::PEST_CODE_QUALITY,
+        PestSetList::PEST_CHAIN,
     ])
     ->withRules([
         RouteActionCallableRector::class,

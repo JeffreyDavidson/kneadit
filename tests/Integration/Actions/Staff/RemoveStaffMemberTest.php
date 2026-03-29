@@ -12,7 +12,7 @@ test('removes a staff member', function () {
     $owner = User::factory()->owner()->create();
     $staff = User::factory()->staff()->create();
 
-    app(RemoveStaffMember::class)($staff->id, $owner->id);
+    resolve(RemoveStaffMember::class)($staff->id, $owner->id);
 
     expect(User::query()->find($staff->id))->toBeNull();
 });
@@ -20,7 +20,7 @@ test('removes a staff member', function () {
 test('prevents removing yourself', function () {
     $owner = User::factory()->owner()->create();
 
-    expect(fn () => app(RemoveStaffMember::class)($owner->id, $owner->id))
+    expect(fn () => resolve(RemoveStaffMember::class)($owner->id, $owner->id))
         ->toThrow(RuntimeException::class, "You can't remove yourself.");
 });
 
@@ -28,6 +28,6 @@ test('prevents removing the last owner', function () {
     $owner = User::factory()->owner()->create();
     $manager = User::factory()->manager()->create();
 
-    expect(fn () => app(RemoveStaffMember::class)($owner->id, $manager->id))
+    expect(fn () => resolve(RemoveStaffMember::class)($owner->id, $manager->id))
         ->toThrow(RuntimeException::class, "Can't remove the last owner.");
 });

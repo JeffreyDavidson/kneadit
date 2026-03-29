@@ -9,7 +9,7 @@ test('creates a nudge message for the tenant', function () {
     createTenant(['store_name' => 'Sweet Dreams']);
     $tenant = App\Models\Tenant::query()->find('test-bakery');
 
-    $message = app(SendTenantNudge::class)($tenant);
+    $message = resolve(SendTenantNudge::class)($tenant);
 
     expect($message)->toBeInstanceOf(PlatformMessage::class)
         ->and($message->tenant_id)->toBe('test-bakery')
