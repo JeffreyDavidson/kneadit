@@ -151,7 +151,7 @@ class QuickOrder extends Page
                                     ->label('Product')
                                     ->required()
                                     ->options(Product::query()
-                                        ->where('is_active', true)
+                                        ->active()
                                         ->orderBy('name')
                                         ->get()
                                         ->mapWithKeys(fn (Product $product): array => [

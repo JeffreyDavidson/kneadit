@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Builders\ProductQueryBuilder;
 use App\Traits\LogsActivity;
 use Database\Factories\ProductFactory;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -53,6 +53,7 @@ use Illuminate\Support\Facades\Storage;
  *
  * @mixin \Eloquent
  */
+#[UseEloquentBuilder(ProductQueryBuilder::class)]
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
@@ -241,19 +242,5 @@ class Product extends Model
                 return null;
             },
         );
-    }
-
-    /** @param Builder<Product> $query */
-    #[Scope]
-    protected function active(Builder $query): void
-    {
-        $query->where('is_active', true);
-    }
-
-    /** @param Builder<Product> $query */
-    #[Scope]
-    protected function featured(Builder $query): void
-    {
-        $query->where('is_featured', true);
     }
 }

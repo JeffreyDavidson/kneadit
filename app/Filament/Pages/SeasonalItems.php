@@ -70,7 +70,7 @@ class SeasonalItems extends Page
                     Grid::make(4)->schema([
                         Select::make('product_id')
                             ->label('Product')
-                            ->options(Product::query()->where('is_active', true)->pluck('name', 'id'))
+                            ->options(Product::query()->active()->pluck('name', 'id'))
                             ->required()
                             ->searchable(),
                         TextInput::make('available_from')

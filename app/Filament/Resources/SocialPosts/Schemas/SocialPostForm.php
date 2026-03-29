@@ -39,7 +39,7 @@ class SocialPostForm
 
                                 Select::make('product_id')
                                     ->label('Product')
-                                    ->options(Product::query()->where('is_active', true)->pluck('name', 'id'))
+                                    ->options(Product::query()->active()->pluck('name', 'id'))
                                     ->searchable()
                                     ->nullable()
                                     ->live(),
