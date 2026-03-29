@@ -68,7 +68,7 @@ class CateringInquiry extends Model
     protected function eventTypeLabel(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->event_type->label(),
+            get: fn () => $this->event_type->getLabel(),
         );
     }
 
@@ -76,7 +76,7 @@ class CateringInquiry extends Model
     protected function statusLabel(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->status->label(),
+            get: fn () => $this->status->getLabel(),
         );
     }
 }

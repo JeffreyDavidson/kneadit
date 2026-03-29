@@ -2,14 +2,16 @@
 
 namespace App\Enums;
 
-enum BlogPostCategory: string
+use Filament\Support\Contracts\HasLabel;
+
+enum BlogPostCategory: string implements HasLabel
 {
     case Guides = 'guides';
     case Laws = 'laws';
     case Tips = 'tips';
     case News = 'news';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Guides => 'Getting Started',

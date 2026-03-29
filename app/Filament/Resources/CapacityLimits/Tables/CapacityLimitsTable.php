@@ -36,7 +36,7 @@ class CapacityLimitsTable
 
                         $day = DayOfWeek::tryFrom($record->day_of_week ?? '');
 
-                        return $day?->label() ?? '—';
+                        return $day?->getLabel() ?? '—';
                     }),
 
                 TextColumn::make('max_orders')

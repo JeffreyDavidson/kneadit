@@ -2,13 +2,15 @@
 
 namespace App\Enums;
 
-enum RewardType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum RewardType: string implements HasLabel
 {
     case PercentageDiscount = 'percentage_discount';
     case FixedDiscount = 'fixed_discount';
     case FreeProduct = 'free_product';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::PercentageDiscount => 'Percentage Off',

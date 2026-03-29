@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum CateringEventType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum CateringEventType: string implements HasLabel
 {
     case Wedding = 'wedding';
     case Corporate = 'corporate';
@@ -10,7 +12,7 @@ enum CateringEventType: string
     case Holiday = 'holiday';
     case Other = 'other';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Wedding => '💒 Wedding',

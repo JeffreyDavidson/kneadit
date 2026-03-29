@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum TaxExportType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum TaxExportType: string implements HasLabel
 {
     case All = 'all';
     case Orders = 'orders';
@@ -10,7 +12,7 @@ enum TaxExportType: string
     case Income = 'income';
     case Summary = 'summary';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::All => 'All (Orders + Expenses + Income + Summary)',

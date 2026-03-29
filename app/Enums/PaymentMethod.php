@@ -2,14 +2,16 @@
 
 namespace App\Enums;
 
-enum PaymentMethod: string
+use Filament\Support\Contracts\HasLabel;
+
+enum PaymentMethod: string implements HasLabel
 {
     case Cash = 'cash';
     case PayPal = 'paypal';
     case Stripe = 'stripe';
     case Other = 'other';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return ucfirst($this->value);
     }

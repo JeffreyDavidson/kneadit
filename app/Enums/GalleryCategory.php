@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum GalleryCategory: string
+use Filament\Support\Contracts\HasLabel;
+
+enum GalleryCategory: string implements HasLabel
 {
     case Products = 'products';
     case Bakery = 'bakery';
@@ -10,4 +12,9 @@ enum GalleryCategory: string
     case Events = 'events';
     case Process = 'process';
     case Other = 'other';
+
+    public function getLabel(): string
+    {
+        return ucfirst($this->value);
+    }
 }

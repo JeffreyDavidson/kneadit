@@ -174,8 +174,8 @@ class CustomerDirectory extends Page
                 return [
                     'id' => $order->id,
                     'order_number' => $order->order_number,
-                    'status' => $order->status->label(),
-                    'payment_status' => $order->payment_status->label(),
+                    'status' => $order->status->getLabel(),
+                    'payment_status' => $order->payment_status->getLabel(),
                     'total' => Number::currency($order->total),
                     'date' => $order->created_at?->format('M j, Y'),
                     'delivery_date' => $order->delivery_date?->format('M j, Y'),

@@ -35,7 +35,7 @@ class CateringInquiriesTable
                         CateringEventType::Holiday->value => 'success',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (mixed $state): string => ($state instanceof CateringEventType ? $state->label() : CateringEventType::tryFrom($state)?->label()) ?? ucfirst($state)),
+                    ->formatStateUsing(fn (mixed $state): string => ($state instanceof CateringEventType ? $state->getLabel() : CateringEventType::tryFrom($state)?->getLabel()) ?? ucfirst($state)),
                 TextColumn::make('event_date')
                     ->date()
                     ->sortable(),
@@ -52,7 +52,7 @@ class CateringInquiriesTable
                         CateringInquiryStatus::Cancelled->value => 'danger',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (mixed $state): string => ($state instanceof CateringInquiryStatus ? $state->label() : CateringInquiryStatus::tryFrom($state)?->label()) ?? ucfirst($state)),
+                    ->formatStateUsing(fn (mixed $state): string => ($state instanceof CateringInquiryStatus ? $state->getLabel() : CateringInquiryStatus::tryFrom($state)?->getLabel()) ?? ucfirst($state)),
                 TextColumn::make('quoted_amount')
                     ->money('usd')
                     ->placeholder('—')

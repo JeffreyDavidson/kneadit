@@ -4,7 +4,7 @@ use App\Enums\RewardType;
 
 test('each reward type has a label', function () {
     foreach (RewardType::cases() as $type) {
-        expect($type->label())->toBeString()->not->toBeEmpty();
+        expect($type->getLabel())->toBeString()->not->toBeEmpty();
     }
 });
 

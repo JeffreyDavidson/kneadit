@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum IncomeSource: string
+use Filament\Support\Contracts\HasLabel;
+
+enum IncomeSource: string implements HasLabel
 {
     case FarmersMarket = 'farmers_market';
     case CashSale = 'cash_sale';
@@ -10,7 +12,7 @@ enum IncomeSource: string
     case Catering = 'catering';
     case Other = 'other';
 
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::FarmersMarket => 'Farmers Market',
