@@ -2,6 +2,7 @@
 
 namespace App\Actions\Orders;
 
+use App\Actions\GiftCards\RedeemGiftCard;
 use App\DataTransferObjects\CreateOrderData;
 use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
@@ -12,7 +13,6 @@ use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\Product;
 use App\Services\CouponService;
-use App\Services\GiftCardService;
 use App\Services\Inventory\CapacityCalculator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -21,7 +21,7 @@ class CreateOrder
 {
     public function __construct(
         protected CouponService $couponService,
-        protected GiftCardService $giftCardService,
+        protected RedeemGiftCard $redeemGiftCard,
         protected CapacityCalculator $capacityCalculator,
     ) {}
 
@@ -83,7 +83,7 @@ class CreateOrder
                 if ($giftCard && $giftCard->is_usable) {
                     $gcAmount = min((float) $giftCard->current_balance, (float) $order->total);
                     if ($gcAmount > 0) {
-                        $this->giftCardService->redeem($giftCard->code, $gcAmount, $order->id);
+                        ($this->redeemGiftCard)($giftCard->code, $gcAmount, $order->id);
                         $order->update(['total' => max(0, (float) $order->total - $gcAmount)]);
                     }
                 }

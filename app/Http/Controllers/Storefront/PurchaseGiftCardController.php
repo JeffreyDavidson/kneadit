@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Actions\GiftCards\CreateGiftCard;
 use App\DataTransferObjects\CreateGiftCardData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PurchaseGiftCardRequest;
-use App\Services\GiftCardService;
 use Illuminate\Http\JsonResponse;
 
 class PurchaseGiftCardController extends Controller
@@ -13,11 +13,11 @@ class PurchaseGiftCardController extends Controller
     /**
      * Purchase a new gift card.
      */
-    public function __invoke(PurchaseGiftCardRequest $request, GiftCardService $service): JsonResponse
+    public function __invoke(PurchaseGiftCardRequest $request, CreateGiftCard $createGiftCard): JsonResponse
     {
         $validated = $request->validated();
 
-        $card = $service->create(CreateGiftCardData::fromArray($validated));
+        $card = $createGiftCard(CreateGiftCardData::fromArray($validated));
 
         return response()->json([
             'success' => true,

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\GiftCards\Pages;
 
+use App\Actions\GiftCards\AddGiftCardCredit;
 use App\Filament\Resources\GiftCards\GiftCardResource;
-use App\Services\GiftCardService;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
@@ -40,8 +40,7 @@ class ViewGiftCard extends ViewRecord
                         ->placeholder('Reason for credit'),
                 ])
                 ->action(function (array $data) {
-                    $service = resolve(GiftCardService::class);
-                    $service->addCredit(
+                    resolve(AddGiftCardCredit::class)(
                         $this->record,
                         (float) $data['amount'],
                         $data['notes'] ?? 'Credit added by admin',

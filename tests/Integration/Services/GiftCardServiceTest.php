@@ -1,5 +1,7 @@
 <?php
 
+use App\Actions\GiftCards\CreateGiftCard;
+use App\Actions\GiftCards\RedeemGiftCard;
 use App\DataTransferObjects\CreateGiftCardData;
 use App\Enums\OrderStatus;
 use App\Models\Customer;
@@ -26,12 +28,12 @@ test('generate code creates formatted code', function () {
 });
 
 test('create generates unique codes', function () {
-    $card1 = test()->service->create(CreateGiftCardData::fromArray([
+    $card1 = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'initial_balance' => 50,
         'purchaser_name' => 'Alice',
         'purchaser_email' => 'alice@test.com',
     ]));
-    $card2 = test()->service->create(CreateGiftCardData::fromArray([
+    $card2 = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'initial_balance' => 25,
         'purchaser_name' => 'Bob',
         'purchaser_email' => 'bob@test.com',
@@ -41,7 +43,7 @@ test('create generates unique codes', function () {
 });
 
 test('check balance returns correct card', function () {
-    $card = test()->service->create(CreateGiftCardData::fromArray([
+    $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'initial_balance' => 100,
         'purchaser_name' => 'Test',
         'purchaser_email' => 'test@test.com',
@@ -53,19 +55,19 @@ test('check balance returns correct card', function () {
 });
 
 test('redeem deducts from balance', function () {
-    $card = test()->service->create(CreateGiftCardData::fromArray([
+    $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'initial_balance' => 50,
         'purchaser_name' => 'Test',
         'purchaser_email' => 'test@test.com',
     ]));
 
-    $result = test()->service->redeem($card->code, 20);
+    $result = resolve(RedeemGiftCard::class)($card->code, 20);
 
     expect($result->success)->toBeTrue()->and($result->amountApplied)->toBe(20.0)->and($result->remainingBalance)->toBe(30.0);
 });
 
 test('redeem creates transaction record', function () {
-    $card = test()->service->create(CreateGiftCardData::fromArray([
+    $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'initial_balance' => 50,
         'purchaser_name' => 'Test',
         'purchaser_email' => 'test@test.com',
@@ -76,7 +78,7 @@ test('redeem creates transaction record', function () {
     $customer = Customer::query()->create(['name' => 'C', 'email' => 'c@t.com']);
     $order = Order::query()->create(['user_id' => $user->id, 'customer_id' => $customer->id, 'status' => OrderStatus::Pending, 'total' => 15, 'subtotal' => 15]);
 
-    test()->service->redeem($card->code, 15, $order->id);
+    resolve(RedeemGiftCard::class)($card->code, 15, $order->id);
 
     assertDatabaseHas('gift_card_transactions', [
         'gift_card_id' => $card->id,
@@ -87,39 +89,39 @@ test('redeem creates transaction record', function () {
 });
 
 test('redeem caps at available balance', function () {
-    $card = test()->service->create(CreateGiftCardData::fromArray([
+    $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'initial_balance' => 20,
         'purchaser_name' => 'Test',
         'purchaser_email' => 'test@test.com',
     ]));
 
-    $result = test()->service->redeem($card->code, 50);
+    $result = resolve(RedeemGiftCard::class)($card->code, 50);
 
     expect($result->success)->toBeTrue()->and($result->amountApplied)->toBe(20.0)->and($result->remainingBalance)->toBe(0.0);
 });
 
 test('redeem fails when card inactive', function () {
-    $card = test()->service->create(CreateGiftCardData::fromArray([
+    $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'initial_balance' => 50,
         'purchaser_name' => 'Test',
         'purchaser_email' => 'test@test.com',
     ]));
     $card->update(['is_active' => false]);
 
-    $result = test()->service->redeem($card->code, 10);
+    $result = resolve(RedeemGiftCard::class)($card->code, 10);
 
     expect($result->success)->toBeFalse();
 });
 
 test('redeem fails when card expired', function () {
-    $card = test()->service->create(CreateGiftCardData::fromArray([
+    $card = resolve(CreateGiftCard::class)(CreateGiftCardData::fromArray([
         'initial_balance' => 50,
         'purchaser_name' => 'Test',
         'purchaser_email' => 'test@test.com',
         'expires_at' => now()->subDay(),
     ]));
 
-    $result = test()->service->redeem($card->code, 10);
+    $result = resolve(RedeemGiftCard::class)($card->code, 10);
 
     expect($result->success)->toBeFalse();
 });
