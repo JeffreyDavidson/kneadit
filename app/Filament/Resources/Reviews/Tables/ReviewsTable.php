@@ -13,6 +13,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class ReviewsTable
 {
@@ -49,7 +50,7 @@ class ReviewsTable
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
 
-                        if (strlen($state) <= $column->getCharacterLimit()) {
+                        if (Str::length($state) <= $column->getCharacterLimit()) {
                             return null;
                         }
 

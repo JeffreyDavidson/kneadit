@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class SettingsTable
 {
@@ -23,7 +24,7 @@ class SettingsTable
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
 
-                        if (strlen($state) <= $column->getCharacterLimit()) {
+                        if (Str::length($state) <= $column->getCharacterLimit()) {
                             return null;
                         }
 
