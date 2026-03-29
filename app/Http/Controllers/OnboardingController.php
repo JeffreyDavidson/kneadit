@@ -4,16 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Actions\Tenants\CompleteReferral;
 use App\Actions\Tenants\CreateTenant;
-use App\Enums\SubscriptionTier;
+use App\Actions\Tenants\SendOnboardingEmails;
 use App\Http\Requests\StoreOnboardingRequest;
-use App\Mail\NewSubscriberNotificationMail;
-use App\Mail\WelcomeBakerMail;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class OnboardingController extends Controller
@@ -32,6 +28,7 @@ class OnboardingController extends Controller
         StoreOnboardingRequest $request,
         CreateTenant $createTenant,
         CompleteReferral $completeReferral,
+        SendOnboardingEmails $sendEmails,
     ): RedirectResponse {
         /** @var User $user */
         $user = auth()->user();
@@ -59,30 +56,11 @@ class OnboardingController extends Controller
             );
         }
 
-        // Send welcome email to the baker
         $scheme = $request->secure() ? 'https' : 'http';
         $host = $request->getHost();
         $adminUrl = "{$scheme}://{$subdomain}.{$host}/admin";
 
-        try {
-            Mail::to($user->email)->send(new WelcomeBakerMail(
-                bakerName: $user->name,
-                storeName: $validated['store_name'],
-                adminUrl: $adminUrl,
-                plan: SubscriptionTier::Starter->value,
-                trialEndsAt: now()->addDays(config('kneadit.trial_days', 30))->format('F j, Y'),
-            ));
-
-            Mail::to(config('mail.platform_notify'))->send(new NewSubscriberNotificationMail(
-                bakerName: $user->name,
-                bakerEmail: $user->email,
-                storeName: $validated['store_name'],
-                subdomain: $subdomain,
-                plan: SubscriptionTier::Starter->value,
-            ));
-        } catch (\Exception $e) {
-            Log::warning('Signup emails failed', ['error' => $e->getMessage()]);
-        }
+        $sendEmails($user, $validated['store_name'], $subdomain, $adminUrl);
 
         Auth::logout();
         $request->session()->invalidate();
