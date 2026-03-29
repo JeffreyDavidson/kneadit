@@ -2,6 +2,8 @@
 
 namespace App\Services\Financial;
 
+use App\DataTransferObjects\FinancialSummary;
+use App\DataTransferObjects\MonthlyFinancials;
 use App\Enums\PaymentStatus;
 use App\Models\Expense;
 use App\Models\Income;
@@ -11,24 +13,22 @@ use Illuminate\Support\Facades\DB;
 
 class FinancialCalculator
 {
-    /**
-     * Calculate all financial metrics for a given year.
-     *
-     * @return array<string, mixed>
-     */
-    public function calculate(int $year): array
+    public function calculate(int $year): FinancialSummary
     {
         $totals = $this->yearlyTotals($year);
         $monthlyBreakdown = $this->monthlyBreakdown($year);
         $expenseBreakdown = $this->expenseBreakdown($year, $totals['totalExpenses']);
         $cogs = $this->cogs($year, $totals['totalExpenses']);
 
-        return [
-            ...$totals,
-            'monthlyBreakdown' => $monthlyBreakdown,
-            'expenseBreakdown' => $expenseBreakdown,
-            ...$cogs,
-        ];
+        return new FinancialSummary(
+            totalRevenue: $totals['totalRevenue'],
+            totalExpenses: $totals['totalExpenses'],
+            netProfit: $totals['netProfit'],
+            cogsAmount: $cogs['cogsAmount'],
+            cogsPercentage: $cogs['cogsPercentage'],
+            monthlyBreakdown: $monthlyBreakdown,
+            expenseBreakdown: $expenseBreakdown,
+        );
     }
 
     /** @return array{totalRevenue: float, totalExpenses: float, netProfit: float} */
@@ -71,13 +71,13 @@ class FinancialCalculator
 
             $totalMonthRevenue = $monthRevenue + $monthIncome;
 
-            $breakdown->push([
-                'month' => $month,
-                'month_name' => date('F', (int) mktime(0, 0, 0, $month, 1)),
-                'revenue' => $totalMonthRevenue,
-                'expenses' => $monthExpenses,
-                'net' => $totalMonthRevenue - $monthExpenses,
-            ]);
+            $breakdown->push(new MonthlyFinancials(
+                month: $month,
+                monthName: date('F', (int) mktime(0, 0, 0, $month, 1)),
+                revenue: $totalMonthRevenue,
+                expenses: $monthExpenses,
+                net: $totalMonthRevenue - $monthExpenses,
+            ));
         }
 
         return $breakdown;

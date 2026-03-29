@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\FinancialSummary;
 use App\Enums\ExpenseCategory;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
@@ -36,9 +37,8 @@ it('calculates yearly totals from orders and expenses', function () {
     $calculator = new FinancialCalculator;
     $result = $calculator->calculate(2026);
 
-    expect($result)->toHaveKeys([
-        'totalRevenue', 'totalExpenses', 'netProfit',
-        'monthlyBreakdown', 'expenseBreakdown',
-        'cogsAmount', 'cogsPercentage',
-    ])->and((float) $result['totalRevenue'])->toBe(100.0)->and((float) $result['totalExpenses'])->toBe(30.0)->and((float) $result['netProfit'])->toBe(70.0);
+    expect($result)->toBeInstanceOf(FinancialSummary::class)
+        ->and($result->totalRevenue)->toBe(100.0)
+        ->and($result->totalExpenses)->toBe(30.0)
+        ->and($result->netProfit)->toBe(70.0);
 });
