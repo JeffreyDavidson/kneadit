@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Orders\CreateOrder;
+use App\DataTransferObjects\CreateOrderData;
 use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
 use App\Mail\OrderPlacedMail;
@@ -20,7 +21,7 @@ test('creates order with correct totals and items', function () {
     $product = Product::factory()->create(['price' => 12.50]);
 
     $order = resolve(CreateOrder::class)(
-        data: [
+        CreateOrderData::fromArray([
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'delivery_date' => now()->addDays(5)->toDateString(),
@@ -28,8 +29,7 @@ test('creates order with correct totals and items', function () {
             'items' => [
                 ['product_id' => $product->id, 'quantity' => 2],
             ],
-        ],
-    );
+        ]));
 
     expect($order)
         ->not->toBeNull()
@@ -49,7 +49,7 @@ test('returns null when capacity is full', function () {
     Order::factory()->create(['delivery_date' => $deliveryDate, 'status' => OrderStatus::Confirmed]);
 
     $order = resolve(CreateOrder::class)(
-        data: [
+        CreateOrderData::fromArray([
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'delivery_date' => $deliveryDate,
@@ -57,8 +57,7 @@ test('returns null when capacity is full', function () {
             'items' => [
                 ['product_id' => $product->id, 'quantity' => 1],
             ],
-        ],
-    );
+        ]));
 
     expect($order)->toBeNull();
 });
@@ -67,7 +66,7 @@ test('sends order placed email to customer on creation', function () {
     $product = Product::factory()->create(['price' => 10.00]);
 
     resolve(CreateOrder::class)(
-        data: [
+        CreateOrderData::fromArray([
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'delivery_date' => now()->addDays(5)->toDateString(),
@@ -75,8 +74,7 @@ test('sends order placed email to customer on creation', function () {
             'items' => [
                 ['product_id' => $product->id, 'quantity' => 1],
             ],
-        ],
-    );
+        ]));
 
     Mail::assertQueued(OrderPlacedMail::class);
 });

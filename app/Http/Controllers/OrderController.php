@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Orders\CreateOrder;
+use App\DataTransferObjects\CreateOrderData;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Category;
 use App\Models\Order;
@@ -27,12 +28,7 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        /** @var array{customer_name: string, customer_email: string, delivery_date: string, delivery_type: string, items: array<int, array{product_id: int, quantity: int}>, customer_phone?: string, customer_birthday?: string, delivery_time?: string, delivery_address?: string, delivery_tier?: string, notes?: string, coupon_id?: int, gift_card_id?: int} $validated */
-        $order = $createOrder(
-            $validated,
-            $validated['coupon_id'] ?? null,
-            $validated['gift_card_id'] ?? null,
-        );
+        $order = $createOrder(CreateOrderData::fromArray($validated));
 
         if (! $order) {
             return back()->withErrors(['delivery_date' => 'Sorry, this date is fully booked. Please choose another date.']);
