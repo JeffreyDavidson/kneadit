@@ -8,37 +8,7 @@
     $content = settingsPageContent('reviews');
 @endphp
 
-<style>
-    @keyframes reviewFadeUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes reviewKenBurns {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.06); }
-    }
-    .review-fade-1 { animation: reviewFadeUp 0.8s ease-out 0.3s both; }
-    .review-fade-2 { animation: reviewFadeUp 0.8s ease-out 0.5s both; }
-    .review-fade-3 { animation: reviewFadeUp 0.8s ease-out 0.7s both; }
-    .review-hero-img { animation: reviewKenBurns 20s ease-in-out infinite alternate; }
-    .review-card {
-        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .review-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 50px rgba(28, 20, 16, 0.12);
-    }
-    .rating-bar-track {
-        height: 6px;
-        border-radius: 3px;
-        overflow: hidden;
-    }
-    .rating-bar-fill {
-        height: 100%;
-        border-radius: 3px;
-        transition: width 1.2s ease-out;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/reviews.css') }}">
 
 {{-- Photo-Forward Hero with Dark Overlay --}}
 <section class="relative overflow-hidden" style="min-height: 60vh;">

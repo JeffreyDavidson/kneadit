@@ -146,21 +146,5 @@
 @endsection
 
 @section('styles')
-<style>
-@keyframes reviewKenBurns {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.06); }
-}
-@keyframes reviewFadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.review-hero-img {
-    animation: reviewKenBurns 25s ease-out forwards;
-}
-.review-fade-up {
-    opacity: 0;
-    animation: reviewFadeUp 0.8s ease-out forwards;
-}
-</style>
+<link rel="stylesheet" href="{{ asset('css/submit-review.css') }}">
 @endsection
