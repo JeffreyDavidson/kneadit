@@ -8,14 +8,7 @@
     $content = settingsPageContent('loyalty');
 @endphp
 
-<style>
-    @keyframes loyaltyKenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
-    @keyframes loyaltyFadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .loyalty-hero-img { animation: loyaltyKenBurns 25s ease-in-out infinite alternate; }
-    .loyalty-fade-1 { animation: loyaltyFadeUp 0.8s ease-out 0.3s both; }
-    .loyalty-fade-2 { animation: loyaltyFadeUp 0.8s ease-out 0.5s both; }
-    .loyalty-fade-3 { animation: loyaltyFadeUp 0.8s ease-out 0.7s both; }
-</style>
+<link rel="stylesheet" href="{{ asset('css/loyalty.css') }}">
 
 {{-- Photo-Forward Hero --}}
 <section class="relative overflow-hidden" style="min-height: 55vh;">

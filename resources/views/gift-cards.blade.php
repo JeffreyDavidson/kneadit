@@ -8,14 +8,7 @@
     $content = settingsPageContent('gift_cards');
 @endphp
 
-<style>
-    @keyframes giftKenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
-    @keyframes giftFadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .gift-hero-img { animation: giftKenBurns 25s ease-in-out infinite alternate; }
-    .gift-fade-1 { animation: giftFadeUp 0.8s ease-out 0.3s both; }
-    .gift-fade-2 { animation: giftFadeUp 0.8s ease-out 0.5s both; }
-    .gift-fade-3 { animation: giftFadeUp 0.8s ease-out 0.7s both; }
-</style>
+<link rel="stylesheet" href="{{ asset('css/gift-cards.css') }}">
 
 <div x-data="giftCardPage()">
     {{-- Photo-Forward Hero --}}
