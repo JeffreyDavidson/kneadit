@@ -21,6 +21,7 @@ class BlockedDatesTable
                     ->sortable(),
 
                 TextColumn::make('reason')
+                    ->searchable()
                     ->badge()
                     ->color(fn (?string $state): string => match ($state) {
                         'Vacation' => 'info',

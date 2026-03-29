@@ -77,6 +77,17 @@ class CateringInquiriesTable
                         return $query
                             ->when($data['from'], fn (Builder $q, string $date) => $q->whereDate('event_date', '>=', $date))
                             ->when($data['until'], fn (Builder $q, string $date) => $q->whereDate('event_date', '<=', $date));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['from'] ?? null) {
+                            $indicators[] = 'From ' . \Carbon\Carbon::parse($data['from'])->toFormattedDateString();
+                        }
+                        if ($data['until'] ?? null) {
+                            $indicators[] = 'Until ' . \Carbon\Carbon::parse($data['until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
                     }),
             ])
             ->recordActions([
