@@ -67,7 +67,7 @@ class InstagramCaptionGenerator extends Page
                 Select::make('product_id')
                     ->label('Select Product')
                     ->placeholder('Choose a product...')
-                    ->options(Product::query()->where('is_active', true)->pluck('name', 'id'))
+                    ->options(Product::query()->active()->pluck('name', 'id'))
                     ->searchable()
                     ->required(),
 
