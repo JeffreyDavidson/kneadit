@@ -146,7 +146,7 @@
         @endif
     </div>
 
-    @push('styles')
+    @pushOnce('styles')
     <style>
         @media print {
             /* Hide everything except labels */
@@ -180,5 +180,5 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
     </style>
-    @endpush
+    @endPushOnce
 </x-filament-panels::page>

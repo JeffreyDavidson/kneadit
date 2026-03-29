@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Mail;
 
 class SendOrderMessageEmailListener implements ShouldQueue
 {
+    public int $timeout = 60;
+
     public int $tries = 3;
 
     /** @var array<int, int> */
