@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8a207c0f6f9819992450968f7aa07118",
+    "content-hash": "df9cdadaf5b345b9571914d8a89f034e",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -10587,6 +10587,70 @@
                 "source": "https://github.com/mockery/mockery"
             },
             "time": "2024-05-16T03:13:13+00:00"
+        },
+        {
+            "name": "mrpunyapal/pest-annotator-plugin",
+            "version": "0.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MrPunyapal/pest-annotator-plugin.git",
+                "reference": "5ab97cd36a427ccf26538961addf91897b2802ed"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MrPunyapal/pest-annotator-plugin/zipball/5ab97cd36a427ccf26538961addf91897b2802ed",
+                "reference": "5ab97cd36a427ccf26538961addf91897b2802ed",
+                "shasum": ""
+            },
+            "require": {
+                "pestphp/pest-plugin": "^4.0",
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.14",
+                "pestphp/pest": "^4.0",
+                "pestphp/pest-plugin-arch": "^4.0",
+                "phpstan/phpstan": "^2.0",
+                "rector/rector": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "pest": {
+                    "plugins": [
+                        "PestAnnotator\\Plugin"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PestAnnotator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Punyapal Shah",
+                    "email": "mrpunyapal@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Pest plugin that annotates uncovered classes and methods with clean, colorized output when running pest --coverage.",
+            "keywords": [
+                "annotator",
+                "coverage",
+                "pest",
+                "php",
+                "plugin",
+                "testing"
+            ],
+            "support": {
+                "issues": "https://github.com/MrPunyapal/pest-annotator-plugin/issues",
+                "source": "https://github.com/MrPunyapal/pest-annotator-plugin/tree/0.0.4"
+            },
+            "time": "2026-02-28T20:16:47+00:00"
         },
         {
             "name": "mrpunyapal/peststan",
