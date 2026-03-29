@@ -16,17 +16,17 @@ class ApplyCouponController extends Controller
         $validated = $request->validated();
         $result = $couponService->validate($validated['code'], (float) $validated['subtotal']);
 
-        if (! $result['valid']) {
-            return response()->json(['error' => $result['error']], 422);
+        if (! $result->valid) {
+            return response()->json(['error' => $result->error], 422);
         }
 
-        $coupon = $result['coupon'];
+        $coupon = $result->coupon;
 
         return response()->json([
             'success' => true,
             'coupon_id' => $coupon?->id,
             'code' => $coupon?->code,
-            'discount_amount' => $result['discount'],
+            'discount_amount' => $result->discount,
             'label' => $coupon?->type === CouponType::Percentage
                 ? Number::format($coupon->value ?? 0) . '% off'
                 : Number::currency((float) ($coupon->value ?? 0)) . ' off',

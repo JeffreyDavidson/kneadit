@@ -14,17 +14,17 @@ test('validates a valid coupon', function () {
     $service = new CouponService;
     $result = $service->validate('save10', 50.00);
 
-    expect($result['valid'])->toBeTrue()
-        ->and($result['coupon']->id)->toBe($coupon->id)
-        ->and($result['error'])->toBeNull();
+    expect($result->valid)->toBeTrue()
+        ->and($result->coupon->id)->toBe($coupon->id)
+        ->and($result->error)->toBeNull();
 });
 
 test('returns error for nonexistent coupon', function () {
     $service = new CouponService;
     $result = $service->validate('FAKE123', 50.00);
 
-    expect($result['valid'])->toBeFalse()
-        ->and($result['error'])->toBe('Coupon not found.');
+    expect($result->valid)->toBeFalse()
+        ->and($result->error)->toBe('Coupon not found.');
 });
 
 test('apply increments used count', function () {
