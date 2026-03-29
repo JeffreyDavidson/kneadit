@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Inventory\AdjustIngredientStock;
+use App\Enums\StockAdjustmentType;
 use App\Enums\StockStatus;
 use App\Models\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,7 +23,7 @@ test('adjust stock creates stock adjustment record', function () {
         'cost_per_unit' => 2.50,
     ]);
 
-    resolve(AdjustIngredientStock::class)($ingredient, 10, 'purchase', 'Restocked');
+    resolve(AdjustIngredientStock::class)($ingredient, 10, StockAdjustmentType::Purchase, 'Restocked');
 
     assertDatabaseHas('stock_adjustments', [
         'ingredient_id' => $ingredient->id,
@@ -41,7 +42,7 @@ test('adjust stock updates current stock', function () {
         'cost_per_unit' => 1.50,
     ]);
 
-    resolve(AdjustIngredientStock::class)($ingredient, -5, 'usage', 'Order usage');
+    resolve(AdjustIngredientStock::class)($ingredient, -5, StockAdjustmentType::Usage, 'Order usage');
 
     expect($ingredient->fresh()->current_stock)->toBe('15.00');
 });
@@ -55,7 +56,7 @@ test('stock can go below zero', function () {
         'cost_per_unit' => 4.00,
     ]);
 
-    resolve(AdjustIngredientStock::class)($ingredient, -5, 'usage', 'Over-used');
+    resolve(AdjustIngredientStock::class)($ingredient, -5, StockAdjustmentType::Usage, 'Over-used');
 
     expect((float) $ingredient->fresh()->current_stock)->toBe(-3.0);
 });

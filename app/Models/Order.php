@@ -64,10 +64,10 @@ class Order extends Model
     use LogsActivity;
 
     protected $attributes = [
-        'status' => 'pending',
-        'payment_status' => 'unpaid',
-        'payment_method' => 'cash',
-        'delivery_type' => 'pickup',
+        'status' => OrderStatus::Pending,
+        'payment_status' => PaymentStatus::Unpaid,
+        'payment_method' => PaymentMethod::Cash,
+        'delivery_type' => DeliveryType::Pickup,
         'delivery_fee' => 0,
         'discount_amount' => 0,
     ];

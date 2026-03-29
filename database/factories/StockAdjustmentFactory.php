@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\StockAdjustmentType;
 use App\Models\Ingredient;
 use App\Models\StockAdjustment;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,7 +19,7 @@ class StockAdjustmentFactory extends Factory
         return [
             'ingredient_id' => Ingredient::factory(),
             'quantity' => fake()->randomFloat(2, -10, 10),
-            'type' => fake()->randomElement(['purchase', 'usage', 'adjustment', 'waste']),
+            'type' => fake()->randomElement(StockAdjustmentType::cases()),
             'notes' => fake()->optional()->sentence(),
         ];
     }

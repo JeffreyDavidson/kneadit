@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\GiftCardTransactionType;
 use Database\Factories\GiftCardTransactionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,6 +43,7 @@ class GiftCardTransaction extends Model
         return [
             'amount' => 'decimal:2',
             'created_at' => 'datetime',
+            'type' => GiftCardTransactionType::class,
         ];
     }
 

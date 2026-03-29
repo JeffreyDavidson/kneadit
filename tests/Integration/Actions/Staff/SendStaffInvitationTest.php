@@ -25,7 +25,7 @@ it('creates an invitation and sends the email', function () {
         invitedBy: $inviter->id,
     );
 
-    expect($invitation)->toBeInstanceOf(StaffInvitation::class)->and($invitation->email)->toBe('new@test.com')->and($invitation->role)->toBe(UserRole::Staff->value)->and($invitation->token)->toHaveLength(64);
+    expect($invitation)->toBeInstanceOf(StaffInvitation::class)->and($invitation->email)->toBe('new@test.com')->and($invitation->role)->toBe(UserRole::Staff)->and($invitation->token)->toHaveLength(64);
 
     Mail::assertQueued(StaffInvitationMail::class);
 });
