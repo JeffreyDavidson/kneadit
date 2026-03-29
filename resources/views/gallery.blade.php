@@ -1,67 +1,7 @@
 @extends('layouts.storefront')
 
 @section('content')
-<style>
-    .gallery-item {
-        position: relative;
-        border-radius: 16px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .gallery-item:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 50px rgba(28, 20, 16, 0.3);
-    }
-    .gallery-item:hover img {
-        transform: scale(1.05);
-    }
-    .gallery-item img {
-        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .gallery-item:hover .gallery-caption {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    .gallery-caption {
-        opacity: 0;
-        transform: translateY(10px);
-        transition: all 0.4s ease;
-    }
-    .gallery-input {
-        width: 100%;
-        padding: 0.875rem 1.25rem;
-        border-radius: 0.75rem;
-        border: 1.5px solid rgba(139,104,68,0.25);
-        background: var(--warm-800);
-        font-family: var(--font-body);
-        font-size: 1rem;
-        color: var(--warm-200);
-        transition: border-color 0.3s, box-shadow 0.3s;
-        outline: none;
-    }
-    .gallery-input:focus {
-        border-color: var(--warm-500);
-        box-shadow: 0 0 0 3px rgba(212,146,12,0.15);
-    }
-    .gallery-input::placeholder {
-        color: var(--warm-600);
-    }
-    @keyframes galleryFadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    .gallery-fade-1 { animation: galleryFadeUp 0.7s ease-out 0.3s both; }
-    .gallery-fade-2 { animation: galleryFadeUp 0.7s ease-out 0.5s both; }
-    .gallery-fade-3 { animation: galleryFadeUp 0.7s ease-out 0.7s both; }
-    @keyframes galleryKenBurns {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.06); }
-    }
-    .gallery-hero-img {
-        animation: galleryKenBurns 25s ease-in-out infinite alternate;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/gallery.css') }}">
 
 @php
     $storeName = settings('store_name', 'Our Bakery');

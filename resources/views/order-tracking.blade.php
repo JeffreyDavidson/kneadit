@@ -9,74 +9,7 @@
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 @endphp
 
-<style>
-    @keyframes trackFadeUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes trackKenBurns {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.06); }
-    }
-    .track-fade-1 { animation: trackFadeUp 0.8s ease-out 0.3s both; }
-    .track-fade-2 { animation: trackFadeUp 0.8s ease-out 0.5s both; }
-    .track-fade-3 { animation: trackFadeUp 0.8s ease-out 0.7s both; }
-    .track-hero-img { animation: trackKenBurns 20s ease-in-out infinite alternate; }
-    .track-input {
-        width: 100%;
-        padding: 1rem 1.25rem;
-        border-radius: 9999px;
-        border: 1.5px solid var(--warm-300);
-        background: white;
-        font-family: var(--font-body);
-        font-size: 1rem;
-        color: var(--warm-800);
-        transition: border-color 0.2s, box-shadow 0.2s;
-        outline: none;
-    }
-    .track-input:focus {
-        border-color: var(--warm-500);
-        box-shadow: 0 0 0 3px rgba(212,146,12,0.12);
-    }
-    .track-input::placeholder {
-        color: var(--warm-400);
-    }
-    .track-stepper-dot {
-        transition: all 0.3s ease;
-    }
-    .order-card {
-        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .order-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 20px 50px rgba(28, 20, 16, 0.08);
-    }
-    .track-message-baker {
-        background: var(--warm-200);
-        border-radius: 1rem 1rem 1rem 0.25rem;
-    }
-    .track-message-customer {
-        background: rgba(212,146,12,0.12);
-        border-radius: 1rem 1rem 0.25rem 1rem;
-    }
-    .track-msg-input {
-        width: 100%;
-        padding: 0.625rem 1rem;
-        border-radius: 9999px;
-        border: 1.5px solid var(--warm-300);
-        background: white;
-        color: var(--warm-800);
-        font-size: 0.875rem;
-        transition: border-color 0.2s;
-        outline: none;
-    }
-    .track-msg-input:focus {
-        border-color: var(--warm-500);
-    }
-    .track-msg-input::placeholder {
-        color: var(--warm-400);
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/order-tracking.css') }}">
 
 {{-- Photo-Forward Hero --}}
 <section class="relative overflow-hidden" style="min-height: 55vh;">
