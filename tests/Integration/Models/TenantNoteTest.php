@@ -12,7 +12,5 @@ test('can create note', function () {
     ]);
 
     $found = TenantNote::query()->where('tenant_id', 'tenant-1')->first();
-    expect($found)->not->toBeNull();
-    expect($found->body)->toBe('This tenant needs attention');
-    expect($found->author)->toBe('Admin Joe');
+    expect($found)->not->toBeNull()->and($found->body)->toBe('This tenant needs attention')->and($found->author)->toBe('Admin Joe');
 });

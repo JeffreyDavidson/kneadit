@@ -31,7 +31,5 @@ it('completes a pending referral for a tenant', function () {
 
     $referral->refresh();
 
-    expect($referral->status)->toBe(ReferralStatus::Completed);
-    expect($referral->referred_tenant_id)->toBe('new-bakery');
-    expect($referral->referred_email)->toBe('baker@test.com');
+    expect($referral->status)->toBe(ReferralStatus::Completed)->and($referral->referred_tenant_id)->toBe('new-bakery')->and($referral->referred_email)->toBe('baker@test.com');
 });

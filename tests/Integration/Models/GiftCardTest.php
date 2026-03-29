@@ -78,9 +78,7 @@ test('gift card redemption deducts balance', function () {
 
     $result = $service->redeem($card->code, 30.00);
 
-    expect($result['success'])->toBeTrue();
-    expect($result['amount_applied'])->toBe(30.00);
-    expect($result['remaining_balance'])->toBe(70.00);
+    expect($result['success'])->toBeTrue()->and($result)->toMatchArray(['amount_applied' => 30.00, 'remaining_balance' => 70.00]);
 });
 
 test('depleted gift card cannot be redeemed', function () {

@@ -11,7 +11,7 @@ beforeEach(fn () => setUpTenantTest());
 test('revokes a pending invitation', function () {
     $invitation = StaffInvitation::factory()->create(['accepted_at' => null]);
 
-    app(RevokeStaffInvitation::class)($invitation->id);
+    resolve(RevokeStaffInvitation::class)($invitation->id);
 
     expect(StaffInvitation::query()->find($invitation->id))->toBeNull();
 });
@@ -19,7 +19,7 @@ test('revokes a pending invitation', function () {
 test('does not revoke accepted invitations', function () {
     $invitation = StaffInvitation::factory()->create(['accepted_at' => now()]);
 
-    app(RevokeStaffInvitation::class)($invitation->id);
+    resolve(RevokeStaffInvitation::class)($invitation->id);
 
     expect(StaffInvitation::query()->find($invitation->id))->not->toBeNull();
 });

@@ -24,11 +24,7 @@ test('changelog displays entry titles', function () {
 test('changelog config has entries', function () {
     $entries = config('changelog');
 
-    expect($entries)->not->toBeEmpty();
-    expect($entries[0])->toHaveKey('date');
-    expect($entries[0])->toHaveKey('version');
-    expect($entries[0])->toHaveKey('title');
-    expect($entries[0])->toHaveKey('items');
+    expect($entries)->not->toBeEmpty()->and($entries[0])->toHaveKeys(['date', 'version', 'title', 'items']);
 });
 
 test('changelog link in footer', function () {

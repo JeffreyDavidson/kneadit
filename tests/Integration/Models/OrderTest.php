@@ -38,8 +38,7 @@ function makeOrder(array $attrs = []): Order
 test('order has customer relationship', function () {
     $order = makeOrder();
 
-    expect($order->customer)->toBeInstanceOf(Customer::class);
-    expect($order->customer->id)->toBe(test()->customer->id);
+    expect($order->customer)->toBeInstanceOf(Customer::class)->and($order->customer->id)->toBe(test()->customer->id);
 });
 
 test('order has items relationship', function () {
@@ -51,8 +50,7 @@ test('order has items relationship', function () {
 
     $order->refresh();
 
-    expect($order->orderItems)->toHaveCount(1);
-    expect($order->orderItems->first()->quantity)->toBe(2);
+    expect($order->orderItems)->toHaveCount(1)->and($order->orderItems->first()->quantity)->toBe(2);
 });
 
 test('order has messages relationship', function () {
@@ -72,9 +70,7 @@ test('order total is cast to decimal', function () {
     $order = makeOrder(['subtotal' => 25.50, 'delivery_fee' => 5.00, 'discount_amount' => 2.50, 'total' => 28.00]);
     $order->refresh();
 
-    expect($order->total)->toBe('28.00');
-    expect($order->delivery_fee)->toBe('5.00');
-    expect($order->discount_amount)->toBe('2.50');
+    expect($order->total)->toBe('28.00')->and($order->delivery_fee)->toBe('5.00')->and($order->discount_amount)->toBe('2.50');
 });
 
 test('order status transitions', function () {

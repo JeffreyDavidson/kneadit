@@ -24,8 +24,7 @@ test('target plans is cast to array', function () {
     ]);
 
     $ann->refresh();
-    expect($ann->target_plans)->toBeArray();
-    expect($ann->target_plans)->toBe(['free', 'pro']);
+    expect($ann->target_plans)->toBeArray()->toBe(['free', 'pro']);
 });
 
 test('is active defaults to true', function () {

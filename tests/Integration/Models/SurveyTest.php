@@ -25,9 +25,7 @@ test('questions are stored as json array', function () {
     ]);
 
     $survey->refresh();
-    expect($survey->questions)->toBeArray();
-    expect($survey->questions)->toHaveCount(2);
-    expect($survey->questions[0]['text'])->toBe('How was the service?');
+    expect($survey->questions)->toBeArray()->toHaveCount(2)->and($survey->questions[0]['text'])->toBe('How was the service?');
 });
 
 test('survey has responses relationship', function () {
@@ -52,8 +50,7 @@ test('is active is cast to boolean', function () {
         'is_active' => true,
     ]);
 
-    expect($survey->is_active)->toBeBool();
-    expect($survey->is_active)->toBeTrue();
+    expect($survey->is_active)->toBeBool()->toBeTrue();
 });
 
 test('responses count is cast to integer', function () {
@@ -65,6 +62,5 @@ test('responses count is cast to integer', function () {
     ]);
 
     $survey->refresh();
-    expect($survey->responses_count)->toBeInt();
-    expect($survey->responses_count)->toBe(42);
+    expect($survey->responses_count)->toBeInt()->toBe(42);
 });

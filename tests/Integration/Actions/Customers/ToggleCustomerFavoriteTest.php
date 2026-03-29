@@ -14,7 +14,7 @@ beforeEach(function () {
 test('it adds a favorite when none exists', function () {
     $product = Product::factory()->create();
 
-    $result = app(ToggleCustomerFavorite::class)('test@example.com', $product->id);
+    $result = resolve(ToggleCustomerFavorite::class)('test@example.com', $product->id);
 
     expect($result)->toBeTrue();
 });
@@ -26,7 +26,7 @@ test('it removes a favorite when one exists', function () {
         'product_id' => $product->id,
     ]);
 
-    $result = app(ToggleCustomerFavorite::class)('test@example.com', $product->id);
+    $result = resolve(ToggleCustomerFavorite::class)('test@example.com', $product->id);
 
     expect($result)->toBeFalse();
 });

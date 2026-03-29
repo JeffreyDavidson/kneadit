@@ -12,7 +12,7 @@ beforeEach(fn () => setUpTenantTest());
 test('creates review from order with rating and comment', function () {
     $order = Order::factory()->create();
 
-    $review = app(CreateReview::class)($order, 5, 'Amazing bread!');
+    $review = resolve(CreateReview::class)($order, 5, 'Amazing bread!');
 
     expect($review)->toBeInstanceOf(Review::class)
         ->and($review->rating)->toBe(5)

@@ -50,8 +50,7 @@ test('published at can be set', function () {
         'published_at' => now(),
     ]);
 
-    expect($post->is_published)->toBeTrue();
-    expect($post->published_at)->not->toBeNull();
+    expect($post->is_published)->toBeTrue()->and($post->published_at)->not->toBeNull();
 });
 
 // tags_are_cast_to_array removed — blog_posts table doesn't have a tags column yet

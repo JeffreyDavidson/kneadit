@@ -72,8 +72,7 @@ test('can create a survey with questions repeater', function () {
     $survey = Survey::query()->first();
     expect($survey)
         ->title->toBe('Customer Satisfaction')
-        ->questions->toHaveCount(1);
-    expect($survey->questions[0]['question'])->toBe('How was your experience?');
+        ->questions->toHaveCount(1)->and($survey->questions[0]['question'])->toBe('How was your experience?');
 });
 
 test('edit survey validates title is required', function () {

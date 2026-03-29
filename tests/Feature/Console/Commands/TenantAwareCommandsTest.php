@@ -27,24 +27,21 @@ test('paypal command uses TenancyManager for tenant context', function () {
     $reflection = new ReflectionClass(CheckPayPalPaymentsCommand::class);
     $source = file_get_contents($reflection->getFileName());
 
-    expect($source)->toContain('Tenant::cursor()');
-    expect($source)->toContain('TenancyManager');
+    expect($source)->toContain('Tenant::cursor()')->toContain('TenancyManager');
 });
 
 test('birthday command uses TenancyManager for tenant context', function () {
     $reflection = new ReflectionClass(SendBirthdayDiscountsCommand::class);
     $source = file_get_contents($reflection->getFileName());
 
-    expect($source)->toContain('Tenant::cursor()');
-    expect($source)->toContain('TenancyManager');
+    expect($source)->toContain('Tenant::cursor()')->toContain('TenancyManager');
 });
 
 test('repeat reminders command uses TenancyManager for tenant context', function () {
     $reflection = new ReflectionClass(SendRepeatOrderRemindersCommand::class);
     $source = file_get_contents($reflection->getFileName());
 
-    expect($source)->toContain('Tenant::cursor()');
-    expect($source)->toContain('TenancyManager');
+    expect($source)->toContain('Tenant::cursor()')->toContain('TenancyManager');
 });
 
 test('commands handle empty tenant list', function () {

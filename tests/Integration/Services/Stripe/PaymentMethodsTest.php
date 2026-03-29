@@ -18,10 +18,7 @@ test('payment step stores payment methods as json array', function () {
     expect($stored)->not->toBeNull();
 
     $decoded = json_decode($stored, true);
-    expect($decoded)->toBeArray();
-    expect($decoded)->toContain('cash');
-    expect($decoded)->toContain('paypal');
-    expect($decoded)->toContain('stripe');
+    expect($decoded)->toBeArray()->toContain('cash')->toContain('paypal')->toContain('stripe');
 });
 
 test('payment step sets legacy payment method to first value', function () {

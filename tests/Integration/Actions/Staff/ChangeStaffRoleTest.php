@@ -13,7 +13,7 @@ test('changes staff member role', function () {
     $owner = User::factory()->owner()->create();
     $staff = User::factory()->staff()->create();
 
-    app(ChangeStaffRole::class)($staff->id, UserRole::Manager, $owner->id);
+    resolve(ChangeStaffRole::class)($staff->id, UserRole::Manager, $owner->id);
 
     expect($staff->fresh()->role)->toBe(UserRole::Manager);
 });
@@ -21,6 +21,6 @@ test('changes staff member role', function () {
 test('prevents changing own role', function () {
     $owner = User::factory()->owner()->create();
 
-    expect(fn () => app(ChangeStaffRole::class)($owner->id, UserRole::Staff, $owner->id))
+    expect(fn () => resolve(ChangeStaffRole::class)($owner->id, UserRole::Staff, $owner->id))
         ->toThrow(RuntimeException::class, "You can't change your own role.");
 });

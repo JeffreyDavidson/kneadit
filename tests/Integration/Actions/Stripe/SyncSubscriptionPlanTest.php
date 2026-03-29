@@ -8,7 +8,7 @@ beforeEach(fn () => setUpCentralTest());
 test('updates tenant plan from stripe price id', function () {
     createTenant(['email' => 'baker@test.com', 'plan' => 'starter']);
 
-    app(SyncSubscriptionPlan::class)(
+    resolve(SyncSubscriptionPlan::class)(
         'baker@test.com',
         'price_growth',
         ['price_growth' => 'growth', 'price_pro' => 'pro']
@@ -21,7 +21,7 @@ test('updates tenant plan from stripe price id', function () {
 test('does not update for unknown price id', function () {
     createTenant(['email' => 'baker@test.com', 'plan' => 'starter']);
 
-    app(SyncSubscriptionPlan::class)(
+    resolve(SyncSubscriptionPlan::class)(
         'baker@test.com',
         'price_unknown',
         ['price_growth' => 'growth']

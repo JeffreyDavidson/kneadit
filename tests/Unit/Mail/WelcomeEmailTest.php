@@ -24,11 +24,7 @@ test('welcome baker email has correct properties', function () {
         trialEndsAt: 'April 15, 2026',
     );
 
-    expect($mail->bakerName)->toBe('Jane');
-    expect($mail->storeName)->toBe('Sunrise Bakery');
-    expect($mail->adminUrl)->toBe('https://sunrise.kneadit.test/admin');
-    expect($mail->plan)->toBe('starter');
-    expect($mail->trialEndsAt)->toBe('April 15, 2026');
+    expect($mail->bakerName)->toBe('Jane')->and($mail->storeName)->toBe('Sunrise Bakery')->and($mail->adminUrl)->toBe('https://sunrise.kneadit.test/admin')->and($mail->plan)->toBe('starter')->and($mail->trialEndsAt)->toBe('April 15, 2026');
 });
 
 test('new subscriber notification has correct subject', function () {
@@ -52,9 +48,5 @@ test('new subscriber notification has correct properties', function () {
         plan: 'starter',
     );
 
-    expect($mail->bakerName)->toBe('Jane');
-    expect($mail->bakerEmail)->toBe('jane@example.com');
-    expect($mail->storeName)->toBe('Sunrise Bakery');
-    expect($mail->subdomain)->toBe('sunrise');
-    expect($mail->plan)->toBe('starter');
+    expect($mail->bakerName)->toBe('Jane')->and($mail->bakerEmail)->toBe('jane@example.com')->and($mail->storeName)->toBe('Sunrise Bakery')->and($mail->subdomain)->toBe('sunrise')->and($mail->plan)->toBe('starter');
 });

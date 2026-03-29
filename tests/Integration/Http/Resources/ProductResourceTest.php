@@ -26,7 +26,5 @@ it('transforms a product into the expected API shape', function () {
     $resource = new ProductResource($product);
     $data = $resource->toArray(request());
 
-    expect($data)->toHaveKeys(['id', 'name', 'slug', 'description', 'price', 'image', 'category_id', 'category_name', 'is_featured']);
-    expect($data['name'])->toBe('Sourdough');
-    expect($data['category_name'])->toBe('Bread');
+    expect($data)->toHaveKeys(['id', 'name', 'slug', 'description', 'price', 'image', 'category_id', 'category_name', 'is_featured'])->toMatchArray(['name' => 'Sourdough', 'category_name' => 'Bread']);
 });

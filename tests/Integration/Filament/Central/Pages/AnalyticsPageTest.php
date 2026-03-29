@@ -11,9 +11,7 @@ beforeEach(function () {
 test('get signups by month returns 12 months', function () {
     $result = test()->page->getSignupsByMonth();
 
-    expect($result)->toHaveCount(12);
-    expect($result[0])->toHaveKey('label');
-    expect($result[0])->toHaveKey('count');
+    expect($result)->toHaveCount(12)->and($result[0])->toHaveKeys(['label', 'count']);
 });
 
 test('get plan distribution', function () {
@@ -22,9 +20,7 @@ test('get plan distribution', function () {
     createTenant(['id' => 'b3', 'name' => 'B3', 'email' => 'b3@test.com', 'plan' => SubscriptionTier::Growth]);
 
     $result = test()->page->getPlanDistribution();
-
-    expect($result['starter'])->toBe(2);
-    expect($result['growth'])->toBe(1);
+    expect($result)->toMatchArray(['starter' => 2, 'growth' => 1]);
 });
 
 test('get trial conversion', function () {
@@ -34,12 +30,7 @@ test('get trial conversion', function () {
 
     $result = test()->page->getTrialConversion();
 
-    expect($result)->toHaveKey('on_trial');
-    expect($result)->toHaveKey('expired');
-    expect($result)->toHaveKey('converted');
-    expect($result['on_trial'])->toBe(1);
-    expect($result['expired'])->toBe(1);
-    expect($result['converted'])->toBe(1);
+    expect($result)->toHaveKeys(['on_trial', 'expired', 'converted'])->toMatchArray(['on_trial' => 1, 'expired' => 1, 'converted' => 1]);
 });
 
 test('get total signups', function () {
@@ -62,8 +53,7 @@ test('get avg days on trial', function () {
 
     $result = test()->page->getAvgDaysOnTrial();
 
-    expect($result)->toBeFloat();
-    expect($result)->toBe(14.0);
+    expect($result)->toBeFloat()->toBe(14.0);
 });
 
 test('get avg days on trial returns zero when no trials', function () {

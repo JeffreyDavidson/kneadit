@@ -34,23 +34,17 @@ test('price id to plan mapping', function () {
     $reflection = new ReflectionMethod($controller, 'priceIdToPlan');
     $reflection->setAccessible(true);
 
-    expect($reflection->invoke($controller, 'price_test_starter'))->toBe('starter');
-    expect($reflection->invoke($controller, 'price_test_growth'))->toBe('growth');
-    expect($reflection->invoke($controller, 'price_test_pro'))->toBe('pro');
-    expect($reflection->invoke($controller, 'price_unknown'))->toBeNull();
+    expect($reflection->invoke($controller, 'price_test_starter'))->toBe('starter')->and($reflection->invoke($controller, 'price_test_growth'))->toBe('growth')->and($reflection->invoke($controller, 'price_test_pro'))->toBe('pro')->and($reflection->invoke($controller, 'price_unknown'))->toBeNull();
 });
 
 test('webhook route uses custom controller', function () {
     $source = file_get_contents(base_path('routes/billing.php'));
 
-    expect($source)->toContain('StripeWebhookController');
-    expect($source)->not->toContain('Cashier\Http\Controllers\WebhookController');
+    expect($source)->toContain('StripeWebhookController')->not->toContain('Cashier\Http\Controllers\WebhookController');
 });
 
 test('payment failed handler sends emails', function () {
     $source = file_get_contents(app_path('Http/Controllers/StripeWebhookController.php'));
 
-    expect($source)->toContain('Payment failed');
-    expect($source)->toContain('PaymentFailedMail');
-    expect($source)->toContain('platform_notify');
+    expect($source)->toContain('Payment failed')->toContain('PaymentFailedMail')->toContain('platform_notify');
 });

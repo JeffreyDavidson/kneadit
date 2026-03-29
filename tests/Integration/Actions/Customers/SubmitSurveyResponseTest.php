@@ -12,7 +12,7 @@ beforeEach(fn () => setUpTenantTest());
 test('creates survey response and increments count', function () {
     $survey = Survey::factory()->create(['responses_count' => 0]);
 
-    $response = app(SubmitSurveyResponse::class)(
+    $response = resolve(SubmitSurveyResponse::class)(
         $survey,
         ['Great bread', 5],
         'Alice',

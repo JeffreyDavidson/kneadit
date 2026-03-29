@@ -27,15 +27,11 @@ test('social post can be created', function () {
 });
 
 test('platform max lengths are defined', function () {
-    expect(SocialPost::PLATFORM_MAX_CHARS['instagram'])->toBe(2200);
-    expect(SocialPost::PLATFORM_MAX_CHARS['facebook'])->toBe(63206);
-    expect(SocialPost::PLATFORM_MAX_CHARS['tiktok'])->toBe(4000);
+    expect(SocialPost::PLATFORM_MAX_CHARS)->toMatchArray(['instagram' => 2200, 'facebook' => 63206, 'tiktok' => 4000]);
 });
 
 test('platforms are defined', function () {
-    expect(SocialPost::PLATFORMS)->toHaveKey('instagram');
-    expect(SocialPost::PLATFORMS)->toHaveKey('facebook');
-    expect(SocialPost::PLATFORMS)->toHaveKey('tiktok');
+    expect(SocialPost::PLATFORMS)->toHaveKeys(['instagram', 'facebook', 'tiktok']);
 });
 
 test('status defaults to draft', function () {
@@ -62,8 +58,7 @@ test('scheduled post has scheduled for date', function () {
         'scheduled_for' => $scheduledDate,
     ]);
 
-    expect($post->scheduled_for)->not->toBeNull();
-    expect($post->scheduled_for)->toBeInstanceOf(Carbon::class);
+    expect($post->scheduled_for)->not->toBeNull()->toBeInstanceOf(Carbon::class);
 });
 
 test('social post belongs to product', function () {

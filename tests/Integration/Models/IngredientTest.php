@@ -22,7 +22,7 @@ test('adjust stock creates stock adjustment record', function () {
         'cost_per_unit' => 2.50,
     ]);
 
-    app(AdjustIngredientStock::class)($ingredient, 10, 'purchase', 'Restocked');
+    resolve(AdjustIngredientStock::class)($ingredient, 10, 'purchase', 'Restocked');
 
     assertDatabaseHas('stock_adjustments', [
         'ingredient_id' => $ingredient->id,
@@ -41,7 +41,7 @@ test('adjust stock updates current stock', function () {
         'cost_per_unit' => 1.50,
     ]);
 
-    app(AdjustIngredientStock::class)($ingredient, -5, 'usage', 'Order usage');
+    resolve(AdjustIngredientStock::class)($ingredient, -5, 'usage', 'Order usage');
 
     expect($ingredient->fresh()->current_stock)->toBe('15.00');
 });
@@ -55,7 +55,7 @@ test('stock can go below zero', function () {
         'cost_per_unit' => 4.00,
     ]);
 
-    app(AdjustIngredientStock::class)($ingredient, -5, 'usage', 'Over-used');
+    resolve(AdjustIngredientStock::class)($ingredient, -5, 'usage', 'Over-used');
 
     expect((float) $ingredient->fresh()->current_stock)->toBe(-3.0);
 });
@@ -69,9 +69,7 @@ test('low stock threshold detection', function () {
         'cost_per_unit' => 3.00,
     ]);
 
-    expect($ingredient->is_low_stock)->toBeTrue();
-    expect($ingredient->is_out_of_stock)->toBeFalse();
-    expect($ingredient->stock_status)->toBe(StockStatus::Low);
+    expect($ingredient->is_low_stock)->toBeTrue()->and($ingredient->is_out_of_stock)->toBeFalse()->and($ingredient->stock_status)->toBe(StockStatus::Low);
 });
 
 test('out of stock detection', function () {
@@ -83,8 +81,7 @@ test('out of stock detection', function () {
         'cost_per_unit' => 0.10,
     ]);
 
-    expect($ingredient->is_out_of_stock)->toBeTrue();
-    expect($ingredient->stock_status)->toBe(StockStatus::Out);
+    expect($ingredient->is_out_of_stock)->toBeTrue()->and($ingredient->stock_status)->toBe(StockStatus::Out);
 });
 
 test('good stock status', function () {
@@ -96,9 +93,7 @@ test('good stock status', function () {
         'cost_per_unit' => 1.00,
     ]);
 
-    expect($ingredient->is_low_stock)->toBeFalse();
-    expect($ingredient->is_out_of_stock)->toBeFalse();
-    expect($ingredient->stock_status)->toBe(StockStatus::Good);
+    expect($ingredient->is_low_stock)->toBeFalse()->and($ingredient->is_out_of_stock)->toBeFalse()->and($ingredient->stock_status)->toBe(StockStatus::Good);
 });
 
 test('cost per unit is stored correctly', function () {

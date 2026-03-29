@@ -74,8 +74,7 @@ test('order placed email has reply to baker', function () {
     $mail = new OrderPlacedMail($this->order);
     $envelope = $mail->envelope();
 
-    expect($envelope->replyTo)->not->toBeEmpty();
-    expect($envelope->replyTo[0]->address)->toBe('baker@sweetreats.com');
+    expect($envelope->replyTo)->not->toBeEmpty()->and($envelope->replyTo[0]->address)->toBe('baker@sweetreats.com');
 });
 
 test('reply to is empty when no store email', function () {

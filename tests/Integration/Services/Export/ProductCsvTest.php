@@ -25,9 +25,7 @@ test('export generates valid csv with headers', function () {
     $lines = explode("\n", trim($csv));
     $headers = str_getcsv($lines[0]);
 
-    expect($headers)->toContain('name');
-    expect($headers)->toContain('price');
-    expect($headers)->toContain('category');
+    expect($headers)->toContain('name')->toContain('price')->toContain('category');
 });
 
 test('export includes all active products', function () {
@@ -36,8 +34,7 @@ test('export includes all active products', function () {
     Product::query()->create(['name' => 'Rye', 'slug' => 'rye', 'price' => 7, 'category_id' => $category->id, 'is_active' => true]);
 
     $csv = $this->service->export();
-    expect($csv)->toContain('Sourdough');
-    expect($csv)->toContain('Rye');
+    expect($csv)->toContain('Sourdough')->toContain('Rye');
 });
 
 test('import creates new products', function () {
@@ -56,26 +53,21 @@ test('import updates existing products by name', function () {
 
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nSourdough,Bread,Updated desc,10.00,,1,0\n");
     $result = resolve(ImportProducts::class)($file);
-
-    expect($result['updated'])->toBe(1);
-    expect($result['created'])->toBe(0);
-    expect((float) Product::query()->where('name', 'Sourdough')->first()->price)->toBe(10.00);
+    expect($result)->toMatchArray(['updated' => 1, 'created' => 0])->and((float) Product::query()->where('name', 'Sourdough')->first()->price)->toBe(10.00);
 });
 
 test('import handles missing required fields', function () {
     $file = createCsvFile("name,category\nTest,Bread\n");
     $result = resolve(ImportProducts::class)($file);
 
-    expect($result['errors'])->not->toBeEmpty();
-    expect($result['created'])->toBe(0);
+    expect($result['errors'])->not->toBeEmpty()->and($result['created'])->toBe(0);
 });
 
 test('import handles invalid prices', function () {
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nBad Item,Bread,desc,notanumber,,1,0\n");
     $result = resolve(ImportProducts::class)($file);
 
-    expect($result['errors'])->not->toBeEmpty();
-    expect($result['created'])->toBe(0);
+    expect($result['errors'])->not->toBeEmpty()->and($result['created'])->toBe(0);
 });
 
 test('template has correct headers', function () {

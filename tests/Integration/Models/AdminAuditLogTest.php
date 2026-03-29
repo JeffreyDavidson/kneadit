@@ -9,18 +9,13 @@ test('log creates record', function () {
     $log = resolve(LogAuditEntry::class)('tenant.suspend', 'Suspended tenant', 'tenant', 'tenant-1', ['reason' => 'abuse']);
 
     $found = AdminAuditLog::query()->where('action', 'tenant.suspend')->first();
-    expect($found)->not->toBeNull();
-    expect($found->description)->toBe('Suspended tenant');
-    expect($found->target_type)->toBe('tenant');
-    expect($found->target_id)->toBe('tenant-1');
-    expect($found->metadata)->toBe(['reason' => 'abuse']);
+    expect($found)->not->toBeNull()->and($found->description)->toBe('Suspended tenant')->and($found->target_type)->toBe('tenant')->and($found->target_id)->toBe('tenant-1')->and($found->metadata)->toBe(['reason' => 'abuse']);
 });
 
 test('log works with minimal params', function () {
     $log = resolve(LogAuditEntry::class)('login', 'Admin logged in');
 
-    expect(AdminAuditLog::query()->where('action', 'login')->first())->not->toBeNull();
-    expect($log->target_type)->toBeNull();
+    expect(AdminAuditLog::query()->where('action', 'login')->first())->not->toBeNull()->and($log->target_type)->toBeNull();
 });
 
 test('scope for action', function () {
@@ -34,8 +29,7 @@ test('scope for target', function () {
     resolve(LogAuditEntry::class)('update', 'Updated', 'tenant', 't1');
     resolve(LogAuditEntry::class)('update', 'Updated', 'user', 'u1');
 
-    expect(AdminAuditLog::forTarget('tenant', 't1')->get())->toHaveCount(1);
-    expect(AdminAuditLog::forTarget('user')->get())->toHaveCount(1);
+    expect(AdminAuditLog::forTarget('tenant', 't1')->get())->toHaveCount(1)->and(AdminAuditLog::forTarget('user')->get())->toHaveCount(1);
 });
 
 test('scope recent', function () {

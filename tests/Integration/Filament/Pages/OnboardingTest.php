@@ -20,9 +20,7 @@ beforeEach(function () {
 test('onboarding page is registered in filament', function () {
     $page = new Onboarding;
     expect($page::$title ?? (new ReflectionClass($page))->getStaticPropertyValue('title'))
-        ->toBe('Welcome to KneadIt');
-    expect($page::$shouldRegisterNavigation ?? (new ReflectionClass($page))->getStaticPropertyValue('shouldRegisterNavigation'))
-        ->toBeFalse();
+        ->toBe('Welcome to KneadIt')->and($page::$shouldRegisterNavigation ?? (new ReflectionClass($page))->getStaticPropertyValue('shouldRegisterNavigation'))->toBeFalse();
 });
 
 test('completed onboarding is detected', function () {
@@ -53,9 +51,7 @@ test('contact step saves all contact info', function () {
     $reflection = new ReflectionMethod($page, 'saveContactStep');
     $reflection->invoke($page);
 
-    expect(settings('store_email'))->toBe('hello@sweetbakery.com');
-    expect(settings('store_phone'))->toBe('555-123-4567');
-    expect(settings('store_address'))->toBe('123 Baker St, Tampa, FL 33601');
+    expect(settings('store_email'))->toBe('hello@sweetbakery.com')->and(settings('store_phone'))->toBe('555-123-4567')->and(settings('store_address'))->toBe('123 Baker St, Tampa, FL 33601');
 });
 
 test('branding step saves colors', function () {
@@ -67,8 +63,7 @@ test('branding step saves colors', function () {
     $reflection = new ReflectionMethod($page, 'saveBrandingStep');
     $reflection->invoke($page);
 
-    expect(settings('brand_color_primary'))->toBe('#ff5500');
-    expect(settings('brand_color_secondary'))->toBe('#00aaff');
+    expect(settings('brand_color_primary'))->toBe('#ff5500')->and(settings('brand_color_secondary'))->toBe('#00aaff');
 });
 
 test('product step creates product in database', function () {
@@ -140,18 +135,7 @@ test('business hours step saves open days only', function () {
 
     $hours = json_decode(settings('operating_hours'), true);
 
-    expect($hours)->toHaveKey('monday');
-    expect($hours)->toHaveKey('tuesday');
-    expect($hours)->not->toHaveKey('wednesday');
-    expect($hours)->not->toHaveKey('thursday');
-    expect($hours)->toHaveKey('friday');
-    expect($hours)->not->toHaveKey('saturday');
-    expect($hours)->not->toHaveKey('sunday');
-
-    expect($hours['monday']['open'])->toBe('08:00');
-    expect($hours['monday']['close'])->toBe('17:00');
-    expect($hours['friday']['open'])->toBe('09:00');
-    expect($hours['friday']['close'])->toBe('15:00');
+    expect($hours)->toHaveKeys(['monday', 'tuesday'])->not->toHaveKey('wednesday')->not->toHaveKey('thursday')->toHaveKey('friday')->not->toHaveKey('saturday')->not->toHaveKey('sunday')->and($hours['monday'])->toMatchArray(['open' => '08:00', 'close' => '17:00'])->and($hours['friday'])->toMatchArray(['open' => '09:00', 'close' => '15:00']);
 });
 
 test('business hours with no days saves empty schedule', function () {
@@ -182,11 +166,7 @@ test('compliance step saves state and details', function () {
     $reflection = new ReflectionMethod($page, 'saveComplianceStep');
     $reflection->invoke($page);
 
-    expect(settings('cottage_food_state'))->toBe('FL');
-    expect(settings('revenue_cap'))->toBe('250000');
-    expect(settings('license_number'))->toBe('CF-12345');
-    expect(settings('allergy_disclaimer'))->toBe('We use nuts and dairy.');
-    expect(settings('compliance_acknowledged'))->toBe('1');
+    expect(settings('cottage_food_state'))->toBe('FL')->and(settings('revenue_cap'))->toBe('250000')->and(settings('license_number'))->toBe('CF-12345')->and(settings('allergy_disclaimer'))->toBe('We use nuts and dairy.')->and(settings('compliance_acknowledged'))->toBe('1');
 });
 
 test('compliance step without license saves empty', function () {
@@ -200,8 +180,7 @@ test('compliance step without license saves empty', function () {
     $reflection = new ReflectionMethod($page, 'saveComplianceStep');
     $reflection->invoke($page);
 
-    expect(settings('cottage_food_state'))->toBe('TX');
-    expect(settings('license_number'))->toBe('');
+    expect(settings('cottage_food_state'))->toBe('TX')->and(settings('license_number'))->toBeEmpty();
 });
 
 test('delivery step saves all delivery settings', function () {
@@ -218,13 +197,7 @@ test('delivery step saves all delivery settings', function () {
     $reflection = new ReflectionMethod($page, 'saveDeliveryStep');
     $reflection->invoke($page);
 
-    expect(settings('delivery_enabled'))->toBe('1');
-    expect(settings('delivery_radius'))->toBe('15');
-    expect(settings('delivery_fee'))->toBe('5.00');
-    expect(settings('free_delivery_threshold'))->toBe('50.00');
-    expect(settings('delivery_minimum_order'))->toBe('20.00');
-    expect(settings('pickup_enabled'))->toBe('1');
-    expect(settings('pickup_instructions'))->toBe('Ring the doorbell.');
+    expect(settings('delivery_enabled'))->toBe('1')->and(settings('delivery_radius'))->toBe('15')->and(settings('delivery_fee'))->toBe('5.00')->and(settings('free_delivery_threshold'))->toBe('50.00')->and(settings('delivery_minimum_order'))->toBe('20.00')->and(settings('pickup_enabled'))->toBe('1')->and(settings('pickup_instructions'))->toBe('Ring the doorbell.');
 });
 
 test('delivery disabled still saves pickup settings', function () {
@@ -241,9 +214,7 @@ test('delivery disabled still saves pickup settings', function () {
     $reflection = new ReflectionMethod($page, 'saveDeliveryStep');
     $reflection->invoke($page);
 
-    expect(settings('delivery_enabled'))->toBe('0');
-    expect(settings('pickup_enabled'))->toBe('1');
-    expect(settings('pickup_instructions'))->toBe('Come to the back door.');
+    expect(settings('delivery_enabled'))->toBe('0')->and(settings('pickup_enabled'))->toBe('1')->and(settings('pickup_instructions'))->toBe('Come to the back door.');
 });
 
 test('free delivery threshold cleared when disabled', function () {
@@ -273,10 +244,7 @@ test('payment step saves paypal credentials', function () {
     $reflection = new ReflectionMethod($page, 'savePaymentStep');
     $reflection->invoke($page);
 
-    expect(settings('paypal_client_id'))->toBe('AaBbCcDdEeFf123456');
-    expect(settings('paypal_client_secret'))->toBe('secret_xyz_789');
-    expect(settings('paypal_sandbox'))->toBe('1');
-    expect(settings('payment_methods'))->toBe('["paypal","cash"]');
+    expect(settings('paypal_client_id'))->toBe('AaBbCcDdEeFf123456')->and(settings('paypal_client_secret'))->toBe('secret_xyz_789')->and(settings('paypal_sandbox'))->toBe('1')->and(settings('payment_methods'))->toBe('["paypal","cash"]');
 });
 
 test('payment step with live mode', function () {
@@ -302,8 +270,7 @@ test('payment step with cash only', function () {
     $reflection = new ReflectionMethod($page, 'savePaymentStep');
     $reflection->invoke($page);
 
-    expect(settings('payment_methods'))->toBe('["cash"]');
-    expect(settings('payment_method'))->toBe('cash');
+    expect(settings('payment_methods'))->toBe('["cash"]')->and(settings('payment_method'))->toBe('cash');
     // PayPal credentials should not be saved when paypal not in payment_methods
     expect(settings('paypal_client_id'))->toBeNull();
 });
@@ -323,8 +290,7 @@ test('complete onboarding timestamp is valid iso date', function () {
 
     $timestamp = settings('onboarding_completed_at');
     $parsed = Date::parse($timestamp);
-    expect($parsed)->not->toBeNull();
-    expect($parsed->isToday())->toBeTrue();
+    expect($parsed)->not->toBeNull()->and($parsed->isToday())->toBeTrue();
 });
 
 test('onboarding page is hidden from navigation', function () {
@@ -418,13 +384,7 @@ test('full onboarding flow saves all settings', function () {
 
     // Verify everything was saved
     expect(settings('store_name'))->toBe('Sunrise Bakery');
-    expect(settings('store_email'))->toBe('jane@sunrisebakery.com');
-    expect(settings('store_phone'))->toBe('555-0100');
-    expect(settings('brand_color_primary'))->toBe('#8b5e3c');
-    expect(settings('cottage_food_state'))->toBe('FL');
-    expect(settings('delivery_enabled'))->toBe('1');
-    expect(settings('paypal_client_id'))->toBe('test_client_id');
-    expect(settings('onboarding_completed_at'))->not->toBeNull();
+    expect(settings('store_email'))->toBe('jane@sunrisebakery.com')->and(settings('store_phone'))->toBe('555-0100')->and(settings('brand_color_primary'))->toBe('#8b5e3c')->and(settings('cottage_food_state'))->toBe('FL')->and(settings('delivery_enabled'))->toBe('1')->and(settings('paypal_client_id'))->toBe('test_client_id')->and(settings('onboarding_completed_at'))->not->toBeNull();
 
     $this->assertDatabaseHas('products', [
         'name' => 'Chocolate Chip Cookie',

@@ -19,8 +19,7 @@ test('product belongs to category', function () {
     $category = Category::query()->create(['name' => 'Cakes', 'slug' => 'cakes']);
     $product = Product::query()->create(['name' => 'Chocolate Cake', 'slug' => 'chocolate-cake', 'price' => 25.00, 'category_id' => $category->id, 'is_active' => true]);
 
-    expect($product->category)->toBeInstanceOf(Category::class);
-    expect($product->category->name)->toBe('Cakes');
+    expect($product->category)->toBeInstanceOf(Category::class)->and($product->category->name)->toBe('Cakes');
 });
 
 test('product has recipes relationship', function () {

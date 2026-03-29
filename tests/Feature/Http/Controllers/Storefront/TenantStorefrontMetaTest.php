@@ -15,8 +15,7 @@ test('404 page exists', function () {
 test('404 page contains bakery themed copy', function () {
     $content = file_get_contents(resource_path('views/errors/404.blade.php'));
 
-    expect($content)->toContain('Nothing baking here');
-    expect($content)->toContain('404');
+    expect($content)->toContain('Nothing baking here')->toContain('404');
 });
 
 test('nonexistent route returns 404', function () {
@@ -30,12 +29,7 @@ test('nonexistent route returns 404', function () {
 test('storefront layout has og tags', function () {
     $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    expect($layout)->toContain('og:title');
-    expect($layout)->toContain('og:description');
-    expect($layout)->toContain('og:type');
-    expect($layout)->toContain('og:url');
-    expect($layout)->toContain('og:site_name');
-    expect($layout)->toContain('twitter:card');
+    expect($layout)->toContain('og:title')->toContain('og:description')->toContain('og:type')->toContain('og:url')->toContain('og:site_name')->toContain('twitter:card');
 });
 
 test('storefront layout has meta description', function () {
@@ -61,8 +55,7 @@ test('favicon uses store logo when available', function () {
 test('favicon falls back to svg with brand color', function () {
     $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    expect($layout)->toContain('image/svg+xml');
-    expect($layout)->toContain('brand_color_primary');
+    expect($layout)->toContain('image/svg+xml')->toContain('brand_color_primary');
 });
 
 // --- #23: Cookie consent ---
@@ -70,9 +63,7 @@ test('favicon falls back to svg with brand color', function () {
 test('storefront layout has cookie consent banner', function () {
     $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
 
-    expect($layout)->toContain('cookieConsent');
-    expect($layout)->toContain('acceptCookies');
-    expect($layout)->toContain('localStorage');
+    expect($layout)->toContain('cookieConsent')->toContain('acceptCookies')->toContain('localStorage');
 });
 
 test('cookie consent links to privacy policy', function () {
