@@ -8,6 +8,7 @@ use App\Models\CustomerPhoto;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
@@ -21,7 +22,12 @@ class GalleryController extends Controller
 
         $products = Product::query()->active()->orderBy('name')->get();
 
-        return view('gallery', compact('photos', 'products'));
+        $storeName = settings('store_name', 'Our Bakery');
+        $heroImage = settings('hero_image');
+        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+        $content = settingsPageContent('gallery');
+
+        return view('gallery', compact('photos', 'products', 'storeName', 'heroImageUrl', 'content'));
     }
 
     public function store(StoreGalleryPhotoRequest $request): RedirectResponse

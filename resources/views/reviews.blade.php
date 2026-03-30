@@ -1,10 +1,4 @@
 <x-layouts.storefront>
-@php
-    $storeName = settings('store_name', 'Our Bakery');
-    $heroImage = settings('hero_image');
-    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-    $content = settingsPageContent('reviews');
-@endphp
 
 <link rel="stylesheet" href="{{ asset('css/reviews.css') }}">
 
@@ -45,10 +39,6 @@
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block" style="color: var(--warm-600);">Total Reviews</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                @php
-                    $fiveStarCount = $reviews->where('rating', 5)->count();
-                    $fiveStarPct = $totalReviews > 0 ? round(($fiveStarCount / $totalReviews) * 100) : 0;
-                @endphp
                 <span class="block font-display text-3xl md:text-4xl font-bold" style="color: var(--warm-400);">{{ $fiveStarPct }}%</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block" style="color: var(--warm-600);">5-Star Reviews</span>
             </div>
@@ -68,7 +58,6 @@
 @if($reviews->count() > 0)
 
 {{-- Featured Review: Massive Pull-Quote --}}
-@php $featured = $reviews->first(); @endphp
 <section class="relative py-24 md:py-32 overflow-hidden" style="background: var(--warm-100);">
     <div class="max-w-4xl mx-auto px-4 text-center">
         <div class="font-display font-bold leading-none mb-6" style="font-size: 8rem; color: var(--warm-500); opacity: 0.12; line-height: 0.5;">&ldquo;</div>

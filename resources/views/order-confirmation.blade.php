@@ -1,21 +1,9 @@
-@php
-    $heroImage = settings('hero_image');
-    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-@endphp
 
 <x-layouts.storefront>
 <x-slot:styles>
 <link rel="stylesheet" href="{{ asset('css/order-confirmation.css') }}">
 </x-slot:styles>
 
-@php
-    $content = settingsPageContent('order_confirmation');
-    $journeySteps = $content['journey_steps'] ?? [
-        ['title' => 'Confirmation', 'description' => 'You\'ll receive an email confirmation with your order details shortly.'],
-        ['title' => 'Preparation', 'description' => 'Our bakers will craft your items fresh on your scheduled date.'],
-        ['title' => 'Delivery', 'description_delivery' => 'We\'ll deliver your fresh items right to your door.', 'description_pickup' => 'Your items will be warm and ready for you to pick up.'],
-    ];
-@endphp
 {{-- Photo-Forward Hero with Success --}}
 <section class="relative overflow-hidden" style="min-height: 40vh;">
     <div class="absolute inset-0">

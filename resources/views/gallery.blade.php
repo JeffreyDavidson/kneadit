@@ -1,12 +1,6 @@
 <x-layouts.storefront>
 <link rel="stylesheet" href="{{ asset('css/gallery.css') }}">
 
-@php
-    $storeName = settings('store_name', 'Our Bakery');
-    $heroImage = settings('hero_image');
-    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-    $content = settingsPageContent('gallery');
-@endphp
 
 {{-- Photo-Forward Hero --}}
 <section class="relative overflow-hidden" style="min-height: 55vh;">

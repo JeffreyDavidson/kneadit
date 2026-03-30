@@ -1,11 +1,5 @@
 @use('App\Enums\OrderStatus')
 <x-layouts.storefront>
-@php
-    $content = settingsPageContent('order_tracking');
-    $storeName = settings('store_name', 'Our Bakery');
-    $heroImage = settings('hero_image');
-    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-@endphp
 
 <link rel="stylesheet" href="{{ asset('css/order-tracking.css') }}">
 
@@ -73,22 +67,6 @@
     </section>
     @else
 
-    @php
-        $allStatuses = [
-            OrderStatus::Pending->value,
-            OrderStatus::Confirmed->value,
-            OrderStatus::Baking->value,
-            OrderStatus::Ready->value,
-            OrderStatus::Delivered->value,
-        ];
-        $statusLabels = [
-            OrderStatus::Pending->value => 'Pending',
-            OrderStatus::Confirmed->value => 'Confirmed',
-            OrderStatus::Baking->value => 'Baking',
-            OrderStatus::Ready->value => 'Ready',
-            OrderStatus::Delivered->value => 'Delivered',
-        ];
-    @endphp
 
     {{-- Orders List --}}
     <section class="relative py-20 md:py-24 overflow-hidden" style="background: var(--warm-900);">

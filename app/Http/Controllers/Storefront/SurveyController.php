@@ -8,6 +8,7 @@ use App\Http\Requests\StoreSurveyResponseRequest;
 use App\Models\Survey;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class SurveyController extends Controller
 {
@@ -15,7 +16,12 @@ class SurveyController extends Controller
     {
         abort_unless($survey->is_active, 404);
 
-        return view('survey', compact('survey'));
+        $storeName = settings('store_name', 'Our Bakery');
+        $heroImage = settings('hero_image');
+        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+        $content = settingsPageContent('survey');
+
+        return view('survey', compact('survey', 'storeName', 'heroImageUrl', 'content'));
     }
 
     public function store(StoreSurveyResponseRequest $request, Survey $survey, SubmitSurveyResponse $submitResponse): RedirectResponse

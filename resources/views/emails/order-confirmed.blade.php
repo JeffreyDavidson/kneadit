@@ -52,15 +52,6 @@
     <a href="{{ url('/track') }}" style="display: inline-block; background-color: {{ $primaryColor }}; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">Track Your Order</a>
 </div>
 
-@php
-    $emailPolicies = array_filter([
-        'Cancellation Policy' => settings('cancellation_policy', ''),
-        'Deposit Policy' => settings('deposit_policy', ''),
-        'Refund Policy' => settings('refund_policy', ''),
-        'Pickup Policy' => settings('pickup_policy', ''),
-        'Additional Terms' => settings('additional_terms', ''),
-    ]);
-@endphp
 
 @if(!empty($emailPolicies))
 <div style="background-color: #f9f6f1; border-radius: 6px; padding: 15px; margin: 20px 0 20px; border-top: 2px solid {{ $primaryColor }};">

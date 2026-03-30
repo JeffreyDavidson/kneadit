@@ -1,10 +1,4 @@
 <x-layouts.storefront>
-@php
-    $heroImage = settings('gift_cards_hero_image');
-    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-
-    $content = settingsPageContent('gift_cards');
-@endphp
 
 <link rel="stylesheet" href="{{ asset('css/gift-cards.css') }}">
 

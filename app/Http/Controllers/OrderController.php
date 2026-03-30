@@ -11,6 +11,7 @@ use App\Services\Stripe\StripeCheckoutService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -18,7 +19,18 @@ class OrderController extends Controller
     {
         $categories = Category::with(['products' => fn (HasMany $q) => $q->where('is_active', true)->orderBy('name')])->orderBy('sort_order')->get();
 
-        return view('order', compact('categories'));
+        $leadTimeHours = settings('order_lead_time_hours', '24');
+        $leadTimeDays = ceil($leadTimeHours / 24);
+        $deliveryEnabled = settings('delivery_enabled', '1') === '1';
+        $deliveryTiers = json_decode(settings('delivery_fee_tiers', '[]'), true);
+        $allergyDisclaimer = settings('allergy_disclaimer');
+        $paymentMethods = json_decode(settings('payment_methods_accepted', '[]'), true);
+        $freeDeliveryMin = settings('free_delivery_minimum', '50');
+
+        return view('order', compact(
+            'categories', 'leadTimeHours', 'leadTimeDays', 'deliveryEnabled',
+            'deliveryTiers', 'allergyDisclaimer', 'paymentMethods', 'freeDeliveryMin',
+        ));
     }
 
     /**
@@ -61,6 +73,15 @@ class OrderController extends Controller
     {
         $order->load('orderItems');
 
-        return view('order-confirmation', compact('order'));
+        $heroImage = settings('hero_image');
+        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+        $content = settingsPageContent('order_confirmation');
+        $journeySteps = $content['journey_steps'] ?? [
+            ['title' => 'Confirmation', 'description' => 'You\'ll receive an email confirmation with your order details shortly.'],
+            ['title' => 'Preparation', 'description' => 'Our bakers will craft your items fresh on your scheduled date.'],
+            ['title' => 'Delivery', 'description_delivery' => 'We\'ll deliver your fresh items right to your door.', 'description_pickup' => 'Your items will be warm and ready for you to pick up.'],
+        ];
+
+        return view('order-confirmation', compact('order', 'heroImageUrl', 'content', 'journeySteps'));
     }
 }
