@@ -13,20 +13,17 @@ beforeEach(function () {
     setUpTenantTest();
 
     Mail::fake();
-    $this->user = User::query()->create(['name' => 'Test', 'email' => 'admin@test.com', 'password' => bcrypt('password')]);
+    $this->user = User::factory()->owner()->create();
     settings(['loyalty_enabled' => '1']);
     settings(['loyalty_points_per_dollar' => '10']);
-    $this->customer = Customer::query()->create(['name' => 'Loyalty Tester', 'email' => 'loyal@test.com']);
+    $this->customer = Customer::factory()->create();
 });
 
 test('points awarded when order delivered', function () {
-    $order = Order::query()->create([
-        'user_id' => $this->user->id,
-        'customer_id' => $this->customer->id,
-        'status' => OrderStatus::Pending,
-        'total' => 25.00,
-        'subtotal' => 25.00,
-    ]);
+    $order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
     resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
@@ -41,13 +38,10 @@ test('points awarded when order delivered', function () {
 });
 
 test('points calculated correctly', function () {
-    $order = Order::query()->create([
-        'user_id' => $this->user->id,
-        'customer_id' => $this->customer->id,
-        'status' => OrderStatus::Pending,
-        'total' => 25.50,
-        'subtotal' => 25.50,
-    ]);
+    $order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create(['total' => 25.50, 'subtotal' => 25.50]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
     resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
@@ -62,13 +56,10 @@ test('points calculated correctly', function () {
 test('points not awarded when loyalty disabled', function () {
     settings(['loyalty_enabled' => '0']);
 
-    $order = Order::query()->create([
-        'user_id' => $this->user->id,
-        'customer_id' => $this->customer->id,
-        'status' => OrderStatus::Pending,
-        'total' => 25.00,
-        'subtotal' => 25.00,
-    ]);
+    $order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
     resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
@@ -79,13 +70,10 @@ test('points not awarded when loyalty disabled', function () {
 });
 
 test('points not double awarded', function () {
-    $order = Order::query()->create([
-        'user_id' => $this->user->id,
-        'customer_id' => $this->customer->id,
-        'status' => OrderStatus::Pending,
-        'total' => 25.00,
-        'subtotal' => 25.00,
-    ]);
+    $order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
     resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Baking);
@@ -99,17 +87,17 @@ test('points not double awarded', function () {
 });
 
 test('total points calculated correctly', function () {
-    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 100, 'type' => 'earned', 'description' => 'test']);
-    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 50, 'type' => 'earned', 'description' => 'test']);
-    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 30, 'type' => 'redeemed', 'description' => 'test']);
+    LoyaltyPoint::factory()->earned(100)->for($this->customer)->create();
+    LoyaltyPoint::factory()->earned(50)->for($this->customer)->create();
+    LoyaltyPoint::factory()->redeemed(30)->for($this->customer)->create();
 
     expect($this->customer->total_points)->toBe(120); // 100 + 50 - 30
 });
 
 test('lifetime points only counts earned', function () {
-    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 100, 'type' => 'earned', 'description' => 'test']);
-    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 50, 'type' => 'earned', 'description' => 'test']);
-    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 30, 'type' => 'redeemed', 'description' => 'test']);
+    LoyaltyPoint::factory()->earned(100)->for($this->customer)->create();
+    LoyaltyPoint::factory()->earned(50)->for($this->customer)->create();
+    LoyaltyPoint::factory()->redeemed(30)->for($this->customer)->create();
 
     expect($this->customer->lifetime_points_earned)->toBe(150);
 });

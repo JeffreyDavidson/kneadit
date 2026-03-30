@@ -13,11 +13,11 @@ beforeEach(function () {
     Mail::fake();
 
     $this->customer = Customer::factory()->create();
-    $this->order = Order::factory()->create();
+    $this->order = Order::factory()->recycle($this->customer)->create();
 
-    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 100, 'type' => 'earned', 'description' => 'test', 'order_id' => $this->order->id]);
-    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 50, 'type' => 'redeemed', 'description' => 'test']);
-    LoyaltyPoint::query()->create(['customer_id' => $this->customer->id, 'points' => 25, 'type' => 'adjusted', 'description' => 'test']);
+    LoyaltyPoint::factory()->earned(100)->for($this->customer)->create(['order_id' => $this->order->id]);
+    LoyaltyPoint::factory()->redeemed(50)->for($this->customer)->create();
+    LoyaltyPoint::factory()->adjusted(25)->for($this->customer)->create();
 });
 
 test('earned scope filters to earned type', function () {

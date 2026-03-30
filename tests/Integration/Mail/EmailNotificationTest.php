@@ -13,15 +13,12 @@ use Illuminate\Support\Facades\Mail;
 beforeEach(function () {
     setUpTenantTest();
 
-    $this->user = User::query()->create(['name' => 'Test', 'email' => 'admin@test.com', 'password' => bcrypt('password')]);
-    $this->customer = Customer::query()->create(['name' => 'Test Customer', 'email' => 'customer@test.com']);
-    $this->order = Order::query()->create([
-        'user_id' => $this->user->id,
-        'customer_id' => $this->customer->id,
-        'status' => OrderStatus::Pending,
-        'total' => 25.00,
-        'subtotal' => 25.00,
-    ]);
+    $this->user = User::factory()->owner()->create();
+    $this->customer = Customer::factory()->create();
+    $this->order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create(['total' => 25.00, 'subtotal' => 25.00]);
     settings(['loyalty_enabled' => '0']);
 });
 
@@ -30,7 +27,7 @@ test('order confirmed email sent on status change', function () {
 
     resolve(TransitionOrderStatus::class)($this->order, OrderStatus::Confirmed);
 
-    Mail::assertQueued(OrderConfirmedMail::class, fn ($mail) => $mail->hasTo('customer@test.com'));
+    Mail::assertQueued(OrderConfirmedMail::class, fn ($mail) => $mail->hasTo($this->customer->email));
 });
 
 test('order ready email sent on status change', function () {
@@ -40,7 +37,7 @@ test('order ready email sent on status change', function () {
     resolve(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Baking);
     resolve(TransitionOrderStatus::class)($this->order->fresh(), OrderStatus::Ready);
 
-    Mail::assertQueued(OrderReadyMail::class, fn ($mail) => $mail->hasTo('customer@test.com'));
+    Mail::assertQueued(OrderReadyMail::class, fn ($mail) => $mail->hasTo($this->customer->email));
 });
 
 test('baking status sends baking email', function () {
