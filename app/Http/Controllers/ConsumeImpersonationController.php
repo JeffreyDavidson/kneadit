@@ -2,37 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Actions\Platform\ConsumeImpersonationToken;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ConsumeImpersonationController extends Controller
 {
-    /**
-     * Tenant side: consume the token and log in as the first user.
-     */
-    public function __invoke(Request $request, string $token): RedirectResponse
+    public function __invoke(string $token, ConsumeImpersonationToken $consumeToken): RedirectResponse
     {
-        $hashed = hash('sha256', $token);
-        $record = DB::connection('central')->table('impersonation_tokens')
-            ->where('token', $hashed)
-            ->where('expires_at', '>', now())
-            ->first();
-
-        abort_unless((bool) $record, 403, 'Invalid or expired impersonation token.');
-
-        // Delete the token (one-time use)
-        DB::connection('central')->table('impersonation_tokens')
-            ->where('token', $hashed)
-            ->delete();
-
-        $user = User::query()->first();
-
-        abort_unless((bool) $user, 404, 'No users found for this tenant.');
-
-        Auth::login($user);
+        Auth::login($consumeToken($token));
 
         return redirect()->to('/admin');
     }

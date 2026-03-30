@@ -168,6 +168,13 @@ function createCentralTables(): void
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         },
+        'impersonation_tokens' => function ($table) {
+            $table->id();
+            $table->string('token', 64)->unique();
+            $table->string('tenant_id');
+            $table->timestamp('expires_at');
+            $table->timestamp('created_at')->nullable();
+        },
         'blog_posts' => function ($table) {
             $table->id();
             $table->string('title');

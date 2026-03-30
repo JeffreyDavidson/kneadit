@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Actions\Platform;
+
+use App\Models\ImpersonationToken;
+use App\Models\Tenant;
+use Illuminate\Support\Str;
+
+class CreateImpersonationToken
+{
+    public function __invoke(Tenant $tenant): string
+    {
+        $token = Str::random(64);
+
+        ImpersonationToken::query()->create([
+            'token' => hash('sha256', $token),
+            'tenant_id' => $tenant->id,
+            'expires_at' => now()->addSeconds(60),
+            'created_at' => now(),
+        ]);
+
+        $domain = $tenant->domains()->first()->domain ?? $tenant->id;
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $scheme = parse_url(config('app.url'), PHP_URL_SCHEME) ?? 'https';
+
+        return "{$scheme}://{$domain}.{$appHost}/impersonate/{$token}";
+    }
+}
