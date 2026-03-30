@@ -1,5 +1,16 @@
 @extends('emails.layout')
 
+@php
+/** @var string $storeName */
+/** @var string $primaryColor */
+/** @var string $secondaryColor */
+/** @var string $storeEmail */
+/** @var string $storePhone */
+/** @var string $storeAddress */
+/** @var string|null $logoUrl */
+@endphp
+
+
 @section('content')
     <h2 style="color: #333; margin-top: 0;">You've been invited!</h2>
     <p style="color: #555; font-size: 16px; line-height: 1.6;">

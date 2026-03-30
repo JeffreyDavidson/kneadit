@@ -1,5 +1,16 @@
 @extends('emails.layout')
 
+@php
+/** @var string $storeName */
+/** @var string $primaryColor */
+/** @var string $secondaryColor */
+/** @var string $storeEmail */
+/** @var string $storePhone */
+/** @var string $storeAddress */
+/** @var string|null $logoUrl */
+@endphp
+
+
 @section('content')
     <h2 style="color: {{ $secondaryColor }}; margin: 0 0 16px; font-size: 20px;">Purchase Order</h2>
 
