@@ -4,7 +4,7 @@
     <div style="color: #faf0d6; max-width: 28rem; margin: 0 auto; line-height: 1.6;">
         {{ $message ?: 'We are currently performing scheduled maintenance. We\'ll be back shortly!' }}
     </div>
-    @if($scheduled_end)
+    @if ($scheduled_end)
         <div style="margin-top: 1rem; color: #8b6844; font-size: 0.85rem;">
             Expected back: {{ \Carbon\Carbon::parse($scheduled_end)->format('M j, Y g:i A') }}
         </div>

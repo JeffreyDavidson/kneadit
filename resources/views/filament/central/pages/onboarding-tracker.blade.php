@@ -37,7 +37,7 @@
 
     {{-- Tenant Cards --}}
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1rem;">
-        @foreach($tenants as $tenant)
+        @foreach ($tenants as $tenant)
             @php
                 $pct = round(($tenant['completed'] / $tenant['total']) * 100);
                 if ($tenant['completed'] <= 2) {
@@ -56,8 +56,8 @@
                         <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">{{ $tenant['subdomain'] }}.kneadit.app</div>
                     </div>
                     <span style="display: inline-block; padding: 0.125rem 0.625rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
-                        @if($tenant['plan'] === 'pro') background: #d4920c; color: #0c0a09;
-                        @elseif($tenant['plan'] === 'enterprise') background: #e8b04a; color: #0c0a09;
+                        @if ($tenant['plan'] === 'pro') background: #d4920c; color: #0c0a09;
+                        @elseif ($tenant['plan'] === 'enterprise') background: #e8b04a; color: #0c0a09;
                         @else background: rgba(212,146,12,0.15); color: #f5d88e; @endif">
                         {{ $tenant['plan'] }}
                     </span>
@@ -84,9 +84,9 @@
 
                 {{-- Checklist --}}
                 <div style="display: flex; flex-direction: column; gap: 0.375rem;">
-                    @foreach($tenant['checks'] as $key => $passed)
+                    @foreach ($tenant['checks'] as $key => $passed)
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;">
-                            @if($passed)
+                            @if ($passed)
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px; color: #10b981; flex-shrink: 0;">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                 </svg>

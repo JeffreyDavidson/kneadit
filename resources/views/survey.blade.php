@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ asset('css/survey.css') }}">
 </x-slot:styles>
 
-@if(session('survey_submitted'))
+@if (session('survey_submitted'))
 {{-- Success State --}}
 <section class="relative overflow-hidden" style="min-height: 60vh;">
     <div class="absolute inset-0">
@@ -43,7 +43,7 @@
             <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
         </div>
         <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $survey->title }}</h1>
-        @if($survey->description)
+        @if ($survey->description)
         <p class="font-script text-2xl md:text-3xl survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $survey->description }}</p>
         @endif
     </div>
@@ -83,7 +83,7 @@
             </div>
 
             {{-- Questions --}}
-            @foreach($survey->questions as $index => $question)
+            @foreach ($survey->questions as $index => $question)
             <div class="rounded-2xl p-6 md:p-8 transition-all duration-300 hover:shadow-lg" style="background: white; border: 1px solid var(--warm-200);">
                 <div class="flex items-start gap-4 mb-4">
                     <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style="background: var(--warm-500); color: var(--warm-900);">{{ $index + 1 }}</span>
@@ -93,9 +93,9 @@
                 </div>
 
                 <div class="pl-12">
-                    @if($question['type'] === 'rating')
+                    @if ($question['type'] === 'rating')
                     <div x-data="{ rating: 0 }" class="flex gap-2 items-center">
-                        @for($star = 1; $star <= 5; $star++)
+                        @for ($star = 1; $star <= 5; $star++)
                         <button type="button"
                             @click="rating = {{ $star }}"
                             :class="rating >= {{ $star }} ? '' : 'opacity-30'"
@@ -108,12 +108,12 @@
                         <span class="ml-3 text-sm font-semibold" style="color: var(--warm-500);" x-show="rating > 0" x-text="['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'][rating]"></span>
                     </div>
 
-                    @elseif($question['type'] === 'text')
+                    @elseif ($question['type'] === 'text')
                     <textarea name="answers[{{ $index }}]" rows="3" class="input-field" placeholder="Type your answer..."></textarea>
 
-                    @elseif($question['type'] === 'multiple_choice')
+                    @elseif ($question['type'] === 'multiple_choice')
                     <div class="space-y-2">
-                        @foreach($question['options'] ?? [] as $option)
+                        @foreach ($question['options'] ?? [] as $option)
                         <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl transition-all duration-200 hover:shadow-sm" style="border: 1px solid var(--warm-200);" onmouseover="this.style.borderColor='var(--warm-400)'" onmouseout="this.style.borderColor='var(--warm-200)'">
                             <input type="radio" name="answers[{{ $index }}]" value="{{ $option }}"
                                 class="w-4 h-4" style="accent-color: var(--warm-500);">

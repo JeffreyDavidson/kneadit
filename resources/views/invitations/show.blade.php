@@ -18,7 +18,7 @@
                 You've been invited as a <strong class="text-amber-700">{{ $invitation->role->getLabel() }}</strong>.
             </p>
 
-            @if($existingUser)
+            @if ($existingUser)
                 <form method="POST" action="{{ route('invitation.accept', $invitation->token) }}">
                     @csrf
                     <p class="text-gray-600 mb-4">

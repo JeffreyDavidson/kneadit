@@ -36,9 +36,9 @@
 </section>
 
 <div class="directory-content" x-data="{ search: '' }" @search-update.window="search = $event.detail.query">
-    @if($bakeries->count() > 0)
+    @if ($bakeries->count() > 0)
         <div class="bakery-grid">
-            @foreach($bakeries as $bakery)
+            @foreach ($bakeries as $bakery)
                 <div class="bakery-card" x-show="search === '' || '{{ strtolower($bakery['name']) }}'.includes(search.toLowerCase())" x-transition>
                     <div class="bakery-stripe" style="background: {{ $bakery['color'] }}"></div>
                     <div class="bakery-card-body">

@@ -30,7 +30,7 @@
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Email</td>
                 <td style="padding: 6px 0; color: {{ $secondaryColor }}; text-align: right; font-size: 14px;">{{ $order->customer?->email ?? '—' }}</td>
             </tr>
-            @if($order->delivery_date)
+            @if ($order->delivery_date)
             <tr>
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Requested Date</td>
                 <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right;">{{ $order->delivery_date->format('M j, Y') }}</td>
@@ -53,14 +53,14 @@
         </table>
     </div>
 
-    @if($order->orderItems->count())
+    @if ($order->orderItems->count())
     <h3 style="color: {{ $secondaryColor }}; font-size: 15px; margin: 20px 0 8px;">Items:</h3>
     <table style="width: 100%; border-collapse: collapse;">
-        @foreach($order->orderItems as $item)
+        @foreach ($order->orderItems as $item)
         <tr style="border-bottom: 1px solid #e8d0b0;">
             <td style="padding: 8px 0; color: #4a3728; font-size: 14px;">
                 {{ $item->product?->name ?? 'Item' }} × {{ $item->quantity }}
-                @if($item->special_instructions)
+                @if ($item->special_instructions)
                     <br><span style="color: #8b6844; font-size: 12px; font-style: italic;">{{ $item->special_instructions }}</span>
                 @endif
             </td>
@@ -72,7 +72,7 @@
     </table>
     @endif
 
-    @if($order->notes)
+    @if ($order->notes)
     <div style="margin: 16px 0; padding: 12px; background: #fff7ed; border-left: 3px solid {{ $primaryColor }}; border-radius: 4px;">
         <strong style="color: {{ $secondaryColor }}; font-size: 13px;">Customer Notes:</strong>
         <p style="color: #4a3728; font-size: 13px; margin: 4px 0 0;">{{ $order->notes }}</p>

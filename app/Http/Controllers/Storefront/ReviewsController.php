@@ -28,10 +28,16 @@ class ReviewsController extends Controller
         $fiveStarPct = $totalReviews > 0 ? round(($fiveStarCount / $totalReviews) * 100) : 0;
         $featured = $reviews->first();
 
-        return view('reviews', compact(
-            'reviews', 'avgRating', 'totalReviews',
-            'storeName', 'heroImageUrl', 'content',
-            'fiveStarCount', 'fiveStarPct', 'featured',
-        ));
+        return view('reviews', [
+            'reviews' => $reviews,
+            'avgRating' => $avgRating,
+            'totalReviews' => $totalReviews,
+            'storeName' => $storeName,
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+            'fiveStarCount' => $fiveStarCount,
+            'fiveStarPct' => $fiveStarPct,
+            'featured' => $featured,
+        ]);
     }
 }

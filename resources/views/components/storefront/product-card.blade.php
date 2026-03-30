@@ -12,13 +12,13 @@
     $formattedPrice = '$' . number_format($price, 2);
 @endphp
 
-@if($variant === 'featured')
+@if ($variant === 'featured')
 <div
     class="group grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl"
     style="background-color: var(--warm-50); border: 1px solid var(--warm-200);"
 >
     <div class="relative overflow-hidden aspect-[4/3] md:aspect-auto">
-        @if($image)
+        @if ($image)
             <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
         @else
             <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-900));">
@@ -31,19 +31,19 @@
     </div>
     <div class="p-8 md:p-10 flex flex-col justify-center">
         <h3 class="font-display text-2xl md:text-3xl font-bold mb-4" style="color: var(--warm-900);">{{ $name }}</h3>
-        @if($description)
+        @if ($description)
             <p class="font-body leading-relaxed" style="color: var(--warm-600);">{{ Str::limit($description, 200) }}</p>
         @endif
     </div>
 </div>
 
-@elseif($variant === 'compact')
+@elseif ($variant === 'compact')
 <div
     class="group flex items-center gap-4 p-3 rounded-xl transition-all duration-300 hover:shadow-md"
     style="background-color: var(--warm-50); border: 1px solid var(--warm-200);"
 >
     <div class="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
-        @if($image)
+        @if ($image)
             <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover">
         @else
             <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-900));">
@@ -64,7 +64,7 @@
     {{ $attributes }}
 >
     <div class="relative overflow-hidden aspect-[4/3]">
-        @if($image)
+        @if ($image)
             <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
         @else
             <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-900));">
@@ -77,7 +77,7 @@
     </div>
     <div class="p-5">
         <h3 class="font-display text-lg font-bold mb-2" style="color: var(--warm-900);">{{ $name }}</h3>
-        @if($description)
+        @if ($description)
             <p class="font-body text-sm leading-relaxed" style="color: var(--warm-600);">{{ Str::limit($description, 100) }}</p>
         @endif
     </div>

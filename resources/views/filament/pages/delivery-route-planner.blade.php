@@ -4,7 +4,7 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-900">Delivery Route Planner</h2>
-                <button wire:click="printRoute" 
+                <button wire:click="printRoute"
                         class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
@@ -12,11 +12,11 @@
                     Print Route
                 </button>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label for="delivery_date" class="block text-sm font-medium text-gray-700 mb-1">Delivery Date</label>
-                    <input type="date" 
+                    <input type="date"
                            wire:model.live="selectedDate"
                            id="delivery_date"
                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
@@ -29,7 +29,7 @@
         </div>
 
         <!-- Route Statistics -->
-        @if($deliveryOrders->isNotEmpty())
+        @if ($deliveryOrders->isNotEmpty())
             @php $stats = $this->getRouteStats(); @endphp
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-blue-50 rounded-lg p-4">
@@ -103,7 +103,7 @@
         </div>
 
         <!-- Delivery Orders List -->
-        @if($deliveryOrders->isNotEmpty())
+        @if ($deliveryOrders->isNotEmpty())
             <div class="bg-white rounded-lg shadow overflow-hidden" id="printable-route">
                 <div class="px-6 py-4 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900">
@@ -135,7 +135,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($deliveryOrders as $order)
+                            @foreach ($deliveryOrders as $order)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {{ $order['order_number'] }}
@@ -153,8 +153,8 @@
                                         ${{ number_format($order['total'], 2) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                               bg-{{ $order['distance_tier']['color'] }}-100 
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                               bg-{{ $order['distance_tier']['color'] }}-100
                                                text-{{ $order['distance_tier']['color'] }}-800">
                                             {{ $order['distance_tier']['tier'] }} (~{{ $order['distance_tier']['estimated_minutes'] }}m)
                                         </span>
@@ -184,27 +184,27 @@
             @page {
                 margin: 1in;
             }
-            
+
             body * {
                 visibility: hidden;
             }
-            
+
             #printable-route, #printable-route * {
                 visibility: visible;
             }
-            
+
             #printable-route {
                 position: absolute;
                 left: 0;
                 top: 0;
                 width: 100% !important;
             }
-            
+
             .bg-gray-50 {
                 background-color: #f9fafb !important;
                 -webkit-print-color-adjust: exact;
             }
-            
+
             .border-gray-200 {
                 border-color: #e5e7eb !important;
                 -webkit-print-color-adjust: exact;

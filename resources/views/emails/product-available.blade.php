@@ -19,7 +19,7 @@
 <p style="margin: 0 0 20px;">Great news — <strong>{{ $product->name }}</strong> is back and available at {{ $storeName }}!</p>
 
 <div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }}; text-align: center;">
-    @if($product->image)
+    @if ($product->image)
         <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="max-width: 200px; border-radius: 8px; margin-bottom: 15px;">
     @endif
     <div style="font-size: 20px; font-weight: 700; color: {{ $secondaryColor }}; margin-bottom: 5px;">{{ $product->name }}</div>

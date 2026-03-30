@@ -24,7 +24,7 @@
 
     <div style="background-color: #fef9ef; border-radius: 10px; padding: 15px 20px; margin-bottom: 20px;">
         <p style="margin: 0 0 8px; font-size: 13px; color: #6b5c4d; text-transform: uppercase;">Order #{{ $order->order_number }}</p>
-        @foreach($orderItems as $item)
+        @foreach ($orderItems as $item)
             <p style="margin: 0 0 4px; font-size: 14px; color: {{ $secondaryColor }};">
                 {{ $item->quantity }}× {{ $item->product->name ?? 'Item' }}
             </p>
@@ -36,7 +36,7 @@
     </p>
 
     <div style="text-align: center; margin-bottom: 25px;">
-        @for($i = 1; $i <= 5; $i++)
+        @for ($i = 1; $i <= 5; $i++)
             <a href="{{ $reviewUrl }}?rating={{ $i }}" style="text-decoration: none; font-size: 36px; margin: 0 3px;">⭐</a>
         @endfor
     </div>

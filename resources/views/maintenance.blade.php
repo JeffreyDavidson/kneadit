@@ -14,7 +14,7 @@
         <p class="message">
             {{ $message ?? 'We are currently performing scheduled maintenance. We\'ll be back shortly!' }}
         </p>
-        @if(!empty($scheduled_end))
+        @if (!empty($scheduled_end))
             <div class="scheduled-end">
                 ⏰ Expected back: {{ \Carbon\Carbon::parse($scheduled_end)->format('M j, Y \a\t g:i A') }}
             </div>

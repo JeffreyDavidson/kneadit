@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        @if($supplierGroups->isEmpty())
+        @if ($supplierGroups->isEmpty())
             <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-12 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-auto text-success-500" style="width: 48px; height: 48px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                 <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-white">All stocked up!</h3>
@@ -33,7 +33,7 @@
         @endif
 
         {{-- Supplier Groups --}}
-        @foreach($supplierGroups as $key => $group)
+        @foreach ($supplierGroups as $key => $group)
             <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 overflow-hidden">
                 {{-- Supplier Header --}}
                 <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-6 py-4">
@@ -42,13 +42,13 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-gray-400" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>
                             {{ $group['supplier']['name'] }}
                         </h3>
-                        @if($group['supplier']['email'] || $group['supplier']['phone'])
+                        @if ($group['supplier']['email'] || $group['supplier']['phone'])
                             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                @if($group['supplier']['email'])
+                                @if ($group['supplier']['email'])
                                     {{ $group['supplier']['email'] }}
                                 @endif
-                                @if($group['supplier']['email'] && $group['supplier']['phone']) &bull; @endif
-                                @if($group['supplier']['phone'])
+                                @if ($group['supplier']['email'] && $group['supplier']['phone']) &bull; @endif
+                                @if ($group['supplier']['phone'])
                                     {{ $group['supplier']['phone'] }}
                                 @endif
                             </p>
@@ -58,7 +58,7 @@
                         <span class="text-lg font-bold text-gray-900 dark:text-white">
                             ${{ number_format($group['total'], 2) }}
                         </span>
-                        @if($group['supplier']['id'] && $group['supplier']['email'])
+                        @if ($group['supplier']['id'] && $group['supplier']['email'])
                             <button wire:click="sendPurchaseOrder({{ $group['supplier']['id'] }})"
                                 wire:confirm="Send purchase order to {{ $group['supplier']['email'] }}?"
                                 class="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-500">
@@ -82,11 +82,11 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($group['items'] as $item)
+                        @foreach ($group['items'] as $item)
                             <tr class="text-gray-900 dark:text-gray-100">
                                 <td class="px-6 py-3">
                                     <div class="font-medium">{{ $item['name'] }}</div>
-                                    @if($item['sku'])
+                                    @if ($item['sku'])
                                         <div class="text-xs text-gray-500">SKU: {{ $item['sku'] }}</div>
                                     @endif
                                 </td>
@@ -99,7 +99,7 @@
                                 <td class="px-6 py-3 text-right">${{ number_format($item['unit_price'], 2) }}</td>
                                 <td class="px-6 py-3 text-right font-medium">${{ number_format($item['subtotal'], 2) }}</td>
                                 <td class="px-6 py-3 text-center">
-                                    @if($item['lead_time_days'])
+                                    @if ($item['lead_time_days'])
                                         {{ $item['lead_time_days'] }}d
                                     @else
                                         <span class="text-gray-400">—</span>
@@ -112,7 +112,7 @@
             </div>
         @endforeach
 
-        @if($supplierGroups->isNotEmpty())
+        @if ($supplierGroups->isNotEmpty())
             <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 p-6">
                 <div class="flex items-center justify-between">
                     <span class="text-lg font-semibold text-gray-900 dark:text-white">Grand Total</span>

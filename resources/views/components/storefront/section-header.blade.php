@@ -21,7 +21,7 @@
 @endphp
 
 <div class="{{ $alignClass }} mb-12 {{ $align === 'center' ? 'max-w-3xl mx-auto' : '' }}">
-    @if($eyebrow)
+    @if ($eyebrow)
         <span
             class="inline-block text-xs md:text-sm font-body font-semibold uppercase tracking-[0.2em] mb-3"
             style="color: var(--warm-500);"
@@ -33,7 +33,7 @@
         style="{{ $titleColor }}"
     >{{ $title }}</h2>
 
-    @if($subtitle)
+    @if ($subtitle)
         <p
             class="mt-4 text-base md:text-lg font-body leading-relaxed max-w-2xl {{ $align === 'center' ? 'mx-auto' : '' }}"
             style="{{ $subtitleColor }}"

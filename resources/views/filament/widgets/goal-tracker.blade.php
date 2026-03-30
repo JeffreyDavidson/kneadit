@@ -28,7 +28,7 @@
                 <div class="goal-label">{{ $monthly['label'] }}</div>
                 <div class="goal-bar">
                     <div class="goal-bar-fill" style="width: {{ $monthly['percentage'] }}%; min-width: {{ $monthly['percentage'] > 5 ? 0 : 40 }}px;">
-                        @if($monthly['percentage'] > 10)<span class="goal-bar-pct">{{ $monthly['percentage'] }}%</span>@endif
+                        @if ($monthly['percentage'] > 10)<span class="goal-bar-pct">{{ $monthly['percentage'] }}%</span>@endif
                     </div>
                 </div>
                 <div class="goal-footer">
@@ -51,7 +51,7 @@
                 <div class="goal-label">{{ $yearly['label'] }}</div>
                 <div class="goal-bar">
                     <div class="goal-bar-fill" style="width: {{ $yearly['percentage'] }}%; min-width: {{ $yearly['percentage'] > 5 ? 0 : 40 }}px;">
-                        @if($yearly['percentage'] > 10)<span class="goal-bar-pct">{{ $yearly['percentage'] }}%</span>@endif
+                        @if ($yearly['percentage'] > 10)<span class="goal-bar-pct">{{ $yearly['percentage'] }}%</span>@endif
                     </div>
                 </div>
                 <div class="goal-footer">

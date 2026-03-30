@@ -11,8 +11,8 @@
             <div style="font-size: 0.65rem; color: #8b6844;">Ordered 2+ times, inactive 30+ days</div>
         </div>
 
-        @if(count($customers) > 0)
-            @foreach($customers as $customer)
+        @if (count($customers) > 0)
+            @foreach ($customers as $customer)
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #fdf8f2; border-radius: 6px; margin-bottom: 6px; font-size: 0.8rem;">
                     <div>
                         <div style="font-weight: 600; color: #3d2314;">{{ $customer['name'] }}</div>

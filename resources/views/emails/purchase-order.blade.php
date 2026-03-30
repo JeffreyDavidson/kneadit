@@ -36,7 +36,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($items as $item)
+            @foreach ($items as $item)
             <tr>
                 <td style="padding: 8px 12px; border-bottom: 1px solid #e8d0b0;">{{ $item['name'] }}</td>
                 <td style="padding: 8px 12px; border-bottom: 1px solid #e8d0b0;">{{ $item['sku'] ?? '—' }}</td>

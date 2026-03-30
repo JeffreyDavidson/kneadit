@@ -30,7 +30,7 @@
 @endphp
 
 <section
-    @if($id) id="{{ $id }}" @endif
+    @if ($id) id="{{ $id }}" @endif
     style="{{ $bgStyles[$bg] ?? $bgStyles['light'] }}"
     {{ $attributes->class([$paddings[$padding] ?? $paddings['lg']]) }}
 >

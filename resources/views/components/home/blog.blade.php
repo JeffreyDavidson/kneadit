@@ -1,4 +1,4 @@
-@if($latestPosts->isNotEmpty())
+@if ($latestPosts->isNotEmpty())
 <section class="py-24 px-4" style="background: var(--warm-100);">
     <div class="max-w-6xl mx-auto">
         {{-- Header --}}
@@ -22,7 +22,7 @@
             @php $lead = $latestPosts->first(); @endphp
             <a href="{{ route('storefront.blog.show', $lead->slug) }}" class="md:col-span-2 group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl" style="background: white;">
                 <div class="relative overflow-hidden" style="aspect-ratio: 16/9;">
-                    @if($lead->featured_image)
+                    @if ($lead->featured_image)
                         <img src="{{ Storage::disk('public')->url($lead->featured_image) }}" alt="{{ $lead->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                     @else
                         <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-800), var(--warm-700));">
@@ -33,18 +33,18 @@
                 <div class="p-8">
                     <p class="text-xs font-semibold uppercase tracking-widest mb-3" style="color: var(--warm-500);">{{ $lead->published_at->format('M j, Y') }}</p>
                     <h3 class="font-display text-2xl md:text-3xl font-bold mb-3 transition-colors group-hover:underline" style="color: var(--warm-900);">{{ $lead->title }}</h3>
-                    @if($lead->excerpt)
+                    @if ($lead->excerpt)
                     <p class="text-base leading-relaxed" style="color: var(--warm-600);">{{ Str::limit($lead->excerpt, 160) }}</p>
                     @endif
                 </div>
             </a>
 
             {{-- Sidebar posts --}}
-            @if($latestPosts->count() > 1)
+            @if ($latestPosts->count() > 1)
             <div class="flex flex-col gap-6">
-                @foreach($latestPosts->skip(1) as $post)
+                @foreach ($latestPosts->skip(1) as $post)
                 <a href="{{ route('storefront.blog.show', $post->slug) }}" class="group rounded-2xl overflow-hidden flex-1 transition-all duration-300 hover:shadow-xl" style="background: white;">
-                    @if($post->featured_image)
+                    @if ($post->featured_image)
                     <div class="overflow-hidden" style="aspect-ratio: 16/9;">
                         <img src="{{ Storage::disk('public')->url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                     </div>

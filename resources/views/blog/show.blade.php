@@ -4,7 +4,7 @@
 @section('meta_description', $post->meta_description ?: Str::limit(strip_tags($post->body), 155))
 @section('og_type', 'article')
 @section('canonical', route('blog.show', $post->slug))
-@if($post->featured_image)
+@if ($post->featured_image)
 @section('og_image', $post->featured_image)
 @endif
 
@@ -41,14 +41,14 @@
         <a href="{{ route('blog.index') }}" class="back-link" style="color:var(--honey)">← Back to Blog</a>
         <div class="post-meta">{{ $post->category }}</div>
         <h1>{{ $post->title }}</h1>
-        @if($post->excerpt)
+        @if ($post->excerpt)
             <p class="excerpt">{{ $post->excerpt }}</p>
         @endif
         {{-- date removed per Cassie's request --}}
     </div>
 </div>
 
-@if($post->featured_image)
+@if ($post->featured_image)
 <div class="post-image">
     <img src="{{ $post->featured_image }}" alt="{{ $post->title }}">
 </div>
@@ -72,11 +72,11 @@
     </div>
 </div>
 
-@if($related->count())
+@if ($related->count())
 <div class="related">
     <h2>Keep Reading</h2>
     <div class="related-grid">
-        @foreach($related as $relatedPost)
+        @foreach ($related as $relatedPost)
             <a href="{{ route('blog.show', $relatedPost->slug) }}" class="related-card">
                 <div class="related-card-cat">{{ $relatedPost->category }}</div>
                 <div class="related-card-title">{{ $relatedPost->title }}</div>

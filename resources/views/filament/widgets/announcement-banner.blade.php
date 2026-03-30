@@ -1,5 +1,5 @@
 <div>
-    @foreach($this->getAnnouncements() as $announcement)
+    @foreach ($this->getAnnouncements() as $announcement)
         <div
             x-data="{ dismissed: localStorage.getItem('announcement-dismissed-{{ $announcement['id'] }}') === 'true' }"
             x-show="!dismissed"
@@ -37,10 +37,10 @@
                     'maintenance' => '#6b7280',
                     default => '#3b82f6',
                 } }};">
-                    @if($announcement['type'] === 'warning') ⚠️
-                    @elseif($announcement['type'] === 'info') ℹ️
-                    @elseif($announcement['type'] === 'success') ✅
-                    @elseif($announcement['type'] === 'maintenance')
+                    @if ($announcement['type'] === 'warning') ⚠️
+                    @elseif ($announcement['type'] === 'info') ℹ️
+                    @elseif ($announcement['type'] === 'success') ✅
+                    @elseif ($announcement['type'] === 'maintenance')
                     @endif
                     {{ $announcement['title'] }}
                 </div>
@@ -48,7 +48,7 @@
                     {!! clean($announcement['body']) !!}
                 </div>
             </div>
-            @if($announcement['is_dismissable'])
+            @if ($announcement['is_dismissable'])
                 <button
                     x-on:click="dismissed = true; localStorage.setItem('announcement-dismissed-{{ $announcement['id'] }}', 'true')"
                     style="

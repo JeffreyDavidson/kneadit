@@ -24,7 +24,14 @@ class ReviewController extends Controller
         $content = settingsPageContent('submit_review');
         $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
 
-        return view('submit-review', compact('order', 'storeName', 'prefilledRating', 'heroImageUrl', 'content', 'ratingDescriptions'));
+        return view('submit-review', [
+            'order' => $order,
+            'storeName' => $storeName,
+            'prefilledRating' => $prefilledRating,
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+            'ratingDescriptions' => $ratingDescriptions,
+        ]);
     }
 
     public function store(Order $order, StoreReviewRequest $request, CreateReview $createReview): View

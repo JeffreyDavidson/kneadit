@@ -14,7 +14,7 @@
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
             <form wire:submit="generateCaptions">
                 {{ $this->form }}
-                
+
                 <div class="mt-6 flex justify-center">
                     <x-filament::button type="submit" icon="heroicon-o-sparkles" size="lg">Generate Captions</x-filament::button>
                 </div>
@@ -22,19 +22,19 @@
         </div>
 
         <!-- Generated Captions -->
-        @if(!empty($captions))
+        @if (!empty($captions))
             <div class="space-y-4">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Generated Captions
                 </h3>
-                
-                @foreach($captions as $index => $caption)
+
+                @foreach ($captions as $index => $caption)
                     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex justify-between items-start mb-3">
                             <h4 class="text-md font-medium text-gray-800 dark:text-gray-200">
                                 Caption Variation {{ $caption['variation'] }}
                             </h4>
-                            <button 
+                            <button
                                 type="button"
                                 onclick="copyToClipboard('caption-{{ $index }}')"
                                 class="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-md transition-colors"
@@ -45,14 +45,14 @@
                                 Copy
                             </button>
                         </div>
-                        
-                        <div 
+
+                        <div
                             id="caption-{{ $index }}"
                             class="bg-gray-50 dark:bg-gray-900 p-4 rounded-md border border-gray-200 dark:border-gray-600"
                         >
                             <pre class="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 font-mono leading-relaxed">{{ $caption['text'] }}</pre>
                         </div>
-                        
+
                         <div class="mt-3 text-xs text-gray-500 dark:text-gray-400">
                             Character count: {{ strlen($caption['text']) }}
                         </div>
@@ -89,11 +89,11 @@
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             const text = element.textContent;
-            
+
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text).then(function() {
                     // Show success message
-                    const button = element.nextElementSibling?.querySelector('button') || 
+                    const button = element.nextElementSibling?.querySelector('button') ||
                                  element.parentElement.querySelector('button');
                     if (button) {
                         const originalText = button.innerHTML;
@@ -105,7 +105,7 @@
                         `;
                         button.classList.remove('bg-primary-600', 'hover:bg-primary-700');
                         button.classList.add('bg-green-600', 'hover:bg-green-700');
-                        
+
                         setTimeout(function() {
                             button.innerHTML = originalText;
                             button.classList.remove('bg-green-600', 'hover:bg-green-700');

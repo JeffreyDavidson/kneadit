@@ -26,16 +26,16 @@
 
 <div class="order-details">
     <div class="order-number">Order #{{ $order->order_number }}</div>
-    
+
     <div class="order-items">
         <h4 style="margin-bottom: 10px; color: #8b4513;">Items Being Prepared:</h4>
-        @foreach($orderItems as $item)
+        @foreach ($orderItems as $item)
             <div class="order-item">
                 <div>
                     <div class="item-name">{{ $item->product->name }}</div>
                     <div class="item-details">
                         Quantity: {{ $item->quantity }}
-                        @if($item->special_instructions)
+                        @if ($item->special_instructions)
                             <br><em>Special instructions: {{ $item->special_instructions }}</em>
                         @endif
                     </div>
@@ -53,7 +53,7 @@
     </div>
 </div>
 
-@if($order->delivery_address)
+@if ($order->delivery_address)
     <div class="delivery-info">
         <div class="info-label">🚚 Delivery Schedule</div>
         <p style="margin: 5px 0;"><strong>Delivery Date:</strong> {{ $order->delivery_date?->format('M j, Y') ?? 'TBD' }}</p>

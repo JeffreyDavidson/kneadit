@@ -19,14 +19,14 @@
     </div>
 </div>
 
-@if(session('success'))
+@if (session('success'))
     <div class="flash flash-success">✅ {{ session('success') }}</div>
 @endif
 
 <div class="pull-hint">Pull down to refresh</div>
 
 <div class="orders-list">
-    @forelse($orders as $order)
+    @forelse ($orders as $order)
         <div class="order-card">
             <div class="order-header">
                 <div>
@@ -36,7 +36,7 @@
                 <span class="badge badge-{{ $order->status }}">{{ $order->status }}</span>
             </div>
 
-            @if($order->delivery_address)
+            @if ($order->delivery_address)
                 <div class="order-detail">
                     <span class="icon">📍</span>
                     <a href="https://maps.google.com/?q={{ urlencode($order->delivery_address) }}" target="_blank" class="maps-link">
@@ -45,20 +45,20 @@
                 </div>
             @endif
 
-            @if($order->delivery_time)
+            @if ($order->delivery_time)
                 <div class="order-detail">
                     <span class="icon">🕐</span>
                     <span>{{ \Carbon\Carbon::parse($order->delivery_time)->format('g:i A') }}</span>
                 </div>
             @endif
 
-            @if($order->orderItems->count())
+            @if ($order->orderItems->count())
                 <div class="items-list">
                     {{ $order->orderItems->map(fn($i) => $i->quantity . '× ' . ($i->product->name ?? 'Item'))->join(', ') }}
                 </div>
             @endif
 
-            @if($order->notes)
+            @if ($order->notes)
                 <div class="order-detail">
                     <span class="icon">📝</span>
                     <span>{{ $order->notes }}</span>

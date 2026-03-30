@@ -25,6 +25,6 @@ class HomeController extends Controller
         $homepageSections = json_decode(settings('homepage_sections', '{}'), true);
         $sections = collect($homepageSections)->filter(fn (array $s) => $s['visible'] ?? true)->sortBy('order');
 
-        return view('home', compact('categories', 'storeName', 'sections'));
+        return view('home', ['categories' => $categories, 'storeName' => $storeName, 'sections' => $sections]);
     }
 }

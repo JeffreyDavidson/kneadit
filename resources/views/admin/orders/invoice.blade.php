@@ -39,13 +39,13 @@
                     <span class="info-label">Name:</span>
                     <span class="info-value">{{ $order->customer->name ?? 'N/A' }}</span>
                 </div>
-                @if($order->customer && $order->customer->email)
+                @if ($order->customer && $order->customer->email)
                     <div class="info-item">
                         <span class="info-label">Email:</span>
                         <span class="info-value">{{ $order->customer->email }}</span>
                     </div>
                 @endif
-                @if($order->delivery_address)
+                @if ($order->delivery_address)
                     <div class="info-item">
                         <span class="info-label">Delivery:</span>
                         <span class="info-value">{{ $order->delivery_address }}</span>
@@ -63,12 +63,12 @@
                     <span class="info-label">Order Date:</span>
                     <span class="info-value">{{ $order->created_at->format('M j, Y g:i A') }}</span>
                 </div>
-                @if($order->delivery_date)
+                @if ($order->delivery_date)
                     <div class="info-item">
                         <span class="info-label">Requested:</span>
                         <span class="info-value">
                             {{ \Carbon\Carbon::parse($order->delivery_date)->format('M j, Y') }}
-                            @if($order->delivery_time)
+                            @if ($order->delivery_time)
                                 at {{ \Carbon\Carbon::parse($order->delivery_time)->format('g:i A') }}
                             @endif
                         </span>
@@ -94,11 +94,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($order->orderItems as $item)
+                    @foreach ($order->orderItems as $item)
                         <tr>
                             <td>
                                 <div class="font-semibold">{{ $item->product ? $item->product->name : 'Product Not Found' }}</div>
-                                @if($item->product && $item->product->description)
+                                @if ($item->product && $item->product->description)
                                     <div style="color: #6B7280; font-size: 0.875rem;">
                                         {{ Str::limit($item->product->description, 60) }}
                                     </div>
@@ -120,13 +120,13 @@
                     <td><strong>Subtotal:</strong></td>
                     <td class="text-right">${{ number_format($order->subtotal, 2) }}</td>
                 </tr>
-                @if($order->delivery_fee > 0)
+                @if ($order->delivery_fee > 0)
                     <tr>
                         <td><strong>Delivery Fee:</strong></td>
                         <td class="text-right">${{ number_format($order->delivery_fee, 2) }}</td>
                     </tr>
                 @endif
-                @if($order->discount_amount > 0)
+                @if ($order->discount_amount > 0)
                     <tr style="color: #059669;">
                         <td><strong>Discount:</strong></td>
                         <td class="text-right">-${{ number_format($order->discount_amount, 2) }}</td>
@@ -139,7 +139,7 @@
             </table>
         </div>
 
-        @if($order->notes)
+        @if ($order->notes)
             <div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid #3B82F6;">
                 <div class="section-title">Notes</div>
                 <p style="color: #374151; white-space: pre-line;">{{ $order->notes }}</p>

@@ -3,13 +3,13 @@
     $storeName = settings('store_name', 'Our Bakery');
     $storePhoto = settings('store_photo');
 @endphp
-@if($aboutUs)
+@if ($aboutUs)
 <section class="relative py-24 px-4 overflow-hidden" style="background: var(--warm-50);">
     <div class="max-w-6xl mx-auto">
         <div class="grid md:grid-cols-5 gap-12 md:gap-16 items-center">
             {{-- Left: Photo or decorative element --}}
             <div class="md:col-span-2 relative">
-                @if($storePhoto)
+                @if ($storePhoto)
                 <div class="relative">
                     <div class="rounded-2xl overflow-hidden shadow-xl">
                         <img src="{{ Storage::url($storePhoto) }}" alt="{{ $storeName }}" class="w-full h-auto object-cover" style="aspect-ratio: 3/4;">

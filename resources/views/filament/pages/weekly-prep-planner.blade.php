@@ -5,11 +5,11 @@
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-900">Weekly Prep Planner</h2>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label for="week_start" class="block text-sm font-medium text-gray-700 mb-1">Week Starting</label>
-                    <input type="date" 
+                    <input type="date"
                            wire:model.live="selectedWeekStart"
                            id="week_start"
                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
@@ -17,7 +17,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Week Range</label>
                     <p class="text-sm text-gray-600 bg-gray-50 rounded-md p-3">
-                        {{ \Carbon\Carbon::parse($selectedWeekStart)->format('M j') }} - 
+                        {{ \Carbon\Carbon::parse($selectedWeekStart)->format('M j') }} -
                         {{ \Carbon\Carbon::parse($selectedWeekStart)->endOfWeek()->format('M j, Y') }}
                     </p>
                 </div>
@@ -25,7 +25,7 @@
         </div>
 
         <!-- Week Summary -->
-        @if($weeklyOrders->isNotEmpty())
+        @if ($weeklyOrders->isNotEmpty())
             @php $summary = $this->getWeekSummary(); @endphp
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-blue-50 rounded-lg p-4">
@@ -87,7 +87,7 @@
         @endif
 
         <!-- Product Summary -->
-        @if($weeklyOrders->isNotEmpty())
+        @if ($weeklyOrders->isNotEmpty())
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Product Summary for the Week</h3>
                 <div class="overflow-x-auto">
@@ -106,7 +106,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($this->getProductSummary() as $product)
+                            @foreach ($this->getProductSummary() as $product)
                                 <tr>
                                     <td class="px-4 py-3 text-sm font-medium text-gray-900">
                                         {{ $product['product_name'] }}
@@ -126,27 +126,27 @@
         @endif
 
         <!-- Daily Prep Timeline -->
-        @if($weeklyOrders->isNotEmpty())
+        @if ($weeklyOrders->isNotEmpty())
             <div class="space-y-6">
-                @foreach($weekDays as $day)
-                    @php 
+                @foreach ($weekDays as $day)
+                    @php
                         $dayKey = $day->format('Y-m-d');
                         $dayOrders = $weeklyOrders->get($dayKey, collect());
                         $dayTimeline = $this->getTimelineView()->get($dayKey, collect());
                     @endphp
-                    
+
                     <div class="bg-white rounded-lg shadow overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200 {{ $dayOrders->isNotEmpty() ? 'bg-blue-50' : 'bg-gray-50' }}">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-semibold {{ $dayOrders->isNotEmpty() ? 'text-blue-900' : 'text-gray-500' }}">
                                     {{ $day->format('l, F j') }}
-                                    @if($day->isToday())
+                                    @if ($day->isToday())
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2">
                                             Today
                                         </span>
                                     @endif
                                 </h3>
-                                @if($dayOrders->isNotEmpty())
+                                @if ($dayOrders->isNotEmpty())
                                     <div class="text-sm text-blue-700">
                                         {{ $dayOrders->count() }} orders • {{ $dayOrders->sum(fn($order) => $order->orderItems->sum('quantity')) }} items
                                     </div>
@@ -154,22 +154,22 @@
                             </div>
                         </div>
 
-                        @if($dayOrders->isNotEmpty())
+                        @if ($dayOrders->isNotEmpty())
                             <div class="p-6">
                                 <!-- Prep Timeline -->
-                                @if($dayTimeline->isNotEmpty())
+                                @if ($dayTimeline->isNotEmpty())
                                     <div class="mb-6">
                                         <h4 class="text-md font-semibold text-gray-900 mb-3">Prep Timeline</h4>
                                         <div class="space-y-3">
-                                            @foreach($dayTimeline as $task)
+                                            @foreach ($dayTimeline as $task)
                                                 <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
                                                     <div class="flex-1">
                                                         <p class="text-sm font-medium text-gray-900">
-                                                            <span class="text-yellow-800 font-bold">{{ $task['time'] }}</span> - 
+                                                            <span class="text-yellow-800 font-bold">{{ $task['time'] }}</span> -
                                                             {{ $task['task'] }}
                                                         </p>
                                                         <p class="text-xs text-gray-600">
-                                                            Order {{ $task['order'] }} • Duration: {{ $task['duration'] }} min • 
+                                                            Order {{ $task['order'] }} • Duration: {{ $task['duration'] }} min •
                                                             Delivery: {{ $task['delivery_time'] }}
                                                         </p>
                                                     </div>
@@ -183,7 +183,7 @@
                                 <div>
                                     <h4 class="text-md font-semibold text-gray-900 mb-3">Orders</h4>
                                     <div class="space-y-3">
-                                        @foreach($dayOrders as $order)
+                                        @foreach ($dayOrders as $order)
                                             <div class="border rounded-lg p-4">
                                                 <div class="flex items-center justify-between mb-2">
                                                     <div class="flex items-center space-x-4">
@@ -196,7 +196,7 @@
                                                     <span class="text-sm font-medium text-gray-900">${{ number_format($order->total, 2) }}</span>
                                                 </div>
                                                 <div class="text-sm text-gray-600">
-                                                    @foreach($order->orderItems as $item)
+                                                    @foreach ($order->orderItems as $item)
                                                         <span class="inline-block mr-4">{{ $item->quantity }}x {{ $item->product->name ?? 'Unknown Product' }}</span>
                                                     @endforeach
                                                 </div>

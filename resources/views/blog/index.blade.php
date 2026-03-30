@@ -56,7 +56,7 @@
     <h1>Baker's <span>Resources</span></h1>
     <p>Everything you need to start, run, and grow your cottage food business.</p>
     <div class="cat-strip">
-        @foreach($categories as $key => $label)
+        @foreach ($categories as $key => $label)
             <a href="{{ $key === 'all' ? route('blog.index') : route('blog.index', ['category' => $key]) }}"
                class="{{ $activeCategory === $key ? 'on' : '' }}">{{ $label }}</a>
         @endforeach
@@ -64,9 +64,9 @@
 </section>
 
 <div class="container">
-    @if($posts->count())
+    @if ($posts->count())
         {{-- Featured post (first on page 1) --}}
-        @if($posts->currentPage() === 1)
+        @if ($posts->currentPage() === 1)
             @php $featured = $posts->first(); @endphp
             <a href="{{ route('blog.show', $featured->slug) }}" class="feat">
                 <div class="feat-label">{{ $featured->category?->getLabel() ?? "Uncategorized" }}</div>
@@ -80,8 +80,8 @@
 
         {{-- Grid --}}
         <div class="grid">
-            @foreach($posts as $i => $post)
-                @if($posts->currentPage() === 1 && $i === 0) @continue @endif
+            @foreach ($posts as $i => $post)
+                @if ($posts->currentPage() === 1 && $i === 0) @continue @endif
                 <a href="{{ route('blog.show', $post->slug) }}" class="card">
                     <div class="card-cat">{{ $post->category?->getLabel() ?? "Uncategorized" }}</div>
                     <h3>{{ $post->title }}</h3>
@@ -90,14 +90,14 @@
             @endforeach
         </div>
 
-        @if($posts->hasPages())
+        @if ($posts->hasPages())
             <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:2.5rem">
-                @if($posts->onFirstPage())
+                @if ($posts->onFirstPage())
                     <span style="padding:.5rem 1rem;border-radius:8px;background:var(--sourdough);color:var(--cinnamon);font-size:.85rem">← Previous</span>
                 @else
                     <a href="{{ $posts->previousPageUrl() }}" style="padding:.5rem 1rem;border-radius:8px;background:var(--honey);color:var(--white);font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">← Previous</a>
                 @endif
-                @if($posts->hasMorePages())
+                @if ($posts->hasMorePages())
                     <a href="{{ $posts->nextPageUrl() }}" style="padding:.5rem 1rem;border-radius:8px;background:var(--honey);color:var(--white);font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s">Next →</a>
                 @else
                     <span style="padding:.5rem 1rem;border-radius:8px;background:var(--sourdough);color:var(--cinnamon);font-size:.85rem">Next →</span>

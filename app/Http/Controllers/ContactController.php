@@ -24,10 +24,18 @@ class ContactController extends Controller
         $allergyDisclaimer = settings('allergy_disclaimer');
         $content = settingsPageContent('contact');
 
-        return view('contact', compact(
-            'storeName', 'heroImageUrl', 'storeAddress', 'storePhone', 'storeEmail',
-            'operatingHours', 'faqItems', 'leadTimeHours', 'allergyDisclaimer', 'content',
-        ));
+        return view('contact', [
+            'storeName' => $storeName,
+            'heroImageUrl' => $heroImageUrl,
+            'storeAddress' => $storeAddress,
+            'storePhone' => $storePhone,
+            'storeEmail' => $storeEmail,
+            'operatingHours' => $operatingHours,
+            'faqItems' => $faqItems,
+            'leadTimeHours' => $leadTimeHours,
+            'allergyDisclaimer' => $allergyDisclaimer,
+            'content' => $content,
+        ]);
     }
 
     public function store(StoreContactMessageRequest $request, SubmitContactMessage $submitMessage): RedirectResponse

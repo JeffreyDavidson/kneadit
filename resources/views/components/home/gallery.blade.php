@@ -1,4 +1,4 @@
-@if($customerPhotos->count() > 0)
+@if ($customerPhotos->count() > 0)
 <style>
     .gallery-masonry {
         columns: 2;
@@ -27,7 +27,7 @@
         </div>
 
         <div class="gallery-masonry">
-            @foreach($customerPhotos as $i => $photo)
+            @foreach ($customerPhotos as $i => $photo)
             <div class="group rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl" style="background: var(--warm-800);">
                 <div class="relative overflow-hidden">
                     <img src="{{ asset('storage/customer-photos/' . basename($photo->photo_path)) }}"
@@ -37,7 +37,7 @@
                     {{-- Hover overlay --}}
                     <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end" style="background: linear-gradient(to top, rgba(28,20,16,0.8), transparent 60%);">
                         <div class="p-4">
-                            @if($photo->caption)
+                            @if ($photo->caption)
                             <p class="italic text-sm mb-1" style="color: var(--warm-200);">"{{ Str::limit($photo->caption, 60) }}"</p>
                             @endif
                             <p class="text-xs font-semibold" style="color: var(--warm-500);">{{ Str::of($photo->customer_name)->explode(' ')->first() }}</p>

@@ -44,7 +44,17 @@ class CateringController extends Controller
             ['title' => 'Enjoy!', 'description' => 'Fresh, beautiful baked goods delivered for your event.'],
         ];
 
-        return view('catering', compact('cateringPhotos', 'storeName', 'minimumGuests', 'leadTimeDays', 'heroImageUrl', 'content', 'occasions', 'occasionSvgs', 'processSteps'));
+        return view('catering', [
+            'cateringPhotos' => $cateringPhotos,
+            'storeName' => $storeName,
+            'minimumGuests' => $minimumGuests,
+            'leadTimeDays' => $leadTimeDays,
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+            'occasions' => $occasions,
+            'occasionSvgs' => $occasionSvgs,
+            'processSteps' => $processSteps,
+        ]);
     }
 
     public function store(StoreCateringInquiryRequest $request): RedirectResponse

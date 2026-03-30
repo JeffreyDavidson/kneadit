@@ -20,7 +20,7 @@
 
         {{-- Header with baker's branding --}}
         <div style="background-color: {{ $secondaryColor }}; text-align: center; padding: 28px 20px;">
-            @if($logoUrl)
+            @if ($logoUrl)
                 <img src="{{ $logoUrl }}" alt="{{ $storeName }}" style="max-height: 60px; margin-bottom: 10px; border-radius: 6px;">
             @endif
             <h1 style="margin: 0; font-size: 26px; font-weight: 700; color: #ffffff;">{{ $storeName }}</h1>
@@ -37,13 +37,13 @@
         {{-- Footer --}}
         <div style="background-color: {{ $secondaryColor }}; color: #ffffff; text-align: center; padding: 24px 20px; font-size: 13px;">
             <p style="margin: 0 0 4px; font-weight: 600; color: {{ $primaryColor }};">{{ $storeName }}</p>
-            @if($storeAddress)
+            @if ($storeAddress)
                 <p style="margin: 0 0 4px; opacity: 0.8;">{{ $storeAddress }}</p>
             @endif
-            @if($storePhone)
+            @if ($storePhone)
                 <p style="margin: 0 0 4px; opacity: 0.8;">{{ $storePhone }}</p>
             @endif
-            @if($storeEmail)
+            @if ($storeEmail)
                 <p style="margin: 0 0 4px; opacity: 0.8;">{{ $storeEmail }}</p>
             @endif
             <p style="margin: 14px 0 0; opacity: 0.4; font-size: 11px;">Powered by <a href="https://getkneadit.app" style="color: {{ $primaryColor }}; text-decoration: none;">KneadIt</a></p>

@@ -9,7 +9,7 @@
 @include('partials.fathom')
 </head>
 <body>
-    @if(session('success'))
+    @if (session('success'))
         <div class="success-banner">{{ session('success') }}</div>
     @endif
 
@@ -20,9 +20,9 @@
         </div>
 
         <div class="plans-grid">
-            @foreach(config('kneadit.plans') as $key => $plan)
+            @foreach (config('kneadit.plans') as $key => $plan)
                 <div class="plan-card {{ $key === 'growth' ? 'featured' : '' }}">
-                    @if($key === 'growth')
+                    @if ($key === 'growth')
                         <div class="badge">Most Popular</div>
                     @endif
 
@@ -32,21 +32,21 @@
                     <div class="plan-price">
                         <span class="price-amount">${{ number_format($plan['founding_price_monthly'] / 100) }}</span>
                         <span class="price-period">/month</span>
-                        @if($plan['founding_price_monthly'] < $plan['regular_price_monthly'])
+                        @if ($plan['founding_price_monthly'] < $plan['regular_price_monthly'])
                             <div class="price-regular">${{ number_format($plan['regular_price_monthly'] / 100) }}/mo regular</div>
                             <div class="price-founding">🔒 Founding member rate — locked in forever</div>
                         @endif
                     </div>
 
                     <ul class="features">
-                        @foreach($plan['features'] as $feature)
+                        @foreach ($plan['features'] as $feature)
                             <li>{{ $feature }}</li>
                         @endforeach
                     </ul>
 
-                    @if($currentPlan === $key)
+                    @if ($currentPlan === $key)
                         <span class="plan-btn plan-btn-current">Current Plan</span>
-                    @elseif($currentPlan)
+                    @elseif ($currentPlan)
                         <form action="{{ route('billing.swap', $key) }}" method="POST">
                             @csrf
                             <button type="submit" class="plan-btn {{ $key === 'growth' ? 'plan-btn-primary' : 'plan-btn-outline' }}">
@@ -69,7 +69,7 @@
             <strong>{{ config('kneadit.trial_days') }}-day free trial</strong> on all plans. Cancel anytime. No questions asked.
         </div>
 
-        @if($currentPlan)
+        @if ($currentPlan)
             <div class="portal-link">
                 <a href="{{ route('billing.portal') }}">Manage billing & invoices →</a>
             </div>

@@ -27,7 +27,13 @@ class GalleryController extends Controller
         $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
         $content = settingsPageContent('gallery');
 
-        return view('gallery', compact('photos', 'products', 'storeName', 'heroImageUrl', 'content'));
+        return view('gallery', [
+            'photos' => $photos,
+            'products' => $products,
+            'storeName' => $storeName,
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+        ]);
     }
 
     public function store(StoreGalleryPhotoRequest $request): RedirectResponse

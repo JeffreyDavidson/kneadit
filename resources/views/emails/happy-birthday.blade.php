@@ -34,25 +34,25 @@
 
     <div style="background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 100%); border-radius: 12px; padding: 30px; margin: 20px 0; text-align: center;">
         <p style="font-size: 18px; color: #333; line-height: 1.6; margin: 0 0 20px;">
-            🎉 It's your special day and we wanted to make it even sweeter! 
+            🎉 It's your special day and we wanted to make it even sweeter!
             You're a treasured part of our bakery family, and we're so grateful to have you.
         </p>
 
-        @if($coupon)
+        @if ($coupon)
             <div style="background-color: white; border: 2px dashed #ff69b4; border-radius: 12px; padding: 25px; margin: 20px 0;">
                 <h3 style="color: #8b4513; font-size: 22px; margin: 0 0 15px;">🎁 Your Birthday Gift!</h3>
-                
+
                 <div style="background-color: #ff69b4; color: white; display: inline-block; padding: 15px 30px; border-radius: 25px; font-size: 24px; font-weight: bold; margin: 10px 0;">
                     {{ number_format($coupon->value) }}% OFF
                 </div>
-                
+
                 <div style="font-size: 18px; color: #333; margin: 15px 0;">
-                    <strong>Use Code:</strong> 
+                    <strong>Use Code:</strong>
                     <span style="background-color: #f8f5f1; padding: 8px 15px; border-radius: 6px; font-family: monospace; font-size: 20px; font-weight: bold; color: #8b4513; letter-spacing: 2px;">
                         {{ $coupon->code }}
                     </span>
                 </div>
-                
+
                 <p style="font-size: 14px; color: #888; margin: 10px 0 0;">
                     Valid until {{ $coupon->expires_at->format('M j, Y') }} • Single use
                 </p>
@@ -62,7 +62,7 @@
 
     <div style="text-align: center; margin: 25px 0;">
         <p style="font-size: 16px; color: #666; line-height: 1.6;">
-            🍰 Whether it's your favorite bread, a decadent cake, or fresh pastries — 
+            🍰 Whether it's your favorite bread, a decadent cake, or fresh pastries —
             treat yourself today! You deserve it! 🧁
         </p>
     </div>

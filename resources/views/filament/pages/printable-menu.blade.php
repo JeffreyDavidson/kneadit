@@ -58,26 +58,26 @@
             <h1 style="font-size: 36px; font-weight: 700; margin: 0 0 8px 0; color: {{ $isElegant ? '#3E2723' : '#D97706' }}; font-family: {{ $isElegant ? "'Playfair Display', Georgia, serif" : "'Inter', sans-serif" }}; letter-spacing: {{ $isElegant ? '2px' : '0' }};">
                 {{ $store['name'] }}
             </h1>
-            @if($store['tagline'])
+            @if ($store['tagline'])
                 <p style="font-size: 16px; color: #666; margin: 0 0 8px 0; font-style: {{ $isElegant ? 'italic' : 'normal' }};">{{ $store['tagline'] }}</p>
             @endif
-            @if($store['phone'] || $store['email'])
+            @if ($store['phone'] || $store['email'])
                 <p style="font-size: 13px; color: #888; margin: 0;">
                     {{ collect([$store['phone'], $store['email'], $store['address']])->filter()->implode(' · ') }}
                 </p>
             @endif
         </div>
 
-        @if($this->activeView === 'menu')
+        @if ($this->activeView === 'menu')
             {{-- Full Menu View --}}
-            @foreach($categories as $category)
+            @foreach ($categories as $category)
                 <div style="margin-bottom: 32px; {{ !$loop->first ? 'page-break-before: auto;' : '' }}">
                     <h2 style="font-size: 24px; font-weight: 600; margin: 0 0 16px 0; color: {{ $isElegant ? '#3E2723' : '#D97706' }}; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px; font-family: {{ $isElegant ? "'Playfair Display', Georgia, serif" : "'Inter', sans-serif" }};">
                         {{ $category->name }}
                     </h2>
-                    @foreach($category->products as $product)
+                    @foreach ($category->products as $product)
                         <div style="display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; padding-bottom: 16px; {{ !$loop->last ? 'border-bottom: 1px dotted #e5e5e5;' : '' }}">
-                            @if($product->image)
+                            @if ($product->image)
                                 <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: {{ $isElegant ? '4px' : '12px' }}; flex-shrink: 0;" />
                             @endif
                             <div style="flex: 1; min-width: 0;">
@@ -85,7 +85,7 @@
                                     <h3 style="font-size: 17px; font-weight: 600; margin: 0; font-family: {{ $isElegant ? "'Playfair Display', Georgia, serif" : "'Inter', sans-serif" }};">{{ $product->name }}</h3>
                                     <span style="font-size: 17px; font-weight: 700; white-space: nowrap; color: {{ $isElegant ? '#3E2723' : '#D97706' }};">${{ number_format($product->price, 2) }}</span>
                                 </div>
-                                @if($product->description)
+                                @if ($product->description)
                                     <p style="font-size: 13px; color: #666; margin: 4px 0 0 0; line-height: 1.4;">{{ $product->description }}</p>
                                 @endif
                             </div>
@@ -96,12 +96,12 @@
         @else
             {{-- Price List View --}}
             <div style="columns: 2; column-gap: 40px;">
-                @foreach($categories as $category)
+                @foreach ($categories as $category)
                     <div style="break-inside: avoid; margin-bottom: 24px;">
                         <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 8px 0; color: {{ $isElegant ? '#3E2723' : '#D97706' }}; text-transform: uppercase; letter-spacing: 1px; font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 4px;">
                             {{ $category->name }}
                         </h2>
-                        @foreach($category->products as $product)
+                        @foreach ($category->products as $product)
                             <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; font-size: 14px;">
                                 <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 8px;">{{ $product->name }}</span>
                                 <span style="white-space: nowrap; font-weight: 600;">${{ number_format($product->price, 2) }}</span>
@@ -113,7 +113,7 @@
         @endif
 
         {{-- Allergy Disclaimer --}}
-        @if($store['disclaimer'])
+        @if ($store['disclaimer'])
             <div style="margin-top: 24px; padding: 12px 16px; background: #fefce8; border: 1px solid #fde68a; border-radius: 6px; font-size: 12px; color: #92400e;">
                 {{ $store['disclaimer'] }}
             </div>
@@ -123,9 +123,9 @@
         <div style="margin-top: 40px; padding-top: 24px; border-top: 2px solid {{ $isElegant ? '#3E2723' : '#D97706' }}; display: flex; justify-content: space-between; align-items: center;">
             <div style="font-size: 13px; line-height: 1.6;">
                 <strong style="font-size: 16px;">{{ $store['name'] }}</strong><br>
-                @if($store['phone'])<span>📞 {{ $store['phone'] }}</span><br>@endif
-                @if($store['email'])<span>✉️ {{ $store['email'] }}</span><br>@endif
-                @if($store['address'])<span>📍 {{ $store['address'] }}</span><br>@endif
+                @if ($store['phone'])<span>📞 {{ $store['phone'] }}</span><br>@endif
+                @if ($store['email'])<span>✉️ {{ $store['email'] }}</span><br>@endif
+                @if ($store['address'])<span>📍 {{ $store['address'] }}</span><br>@endif
                 <span style="color: #666;">{{ $url }}</span>
             </div>
             <div style="text-align: center;">

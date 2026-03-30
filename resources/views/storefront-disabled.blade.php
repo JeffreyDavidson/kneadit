@@ -12,7 +12,7 @@
     <div class="container">
         <h1>{{ $storeName }}</h1>
         <p>This bakery manages their orders through KneadIt but has their own website for customers.</p>
-        @if($tenant->external_website)
+        @if ($tenant->external_website)
             <a href="{{ $tenant->external_website }}" class="admin-link">Visit Our Website →</a>
         @endif
     </div>

@@ -26,16 +26,16 @@
 
 <div class="order-details">
     <div class="order-number">Order #{{ $order->order_number }}</div>
-    
+
     <div class="order-items">
         <h4 style="margin-bottom: 10px; color: #8b4513;">Cancelled Items:</h4>
-        @foreach($orderItems as $item)
+        @foreach ($orderItems as $item)
             <div class="order-item">
                 <div>
                     <div class="item-name">{{ $item->product->name }}</div>
                     <div class="item-details">
                         Quantity: {{ $item->quantity }}
-                        @if($item->special_instructions)
+                        @if ($item->special_instructions)
                             <br><em>{{ $item->special_instructions }}</em>
                         @endif
                     </div>
@@ -53,7 +53,7 @@
     </div>
 </div>
 
-@if($order->payment_method->value !== 'cash')
+@if ($order->payment_method->value !== 'cash')
     <div style="background-color: #d1ecf1; border-radius: 6px; padding: 15px; margin: 20px 0; border-left: 4px solid #17a2b8;">
         <div class="info-label">💳 Refund Information</div>
         <p style="margin: 5px 0;">Your payment has been cancelled and you will not be charged.</p>
@@ -87,7 +87,7 @@
     <p style="margin: 10px 0 5px; color: #856404;"><em>Contact us to claim your discount code: (555) 123-BAKE</em></p>
 </div>
 
-@if($order->delivery_date?->isFuture())
+@if ($order->delivery_date?->isFuture())
     <div style="background-color: #d4edda; border-radius: 6px; padding: 15px; margin: 20px 0; border-left: 4px solid #28a745;">
         <div class="info-label">🗓️ Reschedule Your Order</div>
         <p style="margin: 5px 0;">Since your original date was {{ $order->delivery_date?->format('M j, Y') ?? 'TBD' }}, you may still have time to place a new order!</p>
@@ -97,7 +97,7 @@
 
 <p>We sincerely apologize for the inconvenience and truly appreciate your understanding. Your satisfaction is our top priority, and we hope to serve you again soon.</p>
 
-@if($order->notes)
+@if ($order->notes)
     <div style="background-color: #f8f9fa; border-radius: 6px; padding: 15px; margin: 15px 0; border-left: 4px solid #6c757d;">
         <div class="info-label">📝 Original Order Notes</div>
         <p style="margin: 5px 0; color: #495057;">{{ $order->notes }}</p>

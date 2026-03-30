@@ -50,11 +50,11 @@
     </div>
 
     {{-- Top Products --}}
-    @if($topProducts->isNotEmpty())
+    @if ($topProducts->isNotEmpty())
         <div style="margin-bottom: 25px;">
             <h3 style="margin: 0 0 12px; font-size: 16px; color: {{ $primaryColor }};">🏆 Top Products</h3>
             <table style="width: 100%; border-collapse: collapse;">
-                @foreach($topProducts as $i => $item)
+                @foreach ($topProducts as $i => $item)
                     <tr style="border-bottom: 1px solid #f0e6d6;">
                         <td style="padding: 8px 5px; font-size: 14px;">
                             <span style="color: {{ $primaryColor }}; font-weight: 700;">{{ $i + 1 }}.</span>
@@ -70,12 +70,12 @@
     @endif
 
     {{-- At-Risk Customers --}}
-    @if($atRiskCustomers->isNotEmpty())
+    @if ($atRiskCustomers->isNotEmpty())
         <div style="margin-bottom: 25px;">
             <h3 style="margin: 0 0 12px; font-size: 16px; color: {{ $primaryColor }};">⚠️ At-Risk Customers</h3>
             <p style="margin: 0 0 10px; font-size: 13px; color: #6b5c4d;">Haven't ordered in 30+ days — consider reaching out!</p>
             <table style="width: 100%; border-collapse: collapse;">
-                @foreach($atRiskCustomers as $customer)
+                @foreach ($atRiskCustomers as $customer)
                     <tr style="border-bottom: 1px solid #f0e6d6;">
                         <td style="padding: 8px 5px; font-size: 14px;">{{ $customer->name }}</td>
                         <td style="padding: 8px 5px; text-align: right; font-size: 13px; color: #6b5c4d;">

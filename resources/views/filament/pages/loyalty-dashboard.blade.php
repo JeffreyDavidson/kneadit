@@ -49,7 +49,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($this->topCustomers as $customer)
+                        @forelse ($this->topCustomers as $customer)
                         <tr class="border-t dark:border-gray-700">
                             <td class="p-3">{{ $customer->name }}</td>
                             <td class="p-3 text-right">{{ number_format($customer->total_earned) }}</td>
@@ -68,7 +68,7 @@
                     <h3 class="text-lg font-semibold">Recent Activity</h3>
                 </div>
                 <div class="divide-y dark:divide-gray-700 max-h-96 overflow-y-auto">
-                    @forelse($this->recentActivity as $activity)
+                    @forelse ($this->recentActivity as $activity)
                     <div class="p-3 flex items-center justify-between">
                         <div>
                             <p class="font-medium">{{ $activity->customer?->name ?? 'Unknown' }}</p>

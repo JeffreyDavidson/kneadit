@@ -36,7 +36,7 @@
         <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $inquiry->guest_count }} guests</span>
     </div>
 
-    @if($inquiry->venue_address)
+    @if ($inquiry->venue_address)
     <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8;">
         <span style="color: #888; font-size: 13px;">Venue</span><br>
         <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $inquiry->venue_address }}</span>

@@ -4,7 +4,7 @@
             <div class="mb-6">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">Weekly Overview</h3>
                 <div class="mt-3 grid grid-cols-7 gap-2">
-                    @foreach(\App\Models\BusinessSchedule::DAYS as $num => $name)
+                    @foreach (\App\Models\BusinessSchedule::DAYS as $num => $name)
                         @php
                             $day = $this->schedule[$num] ?? null;
                             $isOpen = $day['is_open'] ?? false;
@@ -13,7 +13,7 @@
                             <div class="font-medium text-sm {{ $isOpen ? 'text-green-700 dark:text-green-400' : 'text-gray-400 dark:text-gray-500' }}">
                                 {{ substr($name, 0, 3) }}
                             </div>
-                            @if($isOpen)
+                            @if ($isOpen)
                                 <div class="text-xs text-green-600 dark:text-green-500 mt-1">
                                     {{ $day['open_time'] ? \Carbon\Carbon::parse($day['open_time'])->format('g:ia') : '' }}
                                     -
