@@ -54,4 +54,32 @@ class OrderQueryBuilder extends Builder
 
         return $this;
     }
+
+    /**
+     * Filter orders for delivery on a specific date with active delivery statuses.
+     */
+    public function forDeliveryOnDate(\Illuminate\Support\Carbon $date): static
+    {
+        $this->with(['customer', 'orderItems.product'])
+            ->whereNotNull('delivery_address')
+            ->where('delivery_address', '!=', '')
+            ->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready])
+            ->whereDate('delivery_date', $date)
+            ->orderBy('delivery_time');
+
+        return $this;
+    }
+
+    /**
+     * Filter orders by customer email via relationship.
+     */
+    public function forCustomerEmail(string $email): static
+    {
+        $this->whereHas('customer', fn (Builder $q) => $q->where('email', $email))
+            ->with(['customer', 'orderItems.product', 'messages'])
+            ->latest()
+            ->limit(50);
+
+        return $this;
+    }
 }

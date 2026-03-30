@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Models\Order;
+use App\Queries\DriverDeliveryQuery;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -12,14 +13,7 @@ class DriverController extends Controller
 {
     public function index(): View
     {
-        $orders = Order::with(['customer', 'orderItems.product'])
-            ->whereNotNull('delivery_address')
-            ->where('delivery_address', '!=', '')
-            ->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready])
-            ->whereDate('delivery_date', today())
-            ->orderBy('delivery_time')
-            ->get();
-
+        $orders = DriverDeliveryQuery::forDate(today());
         $storeName = settings('store_name', 'Our Bakery');
 
         return view('driver', compact('orders', 'storeName'));
