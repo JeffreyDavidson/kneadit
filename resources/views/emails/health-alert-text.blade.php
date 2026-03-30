@@ -7,5 +7,8 @@
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
 @endphp
+@php
+/** @var string $alertMessage */
+@endphp
 
 {{ $alertMessage }}

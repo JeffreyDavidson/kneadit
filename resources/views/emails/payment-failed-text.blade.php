@@ -7,6 +7,9 @@
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
 @endphp
+@php
+/** @var \App\Models\User $user */
+@endphp
 
 Hi {{ $user->name }},
 
