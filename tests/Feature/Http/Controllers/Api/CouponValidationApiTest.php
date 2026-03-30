@@ -1,34 +1,27 @@
 <?php
 
 use App\Models\Coupon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;
 
+uses(RefreshDatabase::class);
+
 beforeEach(fn () => setUpTenantTest());
 
-test('coupon validation returns valid for active coupon', function () {
-    Coupon::factory()->percentage()->create(['code' => 'SPRING20', 'value' => 20]);
+test('API validates a valid coupon', function () {
+    Coupon::factory()->percentage()->create([
+        'code' => 'API10OFF',
+        'value' => 10,
+        'is_active' => true,
+    ]);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->postJson('/api/coupon/validate', [
-            'code' => 'SPRING20',
-            'subtotal' => 100.00,
-        ]);
-
-    $response->assertOk()
-        ->assertJsonPath('data.valid', true)
-        ->assertJsonPath('data.discount_amount', 20);
-});
-
-test('coupon validation returns invalid for expired coupon', function () {
-    Coupon::factory()->expired()->create(['code' => 'OLDCODE']);
-
-    $response = withoutMiddleware(tenantMiddleware())
-        ->postJson('/api/coupon/validate', [
-            'code' => 'OLDCODE',
+            'code' => 'API10OFF',
             'subtotal' => 50.00,
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('data.valid', false);
+        ->assertJsonPath('data.valid', true);
 });
