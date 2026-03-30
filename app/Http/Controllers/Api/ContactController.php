@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Customers\SubmitContactMessage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiContactRequest;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class ContactController extends Controller
@@ -13,9 +14,6 @@ class ContactController extends Controller
     {
         $submitMessage($request->validated());
 
-        return response()->json([
-            'data' => null,
-            'message' => 'Message sent successfully.',
-        ], 201);
+        return ApiResponse::created(message: 'Message sent successfully.');
     }
 }
