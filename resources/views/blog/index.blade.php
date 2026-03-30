@@ -69,7 +69,7 @@
         @if($posts->currentPage() === 1)
             @php $featured = $posts->first(); @endphp
             <a href="{{ route('blog.show', $featured->slug) }}" class="feat">
-                <div class="feat-label">{{ $categories[$featured->category] ?? $featured->category }}</div>
+                <div class="feat-label">{{ $featured->category->getLabel() }}</div>
                 <h2>{{ $featured->title }}</h2>
                 <p>{{ Str::limit($featured->excerpt ?? strip_tags($featured->body), 180) }}</p>
                 <div class="feat-foot">
@@ -83,7 +83,7 @@
             @foreach($posts as $i => $post)
                 @if($posts->currentPage() === 1 && $i === 0) @continue @endif
                 <a href="{{ route('blog.show', $post->slug) }}" class="card">
-                    <div class="card-cat">{{ $categories[$post->category] ?? $post->category }}</div>
+                    <div class="card-cat">{{ $post->category->getLabel() }}</div>
                     <h3>{{ $post->title }}</h3>
                     <p>{{ Str::limit($post->excerpt ?? strip_tags($post->body), 110) }}</p>
                 </a>
