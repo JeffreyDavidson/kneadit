@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
+use App\Http\Responses\ApiResponse;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\JsonResponse;
@@ -17,9 +18,6 @@ class MenuController extends Controller
             ->with(['products' => fn (HasMany $q) => $q->where('is_active', true)])
             ->get();
 
-        return response()->json([
-            'data' => CategoryResource::collection($categories),
-            'message' => 'Menu retrieved successfully.',
-        ]);
+        return ApiResponse::success(CategoryResource::collection($categories), 'Menu retrieved successfully.');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ApplyCouponRequest;
+use App\Http\Responses\ApiResponse;
 use App\Services\CouponService;
 use Illuminate\Http\JsonResponse;
 
@@ -16,22 +17,16 @@ class CouponValidationController extends Controller
         $result = $couponService->validate($validated['code'], (float) $validated['subtotal']);
 
         if (! $result->valid) {
-            return response()->json([
-                'data' => ['valid' => false, 'discount_amount' => 0, 'type' => null, 'value' => null],
-                'message' => $result->error,
-            ]);
+            return ApiResponse::success(['valid' => false, 'discount_amount' => 0, 'type' => null, 'value' => null], $result->error);
         }
 
         $coupon = $result->coupon;
 
-        return response()->json([
-            'data' => [
-                'valid' => true,
-                'discount_amount' => $result->discount,
-                'type' => $coupon?->type,
-                'value' => $coupon?->value,
-            ],
-            'message' => 'Coupon is valid.',
-        ]);
+        return ApiResponse::success([
+            'valid' => true,
+            'discount_amount' => $result->discount,
+            'type' => $coupon?->type,
+            'value' => $coupon?->value,
+        ], 'Coupon is valid.');
     }
 }
