@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth'])->prefix('admin')->name('admin.')->group(function () {
     // Invoice routes
-    Route::get('orders/{order}/invoice', [InvoiceController::class, 'show'])->name('orders.invoice');
+    Route::get('orders/{order}/invoice', InvoiceController::class)->name('orders.invoice');
 });

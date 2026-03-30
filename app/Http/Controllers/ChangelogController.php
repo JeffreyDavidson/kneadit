@@ -6,7 +6,7 @@ use Illuminate\Contracts\View\View;
 
 class ChangelogController extends Controller
 {
-    public function index(): View
+    public function __invoke(): View
     {
         $entries = config('changelog', []);
 

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class DirectoryController extends Controller
 {
-    public function index(Request $request): View
+    public function __invoke(Request $request): View
     {
         $bakeries = Tenant::query()->where('is_active', true)
             ->where('storefront_enabled', true)
