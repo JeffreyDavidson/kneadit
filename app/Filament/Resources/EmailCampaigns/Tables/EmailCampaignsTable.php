@@ -29,6 +29,7 @@ class EmailCampaignsTable
                     ->badge()
                     ->color(fn (EmailCampaignStatus $state): string => match ($state) {
                         EmailCampaignStatus::Draft => 'gray',
+                        EmailCampaignStatus::Scheduled => 'info',
                         EmailCampaignStatus::Sending => 'warning',
                         EmailCampaignStatus::Sent => 'success',
                     }),
