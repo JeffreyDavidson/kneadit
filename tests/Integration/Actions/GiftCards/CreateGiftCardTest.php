@@ -22,7 +22,5 @@ test('creates a gift card with initial balance and transaction', function () {
         ->toBeInstanceOf(GiftCard::class)
         ->initial_balance->toEqual(50.0)
         ->current_balance->toEqual(50.0)
-        ->purchaser_name->toBe('Jane Doe');
-
-    expect($card->transactions)->toHaveCount(1);
+        ->purchaser_name->toBe('Jane Doe')->and($card->transactions)->toHaveCount(1);
 });

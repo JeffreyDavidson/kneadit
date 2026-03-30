@@ -27,7 +27,7 @@ class ListMessages extends ListRecords
                 ->schema([
                     Select::make('tenant_id')
                         ->label('Bakery')
-                        ->options(fn () => Tenant::query()->get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->toArray())
+                        ->options(fn () => Tenant::query()->get()->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])->all())
                         ->searchable()
                         ->required(),
                     TextInput::make('subject')

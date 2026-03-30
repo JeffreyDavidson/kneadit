@@ -41,7 +41,7 @@ class TenantComparison extends Page
         return Tenant::query()->orderBy('store_name')
             ->get()
             ->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])
-            ->toArray();
+            ->all();
     }
 
     /** @return array<int, array<string, mixed>> */

@@ -25,7 +25,7 @@ class SendRepeatOrderRemindersCommand extends Command
 
     public function handle(TenancyManager $tenancyManager): int
     {
-        $tenants = Tenant::cursor();
+        $tenants = Tenant::query()->cursor();
         $failures = 0;
 
         foreach ($tenants as $tenant) {

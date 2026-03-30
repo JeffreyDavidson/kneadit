@@ -27,7 +27,7 @@ class SalesReport
             ->pluck('count', 'status')
             ->toArray();
 
-        $topProducts = ProductSalesQuery::topByRevenue($range)->toArray();
+        $topProducts = ProductSalesQuery::topByRevenue($range)->all();
 
         $revenueByDay = Order::query()->whereBetween('delivery_date', $range->toArray())
             ->where('payment_status', PaymentStatus::Paid)

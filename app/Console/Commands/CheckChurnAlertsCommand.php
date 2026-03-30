@@ -18,7 +18,7 @@ class CheckChurnAlertsCommand extends Command
 
     public function handle(TenancyManager $tenancyManager): int
     {
-        $tenants = Tenant::cursor();
+        $tenants = Tenant::query()->cursor();
         $alertCount = 0;
 
         foreach ($tenants as $tenant) {

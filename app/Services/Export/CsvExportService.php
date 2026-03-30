@@ -105,9 +105,7 @@ class CsvExportService
     public function toString(string $type): string
     {
         $handle = fopen('php://temp', 'r+');
-        if ($handle === false) {
-            throw new \RuntimeException('Failed to open file handle');
-        }
+        throw_if($handle === false, \RuntimeException::class, 'Failed to open file handle');
 
         $this->writeTo($handle, $type);
 
