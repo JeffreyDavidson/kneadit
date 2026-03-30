@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Order;
 
 use App\Enums\SenderType;
+use App\Events\OrderMessageSent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrderMessageRequest;
-use App\Mail\NewOrderMessageMail;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Mail;
 
 class MessageController extends Controller
 {
@@ -27,19 +26,13 @@ class MessageController extends Controller
      */
     public function store(StoreOrderMessageRequest $request, Order $order): JsonResponse
     {
-
         $message = $order->messages()->create([
             'sender_type' => SenderType::Customer,
             'sender_name' => $request->sender_name,
             'message' => $request->message,
         ]);
 
-        // Email the baker
-        $storeEmail = settings('store_email');
-        if ($storeEmail) {
-            Mail::to($storeEmail)
-                ->send(new NewOrderMessageMail($message));
-        }
+        event(new OrderMessageSent($message));
 
         return response()->json(['success' => true, 'message' => $message]);
     }
