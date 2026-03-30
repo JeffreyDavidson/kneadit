@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\SubscriptionTier;
-use App\Enums\SupportTicketStatus;
 use App\Models\SupportTicket;
 use App\Models\Tenant;
 
@@ -34,9 +33,8 @@ test('trial count', function () {
 });
 
 test('open tickets count', function () {
-    SupportTicket::query()->create(['subject' => 'Help', 'body' => 'Need help', 'status' => SupportTicketStatus::Open]);
-    SupportTicket::query()->create(['subject' => 'Bug', 'body' => 'Found bug', 'status' => SupportTicketStatus::Open]);
-    SupportTicket::query()->create(['subject' => 'Done', 'body' => 'Resolved', 'status' => SupportTicketStatus::Closed]);
+    SupportTicket::factory()->open()->count(2)->create();
+    SupportTicket::factory()->closed()->create();
 
     expect(SupportTicket::query()->where('status', 'open')->count())->toBe(2);
 });

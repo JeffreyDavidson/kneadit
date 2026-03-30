@@ -34,12 +34,7 @@ afterEach(function () {
 
 function createSignupUser(array $overrides = []): User
 {
-    return User::query()->create(array_merge([
-        'name' => 'Test Baker',
-        'email' => 'baker@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ], $overrides));
+    return User::factory()->create($overrides);
 }
 
 function uniqueSubdomain(): string

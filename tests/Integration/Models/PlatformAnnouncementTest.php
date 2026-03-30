@@ -5,21 +5,18 @@ use App\Models\PlatformAnnouncement;
 beforeEach(fn () => setUpCentralTest());
 
 test('can create announcement', function () {
-    $ann = PlatformAnnouncement::query()->create([
+    $ann = PlatformAnnouncement::factory()->create([
         'title' => 'Maintenance',
         'body' => 'Scheduled downtime',
         'type' => 'warning',
         'target_plans' => ['pro', 'enterprise'],
-        'is_active' => true,
     ]);
 
     expect(PlatformAnnouncement::query()->where('title', 'Maintenance')->first())->not->toBeNull();
 });
 
 test('target plans is cast to array', function () {
-    $ann = PlatformAnnouncement::query()->create([
-        'title' => 'T',
-        'body' => 'B',
+    $ann = PlatformAnnouncement::factory()->create([
         'target_plans' => ['free', 'pro'],
     ]);
 
@@ -28,7 +25,7 @@ test('target plans is cast to array', function () {
 });
 
 test('is active defaults to true', function () {
-    $ann = PlatformAnnouncement::query()->create(['title' => 'T', 'body' => 'B']);
+    $ann = PlatformAnnouncement::factory()->create();
 
     expect($ann->fresh()->is_active)->toBeTrue();
 });
