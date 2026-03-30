@@ -127,12 +127,12 @@
                                 <div style="color: #8b6844; font-size: 0.75rem; margin-top: 0.35rem;">Signed up {{ $alert['days_since_signup'] }} days ago</div>
                             </div>
                             <div style="display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0;">
-                                @if(in_array($alert['tenant_id'], $this->extendedTrials))
+                                @if (in_array($alert['tenant_id'], $this->extendedTrials))
                                     <span style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600;">Extended</span>
                                 @else
                                     <button wire:click="extendTrial('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled" style="background: #1c1410; color: #d4920c; border: 1px solid rgba(212,146,12,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Extend Trial</button>
                                 @endif
-                                @if(in_array($alert['tenant_id'], $this->sentNudges))
+                                @if (in_array($alert['tenant_id'], $this->sentNudges))
                                     <span style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600;">Nudge Sent</span>
                                 @else
                                     <button wire:click="sendNudge('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled" style="background: #1c1410; color: #e8b04a; border: 1px solid rgba(232,176,74,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Send Nudge</button>
@@ -150,7 +150,7 @@
     @if ($activeTab === 'upgrade')
         @php $tenants = $this->getTenantUsageData(); @endphp
 
-        @if($tenants->isEmpty())
+        @if ($tenants->isEmpty())
             <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 3rem; text-align: center;">
                 <div style="margin-bottom: 1rem;">
                     <svg style="width: 48px; height: 48px; display: inline-block;" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -168,14 +168,14 @@
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1rem;">
-                @foreach($tenants as $t)
+                @foreach ($tenants as $t)
                     <div style="background: #1c1410; border: 1px solid {{ $t['at_limit'] ? '#ef4444' : 'rgba(245,158,11,0.3)' }}; border-radius: 12px; padding: 1.5rem; transition: transform 0.2s, box-shadow 0.2s;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                             <div>
                                 <div style="color: white; font-size: 1rem; font-weight: 700; margin-bottom: 0.15rem;">{{ $t['name'] }}</div>
                                 <span style="color: #8b6844; font-size: 0.75rem;">{{ $t['plan'] }} Plan</span>
                             </div>
-                            @if($t['at_limit'])
+                            @if ($t['at_limit'])
                                 <span style="display: inline-block; background: rgba(239,68,68,0.15); color: #ef4444; border-radius: 9999px; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 600;">At Limit</span>
                             @else
                                 <span style="display: inline-block; background: rgba(245,158,11,0.15); color: #f59e0b; border-radius: 9999px; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 600;">Approaching</span>
@@ -206,7 +206,7 @@
 
                         <div style="border-top: 1px solid rgba(212,146,12,0.08); padding-top: 1rem;">
                             @php $nextPlan = $this->getNextPlan($t['plan_key']); @endphp
-                            @if($nextPlan)
+                            @if ($nextPlan)
                                 <button
                                     wire:click="suggestUpgrade('{{ $t['tenant']->id }}')"
                                     style="width: 100%; background: #d4920c; color: #1c1410; border: none; border-radius: 8px; padding: 0.6rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;"

@@ -27,7 +27,7 @@
     </div>
 
     <p style="margin: 0 0 10px; color: #78350f; font-size: 14px;">
-        @if($orderMessage->sender_type === 'customer')
+        @if ($orderMessage->sender_type === 'customer')
             Log in to your admin panel to reply.
         @else
             Visit your order tracking page to view and reply.

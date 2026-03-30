@@ -35,12 +35,12 @@
     <div class="order-details" style="background: linear-gradient(135deg, #fff 0%, #eef2ff 100%); border-left-color: #6366f1;">
         <div style="text-align: center; padding: 20px 0;">
             <h3 style="color: #8b4513; font-size: 20px; margin: 0 0 15px;">Your Favorites Are Still Here! 🧁</h3>
-            
+
             <p style="font-size: 16px; color: #666; line-height: 1.6; margin: 20px 0;">
-                It's been <strong>{{ $daysSinceLastOrder }} days</strong> since we've had the pleasure of baking for you. 
+                It's been <strong>{{ $daysSinceLastOrder }} days</strong> since we've had the pleasure of baking for you.
                 We've been keeping your favorite treats warm in our ovens, just waiting for your return!
             </p>
-            
+
             <div style="background-color: #f8f5f1; border-radius: 8px; padding: 20px; margin: 20px 0;">
                 <h4 style="color: #8b4513; margin: 0 0 15px; font-size: 18px;">🍰 What's Fresh Today:</h4>
                 <div style="color: #666; font-size: 15px; line-height: 1.8;">
@@ -63,7 +63,7 @@
     <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 25px 0;">
         <h4 style="color: #8b4513; margin: 0 0 10px; text-align: center;">💡 Did You Know?</h4>
         <p style="color: #666; margin: 0; font-size: 15px; text-align: center; line-height: 1.6;">
-            We're always adding new seasonal flavors and limited-time treats to our menu. 
+            We're always adding new seasonal flavors and limited-time treats to our menu.
             Check back often to discover something deliciously new!
         </p>
     </div>
@@ -71,7 +71,7 @@
     <div style="background-color: #f0f8ff; border-radius: 8px; padding: 20px; margin: 25px 0; text-align: center;">
         <h4 style="color: #8b4513; margin: 0 0 15px;">🏠 Local Delivery Available</h4>
         <p style="color: #666; margin: 0; font-size: 15px; line-height: 1.6;">
-            Can't make it to the bakery? No problem! We deliver fresh baked goods right to your door. 
+            Can't make it to the bakery? No problem! We deliver fresh baked goods right to your door.
             Order today and enjoy the comfort of home with the taste of our bakery.
         </p>
     </div>
@@ -81,7 +81,7 @@
             We can't wait to serve you again! 🤗
         </p>
         <p style="color: #666; font-size: 16px; line-height: 1.6; margin: 0;">
-            Thank you for being such a valued customer. Your support means the world to our small business, 
+            Thank you for being such a valued customer. Your support means the world to our small business,
             and we're always here to make your day a little sweeter.
         </p>
     </div>

@@ -111,7 +111,7 @@
                     <h3 class="text-lg font-semibold text-gray-900">Product Profit Analysis</h3>
                     <div>
                         <label for="sort_by" class="block text-xs font-medium text-gray-700 mb-1">Sort by</label>
-                        <select wire:model.live="sortBy" 
+                        <select wire:model.live="sortBy"
                                 id="sort_by"
                                 class="text-sm rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                             <option value="margin_desc">Margin (High to Low)</option>
@@ -149,27 +149,27 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($this->getProductAnalysis() as $product)
+                        @foreach ($this->getProductAnalysis() as $product)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {{ $product['name'] }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    @if($product['price'])
+                                    @if ($product['price'])
                                         ${{ number_format($product['price'], 2) }}
                                     @else
                                         <span class="text-gray-400">—</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    @if($product['cost'])
+                                    @if ($product['cost'])
                                         ${{ number_format($product['cost'], 2) }}
                                     @else
                                         <span class="text-gray-400">—</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    @if($product['margin_percentage'] !== null)
+                                    @if ($product['margin_percentage'] !== null)
                                         <span class="font-medium text-{{ $product['color_class'] }}-600">
                                             {{ $product['margin_percentage'] }}%
                                         </span>
@@ -178,7 +178,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    @if($product['margin_amount'] !== null)
+                                    @if ($product['margin_amount'] !== null)
                                         <span class="font-medium text-{{ $product['color_class'] }}-600">
                                             ${{ number_format($product['margin_amount'], 2) }}
                                         </span>
@@ -187,13 +187,13 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    @if($product['has_cost_data'])
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                               bg-{{ $product['color_class'] }}-100 
+                                    @if ($product['has_cost_data'])
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                               bg-{{ $product['color_class'] }}-100
                                                text-{{ $product['color_class'] }}-800">
-                                            @if($product['color_class'] === 'green')
+                                            @if ($product['color_class'] === 'green')
                                                 High Margin
-                                            @elseif($product['color_class'] === 'yellow')
+                                            @elseif ($product['color_class'] === 'yellow')
                                                 Medium Margin
                                             @else
                                                 Low Margin
@@ -216,11 +216,11 @@
             <!-- Top Profitable Products -->
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Top Profitable Products</h3>
-                
+
                 @php $topProducts = $this->getTopProfitableProducts(); @endphp
-                @if($topProducts->isNotEmpty())
+                @if ($topProducts->isNotEmpty())
                     <div class="space-y-3">
-                        @foreach($topProducts as $product)
+                        @foreach ($topProducts as $product)
                             <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                                 <div class="flex-1">
                                     <p class="text-sm font-medium text-gray-900">{{ $product['name'] }}</p>
@@ -246,11 +246,11 @@
             <!-- Lowest Margin Products -->
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Products Needing Attention</h3>
-                
+
                 @php $lowProducts = $this->getLowestMarginProducts(); @endphp
-                @if($lowProducts->isNotEmpty())
+                @if ($lowProducts->isNotEmpty())
                     <div class="space-y-3">
-                        @foreach($lowProducts as $product)
+                        @foreach ($lowProducts as $product)
                             <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                                 <div class="flex-1">
                                     <p class="text-sm font-medium text-gray-900">{{ $product['name'] }}</p>
@@ -276,7 +276,7 @@
 
         <!-- Missing Cost Data -->
         @php $missingCost = $this->getMissingCostProducts(); @endphp
-        @if($missingCost->isNotEmpty())
+        @if ($missingCost->isNotEmpty())
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Products Missing Cost Data</h3>
                 <div class="bg-orange-50 rounded-lg p-4 mb-4">
@@ -294,13 +294,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    @foreach($missingCost as $product)
+                    @foreach ($missingCost as $product)
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
                             <div class="flex-1">
                                 <p class="text-sm font-medium text-gray-900">{{ $product['name'] }}</p>
-                                @if($product['price'])
+                                @if ($product['price'])
                                     <p class="text-xs text-gray-600">Price: ${{ number_format($product['price'], 2) }}</p>
                                 @else
                                     <p class="text-xs text-red-600">No price set</p>

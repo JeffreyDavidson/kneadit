@@ -7,7 +7,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Action</label>
                     <select wire:model.live="filterAction" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
                         <option value="">All Actions</option>
-                        @foreach($this->actionTypes as $action)
+                        @foreach ($this->actionTypes as $action)
                             <option value="{{ $action }}">{{ ucfirst($action) }}</option>
                         @endforeach
                     </select>
@@ -16,7 +16,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Model Type</label>
                     <select wire:model.live="filterModelType" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm">
                         <option value="">All Types</option>
-                        @foreach($this->modelTypes as $type)
+                        @foreach ($this->modelTypes as $type)
                             <option value="{{ $type['value'] }}">{{ $type['label'] }}</option>
                         @endforeach
                     </select>
@@ -55,7 +55,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                    @forelse($this->activities as $activity)
+                    @forelse ($this->activities as $activity)
                         <tr class="hover:bg-amber-50/50 dark:hover:bg-gray-750 transition-colors">
                             <td class="px-4 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap">
                                 {{ $activity->created_at?->format('M d, Y H:i') }}
@@ -85,9 +85,9 @@
                                 {{ $activity->ip_address }}
                             </td>
                             <td class="px-4 py-3 text-center">
-                                @if($activity->properties)
+                                @if ($activity->properties)
                                     <button wire:click="toggleExpanded({{ $activity->id }})" class="text-primary-600 hover:text-primary-800">
-                                        @if($expandedId === $activity->id)
+                                        @if ($expandedId === $activity->id)
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
                                         @else
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
@@ -96,14 +96,14 @@
                                 @endif
                             </td>
                         </tr>
-                        @if($expandedId === $activity->id && $activity->properties)
+                        @if ($expandedId === $activity->id && $activity->properties)
                             <tr>
                                 <td colspan="6" class="px-4 py-3 bg-gray-50 dark:bg-gray-900">
                                     <div class="text-xs font-mono space-y-1">
                                         <p class="font-semibold text-gray-600 dark:text-gray-400 mb-2">Changes:</p>
                                         @php $props = is_array($activity->properties) ? $activity->properties : json_decode($activity->properties, true); @endphp
-                                        @if(isset($props['changes']))
-                                            @foreach($props['changes'] as $field => $newValue)
+                                        @if (isset($props['changes']))
+                                            @foreach ($props['changes'] as $field => $newValue)
                                                 <div class="flex gap-2">
                                                     <span class="font-medium text-gray-700 dark:text-gray-300">{{ $field }}:</span>
                                                     <span class="text-primary-600">{{ is_array($newValue) ? json_encode($newValue) : $newValue }}</span>
@@ -130,7 +130,7 @@
             </table>
 
             {{-- Pagination --}}
-            @if($this->activities->hasPages())
+            @if ($this->activities->hasPages())
                 <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
                     <p class="text-sm text-gray-500">
                         Showing {{ $this->activities->firstItem() }}–{{ $this->activities->lastItem() }} of {{ $this->activities->total() }}

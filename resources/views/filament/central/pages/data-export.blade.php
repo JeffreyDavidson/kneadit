@@ -10,21 +10,21 @@
             style="flex: 1; max-width: 400px; padding: 0.5rem 2rem 0.5rem 0.75rem; background: #2a1f18; border: 1px solid rgba(212,146,12,0.12); border-radius: 8px; color: #faf0d6; font-size: 0.875rem; outline: none; -webkit-appearance: none; appearance: none; background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23d4920c%22 stroke-width=%222%22><path d=%22M6 9l6 6 6-6%22/></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center;"
         >
             <option value="">— Choose a bakery —</option>
-            @foreach($this->getTenants() as $id => $name)
+            @foreach ($this->getTenants() as $id => $name)
                 <option value="{{ $id }}">{{ $name }}</option>
             @endforeach
         </select>
     </div>
 
-    @if($selectedTenant)
+    @if ($selectedTenant)
         {{-- Export Grid — 3 columns --}}
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
-            @foreach($this->getExportTypes() as $type => $info)
+            @foreach ($this->getExportTypes() as $type => $info)
                 <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 160px;">
                     <div>
                         <div style="color: white; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.35rem;">{{ $info['name'] }}</div>
                         <div style="color: #8b6844; font-size: 0.8rem; line-height: 1.4; margin-bottom: 0.75rem;">{{ $info['description'] }}</div>
-                        @if(isset($counts[$type]))
+                        @if (isset($counts[$type]))
                             <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">
                                 {{ number_format($counts[$type]) }} rows
                             </div>

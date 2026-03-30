@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49c6cf8a3e1ce7f590d33a6a2d57a77a",
+    "content-hash": "6e21f34b90ce97c0bd76989263a8bc77",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -13627,6 +13627,61 @@
                 }
             ],
             "time": "2025-12-08T11:19:18+00:00"
+        },
+        {
+            "name": "tightenco/tlint",
+            "version": "v9.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tighten/tlint.git",
+                "reference": "8f2d8eee3a9db9924c75f484aa9c7e3dbfac2090"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tighten/tlint/zipball/8f2d8eee3a9db9924c75f484aa9c7e3dbfac2090",
+                "reference": "8f2d8eee3a9db9924c75f484aa9c7e3dbfac2090",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/view": "*",
+                "nikic/php-parser": "^5.0",
+                "php": ">=8.1",
+                "symfony/console": "^6.1||^7.0",
+                "symfony/process": "^6.1||^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.6",
+                "spatie/ray": "^1.37",
+                "symfony/var-dumper": "^6.1",
+                "tightenco/duster": "^3.0"
+            },
+            "bin": [
+                "bin/tlint"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Tighten\\TLint\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Logan Henson",
+                    "email": "logan@loganhenson.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Tighten linter for Laravel conventions",
+            "homepage": "https://github.com/tighten/tlint",
+            "support": {
+                "issues": "https://github.com/tighten/tlint/issues",
+                "source": "https://github.com/tighten/tlint/tree/v9.5.0"
+            },
+            "time": "2025-03-21T18:26:57+00:00"
         },
         {
             "name": "tomasvotruba/bladestan",

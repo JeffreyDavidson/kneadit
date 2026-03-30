@@ -41,14 +41,14 @@
         </div>
 
         {{-- Status Actions --}}
-        @if($record->status !== 'closed')
+        @if ($record->status !== 'closed')
         <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-            @if($record->status === 'open')
+            @if ($record->status === 'open')
                 <button wire:click="updateStatus('in_progress')" style="background: #92400e; color: #fde68a; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
                     Mark In Progress
                 </button>
             @endif
-            @if(in_array($record->status, ['open', 'in_progress']))
+            @if (in_array($record->status, ['open', 'in_progress']))
                 <button wire:click="updateStatus('resolved')" style="background: #065f46; color: #6ee7b7; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
                     Mark Resolved
                 </button>
@@ -65,7 +65,7 @@
                 Replies ({{ $record->replies->count() }})
             </div>
 
-            @forelse($record->replies->sortBy('created_at') as $reply)
+            @forelse ($record->replies->sortBy('created_at') as $reply)
                 @php $isAdmin = $reply->author_type === 'admin'; @endphp
                 <div style="display: flex; justify-content: {{ $isAdmin ? 'flex-end' : 'flex-start' }}; margin-bottom: 0.75rem;">
                     <div style="max-width: 80%; background: {{ $isAdmin ? '#2a1f18' : '#1c1410' }}; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1rem; {{ $isAdmin ? 'border-right: 3px solid #d4920c;' : '' }}">
@@ -89,7 +89,7 @@
         </div>
 
         {{-- Reply Form --}}
-        @if($record->status !== 'closed')
+        @if ($record->status !== 'closed')
         <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
             <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Add Reply</div>
             <form wire:submit="addReply">

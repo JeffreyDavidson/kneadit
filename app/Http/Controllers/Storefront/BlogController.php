@@ -15,13 +15,13 @@ class BlogController extends Controller
         $activeCategory = request('category', 'all');
         $posts = BlogPost::query()->forListing($activeCategory)->paginate(6);
 
-        return view('blog.index', compact('posts', 'categories', 'activeCategory'));
+        return view('blog.index', ['posts' => $posts, 'categories' => $categories, 'activeCategory' => $activeCategory]);
     }
 
     public function show(BlogPost $post): View
     {
         $related = BlogPost::query()->published()->relatedTo($post)->get();
 
-        return view('blog.show', compact('post', 'related'));
+        return view('blog.show', ['post' => $post, 'related' => $related]);
     }
 }

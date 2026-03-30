@@ -20,6 +20,6 @@ class DirectoryController extends Controller
                 'color' => $t->brand_color_primary ?? '#d4920c',
             ]);
 
-        return view('directory', compact('bakeries'));
+        return view('directory', ['bakeries' => $bakeries]);
     }
 }

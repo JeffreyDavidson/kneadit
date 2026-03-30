@@ -31,27 +31,27 @@
 {{-- Masonry Gallery with Lightbox --}}
 <section style="background: var(--warm-100);" x-data="{ lightbox: false, lightboxSrc: '', lightboxCaption: '', lightboxAuthor: '' }">
     <div class="max-w-7xl mx-auto px-4 py-16 md:py-24">
-        @if($photos->count() > 0)
+        @if ($photos->count() > 0)
         <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 mb-12">
-            @foreach($photos as $photo)
+            @foreach ($photos as $photo)
             <div class="break-inside-avoid mb-6">
                 <div class="gallery-item"
                      @click="lightboxSrc = '{{ asset('storage/customer-photos/' . basename($photo->photo_path)) }}'; lightboxCaption = '{{ addslashes($photo->caption ?? '') }}'; lightboxAuthor = '{{ addslashes($photo->customer_name) }}'; lightbox = true"
                      style="background: var(--warm-200);">
-                    @if($photo->is_featured)
+                    @if ($photo->is_featured)
                     <div class="absolute top-3 left-3 z-10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider" style="background: var(--warm-500); color: var(--warm-900);">
                         ⭐ Featured
                     </div>
                     @endif
-                    <img 
-                        src="{{ asset('storage/customer-photos/' . basename($photo->photo_path)) }}" 
+                    <img
+                        src="{{ asset('storage/customer-photos/' . basename($photo->photo_path)) }}"
                         alt="Photo by {{ $photo->customer_name }}"
                         class="w-full object-cover"
                         loading="lazy"
                     >
                     {{-- Hover Caption Overlay --}}
                     <div class="gallery-caption absolute inset-0 flex flex-col justify-end p-5" style="background: linear-gradient(to top, rgba(28,20,16,0.85) 0%, transparent 60%);">
-                        @if($photo->caption)
+                        @if ($photo->caption)
                         <p class="italic text-sm mb-2" style="color: var(--warm-200);">"{{ $photo->caption }}"</p>
                         @endif
                         <div class="flex items-center gap-2">
@@ -60,7 +60,7 @@
                             </div>
                             <span class="text-sm font-semibold" style="color: var(--warm-300);">{{ Str::of($photo->customer_name)->explode(' ')->first() }}</span>
                         </div>
-                        @if($photo->product)
+                        @if ($photo->product)
                         <p class="text-xs mt-1" style="color: var(--warm-500);">{{ $photo->product->name }}</p>
                         @endif
                     </div>
@@ -90,7 +90,7 @@
 
             {{-- Faux gallery preview --}}
             <div class="grid grid-cols-3 gap-3 opacity-20">
-                @for($i = 0; $i < 6; $i++)
+                @for ($i = 0; $i < 6; $i++)
                 <div class="rounded-xl overflow-hidden" style="aspect-ratio: {{ [1, '4/5', 1, '5/4', 1, '4/5'][$i] }}; background: linear-gradient(135deg, var(--warm-200), var(--warm-300));"></div>
                 @endfor
             </div>
@@ -133,16 +133,16 @@
             <p class="text-lg" style="color: var(--warm-400);">{{ $content['upload_description'] ?? 'Show off your order! Photos will appear after approval.' }}</p>
         </div>
 
-        @if(session('success'))
+        @if (session('success'))
         <div class="rounded-2xl p-5 mb-6 text-center" style="background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: #86efac;">
             {{ session('success') }}
         </div>
         @endif
 
-        @if($errors->any())
+        @if ($errors->any())
         <div class="rounded-2xl p-5 mb-6" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5;">
             <ul class="list-disc list-inside text-sm">
-                @foreach($errors->all() as $error)
+                @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
                 @endforeach
             </ul>
@@ -193,7 +193,7 @@
                     <label class="block text-sm font-medium mb-2" style="color: var(--warm-300);">Which product? (optional)</label>
                     <select name="product_id" class="gallery-input">
                         <option value="">— Select a product —</option>
-                        @foreach($products as $product)
+                        @foreach ($products as $product)
                         <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
                         @endforeach
                     </select>

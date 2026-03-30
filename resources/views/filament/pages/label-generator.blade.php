@@ -7,7 +7,7 @@
                 <div class="lg:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Products</label>
                     <select wire:model.live="selectedProducts" multiple class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm" size="6">
-                        @foreach($this->getProducts() as $product)
+                        @foreach ($this->getProducts() as $product)
                             <option value="{{ $product['id'] }}">{{ $product['name'] }} — ${{ number_format($product['price'], 2) }}</option>
                         @endforeach
                     </select>
@@ -58,7 +58,7 @@
                 <x-filament::button wire:click="generateLabels" icon="heroicon-o-eye">
                     Generate Preview
                 </x-filament::button>
-                @if($showPreview)
+                @if ($showPreview)
                     <x-filament::button color="success" icon="heroicon-o-printer" onclick="window.print()">
                         Print Labels
                     </x-filament::button>
@@ -67,7 +67,7 @@
         </x-filament::section>
 
         {{-- Label Preview --}}
-        @if($showPreview && !empty($selectedProducts))
+        @if ($showPreview && !empty($selectedProducts))
             @php
                 $products = $this->getSelectedProductModels();
                 $dims = $this->getLabelDimensions();
@@ -77,8 +77,8 @@
 
             <div class="print-area" id="label-print-area">
                 <div class="label-grid" style="display: grid; grid-template-columns: repeat({{ $dims['cols'] }}, 1fr); gap: 4px; padding: 0.25in;">
-                    @foreach($products as $product)
-                        @for($i = 0; $i < $quantity; $i++)
+                    @foreach ($products as $product)
+                        @for ($i = 0; $i < $quantity; $i++)
                             <div class="label-card" style="width: {{ $dims['width'] }}; height: {{ $dims['height'] }}; border: 1px solid #ccc; border-radius: 4px; padding: 6px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; font-family: Arial, sans-serif; page-break-inside: avoid; background: white;">
                                 {{-- Header --}}
                                 <div style="text-align: center; border-bottom: 1px solid #eee; padding-bottom: 3px; margin-bottom: 3px;">
@@ -95,16 +95,16 @@
                                     </div>
                                 </div>
 
-                                @if($labelSize !== 'small')
+                                @if ($labelSize !== 'small')
                                     {{-- Ingredients --}}
-                                    @if($product->recipe && $product->recipe->ingredients)
+                                    @if ($product->recipe && $product->recipe->ingredients)
                                         <div style="font-size: 6px; color: #666; text-align: center; line-height: 1.3; margin: 2px 0;">
                                             <strong>Ingredients:</strong> {{ Str::limit(is_array($product->recipe->ingredients) ? implode(', ', $product->recipe->ingredients) : $product->recipe->ingredients, $labelSize === 'medium' ? 80 : 150) }}
                                         </div>
                                     @endif
 
                                     {{-- Allergy Disclaimer --}}
-                                    @if($includeAllergyDisclaimer)
+                                    @if ($includeAllergyDisclaimer)
                                         <div style="font-size: 5px; color: #999; text-align: center; font-style: italic; margin: 1px 0;">
                                             {{ Str::limit($allergyDisclaimer, $labelSize === 'medium' ? 100 : 200) }}
                                         </div>
@@ -112,14 +112,14 @@
                                 @endif
 
                                 {{-- Barcode --}}
-                                @if($includeBarcode)
+                                @if ($includeBarcode)
                                     <div style="text-align: center; margin: 2px 0;">
                                         <div class="css-barcode" style="display: inline-flex; gap: 1px; height: {{ $labelSize === 'small' ? '12px' : '18px' }};">
                                             @php
                                                 $code = str_pad($product->id, 8, '0', STR_PAD_LEFT);
                                                 $bars = str_split(md5($code));
                                             @endphp
-                                            @foreach(array_slice($bars, 0, 20) as $bar)
+                                            @foreach (array_slice($bars, 0, 20) as $bar)
                                                 <div style="width: {{ hexdec($bar) % 2 === 0 ? '1px' : '2px' }}; height: 100%; background: {{ hexdec($bar) % 3 === 0 ? 'white' : 'black' }};"></div>
                                             @endforeach
                                         </div>
@@ -128,7 +128,7 @@
                                 @endif
 
                                 {{-- QR Code --}}
-                                @if($includeQrCode)
+                                @if ($includeQrCode)
                                     <div style="text-align: center; margin: 2px 0;">
                                         {!! QrCode::size($labelSize === 'small' ? 30 : 50)->generate(url('/menu#product-' . $product->id)) !!}
                                     </div>

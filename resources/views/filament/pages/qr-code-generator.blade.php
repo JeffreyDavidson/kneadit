@@ -32,7 +32,7 @@
             <div style="background: #FFFFFF; border: 1px solid #D7CCC8; border-radius: 12px; padding: 1.5rem; text-align: center;">
                 <h3 style="margin: 0 0 1rem; color: #3E2723; font-size: 1.1rem; font-weight: 600;">👁️ Preview</h3>
                 <div style="background: white; padding: 1.5rem; border-radius: 8px; display: inline-block; border: 2px dashed #BCAAA4;">
-                    @if(($this->data['format'] ?? 'svg') === 'png')
+                    @if (($this->data['format'] ?? 'svg') === 'png')
                         <img src="data:image/png;base64,{{ $this->qrCodeSvg }}" alt="QR Code" style="max-width: 100%;">
                     @else
                         {!! $this->qrCodeSvg !!}

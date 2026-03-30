@@ -21,7 +21,7 @@ class TrackingController extends Controller
         $heroImage = settings('hero_image');
         $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
-        return view('order-tracking', compact('content', 'storeName', 'heroImageUrl'));
+        return view('order-tracking', ['content' => $content, 'storeName' => $storeName, 'heroImageUrl' => $heroImageUrl]);
     }
 
     /**

@@ -4,18 +4,18 @@
     $enabled = $this->announcement_enabled;
 @endphp
 
-@if(!$enabled)
+@if (!$enabled)
     <div class="text-center text-gray-400 dark:text-gray-500 py-4 italic">
         Banner is currently disabled
     </div>
 @else
     <div class="relative px-4 py-3 text-center text-sm font-medium rounded-lg"
          style="
-            @if($type === 'warning')
+            @if ($type === 'warning')
                 background: #fef3cd; color: #856404; border: 2px solid #ffc107;
-            @elseif($type === 'success')
+            @elseif ($type === 'success')
                 background: #d4edda; color: #155724; border: 2px solid #28a745;
-            @elseif($type === 'holiday')
+            @elseif ($type === 'holiday')
                 background: linear-gradient(135deg, #c41e3a, #1a6b2a); color: #fff; border: 2px solid #ffd700;
             @else
                 background: #fff3cd; color: #664d03; border: 2px solid #d4920c;

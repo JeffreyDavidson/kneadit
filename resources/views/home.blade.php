@@ -1,5 +1,5 @@
 <x-layouts.storefront>
-@foreach($sections as $key => $config)
+@foreach ($sections as $key => $config)
     @switch($key)
         @case('hero')
             <x-home.hero />
@@ -32,7 +32,7 @@
 @endforeach
 
 {{-- Fallback: if no homepage_sections configured, show all sections with defaults --}}
-@if(empty($homepageSections))
+@if (empty($homepageSections))
     <x-home.hero />
     @include('partials.home.about')
     <x-home.featured-products :config="['count' => 6, 'title' => 'Our Favorites', 'subtitle' => 'Freshly made']" />

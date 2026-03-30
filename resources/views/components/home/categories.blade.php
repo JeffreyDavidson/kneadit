@@ -1,4 +1,4 @@
-@if($categories->isNotEmpty())
+@if ($categories->isNotEmpty())
 <section class="relative py-20 px-4 overflow-hidden" style="background: var(--warm-200);">
     <div class="max-w-6xl mx-auto">
         {{-- Header --}}
@@ -13,7 +13,7 @@
 
         {{-- Category cards grid --}}
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            @foreach($categories as $category)
+            @foreach ($categories as $category)
             <a href="{{ route('storefront.menu') }}"
                class="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                style="background: var(--warm-900); aspect-ratio: 1/1;">

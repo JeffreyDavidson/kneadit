@@ -5,8 +5,8 @@
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-900">Baking Sheet</h2>
                 <div class="flex space-x-2">
-                    <input type="date" 
-                           wire:model.live="selectedDate" 
+                    <input type="date"
+                           wire:model.live="selectedDate"
                            class="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
                 </div>
             </div>
@@ -24,7 +24,7 @@
                     </div>
                 </div>
 
-                @if($bakingItems->isEmpty())
+                @if ($bakingItems->isEmpty())
                     <div class="text-center py-8 text-gray-500">
                         <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -34,7 +34,7 @@
                     </div>
                 @else
                     <div class="space-y-4">
-                        @foreach($bakingItems as $item)
+                        @foreach ($bakingItems as $item)
                             <div class="border border-gray-200 rounded-lg p-4 print:border-gray-400">
                                 <div class="flex justify-between items-start mb-2">
                                     <h4 class="font-semibold text-lg text-gray-900">{{ $item->product_name }}</h4>
@@ -42,10 +42,10 @@
                                         {{ $item->total_quantity }} {{ $item->total_quantity == 1 ? 'unit' : 'units' }}
                                     </span>
                                 </div>
-                                
+
                                 <div class="text-gray-600">
                                     <p class="text-sm">
-                                        <strong>Customers:</strong> 
+                                        <strong>Customers:</strong>
                                         {{ $item->customer_names }}
                                     </p>
                                 </div>
@@ -64,27 +64,27 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            
+
             .print\\:hidden {
                 display: none !important;
             }
-            
+
             .print\\:shadow-none {
                 box-shadow: none !important;
             }
-            
+
             .print\\:rounded-none {
                 border-radius: 0 !important;
             }
-            
+
             .print\\:p-4 {
                 padding: 1rem !important;
             }
-            
+
             .print\\:mb-4 {
                 margin-bottom: 1rem !important;
             }
-            
+
             .print\\:border-gray-400 {
                 border-color: #9ca3af !important;
             }
@@ -92,7 +92,7 @@
             #baking-sheet {
                 page-break-inside: avoid;
             }
-            
+
             .space-y-4 > * + * {
                 page-break-inside: avoid;
             }

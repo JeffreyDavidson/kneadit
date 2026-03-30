@@ -13,14 +13,14 @@
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
                     🟢 Currently Available
                 </h3>
-                @forelse($this->currentItems as $item)
+                @forelse ($this->currentItems as $item)
                     <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
                         <div>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $item->product->name }}</span>
                             <span class="text-sm text-gray-500 ml-2">
                                 {{ $item->available_from->format('M j') }} – {{ $item->available_until->format('M j, Y') }}
                             </span>
-                            @if($item->notes)
+                            @if ($item->notes)
                                 <span class="text-sm text-gray-400 ml-2">· {{ $item->notes }}</span>
                             @endif
                         </div>
@@ -38,14 +38,14 @@
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
                     🔵 Upcoming
                 </h3>
-                @forelse($this->upcomingItems as $item)
+                @forelse ($this->upcomingItems as $item)
                     <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
                         <div>
                             <span class="font-medium text-gray-900 dark:text-white">{{ $item->product->name }}</span>
                             <span class="text-sm text-gray-500 ml-2">
                                 Starts {{ $item->available_from->format('M j, Y') }} – {{ $item->available_until->format('M j, Y') }}
                             </span>
-                            @if($item->notes)
+                            @if ($item->notes)
                                 <span class="text-sm text-gray-400 ml-2">· {{ $item->notes }}</span>
                             @endif
                         </div>
@@ -63,7 +63,7 @@
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
                     ⚫ Expired
                 </h3>
-                @forelse($this->expiredItems as $item)
+                @forelse ($this->expiredItems as $item)
                     <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
                         <div>
                             <span class="font-medium text-gray-500">{{ $item->product->name }}</span>
@@ -89,7 +89,7 @@
                         ->get();
                     $now = now();
                 @endphp
-                @forelse($allItems as $item)
+                @forelse ($allItems as $item)
                     @php
                         $isActive = $item->isCurrentlyAvailable();
                         $isPast = $item->available_until < $now;

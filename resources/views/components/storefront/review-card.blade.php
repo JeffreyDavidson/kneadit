@@ -14,7 +14,7 @@
     $mutedColor = $dark ? 'var(--warm-400)' : 'var(--warm-500)';
 @endphp
 
-@if($variant === 'featured')
+@if ($variant === 'featured')
 <div
     class="text-center p-8 md:p-12 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
     style="background-color: {{ $cardBg }}; border: 1px solid {{ $cardBorder }};"
@@ -29,7 +29,7 @@
     </cite>
 </div>
 
-@elseif($variant === 'compact')
+@elseif ($variant === 'compact')
 <div
     class="p-4 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
     style="background-color: {{ $cardBg }}; border: 1px solid {{ $cardBorder }};"

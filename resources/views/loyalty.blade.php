@@ -40,7 +40,7 @@
     </div>
 </section>
 
-@if(!$loyaltyEnabled)
+@if (!$loyaltyEnabled)
 <section class="py-20 px-4" style="background: var(--warm-50);">
     <div class="max-w-lg mx-auto text-center rounded-2xl p-12" style="background: white; border: 1px solid var(--warm-200);">
         <p class="font-display text-xl" style="color: var(--warm-700);">{{ $content['paused_message'] ?? 'Our loyalty program is currently paused. Check back soon!' }}</p>
@@ -86,11 +86,11 @@
             </div>
 
             {{-- Progress to next reward --}}
-            @if($rewards->count())
+            @if ($rewards->count())
             @php
                 $nextReward = $rewards->where('points_required', '>', $totalPoints)->sortBy('points_required')->first();
             @endphp
-            @if($nextReward)
+            @if ($nextReward)
             <div class="max-w-2xl mx-auto mb-10 rounded-2xl p-6" style="background: white; border: 1px solid var(--warm-200);">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-semibold" style="color: var(--warm-700);">Next Reward: {{ $nextReward->name }}</span>
@@ -105,13 +105,13 @@
             @endif
 
             {{-- Transaction History --}}
-            @if($history->count())
+            @if ($history->count())
             <div class="max-w-2xl mx-auto rounded-2xl overflow-hidden" style="background: white; border: 1px solid var(--warm-200);">
                 <div class="px-6 py-4" style="border-bottom: 1px solid var(--warm-200);">
                     <h3 class="font-display text-lg font-bold" style="color: var(--warm-900);">Points History</h3>
                 </div>
                 <div class="divide-y" style="border-color: var(--warm-100);">
-                    @foreach($history as $entry)
+                    @foreach ($history as $entry)
                     <div class="flex justify-between items-center px-6 py-4 hover:bg-opacity-50 transition-colors" style="hover: var(--warm-50);">
                         <div>
                             <p class="font-semibold" style="color: var(--warm-900);">{{ $entry->description }}</p>
@@ -128,32 +128,32 @@
         </div>
         @endisset
 
-        @if(isset($customer) && !$customer)
+        @if (isset($customer) && !$customer)
         <div class="max-w-xl mx-auto mb-16 rounded-2xl p-8 text-center" style="background: white; border: 1px solid var(--warm-200);">
             <p style="color: var(--warm-700);">We couldn't find an account with that email. Points are earned automatically when your orders are delivered!</p>
         </div>
         @endif
 
         {{-- Available Rewards --}}
-        @if($rewards->count())
+        @if ($rewards->count())
         <div class="mb-16">
             <div class="text-center mb-10">
                 <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">{{ $content['rewards_eyebrow'] ?? 'Unlock' }}</p>
                 <h2 class="font-display text-3xl font-bold" style="color: var(--warm-900);">{{ $content['rewards_heading'] ?? 'Available Rewards' }}</h2>
             </div>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                @foreach($rewards as $reward)
+                @foreach ($rewards as $reward)
                 @php $canRedeem = isset($totalPoints) && $totalPoints >= $reward->points_required; @endphp
                 <div class="rounded-2xl p-6 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden"
                      style="background: white; border: 2px solid {{ $canRedeem ? 'var(--warm-500)' : 'var(--warm-200)' }};">
-                    @if($canRedeem)
+                    @if ($canRedeem)
                     <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold" style="background: var(--warm-500); color: var(--warm-900);">Redeemable!</div>
                     @endif
                     <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background: var(--warm-100);">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warm-500);"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
                     </div>
                     <h3 class="font-display text-lg font-bold mb-1" style="color: var(--warm-900);">{{ $reward->name }}</h3>
-                    @if($reward->description)
+                    @if ($reward->description)
                     <p class="text-sm mb-3" style="color: var(--warm-600);">{{ $reward->description }}</p>
                     @endif
                     <div class="inline-block px-4 py-2 rounded-full" style="background: var(--warm-100);">
@@ -178,7 +178,7 @@
             <h2 class="font-display text-3xl md:text-4xl font-bold" style="color: white;">{{ $content['how_it_works_heading'] ?? 'How It Works' }}</h2>
         </div>
         <div class="grid sm:grid-cols-3 gap-10 text-center">
-            @foreach($howSteps as $i => $step)
+            @foreach ($howSteps as $i => $step)
 
             <div>
                 <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style="background: rgba(232,176,74,0.1); border: 1px solid rgba(232,176,74,0.2);">

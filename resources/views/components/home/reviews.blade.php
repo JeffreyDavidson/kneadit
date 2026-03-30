@@ -1,4 +1,4 @@
-@if($reviews->count() > 0)
+@if ($reviews->count() > 0)
 <section class="relative py-28 px-4 overflow-hidden" style="background: var(--warm-100);">
     <div class="max-w-6xl mx-auto">
         {{-- Section eyebrow --}}
@@ -10,19 +10,19 @@
             </div>
         </div>
 
-        @if($featuredReview)
+        @if ($featuredReview)
         {{-- Hero testimonial: massive quote --}}
         <div class="text-center mb-20 max-w-4xl mx-auto">
             {{-- Big decorative quote mark --}}
             <div class="font-display font-bold leading-none mb-6" style="font-size: 6rem; color: var(--warm-500); opacity: 0.15; line-height: 0.6;">&ldquo;</div>
-            
+
             <blockquote class="font-display text-2xl md:text-4xl lg:text-5xl font-medium leading-snug mb-8" style="color: var(--warm-800); letter-spacing: -0.01em;">
                 {{ $featuredReview->comment }}
             </blockquote>
 
             {{-- Stars --}}
             <div class="flex justify-center gap-1 mb-4">
-                @for($i = 1; $i <= 5; $i++)
+                @for ($i = 1; $i <= 5; $i++)
                     <svg class="w-5 h-5" style="color: {{ $i <= $featuredReview->rating ? 'var(--warm-500)' : 'var(--warm-300)' }};" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                     </svg>
@@ -33,14 +33,14 @@
         </div>
         @endif
 
-        @if($reviews->count() > 1)
+        @if ($reviews->count() > 1)
         {{-- Secondary reviews: horizontal cards --}}
         <div class="grid md:grid-cols-{{ min($reviews->count() - 1, 3) }} gap-6">
-            @foreach($reviews->skip(1)->take(3) as $review)
+            @foreach ($reviews->skip(1)->take(3) as $review)
             <div class="p-8 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style="background: white; border: 1px solid var(--warm-200);">
                 {{-- Stars --}}
                 <div class="flex gap-0.5 mb-4">
-                    @for($i = 1; $i <= 5; $i++)
+                    @for ($i = 1; $i <= 5; $i++)
                         <svg class="w-4 h-4" style="color: {{ $i <= $review->rating ? 'var(--warm-500)' : 'var(--warm-300)' }};" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                         </svg>

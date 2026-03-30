@@ -38,3 +38,7 @@ arch('mailables should extend BaseMailable')
     ->expect('App\Mail')
     ->toExtend('App\Mail\BaseMailable')
     ->ignoring(['App\Mail\BaseMailable', 'App\Mail\Concerns']);
+
+arch('controllers should not use compact() for view data')
+    ->expect('compact')
+    ->not->toBeUsedIn('App\Http\Controllers');

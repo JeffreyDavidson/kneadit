@@ -24,9 +24,12 @@ class LoyaltyController extends Controller
         $lifetimeEarned = $customer ? $customer->lifetime_points_earned : 0;
         $history = $customer ? $customer->loyaltyPoints()->latest('created_at')->limit(20)->get() : collect();
 
-        return view('loyalty', array_merge($this->sharedViewData(), compact(
-            'customer', 'totalPoints', 'lifetimeEarned', 'history',
-        )));
+        return view('loyalty', array_merge($this->sharedViewData(), [
+            'customer' => $customer,
+            'totalPoints' => $totalPoints,
+            'lifetimeEarned' => $lifetimeEarned,
+            'history' => $history,
+        ]));
     }
 
     /** @return array<string, mixed> */
@@ -52,6 +55,15 @@ class LoyaltyController extends Controller
             'M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7',
         ];
 
-        return compact('rewards', 'programName', 'pointsPerDollar', 'loyaltyEnabled', 'heroImageUrl', 'content', 'howSteps', 'howSvgs');
+        return [
+            'rewards' => $rewards,
+            'programName' => $programName,
+            'pointsPerDollar' => $pointsPerDollar,
+            'loyaltyEnabled' => $loyaltyEnabled,
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+            'howSteps' => $howSteps,
+            'howSvgs' => $howSvgs,
+        ];
     }
 }

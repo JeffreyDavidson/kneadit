@@ -6,7 +6,7 @@
     <div style="margin-top: 1.5rem;">
         <h3 style="color: #d4920c; font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">Tenant Database Stats</h3>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
-            @foreach([
+            @foreach ([
                 ['label' => 'Products', 'value' => number_format($stats['products'])],
                 ['label' => 'Orders', 'value' => number_format($stats['orders'])],
                 ['label' => 'Revenue', 'value' => '$' . number_format($stats['revenue'] / 100, 2)],

@@ -16,7 +16,7 @@
 @section('content')
 <p style="margin: 0 0 15px;">Hello {{ $customer->name }},</p>
 
-@if($order->delivery_address)
+@if ($order->delivery_address)
     <p style="margin: 0 0 20px; font-size: 18px; font-weight: 600; color: {{ $primaryColor }};">🚚 Your order is on its way!</p>
 
     <div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
@@ -31,7 +31,7 @@
     <div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
         <div style="font-size: 18px; font-weight: 700; color: {{ $secondaryColor }}; margin-bottom: 10px;">Order #{{ $order->order_number }}</div>
         <p style="margin: 0 0 5px;"><strong>Pickup Location:</strong> {{ settings('store_address', '') }}</p>
-        @if(settings('store_phone'))
+        @if (settings('store_phone'))
             <p style="margin: 0 0 5px;"><strong>Phone:</strong> {{ settings('store_phone') }}</p>
         @endif
         <p style="margin: 10px 0 0; color: #555; font-size: 14px;"><em>Just mention your name or order number when you arrive!</em></p>

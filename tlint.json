@@ -1,0 +1,13 @@
+{
+    "excluded": [
+        "vendor",
+        "storage",
+        "node_modules",
+        "bootstrap/cache"
+    ],
+    "disabled": [
+        "NoJsonDirective",
+        "NoDocBlocksForMigrationUpDown",
+        "UseAnonymousMigrations"
+    ]
+}

@@ -107,7 +107,7 @@
             </div>
 
             <div class="widget-list" id="widget-sortable">
-                @foreach($widgets as $index => $widget)
+                @foreach ($widgets as $index => $widget)
                     <div class="widget-card {{ $widget['visible'] ? '' : 'disabled' }}" data-index="{{ $index }}">
                         <div class="widget-drag">
                             <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 20 20" fill="currentColor">
@@ -120,7 +120,7 @@
                             <p class="widget-desc">{{ $widget['description'] }}</p>
                         </div>
                         <div class="span-selector">
-                            @for($s = 1; $s <= 3; $s++)
+                            @for ($s = 1; $s <= 3; $s++)
                                 <button class="span-btn {{ ($widget['span'] ?? 1) == $s ? 'active' : '' }}"
                                         wire:click="setSpan({{ $index }}, {{ $s }})" type="button"
                                         title="{{ $s }}/3 width">{{ $s }}</button>
@@ -143,8 +143,8 @@
             </div>
 
             <div class="preview-grid">
-                @foreach($widgets as $widget)
-                    @if($widget['visible'])
+                @foreach ($widgets as $widget)
+                    @if ($widget['visible'])
                         <div class="preview-widget" style="grid-column: span {{ $widget['span'] ?? 1 }};">
                             <div class="preview-widget-header">
                                 <span class="pw-icon">{{ $widget['icon'] }}</span>
@@ -172,7 +172,7 @@
                                         @break
                                     @case('stats_overview')
                                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-                                            @foreach(['Orders: 5', 'Pending: 2', 'Revenue: $142'] as $stat)
+                                            @foreach (['Orders: 5', 'Pending: 2', 'Revenue: $142'] as $stat)
                                                 <div style="background: #fdf8f2; border-radius: 6px; padding: 6px 8px;">
                                                     <div style="font-size: 0.6rem; color: #a08060;">{{ explode(':', $stat)[0] }}</div>
                                                     <div style="font-size: 0.85rem; font-weight: 700; color: #3d2314;">{{ trim(explode(':', $stat)[1]) }}</div>
@@ -182,14 +182,14 @@
                                         @break
                                     @case('revenue_chart')
                                         <div class="pw-line">
-                                            @foreach([30, 45, 20, 60, 80, 55, 70, 40, 90, 65, 50, 75] as $h)
+                                            @foreach ([30, 45, 20, 60, 80, 55, 70, 40, 90, 65, 50, 75] as $h)
                                                 <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
                                             @endforeach
                                         </div>
                                         @break
                                     @case('recent_orders')
                                     @case('upcoming_orders')
-                                        @for($i = 0; $i < 3; $i++)
+                                        @for ($i = 0; $i < 3; $i++)
                                             <div class="pw-row">
                                                 <span><span class="pw-dot" style="background: {{ ['#d4a574','#e8b04a','#8b6844'][$i] }};"></span>Order #{{ 100 + $i }}</span>
                                                 <span>${{ [28, 45, 32][$i] }}</span>
@@ -197,7 +197,7 @@
                                         @endfor
                                         @break
                                     @case('top_products')
-                                        @foreach(['Chocolate Cake' => 85, 'Banana Bread' => 60, 'Cookies' => 40] as $name => $pct)
+                                        @foreach (['Chocolate Cake' => 85, 'Banana Bread' => 60, 'Cookies' => 40] as $name => $pct)
                                             <div style="margin-bottom: 6px;">
                                                 <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #6b4c3b;">
                                                     <span>{{ $name }}</span><span>{{ $pct }}%</span>
@@ -212,7 +212,7 @@
                                         @break
                                     @case('weekly_revenue')
                                         <div class="pw-line">
-                                            @foreach([50, 70, 45, 80, 65, 90, 55] as $h)
+                                            @foreach ([50, 70, 45, 80, 65, 90, 55] as $h)
                                                 <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
                                             @endforeach
                                         </div>
@@ -221,7 +221,7 @@
                                         </div>
                                         @break
                                     @case('order_funnel')
-                                        @foreach(['Pending' => '#e8b04a', 'Confirmed' => '#d4a574', 'Delivered' => '#8b6844'] as $status => $color)
+                                        @foreach (['Pending' => '#e8b04a', 'Confirmed' => '#d4a574', 'Delivered' => '#8b6844'] as $status => $color)
                                             <div class="pw-row">
                                                 <span><span class="pw-dot" style="background: {{ $color }};"></span>{{ $status }}</span>
                                                 <span>{{ ['Pending' => 3, 'Confirmed' => 5, 'Delivered' => 12][$status] }}</span>
@@ -230,7 +230,7 @@
                                         @break
                                     @case('todays_orders')
                                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-                                            @foreach(['9:00 AM' => '$28', '11:30 AM' => '$45', '2:00 PM' => '$32'] as $time => $amt)
+                                            @foreach (['9:00 AM' => '$28', '11:30 AM' => '$45', '2:00 PM' => '$32'] as $time => $amt)
                                                 <div style="background: #fdf8f2; border-radius: 6px; padding: 6px 8px;">
                                                     <div style="font-size: 0.6rem; color: #a08060;">{{ $time }}</div>
                                                     <div style="font-size: 0.8rem; font-weight: 700; color: #3d2314;">{{ $amt }}</div>
@@ -239,7 +239,7 @@
                                         </div>
                                         @break
                                     @case('baking_sheet')
-                                        @foreach(['Chocolate Cake ×2', 'Banana Bread ×4', 'Sugar Cookies ×24'] as $item)
+                                        @foreach (['Chocolate Cake ×2', 'Banana Bread ×4', 'Sugar Cookies ×24'] as $item)
                                             <div class="pw-row">
                                                 <span>{{ $item }}</span>
                                                 <span style="color: #d4a574;">○</span>
@@ -289,7 +289,7 @@
                                         <div style="font-size: 0.65rem; color: #a08060; margin-top: 4px;">12 active cards</div>
                                         @break
                                     @case('loyalty_leaders')
-                                        @foreach(['Sarah M.' => '520 pts', 'Mike R.' => '380 pts', 'Lisa K.' => '290 pts'] as $name => $pts)
+                                        @foreach (['Sarah M.' => '520 pts', 'Mike R.' => '380 pts', 'Lisa K.' => '290 pts'] as $name => $pts)
                                             <div class="pw-row"><span>{{ $name }}</span><span>{{ $pts }}</span></div>
                                         @endforeach
                                         @break
@@ -325,7 +325,7 @@
                                         @break
                                     @default
                                         <div style="display: flex; flex-direction: column; gap: 4px;">
-                                            @for($i = 0; $i < 2; $i++)
+                                            @for ($i = 0; $i < 2; $i++)
                                                 <div style="height: 8px; border-radius: 4px; background: rgba(212,165,116,0.12); width: {{ [100, 70][$i] }}%;"></div>
                                             @endfor
                                         </div>

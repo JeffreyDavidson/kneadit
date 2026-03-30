@@ -39,7 +39,7 @@
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
-            @foreach($occasions as $i => $occasion)
+            @foreach ($occasions as $i => $occasion)
             <div class="rounded-2xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1" style="background: white; border: 1px solid var(--warm-200);">
                 <div class="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style="background: var(--warm-100);">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warm-500);"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $occasionSvgs[$i] ?? $occasionSvgs[0] }}"/></svg>
@@ -62,7 +62,7 @@
         </div>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            @foreach($processSteps as $i => $step)
+            @foreach ($processSteps as $i => $step)
             <div class="text-center">
                 <div class="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center font-display text-xl font-bold" style="background: var(--warm-500); color: var(--warm-900);">{{ $i + 1 }}</div>
                 <h3 class="font-display text-lg font-bold mb-2" style="color: var(--warm-200);">{{ $step['title'] }}</h3>
@@ -73,7 +73,7 @@
     </div>
 </section>
 
-@if(isset($cateringPhotos) && $cateringPhotos->count())
+@if (isset($cateringPhotos) && $cateringPhotos->count())
 {{-- Past Events Gallery --}}
 <section class="py-20 px-4" style="background: var(--warm-50);">
     <div class="max-w-5xl mx-auto">
@@ -82,7 +82,7 @@
             <h2 class="font-display text-3xl font-bold" style="color: var(--warm-900);">Past Events</h2>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            @foreach($cateringPhotos as $photo)
+            @foreach ($cateringPhotos as $photo)
             <div class="aspect-square rounded-2xl overflow-hidden">
                 <img src="{{ Storage::url($photo->photo_path) }}" alt="{{ $photo->caption ?? 'Catering event' }}" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
             </div>
@@ -117,16 +117,16 @@
             <p style="color: var(--warm-600);">Minimum {{ $minimumGuests }} guests · Please allow at least {{ $leadTimeDays }} days lead time</p>
         </div>
 
-        @if(session('success'))
+        @if (session('success'))
         <div class="rounded-2xl p-6 mb-8 text-center" style="background: #d4edda; border: 1px solid #28a745;">
             <p style="color: #155724; font-weight: 600;">{{ session('success') }}</p>
         </div>
         @endif
 
-        @if($errors->any())
+        @if ($errors->any())
         <div class="rounded-2xl p-6 mb-8" style="background: #f8d7da; border: 1px solid #dc3545;">
             <ul class="list-disc list-inside" style="color: #721c24;">
-                @foreach($errors->all() as $error)
+                @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
                 @endforeach
             </ul>

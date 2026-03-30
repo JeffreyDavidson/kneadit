@@ -36,7 +36,7 @@
                     <div class="flex-1 h-px" style="background: rgba(139,104,68,0.25);"></div>
                 </div>
 
-                @foreach($categories as $category)
+                @foreach ($categories as $category)
                 <div>
                     <div class="flex items-center gap-3 mb-6">
                         <span class="block w-6 h-px" style="background: var(--warm-500);"></span>
@@ -44,8 +44,8 @@
                     </div>
 
                     <div class="grid sm:grid-cols-2 gap-5">
-                        @foreach($category->products as $product)
-                        @if($product->is_active)
+                        @foreach ($category->products as $product)
+                        @if ($product->is_active)
                         <div class="order-product-card" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
                             {{-- Favorite Heart --}}
                             <button type="button"
@@ -58,7 +58,7 @@
 
                             {{-- Product Image --}}
                             <div class="relative overflow-hidden" style="aspect-ratio: 4/3;">
-                                @if($product->image)
+                                @if ($product->image)
                                     <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-800));">
@@ -73,7 +73,7 @@
 
                             <div class="p-5">
                                 <h4 class="font-display text-lg font-semibold mb-1" style="color: var(--warm-100);">{{ $product->name }}</h4>
-                                @if($product->description)
+                                @if ($product->description)
                                 <p class="text-sm mb-3 line-clamp-2" style="color: var(--warm-500);">{{ $product->description }}</p>
                                 @endif
                                 <div class="flex items-center justify-between mt-2">
@@ -237,7 +237,7 @@
                                 <span style="color: var(--warm-200);">Pickup <span class="text-sm" style="color: var(--warm-500);">(Free)</span></span>
                             </label>
 
-                            @if($deliveryEnabled)
+                            @if ($deliveryEnabled)
                             <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(139,104,68,0.15);"
                                    :style="form.delivery_type === 'delivery' ? 'border-color: var(--warm-500); background: rgba(212,146,12,0.08);' : ''">
                                 <input type="radio" x-model="form.delivery_type" value="delivery" @change="calculateDeliveryFee()" class="order-radio mr-3">
@@ -246,7 +246,7 @@
                             @endif
                         </div>
 
-                        @if($deliveryEnabled)
+                        @if ($deliveryEnabled)
                         <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-3">
                             <div>
                                 <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Delivery Address *</label>
@@ -256,12 +256,12 @@
                                 <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Distance</label>
                                 <select x-model="form.delivery_tier" @change="calculateDeliveryFee()" class="order-input">
                                     <option value="">Select distance</option>
-                                    @foreach($deliveryTiers as $index => $tier)
+                                    @foreach ($deliveryTiers as $index => $tier)
                                     <option value="{{ $index }}">{{ $tier['description'] }} (${{ number_format($tier['fee'], 2) }})</option>
                                     @endforeach
                                 </select>
                             </div>
-                            @if($freeDeliveryMin)
+                            @if ($freeDeliveryMin)
                             <p class="text-sm" style="color: var(--warm-500);">
                                 🚚 Free delivery on orders over ${{ number_format((float)$freeDeliveryMin, 2) }}!
                             </p>
@@ -297,7 +297,7 @@
                         <textarea x-model="form.notes" placeholder="Allergies, decorations, anything..." class="order-input" rows="3"></textarea>
                     </div>
 
-                    @if(!empty($paymentMethods))
+                    @if (!empty($paymentMethods))
                     <div class="pt-4 mt-4" style="border-top: 1px solid rgba(139,104,68,0.2);">
                         <p class="text-xs" style="color: var(--warm-600);">
                             <span class="font-medium" style="color: var(--warm-500);">Payment:</span> {{ implode(', ', array_map('ucfirst', $paymentMethods)) }}
@@ -305,7 +305,7 @@
                     </div>
                     @endif
 
-                    @if($allergyDisclaimer)
+                    @if ($allergyDisclaimer)
                     <div class="pt-4 mt-4" style="border-top: 1px solid rgba(139,104,68,0.2);">
                         <p class="text-xs leading-relaxed" style="color: var(--warm-600);">
                             <strong style="color: var(--warm-500);">⚠ Allergy Notice:</strong> {{ $allergyDisclaimer }}

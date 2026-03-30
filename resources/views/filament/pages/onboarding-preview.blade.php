@@ -13,7 +13,7 @@
 
         {{-- Hero Banner --}}
         <div style="background: linear-gradient(135deg, {{ $primary }}22 0%, {{ $secondary }}22 100%); padding: 40px 32px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.06);">
-            @if($logoPath)
+            @if ($logoPath)
                 <img src="{{ Storage::url($logoPath) }}" alt="Logo" style="max-height: 64px; margin-bottom: 16px; border-radius: 8px;">
             @endif
             <h2 style="color: #fef9ef; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">{{ $page->bakery_name ?: 'Your Bakery' }}</h2>
@@ -36,10 +36,10 @@
                     <span style="color: #fef9ef; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Contact</span>
                 </div>
                 <div style="color: #d4a574; font-size: 13px; line-height: 1.8;">
-                    @if($page->contact_email)<div>{{ $page->contact_email }}</div>@endif
-                    @if($page->contact_phone)<div>{{ $page->contact_phone }}</div>@endif
-                    @if($page->contact_address)<div style="margin-top: 4px;">{{ $page->contact_address }}</div>@endif
-                    @if(!$page->contact_email && !$page->contact_phone)
+                    @if ($page->contact_email)<div>{{ $page->contact_email }}</div>@endif
+                    @if ($page->contact_phone)<div>{{ $page->contact_phone }}</div>@endif
+                    @if ($page->contact_address)<div style="margin-top: 4px;">{{ $page->contact_address }}</div>@endif
+                    @if (!$page->contact_email && !$page->contact_phone)
                         <div style="color: #6b4c3b; font-style: italic;">Not set yet</div>
                     @endif
                 </div>
@@ -70,10 +70,10 @@
                     <span style="color: #fef9ef; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Hours</span>
                 </div>
                 <div style="font-size: 12px; line-height: 1.9;">
-                    @foreach($days as $key => $label)
+                    @foreach ($days as $key => $label)
                         <div style="display: flex; justify-content: space-between;">
                             <span style="color: #d4a574; font-weight: 600;">{{ $label }}</span>
-                            @if($page->{"hours_{$key}"})
+                            @if ($page->{"hours_{$key}"})
                                 <span style="color: #fef9ef;">{{ $page->{"hours_{$key}_open"} }} – {{ $page->{"hours_{$key}_close"} }}</span>
                             @else
                                 <span style="color: #6b4c3b;">Closed</span>
@@ -93,18 +93,18 @@
                     @php
                         $methodLabels = ['stripe' => 'Stripe Connect', 'paypal' => 'PayPal', 'cash' => 'Cash / Manual'];
                     @endphp
-                    @foreach($methods as $method)
-                        @if(isset($methodLabels[$method]))
+                    @foreach ($methods as $method)
+                        @if (isset($methodLabels[$method]))
                             <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #6ee7b7;">
                                 <span style="font-size: 11px;">●</span>
                                 {{ $methodLabels[$method] }}
-                                @if($method === 'paypal' && $page->paypal_sandbox)
+                                @if ($method === 'paypal' && $page->paypal_sandbox)
                                     <span style="font-size: 10px; color: {{ $primary }}; background: {{ $primary }}22; padding: 1px 6px; border-radius: 4px;">sandbox</span>
                                 @endif
                             </span>
                         @endif
                     @endforeach
-                    @if(empty($methods))
+                    @if (empty($methods))
                         <span style="color: #6b4c3b; font-style: italic; font-size: 13px;">Not configured</span>
                     @endif
                 </div>
@@ -112,13 +112,13 @@
         </div>
 
         {{-- Featured Product --}}
-        @if($page->product_name)
+        @if ($page->product_name)
         <div style="padding: 0 32px 28px;">
             <div style="background: linear-gradient(135deg, {{ $primary }}15 0%, {{ $secondary }}10 100%); border: 1px solid {{ $primary }}33; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <span style="color: {{ $primary }}; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Featured Product</span>
                     <div style="color: #fef9ef; font-size: 16px; font-weight: 600; margin-top: 4px;">{{ $page->product_name }}</div>
-                    @if($page->product_description)
+                    @if ($page->product_description)
                         <div style="color: #d4a574; font-size: 12px; margin-top: 4px; max-width: 400px;">{{ Str::limit($page->product_description, 80) }}</div>
                     @endif
                 </div>

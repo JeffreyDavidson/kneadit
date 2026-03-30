@@ -16,13 +16,13 @@
 @endphp
 
 <div class="flex items-center justify-center my-8 {{ $wClass }} mx-auto" {{ $attributes }}>
-    @if($style === 'line')
+    @if ($style === 'line')
         <div class="w-full h-px" style="background: linear-gradient(to right, transparent, {{ $accentColor }}, transparent);"></div>
-    @elseif($style === 'dot')
+    @elseif ($style === 'dot')
         <div class="flex-1 h-px" style="background: linear-gradient(to right, transparent, {{ $accentColor }});"></div>
         <div class="w-2 h-2 rounded-full mx-3" style="background-color: {{ $accentColor }};"></div>
         <div class="flex-1 h-px" style="background: linear-gradient(to left, transparent, {{ $accentColor }});"></div>
-    @elseif($style === 'ornament')
+    @elseif ($style === 'ornament')
         <div class="flex-1 h-px" style="background: linear-gradient(to right, transparent, {{ $accentColor }});"></div>
         <div class="mx-4">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

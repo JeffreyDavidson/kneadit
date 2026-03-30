@@ -1,4 +1,4 @@
-@if($featuredProducts->isNotEmpty())
+@if ($featuredProducts->isNotEmpty())
 <style>
     .product-showcase-card {
         position: relative;
@@ -56,13 +56,13 @@
             </a>
         </div>
 
-        @if($featuredProducts->count() >= 1)
+        @if ($featuredProducts->count() >= 1)
         @php $star = $featuredProducts->first(); @endphp
         {{-- Hero product: large cinematic card --}}
         <div class="product-showcase-card mb-8" style="background: var(--warm-800);">
             <div class="grid md:grid-cols-2 gap-0">
                 <div class="relative overflow-hidden" style="min-height: 400px;">
-                    @if($star->image)
+                    @if ($star->image)
                         <img src="{{ Storage::url($star->image) }}" alt="{{ $star->name }}" class="w-full h-full object-cover">
                     @else
                         <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-800));">
@@ -77,7 +77,7 @@
                 <div class="flex flex-col justify-center p-10 md:p-16">
                     <span class="font-display text-3xl md:text-4xl font-bold mb-2" style="color: var(--warm-400);">${{ number_format($star->price, 2) }}</span>
                     <h3 class="font-display text-3xl md:text-4xl font-bold mb-4" style="color: var(--warm-100);">{{ $star->name }}</h3>
-                    @if($star->description)
+                    @if ($star->description)
                     <p class="text-base leading-relaxed mb-8" style="color: var(--warm-400);">{{ Str::limit($star->description, 200) }}</p>
                     @endif
                     <a href="{{ route('order.create') }}" class="inline-block self-start px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105" style="background: var(--warm-500); color: var(--warm-900);">
@@ -88,13 +88,13 @@
         </div>
         @endif
 
-        @if($featuredProducts->count() > 1)
+        @if ($featuredProducts->count() > 1)
         {{-- Grid of remaining products --}}
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach($featuredProducts->skip(1) as $product)
+            @foreach ($featuredProducts->skip(1) as $product)
             <div class="product-showcase-card" style="background: var(--warm-800);">
                 <div class="relative overflow-hidden" style="aspect-ratio: 4/3;">
-                    @if($product->image)
+                    @if ($product->image)
                         <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                     @else
                         <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-800));">
@@ -114,7 +114,7 @@
                 </div>
                 <div class="p-6">
                     <h3 class="font-display text-xl font-semibold mb-1" style="color: var(--warm-100);">{{ $product->name }}</h3>
-                    @if($product->description)
+                    @if ($product->description)
                     <p class="text-sm leading-relaxed line-clamp-2" style="color: var(--warm-500);">{{ $product->description }}</p>
                     @endif
                 </div>

@@ -58,7 +58,7 @@
 </section>
 
 @isset($orders)
-    @if($orders->isEmpty())
+    @if ($orders->isEmpty())
     {{-- Empty state --}}
     <section class="relative py-24 overflow-hidden" style="background: var(--warm-900);">
         <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
@@ -94,7 +94,7 @@
             </div>
 
             <div class="space-y-8">
-                @foreach($orders as $order)
+                @foreach ($orders as $order)
                     @php
                         $isCancelled = $order->status === OrderStatus::Cancelled;
                         $currentIndex = array_search($order->status->value, $allStatuses);
@@ -113,7 +113,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="font-display text-2xl font-bold" style="color: var(--warm-400);">${{ number_format($order->total, 2) }}</p>
-                                @if($isCancelled)
+                                @if ($isCancelled)
                                     <span class="inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider" style="background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3);">Cancelled</span>
                                 @endif
                             </div>
@@ -121,22 +121,22 @@
 
                         <div class="px-6 md:px-8 py-8 space-y-8">
                             {{-- Progress stepper --}}
-                            @unless($isCancelled)
+                            @unless ($isCancelled)
                             <div>
                                 {{-- Desktop stepper --}}
                                 <div class="hidden sm:block">
                                     <div class="flex items-center justify-between relative">
                                         <div class="absolute top-4 left-0 right-0 h-1 rounded-full" style="background: rgba(139,104,68,0.15);"></div>
-                                        @if($currentIndex > 0)
+                                        @if ($currentIndex > 0)
                                         <div class="absolute top-4 left-0 h-1 rounded-full transition-all duration-700" style="background: var(--warm-500); width: {{ ($currentIndex / (count($allStatuses) - 1)) * 100 }}%;"></div>
                                         @endif
 
-                                        @foreach($allStatuses as $i => $step)
+                                        @foreach ($allStatuses as $i => $step)
                                             @php $isCompleted = $i <= $currentIndex; @endphp
                                             <div class="relative z-10 flex flex-col items-center" style="width: {{ 100 / count($allStatuses) }}%;">
                                                 <div class="track-stepper-dot w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold"
                                                      style="background: {{ $isCompleted ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }}; color: {{ $isCompleted ? 'var(--warm-900)' : 'var(--warm-600)' }}; {{ $isCompleted && $i === $currentIndex ? 'box-shadow: 0 0 0 4px rgba(212,146,12,0.2);' : '' }}">
-                                                    @if($isCompleted && $i < $currentIndex)
+                                                    @if ($isCompleted && $i < $currentIndex)
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                                     @else
                                                         {{ $i + 1 }}
@@ -152,12 +152,12 @@
 
                                 {{-- Mobile stepper --}}
                                 <div class="sm:hidden space-y-3">
-                                    @foreach($allStatuses as $i => $step)
+                                    @foreach ($allStatuses as $i => $step)
                                         @php $isCompleted = $i <= $currentIndex; @endphp
                                         <div class="flex items-center gap-3">
                                             <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
                                                  style="background: {{ $isCompleted ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }}; color: {{ $isCompleted ? 'var(--warm-900)' : 'var(--warm-600)' }};">
-                                                @if($isCompleted && $i < $currentIndex)
+                                                @if ($isCompleted && $i < $currentIndex)
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                                 @else
                                                     {{ $i + 1 }}
@@ -167,7 +167,7 @@
                                                 {{ $statusLabels[$step] }}
                                             </span>
                                         </div>
-                                        @if($i < count($allStatuses) - 1)
+                                        @if ($i < count($allStatuses) - 1)
                                             <div class="ml-3 w-0.5 h-3" style="background: {{ $i < $currentIndex ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }};"></div>
                                         @endif
                                     @endforeach
@@ -182,7 +182,7 @@
                                     <span class="text-xs uppercase tracking-[0.2em] font-semibold" style="color: var(--warm-500);">{{ $content['items_label'] ?? 'Items Ordered' }}</span>
                                 </div>
                                 <div class="space-y-3">
-                                    @foreach($order->orderItems as $item)
+                                    @foreach ($order->orderItems as $item)
                                         <div class="flex justify-between items-center py-2 px-4 rounded-xl" style="background: rgba(139,104,68,0.06);">
                                             <span class="text-sm" style="color: var(--warm-200);">
                                                 {{ $item->product->name ?? 'Product' }}
@@ -249,7 +249,7 @@
 @endempty
 
 @isset($orders)
-@if($orders->isNotEmpty())
+@if ($orders->isNotEmpty())
 <script>
 const customerEmail = @json($email);
 const customerName = @json($orders->first()->customer->name ?? $email);
@@ -334,7 +334,7 @@ function sendOrderMessage(e, orderId) {
     .catch(() => alert('Failed to send message. Please try again.'));
 }
 
-@foreach($orders as $order)
+@foreach ($orders as $order)
 loadMessages({{ $order->id }});
 @endforeach
 </script>

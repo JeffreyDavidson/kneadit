@@ -26,7 +26,7 @@
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Order #</td>
                 <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right;">{{ $order->order_number }}</td>
             </tr>
-            @if($order->delivery_date)
+            @if ($order->delivery_date)
             <tr>
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Requested Date</td>
                 <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right;">{{ $order->delivery_date->format('M j, Y') }}</td>
@@ -39,10 +39,10 @@
         </table>
     </div>
 
-    @if($order->orderItems->count())
+    @if ($order->orderItems->count())
     <h3 style="color: {{ $secondaryColor }}; font-size: 15px; margin: 20px 0 8px;">Items Ordered:</h3>
     <table style="width: 100%; border-collapse: collapse;">
-        @foreach($order->orderItems as $item)
+        @foreach ($order->orderItems as $item)
         <tr style="border-bottom: 1px solid #e8d0b0;">
             <td style="padding: 8px 0; color: #4a3728; font-size: 14px;">
                 {{ $item->product?->name ?? 'Item' }} × {{ $item->quantity }}

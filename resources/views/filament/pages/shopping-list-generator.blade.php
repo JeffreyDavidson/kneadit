@@ -5,20 +5,20 @@
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-900">Shopping List Generator</h2>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                    <input type="date" 
+                    <input type="date"
                            id="start_date"
-                           wire:model="startDate" 
+                           wire:model="startDate"
                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
                 </div>
                 <div>
                     <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                    <input type="date" 
+                    <input type="date"
                            id="end_date"
-                           wire:model="endDate" 
+                           wire:model="endDate"
                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
                 </div>
             </div>
@@ -29,7 +29,7 @@
         </div>
 
         <!-- Shopping List -->
-        @if($shoppingList->isNotEmpty())
+        @if ($shoppingList->isNotEmpty())
             <div class="bg-white rounded-lg shadow print:shadow-none print:rounded-none" id="shopping-list">
                 <div class="p-6 print:p-4">
                     <div class="flex items-center justify-between mb-6 print:mb-4">
@@ -37,16 +37,16 @@
                             Shopping List
                         </h3>
                         <div class="text-sm text-gray-500 print:hidden">
-                            {{ \Carbon\Carbon::parse($startDate)->format('M j') }} - 
+                            {{ \Carbon\Carbon::parse($startDate)->format('M j') }} -
                             {{ \Carbon\Carbon::parse($endDate)->format('M j, Y') }}
                         </div>
                     </div>
 
                     <div class="space-y-2">
-                        @foreach($shoppingList as $index => $ingredient)
+                        @foreach ($shoppingList as $index => $ingredient)
                             <div class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md print:hover:bg-transparent">
                                 <div class="flex-shrink-0">
-                                    <input type="checkbox" 
+                                    <input type="checkbox"
                                            wire:click="toggleItem({{ $index }})"
                                            {{ isset($checkedItems[$index]) ? 'checked' : '' }}
                                            class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500" />
@@ -55,12 +55,12 @@
                                     <span class="font-medium">{{ $ingredient['name'] }}</span>
                                     <span class="text-gray-600 ml-2">
                                         {{ number_format($ingredient['quantity'], 2) }}
-                                        @if($ingredient['unit'])
+                                        @if ($ingredient['unit'])
                                             {{ $ingredient['unit'] }}
                                         @endif
                                     </span>
-                                    @if(isset($ingredient['in_stock']) && $ingredient['in_stock'] !== null)
-                                        @if(!$ingredient['needs_purchase'])
+                                    @if (isset($ingredient['in_stock']) && $ingredient['in_stock'] !== null)
+                                        @if (!$ingredient['needs_purchase'])
                                             <span class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
                                                 ✓ In stock ({{ number_format($ingredient['in_stock'], 1) }} {{ $ingredient['stock_unit'] }})
                                             </span>
@@ -75,7 +75,7 @@
                         @endforeach
                     </div>
 
-                    @if($shoppingList->count() > 0)
+                    @if ($shoppingList->count() > 0)
                         <div class="mt-6 pt-4 border-t border-gray-200 print:border-gray-400">
                             <div class="flex justify-between text-sm text-gray-600">
                                 <span>Total items: {{ $shoppingList->count() }}</span>
@@ -87,7 +87,7 @@
                     @endif
                 </div>
             </div>
-        @elseif($startDate && $endDate)
+        @elseif ($startDate && $endDate)
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="text-center py-8 text-gray-500">
                     <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,31 +107,31 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            
+
             .print\\:hidden {
                 display: none !important;
             }
-            
+
             .print\\:shadow-none {
                 box-shadow: none !important;
             }
-            
+
             .print\\:rounded-none {
                 border-radius: 0 !important;
             }
-            
+
             .print\\:p-4 {
                 padding: 1rem !important;
             }
-            
+
             .print\\:mb-4 {
                 margin-bottom: 1rem !important;
             }
-            
+
             .print\\:border-gray-400 {
                 border-color: #9ca3af !important;
             }
-            
+
             .print\\:hover\\:bg-transparent:hover {
                 background-color: transparent !important;
             }
@@ -139,7 +139,7 @@
             #shopping-list {
                 page-break-inside: avoid;
             }
-            
+
             .space-y-2 > * + * {
                 page-break-inside: avoid;
             }

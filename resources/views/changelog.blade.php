@@ -29,7 +29,7 @@
 </section>
 
 <div class="cl-container">
-    @foreach($entries as $entry)
+    @foreach ($entries as $entry)
     <div class="cl-entry">
         <div class="cl-meta">
             <span class="cl-version">v{{ $entry['version'] }}</span>
@@ -37,7 +37,7 @@
         </div>
         <h2>{{ $entry['title'] }}</h2>
         <ul>
-            @foreach($entry['items'] as $item)
+            @foreach ($entry['items'] as $item)
             <li>{{ $item }}</li>
             @endforeach
         </ul>

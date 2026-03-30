@@ -36,7 +36,7 @@
 
     <!-- Background image with Ken Burns -->
     <div class="absolute inset-0" style="animation: kenBurns 20s ease-in-out infinite alternate;">
-        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80" 
+        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80"
              alt="" class="w-full h-full object-cover">
     </div>
 
@@ -120,7 +120,7 @@
 
         <!-- Right: Image -->
         <div class="relative overflow-hidden hidden md:block">
-            <img src="https://images.unsplash.com/photo-1486427944544-d2c246c4df4e?w=1200&q=80" 
+            <img src="https://images.unsplash.com/photo-1486427944544-d2c246c4df4e?w=1200&q=80"
                  alt="" class="w-full h-full object-cover" style="animation: kenBurns 25s ease-in-out infinite alternate;">
             <!-- Overlay -->
             <div class="absolute inset-0" style="background: linear-gradient(to right, var(--warm-900) 0%, transparent 30%);"></div>
@@ -161,7 +161,7 @@
         <div class="grid md:grid-cols-3 gap-6" style="min-height: 500px;">
             <!-- Large featured -->
             <div class="md:col-span-2 md:row-span-2 group rounded-3xl overflow-hidden relative cursor-pointer" style="animation: scaleIn 0.8s ease-out 0.3s both;">
-                <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=1200&q=80" 
+                <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=1200&q=80"
                      alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" style="min-height: 500px;">
                 <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(28,20,16,0.8) 0%, transparent 50%);"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12">
@@ -173,7 +173,7 @@
 
             <!-- Top right -->
             <div class="group rounded-3xl overflow-hidden relative cursor-pointer" style="animation: scaleIn 0.8s ease-out 0.5s both;">
-                <img src="https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80" 
+                <img src="https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80"
                      alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" style="min-height: 240px;">
                 <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(28,20,16,0.8) 0%, transparent 60%);"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-6">
@@ -184,7 +184,7 @@
 
             <!-- Bottom right -->
             <div class="group rounded-3xl overflow-hidden relative cursor-pointer" style="animation: scaleIn 0.8s ease-out 0.7s both;">
-                <img src="https://images.unsplash.com/photo-1587668178277-295251f900ce?w=600&q=80" 
+                <img src="https://images.unsplash.com/photo-1587668178277-295251f900ce?w=600&q=80"
                      alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" style="min-height: 240px;">
                 <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(28,20,16,0.8) 0%, transparent 60%);"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-6">
@@ -214,7 +214,7 @@
 
     <!-- Simulated video with moving gradient (real site would use <video>) -->
     <div class="absolute inset-0">
-        <img src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=1920&q=80" 
+        <img src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=1920&q=80"
              alt="" class="w-full h-full object-cover" style="animation: kenBurns 30s ease-in-out infinite alternate;">
     </div>
     <div class="absolute inset-0" style="background: rgba(28,20,16,0.65);"></div>
@@ -284,12 +284,12 @@
             <div class="md:col-span-7 relative" style="min-height: 600px;">
                 <!-- Main image -->
                 <div class="relative z-10 rounded-2xl overflow-hidden shadow-2xl" style="width: 85%; margin-left: auto; animation: scaleIn 1s ease-out 0.3s both;">
-                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=900&q=80" 
+                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=900&q=80"
                          alt="" class="w-full h-auto object-cover" style="aspect-ratio: 3/4;">
                 </div>
                 <!-- Offset accent image -->
                 <div class="absolute bottom-0 left-0 z-20 rounded-2xl overflow-hidden shadow-2xl" style="width: 45%; animation: scaleIn 1s ease-out 0.6s both;">
-                    <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&q=80" 
+                    <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&q=80"
                          alt="" class="w-full h-auto object-cover" style="aspect-ratio: 1/1;">
                 </div>
                 <!-- Decorative frame -->
@@ -333,7 +333,7 @@
         <div class="grid md:grid-cols-3 gap-6 fade-up-3">
             <div class="group cursor-pointer">
                 <div class="rounded-xl overflow-hidden mb-4 aspect-[4/5]">
-                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80" 
+                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80"
                          alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                 </div>
                 <span class="uppercase tracking-[0.2em] text-xs" style="color: var(--warm-500);">Fresh Daily</span>
@@ -341,7 +341,7 @@
             </div>
             <div class="group cursor-pointer md:-mt-12">
                 <div class="rounded-xl overflow-hidden mb-4 aspect-[4/5]">
-                    <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&q=80" 
+                    <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&q=80"
                          alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                 </div>
                 <span class="uppercase tracking-[0.2em] text-xs" style="color: var(--warm-500);">Signature</span>
@@ -349,7 +349,7 @@
             </div>
             <div class="group cursor-pointer">
                 <div class="rounded-xl overflow-hidden mb-4 aspect-[4/5]">
-                    <img src="https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80" 
+                    <img src="https://images.unsplash.com/photo-1612203985729-70726954388c?w=600&q=80"
                          alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                 </div>
                 <span class="uppercase tracking-[0.2em] text-xs" style="color: var(--warm-500);">Weekend Special</span>
@@ -375,7 +375,7 @@
 
     <!-- Full background -->
     <div class="absolute inset-0">
-        <img src="https://images.unsplash.com/photo-1486427944544-d2c246c4df4e?w=1920&q=80" 
+        <img src="https://images.unsplash.com/photo-1486427944544-d2c246c4df4e?w=1920&q=80"
              alt="" class="w-full h-full object-cover">
     </div>
 
@@ -404,7 +404,7 @@
                 <!-- Featured product card floating -->
                 <div class="rounded-2xl overflow-hidden shadow-2xl" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(212,146,12,0.2); backdrop-filter: blur(12px);">
                     <div class="flex gap-6 p-6">
-                        <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=200&q=80" 
+                        <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=200&q=80"
                              alt="" class="w-28 h-28 rounded-xl object-cover">
                         <div class="flex flex-col justify-center">
                             <span class="text-xs uppercase tracking-wider mb-1" style="color: var(--warm-500);">Today's Special</span>
@@ -428,7 +428,7 @@
 
     <!-- Subtle background image, very faded -->
     <div class="absolute inset-0 opacity-10">
-        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80" 
+        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80"
              alt="" class="w-full h-full object-cover">
     </div>
 

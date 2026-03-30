@@ -19,8 +19,8 @@
 
         <div style="margin-top: 16px;">
             <div style="font-size: 0.75rem; color: #6b4c3b; margin-bottom: 8px; font-weight: 600;">Recent Redemptions</div>
-            @if(count($recent) > 0)
-                @foreach($recent as $txn)
+            @if (count($recent) > 0)
+                @foreach ($recent as $txn)
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #fdf8f2; border-radius: 6px; margin-bottom: 6px; font-size: 0.8rem;">
                         <div>
                             <span style="font-weight: 600; color: #3d2314;">{{ $txn['code'] }}</span>

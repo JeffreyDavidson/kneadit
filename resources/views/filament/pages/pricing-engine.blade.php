@@ -7,7 +7,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Product</label>
                     <select wire:model.live="selectedProductId" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                         <option value="">— Select a product —</option>
-                        @foreach($this->products as $product)
+                        @foreach ($this->products as $product)
                             <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->category?->name ?? 'Uncategorized' }})</option>
                         @endforeach
                     </select>
@@ -61,7 +61,7 @@
         </x-filament::section>
 
         {{-- Results --}}
-        @if($result)
+        @if ($result)
             <x-filament::section heading="Pricing Breakdown">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {{-- Cost Breakdown --}}
@@ -108,7 +108,7 @@
 
                     {{-- Comparison & Bulk --}}
                     <div class="space-y-3">
-                        @if($result['current_price'] !== null)
+                        @if ($result['current_price'] !== null)
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Current Price Comparison</h3>
                             <div class="text-center">
                                 <p class="text-2xl font-bold">${{ number_format($result['current_price'], 2) }}</p>
@@ -116,9 +116,9 @@
                                     $diff = $result['recommended_price'] - $result['current_price'];
                                 @endphp
                                 <p class="text-sm mt-1 {{ $diff > 0 ? 'text-amber-600' : 'text-green-600' }}">
-                                    @if($diff > 0)
+                                    @if ($diff > 0)
                                         Consider raising by ${{ number_format(abs($diff), 2) }}
-                                    @elseif($diff < 0)
+                                    @elseif ($diff < 0)
                                         Currently ${{ number_format(abs($diff), 2) }} above suggested
                                     @else
                                         Right on target!
@@ -129,7 +129,7 @@
 
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Bulk Pricing</h3>
                         <div class="space-y-2 text-sm">
-                            @foreach($result['bulk'] as $bulk)
+                            @foreach ($result['bulk'] as $bulk)
                                 <div class="flex justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">{{ $bulk['label'] }}</span>
                                     <span class="font-medium">${{ number_format($bulk['unit_price'], 2) }}/ea (${{ number_format($bulk['total'], 2) }})</span>

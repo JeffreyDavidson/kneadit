@@ -27,6 +27,13 @@ class MenuController extends Controller
         $heroEyebrow = str_replace('{{store_name}}', $storeName, $content['hero_eyebrow'] ?? $storeName);
         $ctaDesc = str_replace('{{lead_time}}', settings('order_lead_time_hours', '24'), $content['cta_description'] ?? 'All orders need ' . settings('order_lead_time_hours', '24') . ' hours notice. Place yours now.');
 
-        return view('menu', compact('categories', 'storeName', 'heroImageUrl', 'content', 'heroEyebrow', 'ctaDesc'));
+        return view('menu', [
+            'categories' => $categories,
+            'storeName' => $storeName,
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+            'heroEyebrow' => $heroEyebrow,
+            'ctaDesc' => $ctaDesc,
+        ]);
     }
 }

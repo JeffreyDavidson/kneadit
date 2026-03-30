@@ -24,11 +24,11 @@
 
     {{-- Pending Invitations --}}
     @php $invitations = $this->getPendingInvitations(); @endphp
-    @if($invitations->count() > 0)
+    @if ($invitations->count() > 0)
         <x-filament::section>
             <x-slot name="heading">Pending Invitations</x-slot>
             <div class="divide-y dark:divide-gray-700">
-                @foreach($invitations as $invitation)
+                @foreach ($invitations as $invitation)
                     <div class="flex items-center justify-between py-3">
                         <div>
                             <p class="font-medium text-gray-900 dark:text-white">{{ $invitation->email }}</p>
@@ -49,14 +49,14 @@
     <x-filament::section>
         <x-slot name="heading">Team Members</x-slot>
         <div class="divide-y dark:divide-gray-700">
-            @foreach($this->getTeamMembers() as $member)
+            @foreach ($this->getTeamMembers() as $member)
                 <div class="flex items-center justify-between py-3">
                     <div>
                         <p class="font-medium text-gray-900 dark:text-white">{{ $member->name }}</p>
                         <p class="text-sm text-gray-500">{{ $member->email }} · Joined {{ $member->created_at->format('M j, Y') }}</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        @if($member->id !== auth()->id())
+                        @if ($member->id !== auth()->id())
                             <select wire:change="changeRole({{ $member->id }}, $event.target.value)"
                                 class="rounded-lg border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                                 <option value="owner" @selected($member->role === 'owner')>Owner</option>

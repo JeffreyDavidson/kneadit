@@ -26,10 +26,16 @@ class OrderController extends Controller
         $paymentMethods = json_decode(settings('payment_methods_accepted', '[]'), true);
         $freeDeliveryMin = settings('free_delivery_minimum', '50');
 
-        return view('order', compact(
-            'categories', 'leadTimeHours', 'leadTimeDays', 'deliveryEnabled',
-            'deliveryTiers', 'allergyDisclaimer', 'paymentMethods', 'freeDeliveryMin',
-        ));
+        return view('order', [
+            'categories' => $categories,
+            'leadTimeHours' => $leadTimeHours,
+            'leadTimeDays' => $leadTimeDays,
+            'deliveryEnabled' => $deliveryEnabled,
+            'deliveryTiers' => $deliveryTiers,
+            'allergyDisclaimer' => $allergyDisclaimer,
+            'paymentMethods' => $paymentMethods,
+            'freeDeliveryMin' => $freeDeliveryMin,
+        ]);
     }
 
     /**
@@ -81,6 +87,11 @@ class OrderController extends Controller
             ['title' => 'Delivery', 'description_delivery' => 'We\'ll deliver your fresh items right to your door.', 'description_pickup' => 'Your items will be warm and ready for you to pick up.'],
         ];
 
-        return view('order-confirmation', compact('order', 'heroImageUrl', 'content', 'journeySteps'));
+        return view('order-confirmation', [
+            'order' => $order,
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+            'journeySteps' => $journeySteps,
+        ]);
     }
 }

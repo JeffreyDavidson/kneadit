@@ -43,13 +43,13 @@
             <h3 class="text-base font-semibold text-gray-900 dark:text-white">Your Referrals</h3>
         </div>
         @php $referrals = $this->getReferrals(); @endphp
-        @if($referrals->isEmpty())
+        @if ($referrals->isEmpty())
             <div class="px-6 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
                 No referrals yet. Share your link to get started!
             </div>
         @else
             <div class="divide-y divide-gray-200 dark:divide-gray-700">
-                @foreach($referrals as $referral)
+                @foreach ($referrals as $referral)
                     <div class="flex items-center justify-between px-6 py-3">
                         <div>
                             <p class="text-sm font-medium text-gray-900 dark:text-white">

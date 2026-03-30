@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="space-y-3 mb-6">
-                    @foreach($order->orderItems as $item)
+                    @foreach ($order->orderItems as $item)
                     <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid rgba(139,104,68,0.12);">
                         <div>
                             <span class="font-medium" style="color: var(--warm-200);">{{ $item->product->name ?? 'Product' }}</span>
@@ -67,15 +67,15 @@
                         <span style="color: var(--warm-500);">Subtotal</span>
                         <span style="color: var(--warm-300);">${{ number_format($order->subtotal, 2) }}</span>
                     </div>
-                    @if($order->delivery_fee > 0)
+                    @if ($order->delivery_fee > 0)
                     <div class="flex justify-between">
                         <span style="color: var(--warm-500);">Delivery Fee</span>
                         <span style="color: var(--warm-300);">${{ number_format($order->delivery_fee, 2) }}</span>
                     </div>
                     @endif
-                    @if($order->discount_amount > 0)
+                    @if ($order->discount_amount > 0)
                     <div class="flex justify-between" style="color: #4ade80;">
-                        <span>Discount @if($order->coupon)({{ $order->coupon->code }})@endif</span>
+                        <span>Discount @if ($order->coupon)({{ $order->coupon->code }})@endif</span>
                         <span>-${{ number_format($order->discount_amount, 2) }}</span>
                     </div>
                     @endif
@@ -100,7 +100,7 @@
                         <span class="block text-xs uppercase tracking-wider font-medium mb-1" style="color: var(--warm-500);">Customer</span>
                         <p style="color: var(--warm-200);">{{ $order->customer->name }}</p>
                         <p class="text-sm" style="color: var(--warm-400);">{{ $order->customer->email }}</p>
-                        @if($order->customer->phone)
+                        @if ($order->customer->phone)
                         <p class="text-sm" style="color: var(--warm-400);">{{ $order->customer->phone }}</p>
                         @endif
                     </div>
@@ -108,19 +108,19 @@
                     <div>
                         <span class="block text-xs uppercase tracking-wider font-medium mb-1" style="color: var(--warm-500);">Date & Time</span>
                         <p style="color: var(--warm-200);">{{ \Carbon\Carbon::parse($order->delivery_date)->format('l, F j, Y') }}</p>
-                        @if($order->delivery_time)
+                        @if ($order->delivery_time)
                         <p class="text-sm" style="color: var(--warm-400);">{{ $order->delivery_time }}</p>
                         @endif
                     </div>
 
-                    @if($order->delivery_type->value === 'delivery' && $order->delivery_address)
+                    @if ($order->delivery_type->value === 'delivery' && $order->delivery_address)
                     <div>
                         <span class="block text-xs uppercase tracking-wider font-medium mb-1" style="color: var(--warm-500);">Delivery Address</span>
                         <p style="color: var(--warm-200);">{{ $order->delivery_address }}</p>
                     </div>
                     @endif
 
-                    @if($order->notes)
+                    @if ($order->notes)
                     <div>
                         <span class="block text-xs uppercase tracking-wider font-medium mb-1" style="color: var(--warm-500);">Special Instructions</span>
                         <p class="text-sm" style="color: var(--warm-300);">{{ $order->notes }}</p>
@@ -145,21 +145,21 @@
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
-                @foreach($journeySteps as $stepIndex => $step)
+                @foreach ($journeySteps as $stepIndex => $step)
                 <div class="text-center">
                     <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background: rgba(212,146,12,0.15); border: 1.5px solid rgba(212,146,12,0.3);">
                         <span class="font-display text-xl font-bold" style="color: var(--warm-400);">{{ $stepIndex + 1 }}</span>
                     </div>
                     <h3 class="font-display text-lg font-semibold mb-2" style="color: var(--warm-200);">
-                        @if(isset($step['description_delivery']) || isset($step['description_pickup']))
+                        @if (isset($step['description_delivery']) || isset($step['description_pickup']))
                             {{ $order->delivery_type->value === 'delivery' ? 'Delivery' : 'Pickup' }}
                         @else
                             {{ $step['title'] }}
                         @endif
                     </h3>
                     <p class="text-sm" style="color: var(--warm-500);">
-                        @if(isset($step['description_delivery']) || isset($step['description_pickup']))
-                            @if($order->delivery_type->value === 'delivery')
+                        @if (isset($step['description_delivery']) || isset($step['description_pickup']))
+                            @if ($order->delivery_type->value === 'delivery')
                                 {{ $step['description_delivery'] ?? 'We\'ll deliver your fresh items right to your door.' }}
                             @else
                                 {{ $step['description_pickup'] ?? 'Your items will be warm and ready for you to pick up.' }}

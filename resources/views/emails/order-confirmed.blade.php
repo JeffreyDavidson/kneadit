@@ -21,7 +21,7 @@
 <div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
     <div style="font-size: 18px; font-weight: 700; color: {{ $secondaryColor }}; margin-bottom: 15px;">Order #{{ $order->order_number }}</div>
 
-    @foreach($orderItems as $item)
+    @foreach ($orderItems as $item)
         <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8; display: flex; justify-content: space-between;">
             <span style="color: {{ $secondaryColor }};">{{ $item->product->name }} × {{ $item->quantity }}</span>
             <span style="font-weight: 600; color: {{ $secondaryColor }};">${{ number_format($item->unit_price * $item->quantity, 2) }}</span>
@@ -29,7 +29,7 @@
     @endforeach
 
     <div style="margin-top: 12px; padding-top: 10px; border-top: 2px solid {{ $primaryColor }}; text-align: right;">
-        @if($order->delivery_fee > 0)
+        @if ($order->delivery_fee > 0)
             <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Subtotal: ${{ number_format($order->subtotal, 2) }}</div>
             <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Delivery Fee: ${{ number_format($order->delivery_fee, 2) }}</div>
         @endif
@@ -37,7 +37,7 @@
     </div>
 </div>
 
-@if($order->delivery_address)
+@if ($order->delivery_address)
     <div style="background-color: #fef9ef; border-radius: 8px; padding: 15px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
         <p style="margin: 0 0 5px; font-weight: 600;">🚚 Delivery Details</p>
         <p style="margin: 0 0 3px;"><strong>Address:</strong> {{ $order->delivery_address }}</p>
@@ -53,7 +53,7 @@
     </div>
 @endif
 
-@if($order->notes)
+@if ($order->notes)
     <div style="background-color: #fff9e6; border-radius: 6px; padding: 12px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
         <p style="margin: 0; font-size: 14px;">📝 <strong>Notes:</strong> {{ $order->notes }}</p>
     </div>
@@ -64,10 +64,10 @@
 </div>
 
 
-@if(!empty($emailPolicies))
+@if (!empty($emailPolicies))
 <div style="background-color: #f9f6f1; border-radius: 6px; padding: 15px; margin: 20px 0 20px; border-top: 2px solid {{ $primaryColor }};">
     <p style="margin: 0 0 10px; font-weight: 700; font-size: 14px; color: {{ $secondaryColor }};">Order Terms</p>
-    @foreach($emailPolicies as $label => $text)
+    @foreach ($emailPolicies as $label => $text)
     <p style="margin: 0 0 6px; font-size: 12px; color: #555;"><strong>{{ $label }}:</strong> {{ $text }}</p>
     @endforeach
 </div>

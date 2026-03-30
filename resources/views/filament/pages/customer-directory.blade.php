@@ -44,7 +44,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <input 
+                        <input
                             wire:model.live="search"
                             id="search"
                             class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
@@ -72,8 +72,8 @@
 
                 <!-- Customer Rows -->
                 <div class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    @forelse($customers as $customer)
-                        <div 
+                    @forelse ($customers as $customer)
+                        <div
                             @click="openCustomerDetails({{ $customer['id'] }})"
                             class="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
                         >
@@ -115,7 +115,7 @@
                             </svg>
                             <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No customers found</h3>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                @if($search)
+                                @if ($search)
                                     Try adjusting your search terms.
                                 @else
                                     Customers will appear here once orders are placed.
@@ -128,30 +128,30 @@
         </div>
 
         <!-- Slide-over panel -->
-        <div 
-            x-show="showCustomerDetails" 
-            x-transition:enter="transform transition ease-in-out duration-500" 
-            x-transition:enter-start="translate-x-full" 
-            x-transition:enter-end="translate-x-0" 
-            x-transition:leave="transform transition ease-in-out duration-500" 
-            x-transition:leave-start="translate-x-0" 
+        <div
+            x-show="showCustomerDetails"
+            x-transition:enter="transform transition ease-in-out duration-500"
+            x-transition:enter-start="translate-x-full"
+            x-transition:enter-end="translate-x-0"
+            x-transition:leave="transform transition ease-in-out duration-500"
+            x-transition:leave-start="translate-x-0"
             x-transition:leave-end="translate-x-full"
             class="fixed inset-0 overflow-hidden z-50"
             style="display: none;"
         >
             <div class="absolute inset-0 overflow-hidden">
-                <div 
+                <div
                     @click="showCustomerDetails = false"
                     x-show="showCustomerDetails"
-                    x-transition:enter="ease-in-out duration-500" 
-                    x-transition:enter-start="opacity-0" 
-                    x-transition:enter-end="opacity-100" 
-                    x-transition:leave="ease-in-out duration-500" 
-                    x-transition:leave-start="opacity-100" 
+                    x-transition:enter="ease-in-out duration-500"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="ease-in-out duration-500"
+                    x-transition:leave-start="opacity-100"
                     x-transition:leave-end="opacity-0"
                     class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
                 ></div>
-                
+
                 <section class="absolute inset-y-0 right-0 pl-10 max-w-full flex">
                     <div class="relative w-screen max-w-2xl">
                         <div class="h-full flex flex-col bg-white dark:bg-gray-800 shadow-xl overflow-y-scroll">
@@ -159,7 +159,7 @@
                             <div class="px-4 py-6 bg-primary-600 sm:px-6">
                                 <div class="flex items-center justify-between">
                                     <h2 class="text-lg font-medium text-white" x-text="selectedCustomer?.name || 'Customer Details'"></h2>
-                                    <button 
+                                    <button
                                         @click="showCustomerDetails = false"
                                         class="ml-3 h-6 w-6 text-primary-200 hover:text-white transition-colors"
                                     >
@@ -237,7 +237,7 @@
                                                             <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                                                                 :class="{
                                                                     'bg-yellow-100 text-yellow-800': order.status === 'Pending',
-                                                                    'bg-blue-100 text-blue-800': order.status === 'Confirmed', 
+                                                                    'bg-blue-100 text-blue-800': order.status === 'Confirmed',
                                                                     'bg-orange-100 text-orange-800': order.status === 'Baking',
                                                                     'bg-green-100 text-green-800': order.status === 'Ready',
                                                                     'bg-purple-100 text-purple-800': order.status === 'Delivered',
@@ -258,12 +258,12 @@
                                     <!-- Notes Section -->
                                     <div>
                                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Customer Notes</h3>
-                                        
+
                                         <!-- Add Note Form -->
                                         <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                             <form wire:submit.prevent="addNote(selectedCustomer.id)" @submit="addNoteSubmitted">
                                                 {{ $this->noteForm }}
-                                                <button 
+                                                <button
                                                     type="submit"
                                                     class="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
                                                 >

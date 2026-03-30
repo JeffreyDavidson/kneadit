@@ -20,7 +20,7 @@
         </div>
     </x-admin.page-banner>
 
-    @if($customers->isEmpty())
+    @if ($customers->isEmpty())
         <x-admin.empty-state
             icon="🎉"
             title="All customers are active!"
@@ -46,7 +46,7 @@
                     <th style="text-align: right;">Total Spent</th>
                     <th style="text-align: right;">Action</th>
                 </x-slot:head>
-                @foreach($customers as $customer)
+                @foreach ($customers as $customer)
                     @php
                         $urgency = $customer->days_since >= 120 ? 'cancelled' : ($customer->days_since >= 90 ? 'pending' : 'confirmed');
                     @endphp

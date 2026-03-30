@@ -72,98 +72,98 @@ Route::middleware([
     // to avoid overriding the central domain landing page.
 
     // PWA routes (outside storefront-enabled check so manifest/SW always work)
-    Route::get('/manifest.json', ManifestController::class)->name('manifest');
+    Route::get('manifest.json', ManifestController::class)->name('manifest');
     // Service worker removed — was caching stale pages after deploys
-    Route::get('/icons/icon-{size}.png', AppIconController::class)->name('app.icon');
+    Route::get('icons/icon-{size}.png', AppIconController::class)->name('app.icon');
 
     // Impersonation token consumer (from central admin)
-    Route::get('/impersonate/{token}', ConsumeImpersonationController::class)
+    Route::get('impersonate/{token}', ConsumeImpersonationController::class)
         ->name('impersonate.consume');
 
     // Stripe Connect OAuth
-    Route::get('/stripe/connect', StripeConnectController::class)
+    Route::get('stripe/connect', StripeConnectController::class)
         ->middleware('auth')
         ->name('stripe.connect');
 
     // Driver view (no auth, shared via link)
     Route::prefix('driver')->name('driver.')->group(function () {
         Route::get('/', [DriverController::class, 'index'])->name('index');
-        Route::post('/{order}/delivered', [DriverController::class, 'update'])->name('delivered')->middleware('auth');
+        Route::post('{order}/delivered', [DriverController::class, 'update'])->name('delivered')->middleware('auth');
     });
 
     // Staff invitation routes (outside auth & storefront middleware)
-    Route::get('/invite/{token}', [InvitationController::class, 'show'])->name('invitation.show');
-    Route::post('/invite/{token}', [InvitationController::class, 'store'])->name('invitation.accept')->middleware('throttle:5,1');
+    Route::get('invite/{token}', [InvitationController::class, 'show'])->name('invitation.show');
+    Route::post('invite/{token}', [InvitationController::class, 'store'])->name('invitation.accept')->middleware('throttle:5,1');
 
     // Storefront routes — only accessible when storefront is enabled
     // When disabled, these redirect to the external website or show a minimal page
     Route::middleware([EnsureStorefrontEnabled::class, TrackPageView::class])->group(function () {
-        Route::get('/menu', MenuController::class)->name('storefront.menu');
-        Route::get('/order', [OrderController::class, 'index'])->name('order.create');
-        Route::post('/order', [OrderController::class, 'store'])->name('order.store')->middleware('throttle:10,1');
-        Route::get('/order/confirmation/{order}', [OrderController::class, 'show'])->name('order.confirmation');
-        Route::get('/order/stripe/success/{order}', StripeSuccessController::class)->name('order.stripe.success');
-        Route::get('/order/stripe/cancel/{order}', StripeCancelController::class)->name('order.stripe.cancel');
-        Route::get('/about', AboutController::class)->name('storefront.about');
-        Route::get('/reviews', ReviewsController::class)->name('storefront.reviews');
-        Route::get('/gallery', [GalleryController::class, 'show'])->name('storefront.gallery');
-        Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.submit')->middleware('throttle:10,1');
-        Route::get('/track', [TrackingController::class, 'show'])->name('order.track');
-        Route::post('/track', [TrackingController::class, 'store'])->name('order.track.lookup')->middleware('throttle:10,1');
+        Route::get('menu', MenuController::class)->name('storefront.menu');
+        Route::get('order', [OrderController::class, 'index'])->name('order.create');
+        Route::post('order', [OrderController::class, 'store'])->name('order.store')->middleware('throttle:10,1');
+        Route::get('order/confirmation/{order}', [OrderController::class, 'show'])->name('order.confirmation');
+        Route::get('order/stripe/success/{order}', StripeSuccessController::class)->name('order.stripe.success');
+        Route::get('order/stripe/cancel/{order}', StripeCancelController::class)->name('order.stripe.cancel');
+        Route::get('about', AboutController::class)->name('storefront.about');
+        Route::get('reviews', ReviewsController::class)->name('storefront.reviews');
+        Route::get('gallery', [GalleryController::class, 'show'])->name('storefront.gallery');
+        Route::post('gallery', [GalleryController::class, 'store'])->name('gallery.submit')->middleware('throttle:10,1');
+        Route::get('track', [TrackingController::class, 'show'])->name('order.track');
+        Route::post('track', [TrackingController::class, 'store'])->name('order.track.lookup')->middleware('throttle:10,1');
 
         // Order messages
-        Route::get('/order/{order}/messages', [MessageController::class, 'show'])->name('order.messages');
-        Route::post('/order/{order}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:10,1');
-        Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
-        Route::post('/contact', [ContactController::class, 'store'])->name('contact.store')->middleware('throttle:10,1');
+        Route::get('order/{order}/messages', [MessageController::class, 'show'])->name('order.messages');
+        Route::post('order/{order}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:10,1');
+        Route::get('contact', [ContactController::class, 'show'])->name('contact.show');
+        Route::post('contact', [ContactController::class, 'store'])->name('contact.store')->middleware('throttle:10,1');
 
         // Reorder data (AJAX)
-        Route::get('/order/reorder/{order}', ReorderController::class)->name('order.reorder');
+        Route::get('order/reorder/{order}', ReorderController::class)->name('order.reorder');
 
         // Capacity check (AJAX)
-        Route::get('/capacity/check/{date}', CapacityController::class)->name('capacity.check');
+        Route::get('capacity/check/{date}', CapacityController::class)->name('capacity.check');
 
         // Availability for next 30 days (scheduling integration)
-        Route::get('/availability', AvailabilityController::class)->name('order.availability');
+        Route::get('availability', AvailabilityController::class)->name('order.availability');
 
         // Loyalty rewards
-        Route::get('/rewards', [LoyaltyController::class, 'show'])->name('storefront.rewards');
-        Route::post('/rewards/check', [LoyaltyController::class, 'store'])->name('rewards.check')->middleware('throttle:10,1');
+        Route::get('rewards', [LoyaltyController::class, 'show'])->name('storefront.rewards');
+        Route::post('rewards/check', [LoyaltyController::class, 'store'])->name('rewards.check')->middleware('throttle:10,1');
 
         // Gift Cards
-        Route::get('/gift-cards', ShowGiftCardsController::class)->name('storefront.gift-cards');
-        Route::post('/gift-cards/purchase', PurchaseGiftCardController::class)->name('gift-cards.purchase')->middleware('throttle:5,1');
-        Route::post('/gift-cards/balance', CheckGiftCardBalanceController::class)->name('gift-cards.balance')->middleware('throttle:10,1');
+        Route::get('gift-cards', ShowGiftCardsController::class)->name('storefront.gift-cards');
+        Route::post('gift-cards/purchase', PurchaseGiftCardController::class)->name('gift-cards.purchase')->middleware('throttle:5,1');
+        Route::post('gift-cards/balance', CheckGiftCardBalanceController::class)->name('gift-cards.balance')->middleware('throttle:10,1');
 
         // Coupon validation (AJAX)
-        Route::post('/coupon/apply', ApplyCouponController::class)->name('coupon.apply')->middleware('throttle:10,1');
+        Route::post('coupon/apply', ApplyCouponController::class)->name('coupon.apply')->middleware('throttle:10,1');
 
         // Gift card validation (AJAX)
-        Route::post('/gift-card/apply', ApplyGiftCardController::class)->name('gift-card.apply')->middleware('throttle:10,1');
+        Route::post('gift-card/apply', ApplyGiftCardController::class)->name('gift-card.apply')->middleware('throttle:10,1');
 
         // Customer favorites (AJAX)
-        Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.get');
-        Route::post('/favorites/toggle', [FavoriteController::class, 'store'])->name('favorites.toggle')->middleware('throttle:10,1');
+        Route::get('favorites', [FavoriteController::class, 'index'])->name('favorites.get');
+        Route::post('favorites/toggle', [FavoriteController::class, 'store'])->name('favorites.toggle')->middleware('throttle:10,1');
 
         // Catering
-        Route::get('/catering', [CateringController::class, 'show'])->name('storefront.catering');
-        Route::post('/catering', [CateringController::class, 'store'])->name('catering.submit')->middleware('throttle:10,1');
+        Route::get('catering', [CateringController::class, 'show'])->name('storefront.catering');
+        Route::post('catering', [CateringController::class, 'store'])->name('catering.submit')->middleware('throttle:10,1');
 
         // Blog
-        Route::get('/blog', [StorefrontBlogController::class, 'index'])->name('storefront.blog');
-        Route::get('/blog/feed.xml', StorefrontBlogFeedController::class)->name('storefront.blog.feed');
-        Route::get('/blog/{post}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
+        Route::get('blog', [StorefrontBlogController::class, 'index'])->name('storefront.blog');
+        Route::get('blog/feed.xml', StorefrontBlogFeedController::class)->name('storefront.blog.feed');
+        Route::get('blog/{post}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
 
         // Review submission (from email link)
-        Route::get('/review/{order}', [ReviewController::class, 'show'])->name('storefront.submit-review');
-        Route::post('/review/{order}', [ReviewController::class, 'store'])->name('storefront.store-review')->middleware('throttle:10,1');
+        Route::get('review/{order}', [ReviewController::class, 'show'])->name('storefront.submit-review');
+        Route::post('review/{order}', [ReviewController::class, 'store'])->name('storefront.store-review')->middleware('throttle:10,1');
 
         // Surveys
-        Route::get('/survey/{survey}', [SurveyController::class, 'show'])->name('storefront.survey');
-        Route::post('/survey/{survey}', [SurveyController::class, 'store'])->name('survey.submit')->middleware('throttle:10,1');
+        Route::get('survey/{survey}', [SurveyController::class, 'show'])->name('storefront.survey');
+        Route::post('survey/{survey}', [SurveyController::class, 'store'])->name('survey.submit')->middleware('throttle:10,1');
 
         // Product waitlist
-        Route::post('/waitlist/product', ProductWaitlistController::class)->name('product-waitlist.join')->middleware('throttle:10,1');
+        Route::post('waitlist/product', ProductWaitlistController::class)->name('product-waitlist.join')->middleware('throttle:10,1');
     });
 
     // Tenant Storefront API (JSON, no CSRF)
@@ -172,24 +172,24 @@ Route::middleware([
         ->group(function () {
             // Read endpoints — generous limit
             Route::middleware('throttle:60,1')->group(function () {
-                Route::get('/store', StoreInfoController::class);
-                Route::get('/categories', ApiCategoryController::class);
-                Route::get('/products', ApiProductController::class);
-                Route::get('/menu', ApiMenuController::class);
-                Route::get('/capacity/{date}', ApiCapacityController::class);
-                Route::get('/reviews', [ApiReviewController::class, 'index']);
-                Route::get('/gallery', ApiGalleryController::class);
-                Route::get('/favorites', [ApiFavoriteController::class, 'index']);
+                Route::get('store', StoreInfoController::class);
+                Route::get('categories', ApiCategoryController::class);
+                Route::get('products', ApiProductController::class);
+                Route::get('menu', ApiMenuController::class);
+                Route::get('capacity/{date}', ApiCapacityController::class);
+                Route::get('reviews', [ApiReviewController::class, 'index']);
+                Route::get('gallery', ApiGalleryController::class);
+                Route::get('favorites', [ApiFavoriteController::class, 'index']);
             });
 
             // Write endpoints — tighter limit
             Route::middleware('throttle:10,1')->group(function () {
-                Route::post('/orders', ApiOrderController::class);
-                Route::post('/coupon/validate', CouponValidationController::class);
-                Route::post('/reviews', [ApiReviewController::class, 'store']);
-                Route::post('/contact', ApiContactController::class);
-                Route::post('/favorites/toggle', [ApiFavoriteController::class, 'store']);
-                Route::post('/waitlist', ApiWaitlistController::class);
+                Route::post('orders', ApiOrderController::class);
+                Route::post('coupon/validate', CouponValidationController::class);
+                Route::post('reviews', [ApiReviewController::class, 'store']);
+                Route::post('contact', ApiContactController::class);
+                Route::post('favorites/toggle', [ApiFavoriteController::class, 'store']);
+                Route::post('waitlist', ApiWaitlistController::class);
             });
         });
 });

@@ -14,8 +14,8 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div>
                 <div style="font-size: 0.75rem; font-weight: 600; color: #6b4c3b; margin-bottom: 8px;">Coming Soon</div>
-                @if(count($comingSoon) > 0)
-                    @foreach($comingSoon as $item)
+                @if (count($comingSoon) > 0)
+                    @foreach ($comingSoon as $item)
                         <div style="padding: 6px 10px; background: #d4a57420; border-radius: 6px; margin-bottom: 4px; font-size: 0.75rem;">
                             <div style="font-weight: 600; color: #3d2314;">{{ $item['name'] }}</div>
                             <div style="color: #8b6844;">{{ $item['date'] }}</div>
@@ -27,8 +27,8 @@
             </div>
             <div>
                 <div style="font-size: 0.75rem; font-weight: 600; color: #6b4c3b; margin-bottom: 8px;">Ending Soon</div>
-                @if(count($endingSoon) > 0)
-                    @foreach($endingSoon as $item)
+                @if (count($endingSoon) > 0)
+                    @foreach ($endingSoon as $item)
                         <div style="padding: 6px 10px; background: #e8b04a20; border-radius: 6px; margin-bottom: 4px; font-size: 0.75rem;">
                             <div style="font-weight: 600; color: #3d2314;">{{ $item['name'] }}</div>
                             <div style="color: #8b6844;">{{ $item['date'] }}</div>

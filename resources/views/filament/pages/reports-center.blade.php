@@ -12,7 +12,7 @@
 
     {{-- Report Selector --}}
     <div class="no-print grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-        @foreach([
+        @foreach ([
             'sales' => ['Sales Report', 'heroicon-o-currency-dollar'],
             'customers' => ['Customer Report', 'heroicon-o-users'],
             'products' => ['Product Performance', 'heroicon-o-cube'],
@@ -29,7 +29,7 @@
     </div>
 
     {{-- Date Controls --}}
-    @if(in_array($activeReport, ['sales', 'customers', 'products']))
+    @if (in_array($activeReport, ['sales', 'customers', 'products']))
         <div class="no-print flex flex-wrap items-end gap-4 mb-6 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
             <div>
                 <label class="block text-sm font-medium mb-1">Start Date</label>
@@ -45,12 +45,12 @@
         </div>
     @endif
 
-    @if($activeReport === 'financial')
+    @if ($activeReport === 'financial')
         <div class="no-print flex items-end gap-4 mb-6 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
             <div>
                 <label class="block text-sm font-medium mb-1">Year</label>
                 <select wire:model="selectedYear" class="fi-input rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800">
-                    @for($y = now()->year; $y >= now()->year - 5; $y--)
+                    @for ($y = now()->year; $y >= now()->year - 5; $y--)
                         <option value="{{ $y }}">{{ $y }}</option>
                     @endfor
                 </select>
@@ -62,7 +62,7 @@
     @endif
 
     {{-- Action Buttons --}}
-    @if($activeReport && !empty($reportData))
+    @if ($activeReport && !empty($reportData))
         <div class="no-print flex gap-3 mb-6">
             <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition text-sm font-medium">
                 <x-filament::icon icon="heroicon-o-printer" class="w-4 h-4" /> Print
@@ -74,10 +74,10 @@
     @endif
 
     {{-- Report Content --}}
-    @if($activeReport === 'sales' && !empty($reportData))
+    @if ($activeReport === 'sales' && !empty($reportData))
         <div class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                @foreach([
+                @foreach ([
                     ['Total Orders', number_format($reportData['totalOrders'])],
                     ['Total Revenue', '$' . number_format($reportData['totalRevenue'], 2)],
                     ['Avg Order Value', '$' . number_format($reportData['avgOrderValue'], 2)],
@@ -89,11 +89,11 @@
                 @endforeach
             </div>
 
-            @if(!empty($reportData['ordersByStatus']))
+            @if (!empty($reportData['ordersByStatus']))
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                     <h3 class="font-semibold mb-3">Orders by Status</h3>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        @foreach($reportData['ordersByStatus'] as $status => $count)
+                        @foreach ($reportData['ordersByStatus'] as $status => $count)
                             <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg text-center">
                                 <div class="text-lg font-bold">{{ $count }}</div>
                                 <div class="text-sm text-gray-500 capitalize">{{ str_replace('_', ' ', $status) }}</div>
@@ -103,7 +103,7 @@
                 </div>
             @endif
 
-            @if(!empty($reportData['topProducts']))
+            @if (!empty($reportData['topProducts']))
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                     <h3 class="font-semibold mb-3">Top Products</h3>
                     <table class="w-full text-sm">
@@ -113,7 +113,7 @@
                             <th class="text-right py-2">Revenue</th>
                         </tr></thead>
                         <tbody>
-                            @foreach($reportData['topProducts'] as $p)
+                            @foreach ($reportData['topProducts'] as $p)
                                 <tr class="border-b dark:border-gray-800">
                                     <td class="py-2">{{ $p['name'] }}</td>
                                     <td class="text-right py-2">{{ $p['units_sold'] }}</td>
@@ -125,12 +125,12 @@
                 </div>
             @endif
 
-            @if(!empty($reportData['revenueByDay']))
+            @if (!empty($reportData['revenueByDay']))
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                     <h3 class="font-semibold mb-3">Revenue by Day</h3>
                     @php $maxRev = max(array_column($reportData['revenueByDay'], 'revenue')) ?: 1; @endphp
                     <div class="bar-chart pb-6">
-                        @foreach($reportData['revenueByDay'] as $day)
+                        @foreach ($reportData['revenueByDay'] as $day)
                             <div class="bar" style="height: {{ ($day['revenue'] / $maxRev) * 100 }}%"
                                 title="{{ $day['date'] }}: ${{ number_format($day['revenue'], 2) }}">
                                 <span class="bar-label">{{ \Carbon\Carbon::parse($day['date'])->format('m/d') }}</span>
@@ -142,10 +142,10 @@
         </div>
     @endif
 
-    @if($activeReport === 'customers' && !empty($reportData))
+    @if ($activeReport === 'customers' && !empty($reportData))
         <div class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                @foreach([
+                @foreach ([
                     ['New Customers', number_format($reportData['newCustomers'])],
                     ['Repeat Rate', $reportData['repeatRate'] . '%'],
                     ['Active Customers', number_format($reportData['totalCustomersWithOrders'])],
@@ -157,7 +157,7 @@
                 @endforeach
             </div>
 
-            @if(!empty($reportData['topCustomers']))
+            @if (!empty($reportData['topCustomers']))
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                     <h3 class="font-semibold mb-3">Top Customers by Spend</h3>
                     <table class="w-full text-sm">
@@ -168,7 +168,7 @@
                             <th class="text-right py-2">Total Spend</th>
                         </tr></thead>
                         <tbody>
-                            @foreach($reportData['topCustomers'] as $c)
+                            @foreach ($reportData['topCustomers'] as $c)
                                 <tr class="border-b dark:border-gray-800">
                                     <td class="py-2">{{ $c['name'] }}</td>
                                     <td class="py-2 text-gray-500">{{ $c['email'] }}</td>
@@ -181,12 +181,12 @@
                 </div>
             @endif
 
-            @if(!empty($reportData['acquisitionByMonth']))
+            @if (!empty($reportData['acquisitionByMonth']))
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                     <h3 class="font-semibold mb-3">Customer Acquisition by Month</h3>
                     @php $maxAcq = max($reportData['acquisitionByMonth']) ?: 1; @endphp
                     <div class="bar-chart pb-6">
-                        @foreach($reportData['acquisitionByMonth'] as $month => $count)
+                        @foreach ($reportData['acquisitionByMonth'] as $month => $count)
                             <div class="bar" style="height: {{ ($count / $maxAcq) * 100 }}%"
                                 title="{{ $month }}: {{ $count }}">
                                 <span class="bar-label">{{ $month }}</span>
@@ -198,7 +198,7 @@
         </div>
     @endif
 
-    @if($activeReport === 'products' && !empty($reportData))
+    @if ($activeReport === 'products' && !empty($reportData))
         <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
             <h3 class="font-semibold mb-3">Product Performance</h3>
             <div class="overflow-x-auto">
@@ -212,13 +212,13 @@
                         <th class="text-right py-2">Revenue</th>
                     </tr></thead>
                     <tbody>
-                        @foreach($reportData['products'] as $p)
+                        @foreach ($reportData['products'] as $p)
                             <tr class="border-b dark:border-gray-800">
                                 <td class="py-2">{{ $p['name'] }}</td>
                                 <td class="text-right py-2">${{ number_format($p['price'], 2) }}</td>
                                 <td class="text-right py-2">${{ number_format($p['cost'], 2) }}</td>
                                 <td class="text-right py-2">
-                                    @if($p['margin'] !== null)
+                                    @if ($p['margin'] !== null)
                                         <span class="{{ $p['margin'] >= 50 ? 'text-success-600' : ($p['margin'] >= 30 ? 'text-warning-600' : 'text-danger-600') }}">
                                             {{ $p['margin'] }}%
                                         </span>
@@ -236,10 +236,10 @@
         </div>
     @endif
 
-    @if($activeReport === 'financial' && !empty($reportData))
+    @if ($activeReport === 'financial' && !empty($reportData))
         <div class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                @foreach([
+                @foreach ([
                     ['Revenue', '$' . number_format($reportData['totalRevenue'], 2), 'text-success-600'],
                     ['Expenses', '$' . number_format($reportData['totalExpenses'], 2), 'text-danger-600'],
                     ['Profit', '$' . number_format($reportData['profit'], 2), $reportData['profit'] >= 0 ? 'text-success-600' : 'text-danger-600'],
@@ -262,7 +262,7 @@
                         <th class="text-right py-2">Profit</th>
                     </tr></thead>
                     <tbody>
-                        @foreach($reportData['monthly'] as $m)
+                        @foreach ($reportData['monthly'] as $m)
                             <tr class="border-b dark:border-gray-800">
                                 <td class="py-2">{{ $m['month'] }}</td>
                                 <td class="text-right py-2">${{ number_format($m['revenue'], 2) }}</td>
@@ -274,12 +274,12 @@
                 </table>
             </div>
 
-            @if(!empty($reportData['expensesByCategory']))
+            @if (!empty($reportData['expensesByCategory']))
                 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                     <h3 class="font-semibold mb-3">Expenses by Category</h3>
                     <div class="space-y-2">
                         @php $maxExp = max(array_column($reportData['expensesByCategory'], 'amount')) ?: 1; @endphp
-                        @foreach($reportData['expensesByCategory'] as $cat)
+                        @foreach ($reportData['expensesByCategory'] as $cat)
                             <div class="flex items-center gap-3">
                                 <div class="w-32 text-sm truncate">{{ $cat['category'] }}</div>
                                 <div class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-6 overflow-hidden">
@@ -294,10 +294,10 @@
         </div>
     @endif
 
-    @if($activeReport === 'inventory' && !empty($reportData))
+    @if ($activeReport === 'inventory' && !empty($reportData))
         <div class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                @foreach([
+                @foreach ([
                     ['Total Items', $reportData['totalItems']],
                     ['Low Stock', $reportData['lowStockItems']],
                     ['Out of Stock', $reportData['outOfStockItems']],
@@ -322,7 +322,7 @@
                             <th class="text-right py-2">Status</th>
                         </tr></thead>
                         <tbody>
-                            @foreach($reportData['ingredients'] as $i)
+                            @foreach ($reportData['ingredients'] as $i)
                                 <tr class="border-b dark:border-gray-800 {{ $i['is_out'] ? 'bg-danger-50 dark:bg-danger-950' : ($i['is_low'] ? 'bg-warning-50 dark:bg-warning-950' : '') }}">
                                     <td class="py-2">{{ $i['name'] }}</td>
                                     <td class="text-right py-2">{{ $i['current_stock'] }} {{ $i['unit'] }}</td>
@@ -330,9 +330,9 @@
                                     <td class="text-right py-2">{{ $i['daily_usage'] }} {{ $i['unit'] }}</td>
                                     <td class="text-right py-2">{{ $i['days_until_stockout'] !== null ? $i['days_until_stockout'] . ' days' : '—' }}</td>
                                     <td class="text-right py-2">
-                                        @if($i['is_out'])
+                                        @if ($i['is_out'])
                                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300">Out</span>
-                                        @elseif($i['is_low'])
+                                        @elseif ($i['is_low'])
                                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-warning-100 text-warning-700 dark:bg-warning-900 dark:text-warning-300">Low</span>
                                         @else
                                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-700 dark:bg-success-900 dark:text-success-300">OK</span>
@@ -347,7 +347,7 @@
         </div>
     @endif
 
-    @if(!$activeReport)
+    @if (!$activeReport)
         <div class="text-center py-12 text-gray-500">
             <x-filament::icon icon="heroicon-o-chart-pie" class="w-16 h-16 mx-auto mb-4 opacity-30" />
             <p class="text-lg">Select a report above to get started</p>

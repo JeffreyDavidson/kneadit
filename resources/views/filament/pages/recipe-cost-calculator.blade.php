@@ -5,18 +5,18 @@
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-900">Recipe Cost Calculator</h2>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label for="recipe" class="block text-sm font-medium text-gray-700 mb-1">Select Recipe</label>
-                    <select wire:model.live="selectedRecipeId" 
+                    <select wire:model.live="selectedRecipeId"
                             id="recipe"
                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">Choose a recipe...</option>
-                        @foreach($recipes as $recipe)
+                        @foreach ($recipes as $recipe)
                             <option value="{{ $recipe->id }}">
                                 {{ $recipe->name }}
-                                @if($recipe->product)
+                                @if ($recipe->product)
                                     ({{ $recipe->product->name }})
                                 @endif
                             </option>
@@ -24,16 +24,16 @@
                     </select>
                 </div>
 
-                @if($selectedRecipe)
+                @if ($selectedRecipe)
                     <div>
                         <label for="target_margin" class="block text-sm font-medium text-gray-700 mb-1">
                             Target Margin %
                         </label>
-                        <input type="number" 
+                        <input type="number"
                                wire:model.live="targetMarginPercentage"
                                id="target_margin"
-                               step="0.1" 
-                               min="0" 
+                               step="0.1"
+                               min="0"
                                max="100"
                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
                     </div>
@@ -41,12 +41,12 @@
             </div>
         </div>
 
-        @if($selectedRecipe)
+        @if ($selectedRecipe)
             <!-- Recipe Details -->
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-xl font-bold text-gray-900 mb-4">{{ $selectedRecipe->name }}</h3>
-                
-                @if($selectedRecipe->product)
+
+                @if ($selectedRecipe->product)
                     <div class="mb-4 p-4 bg-gray-50 rounded-lg">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                             <div>
@@ -60,7 +60,7 @@
                             <div>
                                 <span class="font-medium text-gray-700">Prep Time:</span>
                                 <p class="text-gray-900">
-                                    {{ $selectedRecipe->prep_time_minutes }} 
+                                    {{ $selectedRecipe->prep_time_minutes }}
                                     {{ $selectedRecipe->prep_time_minutes == 1 ? 'minute' : 'minutes' }}
                                 </p>
                             </div>
@@ -69,7 +69,7 @@
                 @endif
 
                 <!-- Ingredients -->
-                @if($this->getFormattedIngredients()->isNotEmpty())
+                @if ($this->getFormattedIngredients()->isNotEmpty())
                     <div class="mb-6">
                         <h4 class="text-lg font-semibold text-gray-900 mb-3">Ingredients & Costs</h4>
                         <div class="overflow-x-auto">
@@ -91,7 +91,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($this->getFormattedIngredients() as $ingredient)
+                                    @foreach ($this->getFormattedIngredients() as $ingredient)
                                         <tr>
                                             <td class="px-4 py-3 text-sm font-medium text-gray-900">
                                                 {{ $ingredient['name'] }}
@@ -129,7 +129,7 @@
                         </div>
                     </div>
 
-                    @if($selectedRecipe->product)
+                    @if ($selectedRecipe->product)
                         <div class="bg-green-50 rounded-lg p-4">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
@@ -177,7 +177,7 @@
                 </div>
 
                 <!-- Price Comparison -->
-                @if($selectedRecipe->product)
+                @if ($selectedRecipe->product)
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="text-lg font-semibold text-gray-900 mb-3">Price Analysis</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -195,10 +195,10 @@
                                 </p>
                             </div>
                         </div>
-                        
-                        @if(abs($priceDiff) > 0.50)
+
+                        @if (abs($priceDiff) > 0.50)
                             <div class="mt-3 p-3 {{ $priceDiff > 0 ? 'bg-red-100 border border-red-200 text-red-700' : 'bg-green-100 border border-green-200 text-green-700' }} rounded-md">
-                                @if($priceDiff > 0)
+                                @if ($priceDiff > 0)
                                     <p class="text-sm">
                                         💡 Consider increasing the price by ${{ number_format($priceDiff, 2) }} to achieve your target margin of {{ number_format($targetMarginPercentage, 1) }}%.
                                     </p>

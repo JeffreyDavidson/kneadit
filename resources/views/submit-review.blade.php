@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ asset('css/submit-review.css') }}">
 </x-slot:styles>
 
-@if(isset($success) && $success)
+@if (isset($success) && $success)
 {{-- Success State --}}
 <section class="relative overflow-hidden" style="min-height: 80vh;">
     <div class="absolute inset-0">
@@ -60,7 +60,7 @@
         {{-- Order Summary --}}
         <div class="rounded-2xl p-5 mb-8" style="background: white; border: 1px solid var(--warm-200);">
             <span class="block text-xs uppercase tracking-wider font-medium mb-3" style="color: var(--warm-500);">Your Order</span>
-            @foreach($order->orderItems as $item)
+            @foreach ($order->orderItems as $item)
                 <div class="flex justify-between text-sm py-1">
                     <span style="color: var(--warm-700);">{{ $item->quantity }}× {{ $item->product->name ?? 'Item' }}</span>
                     <span style="color: var(--warm-500);">${{ number_format($item->total_price, 2) }}</span>
@@ -75,7 +75,7 @@
             <div class="text-center" x-data="{ rating: {{ $prefilledRating ?? 0 }}, hover: 0 }">
                 <label class="block text-xs uppercase tracking-wider font-medium mb-4" style="color: var(--warm-600);">{{ $content['rating_label'] ?? 'Your Rating' }}</label>
                 <div class="flex gap-3 justify-center mb-2">
-                    @for($i = 1; $i <= 5; $i++)
+                    @for ($i = 1; $i <= 5; $i++)
                         <button type="button"
                             x-on:click="rating = {{ $i }}"
                             x-on:mouseenter="hover = {{ $i }}"

@@ -11,14 +11,14 @@
             <div style="text-align: center;">
                 <div style="font-size: 2rem; font-weight: 700; color: #3d2314;">{{ $avg ?: '—' }}</div>
                 <div style="color: #e8b04a; font-size: 1.1rem; letter-spacing: 2px;">
-                    @for($i = 1; $i <= 5; $i++)
+                    @for ($i = 1; $i <= 5; $i++)
                         {{ $i <= round($avg) ? '★' : '☆' }}
                     @endfor
                 </div>
                 <div style="font-size: 0.75rem; color: #6b4c3b;">{{ $total }} review{{ $total !== 1 ? 's' : '' }}</div>
             </div>
             <div style="flex: 1;">
-                @foreach($dist as $stars => $data)
+                @foreach ($dist as $stars => $data)
                     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px;">
                         <span style="font-size: 0.7rem; color: #6b4c3b; width: 12px; text-align: right;">{{ $stars }}</span>
                         <div style="flex: 1; background: #fdf8f2; border-radius: 999px; height: 8px; overflow: hidden;">
@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        @if($recent)
+        @if ($recent)
             <div style="padding: 12px; background: #fdf8f2; border-radius: 8px; border-left: 3px solid #d4a574;">
                 <div style="font-size: 0.75rem; color: #6b4c3b; margin-bottom: 4px;">
                     {{ $recent->customer_name }} — {{ str_repeat('★', $recent->rating) }}

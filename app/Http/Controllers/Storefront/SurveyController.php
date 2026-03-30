@@ -21,7 +21,12 @@ class SurveyController extends Controller
         $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
         $content = settingsPageContent('survey');
 
-        return view('survey', compact('survey', 'storeName', 'heroImageUrl', 'content'));
+        return view('survey', [
+            'survey' => $survey,
+            'storeName' => $storeName,
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+        ]);
     }
 
     public function store(StoreSurveyResponseRequest $request, Survey $survey, SubmitSurveyResponse $submitResponse): RedirectResponse

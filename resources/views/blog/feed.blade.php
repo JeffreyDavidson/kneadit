@@ -6,16 +6,16 @@
         <description>Latest updates from {{ $storeName }}</description>
         <atom:link href="{{ route('storefront.blog.feed') }}" rel="self" type="application/rss+xml"/>
         <language>en-us</language>
-        @foreach($posts as $post)
+        @foreach ($posts as $post)
         <item>
             <title>{{ htmlspecialchars($post->title, ENT_XML1) }}</title>
             <link>{{ route('storefront.blog.show', $post->slug) }}</link>
             <guid>{{ route('storefront.blog.show', $post->slug) }}</guid>
             <pubDate>{{ $post->published_at->toRfc2822String() }}</pubDate>
-            @if($post->excerpt)
+            @if ($post->excerpt)
             <description>{{ htmlspecialchars($post->excerpt, ENT_XML1) }}</description>
             @endif
-            @if($storeName)
+            @if ($storeName)
             <author>{{ htmlspecialchars($storeName, ENT_XML1) }}</author>
             @endif
         </item>

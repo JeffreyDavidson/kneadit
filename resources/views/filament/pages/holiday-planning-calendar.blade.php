@@ -68,7 +68,7 @@
         </div>
 
         <!-- Urgent Holidays Alert -->
-        @if($inPrepPeriod->isNotEmpty())
+        @if ($inPrepPeriod->isNotEmpty())
             <div class="bg-red-100 border-l-4 border-red-500 p-4 rounded-lg">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -81,9 +81,9 @@
                         <div class="mt-2 text-sm text-red-700">
                             <p>The following holidays are in their preparation period:</p>
                             <ul class="mt-1 list-disc pl-5">
-                                @foreach($inPrepPeriod as $holiday)
+                                @foreach ($inPrepPeriod as $holiday)
                                     <li>
-                                        <strong>{{ $holiday->name }}</strong> 
+                                        <strong>{{ $holiday->name }}</strong>
                                         ({{ $this->getDaysAway($holiday) }})
                                     </li>
                                 @endforeach
@@ -97,8 +97,8 @@
         <!-- Holiday Calendar by Month -->
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-xl font-bold text-gray-900 mb-6">Holiday Calendar</h3>
-            
-            @foreach($this->getHolidaysByMonth() as $monthKey => $monthHolidays)
+
+            @foreach ($this->getHolidaysByMonth() as $monthKey => $monthHolidays)
                 <div class="mb-8 last:mb-0">
                     <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,15 +106,15 @@
                         </svg>
                         {{ \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->format('F Y') }}
                     </h4>
-                    
+
                     <div class="space-y-3">
-                        @foreach($monthHolidays as $holiday)
+                        @foreach ($monthHolidays as $holiday)
                             @php
                                 $statusColor = $this->getStatusColor($holiday);
                                 $statusText = $this->getStatusText($holiday);
                                 $daysAway = $this->getDaysAway($holiday);
                             @endphp
-                            
+
                             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                                 <div class="flex justify-between items-start">
                                     <div class="flex-1">
@@ -129,7 +129,7 @@
                                                 {{ $statusText }}
                                             </span>
                                         </div>
-                                        
+
                                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                                             <div>
                                                 <span class="font-medium">Date:</span>
@@ -144,8 +144,8 @@
                                                 {{ $holiday->start_prep_by->format('F j, Y') }}
                                             </div>
                                         </div>
-                                        
-                                        @if($holiday->notes)
+
+                                        @if ($holiday->notes)
                                             <div class="mt-3 p-3 bg-gray-50 rounded-md">
                                                 <p class="text-sm text-gray-700">
                                                     <span class="font-medium">Notes:</span> {{ $holiday->notes }}

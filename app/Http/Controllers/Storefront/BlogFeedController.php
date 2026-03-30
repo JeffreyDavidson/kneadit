@@ -21,7 +21,7 @@ class BlogFeedController extends Controller
         $storeName = settings('store_name', 'Our Bakery');
 
         return response()
-            ->view('blog.feed', compact('posts', 'storeName'))
+            ->view('blog.feed', ['posts' => $posts, 'storeName' => $storeName])
             ->header('Content-Type', 'application/rss+xml; charset=UTF-8');
     }
 }

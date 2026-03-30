@@ -28,7 +28,7 @@
 </section>
 
 {{-- Category Filter Tabs --}}
-@if(count($categories) > 1)
+@if (count($categories) > 1)
 <div class="sticky top-16 z-30" style="background: var(--warm-900); border-bottom: 1px solid rgba(139,104,68,0.15);">
     <div class="max-w-7xl mx-auto px-4">
         <nav class="flex overflow-x-auto gap-2 py-4 scrollbar-hide" style="scrollbar-width: none; -ms-overflow-style: none;" x-data="{ active: '' }">
@@ -38,7 +38,7 @@
                style="color: var(--warm-400); background: rgba(139,104,68,0.15);">
                 All
             </a>
-            @foreach($categories as $cat)
+            @foreach ($categories as $cat)
             <a href="#category-{{ $cat->id }}" @click="active = '{{ $cat->id }}'"
                class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-2.5 rounded-full"
                :class="active === '{{ $cat->id }}' ? 'active' : ''"
@@ -54,7 +54,7 @@
 {{-- Product Grid by Category --}}
 <div style="background: var(--warm-900);">
     <div class="max-w-7xl mx-auto px-4">
-        @forelse($categories as $category)
+        @forelse ($categories as $category)
         <section id="category-{{ $category->id }}" class="py-16 md:py-20">
             {{-- Category Header --}}
             <div class="mb-12">
@@ -68,17 +68,17 @@
                     </h2>
                     <div class="flex-1 h-px mb-3" style="background: rgba(139,104,68,0.2);"></div>
                 </div>
-                @if($category->description)
+                @if ($category->description)
                 <p class="mt-3 text-lg" style="color: var(--warm-500);">{{ $category->description }}</p>
                 @endif
             </div>
 
             {{-- Product Cards Grid --}}
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($category->products as $product)
+                @foreach ($category->products as $product)
                 <div class="menu-card" style="background: var(--warm-800);">
                     <div class="relative overflow-hidden" style="aspect-ratio: 4/3;">
-                        @if($product->image)
+                        @if ($product->image)
                             <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                         @else
                             <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-700), var(--warm-800));">
@@ -90,14 +90,14 @@
                             ${{ number_format($product->price, 2) }}
                         </div>
                         {{-- Seasonal badge --}}
-                        @if($product->seasonal_badge)
+                        @if ($product->seasonal_badge)
                         <div class="absolute top-4 left-4 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider" style="background: var(--warm-500); color: var(--warm-900);">
                             {{ $product->seasonal_badge }}
                         </div>
                         @endif
                         {{-- Hover overlay --}}
                         <div class="menu-card-overlay absolute inset-0 flex items-center justify-center" style="background: rgba(28,20,16,0.5);">
-                            @if($product->is_active)
+                            @if ($product->is_active)
                             <a href="{{ route('order.create') }}" class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold" style="background: var(--warm-500); color: var(--warm-900);">
                                 Add to Order
                             </a>
@@ -110,10 +110,10 @@
                     </div>
                     <div class="p-6">
                         <h3 class="font-display text-xl font-semibold mb-1" style="color: var(--warm-100);">{{ $product->name }}</h3>
-                        @if($product->description)
+                        @if ($product->description)
                         <p class="text-sm leading-relaxed line-clamp-2 mb-3" style="color: var(--warm-500);">{{ $product->description }}</p>
                         @endif
-                        @if(!$product->is_active)
+                        @if (!$product->is_active)
                         <div x-data="{ showWaitlist: false, submitted: false }">
                             <button x-show="!showWaitlist && !submitted" @click="showWaitlist = true"
                                 class="text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer transition-all duration-200"

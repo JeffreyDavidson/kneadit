@@ -24,7 +24,7 @@
 
         <div style="margin-top: 16px; padding: 12px; background: #fdf8f2; border-radius: 8px;">
             <div style="font-size: 0.75rem; color: #6b4c3b; margin-bottom: 4px;">Latest Inquiry</div>
-            @if($latest)
+            @if ($latest)
                 <div style="font-weight: 600; color: #3d2314;">{{ $latest->customer_name }}</div>
                 <div style="font-size: 0.75rem; color: #8b6844;">
                     {{ $latest->event_type }} — {{ $latest->event_date?->format('M j, Y') ?? 'No date' }}

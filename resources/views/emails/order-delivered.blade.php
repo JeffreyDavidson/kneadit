@@ -26,16 +26,16 @@
 
 <div class="order-details">
     <div class="order-number">Order #{{ $order->order_number }}</div>
-    
+
     <div class="order-items">
         <h4 style="margin-bottom: 10px; color: #8b4513;">Delivered Items:</h4>
-        @foreach($orderItems as $item)
+        @foreach ($orderItems as $item)
             <div class="order-item">
                 <div>
                     <div class="item-name">✅ {{ $item->product->name }}</div>
                     <div class="item-details">
                         Quantity: {{ $item->quantity }}
-                        @if($item->special_instructions)
+                        @if ($item->special_instructions)
                             <br><em>{{ $item->special_instructions }}</em>
                         @endif
                     </div>
@@ -86,7 +86,7 @@
 
 <p><strong>Come back soon!</strong> We're always baking up something new and delicious. Check out our website for daily specials and seasonal items.</p>
 
-@if($order->notes)
+@if ($order->notes)
     <div style="background-color: #f8f9fa; border-radius: 6px; padding: 15px; margin: 15px 0; border-left: 4px solid #6c757d;">
         <div class="info-label">📝 Order Notes</div>
         <p style="margin: 5px 0; color: #495057;">{{ $order->notes }}</p>
