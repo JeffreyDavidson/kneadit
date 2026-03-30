@@ -21,6 +21,10 @@ class HomeController extends Controller
 
         $storeName = settings('store_name', 'Our Bakery');
 
-        return view('home', compact('categories', 'storeName'));
+        /** @var array<string, array{visible?: bool, order?: int}> $homepageSections */
+        $homepageSections = json_decode(settings('homepage_sections', '{}'), true);
+        $sections = collect($homepageSections)->filter(fn (array $s) => $s['visible'] ?? true)->sortBy('order');
+
+        return view('home', compact('categories', 'storeName', 'sections'));
     }
 }

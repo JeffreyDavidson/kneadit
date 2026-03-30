@@ -1,17 +1,9 @@
-@php
-    $heroImage = settings('hero_image');
-    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-@endphp
 
 <x-layouts.storefront>
 <x-slot:styles>
 <link rel="stylesheet" href="{{ asset('css/submit-review.css') }}">
 </x-slot:styles>
 
-@php
-    $content = settingsPageContent('submit_review');
-    $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
-@endphp
 @if(isset($success) && $success)
 {{-- Success State --}}
 <section class="relative overflow-hidden" style="min-height: 80vh;">

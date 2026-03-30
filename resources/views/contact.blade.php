@@ -1,19 +1,6 @@
 <x-layouts.storefront>
 <link rel="stylesheet" href="{{ asset('css/contact.css') }}">
 
-@php
-    $storeName = settings('store_name', 'Our Bakery');
-    $heroImage = settings('hero_image');
-    $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-    $storeAddress = settings('store_address');
-    $storePhone = settings('store_phone');
-    $storeEmail = settings('store_email');
-    $operatingHours = json_decode(settings('operating_hours', '{}'), true);
-    $faqItems = json_decode(settings('faq_items', '[]'), true);
-    $leadTimeHours = settings('order_lead_time_hours', '24');
-    $allergyDisclaimer = settings('allergy_disclaimer');
-    $content = settingsPageContent('contact');
-@endphp
 
 {{-- Photo-Forward Hero --}}
 <section class="relative overflow-hidden" style="min-height: 55vh;">

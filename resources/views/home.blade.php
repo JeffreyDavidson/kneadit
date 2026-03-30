@@ -1,9 +1,4 @@
 <x-layouts.storefront>
-@php
-    $homepageSections = json_decode(settings('homepage_sections', '{}'), true);
-    $sections = collect($homepageSections)->filter(fn($s) => $s['visible'] ?? true)->sortBy('order');
-@endphp
-
 @foreach($sections as $key => $config)
     @switch($key)
         @case('hero')

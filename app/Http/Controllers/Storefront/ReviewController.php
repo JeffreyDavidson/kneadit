@@ -8,6 +8,7 @@ use App\Http\Requests\StoreReviewRequest;
 use App\Models\Order;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller
 {
@@ -17,7 +18,13 @@ class ReviewController extends Controller
         $storeName = settings('store_name', 'Our Bakery');
         $prefilledRating = $request->query('rating');
 
-        return view('submit-review', compact('order', 'storeName', 'prefilledRating'));
+        $heroImage = settings('hero_image');
+        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+
+        $content = settingsPageContent('submit_review');
+        $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
+
+        return view('submit-review', compact('order', 'storeName', 'prefilledRating', 'heroImageUrl', 'content', 'ratingDescriptions'));
     }
 
     public function store(Order $order, StoreReviewRequest $request, CreateReview $createReview): View
@@ -33,10 +40,19 @@ class ReviewController extends Controller
 
         $storeName = settings('store_name', 'Our Bakery');
 
+        $heroImage = settings('hero_image');
+        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+
+        $content = settingsPageContent('submit_review');
+        $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
+
         return view('submit-review', [
             'order' => $order,
             'storeName' => $storeName,
             'prefilledRating' => null,
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+            'ratingDescriptions' => $ratingDescriptions,
             'success' => true,
         ]);
     }

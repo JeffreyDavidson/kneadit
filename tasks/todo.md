@@ -1,73 +1,27 @@
-# Refactoring Plan — Scalability & Code Quality
+# Move Inline PHP from Blade Templates to Controllers
 
-## Phase 1: Enum Casts & Quick Wins
-- [x] Cast StaffInvitation.role → UserRole enum
-- [~] Cast Tenant.plan → SubscriptionTier enum (skipped — Stancl Tenancy incompatible)
-- [x] Fix Order $attributes to use enum values (already uses enum cases)
-- [x] Create StockAdjustmentType enum
-- [x] Create GiftCardTransactionType enum
-- [x] Create AnnouncementType enum
-- [x] Create BlogPostCategory enum
-- [x] Create SupportReplyAuthorType enum
+## Todo
+- [x] 1. MenuController + menu.blade.php
+- [x] 2. GalleryController + gallery.blade.php
+- [x] 3. ReviewsController + reviews.blade.php
+- [x] 4. ShowGiftCardsController + gift-cards.blade.php
+- [x] 5. LoyaltyController + loyalty.blade.php (both show and store)
+- [x] 6. CateringController + catering.blade.php
+- [x] 7. ReviewController + submit-review.blade.php
+- [x] 8. SurveyController + survey.blade.php
+- [x] 9. AboutController + about.blade.php
+- [x] 10. ContactController + contact.blade.php
+- [x] 11. TrackingController + order-tracking.blade.php
+- [x] 12. OrderController (index) + order.blade.php
+- [x] 13. OrderController (show) + order-confirmation.blade.php
+- [x] Run php -l on all modified files
+- [x] Run pint --dirty
+- [x] Run tests
 
-## Phase 2: Query Objects & ProductQueryBuilder
-- [x] Create ProductQueryBuilder with active(), featured(), inSeason()
-- [x] Create app/Queries/RevenueQuery (4 files duplicated)
-- [x] Create app/Queries/DailyRevenueQuery (already in RevenueQuery::dailyBreakdown(), consolidated RevenueChartWidget)
-- [x] Create app/Queries/AtRiskCustomersQuery (4 files)
-- [x] Create app/Queries/ProductSalesQuery (3 files)
-- [x] Consolidate FinancialCalculator + FinancialReport (FinancialReport now delegates to FinancialCalculator)
-
-## Phase 3: DTOs
-- [x] CreateOrderData DTO (12+ keys)
-- [x] CouponValidationResult DTO
-- [x] GiftCardRedemptionResult DTO
-- [x] CreateGiftCardData DTO
-- [x] FinancialSummary DTO
-- [~] PricingResult DTO (skipped — Livewire serialization prevents DTO as public property, array is fine)
-
-## Phase 4: Action Extraction
-- [x] QuickOrder::createOrder() → delegate to CreateQuickOrder action
-- [x] GiftCardService write methods → Action classes
-- [~] Onboarding page save steps → per-step Actions (skipped — steps are simple settings() calls, extraction would over-engineer)
-- [x] PricingEngine calculation → PricingCalculator service
-- [x] Webhook handler logic → Action classes
-
-## Phase 5: Service Splitting
-- [x] TenantHealthService → TenantUsageService + ChurnAlertService + TenantHealthService
-- [x] ProfitAnalysisService → memoize getProductAnalysis() (already uses once())
-
-## Phase 6: Value Objects & Custom Casts
-- [x] Money value object (14 models, 20+ columns)
-- [x] DateRange expansion (isActive(), contains())
-- [x] PhoneNumber cast (4 models)
-- [x] Address value object (Customer only)
-
-## Review — FilaCheck Progress
-- Started: 27 passed, 8 failed, 155 warnings
-- Current: 30 passed, 5 failed, 70 warnings
-- Resolved: deprecated-test-methods, enum-missing-filament-interfaces, custom-theme-needed
-- Remaining: action-missing-authorization (page-level auth), string-icon-instead-of-enum (intentional), widget table filters/searchable (N/A)
-
-## Review — PHPStan Progress
-- Started: 600 errors
-- Current: ~286 errors (mostly Bladestan template analysis)
-- Real PHP code errors: ~0
-- Fixes: Product docblock, missing imports, type annotations, 4 real Blade bugs fixed
-
-## Review — Test Coverage
-- Total test cases: 1,111
-- New this session: ~75 tests across 28 files
-- Coverage areas: controllers, actions, services, DTOs, queries, builders, listeners, mailables
-- All 31 enums implement HasLabel (enforced by arch test)
-
-## Review — Security
-- Filament updated 5.3.1 → 5.4.2 (CVE-2026-33080 XSS patch)
-- canAccess() added to 3 unprotected Filament pages
-- 0 composer audit vulnerabilities
-
-## Review — Architecture
-- Storefront layout converted to Blade component
-- Custom Filament theme created
-- FinancialReport consolidated to use FinancialCalculator
-- 6 new arch tests enforce conventions
+## Review
+- Moved all @php blocks from 13 Blade templates into their corresponding controllers
+- Controllers now compute hero image URLs, page content settings, and derived values
+- Blade templates receive pre-computed variables via compact() or array syntax
+- Added Storage facade import to controllers that compute Storage::url()
+- All templates retain their HTML/Blade directives unchanged
+- Tests pass after changes
