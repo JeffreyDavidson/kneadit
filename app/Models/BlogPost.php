@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Builders\BlogPostQueryBuilder;
 use App\Enums\BlogPostCategory;
 use App\Observers\BlogPostObserver;
 use Database\Factories\BlogPostFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[ObservedBy(BlogPostObserver::class)]
+#[UseEloquentBuilder(BlogPostQueryBuilder::class)]
 class BlogPost extends Model
 {
     /** @use HasFactory<BlogPostFactory> */
@@ -54,15 +56,6 @@ class BlogPost extends Model
             'published_at' => 'datetime',
             'category' => BlogPostCategory::class,
         ];
-    }
-
-    /** @param Builder<BlogPost> $query */
-    #[Scope]
-    protected function published(Builder $query): void
-    {
-        $query->where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now());
     }
 
     /** @return Attribute<mixed, never> */
