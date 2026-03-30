@@ -77,11 +77,11 @@ Route::get('terms', fn () => view('legal.terms'))->name('terms');
 Route::get('privacy', fn () => view('legal.privacy'))->name('privacy');
 
 // SEO
-Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('robots.txt', fn () => response("User-agent: *\nAllow: /\n\nSitemap: https://getkneadit.app/sitemap.xml\n", 200, ['Content-Type' => 'text/plain']))->name('robots');
 
 // Changelog
-Route::get('changelog', [ChangelogController::class, 'index'])->name('changelog');
+Route::get('changelog', ChangelogController::class)->name('changelog');
 
 // Resources / Blog (central only)
 Route::get('resources', [BlogController::class, 'index'])->name('blog.index');
@@ -89,10 +89,10 @@ Route::get('resources/feed.xml', BlogFeedController::class)->name('blog.feed');
 Route::get('resources/{post}', [BlogController::class, 'show'])->name('blog.show');
 
 // Root route — serves landing page on central domains, storefront on tenant subdomains
-Route::get('/', [RootController::class, 'index'])->name('home');
+Route::get('/', RootController::class)->name('home');
 
 // Public bakery directory
-Route::get('directory', [DirectoryController::class, 'index'])->name('directory');
+Route::get('directory', DirectoryController::class)->name('directory');
 
 // Tenant Registration (onboarding)
 Route::middleware(['web', 'auth'])->prefix('onboarding')->name('onboarding.')->group(function () {

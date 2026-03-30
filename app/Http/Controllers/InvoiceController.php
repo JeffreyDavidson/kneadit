@@ -7,7 +7,7 @@ use Illuminate\View\View;
 
 class InvoiceController extends Controller
 {
-    public function show(Order $order): View
+    public function __invoke(Order $order): View
     {
         // Load necessary relationships
         $order->load(['customer', 'orderItems.product']);

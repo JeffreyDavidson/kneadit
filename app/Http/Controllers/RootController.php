@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RootController extends Controller
 {
-    public function index(): View|Response
+    public function __invoke(): View|Response
     {
         $centralDomains = config('tenancy.central_domains', []);
 
