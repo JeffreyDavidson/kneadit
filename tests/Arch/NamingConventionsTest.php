@@ -13,3 +13,19 @@ arch('listener classes must end with Listener')
 arch('console command classes must end with Command')
     ->expect('App\Console\Commands')
     ->toHaveSuffix('Command');
+
+arch('controllers must end with Controller')
+    ->expect('App\Http\Controllers')
+    ->toHaveSuffix('Controller');
+
+arch('policies must end with Policy')
+    ->expect('App\Policies')
+    ->toHaveSuffix('Policy');
+
+arch('form requests must end with Request')
+    ->expect('App\Http\Requests')
+    ->toHaveSuffix('Request');
+
+arch('events should not end with Event')
+    ->expect('App\Events')
+    ->not->toHaveSuffix('Event');
