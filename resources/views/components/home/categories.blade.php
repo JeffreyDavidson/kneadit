@@ -32,7 +32,7 @@
                 <div class="absolute bottom-0 left-0 right-0 p-5">
                     <h3 class="font-display text-lg md:text-xl font-semibold mb-1" style="color: var(--warm-100);">{{ $category->name }}</h3>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-medium" style="color: var(--warm-400);">{{ $category->products_count }} {{ Str::plural('item', $category->products_count) }}</span>
+                        <span class="text-xs font-medium" style="color: var(--warm-400);">{{ $category->products_count }} {{ Str::plural('item', $category->products_count ?? 0) }}</span>
                         <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" style="color: var(--warm-500);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </div>
                 </div>

@@ -50,7 +50,7 @@ class FinancialCalculator
         ];
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, MonthlyFinancials> */
     private function monthlyBreakdown(int $year): Collection
     {
         $breakdown = collect();

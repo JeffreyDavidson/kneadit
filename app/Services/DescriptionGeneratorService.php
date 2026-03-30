@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class DescriptionGeneratorService
 {
-    /** @var array<string, mixed> */
+    /** @var array<string, array<int, string>> */
     protected array $templates = [
         'professional' => [
             'Our {product} is crafted with precision and the finest ingredients, delivering a {adjective} experience that sets the standard for artisan {category}.',
@@ -51,7 +51,7 @@ class DescriptionGeneratorService
         ],
     ];
 
-    /** @var array<string, mixed> */
+    /** @var array<string, array<int, string>> */
     protected array $adjectives = [
         'breads' => ['crusty', 'golden', 'aromatic', 'hearty', 'rustic'],
         'bread' => ['crusty', 'golden', 'aromatic', 'hearty', 'rustic'],
@@ -85,9 +85,9 @@ class DescriptionGeneratorService
         $descriptions = [];
         foreach ($selectedKeys as $key) {
             $adjective = $adjectivePool[array_rand($adjectivePool)];
-            $text = Str::replace(
+            $text = str_replace(
                 ['{product}', '{category}', '{adjective}', '{price}'],
-                [$product, $category ?: 'baked goods', $adjective, $price ? Number::currency($price) : ''],
+                [$product, $category ?: 'baked goods', $adjective, (string) ($price ? Number::currency($price) : '')],
                 $templates[$key],
             );
             $descriptions[] = $this->adjustLength($text, $length, $product, $category ?: 'baked goods', $adjectivePool);
@@ -96,7 +96,7 @@ class DescriptionGeneratorService
         return $descriptions;
     }
 
-    /** @param array<string, mixed> $adjectives */
+    /** @param array<int, string> $adjectives */
     protected function adjustLength(string $base, string $length, string $product, string $category, array $adjectives): string
     {
         return match (Str::lower($length)) {
@@ -121,7 +121,7 @@ class DescriptionGeneratorService
         return $text;
     }
 
-    /** @param array<string, mixed> $adjectives */
+    /** @param array<int, string> $adjectives */
     protected function toLong(string $base, string $product, string $category, array $adjectives): string
     {
         $extras = [

@@ -19,7 +19,7 @@ class ReviewsController extends Controller
             ->latest()
             ->paginate(12);
 
-        $avgRating = Review::query()->approved()->avg('rating');
+        $avgRating = (float) Review::query()->approved()->avg('rating');
         $totalReviews = Review::query()->approved()->count();
 
         $storeName = settings('store_name', 'Our Bakery');
