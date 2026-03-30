@@ -1,4 +1,15 @@
 @use('App\Enums\OrderStatus')
+
+@php
+/** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order>|null $orders */
+/** @var string|null $email */
+/** @var array<string, string> $allStatuses */
+/** @var array<string, string> $statusLabels */
+/** @var array<string, string> $content */
+/** @var string $storeName */
+/** @var string $heroImageUrl */
+@endphp
+
 <x-layouts.storefront>
 
 <link rel="stylesheet" href="{{ asset('css/order-tracking.css') }}">

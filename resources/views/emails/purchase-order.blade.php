@@ -8,6 +8,10 @@
 /** @var string $storePhone */
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
+/** @var string $supplierName */
+/** @var array<int, array<string, mixed>> $items */
+/** @var float $total */
+/** @var string $requestedDate */
 @endphp
 
 
