@@ -210,7 +210,8 @@ class OrdersTable
                                 ->send();
                         }
                     })
-                    ->visible(fn (Order $record) => $record->payment_status === PaymentStatus::Unpaid &&
+                    ->visible(
+                        fn (Order $record) => $record->payment_status === PaymentStatus::Unpaid &&
                         ! $record->paypal_invoice_id &&
                         in_array($record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready]),
                     ),

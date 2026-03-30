@@ -42,3 +42,36 @@ arch('mailables should extend BaseMailable')
 arch('controllers should not use compact() for view data')
     ->expect('compact')
     ->not->toBeUsedIn('App\Http\Controllers');
+
+test('view calls with 3+ array items should be multiline', function () {
+    $violations = [];
+    $controllersDir = dirname(__DIR__, 2) . '/app/Http/Controllers';
+
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($controllersDir, FilesystemIterator::SKIP_DOTS),
+    );
+
+    foreach ($iterator as $file) {
+        if ($file->getExtension() !== 'php') {
+            continue;
+        }
+
+        $content = file_get_contents($file->getPathname());
+        $relative = str_replace(dirname(__DIR__, 2) . '/app' . DIRECTORY_SEPARATOR, '', $file->getPathname());
+
+        // Match single-line arrays with 3+ => pairs: ['a' => $a, 'b' => $b, 'c' => $c]
+        if (preg_match_all('/\[([^\[\]]*=>.*=>.*=>.*)\]/', $content, $matches, PREG_OFFSET_CAPTURE)) {
+            foreach ($matches[0] as $match) {
+                $line = substr_count(substr($content, 0, $match[1]), "\n") + 1;
+                $arrowCount = substr_count($match[0], '=>');
+                if ($arrowCount >= 3) {
+                    $violations[] = "{$relative}:{$line} — single-line array with {$arrowCount} items";
+                }
+            }
+        }
+    }
+
+    expect($violations)->toBeEmpty(
+        "Arrays with 3+ items should be multiline:\n" . implode("\n", $violations),
+    );
+});

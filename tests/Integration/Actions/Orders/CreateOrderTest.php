@@ -29,7 +29,8 @@ test('creates order with correct totals and items', function () {
             'items' => [
                 ['product_id' => $product->id, 'quantity' => 2],
             ],
-        ]));
+        ])
+    );
 
     expect($order)
         ->not->toBeNull()
@@ -57,7 +58,8 @@ test('returns null when capacity is full', function () {
             'items' => [
                 ['product_id' => $product->id, 'quantity' => 1],
             ],
-        ]));
+        ])
+    );
 
     expect($order)->toBeNull();
 });
@@ -74,7 +76,8 @@ test('sends order placed email to customer on creation', function () {
             'items' => [
                 ['product_id' => $product->id, 'quantity' => 1],
             ],
-        ]));
+        ])
+    );
 
     Mail::assertQueued(OrderPlacedMail::class);
 });

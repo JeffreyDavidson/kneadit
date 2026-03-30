@@ -22,12 +22,13 @@ class HolidaysTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query
-                ->addSelect([
-                    'order_count' => Order::query()->selectRaw('count(*)')
-                        ->whereColumn('delivery_date', 'holidays.date')
-                        ->where('status', '!=', OrderStatus::Cancelled),
-                ]),
+            ->modifyQueryUsing(
+                fn (Builder $query) => $query
+                    ->addSelect([
+                        'order_count' => Order::query()->selectRaw('count(*)')
+                            ->whereColumn('delivery_date', 'holidays.date')
+                            ->where('status', '!=', OrderStatus::Cancelled),
+                    ]),
             )
             ->heading('Holidays')
             ->emptyStateHeading('No holidays planned')

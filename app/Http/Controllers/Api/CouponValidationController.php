@@ -17,7 +17,12 @@ class CouponValidationController extends Controller
         $result = $couponService->validate($validated['code'], (float) $validated['subtotal']);
 
         if (! $result->valid) {
-            return ApiResponse::success(['valid' => false, 'discount_amount' => 0, 'type' => null, 'value' => null], $result->error);
+            return ApiResponse::success([
+                'valid' => false,
+                'discount_amount' => 0,
+                'type' => null,
+                'value' => null,
+            ], $result->error);
         }
 
         $coupon = $result->coupon;
