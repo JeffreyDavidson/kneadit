@@ -168,6 +168,20 @@ function createCentralTables(): void
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         },
+        'blog_posts' => function ($table) {
+            $table->id();
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('excerpt')->nullable();
+            $table->longText('body');
+            $table->string('featured_image')->nullable();
+            $table->string('category')->default('guides');
+            $table->string('meta_title')->nullable();
+            $table->string('meta_description')->nullable();
+            $table->boolean('is_published')->default(false);
+            $table->timestamp('published_at')->nullable();
+            $table->timestamps();
+        },
         'scheduled_checkins' => function ($table) {
             $table->id();
             $table->string('name');
