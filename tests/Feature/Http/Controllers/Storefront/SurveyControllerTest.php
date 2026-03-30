@@ -31,7 +31,7 @@ test('can submit survey response', function () {
 });
 
 test('inactive survey returns 404', function () {
-    $survey = Survey::factory()->create(['is_active' => false]);
+    $survey = Survey::factory()->inactive()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.survey', ['survey' => $survey], false));

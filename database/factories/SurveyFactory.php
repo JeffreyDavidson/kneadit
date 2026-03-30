@@ -26,4 +26,12 @@ class SurveyFactory extends Factory
             'responses_count' => 0,
         ];
     }
+
+    /**
+     * Survey is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => false]);
+    }
 }

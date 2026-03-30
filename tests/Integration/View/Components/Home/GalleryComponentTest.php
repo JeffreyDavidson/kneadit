@@ -9,8 +9,8 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('loads approved and featured customer photos', function () {
-    CustomerPhoto::factory()->count(3)->create(['is_approved' => true, 'is_featured' => true]);
-    CustomerPhoto::factory()->create(['is_approved' => true, 'is_featured' => false]);
+    CustomerPhoto::factory()->count(3)->approved()->featured()->create();
+    CustomerPhoto::factory()->approved()->create();
     CustomerPhoto::factory()->create(['is_approved' => false]);
 
     $component = new Gallery;

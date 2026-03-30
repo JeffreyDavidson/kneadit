@@ -8,7 +8,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('gallery endpoint returns visible photos', function () {
     GalleryPhoto::factory()->count(3)->create(['is_visible' => true]);
-    GalleryPhoto::factory()->create(['is_visible' => false]);
+    GalleryPhoto::factory()->hidden()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/api/gallery');

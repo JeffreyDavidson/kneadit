@@ -30,6 +30,14 @@ class HolidayFactory extends Factory
     }
 
     /**
+     * Holiday is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => false]);
+    }
+
+    /**
      * Holiday is in the future.
      */
     public function upcoming(): static

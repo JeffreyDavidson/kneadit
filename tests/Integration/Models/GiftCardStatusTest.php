@@ -27,7 +27,7 @@ test('expired gift card has Expired status', function () {
 });
 
 test('inactive gift card has Inactive status', function () {
-    $card = GiftCard::factory()->create(['is_active' => false]);
+    $card = GiftCard::factory()->inactive()->create();
 
     expect($card->status)->toBe(GiftCardStatus::Inactive);
 });

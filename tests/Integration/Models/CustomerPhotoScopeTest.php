@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('approved scope returns only approved photos', function () {
-    $approved = CustomerPhoto::factory()->create(['is_approved' => true]);
+    $approved = CustomerPhoto::factory()->approved()->create();
     CustomerPhoto::factory()->create(['is_approved' => false]);
 
     $results = CustomerPhoto::query()->approved()->get();

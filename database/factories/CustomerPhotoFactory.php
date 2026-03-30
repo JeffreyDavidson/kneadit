@@ -6,7 +6,8 @@ use App\Models\CustomerPhoto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<CustomerPhoto> */
+ * @extends Factory<CustomerPhoto>
+ */
 class CustomerPhotoFactory extends Factory
 {
     /**
@@ -23,5 +24,21 @@ class CustomerPhotoFactory extends Factory
             'is_approved' => false,
             'is_featured' => false,
         ];
+    }
+
+    /**
+     * Photo has been approved.
+     */
+    public function approved(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_approved' => true]);
+    }
+
+    /**
+     * Photo is featured.
+     */
+    public function featured(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_featured' => true]);
     }
 }

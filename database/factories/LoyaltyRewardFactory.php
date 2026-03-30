@@ -26,4 +26,12 @@ class LoyaltyRewardFactory extends Factory
             'is_active' => true,
         ];
     }
+
+    /**
+     * Loyalty reward is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => false]);
+    }
 }

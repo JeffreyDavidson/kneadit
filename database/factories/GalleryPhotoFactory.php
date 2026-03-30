@@ -6,7 +6,8 @@ use App\Models\GalleryPhoto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<GalleryPhoto> */
+ * @extends Factory<GalleryPhoto>
+ */
 class GalleryPhotoFactory extends Factory
 {
     /**
@@ -21,5 +22,13 @@ class GalleryPhotoFactory extends Factory
             'sort_order' => fake()->numberBetween(0, 100),
             'is_visible' => true,
         ];
+    }
+
+    /**
+     * Photo is hidden.
+     */
+    public function hidden(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_visible' => false]);
     }
 }

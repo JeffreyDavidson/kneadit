@@ -89,7 +89,7 @@ test('can sort suppliers by name', function () {
 
 test('can filter suppliers by active status', function () {
     $active = Supplier::factory()->create(['is_active' => true]);
-    $inactive = Supplier::factory()->create(['is_active' => false]);
+    $inactive = Supplier::factory()->inactive()->create();
 
     Livewire::test(ListSuppliers::class)
         ->filterTable('is_active', 1)

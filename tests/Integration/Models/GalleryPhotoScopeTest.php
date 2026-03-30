@@ -9,7 +9,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('visible scope returns only visible photos', function () {
     $visible = GalleryPhoto::factory()->create(['is_visible' => true]);
-    GalleryPhoto::factory()->create(['is_visible' => false]);
+    GalleryPhoto::factory()->hidden()->create();
 
     $results = GalleryPhoto::query()->visible()->get();
 

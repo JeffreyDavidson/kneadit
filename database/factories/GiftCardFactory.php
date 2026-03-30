@@ -40,6 +40,14 @@ class GiftCardFactory extends Factory
     }
 
     /**
+     * Gift card is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => false]);
+    }
+
+    /**
      * Gift card has expired.
      */
     public function expired(): static
