@@ -8,7 +8,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('products endpoint returns active products', function () {
     Product::factory()->count(3)->create(['is_active' => true]);
-    Product::factory()->create(['is_active' => false]);
+    Product::factory()->inactive()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/api/products');
