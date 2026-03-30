@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -50,5 +51,21 @@ class ProductFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'is_featured' => true,
         ]);
+    }
+
+    /**
+     * Product has images.
+     */
+    public function withImages(int $count = 1): static
+    {
+        return $this->has(ProductImage::factory()->count($count), 'images');
+    }
+
+    /**
+     * Product belongs to a specific category.
+     */
+    public function inCategory(Category $category): static
+    {
+        return $this->for($category);
     }
 }

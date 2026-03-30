@@ -6,6 +6,8 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\OrderMessage;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -90,5 +92,21 @@ class OrderFactory extends Factory
     public function paid(): static
     {
         return $this->state(fn (array $attributes) => ['payment_status' => PaymentStatus::Paid]);
+    }
+
+    /**
+     * Order has line items.
+     */
+    public function withItems(int $count = 3): static
+    {
+        return $this->has(OrderItem::factory()->count($count), 'orderItems');
+    }
+
+    /**
+     * Order has messages.
+     */
+    public function withMessages(int $count = 2): static
+    {
+        return $this->has(OrderMessage::factory()->count($count), 'messages');
     }
 }

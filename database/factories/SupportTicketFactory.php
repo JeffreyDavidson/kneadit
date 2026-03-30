@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\SupportTicketPriority;
 use App\Enums\SupportTicketStatus;
+use App\Models\SupportReply;
 use App\Models\SupportTicket;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -58,5 +59,13 @@ class SupportTicketFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'priority' => SupportTicketPriority::High,
         ]);
+    }
+
+    /**
+     * Ticket has replies.
+     */
+    public function withReplies(int $count = 2): static
+    {
+        return $this->has(SupportReply::factory()->count($count), 'replies');
     }
 }

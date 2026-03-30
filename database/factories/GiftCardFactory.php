@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\GiftCard;
+use App\Models\GiftCardTransaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -53,5 +54,13 @@ class GiftCardFactory extends Factory
     public function expired(): static
     {
         return $this->state(fn (array $attributes) => ['expires_at' => now()->subDay()]);
+    }
+
+    /**
+     * Gift card has transaction history.
+     */
+    public function withTransactions(int $count = 3): static
+    {
+        return $this->has(GiftCardTransaction::factory()->count($count), 'transactions');
     }
 }

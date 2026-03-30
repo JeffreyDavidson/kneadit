@@ -19,21 +19,16 @@ beforeEach(function () {
 
 test('deducts ingredient stock based on recipe quantities and order item quantities', function () {
     $product = Product::factory()->create();
-    $recipe = Recipe::query()->create([
-        'product_id' => $product->id,
+    $recipe = Recipe::factory()->for($product)->create([
         'name' => 'Sourdough Recipe',
-        'ingredients' => '[]',
-        'instructions' => 'Mix and bake',
     ]);
-    $flour = Ingredient::query()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 100.00]);
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 100.00]);
 
     $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 0.5, 'unit' => 'kg']);
 
     $order = Order::factory()->create(['status' => OrderStatus::Baking]);
 
-    OrderItem::query()->create([
-        'order_id' => $order->id,
-        'product_id' => $product->id,
+    OrderItem::factory()->recycle($order, $product)->create([
         'quantity' => 3,
         'unit_price' => 10.00,
     ]);

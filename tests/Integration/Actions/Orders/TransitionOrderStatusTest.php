@@ -37,11 +37,10 @@ test('rejects transitions from terminal delivered state', function () {
 })->throws(InvalidOrderTransitionException::class);
 
 test('sends status email on transition', function () {
-    $customer = Customer::query()->create(['name' => 'Test', 'email' => 'test@example.com']);
-    $order = Order::factory()->create([
-        'status' => OrderStatus::Pending,
-        'customer_id' => $customer->id,
-    ]);
+    $customer = Customer::factory()->create();
+    $order = Order::factory()
+        ->for($customer)
+        ->create(['status' => OrderStatus::Pending]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
 
