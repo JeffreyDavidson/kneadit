@@ -17,9 +17,8 @@ class BlogController extends Controller
         return view('blog.index', compact('posts', 'categories', 'activeCategory'));
     }
 
-    public function show(string $slug): View
+    public function show(BlogPost $post): View
     {
-        $post = BlogPost::query()->published()->where('slug', $slug)->firstOrFail();
         $related = BlogPost::query()->published()->relatedTo($post)->get();
 
         return view('blog.show', compact('post', 'related'));
