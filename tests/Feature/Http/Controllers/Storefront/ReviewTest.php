@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Category;
 use App\Models\Product;
 use App\Models\Review;
 
@@ -12,19 +11,10 @@ beforeEach(function () {
 
 function createReviewProduct(): Product
 {
-    $category = Category::query()->create([
-        'name' => 'Breads',
-        'slug' => 'breads',
-        'is_active' => true,
-        'sort_order' => 1,
-    ]);
-
-    return Product::query()->create([
+    return Product::factory()->create([
         'name' => 'Sourdough',
         'slug' => 'sourdough',
         'price' => 8.00,
-        'category_id' => $category->id,
-        'is_active' => true,
     ]);
 }
 
@@ -38,13 +28,11 @@ test('reviews page loads', function () {
 test('reviews page shows approved reviews', function () {
     $product = createReviewProduct();
 
-    Review::query()->create([
+    Review::factory()->for($product)->approved()->create([
         'customer_name' => 'Happy Customer',
         'customer_email' => 'happy@example.com',
-        'product_id' => $product->id,
         'rating' => 5,
         'comment' => 'Absolutely delicious sourdough!',
-        'is_approved' => true,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -58,13 +46,11 @@ test('reviews page shows approved reviews', function () {
 test('reviews page hides unapproved reviews', function () {
     $product = createReviewProduct();
 
-    Review::query()->create([
+    Review::factory()->for($product)->pending()->create([
         'customer_name' => 'Pending Reviewer',
         'customer_email' => 'pending@example.com',
-        'product_id' => $product->id,
         'rating' => 3,
         'comment' => 'This should not be visible yet',
-        'is_approved' => false,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -77,22 +63,18 @@ test('reviews page hides unapproved reviews', function () {
 test('reviews page shows average rating', function () {
     $product = createReviewProduct();
 
-    Review::query()->create([
+    Review::factory()->for($product)->approved()->create([
         'customer_name' => 'A',
         'customer_email' => 'a@example.com',
-        'product_id' => $product->id,
         'rating' => 5,
         'comment' => 'Great!',
-        'is_approved' => true,
     ]);
 
-    Review::query()->create([
+    Review::factory()->for($product)->approved()->create([
         'customer_name' => 'B',
         'customer_email' => 'b@example.com',
-        'product_id' => $product->id,
         'rating' => 3,
         'comment' => 'Good',
-        'is_approved' => true,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -114,22 +96,18 @@ test('empty reviews page shows empty state', function () {
 test('reviews only counts approved in average', function () {
     $product = createReviewProduct();
 
-    Review::query()->create([
+    Review::factory()->for($product)->approved()->create([
         'customer_name' => 'A',
         'customer_email' => 'a@example.com',
-        'product_id' => $product->id,
         'rating' => 5,
         'comment' => 'Amazing',
-        'is_approved' => true,
     ]);
 
-    Review::query()->create([
+    Review::factory()->for($product)->pending()->create([
         'customer_name' => 'Troll',
         'customer_email' => 'troll@example.com',
-        'product_id' => $product->id,
         'rating' => 1,
         'comment' => 'Spam review',
-        'is_approved' => false,
     ]);
 
     $avgRating = Review::query()->where('is_approved', true)->avg('rating');

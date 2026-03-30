@@ -67,11 +67,9 @@ test('menu page shows products with prices', function () {
 });
 
 test('menu hides inactive categories', function () {
-    Category::query()->create([
+    Category::factory()->inactive()->create([
         'name' => 'Seasonal Only',
         'slug' => 'seasonal-only',
-        'is_active' => false,
-        'sort_order' => 1,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -82,19 +80,15 @@ test('menu hides inactive categories', function () {
 });
 
 test('menu does not show inactive products', function () {
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Breads',
         'slug' => 'breads',
-        'is_active' => true,
-        'sort_order' => 1,
     ]);
 
-    Product::query()->create([
+    Product::factory()->for($category)->inactive()->create([
         'name' => 'Hidden Bread',
         'slug' => 'hidden-bread',
         'price' => 5.00,
-        'category_id' => $category->id,
-        'is_active' => false,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())

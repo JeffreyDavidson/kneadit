@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 /**
  * Ensure test files use factories instead of Model::query()->create() for models that have factories.
- * Currently tracking remaining violations — will enforce once all are fixed.
  */
 test('test files should not use query()->create() for models with factories', function () {
     $violations = [];
@@ -62,9 +61,7 @@ test('test files should not use query()->create() for models with factories', fu
         }
     }
 
-    // Track remaining violations — reduce this number as files are fixed
-    // Once at 0, change to expect($violations)->toBeEmpty()
-    expect(count($violations))->toBeLessThanOrEqual(15,
-        "New query()->create() violation added! Fix or use factory:\n" . implode("\n", $violations),
+    expect($violations)->toBeEmpty(
+        "Use Model::factory() instead of Model::query()->create():\n" . implode("\n", $violations),
     );
-})->skip('Tracking: 18 files still need factory refactoring');
+});

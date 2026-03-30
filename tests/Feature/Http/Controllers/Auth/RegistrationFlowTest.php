@@ -53,10 +53,8 @@ test('registration requires all fields', function () {
 });
 
 test('registration requires unique email', function () {
-    User::query()->create([
-        'name' => 'Existing User',
+    User::factory()->create([
         'email' => 'taken@example.com',
-        'password' => bcrypt('password'),
     ]);
 
     $response = post(route('register'), [
@@ -101,11 +99,7 @@ test('plans page requires authentication', function () {
 });
 
 test('authenticated user can view plans', function () {
-    $user = User::query()->create([
-        'name' => 'Jane Baker',
-        'email' => 'jane@example.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->create();
 
     $response = actingAs($user)
         ->get(route('billing.plans'));
@@ -121,11 +115,7 @@ test('checkout requires authentication', function () {
 });
 
 test('checkout rejects invalid plan', function () {
-    $user = User::query()->create([
-        'name' => 'Jane Baker',
-        'email' => 'jane@example.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->create();
 
     $response = actingAs($user)
         ->post(route('billing.checkout', ['plan' => 'invalid']));
@@ -134,11 +124,7 @@ test('checkout rejects invalid plan', function () {
 });
 
 test('onboarding page loads', function () {
-    $user = User::query()->create([
-        'name' => 'Jane Baker',
-        'email' => 'jane@example.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->create();
 
     $response = actingAs($user)
         ->get(route('onboarding.show'));
@@ -147,11 +133,7 @@ test('onboarding page loads', function () {
 });
 
 test('onboarding store creates tenant', function () {
-    $user = User::query()->create([
-        'name' => 'Jane Baker',
-        'email' => 'jane@example.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->create();
 
     $this->mock(Tenant::class, function ($mock) {
         $mock->shouldReceive('create')->andReturn(new Tenant);
@@ -168,11 +150,7 @@ test('onboarding store creates tenant', function () {
 });
 
 test('onboarding validates subdomain format', function () {
-    $user = User::query()->create([
-        'name' => 'Jane Baker',
-        'email' => 'jane@example.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->create();
 
     $response = actingAs($user)
         ->post(route('onboarding.store'), [
@@ -185,11 +163,7 @@ test('onboarding validates subdomain format', function () {
 });
 
 test('onboarding requires external website when own chosen', function () {
-    $user = User::query()->create([
-        'name' => 'Jane Baker',
-        'email' => 'jane@example.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->create();
 
     $response = actingAs($user)
         ->post(route('onboarding.store'), [
@@ -202,11 +176,7 @@ test('onboarding requires external website when own chosen', function () {
 });
 
 test('onboarding does not require external website for kneadit', function () {
-    $user = User::query()->create([
-        'name' => 'Jane Baker',
-        'email' => 'jane@example.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->create();
 
     $response = actingAs($user)
         ->post(route('onboarding.store'), [
@@ -225,11 +195,7 @@ test('guest cannot access onboarding', function () {
 });
 
 test('billing success redirects to onboarding', function () {
-    $user = User::query()->create([
-        'name' => 'Jane Baker',
-        'email' => 'jane@example.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->create();
 
     $response = actingAs($user)
         ->get(route('billing.success'));

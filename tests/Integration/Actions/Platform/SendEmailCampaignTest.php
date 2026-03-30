@@ -12,11 +12,10 @@ beforeEach(fn () => setUpCentralTest());
 test('sends campaign to all customers and updates status', function () {
     Mail::fake();
 
-    $campaign = EmailCampaign::query()->create([
+    $campaign = EmailCampaign::factory()->create([
         'name' => 'Spring Campaign',
         'subject' => 'Spring Sale',
         'body' => '<p>20% off!</p>',
-        'status' => EmailCampaignStatus::Draft,
     ]);
 
     Customer::factory()->count(3)->create();

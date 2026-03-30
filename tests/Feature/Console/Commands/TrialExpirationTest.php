@@ -18,10 +18,8 @@ test('trial check command exists', function () {
 test('7 day reminder sends email', function () {
     Mail::fake();
 
-    User::query()->create([
-        'name' => 'Baker',
+    User::factory()->create([
         'email' => 'baker7@test.com',
-        'password' => bcrypt('password'),
     ]);
 
     createTenant([
@@ -39,10 +37,8 @@ test('7 day reminder sends email', function () {
 test('expired trial pauses storefront', function () {
     Mail::fake();
 
-    User::query()->create([
-        'name' => 'Baker',
+    User::factory()->create([
         'email' => 'expired@test.com',
-        'password' => bcrypt('password'),
     ]);
 
     createTenant([
@@ -66,10 +62,8 @@ test('expired trial pauses storefront', function () {
 test('expired storefront already paused not repaused', function () {
     Mail::fake();
 
-    User::query()->create([
-        'name' => 'Baker',
+    User::factory()->create([
         'email' => 'already@test.com',
-        'password' => bcrypt('password'),
     ]);
 
     createTenant([
@@ -88,10 +82,8 @@ test('expired storefront already paused not repaused', function () {
 test('no action for inactive tenant', function () {
     Mail::fake();
 
-    User::query()->create([
-        'name' => 'Inactive',
+    User::factory()->create([
         'email' => 'inactive@test.com',
-        'password' => bcrypt('password'),
     ]);
 
     createTenant([
@@ -111,10 +103,8 @@ test('no action for inactive tenant', function () {
 test('no action when trial far away', function () {
     Mail::fake();
 
-    User::query()->create([
-        'name' => 'New',
+    User::factory()->create([
         'email' => 'new@test.com',
-        'password' => bcrypt('password'),
     ]);
 
     createTenant([

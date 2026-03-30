@@ -6,11 +6,8 @@ use App\Models\PlatformMessage;
 beforeEach(fn () => setUpCentralTest());
 
 it('casts sender_type to PlatformSenderType enum', function () {
-    $message = PlatformMessage::query()->create([
+    $message = PlatformMessage::factory()->fromAdmin()->create([
         'tenant_id' => 't1',
-        'sender_type' => PlatformSenderType::Admin,
-        'subject' => 'Test',
-        'body' => 'Body',
     ]);
 
     $message->refresh();
@@ -20,8 +17,8 @@ it('casts sender_type to PlatformSenderType enum', function () {
 });
 
 it('scopes fromAdmin using the enum value', function () {
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S', 'body' => 'B']);
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Tenant, 'subject' => 'S', 'body' => 'B']);
+    PlatformMessage::factory()->fromAdmin()->create(['tenant_id' => 't1']);
+    PlatformMessage::factory()->fromTenant()->create(['tenant_id' => 't1']);
 
     $adminMessages = PlatformMessage::query()->fromAdmin()->get();
 
@@ -30,8 +27,8 @@ it('scopes fromAdmin using the enum value', function () {
 });
 
 it('scopes fromTenant using the enum value', function () {
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S', 'body' => 'B']);
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Tenant, 'subject' => 'S', 'body' => 'B']);
+    PlatformMessage::factory()->fromAdmin()->create(['tenant_id' => 't1']);
+    PlatformMessage::factory()->fromTenant()->create(['tenant_id' => 't1']);
 
     $tenantMessages = PlatformMessage::query()->fromTenant()->get();
 

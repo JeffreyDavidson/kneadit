@@ -10,15 +10,13 @@ beforeEach(function () {
 });
 
 test('survey page loads for active survey', function () {
-    $survey = Survey::query()->create([
+    $survey = Survey::factory()->create([
         'title' => 'Customer Satisfaction',
         'description' => 'Tell us how we did',
         'questions' => [
             ['type' => 'rating', 'question' => 'How was the food?'],
             ['type' => 'text', 'question' => 'Any comments?'],
         ],
-        'is_active' => true,
-        'responses_count' => 0,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -29,11 +27,8 @@ test('survey page loads for active survey', function () {
 });
 
 test('survey returns 404 for inactive survey', function () {
-    $survey = Survey::query()->create([
-        'title' => 'Old Survey',
+    $survey = Survey::factory()->inactive()->create([
         'questions' => [['type' => 'text', 'question' => 'Feedback']],
-        'is_active' => false,
-        'responses_count' => 0,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -43,11 +38,8 @@ test('survey returns 404 for inactive survey', function () {
 });
 
 test('survey response can be submitted', function () {
-    $survey = Survey::query()->create([
-        'title' => 'Quick Poll',
+    $survey = Survey::factory()->create([
         'questions' => [['type' => 'rating', 'question' => 'Rate us']],
-        'is_active' => true,
-        'responses_count' => 0,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -65,14 +57,11 @@ test('survey response can be submitted', function () {
 });
 
 test('survey response saves answers as json', function () {
-    $survey = Survey::query()->create([
-        'title' => 'Detailed Survey',
+    $survey = Survey::factory()->create([
         'questions' => [
             ['type' => 'rating', 'question' => 'Quality'],
             ['type' => 'text', 'question' => 'Comments'],
         ],
-        'is_active' => true,
-        'responses_count' => 0,
     ]);
 
     withoutMiddleware(tenantMiddleware())
@@ -87,11 +76,8 @@ test('survey response saves answers as json', function () {
 });
 
 test('survey response increments responses count', function () {
-    $survey = Survey::query()->create([
-        'title' => 'Counter Test',
+    $survey = Survey::factory()->create([
         'questions' => [['type' => 'text', 'question' => 'Feedback']],
-        'is_active' => true,
-        'responses_count' => 0,
     ]);
 
     withoutMiddleware(tenantMiddleware())
@@ -103,11 +89,8 @@ test('survey response increments responses count', function () {
 });
 
 test('rating questions accept valid values', function () {
-    $survey = Survey::query()->create([
-        'title' => 'Rating Test',
+    $survey = Survey::factory()->create([
         'questions' => [['type' => 'rating', 'question' => 'Score']],
-        'is_active' => true,
-        'responses_count' => 0,
     ]);
 
     withoutMiddleware(tenantMiddleware())
@@ -120,11 +103,8 @@ test('rating questions accept valid values', function () {
 });
 
 test('text questions accept string answers', function () {
-    $survey = Survey::query()->create([
-        'title' => 'Text Test',
+    $survey = Survey::factory()->create([
         'questions' => [['type' => 'text', 'question' => 'Thoughts']],
-        'is_active' => true,
-        'responses_count' => 0,
     ]);
 
     withoutMiddleware(tenantMiddleware())

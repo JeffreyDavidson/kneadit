@@ -10,16 +10,9 @@ beforeEach(function () {
 
 function makeGiftCard(array $overrides = []): GiftCard
 {
-    static $counter = 0;
-    $counter++;
-
-    return GiftCard::query()->create(array_merge([
-        'code' => 'GIFT-TEST-' . str_pad($counter, 4, '0', STR_PAD_LEFT),
+    return GiftCard::factory()->create(array_merge([
         'initial_balance' => 50.00,
         'current_balance' => 50.00,
-        'purchaser_name' => 'John Doe',
-        'purchaser_email' => 'john@example.com',
-        'is_active' => true,
     ], $overrides));
 }
 
@@ -76,13 +69,12 @@ test('gift card status attribute', function () {
 test('gift card has transactions relationship', function () {
     $card = makeGiftCard();
 
-    GiftCardTransaction::query()->create([
-        'gift_card_id' => $card->id,
-        'amount' => 50.00,
-        'type' => 'purchase',
-        'notes' => 'Initial purchase',
-        'created_at' => now(),
-    ]);
+    GiftCardTransaction::factory()
+        ->for($card)
+        ->create([
+            'amount' => 50.00,
+            'notes' => 'Initial purchase',
+        ]);
 
     expect($card->transactions)->toHaveCount(1)->and($card->transactions->first()->amount)->toBe('50.00');
 });

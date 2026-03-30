@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RewardType;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
@@ -17,43 +18,22 @@ test('loyalty reward model exists', function () {
 });
 
 test('customer total points calculation', function () {
-    $customer = Customer::query()->create([
-        'name' => 'Test Customer',
-        'email' => 'test@example.com',
-    ]);
+    $customer = Customer::factory()->create();
 
-    LoyaltyPoint::query()->create([
-        'customer_id' => $customer->id,
-        'points' => 100,
-        'type' => 'earned',
-        'description' => 'Order #1',
-    ]);
-
-    LoyaltyPoint::query()->create([
-        'customer_id' => $customer->id,
-        'points' => 50,
-        'type' => 'earned',
-        'description' => 'Order #2',
-    ]);
-
-    LoyaltyPoint::query()->create([
-        'customer_id' => $customer->id,
-        'points' => 30,
-        'type' => 'redeemed',
-        'description' => 'Reward redeemed',
-    ]);
+    LoyaltyPoint::factory()->for($customer)->earned(100)->create(['description' => 'Order #1']);
+    LoyaltyPoint::factory()->for($customer)->earned(50)->create(['description' => 'Order #2']);
+    LoyaltyPoint::factory()->for($customer)->redeemed(30)->create(['description' => 'Reward redeemed']);
 
     expect($customer->total_points)->toBe(120);
 });
 
 test('loyalty reward can be created', function () {
-    $reward = LoyaltyReward::query()->create([
+    $reward = LoyaltyReward::factory()->create([
         'name' => 'Free Cookie',
         'description' => 'Get a free cookie!',
         'points_required' => 100,
-        'reward_type' => 'free_product',
+        'reward_type' => RewardType::FreeProduct,
         'reward_value' => 0,
-        'is_active' => true,
     ]);
 
     $this->assertDatabaseHas('loyalty_rewards', ['name' => 'Free Cookie']);
@@ -61,64 +41,40 @@ test('loyalty reward can be created', function () {
 });
 
 test('loyalty reward type label percentage', function () {
-    $reward = LoyaltyReward::query()->create([
+    $reward = LoyaltyReward::factory()->create([
         'name' => '10% Off',
         'points_required' => 50,
-        'reward_type' => 'percentage_discount',
+        'reward_type' => RewardType::PercentageDiscount,
         'reward_value' => 10,
-        'is_active' => true,
     ]);
 
     expect($reward->reward_type_label)->toContain('% Off');
 });
 
 test('loyalty reward type label fixed', function () {
-    $reward = LoyaltyReward::query()->create([
+    $reward = LoyaltyReward::factory()->create([
         'name' => '$5 Off',
         'points_required' => 75,
-        'reward_type' => 'fixed_discount',
+        'reward_type' => RewardType::FixedDiscount,
         'reward_value' => 5.00,
-        'is_active' => true,
     ]);
 
     expect($reward->reward_type_label)->toBe('$5.00 Off');
 });
 
 test('customer lifetime points earned', function () {
-    $customer = Customer::query()->create([
-        'name' => 'Test Customer',
-        'email' => 'lifetime@example.com',
-    ]);
+    $customer = Customer::factory()->create();
 
-    LoyaltyPoint::query()->create([
-        'customer_id' => $customer->id,
-        'points' => 200,
-        'type' => 'earned',
-        'description' => 'Big order',
-    ]);
-
-    LoyaltyPoint::query()->create([
-        'customer_id' => $customer->id,
-        'points' => 50,
-        'type' => 'redeemed',
-        'description' => 'Reward',
-    ]);
+    LoyaltyPoint::factory()->for($customer)->earned(200)->create(['description' => 'Big order']);
+    LoyaltyPoint::factory()->for($customer)->redeemed(50)->create(['description' => 'Reward']);
 
     expect($customer->lifetime_points_earned)->toBe(200);
 });
 
 test('loyalty points belong to customer', function () {
-    $customer = Customer::query()->create([
-        'name' => 'Test Customer',
-        'email' => 'belong@example.com',
-    ]);
+    $customer = Customer::factory()->create();
 
-    $point = LoyaltyPoint::query()->create([
-        'customer_id' => $customer->id,
-        'points' => 100,
-        'type' => 'earned',
-        'description' => 'Order',
-    ]);
+    $point = LoyaltyPoint::factory()->for($customer)->earned(100)->create(['description' => 'Order']);
 
     expect($point->customer->id)->toBe($customer->id);
 });
