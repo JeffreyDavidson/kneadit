@@ -1,9 +1,6 @@
 <?php
 
 use App\Enums\OrderStatus;
-use App\Enums\PaymentStatus;
-use App\Enums\SenderType;
-use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -17,65 +14,57 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    test()->user = User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
-    test()->customer = Customer::query()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
+    $this->user = User::factory()->owner()->create();
+    $this->customer = Customer::factory()->create();
 });
 
-function makeOrder(array $attrs = []): Order
-{
-    return Order::query()->create(array_merge([
-        'customer_id' => test()->customer->id,
-        'user_id' => test()->user->id,
-        'status' => OrderStatus::Pending,
-        'payment_status' => PaymentStatus::Unpaid,
-        'subtotal' => 10.00,
-        'total' => 10.00,
-        'delivery_date' => now()->addDay(),
-        'delivery_time' => '10:00',
-    ], $attrs));
-}
-
 test('order has customer relationship', function () {
-    $order = makeOrder();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
 
-    expect($order->customer)->toBeInstanceOf(Customer::class)->and($order->customer->id)->toBe(test()->customer->id);
+    expect($order->customer)->toBeInstanceOf(Customer::class)
+        ->and($order->customer->id)->toBe($this->customer->id);
 });
 
 test('order has items relationship', function () {
-    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
-    $order = makeOrder();
+    $product = Product::factory()->create();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
 
-    OrderItem::query()->create(['order_id' => $order->id, 'product_id' => $product->id, 'quantity' => 2, 'unit_price' => 5.00]);
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 2, 'unit_price' => 5.00]);
 
-    $order->refresh();
-
-    expect($order->orderItems)->toHaveCount(1)->and($order->orderItems->first()->quantity)->toBe(2);
+    expect($order->refresh()->orderItems)->toHaveCount(1)
+        ->and($order->orderItems->first()->quantity)->toBe(2);
 });
 
 test('order has messages relationship', function () {
-    $order = makeOrder();
-    OrderMessage::query()->create(['order_id' => $order->id, 'message' => 'Hello', 'sender_type' => SenderType::Baker, 'sender_name' => 'Baker']);
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+
+    OrderMessage::factory()->fromBaker()->recycle($order)->create();
 
     expect($order->messages)->toHaveCount(1);
 });
 
 test('order number is auto generated', function () {
-    $order = makeOrder();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
 
     expect($order->order_number)->toStartWith('ORD-');
 });
 
 test('order total is cast to decimal', function () {
-    $order = makeOrder(['subtotal' => 25.50, 'delivery_fee' => 5.00, 'discount_amount' => 2.50, 'total' => 28.00]);
-    $order->refresh();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+        'subtotal' => 25.50,
+        'delivery_fee' => 5.00,
+        'discount_amount' => 2.50,
+        'total' => 28.00,
+    ]);
 
-    expect($order->total)->toBe('28.00')->and($order->delivery_fee)->toBe('5.00')->and($order->discount_amount)->toBe('2.50');
+    expect($order->refresh()->total)->toBe('28.00')
+        ->and($order->delivery_fee)->toBe('5.00')
+        ->and($order->discount_amount)->toBe('2.50');
 });
 
 test('order status transitions', function () {
     Mail::fake();
-    $order = makeOrder();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
 
     foreach ([OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready, OrderStatus::Delivered] as $status) {
         $order->update(['status' => $status]);
@@ -85,23 +74,29 @@ test('order status transitions', function () {
 
 test('order can be cancelled', function () {
     Mail::fake();
-    $order = makeOrder();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
     $order->update(['status' => OrderStatus::Cancelled]);
 
     expect($order->fresh()->status)->toBe(OrderStatus::Cancelled);
 });
 
 test('order belongs to user', function () {
-    $order = makeOrder();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
 
     expect($order->user)->toBeInstanceOf(User::class);
 });
 
 test('order item total price attribute', function () {
-    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
-    $order = makeOrder(['subtotal' => 15.00, 'total' => 15.00]);
-    $item = OrderItem::query()->create(['order_id' => $order->id, 'product_id' => $product->id, 'quantity' => 3, 'unit_price' => 5.00]);
+    $product = Product::factory()->create();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+        'subtotal' => 15.00,
+        'total' => 15.00,
+    ]);
+
+    $item = OrderItem::factory()->recycle($order, $product)->create([
+        'quantity' => 3,
+        'unit_price' => 5.00,
+    ]);
 
     expect($item->total_price)->toBe(15.00);
 });
