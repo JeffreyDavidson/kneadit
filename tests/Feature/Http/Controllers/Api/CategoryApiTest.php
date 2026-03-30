@@ -8,7 +8,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('categories endpoint returns active categories', function () {
     Category::factory()->count(2)->create(['is_active' => true]);
-    Category::factory()->create(['is_active' => false]);
+    Category::factory()->inactive()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/api/categories');

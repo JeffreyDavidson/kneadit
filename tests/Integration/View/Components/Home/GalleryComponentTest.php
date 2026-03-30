@@ -11,7 +11,7 @@ beforeEach(fn () => setUpTenantTest());
 test('loads approved and featured customer photos', function () {
     CustomerPhoto::factory()->count(3)->approved()->featured()->create();
     CustomerPhoto::factory()->approved()->create();
-    CustomerPhoto::factory()->create(['is_approved' => false]);
+    CustomerPhoto::factory()->create();
 
     $component = new Gallery;
 

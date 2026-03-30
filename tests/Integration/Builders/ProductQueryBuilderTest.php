@@ -9,7 +9,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('active scope returns only active products', function () {
     Product::factory()->create(['is_active' => true]);
-    Product::factory()->create(['is_active' => false]);
+    Product::factory()->inactive()->create();
 
     expect(Product::query()->active()->count())->toBe(1);
 });
