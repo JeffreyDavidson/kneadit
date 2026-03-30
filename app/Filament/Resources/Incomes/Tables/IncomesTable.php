@@ -71,10 +71,10 @@ class IncomesTable
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['from'] ?? null) {
-                            $indicators[] = 'From ' . \Carbon\Carbon::parse($data['from'])->toFormattedDateString();
+                            $indicators[] = 'From ' . \Illuminate\Support\Facades\Date::parse($data['from'])->toFormattedDateString();
                         }
                         if ($data['until'] ?? null) {
-                            $indicators[] = 'Until ' . \Carbon\Carbon::parse($data['until'])->toFormattedDateString();
+                            $indicators[] = 'Until ' . \Illuminate\Support\Facades\Date::parse($data['until'])->toFormattedDateString();
                         }
 
                         return $indicators;

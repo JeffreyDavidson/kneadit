@@ -42,7 +42,7 @@ class DispatchOrderCreatedWebhookListener implements ShouldBeUnique, ShouldQueue
                 'product' => $item->product?->name,
                 'quantity' => $item->quantity,
                 'unit_price' => $item->unit_price,
-            ])->toArray(),
+            ])->all(),
         ]);
     }
 

@@ -32,7 +32,7 @@ class DataExport extends Page
         return Tenant::query()->orderBy('store_name')
             ->get()
             ->mapWithKeys(fn (Tenant $t) => [$t->id => $t->store_name ?: $t->name])
-            ->toArray();
+            ->all();
     }
 
     public function updatedSelectedTenant(?string $value): void

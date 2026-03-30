@@ -19,9 +19,7 @@ class ProductCsvExporter
     public function export(): string
     {
         $output = fopen('php://temp', 'r+');
-        if ($output === false) {
-            throw new \RuntimeException('Failed to open file');
-        }
+        throw_if($output === false, \RuntimeException::class, 'Failed to open file');
         fputcsv($output, $this->headers);
 
         Product::with('category')->orderBy('name')->each(function (Product $product) use ($output) {

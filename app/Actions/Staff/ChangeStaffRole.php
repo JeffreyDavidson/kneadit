@@ -11,9 +11,7 @@ class ChangeStaffRole
     {
         $user = User::query()->findOrFail($userId);
 
-        if ($user->id === $currentUserId) {
-            throw new \RuntimeException("You can't change your own role.");
-        }
+        throw_if($user->id === $currentUserId, \RuntimeException::class, "You can't change your own role.");
 
         $user->update(['role' => $newRole]);
     }

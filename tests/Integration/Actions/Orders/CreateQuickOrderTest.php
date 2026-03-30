@@ -36,8 +36,5 @@ test('creates order with customer and items', function () {
 
     expect($order)
         ->toBeInstanceOf(Order::class)
-        ->total->toEqual(20.0);
-
-    expect($order->orderItems)->toHaveCount(1);
-    expect($order->customer->email)->toBe('jane@example.com');
+        ->total->toEqual(20.0)->and($order->orderItems)->toHaveCount(1)->and($order->customer->email)->toBe('jane@example.com');
 });

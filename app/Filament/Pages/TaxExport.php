@@ -165,9 +165,7 @@ class TaxExport extends Page
 
         return response()->streamDownload(function () use ($type, $dateFrom, $dateTo) {
             $handle = fopen('php://output', 'w');
-            if ($handle === false) {
-                throw new \RuntimeException('Failed to open file handle');
-            }
+            throw_if($handle === false, \RuntimeException::class, 'Failed to open file handle');
 
             $exporter = resolve(TaxCsvExporter::class);
 

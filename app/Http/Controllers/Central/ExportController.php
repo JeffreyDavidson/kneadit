@@ -23,9 +23,7 @@ class ExportController extends Controller
         abort_if(! auth()->check() || auth()->user()?->role !== UserRole::PlatformAdmin, 403, 'Unauthorized.');
 
         $validTypes = [...$csvExport->validTypes(), 'all'];
-        if (! in_array($type, $validTypes, true)) {
-            abort(404, 'Invalid export type.');
-        }
+        abort_unless(in_array($type, $validTypes, true), 404, 'Invalid export type.');
 
         $tenant = Tenant::query()->findOrFail($tenantId);
 
@@ -43,9 +41,7 @@ class ExportController extends Controller
         return response()->streamDownload(function () use ($tenant, $type, $csvExport, $tenancyManager) {
             $tenancyManager->withinTenant($tenant, function () use ($type, $csvExport) {
                 $handle = fopen('php://output', 'w');
-                if ($handle === false) {
-                    throw new \RuntimeException('Failed to open file handle');
-                }
+                throw_if($handle === false, \RuntimeException::class, 'Failed to open file handle');
 
                 $csvExport->writeTo($handle, $type);
                 fclose($handle);

@@ -82,10 +82,10 @@ class WaitlistEntriesTable
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['from'] ?? null) {
-                            $indicators[] = 'From ' . \Carbon\Carbon::parse($data['from'])->toFormattedDateString();
+                            $indicators[] = 'From ' . \Illuminate\Support\Facades\Date::parse($data['from'])->toFormattedDateString();
                         }
                         if ($data['until'] ?? null) {
-                            $indicators[] = 'Until ' . \Carbon\Carbon::parse($data['until'])->toFormattedDateString();
+                            $indicators[] = 'Until ' . \Illuminate\Support\Facades\Date::parse($data['until'])->toFormattedDateString();
                         }
 
                         return $indicators;
@@ -97,7 +97,7 @@ class WaitlistEntriesTable
                     ->color('info')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
-                        app(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Notified);
+                        resolve(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Notified);
                         Notification::make()
                             ->title('Customer notified')
                             ->body('The customer has been marked as notified.')
@@ -111,7 +111,7 @@ class WaitlistEntriesTable
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
-                        app(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Converted);
+                        resolve(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Converted);
                         Notification::make()
                             ->title('Customer converted')
                             ->body('The customer has been marked as converted.')
@@ -125,7 +125,7 @@ class WaitlistEntriesTable
                     ->color('danger')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
-                        app(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Removed);
+                        resolve(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Removed);
                         Notification::make()
                             ->title('Customer removed')
                             ->body('The customer has been removed from the waitlist.')

@@ -12,7 +12,7 @@ class OrderObserver
         if (! $order->order_number) {
             $order->order_number = Cache::lock('order_number_lock', 5)->block(5, function () {
                 $maxNumber = Order::query()
-                    ->where('order_number', 'like', 'ORD-%')
+                    ->whereLike('order_number', 'ORD-%')
                     ->selectRaw('MAX(CAST(SUBSTR(order_number, 5) AS INTEGER)) as max_num')
                     ->value('max_num') ?? 0;
 

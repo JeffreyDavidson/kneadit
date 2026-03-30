@@ -41,7 +41,7 @@ class CustomerReport
             ->groupBy(fn (Customer $c) => $c->created_at->format('Y-m'))
             ->map(fn ($customers) => $customers->count())
             ->sortKeys()
-            ->toArray();
+            ->all();
 
         return compact('newCustomers', 'repeatRate', 'repeatCustomers', 'totalCustomersWithOrders', 'topCustomers', 'acquisitionByMonth');
     }

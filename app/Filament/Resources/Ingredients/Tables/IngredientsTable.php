@@ -103,7 +103,7 @@ class IngredientsTable
                         if (in_array($data['type'], ['usage', 'waste'])) {
                             $qty = -$qty;
                         }
-                        app(AdjustIngredientStock::class)($record, $qty, $data['type'], $data['notes'] ?? null);
+                        resolve(AdjustIngredientStock::class)($record, $qty, $data['type'], $data['notes'] ?? null);
                     }),
                 EditAction::make()
                     ->slideOver()
@@ -127,7 +127,7 @@ class IngredientsTable
                         ->action(function (Collection $records, array $data) {
                             /** @var Collection<int, Ingredient> $records */
                             foreach ($records as $ingredient) {
-                                app(AdjustIngredientStock::class)($ingredient, (float) $data['quantity'], StockAdjustmentType::Purchase, $data['notes'] ?? null);
+                                resolve(AdjustIngredientStock::class)($ingredient, (float) $data['quantity'], StockAdjustmentType::Purchase, $data['notes'] ?? null);
                             }
                         })
                         ->deselectRecordsAfterCompletion(),

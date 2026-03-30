@@ -35,10 +35,7 @@ test('GiftCardRedemptionResult named constructors', function () {
 
     expect($redeemed->success)->toBeTrue()
         ->and($redeemed->amountApplied)->toBe(25.00)
-        ->and($redeemed->remainingBalance)->toBe(75.00);
-
-    expect($failed->success)->toBeFalse()
-        ->and($failed->error)->toBe('Expired');
+        ->and($redeemed->remainingBalance)->toBe(75.00)->and($failed->success)->toBeFalse()->and($failed->error)->toBe('Expired');
 });
 
 test('CreateGiftCardData::fromArray maps purchase data', function () {

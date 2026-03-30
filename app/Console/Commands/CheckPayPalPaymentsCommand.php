@@ -23,7 +23,7 @@ class CheckPayPalPaymentsCommand extends Command
             return Command::SUCCESS;
         }
 
-        $tenants = Tenant::cursor();
+        $tenants = Tenant::query()->cursor();
 
         foreach ($tenants as $tenant) {
             try {
@@ -73,15 +73,15 @@ class CheckPayPalPaymentsCommand extends Command
             }
 
             match ($status) {
-                'PAID' => tap($order, function (Order $o) {
+                'PAID' => tap($order, function (\stdClass $o) {
                     $o->update(['payment_status' => PaymentStatus::Paid]);
                     $this->info("  ✓ #{$o->order_number} paid");
                 }),
-                'CANCELLED' => tap($order, function (Order $o) {
+                'CANCELLED' => tap($order, function (\stdClass $o) {
                     $o->update(['payment_status' => PaymentStatus::Cancelled]);
                     $this->warn("  ⚠ #{$o->order_number} cancelled");
                 }),
-                'REFUNDED' => tap($order, function (Order $o) {
+                'REFUNDED' => tap($order, function (\stdClass $o) {
                     $o->update(['payment_status' => PaymentStatus::Refunded]);
                     $this->warn("  ⚠ #{$o->order_number} refunded");
                 }),

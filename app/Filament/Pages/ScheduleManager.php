@@ -64,7 +64,7 @@ class ScheduleManager extends Page
 
     protected function loadSchedule(): void
     {
-        $scheduleService = app(ScheduleService::class);
+        $scheduleService = resolve(ScheduleService::class);
 
         $this->schedule = [];
         for ($day = 0; $day <= 6; $day++) {

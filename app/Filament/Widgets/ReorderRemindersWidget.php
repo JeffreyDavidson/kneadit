@@ -5,7 +5,6 @@ namespace App\Filament\Widgets;
 use App\Enums\OrderStatus;
 use App\Models\Customer;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -35,7 +34,7 @@ class ReorderRemindersWidget extends Widget
             ->map(fn (Customer $c) => [
                 'name' => $c->name,
                 'email' => $c->email,
-                'last_order' => $c->last_order_at ? Carbon::parse($c->last_order_at)->diffForHumans() : 'N/A',
+                'last_order' => $c->last_order_at ? Date::parse($c->last_order_at)->diffForHumans() : 'N/A',
             ])
             ->all();
     }
