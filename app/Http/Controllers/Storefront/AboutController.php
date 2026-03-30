@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\Review;
+use App\Queries\StorefrontStatsQuery;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class AboutController extends Controller
@@ -27,6 +24,8 @@ class AboutController extends Controller
         $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
         $content = settingsPageContent('about');
 
+        $stats = StorefrontStatsQuery::get();
+
         return view('about', [
             'storeName' => $storeName,
             'tagline' => $tagline,
@@ -36,9 +35,9 @@ class AboutController extends Controller
             'socialLinks' => $socialLinks,
             'heroImageUrl' => $heroImageUrl,
             'content' => $content,
-            'customerCount' => Cache::flexible('about_customer_count', [3600, 7200], fn () => Customer::query()->count()),
-            'avgRating' => Cache::flexible('about_avg_rating', [3600, 7200], fn () => Review::query()->where('is_approved', true)->avg('rating')),
-            'orderCount' => Cache::flexible('about_order_count', [3600, 7200], fn () => Order::query()->count()),
+            'customerCount' => $stats['customer_count'],
+            'avgRating' => $stats['avg_rating'],
+            'orderCount' => $stats['order_count'],
         ]);
     }
 }

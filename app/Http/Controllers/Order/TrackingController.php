@@ -6,7 +6,6 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrackOrderRequest;
 use App\Models\Order;
-use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,14 +29,7 @@ class TrackingController extends Controller
      */
     public function store(TrackOrderRequest $request): View
     {
-
-        $orders = Order::query()->whereHas('customer', function (Builder $q) use ($request) {
-            $q->where('email', $request->email);
-        })
-            ->with(['customer', 'orderItems.product', 'messages'])
-            ->latest()
-            ->limit(50)
-            ->get();
+        $orders = Order::query()->forCustomerEmail($request->email)->get();
 
         $content = settingsPageContent('order_tracking');
         $storeName = settings('store_name', 'Our Bakery');

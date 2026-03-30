@@ -35,4 +35,17 @@ class ReviewQueryBuilder extends Builder
 
         return $this;
     }
+
+    /**
+     * Get aggregate statistics for approved reviews.
+     *
+     * @return object{avg_rating: float, total_count: int}
+     */
+    public function statistics(): object
+    {
+        return $this->approved()
+            ->toBase()
+            ->selectRaw('COALESCE(AVG(rating), 0) as avg_rating, COUNT(*) as total_count')
+            ->first();
+    }
 }
