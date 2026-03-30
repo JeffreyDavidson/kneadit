@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\DataTransferObjects\CreateOrderData;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -39,5 +40,10 @@ class StoreOrderRequest extends FormRequest
             'coupon_id' => ['nullable', 'integer', 'exists:coupons,id'],
             'gift_card_id' => ['nullable', 'integer', 'exists:gift_cards,id'],
         ];
+    }
+
+    public function toData(): CreateOrderData
+    {
+        return CreateOrderData::fromArray($this->validated());
     }
 }

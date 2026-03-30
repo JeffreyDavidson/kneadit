@@ -13,9 +13,7 @@ class BlogFeedController extends Controller
      */
     public function __invoke(): Response
     {
-        $posts = BlogPost::query()->where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
+        $posts = BlogPost::query()->published()
             ->latest('published_at')
             ->take(20)
             ->get();

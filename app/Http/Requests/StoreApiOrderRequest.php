@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\DataTransferObjects\CreateOrderData;
 use App\Enums\DeliveryType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -34,5 +35,10 @@ class StoreApiOrderRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:1000'],
             'coupon_code' => ['nullable', 'string'],
         ];
+    }
+
+    public function toData(): CreateOrderData
+    {
+        return CreateOrderData::fromArray($this->validated());
     }
 }

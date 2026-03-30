@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\DataTransferObjects\CreateGiftCardData;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PurchaseGiftCardRequest extends FormRequest
@@ -24,5 +25,10 @@ class PurchaseGiftCardRequest extends FormRequest
             'message' => ['nullable', 'string', 'max:1000'],
             'initial_balance' => ['required', 'numeric', 'min:1', 'max:500'],
         ];
+    }
+
+    public function toData(): CreateGiftCardData
+    {
+        return CreateGiftCardData::fromArray($this->validated());
     }
 }
