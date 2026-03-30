@@ -2,7 +2,9 @@
 
 namespace App\Enums;
 
-enum PageType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum PageType: string implements HasLabel
 {
     case Menu = 'menu';
     case Home = 'home';
@@ -11,4 +13,9 @@ enum PageType: string
     case Order = 'order';
     case Track = 'track';
     case Contact = 'contact';
+
+    public function getLabel(): string
+    {
+        return ucfirst($this->value);
+    }
 }
