@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\OrderStatus;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
@@ -22,25 +21,14 @@ test('tracking page loads', function () {
 });
 
 test('tracking with valid email returns orders', function () {
-    $user = User::query()->create([
-        'name' => 'Admin',
-        'email' => 'admin@test.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->owner()->create();
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
 
-    $customer = Customer::query()->create([
-        'name' => 'Jane Doe',
-        'email' => 'jane@example.com',
-    ]);
-
-    Order::query()->create([
-        'order_number' => 'KN260308A001',
-        'customer_id' => $customer->id,
-        'status' => OrderStatus::Confirmed,
-        'subtotal' => 25.00,
-        'total' => 25.00,
-        'user_id' => $user->id,
-    ]);
+    Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->confirmed()
+        ->create(['order_number' => 'KN260308A001']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->post('/track', [
@@ -61,26 +49,19 @@ test('tracking with no orders shows empty state', function () {
 });
 
 test('tracking shows correct status for each order stage', function () {
-    $user = User::query()->create([
-        'name' => 'Admin',
-        'email' => 'admin@test.com',
-        'password' => bcrypt('password'),
-    ]);
-
-    $customer = Customer::query()->create([
-        'name' => 'Jane Doe',
-        'email' => 'jane@example.com',
-    ]);
+    $user = User::factory()->owner()->create();
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
 
     foreach (['pending', 'confirmed', 'baking', 'ready', 'delivered'] as $status) {
-        Order::query()->create([
-            'order_number' => 'KN' . strtoupper($status),
-            'customer_id' => $customer->id,
-            'status' => $status,
-            'subtotal' => 10.00,
-            'total' => 10.00,
-            'user_id' => $user->id,
-        ]);
+        Order::factory()
+            ->for($customer)
+            ->recycle($user)
+            ->create([
+                'order_number' => 'KN' . strtoupper($status),
+                'status' => $status,
+                'subtotal' => 10.00,
+                'total' => 10.00,
+            ]);
     }
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -93,47 +74,34 @@ test('tracking shows correct status for each order stage', function () {
 });
 
 test('orders display items and totals', function () {
-    $user = User::query()->create([
-        'name' => 'Admin',
-        'email' => 'admin@test.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->owner()->create();
+    $category = Category::factory()->create(['name' => 'Breads', 'slug' => 'breads']);
 
-    $category = Category::query()->create([
-        'name' => 'Breads',
-        'slug' => 'breads',
-        'is_active' => true,
-        'sort_order' => 1,
-    ]);
-
-    $product = Product::query()->create([
+    $product = Product::factory()->for($category)->create([
         'name' => 'Baguette',
         'slug' => 'baguette',
         'price' => 5.00,
-        'category_id' => $category->id,
-        'is_active' => true,
     ]);
 
-    $customer = Customer::query()->create([
-        'name' => 'Jane Doe',
-        'email' => 'jane@example.com',
-    ]);
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
 
-    $order = Order::query()->create([
-        'order_number' => 'KN260308ITEM',
-        'customer_id' => $customer->id,
-        'status' => OrderStatus::Confirmed,
-        'subtotal' => 15.00,
-        'total' => 15.00,
-        'user_id' => $user->id,
-    ]);
+    $order = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->confirmed()
+        ->create([
+            'order_number' => 'KN260308ITEM',
+            'subtotal' => 15.00,
+            'total' => 15.00,
+        ]);
 
-    OrderItem::query()->create([
-        'order_id' => $order->id,
-        'product_id' => $product->id,
-        'quantity' => 3,
-        'unit_price' => 5.00,
-    ]);
+    OrderItem::factory()
+        ->for($order)
+        ->for($product)
+        ->create([
+            'quantity' => 3,
+            'unit_price' => 5.00,
+        ]);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->post('/track', [

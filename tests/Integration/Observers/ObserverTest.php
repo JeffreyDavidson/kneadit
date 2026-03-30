@@ -6,11 +6,11 @@ use App\Models\User;
 
 beforeEach(function () {
     setUpTenantTest();
-    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::factory()->owner()->create();
 });
 
 it('uppercases coupon code on creation via observer', function () {
-    $coupon = Coupon::query()->create([
+    $coupon = Coupon::factory()->create([
         'code' => 'summer25',
         'type' => CouponType::Percentage,
         'value' => 25,

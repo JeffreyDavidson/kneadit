@@ -8,13 +8,13 @@ use App\Models\User;
 beforeEach(fn () => setUpTenantTest());
 
 it('creates a new user and marks invitation as accepted', function () {
-    $owner = User::query()->create([
+    $owner = User::factory()->owner()->create([
         'name' => 'Owner',
         'email' => 'owner@test.com',
         'password' => bcrypt('password'),
     ]);
 
-    $invitation = StaffInvitation::query()->create([
+    $invitation = StaffInvitation::factory()->create([
         'email' => 'new@test.com',
         'role' => UserRole::Staff->value,
         'token' => 'test-token-123',

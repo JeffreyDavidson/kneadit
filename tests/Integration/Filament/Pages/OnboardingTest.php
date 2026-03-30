@@ -9,11 +9,8 @@ use Illuminate\Support\Facades\Date;
 beforeEach(function () {
     setUpTenantTest();
 
-    $this->user = User::query()->create([
-        'name' => 'Test Baker',
-        'email' => 'test@testbakery.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
+    $this->user = User::factory()->owner()->create([
+
     ]);
 });
 
@@ -67,7 +64,7 @@ test('branding step saves colors', function () {
 });
 
 test('product step creates product in database', function () {
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Breads',
         'slug' => 'breads',
         'is_active' => true,
@@ -93,7 +90,7 @@ test('product step creates product in database', function () {
 });
 
 test('product step generates slug from name', function () {
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Cakes',
         'slug' => 'cakes',
         'is_active' => true,
@@ -321,7 +318,7 @@ test('full onboarding flow saves all settings', function () {
     (new ReflectionMethod($page, 'saveBrandingStep'))->invoke($page);
 
     // Step 4: Product
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Cookies',
         'slug' => 'cookies',
         'is_active' => true,

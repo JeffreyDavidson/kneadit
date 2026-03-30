@@ -14,25 +14,23 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(function () {
     setUpTenantTest();
 
-    $user = User::query()->create(['name' => 'Baker', 'email' => 'baker@test.com', 'password' => bcrypt('pass')]);
-    $customer = Customer::query()->create(['name' => 'Test', 'email' => 'test@example.com']);
-    $this->order = Order::query()->create([
-        'order_number' => 'ORD-MSG-001',
-        'customer_id' => $customer->id,
-        'user_id' => $user->id,
-        'status' => OrderStatus::Confirmed,
-        'subtotal' => 50.00,
-        'total' => 50.00,
-    ]);
+    $user = User::factory()->owner()->create();
+    $customer = Customer::factory()->create();
+    $this->order = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->confirmed()
+        ->create(['order_number' => 'ORD-MSG-001']);
 });
 
 test('messages endpoint returns order messages', function () {
-    OrderMessage::query()->create([
-        'order_id' => $this->order->id,
-        'sender_type' => SenderType::Baker,
-        'sender_name' => 'Baker Bob',
-        'message' => 'Your order is being prepared!',
-    ]);
+    OrderMessage::factory()
+        ->for($this->order)
+        ->fromBaker()
+        ->create([
+            'sender_name' => 'Baker Bob',
+            'message' => 'Your order is being prepared!',
+        ]);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson("/order/{$this->order->order_number}/messages");
