@@ -1,14 +1,12 @@
 <?php
 
-use App\Enums\PlatformSenderType;
 use App\Models\PlatformMessage;
 
 beforeEach(fn () => setUpCentralTest());
 
 test('can create message', function () {
-    $msg = PlatformMessage::query()->create([
+    $msg = PlatformMessage::factory()->create([
         'tenant_id' => 't1',
-        'sender_type' => PlatformSenderType::Admin,
         'subject' => 'Welcome',
         'body' => 'Hello there',
     ]);
@@ -17,43 +15,43 @@ test('can create message', function () {
 });
 
 test('scope unread', function () {
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S1', 'body' => 'B', 'is_read' => false]);
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S2', 'body' => 'B', 'is_read' => true]);
+    PlatformMessage::factory()->create(['tenant_id' => 't1', 'is_read' => false]);
+    PlatformMessage::factory()->create(['tenant_id' => 't1', 'is_read' => true]);
 
     expect(PlatformMessage::unread()->get())->toHaveCount(1);
 });
 
 test('scope from admin', function () {
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S', 'body' => 'B']);
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Tenant, 'subject' => 'S', 'body' => 'B']);
+    PlatformMessage::factory()->fromAdmin()->create(['tenant_id' => 't1']);
+    PlatformMessage::factory()->fromTenant()->create(['tenant_id' => 't1']);
 
     expect(PlatformMessage::fromAdmin()->get())->toHaveCount(1);
 });
 
 test('scope from tenant', function () {
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Tenant, 'subject' => 'S', 'body' => 'B']);
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S', 'body' => 'B']);
+    PlatformMessage::factory()->fromTenant()->create(['tenant_id' => 't1']);
+    PlatformMessage::factory()->fromAdmin()->create(['tenant_id' => 't1']);
 
     expect(PlatformMessage::fromTenant()->get())->toHaveCount(1);
 });
 
 test('scope top level', function () {
-    $parent = PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S', 'body' => 'B']);
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S', 'body' => 'Reply', 'parent_id' => $parent->id]);
+    $parent = PlatformMessage::factory()->create(['tenant_id' => 't1']);
+    PlatformMessage::factory()->create(['tenant_id' => 't1', 'parent_id' => $parent->id]);
 
     expect(PlatformMessage::topLevel()->get())->toHaveCount(1);
 });
 
 test('replies relationship', function () {
-    $parent = PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S', 'body' => 'B']);
-    PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Tenant, 'subject' => 'S', 'body' => 'Reply', 'parent_id' => $parent->id]);
+    $parent = PlatformMessage::factory()->create(['tenant_id' => 't1']);
+    PlatformMessage::factory()->fromTenant()->create(['tenant_id' => 't1', 'parent_id' => $parent->id]);
 
     expect($parent->replies)->toHaveCount(1);
 });
 
 test('parent relationship', function () {
-    $parent = PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Admin, 'subject' => 'S', 'body' => 'B']);
-    $reply = PlatformMessage::query()->create(['tenant_id' => 't1', 'sender_type' => PlatformSenderType::Tenant, 'subject' => 'S', 'body' => 'Reply', 'parent_id' => $parent->id]);
+    $parent = PlatformMessage::factory()->create(['tenant_id' => 't1']);
+    $reply = PlatformMessage::factory()->fromTenant()->create(['tenant_id' => 't1', 'parent_id' => $parent->id]);
 
     expect($reply->parent->id)->toBe($parent->id);
 });

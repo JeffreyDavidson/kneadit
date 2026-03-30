@@ -9,10 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 beforeEach(fn () => setUpCentralTest());
 
 test('can create ticket', function () {
-    $ticket = SupportTicket::query()->create([
+    $ticket = SupportTicket::factory()->create([
         'subject' => 'Help needed',
         'body' => 'Something is broken',
-        'status' => SupportTicketStatus::Open,
         'priority' => 'high',
         'tenant_id' => 'tenant-1',
     ]);
@@ -22,9 +21,7 @@ test('can create ticket', function () {
 });
 
 test('status defaults to open', function () {
-    $ticket = SupportTicket::query()->create([
-        'subject' => 'Test',
-        'body' => 'Body',
+    $ticket = SupportTicket::factory()->create([
         'tenant_id' => 't1',
     ]);
 
@@ -32,9 +29,7 @@ test('status defaults to open', function () {
 });
 
 test('priority defaults to normal', function () {
-    $ticket = SupportTicket::query()->create([
-        'subject' => 'Test',
-        'body' => 'Body',
+    $ticket = SupportTicket::factory()->create([
         'tenant_id' => 't1',
     ]);
 
@@ -42,9 +37,7 @@ test('priority defaults to normal', function () {
 });
 
 test('replies relationship', function () {
-    $ticket = SupportTicket::query()->create([
-        'subject' => 'Test',
-        'body' => 'Body',
+    $ticket = SupportTicket::factory()->create([
         'tenant_id' => 't1',
     ]);
 
@@ -55,7 +48,7 @@ test('replies relationship', function () {
 });
 
 test('tenant relationship exists', function () {
-    $ticket = SupportTicket::query()->create(['subject' => 'T', 'body' => 'B', 'tenant_id' => 't1']);
+    $ticket = SupportTicket::factory()->create(['tenant_id' => 't1']);
 
     expect($ticket->tenant())->toBeInstanceOf(BelongsTo::class);
 });

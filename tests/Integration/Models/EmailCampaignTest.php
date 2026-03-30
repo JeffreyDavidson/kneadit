@@ -8,22 +8,15 @@ use Carbon\Carbon;
 beforeEach(fn () => setUpCentralTest());
 
 test('can create campaign', function () {
-    $campaign = EmailCampaign::query()->create([
-        'name' => 'Test Campaign',
+    $campaign = EmailCampaign::factory()->create([
         'subject' => 'Newsletter',
-        'body' => 'Content here',
-        'status' => EmailCampaignStatus::Draft,
     ]);
 
     expect(EmailCampaign::query()->where('subject', 'Newsletter')->first())->not->toBeNull();
 });
 
 test('sent at is cast to datetime', function () {
-    $campaign = EmailCampaign::query()->create([
-        'name' => 'Test',
-        'subject' => 'Test',
-        'body' => 'Body',
-        'status' => EmailCampaignStatus::Sent,
+    $campaign = EmailCampaign::factory()->sent()->create([
         'sent_at' => '2026-01-01 12:00:00',
     ]);
 
@@ -32,23 +25,18 @@ test('sent at is cast to datetime', function () {
 });
 
 test('status can be updated to sent', function () {
-    $campaign = EmailCampaign::query()->create(['name' => 'T', 'subject' => 'T', 'body' => 'B', 'status' => EmailCampaignStatus::Draft]);
+    $campaign = EmailCampaign::factory()->create();
     $campaign->update(['status' => EmailCampaignStatus::Sent, 'sent_at' => now()]);
 
     expect($campaign->fresh()->status)->toBe(EmailCampaignStatus::Sent);
 });
 
 test('recipient count stored correctly', function () {
-    Customer::query()->create(['name' => 'Customer 1', 'email' => 'c1@example.com']);
-    Customer::query()->create(['name' => 'Customer 2', 'email' => 'c2@example.com']);
-    Customer::query()->create(['name' => 'Customer 3', 'email' => 'c3@example.com']);
+    Customer::factory()->count(3)->create();
 
     $count = Customer::query()->whereNotNull('email')->count();
 
-    $campaign = EmailCampaign::query()->create([
-        'subject' => 'To All',
-        'body' => 'Hello everyone',
-        'status' => EmailCampaignStatus::Sent,
+    $campaign = EmailCampaign::factory()->sent()->create([
         'sent_at' => now(),
         'recipient_count' => $count,
     ]);
