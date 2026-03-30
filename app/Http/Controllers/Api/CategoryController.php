@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\ApiResponse;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 
@@ -14,9 +15,6 @@ class CategoryController extends Controller
             ->orderBy('sort_order')
             ->get(['id', 'name', 'slug', 'description', 'sort_order']);
 
-        return response()->json([
-            'data' => $categories,
-            'message' => 'Categories retrieved successfully.',
-        ]);
+        return ApiResponse::success($categories, 'Categories retrieved successfully.');
     }
 }
