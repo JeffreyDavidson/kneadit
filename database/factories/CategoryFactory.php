@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -36,5 +37,13 @@ class CategoryFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'is_active' => false,
         ]);
+    }
+
+    /**
+     * Category has active products.
+     */
+    public function withProducts(int $count = 3): static
+    {
+        return $this->has(Product::factory()->count($count), 'products');
     }
 }
