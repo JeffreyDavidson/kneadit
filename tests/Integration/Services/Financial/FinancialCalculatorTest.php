@@ -2,8 +2,6 @@
 
 use App\DataTransferObjects\FinancialSummary;
 use App\Enums\ExpenseCategory;
-use App\Enums\OrderStatus;
-use App\Enums\PaymentStatus;
 use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\Order;
@@ -12,21 +10,22 @@ use App\Services\Financial\FinancialCalculator;
 
 beforeEach(function () {
     setUpTenantTest();
-    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
-    $this->customer = Customer::query()->create(['name' => 'Jane', 'email' => 'jane@test.com']);
+    $this->user = User::factory()->owner()->create();
+    $this->customer = Customer::factory()->create();
 });
 
 it('calculates yearly totals from orders and expenses', function () {
-    Order::query()->create([
-        'customer_id' => $this->customer->id,
-        'status' => OrderStatus::Delivered,
-        'payment_status' => PaymentStatus::Paid,
-        'subtotal' => 100,
-        'total' => 100,
-        'delivery_date' => '2026-03-15',
-    ]);
+    Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->delivered()
+        ->create([
+            'subtotal' => 100,
+            'total' => 100,
+            'delivery_date' => '2026-03-15',
+        ]);
 
-    Expense::query()->create([
+    Expense::factory()->create([
         'description' => 'Flour',
         'amount' => 30,
         'category' => ExpenseCategory::Ingredients,

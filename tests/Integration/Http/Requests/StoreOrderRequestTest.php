@@ -9,12 +9,11 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
-    test()->product = Product::query()->create([
+    $category = Category::factory()->create(['name' => 'Bread', 'slug' => 'bread']);
+    test()->product = Product::factory()->for($category)->create([
         'name' => 'Sourdough',
         'slug' => 'sourdough',
         'price' => 5.00,
-        'category_id' => $category->id,
         'is_active' => true,
     ]);
 });

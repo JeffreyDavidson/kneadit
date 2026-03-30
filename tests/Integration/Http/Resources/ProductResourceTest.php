@@ -7,19 +7,17 @@ use App\Models\User;
 
 beforeEach(function () {
     setUpTenantTest();
-    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::factory()->owner()->create();
 });
 
 it('transforms a product into the expected API shape', function () {
-    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread', 'is_active' => true]);
-    $product = Product::query()->create([
+    $category = Category::factory()->create(['name' => 'Bread', 'slug' => 'bread', 'is_active' => true]);
+    $product = Product::factory()->for($category)->featured()->create([
         'name' => 'Sourdough',
         'slug' => 'sourdough',
         'description' => 'A tangy loaf',
         'price' => 8.50,
-        'category_id' => $category->id,
         'is_active' => true,
-        'is_featured' => true,
     ]);
 
     $product->load('category');

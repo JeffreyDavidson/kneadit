@@ -3,7 +3,6 @@
 use App\Actions\GiftCards\CreateGiftCard;
 use App\Actions\GiftCards\RedeemGiftCard;
 use App\DataTransferObjects\CreateGiftCardData;
-use App\Enums\OrderStatus;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
@@ -74,9 +73,12 @@ test('redeem creates transaction record', function () {
     ]));
 
     Mail::fake();
-    $user = User::query()->create(['name' => 'Test', 'email' => 'u@t.com', 'password' => bcrypt('p')]);
-    $customer = Customer::query()->create(['name' => 'C', 'email' => 'c@t.com']);
-    $order = Order::query()->create(['user_id' => $user->id, 'customer_id' => $customer->id, 'status' => OrderStatus::Pending, 'total' => 15, 'subtotal' => 15]);
+    $user = User::factory()->owner()->create();
+    $customer = Customer::factory()->create();
+    $order = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->create(['total' => 15, 'subtotal' => 15]);
 
     resolve(RedeemGiftCard::class)($card->code, 15, $order->id);
 

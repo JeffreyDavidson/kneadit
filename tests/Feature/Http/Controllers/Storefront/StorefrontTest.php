@@ -27,19 +27,15 @@ test('menu page shows store name from settings', function () {
 });
 
 test('menu page shows categories and products', function () {
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Pastries',
         'slug' => 'pastries',
-        'is_active' => true,
-        'sort_order' => 1,
     ]);
 
-    Product::query()->create([
+    Product::factory()->for($category)->create([
         'name' => 'Croissant',
         'slug' => 'croissant',
         'price' => 4.50,
-        'category_id' => $category->id,
-        'is_active' => true,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -51,19 +47,15 @@ test('menu page shows categories and products', function () {
 });
 
 test('menu page shows products with prices', function () {
-    $category = Category::query()->create([
+    $category = Category::factory()->create([
         'name' => 'Cakes',
         'slug' => 'cakes',
-        'is_active' => true,
-        'sort_order' => 1,
     ]);
 
-    Product::query()->create([
+    Product::factory()->for($category)->create([
         'name' => 'Red Velvet Cake',
         'slug' => 'red-velvet-cake',
         'price' => 35.00,
-        'category_id' => $category->id,
-        'is_active' => true,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())

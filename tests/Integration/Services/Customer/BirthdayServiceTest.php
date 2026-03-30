@@ -10,7 +10,7 @@ beforeEach(fn () => setUpTenantTest());
 it('creates a birthday coupon for a customer', function () {
     Date::setTestNow('2026-03-25');
 
-    $customer = Customer::query()->create([
+    $customer = Customer::factory()->create([
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'birthday' => '1990-03-25',

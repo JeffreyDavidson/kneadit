@@ -15,19 +15,15 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(function () {
     setUpTenantTest();
 
-    $this->category = Category::query()->create([
+    $this->category = Category::factory()->create([
         'name' => 'Breads',
         'slug' => 'breads',
-        'is_active' => true,
-        'sort_order' => 1,
     ]);
 
-    $this->product = Product::query()->create([
+    $this->product = Product::factory()->for($this->category)->create([
         'name' => 'Sourdough Loaf',
         'slug' => 'sourdough-loaf',
         'price' => 12.50,
-        'category_id' => $this->category->id,
-        'is_active' => true,
     ]);
 });
 
@@ -112,13 +108,10 @@ test('order validation rejects empty cart', function () {
 });
 
 test('coupon application works for valid coupon', function () {
-    $coupon = Coupon::query()->create([
+    $coupon = Coupon::factory()->create([
         'code' => 'SAVE10',
         'type' => CouponType::Percentage,
         'value' => 10.00,
-        'is_active' => true,
-        'starts_at' => now()->subDay(),
-        'expires_at' => now()->addMonth(),
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -153,25 +146,18 @@ test('capacity check endpoint works', function () {
 });
 
 test('order confirmation page shows after successful order', function () {
-    $user = User::query()->create([
-        'name' => 'Admin',
-        'email' => 'admin@test.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->owner()->create();
+    $customer = Customer::factory()->create();
 
-    $customer = Customer::query()->create([
-        'name' => 'John Baker',
-        'email' => 'john@example.com',
-    ]);
-
-    $order = Order::query()->create([
-        'order_number' => 'KN260308TEST',
-        'customer_id' => $customer->id,
-        'status' => OrderStatus::Pending,
-        'subtotal' => 25.00,
-        'total' => 25.00,
-        'user_id' => $user->id,
-    ]);
+    $order = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->create([
+            'order_number' => 'KN260308TEST',
+            'status' => OrderStatus::Pending,
+            'subtotal' => 25.00,
+            'total' => 25.00,
+        ]);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('order.confirmation', ['order' => $order->order_number], false));

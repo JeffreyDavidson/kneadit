@@ -13,7 +13,7 @@ test('staff invitation model exists', function () {
 
 test('invitation can be created', function () {
     $owner = User::factory()->create(['role' => UserRole::Owner]);
-    StaffInvitation::query()->create([
+    StaffInvitation::factory()->create([
         'email' => 'staff@example.com',
         'role' => UserRole::Staff,
         'token' => Str::random(32),
@@ -25,7 +25,7 @@ test('invitation can be created', function () {
 });
 
 test('invitation is expired when past expiry', function () {
-    $invitation = StaffInvitation::query()->create([
+    $invitation = StaffInvitation::factory()->create([
         'email' => 'staff@example.com',
         'role' => UserRole::Staff,
         'token' => Str::random(32),
@@ -37,7 +37,7 @@ test('invitation is expired when past expiry', function () {
 });
 
 test('invitation is pending when not accepted and not expired', function () {
-    $invitation = StaffInvitation::query()->create([
+    $invitation = StaffInvitation::factory()->create([
         'email' => 'staff@example.com',
         'role' => UserRole::Staff,
         'token' => Str::random(32),
@@ -49,7 +49,7 @@ test('invitation is pending when not accepted and not expired', function () {
 });
 
 test('invitation is not pending when accepted', function () {
-    $invitation = StaffInvitation::query()->create([
+    $invitation = StaffInvitation::factory()->create([
         'email' => 'staff@example.com',
         'role' => UserRole::Staff,
         'token' => Str::random(32),
@@ -63,7 +63,7 @@ test('invitation is not pending when accepted', function () {
 
 test('invitation belongs to inviter', function () {
     $owner = User::factory()->create(['role' => UserRole::Owner]);
-    $invitation = StaffInvitation::query()->create([
+    $invitation = StaffInvitation::factory()->create([
         'email' => 'staff@example.com',
         'role' => UserRole::Staff,
         'token' => Str::random(32),

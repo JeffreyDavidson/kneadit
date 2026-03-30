@@ -7,7 +7,7 @@ use App\Models\User;
 beforeEach(function () {
     setUpCentralTest();
 
-    $this->user = User::query()->create([
+    $this->user = User::factory()->owner()->create([
         'name' => 'Test Baker',
         'email' => 'baker@test.com',
         'password' => bcrypt('password'),

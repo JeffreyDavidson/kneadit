@@ -5,7 +5,7 @@ use App\Services\Reporting\WeeklyDigestDataCollector;
 
 beforeEach(function () {
     setUpTenantTest();
-    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::factory()->owner()->create();
 });
 
 it('returns expected data keys', function () {

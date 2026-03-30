@@ -77,9 +77,9 @@ test('at-risk threshold is configurable via setting', function () {
 test('metrics calculates loyalty points correctly', function () {
     $customer = Customer::factory()->create();
 
-    LoyaltyPoint::query()->create(['customer_id' => $customer->id, 'points' => 500, 'type' => 'earned', 'description' => 'test']);
-    LoyaltyPoint::query()->create(['customer_id' => $customer->id, 'points' => 100, 'type' => 'redeemed', 'description' => 'test']);
-    LoyaltyPoint::query()->create(['customer_id' => $customer->id, 'points' => 50, 'type' => 'adjusted', 'description' => 'test']);
+    LoyaltyPoint::factory()->earned(500)->for($customer)->create();
+    LoyaltyPoint::factory()->redeemed(100)->for($customer)->create();
+    LoyaltyPoint::factory()->adjusted(50)->for($customer)->create();
 
     $metrics = resolve(CustomerIntelligence::class)->metrics($customer);
 

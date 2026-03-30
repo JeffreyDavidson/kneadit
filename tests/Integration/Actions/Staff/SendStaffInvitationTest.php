@@ -12,7 +12,7 @@ beforeEach(fn () => setUpTenantTest());
 it('creates an invitation and sends the email', function () {
     Mail::fake();
 
-    $inviter = User::query()->create([
+    $inviter = User::factory()->owner()->create([
         'name' => 'Owner',
         'email' => 'owner@test.com',
         'password' => bcrypt('password'),

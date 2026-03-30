@@ -64,7 +64,7 @@ test('test files should not use query()->create() for models with factories', fu
 
     // Track remaining violations — reduce this number as files are fixed
     // Once at 0, change to expect($violations)->toBeEmpty()
-    expect(count($violations))->toBeLessThanOrEqual(18,
+    expect(count($violations))->toBeLessThanOrEqual(15,
         "New query()->create() violation added! Fix or use factory:\n" . implode("\n", $violations),
     );
 })->skip('Tracking: 18 files still need factory refactoring');
