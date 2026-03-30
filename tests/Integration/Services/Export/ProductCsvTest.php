@@ -29,16 +29,16 @@ test('export generates valid csv with headers', function () {
 });
 
 test('export includes all active products', function () {
-    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
-    Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
-    Product::query()->create(['name' => 'Rye', 'slug' => 'rye', 'price' => 7, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::factory()->create(['name' => 'Bread', 'slug' => 'bread']);
+    Product::factory()->for($category)->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8]);
+    Product::factory()->for($category)->create(['name' => 'Rye', 'slug' => 'rye', 'price' => 7]);
 
     $csv = $this->service->export();
     expect($csv)->toContain('Sourdough')->toContain('Rye');
 });
 
 test('import creates new products', function () {
-    Category::query()->create(['name' => 'Cakes', 'slug' => 'cakes']);
+    Category::factory()->create(['name' => 'Cakes', 'slug' => 'cakes']);
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nChocolate Cake,Cakes,Rich and moist,25.00,,1,0\n");
 
     $result = resolve(ImportProducts::class)($file);
@@ -48,8 +48,8 @@ test('import creates new products', function () {
 });
 
 test('import updates existing products by name', function () {
-    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
-    Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8, 'category_id' => $category->id, 'is_active' => true]);
+    $category = Category::factory()->create(['name' => 'Bread', 'slug' => 'bread']);
+    Product::factory()->for($category)->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8]);
 
     $file = createCsvFile("name,category,description,price,cost,is_active,is_featured\nSourdough,Bread,Updated desc,10.00,,1,0\n");
     $result = resolve(ImportProducts::class)($file);

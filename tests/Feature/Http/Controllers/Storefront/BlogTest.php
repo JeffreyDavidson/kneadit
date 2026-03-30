@@ -15,18 +15,15 @@ test('blog index page loads', function () {
 });
 
 test('blog shows only published posts', function () {
-    BlogPost::query()->create([
+    BlogPost::factory()->published()->create([
         'title' => 'Published Post',
         'body' => 'Content here',
-        'is_published' => true,
         'published_at' => now()->subDay(),
     ]);
 
-    BlogPost::query()->create([
+    BlogPost::factory()->create([
         'title' => 'Draft Post',
         'body' => 'Draft content',
-        'is_published' => false,
-        'published_at' => null,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())->get('/blog');
@@ -37,10 +34,9 @@ test('blog shows only published posts', function () {
 });
 
 test('blog hides draft posts', function () {
-    BlogPost::query()->create([
+    BlogPost::factory()->create([
         'title' => 'My Draft',
         'body' => 'Not ready yet',
-        'is_published' => false,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())->get('/blog');
@@ -51,10 +47,9 @@ test('blog hides draft posts', function () {
 
 test('blog paginates at six per page', function () {
     for ($i = 1; $i <= 8; $i++) {
-        BlogPost::query()->create([
+        BlogPost::factory()->published()->create([
             'title' => "Post Number $i",
             'body' => "Body $i",
-            'is_published' => true,
             'published_at' => now()->subDays($i),
         ]);
     }
@@ -68,11 +63,10 @@ test('blog paginates at six per page', function () {
 });
 
 test('individual blog post loads by slug', function () {
-    BlogPost::query()->create([
+    BlogPost::factory()->published()->create([
         'title' => 'Sourdough Tips',
         'slug' => 'sourdough-tips',
         'body' => 'Here are some tips for sourdough.',
-        'is_published' => true,
         'published_at' => now()->subDay(),
     ]);
 
@@ -89,11 +83,10 @@ test('returns 404 for nonexistent slug', function () {
 });
 
 test('returns 404 for draft post slug', function () {
-    BlogPost::query()->create([
+    BlogPost::factory()->create([
         'title' => 'Secret Draft',
         'slug' => 'secret-draft',
         'body' => 'Hidden content',
-        'is_published' => false,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())->get('/blog/secret-draft');
@@ -109,10 +102,9 @@ test('rss feed returns xml content type', function () {
 });
 
 test('rss feed contains published posts', function () {
-    BlogPost::query()->create([
+    BlogPost::factory()->published()->create([
         'title' => 'Feed Post',
         'body' => 'Feed body',
-        'is_published' => true,
         'published_at' => now()->subDay(),
     ]);
 

@@ -2,7 +2,6 @@
 
 use App\Enums\SocialPlatform;
 use App\Enums\SocialPostStatus;
-use App\Models\Category;
 use App\Models\Product;
 use App\Models\SocialPost;
 use Illuminate\Support\Carbon;
@@ -14,10 +13,9 @@ test('social post model exists', function () {
 });
 
 test('social post can be created', function () {
-    SocialPost::query()->create([
+    SocialPost::factory()->create([
         'platform' => SocialPlatform::Instagram,
         'caption' => 'Check out our new sourdough! 🍞',
-        'status' => SocialPostStatus::Draft,
     ]);
 
     $this->assertDatabaseHas('social_posts', [
@@ -35,10 +33,9 @@ test('platforms are defined', function () {
 });
 
 test('status defaults to draft', function () {
-    $post = SocialPost::query()->create([
+    $post = SocialPost::factory()->create([
         'platform' => SocialPlatform::Facebook,
         'caption' => 'Test post',
-        'status' => SocialPostStatus::Draft,
     ]);
 
     expect($post->status)->toBe(SocialPostStatus::Draft);
@@ -51,7 +48,7 @@ test('status enum has expected cases', function () {
 test('scheduled post has scheduled for date', function () {
     $scheduledDate = now()->addDays(3);
 
-    $post = SocialPost::query()->create([
+    $post = SocialPost::factory()->create([
         'platform' => SocialPlatform::Instagram,
         'caption' => 'Scheduled post',
         'status' => SocialPostStatus::Scheduled,
@@ -62,20 +59,15 @@ test('scheduled post has scheduled for date', function () {
 });
 
 test('social post belongs to product', function () {
-    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread', 'sort_order' => 0]);
-    $product = Product::query()->create([
+    $product = Product::factory()->create([
         'name' => 'Sourdough',
         'slug' => 'sourdough',
         'price' => 8.99,
-        'category_id' => $category->id,
-        'is_active' => true,
     ]);
 
-    $post = SocialPost::query()->create([
+    $post = SocialPost::factory()->for($product)->create([
         'platform' => SocialPlatform::Instagram,
         'caption' => 'Our famous sourdough',
-        'product_id' => $product->id,
-        'status' => SocialPostStatus::Draft,
     ]);
 
     expect($post->product->id)->toBe($product->id);
