@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Actions\GiftCards\CreateGiftCard;
-use App\DataTransferObjects\CreateGiftCardData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PurchaseGiftCardRequest;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +16,7 @@ class PurchaseGiftCardController extends Controller
     {
         $validated = $request->validated();
 
-        $card = $createGiftCard(CreateGiftCardData::fromArray($validated));
+        $card = $createGiftCard($request->toData());
 
         return response()->json([
             'success' => true,

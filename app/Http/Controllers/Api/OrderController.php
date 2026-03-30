@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\Orders\CreateOrder;
-use App\DataTransferObjects\CreateOrderData;
 use App\Enums\DeliveryType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiOrderRequest;
@@ -27,7 +26,7 @@ class OrderController extends Controller
         $validated['delivery_type'] = $validated['delivery_type'] ?? DeliveryType::Pickup->value;
         $validated['coupon_id'] = $couponId;
 
-        $order = $createOrder(CreateOrderData::fromArray($validated));
+        $order = $createOrder($request->toData());
 
         if (! $order) {
             return response()->json([

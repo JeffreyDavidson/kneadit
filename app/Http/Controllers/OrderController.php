@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Orders\CreateOrder;
-use App\DataTransferObjects\CreateOrderData;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Category;
 use App\Models\Order;
@@ -40,7 +39,7 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        $order = $createOrder(CreateOrderData::fromArray($validated));
+        $order = $createOrder($request->toData());
 
         if (! $order) {
             return back()->withErrors(['delivery_date' => 'Sorry, this date is fully booked. Please choose another date.']);
