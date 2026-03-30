@@ -4,6 +4,7 @@ use App\Filament\Resources\Customers\Pages\ListCustomers;
 use App\Models\Customer;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -55,7 +56,7 @@ test('can edit a customer via table action', function () {
     $customer = Customer::factory()->create();
 
     Livewire::test(ListCustomers::class)
-        ->callTableAction('edit', $customer, data: [
+        ->callAction(TestAction::make('edit')->table($customer), data: [
             'name' => 'Updated Name',
             'email' => $customer->email,
         ])

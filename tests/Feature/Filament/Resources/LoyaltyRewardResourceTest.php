@@ -5,6 +5,7 @@ use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
 use App\Models\LoyaltyReward;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -44,7 +45,7 @@ test('can edit a loyalty reward via table action', function () {
     $reward = LoyaltyReward::factory()->create();
 
     Livewire::test(ListLoyaltyRewards::class)
-        ->callTableAction('edit', $reward, data: [
+        ->callAction(TestAction::make('edit')->table($reward), data: [
             'name' => 'Updated Reward',
             'points_required' => $reward->points_required,
             'reward_type' => $reward->reward_type->value,
@@ -87,6 +88,26 @@ test('can search loyalty rewards by name', function () {
         ->searchTable('Cookie')
         ->assertCanSeeTableRecords(collect([$target]))
         ->assertCanNotSeeTableRecords(collect([$other]));
+});
+
+test('can filter loyalty rewards by reward type', function () {
+    $percentage = LoyaltyReward::factory()->create(['reward_type' => RewardType::PercentageDiscount]);
+    $fixed = LoyaltyReward::factory()->create(['reward_type' => RewardType::FixedDiscount]);
+
+    Livewire::test(ListLoyaltyRewards::class)
+        ->filterTable('reward_type', RewardType::PercentageDiscount->value)
+        ->assertCanSeeTableRecords(collect([$percentage]))
+        ->assertCanNotSeeTableRecords(collect([$fixed]));
+});
+
+test('can filter loyalty rewards by active status', function () {
+    $active = LoyaltyReward::factory()->create(['is_active' => true]);
+    $inactive = LoyaltyReward::factory()->create(['is_active' => false]);
+
+    Livewire::test(ListLoyaltyRewards::class)
+        ->filterTable('is_active', true)
+        ->assertCanSeeTableRecords(collect([$active]))
+        ->assertCanNotSeeTableRecords(collect([$inactive]));
 });
 
 test('can sort loyalty rewards by points required', function () {

@@ -25,3 +25,27 @@ test('SocialPostStatus has a label method', function () {
 test('SocialPlatform has a label method', function () {
     expect(SocialPlatform::Instagram->getLabel())->toBe('Instagram');
 });
+
+test('PlatformSenderType has a label method', function () {
+    expect(App\Enums\PlatformSenderType::Admin->getLabel())->toBe('Admin');
+});
+
+test('LoyaltyPointType has a label method', function () {
+    expect(App\Enums\LoyaltyPointType::Earned->getLabel())->toBe('Earned');
+});
+
+test('SupportTicketStatus has a label method', function () {
+    expect(App\Enums\SupportTicketStatus::Open->getLabel())->toBe('Open');
+});
+
+test('SupportTicketPriority has a label method', function () {
+    expect(App\Enums\SupportTicketPriority::High->getLabel())->toBe('High');
+});
+
+test('AnnouncementType has a label method', function () {
+    expect(App\Enums\AnnouncementType::Info->getLabel())->toBe('Info');
+});
+
+test('SupportReplyAuthorType has a label method', function () {
+    expect(App\Enums\SupportReplyAuthorType::Admin->getLabel())->toBe('Admin');
+});

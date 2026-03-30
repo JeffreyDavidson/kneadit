@@ -48,6 +48,16 @@ test('can filter waitlist entries by status', function () {
         ->assertCanNotSeeTableRecords(collect([$notified]));
 });
 
+test('can filter waitlist entries by requested date range', function () {
+    $early = WaitlistEntry::factory()->create(['requested_date' => '2026-03-01']);
+    $late = WaitlistEntry::factory()->create(['requested_date' => '2026-06-15']);
+
+    Livewire::test(ListWaitlistEntries::class)
+        ->filterTable('requested_date', ['from' => '2026-06-01', 'until' => '2026-06-30'])
+        ->assertCanSeeTableRecords(collect([$late]))
+        ->assertCanNotSeeTableRecords(collect([$early]));
+});
+
 test('can create a waitlist entry via slide-over', function () {
     Livewire::test(ListWaitlistEntries::class)
         ->callAction(CreateAction::class, data: [

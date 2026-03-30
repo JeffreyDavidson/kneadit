@@ -11,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -53,11 +54,16 @@ class CapacityLimitsTable
                     ->falseColor('success'),
 
                 TextColumn::make('notes')
+                    ->searchable()
                     ->limit(40)
                     ->placeholder('—')
                     ->toggleable(),
             ])
             ->defaultSort('day_of_week')
+            ->filters([
+                TernaryFilter::make('is_blocked')
+                    ->label('Blocked'),
+            ])
             ->recordActions([
                 EditAction::make()->slideOver()->modalWidth('md'),
                 DeleteAction::make(),

@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Storage;
  * @property-read int|null $recipes_count
  * @property-read Collection<int, Review> $reviews
  * @property-read int|null $reviews_count
+ * @property-read float|null $reviews_avg_rating
  * @property-read Collection<int, SeasonalItem> $seasonalItems
  * @property-read int|null $seasonal_items_count
  * @property-read Collection<int, SocialPost> $socialPosts
@@ -41,12 +42,7 @@ use Illuminate\Support\Facades\Storage;
  * @property-read Collection<int, ProductWaitlist> $waitlistEntries
  * @property-read int|null $waitlist_entries_count
  *
- * @method static Builder<static>|Product active()
  * @method static \Database\Factories\ProductFactory factory($count = null, $state = [])
- * @method static Builder<static>|Product featured()
- * @method static Builder<static>|Product newModelQuery()
- * @method static Builder<static>|Product newQuery()
- * @method static Builder<static>|Product query()
  *
  * @property Carbon|null $available_from
  * @property Carbon|null $available_until

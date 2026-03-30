@@ -1,12 +1,14 @@
-@extends('layouts.storefront')
-
 @php
     $storeName = settings('store_name', 'Our Bakery');
     $heroImage = settings('hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 @endphp
 
-@section('content')
+<x-layouts.storefront>
+<x-slot:styles>
+<link rel="stylesheet" href="{{ asset('css/survey.css') }}">
+</x-slot:styles>
+
 @php
     $content = settingsPageContent('survey');
 @endphp
@@ -143,8 +145,4 @@
     </div>
 </section>
 @endif
-@endsection
-
-@section('styles')
-<link rel="stylesheet" href="{{ asset('css/survey.css') }}">
-@endsection
+</x-layouts.storefront>

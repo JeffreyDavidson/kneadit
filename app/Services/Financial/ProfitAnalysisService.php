@@ -45,8 +45,6 @@ class ProfitAnalysisService
                     'color_class' => $this->getMarginColorClass($margin),
                 ];
             });
-
-        return $products;
     }
 
     public function getProductCost(Product $product): ?float

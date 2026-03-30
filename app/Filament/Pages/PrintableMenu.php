@@ -8,6 +8,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Category;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;

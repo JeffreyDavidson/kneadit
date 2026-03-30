@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Order;
+use App\Queries\RevenueQuery;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
@@ -76,12 +76,7 @@ class RevenueChartWidget extends ChartWidget
     /** @return array<int, float> */
     private function getDailyRevenue(Carbon $start, Carbon $end): array
     {
-        $raw = Order::query()->active()
-            ->whereBetween('delivery_date', [$start, $end])
-            ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue')
-            ->groupBy('date')
-            ->pluck('revenue', 'date')
-            ->toArray();
+        $raw = RevenueQuery::dailyBreakdown([$start, $end]);
 
         /** @var Collection<int, Carbon> $days */
         $days = collect(iterator_to_array(CarbonPeriod::create($start, $end)));
@@ -93,6 +88,6 @@ class RevenueChartWidget extends ChartWidget
 
     private function fmt(float $v): string
     {
-        return Number::format($v);
+        return (string) Number::format($v);
     }
 }

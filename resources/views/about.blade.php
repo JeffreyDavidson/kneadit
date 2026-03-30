@@ -1,6 +1,4 @@
-@extends('layouts.storefront')
-
-@section('content')
+<x-layouts.storefront>
 @php
     $storeName = settings('store_name', 'Our Bakery');
     $tagline = settings('business_tagline');
@@ -218,4 +216,4 @@
         </a>
     </div>
 </section>
-@endsection
+</x-layouts.storefront>

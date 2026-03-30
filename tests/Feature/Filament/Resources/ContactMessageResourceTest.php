@@ -4,6 +4,7 @@ use App\Filament\Resources\ContactMessages\Pages\ListContactMessages;
 use App\Models\ContactMessage;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -41,7 +42,7 @@ test('can edit a contact message via table action', function () {
     $message = ContactMessage::factory()->create();
 
     Livewire::test(ListContactMessages::class)
-        ->callTableAction('edit', $message, data: [
+        ->callAction(TestAction::make('edit')->table($message), data: [
             'name' => $message->name,
             'email' => $message->email,
             'subject' => 'Updated subject',

@@ -5,6 +5,7 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -53,7 +54,7 @@ test('can edit a review via table action', function () {
     $review = Review::factory()->recycle($this->product)->create();
 
     Livewire::test(ListReviews::class)
-        ->callTableAction('edit', $review, data: [
+        ->callAction(TestAction::make('edit')->table($review), data: [
             'customer_name' => 'Updated Reviewer',
             'customer_email' => $review->customer_email,
             'rating' => $review->rating,

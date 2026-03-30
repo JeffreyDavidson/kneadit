@@ -5,6 +5,7 @@ use App\Filament\Resources\Expenses\Pages\ListExpenses;
 use App\Models\Expense;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -51,7 +52,7 @@ test('can edit an expense via table action', function () {
     $expense = Expense::factory()->create();
 
     Livewire::test(ListExpenses::class)
-        ->callTableAction('edit', $expense, data: [
+        ->callAction(TestAction::make('edit')->table($expense), data: [
             'description' => 'Updated expense',
             'amount' => $expense->amount,
             'category' => $expense->category->value,

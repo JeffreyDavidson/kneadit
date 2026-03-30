@@ -3,6 +3,7 @@
 use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
 use App\Models\GiftCard;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -36,7 +37,7 @@ test('can edit a gift card via table action', function () {
     $giftCard = GiftCard::factory()->create();
 
     Livewire::test(ListGiftCards::class)
-        ->callTableAction('edit', $giftCard, data: [
+        ->callAction(TestAction::make('edit')->table($giftCard), data: [
             'purchaser_name' => 'Updated Name',
             'purchaser_email' => $giftCard->purchaser_email,
             'initial_balance' => $giftCard->initial_balance,
@@ -68,7 +69,7 @@ test('edit gift card validates required fields', function (array $data, array $e
     $giftCard = GiftCard::factory()->create();
 
     Livewire::test(ListGiftCards::class)
-        ->callTableAction('edit', $giftCard, data: [
+        ->callAction(TestAction::make('edit')->table($giftCard), data: [
             'purchaser_name' => $giftCard->purchaser_name,
             'purchaser_email' => $giftCard->purchaser_email,
             'initial_balance' => $giftCard->initial_balance,

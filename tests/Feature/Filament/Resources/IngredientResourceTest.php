@@ -4,6 +4,7 @@ use App\Filament\Resources\Ingredients\Pages\ListIngredients;
 use App\Models\Ingredient;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -77,7 +78,7 @@ test('can edit an ingredient via table action', function () {
     $ingredient = Ingredient::factory()->create(['unit' => 'lbs']);
 
     Livewire::test(ListIngredients::class)
-        ->callTableAction('edit', $ingredient, data: [
+        ->callAction(TestAction::make('edit')->table($ingredient), data: [
             'name' => 'Updated Flour',
             'unit' => 'lbs',
             'current_stock' => $ingredient->current_stock,

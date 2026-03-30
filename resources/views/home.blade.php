@@ -1,6 +1,4 @@
-@extends('layouts.storefront')
-
-@section('content')
+<x-layouts.storefront>
 @php
     $homepageSections = json_decode(settings('homepage_sections', '{}'), true);
     $sections = collect($homepageSections)->filter(fn($s) => $s['visible'] ?? true)->sortBy('order');
@@ -50,4 +48,4 @@
     @include('partials.home.cta', ['config' => ['heading' => 'Treat Yourself Today', 'button_text' => 'Start Your Order']])
     @include('partials.home.social', ['config' => []])
 @endif
-@endsection
+</x-layouts.storefront>

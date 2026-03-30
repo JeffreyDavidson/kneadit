@@ -27,13 +27,13 @@ test('nonexistent route returns 404', function () {
 // --- #22: OG meta tags ---
 
 test('storefront layout has og tags', function () {
-    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
     expect($layout)->toContain('og:title')->toContain('og:description')->toContain('og:type')->toContain('og:url')->toContain('og:site_name')->toContain('twitter:card');
 });
 
 test('storefront layout has meta description', function () {
-    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
     expect($layout)->toContain('meta name="description"');
 });
@@ -41,19 +41,19 @@ test('storefront layout has meta description', function () {
 // --- #21: Dynamic favicon ---
 
 test('storefront layout has favicon', function () {
-    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
     expect($layout)->toContain('rel="icon"');
 });
 
 test('favicon uses store logo when available', function () {
-    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
     expect($layout)->toContain("settings('store_logo')");
 });
 
 test('favicon falls back to svg with brand color', function () {
-    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
     expect($layout)->toContain('image/svg+xml')->toContain('brand_color_primary');
 });
@@ -61,19 +61,19 @@ test('favicon falls back to svg with brand color', function () {
 // --- #23: Cookie consent ---
 
 test('storefront layout has cookie consent banner', function () {
-    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
     expect($layout)->toContain('cookieConsent')->toContain('acceptCookies')->toContain('localStorage');
 });
 
 test('cookie consent links to privacy policy', function () {
-    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
     expect($layout)->toContain('/privacy');
 });
 
 test('cookie consent hidden by default', function () {
-    $layout = file_get_contents(resource_path('views/layouts/storefront.blade.php'));
+    $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
     expect($layout)->toContain('display:none');
 });

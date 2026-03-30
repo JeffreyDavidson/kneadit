@@ -1,6 +1,4 @@
-@extends('layouts.storefront')
-
-@section('content')
+<x-layouts.storefront>
 <link rel="stylesheet" href="{{ asset('css/contact.css') }}">
 
 @php
@@ -207,4 +205,4 @@
     </div>
 </section>
 @endif
-@endsection
+</x-layouts.storefront>

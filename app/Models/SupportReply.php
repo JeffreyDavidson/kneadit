@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SupportReplyAuthorType;
 use Database\Factories\SupportReplyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $ticket_id
- * @property string $author_type
+ * @property SupportReplyAuthorType $author_type
  * @property string $author_name
  * @property string $body
  * @property Carbon|null $created_at

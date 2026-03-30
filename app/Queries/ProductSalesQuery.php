@@ -12,6 +12,7 @@ class ProductSalesQuery
     /**
      * Get top products by revenue within a date range.
      *
+     * @param DateRange|array<int, string> $range
      * @return Collection<int, array{name: string, units_sold: int, revenue: float}>
      */
     public static function topByRevenue(DateRange|array $range, int $limit = 10): Collection
@@ -41,6 +42,7 @@ class ProductSalesQuery
     /**
      * Get top products by quantity sold.
      *
+     * @param DateRange|array<int, string> $range
      * @return Collection<int, array{name: string, units_sold: int, revenue: float}>
      */
     public static function topByQuantity(DateRange|array $range, int $limit = 10): Collection

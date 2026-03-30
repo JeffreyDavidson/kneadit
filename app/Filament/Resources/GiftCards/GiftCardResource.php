@@ -73,7 +73,7 @@ class GiftCardResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Balance' => Number::currency($record->current_balance),
+            'Balance' => (string) Number::currency($record->current_balance),
             'Recipient' => $record->recipient_name ?? 'N/A',
             'Active' => $record->is_active ? 'Yes' : 'No',
         ];

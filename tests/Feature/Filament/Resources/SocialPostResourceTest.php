@@ -5,6 +5,7 @@ use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
 use App\Models\SocialPost;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -45,7 +46,7 @@ test('can edit a social post via table action', function () {
     $post = SocialPost::factory()->create();
 
     Livewire::test(ListSocialPosts::class)
-        ->callTableAction('edit', $post, data: [
+        ->callAction(TestAction::make('edit')->table($post), data: [
             'platform' => $post->platform->value,
             'caption' => 'Updated caption for our bakery',
         ])

@@ -1,6 +1,4 @@
-@extends('layouts.storefront')
-
-@section('content')
+<x-layouts.storefront>
 @php
     $heroImage = settings('loyalty_hero_image');
     $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
@@ -199,4 +197,4 @@
     </div>
 </section>
 @endif
-@endsection
+</x-layouts.storefront>

@@ -5,6 +5,7 @@ use App\Filament\Resources\Coupons\Pages\ListCoupons;
 use App\Models\Coupon;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -52,7 +53,7 @@ test('can edit a coupon via table action', function () {
     $coupon = Coupon::factory()->create();
 
     Livewire::test(ListCoupons::class)
-        ->callTableAction('edit', $coupon, data: [
+        ->callAction(TestAction::make('edit')->table($coupon), data: [
             'code' => 'UPDATED01',
             'type' => $coupon->type->value,
             'value' => $coupon->value,

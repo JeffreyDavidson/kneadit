@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/storefront.css',
                 'resources/js/storefront.js',
+                'resources/css/filament/admin/theme.css',
             ],
             refresh: true,
         }),

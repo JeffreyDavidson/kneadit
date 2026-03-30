@@ -31,6 +31,7 @@ class NotesRelationManager extends RelationManager
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('body')
+                    ->searchable()
                     ->limit(100)
                     ->wrap(),
                 TextColumn::make('author'),

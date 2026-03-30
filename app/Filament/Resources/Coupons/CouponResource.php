@@ -72,7 +72,7 @@ class CouponResource extends Resource
     {
         return [
             'Type' => $record->type->getLabel(),
-            'Value' => $record->type === CouponType::Percentage ? $record->value . '%' : Number::currency($record->value),
+            'Value' => $record->type === CouponType::Percentage ? $record->value . '%' : (string) Number::currency($record->value),
             'Active' => $record->is_active ? 'Yes' : 'No',
         ];
     }

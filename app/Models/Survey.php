@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
+ * @property array<int, array<string, mixed>> $questions
  * @property-read Collection<int, SurveyResponse> $responses
  * @property-read int|null $responses_count
  *

@@ -3,6 +3,7 @@
 use App\Filament\Resources\GalleryPhotos\Pages\ListGalleryPhotos;
 use App\Models\GalleryPhoto;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -33,7 +34,7 @@ test('can edit a gallery photo via table action', function () {
     $photo = GalleryPhoto::factory()->create();
 
     Livewire::test(ListGalleryPhotos::class)
-        ->callTableAction('edit', $photo, data: [
+        ->callAction(TestAction::make('edit')->table($photo), data: [
             'title' => 'Updated Photo Title',
             'image_path' => [$photo->image_path],
             'sort_order' => $photo->sort_order,
@@ -57,7 +58,7 @@ test('edit gallery photo validates title is required', function () {
     $photo = GalleryPhoto::factory()->create();
 
     Livewire::test(ListGalleryPhotos::class)
-        ->callTableAction('edit', $photo, data: [
+        ->callAction(TestAction::make('edit')->table($photo), data: [
             'title' => null,
             'image_path' => [$photo->image_path],
             'sort_order' => $photo->sort_order,

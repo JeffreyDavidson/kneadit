@@ -3,6 +3,7 @@
 use App\Filament\Resources\Surveys\Pages\ListSurveys;
 use App\Models\Survey;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -41,7 +42,7 @@ test('can edit a survey via table action', function () {
     $survey = Survey::factory()->create();
 
     Livewire::test(ListSurveys::class)
-        ->callTableAction('edit', $survey, data: [
+        ->callAction(TestAction::make('edit')->table($survey), data: [
             'title' => 'Updated Survey',
         ])
         ->assertHasNoFormErrors();
@@ -75,11 +76,21 @@ test('can create a survey with questions repeater', function () {
         ->questions->toHaveCount(1)->and($survey->questions[0]['question'])->toBe('How was your experience?');
 });
 
+test('can filter surveys by active status', function () {
+    $active = Survey::factory()->create(['is_active' => true]);
+    $inactive = Survey::factory()->create(['is_active' => false]);
+
+    Livewire::test(ListSurveys::class)
+        ->filterTable('is_active', true)
+        ->assertCanSeeTableRecords(collect([$active]))
+        ->assertCanNotSeeTableRecords(collect([$inactive]));
+});
+
 test('edit survey validates title is required', function () {
     $survey = Survey::factory()->create();
 
     Livewire::test(ListSurveys::class)
-        ->callTableAction('edit', $survey, data: [
+        ->callAction(TestAction::make('edit')->table($survey), data: [
             'title' => null,
         ])
         ->assertHasFormErrors(['title' => 'required']);

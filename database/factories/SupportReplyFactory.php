@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SupportReplyAuthorType;
 use App\Models\SupportReply;
 use App\Models\SupportTicket;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,7 +18,7 @@ class SupportReplyFactory extends Factory
     {
         return [
             'ticket_id' => SupportTicket::factory(),
-            'author_type' => 'admin',
+            'author_type' => fake()->randomElement(SupportReplyAuthorType::cases()),
             'author_name' => fake()->name(),
             'body' => fake()->paragraph(),
         ];

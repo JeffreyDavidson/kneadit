@@ -4,6 +4,7 @@ use App\Filament\Resources\Suppliers\Pages\ListSuppliers;
 use App\Models\Supplier;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -42,7 +43,7 @@ test('can edit a supplier via table action', function () {
     $supplier = Supplier::factory()->create();
 
     Livewire::test(ListSuppliers::class)
-        ->callTableAction('edit', $supplier, data: [
+        ->callAction(TestAction::make('edit')->table($supplier), data: [
             'name' => 'Updated Supplier',
         ])
         ->assertHasNoFormErrors();

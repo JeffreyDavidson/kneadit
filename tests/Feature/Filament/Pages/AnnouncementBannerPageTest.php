@@ -12,6 +12,12 @@ beforeEach(function () {
     $this->actingAs(User::factory()->owner()->create());
 });
 
+test('staff cannot access announcement banner page', function () {
+    $this->actingAs(User::factory()->staff()->create());
+
+    expect(AnnouncementBanner::canAccess())->toBeFalse();
+});
+
 test('announcement banner saves settings', function () {
     Livewire::test(AnnouncementBanner::class)
         ->set('announcement_enabled', true)

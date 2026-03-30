@@ -48,7 +48,7 @@ class PricingEngine extends Page
 
     public float $ingredientCost = 0;
 
-    public float $prepTimeMinutes = 0;
+    public int $prepTimeMinutes = 0;
 
     public float $hourlyLaborRate = 15;
 
@@ -92,7 +92,7 @@ class PricingEngine extends Page
         $recipe = $product->recipes->first();
         if ($recipe) {
             $this->ingredientCost = (float) ($recipe->cost ?? $product->cost ?? 0);
-            $this->prepTimeMinutes = (float) ($recipe->prep_time_minutes ?? 0);
+            $this->prepTimeMinutes = (int) ($recipe->prep_time_minutes ?? 0);
         } else {
             $this->ingredientCost = (float) ($product->cost ?? 0);
             $this->prepTimeMinutes = 0;

@@ -33,7 +33,10 @@ class ChurnAlertService
         return $alerts->sortByDesc(fn (array $a) => $a['severity'] === 'critical' ? 1 : 0)->values();
     }
 
-    /** @param Collection<int, array<string, mixed>> $alerts */
+    /**
+     * @param array<string, mixed>|null $health
+     * @param Collection<int, array<string, mixed>> $alerts
+     */
     private function checkTrialExpiring(Tenant $tenant, ?array $health, int $daysSinceSignup, Collection $alerts): void
     {
         if (! $tenant->trial_ends_at) {

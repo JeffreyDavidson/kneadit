@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\AnnouncementType;
 use App\Models\PlatformAnnouncement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,7 +18,7 @@ class PlatformAnnouncementFactory extends Factory
         return [
             'title' => fake()->sentence(),
             'body' => fake()->paragraph(),
-            'type' => 'info',
+            'type' => fake()->randomElement(AnnouncementType::cases()),
             'target_plans' => null,
             'is_active' => true,
         ];
