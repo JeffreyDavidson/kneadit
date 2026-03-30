@@ -1,3 +1,18 @@
+@php
+/** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\LoyaltyReward> $rewards */
+/** @var string $programName */
+/** @var string $pointsPerDollar */
+/** @var bool $loyaltyEnabled */
+/** @var string $heroImageUrl */
+/** @var array<string, string> $content */
+/** @var array<int, array<string, string>> $howSteps */
+/** @var array<int, string> $howSvgs */
+/** @var \App\Models\Customer|null $customer */
+/** @var int $totalPoints */
+/** @var int $lifetimeEarned */
+/** @var \Illuminate\Support\Collection $history */
+@endphp
+
 <x-layouts.storefront>
 
 <link rel="stylesheet" href="{{ asset('css/loyalty.css') }}">

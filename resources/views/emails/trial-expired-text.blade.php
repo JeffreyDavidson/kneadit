@@ -6,6 +6,8 @@
 /** @var string $storePhone */
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
+/** @var \App\Models\User $user */
+/** @var string $tenantId */
 @endphp
 
 Hi {{ $user->name }},

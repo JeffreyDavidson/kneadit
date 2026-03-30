@@ -6,6 +6,10 @@
 /** @var string $storePhone */
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
+/** @var string $bakerName */
+/** @var string $bakerEmail */
+/** @var string $subdomain */
+/** @var string $plan */
 @endphp
 
 <!DOCTYPE html>

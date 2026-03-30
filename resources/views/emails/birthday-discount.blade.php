@@ -8,6 +8,8 @@
 /** @var string $storePhone */
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
+/** @var \App\Models\Customer $customer */
+/** @var \App\Models\Coupon $coupon */
 @endphp
 
 

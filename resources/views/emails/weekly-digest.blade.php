@@ -8,6 +8,11 @@
 /** @var string $storePhone */
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
+/** @var array<string, mixed> $stats */
+/** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $topProducts */
+/** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Customer> $atRiskCustomers */
+/** @var int $upcomingCount */
+/** @var string $adminUrl */
 @endphp
 
 

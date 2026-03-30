@@ -8,6 +8,9 @@
 /** @var string $storePhone */
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
+/** @var \App\Models\Order $order */
+/** @var string $reviewUrl */
+/** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $orderItems */
 @endphp
 
 
