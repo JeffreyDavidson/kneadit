@@ -1,8 +1,6 @@
 <?php
 
-use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
-use App\Enums\PaymentStatus;
 use App\Mail\BirthdayDiscountMail;
 use App\Mail\CateringQuoteMail;
 use App\Mail\Concerns\BakerBranded;
@@ -19,35 +17,18 @@ use App\Mail\ProductAvailableMail;
 use App\Mail\RepeatOrderReminderMail;
 use App\Mail\ReviewRequestMail;
 use App\Mail\WeeklyDigestMail;
-use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
 
 beforeEach(function () {
     setUpCentralTest();
 
-    $user = User::query()->create([
-        'name' => 'Baker',
-        'email' => 'baker@test.com',
-        'password' => bcrypt('password'),
-    ]);
+    $user = User::factory()->owner()->create();
 
-    $customer = Customer::query()->create([
-        'name' => 'Test Customer',
-        'email' => 'customer@test.com',
-    ]);
-
-    $this->order = Order::query()->create([
-        'order_number' => 'ORD-001',
-        'customer_id' => $customer->id,
-        'user_id' => $user->id,
-        'status' => OrderStatus::Pending,
-        'payment_status' => PaymentStatus::Unpaid,
+    $this->order = Order::factory()->recycle($user)->create([
         'payment_method' => PaymentMethod::Cash,
-        'subtotal' => 25.00,
         'delivery_fee' => 0,
         'discount_amount' => 0,
-        'total' => 25.00,
     ]);
 });
 

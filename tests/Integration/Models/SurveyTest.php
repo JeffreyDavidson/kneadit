@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::factory()->owner()->create();
 });
 
 test('questions are stored as json array', function () {
@@ -18,10 +18,9 @@ test('questions are stored as json array', function () {
         ['text' => 'Any suggestions?', 'type' => 'text'],
     ];
 
-    $survey = Survey::query()->create([
+    $survey = Survey::factory()->create([
         'title' => 'Customer Feedback',
         'questions' => $questions,
-        'is_active' => true,
     ]);
 
     $survey->refresh();
@@ -29,35 +28,29 @@ test('questions are stored as json array', function () {
 });
 
 test('survey has responses relationship', function () {
-    $survey = Survey::query()->create([
+    $survey = Survey::factory()->create([
         'title' => 'Feedback',
         'questions' => [['text' => 'Rate us', 'type' => 'rating']],
-        'is_active' => true,
     ]);
 
-    SurveyResponse::query()->create([
-        'survey_id' => $survey->id,
-        'answers' => ['5'],
-    ]);
+    SurveyResponse::factory()->for($survey)->create();
 
     expect($survey->fresh()->responses)->toHaveCount(1);
 });
 
 test('is active is cast to boolean', function () {
-    $survey = Survey::query()->create([
+    $survey = Survey::factory()->create([
         'title' => 'Test Survey',
         'questions' => [],
-        'is_active' => true,
     ]);
 
     expect($survey->is_active)->toBeBool()->toBeTrue();
 });
 
 test('responses count is cast to integer', function () {
-    $survey = Survey::query()->create([
+    $survey = Survey::factory()->create([
         'title' => 'Test Survey',
         'questions' => [],
-        'is_active' => true,
         'responses_count' => 42,
     ]);
 

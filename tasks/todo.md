@@ -1,27 +1,26 @@
-# Move Inline PHP from Blade Templates to Controllers
+# Refactor Test Files: Replace query()->create() with Factory Usage
 
-## Todo
-- [x] 1. MenuController + menu.blade.php
-- [x] 2. GalleryController + gallery.blade.php
-- [x] 3. ReviewsController + reviews.blade.php
-- [x] 4. ShowGiftCardsController + gift-cards.blade.php
-- [x] 5. LoyaltyController + loyalty.blade.php (both show and store)
-- [x] 6. CateringController + catering.blade.php
-- [x] 7. ReviewController + submit-review.blade.php
-- [x] 8. SurveyController + survey.blade.php
-- [x] 9. AboutController + about.blade.php
-- [x] 10. ContactController + contact.blade.php
-- [x] 11. TrackingController + order-tracking.blade.php
-- [x] 12. OrderController (index) + order.blade.php
-- [x] 13. OrderController (show) + order-confirmation.blade.php
-- [x] Run php -l on all modified files
-- [x] Run pint --dirty
-- [x] Run tests
+## Tasks
+- [x] 1. BakerBrandedEmailTest.php
+- [x] 2. LoyaltyRewardTest.php
+- [x] 3. LoyaltyTest.php
+- [x] 4. ActivityLogTest.php
+- [x] 5. CustomerTest.php
+- [x] 6. ProductTest.php
+- [x] 7. SurveyTest.php
+- [x] 8. SupplierTest.php
+- [x] 9. Run php -l on all modified files
+- [x] 10. Run vendor/bin/pint --dirty
 
 ## Review
-- Moved all @php blocks from 13 Blade templates into their corresponding controllers
-- Controllers now compute hero image URLs, page content settings, and derived values
-- Blade templates receive pre-computed variables via compact() or array syntax
-- Added Storage facade import to controllers that compute Storage::url()
-- All templates retain their HTML/Blade directives unchanged
-- Tests pass after changes
+- Replaced all `Model::query()->create([...])` calls with proper factory usage across all 8 test files
+- Used `User::factory()->owner()->create()` instead of manual User creation with bcrypt
+- Used `Customer::factory()->create()` instead of manual Customer creation
+- Used `Order::factory()->for($customer)->recycle($user)` with state methods (`.delivered()`, `.cancelled()`, `.confirmed()`, `.ready()`) instead of manual Order creation with inline status enums
+- Used `Product::factory()->for($category)->create()` instead of manual Product creation with `category_id`
+- Used `LoyaltyReward::factory()->for($product)->create()` with `RewardType` enum instead of raw strings
+- Used `LoyaltyPoint::factory()->for($customer)->earned(N)->create()` and `.redeemed(N)` states
+- Used `Recipe::factory()->for($product)`, `SeasonalItem::factory()->for($product)`, `SurveyResponse::factory()->for($survey)` for belongsTo relationships
+- Used `Supplier::factory()`, `Ingredient::factory()`, `Survey::factory()`, `Category::factory()` throughout
+- Pint fixed unused imports in CustomerTest.php (removed `OrderStatus`) and ProductTest.php (removed `Category`, `Date`)
+- All 54 tests pass with 83 assertions, unchanged from before refactoring

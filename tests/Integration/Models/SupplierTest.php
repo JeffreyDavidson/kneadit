@@ -9,12 +9,12 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::factory()->owner()->create();
 });
 
 test('supplier has ingredients relationship', function () {
-    $supplier = Supplier::query()->create(['name' => 'Flour Co', 'is_active' => true]);
-    $ingredient = Ingredient::query()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 100, 'low_stock_threshold' => 10, 'cost_per_unit' => 1.50]);
+    $supplier = Supplier::factory()->create(['name' => 'Flour Co']);
+    $ingredient = Ingredient::factory()->create(['name' => 'Flour']);
 
     $supplier->ingredients()->attach($ingredient->id, ['unit_price' => 1.20]);
 
@@ -22,8 +22,8 @@ test('supplier has ingredients relationship', function () {
 });
 
 test('ingredients pivot has unit price', function () {
-    $supplier = Supplier::query()->create(['name' => 'Flour Co', 'is_active' => true]);
-    $ingredient = Ingredient::query()->create(['name' => 'Flour', 'unit' => 'kg', 'current_stock' => 100, 'low_stock_threshold' => 10, 'cost_per_unit' => 1.50]);
+    $supplier = Supplier::factory()->create(['name' => 'Flour Co']);
+    $ingredient = Ingredient::factory()->create(['name' => 'Flour']);
 
     $supplier->ingredients()->attach($ingredient->id, ['unit_price' => 1.20]);
 
@@ -32,13 +32,13 @@ test('ingredients pivot has unit price', function () {
 });
 
 test('is active is cast to boolean', function () {
-    $supplier = Supplier::query()->create(['name' => 'Flour Co', 'is_active' => true]);
+    $supplier = Supplier::factory()->create(['name' => 'Flour Co']);
 
     expect($supplier->is_active)->toBeBool()->toBeTrue();
 });
 
 test('supplier can be deactivated', function () {
-    $supplier = Supplier::query()->create(['name' => 'Flour Co', 'is_active' => true]);
+    $supplier = Supplier::factory()->create(['name' => 'Flour Co']);
     $supplier->update(['is_active' => false]);
 
     expect($supplier->fresh()->is_active)->toBeFalse();

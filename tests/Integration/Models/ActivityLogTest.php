@@ -9,12 +9,12 @@ use function Pest\Laravel\actingAs;
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->user = User::query()->create(['name' => 'Baker Bob', 'email' => 'bob@test.com', 'password' => bcrypt('password')]);
-    $this->category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
+    $this->user = User::factory()->owner()->create(['name' => 'Baker Bob']);
+    $this->category = Category::factory()->create(['name' => 'Bread']);
 });
 
 test('creating a product logs created activity', function () {
-    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+    $product = Product::factory()->for($this->category)->create(['name' => 'Sourdough']);
 
     $log = ActivityLog::query()->where('model_type', Product::class)->where('model_id', $product->id)->where('action', 'created')->first();
 
@@ -22,7 +22,7 @@ test('creating a product logs created activity', function () {
 });
 
 test('updating a product logs updated activity', function () {
-    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+    $product = Product::factory()->for($this->category)->create(['name' => 'Sourdough']);
 
     $product->update(['price' => 6.00]);
 
@@ -32,7 +32,7 @@ test('updating a product logs updated activity', function () {
 });
 
 test('deleting a product logs deleted activity', function () {
-    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+    $product = Product::factory()->for($this->category)->create(['name' => 'Sourdough']);
     $productId = $product->id;
 
     $product->delete();
@@ -45,7 +45,7 @@ test('deleting a product logs deleted activity', function () {
 test('activity log stores user name', function () {
     actingAs($this->user);
 
-    Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+    Product::factory()->for($this->category)->create(['name' => 'Sourdough']);
 
     $log = ActivityLog::query()->where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
 
@@ -53,7 +53,7 @@ test('activity log stores user name', function () {
 });
 
 test('changes are captured in properties', function () {
-    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+    $product = Product::factory()->for($this->category)->create(['name' => 'Sourdough']);
 
     $product->update(['price' => 7.50]);
 
@@ -63,7 +63,7 @@ test('changes are captured in properties', function () {
 });
 
 test('system user name when not authenticated', function () {
-    Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $this->category->id, 'is_active' => true]);
+    Product::factory()->for($this->category)->create(['name' => 'Sourdough']);
 
     $log = ActivityLog::query()->where('action', 'created')->where('model_type', Product::class)->latest('id')->first();
 
