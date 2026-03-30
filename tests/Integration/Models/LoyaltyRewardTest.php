@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Category;
+use App\Enums\RewardType;
 use App\Models\LoyaltyReward;
 use App\Models\Product;
 use App\Models\User;
@@ -10,72 +10,61 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    User::query()->create(['name' => 'Test', 'email' => 'test@test.com', 'password' => bcrypt('password')]);
+    User::factory()->owner()->create();
 });
 
 test('reward type label for percentage discount', function () {
-    $reward = LoyaltyReward::query()->create([
+    $reward = LoyaltyReward::factory()->create([
         'name' => '10% Off',
         'points_required' => 100,
-        'reward_type' => 'percentage_discount',
+        'reward_type' => RewardType::PercentageDiscount,
         'reward_value' => 10.00,
-        'is_active' => true,
     ]);
 
     expect($reward->reward_type_label)->toBe('10.00% Off');
 });
 
 test('reward type label for fixed discount', function () {
-    $reward = LoyaltyReward::query()->create([
+    $reward = LoyaltyReward::factory()->create([
         'name' => '$5 Off',
         'points_required' => 50,
-        'reward_type' => 'fixed_discount',
+        'reward_type' => RewardType::FixedDiscount,
         'reward_value' => 5.00,
-        'is_active' => true,
     ]);
 
     expect($reward->reward_type_label)->toBe('$5.00 Off');
 });
 
 test('reward type label for free product', function () {
-    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
+    $product = Product::factory()->create(['name' => 'Sourdough']);
 
-    $reward = LoyaltyReward::query()->create([
+    $reward = LoyaltyReward::factory()->for($product)->create([
         'name' => 'Free Sourdough',
         'points_required' => 200,
-        'reward_type' => 'free_product',
+        'reward_type' => RewardType::FreeProduct,
         'reward_value' => 0,
-        'product_id' => $product->id,
-        'is_active' => true,
     ]);
 
     expect($reward->reward_type_label)->toBe('Free Sourdough');
 });
 
 test('reward belongs to product', function () {
-    $category = Category::query()->create(['name' => 'Bread', 'slug' => 'bread']);
-    $product = Product::query()->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 5.00, 'category_id' => $category->id, 'is_active' => true]);
+    $product = Product::factory()->create(['name' => 'Sourdough']);
 
-    $reward = LoyaltyReward::query()->create([
+    $reward = LoyaltyReward::factory()->for($product)->create([
         'name' => 'Free Sourdough',
         'points_required' => 200,
-        'reward_type' => 'free_product',
+        'reward_type' => RewardType::FreeProduct,
         'reward_value' => 0,
-        'product_id' => $product->id,
-        'is_active' => true,
     ]);
 
     expect($reward->product)->toBeInstanceOf(Product::class);
 });
 
 test('is active is cast to boolean', function () {
-    $reward = LoyaltyReward::query()->create([
-        'name' => 'Reward',
-        'points_required' => 100,
-        'reward_type' => 'percentage_discount',
+    $reward = LoyaltyReward::factory()->create([
+        'reward_type' => RewardType::PercentageDiscount,
         'reward_value' => 10,
-        'is_active' => true,
     ]);
 
     expect($reward->is_active)->toBeBool();
