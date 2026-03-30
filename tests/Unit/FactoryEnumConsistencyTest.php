@@ -195,3 +195,21 @@ test('product image factory creates valid instance', function () {
         ->and($image->sort_order)->toBeInt()
         ->and($image->is_primary)->toBeBool();
 });
+
+test('gift card transaction factory uses enum type', function () {
+    $transaction = App\Models\GiftCardTransaction::factory()->make(['gift_card_id' => 1]);
+
+    expect($transaction->type)->toBeInstanceOf(App\Enums\GiftCardTransactionType::class);
+});
+
+test('gift card transaction factory redemption state uses enum', function () {
+    $transaction = App\Models\GiftCardTransaction::factory()->redemption()->make(['gift_card_id' => 1]);
+
+    expect($transaction->type)->toBe(App\Enums\GiftCardTransactionType::Redemption);
+});
+
+test('loyalty reward factory uses enum reward_type', function () {
+    $rewards = App\Models\LoyaltyReward::factory()->count(10)->make();
+
+    $rewards->each(fn ($reward) => expect($reward->reward_type)->toBeInstanceOf(App\Enums\RewardType::class));
+});

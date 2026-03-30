@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\GiftCardTransactionType;
 use App\Models\GiftCard;
 use App\Models\GiftCardTransaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -19,7 +20,7 @@ class GiftCardTransactionFactory extends Factory
         return [
             'gift_card_id' => GiftCard::factory(),
             'amount' => fake()->randomFloat(2, 5, 50),
-            'type' => 'purchase',
+            'type' => GiftCardTransactionType::Purchase,
             'order_id' => null,
             'notes' => fake()->optional()->sentence(),
             'created_at' => now(),
@@ -31,7 +32,7 @@ class GiftCardTransactionFactory extends Factory
      */
     public function redemption(): static
     {
-        return $this->state(fn (array $attributes) => ['type' => 'redemption']);
+        return $this->state(fn (array $attributes) => ['type' => GiftCardTransactionType::Redemption]);
     }
 
     /**
@@ -39,6 +40,6 @@ class GiftCardTransactionFactory extends Factory
      */
     public function credit(): static
     {
-        return $this->state(fn (array $attributes) => ['type' => 'refund']);
+        return $this->state(fn (array $attributes) => ['type' => GiftCardTransactionType::Refund]);
     }
 }
