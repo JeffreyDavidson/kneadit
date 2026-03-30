@@ -9,6 +9,10 @@
 /** @var string $storeAddress */
 /** @var string|null $logoUrl */
 @endphp
+@php
+/** @var \App\Models\Customer $customer */
+/** @var \App\Models\Coupon|null $coupon */
+@endphp
 
 
 @section('title', 'Happy Birthday! 🎂')
