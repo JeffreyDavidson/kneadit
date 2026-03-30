@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\OrderStatus;
 use App\Enums\SenderType;
 use App\Mail\NewOrderMessageMail;
 use App\Models\Customer;
