@@ -11,9 +11,7 @@ beforeEach(fn () => setUpTenantTest());
 test('reorder returns items from previous order', function () {
     $product = Product::factory()->create(['name' => 'Sourdough']);
     $order = Order::factory()->create();
-    OrderItem::query()->create([
-        'order_id' => $order->id,
-        'product_id' => $product->id,
+    OrderItem::factory()->recycle($order, $product)->create([
         'quantity' => 2,
         'unit_price' => 8.50,
     ]);

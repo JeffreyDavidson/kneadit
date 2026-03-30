@@ -10,8 +10,8 @@ beforeEach(function () {
 });
 
 test('get activities returns collection', function () {
-    PlatformActivity::query()->create(['event' => 'tenant_created', 'description' => 'New tenant']);
-    PlatformActivity::query()->create(['event' => 'plan_changed', 'description' => 'Plan upgraded']);
+    PlatformActivity::factory()->create(['event' => 'tenant_created', 'description' => 'New tenant']);
+    PlatformActivity::factory()->create(['event' => 'plan_changed', 'description' => 'Plan upgraded']);
 
     $result = test()->page->getActivities();
 

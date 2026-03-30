@@ -10,8 +10,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('first image is set as primary on save', function () {
     $product = Product::factory()->create();
-    $image = ProductImage::query()->create([
-        'product_id' => $product->id,
+    $image = ProductImage::factory()->recycle($product)->create([
         'path' => 'products/test.jpg',
         'sort_order' => 1,
     ]);
@@ -23,14 +22,12 @@ test('first image is set as primary on save', function () {
 test('lowest sort order image becomes primary when new image added', function () {
     $product = Product::factory()->create();
 
-    $first = ProductImage::query()->create([
-        'product_id' => $product->id,
+    $first = ProductImage::factory()->recycle($product)->create([
         'path' => 'products/first.jpg',
         'sort_order' => 2,
     ]);
 
-    $second = ProductImage::query()->create([
-        'product_id' => $product->id,
+    $second = ProductImage::factory()->recycle($product)->create([
         'path' => 'products/second.jpg',
         'sort_order' => 1,
     ]);

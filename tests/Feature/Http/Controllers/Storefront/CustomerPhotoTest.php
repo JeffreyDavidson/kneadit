@@ -17,15 +17,11 @@ test('gallery page loads', function () {
 });
 
 test('gallery shows only approved photos', function () {
-    CustomerPhoto::query()->create([
-        'customer_name' => 'Alice',
-        'customer_email' => 'alice@example.com',
+    CustomerPhoto::factory()->approved()->create([
         'caption' => 'My beautiful cake',
-        'photo_path' => 'photos/approved.jpg',
-        'is_approved' => true,
     ]);
 
-    CustomerPhoto::query()->create([
+    CustomerPhoto::factory()->create([
         'customer_name' => 'Bob',
         'customer_email' => 'bob@example.com',
         'caption' => 'Pending photo',
@@ -41,12 +37,8 @@ test('gallery shows only approved photos', function () {
 });
 
 test('gallery hides unapproved photos', function () {
-    CustomerPhoto::query()->create([
-        'customer_name' => 'Eve',
-        'customer_email' => 'eve@example.com',
+    CustomerPhoto::factory()->create([
         'caption' => 'Unapproved shot',
-        'photo_path' => 'photos/unapproved.jpg',
-        'is_approved' => false,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())->get('/gallery');

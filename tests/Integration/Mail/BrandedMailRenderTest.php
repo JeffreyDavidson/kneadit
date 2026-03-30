@@ -80,10 +80,8 @@ test('ReviewRequest has correct subject with store name', function () {
 
 test('NewOrderMessage has correct subject with order number', function () {
     $order = Order::factory()->create();
-    $message = App\Models\OrderMessage::query()->create([
-        'order_id' => $order->id,
+    $message = App\Models\OrderMessage::factory()->recycle($order)->fromBaker()->create([
         'message' => 'Your order is ready!',
-        'sender_type' => App\Enums\SenderType::Baker,
         'sender_name' => 'Baker',
     ]);
     $mail = new App\Mail\NewOrderMessageMail($message);
