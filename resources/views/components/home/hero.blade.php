@@ -150,7 +150,7 @@
                         </svg>
                     @endfor
                 </div>
-                <p class="italic text-sm leading-relaxed" style="color: var(--warm-200);">"{{ Str::limit($topReview->comment, 120) }}"</p>
+                <p class="italic text-sm leading-relaxed" style="color: var(--warm-200);">"{{ Str::limit($topReview->comment ?? '', 120) }}"</p>
                 <p class="text-xs mt-2 font-semibold" style="color: var(--warm-500);">— {{ $topReview->customer_name }}</p>
             </div>
             @endif
@@ -171,7 +171,7 @@
                     </svg>
                 @endfor
             </div>
-            <p class="italic text-xs" style="color: var(--warm-200);">"{{ Str::limit($topReview->comment, 80) }}"</p>
+            <p class="italic text-xs" style="color: var(--warm-200);">"{{ Str::limit($topReview->comment ?? '', 80) }}"</p>
             <p class="text-xs mt-1 font-semibold" style="color: var(--warm-500);">— {{ $topReview->customer_name }}</p>
         </div>
         @endif

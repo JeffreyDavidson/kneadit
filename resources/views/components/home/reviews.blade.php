@@ -46,7 +46,7 @@
                         </svg>
                     @endfor
                 </div>
-                <p class="text-base leading-relaxed mb-6" style="color: var(--warm-700);">"{{ Str::limit($review->comment, 150) }}"</p>
+                <p class="text-base leading-relaxed mb-6" style="color: var(--warm-700);">"{{ Str::limit($review->comment ?? '', 150) }}"</p>
                 <div class="flex items-center gap-3">
                     {{-- Avatar circle with initial --}}
                     <div class="w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-sm" style="background: var(--warm-200); color: var(--warm-600);">
