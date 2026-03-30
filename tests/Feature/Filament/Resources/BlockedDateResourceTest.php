@@ -68,8 +68,8 @@ test('can render blocked date table columns', function (string $column) {
 })->with(['date', 'reason']);
 
 test('can filter blocked dates by all day status', function () {
-    $allDay = BlockedDate::factory()->create(['is_all_day' => true]);
-    $partial = BlockedDate::factory()->create(['is_all_day' => false]);
+    $allDay = BlockedDate::factory()->allDay()->create();
+    $partial = BlockedDate::factory()->partialDay()->create();
 
     Livewire::test(ListBlockedDates::class)
         ->filterTable('is_all_day', true)

@@ -26,4 +26,12 @@ class SupplierFactory extends Factory
             'is_active' => true,
         ];
     }
+
+    /**
+     * Supplier is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => false]);
+    }
 }

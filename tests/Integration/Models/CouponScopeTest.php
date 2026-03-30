@@ -9,7 +9,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('active scope returns only active coupons', function () {
     $active = Coupon::factory()->create(['is_active' => true]);
-    Coupon::factory()->create(['is_active' => false]);
+    Coupon::factory()->inactive()->create();
 
     $results = Coupon::query()->active()->get();
 

@@ -7,7 +7,8 @@ use App\Models\EmailCampaign;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<EmailCampaign> */
+ * @extends Factory<EmailCampaign>
+ */
 class EmailCampaignFactory extends Factory
 {
     /**
@@ -23,6 +24,14 @@ class EmailCampaignFactory extends Factory
             'status' => EmailCampaignStatus::Draft,
             'recipient_count' => 0,
         ];
+    }
+
+    public function scheduled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => EmailCampaignStatus::Scheduled,
+            'scheduled_at' => now()->addDay(),
+        ]);
     }
 
     public function sending(): static

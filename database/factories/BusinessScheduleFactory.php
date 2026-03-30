@@ -6,7 +6,8 @@ use App\Models\BusinessSchedule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<BusinessSchedule> */
+ * @extends Factory<BusinessSchedule>
+ */
 class BusinessScheduleFactory extends Factory
 {
     /**
@@ -20,5 +21,13 @@ class BusinessScheduleFactory extends Factory
             'open_time' => '08:00',
             'close_time' => '17:00',
         ];
+    }
+
+    /**
+     * Business is closed on this day.
+     */
+    public function closed(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_open' => false]);
     }
 }

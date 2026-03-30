@@ -29,6 +29,14 @@ class ReviewFactory extends Factory
     }
 
     /**
+     * Review is pending approval.
+     */
+    public function pending(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_approved' => false]);
+    }
+
+    /**
      * Review has been approved.
      */
     public function approved(): static

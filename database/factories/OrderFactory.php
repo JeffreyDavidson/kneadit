@@ -34,6 +34,14 @@ class OrderFactory extends Factory
     }
 
     /**
+     * Order is unpaid.
+     */
+    public function unpaid(): static
+    {
+        return $this->state(fn (array $attributes) => ['payment_status' => PaymentStatus::Unpaid]);
+    }
+
+    /**
      * Order is confirmed.
      */
     public function confirmed(): static

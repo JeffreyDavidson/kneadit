@@ -30,6 +30,14 @@ class CouponFactory extends Factory
     }
 
     /**
+     * Coupon is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => false]);
+    }
+
+    /**
      * Coupon has expired.
      */
     public function expired(): static

@@ -15,7 +15,7 @@ beforeEach(function () {
 
 test('can filter announcements by active status', function () {
     $active = PlatformAnnouncement::factory()->create(['is_active' => true]);
-    $inactive = PlatformAnnouncement::factory()->create(['is_active' => false]);
+    $inactive = PlatformAnnouncement::factory()->inactive()->create();
 
     Livewire::test(ListAnnouncements::class)
         ->filterTable('is_active', true)
