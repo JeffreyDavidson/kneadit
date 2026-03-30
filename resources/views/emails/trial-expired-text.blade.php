@@ -1,3 +1,13 @@
+@php
+/** @var string $storeName */
+/** @var string $primaryColor */
+/** @var string $secondaryColor */
+/** @var string $storeEmail */
+/** @var string $storePhone */
+/** @var string $storeAddress */
+/** @var string|null $logoUrl */
+@endphp
+
 Hi {{ $user->name }},
 
 Your KneadIt free trial has expired. Your storefront has been paused.
