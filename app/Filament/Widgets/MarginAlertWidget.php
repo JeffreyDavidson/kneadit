@@ -7,6 +7,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\Number;
 
 class MarginAlertWidget extends BaseWidget
 {
@@ -44,7 +45,7 @@ class MarginAlertWidget extends BaseWidget
                     ->money('usd'),
                 TextColumn::make('recipe.profit_margin')
                     ->label('Margin')
-                    ->formatStateUsing(fn (mixed $state) => $state !== null ? number_format($state, 1) . '%' : '—')
+                    ->formatStateUsing(fn (mixed $state) => $state !== null ? (string) Number::format($state, 1) . '%' : '—')
                     ->badge()
                     ->color('danger'),
             ])
