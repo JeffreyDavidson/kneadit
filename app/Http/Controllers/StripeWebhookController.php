@@ -53,7 +53,9 @@ class StripeWebhookController extends WebhookController
         $plan = $this->priceIdToPlan($stripePriceId);
         if ($plan && $tenant->plan !== $plan) {
             $oldPlan = $tenant->plan;
-            $tenant->update(['plan' => $plan]);
+            $tenant->update([
+                'plan' => $plan,
+            ]);
             Log::info("Tenant {$tenant->id} plan changed: {$oldPlan} → {$plan}");
         }
 
@@ -92,7 +94,9 @@ class StripeWebhookController extends WebhookController
         try {
             Mail::to($user->email)->queue(new PaymentFailedMail($user));
         } catch (\Exception $e) {
-            Log::error('Failed to send payment failure email', ['error' => $e->getMessage()]);
+            Log::error('Failed to send payment failure email', [
+                'error' => $e->getMessage(),
+            ]);
         }
 
         try {
@@ -101,7 +105,9 @@ class StripeWebhookController extends WebhookController
                 . "\nAmount: " . Number::currency(($invoice['amount_due'] ?? 0) / 100);
             Mail::to(config('mail.platform_notify'))->queue(new HealthAlertMail($alertMsg));
         } catch (\Exception $e) {
-            Log::error('Failed to send platform payment alert', ['error' => $e->getMessage()]);
+            Log::error('Failed to send platform payment alert', [
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 

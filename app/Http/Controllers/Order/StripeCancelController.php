@@ -14,7 +14,9 @@ class StripeCancelController extends Controller
      */
     public function __invoke(Order $order): RedirectResponse
     {
-        $order->update(['payment_status' => PaymentStatus::Unpaid]);
+        $order->update([
+            'payment_status' => PaymentStatus::Unpaid,
+        ]);
 
         return to_route('order.confirmation', $order)
             ->with('warning', 'Payment was not completed. You can pay later or contact the baker.');

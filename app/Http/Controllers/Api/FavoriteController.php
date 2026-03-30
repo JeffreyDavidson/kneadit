@@ -30,6 +30,8 @@ class FavoriteController extends Controller
 
         $favorited = $toggleFavorite($validated['email'], $validated['product_id']);
 
-        return ApiResponse::success(['favorited' => $favorited], $favorited ? 'Added to favorites.' : 'Removed from favorites.');
+        return ApiResponse::success([
+            'favorited' => $favorited,
+        ], $favorited ? 'Added to favorites.' : 'Removed from favorites.');
     }
 }

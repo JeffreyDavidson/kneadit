@@ -25,7 +25,9 @@ class FavoriteController extends Controller
             ->pluck('product_id')
             ->toArray();
 
-        return response()->json(['favorites' => $favorites]);
+        return response()->json([
+            'favorites' => $favorites,
+        ]);
     }
 
     /**
@@ -42,7 +44,9 @@ class FavoriteController extends Controller
         if ($existing) {
             $existing->delete();
 
-            return response()->json(['favorited' => false]);
+            return response()->json([
+                'favorited' => false,
+            ]);
         }
 
         CustomerFavorite::query()->create([
@@ -50,6 +54,8 @@ class FavoriteController extends Controller
             'product_id' => $validated['product_id'],
         ]);
 
-        return response()->json(['favorited' => true]);
+        return response()->json([
+            'favorited' => true,
+        ]);
     }
 }

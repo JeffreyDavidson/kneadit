@@ -18,7 +18,10 @@ class CheckGiftCardBalanceController extends Controller
         $card = $service->checkBalance($request->code);
 
         if (! $card) {
-            return response()->json(['success' => false, 'error' => 'Gift card not found.'], 404);
+            return response()->json([
+                'success' => false,
+                'error' => 'Gift card not found.',
+            ], 404);
         }
 
         return response()->json([

@@ -17,7 +17,9 @@ class ApplyCouponController extends Controller
         $result = $couponService->validate($validated['code'], (float) $validated['subtotal']);
 
         if (! $result->valid) {
-            return response()->json(['error' => $result->error], 422);
+            return response()->json([
+                'error' => $result->error,
+            ], 422);
         }
 
         $coupon = $result->coupon;

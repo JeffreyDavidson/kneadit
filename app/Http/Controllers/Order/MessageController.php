@@ -18,7 +18,9 @@ class MessageController extends Controller
     {
         $messages = $order->messages()->oldest()->get();
 
-        return response()->json(['messages' => $messages]);
+        return response()->json([
+            'messages' => $messages,
+        ]);
     }
 
     /**
@@ -34,6 +36,9 @@ class MessageController extends Controller
 
         event(new OrderMessageSent($message));
 
-        return response()->json(['success' => true, 'message' => $message]);
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+        ]);
     }
 }

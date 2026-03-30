@@ -27,7 +27,9 @@ class ProductWaitlistController extends Controller
         ]);
 
         if ($request->wantsJson()) {
-            return response()->json(['message' => 'You\'ll be notified when this item is available!']);
+            return response()->json([
+                'message' => 'You\'ll be notified when this item is available!',
+            ]);
         }
 
         return back()->with('waitlist_success', 'You\'ll be notified when this item is available!');

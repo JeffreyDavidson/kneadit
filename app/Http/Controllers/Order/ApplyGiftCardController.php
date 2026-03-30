@@ -18,11 +18,15 @@ class ApplyGiftCardController extends Controller
         $card = $service->checkBalance($request->code);
 
         if (! $card) {
-            return response()->json(['error' => 'Gift card not found.'], 422);
+            return response()->json([
+                'error' => 'Gift card not found.',
+            ], 422);
         }
 
         if (! $card->is_usable) {
-            return response()->json(['error' => 'This gift card is no longer valid.'], 422);
+            return response()->json([
+                'error' => 'This gift card is no longer valid.',
+            ], 422);
         }
 
         $applicable = min((float) $card->current_balance, (float) $request->subtotal);

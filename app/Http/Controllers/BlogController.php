@@ -25,6 +25,9 @@ class BlogController extends Controller
     {
         $related = BlogPost::query()->published()->relatedTo($post)->get();
 
-        return view('blog.show', ['post' => $post, 'related' => $related]);
+        return view('blog.show', [
+            'post' => $post,
+            'related' => $related,
+        ]);
     }
 }

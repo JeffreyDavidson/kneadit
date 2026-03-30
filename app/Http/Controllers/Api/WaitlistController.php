@@ -20,6 +20,8 @@ class WaitlistController extends Controller
             'status' => WaitlistStatus::Waiting,
         ]);
 
-        return ApiResponse::created(['id' => $entry->id], 'Added to waitlist successfully.');
+        return ApiResponse::created([
+            'id' => $entry->id,
+        ], 'Added to waitlist successfully.');
     }
 }

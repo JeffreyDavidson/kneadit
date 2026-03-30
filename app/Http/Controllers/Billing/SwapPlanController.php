@@ -26,7 +26,9 @@ class SwapPlanController extends Controller
         try {
             $user->subscription('default')?->swap($priceId);
         } catch (Exception $e) {
-            Log::error('Plan swap failed', ['error' => $e->getMessage()]);
+            Log::error('Plan swap failed', [
+                'error' => $e->getMessage(),
+            ]);
 
             return to_route('billing.plans')
                 ->with('error', 'Unable to update your plan. Please try again or contact support.');
