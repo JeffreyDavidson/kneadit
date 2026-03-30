@@ -159,7 +159,8 @@ class StorefrontAnalytics extends Page
             fn (PageView $row) => (object) [
                 'name' => $products[$row->product_id] ?? 'Unknown',
                 'views' => $row->views,
-            ]);
+            ],
+        );
     }
 
     /** @return array<int, array<string, mixed>> */

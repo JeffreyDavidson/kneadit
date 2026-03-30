@@ -15,7 +15,11 @@ class BlogController extends Controller
         $activeCategory = request('category', 'all');
         $posts = BlogPost::query()->forListing($activeCategory)->paginate(6);
 
-        return view('blog.index', ['posts' => $posts, 'categories' => $categories, 'activeCategory' => $activeCategory]);
+        return view('blog.index', [
+            'posts' => $posts,
+            'categories' => $categories,
+            'activeCategory' => $activeCategory,
+        ]);
     }
 
     public function show(BlogPost $post): View
