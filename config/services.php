@@ -51,4 +51,8 @@ return [
         'site_id' => env('FORGE_SITE_ID', '3062608'),
     ],
 
+    'github' => [
+        'token' => env('GITHUB_TOKEN'),
+    ],
+
 ];

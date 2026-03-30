@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ChangelogService;
 use Illuminate\Contracts\View\View;
 
 class ChangelogController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke(ChangelogService $changelog): View
     {
-        $entries = config('changelog', []);
-
         return view('changelog', [
-            'entries' => $entries,
+            'entries' => $changelog->entries(),
         ]);
     }
 }
