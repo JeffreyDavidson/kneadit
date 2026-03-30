@@ -118,7 +118,7 @@ class SocialPostForm
                                 Select::make('status')
                                     ->options(SocialPostStatus::class)
                                     ->required()
-                                    ->default('draft'),
+                                    ->default(SocialPostStatus::Draft),
                             ]),
 
                         Textarea::make('notes')

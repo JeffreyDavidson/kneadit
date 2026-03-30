@@ -106,7 +106,7 @@ class EmailCampaignResource extends Resource
                     ->action(function (EmailCampaign $record) {
                         $recipientCount = Tenant::query()->count();
                         $record->update([
-                            'status' => 'sent',
+                            'status' => EmailCampaignStatus::Sent,
                             'sent_at' => now(),
                             'recipient_count' => $recipientCount,
                         ]);
@@ -123,7 +123,7 @@ class EmailCampaignResource extends Resource
                     ])
                     ->action(function (EmailCampaign $record, array $data) {
                         $record->update([
-                            'status' => 'scheduled',
+                            'status' => EmailCampaignStatus::Scheduled,
                             'scheduled_at' => $data['scheduled_at'],
                         ]);
                     })
