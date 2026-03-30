@@ -33,4 +33,18 @@ class BlogPostQueryBuilder extends Builder
 
         return $this;
     }
+
+    public function forListing(?string $category = null): static
+    {
+        $this->published()->orderByDesc('published_at');
+
+        if ($category && $category !== 'all') {
+            $enum = BlogPostCategory::tryFrom($category);
+            if ($enum) {
+                $this->inCategory($enum);
+            }
+        }
+
+        return $this;
+    }
 }

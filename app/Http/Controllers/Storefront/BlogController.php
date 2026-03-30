@@ -11,22 +11,9 @@ class BlogController extends Controller
 {
     public function index(): View
     {
-        $categories = collect(BlogPostCategory::cases())
-            ->mapWithKeys(fn (BlogPostCategory $case) => [$case->value => $case->getLabel()])
-            ->prepend('All Posts', 'all');
-
+        $categories = BlogPostCategory::options();
         $activeCategory = request('category', 'all');
-
-        $query = BlogPost::query()->published()->latest('published_at');
-
-        if ($activeCategory !== 'all') {
-            $category = BlogPostCategory::tryFrom($activeCategory);
-            if ($category) {
-                $query->inCategory($category);
-            }
-        }
-
-        $posts = $query->paginate(6);
+        $posts = BlogPost::query()->forListing($activeCategory)->paginate(6);
 
         return view('blog.index', compact('posts', 'categories', 'activeCategory'));
     }
