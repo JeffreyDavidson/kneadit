@@ -45,15 +45,15 @@
 @if($order->delivery_address)
     <div class="delivery-info">
         <div class="info-label">🚚 Delivery Schedule</div>
-        <p style="margin: 5px 0;"><strong>Delivery Date:</strong> {{ $order->delivery_date->format('M j, Y') }}</p>
-        <p style="margin: 5px 0;"><strong>Delivery Time:</strong> {{ $order->delivery_time->format('g:i A') }}</p>
+        <p style="margin: 5px 0;"><strong>Delivery Date:</strong> {{ $order->delivery_date?->format('M j, Y') ?? 'TBD' }}</p>
+        <p style="margin: 5px 0;"><strong>Delivery Time:</strong> {{ $order->delivery_time?->format('g:i A') ?? 'TBD' }}</p>
         <p style="margin: 5px 0;"><strong>Address:</strong> {{ $order->delivery_address }}</p>
     </div>
 @else
     <div class="delivery-info">
         <div class="info-label">🏪 Pickup Schedule</div>
-        <p style="margin: 5px 0;"><strong>Pickup Date:</strong> {{ $order->delivery_date->format('M j, Y') }}</p>
-        <p style="margin: 5px 0;"><strong>Pickup Time:</strong> {{ $order->delivery_time->format('g:i A') }}</p>
+        <p style="margin: 5px 0;"><strong>Pickup Date:</strong> {{ $order->delivery_date?->format('M j, Y') ?? 'TBD' }}</p>
+        <p style="margin: 5px 0;"><strong>Pickup Time:</strong> {{ $order->delivery_time?->format('g:i A') ?? 'TBD' }}</p>
         <p style="margin: 5px 0;"><strong>Location:</strong> 123 Baker Street, Sweet City, SC 12345</p>
     </div>
 @endif
@@ -61,7 +61,7 @@
 <div style="background-color: #fff3cd; border-radius: 6px; padding: 15px; margin: 20px 0; border-left: 4px solid #ffc107;">
     <div class="info-label">⏰ What's Next?</div>
     <p style="margin: 5px 0;">Our talented bakers are now working on your order with fresh ingredients and lots of care. We'll notify you as soon as everything is ready!</p>
-    <p style="margin: 5px 0;"><strong>Estimated completion:</strong> {{ $order->delivery_date->format('M j, Y') }} at {{ $order->delivery_time->format('g:i A') }}</p>
+    <p style="margin: 5px 0;"><strong>Estimated completion:</strong> {{ $order->delivery_date?->format('M j, Y') ?? 'TBD' }} at {{ $order->delivery_time?->format('g:i A') ?? 'TBD' }}</p>
 </div>
 
 <p>We take pride in creating each item fresh for you. Thank you for your patience and for choosing KneadIt Bakery!</p>
