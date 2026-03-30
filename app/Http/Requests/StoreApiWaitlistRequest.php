@@ -20,7 +20,7 @@ class StoreApiWaitlistRequest extends FormRequest
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_email' => ['required', 'email', 'max:255'],
             'customer_phone' => ['required', 'string', 'max:50'],
-            'delivery_date' => ['required', 'date'],
+            'requested_date' => ['required', 'date'],
             'product_id' => ['nullable', 'exists:products,id'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
