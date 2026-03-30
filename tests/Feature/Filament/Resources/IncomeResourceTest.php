@@ -5,6 +5,7 @@ use App\Filament\Resources\Incomes\Pages\ListIncomes;
 use App\Models\Income;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -50,7 +51,7 @@ test('can edit an income via table action', function () {
     $income = Income::factory()->create();
 
     Livewire::test(ListIncomes::class)
-        ->callTableAction('edit', $income, data: [
+        ->callAction(TestAction::make('edit')->table($income), data: [
             'description' => 'Updated income',
             'amount' => $income->amount,
             'source' => $income->source->value,

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Enums\AnnouncementType;
 use App\Filament\Central\Resources\AnnouncementResource\Pages;
 use App\Models\PlatformAnnouncement;
 use BackedEnum;
@@ -18,6 +19,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -46,12 +48,7 @@ class AnnouncementResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                         Select::make('type')
-                            ->options([
-                                'info' => 'Info',
-                                'warning' => 'Warning',
-                                'success' => 'Success',
-                                'maintenance' => 'Maintenance',
-                            ])
+                            ->options(AnnouncementType::class)
                             ->required()
                             ->default('info'),
                         CheckboxList::make('target_plans')
@@ -91,13 +88,7 @@ class AnnouncementResource extends Resource
                     ->sortable(),
                 TextColumn::make('type')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'info' => 'info',
-                        'warning' => 'warning',
-                        'success' => 'success',
-                        'maintenance' => 'gray',
-                        default => 'gray',
-                    }),
+                    ->color(fn (AnnouncementType $state): string => $state->color()),
                 TextColumn::make('target_plans')
                     ->label('Target')
                     ->formatStateUsing(fn (mixed $state) => empty($state) ? 'All Plans' : (is_array($state) ? implode(', ', $state) : 'All Plans'))
@@ -116,6 +107,10 @@ class AnnouncementResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
+            ->filters([
+                TernaryFilter::make('is_active')
+                    ->label('Active'),
+            ])
             ->actions([
                 Actions\EditAction::make()
                     ->slideOver(),

@@ -3,6 +3,7 @@
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Models\Recipe;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -43,7 +44,7 @@ test('can edit a recipe via table action', function () {
     $recipe = Recipe::factory()->create();
 
     Livewire::test(ListRecipes::class)
-        ->callTableAction('edit', $recipe, data: [
+        ->callAction(TestAction::make('edit')->table($recipe), data: [
             'name' => 'Updated Recipe',
             'prep_time_minutes' => $recipe->prep_time_minutes,
         ])
@@ -85,7 +86,7 @@ test('edit recipe validates name is required', function () {
     $recipe = Recipe::factory()->create();
 
     Livewire::test(ListRecipes::class)
-        ->callTableAction('edit', $recipe, data: [
+        ->callAction(TestAction::make('edit')->table($recipe), data: [
             'name' => null,
             'prep_time_minutes' => $recipe->prep_time_minutes,
         ])

@@ -29,6 +29,26 @@ test('can render capacity limit table columns', function (string $column) {
         ->assertCanRenderTableColumn($column);
 })->with(['max_orders']);
 
+test('can filter capacity limits by blocked status', function () {
+    $blocked = CapacityLimit::factory()->create(['is_blocked' => true]);
+    $open = CapacityLimit::factory()->create(['is_blocked' => false]);
+
+    Livewire::test(ListCapacityLimits::class)
+        ->filterTable('is_blocked', true)
+        ->assertCanSeeTableRecords(collect([$blocked]))
+        ->assertCanNotSeeTableRecords(collect([$open]));
+});
+
+test('can search capacity limits by notes', function () {
+    $target = CapacityLimit::factory()->create(['notes' => 'Holiday rush']);
+    $other = CapacityLimit::factory()->create(['notes' => 'Regular day']);
+
+    Livewire::test(ListCapacityLimits::class)
+        ->searchTable('Holiday')
+        ->assertCanSeeTableRecords(collect([$target]))
+        ->assertCanNotSeeTableRecords(collect([$other]));
+});
+
 test('can create a capacity limit for a weekday', function () {
     Livewire::test(ListCapacityLimits::class)
         ->callAction('create', data: [

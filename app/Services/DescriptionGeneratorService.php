@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
 class DescriptionGeneratorService

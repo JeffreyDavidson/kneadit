@@ -58,7 +58,7 @@ class ProductResource extends Resource
     {
         return [
             'Category' => $record->category->name ?? 'N/A',
-            'Price' => Number::currency($record->price),
+            'Price' => (string) Number::currency($record->price),
         ];
     }
 

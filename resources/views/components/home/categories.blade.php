@@ -18,17 +18,11 @@
                class="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                style="background: var(--warm-900); aspect-ratio: 1/1;">
 
-                {{-- Background: category image or gradient --}}
-                @if($category->image)
-                <img src="{{ Storage::url($category->image) }}" alt="{{ $category->name }}" 
-                     class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" style="opacity: 0.5;">
-                @else
+                {{-- Background gradient with ghost letter --}}
                 <div class="absolute inset-0" style="background: linear-gradient(135deg, var(--warm-800), var(--warm-700));"></div>
-                {{-- Large ghost letter --}}
                 <div class="absolute inset-0 flex items-center justify-center">
                     <span class="font-display font-bold" style="font-size: 6rem; color: var(--warm-600); opacity: 0.15;">{{ strtoupper(substr($category->name, 0, 1)) }}</span>
                 </div>
-                @endif
 
                 {{-- Overlay --}}
                 <div class="absolute inset-0 transition-opacity duration-300" style="background: linear-gradient(to top, rgba(28,20,16,0.9) 0%, rgba(28,20,16,0.2) 60%); opacity: 0.8;"></div>

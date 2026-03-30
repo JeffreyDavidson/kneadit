@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('generates financial report for a year', function () {
-    $report = new FinancialReport;
+    $report = resolve(FinancialReport::class);
     $result = $report->generate(2026);
 
     expect($result)->toBeArray()

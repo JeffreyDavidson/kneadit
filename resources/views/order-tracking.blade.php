@@ -1,7 +1,5 @@
 @use('App\Enums\OrderStatus')
-@extends('layouts.storefront')
-
-@section('content')
+<x-layouts.storefront>
 @php
     $content = settingsPageContent('order_tracking');
     $storeName = settings('store_name', 'Our Bakery');
@@ -353,4 +351,4 @@ loadMessages({{ $order->id }});
 </script>
 @endif
 @endisset
-@endsection
+</x-layouts.storefront>

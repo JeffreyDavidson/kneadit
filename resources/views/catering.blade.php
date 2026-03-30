@@ -1,6 +1,4 @@
-@extends('layouts.storefront')
-
-@section('content')
+<x-layouts.storefront>
 @php
     $storeName = settings('store_name', 'Our Bakery');
     $minimumGuests = settings('catering_minimum_guests', '10');
@@ -115,7 +113,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @foreach($cateringPhotos as $photo)
             <div class="aspect-square rounded-2xl overflow-hidden">
-                <img src="{{ Storage::url($photo->photo) }}" alt="{{ $photo->caption ?? 'Catering event' }}" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                <img src="{{ Storage::url($photo->photo_path) }}" alt="{{ $photo->caption ?? 'Catering event' }}" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
             </div>
             @endforeach
         </div>
@@ -225,4 +223,4 @@
         </form>
     </div>
 </section>
-@endsection
+</x-layouts.storefront>

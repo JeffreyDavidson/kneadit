@@ -6,6 +6,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class SurveysTable
@@ -29,6 +30,10 @@ class SurveysTable
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
+            ])
+            ->filters([
+                TernaryFilter::make('is_active')
+                    ->label('Active'),
             ])
             ->recordActions([
                 ViewAction::make(),

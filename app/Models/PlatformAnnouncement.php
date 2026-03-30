@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AnnouncementType;
 use Database\Factories\PlatformAnnouncementFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -62,6 +63,7 @@ class PlatformAnnouncement extends Model
     protected function casts(): array
     {
         return [
+            'type' => AnnouncementType::class,
             'target_plans' => 'array',
             'is_active' => 'boolean',
             'is_dismissable' => 'boolean',

@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -73,11 +74,10 @@ class EmailCampaignResource extends Resource
                     ->badge(),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'gray',
-                        'scheduled' => 'info',
-                        'sent' => 'success',
-                        default => 'gray',
+                    ->color(fn (EmailCampaignStatus $state): string => match ($state) {
+                        EmailCampaignStatus::Draft => 'gray',
+                        EmailCampaignStatus::Sending => 'warning',
+                        EmailCampaignStatus::Sent => 'success',
                     }),
                 TextColumn::make('recipient_count')
                     ->label('Recipients')
@@ -90,6 +90,10 @@ class EmailCampaignResource extends Resource
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
+            ->filters([
+                SelectFilter::make('status')
+                    ->options(EmailCampaignStatus::class),
+            ])
             ->actions([
                 Actions\EditAction::make()->slideOver(),
                 Actions\Action::make('send_now')

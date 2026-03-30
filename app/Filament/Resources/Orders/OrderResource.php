@@ -59,7 +59,7 @@ class OrderResource extends Resource
     {
         return [
             'Customer' => $record->customer->name ?? 'N/A',
-            'Total' => Number::currency($record->total),
+            'Total' => (string) Number::currency($record->total),
             'Status' => $record->status->getLabel(),
         ];
     }

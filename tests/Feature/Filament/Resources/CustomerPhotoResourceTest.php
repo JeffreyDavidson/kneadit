@@ -3,6 +3,7 @@
 use App\Filament\Resources\CustomerPhotos\Pages\ListCustomerPhotos;
 use App\Models\CustomerPhoto;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -70,7 +71,7 @@ test('can edit a customer photo via table action', function () {
     $photo = CustomerPhoto::factory()->create();
 
     Livewire::test(ListCustomerPhotos::class)
-        ->callTableAction('edit', $photo, data: [
+        ->callAction(TestAction::make('edit')->table($photo), data: [
             'customer_name' => 'Updated Name',
             'customer_email' => $photo->customer_email,
             'photo_path' => [$photo->photo_path],

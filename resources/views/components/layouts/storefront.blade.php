@@ -316,10 +316,10 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ urlencode(tenant()->brand_color_primary ?? '#d4920c') }}'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-family='serif' font-weight='bold'>{{ substr(settings('store_name', 'B'), 0, 1) }}</text></svg>" type="image/svg+xml">
     @endif
 
-        @yield('styles')\n    @stack('styles')
+        {{ $styles ?? "" }}\n    
 @include('partials.fathom')
 </head>
-<body data-theme="{{ $storefrontTheme }}" @yield('body_attrs')>
+<body data-theme="{{ $storefrontTheme }}" {{ $bodyAttrs ?? "" }}>
 
     @php
         $storeName = settings('store_name', 'Our Bakery');
@@ -464,7 +464,7 @@
         </div>
         @endif
 
-        @yield('content')
+        {{ $slot }}
     </main>
 
     <!-- Policies -->
@@ -589,7 +589,7 @@
     if(!localStorage.getItem('cookieConsent')){document.getElementById('cookieConsent').style.display='block'}
     </script>
 
-    @yield('scripts')
-@stack('scripts')
+    {{ $scripts ?? "" }}
+
 </body>
 </html>

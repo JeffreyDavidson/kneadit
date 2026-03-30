@@ -7,6 +7,8 @@ use App\Models\LoyaltyReward;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
@@ -40,6 +42,12 @@ class LoyaltyRewardsTable
                     ->label('Value'),
                 IconColumn::make('is_active')
                     ->boolean()
+                    ->label('Active'),
+            ])
+            ->filters([
+                SelectFilter::make('reward_type')
+                    ->options(RewardType::class),
+                TernaryFilter::make('is_active')
                     ->label('Active'),
             ])
             ->recordActions([

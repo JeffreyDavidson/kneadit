@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BlogPosts\Tables;
 
+use App\Enums\BlogPostCategory;
 use App\Models\BlogPost;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -86,17 +87,7 @@ class BlogPostsTable
 
                 SelectFilter::make('category')
                     ->label('Category')
-                    ->options(function () {
-                        return BlogPost::query()
-                            ->whereNotNull('category')
-                            ->where('category', '!=', '')
-                            ->select('category')
-                            ->distinct()
-                            ->get()
-                            ->pluck('category', 'category')
-                            ->filter()
-                            ->toArray();
-                    }),
+                    ->options(BlogPostCategory::class),
             ]);
     }
 }

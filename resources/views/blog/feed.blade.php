@@ -15,8 +15,8 @@
             @if($post->excerpt)
             <description>{{ htmlspecialchars($post->excerpt, ENT_XML1) }}</description>
             @endif
-            @if($post->author_name)
-            <author>{{ htmlspecialchars($post->author_name, ENT_XML1) }}</author>
+            @if($storeName)
+            <author>{{ htmlspecialchars($storeName, ENT_XML1) }}</author>
             @endif
         </item>
         @endforeach

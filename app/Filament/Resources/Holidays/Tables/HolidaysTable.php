@@ -12,6 +12,7 @@ use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
@@ -99,6 +100,10 @@ class HolidaysTable
                     ->label('Active')
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                TernaryFilter::make('is_active')
+                    ->label('Active'),
             ])
             ->recordActions([
                 EditAction::make()->slideOver()->modalWidth('md'),

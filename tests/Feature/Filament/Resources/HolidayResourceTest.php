@@ -4,6 +4,7 @@ use App\Filament\Resources\Holidays\Pages\ListHolidays;
 use App\Models\Holiday;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -42,7 +43,7 @@ test('can edit a holiday via table action', function () {
     $holiday = Holiday::factory()->create();
 
     Livewire::test(ListHolidays::class)
-        ->callTableAction('edit', $holiday, data: [
+        ->callAction(TestAction::make('edit')->table($holiday), data: [
             'name' => 'Updated Holiday',
             'date' => $holiday->date->format('Y-m-d'),
             'order_deadline' => $holiday->order_deadline->format('Y-m-d'),
@@ -82,6 +83,16 @@ test('can search holidays by name', function () {
         ->searchTable('Christmas')
         ->assertCanSeeTableRecords(collect([$christmas]))
         ->assertCanNotSeeTableRecords(collect([$easter]));
+});
+
+test('can filter holidays by active status', function () {
+    $active = Holiday::factory()->create(['is_active' => true]);
+    $inactive = Holiday::factory()->create(['is_active' => false]);
+
+    Livewire::test(ListHolidays::class)
+        ->filterTable('is_active', true)
+        ->assertCanSeeTableRecords(collect([$active]))
+        ->assertCanNotSeeTableRecords(collect([$inactive]));
 });
 
 test('can sort holidays by date', function () {

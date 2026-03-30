@@ -11,6 +11,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class EmailCampaignsTable
@@ -26,11 +27,10 @@ class EmailCampaignsTable
 
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        EmailCampaignStatus::Draft->value => 'gray',
-                        EmailCampaignStatus::Sending->value => 'warning',
-                        EmailCampaignStatus::Sent->value => 'success',
-                        default => 'gray',
+                    ->color(fn (EmailCampaignStatus $state): string => match ($state) {
+                        EmailCampaignStatus::Draft => 'gray',
+                        EmailCampaignStatus::Sending => 'warning',
+                        EmailCampaignStatus::Sent => 'success',
                     }),
 
                 TextColumn::make('recipient_count')
@@ -49,6 +49,10 @@ class EmailCampaignsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
+            ->filters([
+                SelectFilter::make('status')
+                    ->options(EmailCampaignStatus::class),
+            ])
             ->actions([
                 Action::make('send')
                     ->label('Send Campaign')

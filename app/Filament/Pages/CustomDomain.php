@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\UserRole;
 use App\Services\ForgeService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -13,10 +14,22 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
 use Stancl\Tenancy\Database\Models\Domain;
 
 class CustomDomain extends Page
 {
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return true;
+    }
+
     use InteractsWithFormActions;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;

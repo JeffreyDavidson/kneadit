@@ -4,6 +4,7 @@ use App\Filament\Resources\Settings\Pages\ListSettings;
 use App\Models\Setting;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -38,7 +39,7 @@ test('can edit a setting via table action', function () {
     $setting = Setting::factory()->create();
 
     Livewire::test(ListSettings::class)
-        ->callTableAction('edit', $setting, data: [
+        ->callAction(TestAction::make('edit')->table($setting), data: [
             'key' => $setting->key,
             'value' => 'Updated value',
         ])

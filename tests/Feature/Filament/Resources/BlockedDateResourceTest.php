@@ -4,6 +4,7 @@ use App\Filament\Resources\BlockedDates\Pages\ListBlockedDates;
 use App\Models\BlockedDate;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -40,7 +41,7 @@ test('can edit a blocked date via table action', function () {
     $blockedDate = BlockedDate::factory()->create();
 
     Livewire::test(ListBlockedDates::class)
-        ->callTableAction('edit', $blockedDate, data: [
+        ->callAction(TestAction::make('edit')->table($blockedDate), data: [
             'date' => $blockedDate->date->format('Y-m-d'),
             'reason' => 'Vacation',
             'is_all_day' => true,
@@ -65,6 +66,16 @@ test('can render blocked date table columns', function (string $column) {
     Livewire::test(ListBlockedDates::class)
         ->assertCanRenderTableColumn($column);
 })->with(['date', 'reason']);
+
+test('can filter blocked dates by all day status', function () {
+    $allDay = BlockedDate::factory()->create(['is_all_day' => true]);
+    $partial = BlockedDate::factory()->create(['is_all_day' => false]);
+
+    Livewire::test(ListBlockedDates::class)
+        ->filterTable('is_all_day', true)
+        ->assertCanSeeTableRecords(collect([$allDay]))
+        ->assertCanNotSeeTableRecords(collect([$partial]));
+});
 
 test('can sort blocked dates by date', function () {
     $early = BlockedDate::factory()->create(['date' => '2026-01-01']);

@@ -4,6 +4,7 @@ use App\Filament\Resources\Categories\Pages\ListCategories;
 use App\Models\Category;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -48,7 +49,7 @@ test('can edit a category via table action', function () {
     $category = Category::factory()->create();
 
     Livewire::test(ListCategories::class)
-        ->callTableAction('edit', $category, data: [
+        ->callAction(TestAction::make('edit')->table($category), data: [
             'name' => 'Updated Category',
             'slug' => $category->slug,
         ])

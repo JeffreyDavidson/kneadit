@@ -5,6 +5,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -107,7 +108,7 @@ test('can edit a product via table action', function () {
     $product = Product::factory()->recycle($this->category)->create();
 
     Livewire::test(ListProducts::class)
-        ->callTableAction('edit', $product, data: [
+        ->callAction(TestAction::make('edit')->table($product), data: [
             'name' => 'Updated Bread',
             'slug' => $product->slug,
             'price' => $product->price,

@@ -32,6 +32,7 @@ class HandleConnectCheckoutCompleted
             return;
         }
 
+        /** @var Tenant|null $tenant */
         $tenant = Tenant::query()->find($tenantId);
         if (! $tenant) {
             Log::warning('Tenant not found for checkout session', ['tenant_id' => $tenantId]);

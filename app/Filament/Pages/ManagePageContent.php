@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\UserRole;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
@@ -16,9 +17,21 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
 
 class ManagePageContent extends Page
 {
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
+            return false;
+        }
+
+        return true;
+    }
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';
