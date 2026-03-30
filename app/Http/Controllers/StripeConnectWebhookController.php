@@ -50,7 +50,9 @@ class StripeConnectWebhookController extends Controller
             return response('Already processed', 200);
         }
 
-        Log::info('Stripe Connect webhook received', ['type' => $type]);
+        Log::info('Stripe Connect webhook received', [
+            'type' => $type,
+        ]);
 
         match ($type) {
             'account.updated' => resolve(HandleConnectAccountUpdated::class)($data),

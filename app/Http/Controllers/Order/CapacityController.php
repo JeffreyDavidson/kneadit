@@ -17,7 +17,9 @@ class CapacityController extends Controller
         try {
             $carbon = Date::parse($date);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Invalid date'], 422);
+            return response()->json([
+                'error' => 'Invalid date',
+            ], 422);
         }
 
         return response()->json([

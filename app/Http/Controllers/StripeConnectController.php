@@ -35,7 +35,9 @@ class StripeConnectController extends Controller
             ]);
 
             $connectId = $account->id;
-            settings(['stripe_connect_id' => $connectId]);
+            settings([
+                'stripe_connect_id' => $connectId,
+            ]);
         }
 
         // Create an account link for onboarding

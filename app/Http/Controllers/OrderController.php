@@ -16,7 +16,9 @@ class OrderController extends Controller
 {
     public function index(): View
     {
-        $categories = Category::with(['products' => fn (HasMany $q) => $q->where('is_active', true)->orderBy('name')])->orderBy('sort_order')->get();
+        $categories = Category::with([
+            'products' => fn (HasMany $q) => $q->where('is_active', true)->orderBy('name'),
+        ])->orderBy('sort_order')->get();
 
         $leadTimeHours = settings('order_lead_time_hours', '24');
         $leadTimeDays = ceil($leadTimeHours / 24);
@@ -82,8 +84,14 @@ class OrderController extends Controller
         $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
         $content = settingsPageContent('order_confirmation');
         $journeySteps = $content['journey_steps'] ?? [
-            ['title' => 'Confirmation', 'description' => 'You\'ll receive an email confirmation with your order details shortly.'],
-            ['title' => 'Preparation', 'description' => 'Our bakers will craft your items fresh on your scheduled date.'],
+            [
+                'title' => 'Confirmation',
+                'description' => 'You\'ll receive an email confirmation with your order details shortly.',
+            ],
+            [
+                'title' => 'Preparation',
+                'description' => 'Our bakers will craft your items fresh on your scheduled date.',
+            ],
             [
                 'title' => 'Delivery',
                 'description_delivery' => 'We\'ll deliver your fresh items right to your door.',

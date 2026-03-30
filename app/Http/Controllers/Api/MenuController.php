@@ -15,7 +15,9 @@ class MenuController extends Controller
     {
         $categories = Category::query()->active()
             ->orderBy('sort_order')
-            ->with(['products' => fn (HasMany $q) => $q->where('is_active', true)])
+            ->with([
+                'products' => fn (HasMany $q) => $q->where('is_active', true),
+            ])
             ->get();
 
         return ApiResponse::success(CategoryResource::collection($categories), 'Menu retrieved successfully.');

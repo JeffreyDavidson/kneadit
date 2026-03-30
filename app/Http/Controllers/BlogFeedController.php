@@ -39,6 +39,8 @@ class BlogFeedController extends Controller
 
         $xml .= '</channel></rss>';
 
-        return response($xml, 200, ['Content-Type' => 'application/rss+xml; charset=UTF-8']);
+        return response($xml, 200, [
+            'Content-Type' => 'application/rss+xml; charset=UTF-8',
+        ]);
     }
 }

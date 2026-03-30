@@ -31,6 +31,8 @@ class ReviewController extends Controller
             'is_approved' => false,
         ]);
 
-        return ApiResponse::created(['id' => $review->id], 'Review submitted and pending approval.');
+        return ApiResponse::created([
+            'id' => $review->id,
+        ], 'Review submitted and pending approval.');
     }
 }

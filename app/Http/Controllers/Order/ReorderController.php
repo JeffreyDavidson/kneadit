@@ -23,6 +23,8 @@ class ReorderController extends Controller
             'quantity' => $item->quantity,
         ]);
 
-        return response()->json(['items' => $items]);
+        return response()->json([
+            'items' => $items,
+        ]);
     }
 }

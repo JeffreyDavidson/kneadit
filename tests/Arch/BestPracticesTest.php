@@ -43,7 +43,7 @@ arch('controllers should not use compact() for view data')
     ->expect('compact')
     ->not->toBeUsedIn('App\Http\Controllers');
 
-test('view calls with 3+ array items should be multiline', function () {
+test('associative arrays in controllers should be multiline', function () {
     $violations = [];
     $controllersDir = dirname(__DIR__, 2) . '/app/Http/Controllers';
 
@@ -57,21 +57,43 @@ test('view calls with 3+ array items should be multiline', function () {
         }
 
         $content = file_get_contents($file->getPathname());
+        $lines = explode("\n", $content);
         $relative = str_replace(dirname(__DIR__, 2) . '/app' . DIRECTORY_SEPARATOR, '', $file->getPathname());
 
-        // Match single-line arrays with 3+ => pairs: ['a' => $a, 'b' => $b, 'c' => $c]
-        if (preg_match_all('/\[([^\[\]]*=>.*=>.*=>.*)\]/', $content, $matches, PREG_OFFSET_CAPTURE)) {
-            foreach ($matches[0] as $match) {
-                $line = substr_count(substr($content, 0, $match[1]), "\n") + 1;
-                $arrowCount = substr_count($match[0], '=>');
-                if ($arrowCount >= 3) {
-                    $violations[] = "{$relative}:{$line} — single-line array with {$arrowCount} items";
+        foreach ($lines as $lineNum => $sourceLine) {
+            // Skip lines without single-line associative arrays
+            if (! preg_match('/\[([^\[\]\n]*=>[^\[\]\n]*)\]/', $sourceLine)) {
+                continue;
+            }
+
+            // Skip closure arrays (eager loading with fn)
+            if (str_contains($sourceLine, 'fn(') || str_contains($sourceLine, 'fn (')) {
+                continue;
+            }
+
+            // Skip eager loading ->with([...])
+            if (str_contains($sourceLine, '->with(')) {
+                continue;
+            }
+
+            // Skip withErrors([...])
+            if (str_contains($sourceLine, 'withErrors(')) {
+                continue;
+            }
+
+            // Skip lines that are nested array items (indented, not a statement)
+            $trimmed = ltrim($sourceLine);
+            if (str_starts_with($trimmed, '[') && ! str_starts_with($trimmed, '[\'') === false) {
+                if (! str_contains($sourceLine, 'return') && ! str_contains($sourceLine, 'view(') && ! str_contains($sourceLine, 'json(')) {
+                    continue;
                 }
             }
+
+            $violations[] = $relative . ':' . ($lineNum + 1) . ' — single-line associative array';
         }
     }
 
     expect($violations)->toBeEmpty(
-        "Arrays with 3+ items should be multiline:\n" . implode("\n", $violations),
+        "Associative arrays should be multiline:\n" . implode("\n", array_slice($violations, 0, 30)),
     );
 });

@@ -10,6 +10,8 @@ class ChangelogController extends Controller
     {
         $entries = config('changelog', []);
 
-        return view('changelog', ['entries' => $entries]);
+        return view('changelog', [
+            'entries' => $entries,
+        ]);
     }
 }

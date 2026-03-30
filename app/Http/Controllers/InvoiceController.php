@@ -21,6 +21,9 @@ class InvoiceController extends Controller
             'website' => settings('store_website') ?? url('/'),
         ];
 
-        return view('admin.orders.invoice', ['order' => $order, 'storeInfo' => $storeInfo]);
+        return view('admin.orders.invoice', [
+            'order' => $order,
+            'storeInfo' => $storeInfo,
+        ]);
     }
 }

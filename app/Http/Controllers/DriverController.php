@@ -16,7 +16,10 @@ class DriverController extends Controller
         $orders = DriverDeliveryQuery::forDate(today());
         $storeName = settings('store_name', 'Our Bakery');
 
-        return view('driver', ['orders' => $orders, 'storeName' => $storeName]);
+        return view('driver', [
+            'orders' => $orders,
+            'storeName' => $storeName,
+        ]);
     }
 
     public function update(Order $order, TransitionOrderStatus $transitionStatus): RedirectResponse

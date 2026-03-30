@@ -17,6 +17,9 @@ class ShowGiftCardsController extends Controller
         $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
         $content = settingsPageContent('gift_cards');
 
-        return view('gift-cards', ['heroImageUrl' => $heroImageUrl, 'content' => $content]);
+        return view('gift-cards', [
+            'heroImageUrl' => $heroImageUrl,
+            'content' => $content,
+        ]);
     }
 }
