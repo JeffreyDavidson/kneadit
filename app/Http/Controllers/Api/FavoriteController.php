@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Customers\ToggleCustomerFavorite;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiFavoriteRequest;
+use App\Http\Responses\ApiResponse;
 use App\Models\CustomerFavorite;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,10 +21,7 @@ class FavoriteController extends Controller
         $productIds = CustomerFavorite::forCustomer($request->string('email'))
             ->pluck('product_id');
 
-        return response()->json([
-            'data' => $productIds,
-            'message' => 'Favorites retrieved successfully.',
-        ]);
+        return ApiResponse::success($productIds, 'Favorites retrieved successfully.');
     }
 
     public function store(StoreApiFavoriteRequest $request, ToggleCustomerFavorite $toggleFavorite): JsonResponse
@@ -32,9 +30,6 @@ class FavoriteController extends Controller
 
         $favorited = $toggleFavorite($validated['email'], $validated['product_id']);
 
-        return response()->json([
-            'data' => ['favorited' => $favorited],
-            'message' => $favorited ? 'Added to favorites.' : 'Removed from favorites.',
-        ]);
+        return ApiResponse::success(['favorited' => $favorited], $favorited ? 'Added to favorites.' : 'Removed from favorites.');
     }
 }

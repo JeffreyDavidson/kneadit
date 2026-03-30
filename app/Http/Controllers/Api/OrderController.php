@@ -6,6 +6,7 @@ use App\Actions\Orders\CreateOrder;
 use App\Enums\DeliveryType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiOrderRequest;
+use App\Http\Responses\ApiResponse;
 use App\Services\CouponService;
 use Illuminate\Http\JsonResponse;
 
@@ -29,19 +30,13 @@ class OrderController extends Controller
         $order = $createOrder($request->toData());
 
         if (! $order) {
-            return response()->json([
-                'data' => null,
-                'message' => 'This date is fully booked or no valid items in order.',
-            ], 422);
+            return ApiResponse::error('This date is fully booked or no valid items in order.');
         }
 
-        return response()->json([
-            'data' => [
-                'order_number' => $order->order_number,
-                'total' => $order->total,
-                'status' => $order->status,
-            ],
-            'message' => 'Order submitted successfully.',
-        ], 201);
+        return ApiResponse::created([
+            'order_number' => $order->order_number,
+            'total' => $order->total,
+            'status' => $order->status,
+        ], 'Order submitted successfully.');
     }
 }

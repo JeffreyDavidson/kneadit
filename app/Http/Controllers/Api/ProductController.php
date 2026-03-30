@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
+use App\Http\Responses\ApiResponse;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -23,9 +24,6 @@ class ProductController extends Controller
             $query->where('is_featured', true);
         }
 
-        return response()->json([
-            'data' => ProductResource::collection($query->get()),
-            'message' => 'Products retrieved successfully.',
-        ]);
+        return ApiResponse::success(ProductResource::collection($query->get()), 'Products retrieved successfully.');
     }
 }

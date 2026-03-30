@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiReviewRequest;
 use App\Http\Resources\ReviewResource;
+use App\Http\Responses\ApiResponse;
 use App\Models\Review;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,10 +20,7 @@ class ReviewController extends Controller
             $query->where('is_featured', true);
         }
 
-        return response()->json([
-            'data' => ReviewResource::collection($query->latest()->get()),
-            'message' => 'Reviews retrieved successfully.',
-        ]);
+        return ApiResponse::success(ReviewResource::collection($query->latest()->get()), 'Reviews retrieved successfully.');
     }
 
     public function store(StoreApiReviewRequest $request): JsonResponse
@@ -33,9 +31,6 @@ class ReviewController extends Controller
             'is_approved' => false,
         ]);
 
-        return response()->json([
-            'data' => ['id' => $review->id],
-            'message' => 'Review submitted and pending approval.',
-        ], 201);
+        return ApiResponse::created(['id' => $review->id], 'Review submitted and pending approval.');
     }
 }
