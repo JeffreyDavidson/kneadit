@@ -3,6 +3,7 @@
 namespace App\Enums;
 
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Collection;
 
 enum BlogPostCategory: string implements HasLabel
 {
@@ -19,6 +20,14 @@ enum BlogPostCategory: string implements HasLabel
             self::Tips => 'Baker Tips',
             self::News => 'KneadIt News',
         };
+    }
+
+    /** @return Collection<string, string> */
+    public static function options(): Collection
+    {
+        return collect(self::cases())
+            ->mapWithKeys(fn (self $case) => [$case->value => $case->getLabel()])
+            ->prepend('All Posts', 'all');
     }
 
     public function color(): string
