@@ -14,9 +14,7 @@ class InvitationController extends Controller
 {
     public function show(string $token): View
     {
-        $invitation = StaffInvitation::query()->where('token', $token)
-            ->whereNull('accepted_at')
-            ->firstOrFail();
+        $invitation = StaffInvitation::query()->pending()->where('token', $token)->firstOrFail();
 
         if ($invitation->isExpired()) {
             return view('invitations.expired');
@@ -34,9 +32,7 @@ class InvitationController extends Controller
 
     public function store(AcceptInvitationRequest $request, string $token, AcceptStaffInvitation $acceptInvitation): View|RedirectResponse
     {
-        $invitation = StaffInvitation::query()->where('token', $token)
-            ->whereNull('accepted_at')
-            ->firstOrFail();
+        $invitation = StaffInvitation::query()->pending()->where('token', $token)->firstOrFail();
 
         if ($invitation->isExpired()) {
             return view('invitations.expired');

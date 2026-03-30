@@ -15,10 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StripeWebhookController extends WebhookController
 {
-    /**
-     * Check if a Stripe event has already been processed.
-     * Returns true if the event should be skipped.
-     */
     /** @param array<string, mixed> $payload */
     protected function alreadyProcessed(array $payload): bool
     {
@@ -28,14 +24,9 @@ class StripeWebhookController extends WebhookController
             return false;
         }
 
-        // Atomic check-and-lock: returns false if key already exists
         return ! Cache::add("stripe_event:{$eventId}", true, now()->addHours(24));
     }
 
-    /**
-     * Handle customer subscription updated.
-     * Syncs plan changes from Stripe to tenant record.
-     */
     /** @param array<string, mixed> $payload */
     protected function handleCustomerSubscriptionUpdated(array $payload): ?Response
     {
@@ -54,26 +45,18 @@ class StripeWebhookController extends WebhookController
             return null;
         }
 
-        $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
-        if (! $user) {
+        [$user, $tenant] = $this->findUserAndTenant($stripeCustomerId);
+        if (! $user || ! $tenant) {
             return null;
         }
 
-        $tenant = Tenant::query()->where('email', $user->email)->first();
-        if (! $tenant) {
-            return null;
-        }
-
-        // Map Stripe price ID back to plan name
         $plan = $this->priceIdToPlan($stripePriceId);
         if ($plan && $tenant->plan !== $plan) {
             $oldPlan = $tenant->plan;
             $tenant->update(['plan' => $plan]);
-
             Log::info("Tenant {$tenant->id} plan changed: {$oldPlan} → {$plan}");
         }
 
-        // Handle subscription cancellation (status becomes 'canceled' at period end)
         if ($status === 'canceled' || ($subscription['cancel_at_period_end'] ?? false)) {
             Log::info("Tenant {$tenant->id} subscription canceling at period end");
         }
@@ -81,10 +64,6 @@ class StripeWebhookController extends WebhookController
         return $response;
     }
 
-    /**
-     * Handle invoice payment failed.
-     * Alerts the baker and platform.
-     */
     /** @param array<string, mixed> $payload */
     protected function handleInvoicePaymentFailed(array $payload): void
     {
@@ -99,12 +78,10 @@ class StripeWebhookController extends WebhookController
             return;
         }
 
-        $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
+        [$user, $tenant] = $this->findUserAndTenant($stripeCustomerId);
         if (! $user) {
             return;
         }
-
-        $tenant = Tenant::query()->where('email', $user->email)->first();
 
         Log::warning('Payment failed', [
             'tenant' => $tenant?->id,
@@ -112,14 +89,12 @@ class StripeWebhookController extends WebhookController
             'amount' => ($invoice['amount_due'] ?? 0) / 100,
         ]);
 
-        // Notify the baker
         try {
             Mail::to($user->email)->queue(new PaymentFailedMail($user));
         } catch (\Exception $e) {
             Log::error('Failed to send payment failure email', ['error' => $e->getMessage()]);
         }
 
-        // Notify platform
         try {
             $alertMsg = "Payment failed for {$user->name} ({$user->email})"
                 . ($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '')
@@ -128,12 +103,8 @@ class StripeWebhookController extends WebhookController
         } catch (\Exception $e) {
             Log::error('Failed to send platform payment alert', ['error' => $e->getMessage()]);
         }
-
     }
 
-    /**
-     * Handle customer subscription deleted (fully canceled).
-     */
     /** @param array<string, mixed> $payload */
     protected function handleCustomerSubscriptionDeleted(array $payload): ?Response
     {
@@ -146,17 +117,30 @@ class StripeWebhookController extends WebhookController
         $subscription = $payload['data']['object'] ?? [];
         $stripeCustomerId = $subscription['customer'] ?? null;
 
-        $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
+        [$user, $tenant] = $this->findUserAndTenant((string) $stripeCustomerId);
         if (! $user) {
             return null;
         }
 
-        $tenant = Tenant::query()->where('email', $user->email)->first();
         if ($tenant) {
             Log::info("Tenant {$tenant->id} subscription fully canceled");
         }
 
         return $response;
+    }
+
+    /** @return array{0: User|null, 1: Tenant|null} */
+    private function findUserAndTenant(string $stripeCustomerId): array
+    {
+        $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
+
+        if (! $user) {
+            return [null, null];
+        }
+
+        $tenant = Tenant::query()->where('email', $user->email)->first();
+
+        return [$user, $tenant];
     }
 
     protected function priceIdToPlan(string $priceId): ?string

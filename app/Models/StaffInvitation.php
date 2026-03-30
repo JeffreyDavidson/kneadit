@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use Database\Factories\StaffInvitationFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,6 +52,12 @@ class StaffInvitation extends Model
     public function inviter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'invited_by');
+    }
+
+    #[Scope]
+    protected function pending(Builder $query): void
+    {
+        $query->whereNull('accepted_at');
     }
 
     public function isExpired(): bool
