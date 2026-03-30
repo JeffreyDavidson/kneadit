@@ -131,8 +131,9 @@ function createCentralTables(): void
         'support_replies' => function ($table) {
             $table->id();
             $table->foreignId('ticket_id');
+            $table->string('author_type');
+            $table->string('author_name');
             $table->text('body');
-            $table->string('sender_type')->default('admin');
             $table->timestamps();
         },
         'platform_messages' => function ($table) {

@@ -16,10 +16,9 @@ it('completes a pending referral for a tenant', function () {
         ['id' => 'new-bakery', 'name' => 'New Bakery', 'email' => 'new@test.com', 'plan' => SubscriptionTier::Starter, 'data' => '{}', 'created_at' => now(), 'updated_at' => now()],
     ]);
 
-    $referral = Referral::query()->create([
+    $referral = Referral::factory()->create([
         'referral_code' => 'TEST123',
         'referrer_tenant_id' => 'existing-bakery',
-        'status' => ReferralStatus::Pending,
     ]);
 
     $action = new CompleteReferral;

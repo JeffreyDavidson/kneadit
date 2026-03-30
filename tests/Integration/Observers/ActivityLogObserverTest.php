@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('activity log created_at defaults to now when not set', function () {
-    $log = ActivityLog::query()->create([
+    $log = ActivityLog::factory()->create([
         'user_name' => 'Test User',
         'action' => 'test',
         'description' => 'Test description',

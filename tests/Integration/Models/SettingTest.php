@@ -14,7 +14,7 @@ beforeEach(function () {
 });
 
 test('get returns value when exists', function () {
-    Setting::query()->create(['key' => 'store_name', 'value' => 'Test Bakery']);
+    Setting::factory()->create(['key' => 'store_name', 'value' => 'Test Bakery']);
 
     expect(settings('store_name'))->toBe('Test Bakery');
 });

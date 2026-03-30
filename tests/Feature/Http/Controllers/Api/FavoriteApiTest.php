@@ -9,9 +9,8 @@ beforeEach(fn () => setUpTenantTest());
 
 test('favorites index returns product ids for customer email', function () {
     $product = Product::factory()->create();
-    CustomerFavorite::query()->create([
+    CustomerFavorite::factory()->recycle($product)->create([
         'customer_email' => 'alice@test.com',
-        'product_id' => $product->id,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())

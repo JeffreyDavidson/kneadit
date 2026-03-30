@@ -41,8 +41,8 @@ test('replies relationship', function () {
         'tenant_id' => 't1',
     ]);
 
-    SupportReply::query()->create(['ticket_id' => $ticket->id, 'body' => 'Reply 1']);
-    SupportReply::query()->create(['ticket_id' => $ticket->id, 'body' => 'Reply 2']);
+    SupportReply::factory()->for($ticket, 'ticket')->create(['body' => 'Reply 1']);
+    SupportReply::factory()->for($ticket, 'ticket')->create(['body' => 'Reply 2']);
 
     expect($ticket->replies)->toHaveCount(2);
 });
