@@ -21,3 +21,20 @@ arch('observers should end with Observer')
 arch('enums should be string-backed')
     ->expect('App\Enums')
     ->toBeStringBackedEnums();
+
+arch('controllers should not use env() directly')
+    ->expect('env')
+    ->not->toBeUsedIn('App\Http\Controllers');
+
+arch('models should not use DB facade')
+    ->expect('Illuminate\Support\Facades\DB')
+    ->not->toBeUsedIn('App\Models');
+
+arch('exceptions should be classes')
+    ->expect('App\Exceptions')
+    ->toBeClasses();
+
+arch('mailables should extend BaseMailable')
+    ->expect('App\Mail')
+    ->toExtend('App\Mail\BaseMailable')
+    ->ignoring(['App\Mail\BaseMailable', 'App\Mail\Concerns']);
