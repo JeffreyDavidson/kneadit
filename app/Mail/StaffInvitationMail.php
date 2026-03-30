@@ -29,7 +29,7 @@ class StaffInvitationMail extends BaseMailable
                 'invitation' => $this->invitation,
                 'storeName' => $this->storeName,
                 'acceptUrl' => $this->acceptUrl,
-                'role' => ucfirst($this->invitation->role),
+                'role' => $this->invitation->role->getLabel(),
                 'expiresAt' => $this->invitation->expires_at?->format('F j, Y'),
             ],
         );
