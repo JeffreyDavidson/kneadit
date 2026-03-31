@@ -6,39 +6,19 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TrackOrderRequest;
 use App\Models\Order;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Storage;
 
 class TrackingController extends Controller
 {
     /**
-     * Show the order tracking page.
-     */
-    public function show(): View
-    {
-        $content = settingsPageContent('order_tracking');
-        $storeName = settings('store_name', 'Our Bakery');
-        $heroImage = settings('hero_image');
-        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-
-        return view('order-tracking', [
-            'content' => $content,
-            'storeName' => $storeName,
-            'heroImageUrl' => $heroImageUrl,
-        ]);
-    }
-
-    /**
      * Look up orders by customer email.
      */
-    public function store(TrackOrderRequest $request): View
+    public function store(TrackOrderRequest $request, TenantSettings $settings): View
     {
         $orders = Order::query()->forCustomerEmail($request->email)->get();
 
         $content = settingsPageContent('order_tracking');
-        $storeName = settings('store_name', 'Our Bakery');
-        $heroImage = settings('hero_image');
-        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
         $allStatuses = [
             OrderStatus::Pending->value,
@@ -56,13 +36,25 @@ class TrackingController extends Controller
         ];
 
         return view('order-tracking', [
+            'settings' => $settings,
             'orders' => $orders,
             'email' => $request->email,
             'content' => $content,
-            'storeName' => $storeName,
-            'heroImageUrl' => $heroImageUrl,
             'allStatuses' => $allStatuses,
             'statusLabels' => $statusLabels,
+        ]);
+    }
+
+    /**
+     * Show the order tracking page.
+     */
+    public function show(TenantSettings $settings): View
+    {
+        $content = settingsPageContent('order_tracking');
+
+        return view('order-tracking', [
+            'settings' => $settings,
+            'content' => $content,
         ]);
     }
 }

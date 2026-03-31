@@ -39,6 +39,28 @@
 
 ## Code Patterns
 
+### Controllers
+- Controllers must be either **invokable** (`__invoke`) or **resourceful** (only standard resource methods)
+- Resource methods must follow standard order: `index`, `create`, `store`, `show`, `edit`, `update`, `destroy` (enforced by arch test)
+- Prefer splitting multi-method controllers into invokable controllers when each method serves a distinct purpose
+- **No direct `settings()` calls** — inject `TenantSettings` DTO via method injection
+- **No `Storage::url()` for hero images** — use `TenantSettings` computed methods (`heroImageUrl()`, etc.)
+- **No inline auth checks** (`abort_unless($user->role === ...)`) — use Gates or middleware
+- Pass `'settings' => $settings` to views; templates access via `$settings->propertyName`
+- `settingsPageContent()` calls remain in controllers (page-specific, not on TenantSettings)
+
+### TenantSettings DTO
+- `App\Services\Settings\TenantSettings` — readonly DTO loaded once per request (singleton)
+- Contains all shared tenant settings as typed properties (store info, branding, order config, etc.)
+- Computed methods: `heroImageUrl()`, `cateringHeroImageUrl()`, `loyaltyHeroImageUrl()`, `giftCardsHeroImageUrl()`, `storeLogoUrl()`, `defaultTagline()`, `leadTimeDays()`
+- Inject via method injection in controllers: `public function show(TenantSettings $settings)`
+- In closures/components where DI isn't available: `app(TenantSettings::class)`
+
+### Authorization
+- Platform-level abilities use Gates defined in `AppServiceProvider::boot()` (e.g., `platform-admin`)
+- Use `Gate::authorize('platform-admin')` in controllers, not inline role checks
+- Model-specific authorization uses Policies
+
 ### Actions
 - Write operations use single-purpose Action classes in `app/Actions/`
 - Actions are invokable via `__invoke()` and resolved from the container: `app(CreateOrder::class)($data)`

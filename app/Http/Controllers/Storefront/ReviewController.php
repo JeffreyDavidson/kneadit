@@ -6,35 +6,13 @@ use App\Actions\Customers\CreateReview;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReviewRequest;
 use App\Models\Order;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller
 {
-    public function show(Order $order, Request $request): View
-    {
-        $order->load(['customer', 'orderItems.product']);
-        $storeName = settings('store_name', 'Our Bakery');
-        $prefilledRating = $request->query('rating');
-
-        $heroImage = settings('hero_image');
-        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-
-        $content = settingsPageContent('submit_review');
-        $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
-
-        return view('submit-review', [
-            'order' => $order,
-            'storeName' => $storeName,
-            'prefilledRating' => $prefilledRating,
-            'heroImageUrl' => $heroImageUrl,
-            'content' => $content,
-            'ratingDescriptions' => $ratingDescriptions,
-        ]);
-    }
-
-    public function store(Order $order, StoreReviewRequest $request, CreateReview $createReview): View
+    public function store(Order $order, StoreReviewRequest $request, CreateReview $createReview, TenantSettings $settings): View
     {
         $validated = $request->validated();
 
@@ -45,22 +23,33 @@ class ReviewController extends Controller
             photo: $request->file('photo'),
         );
 
-        $storeName = settings('store_name', 'Our Bakery');
+        $content = settingsPageContent('submit_review');
+        $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
 
-        $heroImage = settings('hero_image');
-        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+        return view('submit-review', [
+            'settings' => $settings,
+            'order' => $order,
+            'prefilledRating' => null,
+            'content' => $content,
+            'ratingDescriptions' => $ratingDescriptions,
+            'success' => true,
+        ]);
+    }
+
+    public function show(Order $order, Request $request, TenantSettings $settings): View
+    {
+        $order->load(['customer', 'orderItems.product']);
+        $prefilledRating = $request->query('rating');
 
         $content = settingsPageContent('submit_review');
         $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
 
         return view('submit-review', [
+            'settings' => $settings,
             'order' => $order,
-            'storeName' => $storeName,
-            'prefilledRating' => null,
-            'heroImageUrl' => $heroImageUrl,
+            'prefilledRating' => $prefilledRating,
             'content' => $content,
             'ratingDescriptions' => $ratingDescriptions,
-            'success' => true,
         ]);
     }
 }

@@ -4,22 +4,19 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Storage;
 
 class ReviewsController extends Controller
 {
     /**
      * Show the storefront reviews listing page.
      */
-    public function __invoke(): View
+    public function __invoke(TenantSettings $settings): View
     {
         $reviews = Review::query()->forDisplay()->paginate(12);
         $stats = Review::query()->statistics();
 
-        $storeName = settings('store_name', 'Our Bakery');
-        $heroImage = settings('hero_image');
-        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
         $content = settingsPageContent('reviews');
 
         $avgRating = (float) $stats->avg_rating;
@@ -29,11 +26,10 @@ class ReviewsController extends Controller
         $featured = $reviews->first();
 
         return view('reviews', [
+            'settings' => $settings,
             'reviews' => $reviews,
             'avgRating' => $avgRating,
             'totalReviews' => $totalReviews,
-            'storeName' => $storeName,
-            'heroImageUrl' => $heroImageUrl,
             'content' => $content,
             'fiveStarCount' => $fiveStarCount,
             'fiveStarPct' => $fiveStarPct,

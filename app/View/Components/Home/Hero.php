@@ -4,9 +4,9 @@ namespace App\View\Components\Home;
 
 use App\Models\Customer;
 use App\Models\Review;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Component;
 
 class Hero extends Component
@@ -29,15 +29,13 @@ class Hero extends Component
 
     public function __construct()
     {
-        $this->storeName = settings('store_name', 'Our Bakery');
-        $this->tagline = settings('business_tagline');
-        $this->aboutUs = settings('about_us_text');
-        $this->heroStyle = settings('hero_style', 'split');
+        $settings = app(TenantSettings::class);
 
-        $heroImage = settings('hero_image');
-        $this->heroImageUrl = $heroImage
-            ? Storage::url($heroImage)
-            : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
+        $this->storeName = $settings->storeName;
+        $this->tagline = $settings->businessTagline;
+        $this->aboutUs = $settings->aboutUsText;
+        $this->heroStyle = $settings->heroStyle;
+        $this->heroImageUrl = $settings->heroImageUrl();
 
         $this->customerCount = Cache::flexible('hero_customer_count', [3600, 7200], fn () => Customer::query()->count());
         $this->avgRating = Cache::flexible('hero_avg_rating', [3600, 7200], function () {

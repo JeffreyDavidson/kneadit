@@ -2,6 +2,7 @@
 
 namespace App\View\Components\Layouts;
 
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
@@ -14,14 +15,13 @@ class Storefront extends Component
 
     public function render(): View
     {
-        $storeName = settings('store_name', 'Artisan Bakery');
-        $storeLogo = settings('store_logo');
+        $settings = app(TenantSettings::class);
 
         return view('components.layouts.storefront', [
-            'ogStoreName' => $storeName,
-            'ogDescription' => settings('store_tagline', "{$storeName} — Fresh baked goods made with love"),
-            'ogLogo' => $storeLogo ? asset("storage/{$storeLogo}") : null,
-            'storefrontTheme' => settings('storefront_theme', 'classic'),
+            'ogStoreName' => $settings->storeName,
+            'ogDescription' => $settings->defaultTagline(),
+            'ogLogo' => $settings->storeLogoUrl(),
+            'storefrontTheme' => $settings->storefrontTheme,
         ]);
     }
 }

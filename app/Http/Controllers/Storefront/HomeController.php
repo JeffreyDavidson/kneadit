@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -12,7 +13,7 @@ class HomeController extends Controller
     /**
      * Show the storefront home page.
      */
-    public function __invoke(): View
+    public function __invoke(TenantSettings $settings): View
     {
         $categories = Category::query()->active()
             ->with([
@@ -21,15 +22,12 @@ class HomeController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        $storeName = settings('store_name', 'Our Bakery');
-
-        /** @var array<string, array{visible?: bool, order?: int}> $homepageSections */
-        $homepageSections = json_decode(settings('homepage_sections', '{}'), true);
-        $sections = collect($homepageSections)->filter(fn (array $s) => $s['visible'] ?? true)->sortBy('order');
+        $sections = collect($settings->homepageSections)->filter(fn (array $s) => $s['visible'] ?? true)->sortBy('order');
 
         return view('home', [
+            'settings' => $settings,
             'categories' => $categories,
-            'storeName' => $storeName,
+            'homepageSections' => $settings->homepageSections,
             'sections' => $sections,
         ]);
     }

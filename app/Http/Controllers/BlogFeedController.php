@@ -12,7 +12,7 @@ class BlogFeedController extends Controller
      */
     public function __invoke(): Response
     {
-        $posts = BlogPost::published()
+        $posts = BlogPost::query()->published()
             ->orderByDesc('published_at')
             ->take(20)
             ->get();

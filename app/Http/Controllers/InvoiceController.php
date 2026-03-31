@@ -3,27 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Services\Settings\TenantSettings;
 use Illuminate\View\View;
 
 class InvoiceController extends Controller
 {
-    public function __invoke(Order $order): View
+    public function __invoke(Order $order, TenantSettings $settings): View
     {
-        // Load necessary relationships
         $order->load(['customer', 'orderItems.product']);
-
-        // Get store information from settings
-        $storeInfo = [
-            'name' => settings('store_name') ?? config('app.name'),
-            'address' => settings('store_address') ?? 'Address not configured',
-            'phone' => settings('store_phone') ?? 'Phone not configured',
-            'email' => settings('store_email') ?? 'Email not configured',
-            'website' => settings('store_website') ?? url('/'),
-        ];
 
         return view('admin.orders.invoice', [
             'order' => $order,
-            'storeInfo' => $storeInfo,
+            'settings' => $settings,
         ]);
     }
 }

@@ -6,36 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreGalleryPhotoRequest;
 use App\Models\CustomerPhoto;
 use App\Models\Product;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
-    public function show(): View
-    {
-        $photos = CustomerPhoto::approved()
-            ->with('product')
-            ->orderByDesc('is_featured')
-            ->latest()
-            ->paginate(18);
-
-        $products = Product::query()->active()->orderBy('name')->get();
-
-        $storeName = settings('store_name', 'Our Bakery');
-        $heroImage = settings('hero_image');
-        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-        $content = settingsPageContent('gallery');
-
-        return view('gallery', [
-            'photos' => $photos,
-            'products' => $products,
-            'storeName' => $storeName,
-            'heroImageUrl' => $heroImageUrl,
-            'content' => $content,
-        ]);
-    }
-
     public function store(StoreGalleryPhotoRequest $request): RedirectResponse
     {
         $validated = $request->validated();
@@ -52,5 +28,25 @@ class GalleryController extends Controller
 
         return to_route('storefront.gallery')
             ->with('success', 'Thank you! Your photo has been submitted and will appear after approval.');
+    }
+
+    public function show(TenantSettings $settings): View
+    {
+        $photos = CustomerPhoto::query()->approved()
+            ->with('product')
+            ->orderByDesc('is_featured')
+            ->latest()
+            ->paginate(18);
+
+        $products = Product::query()->active()->orderBy('name')->get();
+
+        $content = settingsPageContent('gallery');
+
+        return view('gallery', [
+            'settings' => $settings,
+            'photos' => $photos,
+            'products' => $products,
+            'content' => $content,
+        ]);
     }
 }

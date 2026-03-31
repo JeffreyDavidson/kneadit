@@ -6,13 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCateringInquiryRequest;
 use App\Models\CateringInquiry;
 use App\Models\CustomerPhoto;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 
 class CateringController extends Controller
 {
-    public function show(): View
+    public function store(StoreCateringInquiryRequest $request): RedirectResponse
+    {
+
+        $validated = $request->validated();
+
+        CateringInquiry::query()->create($validated);
+
+        return to_route('storefront.catering')
+            ->with('success', 'Thank you for your inquiry! We\'ll review your request and get back to you with a custom quote soon.');
+    }
+
+    public function show(TenantSettings $settings): View
     {
         $cateringPhotos = CustomerPhoto::query()->whereLike('caption', '%catering%')
             ->where('is_approved', true)
@@ -20,11 +31,6 @@ class CateringController extends Controller
             ->take(8)
             ->get();
 
-        $storeName = settings('store_name', 'Our Bakery');
-        $minimumGuests = settings('catering_minimum_guests', '10');
-        $leadTimeDays = settings('catering_lead_time_days', '14');
-        $heroImage = settings('catering_hero_image');
-        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1555244162-803834f70033?w=1920&q=80';
         $content = settingsPageContent('catering');
 
         $occasions = $content['occasions'] ?? [
@@ -54,26 +60,12 @@ class CateringController extends Controller
         ];
 
         return view('catering', [
+            'settings' => $settings,
             'cateringPhotos' => $cateringPhotos,
-            'storeName' => $storeName,
-            'minimumGuests' => $minimumGuests,
-            'leadTimeDays' => $leadTimeDays,
-            'heroImageUrl' => $heroImageUrl,
             'content' => $content,
             'occasions' => $occasions,
             'occasionSvgs' => $occasionSvgs,
             'processSteps' => $processSteps,
         ]);
-    }
-
-    public function store(StoreCateringInquiryRequest $request): RedirectResponse
-    {
-
-        $validated = $request->validated();
-
-        CateringInquiry::query()->create($validated);
-
-        return to_route('storefront.catering')
-            ->with('success', 'Thank you for your inquiry! We\'ll review your request and get back to you with a custom quote soon.');
     }
 }

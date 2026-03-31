@@ -5,7 +5,7 @@
 {{-- Photo-Forward Hero --}}
 <section class="relative overflow-hidden" style="min-height: 55vh;">
     <div class="absolute inset-0">
-        <img src="{{ $heroImageUrl }}" alt="Catering spread" class="w-full h-full object-cover catering-hero-img">
+        <img src="{{ $settings->cateringHeroImageUrl() }}" alt="Catering spread" class="w-full h-full object-cover catering-hero-img">
     </div>
     <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
@@ -114,7 +114,7 @@
         <div class="text-center mb-10">
             <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">{{ $content['form_eyebrow'] ?? 'Ready to get started?' }}</p>
             <h2 class="font-display text-3xl md:text-4xl font-bold mb-3" style="color: var(--warm-900);">{{ $content['form_heading'] ?? 'Request a Quote' }}</h2>
-            <p style="color: var(--warm-600);">Minimum {{ $minimumGuests }} guests · Please allow at least {{ $leadTimeDays }} days lead time</p>
+            <p style="color: var(--warm-600);">Minimum {{ $settings->cateringMinimumGuests }} guests · Please allow at least {{ $settings->cateringLeadTimeDays }} days lead time</p>
         </div>
 
         @if (session('success'))
@@ -162,11 +162,11 @@
                 </div>
                 <div>
                     <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Event Date *</label>
-                    <input type="date" name="event_date" value="{{ old('event_date') }}" required min="{{ now()->addDays((int) $leadTimeDays)->format('Y-m-d') }}" class="input-field">
+                    <input type="date" name="event_date" value="{{ old('event_date') }}" required min="{{ now()->addDays((int) $settings->cateringLeadTimeDays)->format('Y-m-d') }}" class="input-field">
                 </div>
                 <div>
                     <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Number of Guests *</label>
-                    <input type="number" name="guest_count" value="{{ old('guest_count') }}" required min="{{ $minimumGuests }}" class="input-field" placeholder="Minimum {{ $minimumGuests }}">
+                    <input type="number" name="guest_count" value="{{ old('guest_count') }}" required min="{{ $settings->cateringMinimumGuests }}" class="input-field" placeholder="Minimum {{ $settings->cateringMinimumGuests }}">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Budget Range</label>

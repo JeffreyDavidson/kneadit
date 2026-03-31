@@ -6,17 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RedeemLoyaltyRewardRequest;
 use App\Models\Customer;
 use App\Models\LoyaltyReward;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Storage;
 
 class LoyaltyController extends Controller
 {
-    public function show(): View
-    {
-        return view('loyalty', $this->sharedViewData());
-    }
-
-    public function store(RedeemLoyaltyRewardRequest $request): View
+    public function store(RedeemLoyaltyRewardRequest $request, TenantSettings $settings): View
     {
         $customer = Customer::query()->where('email', $request->email)->first();
 
@@ -24,7 +19,7 @@ class LoyaltyController extends Controller
         $lifetimeEarned = $customer ? $customer->lifetime_points_earned : 0;
         $history = $customer ? $customer->loyaltyPoints()->latest('created_at')->limit(20)->get() : collect();
 
-        return view('loyalty', array_merge($this->sharedViewData(), [
+        return view('loyalty', array_merge($this->sharedViewData($settings), [
             'customer' => $customer,
             'totalPoints' => $totalPoints,
             'lifetimeEarned' => $lifetimeEarned,
@@ -32,16 +27,15 @@ class LoyaltyController extends Controller
         ]));
     }
 
+    public function show(TenantSettings $settings): View
+    {
+        return view('loyalty', $this->sharedViewData($settings));
+    }
+
     /** @return array<string, mixed> */
-    private function sharedViewData(): array
+    private function sharedViewData(TenantSettings $settings): array
     {
         $rewards = LoyaltyReward::query()->active()->orderBy('points_required')->get();
-        $programName = settings('loyalty_program_name', 'Rewards');
-        $pointsPerDollar = settings('loyalty_points_per_dollar', '10');
-        $loyaltyEnabled = settings('loyalty_enabled', '1') === '1';
-
-        $heroImage = settings('loyalty_hero_image');
-        $heroImageUrl = $heroImage ? Storage::url($heroImage) : 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
         $content = settingsPageContent('loyalty');
 
         $howSteps = $content['how_it_works_steps'] ?? [
@@ -51,7 +45,7 @@ class LoyaltyController extends Controller
             ],
             [
                 'title' => 'Earn Points',
-                'description' => "Get {$pointsPerDollar} points for every \$1 spent when delivered.",
+                'description' => "Get {$settings->loyaltyPointsPerDollar} points for every \$1 spent when delivered.",
             ],
             [
                 'title' => 'Redeem Rewards',
@@ -65,11 +59,8 @@ class LoyaltyController extends Controller
         ];
 
         return [
+            'settings' => $settings,
             'rewards' => $rewards,
-            'programName' => $programName,
-            'pointsPerDollar' => $pointsPerDollar,
-            'loyaltyEnabled' => $loyaltyEnabled,
-            'heroImageUrl' => $heroImageUrl,
             'content' => $content,
             'howSteps' => $howSteps,
             'howSvgs' => $howSvgs,
