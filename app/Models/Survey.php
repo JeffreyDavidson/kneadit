@@ -49,4 +49,12 @@ class Survey extends Model
     {
         return $this->hasMany(SurveyResponse::class);
     }
+
+    public function resolveRouteBinding($value, $field = null): ?self
+    {
+        return $this->newQuery()
+            ->where('is_active', true)
+            ->where($field ?? $this->getRouteKeyName(), $value)
+            ->firstOrFail();
+    }
 }

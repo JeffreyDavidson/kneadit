@@ -14,15 +14,11 @@ class SurveyController extends Controller
 {
     public function store(StoreSurveyResponseRequest $request, Survey $survey, SubmitSurveyResponse $submitResponse): RedirectResponse
     {
-        abort_unless($survey->is_active, 404);
-
-        $validated = $request->validated();
-
         $submitResponse(
             survey: $survey,
-            answers: $validated['answers'],
-            customerName: $validated['customer_name'] ?? null,
-            customerEmail: $validated['customer_email'] ?? null,
+            answers: $request->validated('answers'),
+            customerName: $request->validated('customer_name'),
+            customerEmail: $request->validated('customer_email'),
         );
 
         return to_route('storefront.survey', $survey)->with('survey_submitted', true);
@@ -30,8 +26,6 @@ class SurveyController extends Controller
 
     public function show(Survey $survey, TenantSettings $settings): View
     {
-        abort_unless($survey->is_active, 404);
-
         $content = settingsPageContent('survey');
 
         return view('survey', [
