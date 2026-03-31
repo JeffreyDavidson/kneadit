@@ -18,6 +18,7 @@ class Storefront extends Component
         $settings = app(TenantSettings::class);
 
         return view('components.layouts.storefront', [
+            'settings' => $settings,
             'ogStoreName' => $settings->storeName,
             'ogDescription' => $settings->defaultTagline(),
             'ogLogo' => $settings->storeLogoUrl(),

@@ -1,7 +1,7 @@
 @php
-    $aboutUs = settings('about_us_text');
-    $storeName = settings('store_name', 'Our Bakery');
-    $storePhoto = settings('store_photo');
+    $aboutUs = $settings->aboutUsText;
+    $storeName = $settings->storeName;
+    $storePhoto = $settings->storePhoto;
 @endphp
 @if ($aboutUs)
 <section class="relative py-24 px-4 overflow-hidden" style="background: var(--warm-50);">
