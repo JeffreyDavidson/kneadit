@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Storefront;
 use App\Actions\Customers\JoinProductWaitlist;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductWaitlistRequest;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 
@@ -19,9 +20,7 @@ class ProductWaitlistController extends Controller
         );
 
         if ($request->wantsJson()) {
-            return response()->json([
-                'message' => 'You\'ll be notified when this item is available!',
-            ]);
+            return ApiResponse::success(message: 'You\'ll be notified when this item is available!');
         }
 
         return back()->with('waitlist_success', 'You\'ll be notified when this item is available!');
