@@ -31,4 +31,11 @@ enum SubscriptionTier: string implements HasLabel
     {
         return $this->level() >= $required->level();
     }
+
+    public static function fromPriceId(string $priceId): ?self
+    {
+        $plan = array_search($priceId, config('kneadit.stripe_prices', []), true);
+
+        return $plan ? self::tryFrom($plan) : null;
+    }
 }

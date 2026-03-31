@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\HealthAlertMail;
-use App\Mail\PaymentFailedMail;
-use App\Models\Tenant;
-use App\Models\User;
+use App\Actions\Stripe\SyncSubscriptionPlan;
+use App\Events\PaymentFailed;
+use App\Queries\StripeCustomerLookupQuery;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Number;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,28 +36,17 @@ class StripeWebhookController extends WebhookController
         $subscription = $payload['data']['object'] ?? [];
         $stripeCustomerId = $subscription['customer'] ?? null;
         $stripePriceId = $subscription['items']['data'][0]['price']['id'] ?? null;
-        $status = $subscription['status'] ?? null;
 
-        if (! $stripeCustomerId || ! $stripePriceId) {
-            return null;
-        }
+        if ($stripeCustomerId && $stripePriceId) {
+            $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
 
-        [$user, $tenant] = $this->findUserAndTenant($stripeCustomerId);
-        if (! $user || ! $tenant) {
-            return null;
-        }
-
-        $plan = $this->priceIdToPlan($stripePriceId);
-        if ($plan && $tenant->plan !== $plan) {
-            $oldPlan = $tenant->plan;
-            $tenant->update([
-                'plan' => $plan,
-            ]);
-            Log::info("Tenant {$tenant->id} plan changed: {$oldPlan} → {$plan}");
-        }
-
-        if ($status === 'canceled' || ($subscription['cancel_at_period_end'] ?? false)) {
-            Log::info("Tenant {$tenant->id} subscription canceling at period end");
+            if ($lookup['user']) {
+                app(SyncSubscriptionPlan::class)(
+                    tenantEmail: $lookup['user']->email,
+                    stripePriceId: $stripePriceId,
+                    priceMap: array_flip(config('kneadit.stripe_prices', [])),
+                );
+            }
         }
 
         return $response;
@@ -80,35 +66,23 @@ class StripeWebhookController extends WebhookController
             return;
         }
 
-        [$user, $tenant] = $this->findUserAndTenant($stripeCustomerId);
-        if (! $user) {
+        $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
+
+        if (! $lookup['user']) {
             return;
         }
 
         Log::warning('Payment failed', [
-            'tenant' => $tenant?->id,
-            'email' => $user->email,
+            'tenant' => $lookup['tenant']?->id,
+            'email' => $lookup['user']->email,
             'amount' => ($invoice['amount_due'] ?? 0) / 100,
         ]);
 
-        try {
-            Mail::to($user->email)->queue(new PaymentFailedMail($user));
-        } catch (\Exception $e) {
-            Log::error('Failed to send payment failure email', [
-                'error' => $e->getMessage(),
-            ]);
-        }
-
-        try {
-            $alertMsg = "Payment failed for {$user->name} ({$user->email})"
-                . ($tenant ? " — Tenant: {$tenant->store_name} ({$tenant->id})" : '')
-                . "\nAmount: " . Number::currency(($invoice['amount_due'] ?? 0) / 100);
-            Mail::to(config('mail.platform_notify'))->queue(new HealthAlertMail($alertMsg));
-        } catch (\Exception $e) {
-            Log::error('Failed to send platform payment alert', [
-                'error' => $e->getMessage(),
-            ]);
-        }
+        PaymentFailed::dispatch(
+            $lookup['user'],
+            $lookup['tenant'],
+            ($invoice['amount_due'] ?? 0) / 100,
+        );
     }
 
     /** @param array<string, mixed> $payload */
@@ -123,42 +97,12 @@ class StripeWebhookController extends WebhookController
         $subscription = $payload['data']['object'] ?? [];
         $stripeCustomerId = $subscription['customer'] ?? null;
 
-        [$user, $tenant] = $this->findUserAndTenant((string) $stripeCustomerId);
-        if (! $user) {
-            return null;
-        }
+        $lookup = StripeCustomerLookupQuery::find((string) $stripeCustomerId);
 
-        if ($tenant) {
-            Log::info("Tenant {$tenant->id} subscription fully canceled");
+        if ($lookup['tenant']) {
+            Log::info("Tenant {$lookup['tenant']->id} subscription fully canceled");
         }
 
         return $response;
-    }
-
-    /** @return array{0: User|null, 1: Tenant|null} */
-    private function findUserAndTenant(string $stripeCustomerId): array
-    {
-        $user = User::query()->where('stripe_id', $stripeCustomerId)->first();
-
-        if (! $user) {
-            return [null, null];
-        }
-
-        $tenant = Tenant::query()->where('email', $user->email)->first();
-
-        return [$user, $tenant];
-    }
-
-    protected function priceIdToPlan(string $priceId): ?string
-    {
-        $prices = config('kneadit.stripe_prices', []);
-
-        foreach ($prices as $plan => $id) {
-            if ($id === $priceId) {
-                return $plan;
-            }
-        }
-
-        return null;
     }
 }

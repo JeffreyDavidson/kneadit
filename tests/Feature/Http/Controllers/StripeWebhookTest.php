@@ -1,17 +1,20 @@
 <?php
 
+use App\Enums\SubscriptionTier;
+use App\Events\PaymentFailed;
 use App\Http\Controllers\StripeWebhookController;
 use App\Models\Tenant;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Event;
 
 beforeEach(function () {
     setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
-    Mail::fake();
 });
 
-test('handleInvoicePaymentFailed sends email to baker', function () {
+test('handleInvoicePaymentFailed dispatches PaymentFailed event', function () {
+    Event::fake([PaymentFailed::class]);
+
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_test123']);
     Tenant::factory()->create(['email' => $user->email]);
 
@@ -28,10 +31,13 @@ test('handleInvoicePaymentFailed sends email to baker', function () {
         ],
     ]);
 
-    Mail::assertQueued(App\Mail\PaymentFailedMail::class, fn ($mail) => $mail->hasTo($user->email));
+    Event::assertDispatched(PaymentFailed::class, fn (PaymentFailed $event) => $event->user->email === $user->email
+        && $event->amount === 29.00);
 });
 
 test('duplicate events are skipped via idempotency check', function () {
+    Event::fake([PaymentFailed::class]);
+
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_test456']);
     Tenant::factory()->create(['email' => $user->email]);
 
@@ -45,20 +51,17 @@ test('duplicate events are skipped via idempotency check', function () {
     ];
 
     $method->invoke($controller, $payload);
-    Mail::assertQueued(App\Mail\PaymentFailedMail::class);
+    Event::assertDispatched(PaymentFailed::class);
 
-    Mail::fake(); // Reset
+    Event::fake([PaymentFailed::class]);
     $method->invoke($controller, $payload);
-    Mail::assertNothingQueued();
+    Event::assertNotDispatched(PaymentFailed::class);
 });
 
-test('priceIdToPlan maps stripe price to plan name', function () {
+test('SubscriptionTier::fromPriceId maps stripe price to tier', function () {
     config(['kneadit.stripe_prices' => ['starter' => 'price_starter', 'growth' => 'price_growth']]);
 
-    $controller = new StripeWebhookController;
-    $method = new ReflectionMethod($controller, 'priceIdToPlan');
-
-    expect($method->invoke($controller, 'price_starter'))->toBe('starter')
-        ->and($method->invoke($controller, 'price_growth'))->toBe('growth')
-        ->and($method->invoke($controller, 'price_unknown'))->toBeNull();
+    expect(SubscriptionTier::fromPriceId('price_starter'))->toBe(SubscriptionTier::Starter)
+        ->and(SubscriptionTier::fromPriceId('price_growth'))->toBe(SubscriptionTier::Growth)
+        ->and(SubscriptionTier::fromPriceId('price_unknown'))->toBeNull();
 });
