@@ -65,4 +65,11 @@ class Category extends Model
     {
         $query->with(['products' => fn (HasMany $q) => $q->where('is_active', true)->orderBy('name')]);
     }
+
+    /** @param Builder<Category> $query */
+    #[Scope]
+    protected function withFeaturedProducts(Builder $query): void
+    {
+        $query->with(['products' => fn (HasMany $q) => $q->where('is_active', true)->where('is_featured', true)]);
+    }
 }
