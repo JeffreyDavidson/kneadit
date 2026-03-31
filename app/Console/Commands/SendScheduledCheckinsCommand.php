@@ -2,14 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\ScheduledCheckinMail;
+use App\Events\ScheduledCheckinDue;
 use App\Models\CheckinLog;
 use App\Models\ScheduledCheckin;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class SendScheduledCheckinsCommand extends Command
 {
@@ -51,7 +50,7 @@ class SendScheduledCheckinsCommand extends Command
                 }
 
                 try {
-                    Mail::to($tenant->email)->queue(new ScheduledCheckinMail($checkin->body, $checkin->subject));
+                    ScheduledCheckinDue::dispatch($tenant->email, $checkin->body, $checkin->subject);
 
                     CheckinLog::query()->create([
                         'checkin_id' => $checkin->id,

@@ -2,12 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\HealthAlertMail;
+use App\Events\HealthCheckFailed;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class HealthCheckCommand extends Command
 {
@@ -103,14 +102,7 @@ class HealthCheckCommand extends Command
 
         Log::critical('Health check failed', ['issues' => $issues]);
 
-        // Send email alert
-        try {
-            $alertEmail = config('mail.platform_notify');
-            Mail::to($alertEmail)->queue(new HealthAlertMail($message));
-            $this->info('Alert email sent to ' . $alertEmail);
-        } catch (\Exception $e) {
-            Log::error('Failed to send health check alert email', ['error' => $e->getMessage()]);
-            $this->error('Failed to send alert email: ' . $e->getMessage());
-        }
+        HealthCheckFailed::dispatch($message);
+        $this->info('Health check alert dispatched.');
     }
 }

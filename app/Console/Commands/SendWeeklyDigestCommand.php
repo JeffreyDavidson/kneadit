@@ -3,14 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Enums\UserRole;
-use App\Mail\WeeklyDigestMail;
+use App\Events\WeeklyDigestRequested;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Reporting\WeeklyDigestDataCollector;
 use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class SendWeeklyDigestCommand extends Command
 {
@@ -41,14 +40,15 @@ class SendWeeklyDigestCommand extends Command
                     $data = resolve(WeeklyDigestDataCollector::class)->collect();
 
                     foreach ($users as $user) {
-                        Mail::to($user->email)->queue(new WeeklyDigestMail(
-                            stats: $data['stats'],
-                            topProducts: $data['topProducts'],
-                            atRiskCustomers: $data['atRiskCustomers'],
-                            upcomingCount: $data['upcomingCount'],
-                            storeName: $data['storeName'],
-                            adminUrl: $data['adminUrl'],
-                        ));
+                        WeeklyDigestRequested::dispatch(
+                            $user,
+                            $data['stats'],
+                            $data['topProducts'],
+                            $data['atRiskCustomers'],
+                            $data['upcomingCount'],
+                            $data['storeName'],
+                            $data['adminUrl'],
+                        );
                     }
 
                     $this->info("Sent digest for {$tenant->id} to {$users->count()} user(s)");

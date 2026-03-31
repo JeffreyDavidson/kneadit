@@ -48,7 +48,7 @@ class WeeklyDigestDataCollector
                 ->whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
                 ->active()
                 ->count(),
-            'storeName' => settings('store_name', 'KneadIt Bakery'),
+            'storeName' => app(\App\Services\Settings\TenantSettings::class)->storeName,
             'adminUrl' => url('/admin'),
         ];
     }

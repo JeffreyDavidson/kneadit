@@ -43,6 +43,6 @@ class CustomerReport
             ->sortKeys()
             ->all();
 
-        return compact('newCustomers', 'repeatRate', 'repeatCustomers', 'totalCustomersWithOrders', 'topCustomers', 'acquisitionByMonth');
+        return ['newCustomers' => $newCustomers, 'repeatRate' => $repeatRate, 'repeatCustomers' => $repeatCustomers, 'totalCustomersWithOrders' => $totalCustomersWithOrders, 'topCustomers' => $topCustomers, 'acquisitionByMonth' => $acquisitionByMonth];
     }
 }

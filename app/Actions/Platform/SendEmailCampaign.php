@@ -3,10 +3,9 @@
 namespace App\Actions\Platform;
 
 use App\Enums\EmailCampaignStatus;
-use App\Mail\CustomerBlastMail;
+use App\Events\CampaignEmailQueued;
 use App\Models\Customer;
 use App\Models\EmailCampaign;
-use Illuminate\Support\Facades\Mail;
 
 class SendEmailCampaign
 {
@@ -19,9 +18,7 @@ class SendEmailCampaign
             ->pluck('email');
 
         foreach ($emails as $email) {
-            Mail::to($email)->queue(
-                new CustomerBlastMail($campaign->subject, $campaign->body),
-            );
+            CampaignEmailQueued::dispatch($email, $campaign->subject, $campaign->body);
         }
 
         $campaign->update([
