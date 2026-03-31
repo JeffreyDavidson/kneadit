@@ -5,16 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'KneadIt Bakery')</title>
 </head>
-@php
-    $storeName = settings('store_name', 'KneadIt Bakery');
-    $storeEmail = settings('store_email', '');
-    $storePhone = settings('store_phone', '');
-    $storeAddress = settings('store_address', '');
-    $primaryColor = settings('brand_color_primary', '#d4920c');
-    $secondaryColor = settings('brand_color_secondary', '#1c1410');
-    $logoPath = settings('store_logo');
-    $logoUrl = $logoPath ? \Illuminate\Support\Facades\Storage::url($logoPath) : null;
-@endphp
+{{-- Variables provided by BaseMailable::buildViewData(): $storeName, $primaryColor, $secondaryColor, $storeEmail, $storePhone, $storeAddress, $logoUrl --}}
 <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #1c1410; background-color: #f5f0e8; margin: 0; padding: 20px;">
     <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
 

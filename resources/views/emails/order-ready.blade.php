@@ -30,9 +30,9 @@
 
     <div style="background-color: #fef9ef; border-radius: 8px; padding: 20px; margin: 0 0 20px; border-left: 4px solid {{ $primaryColor }};">
         <div style="font-size: 18px; font-weight: 700; color: {{ $secondaryColor }}; margin-bottom: 10px;">Order #{{ $order->order_number }}</div>
-        <p style="margin: 0 0 5px;"><strong>Pickup Location:</strong> {{ settings('store_address', '') }}</p>
-        @if (settings('store_phone'))
-            <p style="margin: 0 0 5px;"><strong>Phone:</strong> {{ settings('store_phone') }}</p>
+        <p style="margin: 0 0 5px;"><strong>Pickup Location:</strong> {{ $storeAddress }}</p>
+        @if ($storePhone)
+            <p style="margin: 0 0 5px;"><strong>Phone:</strong> {{ $storePhone }}</p>
         @endif
         <p style="margin: 10px 0 0; color: #555; font-size: 14px;"><em>Just mention your name or order number when you arrive!</em></p>
     </div>
@@ -42,5 +42,5 @@
     <a href="{{ url('/track') }}" style="display: inline-block; background-color: {{ $primaryColor }}; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">Track Your Order</a>
 </div>
 
-<p style="margin: 0; color: #555; font-size: 14px;">Thank you for choosing {{ settings('store_name', 'KneadIt Bakery') }}!</p>
+<p style="margin: 0; color: #555; font-size: 14px;">Thank you for choosing {{ $storeName }}!</p>
 @endsection
