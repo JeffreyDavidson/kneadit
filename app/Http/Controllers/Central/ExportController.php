@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use App\Services\Export\CsvExportService;
 use App\Services\Tenant\TenancyManager;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -14,7 +13,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class ExportController extends Controller
 {
     public function __invoke(
-        Request $request,
         string $tenantId,
         string $type,
         CsvExportService $csvExport,
