@@ -17,4 +17,16 @@ enum OrderStatus: string implements HasLabel
     {
         return ucfirst($this->value);
     }
+
+    /** @return array<int, self> */
+    public static function trackableStatuses(): array
+    {
+        return [
+            self::Pending,
+            self::Confirmed,
+            self::Baking,
+            self::Ready,
+            self::Delivered,
+        ];
+    }
 }

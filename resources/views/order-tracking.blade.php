@@ -3,8 +3,7 @@
 @php
 /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order>|null $orders */
 /** @var string|null $email */
-/** @var array<string, string> $allStatuses */
-/** @var array<string, string> $statusLabels */
+/** @var array<string, string> $trackableStatuses */
 /** @var array<string, string> $content */
 @endphp
 
@@ -95,7 +94,7 @@
                 @foreach ($orders as $order)
                     @php
                         $isCancelled = $order->status === OrderStatus::Cancelled;
-                        $currentIndex = array_search($order->status->value, $allStatuses);
+                        $currentIndex = array_search($order->status, $trackableStatuses);
                         if ($currentIndex === false) $currentIndex = -1;
                     @endphp
                     <div class="order-card rounded-2xl overflow-hidden" style="background: var(--warm-800); border: 1px solid rgba(139,104,68,0.2);">
@@ -126,12 +125,12 @@
                                     <div class="flex items-center justify-between relative">
                                         <div class="absolute top-4 left-0 right-0 h-1 rounded-full" style="background: rgba(139,104,68,0.15);"></div>
                                         @if ($currentIndex > 0)
-                                        <div class="absolute top-4 left-0 h-1 rounded-full transition-all duration-700" style="background: var(--warm-500); width: {{ ($currentIndex / (count($allStatuses) - 1)) * 100 }}%;"></div>
+                                        <div class="absolute top-4 left-0 h-1 rounded-full transition-all duration-700" style="background: var(--warm-500); width: {{ ($currentIndex / (count($trackableStatuses) - 1)) * 100 }}%;"></div>
                                         @endif
 
-                                        @foreach ($allStatuses as $i => $step)
+                                        @foreach ($trackableStatuses as $i => $step)
                                             @php $isCompleted = $i <= $currentIndex; @endphp
-                                            <div class="relative z-10 flex flex-col items-center" style="width: {{ 100 / count($allStatuses) }}%;">
+                                            <div class="relative z-10 flex flex-col items-center" style="width: {{ 100 / count($trackableStatuses) }}%;">
                                                 <div class="track-stepper-dot w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold"
                                                      style="background: {{ $isCompleted ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }}; color: {{ $isCompleted ? 'var(--warm-900)' : 'var(--warm-600)' }}; {{ $isCompleted && $i === $currentIndex ? 'box-shadow: 0 0 0 4px rgba(212,146,12,0.2);' : '' }}">
                                                     @if ($isCompleted && $i < $currentIndex)
@@ -141,7 +140,7 @@
                                                     @endif
                                                 </div>
                                                 <span class="mt-2 text-xs font-medium text-center" style="color: {{ $isCompleted ? 'var(--warm-300)' : 'var(--warm-600)' }};">
-                                                    {{ $statusLabels[$step] }}
+                                                    {{ $step->getLabel() }}
                                                 </span>
                                             </div>
                                         @endforeach
@@ -150,7 +149,7 @@
 
                                 {{-- Mobile stepper --}}
                                 <div class="sm:hidden space-y-3">
-                                    @foreach ($allStatuses as $i => $step)
+                                    @foreach ($trackableStatuses as $i => $step)
                                         @php $isCompleted = $i <= $currentIndex; @endphp
                                         <div class="flex items-center gap-3">
                                             <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
@@ -162,10 +161,10 @@
                                                 @endif
                                             </div>
                                             <span class="text-sm font-medium" style="color: {{ $isCompleted ? 'var(--warm-200)' : 'var(--warm-600)' }};">
-                                                {{ $statusLabels[$step] }}
+                                                {{ $step->getLabel() }}
                                             </span>
                                         </div>
-                                        @if ($i < count($allStatuses) - 1)
+                                        @if ($i < count($trackableStatuses) - 1)
                                             <div class="ml-3 w-0.5 h-3" style="background: {{ $i < $currentIndex ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }};"></div>
                                         @endif
                                     @endforeach
