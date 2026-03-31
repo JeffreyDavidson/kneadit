@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Events\BirthdayDiscountGenerated;
-use App\Models\CustomerProfile;
+use App\Models\Customer;
 use App\Models\Tenant;
 use App\Services\Customer\BirthdayService;
 use App\Services\Tenant\TenancyManager;
@@ -46,9 +46,9 @@ class SendBirthdayDiscountsCommand extends Command
         $today = Date::today();
         $discountPercent = (int) settings('birthday_discount_percent', 15);
 
-        $birthdayCustomers = CustomerProfile::query()->whereMonth('birthday', $today->month)
+        $birthdayCustomers = Customer::query()->whereNotNull('birthday')
+            ->whereMonth('birthday', $today->month)
             ->whereDay('birthday', $today->day)
-            ->with('customer')
             ->get();
 
         if ($birthdayCustomers->isEmpty()) {
@@ -57,10 +57,8 @@ class SendBirthdayDiscountsCommand extends Command
 
         $this->info("Tenant {$tenant->store_name}: {$birthdayCustomers->count()} birthday(s)");
 
-        foreach ($birthdayCustomers as $customerProfile) {
-            $customer = $customerProfile->customer;
-
-            if (! $customer || ! $customer->email) {
+        foreach ($birthdayCustomers as $customer) {
+            if (! $customer->email) {
                 continue;
             }
 
