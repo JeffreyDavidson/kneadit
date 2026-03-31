@@ -4,21 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\Customers\ToggleCustomerFavorite;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\IndexFavoritesRequest;
 use App\Http\Requests\StoreApiFavoriteRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\CustomerFavorite;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(IndexFavoritesRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-        ]);
-
-        $productIds = CustomerFavorite::query()->forCustomer($request->string('email'))
+        $productIds = CustomerFavorite::query()->forCustomer($request->validated('email'))
             ->pluck('product_id');
 
         return ApiResponse::success($productIds, 'Favorites retrieved successfully.');
@@ -26,9 +22,7 @@ class FavoriteController extends Controller
 
     public function store(StoreApiFavoriteRequest $request, ToggleCustomerFavorite $toggleFavorite): JsonResponse
     {
-        $validated = $request->validated();
-
-        $favorited = $toggleFavorite($validated['email'], $validated['product_id']);
+        $favorited = $toggleFavorite($request->validated('email'), $request->validated('product_id'));
 
         return ApiResponse::success([
             'favorited' => $favorited,
