@@ -17,7 +17,6 @@ class CustomerProfileFactory extends Factory
     {
         return [
             'customer_id' => Customer::factory(),
-            'birthday' => fake()->optional()->date(),
             'notes' => fake()->optional()->paragraph(),
         ];
     }
