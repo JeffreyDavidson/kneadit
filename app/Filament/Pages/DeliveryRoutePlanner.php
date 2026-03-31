@@ -6,6 +6,7 @@ use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Delivery\DeliveryRouteService;
+use App\Services\Settings\TenantSettings;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -52,7 +53,7 @@ class DeliveryRoutePlanner extends Page
     public function mount(): void
     {
         $this->selectedDate = now()->format('Y-m-d');
-        $this->storeAddress = settings('store_address') ?? 'Store address not configured';
+        $this->storeAddress = app(TenantSettings::class)->storeAddress ?? 'Store address not configured';
         $this->loadOrders();
     }
 

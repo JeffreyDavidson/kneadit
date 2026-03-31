@@ -9,6 +9,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customer;
 use App\Models\LoyaltyPoint;
 use App\Models\LoyaltyReward;
+use App\Services\Settings\TenantSettings;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -52,8 +53,9 @@ class LoyaltyDashboard extends Page
 
     public function mount(): void
     {
-        $this->loyaltyEnabled = settings('loyalty_enabled', '1') === '1';
-        $this->programName = settings('loyalty_program_name', 'Rewards');
+        $settings = app(TenantSettings::class);
+        $this->loyaltyEnabled = $settings->loyaltyEnabled;
+        $this->programName = $settings->loyaltyProgramName;
     }
 
     public function toggleLoyalty(): void
