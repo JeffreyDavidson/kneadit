@@ -43,7 +43,6 @@ use App\Http\Controllers\Storefront\MenuController;
 use App\Http\Controllers\Storefront\ProductWaitlistController;
 use App\Http\Controllers\Storefront\PurchaseGiftCardController;
 use App\Http\Controllers\Storefront\ReviewController;
-use App\Http\Controllers\Storefront\ReviewsController;
 use App\Http\Controllers\Storefront\ShowCateringController;
 use App\Http\Controllers\Storefront\ShowGiftCardsController;
 use App\Http\Controllers\Storefront\SubmitCateringInquiryController;
@@ -110,7 +109,7 @@ Route::middleware([
         Route::get('order/stripe/success/{order}', StripeSuccessController::class)->name('order.stripe.success');
         Route::get('order/stripe/cancel/{order}', StripeCancelController::class)->name('order.stripe.cancel');
         Route::get('about', AboutController::class)->name('storefront.about');
-        Route::get('reviews', ReviewsController::class)->name('storefront.reviews');
+        Route::get('reviews', [ReviewController::class, 'index'])->name('storefront.reviews');
         Route::get('gallery', [GalleryController::class, 'show'])->name('storefront.gallery');
         Route::post('gallery', [GalleryController::class, 'store'])->name('gallery.submit')->middleware('throttle:10,1');
         Route::get('track', [TrackingController::class, 'show'])->name('order.track');
