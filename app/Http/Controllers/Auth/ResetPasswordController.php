@@ -15,14 +15,6 @@ use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
 {
-    public function show(Request $request, ?string $token = null): View
-    {
-        return view('auth.reset-password', [
-            'token' => $token,
-            'email' => $request->email,
-        ]);
-    }
-
     public function store(ResetPasswordRequest $request): RedirectResponse
     {
 
@@ -42,5 +34,13 @@ class ResetPasswordController extends Controller
         return $status === Password::PASSWORD_RESET
             ? to_route('login')->with('status', __($status))
             : back()->withErrors(['email' => [__($status)]]);
+    }
+
+    public function show(Request $request, ?string $token = null): View
+    {
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $request->email,
+        ]);
     }
 }

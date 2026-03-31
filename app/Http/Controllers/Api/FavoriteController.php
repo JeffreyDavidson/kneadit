@@ -18,7 +18,7 @@ class FavoriteController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        $productIds = CustomerFavorite::forCustomer($request->string('email'))
+        $productIds = CustomerFavorite::query()->forCustomer($request->string('email'))
             ->pluck('product_id');
 
         return ApiResponse::success($productIds, 'Favorites retrieved successfully.');

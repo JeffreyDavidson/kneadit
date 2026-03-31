@@ -97,3 +97,33 @@ test('associative arrays in controllers should be multiline', function () {
         "Associative arrays should be multiline:\n" . implode("\n", array_slice($violations, 0, 30)),
     );
 });
+
+test('model static calls in controllers must use explicit query()', function () {
+    $controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php'))
+        ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php'))
+        ->reject(fn ($file) => str_ends_with($file, 'Controller.php') && basename($file) === 'Controller.php');
+
+    $modelClasses = collect(glob(__DIR__ . '/../../app/Models/*.php'))
+        ->map(fn ($file) => pathinfo($file, PATHINFO_FILENAME))
+        ->all();
+
+    $violations = [];
+
+    foreach ($controllerFiles as $file) {
+        $contents = file_get_contents($file);
+        $shortName = basename($file);
+
+        foreach ($modelClasses as $model) {
+            // Match Model::anything() that is NOT ::query(), ::class, ::factory(), ::dispatch(), ::find(, ::findOrFail(
+            if (preg_match_all("/\\b{$model}::(?!query|class|factory|dispatch|find)(\w+)\s*\(/", $contents, $matches)) {
+                foreach ($matches[1] as $method) {
+                    $violations[] = "{$shortName}: {$model}::{$method}() should be {$model}::query()->{$method}()";
+                }
+            }
+        }
+    }
+
+    expect($violations)->toBeEmpty(
+        "Controllers must use Model::query()->method() instead of Model::method():\n" . implode("\n", $violations),
+    );
+});
