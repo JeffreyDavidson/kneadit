@@ -11,13 +11,16 @@ class NotifyBakerOfNewOrderListener extends QueuedListener
 {
     public function handle(OrderCreated $event): void
     {
+        $order = $event->order;
+        $order->loadMissing('orderItems.product');
+
         $bakerEmail = settings('store_email');
 
         if (! $bakerEmail) {
             return;
         }
 
-        Mail::to($bakerEmail)->send(new NewOrderNotificationMail($event->order));
+        Mail::to($bakerEmail)->send(new NewOrderNotificationMail($order));
     }
 
     public function failed(OrderCreated $event, \Throwable $exception): void

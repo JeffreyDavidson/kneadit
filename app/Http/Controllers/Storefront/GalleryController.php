@@ -35,7 +35,7 @@ class GalleryController extends Controller
             ->latest()
             ->paginate(18);
 
-        $products = Product::query()->active()->orderBy('name')->get();
+        $products = Product::query()->active()->orderBy('name')->get(['id', 'name']);
 
         $content = settingsPageContent('gallery');
 

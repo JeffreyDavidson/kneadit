@@ -11,7 +11,7 @@ class ShowOrderConfirmationController extends Controller
 {
     public function __invoke(Order $order, TenantSettings $settings): View
     {
-        $order->load('orderItems');
+        $order->load('orderItems.product');
 
         $content = settingsPageContent('order_confirmation');
 

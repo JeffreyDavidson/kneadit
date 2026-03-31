@@ -23,6 +23,7 @@ class SendOrderStatusEmailListener extends QueuedListener implements ShouldBeUni
     public function handle(OrderStatusChanged $event): void
     {
         $order = $event->order;
+        $order->loadMissing('orderItems.product');
 
         if (! $order->customer?->email) {
             return;

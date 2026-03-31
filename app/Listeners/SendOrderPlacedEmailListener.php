@@ -12,6 +12,7 @@ class SendOrderPlacedEmailListener extends QueuedListener
     public function handle(OrderCreated $event): void
     {
         $order = $event->order;
+        $order->loadMissing('orderItems.product');
 
         if (! $order->customer?->email) {
             return;
