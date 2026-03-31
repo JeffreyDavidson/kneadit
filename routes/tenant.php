@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AcceptInvitationController;
 use App\Http\Controllers\Api\CapacityController as ApiCapacityController;
 use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
 use App\Http\Controllers\Api\ContactController as ApiContactController;
@@ -16,8 +17,8 @@ use App\Http\Controllers\Api\StoreInfoController;
 use App\Http\Controllers\Api\WaitlistController as ApiWaitlistController;
 use App\Http\Controllers\ConsumeImpersonationController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\DriverController;
-use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\DriverDashboardController;
+use App\Http\Controllers\MarkOrderDeliveredController;
 use App\Http\Controllers\Order\ApplyCouponController;
 use App\Http\Controllers\Order\ApplyGiftCardController;
 use App\Http\Controllers\Order\AvailabilityController;
@@ -27,7 +28,9 @@ use App\Http\Controllers\Order\ReorderController;
 use App\Http\Controllers\Order\StripeCancelController;
 use App\Http\Controllers\Order\StripeSuccessController;
 use App\Http\Controllers\Order\TrackingController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ShowInvitationController;
+use App\Http\Controllers\ShowOrderConfirmationController;
+use App\Http\Controllers\ShowOrderFormController;
 use App\Http\Controllers\Storefront\AboutController;
 use App\Http\Controllers\Storefront\AppIconController;
 use App\Http\Controllers\Storefront\BlogController as StorefrontBlogController;
@@ -46,7 +49,9 @@ use App\Http\Controllers\Storefront\ReviewsController;
 use App\Http\Controllers\Storefront\ShowGiftCardsController;
 use App\Http\Controllers\Storefront\SurveyController;
 use App\Http\Controllers\StripeConnectController;
+use App\Http\Controllers\SubmitOrderController;
 use App\Http\Middleware\EnsureStorefrontEnabled;
+use App\Http\Middleware\ResolveInvitation;
 use App\Http\Middleware\TrackPageView;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -87,21 +92,21 @@ Route::middleware([
 
     // Driver view (no auth, shared via link)
     Route::prefix('driver')->name('driver.')->group(function () {
-        Route::get('/', [DriverController::class, 'index'])->name('index');
-        Route::post('{order}/delivered', [DriverController::class, 'update'])->name('delivered')->middleware('auth');
+        Route::get('/', DriverDashboardController::class)->name('index');
+        Route::post('{order}/delivered', MarkOrderDeliveredController::class)->name('delivered')->middleware('auth');
     });
 
     // Staff invitation routes (outside auth & storefront middleware)
-    Route::get('invite/{token}', [InvitationController::class, 'show'])->name('invitation.show');
-    Route::post('invite/{token}', [InvitationController::class, 'store'])->name('invitation.accept')->middleware('throttle:5,1');
+    Route::get('invite/{token}', ShowInvitationController::class)->name('invitation.show')->middleware(ResolveInvitation::class);
+    Route::post('invite/{token}', AcceptInvitationController::class)->name('invitation.accept')->middleware([ResolveInvitation::class, 'throttle:5,1']);
 
     // Storefront routes — only accessible when storefront is enabled
     // When disabled, these redirect to the external website or show a minimal page
     Route::middleware([EnsureStorefrontEnabled::class, TrackPageView::class])->group(function () {
         Route::get('menu', MenuController::class)->name('storefront.menu');
-        Route::get('order', [OrderController::class, 'index'])->name('order.create');
-        Route::post('order', [OrderController::class, 'store'])->name('order.store')->middleware('throttle:10,1');
-        Route::get('order/confirmation/{order}', [OrderController::class, 'show'])->name('order.confirmation');
+        Route::get('order', ShowOrderFormController::class)->name('order.create');
+        Route::post('order', SubmitOrderController::class)->name('order.store')->middleware('throttle:10,1');
+        Route::get('order/confirmation/{order}', ShowOrderConfirmationController::class)->name('order.confirmation');
         Route::get('order/stripe/success/{order}', StripeSuccessController::class)->name('order.stripe.success');
         Route::get('order/stripe/cancel/{order}', StripeCancelController::class)->name('order.stripe.cancel');
         Route::get('about', AboutController::class)->name('storefront.about');

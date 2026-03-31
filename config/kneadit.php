@@ -92,4 +92,20 @@ return [
         'client_id' => env('STRIPE_CONNECT_CLIENT_ID'),
         'webhook_secret' => env('STRIPE_CONNECT_WEBHOOK_SECRET'),
     ],
+
+    'default_journey_steps' => [
+        [
+            'title' => 'Confirmation',
+            'description' => 'You\'ll receive an email confirmation with your order details shortly.',
+        ],
+        [
+            'title' => 'Preparation',
+            'description' => 'Our bakers will craft your items fresh on your scheduled date.',
+        ],
+        [
+            'title' => 'Delivery',
+            'description_delivery' => 'We\'ll deliver your fresh items right to your door.',
+            'description_pickup' => 'Your items will be warm and ready for you to pick up.',
+        ],
+    ],
 ];

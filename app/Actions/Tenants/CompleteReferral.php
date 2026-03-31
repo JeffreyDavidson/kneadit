@@ -7,8 +7,12 @@ use App\Models\Referral;
 
 class CompleteReferral
 {
-    public function __invoke(string $referralCode, string $tenantId, string $email): void
+    public function __invoke(?string $referralCode, string $tenantId, string $email): void
     {
+        if (! $referralCode) {
+            return;
+        }
+
         $referral = Referral::query()->where('referral_code', $referralCode)
             ->where('status', ReferralStatus::Pending)
             ->whereNull('referred_tenant_id')

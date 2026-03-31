@@ -58,4 +58,11 @@ class Category extends Model
     {
         $query->where('is_active', true);
     }
+
+    /** @param Builder<Category> $query */
+    #[Scope]
+    protected function withActiveProducts(Builder $query): void
+    {
+        $query->with(['products' => fn (HasMany $q) => $q->where('is_active', true)->orderBy('name')]);
+    }
 }

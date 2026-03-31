@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class StoreOnboardingRequest extends FormRequest
 {
@@ -22,5 +23,27 @@ class StoreOnboardingRequest extends FormRequest
             'storefront_choice' => ['required', 'in:kneadit,own'],
             'external_website' => ['required_if:storefront_choice,own', 'nullable', 'url', 'max:255'],
         ];
+    }
+
+    public function subdomain(): string
+    {
+        return Str::lower($this->validated('subdomain'));
+    }
+
+    public function usesKneadItStorefront(): bool
+    {
+        return $this->validated('storefront_choice') === 'kneadit';
+    }
+
+    public function referralCode(): ?string
+    {
+        return $this->session()->get('referral_code') ?? $this->cookie('referral_code');
+    }
+
+    public function adminUrl(): string
+    {
+        $scheme = $this->secure() ? 'https' : 'http';
+
+        return "{$scheme}://{$this->subdomain()}.{$this->getHost()}/admin";
     }
 }

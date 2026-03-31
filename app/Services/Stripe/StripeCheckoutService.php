@@ -38,6 +38,21 @@ class StripeCheckoutService
         return settings('stripe_connect_id');
     }
 
+    public function redirectToCheckout(Order $order): ?string
+    {
+        if ($order->total <= 0 || ! self::isEnabled()) {
+            return null;
+        }
+
+        $session = $this->createCheckoutSession(
+            $order,
+            route('order.stripe.success', $order) . '?session_id={CHECKOUT_SESSION_ID}',
+            route('order.stripe.cancel', $order),
+        );
+
+        return $session?->url;
+    }
+
     public function createCheckoutSession(Order $order, string $successUrl, string $cancelUrl): ?Session
     {
         $connectId = self::getConnectId();

@@ -2,14 +2,25 @@
 
 namespace App\Http\Requests;
 
+use App\Models\StaffInvitation;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 
 class AcceptInvitationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        if (! Auth::check()) {
+            return true;
+        }
+
+        $invitation = StaffInvitation::query()
+            ->pending()
+            ->where('token', $this->route('token'))
+            ->first();
+
+        return ! $invitation || Auth::user()->email === $invitation->email;
     }
 
     /**

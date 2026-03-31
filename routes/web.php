@@ -8,11 +8,12 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BlogFeedController;
 use App\Http\Controllers\Central\ExportController;
 use App\Http\Controllers\ChangelogController;
+use App\Http\Controllers\CompleteOnboardingController;
 use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\ImpersonateController;
-use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\RootController;
+use App\Http\Controllers\ShowOnboardingController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -96,6 +97,6 @@ Route::get('directory', DirectoryController::class)->name('directory');
 
 // Tenant Registration (onboarding)
 Route::middleware(['web', 'auth'])->prefix('onboarding')->name('onboarding.')->group(function () {
-    Route::get('/', [OnboardingController::class, 'show'])->name('show');
-    Route::post('/', [OnboardingController::class, 'store'])->name('store');
+    Route::get('/', ShowOnboardingController::class)->name('show');
+    Route::post('/', CompleteOnboardingController::class)->name('store');
 });
