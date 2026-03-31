@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Order;
+use App\Services\Settings\TenantSettings;
+use Illuminate\Contracts\View\View;
+
+class ShowOrderConfirmationController extends Controller
+{
+    public function __invoke(Order $order, TenantSettings $settings): View
+    {
+        $order->load('orderItems');
+
+        $content = settingsPageContent('order_confirmation');
+
+        return view('order-confirmation', [
+            'settings' => $settings,
+            'order' => $order,
+            'content' => $content,
+            'journeySteps' => $content['journey_steps'] ?? config('kneadit.default_journey_steps'),
+        ]);
+    }
+}
