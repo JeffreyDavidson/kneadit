@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\TestResponse;
 
 use function Pest\Laravel\actingAs;
@@ -14,6 +15,7 @@ use function Pest\Laravel\get;
 uses(DatabaseMigrations::class);
 
 beforeEach(function () {
+    Mail::fake();
     setUpTenantTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
 

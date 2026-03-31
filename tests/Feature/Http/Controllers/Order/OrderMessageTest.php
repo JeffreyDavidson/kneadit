@@ -35,7 +35,7 @@ test('messages endpoint returns order messages', function () {
         ->getJson("/order/{$this->order->order_number}/messages");
 
     $response->assertOk();
-    $response->assertJsonPath('messages.0.message', 'Your order is being prepared!');
+    $response->assertJsonPath('data.0.message', 'Your order is being prepared!');
 });
 
 test('customer can send message on their order', function () {
@@ -49,7 +49,7 @@ test('customer can send message on their order', function () {
         ]);
 
     $response->assertOk();
-    $response->assertJsonPath('success', true);
+    $response->assertJsonPath('message', 'Message sent successfully.');
     $this->assertDatabaseHas('order_messages', [
         'order_id' => $this->order->id,
         'message' => 'Can I add extra frosting?',

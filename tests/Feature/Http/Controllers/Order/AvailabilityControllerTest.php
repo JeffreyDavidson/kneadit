@@ -13,5 +13,5 @@ test('availability endpoint returns json array', function () {
         ->getJson(route('order.availability', [], false));
 
     $response->assertOk()
-        ->assertJsonIsArray();
+        ->assertJsonIsArray('data');
 });

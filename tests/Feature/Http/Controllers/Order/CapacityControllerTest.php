@@ -15,7 +15,7 @@ test('capacity check returns availability for valid date', function () {
         ->getJson(route('capacity.check', ['date' => $date], false));
 
     $response->assertOk()
-        ->assertJsonStructure(['available', 'remaining', 'max_orders', 'usage_percent']);
+        ->assertJsonStructure(['data' => ['available', 'remaining', 'max_orders', 'usage_percent']]);
 });
 
 test('capacity check returns error for invalid date', function () {
@@ -23,5 +23,5 @@ test('capacity check returns error for invalid date', function () {
         ->getJson(route('capacity.check', ['date' => 'not-a-date'], false));
 
     $response->assertUnprocessable()
-        ->assertJson(['error' => 'Invalid date']);
+        ->assertJsonValidationErrors(['date']);
 });

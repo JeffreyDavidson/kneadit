@@ -121,7 +121,7 @@ test('coupon application works for valid coupon', function () {
         ]);
 
     $response->assertOk();
-    $response->assertJsonStructure(['success', 'coupon_id', 'discount_amount']);
+    $response->assertJsonStructure(['data' => ['coupon_id', 'discount_amount']]);
 });
 
 test('invalid coupon returns error', function () {
@@ -132,7 +132,7 @@ test('invalid coupon returns error', function () {
         ]);
 
     $response->assertUnprocessable();
-    $response->assertJsonStructure(['error']);
+    $response->assertJsonStructure(['message']);
 });
 
 test('capacity check endpoint works', function () {
@@ -142,7 +142,7 @@ test('capacity check endpoint works', function () {
         ->getJson(route('capacity.check', ['date' => $date], false));
 
     $response->assertOk();
-    $response->assertJsonStructure(['available', 'remaining', 'max_orders']);
+    $response->assertJsonStructure(['data' => ['available', 'remaining', 'max_orders']]);
 });
 
 test('order confirmation page shows after successful order', function () {

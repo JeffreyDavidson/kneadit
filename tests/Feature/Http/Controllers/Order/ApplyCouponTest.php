@@ -16,8 +16,7 @@ test('apply coupon returns discount for valid coupon', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('success', true)
-        ->assertJsonPath('code', 'SAVE10');
+        ->assertJsonPath('data.code', 'SAVE10');
 });
 
 test('apply coupon returns error for invalid code', function () {
@@ -28,5 +27,5 @@ test('apply coupon returns error for invalid code', function () {
         ]);
 
     $response->assertUnprocessable()
-        ->assertJsonPath('error', 'Coupon not found.');
+        ->assertJsonPath('message', 'Coupon not found.');
 });

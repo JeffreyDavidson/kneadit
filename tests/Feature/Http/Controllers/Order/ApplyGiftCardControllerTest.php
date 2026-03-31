@@ -24,10 +24,11 @@ test('apply valid gift card returns balance', function () {
 
     $response->assertOk()
         ->assertJson([
-            'success' => true,
-            'gift_card_id' => $card->id,
-            'available_balance' => 25.00,
-            'applicable_amount' => 25.00,
+            'data' => [
+                'gift_card_id' => $card->id,
+                'available_balance' => 25.00,
+                'applicable_amount' => 25.00,
+            ],
         ]);
 });
 
@@ -39,7 +40,7 @@ test('apply nonexistent gift card returns error', function () {
         ]);
 
     $response->assertUnprocessable()
-        ->assertJson(['error' => 'Gift card not found.']);
+        ->assertJson(['message' => 'Gift card not found.']);
 });
 
 test('gift card caps applicable amount at subtotal', function () {
@@ -57,7 +58,9 @@ test('gift card caps applicable amount at subtotal', function () {
 
     $response->assertOk()
         ->assertJson([
-            'available_balance' => 100.00,
-            'applicable_amount' => 30.00,
+            'data' => [
+                'available_balance' => 100.00,
+                'applicable_amount' => 30.00,
+            ],
         ]);
 });

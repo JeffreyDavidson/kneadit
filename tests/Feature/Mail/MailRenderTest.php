@@ -136,7 +136,16 @@ test('TrialReminderMail renders', function () {
 });
 
 test('WeeklyDigestMail renders', function () {
-    expect((new App\Mail\WeeklyDigestMail)->render())->toBeString()->not->toBeEmpty();
+    $mail = new App\Mail\WeeklyDigestMail(
+        stats: ['total_orders' => 10, 'total_revenue' => '$500.00', 'new_customers' => 3, 'avg_order_value' => '$50.00'],
+        topProducts: new Illuminate\Database\Eloquent\Collection,
+        atRiskCustomers: new Illuminate\Database\Eloquent\Collection,
+        upcomingCount: 5,
+        storeName: 'Test Bakery',
+        adminUrl: 'https://test.kneadit.test/admin',
+    );
+
+    expect($mail->render())->toBeString()->not->toBeEmpty();
 });
 
 test('PaymentFailedMail renders', function () {

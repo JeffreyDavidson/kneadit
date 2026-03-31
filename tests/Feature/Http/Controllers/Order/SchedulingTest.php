@@ -14,7 +14,7 @@ test('availability endpoint returns json', function () {
         ->getJson('/availability');
 
     $response->assertOk();
-    $response->assertJsonIsArray();
+    $response->assertJsonIsArray('data');
 });
 
 test('blocked dates show as unavailable', function () {
@@ -38,7 +38,7 @@ test('blocked dates show as unavailable', function () {
 
     $response->assertOk();
 
-    $dates = collect($response->json());
+    $dates = collect($response->json('data'));
     $blockedEntry = $dates->firstWhere('date', $tomorrow->toDateString());
     expect($blockedEntry)->not->toBeNull()->and($blockedEntry['available'])->toBeFalse();
 });
@@ -60,7 +60,7 @@ test('closed days show as unavailable', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/availability');
 
-    $dates = collect($response->json());
+    $dates = collect($response->json('data'));
     $entry = $dates->firstWhere('date', $target->toDateString());
     expect($entry)->not->toBeNull()->and($entry['available'])->toBeFalse()->and($entry['reason'])->toBe('Closed');
 });
@@ -78,7 +78,7 @@ test('open days show as available', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/availability');
 
-    $dates = collect($response->json());
+    $dates = collect($response->json('data'));
     $entry = $dates->firstWhere('date', $tomorrow->toDateString());
     expect($entry)->not->toBeNull()->and($entry['available'])->toBeTrue();
 });
@@ -94,7 +94,7 @@ test('capacity is reflected in availability response', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/availability');
 
-    $dates = collect($response->json());
+    $dates = collect($response->json('data'));
     $entry = $dates->firstWhere('date', $tomorrow->toDateString());
     expect($entry)->toHaveKey('remaining_capacity')->and($entry['remaining_capacity'])->toBe(10);
 });

@@ -18,8 +18,7 @@ test('can purchase a gift card', function () {
         ]);
 
     $response->assertOk()
-        ->assertJson(['success' => true])
-        ->assertJsonStructure(['gift_card' => ['code', 'balance']]);
+        ->assertJsonStructure(['data' => ['code', 'balance']]);
 
     expect(GiftCard::query()->count())->toBe(1);
 });

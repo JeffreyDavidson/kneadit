@@ -11,5 +11,5 @@ test('capacity check returns availability for a date', function () {
         ->getJson("/capacity/check/{$date}");
 
     $response->assertOk()
-        ->assertJsonStructure(['available', 'remaining', 'max_orders', 'usage_percent']);
+        ->assertJsonStructure(['data' => ['available', 'remaining', 'max_orders', 'usage_percent']]);
 });
