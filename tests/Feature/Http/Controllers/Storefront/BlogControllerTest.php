@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\BlogPost;
+use App\Models\TenantBlogPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;
@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('blog index page renders', function () {
-    BlogPost::factory()->create(['is_published' => true, 'published_at' => now()]);
+    TenantBlogPost::factory()->published()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.blog', [], false));
