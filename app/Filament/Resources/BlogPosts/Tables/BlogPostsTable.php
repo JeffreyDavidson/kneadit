@@ -2,8 +2,7 @@
 
 namespace App\Filament\Resources\BlogPosts\Tables;
 
-use App\Enums\BlogPostCategory;
-use App\Models\BlogPost;
+use App\Models\TenantBlogPost;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
@@ -47,7 +46,7 @@ class BlogPostsTable
                     ->requiresConfirmation()
                     ->modalHeading('Publish Post')
                     ->modalDescription('Are you sure you want to publish this post?')
-                    ->action(function (BlogPost $record) {
+                    ->action(function (TenantBlogPost $record) {
                         $record->update([
                             'is_published' => true,
                             'published_at' => now(),
@@ -57,7 +56,7 @@ class BlogPostsTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (BlogPost $record) => ! $record->is_published),
+                    ->visible(fn (TenantBlogPost $record) => ! $record->is_published),
 
                 Action::make('unpublish')
                     ->icon(Heroicon::OutlinedArrowDownCircle)
@@ -65,7 +64,7 @@ class BlogPostsTable
                     ->requiresConfirmation()
                     ->modalHeading('Unpublish Post')
                     ->modalDescription('Are you sure you want to unpublish this post?')
-                    ->action(function (BlogPost $record) {
+                    ->action(function (TenantBlogPost $record) {
                         $record->update([
                             'is_published' => false,
                             'published_at' => null,
@@ -75,7 +74,7 @@ class BlogPostsTable
                             ->warning()
                             ->send();
                     })
-                    ->visible(fn (BlogPost $record) => $record->is_published),
+                    ->visible(fn (TenantBlogPost $record) => $record->is_published),
             ])
             ->filters([
                 SelectFilter::make('is_published')
@@ -85,9 +84,6 @@ class BlogPostsTable
                         '0' => 'Draft',
                     ]),
 
-                SelectFilter::make('category')
-                    ->label('Category')
-                    ->options(BlogPostCategory::class),
             ]);
     }
 }

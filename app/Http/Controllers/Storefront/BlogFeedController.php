@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\BlogPost;
+use App\Models\TenantBlogPost;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Http\Response;
 
 class BlogFeedController extends Controller
 {
-    /**
-     * Generate the RSS feed for the storefront blog.
-     */
     public function __invoke(TenantSettings $settings): Response
     {
-        $posts = BlogPost::query()->published()
+        $posts = TenantBlogPost::query()
+            ->published()
             ->latest('published_at')
             ->take(20)
             ->get();

@@ -7,7 +7,7 @@ use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Filament\Resources\BlogPosts\Schemas\BlogPostForm;
 use App\Filament\Resources\BlogPosts\Tables\BlogPostsTable;
-use App\Models\BlogPost;
+use App\Models\TenantBlogPost;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BlogPostResource extends Resource
 {
-    protected static ?string $model = BlogPost::class;
+    protected static ?string $model = TenantBlogPost::class;
 
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedPencilSquare;
 
@@ -46,13 +46,13 @@ class BlogPostResource extends Resource
         return ['title', 'excerpt'];
     }
 
-    /** @param BlogPost $record */
+    /** @param TenantBlogPost $record */
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->title;
     }
 
-    /** @param BlogPost $record */
+    /** @param TenantBlogPost $record */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
