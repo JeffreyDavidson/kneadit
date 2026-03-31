@@ -73,9 +73,7 @@ class GiftCard extends Model
     protected function isUsable(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->is_active
-                && $this->current_balance > 0
-                && ($this->expires_at === null || $this->expires_at->isFuture()),
+            get: fn () => $this->status === GiftCardStatus::Active,
         );
     }
 

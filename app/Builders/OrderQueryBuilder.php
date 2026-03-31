@@ -18,6 +18,27 @@ class OrderQueryBuilder extends Builder
         return $this;
     }
 
+    public function unpaid(): static
+    {
+        $this->where('payment_status', PaymentStatus::Unpaid);
+
+        return $this;
+    }
+
+    public function pending(): static
+    {
+        $this->where('status', OrderStatus::Pending);
+
+        return $this;
+    }
+
+    public function ready(): static
+    {
+        $this->where('status', OrderStatus::Ready);
+
+        return $this;
+    }
+
     public function active(): static
     {
         $this->whereNotIn('status', [OrderStatus::Cancelled]);

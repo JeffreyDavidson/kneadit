@@ -121,7 +121,7 @@ class BakeryInsights extends Page
 
     public function getNextPlan(string $currentPlan): ?string
     {
-        return resolve(TenantUsageService::class)->getNextPlan($currentPlan);
+        return resolve(TenantUsageService::class)->getNextPlan($currentPlan)?->getLabel();
     }
 
     public function suggestUpgrade(string $tenantId): void
