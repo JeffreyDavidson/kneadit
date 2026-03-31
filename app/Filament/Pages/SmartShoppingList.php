@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Events\PurchaseOrderRequested;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Inventory\ShoppingListService;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -91,7 +92,7 @@ class SmartShoppingList extends Page
             return;
         }
 
-        $storeName = settings('store_name', config('app.name'));
+        $storeName = app(TenantSettings::class)->storeName;
 
         PurchaseOrderRequested::dispatch(
             supplierEmail: $group['supplier']['email'],

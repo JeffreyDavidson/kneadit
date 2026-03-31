@@ -5,16 +5,12 @@ namespace App\Filament\Pages;
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Order;
-use App\Models\PageView;
-use App\Models\Product;
+use App\Queries\StorefrontAnalyticsQuery;
 use Carbon\Carbon;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Laravel\Pennant\Feature;
 
 class StorefrontAnalytics extends Page
@@ -54,7 +50,61 @@ class StorefrontAnalytics extends Page
         $this->period = request()->query('period', 'week');
     }
 
-    protected function getStartDate(): ?Carbon
+    public function getTotalViews(): int
+    {
+        return $this->query()->totalViews();
+    }
+
+    public function getUniqueVisitors(): int
+    {
+        return $this->query()->uniqueVisitors();
+    }
+
+    public function getMostPopularPage(): string
+    {
+        return $this->query()->mostPopularPage();
+    }
+
+    public function getConversionRate(): float
+    {
+        return $this->query()->conversionRate();
+    }
+
+    /** @return Collection<int, mixed> */
+    public function getPageViewsChart(): Collection
+    {
+        return $this->query()->pageViewsByPage();
+    }
+
+    /** @return Collection<int, mixed> */
+    public function getDailyTrend(): Collection
+    {
+        return $this->query()->dailyTrend((int) config('analytics.trend_days', 30));
+    }
+
+    /** @return Collection<int, mixed> */
+    public function getTopProducts(): Collection
+    {
+        return $this->query()->topProducts();
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public function getConversionFunnel(): array
+    {
+        return $this->query()->conversionFunnel();
+    }
+
+    public function setPeriod(string $period): void
+    {
+        $this->period = $period;
+    }
+
+    private function query(): StorefrontAnalyticsQuery
+    {
+        return new StorefrontAnalyticsQuery($this->getStartDate());
+    }
+
+    private function getStartDate(): ?Carbon
     {
         return match ($this->period) {
             'today' => today(),
@@ -63,147 +113,5 @@ class StorefrontAnalytics extends Page
             'all' => null,
             default => now()->startOfWeek(),
         };
-    }
-
-    /** @return Builder<PageView> */
-    protected function baseQuery(): Builder
-    {
-        $query = PageView::query();
-        $start = $this->getStartDate();
-        if ($start) {
-            $query->where('created_at', '>=', $start);
-        }
-
-        return $query;
-    }
-
-    public function getTotalViews(): int
-    {
-        return $this->baseQuery()->whereNull('product_id')->count();
-    }
-
-    public function getUniqueVisitors(): int
-    {
-        return $this->baseQuery()->whereNull('product_id')->distinct('session_id')->count('session_id');
-    }
-
-    public function getMostPopularPage(): string
-    {
-        $page = $this->baseQuery()
-            ->whereNull('product_id')
-            ->select('page', DB::raw('COUNT(*) as views'))
-            ->groupBy('page')
-            ->orderByDesc('views')
-            ->first();
-
-        return $page->page ?? '—';
-    }
-
-    public function getConversionRate(): float
-    {
-        $orderPageViews = $this->baseQuery()->whereNull('product_id')->where('page', 'order')->count();
-        if ($orderPageViews === 0) {
-            return 0;
-        }
-
-        $start = $this->getStartDate();
-        $ordersQuery = Order::query();
-        if ($start) {
-            $ordersQuery->where('created_at', '>=', $start);
-        }
-        $completedOrders = $ordersQuery->count();
-
-        return round(($completedOrders / $orderPageViews) * 100, 1);
-    }
-
-    /** @return Collection<int, mixed> */
-    public function getPageViewsChart(): Collection
-    {
-        $data = $this->baseQuery()
-            ->whereNull('product_id')
-            ->select('page', DB::raw('COUNT(*) as views'))
-            ->groupBy('page')
-            ->orderByDesc('views')
-            ->get();
-
-        return $data;
-    }
-
-    /** @return Collection<int, mixed> */
-    public function getDailyTrend(): Collection
-    {
-        $start = now()->subDays(config('analytics.trend_days', 30))->startOfDay();
-
-        return PageView::query()->where('created_at', '>=', $start)
-            ->whereNull('product_id')
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as views'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
-    }
-
-    /** @return Collection<int, mixed> */
-    public function getTopProducts(): Collection
-    {
-        $data = $this->baseQuery()
-            ->whereNotNull('product_id')
-            ->select('product_id', DB::raw('COUNT(*) as views'))
-            ->groupBy('product_id')
-            ->orderByDesc('views')
-            ->limit(10)
-            ->get();
-
-        $products = Product::query()->whereIn('id', $data->pluck('product_id'))->pluck('name', 'id');
-
-        return $data->map(
-            fn (PageView $row) => (object) [
-                'name' => $products[$row->product_id] ?? 'Unknown',
-                'views' => $row->views,
-            ],
-        );
-    }
-
-    /** @return array<int, array<string, mixed>> */
-    public function getConversionFunnel(): array
-    {
-        $start = $this->getStartDate();
-        $base = PageView::query()->whereNull('product_id');
-        if ($start) {
-            $base->where('created_at', '>=', $start);
-        }
-
-        $homeViews = (clone $base)->where('page', 'home')->count();
-        $menuViews = (clone $base)->where('page', 'menu')->count();
-        $orderViews = (clone $base)->where('page', 'order')->count();
-
-        $ordersQuery = Order::query();
-        if ($start) {
-            $ordersQuery->where('created_at', '>=', $start);
-        }
-        $completedOrders = $ordersQuery->count();
-
-        $funnel = [
-            ['label' => 'Home', 'count' => $homeViews],
-            ['label' => 'Menu', 'count' => $menuViews],
-            ['label' => 'Order Page', 'count' => $orderViews],
-            ['label' => 'Completed Orders', 'count' => $completedOrders],
-        ];
-
-        $maxCount = max(array_column($funnel, 'count')) ?: 1;
-        $maxVal = max($maxCount, 1);
-
-        foreach ($funnel as $i => &$step) {
-            $step['percentage'] = round(($step['count'] / $maxVal) * 100);
-            $step['dropoff'] = $i > 0 && $funnel[$i - 1]['count'] > 0
-                ? round((1 - $step['count'] / $funnel[$i - 1]['count']) * 100, 1)
-                : null;
-        }
-
-        return $funnel;
-    }
-
-    public function setPeriod(string $period): void
-    {
-        $this->period = $period;
     }
 }
