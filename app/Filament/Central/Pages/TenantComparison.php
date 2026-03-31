@@ -56,46 +56,18 @@ class TenantComparison extends Page
 
         /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
-            $data = [
-                'id' => $tenant->id,
-                'name' => $tenant->store_name ?? $tenant->name,
-                'plan' => $tenant->plan ?? 'free',
-                'days_since_signup' => $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0,
-                'total_orders' => 0,
-                'month_orders' => 0,
-                'total_products' => 0,
-                'total_categories' => 0,
-                'avg_review' => 0,
-                'setup_completed' => 0,
-            ];
+            $data = $this->collectTenantMetrics($tenant);
+            $data['days_since_signup'] = $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0;
 
             $setupChecks = [
                 ! empty($tenant->store_name),
                 ! empty($tenant->store_logo),
                 (bool) $tenant->storefront_enabled,
                 ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c',
+                $data['total_products'] > 0,
+                $data['total_categories'] > 0,
+                $data['total_orders'] > 0,
             ];
-
-            try {
-                tenancy()->initialize($tenant);
-
-                $data['total_orders'] = DB::table('orders')->count();
-                $data['month_orders'] = DB::table('orders')
-                    ->where('created_at', '>=', now()->startOfMonth())
-                    ->count();
-                $data['total_products'] = DB::table('products')->count();
-                $data['total_categories'] = DB::table('categories')->count();
-                $data['avg_review'] = round((float) DB::table('reviews')->avg('rating'), 1);
-
-                $setupChecks[] = $data['total_products'] > 0;
-                $setupChecks[] = $data['total_categories'] > 0;
-                $setupChecks[] = $data['total_orders'] > 0;
-
-                tenancy()->end();
-            } catch (\Throwable $e) {
-                tenancy()->end();
-                $setupChecks = array_pad($setupChecks, 7, false);
-            }
 
             $data['setup_completed'] = collect($setupChecks)->filter()->count();
             $data['health_score'] = $this->calculateHealthScore($tenant, $data);
@@ -159,39 +131,49 @@ class TenantComparison extends Page
 
         /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
-            $data = [
-                'id' => $tenant->id,
-                'name' => $tenant->store_name ?? $tenant->name,
-                'owner' => $tenant->name,
-                'email' => $tenant->email,
-                'plan' => $tenant->plan ?? 'free',
-                'total_orders' => 0,
-                'month_orders' => 0,
-                'total_products' => 0,
-                'avg_review' => 0,
-            ];
+            $metrics = $this->collectTenantMetrics($tenant);
+            $metrics['owner'] = $tenant->name;
+            $metrics['email'] = $tenant->email;
 
-            try {
-                tenancy()->initialize($tenant);
-
-                $data['total_orders'] = DB::table('orders')->count();
-                $data['month_orders'] = DB::table('orders')
-                    ->where('created_at', '>=', now()->startOfMonth())
-                    ->count();
-                $data['total_products'] = DB::table('products')->count();
-                $data['avg_review'] = round((float) DB::table('reviews')->avg('rating'), 1);
-
-                tenancy()->end();
-            } catch (\Throwable $e) {
-                tenancy()->end();
-            }
-
-            $results[] = $data;
+            $results[] = $metrics;
         }
 
         usort($results, fn (array $a, array $b) => $b['total_orders'] <=> $a['total_orders']);
 
         return $results;
+    }
+
+    /** @return array<string, mixed> */
+    private function collectTenantMetrics(Tenant $tenant): array
+    {
+        $data = [
+            'id' => $tenant->id,
+            'name' => $tenant->store_name ?? $tenant->name,
+            'plan' => $tenant->plan ?? 'free',
+            'total_orders' => 0,
+            'month_orders' => 0,
+            'total_products' => 0,
+            'total_categories' => 0,
+            'avg_review' => 0,
+        ];
+
+        try {
+            tenancy()->initialize($tenant);
+
+            $data['total_orders'] = DB::table('orders')->count();
+            $data['month_orders'] = DB::table('orders')
+                ->where('created_at', '>=', now()->startOfMonth())
+                ->count();
+            $data['total_products'] = DB::table('products')->count();
+            $data['total_categories'] = DB::table('categories')->count();
+            $data['avg_review'] = round((float) DB::table('reviews')->avg('rating'), 1);
+
+            tenancy()->end();
+        } catch (\Throwable $e) {
+            tenancy()->end();
+        }
+
+        return $data;
     }
 
     /** @return array<string, mixed> */
