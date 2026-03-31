@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Actions\Orders\CreateQuickOrder;
+use App\DataTransferObjects\CreateQuickOrderData;
 use App\Enums\DeliveryType;
 use App\Enums\PaymentMethod;
 use App\Enums\UserRole;
@@ -267,7 +268,7 @@ class QuickOrder extends Page
         $data = $this->form->getState();
 
         try {
-            $order = resolve(CreateQuickOrder::class)($data);
+            $order = resolve(CreateQuickOrder::class)(CreateQuickOrderData::fromArray($data));
 
             Notification::make()
                 ->title('Order Created Successfully!')

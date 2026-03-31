@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Order;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -17,7 +18,7 @@ class OrderPlacedMail extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $storeName = settings('store_name', 'KneadIt Bakery');
+        $storeName = app(TenantSettings::class)->storeName;
 
         return new Envelope(
             from: $this->bakerFrom(),
@@ -32,7 +33,6 @@ class OrderPlacedMail extends BaseMailable
             view: 'emails.order-placed',
             with: [
                 'order' => $this->order,
-                'storeName' => settings('store_name', 'KneadIt Bakery'),
             ],
         );
     }

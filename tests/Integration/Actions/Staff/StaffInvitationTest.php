@@ -33,7 +33,7 @@ test('invitation is expired when past expiry', function () {
         'invited_by' => User::factory()->create(['role' => UserRole::Owner])->id,
     ]);
 
-    expect($invitation->isExpired())->toBeTrue();
+    expect($invitation->is_expired)->toBeTrue();
 });
 
 test('invitation is pending when not accepted and not expired', function () {
@@ -45,7 +45,7 @@ test('invitation is pending when not accepted and not expired', function () {
         'invited_by' => User::factory()->create(['role' => UserRole::Owner])->id,
     ]);
 
-    expect($invitation->isPending())->toBeTrue();
+    expect($invitation->is_pending)->toBeTrue();
 });
 
 test('invitation is not pending when accepted', function () {
@@ -58,7 +58,7 @@ test('invitation is not pending when accepted', function () {
         'invited_by' => User::factory()->create(['role' => UserRole::Owner])->id,
     ]);
 
-    expect($invitation->isPending())->toBeFalse();
+    expect($invitation->is_pending)->toBeFalse();
 });
 
 test('invitation belongs to inviter', function () {

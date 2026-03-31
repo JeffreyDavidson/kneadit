@@ -31,3 +31,25 @@ test('it creates a message and dispatches event', function () {
 
     Event::assertDispatched(OrderMessageSent::class);
 });
+
+test('baker message marks unread customer messages as read', function () {
+    Event::fake([OrderMessageSent::class]);
+
+    $order = Order::factory()->create();
+    $order->messages()->create([
+        'sender_type' => SenderType::Customer,
+        'sender_name' => 'Customer',
+        'message' => 'Hello?',
+        'is_read' => false,
+    ]);
+
+    $action = new SendOrderMessage;
+    $action(
+        order: $order,
+        senderName: 'Baker Jane',
+        message: 'Your order is ready!',
+        senderType: SenderType::Baker,
+    );
+
+    expect($order->messages()->where('sender_type', SenderType::Customer)->first()->is_read)->toBeTrue();
+});

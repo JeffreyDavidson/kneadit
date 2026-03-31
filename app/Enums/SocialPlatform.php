@@ -2,9 +2,10 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum SocialPlatform: string implements HasLabel
+enum SocialPlatform: string implements HasColor, HasLabel
 {
     case Instagram = 'instagram';
     case Facebook = 'facebook';
@@ -16,6 +17,15 @@ enum SocialPlatform: string implements HasLabel
             self::Instagram => 'Instagram',
             self::Facebook => 'Facebook',
             self::TikTok => 'TikTok',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Instagram => 'pink',
+            self::Facebook => 'info',
+            self::TikTok => 'gray',
         };
     }
 

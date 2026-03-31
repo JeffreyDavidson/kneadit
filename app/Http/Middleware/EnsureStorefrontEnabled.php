@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Settings\TenantSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +19,11 @@ class EnsureStorefrontEnabled
                 return redirect()->away($tenant->external_website);
             }
 
+            $settings = app(TenantSettings::class);
+
             // Otherwise show disabled page
             return response()->view('storefront-disabled', [
-                'storeName' => settings('store_name', $tenant->store_name ?? 'Our Bakery'),
+                'storeName' => $settings->storeName,
                 'tenant' => $tenant,
             ]);
         }

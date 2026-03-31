@@ -2,9 +2,8 @@
 
 namespace App\Queries;
 
-use App\Enums\OrderStatus;
+use App\Builders\CustomerQueryBuilder;
 use App\Models\Customer;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class AtRiskCustomersQuery
@@ -16,12 +15,7 @@ class AtRiskCustomersQuery
      */
     public static function get(int $days = 30, ?int $limit = null): Collection
     {
-        $query = Customer::query()
-            ->whereHas('orders', fn (Builder $q) => $q->whereNotIn('status', [OrderStatus::Cancelled]))
-            ->whereDoesntHave('orders', fn (Builder $q) => $q
-                ->whereNotIn('status', [OrderStatus::Cancelled])
-                ->where('created_at', '>=', now()->subDays($days)))
-            ->orderBy('name');
+        $query = self::query($days)->orderBy('name');
 
         if ($limit) {
             $query->limit($limit);
@@ -31,15 +25,18 @@ class AtRiskCustomersQuery
     }
 
     /**
+     * Get the base query for at-risk customers.
+     */
+    public static function query(int $days = 30): CustomerQueryBuilder
+    {
+        return Customer::query()->atRisk($days);
+    }
+
+    /**
      * Get count of at-risk customers.
      */
     public static function count(int $days = 30): int
     {
-        return Customer::query()
-            ->whereHas('orders', fn (Builder $q) => $q->whereNotIn('status', [OrderStatus::Cancelled]))
-            ->whereDoesntHave('orders', fn (Builder $q) => $q
-                ->whereNotIn('status', [OrderStatus::Cancelled])
-                ->where('created_at', '>=', now()->subDays($days)))
-            ->count();
+        return self::query($days)->count();
     }
 }

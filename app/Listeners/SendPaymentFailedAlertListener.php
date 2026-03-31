@@ -4,20 +4,12 @@ namespace App\Listeners;
 
 use App\Events\PaymentFailed;
 use App\Mail\HealthAlertMail;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Number;
 
-class SendPaymentFailedAlertListener implements ShouldQueue
+class SendPaymentFailedAlertListener extends QueuedListener
 {
-    public int $timeout = 60;
-
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
-
     public function handle(PaymentFailed $event): void
     {
         $message = "Payment failed for {$event->user->name} ({$event->user->email})"

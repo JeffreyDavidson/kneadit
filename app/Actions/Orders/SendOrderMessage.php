@@ -17,6 +17,13 @@ class SendOrderMessage
             'message' => $message,
         ]);
 
+        if ($senderType === SenderType::Baker) {
+            $order->messages()
+                ->where('sender_type', SenderType::Customer)
+                ->where('is_read', false)
+                ->update(['is_read' => true]);
+        }
+
         event(new OrderMessageSent($orderMessage));
 
         return $orderMessage;

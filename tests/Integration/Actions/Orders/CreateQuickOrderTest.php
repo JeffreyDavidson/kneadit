@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Orders\CreateQuickOrder;
+use App\DataTransferObjects\CreateQuickOrderData;
 use App\Enums\DeliveryType;
 use App\Enums\PaymentMethod;
 use App\Models\Order;
@@ -18,7 +19,7 @@ beforeEach(function () {
 test('creates order with customer and items', function () {
     $product = Product::factory()->create(['price' => 10.00]);
 
-    $order = resolve(CreateQuickOrder::class)([
+    $data = CreateQuickOrderData::fromArray([
         'customer_name' => 'Jane Doe',
         'customer_email' => 'jane@example.com',
         'delivery_date' => now()->addDays(3)->toDateString(),
@@ -33,6 +34,8 @@ test('creates order with customer and items', function () {
             ],
         ],
     ]);
+
+    $order = resolve(CreateQuickOrder::class)($data);
 
     expect($order)
         ->toBeInstanceOf(Order::class)

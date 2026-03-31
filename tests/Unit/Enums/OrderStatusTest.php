@@ -7,3 +7,9 @@ test('OrderStatus has a label method', function () {
         ->and(OrderStatus::Confirmed->getLabel())->toBe('Confirmed')
         ->and(OrderStatus::Cancelled->getLabel())->toBe('Cancelled');
 });
+
+test('OrderStatus has a color for every case', function () {
+    foreach (OrderStatus::cases() as $case) {
+        expect($case->getColor())->toBeString();
+    }
+});

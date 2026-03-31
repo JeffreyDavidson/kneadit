@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\SeasonalItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -79,10 +80,11 @@ class SeasonalItem extends Model
         $query->where('available_until', '<', Date::today());
     }
 
-    public function isCurrentlyAvailable(): bool
+    /** @return Attribute<bool, never> */
+    protected function isCurrentlyAvailable(): Attribute
     {
-        $today = Date::today();
-
-        return $this->available_from <= $today && $this->available_until >= $today;
+        return Attribute::make(
+            get: fn () => $this->available_from <= Date::today() && $this->available_until >= Date::today(),
+        );
     }
 }

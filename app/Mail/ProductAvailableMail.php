@@ -4,7 +4,7 @@ namespace App\Mail;
 
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Product;
-use Illuminate\Mail\Mailables\Attachment;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -19,7 +19,7 @@ class ProductAvailableMail extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $storeName = settings('store_name', 'KneadIt Bakery');
+        $storeName = app(TenantSettings::class)->storeName;
 
         return new Envelope(
             from: $this->bakerFrom(),
@@ -35,16 +35,7 @@ class ProductAvailableMail extends BaseMailable
             with: [
                 'product' => $this->product,
                 'customerName' => $this->customerName,
-                'storeName' => settings('store_name', 'KneadIt Bakery'),
             ],
         );
-    }
-
-    /**
-     * @return array<int, Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
     }
 }

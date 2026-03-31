@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources\Orders\Pages;
 
+use App\Actions\Orders\AddOrderNote;
+use App\Actions\Orders\SendOrderMessage;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
-use App\Enums\PaymentStatus;
 use App\Enums\SenderType;
-use App\Events\OrderMessageSent;
 use App\Exceptions\InvalidOrderTransitionException;
 use App\Filament\Resources\Orders\OrderResource;
+use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -37,25 +38,9 @@ class ViewOrder extends ViewRecord
                                     ->label('Order Number')
                                     ->badge(),
                                 TextEntry::make('status')
-                                    ->badge()
-                                    ->color(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
-                                        OrderStatus::Pending->value => 'gray',
-                                        OrderStatus::Confirmed->value => 'info',
-                                        OrderStatus::Baking->value => 'warning',
-                                        OrderStatus::Ready->value => 'success',
-                                        OrderStatus::Delivered->value => 'success',
-                                        OrderStatus::Cancelled->value => 'danger',
-                                        default => 'gray',
-                                    }),
+                                    ->badge(),
                                 TextEntry::make('payment_status')
-                                    ->badge()
-                                    ->color(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
-                                        PaymentStatus::Unpaid->value => 'warning',
-                                        PaymentStatus::Paid->value => 'success',
-                                        PaymentStatus::Cancelled->value => 'danger',
-                                        PaymentStatus::Refunded->value => 'gray',
-                                        default => 'gray',
-                                    }),
+                                    ->badge(),
                             ]),
                         Grid::make(2)
                             ->schema([
@@ -183,21 +168,14 @@ class ViewOrder extends ViewRecord
                         ->rows(3),
                 ])
                 ->action(function (array $data): void {
-                    $bakerName = auth()->user()->name ?? settings('store_name', 'Baker');
+                    $bakerName = auth()->user()->name ?? app(TenantSettings::class)->storeName;
 
-                    $message = $this->record->messages()->create([
-                        'sender_type' => SenderType::Baker,
-                        'sender_name' => $bakerName,
-                        'message' => $data['message'],
-                    ]);
-
-                    // Mark customer messages as read
-                    $this->record->messages()
-                        ->where('sender_type', SenderType::Customer)
-                        ->where('is_read', false)
-                        ->update(['is_read' => true]);
-
-                    event(new OrderMessageSent($message));
+                    resolve(SendOrderMessage::class)(
+                        order: $this->record,
+                        senderName: $bakerName,
+                        message: $data['message'],
+                        senderType: SenderType::Baker,
+                    );
 
                     $this->notify('success', 'Message sent to customer.');
                 }),
@@ -212,13 +190,7 @@ class ViewOrder extends ViewRecord
                         ->rows(3),
                 ])
                 ->action(function (array $data): void {
-                    $currentNotes = $this->record->notes;
-                    $timestamp = now()->format('Y-m-d H:i:s');
-                    $newNote = "[{$timestamp}] " . $data['note'];
-
-                    $updatedNotes = $currentNotes ? $currentNotes . "\n\n" . $newNote : $newNote;
-
-                    $this->record->update(['notes' => $updatedNotes]);
+                    resolve(AddOrderNote::class)($this->record, $data['note']);
 
                     $this->notify('success', 'Note added successfully.');
                 }),

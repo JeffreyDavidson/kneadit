@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use Database\Factories\StaffInvitationFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -60,17 +61,19 @@ class StaffInvitation extends Model
         $query->whereNull('accepted_at');
     }
 
-    public function isExpired(): bool
+    /** @return Attribute<bool, never> */
+    protected function isExpired(): Attribute
     {
-        if (! $this->expires_at) {
-            return true;
-        }
-
-        return $this->expires_at->isPast();
+        return Attribute::make(
+            get: fn () => ! $this->expires_at || $this->expires_at->isPast(),
+        );
     }
 
-    public function isPending(): bool
+    /** @return Attribute<bool, never> */
+    protected function isPending(): Attribute
     {
-        return is_null($this->accepted_at) && ! $this->isExpired();
+        return Attribute::make(
+            get: fn () => is_null($this->accepted_at) && ! $this->is_expired,
+        );
     }
 }

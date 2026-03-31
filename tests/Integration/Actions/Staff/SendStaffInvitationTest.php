@@ -18,7 +18,7 @@ it('creates an invitation and sends the email', function () {
         'password' => bcrypt('password'),
     ]);
 
-    $action = new SendStaffInvitation;
+    $action = resolve(SendStaffInvitation::class);
     $invitation = $action(
         email: 'new@test.com',
         role: UserRole::Staff,

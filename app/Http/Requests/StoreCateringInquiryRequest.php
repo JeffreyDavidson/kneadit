@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\CateringEventType;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,8 +24,8 @@ class StoreCateringInquiryRequest extends FormRequest
             'customer_email' => ['required', 'email', 'max:255'],
             'customer_phone' => ['nullable', 'string', 'max:255'],
             'event_type' => ['required', Rule::in(CateringEventType::cases())],
-            'event_date' => ['required', 'date', 'after_or_equal:' . now()->addDays((int) settings('catering_lead_time_days', '14'))->format('Y-m-d')],
-            'guest_count' => ['required', 'integer', 'min:' . (int) settings('catering_minimum_guests', '10')],
+            'event_date' => ['required', 'date', 'after_or_equal:' . now()->addDays((int) app(TenantSettings::class)->cateringLeadTimeDays)->format('Y-m-d')],
+            'guest_count' => ['required', 'integer', 'min:' . (int) app(TenantSettings::class)->cateringMinimumGuests],
             'budget' => ['nullable', 'string', 'max:255'],
             'details' => ['required', 'string', 'max:5000'],
             'dietary_requirements' => ['nullable', 'string', 'max:2000'],

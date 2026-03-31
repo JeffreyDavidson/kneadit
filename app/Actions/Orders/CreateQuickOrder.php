@@ -2,6 +2,7 @@
 
 namespace App\Actions\Orders;
 
+use App\DataTransferObjects\CreateQuickOrderData;
 use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
@@ -12,36 +13,30 @@ use Illuminate\Support\Facades\DB;
 
 class CreateQuickOrder
 {
-    /**
-     * Create an order from the admin quick order form.
-     *
-     * @param array<string, mixed> $data
-     */
-    public function __invoke(array $data): Order
+    public function __invoke(CreateQuickOrderData $data): Order
     {
         return DB::transaction(function () use ($data) {
             $customer = $this->findOrCreateCustomer($data);
 
-            $orderItems = $data['order_items'] ?? [];
-            $subtotal = collect($orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
-            $deliveryFee = ($data['delivery_type'] === DeliveryType::Delivery->value) ? 5.00 : 0.00;
+            $subtotal = collect($data->orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
+            $deliveryFee = ($data->deliveryType === DeliveryType::Delivery->value) ? 5.00 : 0.00;
 
             $order = Order::query()->create([
                 'customer_id' => $customer->id,
                 'status' => OrderStatus::Pending,
                 'payment_status' => PaymentStatus::Unpaid,
-                'payment_method' => $data['payment_method'],
+                'payment_method' => $data->paymentMethod,
                 'subtotal' => $subtotal,
                 'delivery_fee' => $deliveryFee,
                 'total' => $subtotal + $deliveryFee,
-                'delivery_address' => $data['delivery_type'] === DeliveryType::Delivery->value ? $data['delivery_address'] : null,
-                'delivery_date' => $data['delivery_date'],
-                'delivery_time' => $data['delivery_time'],
-                'notes' => $data['notes'] ?? null,
+                'delivery_address' => $data->deliveryType === DeliveryType::Delivery->value ? $data->deliveryAddress : null,
+                'delivery_date' => $data->deliveryDate,
+                'delivery_time' => $data->deliveryTime,
+                'notes' => $data->notes,
                 'user_id' => auth()->id(),
             ]);
 
-            foreach ($orderItems as $item) {
+            foreach ($data->orderItems as $item) {
                 OrderItem::query()->create([
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],
@@ -55,20 +50,19 @@ class CreateQuickOrder
         });
     }
 
-    /** @param array<string, mixed> $data */
-    private function findOrCreateCustomer(array $data): Customer
+    private function findOrCreateCustomer(CreateQuickOrderData $data): Customer
     {
-        if (! empty($data['customer_email'])) {
-            $customer = Customer::query()->where('email', $data['customer_email'])->first();
+        if ($data->customerEmail) {
+            $customer = Customer::query()->where('email', $data->customerEmail)->first();
             if ($customer) {
                 return $customer;
             }
         }
 
         return Customer::query()->create([
-            'name' => $data['customer_name'],
-            'email' => $data['customer_email'] ?? null,
-            'phone' => $data['customer_phone'] ?? null,
+            'name' => $data->customerName,
+            'email' => $data->customerEmail,
+            'phone' => $data->customerPhone,
         ]);
     }
 }

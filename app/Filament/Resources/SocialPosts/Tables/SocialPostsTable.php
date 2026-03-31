@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SocialPosts\Tables;
 
+use App\Actions\Content\TransitionSocialPostStatus;
 use App\Enums\SocialPlatform;
 use App\Enums\SocialPostStatus;
 use App\Models\SocialPost;
@@ -25,17 +26,6 @@ class SocialPostsTable
             ->modifyQueryUsing(fn (Builder $query) => $query->with(['product']))
             ->columns([
                 BadgeColumn::make('platform')
-                    ->colors([
-                        'pink' => SocialPlatform::Instagram->value,
-                        'info' => SocialPlatform::Facebook->value,
-                        'gray' => SocialPlatform::TikTok->value,
-                    ])
-                    ->formatStateUsing(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
-                        SocialPlatform::Instagram->value => '📸 Instagram',
-                        SocialPlatform::Facebook->value => '📘 Facebook',
-                        SocialPlatform::TikTok->value => '🎵 TikTok',
-                        default => $state,
-                    })
                     ->sortable(),
 
                 TextColumn::make('caption')
@@ -52,12 +42,7 @@ class SocialPostsTable
                     ->sortable()
                     ->placeholder('Not scheduled'),
 
-                BadgeColumn::make('status')
-                    ->colors([
-                        'gray' => SocialPostStatus::Draft->value,
-                        'warning' => SocialPostStatus::Scheduled->value,
-                        'success' => SocialPostStatus::Posted->value,
-                    ]),
+                BadgeColumn::make('status'),
 
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -78,7 +63,7 @@ class SocialPostsTable
                     ->modalHeading('Schedule Post')
                     ->modalDescription('Mark this post as scheduled?')
                     ->action(function (SocialPost $record) {
-                        $record->update(['status' => SocialPostStatus::Scheduled]);
+                        resolve(TransitionSocialPostStatus::class)($record, SocialPostStatus::Scheduled);
                         Notification::make()
                             ->title('Post scheduled')
                             ->success()
@@ -94,7 +79,7 @@ class SocialPostsTable
                     ->modalHeading('Mark as Posted')
                     ->modalDescription('Mark this post as posted?')
                     ->action(function (SocialPost $record) {
-                        $record->update(['status' => SocialPostStatus::Posted]);
+                        resolve(TransitionSocialPostStatus::class)($record, SocialPostStatus::Posted);
                         Notification::make()
                             ->title('Post marked as posted')
                             ->success()
@@ -110,7 +95,7 @@ class SocialPostsTable
                     ->modalHeading('Revert to Draft')
                     ->modalDescription('Move this post back to draft status?')
                     ->action(function (SocialPost $record) {
-                        $record->update(['status' => SocialPostStatus::Draft]);
+                        resolve(TransitionSocialPostStatus::class)($record, SocialPostStatus::Draft);
                         Notification::make()
                             ->title('Post reverted to draft')
                             ->warning()

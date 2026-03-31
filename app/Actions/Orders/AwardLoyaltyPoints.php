@@ -5,12 +5,17 @@ namespace App\Actions\Orders;
 use App\Enums\LoyaltyPointType;
 use App\Models\LoyaltyPoint;
 use App\Models\Order;
+use App\Services\Settings\TenantSettings;
 
 class AwardLoyaltyPoints
 {
+    public function __construct(
+        private TenantSettings $settings,
+    ) {}
+
     public function __invoke(Order $order): void
     {
-        if (settings('loyalty_enabled') !== '1') {
+        if (! $this->settings->loyaltyEnabled) {
             return;
         }
 
@@ -39,7 +44,7 @@ class AwardLoyaltyPoints
 
     private function calculatePoints(Order $order): int
     {
-        $pointsPerDollar = (int) settings('loyalty_points_per_dollar', '10');
+        $pointsPerDollar = (int) $this->settings->loyaltyPointsPerDollar;
 
         return (int) floor((float) $order->total * $pointsPerDollar);
     }

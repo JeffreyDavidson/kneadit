@@ -13,4 +13,14 @@ enum SenderType: string implements HasLabel
     {
         return ucfirst($this->value);
     }
+
+    public function isBaker(): bool
+    {
+        return $this === self::Baker;
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this === self::Customer;
+    }
 }

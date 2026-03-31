@@ -15,7 +15,7 @@ class AppIconController extends Controller
     public function __invoke(string $size, TenantSettings $settings): Response
     {
         $size = in_array($size, ['192', '512']) ? (int) $size : 192;
-        $color = tenant()->brand_color_primary ?? '#d4920c';
+        $color = $settings->brandColorPrimary;
 
         $img = imagecreatetruecolor($size, $size);
         $r = hexdec(substr($color, 1, 2));

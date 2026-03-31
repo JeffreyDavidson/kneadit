@@ -30,7 +30,6 @@ class CustomerBlastMail extends BaseMailable
             view: 'emails.customer-blast',
             with: [
                 'body' => $this->campaignBody,
-                'storeName' => settings('store_name', 'Our Bakery'),
             ],
         );
     }

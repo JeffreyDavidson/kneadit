@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Coupon;
+use App\Services\CouponService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -25,4 +26,18 @@ test('valid scope excludes expired coupons', function () {
 
     expect($results)->toHaveCount(1)
         ->and($results->first()->id)->toBe($valid->id);
+});
+
+test('isValid method agrees with valid scope', function () {
+    $valid = Coupon::factory()->create();
+    $expired = Coupon::factory()->expired()->create();
+    $inactive = Coupon::factory()->inactive()->create();
+    $maxedOut = Coupon::factory()->create(['max_uses' => 1, 'used_count' => 1]);
+
+    $scopeIds = Coupon::query()->valid()->pluck('id')->sort()->values();
+    $methodIds = Coupon::all()
+        ->filter(fn (Coupon $coupon) => resolve(CouponService::class)->isValid($coupon))
+        ->pluck('id')->sort()->values();
+
+    expect($methodIds->all())->toBe($scopeIds->all());
 });

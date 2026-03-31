@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources;
 
+use App\Enums\EmailCampaignSegment;
 use App\Enums\EmailCampaignStatus;
 use App\Filament\Central\Resources\EmailCampaignResource\Pages;
 use App\Models\EmailCampaign;
@@ -46,16 +47,9 @@ class EmailCampaignResource extends Resource
                     ->required()
                     ->columnSpanFull(),
                 Select::make('target_segment')
-                    ->options([
-                        'all' => 'All',
-                        'starter' => 'Starter',
-                        'growth' => 'Growth',
-                        'pro' => 'Pro',
-                        'trial' => 'Trial',
-                        'inactive' => 'Inactive',
-                    ])
+                    ->options(EmailCampaignSegment::class)
                     ->required()
-                    ->default('all'),
+                    ->default(EmailCampaignSegment::All),
             ]);
     }
 

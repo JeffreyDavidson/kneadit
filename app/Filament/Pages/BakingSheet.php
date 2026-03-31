@@ -2,15 +2,13 @@
 
 namespace App\Filament\Pages;
 
-use App\Enums\OrderStatus;
 use App\Enums\UserRole;
-use App\Models\OrderItem;
+use App\Queries\BakingSheetQuery;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class BakingSheet extends Page
 {
@@ -48,25 +46,7 @@ class BakingSheet extends Page
 
     public function loadBakingSheet(): void
     {
-        // Aggregate order items by product for the selected date
-        $groupConcat = DB::getDriverName() === 'sqlite'
-            ? "group_concat(customers.name, ', ')"
-            : "GROUP_CONCAT(customers.name SEPARATOR ', ')";
-
-        $this->bakingItems = OrderItem::query()
-            ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->join('customers', 'orders.customer_id', '=', 'customers.id')
-            ->whereDate('orders.delivery_date', $this->selectedDate)
-            ->whereIn('orders.status', [OrderStatus::Confirmed->value, OrderStatus::Baking->value])
-            ->select([
-                'products.name as product_name',
-                DB::raw('SUM(order_items.quantity) as total_quantity'),
-                DB::raw("{$groupConcat} as customer_names"),
-            ])
-            ->groupBy('products.id', 'products.name')
-            ->orderBy('products.name')
-            ->get();
+        $this->bakingItems = BakingSheetQuery::forDate($this->selectedDate);
     }
 
     public function updatedSelectedDate(): void

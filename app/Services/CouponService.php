@@ -10,6 +10,27 @@ use Illuminate\Support\Str;
 
 class CouponService
 {
+    public function isValid(Coupon $coupon): bool
+    {
+        if (! $coupon->is_active) {
+            return false;
+        }
+
+        if ($coupon->starts_at && $coupon->starts_at->isFuture()) {
+            return false;
+        }
+
+        if ($coupon->expires_at && $coupon->expires_at->isPast()) {
+            return false;
+        }
+
+        if ($coupon->max_uses !== null && $coupon->used_count >= $coupon->max_uses) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Validate a coupon code against the given subtotal.
      *
@@ -23,7 +44,7 @@ class CouponService
             return CouponValidationResult::invalid('Coupon not found.');
         }
 
-        if (! $coupon->isValid()) {
+        if (! $this->isValid($coupon)) {
             return CouponValidationResult::invalid('This coupon is no longer valid.');
         }
 

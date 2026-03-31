@@ -10,19 +10,11 @@ use App\Mail\OrderConfirmedMail;
 use App\Mail\OrderDeliveredMail;
 use App\Mail\OrderReadyMail;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendOrderStatusEmailListener implements ShouldBeUnique, ShouldQueue
+class SendOrderStatusEmailListener extends QueuedListener implements ShouldBeUnique
 {
-    public int $timeout = 60;
-
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
-
     public function uniqueId(): string
     {
         return 'order-status-email';

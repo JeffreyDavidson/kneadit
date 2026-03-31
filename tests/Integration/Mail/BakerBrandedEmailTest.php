@@ -69,7 +69,7 @@ test('from name defaults when no store name', function () {
     $mail = new OrderPlacedMail($this->order);
     $envelope = $mail->envelope();
 
-    expect($envelope->from->name)->toContain('KneadIt Bakery via KneadIt');
+    expect($envelope->from->name)->toContain('Our Bakery via KneadIt');
 });
 
 test('order confirmed uses baker branded from', function () {

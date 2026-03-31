@@ -1,0 +1,41 @@
+<?php
+
+use App\Models\Customer;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
+use App\Queries\BakingSheetQuery;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    setUpTenantTest();
+    Mail::fake();
+});
+
+test('returns aggregated baking items for a given date', function () {
+    $user = User::factory()->owner()->create();
+    $customer = Customer::factory()->create();
+    $product = Product::factory()->create(['name' => 'Sourdough']);
+    $date = now()->format('Y-m-d');
+
+    $order = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->confirmed()
+        ->create(['delivery_date' => $date]);
+
+    $order->orderItems()->create([
+        'product_id' => $product->id,
+        'quantity' => 3,
+        'unit_price' => 10.00,
+    ]);
+
+    $items = BakingSheetQuery::forDate($date);
+
+    expect($items)->toHaveCount(1)
+        ->and($items->first()->product_name)->toBe('Sourdough')
+        ->and((int) $items->first()->total_quantity)->toBe(3);
+});

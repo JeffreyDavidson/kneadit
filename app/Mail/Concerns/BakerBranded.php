@@ -2,6 +2,7 @@
 
 namespace App\Mail\Concerns;
 
+use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Address;
 
 trait BakerBranded
@@ -12,7 +13,7 @@ trait BakerBranded
      */
     protected function bakerFrom(): Address
     {
-        $storeName = settings('store_name', 'KneadIt Bakery');
+        $storeName = app(TenantSettings::class)->storeName;
 
         return new Address(
             address: config('mail.from.address', 'hello@getkneadit.app'),
@@ -25,13 +26,12 @@ trait BakerBranded
      */
     protected function bakerReplyTo(): ?Address
     {
-        $email = settings('store_email');
-        $storeName = settings('store_name', 'KneadIt Bakery');
+        $settings = app(TenantSettings::class);
 
-        if (! $email) {
+        if (! $settings->storeEmail) {
             return null;
         }
 
-        return new Address($email, $storeName);
+        return new Address($settings->storeEmail, $settings->storeName);
     }
 }

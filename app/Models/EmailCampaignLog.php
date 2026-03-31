@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EmailDeliveryStatus;
 use Database\Factories\EmailCampaignLogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Support\Carbon;
  * @property int $campaign_id
  * @property string $tenant_id
  * @property string $email
- * @property string $status
+ * @property EmailDeliveryStatus $status
  * @property Carbon|null $sent_at
  * @property Carbon|null $opened_at
  * @property Carbon|null $created_at
@@ -55,6 +56,7 @@ class EmailCampaignLog extends Model
     protected function casts(): array
     {
         return [
+            'status' => EmailDeliveryStatus::class,
             'sent_at' => 'datetime',
             'opened_at' => 'datetime',
         ];
