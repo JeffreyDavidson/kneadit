@@ -4,8 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
+use App\Events\PurchaseOrderRequested;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Mail\PurchaseOrderMail;
 use App\Services\Inventory\ShoppingListService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -13,7 +13,6 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Laravel\Pennant\Feature;
 
 class SmartShoppingList extends Page
@@ -94,16 +93,16 @@ class SmartShoppingList extends Page
 
         $storeName = settings('store_name', config('app.name'));
 
-        Mail::to($group['supplier']['email'])
-            ->send(new PurchaseOrderMail(
-                supplierName: $group['supplier']['name'],
-                storeName: $storeName,
-                items: $group['items'],
-                total: $group['total'],
-                requestedDate: now()->addDays(
-                    (int) max(3, ...array_column($group['items'], 'lead_time_days')),
-                )->format('Y-m-d'),
-            ));
+        PurchaseOrderRequested::dispatch(
+            supplierEmail: $group['supplier']['email'],
+            supplierName: $group['supplier']['name'],
+            storeName: $storeName,
+            items: $group['items'],
+            total: $group['total'],
+            requestedDate: now()->addDays(
+                (int) max(3, ...array_column($group['items'], 'lead_time_days')),
+            )->format('Y-m-d'),
+        );
 
         Notification::make()
             ->title('Purchase order sent!')
