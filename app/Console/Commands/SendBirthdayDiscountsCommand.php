@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\BirthdayDiscountMail;
+use App\Events\BirthdayDiscountGenerated;
 use App\Models\CustomerProfile;
 use App\Models\Tenant;
 use App\Services\Customer\BirthdayService;
@@ -10,7 +10,6 @@ use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class SendBirthdayDiscountsCommand extends Command
 {
@@ -71,7 +70,7 @@ class SendBirthdayDiscountsCommand extends Command
                     continue;
                 }
 
-                Mail::to($customer->email)->send(new BirthdayDiscountMail($customer, $coupon));
+                BirthdayDiscountGenerated::dispatch($customer, $coupon);
                 $this->info("  ✓ {$customer->name}");
             } catch (\Exception $e) {
                 $this->error("  ✗ {$customer->name}: {$e->getMessage()}");

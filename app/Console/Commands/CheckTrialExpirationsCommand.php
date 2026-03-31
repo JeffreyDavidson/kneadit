@@ -2,13 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\TrialExpiredMail;
-use App\Mail\TrialReminderMail;
+use App\Events\TrialExpired;
+use App\Events\TrialReminding;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class CheckTrialExpirationsCommand extends Command
 {
@@ -56,7 +55,7 @@ class CheckTrialExpirationsCommand extends Command
                 $storeName = $tenant->store_name ?: $tenant->name;
                 $daysText = $daysLeft === 1 ? 'tomorrow' : "in {$daysLeft} days";
 
-                Mail::to($user->email)->queue(new TrialReminderMail($user, $storeName, $daysLeft));
+                TrialReminding::dispatch($user, $storeName, $daysLeft);
 
                 cache()->put($sentKey, true, now()->addDays(30));
                 $this->info("  ✓ {$daysLeft}d reminder → {$user->email} ({$tenant->store_name})");
@@ -92,7 +91,7 @@ class CheckTrialExpirationsCommand extends Command
                 // Send expiration email
                 if ($user) {
                     try {
-                        Mail::to($user->email)->queue(new TrialExpiredMail($user, $tenant->id));
+                        TrialExpired::dispatch($user, $tenant->id);
                     } catch (\Exception $e) {
                         Log::error("Trial expiration email failed for {$tenant->id}", ['error' => $e->getMessage()]);
                     }

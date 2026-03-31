@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\SocialPosts\Schemas;
 
+use App\Enums\SocialPlatform;
 use App\Enums\SocialPostStatus;
 use App\Models\Product;
-use App\Models\SocialPost;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -32,7 +32,7 @@ class SocialPostForm
                         Grid::make(2)
                             ->components([
                                 Select::make('platform')
-                                    ->options(SocialPost::PLATFORMS)
+                                    ->options(SocialPlatform::options())
                                     ->required()
                                     ->live()
                                     ->default('instagram'),
@@ -48,8 +48,8 @@ class SocialPostForm
                         Textarea::make('caption')
                             ->required()
                             ->rows(4)
-                            ->maxLength(fn (Get $get): int => SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200)
-                            ->helperText(fn (Get $get): string => 'Max ' . Number::format(SocialPost::PLATFORM_MAX_CHARS[$get('platform') ?? 'instagram'] ?? 2200) . ' characters for ' . (SocialPost::PLATFORMS[$get('platform') ?? 'instagram'] ?? 'Instagram'))
+                            ->maxLength(fn (Get $get): int => (SocialPlatform::tryFrom($get('platform') ?? 'instagram')?->maxChars() ?? 2200))
+                            ->helperText(fn (Get $get): string => 'Max ' . Number::format((SocialPlatform::tryFrom($get('platform') ?? 'instagram')?->maxChars() ?? 2200)) . ' characters for ' . ((SocialPlatform::tryFrom($get('platform') ?? 'instagram')?->getLabel() ?? 'Instagram')))
                             ->hintAction(
                                 Action::make('generateCaption')
                                     ->label('Generate Caption')

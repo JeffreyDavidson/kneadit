@@ -48,18 +48,6 @@ class SocialPost extends Model
         ];
     }
 
-    public const PLATFORMS = [
-        'instagram' => 'Instagram',
-        'facebook' => 'Facebook',
-        'tiktok' => 'TikTok',
-    ];
-
-    public const PLATFORM_MAX_CHARS = [
-        'instagram' => 2200,
-        'facebook' => 63206,
-        'tiktok' => 4000,
-    ];
-
     /**
      * @return BelongsTo<Product, $this>
      */
