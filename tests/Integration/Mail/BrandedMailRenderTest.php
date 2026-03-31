@@ -98,7 +98,14 @@ test('CateringQuote has correct subject with store name', function () {
 });
 
 test('WeeklyDigest has correct subject with store name', function () {
-    $mail = new App\Mail\WeeklyDigestMail;
+    $mail = new App\Mail\WeeklyDigestMail(
+        stats: [],
+        topProducts: App\Models\OrderItem::query()->whereKey([])->get(),
+        atRiskCustomers: Customer::query()->whereKey([])->get(),
+        upcomingCount: 0,
+        storeName: 'Test Bakery',
+        adminUrl: 'https://test.kneadit.test/admin',
+    );
 
     expect($mail->envelope()->subject)->toContain('Weekly Digest')
         ->and($mail->envelope()->subject)->toContain('Test Bakery');

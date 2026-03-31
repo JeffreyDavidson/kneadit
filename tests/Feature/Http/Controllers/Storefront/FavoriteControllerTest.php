@@ -18,23 +18,23 @@ test('can get favorites for an email', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->getJson(route('favorites.get', ['email' => 'jane@example.com'], false));
+        ->getJson(route('api.favorites.index', ['email' => 'jane@example.com'], false));
 
     $response->assertOk()
-        ->assertJsonCount(1, 'favorites');
+        ->assertJsonCount(1, 'data');
 });
 
 test('can toggle a favorite on', function () {
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('favorites.toggle', [], false), [
+        ->postJson(route('api.favorites.toggle', [], false), [
             'email' => 'jane@example.com',
             'product_id' => $product->id,
         ]);
 
     $response->assertOk()
-        ->assertJson(['favorited' => true]);
+        ->assertJsonPath('data.favorited', true);
 
     expect(CustomerFavorite::query()->count())->toBe(1);
 });
@@ -47,13 +47,13 @@ test('can toggle a favorite off', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('favorites.toggle', [], false), [
+        ->postJson(route('api.favorites.toggle', [], false), [
             'email' => 'jane@example.com',
             'product_id' => $product->id,
         ]);
 
     $response->assertOk()
-        ->assertJson(['favorited' => false]);
+        ->assertJsonPath('data.favorited', false);
 
     expect(CustomerFavorite::query()->count())->toBe(0);
 });

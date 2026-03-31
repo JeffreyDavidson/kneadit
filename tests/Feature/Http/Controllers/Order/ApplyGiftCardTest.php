@@ -19,8 +19,7 @@ test('apply gift card returns balance for valid card', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('success', true)
-        ->assertJsonPath('applicable_amount', 30);
+        ->assertJsonPath('data.applicable_amount', 30);
 });
 
 test('apply gift card returns error for unknown code', function () {
@@ -31,5 +30,5 @@ test('apply gift card returns error for unknown code', function () {
         ]);
 
     $response->assertUnprocessable()
-        ->assertJsonPath('error', 'Gift card not found.');
+        ->assertJsonPath('message', 'Gift card not found.');
 });

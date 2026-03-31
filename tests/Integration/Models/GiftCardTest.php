@@ -30,7 +30,7 @@ test('gift card can be purchased with valid data', function () {
         ]);
 
     $response->assertOk();
-    $response->assertJsonStructure(['success', 'gift_card' => ['code', 'balance']]);
+    $response->assertJsonStructure(['data' => ['code', 'balance']]);
     $this->assertDatabaseHas('gift_cards', [
         'purchaser_email' => 'john@example.com',
         'initial_balance' => 50.00,
@@ -51,7 +51,7 @@ test('gift card balance check works', function () {
         ]);
 
     $response->assertOk();
-    $response->assertJson(['success' => true, 'current_balance' => 25.00]);
+    $response->assertJson(['data' => ['current_balance' => 25.00]]);
 });
 
 test('gift card balance check returns 404 for invalid code', function () {
@@ -61,7 +61,6 @@ test('gift card balance check returns 404 for invalid code', function () {
         ]);
 
     $response->assertNotFound();
-    $response->assertJson(['success' => false]);
 });
 
 test('gift card code is generated in correct format', function () {

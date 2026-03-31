@@ -9,5 +9,5 @@ test('availability endpoint returns 30 days of dates', function () {
         ->getJson('/availability');
 
     $response->assertOk()
-        ->assertJsonCount(30);
+        ->assertJsonCount(30, 'data');
 });

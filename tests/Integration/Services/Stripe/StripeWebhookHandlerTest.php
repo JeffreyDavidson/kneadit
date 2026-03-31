@@ -23,18 +23,17 @@ test('webhook controller handles subscription deleted', function () {
     expect(method_exists(StripeWebhookController::class, 'handleCustomerSubscriptionDeleted'))->toBeTrue();
 });
 
-test('price id to plan mapping', function () {
+test('price id to plan mapping uses SubscriptionTier::fromPriceId', function () {
     config(['kneadit.stripe_prices' => [
         'starter' => 'price_test_starter',
         'growth' => 'price_test_growth',
         'pro' => 'price_test_pro',
     ]]);
 
-    $controller = new StripeWebhookController;
-    $reflection = new ReflectionMethod($controller, 'priceIdToPlan');
-    $reflection->setAccessible(true);
-
-    expect($reflection->invoke($controller, 'price_test_starter'))->toBe('starter')->and($reflection->invoke($controller, 'price_test_growth'))->toBe('growth')->and($reflection->invoke($controller, 'price_test_pro'))->toBe('pro')->and($reflection->invoke($controller, 'price_unknown'))->toBeNull();
+    expect(App\Enums\SubscriptionTier::fromPriceId('price_test_starter'))->toBe(App\Enums\SubscriptionTier::Starter)
+        ->and(App\Enums\SubscriptionTier::fromPriceId('price_test_growth'))->toBe(App\Enums\SubscriptionTier::Growth)
+        ->and(App\Enums\SubscriptionTier::fromPriceId('price_test_pro'))->toBe(App\Enums\SubscriptionTier::Pro)
+        ->and(App\Enums\SubscriptionTier::fromPriceId('price_unknown'))->toBeNull();
 });
 
 test('webhook route uses custom controller', function () {
@@ -43,8 +42,8 @@ test('webhook route uses custom controller', function () {
     expect($source)->toContain('StripeWebhookController')->not->toContain('Cashier\Http\Controllers\WebhookController');
 });
 
-test('payment failed handler sends emails', function () {
+test('payment failed handler dispatches PaymentFailed event', function () {
     $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeWebhookController.php'));
 
-    expect($source)->toContain('Payment failed')->toContain('PaymentFailedMail')->toContain('platform_notify');
+    expect($source)->toContain('Payment failed')->toContain('PaymentFailed::dispatch');
 });

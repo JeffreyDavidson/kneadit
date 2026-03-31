@@ -24,9 +24,10 @@ test('apply valid coupon returns discount', function () {
 
     $response->assertOk()
         ->assertJson([
-            'success' => true,
-            'coupon_id' => $coupon->id,
-            'code' => 'SAVE10',
+            'data' => [
+                'coupon_id' => $coupon->id,
+                'code' => 'SAVE10',
+            ],
         ]);
 });
 
@@ -38,7 +39,7 @@ test('apply invalid coupon code returns error', function () {
         ]);
 
     $response->assertUnprocessable()
-        ->assertJsonStructure(['error']);
+        ->assertJsonStructure(['message']);
 });
 
 test('apply expired coupon returns error', function () {
@@ -51,7 +52,7 @@ test('apply expired coupon returns error', function () {
         ]);
 
     $response->assertUnprocessable()
-        ->assertJsonStructure(['error']);
+        ->assertJsonStructure(['message']);
 });
 
 test('apply coupon validates required fields', function () {

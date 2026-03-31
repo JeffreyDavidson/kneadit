@@ -22,10 +22,7 @@ test('check balance returns card details for valid code', function () {
         ]);
 
     $response->assertOk()
-        ->assertJson([
-            'success' => true,
-            'is_usable' => true,
-        ]);
+        ->assertJsonPath('data.is_usable', true);
 });
 
 test('check balance returns 404 for invalid code', function () {
@@ -35,5 +32,5 @@ test('check balance returns 404 for invalid code', function () {
         ]);
 
     $response->assertNotFound()
-        ->assertJson(['success' => false]);
+        ->assertJsonPath('message', 'Gift card not found.');
 });

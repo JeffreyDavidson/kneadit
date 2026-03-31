@@ -20,7 +20,7 @@ test('reorder returns items from previous order', function () {
         ->getJson(route('order.reorder', ['order' => $order], false));
 
     $response->assertOk()
-        ->assertJsonCount(1, 'items')
-        ->assertJsonPath('items.0.product_id', $product->id)
-        ->assertJsonPath('items.0.quantity', 2);
+        ->assertJsonCount(1, 'data.items')
+        ->assertJsonPath('data.items.0.product_id', $product->id)
+        ->assertJsonPath('data.items.0.quantity', 2);
 });

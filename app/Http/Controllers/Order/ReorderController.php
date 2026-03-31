@@ -21,6 +21,8 @@ class ReorderController extends Controller
             'quantity' => $item->quantity,
         ]);
 
-        return ApiResponse::success(['items' => $items], 'Reorder data retrieved successfully.');
+        return ApiResponse::success([
+            'items' => $items,
+        ], 'Reorder data retrieved successfully.');
     }
 }

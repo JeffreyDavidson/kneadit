@@ -16,7 +16,7 @@ test('can retrieve messages for an order', function () {
         ->getJson(route('order.messages', ['order' => $order], false));
 
     $response->assertOk()
-        ->assertJsonStructure(['messages']);
+        ->assertJsonIsArray('data');
 });
 
 test('can send a message on an order', function () {
@@ -30,7 +30,7 @@ test('can send a message on an order', function () {
         ]);
 
     $response->assertOk()
-        ->assertJson(['success' => true]);
+        ->assertJsonPath('message', 'Message sent successfully.');
 
     expect($order->messages()->count())->toBe(1);
 });
