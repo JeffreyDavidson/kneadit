@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Actions\Tenants\CompleteReferral;
 use App\Actions\Tenants\CreateTenant;
 use App\Events\TenantOnboarded;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOnboardingRequest;
 use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;

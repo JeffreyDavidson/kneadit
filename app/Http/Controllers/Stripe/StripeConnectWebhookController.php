@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Stripe;
 
 use App\Actions\Stripe\HandleConnectAccountUpdated;
 use App\Actions\Stripe\HandleConnectCheckoutCompleted;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;

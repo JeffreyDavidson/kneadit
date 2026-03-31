@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Customers\SubmitContactMessage;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreContactMessageRequest;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;

@@ -2,7 +2,7 @@
 
 use App\Enums\SubscriptionTier;
 use App\Events\PaymentFailed;
-use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\Stripe\StripeWebhookController;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
