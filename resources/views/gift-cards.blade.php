@@ -6,7 +6,7 @@
     {{-- Photo-Forward Hero --}}
     <section class="relative overflow-hidden" style="min-height: 55vh;">
         <div class="absolute inset-0">
-            <img src="{{ $heroImageUrl }}" alt="Fresh baked goods" class="w-full h-full object-cover gift-hero-img">
+            <img src="{{ $settings->giftCardsHeroImageUrl() }}" alt="Fresh baked goods" class="w-full h-full object-cover gift-hero-img">
         </div>
         <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
         <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
@@ -71,7 +71,7 @@
                             <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(-30%, 30%);"></div>
                             <div class="relative z-10">
                                 <p class="font-script text-2xl" style="color: var(--warm-500);">Gift Card</p>
-                                <p class="font-display text-lg mt-1" style="color: var(--warm-400);">{{ settings('store_name', 'Our Bakery') }}</p>
+                                <p class="font-display text-lg mt-1" style="color: var(--warm-400);">{{ $settings->storeName }}</p>
                             </div>
                             <div class="relative z-10 text-right">
                                 <p class="font-display text-5xl font-bold" style="color: white;" x-text="'$' + parseFloat(form.initial_balance || 0).toFixed(2)"></p>

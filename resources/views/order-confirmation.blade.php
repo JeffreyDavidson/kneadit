@@ -7,7 +7,7 @@
 {{-- Photo-Forward Hero with Success --}}
 <section class="relative overflow-hidden" style="min-height: 40vh;">
     <div class="absolute inset-0">
-        <img src="{{ $heroImageUrl }}" alt="Order confirmed" class="w-full h-full object-cover confirmation-hero-img">
+        <img src="{{ $settings->heroImageUrl() }}" alt="Order confirmed" class="w-full h-full object-cover confirmation-hero-img">
     </div>
     <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
@@ -182,7 +182,7 @@
                         Track Your Order
                     </a>
                     <a href="{{ url('/') }}" class="inline-flex items-center gap-2 px-6 py-3 font-semibold transition-all" style="color: var(--warm-400);">
-                        Back to {{ settings('store_name', 'Home') }}
+                        Back to {{ $settings->storeName }}
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                     <button onclick="window.print()" class="inline-flex items-center gap-2 px-6 py-3 font-semibold transition-all" style="color: var(--warm-500);">

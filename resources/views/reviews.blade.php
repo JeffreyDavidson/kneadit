@@ -5,7 +5,7 @@
 {{-- Photo-Forward Hero with Dark Overlay --}}
 <section class="relative overflow-hidden" style="min-height: 60vh;">
     <div class="absolute inset-0">
-        <img src="{{ $heroImageUrl }}" alt="{{ $storeName }} Reviews" class="w-full h-full object-cover review-hero-img">
+        <img src="{{ $settings->heroImageUrl() }}" alt="{{ $settings->storeName }} Reviews" class="w-full h-full object-cover review-hero-img">
     </div>
     <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>

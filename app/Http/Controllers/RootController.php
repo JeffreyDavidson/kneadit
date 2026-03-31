@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Storefront\HomeController;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -33,13 +34,15 @@ class RootController extends Controller
 
             // If storefront is disabled but no external URL, show a minimal page
             if ($tenant && ! $tenant->storefront_enabled) {
+                $settings = app(TenantSettings::class);
+
                 return response()->view('storefront-disabled', [
-                    'storeName' => settings('store_name', $tenant->store_name ?? 'Our Bakery'),
+                    'storeName' => $settings->storeName,
                     'tenant' => $tenant,
                 ]);
             }
 
-            return resolve(HomeController::class)();
+            return resolve(HomeController::class)(app(TenantSettings::class));
         });
     }
 }

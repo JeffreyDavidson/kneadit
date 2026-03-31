@@ -8,7 +8,7 @@
 {{-- Success State --}}
 <section class="relative overflow-hidden" style="min-height: 60vh;">
     <div class="absolute inset-0">
-        <img src="{{ $heroImageUrl }}" alt="Survey submitted" class="w-full h-full object-cover survey-hero-img">
+        <img src="{{ $settings->heroImageUrl() }}" alt="Survey submitted" class="w-full h-full object-cover survey-hero-img">
     </div>
     <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
@@ -22,7 +22,7 @@
         <h1 class="font-display text-4xl font-bold mb-4 survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
         <p class="text-lg mb-10 survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
         <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 survey-fade-up" style="background: var(--warm-500); color: var(--warm-900); animation-delay: 0.9s;">
-            Back to {{ $storeName }}
+            Back to {{ $settings->storeName }}
         </a>
     </div>
 </section>
@@ -31,7 +31,7 @@
 {{-- Photo-Forward Hero --}}
 <section class="relative overflow-hidden" style="min-height: 40vh;">
     <div class="absolute inset-0">
-        <img src="{{ $heroImageUrl }}" alt="Share your feedback" class="w-full h-full object-cover survey-hero-img">
+        <img src="{{ $settings->heroImageUrl() }}" alt="Share your feedback" class="w-full h-full object-cover survey-hero-img">
     </div>
     <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>

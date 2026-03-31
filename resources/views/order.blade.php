@@ -15,7 +15,7 @@
         </h1>
         <p class="text-lg max-w-2xl" style="color: var(--warm-400);">
             Choose your items, tell us when you need them, and we'll have everything freshly prepared.
-            Orders need {{ $leadTimeHours }} hours notice — ready {{ date('l, F j', strtotime('+' . $leadTimeDays . ' days')) }} or later.
+            Orders need {{ $settings->leadTimeHours }} hours notice — ready {{ date('l, F j', strtotime('+' . $settings->leadTimeDays() . ' days')) }} or later.
         </p>
     </div>
 </section>
@@ -237,7 +237,7 @@
                                 <span style="color: var(--warm-200);">Pickup <span class="text-sm" style="color: var(--warm-500);">(Free)</span></span>
                             </label>
 
-                            @if ($deliveryEnabled)
+                            @if ($settings->deliveryEnabled)
                             <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(139,104,68,0.15);"
                                    :style="form.delivery_type === 'delivery' ? 'border-color: var(--warm-500); background: rgba(212,146,12,0.08);' : ''">
                                 <input type="radio" x-model="form.delivery_type" value="delivery" @change="calculateDeliveryFee()" class="order-radio mr-3">
@@ -246,7 +246,7 @@
                             @endif
                         </div>
 
-                        @if ($deliveryEnabled)
+                        @if ($settings->deliveryEnabled)
                         <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-3">
                             <div>
                                 <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Delivery Address *</label>
@@ -256,14 +256,14 @@
                                 <label class="block text-xs font-medium mb-1" style="color: var(--warm-400);">Distance</label>
                                 <select x-model="form.delivery_tier" @change="calculateDeliveryFee()" class="order-input">
                                     <option value="">Select distance</option>
-                                    @foreach ($deliveryTiers as $index => $tier)
+                                    @foreach ($settings->deliveryFeeTiers as $index => $tier)
                                     <option value="{{ $index }}">{{ $tier['description'] }} (${{ number_format($tier['fee'], 2) }})</option>
                                     @endforeach
                                 </select>
                             </div>
-                            @if ($freeDeliveryMin)
+                            @if ($settings->freeDeliveryMinimum)
                             <p class="text-sm" style="color: var(--warm-500);">
-                                🚚 Free delivery on orders over ${{ number_format((float)$freeDeliveryMin, 2) }}!
+                                🚚 Free delivery on orders over ${{ number_format((float)$settings->freeDeliveryMinimum, 2) }}!
                             </p>
                             @endif
                         </div>
@@ -297,18 +297,18 @@
                         <textarea x-model="form.notes" placeholder="Allergies, decorations, anything..." class="order-input" rows="3"></textarea>
                     </div>
 
-                    @if (!empty($paymentMethods))
+                    @if (!empty($settings->paymentMethodsAccepted))
                     <div class="pt-4 mt-4" style="border-top: 1px solid rgba(139,104,68,0.2);">
                         <p class="text-xs" style="color: var(--warm-600);">
-                            <span class="font-medium" style="color: var(--warm-500);">Payment:</span> {{ implode(', ', array_map('ucfirst', $paymentMethods)) }}
+                            <span class="font-medium" style="color: var(--warm-500);">Payment:</span> {{ implode(', ', array_map('ucfirst', $settings->paymentMethodsAccepted)) }}
                         </p>
                     </div>
                     @endif
 
-                    @if ($allergyDisclaimer)
+                    @if ($settings->allergyDisclaimer)
                     <div class="pt-4 mt-4" style="border-top: 1px solid rgba(139,104,68,0.2);">
                         <p class="text-xs leading-relaxed" style="color: var(--warm-600);">
-                            <strong style="color: var(--warm-500);">⚠ Allergy Notice:</strong> {{ $allergyDisclaimer }}
+                            <strong style="color: var(--warm-500);">⚠ Allergy Notice:</strong> {{ $settings->allergyDisclaimer }}
                         </p>
                     </div>
                     @endif
@@ -367,7 +367,7 @@ function orderForm() {
         unavailableDates: [],
 
         init() {
-            const leadTimeHours = {{ $leadTimeHours }};
+            const leadTimeHours = {{ $settings->leadTimeHours }};
             const today = new Date();
             today.setTime(today.getTime() + (leadTimeHours * 60 * 60 * 1000));
             this.minDate = today.toISOString().split('T')[0];
@@ -471,8 +471,8 @@ function orderForm() {
             if (this.form.delivery_type === 'pickup') {
                 this.deliveryFee = 0;
             } else {
-                const tiers = @json($deliveryTiers);
-                const freeMin = {{ (float)($freeDeliveryMin ?: 0) }};
+                const tiers = @json($settings->deliveryFeeTiers);
+                const freeMin = {{ (float)($settings->freeDeliveryMinimum ?: 0) }};
                 const tierIndex = parseInt(this.form.delivery_tier);
                 if (!isNaN(tierIndex) && tiers[tierIndex]) {
                     this.deliveryFee = (freeMin > 0 && this.subtotal >= freeMin) ? 0 : parseFloat(tiers[tierIndex].fee);

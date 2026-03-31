@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Deliveries — {{ $storeName }}</title>
+    <title>Deliveries — {{ $settings->storeName }}</title>
 <link rel="stylesheet" href="{{ asset('css/driver.css') }}">
 </head>
 <body>
 
 <div class="header">
     <div class="header-top">
-        <span class="store-name">🚗 {{ $storeName }}</span>
+        <span class="store-name">🚗 {{ $settings->storeName }}</span>
         <a href="/admin" class="admin-link">← Admin</a>
     </div>
     <div class="header-meta">

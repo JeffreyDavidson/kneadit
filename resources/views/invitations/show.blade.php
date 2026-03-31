@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join {{ $storeName }} on KneadIt</title>
+    <title>Join {{ $settings->storeName }} on KneadIt</title>
     @vite(["resources/css/storefront.css"])
 </head>
 <body class="min-h-screen bg-amber-50 flex items-center justify-center p-4">
@@ -13,7 +13,7 @@
             <p class="text-amber-100 mt-2">You've been invited!</p>
         </div>
         <div class="p-8">
-            <h2 class="text-xl font-semibold text-gray-800 mb-2">Join {{ $storeName }}</h2>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Join {{ $settings->storeName }}</h2>
             <p class="text-gray-600 mb-6">
                 You've been invited as a <strong class="text-amber-700">{{ $invitation->role->getLabel() }}</strong>.
             </p>

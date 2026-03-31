@@ -20,7 +20,7 @@
 {{-- Photo-Forward Hero --}}
 <section class="relative overflow-hidden" style="min-height: 55vh;">
     <div class="absolute inset-0">
-        <img src="{{ $heroImageUrl }}" alt="Fresh baked goods" class="w-full h-full object-cover loyalty-hero-img">
+        <img src="{{ $settings->loyaltyHeroImageUrl() }}" alt="Fresh baked goods" class="w-full h-full object-cover loyalty-hero-img">
     </div>
     <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
@@ -32,7 +32,7 @@
             <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
         </div>
         <h1 class="loyalty-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
-            {{ settings('store_name', 'Our') }} {{ $programName }}
+            {{ $settings->storeName }} {{ $settings->loyaltyProgramName }}
         </h1>
         <p class="loyalty-fade-3 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
             {{ $content['hero_subtitle'] ?? 'Earn points with every order, unlock delicious rewards' }}
@@ -40,7 +40,7 @@
     </div>
 </section>
 
-@if (!$loyaltyEnabled)
+@if (!$settings->loyaltyEnabled)
 <section class="py-20 px-4" style="background: var(--warm-50);">
     <div class="max-w-lg mx-auto text-center rounded-2xl p-12" style="background: white; border: 1px solid var(--warm-200);">
         <p class="font-display text-xl" style="color: var(--warm-700);">{{ $content['paused_message'] ?? 'Our loyalty program is currently paused. Check back soon!' }}</p>

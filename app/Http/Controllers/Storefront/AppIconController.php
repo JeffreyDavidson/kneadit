@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 
@@ -11,10 +12,9 @@ class AppIconController extends Controller
     /**
      * Generate a dynamic PWA app icon for the storefront.
      */
-    public function __invoke(string $size): Response
+    public function __invoke(string $size, TenantSettings $settings): Response
     {
         $size = in_array($size, ['192', '512']) ? (int) $size : 192;
-        $storeName = settings('store_name', 'B');
         $color = tenant()->brand_color_primary ?? '#d4920c';
 
         $img = imagecreatetruecolor($size, $size);
@@ -25,7 +25,7 @@ class AppIconController extends Controller
         $textColor = imagecolorallocate($img, (int) 255, (int) 255, (int) 255);
         imagefill($img, 0, 0, (int) $bgColor);
 
-        $letter = Str::upper(substr($storeName, 0, 1));
+        $letter = Str::upper(substr($settings->storeName, 0, 1));
         $font = 5;
         $textWidth = imagefontwidth($font) * strlen($letter);
         $textHeight = imagefontheight($font);

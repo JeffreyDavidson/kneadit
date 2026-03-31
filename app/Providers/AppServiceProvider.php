@@ -3,12 +3,16 @@
 namespace App\Providers;
 
 use App\Enums\SubscriptionTier;
+use App\Enums\UserRole;
+use App\Models\User;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
+use App\Services\Settings\TenantSettings;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pennant\Feature;
@@ -24,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(SettingsManager::class);
         $this->app->singleton(PlatformSettingsManager::class);
+        $this->app->singleton(TenantSettings::class, fn () => TenantSettings::resolve());
     }
 
     /**
@@ -34,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(! app()->isProduction());
 
         RateLimiter::for('webhooks', fn () => Limit::perMinute(30));
+
+        Gate::define('platform-admin', fn (User $user): bool => $user->role === UserRole::PlatformAdmin);
 
         Feature::define('growth-features', fn (): bool => SubscriptionTier::tryFrom(tenant()?->plan)?->meetsRequirement(SubscriptionTier::Growth) ?? false);
         Feature::define('pro-features', fn (): bool => SubscriptionTier::tryFrom(tenant()?->plan)?->meetsRequirement(SubscriptionTier::Pro) ?? false);
