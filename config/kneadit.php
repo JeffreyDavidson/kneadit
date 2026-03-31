@@ -108,4 +108,17 @@ return [
             'description_pickup' => 'Your items will be warm and ready for you to pick up.',
         ],
     ],
+
+    'default_catering_occasions' => [
+        ['title' => 'Weddings', 'description' => 'Custom wedding cakes, dessert tables, pastry towers, and sweet treats to make your big day even sweeter.'],
+        ['title' => 'Corporate Events', 'description' => 'Professional catering for meetings, launches, office parties, and team celebrations.'],
+        ['title' => 'Parties & Celebrations', 'description' => 'Birthday parties, holiday gatherings, baby showers — we bring the sweetness to any celebration.'],
+    ],
+
+    'default_catering_process_steps' => [
+        ['title' => 'Tell Us About Your Event', 'description' => 'Fill out the inquiry form with your event details.'],
+        ['title' => 'Get a Custom Quote', 'description' => 'We\'ll craft a personalized quote based on your needs.'],
+        ['title' => 'Confirm Your Order', 'description' => 'Review and confirm — we handle the rest.'],
+        ['title' => 'Enjoy!', 'description' => 'Fresh, beautiful baked goods delivered for your event.'],
+    ],
 ];
