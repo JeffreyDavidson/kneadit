@@ -11,6 +11,8 @@ class SendReviewRequestEmailListener extends QueuedListener
 {
     public function handle(ReviewRequested $event): void
     {
+        $event->order->loadMissing('orderItems.product');
+
         Mail::to($event->order->customer?->email)->send(new ReviewRequestMail($event->order));
     }
 
