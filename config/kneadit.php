@@ -127,4 +127,6 @@ return [
         ['title' => 'Earn Points', 'description' => 'Earn points for every $1 spent when delivered.'],
         ['title' => 'Redeem Rewards', 'description' => 'Use your points for discounts and free treats!'],
     ],
+
+    'default_rating_descriptions' => ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'],
 ];
