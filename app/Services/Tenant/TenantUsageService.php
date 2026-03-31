@@ -2,6 +2,7 @@
 
 namespace App\Services\Tenant;
 
+use App\Enums\SubscriptionTier;
 use App\Models\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -67,11 +68,13 @@ class TenantUsageService
         return $results->sortByDesc(fn (array $t) => max($t['product_percent'], $t['order_percent']));
     }
 
-    public function getNextPlan(string $currentPlan): ?string
+    public function getNextPlan(string $currentPlan): ?SubscriptionTier
     {
-        return match ($currentPlan) {
-            'starter' => 'Growth',
-            'growth' => 'Pro',
+        $tier = SubscriptionTier::tryFrom($currentPlan);
+
+        return match ($tier) {
+            SubscriptionTier::Starter => SubscriptionTier::Growth,
+            SubscriptionTier::Growth => SubscriptionTier::Pro,
             default => null,
         };
     }
