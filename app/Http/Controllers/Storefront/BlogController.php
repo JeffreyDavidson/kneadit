@@ -2,33 +2,28 @@
 
 namespace App\Http\Controllers\Storefront;
 
-use App\Enums\BlogPostCategory;
 use App\Http\Controllers\Controller;
-use App\Models\BlogPost;
+use App\Models\TenantBlogPost;
 use Illuminate\Contracts\View\View;
 
 class BlogController extends Controller
 {
     public function index(): View
     {
-        $categories = BlogPostCategory::options();
-        $activeCategory = request('category', 'all');
-        $posts = BlogPost::query()->forListing($activeCategory)->paginate(6);
+        $posts = TenantBlogPost::query()
+            ->published()
+            ->latest('published_at')
+            ->paginate(6);
 
-        return view('blog.index', [
+        return view('storefront.blog.index', [
             'posts' => $posts,
-            'categories' => $categories,
-            'activeCategory' => $activeCategory,
         ]);
     }
 
-    public function show(BlogPost $post): View
+    public function show(TenantBlogPost $post): View
     {
-        $related = BlogPost::query()->published()->relatedTo($post)->get();
-
-        return view('blog.show', [
+        return view('storefront.blog.show', [
             'post' => $post,
-            'related' => $related,
         ]);
     }
 }
