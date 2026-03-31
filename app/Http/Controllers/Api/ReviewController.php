@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Customers\SubmitApiReview;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiReviewRequest;
 use App\Http\Resources\ReviewResource;
@@ -23,13 +24,9 @@ class ReviewController extends Controller
         return ApiResponse::success(ReviewResource::collection($query->latest()->get()), 'Reviews retrieved successfully.');
     }
 
-    public function store(StoreApiReviewRequest $request): JsonResponse
+    public function store(StoreApiReviewRequest $request, SubmitApiReview $submitReview): JsonResponse
     {
-        $validated = $request->validated();
-        $review = Review::query()->create([
-            ...$validated,
-            'is_approved' => false,
-        ]);
+        $review = $submitReview($request->validated());
 
         return ApiResponse::created([
             'id' => $review->id,
