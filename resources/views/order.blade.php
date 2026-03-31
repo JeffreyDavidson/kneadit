@@ -499,7 +499,7 @@ function orderForm() {
         async loadFavorites() {
             if (!this.form.customer_email) return;
             try {
-                const response = await fetch(`{{ route('favorites.get') }}?email=${encodeURIComponent(this.form.customer_email)}`);
+                const response = await fetch(`{{ route('api.favorites.index') }}?email=${encodeURIComponent(this.form.customer_email)}`);
                 const data = await response.json();
                 this.favorites = data.favorites || [];
             } catch (error) {
@@ -517,7 +517,7 @@ function orderForm() {
                 return;
             }
             try {
-                const response = await fetch('{{ route('favorites.toggle') }}', {
+                const response = await fetch('{{ route('api.favorites.toggle') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

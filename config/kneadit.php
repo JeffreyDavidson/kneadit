@@ -121,4 +121,10 @@ return [
         ['title' => 'Confirm Your Order', 'description' => 'Review and confirm — we handle the rest.'],
         ['title' => 'Enjoy!', 'description' => 'Fresh, beautiful baked goods delivered for your event.'],
     ],
+
+    'default_loyalty_steps' => [
+        ['title' => 'Place an Order', 'description' => 'Order your favorite baked goods as usual.'],
+        ['title' => 'Earn Points', 'description' => 'Earn points for every $1 spent when delivered.'],
+        ['title' => 'Redeem Rewards', 'description' => 'Use your points for discounts and free treats!'],
+    ],
 ];
