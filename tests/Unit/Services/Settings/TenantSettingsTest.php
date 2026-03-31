@@ -137,6 +137,19 @@ test('defaultTagline returns generated tagline when not set', function () {
     expect($settings->defaultTagline())->toBe('My Bakery — Fresh baked goods made with love');
 });
 
+test('visibleHomepageSections filters and sorts by order', function () {
+    $settings = makeTenantSettings(['homepageSections' => [
+        'hero' => ['visible' => true, 'order' => 3],
+        'hidden' => ['visible' => false, 'order' => 1],
+        'featured' => ['visible' => true, 'order' => 1],
+        'no_visible_key' => ['order' => 2],
+    ]]);
+
+    $sections = $settings->visibleHomepageSections();
+
+    expect($sections->keys()->all())->toBe(['featured', 'no_visible_key', 'hero']);
+});
+
 test('leadTimeDays calculates days from hours', function () {
     expect(makeTenantSettings(['leadTimeHours' => 24])->leadTimeDays())->toBe(1)
         ->and(makeTenantSettings(['leadTimeHours' => 48])->leadTimeDays())->toBe(2)

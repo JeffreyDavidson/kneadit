@@ -131,4 +131,12 @@ final readonly class TenantSettings
     {
         return (int) ceil($this->leadTimeHours / 24);
     }
+
+    /** @return \Illuminate\Support\Collection<string, array<string, mixed>> */
+    public function visibleHomepageSections(): \Illuminate\Support\Collection
+    {
+        return collect($this->homepageSections)
+            ->filter(fn (array $s) => $s['visible'] ?? true)
+            ->sortBy('order');
+    }
 }
