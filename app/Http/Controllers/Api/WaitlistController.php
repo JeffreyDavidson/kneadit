@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\WaitlistStatus;
+use App\Actions\Customers\JoinWaitlist;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApiWaitlistRequest;
 use App\Http\Responses\ApiResponse;
-use App\Models\WaitlistEntry;
 use Illuminate\Http\JsonResponse;
 
 class WaitlistController extends Controller
 {
-    public function __invoke(StoreApiWaitlistRequest $request): JsonResponse
+    public function __invoke(StoreApiWaitlistRequest $request, JoinWaitlist $joinWaitlist): JsonResponse
     {
-        $validated = $request->validated();
-
-        $entry = WaitlistEntry::query()->create([
-            ...$validated,
-            'status' => WaitlistStatus::Waiting,
-        ]);
+        $entry = $joinWaitlist($request->validated());
 
         return ApiResponse::created([
             'id' => $entry->id,
