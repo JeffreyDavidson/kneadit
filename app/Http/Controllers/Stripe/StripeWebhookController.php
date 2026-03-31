@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Stripe;
 
 use App\Actions\Stripe\SyncSubscriptionPlan;
 use App\Events\PaymentFailed;

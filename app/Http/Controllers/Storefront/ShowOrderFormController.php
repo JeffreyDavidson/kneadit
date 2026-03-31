@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Storefront;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;

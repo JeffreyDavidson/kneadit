@@ -5,8 +5,8 @@ use App\Http\Controllers\Billing\CheckoutController;
 use App\Http\Controllers\Billing\CheckoutSuccessController;
 use App\Http\Controllers\Billing\ShowPlansController;
 use App\Http\Controllers\Billing\SwapPlanController;
-use App\Http\Controllers\StripeConnectWebhookController;
-use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\Stripe\StripeConnectWebhookController;
+use App\Http\Controllers\Stripe\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth'])->prefix('billing')->name('billing.')->group(function () {

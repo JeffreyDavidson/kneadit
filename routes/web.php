@@ -1,19 +1,19 @@
 <?php
 
+use App\Http\Controllers\Auth\CompleteOnboardingController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ShowOnboardingController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BlogFeedController;
 use App\Http\Controllers\Central\ExportController;
+use App\Http\Controllers\Central\ImpersonateController;
 use App\Http\Controllers\ChangelogController;
-use App\Http\Controllers\CompleteOnboardingController;
 use App\Http\Controllers\DirectoryController;
-use App\Http\Controllers\ImpersonateController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\RootController;
-use App\Http\Controllers\ShowOnboardingController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\Stripe\StripeWebhookController;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 
 beforeEach(function () {
@@ -44,7 +44,7 @@ test('webhook route uses custom controller', function () {
 });
 
 test('payment failed handler sends emails', function () {
-    $source = file_get_contents(app_path('Http/Controllers/StripeWebhookController.php'));
+    $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeWebhookController.php'));
 
     expect($source)->toContain('Payment failed')->toContain('PaymentFailedMail')->toContain('platform_notify');
 });
