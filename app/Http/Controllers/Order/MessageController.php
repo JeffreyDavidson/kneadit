@@ -12,18 +12,6 @@ use Illuminate\Http\JsonResponse;
 class MessageController extends Controller
 {
     /**
-     * Get messages for an order.
-     */
-    public function show(Order $order): JsonResponse
-    {
-        $messages = $order->messages()->oldest()->get();
-
-        return response()->json([
-            'messages' => $messages,
-        ]);
-    }
-
-    /**
      * Send a message on an order.
      */
     public function store(StoreOrderMessageRequest $request, Order $order): JsonResponse
@@ -39,6 +27,18 @@ class MessageController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
+        ]);
+    }
+
+    /**
+     * Get messages for an order.
+     */
+    public function show(Order $order): JsonResponse
+    {
+        $messages = $order->messages()->oldest()->get();
+
+        return response()->json([
+            'messages' => $messages,
         ]);
     }
 }

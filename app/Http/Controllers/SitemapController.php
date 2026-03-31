@@ -9,7 +9,7 @@ class SitemapController extends Controller
 {
     public function __invoke(): Response
     {
-        $posts = BlogPost::published()->orderByDesc('published_at')->get();
+        $posts = BlogPost::query()->published()->orderByDesc('published_at')->get();
 
         return response()
             ->view('sitemap', [

@@ -50,3 +50,33 @@ arch('controllers should not use DB facade directly')
         'App\Http\Controllers\ImpersonateController',
         'App\Http\Controllers\ConsumeImpersonationController',
     ]);
+
+foreach ($controllerFiles as $controllerClass) {
+    $shortName = str_replace('App\\Http\\Controllers\\', '', $controllerClass);
+
+    test("{$shortName} has resource methods in standard order", function () use ($controllerClass, $resourceMethods) {
+        $reflection = new ReflectionClass($controllerClass);
+
+        $publicMethods = collect($reflection->getMethods(ReflectionMethod::IS_PUBLIC))
+            ->reject(fn (ReflectionMethod $method) => $method->class !== $reflection->getName())
+            ->reject(fn (ReflectionMethod $method) => $method->isStatic())
+            ->reject(fn (ReflectionMethod $method) => str_starts_with($method->getName(), '__'))
+            ->map(fn (ReflectionMethod $method) => $method->getName())
+            ->values()
+            ->all();
+
+        if (count($publicMethods) < 2) {
+            expect(true)->toBeTrue();
+
+            return;
+        }
+
+        $presentResourceMethods = array_values(array_intersect($resourceMethods, $publicMethods));
+        $actualOrder = array_values(array_intersect($publicMethods, $resourceMethods));
+
+        expect($actualOrder)->toBe(
+            $presentResourceMethods,
+            'Resource methods must follow standard order (index, create, store, show, edit, update, destroy). Found: ' . implode(', ', $actualOrder),
+        );
+    });
+}

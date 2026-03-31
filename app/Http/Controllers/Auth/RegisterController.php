@@ -12,11 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
-    public function show(): View
-    {
-        return view('auth.register');
-    }
-
     public function store(RegisterRequest $request): RedirectResponse
     {
         $validated = $request->validated();
@@ -34,5 +29,10 @@ class RegisterController extends Controller
         Auth::login($user);
 
         return to_route('billing.plans');
+    }
+
+    public function show(): View
+    {
+        return view('auth.register');
     }
 }

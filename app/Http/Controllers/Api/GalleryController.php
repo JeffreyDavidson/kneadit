@@ -11,7 +11,7 @@ class GalleryController extends Controller
 {
     public function __invoke(): JsonResponse
     {
-        $photos = GalleryPhoto::visible()->ordered()->get(['id', 'title', 'image_path', 'category']);
+        $photos = GalleryPhoto::query()->visible()->ordered()->get(['id', 'title', 'image_path', 'category']);
 
         return ApiResponse::success($photos, 'Gallery retrieved successfully.');
     }

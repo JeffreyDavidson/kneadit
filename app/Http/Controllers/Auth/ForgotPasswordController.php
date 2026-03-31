@@ -10,11 +10,6 @@ use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordController extends Controller
 {
-    public function show(): View
-    {
-        return view('auth.forgot-password');
-    }
-
     public function store(ForgotPasswordRequest $request): RedirectResponse
     {
 
@@ -25,5 +20,10 @@ class ForgotPasswordController extends Controller
             : back()->withErrors([
                 'email' => __($status),
             ]);
+    }
+
+    public function show(): View
+    {
+        return view('auth.forgot-password');
     }
 }
