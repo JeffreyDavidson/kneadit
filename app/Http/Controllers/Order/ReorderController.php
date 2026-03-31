@@ -3,15 +3,13 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\ApiResponse;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\JsonResponse;
 
 class ReorderController extends Controller
 {
-    /**
-     * Return reorder data for a previous order.
-     */
     public function __invoke(Order $order): JsonResponse
     {
         $order->load('orderItems.product');
@@ -23,8 +21,6 @@ class ReorderController extends Controller
             'quantity' => $item->quantity,
         ]);
 
-        return response()->json([
-            'items' => $items,
-        ]);
+        return ApiResponse::success(['items' => $items], 'Reorder data retrieved successfully.');
     }
 }
