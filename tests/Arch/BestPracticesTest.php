@@ -127,3 +127,50 @@ test('model static calls in controllers must use explicit query()', function () 
         "Controllers must use Model::query()->method() instead of Model::method():\n" . implode("\n", $violations),
     );
 });
+
+arch('controllers should not use Mail facade directly')
+    ->expect('Illuminate\Support\Facades\Mail')
+    ->not->toBeUsedIn('App\Http\Controllers');
+
+arch('all listeners should implement ShouldQueue')
+    ->expect('App\Listeners')
+    ->toImplement('Illuminate\Contracts\Queue\ShouldQueue');
+
+test('all listeners have retry configuration', function () {
+    $listenerFiles = glob(__DIR__ . '/../../app/Listeners/*.php');
+    $violations = [];
+
+    foreach ($listenerFiles as $file) {
+        $contents = file_get_contents($file);
+        $name = basename($file, '.php');
+
+        if (! str_contains($contents, '$tries')) {
+            $violations[] = "{$name}: missing \$tries property";
+        }
+        if (! str_contains($contents, '$backoff')) {
+            $violations[] = "{$name}: missing \$backoff property";
+        }
+    }
+
+    expect($violations)->toBeEmpty(
+        "Listeners must have retry configuration:\n" . implode("\n", $violations),
+    );
+});
+
+test('all models have factories', function () {
+    $modelFiles = collect(glob(__DIR__ . '/../../app/Models/*.php'))
+        ->map(fn ($file) => pathinfo($file, PATHINFO_FILENAME))
+        ->reject(fn ($name) => in_array($name, ['ImpersonationToken', 'Tenant']))
+        ->values();
+
+    $factoryFiles = collect(glob(__DIR__ . '/../../database/factories/*.php'))
+        ->map(fn ($file) => str_replace('Factory', '', pathinfo($file, PATHINFO_FILENAME)))
+        ->values()
+        ->all();
+
+    $missing = $modelFiles->reject(fn ($model) => in_array($model, $factoryFiles))->all();
+
+    expect($missing)->toBeEmpty(
+        'Models missing factories: ' . implode(', ', $missing),
+    );
+});
