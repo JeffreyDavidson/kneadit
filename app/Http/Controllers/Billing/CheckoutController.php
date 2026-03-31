@@ -5,26 +5,18 @@ namespace App\Http\Controllers\Billing;
 use App\Enums\SubscriptionTier;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Container\Attributes\CurrentUser;
 use Laravel\Cashier\Checkout;
 
 class CheckoutController extends Controller
 {
-    /**
-     * Redirect to Stripe Checkout for the selected plan.
-     */
-    public function __invoke(Request $request, string $plan): Checkout
+    public function __invoke(#[CurrentUser] User $user, string $plan): Checkout
     {
-        /** @var User $user */
-        $user = $request->user();
-
         $tier = SubscriptionTier::tryFrom($plan);
-
-        abort_unless((bool) $tier, 404, 'Plan not found.');
+        abort_unless($tier, 404, 'Plan not found.');
 
         $priceId = config("kneadit.stripe_prices.{$tier->value}");
-
-        abort_unless((bool) $priceId, 404, 'Plan not found.');
+        abort_unless($priceId, 404, 'Plan not found.');
 
         return $user
             ->newSubscription('default', $priceId)
