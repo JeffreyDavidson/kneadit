@@ -49,6 +49,13 @@ final readonly class TenantSettings
         public string $cateringLeadTimeDays,
         public array $socialMediaLinks,
         public array $homepageSections,
+        public bool $cateringEnabled,
+        public ?string $storePhoto,
+        public bool $announcementEnabled,
+        public string $announcementText,
+        public string $announcementType,
+        public bool $showPolicies,
+        public string $cancellationPolicy,
     ) {}
 
     public static function resolve(): self
@@ -84,6 +91,13 @@ final readonly class TenantSettings
             cateringLeadTimeDays: (string) settings('catering_lead_time_days', '14'),
             socialMediaLinks: (array) json_decode((string) settings('social_media_links', '{}'), true),
             homepageSections: (array) json_decode((string) settings('homepage_sections', '{}'), true),
+            cateringEnabled: settings('catering_enabled', '0') === '1',
+            storePhoto: settings('store_photo'),
+            announcementEnabled: settings('announcement_enabled', '0') === '1',
+            announcementText: (string) settings('announcement_text', ''),
+            announcementType: (string) settings('announcement_type', 'info'),
+            showPolicies: settings('show_policies_on_storefront', '0') === '1',
+            cancellationPolicy: (string) settings('cancellation_policy', ''),
         );
     }
 

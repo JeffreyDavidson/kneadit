@@ -34,6 +34,13 @@ test('it can be constructed with all properties', function () {
         cateringLeadTimeDays: '14',
         socialMediaLinks: [],
         homepageSections: [],
+        cateringEnabled: false,
+        storePhoto: null,
+        announcementEnabled: false,
+        announcementText: '',
+        announcementType: 'info',
+        showPolicies: false,
+        cancellationPolicy: '',
     );
 
     expect($settings->storeName)->toBe('Test Bakery')
@@ -76,6 +83,13 @@ function makeTenantSettings(array $overrides = []): TenantSettings
         'cateringLeadTimeDays' => '14',
         'socialMediaLinks' => [],
         'homepageSections' => [],
+        'cateringEnabled' => false,
+        'storePhoto' => null,
+        'announcementEnabled' => false,
+        'announcementText' => '',
+        'announcementType' => 'info',
+        'showPolicies' => false,
+        'cancellationPolicy' => '',
     ], $overrides));
 }
 
