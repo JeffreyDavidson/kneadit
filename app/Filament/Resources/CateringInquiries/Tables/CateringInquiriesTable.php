@@ -4,7 +4,7 @@ namespace App\Filament\Resources\CateringInquiries\Tables;
 
 use App\Enums\CateringEventType;
 use App\Enums\CateringInquiryStatus;
-use App\Mail\CateringQuoteMail;
+use App\Events\CateringQuoteRequested;
 use App\Models\CateringInquiry;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -15,7 +15,6 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Mail;
 
 class CateringInquiriesTable
 {
@@ -100,7 +99,7 @@ class CateringInquiriesTable
                     ->modalDescription(fn (CateringInquiry $record) => "Send a quote of \${$record->quoted_amount} to {$record->customer_email}?")
                     ->visible(fn (CateringInquiry $record) => $record->quoted_amount && in_array($record->status, [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Quoted]))
                     ->action(function (CateringInquiry $record) {
-                        Mail::to($record->customer_email)->send(new CateringQuoteMail($record));
+                        CateringQuoteRequested::dispatch($record);
                         $record->update(['status' => CateringInquiryStatus::Quoted]);
                     }),
                 Action::make('confirm')
