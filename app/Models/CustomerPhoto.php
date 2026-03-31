@@ -68,4 +68,11 @@ class CustomerPhoto extends Model
     {
         $query->where('is_featured', true);
     }
+
+    /** @param Builder<CustomerPhoto> $query */
+    #[Scope]
+    protected function withCaptionLike(Builder $query, string $term): void
+    {
+        $query->whereLike('caption', "%{$term}%");
+    }
 }

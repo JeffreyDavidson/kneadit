@@ -35,7 +35,6 @@ use App\Http\Controllers\Storefront\AboutController;
 use App\Http\Controllers\Storefront\AppIconController;
 use App\Http\Controllers\Storefront\BlogController as StorefrontBlogController;
 use App\Http\Controllers\Storefront\BlogFeedController as StorefrontBlogFeedController;
-use App\Http\Controllers\Storefront\CateringController;
 use App\Http\Controllers\Storefront\CheckGiftCardBalanceController;
 use App\Http\Controllers\Storefront\FavoriteController;
 use App\Http\Controllers\Storefront\GalleryController;
@@ -46,7 +45,9 @@ use App\Http\Controllers\Storefront\ProductWaitlistController;
 use App\Http\Controllers\Storefront\PurchaseGiftCardController;
 use App\Http\Controllers\Storefront\ReviewController;
 use App\Http\Controllers\Storefront\ReviewsController;
+use App\Http\Controllers\Storefront\ShowCateringController;
 use App\Http\Controllers\Storefront\ShowGiftCardsController;
+use App\Http\Controllers\Storefront\SubmitCateringInquiryController;
 use App\Http\Controllers\Storefront\SurveyController;
 use App\Http\Controllers\StripeConnectController;
 use App\Http\Controllers\SubmitOrderController;
@@ -151,8 +152,8 @@ Route::middleware([
         Route::post('favorites/toggle', [FavoriteController::class, 'store'])->name('favorites.toggle')->middleware('throttle:10,1');
 
         // Catering
-        Route::get('catering', [CateringController::class, 'show'])->name('storefront.catering');
-        Route::post('catering', [CateringController::class, 'store'])->name('catering.submit')->middleware('throttle:10,1');
+        Route::get('catering', ShowCateringController::class)->name('storefront.catering');
+        Route::post('catering', SubmitCateringInquiryController::class)->name('catering.submit')->middleware('throttle:10,1');
 
         // Blog
         Route::get('blog', [StorefrontBlogController::class, 'index'])->name('storefront.blog');
