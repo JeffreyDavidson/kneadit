@@ -14,24 +14,16 @@ class ReviewController extends Controller
 {
     public function store(Order $order, StoreReviewRequest $request, CreateReview $createReview, TenantSettings $settings): View
     {
-        $validated = $request->validated();
-
         $createReview(
             order: $order,
-            rating: (int) $validated['rating'],
-            comment: $validated['comment'] ?? null,
+            rating: (int) $request->validated('rating'),
+            comment: $request->validated('comment'),
             photo: $request->file('photo'),
         );
 
-        $content = settingsPageContent('submit_review');
-        $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
-
         return view('submit-review', [
-            'settings' => $settings,
-            'order' => $order,
+            ...$this->sharedViewData($settings, $order),
             'prefilledRating' => null,
-            'content' => $content,
-            'ratingDescriptions' => $ratingDescriptions,
             'success' => true,
         ]);
     }
@@ -39,17 +31,23 @@ class ReviewController extends Controller
     public function show(Order $order, Request $request, TenantSettings $settings): View
     {
         $order->load(['customer', 'orderItems.product']);
-        $prefilledRating = $request->query('rating');
-
-        $content = settingsPageContent('submit_review');
-        $ratingDescriptions = $content['rating_descriptions'] ?? ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'];
 
         return view('submit-review', [
+            ...$this->sharedViewData($settings, $order),
+            'prefilledRating' => $request->query('rating'),
+        ]);
+    }
+
+    /** @return array<string, mixed> */
+    private function sharedViewData(TenantSettings $settings, Order $order): array
+    {
+        $content = settingsPageContent('submit_review');
+
+        return [
             'settings' => $settings,
             'order' => $order,
-            'prefilledRating' => $prefilledRating,
             'content' => $content,
-            'ratingDescriptions' => $ratingDescriptions,
-        ]);
+            'ratingDescriptions' => $content['rating_descriptions'] ?? config('kneadit.default_rating_descriptions'),
+        ];
     }
 }
