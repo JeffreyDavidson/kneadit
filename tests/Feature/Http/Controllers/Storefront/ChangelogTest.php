@@ -1,6 +1,14 @@
 <?php
 
+use Illuminate\Support\Facades\Http;
+
 use function Pest\Laravel\get;
+
+beforeEach(function () {
+    Http::fake([
+        'api.github.com/*' => Http::response([], 404),
+    ]);
+});
 
 test('changelog page loads', function () {
     $response = get('/changelog');

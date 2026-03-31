@@ -27,7 +27,7 @@ dataset('requestsWithRequiredFields', [
     'StoreSurveyResponseRequest' => [StoreSurveyResponseRequest::class, ['answers']],
     'PurchaseGiftCardRequest' => [PurchaseGiftCardRequest::class, ['purchaser_name', 'purchaser_email', 'initial_balance']],
     'StoreApiReviewRequest' => [App\Http\Requests\StoreApiReviewRequest::class, ['customer_name', 'customer_email', 'product_id', 'rating', 'comment']],
-    'StoreApiWaitlistRequest' => [App\Http\Requests\StoreApiWaitlistRequest::class, ['customer_name', 'customer_email', 'customer_phone', 'delivery_date']],
+    'StoreApiWaitlistRequest' => [App\Http\Requests\StoreApiWaitlistRequest::class, ['customer_name', 'customer_email', 'customer_phone', 'requested_date']],
     'StoreReviewRequest' => [App\Http\Requests\StoreReviewRequest::class, ['rating']],
     'StoreProductWaitlistRequest' => [App\Http\Requests\StoreProductWaitlistRequest::class, ['product_id', 'customer_email']],
     'StoreApiFavoriteRequest' => [App\Http\Requests\StoreApiFavoriteRequest::class, ['email', 'product_id']],
