@@ -43,6 +43,6 @@ class InventoryReport
         $lowStockItems = collect($ingredients)->where('is_low', true)->count();
         $outOfStockItems = collect($ingredients)->where('is_out', true)->count();
 
-        return compact('ingredients', 'totalItems', 'lowStockItems', 'outOfStockItems');
+        return ['ingredients' => $ingredients, 'totalItems' => $totalItems, 'lowStockItems' => $lowStockItems, 'outOfStockItems' => $outOfStockItems];
     }
 }

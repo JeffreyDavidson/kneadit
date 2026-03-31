@@ -15,6 +15,6 @@ class ScheduleService
     {
         $schedule = $this->forDay($dayOfWeek);
 
-        return $schedule->is_open ?? false;
+        return $schedule?->is_open ?? false;
     }
 }

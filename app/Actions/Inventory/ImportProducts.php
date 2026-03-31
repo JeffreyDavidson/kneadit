@@ -76,6 +76,6 @@ class ImportProducts
             }
         }
 
-        return compact('created', 'updated', 'errors');
+        return ['created' => $created, 'updated' => $updated, 'errors' => $errors];
     }
 }

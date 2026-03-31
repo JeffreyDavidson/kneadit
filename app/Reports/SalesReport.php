@@ -38,6 +38,6 @@ class SalesReport
             ->map(fn (Order $row) => ['date' => $row->date, 'revenue' => (float) $row->revenue])
             ->all();
 
-        return compact('totalOrders', 'totalRevenue', 'avgOrderValue', 'ordersByStatus', 'topProducts', 'revenueByDay');
+        return ['totalOrders' => $totalOrders, 'totalRevenue' => $totalRevenue, 'avgOrderValue' => $avgOrderValue, 'ordersByStatus' => $ordersByStatus, 'topProducts' => $topProducts, 'revenueByDay' => $revenueByDay];
     }
 }

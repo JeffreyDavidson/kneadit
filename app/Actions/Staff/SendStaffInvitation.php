@@ -3,11 +3,10 @@
 namespace App\Actions\Staff;
 
 use App\Enums\UserRole;
+use App\Events\StaffInvitationSent;
 use App\Exceptions\StaffInvitationException;
-use App\Mail\StaffInvitationMail;
 use App\Models\StaffInvitation;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class SendStaffInvitation
@@ -41,7 +40,7 @@ class SendStaffInvitation
         $storeName = settings('store_name', 'Our Bakery');
         $acceptUrl = route('invitation.show', $invitation->token);
 
-        Mail::to($email)->send(new StaffInvitationMail($invitation, $storeName, $acceptUrl));
+        StaffInvitationSent::dispatch($invitation, $storeName, $acceptUrl);
 
         return $invitation;
     }

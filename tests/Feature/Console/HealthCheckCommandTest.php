@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
     setUpCentralTest();
+    Mail::fake();
     @mkdir(storage_path('logs'), 0755, true);
 });
 
