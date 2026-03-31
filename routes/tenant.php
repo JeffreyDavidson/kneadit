@@ -36,7 +36,6 @@ use App\Http\Controllers\Storefront\AppIconController;
 use App\Http\Controllers\Storefront\BlogController as StorefrontBlogController;
 use App\Http\Controllers\Storefront\BlogFeedController as StorefrontBlogFeedController;
 use App\Http\Controllers\Storefront\CheckGiftCardBalanceController;
-use App\Http\Controllers\Storefront\FavoriteController;
 use App\Http\Controllers\Storefront\GalleryController;
 use App\Http\Controllers\Storefront\LoyaltyController;
 use App\Http\Controllers\Storefront\ManifestController;
@@ -148,8 +147,6 @@ Route::middleware([
         Route::post('gift-card/apply', ApplyGiftCardController::class)->name('gift-card.apply')->middleware('throttle:10,1');
 
         // Customer favorites (AJAX)
-        Route::get('favorites', [FavoriteController::class, 'index'])->name('favorites.get');
-        Route::post('favorites/toggle', [FavoriteController::class, 'store'])->name('favorites.toggle')->middleware('throttle:10,1');
 
         // Catering
         Route::get('catering', ShowCateringController::class)->name('storefront.catering');
