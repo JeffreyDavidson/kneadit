@@ -49,7 +49,7 @@
         <p style="margin: 0 0 5px; font-weight: 600;">🏪 Pickup Details</p>
         <p style="margin: 0 0 3px;"><strong>Date:</strong> {{ $order->delivery_date?->format('M j, Y') ?? 'TBD' }}</p>
         <p style="margin: 0 0 3px;"><strong>Time:</strong> {{ $order->delivery_time?->format('g:i A') ?? 'TBD' }}</p>
-        <p style="margin: 0;"><strong>Location:</strong> {{ settings('store_address', '') }}</p>
+        <p style="margin: 0;"><strong>Location:</strong> {{ $storeAddress }}</p>
     </div>
 @endif
 
