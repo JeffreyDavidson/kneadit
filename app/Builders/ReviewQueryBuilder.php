@@ -15,6 +15,13 @@ class ReviewQueryBuilder extends Builder
         return $this;
     }
 
+    public function featured(): static
+    {
+        $this->where('is_featured', true);
+
+        return $this;
+    }
+
     public function withProduct(): static
     {
         $this->with('product');

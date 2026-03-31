@@ -2,11 +2,11 @@
 
 namespace App\Mail;
 
+use App\Services\Settings\TenantSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Storage;
 
 abstract class BaseMailable extends Mailable implements ShouldQueue
 {
@@ -22,17 +22,16 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
      */
     public function buildViewData(): array
     {
-        $storeName = settings('store_name', 'KneadIt Bakery');
-        $logoPath = settings('store_logo');
+        $settings = app(TenantSettings::class);
 
         return array_merge(parent::buildViewData(), [
-            'storeName' => $storeName,
-            'primaryColor' => settings('brand_color_primary', '#d4920c'),
-            'secondaryColor' => settings('brand_color_secondary', '#1c1410'),
-            'storeEmail' => settings('store_email', ''),
-            'storePhone' => settings('store_phone', ''),
-            'storeAddress' => settings('store_address', ''),
-            'logoUrl' => $logoPath ? Storage::url($logoPath) : null,
+            'storeName' => $settings->storeName,
+            'primaryColor' => tenant()->brand_color_primary ?? '#d4920c',
+            'secondaryColor' => tenant()->brand_color_secondary ?? '#1c1410',
+            'storeEmail' => $settings->storeEmail ?? '',
+            'storePhone' => $settings->storePhone ?? '',
+            'storeAddress' => $settings->storeAddress ?? '',
+            'logoUrl' => $settings->storeLogoUrl(),
         ]);
     }
 }

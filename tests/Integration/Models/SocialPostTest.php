@@ -24,12 +24,14 @@ test('social post can be created', function () {
     ]);
 });
 
-test('platform max lengths are defined', function () {
-    expect(SocialPost::PLATFORM_MAX_CHARS)->toMatchArray(['instagram' => 2200, 'facebook' => 63206, 'tiktok' => 4000]);
+test('platform max chars are defined on enum', function () {
+    expect(SocialPlatform::Instagram->maxChars())->toBe(2200)
+        ->and(SocialPlatform::Facebook->maxChars())->toBe(63206)
+        ->and(SocialPlatform::TikTok->maxChars())->toBe(4000);
 });
 
-test('platforms are defined', function () {
-    expect(SocialPost::PLATFORMS)->toHaveKeys(['instagram', 'facebook', 'tiktok']);
+test('platform options are available', function () {
+    expect(SocialPlatform::options())->toHaveKeys(['instagram', 'facebook', 'tiktok']);
 });
 
 test('status defaults to draft', function () {
