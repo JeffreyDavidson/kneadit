@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Central;
 
-use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use App\Services\Export\CsvExportService;
 use App\Services\Tenant\TenancyManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -20,7 +20,7 @@ class ExportController extends Controller
         CsvExportService $csvExport,
         TenancyManager $tenancyManager,
     ): StreamedResponse|BinaryFileResponse {
-        abort_if(! auth()->check() || auth()->user()?->role !== UserRole::PlatformAdmin, 403, 'Unauthorized.');
+        Gate::authorize('platform-admin');
 
         $validTypes = [...$csvExport->validTypes(), 'all'];
         abort_unless(in_array($type, $validTypes, true), 404, 'Invalid export type.');
