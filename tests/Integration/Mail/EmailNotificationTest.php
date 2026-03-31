@@ -80,5 +80,5 @@ test('email uses default store name when not set', function () {
     $mail = new OrderConfirmedMail($this->order);
     $envelope = $mail->envelope();
 
-    expect($envelope->subject)->toContain('KneadIt Bakery');
+    expect($envelope->subject)->toContain('Our Bakery');
 });

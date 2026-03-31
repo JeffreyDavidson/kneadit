@@ -69,12 +69,12 @@ test('password can be reset', function () {
     $response = post('/reset-password', [
         'token' => $token,
         'email' => 'baker@example.com',
-        'password' => 'new-password',
-        'password_confirmation' => 'new-password',
+        'password' => 'newPassword1',
+        'password_confirmation' => 'newPassword1',
     ]);
 
     $response->assertRedirect('/login');
-    expect(Hash::check('new-password', $user->fresh()->password))->toBeTrue();
+    expect(Hash::check('newPassword1', $user->fresh()->password))->toBeTrue();
 });
 
 test('reset password page loads', function () {
@@ -90,8 +90,8 @@ test('reset requires valid token', function () {
     $response = post('/reset-password', [
         'token' => 'invalid-token',
         'email' => 'baker@example.com',
-        'password' => 'new-password',
-        'password_confirmation' => 'new-password',
+        'password' => 'newPassword1',
+        'password_confirmation' => 'newPassword1',
     ]);
 
     $response->assertSessionHasErrors('email');
@@ -101,7 +101,7 @@ test('reset requires password confirmation', function () {
     $response = post('/reset-password', [
         'token' => 'some-token',
         'email' => 'baker@example.com',
-        'password' => 'new-password',
+        'password' => 'newPassword1',
         'password_confirmation' => 'wrong-confirmation',
     ]);
 

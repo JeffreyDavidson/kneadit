@@ -27,6 +27,39 @@ test('returns error for nonexistent coupon', function () {
         ->and($result->error)->toBe('Coupon not found.');
 });
 
+test('isValid returns true for active unexpired coupon', function () {
+    $coupon = Coupon::factory()->create();
+
+    expect((new CouponService)->isValid($coupon))->toBeTrue();
+});
+
+test('isValid returns false for inactive coupon', function () {
+    $coupon = Coupon::factory()->inactive()->create();
+
+    expect((new CouponService)->isValid($coupon))->toBeFalse();
+});
+
+test('isValid returns false for expired coupon', function () {
+    $coupon = Coupon::factory()->expired()->create();
+
+    expect((new CouponService)->isValid($coupon))->toBeFalse();
+});
+
+test('isValid returns false when max uses reached', function () {
+    $coupon = Coupon::factory()->create(['max_uses' => 5, 'used_count' => 5]);
+
+    expect((new CouponService)->isValid($coupon))->toBeFalse();
+});
+
+test('isValid returns false for future start date coupon', function () {
+    $coupon = Coupon::factory()->create([
+        'starts_at' => now()->addWeek(),
+        'expires_at' => now()->addMonth(),
+    ]);
+
+    expect((new CouponService)->isValid($coupon))->toBeFalse();
+});
+
 test('apply increments used count', function () {
     $coupon = Coupon::factory()->create(['used_count' => 0]);
 

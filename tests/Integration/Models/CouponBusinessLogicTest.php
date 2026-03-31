@@ -11,19 +11,19 @@ beforeEach(fn () => setUpTenantTest());
 test('isValid returns true for active unexpired coupon', function () {
     $coupon = Coupon::factory()->create();
 
-    expect($coupon->isValid())->toBeTrue();
+    expect(resolve(CouponService::class)->isValid($coupon))->toBeTrue();
 });
 
 test('isValid returns false for expired coupon', function () {
     $coupon = Coupon::factory()->expired()->create();
 
-    expect($coupon->isValid())->toBeFalse();
+    expect(resolve(CouponService::class)->isValid($coupon))->toBeFalse();
 });
 
 test('isValid returns false when max uses reached', function () {
     $coupon = Coupon::factory()->create(['max_uses' => 5, 'used_count' => 5]);
 
-    expect($coupon->isValid())->toBeFalse();
+    expect(resolve(CouponService::class)->isValid($coupon))->toBeFalse();
 });
 
 test('percentage discount calculates correctly', function () {
@@ -46,7 +46,7 @@ test('isValid returns false for future start date coupon', function () {
         'expires_at' => now()->addMonth(),
     ]);
 
-    expect($coupon->isValid())->toBeFalse();
+    expect(resolve(CouponService::class)->isValid($coupon))->toBeFalse();
 });
 
 test('discount returns zero when below minimum order amount', function () {

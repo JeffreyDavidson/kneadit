@@ -2,9 +2,10 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum CateringInquiryStatus: string implements HasLabel
+enum CateringInquiryStatus: string implements HasColor, HasLabel
 {
     case Inquiry = 'inquiry';
     case Quoted = 'quoted';
@@ -20,6 +21,17 @@ enum CateringInquiryStatus: string implements HasLabel
             self::Confirmed => 'Confirmed',
             self::Completed => 'Completed',
             self::Cancelled => 'Cancelled',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Inquiry => 'gray',
+            self::Quoted => 'info',
+            self::Confirmed => 'success',
+            self::Completed => 'primary',
+            self::Cancelled => 'danger',
         };
     }
 }

@@ -11,6 +11,8 @@ test('it can be constructed with all properties', function () {
         storeWebsite: 'https://test.com',
         storeLogo: 'logos/test.png',
         storeTagline: 'Best baked goods',
+        brandColorPrimary: '#d4920c',
+        onboardingCompletedAt: null,
         storefrontTheme: 'classic',
         businessTagline: 'Fresh daily',
         aboutUsText: 'We bake.',
@@ -60,6 +62,8 @@ function makeTenantSettings(array $overrides = []): TenantSettings
         'storeWebsite' => null,
         'storeLogo' => null,
         'storeTagline' => null,
+        'brandColorPrimary' => '#d4920c',
+        'onboardingCompletedAt' => null,
         'storefrontTheme' => 'classic',
         'businessTagline' => null,
         'aboutUsText' => null,
@@ -146,6 +150,8 @@ test('defaultTagline returns generated tagline when not set', function () {
     $settings = makeTenantSettings([
         'storeName' => 'My Bakery',
         'storeTagline' => null,
+        'brandColorPrimary' => '#d4920c',
+        'onboardingCompletedAt' => null,
     ]);
 
     expect($settings->defaultTagline())->toBe('My Bakery — Fresh baked goods made with love');
@@ -168,6 +174,20 @@ test('leadTimeDays calculates days from hours', function () {
     expect(makeTenantSettings(['leadTimeHours' => 24])->leadTimeDays())->toBe(1)
         ->and(makeTenantSettings(['leadTimeHours' => 48])->leadTimeDays())->toBe(2)
         ->and(makeTenantSettings(['leadTimeHours' => 36])->leadTimeDays())->toBe(2);
+});
+
+test('brandColorPrimary is accessible', function () {
+    $settings = makeTenantSettings(['brandColorPrimary' => '#ff5500']);
+
+    expect($settings->brandColorPrimary)->toBe('#ff5500');
+});
+
+test('onboardingCompletedAt is accessible and nullable', function () {
+    $withValue = makeTenantSettings(['onboardingCompletedAt' => '2026-01-15 10:00:00']);
+    $withNull = makeTenantSettings(['onboardingCompletedAt' => null]);
+
+    expect($withValue->onboardingCompletedAt)->toBe('2026-01-15 10:00:00')
+        ->and($withNull->onboardingCompletedAt)->toBeNull();
 });
 
 test('it is bound as a singleton in the container', function () {

@@ -4,19 +4,11 @@ namespace App\Listeners;
 
 use App\Events\OrderCreated;
 use App\Mail\NewOrderNotificationMail;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class NotifyBakerOfNewOrderListener implements ShouldQueue
+class NotifyBakerOfNewOrderListener extends QueuedListener
 {
-    public int $timeout = 60;
-
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
-
     public function handle(OrderCreated $event): void
     {
         $bakerEmail = settings('store_email');

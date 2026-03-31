@@ -5,19 +5,11 @@ namespace App\Listeners;
 use App\Enums\SubscriptionTier;
 use App\Events\TenantOnboarded;
 use App\Mail\WelcomeBakerMail;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendWelcomeBakerEmailListener implements ShouldQueue
+class SendWelcomeBakerEmailListener extends QueuedListener
 {
-    public int $timeout = 60;
-
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
-
     public function handle(TenantOnboarded $event): void
     {
         Mail::to($event->user->email)->send(new WelcomeBakerMail(

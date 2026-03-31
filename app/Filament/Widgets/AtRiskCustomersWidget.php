@@ -2,12 +2,11 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\OrderStatus;
 use App\Models\Customer;
+use App\Queries\AtRiskCustomersQuery;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Contracts\Database\Query\Builder;
 
 class AtRiskCustomersWidget extends BaseWidget
 {
@@ -21,15 +20,9 @@ class AtRiskCustomersWidget extends BaseWidget
     {
         return $table
             ->query(
-                Customer::query()
-                    ->whereHas('orders', function (Builder $query) {
-                        $query->whereNotIn('status', [OrderStatus::Cancelled]);
-                    })
-                    ->whereDoesntHave('orders', function (Builder $query) {
-                        $query->whereNotIn('status', [OrderStatus::Cancelled])
-                            ->where('created_at', '>=', now()->subDays(config('analytics.at_risk_threshold_days', 30)));
-                    })
-                    ->limit(5),
+                AtRiskCustomersQuery::query(
+                    (int) config('analytics.at_risk_threshold_days', 30),
+                )->limit(5),
             )
             ->columns([
                 TextColumn::make('name')

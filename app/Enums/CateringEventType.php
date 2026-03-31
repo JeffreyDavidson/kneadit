@@ -2,9 +2,10 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum CateringEventType: string implements HasLabel
+enum CateringEventType: string implements HasColor, HasLabel
 {
     case Wedding = 'wedding';
     case Corporate = 'corporate';
@@ -20,6 +21,17 @@ enum CateringEventType: string implements HasLabel
             self::Birthday => '🎂 Birthday',
             self::Holiday => '🎄 Holiday',
             self::Other => '🎉 Other',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Wedding => 'danger',
+            self::Corporate => 'info',
+            self::Birthday => 'warning',
+            self::Holiday => 'success',
+            self::Other => 'gray',
         };
     }
 }

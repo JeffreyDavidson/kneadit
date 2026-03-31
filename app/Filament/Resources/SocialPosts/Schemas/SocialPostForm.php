@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SocialPosts\Schemas;
 
+use App\Actions\Content\GenerateSocialCaption;
 use App\Enums\SocialPlatform;
 use App\Enums\SocialPostStatus;
 use App\Models\Product;
@@ -18,7 +19,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Number;
-use Illuminate\Support\Str;
 
 class SocialPostForm
 {
@@ -73,24 +73,7 @@ class SocialPostForm
                                             return;
                                         }
 
-                                        $storeName = tenant()->store_name ?? tenant()->name ?? 'Our Bakery';
-                                        $storeHashtag = Str::replace(' ', '', ucwords($storeName));
-
-                                        $templates = [
-                                            'Fresh from the oven! Our {product} is made with love and the finest ingredients. Order yours today! 🍞✨ #{store_hashtag}',
-                                            "Have you tried our {product}? It's one of our favorites! DM us to place your order 💛 #{store_hashtag}",
-                                            'Weekend treat alert! 🎉 Our {product} ({price}) is calling your name. Link in bio to order! #{store_hashtag}',
-                                        ];
-
-                                        $template = $templates[array_rand($templates)];
-
-                                        $caption = Str::replace(
-                                            ['{product}', '{price}', '{store_hashtag}'],
-                                            [$product->name, Number::currency($product->price), $storeHashtag],
-                                            $template,
-                                        );
-
-                                        $set('caption', $caption);
+                                        $set('caption', resolve(GenerateSocialCaption::class)($product));
 
                                         Notification::make()
                                             ->title('Caption generated!')

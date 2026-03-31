@@ -25,7 +25,6 @@ class NewOrderNotificationMail extends BaseMailable
             view: 'emails.new-order-notification',
             with: [
                 'order' => $this->order,
-                'storeName' => settings('store_name', 'KneadIt Bakery'),
             ],
         );
     }

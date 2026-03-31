@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\EmailDeliveryStatus;
 use App\Models\EmailCampaign;
 use App\Models\EmailCampaignLog;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -19,7 +20,7 @@ class EmailCampaignLogFactory extends Factory
             'campaign_id' => EmailCampaign::factory(),
             'tenant_id' => null,
             'email' => fake()->safeEmail(),
-            'status' => 'sent',
+            'status' => EmailDeliveryStatus::Sent,
             'sent_at' => now(),
         ];
     }

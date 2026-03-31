@@ -132,9 +132,15 @@ arch('controllers should not use Mail facade directly')
     ->expect('Illuminate\Support\Facades\Mail')
     ->not->toBeUsedIn('App\Http\Controllers');
 
-arch('all listeners should implement ShouldQueue')
+arch('mail classes should not call settings() directly')
+    ->expect('settings')
+    ->not->toBeUsedIn('App\Mail')
+    ->ignoring('App\Mail\Concerns');
+
+arch('all listeners should extend QueuedListener')
     ->expect('App\Listeners')
-    ->toImplement('Illuminate\Contracts\Queue\ShouldQueue');
+    ->toExtend('App\Listeners\QueuedListener')
+    ->ignoring('App\Listeners\QueuedListener');
 
 test('all listeners have retry configuration', function () {
     $listenerFiles = glob(__DIR__ . '/../../app/Listeners/*.php');
@@ -144,11 +150,17 @@ test('all listeners have retry configuration', function () {
         $contents = file_get_contents($file);
         $name = basename($file, '.php');
 
-        if (! str_contains($contents, '$tries')) {
-            $violations[] = "{$name}: missing \$tries property";
+        if ($name === 'QueuedListener') {
+            continue;
         }
-        if (! str_contains($contents, '$backoff')) {
-            $violations[] = "{$name}: missing \$backoff property";
+
+        $extendsBase = str_contains($contents, 'extends QueuedListener');
+
+        if (! $extendsBase && ! str_contains($contents, '$tries')) {
+            $violations[] = "{$name}: missing \$tries property (extend QueuedListener or define directly)";
+        }
+        if (! $extendsBase && ! str_contains($contents, '$backoff')) {
+            $violations[] = "{$name}: missing \$backoff property (extend QueuedListener or define directly)";
         }
     }
 

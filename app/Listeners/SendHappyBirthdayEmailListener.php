@@ -4,19 +4,11 @@ namespace App\Listeners;
 
 use App\Events\CustomerBirthday;
 use App\Mail\HappyBirthdayMail;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendHappyBirthdayEmailListener implements ShouldQueue
+class SendHappyBirthdayEmailListener extends QueuedListener
 {
-    public int $timeout = 60;
-
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
-
     public function handle(CustomerBirthday $event): void
     {
         Mail::to($event->customer->email)->send(

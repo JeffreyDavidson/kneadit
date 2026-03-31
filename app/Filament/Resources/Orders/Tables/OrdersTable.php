@@ -36,24 +36,10 @@ class OrdersTable
                     ->sortable()
                     ->searchable(),
 
-                BadgeColumn::make('status')
-                    ->colors([
-                        'gray' => OrderStatus::Pending->value,
-                        'warning' => OrderStatus::Confirmed->value,
-                        'info' => OrderStatus::Baking->value,
-                        'success' => OrderStatus::Ready->value,
-                        'primary' => OrderStatus::Delivered->value,
-                        'danger' => OrderStatus::Cancelled->value,
-                    ]),
+                BadgeColumn::make('status'),
 
                 BadgeColumn::make('payment_status')
-                    ->label('Payment')
-                    ->colors([
-                        'danger' => PaymentStatus::Unpaid->value,
-                        'success' => PaymentStatus::Paid->value,
-                        'gray' => PaymentStatus::Cancelled->value,
-                        'warning' => PaymentStatus::Refunded->value,
-                    ]),
+                    ->label('Payment'),
 
                 TextColumn::make('total')
                     ->money('USD')

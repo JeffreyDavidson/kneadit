@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\EmailCampaignSegment;
 use App\Enums\EmailCampaignStatus;
 use App\Models\EmailCampaign;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +21,7 @@ class EmailCampaignFactory extends Factory
             'name' => fake()->words(3, true),
             'subject' => fake()->sentence(),
             'body' => fake()->paragraphs(3, true),
-            'target_segment' => 'all',
+            'target_segment' => EmailCampaignSegment::All,
             'status' => EmailCampaignStatus::Draft,
             'recipient_count' => 0,
         ];

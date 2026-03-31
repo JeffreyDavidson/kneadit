@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Settings\TenantSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -38,7 +39,9 @@ class EnsureOnboardingComplete
 
         // Check if onboarding is complete
         try {
-            if (settings('onboarding_completed_at') === null) {
+            $settings = app(TenantSettings::class);
+
+            if ($settings->onboardingCompletedAt === null) {
                 return redirect()->to(url('/admin/onboarding'));
             }
         } catch (\Throwable $e) {

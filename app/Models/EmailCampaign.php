@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EmailCampaignSegment;
 use App\Enums\EmailCampaignStatus;
 use Database\Factories\EmailCampaignFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,7 +16,7 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property string $subject
  * @property string $body
- * @property string $target_segment
+ * @property EmailCampaignSegment $target_segment
  * @property EmailCampaignStatus $status
  * @property Carbon|null $scheduled_at
  * @property Carbon|null $sent_at
@@ -64,6 +65,7 @@ class EmailCampaign extends Model
     protected function casts(): array
     {
         return [
+            'target_segment' => EmailCampaignSegment::class,
             'status' => EmailCampaignStatus::class,
             'scheduled_at' => 'datetime',
             'sent_at' => 'datetime',

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\CateringInquiries\Tables;
 
+use App\Actions\Customers\TransitionCateringInquiryStatus;
 use App\Enums\CateringEventType;
 use App\Enums\CateringInquiryStatus;
-use App\Events\CateringQuoteRequested;
 use App\Models\CateringInquiry;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -26,15 +26,7 @@ class CateringInquiriesTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('event_type')
-                    ->badge()
-                    ->color(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
-                        CateringEventType::Wedding->value => 'danger',
-                        CateringEventType::Corporate->value => 'info',
-                        CateringEventType::Birthday->value => 'warning',
-                        CateringEventType::Holiday->value => 'success',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (mixed $state): string => ($state instanceof CateringEventType ? $state->getLabel() : CateringEventType::tryFrom($state)?->getLabel()) ?? ucfirst($state)),
+                    ->badge(),
                 TextColumn::make('event_date')
                     ->date()
                     ->sortable(),
@@ -42,16 +34,7 @@ class CateringInquiriesTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (mixed $state): string => match ($state instanceof \BackedEnum ? $state->value : $state) {
-                        CateringInquiryStatus::Inquiry->value => 'gray',
-                        CateringInquiryStatus::Quoted->value => 'info',
-                        CateringInquiryStatus::Confirmed->value => 'success',
-                        CateringInquiryStatus::Completed->value => 'primary',
-                        CateringInquiryStatus::Cancelled->value => 'danger',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (mixed $state): string => ($state instanceof CateringInquiryStatus ? $state->getLabel() : CateringInquiryStatus::tryFrom($state)?->getLabel()) ?? ucfirst($state)),
+                    ->badge(),
                 TextColumn::make('quoted_amount')
                     ->money('usd')
                     ->placeholder('—')
@@ -98,17 +81,14 @@ class CateringInquiriesTable
                     ->modalHeading('Send Quote to Customer')
                     ->modalDescription(fn (CateringInquiry $record) => "Send a quote of \${$record->quoted_amount} to {$record->customer_email}?")
                     ->visible(fn (CateringInquiry $record) => $record->quoted_amount && in_array($record->status, [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Quoted]))
-                    ->action(function (CateringInquiry $record) {
-                        CateringQuoteRequested::dispatch($record);
-                        $record->update(['status' => CateringInquiryStatus::Quoted]);
-                    }),
+                    ->action(fn (CateringInquiry $record) => resolve(TransitionCateringInquiryStatus::class)($record, CateringInquiryStatus::Quoted)),
                 Action::make('confirm')
                     ->label('Confirm')
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
                     ->requiresConfirmation()
                     ->visible(fn (CateringInquiry $record) => $record->status === CateringInquiryStatus::Quoted)
-                    ->action(fn (CateringInquiry $record) => $record->update(['status' => CateringInquiryStatus::Confirmed])),
+                    ->action(fn (CateringInquiry $record) => resolve(TransitionCateringInquiryStatus::class)($record, CateringInquiryStatus::Confirmed)),
                 EditAction::make()
                     ->slideOver()
                     ->modalWidth('md'),

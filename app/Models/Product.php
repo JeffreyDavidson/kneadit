@@ -203,7 +203,7 @@ class Product extends Model
                     return true;
                 }
 
-                return $seasonalItems->contains(fn (SeasonalItem $item) => $item->isCurrentlyAvailable());
+                return $seasonalItems->contains(fn (SeasonalItem $item) => $item->is_currently_available);
             },
         );
     }
@@ -217,7 +217,7 @@ class Product extends Model
                 if (! $seasonal) {
                     return null;
                 }
-                if ($seasonal->isCurrentlyAvailable()) {
+                if ($seasonal->is_currently_available) {
                     return 'Limited Time';
                 }
 

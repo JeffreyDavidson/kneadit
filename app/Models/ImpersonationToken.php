@@ -33,9 +33,4 @@ class ImpersonationToken extends Model
     {
         return $this->belongsTo(Tenant::class);
     }
-
-    public function isExpired(): bool
-    {
-        return $this->expires_at->isPast();
-    }
 }

@@ -5,19 +5,11 @@ namespace App\Listeners;
 use App\Enums\SenderType;
 use App\Events\OrderMessageSent;
 use App\Mail\NewOrderMessageMail;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class SendOrderMessageEmailListener implements ShouldQueue
+class SendOrderMessageEmailListener extends QueuedListener
 {
-    public int $timeout = 60;
-
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
-
     public function handle(OrderMessageSent $event): void
     {
         $message = $event->message;

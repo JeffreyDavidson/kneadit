@@ -91,7 +91,7 @@
                 @endphp
                 @forelse ($allItems as $item)
                     @php
-                        $isActive = $item->isCurrentlyAvailable();
+                        $isActive = $item->is_currently_available;
                         $isPast = $item->available_until < $now;
                     @endphp
                     <div class="flex items-center gap-3 py-2">

@@ -7,10 +7,15 @@ use App\Events\StaffInvitationSent;
 use App\Exceptions\StaffInvitationException;
 use App\Models\StaffInvitation;
 use App\Models\User;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Str;
 
 class SendStaffInvitation
 {
+    public function __construct(
+        private TenantSettings $settings,
+    ) {}
+
     /**
      * @throws StaffInvitationException
      */
@@ -37,7 +42,7 @@ class SendStaffInvitation
             'invited_by' => $invitedBy,
         ]);
 
-        $storeName = settings('store_name', 'Our Bakery');
+        $storeName = $this->settings->storeName;
         $acceptUrl = route('invitation.show', $invitation->token);
 
         StaffInvitationSent::dispatch($invitation, $storeName, $acceptUrl);

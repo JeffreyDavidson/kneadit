@@ -2,6 +2,7 @@
 
 namespace App\Builders;
 
+use App\Enums\OrderStatus;
 use App\Models\Customer;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -10,8 +11,10 @@ class CustomerQueryBuilder extends Builder
 {
     public function atRisk(int $days = 30): static
     {
-        $this->whereHas('orders')
-            ->whereDoesntHave('orders', fn (Builder $q) => $q->where('created_at', '>=', now()->subDays($days)));
+        $this->whereHas('orders', fn (Builder $q) => $q->whereNotIn('status', [OrderStatus::Cancelled]))
+            ->whereDoesntHave('orders', fn (Builder $q) => $q
+                ->whereNotIn('status', [OrderStatus::Cancelled])
+                ->where('created_at', '>=', now()->subDays($days)));
 
         return $this;
     }

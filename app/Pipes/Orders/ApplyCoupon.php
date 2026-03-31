@@ -20,7 +20,7 @@ class ApplyCoupon
 
         $coupon = Coupon::query()->lockForUpdate()->find($payload->data->couponId);
 
-        if ($coupon && $coupon->isValid()) {
+        if ($coupon && $this->couponService->isValid($coupon)) {
             $payload->discountAmount = $this->couponService->calculateDiscount($coupon, $payload->subtotal);
             $payload->couponId = $coupon->id;
             $payload->total = max(0, $payload->total - $payload->discountAmount);
