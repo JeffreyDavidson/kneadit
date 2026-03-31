@@ -182,7 +182,7 @@ Route::middleware([
                 Route::get('capacity/{date}', ApiCapacityController::class);
                 Route::get('reviews', [ApiReviewController::class, 'index']);
                 Route::get('gallery', ApiGalleryController::class);
-                Route::get('favorites', [ApiFavoriteController::class, 'index']);
+                Route::get('favorites', [ApiFavoriteController::class, 'index'])->name('api.favorites.index');
             });
 
             // Write endpoints — tighter limit
@@ -191,7 +191,7 @@ Route::middleware([
                 Route::post('coupon/validate', CouponValidationController::class);
                 Route::post('reviews', [ApiReviewController::class, 'store']);
                 Route::post('contact', ApiContactController::class);
-                Route::post('favorites/toggle', [ApiFavoriteController::class, 'store']);
+                Route::post('favorites/toggle', [ApiFavoriteController::class, 'store'])->name('api.favorites.toggle');
                 Route::post('waitlist', ApiWaitlistController::class);
             });
         });
