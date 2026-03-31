@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Pipes\Orders;
+
+use App\Enums\DeliveryType;
+use App\Models\Product;
+use Closure;
+
+class CalculateOrderTotals
+{
+    public function handle(OrderPipelineData $payload, Closure $next): mixed
+    {
+        $productIds = array_column($payload->data->items, 'product_id');
+        $products = Product::query()->findOrFail($productIds)->keyBy('id');
+
+        foreach ($payload->data->items as $item) {
+            $product = $products->get($item['product_id']);
+            if (! $product || ! $product->is_active) {
+                continue;
+            }
+
+            $lineTotal = $product->price * $item['quantity'];
+            $payload->subtotal += $lineTotal;
+
+            $payload->orderItems[] = [
+                'product_id' => $product->id,
+                'quantity' => $item['quantity'],
+                'unit_price' => $product->price,
+                'total_price' => $lineTotal,
+            ];
+        }
+
+        if (empty($payload->orderItems)) {
+            $payload->cancelled = true;
+
+            return $payload;
+        }
+
+        if ($payload->data->deliveryType === DeliveryType::Delivery->value) {
+            $fees = config('kneadit.delivery_fees', []);
+            $payload->deliveryFee = $fees[$payload->data->deliveryTier] ?? 0;
+        }
+
+        $payload->total = $payload->subtotal + $payload->deliveryFee;
+
+        return $next($payload);
+    }
+}
