@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\WaitlistStatus;
 use App\Models\Product;
 use App\Models\WaitlistEntry;
 use Illuminate\Database\Seeder;
@@ -31,7 +32,7 @@ class WaitlistEntrySeeder extends Seeder
                 'product_name' => 'Chocolate Ganache Torte',
                 'requested_date' => Date::now()->addDays(3),
                 'notes' => 'Need for anniversary dinner party - serves 8 people',
-                'status' => 'waiting',
+                'status' => WaitlistStatus::Waiting,
             ],
             [
                 'customer_name' => 'Mark Thompson',
@@ -40,7 +41,7 @@ class WaitlistEntrySeeder extends Seeder
                 'product_name' => 'Classic Vanilla Birthday Cake',
                 'requested_date' => Date::now()->addDays(5),
                 'notes' => 'Son\'s 10th birthday - would like blue and green decorations',
-                'status' => 'notified',
+                'status' => WaitlistStatus::Notified,
             ],
             [
                 'customer_name' => 'Sarah Wilson',
@@ -49,7 +50,7 @@ class WaitlistEntrySeeder extends Seeder
                 'product_name' => 'Wedding Cake Consultation',
                 'requested_date' => Date::now()->addDays(7),
                 'notes' => 'Planning June wedding, 150 guests. Prefer vanilla with fresh flowers.',
-                'status' => 'converted',
+                'status' => WaitlistStatus::Converted,
             ],
             [
                 'customer_name' => 'David Garcia',
@@ -58,7 +59,7 @@ class WaitlistEntrySeeder extends Seeder
                 'product_name' => 'Custom Birthday Cake',
                 'requested_date' => Date::now()->addDays(10),
                 'notes' => 'Wife\'s 40th birthday - chocolate cake with raspberry filling',
-                'status' => 'waiting',
+                'status' => WaitlistStatus::Waiting,
             ],
             [
                 'customer_name' => 'Lisa Rodriguez',
@@ -67,7 +68,7 @@ class WaitlistEntrySeeder extends Seeder
                 'product_name' => 'Pumpkin Spice Cheesecake',
                 'requested_date' => Date::now()->addDays(14),
                 'notes' => 'Fall dinner party dessert - need it to serve 12',
-                'status' => 'removed',
+                'status' => WaitlistStatus::Removed,
             ],
         ];
 
