@@ -58,6 +58,8 @@ class BlockedDatesTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('date', 'asc');
+            ->defaultSort('date', 'asc')
+            ->emptyStateHeading('No blocked dates')
+            ->emptyStateDescription('Block specific dates to prevent orders.');
     }
 }

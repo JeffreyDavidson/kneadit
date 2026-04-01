@@ -55,6 +55,8 @@ class LoyaltyRewardsTable
                     ->slideOver()
                     ->modalWidth('md'),
             ])
-            ->defaultSort('points_required');
+            ->defaultSort('points_required')
+            ->emptyStateHeading('No loyalty rewards yet')
+            ->emptyStateDescription('Create rewards for your loyalty program.');
     }
 }

@@ -67,6 +67,8 @@ class RecipesTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('name');
+            ->defaultSort('name')
+            ->emptyStateHeading('No recipes yet')
+            ->emptyStateDescription('Add recipes to track ingredient costs and manage production.');
     }
 }

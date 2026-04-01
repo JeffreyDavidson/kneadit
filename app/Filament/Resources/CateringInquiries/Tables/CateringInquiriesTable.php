@@ -92,6 +92,8 @@ class CateringInquiriesTable
                 EditAction::make()
                     ->slideOver()
                     ->modalWidth('md'),
-            ]);
+            ])
+            ->emptyStateHeading('No catering inquiries yet')
+            ->emptyStateDescription('Inquiries will appear here when customers submit them.');
     }
 }

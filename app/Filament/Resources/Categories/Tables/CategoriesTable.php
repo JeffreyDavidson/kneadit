@@ -57,6 +57,8 @@ class CategoriesTable
                 ]),
             ])
             ->reorderable('sort_order')
-            ->defaultSort('sort_order');
+            ->defaultSort('sort_order')
+            ->emptyStateHeading('No categories yet')
+            ->emptyStateDescription('Create categories to organize your products.');
     }
 }

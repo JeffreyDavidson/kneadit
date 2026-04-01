@@ -116,6 +116,8 @@ class ReviewsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('No reviews yet')
+            ->emptyStateDescription('Customer reviews will appear here.');
     }
 }

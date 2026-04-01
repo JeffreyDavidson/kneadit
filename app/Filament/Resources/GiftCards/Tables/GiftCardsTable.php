@@ -81,6 +81,8 @@ class GiftCardsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('No gift cards yet')
+            ->emptyStateDescription('Gift cards purchased by customers will appear here.');
     }
 }

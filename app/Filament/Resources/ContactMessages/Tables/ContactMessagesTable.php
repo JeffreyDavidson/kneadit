@@ -59,6 +59,8 @@ class ContactMessagesTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('No messages yet')
+            ->emptyStateDescription('Customer messages will appear here.');
     }
 }
