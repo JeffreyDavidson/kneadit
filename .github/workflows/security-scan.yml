@@ -1,0 +1,39 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: '0 9 * * 1' # Weekly on Monday at 9am UTC
+
+jobs:
+  ward:
+    name: Ward Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+
+      - name: Install Ward
+        run: go install github.com/eljakani/ward@latest
+
+      - name: Initialize Ward
+        run: ward init
+
+      - name: Run security scan
+        run: ward scan . --output sarif --fail-on high
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ward-report.sarif
