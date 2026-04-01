@@ -44,6 +44,10 @@ test('it returns store info from TenantSettings', function () {
         announcementType: 'info',
         showPolicies: false,
         cancellationPolicy: '',
+        depositPolicy: '',
+        refundPolicy: '',
+        pickupPolicy: '',
+        additionalTerms: '',
     );
 
     $controller = new StoreInfoController;

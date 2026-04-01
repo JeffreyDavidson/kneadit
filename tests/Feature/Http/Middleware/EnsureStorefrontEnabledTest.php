@@ -60,6 +60,10 @@ test('disabled storefront view receives storeName from TenantSettings', function
         announcementType: 'info',
         showPolicies: false,
         cancellationPolicy: '',
+        depositPolicy: '',
+        refundPolicy: '',
+        pickupPolicy: '',
+        additionalTerms: '',
     );
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);
 

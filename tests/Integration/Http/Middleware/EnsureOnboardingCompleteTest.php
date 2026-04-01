@@ -78,6 +78,10 @@ test('redirects to onboarding when onboardingCompletedAt is null using TenantSet
         announcementType: 'info',
         showPolicies: false,
         cancellationPolicy: '',
+        depositPolicy: '',
+        refundPolicy: '',
+        pickupPolicy: '',
+        additionalTerms: '',
     );
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);
 

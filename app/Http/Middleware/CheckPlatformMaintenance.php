@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -44,13 +43,11 @@ class CheckPlatformMaintenance
 
     protected function detectService(Request $request): string
     {
-        $path = $request->path();
-
-        if (Str::startsWith($path, 'api/') || $request->is('api/*')) {
+        if ($request->is('api/*')) {
             return 'api';
         }
 
-        if (Str::startsWith($path, 'admin') || $request->is('admin/*')) {
+        if ($request->is('admin/*', 'admin')) {
             return 'admin';
         }
 

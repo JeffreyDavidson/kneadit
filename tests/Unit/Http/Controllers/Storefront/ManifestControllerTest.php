@@ -44,6 +44,10 @@ test('it uses brandColorPrimary from TenantSettings for theme_color', function (
         announcementType: 'info',
         showPolicies: false,
         cancellationPolicy: '',
+        depositPolicy: '',
+        refundPolicy: '',
+        pickupPolicy: '',
+        additionalTerms: '',
     );
 
     $controller = new ManifestController;

@@ -58,6 +58,10 @@ final readonly class TenantSettings
         public string $announcementType,
         public bool $showPolicies,
         public string $cancellationPolicy,
+        public string $depositPolicy,
+        public string $refundPolicy,
+        public string $pickupPolicy,
+        public string $additionalTerms,
     ) {}
 
     public static function resolve(): self
@@ -102,6 +106,10 @@ final readonly class TenantSettings
             announcementType: (string) settings('announcement_type', 'info'),
             showPolicies: settings('show_policies_on_storefront', '0') === '1',
             cancellationPolicy: (string) settings('cancellation_policy', ''),
+            depositPolicy: (string) settings('deposit_policy', ''),
+            refundPolicy: (string) settings('refund_policy', ''),
+            pickupPolicy: (string) settings('pickup_policy', ''),
+            additionalTerms: (string) settings('additional_terms', ''),
         );
     }
 

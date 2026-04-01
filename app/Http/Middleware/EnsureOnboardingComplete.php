@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Services\Settings\TenantSettings;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,6 +46,11 @@ class EnsureOnboardingComplete
                 return redirect()->to(url('/admin/onboarding'));
             }
         } catch (\Throwable $e) {
+            Log::warning('Failed to check onboarding status', [
+                'tenant' => tenant()?->getTenantKey(),
+                'error' => $e->getMessage(),
+            ]);
+
             return $next($request);
         }
 

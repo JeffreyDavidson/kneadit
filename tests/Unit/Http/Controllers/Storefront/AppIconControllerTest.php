@@ -44,6 +44,10 @@ test('it generates icon using brandColorPrimary from TenantSettings', function (
         announcementType: 'info',
         showPolicies: false,
         cancellationPolicy: '',
+        depositPolicy: '',
+        refundPolicy: '',
+        pickupPolicy: '',
+        additionalTerms: '',
     );
 
     $controller = new AppIconController;
