@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\CouponType;
 use App\Models\Coupon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Date;
@@ -13,7 +14,7 @@ class CouponSeeder extends Seeder
         $coupons = [
             [
                 'code' => 'WELCOME10',
-                'type' => 'percentage',
+                'type' => CouponType::Percentage,
                 'value' => 10.00,
                 'min_order_amount' => 25.00,
                 'max_uses' => 100,
@@ -24,7 +25,7 @@ class CouponSeeder extends Seeder
             ],
             [
                 'code' => 'FIRST5',
-                'type' => 'fixed',
+                'type' => CouponType::Fixed,
                 'value' => 5.00,
                 'min_order_amount' => 15.00,
                 'max_uses' => 50,
@@ -35,7 +36,7 @@ class CouponSeeder extends Seeder
             ],
             [
                 'code' => 'HOLIDAY20',
-                'type' => 'percentage',
+                'type' => CouponType::Percentage,
                 'value' => 20.00,
                 'min_order_amount' => 40.00,
                 'max_uses' => 200,
@@ -46,7 +47,7 @@ class CouponSeeder extends Seeder
             ],
             [
                 'code' => 'BAKER15',
-                'type' => 'percentage',
+                'type' => CouponType::Percentage,
                 'value' => 15.00,
                 'min_order_amount' => 30.00,
                 'max_uses' => null, // Unlimited uses
@@ -57,7 +58,7 @@ class CouponSeeder extends Seeder
             ],
             [
                 'code' => 'FREESHIP',
-                'type' => 'fixed',
+                'type' => CouponType::Fixed,
                 'value' => 3.00, // Fixed amount for delivery fee
                 'min_order_amount' => 20.00,
                 'max_uses' => 75,

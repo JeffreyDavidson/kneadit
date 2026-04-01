@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -22,9 +25,7 @@ class OrderSeeder extends Seeder
         $products = Product::all();
         $user = User::query()->first(); // Assuming we have at least one user
 
-        $statuses = ['pending', 'confirmed', 'baking', 'ready', 'delivered', 'cancelled'];
-        $paymentStatuses = ['unpaid', 'paid'];
-        $paymentMethods = ['cash', 'paypal'];
+        $paymentMethods = [PaymentMethod::Cash, PaymentMethod::PayPal];
 
         $deliveryAddresses = [
             '123 Main Street, Orlando, FL 32801',
@@ -40,20 +41,20 @@ class OrderSeeder extends Seeder
 
             // Weight the status distribution - most delivered, fewer cancelled
             $statusWeights = [
-                'delivered' => 50,  // 50% delivered
-                'pending' => 15,    // 15% pending
-                'confirmed' => 15,  // 15% confirmed
-                'baking' => 10,     // 10% baking
-                'ready' => 8,       // 8% ready
-                'cancelled' => 2,   // 2% cancelled
+                OrderStatus::Delivered->value => 50,  // 50% delivered
+                OrderStatus::Pending->value => 15,    // 15% pending
+                OrderStatus::Confirmed->value => 15,  // 15% confirmed
+                OrderStatus::Baking->value => 10,     // 10% baking
+                OrderStatus::Ready->value => 8,       // 8% ready
+                OrderStatus::Cancelled->value => 2,   // 2% cancelled
             ];
 
             $status = $this->weightedRandomSelect($statusWeights);
 
             // Payment status logic - most paid, some unpaid for recent orders
-            $paymentStatus = 'paid';
-            if ($requestedDate->isAfter(Date::now()->subDays(7)) && in_array($status, ['pending', 'confirmed'])) {
-                $paymentStatus = rand(0, 100) < 30 ? 'unpaid' : 'paid'; // 30% chance unpaid for recent pending/confirmed
+            $paymentStatus = PaymentStatus::Paid;
+            if ($requestedDate->isAfter(Date::now()->subDays(7)) && in_array($status, [OrderStatus::Pending->value, OrderStatus::Confirmed->value])) {
+                $paymentStatus = rand(0, 100) < 30 ? PaymentStatus::Unpaid : PaymentStatus::Paid; // 30% chance unpaid for recent pending/confirmed
             }
 
             $isDelivery = rand(0, 100) < 40; // 40% delivery, 60% pickup

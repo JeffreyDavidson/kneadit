@@ -44,7 +44,7 @@ class ProductSeeder extends Seeder
                 'category' => 'Artisan Breads',
                 'description' => 'Soft, slightly sweet wheat bread enriched with local honey.',
                 'price' => 6.00,
-                'cost' => null,
+                'cost' => 2.40,
                 'is_featured' => false,
             ],
 
@@ -70,7 +70,7 @@ class ProductSeeder extends Seeder
                 'category' => 'Gourmet Cookies',
                 'description' => 'Chewy oatmeal cookies loaded with dried cranberries and toasted walnuts.',
                 'price' => 3.00,
-                'cost' => null,
+                'cost' => 1.20,
                 'is_featured' => false,
             ],
             [
@@ -104,7 +104,7 @@ class ProductSeeder extends Seeder
                 'category' => 'Celebration Cakes',
                 'description' => 'Southern classic with cream cheese frosting and a hint of cocoa.',
                 'price' => 42.00,
-                'cost' => null,
+                'cost' => 15.00,
                 'is_featured' => false,
             ],
             [
@@ -138,7 +138,7 @@ class ProductSeeder extends Seeder
                 'category' => 'Artisan Cupcakes',
                 'description' => 'Classic vanilla cupcakes made with real vanilla beans and fluffy frosting.',
                 'price' => 3.75,
-                'cost' => null,
+                'cost' => 1.50,
                 'is_featured' => false,
             ],
             [
@@ -180,7 +180,7 @@ class ProductSeeder extends Seeder
                 'category' => 'Classic Pies',
                 'description' => 'Rustic free-form pie with seasonal berries and a buttery crust.',
                 'price' => 15.00,
-                'cost' => null,
+                'cost' => 5.25,
                 'is_featured' => false,
             ],
 
@@ -214,7 +214,7 @@ class ProductSeeder extends Seeder
                 'category' => 'French Pastries',
                 'description' => 'Choux pastry filled with vanilla pastry cream and topped with chocolate glaze.',
                 'price' => 5.00,
-                'cost' => null,
+                'cost' => 1.80,
                 'is_featured' => false,
             ],
 
@@ -240,7 +240,7 @@ class ProductSeeder extends Seeder
                 'category' => 'Fresh Muffins',
                 'description' => 'Hearty muffins with carrots, raisins, walnuts, and warm spices.',
                 'price' => 3.75,
-                'cost' => null,
+                'cost' => 1.35,
                 'is_featured' => false,
             ],
             [
@@ -274,7 +274,7 @@ class ProductSeeder extends Seeder
                 'category' => 'Seasonal Specials',
                 'description' => 'Adorable lamb-shaped vanilla cake covered in coconut "wool".',
                 'price' => 25.00,
-                'cost' => null,
+                'cost' => 9.00,
                 'is_featured' => false,
             ],
 
@@ -300,7 +300,7 @@ class ProductSeeder extends Seeder
                 'category' => 'Custom Orders',
                 'description' => 'Assorted pastries and baked goods perfect for office meetings and events.',
                 'price' => 45.00,
-                'cost' => null,
+                'cost' => 18.00,
                 'is_featured' => false,
             ],
         ];
