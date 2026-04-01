@@ -15,7 +15,7 @@ beforeEach(function () {
 
 test('tracking page loads', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/track');
+        ->get(route('order.track', absolute: false));
 
     $response->assertOk();
 });
@@ -31,7 +31,7 @@ test('tracking with valid email returns orders', function () {
         ->create(['order_number' => 'KN260308A001']);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/track', [
+        ->post(route('order.track.lookup', absolute: false), [
             'email' => 'jane@example.com',
         ]);
 
@@ -41,37 +41,35 @@ test('tracking with valid email returns orders', function () {
 
 test('tracking with no orders shows empty state', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/track', [
+        ->post(route('order.track.lookup', absolute: false), [
             'email' => 'nobody@example.com',
         ]);
 
     $response->assertOk();
 });
 
-test('tracking shows correct status for each order stage', function () {
+test('tracking shows correct status for each order stage', function (string $status) {
     $user = User::factory()->owner()->create();
     $customer = Customer::factory()->create(['email' => 'jane@example.com']);
 
-    foreach (['pending', 'confirmed', 'baking', 'ready', 'delivered'] as $status) {
-        Order::factory()
-            ->for($customer)
-            ->recycle($user)
-            ->create([
-                'order_number' => 'KN' . strtoupper($status),
-                'status' => $status,
-                'subtotal' => 10.00,
-                'total' => 10.00,
-            ]);
-    }
+    Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->create([
+            'order_number' => 'KN' . strtoupper($status),
+            'status' => $status,
+            'subtotal' => 10.00,
+            'total' => 10.00,
+        ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/track', [
+        ->post(route('order.track.lookup', absolute: false), [
             'email' => 'jane@example.com',
         ]);
 
     $response->assertOk();
-    expect(Order::query()->where('customer_id', $customer->id)->count())->toBe(5);
-});
+    expect(Order::query()->where('customer_id', $customer->id)->count())->toBe(1);
+})->with(['pending', 'confirmed', 'baking', 'ready', 'delivered']);
 
 test('orders display items and totals', function () {
     $user = User::factory()->owner()->create();
@@ -104,7 +102,7 @@ test('orders display items and totals', function () {
         ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/track', [
+        ->post(route('order.track.lookup', absolute: false), [
             'email' => 'jane@example.com',
         ]);
 
@@ -115,7 +113,7 @@ test('orders display items and totals', function () {
 
 test('tracking requires email', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/track', []);
+        ->post(route('order.track.lookup', absolute: false), []);
 
     $response->assertSessionHasErrors('email');
 });

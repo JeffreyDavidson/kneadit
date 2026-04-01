@@ -2,9 +2,9 @@
 
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
-use App\Mail\OrderBakingMail;
-use App\Mail\OrderConfirmedMail;
-use App\Mail\OrderReadyMail;
+use App\Mail\Orders\OrderBakingMail;
+use App\Mail\Orders\OrderConfirmedMail;
+use App\Mail\Orders\OrderReadyMail;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;

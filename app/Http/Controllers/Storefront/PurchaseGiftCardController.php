@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Actions\GiftCards\CreateGiftCard;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PurchaseGiftCardRequest;
+use App\Http\Requests\Order\PurchaseGiftCardRequest;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
 

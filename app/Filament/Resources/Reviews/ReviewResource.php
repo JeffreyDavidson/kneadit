@@ -23,6 +23,8 @@ class ReviewResource extends Resource
 
     protected static ?string $model = Review::class;
 
+    protected static ?string $recordTitleAttribute = 'customer_name';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';

@@ -1,7 +1,7 @@
 <?php
 
-use App\Mail\NewSubscriberNotificationMail;
-use App\Mail\WelcomeBakerMail;
+use App\Mail\Platform\NewSubscriberNotificationMail;
+use App\Mail\Platform\WelcomeBakerMail;
 
 test('welcome baker email has correct subject', function () {
     $mail = new WelcomeBakerMail(

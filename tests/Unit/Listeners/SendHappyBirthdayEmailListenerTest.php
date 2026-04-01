@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\CustomerBirthday;
-use App\Listeners\SendHappyBirthdayEmailListener;
-use App\Mail\HappyBirthdayMail;
+use App\Events\Customers\CustomerBirthday;
+use App\Listeners\Customers\SendHappyBirthdayEmailListener;
+use App\Mail\Customers\HappyBirthdayMail;
 use App\Models\Coupon;
 use App\Models\Customer;
 use Illuminate\Foundation\Testing\RefreshDatabase;

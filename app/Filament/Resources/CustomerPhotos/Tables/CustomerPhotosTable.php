@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CustomerPhotos\Tables;
 
+use App\Actions\Content\ApproveCustomerPhoto;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -79,7 +80,7 @@ class CustomerPhotosTable
                     BulkAction::make('approve')
                         ->label('Approve')
                         ->icon(Heroicon::OutlinedCheckCircle)
-                        ->action(fn (Collection $records) => $records->each->update(['is_approved' => true]))
+                        ->action(fn (Collection $records) => $records->each(fn ($record) => resolve(ApproveCustomerPhoto::class)($record)))
                         ->deselectRecordsAfterCompletion()
                         ->requiresConfirmation(),
                     DeleteBulkAction::make(),

@@ -3,7 +3,7 @@
 namespace App\Actions\Orders;
 
 use App\Enums\OrderStatus;
-use App\Events\OrderStatusChanged;
+use App\Events\Orders\OrderStatusChanged;
 use App\Exceptions\InvalidOrderTransitionException;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;

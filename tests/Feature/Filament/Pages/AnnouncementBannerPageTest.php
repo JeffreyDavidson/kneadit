@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\AnnouncementBanner;
+use App\Filament\Pages\Engagement\AnnouncementBanner;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

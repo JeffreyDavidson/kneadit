@@ -13,7 +13,7 @@
                 </a>
             @endif
 
-            <span class="text-sm font-medium" style="color: var(--warm-500);">
+            <span class="text-sm font-medium text-warm-500">
                 {{ $paginator->currentPage() }} / {{ $paginator->lastPage() }}
             </span>
 
@@ -55,7 +55,7 @@
                 @foreach ($elements as $element)
                     @if (is_string($element))
                         <span aria-disabled="true">
-                            <span class="inline-flex items-center justify-center w-10 h-10 text-sm font-medium" style="color: var(--warm-400);">{{ $element }}</span>
+                            <span class="inline-flex items-center justify-center w-10 h-10 text-sm font-medium text-warm-400">{{ $element }}</span>
                         </span>
                     @endif
 
@@ -63,7 +63,7 @@
                         @foreach ($element as $page => $url)
                             @if ($page == $paginator->currentPage())
                                 <span aria-current="page">
-                                    <span class="inline-flex items-center justify-center w-10 h-10 text-sm font-bold rounded-full" style="background: var(--warm-500); color: var(--warm-900);">{{ $page }}</span>
+                                    <span class="inline-flex items-center justify-center w-10 h-10 text-sm font-bold rounded-full bg-warm-500 text-warm-900">{{ $page }}</span>
                                 </span>
                             @else
                                 <a href="{{ $url }}" class="inline-flex items-center justify-center w-10 h-10 text-sm font-medium rounded-full transition-all duration-200 hover:scale-110" style="background: transparent; color: var(--warm-600);"
@@ -97,7 +97,7 @@
                 @endif
             </div>
 
-            <p class="text-sm" style="color: var(--warm-500);">
+            <p class="text-sm text-warm-500">
                 Showing {{ $paginator->firstItem() ?? 0 }}–{{ $paginator->lastItem() ?? 0 }} of {{ $paginator->total() }}
             </p>
         </div>

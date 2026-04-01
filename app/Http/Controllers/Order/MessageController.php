@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Order;
 
 use App\Actions\Orders\SendOrderMessage;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreOrderMessageRequest;
+use App\Http\Requests\Storefront\StoreOrderMessageRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;

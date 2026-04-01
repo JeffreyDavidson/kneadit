@@ -1,10 +1,10 @@
 <?php
 
-use App\Events\OrderCreated;
-use App\Listeners\NotifyBakerOfNewOrderListener;
-use App\Listeners\SendOrderPlacedEmailListener;
-use App\Mail\NewOrderNotificationMail;
-use App\Mail\OrderPlacedMail;
+use App\Events\Orders\OrderCreated;
+use App\Listeners\Orders\NotifyBakerOfNewOrderListener;
+use App\Listeners\Orders\SendOrderPlacedEmailListener;
+use App\Mail\Orders\NewOrderNotificationMail;
+use App\Mail\Orders\OrderPlacedMail;
 use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -43,11 +43,11 @@ test('SendOrderStatusEmailListener sends confirmed email', function () {
 
     $customer = Customer::factory()->create(['email' => 'buyer@example.com']);
     $order = Order::factory()->recycle($customer)->create();
-    $event = new App\Events\OrderStatusChanged($order, App\Enums\OrderStatus::Pending, App\Enums\OrderStatus::Confirmed);
+    $event = new App\Events\Orders\OrderStatusChanged($order, App\Enums\OrderStatus::Pending, App\Enums\OrderStatus::Confirmed);
 
-    (new App\Listeners\SendOrderStatusEmailListener)->handle($event);
+    (new App\Listeners\Orders\SendOrderStatusEmailListener)->handle($event);
 
-    Mail::assertQueued(App\Mail\OrderConfirmedMail::class, fn ($mail) => $mail->hasTo('buyer@example.com'));
+    Mail::assertQueued(App\Mail\Orders\OrderConfirmedMail::class, fn ($mail) => $mail->hasTo('buyer@example.com'));
 });
 
 test('SendOrderStatusEmailListener sends delivered email', function () {
@@ -55,9 +55,9 @@ test('SendOrderStatusEmailListener sends delivered email', function () {
 
     $customer = Customer::factory()->create(['email' => 'buyer@example.com']);
     $order = Order::factory()->recycle($customer)->create();
-    $event = new App\Events\OrderStatusChanged($order, App\Enums\OrderStatus::Ready, App\Enums\OrderStatus::Delivered);
+    $event = new App\Events\Orders\OrderStatusChanged($order, App\Enums\OrderStatus::Ready, App\Enums\OrderStatus::Delivered);
 
-    (new App\Listeners\SendOrderStatusEmailListener)->handle($event);
+    (new App\Listeners\Orders\SendOrderStatusEmailListener)->handle($event);
 
-    Mail::assertQueued(App\Mail\OrderDeliveredMail::class);
+    Mail::assertQueued(App\Mail\Orders\OrderDeliveredMail::class);
 });

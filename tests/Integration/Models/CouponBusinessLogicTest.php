@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Coupon;
-use App\Services\CouponService;
+use App\Services\Coupon\CouponService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

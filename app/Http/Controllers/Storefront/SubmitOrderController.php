@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Orders\CreateOrder;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\Storefront\StoreOrderRequest;
 use App\Services\Stripe\StripeCheckoutService;
 use Illuminate\Http\RedirectResponse;
 

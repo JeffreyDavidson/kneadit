@@ -23,6 +23,8 @@ class RecipeResource extends Resource
 
     protected static ?string $model = Recipe::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Tools';

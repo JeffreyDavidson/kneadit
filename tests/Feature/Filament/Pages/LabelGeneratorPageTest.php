@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\LabelGenerator;
+use App\Filament\Pages\Tools\LabelGenerator;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

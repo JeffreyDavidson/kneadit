@@ -4,7 +4,7 @@ use App\Actions\Orders\CreateOrder;
 use App\DataTransferObjects\CreateOrderData;
 use App\Enums\DeliveryType;
 use App\Enums\OrderStatus;
-use App\Mail\OrderPlacedMail;
+use App\Mail\Orders\OrderPlacedMail;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;

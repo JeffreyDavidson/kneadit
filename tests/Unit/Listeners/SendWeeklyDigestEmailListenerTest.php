@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\WeeklyDigestRequested;
-use App\Listeners\SendWeeklyDigestEmailListener;
-use App\Mail\WeeklyDigestMail;
+use App\Events\Platform\WeeklyDigestRequested;
+use App\Listeners\Platform\SendWeeklyDigestEmailListener;
+use App\Mail\Platform\WeeklyDigestMail;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;

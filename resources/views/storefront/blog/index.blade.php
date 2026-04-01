@@ -1,22 +1,22 @@
 <x-layouts.storefront>
 
-<section class="relative overflow-hidden py-16" style="background: var(--warm-900);">
+<section class="relative overflow-hidden py-16 bg-warm-900">
     <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
-        <h1 class="font-display text-4xl md:text-5xl font-bold mb-4" style="color: var(--warm-100);">Our Blog</h1>
-        <p class="text-lg" style="color: var(--warm-400);">Stories, recipes, and updates from our kitchen to yours.</p>
+        <h1 class="font-display text-4xl md:text-5xl font-bold mb-4 text-warm-100">Our Blog</h1>
+        <p class="text-lg text-warm-400">Stories, recipes, and updates from our kitchen to yours.</p>
     </div>
 </section>
 
-<section style="background: var(--warm-100);">
+<section class="bg-warm-100">
     <div class="max-w-5xl mx-auto px-4 py-16">
         @if ($posts->count() > 0)
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach ($posts as $post)
-                    <a href="{{ route('storefront.blog.show', $post) }}" class="block rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style="background: white; border: 1px solid var(--warm-200);">
+                    <a href="{{ route('storefront.blog.show', $post) }}" class="block rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg bg-white border border-warm-200">
                         @if ($post->featured_image)
                             <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-48 object-cover">
                         @else
-                            <div class="w-full h-48 flex items-center justify-center" style="background: var(--warm-200);">
+                            <div class="w-full h-48 flex items-center justify-center bg-warm-200">
                                 <span class="text-3xl">🍞</span>
                             </div>
                         @endif
@@ -28,11 +28,11 @@
                                     @endforeach
                                 </div>
                             @endif
-                            <h2 class="font-display text-lg font-semibold mb-2" style="color: var(--warm-800);">{{ $post->title }}</h2>
+                            <h2 class="font-display text-lg font-semibold mb-2 text-warm-800">{{ $post->title }}</h2>
                             @if ($post->excerpt)
-                                <p class="text-sm mb-3" style="color: var(--warm-600);">{{ Str::limit($post->excerpt, 120) }}</p>
+                                <p class="text-sm mb-3 text-warm-600">{{ Str::limit($post->excerpt, 120) }}</p>
                             @endif
-                            <div class="flex items-center justify-between text-xs" style="color: var(--warm-500);">
+                            <div class="flex items-center justify-between text-xs text-warm-500">
                                 @if ($post->author_name)
                                     <span>{{ $post->author_name }}</span>
                                 @endif
@@ -49,8 +49,8 @@
         @else
             <div class="text-center py-16">
                 <p class="text-2xl mb-2">📝</p>
-                <h2 class="font-display text-2xl font-bold mb-2" style="color: var(--warm-800);">No posts yet</h2>
-                <p style="color: var(--warm-600);">Check back soon for stories and updates!</p>
+                <h2 class="font-display text-2xl font-bold mb-2 text-warm-800">No posts yet</h2>
+                <p class="text-warm-600">Check back soon for stories and updates!</p>
             </div>
         @endif
     </div>

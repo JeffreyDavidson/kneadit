@@ -3,7 +3,7 @@
 namespace App\Actions\Platform;
 
 use App\Enums\EmailCampaignStatus;
-use App\Events\CampaignEmailQueued;
+use App\Events\Marketing\CampaignEmailQueued;
 use App\Models\Customer;
 use App\Models\EmailCampaign;
 

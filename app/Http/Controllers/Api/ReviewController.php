@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\Customers\SubmitApiReview;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreApiReviewRequest;
+use App\Http\Requests\Api\StoreApiReviewRequest;
 use App\Http\Resources\ReviewResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Review;

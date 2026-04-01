@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\ThemeSelector;
+use App\Filament\Pages\Settings\ThemeSelector;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Events\TrialExpired;
-use App\Events\TrialReminding;
+use App\Events\Platform\TrialExpired;
+use App\Events\Platform\TrialReminding;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Console\Command;

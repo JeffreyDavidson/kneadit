@@ -18,6 +18,8 @@ class SurveyResource extends Resource
 {
     protected static ?string $model = Survey::class;
 
+    protected static ?string $recordTitleAttribute = 'title';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';

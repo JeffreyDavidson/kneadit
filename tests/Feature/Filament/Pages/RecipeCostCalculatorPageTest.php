@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\RecipeCostCalculator;
+use App\Filament\Pages\Tools\RecipeCostCalculator;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

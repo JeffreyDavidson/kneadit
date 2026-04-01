@@ -8,7 +8,7 @@ test('capacity check returns availability for a date', function () {
     $date = now()->addDays(5)->toDateString();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->getJson("/capacity/check/{$date}");
+        ->getJson(route('capacity.check', ['date' => $date], false));
 
     $response->assertOk()
         ->assertJsonStructure(['data' => ['available', 'remaining', 'max_orders', 'usage_percent']]);

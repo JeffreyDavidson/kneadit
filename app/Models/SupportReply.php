@@ -48,6 +48,16 @@ class SupportReply extends Model
     ];
 
     /**
+     * @return array<string, mixed>
+     */
+    protected function casts(): array
+    {
+        return [
+            'author_type' => SupportReplyAuthorType::class,
+        ];
+    }
+
+    /**
      * @return BelongsTo<SupportTicket, $this>
      */
     public function ticket(): BelongsTo

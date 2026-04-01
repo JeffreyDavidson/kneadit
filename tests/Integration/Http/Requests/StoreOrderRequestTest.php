@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\Storefront\StoreOrderRequest;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;

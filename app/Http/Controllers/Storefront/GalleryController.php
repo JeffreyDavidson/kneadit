@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Customers\CreateCustomerPhoto;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreGalleryPhotoRequest;
+use App\Http\Requests\Storefront\StoreGalleryPhotoRequest;
 use App\Models\CustomerPhoto;
 use App\Models\Product;
 use App\Services\Settings\TenantSettings;

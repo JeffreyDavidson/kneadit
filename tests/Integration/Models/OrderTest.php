@@ -62,15 +62,19 @@ test('order total is cast to decimal', function () {
         ->and($order->discount_amount)->toBe('2.50');
 });
 
-test('order status transitions', function () {
+test('order status transitions', function (OrderStatus $status) {
     Mail::fake();
     $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
 
-    foreach ([OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready, OrderStatus::Delivered] as $status) {
-        $order->update(['status' => $status]);
-        expect($order->fresh()->status)->toBe($status);
-    }
-});
+    $order->update(['status' => $status]);
+
+    expect($order->fresh()->status)->toBe($status);
+})->with([
+    'confirmed' => [OrderStatus::Confirmed],
+    'baking' => [OrderStatus::Baking],
+    'ready' => [OrderStatus::Ready],
+    'delivered' => [OrderStatus::Delivered],
+]);
 
 test('order can be cancelled', function () {
     Mail::fake();

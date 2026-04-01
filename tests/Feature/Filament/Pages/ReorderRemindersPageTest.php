@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\ReorderReminders;
+use App\Filament\Pages\Operations\ReorderReminders;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

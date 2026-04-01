@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Customers\JoinProductWaitlist;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProductWaitlistRequest;
+use App\Http\Requests\Storefront\StoreProductWaitlistRequest;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;

@@ -17,6 +17,8 @@ class CateringInquiryResource extends Resource
 {
     protected static ?string $model = CateringInquiry::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCake;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';

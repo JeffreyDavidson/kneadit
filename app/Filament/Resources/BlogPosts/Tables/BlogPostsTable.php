@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\BlogPosts\Tables;
 
+use App\Actions\Content\PublishBlogPost;
+use App\Actions\Content\UnpublishBlogPost;
 use App\Models\TenantBlogPost;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -47,10 +49,7 @@ class BlogPostsTable
                     ->modalHeading('Publish Post')
                     ->modalDescription('Are you sure you want to publish this post?')
                     ->action(function (TenantBlogPost $record) {
-                        $record->update([
-                            'is_published' => true,
-                            'published_at' => now(),
-                        ]);
+                        resolve(PublishBlogPost::class)($record);
                         Notification::make()
                             ->title('Post published')
                             ->success()
@@ -65,10 +64,7 @@ class BlogPostsTable
                     ->modalHeading('Unpublish Post')
                     ->modalDescription('Are you sure you want to unpublish this post?')
                     ->action(function (TenantBlogPost $record) {
-                        $record->update([
-                            'is_published' => false,
-                            'published_at' => null,
-                        ]);
+                        resolve(UnpublishBlogPost::class)($record);
                         Notification::make()
                             ->title('Post unpublished')
                             ->warning()

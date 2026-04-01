@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\GiftCards\Pages;
 
 use App\Actions\GiftCards\AddGiftCardCredit;
+use App\Actions\GiftCards\ToggleGiftCardActive;
 use App\Filament\Resources\GiftCards\GiftCardResource;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -22,7 +23,7 @@ class ViewGiftCard extends ViewRecord
                 ->color(fn () => $this->record->is_active ? 'danger' : 'success')
                 ->requiresConfirmation()
                 ->action(function () {
-                    $this->record->update(['is_active' => ! $this->record->is_active]);
+                    resolve(ToggleGiftCardActive::class)($this->record);
                 }),
 
             Action::make('add_credit')

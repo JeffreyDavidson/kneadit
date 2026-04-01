@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\PrintableMenu;
+use App\Filament\Pages\Tools\PrintableMenu;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

@@ -4,7 +4,7 @@
     $storePhoto = $settings->storePhoto;
 @endphp
 @if ($aboutUs)
-<section class="relative py-24 px-4 overflow-hidden" style="background: var(--warm-50);">
+<section class="relative py-24 px-4 overflow-hidden bg-warm-50">
     <div class="max-w-6xl mx-auto">
         <div class="grid md:grid-cols-5 gap-12 md:gap-16 items-center">
             {{-- Left: Photo or decorative element --}}
@@ -19,11 +19,11 @@
                 </div>
                 @else
                 {{-- Decorative typography block when no photo --}}
-                <div class="relative rounded-2xl p-12 text-center" style="background: var(--warm-200);">
+                <div class="relative rounded-2xl p-12 text-center bg-warm-200">
                     <div class="font-display font-bold leading-none" style="font-size: 8rem; color: var(--warm-300); opacity: 0.5;">
                         {{ strtoupper(substr($storeName, 0, 1)) }}
                     </div>
-                    <p class="font-script text-xl mt-4" style="color: var(--warm-500);">Est. {{ date('Y') }}</p>
+                    <p class="font-script text-xl mt-4 text-warm-500">Est. {{ date('Y') }}</p>
                     {{-- Corner accents --}}
                     <div class="absolute top-4 left-4 w-8 h-8" style="border-top: 2px solid var(--warm-400); border-left: 2px solid var(--warm-400); opacity: 0.3;"></div>
                     <div class="absolute bottom-4 right-4 w-8 h-8" style="border-bottom: 2px solid var(--warm-400); border-right: 2px solid var(--warm-400); opacity: 0.3;"></div>
@@ -34,20 +34,20 @@
             {{-- Right: Content --}}
             <div class="md:col-span-3">
                 <div class="flex items-center gap-3 mb-6">
-                    <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-                    <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">Our Story</span>
+                    <span class="block w-8 h-px bg-warm-500"></span>
+                    <span class="uppercase tracking-[0.25em] text-xs font-semibold text-warm-500">Our Story</span>
                 </div>
 
-                <h2 class="font-display text-3xl md:text-5xl font-bold mb-6 leading-tight" style="color: var(--warm-900);">
+                <h2 class="font-display text-3xl md:text-5xl font-bold mb-6 leading-tight text-warm-900">
                     A little about<br>{{ $storeName }}
                 </h2>
 
-                <p class="text-lg leading-relaxed mb-8" style="color: var(--warm-600);">
+                <p class="text-lg leading-relaxed mb-8 text-warm-600">
                     {{ $aboutUs }}
                 </p>
 
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('storefront.about') }}" class="inline-flex items-center gap-2 font-semibold transition-all duration-200 hover:gap-3" style="color: var(--warm-700);">
+                    <a href="{{ route('storefront.about') }}" class="inline-flex items-center gap-2 font-semibold transition-all duration-200 hover:gap-3 text-warm-700">
                         Read Our Full Story
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>

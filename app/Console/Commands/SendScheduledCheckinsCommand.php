@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Events\ScheduledCheckinDue;
+use App\Events\Platform\ScheduledCheckinDue;
 use App\Models\CheckinLog;
 use App\Models\ScheduledCheckin;
 use App\Models\Tenant;

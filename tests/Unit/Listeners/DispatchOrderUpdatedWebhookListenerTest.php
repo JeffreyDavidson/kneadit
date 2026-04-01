@@ -1,8 +1,8 @@
 <?php
 
 use App\Enums\OrderStatus;
-use App\Events\OrderStatusChanged;
-use App\Listeners\DispatchOrderUpdatedWebhookListener;
+use App\Events\Orders\OrderStatusChanged;
+use App\Listeners\Orders\DispatchOrderUpdatedWebhookListener;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;

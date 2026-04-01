@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Stripe;
 
 use App\Actions\Stripe\SyncSubscriptionPlan;
-use App\Events\PaymentFailed;
+use App\Events\Platform\PaymentFailed;
 use App\Queries\StripeCustomerLookupQuery;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;

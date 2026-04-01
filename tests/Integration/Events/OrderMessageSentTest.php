@@ -1,7 +1,7 @@
 <?php
 
-use App\Events\OrderMessageSent;
-use App\Listeners\SendOrderMessageEmailListener;
+use App\Events\Orders\OrderMessageSent;
+use App\Listeners\Orders\SendOrderMessageEmailListener;
 use Illuminate\Support\Facades\Event;
 
 test('OrderMessageSent event has correct listeners', function () {

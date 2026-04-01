@@ -2,7 +2,7 @@
 
 use App\Actions\Customers\TransitionCateringInquiryStatus;
 use App\Enums\CateringInquiryStatus;
-use App\Events\CateringQuoteRequested;
+use App\Events\Marketing\CateringQuoteRequested;
 use App\Models\CateringInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;

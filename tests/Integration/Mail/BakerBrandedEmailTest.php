@@ -1,22 +1,22 @@
 <?php
 
 use App\Enums\PaymentMethod;
-use App\Mail\BirthdayDiscountMail;
 use App\Mail\CateringQuoteMail;
 use App\Mail\Concerns\BakerBranded;
 use App\Mail\CustomerBlastMail;
-use App\Mail\HappyBirthdayMail;
-use App\Mail\NewOrderMessageMail;
-use App\Mail\OrderBakingMail;
-use App\Mail\OrderCancelledMail;
-use App\Mail\OrderConfirmedMail;
-use App\Mail\OrderDeliveredMail;
-use App\Mail\OrderPlacedMail;
-use App\Mail\OrderReadyMail;
-use App\Mail\ProductAvailableMail;
-use App\Mail\RepeatOrderReminderMail;
-use App\Mail\ReviewRequestMail;
-use App\Mail\WeeklyDigestMail;
+use App\Mail\Customers\BirthdayDiscountMail;
+use App\Mail\Customers\HappyBirthdayMail;
+use App\Mail\Customers\ProductAvailableMail;
+use App\Mail\Customers\RepeatOrderReminderMail;
+use App\Mail\Customers\ReviewRequestMail;
+use App\Mail\Orders\NewOrderMessageMail;
+use App\Mail\Orders\OrderBakingMail;
+use App\Mail\Orders\OrderCancelledMail;
+use App\Mail\Orders\OrderConfirmedMail;
+use App\Mail\Orders\OrderDeliveredMail;
+use App\Mail\Orders\OrderPlacedMail;
+use App\Mail\Orders\OrderReadyMail;
+use App\Mail\Platform\WeeklyDigestMail;
 use App\Models\Order;
 use App\Models\User;
 

@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\PaymentFailed;
-use App\Listeners\SendPaymentFailedEmailListener;
-use App\Mail\PaymentFailedMail;
+use App\Events\Platform\PaymentFailed;
+use App\Listeners\Platform\SendPaymentFailedEmailListener;
+use App\Mail\Platform\PaymentFailedMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;

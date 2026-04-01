@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Requests\AcceptInvitationRequest;
+use App\Http\Requests\Auth\AcceptInvitationRequest;
 
 test('accept invitation passes with no data since fields are sometimes', function () {
     $request = new AcceptInvitationRequest;

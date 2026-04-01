@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\ReviewRequested;
-use App\Listeners\SendReviewRequestEmailListener;
-use App\Mail\ReviewRequestMail;
+use App\Events\Customers\ReviewRequested;
+use App\Listeners\Customers\SendReviewRequestEmailListener;
+use App\Mail\Customers\ReviewRequestMail;
 use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;

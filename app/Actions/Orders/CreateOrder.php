@@ -3,7 +3,7 @@
 namespace App\Actions\Orders;
 
 use App\DataTransferObjects\CreateOrderData;
-use App\Events\OrderCreated;
+use App\Events\Orders\OrderCreated;
 use App\Models\Order;
 use App\Pipes\Orders\ApplyCoupon;
 use App\Pipes\Orders\ApplyCouponUsage;

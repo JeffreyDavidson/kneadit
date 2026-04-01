@@ -1,7 +1,7 @@
 <?php
 
-use App\Events\StaffInvitationSent;
-use App\Listeners\SendStaffInvitationEmailListener;
+use App\Events\Platform\StaffInvitationSent;
+use App\Listeners\Platform\SendStaffInvitationEmailListener;
 use App\Mail\StaffInvitationMail;
 use App\Models\StaffInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;

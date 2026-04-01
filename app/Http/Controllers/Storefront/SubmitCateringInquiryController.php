@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Customers\CreateCateringInquiry;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCateringInquiryRequest;
+use App\Http\Requests\Storefront\StoreCateringInquiryRequest;
 use Illuminate\Http\RedirectResponse;
 
 class SubmitCateringInquiryController extends Controller

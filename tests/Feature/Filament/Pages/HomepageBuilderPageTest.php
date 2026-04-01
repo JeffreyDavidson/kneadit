@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\HomepageBuilder;
+use App\Filament\Pages\Settings\HomepageBuilder;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

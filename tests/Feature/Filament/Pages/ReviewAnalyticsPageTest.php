@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\ReviewAnalytics;
+use App\Filament\Pages\Analytics\ReviewAnalytics;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

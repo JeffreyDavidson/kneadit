@@ -23,6 +23,8 @@ class GiftCardResource extends Resource
 
     protected static ?string $model = GiftCard::class;
 
+    protected static ?string $recordTitleAttribute = 'code';
+
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedGiftTop;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';

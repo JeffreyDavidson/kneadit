@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Order;
 
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\TrackOrderRequest;
+use App\Http\Requests\Storefront\TrackOrderRequest;
 use App\Models\Order;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;

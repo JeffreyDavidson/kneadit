@@ -20,6 +20,8 @@ class ExpenseResource extends Resource
 
     protected static ?string $model = Expense::class;
 
+    protected static ?string $recordTitleAttribute = 'description';
+
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowTrendingDown;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance';

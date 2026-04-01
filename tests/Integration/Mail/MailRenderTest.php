@@ -1,12 +1,12 @@
 <?php
 
-use App\Mail\HealthAlertMail;
-use App\Mail\NewSubscriberNotificationMail;
-use App\Mail\PaymentFailedMail;
-use App\Mail\ScheduledCheckinMail;
-use App\Mail\TrialExpiredMail;
-use App\Mail\TrialReminderMail;
-use App\Mail\WelcomeBakerMail;
+use App\Mail\Platform\HealthAlertMail;
+use App\Mail\Platform\NewSubscriberNotificationMail;
+use App\Mail\Platform\PaymentFailedMail;
+use App\Mail\Platform\ScheduledCheckinMail;
+use App\Mail\Platform\TrialExpiredMail;
+use App\Mail\Platform\TrialReminderMail;
+use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\BirthdayDiscountGenerated;
-use App\Listeners\SendBirthdayDiscountEmailListener;
-use App\Mail\BirthdayDiscountMail;
+use App\Events\Customers\BirthdayDiscountGenerated;
+use App\Listeners\Customers\SendBirthdayDiscountEmailListener;
+use App\Mail\Customers\BirthdayDiscountMail;
 use App\Models\Coupon;
 use App\Models\Customer;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\QrCodeGenerator;
+use App\Filament\Pages\Tools\QrCodeGenerator;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

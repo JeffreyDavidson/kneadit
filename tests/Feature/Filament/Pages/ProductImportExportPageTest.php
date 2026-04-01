@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\ProductImportExport;
+use App\Filament\Pages\Tools\ProductImportExport;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

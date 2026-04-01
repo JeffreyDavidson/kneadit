@@ -1,7 +1,7 @@
 <?php
 
-use App\Events\CampaignEmailQueued;
-use App\Listeners\SendCampaignEmailListener;
+use App\Events\Marketing\CampaignEmailQueued;
+use App\Listeners\Marketing\SendCampaignEmailListener;
 use App\Mail\CustomerBlastMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;

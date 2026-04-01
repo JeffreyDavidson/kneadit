@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\Customers\ToggleCustomerFavorite;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\IndexFavoritesRequest;
-use App\Http\Requests\StoreApiFavoriteRequest;
+use App\Http\Requests\Api\IndexFavoritesRequest;
+use App\Http\Requests\Api\StoreApiFavoriteRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\CustomerFavorite;
 use Illuminate\Http\JsonResponse;

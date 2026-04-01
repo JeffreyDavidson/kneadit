@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Customers\SubmitContactMessage;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreContactMessageRequest;
+use App\Http\Requests\Storefront\StoreContactMessageRequest;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;

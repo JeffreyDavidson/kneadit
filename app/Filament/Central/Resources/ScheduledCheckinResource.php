@@ -3,23 +3,21 @@
 namespace App\Filament\Central\Resources;
 
 use App\Filament\Central\Resources\ScheduledCheckinResource\Pages;
+use App\Filament\Central\Resources\ScheduledCheckinResource\Schemas\ScheduledCheckinForm;
+use App\Filament\Central\Resources\ScheduledCheckinResource\Tables\ScheduledCheckinsTable;
 use App\Models\ScheduledCheckin;
 use BackedEnum;
-use Filament\Actions;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class ScheduledCheckinResource extends Resource
 {
     protected static ?string $model = ScheduledCheckin::class;
+
+    protected static ?string $recordTitleAttribute = 'label';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
@@ -31,54 +29,12 @@ class ScheduledCheckinResource extends Resource
 
     public static function form(Schema $form): Schema
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('days_after_signup')
-                    ->label('Days After Signup')
-                    ->numeric()
-                    ->required()
-                    ->minValue(1),
-                TextInput::make('subject')
-                    ->required()
-                    ->maxLength(255),
-                Textarea::make('body')
-                    ->required()
-                    ->columnSpanFull(),
-                Toggle::make('is_active')
-                    ->label('Active')
-                    ->default(true),
-            ]);
+        return ScheduledCheckinForm::configure($form);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('days_after_signup')
-                    ->label('Days After Signup')
-                    ->sortable(),
-                TextColumn::make('subject')
-                    ->searchable(),
-                ToggleColumn::make('is_active')
-                    ->label('Active'),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
-            ])
-            ->defaultSort('days_after_signup', 'asc')
-            ->actions([
-                Actions\EditAction::make()
-                    ->slideOver(),
-            ])
-            ->toolbarActions([
-                Actions\DeleteBulkAction::make(),
-            ]);
+        return ScheduledCheckinsTable::configure($table);
     }
 
     public static function getPages(): array

@@ -6,6 +6,7 @@ use Database\Factories\TenantFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
@@ -36,6 +37,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property-read int|null $notes_count
  * @property-read Collection<int, Referral> $referralsMade
  * @property-read int|null $referrals_made_count
+ * @property-read Referral|null $referral
  *
  * @method static \Stancl\Tenancy\Database\TenantCollection<int, static> all($columns = ['*'])
  * @method static \Database\Factories\TenantFactory factory($count = null, $state = [])
@@ -110,10 +112,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     }
 
     /**
-     * Get the referral that brought this tenant in, if any.
+     * The referral that brought this tenant in, if any.
+     *
+     * @return HasOne<Referral, $this>
      */
-    public function referredBy(): ?Referral
+    public function referral(): HasOne
     {
-        return Referral::query()->where('referred_tenant_id', $this->id)->first();
+        return $this->hasOne(Referral::class, 'referred_tenant_id');
     }
 }

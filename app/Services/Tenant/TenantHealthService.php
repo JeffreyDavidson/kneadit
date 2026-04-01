@@ -16,25 +16,67 @@ class TenantHealthService
     /** @return Collection<int, mixed> */
     public function getTenantHealthData(): Collection
     {
-        return Tenant::all()->map(function (Tenant $tenant) {
-            $loginScore = $this->getLoginScore($tenant);
-            $orderScore = $this->getOrderScore($tenant);
-            $productScore = $this->getProductScore($tenant);
-            $setupScore = $this->getSetupScore($tenant);
+        $results = collect();
 
-            return [
+        Tenant::query()->lazy()->each(function (Tenant $tenant) use ($results) {
+            $tenantScores = $this->getTenantScores($tenant);
+            $setupScore = $this->getSetupScore($tenant, $tenantScores);
+
+            $totalScore = $tenantScores['login'] + $tenantScores['order'] + $tenantScores['product'] + $setupScore;
+
+            $results->push([
                 'id' => $tenant->id,
                 'name' => $tenant->store_name ?? $tenant->name,
                 'owner' => $tenant->name,
                 'email' => $tenant->email,
                 'plan' => $tenant->plan ?? 'free',
-                'health_score' => $loginScore + $orderScore + $productScore + $setupScore,
-                'login_score' => $loginScore,
-                'order_score' => $orderScore,
-                'product_score' => $productScore,
+                'health_score' => $totalScore,
+                'login_score' => $tenantScores['login'],
+                'order_score' => $tenantScores['order'],
+                'product_score' => $tenantScores['product'],
                 'setup_score' => $setupScore,
+            ]);
+        });
+
+        return $results->sortBy('health_score')->values();
+    }
+
+    /**
+     * Gather all tenant-side scores in a single DB context switch.
+     *
+     * @return array{login: int, order: int, product: int, has_products: bool, has_categories: bool, has_orders: bool}
+     */
+    protected function getTenantScores(Tenant $tenant): array
+    {
+        try {
+            return $this->tenancyManager->withinTenant($tenant, function () {
+                $lastLogin = DB::table('users')->max('updated_at');
+                $orderCount = DB::table('orders')
+                    ->where('created_at', '>=', now()->startOfMonth())
+                    ->count();
+                $productCount = DB::table('products')->count();
+                $categoryCount = DB::table('categories')->count();
+                $hasOrders = DB::table('orders')->exists();
+
+                return [
+                    'login' => $this->scoreLogin($lastLogin),
+                    'order' => $this->scoreOrder($orderCount),
+                    'product' => $this->scoreProduct($productCount),
+                    'has_products' => $productCount > 0,
+                    'has_categories' => $categoryCount > 0,
+                    'has_orders' => $hasOrders,
+                ];
+            });
+        } catch (\Throwable) {
+            return [
+                'login' => 0,
+                'order' => 0,
+                'product' => 0,
+                'has_products' => false,
+                'has_categories' => false,
+                'has_orders' => false,
             ];
-        })->sortBy('health_score')->values();
+        }
     }
 
     /** @return array<string, mixed> */
@@ -51,14 +93,8 @@ class TenantHealthService
         ];
     }
 
-    protected function getLoginScore(Tenant $tenant): int
+    protected function scoreLogin(?string $lastLogin): int
     {
-        try {
-            $lastLogin = $this->tenancyManager->withinTenant($tenant, fn () => DB::table('users')->max('updated_at'));
-        } catch (\Throwable) {
-            return 0;
-        }
-
         if (! $lastLogin) {
             return 0;
         }
@@ -78,16 +114,8 @@ class TenantHealthService
         return 0;
     }
 
-    protected function getOrderScore(Tenant $tenant): int
+    protected function scoreOrder(int $count): int
     {
-        try {
-            $count = $this->tenancyManager->withinTenant($tenant, fn () => DB::table('orders')
-                ->where('created_at', '>=', now()->startOfMonth())
-                ->count());
-        } catch (\Throwable) {
-            return 0;
-        }
-
         if ($count >= 10) {
             return 25;
         }
@@ -101,14 +129,8 @@ class TenantHealthService
         return 0;
     }
 
-    protected function getProductScore(Tenant $tenant): int
+    protected function scoreProduct(int $count): int
     {
-        try {
-            $count = $this->tenancyManager->withinTenant($tenant, fn () => DB::table('products')->count());
-        } catch (\Throwable) {
-            return 0;
-        }
-
         if ($count >= 10) {
             return 20;
         }
@@ -122,7 +144,10 @@ class TenantHealthService
         return 0;
     }
 
-    protected function getSetupScore(Tenant $tenant): int
+    /**
+     * @param array{has_products: bool, has_categories: bool, has_orders: bool} $tenantScores
+     */
+    protected function getSetupScore(Tenant $tenant, array $tenantScores): int
     {
         $pointsPer = 30 / 7;
         $completed = 0;
@@ -140,23 +165,14 @@ class TenantHealthService
             $completed++;
         }
 
-        try {
-            $completed += $this->tenancyManager->withinTenant($tenant, function () {
-                $extra = 0;
-                if (DB::table('products')->count() > 0) {
-                    $extra++;
-                }
-                if (DB::table('categories')->count() > 0) {
-                    $extra++;
-                }
-                if (DB::table('orders')->count() > 0) {
-                    $extra++;
-                }
-
-                return $extra;
-            });
-        } catch (\Throwable) {
-            // Tenant DB may not exist yet
+        if ($tenantScores['has_products']) {
+            $completed++;
+        }
+        if ($tenantScores['has_categories']) {
+            $completed++;
+        }
+        if ($tenantScores['has_orders']) {
+            $completed++;
         }
 
         return (int) round($completed * $pointsPer);

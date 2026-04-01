@@ -1,6 +1,6 @@
 <?php
 
-use App\Events\TenantOnboarded;
+use App\Events\Platform\TenantOnboarded;
 use App\Models\Tenant;
 use App\Models\User;
 

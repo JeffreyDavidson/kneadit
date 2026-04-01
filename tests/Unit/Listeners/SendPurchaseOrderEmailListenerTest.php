@@ -1,7 +1,7 @@
 <?php
 
-use App\Events\PurchaseOrderRequested;
-use App\Listeners\SendPurchaseOrderEmailListener;
+use App\Events\Marketing\PurchaseOrderRequested;
+use App\Listeners\Marketing\SendPurchaseOrderEmailListener;
 use App\Mail\PurchaseOrderMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Events\HealthCheckFailed;
+use App\Events\Platform\HealthCheckFailed;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
