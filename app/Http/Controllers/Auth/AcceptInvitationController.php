@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Actions\Staff\AcceptStaffInvitation;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AcceptInvitationRequest;
+use App\Http\Requests\Auth\AcceptInvitationRequest;
 use App\Models\StaffInvitation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;

@@ -6,17 +6,12 @@
 
 @if (isset($success) && $success)
 {{-- Success State --}}
-<section class="relative overflow-hidden" style="min-height: 80vh;">
-    <div class="absolute inset-0">
-        <img src="{{ $settings->heroImageUrl() }}" alt="Review submitted" class="w-full h-full object-cover review-hero-img">
-    </div>
-    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Review submitted" image-class="review-hero-img" min-height="80vh">
 
     <div class="relative z-10 flex items-center justify-center min-h-[70vh] px-4">
         <div class="text-center max-w-md">
             <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 review-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
-                <svg class="w-12 h-12" style="color: var(--warm-500);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                 </svg>
             </div>
@@ -27,23 +22,14 @@
             </a>
         </div>
     </div>
-</section>
+</x-storefront.hero-section>
 
 @else
 {{-- Photo-Forward Hero --}}
-<section class="relative overflow-hidden" style="min-height: 40vh;">
-    <div class="absolute inset-0">
-        <img src="{{ $settings->heroImageUrl() }}" alt="Share your experience" class="w-full h-full object-cover review-hero-img">
-    </div>
-    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Share your experience" image-class="review-hero-img" min-height="40vh">
 
     <div class="relative z-10 text-center px-4 py-16 md:py-24">
-        <div class="flex items-center justify-center gap-3 mb-6 review-fade-up" style="animation-delay: 0.3s;">
-            <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'We\'d Love to Hear From You' }}</span>
-            <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-        </div>
+        <x-storefront.eyebrow class="review-fade-up mb-6" style="animation-delay: 0.3s;">{{ $content['hero_eyebrow'] ?? 'We\'d Love to Hear From You' }}</x-storefront.eyebrow>
         <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 review-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">
             {{ $content['hero_title'] ?? 'How Was Your Order?' }}
         </h1>
@@ -51,19 +37,19 @@
             From {{ $settings->storeName }} · Order #{{ $order->order_number }}
         </p>
     </div>
-</section>
+</x-storefront.hero-section>
 
 {{-- Review Form on Cream Background --}}
-<section style="background: var(--warm-100);">
+<section class="bg-warm-100">
     <div class="max-w-2xl mx-auto px-4 py-16 md:py-24">
 
         {{-- Order Summary --}}
-        <div class="rounded-2xl p-5 mb-8" style="background: white; border: 1px solid var(--warm-200);">
-            <span class="block text-xs uppercase tracking-wider font-medium mb-3" style="color: var(--warm-500);">Your Order</span>
+        <div class="rounded-2xl p-5 mb-8 bg-white border border-warm-200">
+            <span class="block text-xs uppercase tracking-wider font-medium mb-3 text-warm-500">Your Order</span>
             @foreach ($order->orderItems as $item)
                 <div class="flex justify-between text-sm py-1">
-                    <span style="color: var(--warm-700);">{{ $item->quantity }}× {{ $item->product->name ?? 'Item' }}</span>
-                    <span style="color: var(--warm-500);">${{ number_format($item->total_price, 2) }}</span>
+                    <span class="text-warm-700">{{ $item->quantity }}× {{ $item->product->name ?? 'Item' }}</span>
+                    <span class="text-warm-500">${{ number_format($item->total_price, 2) }}</span>
                 </div>
             @endforeach
         </div>
@@ -73,7 +59,7 @@
 
             {{-- Star Rating --}}
             <div class="text-center" x-data="{ rating: {{ $prefilledRating ?? 0 }}, hover: 0 }">
-                <label class="block text-xs uppercase tracking-wider font-medium mb-4" style="color: var(--warm-600);">{{ $content['rating_label'] ?? 'Your Rating' }}</label>
+                <label class="block text-xs uppercase tracking-wider font-medium mb-4 text-warm-600">{{ $content['rating_label'] ?? 'Your Rating' }}</label>
                 <div class="flex gap-3 justify-center mb-2">
                     @for ($i = 1; $i <= 5; $i++)
                         <button type="button"
@@ -90,7 +76,7 @@
                     @endfor
                     <input type="hidden" name="rating" x-bind:value="rating">
                 </div>
-                <p class="text-sm" style="color: var(--warm-500);" x-show="rating > 0">
+                <p class="text-sm text-warm-500" x-show="rating > 0">
                     <span x-text="{{ json_encode($ratingDescriptions) }}[rating]"></span>
                 </p>
                 @error('rating')
@@ -100,7 +86,7 @@
 
             {{-- Comment --}}
             <div>
-                <label for="comment" class="block text-xs uppercase tracking-wider font-medium mb-2" style="color: var(--warm-600);">{{ $content['comment_label'] ?? 'Tell Us About Your Experience' }}</label>
+                <label for="comment" class="block text-xs uppercase tracking-wider font-medium mb-2 text-warm-600">{{ $content['comment_label'] ?? 'Tell Us About Your Experience' }}</label>
                 <textarea name="comment" id="comment" rows="5"
                     class="w-full p-4 rounded-xl text-base"
                     style="background: var(--warm-50); border: 1.5px solid var(--warm-200); color: var(--warm-800); outline: none; transition: border-color 0.2s;"
@@ -114,14 +100,14 @@
 
             {{-- Photo Upload --}}
             <div>
-                <label for="photo" class="block text-xs uppercase tracking-wider font-medium mb-2" style="color: var(--warm-600);">{{ $content['photo_label'] ?? 'Add a Photo' }} <span style="color: var(--warm-400);">(optional)</span></label>
+                <label for="photo" class="block text-xs uppercase tracking-wider font-medium mb-2 text-warm-600">{{ $content['photo_label'] ?? 'Add a Photo' }} <span class="text-warm-400">(optional)</span></label>
                 <div class="rounded-xl p-6 text-center cursor-pointer transition-all"
                      style="background: var(--warm-50); border: 2px dashed var(--warm-300);"
                      onclick="document.getElementById('photo').click()">
-                    <svg class="w-8 h-8 mx-auto mb-2" style="color: var(--warm-400);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 mx-auto mb-2 text-warm-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
-                    <p class="text-sm" style="color: var(--warm-500);">Click to upload a photo</p>
+                    <p class="text-sm text-warm-500">Click to upload a photo</p>
                 </div>
                 <input type="file" name="photo" id="photo" accept="image/*" class="hidden">
                 @error('photo')

@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\OrderStatusChanged;
-use App\Listeners\DispatchOrderUpdatedWebhookListener;
-use App\Listeners\SendOrderStatusEmailListener;
+use App\Events\Orders\OrderStatusChanged;
+use App\Listeners\Orders\DispatchOrderUpdatedWebhookListener;
+use App\Listeners\Orders\SendOrderStatusEmailListener;
 use Illuminate\Support\Facades\Event;
 
 test('OrderStatusChanged event has correct listeners', function () {

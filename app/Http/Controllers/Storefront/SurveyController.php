@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Customers\SubmitSurveyResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreSurveyResponseRequest;
+use App\Http\Requests\Storefront\StoreSurveyResponseRequest;
 use App\Models\Survey;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;

@@ -20,6 +20,8 @@ class HolidayResource extends Resource
 
     protected static ?string $model = Holiday::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static ?string $navigationLabel = 'Holidays';
 
     protected static ?int $navigationSort = 9;

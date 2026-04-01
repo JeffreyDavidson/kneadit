@@ -14,6 +14,6 @@ beforeEach(function () {
 });
 
 test('tax export page can render', function () {
-    Livewire::test(App\Filament\Pages\TaxExport::class)
+    Livewire::test(App\Filament\Pages\Tools\TaxExport::class)
         ->assertOk();
 });

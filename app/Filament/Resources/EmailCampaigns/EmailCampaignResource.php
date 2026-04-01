@@ -22,6 +22,8 @@ class EmailCampaignResource extends Resource
 
     protected static ?string $model = EmailCampaign::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';

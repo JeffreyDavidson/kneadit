@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\OrderMessageSent;
-use App\Listeners\SendOrderMessageEmailListener;
-use App\Mail\NewOrderMessageMail;
+use App\Events\Orders\OrderMessageSent;
+use App\Listeners\Orders\SendOrderMessageEmailListener;
+use App\Mail\Orders\NewOrderMessageMail;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderMessage;

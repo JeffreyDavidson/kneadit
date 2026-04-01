@@ -1,6 +1,6 @@
 <?php
 
-use App\Events\PaymentFailed;
+use App\Events\Platform\PaymentFailed;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

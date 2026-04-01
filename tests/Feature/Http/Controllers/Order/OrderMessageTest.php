@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\SenderType;
-use App\Mail\NewOrderMessageMail;
+use App\Mail\Orders\NewOrderMessageMail;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderMessage;

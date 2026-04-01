@@ -9,11 +9,13 @@ use App\Filament\Resources\Suppliers\RelationManagers\IngredientsRelationManager
 use App\Filament\Resources\Suppliers\Schemas\SupplierForm;
 use App\Filament\Resources\Suppliers\Tables\SuppliersTable;
 use App\Models\Supplier;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Laravel\Pennant\Feature;
+use UnitEnum;
 
 class SupplierResource extends Resource
 {
@@ -21,9 +23,11 @@ class SupplierResource extends Resource
 
     protected static ?string $model = Supplier::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
+    protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Shop';
 
     protected static ?int $navigationSort = 9;
 

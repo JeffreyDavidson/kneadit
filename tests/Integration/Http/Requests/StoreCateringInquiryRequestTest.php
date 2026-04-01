@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Requests\StoreCateringInquiryRequest;
+use App\Http\Requests\Storefront\StoreCateringInquiryRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

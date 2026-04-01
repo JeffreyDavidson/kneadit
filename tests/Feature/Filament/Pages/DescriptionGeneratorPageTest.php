@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\DescriptionGenerator;
+use App\Filament\Pages\Tools\DescriptionGenerator;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

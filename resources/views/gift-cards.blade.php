@@ -4,53 +4,43 @@
 
 <div x-data="giftCardPage()">
     {{-- Photo-Forward Hero --}}
-    <section class="relative overflow-hidden" style="min-height: 55vh;">
-        <div class="absolute inset-0">
-            <img src="{{ $settings->giftCardsHeroImageUrl() }}" alt="Fresh baked goods" class="w-full h-full object-cover gift-hero-img">
-        </div>
-        <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
-        <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
-
+    <x-storefront.hero-section :image="$settings->giftCardsHeroImageUrl()" image-alt="Fresh baked goods" image-class="gift-hero-img">
         <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
-            <div class="gift-fade-1 flex items-center justify-center gap-4 mb-6">
-                <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'A Sweet Gesture' }}</span>
-                <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
-            </div>
-            <h1 class="gift-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
+            <x-storefront.eyebrow line-opacity="0.4" class="gift-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'A Sweet Gesture' }}</x-storefront.eyebrow>
+            <h1 class="gift-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
                 {!! nl2br(e($content['hero_title'] ?? "Give the Gift of\nFresh Baked Goods")) !!}
             </h1>
-            <p class="gift-fade-3 font-script text-2xl md:text-3xl" style="color: var(--warm-400);">
+            <p class="gift-fade-3 font-script text-2xl md:text-3xl text-warm-400">
                 {{ $content['hero_subtitle'] ?? 'A treat they\'ll remember long after the last crumb' }}
             </p>
         </div>
-    </section>
+    </x-storefront.hero-section>
 
     {{-- Success State --}}
-    <div x-show="purchasedCard" x-cloak class="py-20 px-4" style="background: var(--warm-50);">
+    <div x-show="purchasedCard" x-cloak class="py-20 px-4 bg-warm-50">
         <div class="max-w-lg mx-auto text-center">
             {{-- Gift card mockup --}}
             <div class="rounded-2xl p-8 mb-8 shadow-2xl relative overflow-hidden" style="background: linear-gradient(135deg, var(--warm-900) 0%, var(--warm-800) 100%);">
                 <div class="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10" style="background: var(--warm-500); transform: translate(30%, -30%);"></div>
                 <div class="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-10" style="background: var(--warm-500); transform: translate(-30%, 30%);"></div>
                 <div class="relative z-10">
-                    <p class="font-script text-xl mb-1" style="color: var(--warm-500);">Gift Card</p>
-                    <p class="font-display text-4xl font-bold mb-4" style="color: white;" x-text="'$' + parseFloat(purchasedCard?.balance || 0).toFixed(2)"></p>
+                    <p class="font-script text-xl mb-1 text-warm-500">Gift Card</p>
+                    <p class="font-display text-4xl font-bold mb-4 text-white" x-text="'$' + parseFloat(purchasedCard?.balance || 0).toFixed(2)"></p>
                     <div class="py-3 px-6 rounded-xl inline-block mb-2" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(232,176,74,0.2);">
-                        <span class="font-mono text-lg tracking-[0.2em] font-bold" style="color: var(--warm-400);" x-text="purchasedCard?.code"></span>
+                        <span class="font-mono text-lg tracking-[0.2em] font-bold text-warm-400" x-text="purchasedCard?.code"></span>
                     </div>
                 </div>
             </div>
 
-            <h2 class="font-display text-2xl font-bold mb-2" style="color: var(--warm-900);">{{ $content['success_heading'] ?? 'Gift Card Purchased!' }}</h2>
-            <p class="mb-6" style="color: var(--warm-600);">{{ $content['success_description'] ?? 'Share the code below with the lucky recipient.' }}</p>
+            <h2 class="font-display text-2xl font-bold mb-2 text-warm-900">{{ $content['success_heading'] ?? 'Gift Card Purchased!' }}</h2>
+            <p class="mb-6 text-warm-600">{{ $content['success_description'] ?? 'Share the code below with the lucky recipient.' }}</p>
 
             <div class="flex justify-center gap-4">
                 <button @click="copyCode()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105" style="border: 2px solid var(--warm-300); color: var(--warm-700);">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     <span x-text="copied ? 'Copied!' : 'Copy Code'"></span>
                 </button>
-                <button @click="purchasedCard = null" class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105" style="background: var(--warm-500); color: var(--warm-900);">
+                <button @click="purchasedCard = null" class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-500 text-warm-900">
                     Purchase Another
                 </button>
             </div>
@@ -59,29 +49,29 @@
 
     {{-- Main Content --}}
     <div x-show="!purchasedCard">
-        <section class="py-20 px-4" style="background: var(--warm-50);">
+        <section class="py-20 px-4 bg-warm-50">
             <div class="max-w-6xl mx-auto grid lg:grid-cols-5 gap-12">
                 {{-- Left: Gift Card Preview + Amount Selection (3 cols) --}}
                 <div class="lg:col-span-3 space-y-10">
                     {{-- Card Preview --}}
                     <div>
-                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4" style="color: var(--warm-500);">{{ $content['preview_label'] ?? 'Preview' }}</p>
+                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4 text-warm-500">{{ $content['preview_label'] ?? 'Preview' }}</p>
                         <div class="rounded-2xl p-10 shadow-xl relative overflow-hidden aspect-[16/9] flex flex-col justify-between" style="background: linear-gradient(135deg, var(--warm-900) 0%, var(--warm-800) 100%);">
                             <div class="absolute top-0 right-0 w-60 h-60 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(30%, -30%);"></div>
                             <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(-30%, 30%);"></div>
                             <div class="relative z-10">
-                                <p class="font-script text-2xl" style="color: var(--warm-500);">Gift Card</p>
-                                <p class="font-display text-lg mt-1" style="color: var(--warm-400);">{{ $settings->storeName }}</p>
+                                <p class="font-script text-2xl text-warm-500">Gift Card</p>
+                                <p class="font-display text-lg mt-1 text-warm-400">{{ $settings->storeName }}</p>
                             </div>
                             <div class="relative z-10 text-right">
-                                <p class="font-display text-5xl font-bold" style="color: white;" x-text="'$' + parseFloat(form.initial_balance || 0).toFixed(2)"></p>
+                                <p class="font-display text-5xl font-bold text-white" x-text="'$' + parseFloat(form.initial_balance || 0).toFixed(2)"></p>
                             </div>
                         </div>
                     </div>
 
                     {{-- Amount Selection --}}
                     <div>
-                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4" style="color: var(--warm-500);">{{ $content['amount_label'] ?? 'Select Amount' }}</p>
+                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4 text-warm-500">{{ $content['amount_label'] ?? 'Select Amount' }}</p>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
                             <template x-for="preset in [10, 25, 50, 100]" :key="preset">
                                 <button type="button"
@@ -95,9 +85,9 @@
                             </template>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="text-sm font-semibold whitespace-nowrap" style="color: var(--warm-600);">Custom amount:</span>
+                            <span class="text-sm font-semibold whitespace-nowrap text-warm-600">Custom amount:</span>
                             <div class="relative flex-1">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-semibold" style="color: var(--warm-500);">$</span>
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-warm-500">$</span>
                                 <input type="number" x-model="customAmount"
                                        @input="form.initial_balance = customAmount"
                                        min="1" step="0.01" placeholder="0.00"
@@ -107,8 +97,8 @@
                     </div>
 
                     {{-- Check Balance --}}
-                    <div class="rounded-2xl p-8" style="background: white; border: 1px solid var(--warm-200);">
-                        <h3 class="font-display text-xl font-semibold mb-4" style="color: var(--warm-900);">{{ $content['balance_heading'] ?? 'Check Gift Card Balance' }}</h3>
+                    <div class="rounded-2xl p-8 bg-white border border-warm-200">
+                        <h3 class="font-display text-xl font-semibold mb-4 text-warm-900">{{ $content['balance_heading'] ?? 'Check Gift Card Balance' }}</h3>
                         <form @submit.prevent="checkBalance()" class="flex flex-col sm:flex-row gap-3">
                             <input type="text" x-model="balanceCode" required
                                    placeholder="XXXX-XXXX-XXXX-XXXX"
@@ -122,10 +112,10 @@
                             </button>
                         </form>
                         <div x-show="balanceError" class="text-red-600 text-sm mt-2" x-text="balanceError"></div>
-                        <div x-show="balanceResult" x-cloak class="mt-6 rounded-xl p-6 text-center" style="background: var(--warm-50);">
-                            <p class="text-sm uppercase tracking-wider mb-1" style="color: var(--warm-500);">Current Balance</p>
-                            <p class="font-display text-4xl font-bold" style="color: var(--warm-900);" x-text="'$' + parseFloat(balanceResult?.current_balance || 0).toFixed(2)"></p>
-                            <p class="text-sm mt-2" style="color: var(--warm-500);" x-show="balanceResult?.expires_at">
+                        <div x-show="balanceResult" x-cloak class="mt-6 rounded-xl p-6 text-center bg-warm-50">
+                            <p class="text-sm uppercase tracking-wider mb-1 text-warm-500">Current Balance</p>
+                            <p class="font-display text-4xl font-bold text-warm-900" x-text="'$' + parseFloat(balanceResult?.current_balance || 0).toFixed(2)"></p>
+                            <p class="text-sm mt-2 text-warm-500" x-show="balanceResult?.expires_at">
                                 Expires: <span x-text="balanceResult?.expires_at"></span>
                             </p>
                             <p class="text-sm mt-1 text-red-600 font-semibold" x-show="balanceResult && !balanceResult.is_usable">
@@ -138,32 +128,32 @@
                 {{-- Right: Purchase Form (2 cols) --}}
                 <div class="lg:col-span-2">
                     <div class="rounded-2xl p-8 sticky top-8" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08);">
-                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-1" style="color: var(--warm-500);">{{ $content['details_eyebrow'] ?? 'Details' }}</p>
-                        <h2 class="font-display text-2xl font-bold mb-6" style="color: var(--warm-900);">{{ $content['details_heading'] ?? 'Send Your Gift' }}</h2>
+                        <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-1 text-warm-500">{{ $content['details_eyebrow'] ?? 'Details' }}</p>
+                        <h2 class="font-display text-2xl font-bold mb-6 text-warm-900">{{ $content['details_heading'] ?? 'Send Your Gift' }}</h2>
 
                         <form @submit.prevent="purchase()" class="space-y-5">
                             <div>
-                                <label class="block text-sm font-semibold mb-1" style="color: var(--warm-700);">Your Name *</label>
+                                <label class="block text-sm font-semibold mb-1 text-warm-700">Your Name *</label>
                                 <input type="text" x-model="form.purchaser_name" required class="input-field">
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold mb-1" style="color: var(--warm-700);">Your Email *</label>
+                                <label class="block text-sm font-semibold mb-1 text-warm-700">Your Email *</label>
                                 <input type="email" x-model="form.purchaser_email" required class="input-field">
                             </div>
 
                             <div class="pt-4" style="border-top: 1px solid var(--warm-200);">
-                                <p class="font-script text-lg mb-3" style="color: var(--warm-500);">{{ $content['recipient_label'] ?? 'Recipient Info' }}</p>
+                                <p class="font-script text-lg mb-3 text-warm-500">{{ $content['recipient_label'] ?? 'Recipient Info' }}</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold mb-1" style="color: var(--warm-700);">Recipient Name</label>
+                                <label class="block text-sm font-semibold mb-1 text-warm-700">Recipient Name</label>
                                 <input type="text" x-model="form.recipient_name" class="input-field" placeholder="Optional">
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold mb-1" style="color: var(--warm-700);">Recipient Email</label>
+                                <label class="block text-sm font-semibold mb-1 text-warm-700">Recipient Email</label>
                                 <input type="email" x-model="form.recipient_email" class="input-field" placeholder="Optional">
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold mb-1" style="color: var(--warm-700);">Gift Message</label>
+                                <label class="block text-sm font-semibold mb-1 text-warm-700">Gift Message</label>
                                 <textarea x-model="form.message" class="input-field" rows="3" placeholder="Add a personal touch..."></textarea>
                             </div>
 
@@ -173,7 +163,7 @@
                                     :disabled="!form.purchaser_name || !form.purchaser_email || !form.initial_balance || isPurchasing"
                                     class="w-full py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
                                     :class="isPurchasing ? 'opacity-50 cursor-not-allowed' : ''"
-                                    style="background: var(--warm-500); color: var(--warm-900);">
+                                    class="bg-warm-500 text-warm-900">
                                 <span x-text="isPurchasing ? 'Processing...' : 'Purchase — $' + parseFloat(form.initial_balance || 0).toFixed(2)"></span>
                             </button>
                         </form>

@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\TrialExpired;
-use App\Listeners\SendTrialExpiredEmailListener;
-use App\Mail\TrialExpiredMail;
+use App\Events\Platform\TrialExpired;
+use App\Listeners\Platform\SendTrialExpiredEmailListener;
+use App\Mail\Platform\TrialExpiredMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;

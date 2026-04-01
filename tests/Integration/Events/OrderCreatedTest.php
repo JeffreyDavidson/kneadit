@@ -1,9 +1,9 @@
 <?php
 
-use App\Events\OrderCreated;
-use App\Listeners\DispatchOrderCreatedWebhookListener;
-use App\Listeners\NotifyBakerOfNewOrderListener;
-use App\Listeners\SendOrderPlacedEmailListener;
+use App\Events\Orders\OrderCreated;
+use App\Listeners\Orders\DispatchOrderCreatedWebhookListener;
+use App\Listeners\Orders\NotifyBakerOfNewOrderListener;
+use App\Listeners\Orders\SendOrderPlacedEmailListener;
 use Illuminate\Support\Facades\Event;
 
 test('OrderCreated event has correct listeners', function () {

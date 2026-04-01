@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\UserRole;
-use App\Events\WeeklyDigestRequested;
+use App\Events\Platform\WeeklyDigestRequested;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Reporting\WeeklyDigestDataCollector;

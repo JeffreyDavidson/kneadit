@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\CustomerDirectory;
+use App\Filament\Pages\Operations\CustomerDirectory;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

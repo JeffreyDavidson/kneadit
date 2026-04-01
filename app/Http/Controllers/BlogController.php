@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BlogPostCategory;
-use App\Http\Requests\IndexBlogPostsRequest;
+use App\Http\Requests\Api\IndexBlogPostsRequest;
 use App\Models\BlogPost;
 use Illuminate\Contracts\View\View;
 

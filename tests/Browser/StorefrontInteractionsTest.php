@@ -1,6 +1,7 @@
 <?php
 
-$storefrontUrl = 'http://sweet-surrender.kneadit.test';
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://sweet-surrender.kneadit.test');
+$centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
 
 test('smoke test all storefront pages', function () use ($storefrontUrl) {
     $pages = visit([
@@ -20,12 +21,12 @@ test('smoke test all storefront pages', function () use ($storefrontUrl) {
     $pages->assertNoJavaScriptErrors();
 });
 
-test('smoke test central pages', function () {
+test('smoke test central pages', function () use ($centralUrl) {
     $pages = visit([
-        'http://kneadit.test',
-        'http://kneadit.test/directory',
-        'http://kneadit.test/changelog',
-        'http://kneadit.test/resources',
+        "{$centralUrl}",
+        "{$centralUrl}/directory",
+        "{$centralUrl}/changelog",
+        "{$centralUrl}/resources",
     ]);
 
     $pages->assertNoJavaScriptErrors();

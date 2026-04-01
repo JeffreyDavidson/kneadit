@@ -6,7 +6,7 @@ use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
-use App\Services\PayPalService;
+use App\Services\PayPal\InvoiceService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -180,8 +180,8 @@ class OrdersTable
                     ->modalHeading('Send PayPal Invoice')
                     ->modalDescription('This will create and send a PayPal invoice to the customer for payment.')
                     ->action(function (Order $record) {
-                        $paypalService = resolve(PayPalService::class);
-                        $invoiceId = $paypalService->createAndSendInvoice($record);
+                        $invoiceService = resolve(InvoiceService::class);
+                        $invoiceId = $invoiceService->createAndSend($record);
 
                         if ($invoiceId) {
                             Notification::make()

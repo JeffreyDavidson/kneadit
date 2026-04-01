@@ -5,7 +5,7 @@ namespace App\Actions\GiftCards;
 use App\DataTransferObjects\CreateGiftCardData;
 use App\Enums\GiftCardTransactionType;
 use App\Models\GiftCard;
-use App\Services\GiftCardService;
+use App\Services\GiftCard\GiftCardService;
 
 class CreateGiftCard
 {

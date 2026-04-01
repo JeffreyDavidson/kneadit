@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\PricingEngine;
+use App\Filament\Pages\Tools\PricingEngine;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

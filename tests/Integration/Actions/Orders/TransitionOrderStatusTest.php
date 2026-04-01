@@ -3,7 +3,7 @@
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\OrderStatus;
 use App\Exceptions\InvalidOrderTransitionException;
-use App\Mail\OrderConfirmedMail;
+use App\Mail\Orders\OrderConfirmedMail;
 use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;

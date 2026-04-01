@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\ManageSettings;
+use App\Filament\Pages\Settings\ManageSettings;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

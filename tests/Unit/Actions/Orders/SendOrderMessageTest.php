@@ -2,7 +2,7 @@
 
 use App\Actions\Orders\SendOrderMessage;
 use App\Enums\SenderType;
-use App\Events\OrderMessageSent;
+use App\Events\Orders\OrderMessageSent;
 use App\Models\Order;
 use App\Models\OrderMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;

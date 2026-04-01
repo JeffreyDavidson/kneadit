@@ -21,6 +21,8 @@ class IngredientResource extends Resource
 
     protected static ?string $model = Ingredient::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';

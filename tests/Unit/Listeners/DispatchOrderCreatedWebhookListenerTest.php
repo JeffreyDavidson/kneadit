@@ -1,7 +1,7 @@
 <?php
 
-use App\Events\OrderCreated;
-use App\Listeners\DispatchOrderCreatedWebhookListener;
+use App\Events\Orders\OrderCreated;
+use App\Listeners\Orders\DispatchOrderCreatedWebhookListener;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;

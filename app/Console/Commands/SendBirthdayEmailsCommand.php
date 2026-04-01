@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Events\CustomerBirthday;
+use App\Events\Customers\CustomerBirthday;
 use App\Models\Customer;
 use App\Models\Tenant;
 use App\Services\Customer\BirthdayService;

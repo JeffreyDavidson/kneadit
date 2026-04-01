@@ -3,39 +3,29 @@
 <link rel="stylesheet" href="{{ asset('css/catering.css') }}">
 
 {{-- Photo-Forward Hero --}}
-<section class="relative overflow-hidden" style="min-height: 55vh;">
-    <div class="absolute inset-0">
-        <img src="{{ $settings->cateringHeroImageUrl() }}" alt="Catering spread" class="w-full h-full object-cover catering-hero-img">
-    </div>
-    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
-
+<x-storefront.hero-section :image="$settings->cateringHeroImageUrl()" image-alt="Catering spread" image-class="catering-hero-img">
     <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
-        <div class="catering-fade-1 flex items-center justify-center gap-4 mb-6">
-            <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'Premium Catering' }}</span>
-            <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
-        </div>
-        <h1 class="catering-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight" style="color: white;">
+        <x-storefront.eyebrow line-opacity="0.4" class="catering-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Premium Catering' }}</x-storefront.eyebrow>
+        <h1 class="catering-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
             {{ $content['hero_title'] ?? 'Events & Catering' }}
         </h1>
-        <p class="catering-fade-2 font-script text-2xl md:text-3xl mb-10" style="color: var(--warm-400);">
+        <p class="catering-fade-2 font-script text-2xl md:text-3xl mb-10 text-warm-400">
             {{ $content['hero_subtitle'] ?? 'Let us make your celebration unforgettable' }}
         </p>
         <div class="catering-fade-3">
-            <a href="#inquiry-form" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
+            <a href="#inquiry-form" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
                 {{ $content['hero_button'] ?? 'Request a Quote' }}
             </a>
         </div>
     </div>
-</section>
+</x-storefront.hero-section>
 
 {{-- What We Offer --}}
-<section class="py-20 px-4" style="background: var(--warm-50);">
+<section class="py-20 px-4 bg-warm-50">
     <div class="max-w-5xl mx-auto">
         <div class="text-center mb-14">
-            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">{{ $content['occasions_eyebrow'] ?? 'What We Offer' }}</p>
-            <h2 class="font-display text-3xl md:text-4xl font-bold" style="color: var(--warm-900);">{{ $content['occasions_heading'] ?? 'Perfect for Every Occasion' }}</h2>
+            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">{{ $content['occasions_eyebrow'] ?? 'What We Offer' }}</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-warm-900">{{ $content['occasions_heading'] ?? 'Perfect for Every Occasion' }}</h2>
         </div>
 
         @php
@@ -47,12 +37,12 @@
         @endphp
         <div class="grid md:grid-cols-3 gap-8">
             @foreach ($occasions as $i => $occasion)
-            <div class="rounded-2xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1" style="background: white; border: 1px solid var(--warm-200);">
-                <div class="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style="background: var(--warm-100);">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color: var(--warm-500);"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $occasionSvgs[$i] ?? $occasionSvgs[0] }}"/></svg>
+            <div class="rounded-2xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white border border-warm-200">
+                <div class="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center bg-warm-100">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="text-warm-500"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $occasionSvgs[$i] ?? $occasionSvgs[0] }}"/></svg>
                 </div>
-                <h3 class="font-display text-xl font-bold mb-3" style="color: var(--warm-900);">{{ $occasion['title'] }}</h3>
-                <p style="color: var(--warm-600);">{{ $occasion['description'] }}</p>
+                <h3 class="font-display text-xl font-bold mb-3 text-warm-900">{{ $occasion['title'] }}</h3>
+                <p class="text-warm-600">{{ $occasion['description'] }}</p>
             </div>
             @endforeach
         </div>
@@ -60,33 +50,32 @@
 </section>
 
 {{-- How It Works --}}
-<section class="relative overflow-hidden py-20 px-4" style="background: var(--warm-900);">
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
-    <div class="relative z-10 max-w-4xl mx-auto">
+<x-storefront.dark-section :show-radial="false" padding="py-20">
+    <div class="max-w-4xl mx-auto px-4">
         <div class="text-center mb-14">
-            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">{{ $content['process_eyebrow'] ?? 'Simple Process' }}</p>
-            <h2 class="font-display text-3xl md:text-4xl font-bold" style="color: white;">{{ $content['process_heading'] ?? 'How It Works' }}</h2>
+            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">{{ $content['process_eyebrow'] ?? 'Simple Process' }}</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-white">{{ $content['process_heading'] ?? 'How It Works' }}</h2>
         </div>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             @foreach ($processSteps as $i => $step)
             <div class="text-center">
-                <div class="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center font-display text-xl font-bold" style="background: var(--warm-500); color: var(--warm-900);">{{ $i + 1 }}</div>
-                <h3 class="font-display text-lg font-bold mb-2" style="color: var(--warm-200);">{{ $step['title'] }}</h3>
-                <p class="text-sm" style="color: var(--warm-500);">{{ $step['description'] }}</p>
+                <div class="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center font-display text-xl font-bold bg-warm-500 text-warm-900">{{ $i + 1 }}</div>
+                <h3 class="font-display text-lg font-bold mb-2 text-warm-200">{{ $step['title'] }}</h3>
+                <p class="text-sm text-warm-500">{{ $step['description'] }}</p>
             </div>
             @endforeach
         </div>
     </div>
-</section>
+</x-storefront.dark-section>
 
 @if (isset($cateringPhotos) && $cateringPhotos->count())
 {{-- Past Events Gallery --}}
-<section class="py-20 px-4" style="background: var(--warm-50);">
+<section class="py-20 px-4 bg-warm-50">
     <div class="max-w-5xl mx-auto">
         <div class="text-center mb-10">
-            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">Our Work</p>
-            <h2 class="font-display text-3xl font-bold" style="color: var(--warm-900);">Past Events</h2>
+            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">Our Work</p>
+            <h2 class="font-display text-3xl font-bold text-warm-900">Past Events</h2>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @foreach ($cateringPhotos as $photo)
@@ -100,44 +89,43 @@
 @endif
 
 {{-- Testimonial --}}
-<section class="py-20 px-4" style="background: white;">
+<section class="py-20 px-4 bg-white">
     <div class="max-w-3xl mx-auto">
-        <div class="rounded-2xl p-12 text-center relative overflow-hidden" style="background: var(--warm-900);">
-            <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+        <div class="rounded-2xl p-12 text-center relative overflow-hidden bg-warm-900">
+            <x-storefront.grain-texture />
             <div class="relative z-10">
-                <p class="font-script text-2xl mb-6" style="color: var(--warm-500);">{{ $content['testimonial_script'] ?? 'What our clients say' }}</p>
-                <p class="text-xl italic leading-relaxed mb-6" style="color: var(--warm-200);">
+
+                <p class="font-script text-2xl mb-6 text-warm-500">{{ $content['testimonial_script'] ?? 'What our clients say' }}</p>
+                <p class="text-xl italic leading-relaxed mb-6 text-warm-200">
                     "{{ $content['testimonial_quote'] ?? 'The dessert spread at our wedding was absolutely stunning. Every guest raved about the pastries and the cake was a masterpiece. We couldn\'t have asked for a better experience!' }}"
                 </p>
-                <p class="font-display font-semibold" style="color: var(--warm-500);">— {{ $content['testimonial_attribution'] ?? 'A Happy Couple' }}</p>
+                <p class="font-display font-semibold text-warm-500">— {{ $content['testimonial_attribution'] ?? 'A Happy Couple' }}</p>
             </div>
         </div>
     </div>
 </section>
 
 {{-- Inquiry Form --}}
-<section id="inquiry-form" class="py-20 px-4" style="background: var(--warm-50);">
+<section id="inquiry-form" class="py-20 px-4 bg-warm-50">
     <div class="max-w-3xl mx-auto">
         <div class="text-center mb-10">
-            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2" style="color: var(--warm-500);">{{ $content['form_eyebrow'] ?? 'Ready to get started?' }}</p>
-            <h2 class="font-display text-3xl md:text-4xl font-bold mb-3" style="color: var(--warm-900);">{{ $content['form_heading'] ?? 'Request a Quote' }}</h2>
-            <p style="color: var(--warm-600);">Minimum {{ $settings->cateringMinimumGuests }} guests · Please allow at least {{ $settings->cateringLeadTimeDays }} days lead time</p>
+            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">{{ $content['form_eyebrow'] ?? 'Ready to get started?' }}</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold mb-3 text-warm-900">{{ $content['form_heading'] ?? 'Request a Quote' }}</h2>
+            <p class="text-warm-600">Minimum {{ $settings->cateringMinimumGuests }} guests · Please allow at least {{ $settings->cateringLeadTimeDays }} days lead time</p>
         </div>
 
         @if (session('success'))
-        <div class="rounded-2xl p-6 mb-8 text-center" style="background: #d4edda; border: 1px solid #28a745;">
-            <p style="color: #155724; font-weight: 600;">{{ session('success') }}</p>
-        </div>
+        <x-storefront.alert variant="light"><p class="font-semibold">{{ session('success') }}</p></x-storefront.alert>
         @endif
 
         @if ($errors->any())
-        <div class="rounded-2xl p-6 mb-8" style="background: #f8d7da; border: 1px solid #dc3545;">
-            <ul class="list-disc list-inside" style="color: #721c24;">
+        <x-storefront.alert type="error" variant="light">
+            <ul class="list-disc list-inside">
                 @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
                 @endforeach
             </ul>
-        </div>
+        </x-storefront.alert>
         @endif
 
         <form method="POST" action="{{ route('catering.submit') }}" class="rounded-2xl p-8 md:p-10" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);">
@@ -145,19 +133,19 @@
 
             <div class="grid md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Your Name *</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Your Name *</label>
                     <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="input-field">
                 </div>
                 <div>
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Email *</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Email *</label>
                     <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="input-field">
                 </div>
                 <div>
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Phone</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Phone</label>
                     <input type="tel" name="customer_phone" value="{{ old('customer_phone') }}" class="input-field">
                 </div>
                 <div>
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Event Type *</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Event Type *</label>
                     <select name="event_type" required class="input-field">
                         <option value="">Select event type...</option>
                         <option value="wedding" {{ old('event_type') === 'wedding' ? 'selected' : '' }}>Wedding</option>
@@ -168,33 +156,33 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Event Date *</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Event Date *</label>
                     <input type="date" name="event_date" value="{{ old('event_date') }}" required min="{{ now()->addDays((int) $settings->cateringLeadTimeDays)->format('Y-m-d') }}" class="input-field">
                 </div>
                 <div>
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Number of Guests *</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Number of Guests *</label>
                     <input type="number" name="guest_count" value="{{ old('guest_count') }}" required min="{{ $settings->cateringMinimumGuests }}" class="input-field" placeholder="Minimum {{ $settings->cateringMinimumGuests }}">
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Budget Range</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Budget Range</label>
                     <input type="text" name="budget" value="{{ old('budget') }}" class="input-field" placeholder="e.g. $500 - $1000 (optional)">
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Tell Us What You'd Like *</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Tell Us What You'd Like *</label>
                     <textarea name="details" required rows="4" class="input-field" placeholder="Describe what baked goods you'd like, any themes, special requests...">{{ old('details') }}</textarea>
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Dietary Requirements</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Dietary Requirements</label>
                     <textarea name="dietary_requirements" rows="2" class="input-field" placeholder="Allergies, gluten-free, vegan, etc.">{{ old('dietary_requirements') }}</textarea>
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block mb-2 font-semibold text-sm" style="color: var(--warm-700);">Venue Address</label>
+                    <label class="block mb-2 font-semibold text-sm text-warm-700">Venue Address</label>
                     <textarea name="venue_address" rows="2" class="input-field" placeholder="Where should we deliver?">{{ old('venue_address') }}</textarea>
                 </div>
             </div>
 
             <div class="mt-8 text-center">
-                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
+                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
                     Submit Inquiry
                 </button>
             </div>

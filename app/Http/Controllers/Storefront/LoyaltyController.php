@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RedeemLoyaltyRewardRequest;
+use App\Http\Requests\Order\RedeemLoyaltyRewardRequest;
 use App\Models\Customer;
 use App\Models\LoyaltyReward;
 use App\Services\Settings\TenantSettings;

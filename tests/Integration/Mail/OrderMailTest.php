@@ -1,12 +1,12 @@
 <?php
 
-use App\Mail\NewOrderNotificationMail;
-use App\Mail\OrderBakingMail;
-use App\Mail\OrderCancelledMail;
-use App\Mail\OrderConfirmedMail;
-use App\Mail\OrderDeliveredMail;
-use App\Mail\OrderPlacedMail;
-use App\Mail\OrderReadyMail;
+use App\Mail\Orders\NewOrderNotificationMail;
+use App\Mail\Orders\OrderBakingMail;
+use App\Mail\Orders\OrderCancelledMail;
+use App\Mail\Orders\OrderConfirmedMail;
+use App\Mail\Orders\OrderDeliveredMail;
+use App\Mail\Orders\OrderPlacedMail;
+use App\Mail\Orders\OrderReadyMail;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

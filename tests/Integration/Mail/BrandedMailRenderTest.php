@@ -1,7 +1,7 @@
 <?php
 
 use App\Mail\CustomerBlastMail;
-use App\Mail\RepeatOrderReminderMail;
+use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,7 +33,7 @@ test('RepeatOrderReminder has correct subject', function () {
 
 test('ProductAvailable has correct subject with product name', function () {
     $product = App\Models\Product::factory()->create(['name' => 'Sourdough Loaf']);
-    $mail = new App\Mail\ProductAvailableMail($product, 'Alice');
+    $mail = new App\Mail\Customers\ProductAvailableMail($product, 'Alice');
 
     expect($mail->envelope()->subject)->toContain('Sourdough Loaf')
         ->and($mail->envelope()->subject)->toContain('Test Bakery');
@@ -57,7 +57,7 @@ test('StaffInvitationMail has correct subject with store name', function () {
 
 test('HappyBirthday has correct subject with customer name', function () {
     $customer = Customer::factory()->create(['name' => 'Alice']);
-    $mail = new App\Mail\HappyBirthdayMail($customer);
+    $mail = new App\Mail\Customers\HappyBirthdayMail($customer);
 
     expect($mail->envelope()->subject)->toContain('Alice')
         ->and($mail->envelope()->subject)->toContain('Birthday');
@@ -66,14 +66,14 @@ test('HappyBirthday has correct subject with customer name', function () {
 test('BirthdayDiscount has correct subject', function () {
     $customer = Customer::factory()->create();
     $coupon = App\Models\Coupon::factory()->create();
-    $mail = new App\Mail\BirthdayDiscountMail($customer, $coupon);
+    $mail = new App\Mail\Customers\BirthdayDiscountMail($customer, $coupon);
 
     expect($mail->envelope()->subject)->toContain('Birthday');
 });
 
 test('ReviewRequest has correct subject with store name', function () {
     $order = Order::factory()->create();
-    $mail = new App\Mail\ReviewRequestMail($order);
+    $mail = new App\Mail\Customers\ReviewRequestMail($order);
 
     expect($mail->envelope()->subject)->toContain('Test Bakery');
 });
@@ -84,7 +84,7 @@ test('NewOrderMessage has correct subject with order number', function () {
         'message' => 'Your order is ready!',
         'sender_name' => 'Baker',
     ]);
-    $mail = new App\Mail\NewOrderMessageMail($message);
+    $mail = new App\Mail\Orders\NewOrderMessageMail($message);
 
     expect($mail->envelope()->subject)->toContain($order->order_number);
 });
@@ -98,7 +98,7 @@ test('CateringQuote has correct subject with store name', function () {
 });
 
 test('WeeklyDigest has correct subject with store name', function () {
-    $mail = new App\Mail\WeeklyDigestMail(
+    $mail = new App\Mail\Platform\WeeklyDigestMail(
         stats: [],
         topProducts: App\Models\OrderItem::query()->whereKey([])->get(),
         atRiskCustomers: Customer::query()->whereKey([])->get(),

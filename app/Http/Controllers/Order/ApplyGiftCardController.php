@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ApplyGiftCardRequest;
+use App\Http\Requests\Order\ApplyGiftCardRequest;
 use App\Http\Responses\ApiResponse;
-use App\Services\GiftCardService;
+use App\Services\GiftCard\GiftCardService;
 use Illuminate\Http\JsonResponse;
 
 class ApplyGiftCardController extends Controller

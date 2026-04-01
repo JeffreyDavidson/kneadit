@@ -3,7 +3,7 @@
 namespace App\Actions\Customers;
 
 use App\Enums\CateringInquiryStatus;
-use App\Events\CateringQuoteRequested;
+use App\Events\Marketing\CateringQuoteRequested;
 use App\Models\CateringInquiry;
 
 class TransitionCateringInquiryStatus

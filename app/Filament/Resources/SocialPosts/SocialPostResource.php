@@ -23,6 +23,8 @@ class SocialPostResource extends Resource
 
     protected static ?string $model = SocialPost::class;
 
+    protected static ?string $recordTitleAttribute = 'title';
+
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedShare;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';

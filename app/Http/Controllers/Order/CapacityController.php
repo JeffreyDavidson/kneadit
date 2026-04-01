@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CheckCapacityRequest;
+use App\Http\Requests\Order\CheckCapacityRequest;
 use App\Http\Responses\ApiResponse;
 use App\Services\Inventory\CapacityCalculator;
 use Illuminate\Http\JsonResponse;

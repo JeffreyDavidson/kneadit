@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\ReferralProgram;
+use App\Filament\Pages\Engagement\ReferralProgram;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;

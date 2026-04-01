@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Tenant;
-use App\Services\PayPalService;
+use App\Services\PayPal\PaymentVerifier;
 use App\Services\Tenant\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -47,7 +47,7 @@ class CheckPayPalPaymentsCommand extends Command
 
     protected function processTenant(Tenant $tenant): void
     {
-        $paypalService = resolve(PayPalService::class);
+        $paymentVerifier = resolve(PaymentVerifier::class);
 
         $orders = Order::query()->where('payment_status', PaymentStatus::Unpaid)
             ->whereNotNull('paypal_invoice_id')
@@ -64,7 +64,7 @@ class CheckPayPalPaymentsCommand extends Command
                 continue;
             }
 
-            $status = $paypalService->getInvoiceStatus($order->paypal_invoice_id);
+            $status = $paymentVerifier->getInvoiceStatus($order->paypal_invoice_id);
 
             if (! $status) {
                 $this->error("  ✗ Failed to check order #{$order->order_number}");

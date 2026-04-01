@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Reviews\Tables;
 
+use App\Actions\Content\ApproveReview;
+use App\Actions\Content\FeatureReview;
 use App\Models\Review;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -98,13 +100,13 @@ class ReviewsTable
                 Action::make('approve')
                     ->icon(Heroicon::OutlinedCheck)
                     ->color('success')
-                    ->action(fn (Review $record) => $record->update(['is_approved' => true]))
+                    ->action(fn (Review $record) => resolve(ApproveReview::class)($record))
                     ->visible(fn (Review $record) => ! $record->is_approved),
 
                 Action::make('feature')
                     ->icon(Heroicon::OutlinedStar)
                     ->color('warning')
-                    ->action(fn (Review $record) => $record->update(['is_featured' => true]))
+                    ->action(fn (Review $record) => resolve(FeatureReview::class)($record))
                     ->visible(fn (Review $record) => ! $record->is_featured && $record->is_approved),
 
                 EditAction::make()

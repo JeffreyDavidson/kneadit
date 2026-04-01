@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Mail\Orders;
+
+use App\Mail\BaseMailable;
+use App\Mail\Concerns\BakerBranded;
+use App\Models\Order;
+use App\Services\Settings\TenantSettings;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+
+class OrderReadyMail extends BaseMailable
+{
+    use BakerBranded;
+
+    public function __construct(
+        public Order $order,
+    ) {}
+
+    public function envelope(): Envelope
+    {
+        $storeName = app(TenantSettings::class)->storeName;
+
+        return new Envelope(
+            from: $this->bakerFrom(),
+            replyTo: array_filter([$this->bakerReplyTo()]),
+            subject: "Order #{$this->order->order_number} is Ready! — {$storeName}",
+        );
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            html: 'emails.order-ready',
+            with: [
+                'order' => $this->order,
+                'customer' => $this->order->customer,
+                'orderItems' => $this->order->orderItems()->with('product')->get(),
+            ],
+        );
+    }
+}

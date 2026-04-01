@@ -2,28 +2,22 @@
 
 namespace App\Filament\Central\Resources;
 
-use App\Enums\EmailCampaignSegment;
-use App\Enums\EmailCampaignStatus;
 use App\Filament\Central\Resources\EmailCampaignResource\Pages;
+use App\Filament\Central\Resources\EmailCampaignResource\Schemas\EmailCampaignForm;
+use App\Filament\Central\Resources\EmailCampaignResource\Tables\EmailCampaignsTable;
 use App\Models\EmailCampaign;
-use App\Models\Tenant;
 use BackedEnum;
-use Filament\Actions;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class EmailCampaignResource extends Resource
 {
     protected static ?string $model = EmailCampaign::class;
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
@@ -35,105 +29,12 @@ class EmailCampaignResource extends Resource
 
     public static function form(Schema $form): Schema
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('subject')
-                    ->required()
-                    ->maxLength(255),
-                Textarea::make('body')
-                    ->required()
-                    ->columnSpanFull(),
-                Select::make('target_segment')
-                    ->options(EmailCampaignSegment::class)
-                    ->required()
-                    ->default(EmailCampaignSegment::All),
-            ]);
+        return EmailCampaignForm::configure($form);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('subject')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('target_segment')
-                    ->label('Segment')
-                    ->badge(),
-                TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (EmailCampaignStatus $state): string => match ($state) {
-                        EmailCampaignStatus::Draft => 'gray',
-                        EmailCampaignStatus::Scheduled => 'info',
-                        EmailCampaignStatus::Sending => 'warning',
-                        EmailCampaignStatus::Sent => 'success',
-                    }),
-                TextColumn::make('recipient_count')
-                    ->label('Recipients')
-                    ->sortable(),
-                TextColumn::make('scheduled_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('sent_at')
-                    ->dateTime()
-                    ->sortable(),
-            ])
-            ->defaultSort('created_at', 'desc')
-            ->filters([
-                SelectFilter::make('status')
-                    ->options(EmailCampaignStatus::class),
-            ])
-            ->actions([
-                Actions\EditAction::make()->slideOver(),
-                Actions\Action::make('send_now')
-                    ->label('Send Now')
-                    ->icon(Heroicon::OutlinedPaperAirplane)
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading('Send Campaign Now')
-                    ->modalDescription('Are you sure you want to send this campaign immediately?')
-                    ->action(function (EmailCampaign $record) {
-                        $recipientCount = Tenant::query()->count();
-                        $record->update([
-                            'status' => EmailCampaignStatus::Sent,
-                            'sent_at' => now(),
-                            'recipient_count' => $recipientCount,
-                        ]);
-                    })
-                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent),
-                Actions\Action::make('schedule')
-                    ->label('Schedule')
-                    ->icon(Heroicon::OutlinedClock)
-                    ->color('info')
-                    ->schema([
-                        DateTimePicker::make('scheduled_at')
-                            ->label('Schedule At')
-                            ->required(),
-                    ])
-                    ->action(function (EmailCampaign $record, array $data) {
-                        $record->update([
-                            'status' => EmailCampaignStatus::Scheduled,
-                            'scheduled_at' => $data['scheduled_at'],
-                        ]);
-                    })
-                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent),
-                Actions\Action::make('preview')
-                    ->icon(Heroicon::OutlinedEye)
-                    ->modalHeading(fn (EmailCampaign $record) => 'Preview: ' . $record->subject)
-                    ->modalContent(fn (EmailCampaign $record) => view('filament.central.partials.email-preview', ['campaign' => $record]))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Close'),
-                Actions\ViewAction::make(),
-            ])
-            ->toolbarActions([
-                Actions\DeleteBulkAction::make(),
-            ]);
+        return EmailCampaignsTable::configure($table);
     }
 
     public static function getPages(): array

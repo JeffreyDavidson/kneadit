@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ApplyCouponRequest;
+use App\Http\Requests\Order\ApplyCouponRequest;
 use App\Http\Responses\ApiResponse;
-use App\Services\CouponService;
+use App\Services\Coupon\CouponService;
 use Illuminate\Http\JsonResponse;
 
 class ApplyCouponController extends Controller

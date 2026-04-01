@@ -3,7 +3,7 @@
 namespace App\Actions\Staff;
 
 use App\Enums\UserRole;
-use App\Events\StaffInvitationSent;
+use App\Events\Platform\StaffInvitationSent;
 use App\Exceptions\StaffInvitationException;
 use App\Models\StaffInvitation;
 use App\Models\User;

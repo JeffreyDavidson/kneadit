@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\ScheduledCheckinDue;
-use App\Listeners\SendScheduledCheckinEmailListener;
-use App\Mail\ScheduledCheckinMail;
+use App\Events\Platform\ScheduledCheckinDue;
+use App\Listeners\Platform\SendScheduledCheckinEmailListener;
+use App\Mail\Platform\ScheduledCheckinMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

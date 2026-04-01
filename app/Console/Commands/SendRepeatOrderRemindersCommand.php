@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\PaymentStatus;
-use App\Events\RepeatOrderReminderDue;
+use App\Events\Customers\RepeatOrderReminderDue;
 use App\Models\Customer;
 use App\Models\CustomerReminder;
 use App\Models\Tenant;

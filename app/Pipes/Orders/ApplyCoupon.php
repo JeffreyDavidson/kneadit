@@ -3,7 +3,7 @@
 namespace App\Pipes\Orders;
 
 use App\Models\Coupon;
-use App\Services\CouponService;
+use App\Services\Coupon\CouponService;
 use Closure;
 
 class ApplyCoupon

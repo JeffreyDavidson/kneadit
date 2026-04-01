@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\TrialReminding;
-use App\Listeners\SendTrialReminderEmailListener;
-use App\Mail\TrialReminderMail;
+use App\Events\Platform\TrialReminding;
+use App\Listeners\Platform\SendTrialReminderEmailListener;
+use App\Mail\Platform\TrialReminderMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;

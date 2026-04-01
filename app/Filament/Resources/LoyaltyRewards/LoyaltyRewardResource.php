@@ -22,6 +22,8 @@ class LoyaltyRewardResource extends Resource
 
     protected static ?string $model = LoyaltyReward::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGift;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Shop';

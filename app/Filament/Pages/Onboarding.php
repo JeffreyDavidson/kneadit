@@ -4,7 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Enums\UserRole;
 use App\Models\Category;
-use App\Models\Product;
+use App\Services\Tenant\SaveOnboardingStep;
 use BackedEnum;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
@@ -579,58 +579,24 @@ class Onboarding extends Page
 
     protected function saveWelcomeStep(): void
     {
-        settings(['store_name' => $this->bakery_name]);
-
-        $tenant = tenant();
-        if ($tenant) {
-            $tenant->name = $this->owner_name;
-            $tenant->store_name = $this->bakery_name;
-            $tenant->save();
-        }
+        resolve(SaveOnboardingStep::class)->welcome($this->bakery_name, $this->owner_name);
     }
 
     protected function saveContactStep(): void
     {
-        settings(['store_email' => $this->contact_email]);
-        settings(['store_phone' => $this->contact_phone]);
-        settings(['store_address' => $this->contact_address]);
+        resolve(SaveOnboardingStep::class)->contact($this->contact_email, $this->contact_phone, $this->contact_address);
     }
 
     protected function saveBrandingStep(): void
     {
-        settings(['brand_color_primary' => $this->brand_color_primary]);
-        settings(['brand_color_secondary' => $this->brand_color_secondary]);
+        $logoPath = ! empty($this->store_logo) ? collect($this->store_logo)->first() : null;
 
-        $tenant = tenant();
-        if ($tenant) {
-            $tenant->brand_color_primary = $this->brand_color_primary;
-            $tenant->brand_color_secondary = $this->brand_color_secondary;
-            $tenant->save();
-        }
-
-        if (! empty($this->store_logo)) {
-            $logoPath = collect($this->store_logo)->first();
-            if ($logoPath) {
-                settings(['store_logo' => $logoPath]);
-                if ($tenant) {
-                    $tenant->store_logo = $logoPath;
-                    $tenant->save();
-                }
-            }
-        }
+        resolve(SaveOnboardingStep::class)->branding($this->brand_color_primary, $this->brand_color_secondary, $logoPath);
     }
 
     protected function saveProductStep(): void
     {
-        $slug = Str::slug((string) $this->product_name);
-
-        Product::query()->updateOrCreate(['slug' => $slug], [
-            'name' => $this->product_name,
-            'description' => $this->product_description,
-            'price' => $this->product_price,
-            'category_id' => $this->product_category_id,
-            'is_active' => true,
-        ]);
+        resolve(SaveOnboardingStep::class)->product($this->product_name, $this->product_description, $this->product_price, $this->product_category_id);
     }
 
     protected function saveBusinessHoursStep(): void
@@ -647,59 +613,46 @@ class Onboarding extends Page
             }
         }
 
-        settings(['operating_hours' => json_encode($hours)]);
+        resolve(SaveOnboardingStep::class)->businessHours($hours);
     }
 
     protected function saveComplianceStep(): void
     {
-        settings(['cottage_food_state' => $this->cottage_food_state]);
-        settings(['revenue_cap' => $this->revenue_cap]);
-        settings(['license_number' => $this->license_number]);
-        settings(['allergy_disclaimer' => $this->allergy_disclaimer]);
-        settings(['compliance_acknowledged' => $this->compliance_acknowledged ? '1' : '0']);
+        resolve(SaveOnboardingStep::class)->compliance(
+            $this->cottage_food_state,
+            $this->revenue_cap,
+            $this->license_number,
+            $this->allergy_disclaimer,
+            $this->compliance_acknowledged,
+        );
     }
 
     protected function saveDeliveryStep(): void
     {
-        settings(['delivery_enabled' => $this->delivery_enabled ? '1' : '0']);
-        settings(['delivery_radius' => $this->delivery_radius]);
-        settings(['delivery_fee' => $this->delivery_fee]);
-        settings(['free_delivery_threshold' => $this->free_delivery_over ? $this->free_delivery_threshold : null]);
-        settings(['delivery_minimum_order' => $this->delivery_minimum_order]);
-        settings(['pickup_enabled' => $this->pickup_enabled ? '1' : '0']);
-        settings(['pickup_instructions' => $this->pickup_instructions]);
+        resolve(SaveOnboardingStep::class)->delivery(
+            $this->delivery_enabled,
+            $this->delivery_radius,
+            $this->delivery_fee,
+            $this->free_delivery_over ? $this->free_delivery_threshold : null,
+            $this->delivery_minimum_order,
+            $this->pickup_enabled,
+            $this->pickup_instructions,
+        );
     }
 
     protected function savePaymentStep(): void
     {
-        settings(['payment_methods' => json_encode($this->payment_methods)]);
-        // Keep legacy single value for backward compatibility
-        settings(['payment_method' => $this->payment_methods[0] ?? 'cash']);
-
-        if (in_array('paypal', $this->payment_methods ?? [])) {
-            settings(['paypal_client_id' => $this->paypal_client_id]);
-            settings(['paypal_client_secret' => $this->paypal_client_secret]);
-            settings(['paypal_sandbox' => $this->paypal_sandbox ? '1' : '0']);
-
-            $tenant = tenant();
-            if ($tenant) {
-                if ($this->paypal_client_id) {
-                    $tenant->paypal_client_id = $this->paypal_client_id;
-                }
-                if ($this->paypal_client_secret) {
-                    $tenant->paypal_client_secret = $this->paypal_client_secret;
-                }
-                $tenant->save();
-            }
-        }
-
-        // Stripe Connect account is created during the OAuth flow,
-        // so nothing to save here — the connect ID is already stored.
+        resolve(SaveOnboardingStep::class)->payments(
+            $this->payment_methods ?? ['cash'],
+            $this->paypal_client_id,
+            $this->paypal_client_secret,
+            $this->paypal_sandbox,
+        );
     }
 
     public function completeOnboarding(): void
     {
-        settings(['onboarding_completed_at' => now()->toISOString()]);
+        resolve(SaveOnboardingStep::class)->complete();
 
         Notification::make()
             ->title('Welcome aboard!')

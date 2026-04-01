@@ -210,7 +210,7 @@
 
                             @case('social')
                                 <div class="col-span-full">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Social links are managed in <a href="{{ \App\Filament\Pages\ManageSettings::getUrl() }}" class="text-primary-600 hover:underline">Settings</a>. Use the toggle to show/hide this section.</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Social links are managed in <a href="{{ \App\Filament\Pages\Settings\ManageSettings::getUrl() }}" class="text-primary-600 hover:underline">Settings</a>. Use the toggle to show/hide this section.</p>
                                 </div>
                                 @break
                         @endswitch

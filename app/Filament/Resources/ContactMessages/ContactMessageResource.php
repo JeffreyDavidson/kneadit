@@ -16,6 +16,8 @@ class ContactMessageResource extends Resource
 {
     protected static ?string $model = ContactMessage::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';

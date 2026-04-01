@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\Customers\SubmitContactMessage;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreApiContactRequest;
+use App\Http\Requests\Api\StoreApiContactRequest;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
 

@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Actions\Orders\GenerateOrderNumber;
 use App\Models\Order;
-use App\Services\GenerateOrderNumber;
 
 class OrderObserver
 {

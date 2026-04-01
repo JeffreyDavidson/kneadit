@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Orders\CreateOrder;
 use App\Enums\DeliveryType;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreApiOrderRequest;
+use App\Http\Requests\Api\StoreApiOrderRequest;
 use App\Http\Responses\ApiResponse;
-use App\Services\CouponService;
+use App\Services\Coupon\CouponService;
 use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller

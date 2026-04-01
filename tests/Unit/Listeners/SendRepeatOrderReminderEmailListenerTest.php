@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\RepeatOrderReminderDue;
-use App\Listeners\SendRepeatOrderReminderEmailListener;
-use App\Mail\RepeatOrderReminderMail;
+use App\Events\Customers\RepeatOrderReminderDue;
+use App\Listeners\Customers\SendRepeatOrderReminderEmailListener;
+use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Models\Customer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;

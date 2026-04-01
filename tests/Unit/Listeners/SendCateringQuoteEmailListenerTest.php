@@ -1,7 +1,7 @@
 <?php
 
-use App\Events\CateringQuoteRequested;
-use App\Listeners\SendCateringQuoteEmailListener;
+use App\Events\Marketing\CateringQuoteRequested;
+use App\Listeners\Marketing\SendCateringQuoteEmailListener;
 use App\Mail\CateringQuoteMail;
 use App\Models\CateringInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;

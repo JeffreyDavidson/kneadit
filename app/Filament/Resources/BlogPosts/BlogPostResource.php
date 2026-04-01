@@ -8,19 +8,23 @@ use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Filament\Resources\BlogPosts\Schemas\BlogPostForm;
 use App\Filament\Resources\BlogPosts\Tables\BlogPostsTable;
 use App\Models\TenantBlogPost;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 class BlogPostResource extends Resource
 {
     protected static ?string $model = TenantBlogPost::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedPencilSquare;
+    protected static ?string $recordTitleAttribute = 'title';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Content';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPencilSquare;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Content';
 
     protected static ?int $navigationSort = 1;
 

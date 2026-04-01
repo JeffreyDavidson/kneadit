@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Customers\CreateReview;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreReviewRequest;
+use App\Http\Requests\Storefront\StoreReviewRequest;
 use App\Models\Order;
 use App\Models\Review;
 use App\Services\Settings\TenantSettings;

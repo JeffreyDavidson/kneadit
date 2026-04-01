@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\InstagramCaptionGenerator;
+use App\Filament\Pages\Tools\InstagramCaptionGenerator;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

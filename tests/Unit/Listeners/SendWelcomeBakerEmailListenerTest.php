@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\TenantOnboarded;
-use App\Listeners\SendWelcomeBakerEmailListener;
-use App\Mail\WelcomeBakerMail;
+use App\Events\Platform\TenantOnboarded;
+use App\Listeners\Platform\SendWelcomeBakerEmailListener;
+use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;

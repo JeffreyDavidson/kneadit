@@ -23,287 +23,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Dancing+Script:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 
 
-    <style>
-        /* ===== Base / Classic Theme (default) ===== */
-        :root {
-            --warm-900: #1c1410;
-            --warm-800: #2a1f18;
-            --warm-700: #4a3728;
-            --warm-600: #8b6844;
-            --warm-500: #d4920c;
-            --warm-400: #e8b04a;
-            --warm-300: #f5d88e;
-            --warm-200: #faf4e8;
-            --warm-100: #fef9ef;
-            --warm-50: #fffdf7;
-            --font-display: 'Playfair Display', serif;
-            --font-body: 'Inter', sans-serif;
-            --font-script: 'Dancing Script', cursive;
-            --radius-card: 12px;
-            --radius-btn: 8px;
-        }
-
-        /* ===== Modern Theme ===== */
-        [data-theme="modern"] {
-            --warm-900: #111827;
-            --warm-800: #1f2937;
-            --warm-700: #374151;
-            --warm-600: #d4920c;
-            --warm-500: #f59e0b;
-            --warm-400: #fbbf24;
-            --warm-300: #e5e7eb;
-            --warm-200: #f3f4f6;
-            --warm-100: #ffffff;
-            --warm-50: #ffffff;
-            --font-display: 'Inter', sans-serif;
-            --font-body: 'Inter', sans-serif;
-            --font-script: 'Inter', sans-serif;
-            --radius-card: 2px;
-            --radius-btn: 2px;
-        }
-
-        /* ===== Rustic Theme ===== */
-        [data-theme="rustic"] {
-            --warm-900: #3d3527;
-            --warm-800: #4a4035;
-            --warm-700: #5c5245;
-            --warm-600: #6b7c5e;
-            --warm-500: #8a9e76;
-            --warm-400: #a3b48f;
-            --warm-300: #d5ccba;
-            --warm-200: #e8e0d0;
-            --warm-100: #f5f0e8;
-            --warm-50: #faf7f2;
-            --font-display: 'Caveat', cursive;
-            --font-body: 'Inter', sans-serif;
-            --font-script: 'Caveat', cursive;
-            --radius-card: 16px;
-            --radius-btn: 16px;
-        }
-
-        /* ===== Elegant Theme ===== */
-        [data-theme="elegant"] {
-            --warm-900: #1a1a1a;
-            --warm-800: #2d2d2d;
-            --warm-700: #444444;
-            --warm-600: #b8960c;
-            --warm-500: #c9a827;
-            --warm-400: #d4b84a;
-            --warm-300: #e0e0e0;
-            --warm-200: #f5f5f5;
-            --warm-100: #ffffff;
-            --warm-50: #ffffff;
-            --font-display: 'Cormorant Garamond', serif;
-            --font-body: 'Inter', sans-serif;
-            --font-script: 'Cormorant Garamond', serif;
-            --radius-card: 0px;
-            --radius-btn: 0px;
-        }
-
-        body {
-            font-family: var(--font-body);
-            color: var(--warm-900);
-            background: var(--warm-100);
-        }
-
-        .font-display {
-            font-family: var(--font-display);
-        }
-
-        .font-script {
-            font-family: var(--font-script);
-        }
-
-        .btn-primary {
-            background: var(--warm-600);
-            color: white;
-            padding: 12px 24px;
-            border-radius: var(--radius-btn);
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            background: var(--warm-700);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: var(--warm-200);
-            color: var(--warm-900);
-            padding: 12px 24px;
-            border-radius: var(--radius-btn);
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: 1px solid var(--warm-300);
-            cursor: pointer;
-        }
-
-        .btn-secondary:hover {
-            background: var(--warm-300);
-        }
-
-        .nav-link {
-            color: var(--warm-200);
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 100px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-link:hover {
-            background: rgba(212, 146, 12, 0.2);
-            color: var(--warm-400);
-        }
-
-        .nav-link.active {
-            background: var(--warm-500);
-            color: var(--warm-900);
-        }
-
-        .nav-dropdown-link {
-            display: block;
-            color: var(--warm-200);
-            text-decoration: none;
-            padding: 8px 20px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-
-        .nav-dropdown-link:hover {
-            background: rgba(212, 146, 12, 0.15);
-            color: var(--warm-400);
-        }
-
-        .nav-dropdown-link.active {
-            color: var(--warm-400);
-            background: rgba(212, 146, 12, 0.1);
-        }
-
-        .card {
-            background: white;
-            border-radius: var(--radius-card);
-            box-shadow: 0 4px 20px rgba(28, 20, 16, 0.1);
-            border: 1px solid var(--warm-200);
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--warm-200);
-            border-radius: var(--radius-btn);
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-            background: white;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--warm-500);
-        }
-
-        .text-primary {
-            color: var(--warm-600);
-        }
-
-        .text-secondary {
-            color: var(--warm-700);
-        }
-
-        .bg-primary {
-            background: var(--warm-600);
-        }
-
-        .bg-secondary {
-            background: var(--warm-200);
-        }
-
-        .border-primary {
-            border-color: var(--warm-500);
-        }
-
-        /* Section divider — reusable organic curve */
-        .section-divider {
-            position: relative;
-            height: 40px;
-            overflow: hidden;
-        }
-        .section-divider::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 1px;
-            background: var(--warm-500);
-            opacity: 0.4;
-        }
-        .section-divider::after {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--warm-500);
-            opacity: 0.5;
-        }
-        .section-divider-dark::before { background: var(--warm-400); opacity: 0.3; }
-        .section-divider-dark::after { background: var(--warm-400); opacity: 0.4; }
-
-        /* Better base typography scale */
-        h1 { line-height: 1.05; }
-        h2 { line-height: 1.15; }
-        h3 { line-height: 1.25; }
-
-        /* Elegant theme: extra letter-spacing and thin borders */
-        [data-theme="elegant"] .font-display {
-            letter-spacing: 0.05em;
-            font-weight: 300;
-        }
-        [data-theme="elegant"] .card {
-            border-width: 1px;
-            box-shadow: none;
-        }
-
-        /* Rustic theme: larger heading sizes for handwritten feel */
-        [data-theme="rustic"] .font-display {
-            font-weight: 600;
-        }
-
-        /* Modern theme: stronger shadows */
-        [data-theme="modern"] .card {
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-            border: none;
-        }
-
-        @media (max-width: 768px) {
-            .nav-mobile {
-                display: block;
-            }
-
-            .nav-desktop {
-                display: none;
-            }
-        }
-
-        @media (min-width: 769px) {
-            .nav-mobile {
-                display: none;
-            }
-
-            .nav-desktop {
-                display: flex;
-            }
-        }
-    </style>
+    @include('components.layouts.storefront-styles')
+    {{-- Original style block replaced by include above --}}
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="{{ tenant()->brand_color_primary ?? '#d4920c' }}">
@@ -482,12 +203,12 @@
     @if (!empty($policies))
     <section style="background: var(--warm-50); border-top: 1px solid var(--warm-200);" class="py-12">
         <div class="max-w-4xl mx-auto px-4">
-            <h3 class="font-display text-2xl text-center mb-8" style="color: var(--warm-700);">Policies & Terms</h3>
+            <h3 class="font-display text-2xl text-center mb-8 text-warm-700">Policies & Terms</h3>
             <div class="grid gap-6 md:grid-cols-2">
                 @foreach ($policies as $label => $text)
                 <div class="card p-5">
-                    <h4 class="font-display text-lg mb-2" style="color: var(--warm-600);">{{ $label }}</h4>
-                    <p class="text-sm leading-relaxed" style="color: var(--warm-700);">{{ $text }}</p>
+                    <h4 class="font-display text-lg mb-2 text-warm-600">{{ $label }}</h4>
+                    <p class="text-sm leading-relaxed text-warm-700">{{ $text }}</p>
                 </div>
                 @endforeach
             </div>
@@ -501,7 +222,7 @@
             <div class="h-1 mb-12" style="background: linear-gradient(to right, transparent, var(--warm-500), transparent);"></div>
 
             <h3 class="font-display text-2xl mb-2">{{ $settings->storeName }}</h3>
-            <p class="font-script text-xl mb-6" style="color: var(--warm-400);">Baked with love, served with care</p>
+            <p class="font-script text-xl mb-6 text-warm-400">Baked with love, served with care</p>
 
             @php
                 $footerAddress = $settings->storeAddress;
@@ -534,7 +255,7 @@
             @endif
 
             @if ($footerAddress || $footerPhone || $footerEmail)
-            <div class="flex flex-wrap justify-center gap-6 mb-8 text-sm" style="color: var(--warm-400);">
+            <div class="flex flex-wrap justify-center gap-6 mb-8 text-sm text-warm-400">
                 @if ($footerAddress)
                 <span>{{ $footerAddress }}</span>
                 @endif
@@ -547,7 +268,7 @@
             </div>
             @endif
 
-            <div class="text-sm leading-relaxed space-y-3" style="color: var(--warm-400);">
+            <div class="text-sm leading-relaxed space-y-3 text-warm-400">
                 <p>&copy; {{ date('Y') }} {{ $settings->storeName }}. All rights reserved.</p>
                 <p class="text-xs opacity-60">Powered by KneadIt</p>
             </div>

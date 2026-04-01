@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\TenantOnboarded;
-use App\Listeners\NotifyPlatformOfNewTenantListener;
-use App\Mail\NewSubscriberNotificationMail;
+use App\Events\Platform\TenantOnboarded;
+use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
+use App\Mail\Platform\NewSubscriberNotificationMail;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;

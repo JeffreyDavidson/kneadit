@@ -1,8 +1,8 @@
 <?php
 
-use App\Events\HealthCheckFailed;
-use App\Listeners\SendHealthCheckAlertListener;
-use App\Mail\HealthAlertMail;
+use App\Events\Platform\HealthCheckFailed;
+use App\Listeners\Platform\SendHealthCheckAlertListener;
+use App\Mail\Platform\HealthAlertMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

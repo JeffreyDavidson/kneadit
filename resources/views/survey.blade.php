@@ -6,16 +6,11 @@
 
 @if (session('survey_submitted'))
 {{-- Success State --}}
-<section class="relative overflow-hidden" style="min-height: 60vh;">
-    <div class="absolute inset-0">
-        <img src="{{ $settings->heroImageUrl() }}" alt="Survey submitted" class="w-full h-full object-cover survey-hero-img">
-    </div>
-    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Survey submitted" image-class="survey-hero-img" min-height="60vh">
 
     <div class="relative z-10 max-w-lg mx-auto text-center px-4 py-28">
         <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center survey-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
-            <svg class="w-10 h-10" style="color: var(--warm-500);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-10 h-10 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
@@ -25,41 +20,32 @@
             Back to {{ $settings->storeName }}
         </a>
     </div>
-</section>
+</x-storefront.hero-section>
 @else
 
 {{-- Photo-Forward Hero --}}
-<section class="relative overflow-hidden" style="min-height: 40vh;">
-    <div class="absolute inset-0">
-        <img src="{{ $settings->heroImageUrl() }}" alt="Share your feedback" class="w-full h-full object-cover survey-hero-img">
-    </div>
-    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.65) 50%, rgba(28,20,16,0.95) 100%);"></div>
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Share your feedback" image-class="survey-hero-img" min-height="40vh">
 
     <div class="relative z-10 max-w-3xl mx-auto text-center px-4 py-20 md:py-24">
-        <div class="flex items-center justify-center gap-3 mb-6 survey-fade-up" style="animation-delay: 0.3s;">
-            <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold" style="color: var(--warm-500);">{{ $content['hero_eyebrow'] ?? 'Your Opinion Matters' }}</span>
-            <span class="block w-8 h-px" style="background: var(--warm-500);"></span>
-        </div>
+        <x-storefront.eyebrow class="survey-fade-up mb-6" style="animation-delay: 0.3s;">{{ $content['hero_eyebrow'] ?? 'Your Opinion Matters' }}</x-storefront.eyebrow>
         <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $survey->title }}</h1>
         @if ($survey->description)
         <p class="font-script text-2xl md:text-3xl survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $survey->description }}</p>
         @endif
     </div>
-</section>
+</x-storefront.hero-section>
 
 {{-- Survey Form --}}
-<section class="py-16 px-4" style="background: var(--warm-50);">
+<section class="py-16 px-4 bg-warm-50">
     <div class="max-w-2xl mx-auto" x-data="{ totalQuestions: {{ count($survey->questions) + 1 }} }">
 
         {{-- Progress Bar --}}
         <div class="mb-10">
             <div class="flex justify-between items-center mb-2">
-                <span class="text-sm font-semibold" style="color: var(--warm-600);">{{ count($survey->questions) }} questions</span>
-                <span class="text-sm" style="color: var(--warm-500);">Takes about {{ max(1, ceil(count($survey->questions) * 0.5)) }} min</span>
+                <span class="text-sm font-semibold text-warm-600">{{ count($survey->questions) }} questions</span>
+                <span class="text-sm text-warm-500">Takes about {{ max(1, ceil(count($survey->questions) * 0.5)) }} min</span>
             </div>
-            <div class="w-full rounded-full h-2" style="background: var(--warm-200);">
+            <div class="w-full rounded-full h-2 bg-warm-200">
                 <div class="h-full rounded-full" style="background: linear-gradient(90deg, var(--warm-500), var(--warm-400)); width: 0%;" id="surveyProgress"></div>
             </div>
         </div>
@@ -68,15 +54,15 @@
             @csrf
 
             {{-- Contact Info --}}
-            <div class="rounded-2xl p-6 md:p-8" style="background: white; border: 1px solid var(--warm-200);">
-                <p class="font-script text-2xl md:text-3xl mb-4" style="color: var(--warm-400);">A little about you</p>
+            <div class="rounded-2xl p-6 md:p-8 bg-white border border-warm-200">
+                <p class="font-script text-2xl md:text-3xl mb-4 text-warm-400">A little about you</p>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div>
-                        <label class="block text-sm font-semibold mb-1" style="color: var(--warm-700);">Your Name (optional)</label>
+                        <label class="block text-sm font-semibold mb-1 text-warm-700">Your Name (optional)</label>
                         <input type="text" name="customer_name" class="input-field">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-1" style="color: var(--warm-700);">Your Email (optional)</label>
+                        <label class="block text-sm font-semibold mb-1 text-warm-700">Your Email (optional)</label>
                         <input type="email" name="customer_email" class="input-field">
                     </div>
                 </div>
@@ -84,10 +70,10 @@
 
             {{-- Questions --}}
             @foreach ($survey->questions as $index => $question)
-            <div class="rounded-2xl p-6 md:p-8 transition-all duration-300 hover:shadow-lg" style="background: white; border: 1px solid var(--warm-200);">
+            <div class="rounded-2xl p-6 md:p-8 transition-all duration-300 hover:shadow-lg bg-white border border-warm-200">
                 <div class="flex items-start gap-4 mb-4">
-                    <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style="background: var(--warm-500); color: var(--warm-900);">{{ $index + 1 }}</span>
-                    <label class="font-display text-lg font-semibold leading-snug" style="color: var(--warm-900);">
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-warm-500 text-warm-900">{{ $index + 1 }}</span>
+                    <label class="font-display text-lg font-semibold leading-snug text-warm-900">
                         {{ $question['question'] }}
                     </label>
                 </div>
@@ -105,7 +91,7 @@
                         </button>
                         @endfor
                         <input type="hidden" name="answers[{{ $index }}]" x-bind:value="rating">
-                        <span class="ml-3 text-sm font-semibold" style="color: var(--warm-500);" x-show="rating > 0" x-text="['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'][rating]"></span>
+                        <span class="ml-3 text-sm font-semibold text-warm-500" x-show="rating > 0" x-text="['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'][rating]"></span>
                     </div>
 
                     @elseif ($question['type'] === 'text')
@@ -117,7 +103,7 @@
                         <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl transition-all duration-200 hover:shadow-sm" style="border: 1px solid var(--warm-200);" onmouseover="this.style.borderColor='var(--warm-400)'" onmouseout="this.style.borderColor='var(--warm-200)'">
                             <input type="radio" name="answers[{{ $index }}]" value="{{ $option }}"
                                 class="w-4 h-4" style="accent-color: var(--warm-500);">
-                            <span class="font-medium" style="color: var(--warm-800);">{{ $option }}</span>
+                            <span class="font-medium text-warm-800">{{ $option }}</span>
                         </label>
                         @endforeach
                     </div>
@@ -128,10 +114,10 @@
 
             {{-- Submit --}}
             <div class="text-center pt-4">
-                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl" style="background: var(--warm-500); color: var(--warm-900);">
+                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
                     {{ $content['submit_button'] ?? 'Submit Feedback' }}
                 </button>
-                <p class="text-sm mt-4" style="color: var(--warm-500);">{{ $content['submit_footer'] ?? 'Your feedback helps us bake better for you' }}</p>
+                <p class="text-sm mt-4 text-warm-500">{{ $content['submit_footer'] ?? 'Your feedback helps us bake better for you' }}</p>
             </div>
         </form>
     </div>

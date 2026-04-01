@@ -1,9 +1,9 @@
 <x-layouts.storefront>
 
-<article style="background: var(--warm-100);">
+<article class="bg-warm-100">
     <div class="max-w-3xl mx-auto px-4 py-16">
         {{-- Back link --}}
-        <a href="{{ route('storefront.blog') }}" class="inline-flex items-center gap-2 text-sm font-medium mb-8 transition-colors" style="color: var(--warm-500);">
+        <a href="{{ route('storefront.blog') }}" class="inline-flex items-center gap-2 text-sm font-medium mb-8 transition-colors text-warm-500">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             Back to Blog
         </a>
@@ -18,10 +18,10 @@
         @endif
 
         {{-- Title --}}
-        <h1 class="font-display text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4" style="color: var(--warm-800);">{{ $post->title }}</h1>
+        <h1 class="font-display text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4 text-warm-800">{{ $post->title }}</h1>
 
         {{-- Meta --}}
-        <div class="flex items-center gap-4 text-sm mb-8" style="color: var(--warm-500);">
+        <div class="flex items-center gap-4 text-sm mb-8 text-warm-500">
             @if ($post->author_name)
                 <span>By {{ $post->author_name }}</span>
                 <span>&middot;</span>
@@ -38,11 +38,11 @@
 
         {{-- Excerpt --}}
         @if ($post->excerpt)
-            <p class="text-lg leading-relaxed mb-8 font-medium" style="color: var(--warm-700);">{{ $post->excerpt }}</p>
+            <p class="text-lg leading-relaxed mb-8 font-medium text-warm-700">{{ $post->excerpt }}</p>
         @endif
 
         {{-- Body --}}
-        <div class="prose prose-lg max-w-none" style="color: var(--warm-700);">
+        <div class="prose prose-lg max-w-none text-warm-700">
             {!! $post->body !!}
         </div>
     </div>

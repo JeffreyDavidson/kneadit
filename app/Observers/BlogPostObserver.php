@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
+use App\Actions\Content\GenerateUniqueSlug;
 use App\Models\BlogPost;
-use App\Services\GenerateUniqueSlug;
 use Illuminate\Support\Str;
 
 class BlogPostObserver
