@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Enums\UserRole;
 use App\Models\Product;
+use App\Services\Settings\TenantSettings;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -94,11 +95,11 @@ class LabelGenerator extends Page
 
     public function getStoreName(): string
     {
-        return settings('store_name', 'Our Bakery');
+        return app(TenantSettings::class)->storeName;
     }
 
     public function getAllergyDisclaimer(): string
     {
-        return settings('allergy_disclaimer', 'May contain allergens.');
+        return app(TenantSettings::class)->allergyDisclaimer ?? 'May contain allergens.';
     }
 }

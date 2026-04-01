@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\OrderCreated;
 use App\Mail\NewOrderNotificationMail;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -14,7 +15,7 @@ class NotifyBakerOfNewOrderListener extends QueuedListener
         $order = $event->order;
         $order->loadMissing('orderItems.product');
 
-        $bakerEmail = settings('store_email');
+        $bakerEmail = app(TenantSettings::class)->storeEmail;
 
         if (! $bakerEmail) {
             return;

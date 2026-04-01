@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Enums\SenderType;
 use App\Events\OrderMessageSent;
 use App\Mail\NewOrderMessageMail;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -21,7 +22,7 @@ class SendOrderMessageEmailListener extends QueuedListener
 
         if ($message->sender_type === SenderType::Customer) {
             // Customer sent a message — notify the baker
-            $storeEmail = settings('store_email');
+            $storeEmail = app(TenantSettings::class)->storeEmail;
             if ($storeEmail) {
                 Mail::to($storeEmail)->send(new NewOrderMessageMail($message));
             }
