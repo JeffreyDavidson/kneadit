@@ -68,8 +68,8 @@
                         <td style="text-align: right; font-weight: 700; color: var(--brand-900);">${{ number_format($customer->total_spent, 2) }}</td>
                         <td style="text-align: right;">
                             @php
-                                $subject = rawurlencode('We miss you at ' . settings('business_name', 'KneadIt') . '!');
-                                $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n" . settings('business_name', 'KneadIt') . " 🍪");
+                                $subject = rawurlencode('We miss you at ' . app(\App\Services\Settings\TenantSettings::class)->storeName . '!');
+                                $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n" . app(\App\Services\Settings\TenantSettings::class)->storeName . " 🍪");
                             @endphp
                             <x-admin.btn variant="primary" :href="'mailto:' . $customer->customer_email . '?subject=' . $subject . '&body=' . $body" icon="✉️" size="sm">
                                 Send Reminder
