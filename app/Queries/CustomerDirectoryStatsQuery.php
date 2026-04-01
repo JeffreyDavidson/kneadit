@@ -31,10 +31,10 @@ class CustomerDirectoryStatsQuery
 
         return [
             'total_customers' => $totalCustomers,
-            'avg_lifetime_value' => Number::currency($avgLifetimeValue),
+            'avg_lifetime_value' => (string) Number::currency($avgLifetimeValue),
             'at_risk_count' => $atRiskCount,
             'top_customer_name' => $topCustomer->name ?? 'N/A',
-            'top_customer_value' => Number::currency($topCustomer->orders_sum_total ?? 0),
+            'top_customer_value' => (string) Number::currency($topCustomer->orders_sum_total ?? 0),
         ];
     }
 }

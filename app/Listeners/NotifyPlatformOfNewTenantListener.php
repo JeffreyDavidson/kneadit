@@ -15,7 +15,7 @@ class NotifyPlatformOfNewTenantListener extends QueuedListener
         Mail::to(config('mail.platform_notify'))->send(new NewSubscriberNotificationMail(
             bakerName: $event->user->name,
             bakerEmail: $event->user->email,
-            storeName: $event->tenant->store_name,
+            storeName: $event->tenant->store_name ?? $event->tenant->name,
             subdomain: (string) $event->tenant->id,
             plan: SubscriptionTier::Starter->value,
         ));
