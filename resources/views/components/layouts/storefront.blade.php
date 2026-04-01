@@ -472,10 +472,10 @@
         $showPolicies = $settings->showPolicies;
         $policies = $showPolicies ? array_filter([
             'Cancellation Policy' => $settings->cancellationPolicy,
-            'Deposit Policy' => settings('deposit_policy', ''),
-            'Refund Policy' => settings('refund_policy', ''),
-            'Pickup Policy' => settings('pickup_policy', ''),
-            'Additional Terms' => settings('additional_terms', ''),
+            'Deposit Policy' => $settings->depositPolicy,
+            'Refund Policy' => $settings->refundPolicy,
+            'Pickup Policy' => $settings->pickupPolicy,
+            'Additional Terms' => $settings->additionalTerms,
         ]) : [];
     @endphp
 

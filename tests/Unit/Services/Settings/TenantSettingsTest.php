@@ -43,6 +43,10 @@ test('it can be constructed with all properties', function () {
         announcementType: 'info',
         showPolicies: false,
         cancellationPolicy: '',
+        depositPolicy: '',
+        refundPolicy: '',
+        pickupPolicy: '',
+        additionalTerms: '',
     );
 
     expect($settings->storeName)->toBe('Test Bakery')
@@ -94,6 +98,10 @@ function makeTenantSettings(array $overrides = []): TenantSettings
         'announcementType' => 'info',
         'showPolicies' => false,
         'cancellationPolicy' => '',
+        'depositPolicy' => '',
+        'refundPolicy' => '',
+        'pickupPolicy' => '',
+        'additionalTerms' => '',
     ], $overrides));
 }
 
