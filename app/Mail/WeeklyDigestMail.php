@@ -5,10 +5,10 @@ namespace App\Mail;
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Customer;
 use App\Models\OrderItem;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Collection;
 
 class WeeklyDigestMail extends BaseMailable
 {

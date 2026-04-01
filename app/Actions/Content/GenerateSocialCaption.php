@@ -23,7 +23,7 @@ class GenerateSocialCaption
 
         return Str::replace(
             ['{product}', '{price}', '{store_hashtag}'],
-            [$product->name, Number::currency($product->price), $storeHashtag],
+            [$product->name, (string) Number::currency($product->price), $storeHashtag],
             $template,
         );
     }
