@@ -6,6 +6,7 @@ use App\Enums\SubscriptionTier;
 use App\Enums\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Category;
+use App\Services\Settings\TenantSettings;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
@@ -63,13 +64,15 @@ class PrintableMenu extends Page
     /** @return array<string, mixed> */
     public function getStoreInfo(): array
     {
+        $settings = app(TenantSettings::class);
+
         return [
-            'name' => settings('store_name', 'My Bakery'),
-            'tagline' => settings('business_tagline', ''),
-            'phone' => settings('store_phone', ''),
-            'email' => settings('store_email', ''),
-            'address' => settings('store_address', ''),
-            'disclaimer' => settings('allergy_disclaimer', ''),
+            'name' => $settings->storeName,
+            'tagline' => $settings->businessTagline ?? '',
+            'phone' => $settings->storePhone ?? '',
+            'email' => $settings->storeEmail ?? '',
+            'address' => $settings->storeAddress ?? '',
+            'disclaimer' => $settings->allergyDisclaimer ?? '',
         ];
     }
 
