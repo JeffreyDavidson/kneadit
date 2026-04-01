@@ -95,6 +95,8 @@ class CouponsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('No coupons yet')
+            ->emptyStateDescription('Create a coupon to offer discounts to your customers.');
     }
 }

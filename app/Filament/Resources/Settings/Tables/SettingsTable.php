@@ -53,6 +53,8 @@ class SettingsTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('key');
+            ->defaultSort('key')
+            ->emptyStateHeading('No settings configured')
+            ->emptyStateDescription('Settings will be populated automatically.');
     }
 }

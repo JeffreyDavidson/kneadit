@@ -68,6 +68,8 @@ class GalleryPhotosTable
             ->reorderable('sort_order')
             ->headerActions([
                 CreateAction::make()->slideOver(),
-            ]);
+            ])
+            ->emptyStateHeading('No gallery photos yet')
+            ->emptyStateDescription('Add photos to showcase your bakery.');
     }
 }

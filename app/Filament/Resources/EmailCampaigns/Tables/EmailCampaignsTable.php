@@ -72,6 +72,8 @@ class EmailCampaignsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('No email campaigns yet')
+            ->emptyStateDescription('Create your first campaign to reach your customers.');
     }
 }

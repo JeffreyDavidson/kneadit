@@ -84,6 +84,8 @@ class BlogPostsTable
                         '0' => 'Draft',
                     ]),
 
-            ]);
+            ])
+            ->emptyStateHeading('No blog posts yet')
+            ->emptyStateDescription('Write your first blog post to share with customers.');
     }
 }

@@ -41,6 +41,8 @@ class SurveysTable
                     ->slideOver()
                     ->modalWidth('md'),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('No surveys yet')
+            ->emptyStateDescription('Create a survey to gather customer feedback.');
     }
 }

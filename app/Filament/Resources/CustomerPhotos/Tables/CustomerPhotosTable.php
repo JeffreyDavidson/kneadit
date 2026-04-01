@@ -84,6 +84,8 @@ class CustomerPhotosTable
                         ->requiresConfirmation(),
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('No customer photos yet')
+            ->emptyStateDescription('Photos submitted by customers will appear here for approval.');
     }
 }
