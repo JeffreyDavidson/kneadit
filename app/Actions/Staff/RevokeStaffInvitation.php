@@ -2,7 +2,7 @@
 
 namespace App\Actions\Staff;
 
-use App\Models\StaffInvitation;
+use App\Models\Staff\StaffInvitation;
 
 class RevokeStaffInvitation
 {

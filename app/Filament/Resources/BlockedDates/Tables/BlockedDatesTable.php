@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\BlockedDates\Tables;
 
-use App\Models\BlockedDate;
+use App\Models\Operations\BlockedDate;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

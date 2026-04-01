@@ -2,11 +2,11 @@
 
 use App\Actions\Orders\AwardLoyaltyPoints;
 use App\Actions\Orders\TransitionOrderStatus;
-use App\Enums\OrderStatus;
-use App\Models\Customer;
-use App\Models\LoyaltyPoint;
-use App\Models\Order;
-use App\Models\User;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {

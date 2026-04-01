@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\WaitlistEntries\Schemas;
 
-use App\Enums\WaitlistStatus;
-use App\Models\Product;
+use App\Enums\Customers\WaitlistStatus;
+use App\Models\Inventory\Product;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;

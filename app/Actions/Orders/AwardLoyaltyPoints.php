@@ -2,9 +2,9 @@
 
 namespace App\Actions\Orders;
 
-use App\Enums\LoyaltyPointType;
-use App\Models\LoyaltyPoint;
-use App\Models\Order;
+use App\Enums\Engagement\LoyaltyPointType;
+use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
 
 class AwardLoyaltyPoints

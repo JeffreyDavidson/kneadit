@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserRole;
+use App\Enums\Staff\UserRole;
 
 test('has expected cases', function () {
     expect(UserRole::cases())

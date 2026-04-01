@@ -2,7 +2,7 @@
 
 namespace App\Actions\Tenants;
 
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 

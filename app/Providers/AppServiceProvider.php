@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
-use App\Models\User;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
+use App\Models\Staff\User;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;

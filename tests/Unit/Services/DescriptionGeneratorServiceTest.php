@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\DescriptionGeneratorService;
+use App\Services\Content\DescriptionGeneratorService;
 
 test('generates descriptions with correct count', function () {
     $service = new DescriptionGeneratorService;

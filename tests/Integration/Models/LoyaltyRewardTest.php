@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\RewardType;
-use App\Models\LoyaltyReward;
-use App\Models\Product;
-use App\Models\User;
+use App\Enums\Engagement\RewardType;
+use App\Models\Engagement\LoyaltyReward;
+use App\Models\Inventory\Product;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

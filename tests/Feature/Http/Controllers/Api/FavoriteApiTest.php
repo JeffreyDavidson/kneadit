@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\CustomerFavorite;
-use App\Models\Product;
+use App\Models\Customers\CustomerFavorite;
+use App\Models\Inventory\Product;
 
 use function Pest\Laravel\withoutMiddleware;
 

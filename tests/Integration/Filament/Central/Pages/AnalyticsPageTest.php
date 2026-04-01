@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Central\Pages\Analytics;
 
 beforeEach(function () {

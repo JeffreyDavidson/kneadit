@@ -1,7 +1,7 @@
 <?php
 
 use App\Casts\StripTagsCast;
-use App\Models\WaitlistEntry;
+use App\Models\Customers\WaitlistEntry;
 
 it('has StripTagsCast on WaitlistEntry notes column', function () {
     $entry = new WaitlistEntry;

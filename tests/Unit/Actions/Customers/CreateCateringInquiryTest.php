@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\Customers\CreateCateringInquiry;
-use App\Models\CateringInquiry;
+use App\Models\Customers\CateringInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

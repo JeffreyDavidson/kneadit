@@ -35,7 +35,7 @@ class CheckPlatformMaintenance
         $scheduledEnd = platformSettings('maintenance_scheduled_end');
 
         return response()
-            ->view('maintenance', [
+            ->view('platform.maintenance', [
                 'message' => $message,
                 'scheduled_end' => $scheduledEnd,
             ], 503);

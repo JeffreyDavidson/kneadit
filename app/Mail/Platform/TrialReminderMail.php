@@ -3,7 +3,7 @@
 namespace App\Mail\Platform;
 
 use App\Mail\BaseMailable;
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -32,7 +32,7 @@ class TrialReminderMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            text: 'emails.trial-reminder-text',
+            text: 'emails.platform.trial-reminder-text',
         );
     }
 

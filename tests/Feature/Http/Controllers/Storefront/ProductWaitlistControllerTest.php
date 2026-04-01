@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Product;
-use App\Models\ProductWaitlist;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\ProductWaitlist;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;

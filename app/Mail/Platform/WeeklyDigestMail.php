@@ -4,8 +4,8 @@ namespace App\Mail\Platform;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Customer;
-use App\Models\OrderItem;
+use App\Models\Customers\Customer;
+use App\Models\Orders\OrderItem;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -41,7 +41,7 @@ class WeeklyDigestMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            html: 'emails.weekly-digest',
+            html: 'emails.platform.weekly-digest',
         );
     }
 

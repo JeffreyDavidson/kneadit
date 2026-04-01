@@ -2,7 +2,7 @@
 
 namespace App\Events\Orders;
 
-use App\Models\OrderMessage;
+use App\Models\Orders\OrderMessage;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

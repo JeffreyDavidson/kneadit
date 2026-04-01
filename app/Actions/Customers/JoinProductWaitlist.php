@@ -2,7 +2,7 @@
 
 namespace App\Actions\Customers;
 
-use App\Models\ProductWaitlist;
+use App\Models\Inventory\ProductWaitlist;
 
 class JoinProductWaitlist
 {

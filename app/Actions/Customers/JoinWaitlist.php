@@ -2,8 +2,8 @@
 
 namespace App\Actions\Customers;
 
-use App\Enums\WaitlistStatus;
-use App\Models\WaitlistEntry;
+use App\Enums\Customers\WaitlistStatus;
+use App\Models\Customers\WaitlistEntry;
 
 class JoinWaitlist
 {

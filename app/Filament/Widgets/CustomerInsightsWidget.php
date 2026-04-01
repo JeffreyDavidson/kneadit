@@ -2,9 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\OrderStatus;
-use App\Models\Customer;
-use App\Models\Order;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\Date;

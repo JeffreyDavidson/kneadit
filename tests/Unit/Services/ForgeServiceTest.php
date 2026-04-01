@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\ForgeService;
+use App\Services\Platform\ForgeService;
 
 test('isConfigured returns false when token is missing', function () {
     config(['services.forge.token' => '']);

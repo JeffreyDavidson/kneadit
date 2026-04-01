@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Product;
-use App\Models\Review;
+use App\Models\Engagement\Review;
+use App\Models\Inventory\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

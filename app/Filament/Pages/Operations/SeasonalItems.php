@@ -2,11 +2,11 @@
 
 namespace App\Filament\Pages\Operations;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Product;
-use App\Models\SeasonalItem;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\SeasonalItem;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -50,7 +50,7 @@ class SeasonalItems extends Page
 
     protected static ?int $navigationSort = 12;
 
-    protected string $view = 'filament.pages.seasonal-items';
+    protected string $view = 'filament.pages.operations.seasonal-items';
 
     protected static ?string $title = 'Seasonal Items';
 

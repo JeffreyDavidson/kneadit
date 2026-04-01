@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\Ingredients\Pages\ListIngredients;
-use App\Models\Ingredient;
-use App\Models\User;
+use App\Models\Inventory\Ingredient;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

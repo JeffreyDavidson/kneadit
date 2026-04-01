@@ -2,8 +2,8 @@
 
 namespace App\Actions\Platform;
 
-use App\Enums\EmailCampaignStatus;
-use App\Models\EmailCampaign;
+use App\Enums\Marketing\EmailCampaignStatus;
+use App\Models\Engagement\EmailCampaign;
 use Illuminate\Support\Carbon;
 
 class ScheduleEmailCampaign

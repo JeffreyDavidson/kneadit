@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
-use App\Queries\RevenueQuery;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Orders\Order;
+use App\Queries\Financial\RevenueQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

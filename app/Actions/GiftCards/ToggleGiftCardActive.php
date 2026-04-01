@@ -2,7 +2,7 @@
 
 namespace App\Actions\GiftCards;
 
-use App\Models\GiftCard;
+use App\Models\Financial\GiftCard;
 
 class ToggleGiftCardActive
 {

@@ -2,8 +2,8 @@
 
 namespace App\Actions\Staff;
 
-use App\Enums\UserRole;
-use App\Models\User;
+use App\Enums\Staff\UserRole;
+use App\Models\Staff\User;
 
 class ChangeStaffRole
 {

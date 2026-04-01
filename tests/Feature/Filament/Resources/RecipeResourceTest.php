@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
-use App\Models\Recipe;
-use App\Models\User;
+use App\Models\Inventory\Recipe;
+use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
@@ -15,7 +15,7 @@ class ShowOrderConfirmationController extends Controller
 
         $content = settingsPageContent('order_confirmation');
 
-        return view('order-confirmation', [
+        return view('storefront.order-confirmation', [
             'settings' => $settings,
             'order' => $order,
             'content' => $content,

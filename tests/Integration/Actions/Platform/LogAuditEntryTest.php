@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Platform\LogAuditEntry;
-use App\Models\AdminAuditLog;
-use App\Models\User;
+use App\Models\Platform\AdminAuditLog;
+use App\Models\Staff\User;
 
 use function Pest\Laravel\actingAs;
 

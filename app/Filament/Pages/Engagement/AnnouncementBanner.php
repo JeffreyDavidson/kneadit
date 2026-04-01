@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Engagement;
 
-use App\Enums\UserRole;
+use App\Enums\Staff\UserRole;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -41,7 +41,7 @@ class AnnouncementBanner extends Page
 
     protected static ?int $navigationSort = 7;
 
-    protected string $view = 'filament.pages.announcement-banner';
+    protected string $view = 'filament.pages.engagement.announcement-banner';
 
     protected static ?string $title = 'Announcement Banner';
 
@@ -90,7 +90,7 @@ class AnnouncementBanner extends Page
                 Section::make('Preview')
                     ->description('This is how the banner will appear on your storefront')
                     ->schema([
-                        View::make('filament.pages.announcement-banner-preview'),
+                        View::make('filament.pages.engagement.announcement-banner-preview'),
                     ]),
 
                 Actions::make([

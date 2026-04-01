@@ -1,9 +1,9 @@
 <?php
 
-use App\Filament\Pages\Onboarding;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\User;
+use App\Filament\Pages\Platform\Onboarding;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\Date;
 
 beforeEach(function () {

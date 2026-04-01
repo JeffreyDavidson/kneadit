@@ -3,8 +3,8 @@
 use App\Filament\Resources\BlogPosts\Pages\CreateBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
-use App\Models\BlogPost;
-use App\Models\User;
+use App\Models\Content\BlogPost;
+use App\Models\Staff\User;
 use Livewire\Livewire;
 
 beforeEach(function () {

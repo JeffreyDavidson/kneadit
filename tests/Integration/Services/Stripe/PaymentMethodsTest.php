@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\Onboarding;
+use App\Filament\Pages\Platform\Onboarding;
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -2,8 +2,8 @@
 
 namespace App\Pipes\Orders;
 
-use App\Enums\DeliveryType;
-use App\Models\Product;
+use App\Enums\Orders\DeliveryType;
+use App\Models\Inventory\Product;
 use Closure;
 
 class CalculateOrderTotals

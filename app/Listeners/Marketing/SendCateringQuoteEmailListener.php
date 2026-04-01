@@ -4,7 +4,7 @@ namespace App\Listeners\Marketing;
 
 use App\Events\Marketing\CateringQuoteRequested;
 use App\Listeners\QueuedListener;
-use App\Mail\CateringQuoteMail;
+use App\Mail\Marketing\CateringQuoteMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 

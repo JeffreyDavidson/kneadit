@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Reviews\Tables;
 
 use App\Actions\Content\ApproveReview;
 use App\Actions\Content\FeatureReview;
-use App\Models\Review;
+use App\Models\Engagement\Review;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Services\Tenant\TenantUsageService;
 
 test('getNextPlan returns correct upgrade path', function (string $current, ?SubscriptionTier $expected) {

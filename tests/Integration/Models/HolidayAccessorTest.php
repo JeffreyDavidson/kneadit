@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Holiday;
+use App\Models\Operations\Holiday;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

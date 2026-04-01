@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\DayOfWeek;
+use App\Enums\Staff\DayOfWeek;
 
 test('options returns all days as key value pairs', function () {
     $options = DayOfWeek::options();

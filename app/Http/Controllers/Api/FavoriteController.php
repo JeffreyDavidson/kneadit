@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\IndexFavoritesRequest;
 use App\Http\Requests\Api\StoreApiFavoriteRequest;
 use App\Http\Responses\ApiResponse;
-use App\Models\CustomerFavorite;
+use App\Models\Customers\CustomerFavorite;
 use Illuminate\Http\JsonResponse;
 
 class FavoriteController extends Controller

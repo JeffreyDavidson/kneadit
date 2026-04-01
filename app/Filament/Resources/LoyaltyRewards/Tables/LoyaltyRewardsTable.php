@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\LoyaltyRewards\Tables;
 
-use App\Enums\RewardType;
-use App\Models\LoyaltyReward;
+use App\Enums\Engagement\RewardType;
+use App\Models\Engagement\LoyaltyReward;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;

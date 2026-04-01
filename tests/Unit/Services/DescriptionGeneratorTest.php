@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\DescriptionGeneratorService;
+use App\Services\Content\DescriptionGeneratorService;
 
 beforeEach(function () {
     $this->service = new DescriptionGeneratorService;

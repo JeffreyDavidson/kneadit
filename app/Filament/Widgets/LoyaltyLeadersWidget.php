@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Customer;
-use App\Models\LoyaltyPoint;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
 use Filament\Widgets\Widget;
 
 class LoyaltyLeadersWidget extends Widget

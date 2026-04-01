@@ -1,0 +1,91 @@
+<?php
+
+namespace App\Filament\Resources\GiftCardResource;
+
+use App\Enums\Platform\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
+use App\Filament\Resources\GiftCardResource\Pages\ListGiftCards;
+use App\Filament\Resources\GiftCardResource\Pages\ViewGiftCard;
+use App\Filament\Resources\GiftCardResource\Schemas\GiftCardForm;
+use App\Filament\Resources\GiftCardResource\Tables\GiftCardsTable;
+use App\Models\Financial\GiftCard;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
+use Laravel\Pennant\Feature;
+
+class GiftCardResource extends Resource
+{
+    use ShowsUpgradeBadge;
+
+    protected static ?string $model = GiftCard::class;
+
+    protected static ?string $recordTitleAttribute = 'code';
+
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedGiftTop;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+
+    protected static ?int $navigationSort = 11;
+
+    protected static ?string $navigationLabel = 'Gift Cards';
+
+    protected static ?string $pluralModelLabel = 'Gift Cards';
+
+    public static function form(Schema $schema): Schema
+    {
+        return GiftCardForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return GiftCardsTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
+    }
+
+    public static function getRelations(): array
+    {
+        return [];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['code', 'purchaser_name', 'recipient_name'];
+    }
+
+    /** @param GiftCard $record */
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return 'Gift Card: ' . $record->code;
+    }
+
+    /** @param GiftCard $record */
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Balance' => (string) Number::currency($record->current_balance),
+            'Recipient' => $record->recipient_name ?? 'N/A',
+            'Active' => $record->is_active ? 'Yes' : 'No',
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListGiftCards::route('/'),
+            'view' => ViewGiftCard::route('/{record}'),
+        ];
+    }
+}

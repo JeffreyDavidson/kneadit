@@ -7,7 +7,7 @@ use App\Actions\Tenants\CreateTenant;
 use App\Events\Platform\TenantOnboarded;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreOnboardingRequest;
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;

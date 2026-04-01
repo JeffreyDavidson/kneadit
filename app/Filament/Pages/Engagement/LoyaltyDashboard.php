@@ -2,13 +2,13 @@
 
 namespace App\Filament\Pages\Engagement;
 
-use App\Enums\LoyaltyPointType;
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Engagement\LoyaltyPointType;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Customer;
-use App\Models\LoyaltyPoint;
-use App\Models\LoyaltyReward;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Engagement\LoyaltyReward;
 use App\Services\Settings\TenantSettings;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -45,7 +45,7 @@ class LoyaltyDashboard extends Page
 
     protected static ?int $navigationSort = 13;
 
-    protected string $view = 'filament.pages.loyalty-dashboard';
+    protected string $view = 'filament.pages.engagement.loyalty-dashboard';
 
     public bool $loyaltyEnabled;
 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Category;
+use App\Models\Inventory\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

@@ -2,7 +2,7 @@
 
 namespace App\Actions\Content;
 
-use App\Models\CustomerPhoto;
+use App\Models\Customers\CustomerPhoto;
 
 class ApproveCustomerPhoto
 {

@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\EmailCampaigns;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\EmailCampaigns\Pages\ListEmailCampaigns;
 use App\Filament\Resources\EmailCampaigns\Schemas\EmailCampaignForm;
 use App\Filament\Resources\EmailCampaigns\Tables\EmailCampaignsTable;
-use App\Models\EmailCampaign;
+use App\Models\Engagement\EmailCampaign;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

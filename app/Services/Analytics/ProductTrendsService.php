@@ -2,9 +2,9 @@
 
 namespace App\Services\Analytics;
 
-use App\Enums\OrderStatus;
-use App\Models\Category;
-use App\Models\OrderItem;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Inventory\Category;
+use App\Models\Orders\OrderItem;
 use App\ValueObjects\DateRange;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;

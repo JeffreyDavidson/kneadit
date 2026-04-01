@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\Central\InvoiceController;
 use Illuminate\Support\Facades\Route;
 
 /*

@@ -2,10 +2,10 @@
 
 use App\Actions\GiftCards\CreateGiftCard;
 use App\Actions\GiftCards\RedeemGiftCard;
-use App\DataTransferObjects\CreateGiftCardData;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\User;
+use App\DataTransferObjects\GiftCards\CreateGiftCardData;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use App\Services\GiftCard\GiftCardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;

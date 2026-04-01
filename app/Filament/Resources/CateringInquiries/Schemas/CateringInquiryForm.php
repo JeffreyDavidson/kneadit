@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\CateringInquiries\Schemas;
 
-use App\Enums\CateringInquiryStatus;
+use App\Enums\Customers\CateringInquiryStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;

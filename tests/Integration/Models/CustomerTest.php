@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\User;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

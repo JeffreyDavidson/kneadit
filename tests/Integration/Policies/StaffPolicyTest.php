@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -8,9 +8,9 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 dataset('staffPolicies', [
-    'BlogPost' => ['App\Policies\BlogPostPolicy', 'App\Models\BlogPost'],
-    'Order' => ['App\Policies\OrderPolicy', 'App\Models\Order'],
-    'Product' => ['App\Policies\ProductPolicy', 'App\Models\Product'],
+    'BlogPost' => ['App\Policies\Content\BlogPostPolicy', 'App\Models\Content\BlogPost'],
+    'Order' => ['App\Policies\Orders\OrderPolicy', 'App\Models\Orders\Order'],
+    'Product' => ['App\Policies\Inventory\ProductPolicy', 'App\Models\Inventory\Product'],
 ]);
 
 test('staff policies allow staff users', function (string $policyClass, string $modelClass) {

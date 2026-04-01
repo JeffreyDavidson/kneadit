@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Stripe;
 
 use App\Actions\Stripe\SyncSubscriptionPlan;
 use App\Events\Platform\PaymentFailed;
-use App\Queries\StripeCustomerLookupQuery;
+use App\Queries\Platform\StripeCustomerLookupQuery;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Http\Controllers\WebhookController;

@@ -3,7 +3,7 @@
 namespace App\Filament\Pages\Settings;
 
 use App\Actions\Tenants\SaveTenantSettings;
-use App\Enums\UserRole;
+use App\Enums\Staff\UserRole;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -45,7 +45,7 @@ class ManageSettings extends Page
 
     protected static ?int $navigationSort = 2;
 
-    protected string $view = 'filament.pages.manage-settings';
+    protected string $view = 'filament.pages.settings.manage-settings';
 
     protected static ?string $title = 'Manage Settings';
 
@@ -221,7 +221,7 @@ class ManageSettings extends Page
                             ->live()
                             ->columnSpanFull(),
 
-                        View::make('filament.pages.stripe-connect-status')
+                        View::make('filament.pages.shared.stripe-connect-status')
                             ->visible(fn (Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
 
                         Grid::make(2)

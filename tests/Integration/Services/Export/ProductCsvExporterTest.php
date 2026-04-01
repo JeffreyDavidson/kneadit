@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use App\Services\Export\ProductCsvExporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

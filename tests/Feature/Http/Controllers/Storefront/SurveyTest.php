@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Survey;
-use App\Models\SurveyResponse;
+use App\Models\Engagement\Survey;
+use App\Models\Engagement\SurveyResponse;
 
 use function Pest\Laravel\withoutMiddleware;
 

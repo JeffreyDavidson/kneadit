@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\GalleryPhotos\Schemas;
 
-use App\Enums\GalleryCategory;
+use App\Enums\Content\GalleryCategory;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

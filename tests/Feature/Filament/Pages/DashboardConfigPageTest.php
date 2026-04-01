@@ -1,7 +1,7 @@
 <?php
 
-use App\Filament\Pages\DashboardConfig;
-use App\Models\User;
+use App\Filament\Pages\Dashboard\DashboardConfig;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 

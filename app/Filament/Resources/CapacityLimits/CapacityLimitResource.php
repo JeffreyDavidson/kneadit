@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\CapacityLimits;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\CapacityLimits\Schemas\CapacityLimitForm;
 use App\Filament\Resources\CapacityLimits\Tables\CapacityLimitsTable;
-use App\Models\CapacityLimit;
+use App\Models\Operations\CapacityLimit;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

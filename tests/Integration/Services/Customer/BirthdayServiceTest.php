@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Coupon;
-use App\Models\Customer;
+use App\Models\Customers\Customer;
+use App\Models\Financial\Coupon;
 use App\Services\Customer\BirthdayService;
 use Illuminate\Support\Facades\Date;
 

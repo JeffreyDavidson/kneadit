@@ -1,0 +1,104 @@
+<?php
+
+namespace App\Console\Commands\Platform;
+
+use App\Events\Platform\TrialExpired;
+use App\Events\Platform\TrialReminding;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+
+class CheckTrialExpirationsCommand extends Command
+{
+    protected $signature = 'trial:check';
+
+    protected $description = 'Send trial expiration reminder emails and restrict expired accounts';
+
+    public function handle(): int
+    {
+        $this->sendReminders(7, 'trial_reminder_7d');
+        $this->sendReminders(3, 'trial_reminder_3d');
+        $this->sendReminders(1, 'trial_reminder_1d');
+        $this->handleExpired();
+
+        return Command::SUCCESS;
+    }
+
+    protected function sendReminders(int $daysLeft, string $reminderKey): void
+    {
+        $targetDate = now()->addDays($daysLeft)->startOfDay();
+
+        $tenants = Tenant::query()->whereDate('trial_ends_at', $targetDate->toDateString())
+            ->where('is_active', true)
+            ->cursor();
+
+        /** @var Tenant $tenant */
+        foreach ($tenants as $tenant) {
+            // Check if we already sent this reminder
+            $sentKey = "sent_{$reminderKey}_{$tenant->id}";
+            if (cache()->has($sentKey)) {
+                continue;
+            }
+
+            $user = User::query()->where('email', $tenant->email)->first();
+            if (! $user) {
+                continue;
+            }
+
+            // Skip if user has an active subscription (they converted during trial)
+            if ($user->subscribed('default')) {
+                continue;
+            }
+
+            try {
+                $storeName = $tenant->store_name ?: $tenant->name;
+                $daysText = $daysLeft === 1 ? 'tomorrow' : "in {$daysLeft} days";
+
+                TrialReminding::dispatch($user, $storeName, $daysLeft);
+
+                cache()->put($sentKey, true, now()->addDays(30));
+                $this->info("  ✓ {$daysLeft}d reminder → {$user->email} ({$tenant->store_name})");
+            } catch (\Exception $e) {
+                Log::error('Trial check failed', ['email' => $user->email, 'error' => $e->getMessage()]);
+                $this->error("  ✗ Failed: {$user->email} — {$e->getMessage()}");
+            }
+        }
+    }
+
+    protected function handleExpired(): void
+    {
+        // Find tenants whose trial has expired and have no active subscription
+        $expiredTenants = Tenant::query()->where('trial_ends_at', '<', now())
+            ->where('is_active', true)
+            ->cursor();
+
+        /** @var Tenant $tenant */
+        foreach ($expiredTenants as $tenant) {
+            $user = User::query()->where('email', $tenant->email)->first();
+
+            // Skip if they have an active subscription
+            if ($user && $user->subscribed('default')) {
+                continue;
+            }
+
+            // Deactivate storefront (admin still accessible so they can subscribe)
+            if ($tenant->storefront_enabled) {
+                $tenant->update(['storefront_enabled' => false]);
+
+                $this->info("  ⏸ Paused storefront: {$tenant->store_name} ({$tenant->id})");
+
+                // Send expiration email
+                if ($user) {
+                    try {
+                        TrialExpired::dispatch($user, $tenant->id);
+                    } catch (\Exception $e) {
+                        Log::error("Trial expiration email failed for {$tenant->id}", ['error' => $e->getMessage()]);
+                    }
+                }
+
+                Log::info('Trial expired — storefront paused', ['tenant' => $tenant->id]);
+            }
+        }
+    }
+}

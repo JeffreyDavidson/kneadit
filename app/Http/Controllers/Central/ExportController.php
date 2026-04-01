@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use App\Services\Export\CsvExportService;
 use App\Services\Tenant\TenancyManager;
 use Illuminate\Support\Facades\Gate;

@@ -1,9 +1,9 @@
 <?php
 
 use App\Actions\Customers\AddCustomerNote;
-use App\Models\Customer;
-use App\Models\CustomerNote;
-use App\Models\User;
+use App\Models\Customers\Customer;
+use App\Models\Customers\CustomerNote;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

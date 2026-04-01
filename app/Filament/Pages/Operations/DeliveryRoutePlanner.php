@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Operations;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Delivery\DeliveryRouteService;
 use App\Services\Settings\TenantSettings;
@@ -41,7 +41,7 @@ class DeliveryRoutePlanner extends Page
 
     protected static ?int $navigationSort = 10;
 
-    protected string $view = 'filament.pages.delivery-route-planner';
+    protected string $view = 'filament.pages.operations.delivery-route-planner';
 
     public ?string $selectedDate = null;
 

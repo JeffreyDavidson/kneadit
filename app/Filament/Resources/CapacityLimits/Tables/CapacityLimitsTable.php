@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\CapacityLimits\Tables;
 
-use App\Enums\DayOfWeek;
-use App\Models\CapacityLimit;
+use App\Enums\Staff\DayOfWeek;
+use App\Models\Operations\CapacityLimit;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;

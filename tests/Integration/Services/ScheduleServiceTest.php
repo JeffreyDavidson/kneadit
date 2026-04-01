@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\BusinessSchedule;
-use App\Services\ScheduleService;
+use App\Models\Operations\BusinessSchedule;
+use App\Services\Scheduling\ScheduleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

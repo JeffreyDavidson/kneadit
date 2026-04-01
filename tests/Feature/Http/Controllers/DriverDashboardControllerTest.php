@@ -12,6 +12,6 @@ test('driver dashboard returns ok with settings', function () {
         ->get(route('driver.index'));
 
     $response->assertOk()
-        ->assertViewIs('driver')
+        ->assertViewIs('storefront.driver')
         ->assertViewHas('settings');
 });

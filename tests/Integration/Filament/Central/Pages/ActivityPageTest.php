@@ -1,7 +1,7 @@
 <?php
 
 use App\Filament\Central\Pages\Activity;
-use App\Models\PlatformActivity;
+use App\Models\Platform\PlatformActivity;
 use Filament\Support\Icons\Heroicon;
 
 beforeEach(function () {

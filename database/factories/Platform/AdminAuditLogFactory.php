@@ -1,0 +1,29 @@
+<?php
+
+namespace Database\Factories\Platform;
+
+use App\Models\Platform\AdminAuditLog;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<AdminAuditLog> */
+class AdminAuditLogFactory extends Factory
+{
+    protected $model = AdminAuditLog::class;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'admin_id' => null,
+            'action' => fake()->randomElement(['create', 'update', 'delete', 'view']),
+            'description' => fake()->sentence(),
+            'target_type' => null,
+            'target_id' => null,
+            'user_name' => fake()->name(),
+            'ip_address' => fake()->ipv4(),
+        ];
+    }
+}

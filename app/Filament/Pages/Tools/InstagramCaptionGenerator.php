@@ -2,11 +2,11 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\CaptionStyle;
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Content\CaptionStyle;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -47,7 +47,7 @@ class InstagramCaptionGenerator extends Page
 
     protected static ?string $title = 'Instagram Caption Generator';
 
-    protected string $view = 'filament.pages.instagram-caption-generator';
+    protected string $view = 'filament.pages.tools.instagram-caption-generator';
 
     /** @var array<string, mixed> */
     public ?array $data = [];

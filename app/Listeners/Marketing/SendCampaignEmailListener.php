@@ -4,7 +4,7 @@ namespace App\Listeners\Marketing;
 
 use App\Events\Marketing\CampaignEmailQueued;
 use App\Listeners\QueuedListener;
-use App\Mail\CustomerBlastMail;
+use App\Mail\Marketing\CustomerBlastMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 

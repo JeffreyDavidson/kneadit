@@ -1,10 +1,10 @@
 <?php
 
 use App\Actions\Orders\SendOrderMessage;
-use App\Enums\SenderType;
+use App\Enums\Orders\SenderType;
 use App\Events\Orders\OrderMessageSent;
-use App\Models\Order;
-use App\Models\OrderMessage;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 

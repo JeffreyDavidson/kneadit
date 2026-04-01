@@ -2,12 +2,12 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Product;
-use App\Models\Setting;
-use App\Services\PricingCalculator;
+use App\Models\Inventory\Product;
+use App\Models\Platform\Setting;
+use App\Services\Financial\PricingCalculator;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -42,7 +42,7 @@ class PricingEngine extends Page
 
     protected static ?int $navigationSort = 8;
 
-    protected string $view = 'filament.pages.pricing-engine';
+    protected string $view = 'filament.pages.tools.pricing-engine';
 
     public ?string $selectedProductId = null;
 

@@ -3,8 +3,8 @@
 use App\Events\Orders\OrderCreated;
 use App\Listeners\Orders\SendOrderPlacedEmailListener;
 use App\Mail\Orders\OrderPlacedMail;
-use App\Models\Customer;
-use App\Models\Order;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

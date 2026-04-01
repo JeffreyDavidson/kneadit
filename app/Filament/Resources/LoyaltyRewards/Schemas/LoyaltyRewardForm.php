@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\LoyaltyRewards\Schemas;
 
-use App\Enums\RewardType;
+use App\Enums\Engagement\RewardType;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;

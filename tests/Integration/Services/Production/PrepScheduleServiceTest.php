@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use App\Services\Production\PrepScheduleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

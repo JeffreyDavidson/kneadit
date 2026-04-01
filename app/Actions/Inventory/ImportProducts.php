@@ -2,8 +2,8 @@
 
 namespace App\Actions\Inventory;
 
-use App\Models\Category;
-use App\Models\Product;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
 use App\Services\Export\ProductCsvExporter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;

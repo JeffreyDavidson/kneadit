@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Ingredient;
+use App\Models\Inventory\Ingredient;
 use App\Services\Inventory\ShoppingListService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Customer;
-use App\Models\Order;
-use App\Queries\AtRiskCustomersQuery;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Queries\Customers\AtRiskCustomersQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

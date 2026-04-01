@@ -2,9 +2,9 @@
 
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\User;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -57,7 +57,7 @@ test('can filter orders by status', function () {
     $delivered = Order::factory()->recycle($this->customer)->delivered()->create();
 
     Livewire::test(ListOrders::class)
-        ->filterTable('status', App\Enums\OrderStatus::Delivered->value)
+        ->filterTable('status', App\Enums\Orders\OrderStatus::Delivered->value)
         ->assertCanSeeTableRecords(collect([$delivered]))
         ->assertCanNotSeeTableRecords(collect([$pending]));
 });
@@ -67,7 +67,7 @@ test('can filter orders by payment status', function () {
     $paid = Order::factory()->recycle($this->customer)->paid()->create();
 
     Livewire::test(ListOrders::class)
-        ->filterTable('payment_status', App\Enums\PaymentStatus::Paid->value)
+        ->filterTable('payment_status', App\Enums\Orders\PaymentStatus::Paid->value)
         ->assertCanSeeTableRecords(collect([$paid]))
         ->assertCanNotSeeTableRecords(collect([$unpaid]));
 });

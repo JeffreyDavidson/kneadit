@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Pages\Operations\CustomerDirectory;
-use App\Models\Customer;
-use App\Models\User;
+use App\Models\Customers\Customer;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;

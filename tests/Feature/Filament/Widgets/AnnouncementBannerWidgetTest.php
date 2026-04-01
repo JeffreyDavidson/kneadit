@@ -1,7 +1,7 @@
 <?php
 
 use App\Filament\Widgets\AnnouncementBanner;
-use App\Models\User;
+use App\Models\Staff\User;
 use Livewire\Livewire;
 
 beforeEach(function () {

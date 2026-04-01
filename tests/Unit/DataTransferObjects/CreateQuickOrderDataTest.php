@@ -1,7 +1,7 @@
 <?php
 
-use App\DataTransferObjects\CreateQuickOrderData;
-use App\Enums\DeliveryType;
+use App\DataTransferObjects\Orders\CreateQuickOrderData;
+use App\Enums\Orders\DeliveryType;
 
 test('it can be created from array', function () {
     $data = CreateQuickOrderData::fromArray([

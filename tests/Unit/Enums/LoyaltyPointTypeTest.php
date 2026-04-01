@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\LoyaltyPointType;
+use App\Enums\Engagement\LoyaltyPointType;
 
 test('has expected cases', function () {
     expect(LoyaltyPointType::cases())

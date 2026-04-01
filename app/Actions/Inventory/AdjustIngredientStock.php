@@ -2,8 +2,8 @@
 
 namespace App\Actions\Inventory;
 
-use App\Enums\StockAdjustmentType;
-use App\Models\Ingredient;
+use App\Enums\Inventory\StockAdjustmentType;
+use App\Models\Inventory\Ingredient;
 
 class AdjustIngredientStock
 {

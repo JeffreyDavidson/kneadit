@@ -4,7 +4,7 @@ namespace App\Mail\Orders;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\OrderMessage;
+use App\Models\Orders\OrderMessage;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -32,7 +32,7 @@ class NewOrderMessageMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.new-order-message',
+            view: 'emails.orders.new-order-message',
             with: [
                 'orderMessage' => $this->orderMessage,
                 'order' => $this->orderMessage->order,

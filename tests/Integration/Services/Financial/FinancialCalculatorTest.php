@@ -1,11 +1,11 @@
 <?php
 
-use App\DataTransferObjects\FinancialSummary;
-use App\Enums\ExpenseCategory;
-use App\Models\Customer;
-use App\Models\Expense;
-use App\Models\Order;
-use App\Models\User;
+use App\DataTransferObjects\Financial\FinancialSummary;
+use App\Enums\Financial\ExpenseCategory;
+use App\Models\Customers\Customer;
+use App\Models\Financial\Expense;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use App\Services\Financial\FinancialCalculator;
 
 beforeEach(function () {

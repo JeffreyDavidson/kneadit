@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Survey;
+use App\Models\Engagement\Survey;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

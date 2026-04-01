@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
@@ -15,9 +15,9 @@ beforeEach(function () {
 });
 
 dataset('adminPages', [
-    'Dashboard' => [App\Filament\Pages\Dashboard::class],
+    'Dashboard' => [App\Filament\Pages\Dashboard\Dashboard::class],
     'ManageSettings' => [App\Filament\Pages\Settings\ManageSettings::class],
-    'HelpCenter' => [App\Filament\Pages\HelpCenter::class],
+    'HelpCenter' => [App\Filament\Pages\Platform\HelpCenter::class],
     'OrderCalendar' => [App\Filament\Pages\Operations\OrderCalendar::class],
     'FinanceSummary' => [App\Filament\Pages\Analytics\FinanceSummary::class],
     'ReportsCenter' => [App\Filament\Pages\Analytics\ReportsCenter::class],
@@ -27,7 +27,7 @@ dataset('adminPages', [
     'BakingSheet' => [App\Filament\Pages\Operations\BakingSheet::class],
     'DeliveryRoutePlanner' => [App\Filament\Pages\Operations\DeliveryRoutePlanner::class],
     'LabelGenerator' => [App\Filament\Pages\Tools\LabelGenerator::class],
-    'UpgradePlan' => [App\Filament\Pages\UpgradePlan::class],
+    'UpgradePlan' => [App\Filament\Pages\Platform\UpgradePlan::class],
 ]);
 
 test('admin page can render', function (string $pageClass) {
@@ -36,9 +36,9 @@ test('admin page can render', function (string $pageClass) {
 })->with('adminPages');
 
 dataset('moreAdminPages', [
-    'ActivityLogPage' => [App\Filament\Pages\ActivityLogPage::class],
+    'ActivityLogPage' => [App\Filament\Pages\Platform\ActivityLogPage::class],
     'AnnouncementBanner' => [App\Filament\Pages\Engagement\AnnouncementBanner::class],
-    'DashboardConfig' => [App\Filament\Pages\DashboardConfig::class],
+    'DashboardConfig' => [App\Filament\Pages\Dashboard\DashboardConfig::class],
     'DescriptionGenerator' => [App\Filament\Pages\Tools\DescriptionGenerator::class],
     'HolidayPlanningCalendar' => [App\Filament\Pages\Operations\HolidayPlanningCalendar::class],
     'HomepageBuilder' => [App\Filament\Pages\Settings\HomepageBuilder::class],

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Expenses\Schemas;
 
-use App\Enums\ExpenseCategory;
+use App\Enums\Financial\ExpenseCategory;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;

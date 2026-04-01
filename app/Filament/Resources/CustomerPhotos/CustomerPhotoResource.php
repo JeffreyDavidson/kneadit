@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\CustomerPhotos;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\CustomerPhotos\Pages\ListCustomerPhotos;
 use App\Filament\Resources\CustomerPhotos\Schemas\CustomerPhotoForm;
 use App\Filament\Resources\CustomerPhotos\Tables\CustomerPhotosTable;
-use App\Models\CustomerPhoto;
+use App\Models\Customers\CustomerPhoto;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\EmailCampaignStatus;
+use App\Enums\Marketing\EmailCampaignStatus;
 use App\Filament\Resources\EmailCampaigns\Pages\ListEmailCampaigns;
-use App\Models\EmailCampaign;
-use App\Models\User;
+use App\Models\Engagement\EmailCampaign;
+use App\Models\Staff\User;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
 

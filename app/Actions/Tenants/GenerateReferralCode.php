@@ -2,9 +2,9 @@
 
 namespace App\Actions\Tenants;
 
-use App\Enums\ReferralStatus;
-use App\Models\Referral;
-use App\Models\Tenant;
+use App\Enums\Customers\ReferralStatus;
+use App\Models\Customers\Referral;
+use App\Models\Platform\Tenant;
 use Illuminate\Support\Str;
 
 class GenerateReferralCode

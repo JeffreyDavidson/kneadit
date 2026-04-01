@@ -2,11 +2,11 @@
 
 namespace App\Services\Customer;
 
-use App\DataTransferObjects\CustomerMetrics;
-use App\Enums\LoyaltyPointType;
-use App\Enums\OrderStatus;
-use App\Models\Customer;
-use App\Models\Order;
+use App\DataTransferObjects\Customers\CustomerMetrics;
+use App\Enums\Engagement\LoyaltyPointType;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 

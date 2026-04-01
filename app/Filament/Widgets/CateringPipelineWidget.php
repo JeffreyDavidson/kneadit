@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\CateringInquiryStatus;
-use App\Models\CateringInquiry;
+use App\Enums\Customers\CateringInquiryStatus;
+use App\Models\Customers\CateringInquiry;
 use Filament\Widgets\Widget;
 
 class CateringPipelineWidget extends Widget

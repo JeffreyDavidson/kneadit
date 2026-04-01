@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Category;
+use App\Models\Inventory\Category;
 
 use function Pest\Laravel\withoutMiddleware;
 

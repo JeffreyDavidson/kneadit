@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Resources\EmailCampaignResource\Schemas;
 
-use App\Enums\EmailCampaignSegment;
+use App\Enums\Marketing\EmailCampaignSegment;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;

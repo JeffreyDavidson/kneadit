@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\BlogPost;
+use App\Models\Content\BlogPost;
 use App\View\Components\Home\BlogPosts;
 
 beforeEach(fn () => setUpCentralTest());

@@ -1,7 +1,7 @@
 <?php
 
-use App\Filament\Pages\Messages;
-use App\Models\User;
+use App\Filament\Pages\Platform\Messages;
+use App\Models\Staff\User;
 use Livewire\Livewire;
 
 beforeEach(function () {

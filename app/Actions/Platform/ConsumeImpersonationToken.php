@@ -2,9 +2,9 @@
 
 namespace App\Actions\Platform;
 
-use App\Enums\UserRole;
-use App\Models\ImpersonationToken;
-use App\Models\User;
+use App\Enums\Staff\UserRole;
+use App\Models\Platform\ImpersonationToken;
+use App\Models\Staff\User;
 
 class ConsumeImpersonationToken
 {

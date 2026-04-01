@@ -2,9 +2,9 @@
 
 namespace App\Actions\Tenants;
 
-use App\Enums\PlatformSenderType;
-use App\Models\PlatformMessage;
-use App\Models\Tenant;
+use App\Enums\Platform\PlatformSenderType;
+use App\Models\Platform\PlatformMessage;
+use App\Models\Platform\Tenant;
 
 class SendTenantNudge
 {

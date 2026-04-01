@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\Categories\Pages\ListCategories;
-use App\Models\Category;
-use App\Models\User;
+use App\Models\Inventory\Category;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -2,9 +2,9 @@
 
 namespace App\Actions\GiftCards;
 
-use App\DataTransferObjects\CreateGiftCardData;
-use App\Enums\GiftCardTransactionType;
-use App\Models\GiftCard;
+use App\DataTransferObjects\GiftCards\CreateGiftCardData;
+use App\Enums\Financial\GiftCardTransactionType;
+use App\Models\Financial\GiftCard;
 use App\Services\GiftCard\GiftCardService;
 
 class CreateGiftCard

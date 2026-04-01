@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Coupon;
+use App\Models\Financial\Coupon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;

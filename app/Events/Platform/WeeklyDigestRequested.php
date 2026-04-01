@@ -2,7 +2,7 @@
 
 namespace App\Events\Platform;
 
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Support\Collection;

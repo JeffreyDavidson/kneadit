@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\Recipe;
-use App\Models\SeasonalItem;
-use App\Models\User;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\Recipe;
+use App\Models\Inventory\SeasonalItem;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

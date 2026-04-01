@@ -2,10 +2,10 @@
 
 namespace App\Actions\Orders;
 
-use App\Enums\OrderStatus;
+use App\Enums\Orders\OrderStatus;
 use App\Events\Orders\OrderStatusChanged;
-use App\Exceptions\InvalidOrderTransitionException;
-use App\Models\Order;
+use App\Exceptions\Orders\InvalidOrderTransitionException;
+use App\Models\Orders\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 

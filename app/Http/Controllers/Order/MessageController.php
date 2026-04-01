@@ -6,7 +6,7 @@ use App\Actions\Orders\SendOrderMessage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreOrderMessageRequest;
 use App\Http\Responses\ApiResponse;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Http\JsonResponse;
 
 class MessageController extends Controller

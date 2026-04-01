@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Recipe;
+use App\Models\Inventory\Recipe;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -42,7 +42,7 @@ class PriceSuggestionTool extends Page
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected string $view = 'filament.pages.price-suggestion-tool';
+    protected string $view = 'filament.pages.tools.price-suggestion-tool';
 
     public ?int $selectedRecipeId = null;
 

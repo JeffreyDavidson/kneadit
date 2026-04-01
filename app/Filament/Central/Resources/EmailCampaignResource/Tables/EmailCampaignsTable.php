@@ -4,8 +4,8 @@ namespace App\Filament\Central\Resources\EmailCampaignResource\Tables;
 
 use App\Actions\Platform\ScheduleEmailCampaign;
 use App\Actions\Platform\SendEmailCampaign;
-use App\Enums\EmailCampaignStatus;
-use App\Models\EmailCampaign;
+use App\Enums\Marketing\EmailCampaignStatus;
+use App\Models\Engagement\EmailCampaign;
 use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Support\Icons\Heroicon;

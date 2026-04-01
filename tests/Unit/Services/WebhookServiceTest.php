@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\OrderStatus;
-use App\Services\WebhookService;
+use App\Enums\Orders\OrderStatus;
+use App\Services\Platform\WebhookService;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {

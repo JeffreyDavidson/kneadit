@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\Orders\CreateOrder;
-use App\Enums\DeliveryType;
+use App\Enums\Orders\DeliveryType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreApiOrderRequest;
 use App\Http\Responses\ApiResponse;

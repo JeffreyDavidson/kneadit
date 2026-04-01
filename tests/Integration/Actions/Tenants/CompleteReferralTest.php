@@ -1,9 +1,9 @@
 <?php
 
 use App\Actions\Tenants\CompleteReferral;
-use App\Enums\ReferralStatus;
-use App\Enums\SubscriptionTier;
-use App\Models\Referral;
+use App\Enums\Customers\ReferralStatus;
+use App\Enums\Platform\SubscriptionTier;
+use App\Models\Customers\Referral;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {

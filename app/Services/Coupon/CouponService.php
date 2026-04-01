@@ -2,9 +2,9 @@
 
 namespace App\Services\Coupon;
 
-use App\DataTransferObjects\CouponValidationResult;
-use App\Enums\CouponType;
-use App\Models\Coupon;
+use App\DataTransferObjects\Orders\CouponValidationResult;
+use App\Enums\Financial\CouponType;
+use App\Models\Financial\Coupon;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 

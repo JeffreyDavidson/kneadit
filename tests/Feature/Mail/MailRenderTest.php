@@ -3,8 +3,8 @@
 use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Mail\Orders\OrderDeliveredMail;
 use App\Mail\Platform\WelcomeBakerMail;
-use App\Models\Customer;
-use App\Models\Order;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -45,14 +45,14 @@ test('order-based mail classes render without errors', function (string $mailCla
 ]);
 
 test('StaffInvitationMail renders', function () {
-    $invitation = App\Models\StaffInvitation::factory()->create();
+    $invitation = App\Models\Staff\StaffInvitation::factory()->create();
 
-    expect((new App\Mail\StaffInvitationMail($invitation, 'Sweet Bakery', 'https://example.com/accept'))->render())
+    expect((new App\Mail\Platform\StaffInvitationMail($invitation, 'Sweet Bakery', 'https://example.com/accept'))->render())
         ->toBeString()->not->toBeEmpty();
 });
 
 test('CustomerBlastMail renders', function () {
-    expect((new App\Mail\CustomerBlastMail('Sale this weekend!', '<p>50% off all cakes</p>'))->render())
+    expect((new App\Mail\Marketing\CustomerBlastMail('Sale this weekend!', '<p>50% off all cakes</p>'))->render())
         ->toBeString()->not->toBeEmpty();
 });
 
@@ -63,7 +63,7 @@ test('NewSubscriberNotificationMail renders', function () {
 
 test('BirthdayDiscountMail renders', function () {
     $customer = Customer::factory()->create();
-    $coupon = App\Models\Coupon::factory()->percentage()->create();
+    $coupon = App\Models\Financial\Coupon::factory()->percentage()->create();
 
     expect((new App\Mail\Customers\BirthdayDiscountMail($customer, $coupon))->render())
         ->toBeString()->not->toBeEmpty();
@@ -77,7 +77,7 @@ test('HappyBirthdayMail renders', function () {
 });
 
 test('ProductAvailableMail renders', function () {
-    $product = App\Models\Product::factory()->create();
+    $product = App\Models\Inventory\Product::factory()->create();
 
     expect((new App\Mail\Customers\ProductAvailableMail($product, 'Jane'))->render())
         ->toBeString()->not->toBeEmpty();
@@ -86,7 +86,7 @@ test('ProductAvailableMail renders', function () {
 test('PurchaseOrderMail renders', function () {
     $items = [['name' => 'Flour', 'sku' => 'FL-001', 'needed' => 10, 'unit' => 'kg', 'unit_price' => 5.00, 'subtotal' => 50.00]];
 
-    expect((new App\Mail\PurchaseOrderMail('Acme Supplies', 'Sweet Bakery', $items, 100.00, '2026-04-15'))->render())
+    expect((new App\Mail\Orders\PurchaseOrderMail('Acme Supplies', 'Sweet Bakery', $items, 100.00, '2026-04-15'))->render())
         ->toBeString()->not->toBeEmpty();
 });
 
@@ -105,15 +105,15 @@ test('OrderCancelledMail renders', function () {
 });
 
 test('CateringQuoteMail renders', function () {
-    $inquiry = App\Models\CateringInquiry::factory()->create(['quoted_amount' => 500.00]);
+    $inquiry = App\Models\Customers\CateringInquiry::factory()->create(['quoted_amount' => 500.00]);
 
-    expect((new App\Mail\CateringQuoteMail($inquiry))->render())->toBeString()->not->toBeEmpty();
+    expect((new App\Mail\Marketing\CateringQuoteMail($inquiry))->render())->toBeString()->not->toBeEmpty();
 });
 
 test('NewOrderMessageMail renders', function () {
     $order = Order::factory()->create();
     $message = $order->messages()->create([
-        'sender_type' => App\Enums\SenderType::Customer,
+        'sender_type' => App\Enums\Orders\SenderType::Customer,
         'sender_name' => 'Jane',
         'message' => 'Can I add extra frosting?',
     ]);
@@ -130,7 +130,7 @@ test('ScheduledCheckinMail renders', function () {
 });
 
 test('TrialReminderMail renders', function () {
-    $user = App\Models\User::factory()->owner()->create();
+    $user = App\Models\Staff\User::factory()->owner()->create();
 
     expect((new App\Mail\Platform\TrialReminderMail($user, 'Sweet Bakery', 3))->render())->toBeString()->not->toBeEmpty();
 });
@@ -149,13 +149,13 @@ test('WeeklyDigestMail renders', function () {
 });
 
 test('PaymentFailedMail renders', function () {
-    $user = App\Models\User::factory()->owner()->create();
+    $user = App\Models\Staff\User::factory()->owner()->create();
 
     expect((new App\Mail\Platform\PaymentFailedMail($user))->render())->toBeString()->not->toBeEmpty();
 });
 
 test('TrialExpiredMail renders', function () {
-    $user = App\Models\User::factory()->owner()->create();
+    $user = App\Models\Staff\User::factory()->owner()->create();
 
     expect((new App\Mail\Platform\TrialExpiredMail($user, 'test-tenant'))->render())->toBeString()->not->toBeEmpty();
 });

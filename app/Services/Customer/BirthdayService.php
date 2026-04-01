@@ -2,9 +2,9 @@
 
 namespace App\Services\Customer;
 
-use App\Enums\CouponType;
-use App\Models\Coupon;
-use App\Models\Customer;
+use App\Enums\Financial\CouponType;
+use App\Models\Customers\Customer;
+use App\Models\Financial\Coupon;
 use Illuminate\Support\Facades\Date;
 
 class BirthdayService

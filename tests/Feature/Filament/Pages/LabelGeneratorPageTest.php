@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Pages\Tools\LabelGenerator;
-use App\Models\Product;
-use App\Models\User;
+use App\Models\Inventory\Product;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 

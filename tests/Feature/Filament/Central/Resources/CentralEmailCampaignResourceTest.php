@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Central\Resources\EmailCampaignResource\Pages\ListEmailCampaigns;
-use App\Models\EmailCampaign;
-use App\Models\User;
+use App\Models\Engagement\EmailCampaign;
+use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 

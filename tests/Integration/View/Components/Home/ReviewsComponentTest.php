@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Review;
+use App\Models\Engagement\Review;
 use App\View\Components\Home\Reviews;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

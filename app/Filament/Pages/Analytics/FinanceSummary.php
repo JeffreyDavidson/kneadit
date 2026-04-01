@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Analytics;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Financial\FinancialCalculator;
 use Filament\Actions\Action;
@@ -41,7 +41,7 @@ class FinanceSummary extends Page
 
     protected static ?int $navigationSort = 3;
 
-    protected string $view = 'filament.pages.finance-summary';
+    protected string $view = 'filament.pages.analytics.finance-summary';
 
     public int $selectedYear;
 
@@ -79,7 +79,7 @@ class FinanceSummary extends Page
         $this->totalRevenue = $data->totalRevenue;
         $this->totalExpenses = $data->totalExpenses;
         $this->netProfit = $data->netProfit;
-        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (\App\DataTransferObjects\MonthlyFinancials $m) => ['month_name' => $m->monthName, 'revenue' => $m->revenue, 'expenses' => $m->expenses, 'net' => $m->net]);
+        $this->monthlyBreakdown = $data->monthlyBreakdown->map(fn (\App\DataTransferObjects\Financial\MonthlyFinancials $m) => ['month_name' => $m->monthName, 'revenue' => $m->revenue, 'expenses' => $m->expenses, 'net' => $m->net]);
         $this->expenseBreakdown = $data->expenseBreakdown;
         $this->cogsAmount = $data->cogsAmount;
         $this->cogsPercentage = $data->cogsPercentage;

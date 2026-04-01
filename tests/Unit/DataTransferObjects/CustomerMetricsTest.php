@@ -1,6 +1,6 @@
 <?php
 
-use App\DataTransferObjects\CustomerMetrics;
+use App\DataTransferObjects\Customers\CustomerMetrics;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 

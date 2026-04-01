@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Settings;
 
-use App\Enums\UserRole;
+use App\Enums\Staff\UserRole;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
@@ -40,7 +40,7 @@ class ManagePageContent extends Page
 
     protected static ?int $navigationSort = 3;
 
-    protected string $view = 'filament.pages.manage-page-content';
+    protected string $view = 'filament.pages.settings.manage-page-content';
 
     protected static ?string $title = 'Page Content';
 

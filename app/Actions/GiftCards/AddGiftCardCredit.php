@@ -2,8 +2,8 @@
 
 namespace App\Actions\GiftCards;
 
-use App\Enums\GiftCardTransactionType;
-use App\Models\GiftCard;
+use App\Enums\Financial\GiftCardTransactionType;
+use App\Models\Financial\GiftCard;
 
 class AddGiftCardCredit
 {

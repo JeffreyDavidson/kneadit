@@ -2,7 +2,7 @@
 
 namespace App\Services\Tenant;
 
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
 
 class TenancyManager

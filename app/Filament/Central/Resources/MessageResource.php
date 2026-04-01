@@ -5,7 +5,7 @@ namespace App\Filament\Central\Resources;
 use App\Filament\Central\Resources\MessageResource\Pages\ListMessages;
 use App\Filament\Central\Resources\MessageResource\Pages\ViewMessage;
 use App\Filament\Central\Resources\MessageResource\Tables\MessagesTable;
-use App\Models\PlatformMessage;
+use App\Models\Platform\PlatformMessage;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;

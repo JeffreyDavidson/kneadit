@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\StockStatus;
-use App\Models\Ingredient;
+use App\Enums\Inventory\StockStatus;
+use App\Models\Inventory\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

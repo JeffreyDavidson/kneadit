@@ -1,9 +1,9 @@
 <?php
 
-use App\DataTransferObjects\CouponValidationResult;
-use App\DataTransferObjects\CreateGiftCardData;
-use App\DataTransferObjects\CreateOrderData;
-use App\DataTransferObjects\GiftCardRedemptionResult;
+use App\DataTransferObjects\GiftCards\CreateGiftCardData;
+use App\DataTransferObjects\GiftCards\GiftCardRedemptionResult;
+use App\DataTransferObjects\Orders\CouponValidationResult;
+use App\DataTransferObjects\Orders\CreateOrderData;
 
 test('CreateOrderData::fromArray maps validated request data', function () {
     $dto = CreateOrderData::fromArray([

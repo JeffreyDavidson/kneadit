@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\Inventory\Category;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
@@ -17,7 +17,7 @@ class ShowOrderFormController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        return view('order', [
+        return view('storefront.order', [
             'settings' => $settings,
             'categories' => $categories,
         ]);

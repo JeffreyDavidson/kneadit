@@ -2,13 +2,13 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\TaxExportType;
-use App\Enums\UserRole;
+use App\Enums\Financial\TaxExportType;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Expense;
-use App\Models\Income;
-use App\Models\Order;
+use App\Models\Financial\Expense;
+use App\Models\Financial\Income;
+use App\Models\Orders\Order;
 use App\Services\Financial\TaxCsvExporter;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -29,7 +29,7 @@ class TaxExport extends Page
 {
     use ShowsUpgradeBadge;
 
-    protected string $view = 'filament.pages.tax-export';
+    protected string $view = 'filament.pages.tools.tax-export';
 
     public static function canAccess(): bool
     {

@@ -2,7 +2,7 @@
 
 namespace App\Actions\Customers;
 
-use App\Models\CustomerPhoto;
+use App\Models\Customers\CustomerPhoto;
 use Illuminate\Http\UploadedFile;
 
 class CreateCustomerPhoto

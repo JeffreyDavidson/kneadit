@@ -2,9 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Pages\Messages;
-use App\Models\PlatformMessage;
-use App\Models\Tenant;
+use App\Filament\Pages\Platform\Messages;
+use App\Models\Platform\PlatformMessage;
+use App\Models\Platform\Tenant;
 use Filament\Facades\Filament;
 use Filament\Widgets\Widget;
 

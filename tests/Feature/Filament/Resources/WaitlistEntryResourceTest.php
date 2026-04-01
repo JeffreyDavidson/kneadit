@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\WaitlistEntries\Pages\ListWaitlistEntries;
-use App\Models\User;
-use App\Models\WaitlistEntry;
+use App\Models\Customers\WaitlistEntry;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -39,11 +39,11 @@ test('can search waitlist entries by customer name', function () {
 });
 
 test('can filter waitlist entries by status', function () {
-    $waiting = WaitlistEntry::factory()->create(['status' => App\Enums\WaitlistStatus::Waiting]);
-    $notified = WaitlistEntry::factory()->create(['status' => App\Enums\WaitlistStatus::Notified]);
+    $waiting = WaitlistEntry::factory()->create(['status' => App\Enums\Customers\WaitlistStatus::Waiting]);
+    $notified = WaitlistEntry::factory()->create(['status' => App\Enums\Customers\WaitlistStatus::Notified]);
 
     Livewire::test(ListWaitlistEntries::class)
-        ->filterTable('status', App\Enums\WaitlistStatus::Waiting->value)
+        ->filterTable('status', App\Enums\Customers\WaitlistStatus::Waiting->value)
         ->assertCanSeeTableRecords(collect([$waiting]))
         ->assertCanNotSeeTableRecords(collect([$notified]));
 });
@@ -65,7 +65,7 @@ test('can create a waitlist entry via slide-over', function () {
             'customer_email' => 'jane@example.com',
             'customer_phone' => '555-0100',
             'requested_date' => now()->addDays(5)->format('Y-m-d'),
-            'status' => App\Enums\WaitlistStatus::Waiting->value,
+            'status' => App\Enums\Customers\WaitlistStatus::Waiting->value,
         ])
         ->assertHasNoFormErrors();
 
@@ -80,7 +80,7 @@ test('create waitlist entry validates required fields', function (array $data, a
             'customer_name' => 'Test',
             'customer_email' => 'test@example.com',
             'requested_date' => now()->addDay()->format('Y-m-d'),
-            'status' => App\Enums\WaitlistStatus::Waiting->value,
+            'status' => App\Enums\Customers\WaitlistStatus::Waiting->value,
             ...$data,
         ])
         ->assertHasFormErrors($errors);

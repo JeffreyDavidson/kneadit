@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Customers\ToggleCustomerFavorite;
-use App\Models\CustomerFavorite;
-use App\Models\Product;
+use App\Models\Customers\CustomerFavorite;
+use App\Models\Inventory\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

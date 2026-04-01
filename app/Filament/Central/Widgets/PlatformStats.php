@@ -2,9 +2,9 @@
 
 namespace App\Filament\Central\Widgets;
 
-use App\Enums\SupportTicketStatus;
-use App\Models\SupportTicket;
-use App\Models\Tenant;
+use App\Enums\Platform\SupportTicketStatus;
+use App\Models\Platform\SupportTicket;
+use App\Models\Platform\Tenant;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;

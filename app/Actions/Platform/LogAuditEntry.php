@@ -2,7 +2,7 @@
 
 namespace App\Actions\Platform;
 
-use App\Models\AdminAuditLog;
+use App\Models\Platform\AdminAuditLog;
 
 class LogAuditEntry
 {

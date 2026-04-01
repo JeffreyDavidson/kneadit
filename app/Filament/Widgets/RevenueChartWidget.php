@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Queries\RevenueQuery;
+use App\Queries\Financial\RevenueQuery;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;

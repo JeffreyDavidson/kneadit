@@ -2,9 +2,9 @@
 
 namespace App\Actions\Stripe;
 
-use App\Enums\PaymentStatus;
-use App\Models\Order;
-use App\Models\Tenant;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Orders\Order;
+use App\Models\Platform\Tenant;
 use Illuminate\Support\Facades\Log;
 
 class HandleConnectCheckoutCompleted

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 
 test('it resolves a tier from a stripe price id', function () {
     config(['kneadit.stripe_prices' => [

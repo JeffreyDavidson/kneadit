@@ -4,7 +4,7 @@ namespace App\Listeners\Marketing;
 
 use App\Events\Marketing\PurchaseOrderRequested;
 use App\Listeners\QueuedListener;
-use App\Mail\PurchaseOrderMail;
+use App\Mail\Orders\PurchaseOrderMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 

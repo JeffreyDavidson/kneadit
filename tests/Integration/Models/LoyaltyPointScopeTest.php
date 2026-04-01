@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Customer;
-use App\Models\LoyaltyPoint;
-use App\Models\Order;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

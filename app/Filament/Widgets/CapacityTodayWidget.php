@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\BlockedDate;
-use App\Models\Order;
+use App\Models\Operations\BlockedDate;
+use App\Models\Orders\Order;
 use App\Services\Inventory\CapacityCalculator;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;

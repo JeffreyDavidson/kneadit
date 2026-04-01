@@ -2,12 +2,12 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\OrderStatus;
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Ingredient;
-use App\Models\Order;
+use App\Models\Inventory\Ingredient;
+use App\Models\Orders\Order;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -46,7 +46,7 @@ class ShoppingListGenerator extends Page
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected string $view = 'filament.pages.shopping-list-generator';
+    protected string $view = 'filament.pages.tools.shopping-list-generator';
 
     public string $startDate = '';
 

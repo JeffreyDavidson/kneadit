@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Middleware\ResolveInvitation;
-use App\Models\StaffInvitation;
+use App\Models\Staff\StaffInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 

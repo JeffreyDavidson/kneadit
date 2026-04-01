@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\Customers\SubmitContactMessage;
-use App\Models\ContactMessage;
+use App\Models\Customers\ContactMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

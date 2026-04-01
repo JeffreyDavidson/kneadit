@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
-use App\Enums\OrderStatus;
-use App\Enums\PaymentMethod;
-use App\Enums\PaymentStatus;
-use App\Models\Customer;
-use App\Models\User;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentMethod;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Customers\Customer;
+use App\Models\Staff\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;

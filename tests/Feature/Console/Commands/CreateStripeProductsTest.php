@@ -1,6 +1,6 @@
 <?php
 
-use App\Console\Commands\CreateStripeProductsCommand;
+use App\Console\Commands\Stripe\CreateStripeProductsCommand;
 
 test('stripe create-products command is registered and has correct signature', function () {
     $command = new CreateStripeProductsCommand;

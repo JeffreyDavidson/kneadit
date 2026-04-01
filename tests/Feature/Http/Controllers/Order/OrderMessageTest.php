@@ -1,11 +1,11 @@
 <?php
 
-use App\Enums\SenderType;
+use App\Enums\Orders\SenderType;
 use App\Mail\Orders\NewOrderMessageMail;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\OrderMessage;
-use App\Models\User;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderMessage;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\withoutMiddleware;

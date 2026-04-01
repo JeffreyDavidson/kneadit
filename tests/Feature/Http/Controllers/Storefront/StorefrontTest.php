@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Category;
-use App\Models\Product;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
 
 use function Pest\Laravel\withoutMiddleware;
 

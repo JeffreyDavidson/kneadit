@@ -26,21 +26,21 @@ test('every model with a factory can be created', function () {
 
         // Skip models that need central connection or special setup
         $skipModels = [
-            'App\\Models\\BlogPost',
-            'App\\Models\\Tenant',
-            'App\\Models\\EmailCampaign',
-            'App\\Models\\PlatformActivity',
-            'App\\Models\\PlatformAnnouncement',
-            'App\\Models\\PlatformMessage',
-            'App\\Models\\PlatformSetting',
-            'App\\Models\\AdminAuditLog',
-            'App\\Models\\SupportTicket',
-            'App\\Models\\ScheduledCheckin',
-            'App\\Models\\FeatureUsageLog',
-            'App\\Models\\TenantNote',
-            'App\\Models\\SupportReply',
-            'App\\Models\\CheckinLog',
-            'App\\Models\\EmailCampaignLog',
+            'App\\Models\\Content\\BlogPost',
+            'App\\Models\\Platform\\Tenant',
+            'App\\Models\\Engagement\\EmailCampaign',
+            'App\\Models\\Platform\\PlatformActivity',
+            'App\\Models\\Platform\\PlatformAnnouncement',
+            'App\\Models\\Platform\\PlatformMessage',
+            'App\\Models\\Platform\\PlatformSetting',
+            'App\\Models\\Platform\\AdminAuditLog',
+            'App\\Models\\Platform\\SupportTicket',
+            'App\\Models\\Operations\\ScheduledCheckin',
+            'App\\Models\\Platform\\FeatureUsageLog',
+            'App\\Models\\Platform\\TenantNote',
+            'App\\Models\\Platform\\SupportReply',
+            'App\\Models\\Operations\\CheckinLog',
+            'App\\Models\\Engagement\\EmailCampaignLog',
         ];
 
         if (in_array($modelClass, $skipModels)) {

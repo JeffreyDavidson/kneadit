@@ -2,8 +2,8 @@
 
 namespace App\Actions\Staff;
 
-use App\Models\StaffInvitation;
-use App\Models\User;
+use App\Models\Staff\StaffInvitation;
+use App\Models\Staff\User;
 
 class AcceptStaffInvitation
 {

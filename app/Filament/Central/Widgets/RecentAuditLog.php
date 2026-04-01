@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Widgets;
 
-use App\Models\AdminAuditLog;
+use App\Models\Platform\AdminAuditLog;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Collection;
 

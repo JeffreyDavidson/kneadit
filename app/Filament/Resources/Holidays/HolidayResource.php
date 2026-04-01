@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\Holidays;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\Holidays\Schemas\HolidayForm;
 use App\Filament\Resources\Holidays\Tables\HolidaysTable;
-use App\Models\Holiday;
+use App\Models\Operations\Holiday;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\GalleryPhotos;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\GalleryPhotos\Pages\ListGalleryPhotos;
 use App\Filament\Resources\GalleryPhotos\Schemas\GalleryPhotoForm;
 use App\Filament\Resources\GalleryPhotos\Tables\GalleryPhotosTable;
-use App\Models\GalleryPhoto;
+use App\Models\Content\GalleryPhoto;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

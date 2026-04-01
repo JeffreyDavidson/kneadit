@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Referral;
-use App\Models\Tenant;
+use App\Models\Customers\Referral;
+use App\Models\Platform\Tenant;
 
 beforeEach(function () {
     setUpCentralTest();

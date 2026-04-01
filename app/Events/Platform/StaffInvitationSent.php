@@ -2,7 +2,7 @@
 
 namespace App\Events\Platform;
 
-use App\Models\StaffInvitation;
+use App\Models\Staff\StaffInvitation;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

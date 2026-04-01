@@ -5,7 +5,7 @@ namespace App\Filament\Resources\CateringInquiries;
 use App\Filament\Resources\CateringInquiries\Pages\ListCateringInquiries;
 use App\Filament\Resources\CateringInquiries\Schemas\CateringInquiryForm;
 use App\Filament\Resources\CateringInquiries\Tables\CateringInquiriesTable;
-use App\Models\CateringInquiry;
+use App\Models\Customers\CateringInquiry;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

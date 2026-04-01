@@ -2,9 +2,9 @@
 
 namespace App\Services\Stripe;
 
-use App\Enums\PaymentMethod;
-use App\Enums\PaymentStatus;
-use App\Models\Order;
+use App\Enums\Orders\PaymentMethod;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Orders\Order;
 use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;

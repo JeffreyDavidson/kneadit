@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Analytics;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Analytics\ProductTrendsService;
 use BackedEnum;
@@ -18,7 +18,7 @@ class ProductTrends extends Page
 {
     use ShowsUpgradeBadge;
 
-    protected string $view = 'filament.pages.product-trends';
+    protected string $view = 'filament.pages.analytics.product-trends';
 
     public static function canAccess(): bool
     {

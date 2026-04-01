@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\OrderStatus;
+use App\Enums\Orders\OrderStatus;
 
 test('trackableStatuses returns statuses excluding cancelled', function () {
     $statuses = OrderStatus::trackableStatuses();

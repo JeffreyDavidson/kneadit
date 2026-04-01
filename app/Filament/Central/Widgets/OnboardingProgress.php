@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Widgets;
 
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\DB;
 

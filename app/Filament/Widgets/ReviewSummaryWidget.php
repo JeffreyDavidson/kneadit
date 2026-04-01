@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Review;
+use App\Models\Engagement\Review;
 use Filament\Widgets\Widget;
 
 class ReviewSummaryWidget extends Widget

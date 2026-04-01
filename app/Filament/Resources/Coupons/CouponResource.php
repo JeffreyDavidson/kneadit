@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\Coupons;
 
-use App\Enums\CouponType;
-use App\Enums\SubscriptionTier;
+use App\Enums\Financial\CouponType;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\Coupons\Pages\ListCoupons;
 use App\Filament\Resources\Coupons\Schemas\CouponForm;
 use App\Filament\Resources\Coupons\Tables\CouponsTable;
-use App\Models\Coupon;
+use App\Models\Financial\Coupon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;

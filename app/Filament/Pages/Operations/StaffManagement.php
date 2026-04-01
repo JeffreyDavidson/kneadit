@@ -6,10 +6,10 @@ use App\Actions\Staff\ChangeStaffRole;
 use App\Actions\Staff\RemoveStaffMember;
 use App\Actions\Staff\RevokeStaffInvitation;
 use App\Actions\Staff\SendStaffInvitation;
-use App\Enums\UserRole;
-use App\Exceptions\StaffInvitationException;
-use App\Models\StaffInvitation;
-use App\Models\User;
+use App\Enums\Staff\UserRole;
+use App\Exceptions\Staff\StaffInvitationException;
+use App\Models\Staff\StaffInvitation;
+use App\Models\Staff\User;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -40,7 +40,7 @@ class StaffManagement extends Page
 
     protected static ?int $navigationSort = 1;
 
-    protected string $view = 'filament.pages.staff-management';
+    protected string $view = 'filament.pages.operations.staff-management';
 
     public string $inviteEmail = '';
 

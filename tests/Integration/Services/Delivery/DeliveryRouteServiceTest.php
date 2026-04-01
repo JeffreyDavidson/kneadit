@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Order;
+use App\Models\Orders\Order;
 use App\Services\Delivery\DeliveryRouteService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

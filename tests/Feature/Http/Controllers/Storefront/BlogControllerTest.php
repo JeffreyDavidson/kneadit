@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\TenantBlogPost;
+use App\Models\Content\TenantBlogPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;

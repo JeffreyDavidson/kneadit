@@ -2,13 +2,13 @@
 
 namespace App\Actions\Orders;
 
-use App\DataTransferObjects\CreateQuickOrderData;
-use App\Enums\DeliveryType;
-use App\Enums\OrderStatus;
-use App\Enums\PaymentStatus;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\DataTransferObjects\Orders\CreateQuickOrderData;
+use App\Enums\Orders\DeliveryType;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use Illuminate\Support\Facades\DB;
 
 class CreateQuickOrder

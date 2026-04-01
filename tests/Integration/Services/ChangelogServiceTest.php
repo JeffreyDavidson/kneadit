@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\ChangelogService;
+use App\Services\Platform\ChangelogService;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(fn () => setUpCentralTest());

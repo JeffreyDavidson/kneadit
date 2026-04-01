@@ -3,8 +3,8 @@
 namespace App\Filament\Pages\Tools;
 
 use App\Actions\Inventory\ImportProducts;
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Export\ProductCsvExporter;
 use BackedEnum;
@@ -26,7 +26,7 @@ class ProductImportExport extends Page
 {
     use ShowsUpgradeBadge;
 
-    protected string $view = 'filament.pages.product-import-export';
+    protected string $view = 'filament.pages.tools.product-import-export';
 
     public static function canAccess(): bool
     {

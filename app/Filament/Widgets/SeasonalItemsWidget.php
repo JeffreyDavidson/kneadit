@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\SeasonalItem;
+use App\Models\Inventory\SeasonalItem;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
 

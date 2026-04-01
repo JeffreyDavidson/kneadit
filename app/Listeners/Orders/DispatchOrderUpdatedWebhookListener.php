@@ -4,7 +4,7 @@ namespace App\Listeners\Orders;
 
 use App\Events\Orders\OrderStatusChanged;
 use App\Listeners\QueuedListener;
-use App\Services\WebhookService;
+use App\Services\Platform\WebhookService;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Support\Facades\Log;

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Billing;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Container\Attributes\CurrentUser;
 use Laravel\Cashier\Checkout;
 

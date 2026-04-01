@@ -5,7 +5,7 @@ namespace App\Filament\Central\Resources;
 use App\Filament\Central\Resources\EmailCampaignResource\Pages;
 use App\Filament\Central\Resources\EmailCampaignResource\Schemas\EmailCampaignForm;
 use App\Filament\Central\Resources\EmailCampaignResource\Tables\EmailCampaignsTable;
-use App\Models\EmailCampaign;
+use App\Models\Engagement\EmailCampaign;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

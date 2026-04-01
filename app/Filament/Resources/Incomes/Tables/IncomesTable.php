@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Incomes\Tables;
 
-use App\Enums\IncomeSource;
+use App\Enums\Financial\IncomeSource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

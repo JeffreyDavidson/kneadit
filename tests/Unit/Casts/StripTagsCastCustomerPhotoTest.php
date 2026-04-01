@@ -1,7 +1,7 @@
 <?php
 
 use App\Casts\StripTagsCast;
-use App\Models\CustomerPhoto;
+use App\Models\Customers\CustomerPhoto;
 
 it('has StripTagsCast on CustomerPhoto customer_name and caption columns', function () {
     $photo = new CustomerPhoto;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Console\Commands\BackupDatabasesCommand;
+use App\Console\Commands\Operations\BackupDatabasesCommand;
 
 beforeEach(function () {
     setUpCentralTest();

@@ -5,7 +5,7 @@ namespace App\Filament\Central\Resources;
 use App\Filament\Central\Resources\AnnouncementResource\Pages;
 use App\Filament\Central\Resources\AnnouncementResource\Schemas\AnnouncementForm;
 use App\Filament\Central\Resources\AnnouncementResource\Tables\AnnouncementsTable;
-use App\Models\PlatformAnnouncement;
+use App\Models\Platform\PlatformAnnouncement;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

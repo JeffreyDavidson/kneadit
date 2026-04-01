@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\ActivityLog;
+use App\Models\Operations\ActivityLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

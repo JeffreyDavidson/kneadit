@@ -2,7 +2,7 @@
 
 namespace App\Listeners\Platform;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\TenantOnboarded;
 use App\Listeners\QueuedListener;
 use App\Mail\Platform\NewSubscriberNotificationMail;

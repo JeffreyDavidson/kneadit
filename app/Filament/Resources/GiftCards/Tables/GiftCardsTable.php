@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\GiftCards\Tables;
 
-use App\Enums\GiftCardStatus;
-use App\Models\GiftCard;
+use App\Enums\Financial\GiftCardStatus;
+use App\Models\Financial\GiftCard;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

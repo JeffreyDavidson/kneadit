@@ -2,7 +2,7 @@
 
 namespace App\Services\GiftCard;
 
-use App\Models\GiftCard;
+use App\Models\Financial\GiftCard;
 use Illuminate\Support\Str;
 
 class GiftCardService

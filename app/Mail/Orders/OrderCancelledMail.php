@@ -4,7 +4,7 @@ namespace App\Mail\Orders;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -29,7 +29,7 @@ class OrderCancelledMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            html: 'emails.order-cancelled',
+            html: 'emails.orders.order-cancelled',
             with: [
                 'order' => $this->order,
                 'customer' => $this->order->customer,

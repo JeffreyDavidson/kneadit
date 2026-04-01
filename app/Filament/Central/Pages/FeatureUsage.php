@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\Models\FeatureUsageLog;
+use App\Models\Platform\FeatureUsageLog;
 use BackedEnum;
 use Carbon\Carbon;
 use Filament\Pages\Page;

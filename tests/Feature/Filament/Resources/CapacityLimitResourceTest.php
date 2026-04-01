@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\CapacityLimits\Pages\ListCapacityLimits;
-use App\Models\CapacityLimit;
-use App\Models\User;
+use App\Models\Operations\CapacityLimit;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;

@@ -2,7 +2,7 @@
 
 namespace App\Actions\Stripe;
 
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use Illuminate\Support\Facades\Log;
 
 class SyncSubscriptionPlan

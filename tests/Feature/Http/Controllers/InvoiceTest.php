@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Order;
-use App\Models\User;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 
 use function Pest\Laravel\withoutMiddleware;
 

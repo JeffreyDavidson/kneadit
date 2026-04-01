@@ -1,8 +1,8 @@
 <?php
 
-use App\Console\Commands\CheckPayPalPaymentsCommand;
-use App\Console\Commands\SendBirthdayDiscountsCommand;
-use App\Console\Commands\SendRepeatOrderRemindersCommand;
+use App\Console\Commands\Customers\SendBirthdayDiscountsCommand;
+use App\Console\Commands\Customers\SendRepeatOrderRemindersCommand;
+use App\Console\Commands\Stripe\CheckPayPalPaymentsCommand;
 
 beforeEach(function () {
     setUpCentralTest();

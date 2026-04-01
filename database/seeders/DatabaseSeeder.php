@@ -2,7 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Staff\User;
+use Database\Seeders\Content\BlogPostSeeder;
+use Database\Seeders\Customers\CustomerSeeder;
+use Database\Seeders\Customers\ReviewSeeder;
+use Database\Seeders\Customers\WaitlistEntrySeeder;
+use Database\Seeders\Financial\CouponSeeder;
+use Database\Seeders\Financial\ExpenseSeeder;
+use Database\Seeders\Financial\IncomeSeeder;
+use Database\Seeders\Inventory\CategorySeeder;
+use Database\Seeders\Inventory\ProductSeeder;
+use Database\Seeders\Inventory\RecipeSeeder;
+use Database\Seeders\Operations\CapacityLimitSeeder;
+use Database\Seeders\Operations\SettingSeeder;
+use Database\Seeders\Orders\OrderSeeder;
+use Database\Seeders\Platform\CentralSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

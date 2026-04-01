@@ -15,6 +15,6 @@ test('show returns the contact view with tenant settings', function () {
         ->get(route('contact.show'));
 
     $response->assertOk()
-        ->assertViewIs('contact')
+        ->assertViewIs('storefront.contact')
         ->assertViewHas('settings', fn (TenantSettings $s) => $s->storeName === 'Our Bakery');
 });

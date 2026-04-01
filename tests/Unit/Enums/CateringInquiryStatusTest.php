@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\CateringInquiryStatus;
+use App\Enums\Customers\CateringInquiryStatus;
 
 test('CateringInquiryStatus has a color for every case', function () {
     foreach (CateringInquiryStatus::cases() as $case) {

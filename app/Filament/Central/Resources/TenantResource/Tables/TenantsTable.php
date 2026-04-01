@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Resources\TenantResource\Tables;
 
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use Filament\Actions;
 use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteBulkAction;

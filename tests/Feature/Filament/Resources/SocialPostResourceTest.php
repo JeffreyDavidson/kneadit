@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\SocialPlatform;
+use App\Enums\Marketing\SocialPlatform;
 use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
-use App\Models\SocialPost;
-use App\Models\User;
+use App\Models\Content\SocialPost;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

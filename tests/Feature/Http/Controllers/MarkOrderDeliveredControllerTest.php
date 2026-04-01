@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
-use App\Models\User;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

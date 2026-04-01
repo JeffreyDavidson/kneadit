@@ -1,12 +1,12 @@
 <?php
 
-use App\Enums\CouponType;
-use App\Enums\OrderStatus;
-use App\Enums\PaymentStatus;
-use App\Enums\UserRole;
-use App\Models\Coupon;
-use App\Models\Order;
-use App\Models\User;
+use App\Enums\Financial\CouponType;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
+use App\Enums\Staff\UserRole;
+use App\Models\Financial\Coupon;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

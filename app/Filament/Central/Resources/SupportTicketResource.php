@@ -2,10 +2,10 @@
 
 namespace App\Filament\Central\Resources;
 
-use App\Enums\SupportTicketStatus;
+use App\Enums\Platform\SupportTicketStatus;
 use App\Filament\Central\Resources\SupportTicketResource\Schemas\SupportTicketForm;
 use App\Filament\Central\Resources\SupportTicketResource\Tables\SupportTicketsTable;
-use App\Models\SupportTicket;
+use App\Models\Platform\SupportTicket;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\PlatformAnnouncement;
-use App\Models\Tenant;
+use App\Models\Platform\PlatformAnnouncement;
+use App\Models\Platform\Tenant;
 use Filament\Facades\Filament;
 use Filament\Widgets\Widget;
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Order;
 
-use App\DataTransferObjects\CreateGiftCardData;
+use App\DataTransferObjects\GiftCards\CreateGiftCardData;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PurchaseGiftCardRequest extends FormRequest

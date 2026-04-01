@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\GiftCards;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
 use App\Filament\Resources\GiftCards\Pages\ViewGiftCard;
 use App\Filament\Resources\GiftCards\Schemas\GiftCardForm;
 use App\Filament\Resources\GiftCards\Tables\GiftCardsTable;
-use App\Models\GiftCard;
+use App\Models\Financial\GiftCard;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;

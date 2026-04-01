@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Income;
+use App\Models\Financial\Income;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

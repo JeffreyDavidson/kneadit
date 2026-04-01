@@ -4,8 +4,8 @@ namespace App\Mail\Customers;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Coupon;
-use App\Models\Customer;
+use App\Models\Customers\Customer;
+use App\Models\Financial\Coupon;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -33,7 +33,7 @@ class BirthdayDiscountMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.birthday-discount',
+            view: 'emails.customers.birthday-discount',
         );
     }
 

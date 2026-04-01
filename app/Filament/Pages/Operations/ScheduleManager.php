@@ -3,11 +3,11 @@
 namespace App\Filament\Pages\Operations;
 
 use App\Actions\Tenants\UpdateSchedule;
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\BusinessSchedule;
-use App\Services\ScheduleService;
+use App\Models\Operations\BusinessSchedule;
+use App\Services\Scheduling\ScheduleService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
@@ -50,7 +50,7 @@ class ScheduleManager extends Page
 
     protected static ?int $navigationSort = 6;
 
-    protected string $view = 'filament.pages.schedule-manager';
+    protected string $view = 'filament.pages.operations.schedule-manager';
 
     protected static ?string $title = 'Business Schedule';
 

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Central\Resources\SupportTicketResource\Tables;
 
-use App\Enums\SupportTicketPriority;
-use App\Enums\SupportTicketStatus;
+use App\Enums\Platform\SupportTicketPriority;
+use App\Enums\Platform\SupportTicketStatus;
 use Filament\Actions;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;

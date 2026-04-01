@@ -3,8 +3,8 @@
 namespace App\Filament\Pages\Engagement;
 
 use App\Actions\Tenants\GenerateReferralCode;
-use App\Enums\ReferralStatus;
-use App\Models\Referral;
+use App\Enums\Customers\ReferralStatus;
+use App\Models\Customers\Referral;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\View;
@@ -22,14 +22,14 @@ class ReferralProgram extends Page
 
     protected static ?int $navigationSort = 3;
 
-    protected string $view = 'filament.pages.referral-program';
+    protected string $view = 'filament.pages.engagement.referral-program';
 
     protected static ?string $title = 'Referral Program';
 
     public function content(Schema $schema): Schema
     {
         return $schema->schema([
-            View::make('filament.pages.referral-program-content'),
+            View::make('filament.pages.engagement.referral-program-content'),
         ]);
     }
 

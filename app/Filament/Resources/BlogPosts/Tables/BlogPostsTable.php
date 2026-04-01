@@ -4,7 +4,7 @@ namespace App\Filament\Resources\BlogPosts\Tables;
 
 use App\Actions\Content\PublishBlogPost;
 use App\Actions\Content\UnpublishBlogPost;
-use App\Models\TenantBlogPost;
+use App\Models\Content\TenantBlogPost;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;

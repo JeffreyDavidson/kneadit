@@ -1,11 +1,11 @@
 <?php
 
 use App\Actions\Orders\TransitionOrderStatus;
-use App\Enums\OrderStatus;
-use App\Exceptions\InvalidOrderTransitionException;
+use App\Enums\Orders\OrderStatus;
+use App\Exceptions\Orders\InvalidOrderTransitionException;
 use App\Mail\Orders\OrderConfirmedMail;
-use App\Models\Customer;
-use App\Models\Order;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

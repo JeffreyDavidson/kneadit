@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\EmailCampaignStatus;
-use App\Models\Customer;
-use App\Models\EmailCampaign;
+use App\Enums\Marketing\EmailCampaignStatus;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\EmailCampaign;
 use Carbon\Carbon;
 
 beforeEach(fn () => setUpCentralTest());

@@ -68,7 +68,7 @@ test('storefront rewards page renders', function () {
 });
 
 test('storefront survey page renders', function () {
-    $survey = App\Models\Survey::factory()->create(['is_active' => true]);
+    $survey = App\Models\Engagement\Survey::factory()->create(['is_active' => true]);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get("/survey/{$survey->id}");
@@ -77,7 +77,7 @@ test('storefront survey page renders', function () {
 });
 
 test('storefront review submission page renders', function () {
-    $order = App\Models\Order::factory()->create();
+    $order = App\Models\Orders\Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get("/review/{$order->order_number}");

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CustomerPhoto;
+use App\Models\Customers\CustomerPhoto;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

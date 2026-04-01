@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages\Operations;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Holiday;
+use App\Models\Operations\Holiday;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -42,7 +42,7 @@ class HolidayPlanningCalendar extends Page
 
     protected static ?int $navigationSort = 9;
 
-    protected string $view = 'filament.pages.holiday-planning-calendar';
+    protected string $view = 'filament.pages.operations.holiday-planning-calendar';
 
     /** @var Collection<int, mixed> */
     public Collection $holidays;

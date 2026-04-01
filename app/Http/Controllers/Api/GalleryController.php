@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GalleryPhotoResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\GalleryPhoto;
+use App\Models\Content\GalleryPhoto;
 use Illuminate\Http\JsonResponse;
 
 class GalleryController extends Controller

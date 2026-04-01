@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;

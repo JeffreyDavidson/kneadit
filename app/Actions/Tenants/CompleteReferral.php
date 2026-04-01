@@ -2,8 +2,8 @@
 
 namespace App\Actions\Tenants;
 
-use App\Enums\ReferralStatus;
-use App\Models\Referral;
+use App\Enums\Customers\ReferralStatus;
+use App\Models\Customers\Referral;
 
 class CompleteReferral
 {

@@ -2,10 +2,10 @@
 
 namespace App\Filament\Central\Resources\MessageResource\Tables;
 
-use App\Enums\PlatformSenderType;
+use App\Enums\Platform\PlatformSenderType;
 use App\Filament\Central\Resources\MessageResource;
-use App\Models\PlatformMessage;
-use App\Models\Tenant;
+use App\Models\Platform\PlatformMessage;
+use App\Models\Platform\Tenant;
 use Filament\Actions;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;

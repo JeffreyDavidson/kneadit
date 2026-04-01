@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\SocialPlatform;
-use App\Models\SocialPost;
+use App\Enums\Marketing\SocialPlatform;
+use App\Models\Content\SocialPost;
 
 beforeEach(fn () => setUpTenantTest());
 

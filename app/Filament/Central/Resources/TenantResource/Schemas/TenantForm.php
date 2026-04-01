@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Resources\TenantResource\Schemas;
 
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

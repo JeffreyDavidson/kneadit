@@ -1,8 +1,8 @@
 <?php
 
 use App\Events\Platform\TenantOnboarded;
-use App\Models\Tenant;
-use App\Models\User;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 
 beforeEach(function () {
     config(['database.connections.central' => config('database.connections.sqlite')]);

@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\CustomerPhotos\Pages\ListCustomerPhotos;
-use App\Models\CustomerPhoto;
-use App\Models\User;
+use App\Models\Customers\CustomerPhoto;
+use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;

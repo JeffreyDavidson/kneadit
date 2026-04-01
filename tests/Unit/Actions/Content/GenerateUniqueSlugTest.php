@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\Content\GenerateUniqueSlug;
-use App\Models\TenantBlogPost;
+use App\Models\Content\TenantBlogPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

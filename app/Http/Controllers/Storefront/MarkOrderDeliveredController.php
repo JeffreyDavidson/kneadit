@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Orders\TransitionOrderStatus;
-use App\Enums\OrderStatus;
+use App\Enums\Orders\OrderStatus;
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Http\RedirectResponse;
 
 class MarkOrderDeliveredController extends Controller

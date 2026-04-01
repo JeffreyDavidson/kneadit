@@ -2,7 +2,7 @@
 
 namespace App\Actions\Platform;
 
-use App\Models\PlatformActivity;
+use App\Models\Platform\PlatformActivity;
 
 class LogPlatformActivity
 {

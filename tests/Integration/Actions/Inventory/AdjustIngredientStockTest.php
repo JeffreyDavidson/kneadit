@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Inventory\AdjustIngredientStock;
-use App\Enums\StockAdjustmentType;
-use App\Models\Ingredient;
+use App\Enums\Inventory\StockAdjustmentType;
+use App\Models\Inventory\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\assertDatabaseHas;

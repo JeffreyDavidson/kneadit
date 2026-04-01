@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Platform\ScheduleEmailCampaign;
-use App\Enums\EmailCampaignStatus;
-use App\Models\EmailCampaign;
+use App\Enums\Marketing\EmailCampaignStatus;
+use App\Models\Engagement\EmailCampaign;
 
 beforeEach(fn () => setUpCentralTest());
 

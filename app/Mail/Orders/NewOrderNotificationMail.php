@@ -3,7 +3,7 @@
 namespace App\Mail\Orders;
 
 use App\Mail\BaseMailable;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -23,7 +23,7 @@ class NewOrderNotificationMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.new-order-notification',
+            view: 'emails.orders.new-order-notification',
             with: [
                 'order' => $this->order,
             ],

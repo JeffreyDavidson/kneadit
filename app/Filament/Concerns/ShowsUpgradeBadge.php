@@ -2,7 +2,7 @@
 
 namespace App\Filament\Concerns;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use Illuminate\Support\Str;
 
 trait ShowsUpgradeBadge

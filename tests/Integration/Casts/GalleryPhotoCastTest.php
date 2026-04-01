@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\GalleryCategory;
-use App\Models\GalleryPhoto;
+use App\Enums\Content\GalleryCategory;
+use App\Models\Content\GalleryPhoto;
 
 beforeEach(fn () => setUpTenantTest());
 

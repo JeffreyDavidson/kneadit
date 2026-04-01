@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\Orders\Tables;
 
 use App\Actions\Orders\TransitionOrderStatus;
-use App\Enums\OrderStatus;
-use App\Enums\PaymentStatus;
-use App\Models\Order;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Orders\Order;
 use App\Services\PayPal\InvoiceService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\StaffInvitation;
+use App\Models\Staff\StaffInvitation;
 
 use function Pest\Laravel\withoutMiddleware;
 

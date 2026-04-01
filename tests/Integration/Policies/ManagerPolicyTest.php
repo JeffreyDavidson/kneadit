@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -8,28 +8,28 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 dataset('managerPolicies', [
-    'BlockedDate' => ['App\Policies\BlockedDatePolicy', 'App\Models\BlockedDate'],
-    'CapacityLimit' => ['App\Policies\CapacityLimitPolicy', 'App\Models\CapacityLimit'],
-    'Category' => ['App\Policies\CategoryPolicy', 'App\Models\Category'],
-    'ContactMessage' => ['App\Policies\ContactMessagePolicy', 'App\Models\ContactMessage'],
-    'Coupon' => ['App\Policies\CouponPolicy', 'App\Models\Coupon'],
-    'CustomerPhoto' => ['App\Policies\CustomerPhotoPolicy', 'App\Models\CustomerPhoto'],
-    'Customer' => ['App\Policies\CustomerPolicy', 'App\Models\Customer'],
-    'EmailCampaign' => ['App\Policies\EmailCampaignPolicy', 'App\Models\EmailCampaign'],
-    'Expense' => ['App\Policies\ExpensePolicy', 'App\Models\Expense'],
-    'GalleryPhoto' => ['App\Policies\GalleryPhotoPolicy', 'App\Models\GalleryPhoto'],
-    'GiftCard' => ['App\Policies\GiftCardPolicy', 'App\Models\GiftCard'],
-    'Holiday' => ['App\Policies\HolidayPolicy', 'App\Models\Holiday'],
-    'Income' => ['App\Policies\IncomePolicy', 'App\Models\Income'],
-    'Ingredient' => ['App\Policies\IngredientPolicy', 'App\Models\Ingredient'],
-    'LoyaltyReward' => ['App\Policies\LoyaltyRewardPolicy', 'App\Models\LoyaltyReward'],
-    'Recipe' => ['App\Policies\RecipePolicy', 'App\Models\Recipe'],
-    'Review' => ['App\Policies\ReviewPolicy', 'App\Models\Review'],
-    'Setting' => ['App\Policies\SettingPolicy', 'App\Models\Setting'],
-    'SocialPost' => ['App\Policies\SocialPostPolicy', 'App\Models\SocialPost'],
-    'Supplier' => ['App\Policies\SupplierPolicy', 'App\Models\Supplier'],
-    'Survey' => ['App\Policies\SurveyPolicy', 'App\Models\Survey'],
-    'WaitlistEntry' => ['App\Policies\WaitlistEntryPolicy', 'App\Models\WaitlistEntry'],
+    'BlockedDate' => ['App\Policies\Operations\BlockedDatePolicy', 'App\Models\Operations\BlockedDate'],
+    'CapacityLimit' => ['App\Policies\Operations\CapacityLimitPolicy', 'App\Models\Operations\CapacityLimit'],
+    'Category' => ['App\Policies\Inventory\CategoryPolicy', 'App\Models\Inventory\Category'],
+    'ContactMessage' => ['App\Policies\Customers\ContactMessagePolicy', 'App\Models\Customers\ContactMessage'],
+    'Coupon' => ['App\Policies\Engagement\CouponPolicy', 'App\Models\Financial\Coupon'],
+    'CustomerPhoto' => ['App\Policies\Content\CustomerPhotoPolicy', 'App\Models\Customers\CustomerPhoto'],
+    'Customer' => ['App\Policies\Customers\CustomerPolicy', 'App\Models\Customers\Customer'],
+    'EmailCampaign' => ['App\Policies\Platform\EmailCampaignPolicy', 'App\Models\Engagement\EmailCampaign'],
+    'Expense' => ['App\Policies\Financial\ExpensePolicy', 'App\Models\Financial\Expense'],
+    'GalleryPhoto' => ['App\Policies\Content\GalleryPhotoPolicy', 'App\Models\Content\GalleryPhoto'],
+    'GiftCard' => ['App\Policies\Financial\GiftCardPolicy', 'App\Models\Financial\GiftCard'],
+    'Holiday' => ['App\Policies\Operations\HolidayPolicy', 'App\Models\Operations\Holiday'],
+    'Income' => ['App\Policies\Financial\IncomePolicy', 'App\Models\Financial\Income'],
+    'Ingredient' => ['App\Policies\Inventory\IngredientPolicy', 'App\Models\Inventory\Ingredient'],
+    'LoyaltyReward' => ['App\Policies\Engagement\LoyaltyRewardPolicy', 'App\Models\Engagement\LoyaltyReward'],
+    'Recipe' => ['App\Policies\Inventory\RecipePolicy', 'App\Models\Inventory\Recipe'],
+    'Review' => ['App\Policies\Customers\ReviewPolicy', 'App\Models\Engagement\Review'],
+    'Setting' => ['App\Policies\Operations\SettingPolicy', 'App\Models\Platform\Setting'],
+    'SocialPost' => ['App\Policies\Engagement\SocialPostPolicy', 'App\Models\Content\SocialPost'],
+    'Supplier' => ['App\Policies\Inventory\SupplierPolicy', 'App\Models\Inventory\Supplier'],
+    'Survey' => ['App\Policies\Engagement\SurveyPolicy', 'App\Models\Engagement\Survey'],
+    'WaitlistEntry' => ['App\Policies\Customers\WaitlistEntryPolicy', 'App\Models\Customers\WaitlistEntry'],
 ]);
 
 test('manager policies deny staff users', function (string $policyClass, string $modelClass) {

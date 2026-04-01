@@ -4,8 +4,8 @@ namespace App\Mail\Customers;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Coupon;
-use App\Models\Customer;
+use App\Models\Customers\Customer;
+use App\Models\Financial\Coupon;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -35,7 +35,7 @@ class HappyBirthdayMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.happy-birthday',
+            view: 'emails.customers.happy-birthday',
         );
     }
 }

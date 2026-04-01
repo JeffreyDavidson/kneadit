@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CustomerPhoto;
+use App\Models\Customers\CustomerPhoto;
 use App\View\Components\Home\Gallery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

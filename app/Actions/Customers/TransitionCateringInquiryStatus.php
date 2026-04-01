@@ -2,9 +2,9 @@
 
 namespace App\Actions\Customers;
 
-use App\Enums\CateringInquiryStatus;
+use App\Enums\Customers\CateringInquiryStatus;
 use App\Events\Marketing\CateringQuoteRequested;
-use App\Models\CateringInquiry;
+use App\Models\Customers\CateringInquiry;
 
 class TransitionCateringInquiryStatus
 {

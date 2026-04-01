@@ -2,8 +2,8 @@
 
 namespace App\Services\Analytics;
 
-use App\Models\Product;
-use App\Models\Review;
+use App\Models\Engagement\Review;
+use App\Models\Inventory\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

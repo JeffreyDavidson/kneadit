@@ -2,9 +2,9 @@
 
 namespace App\Pipes\Orders;
 
-use App\DataTransferObjects\CreateOrderData;
-use App\Models\Customer;
-use App\Models\Order;
+use App\DataTransferObjects\Orders\CreateOrderData;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 
 class OrderPipelineData
 {

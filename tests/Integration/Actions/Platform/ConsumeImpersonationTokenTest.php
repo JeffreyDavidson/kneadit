@@ -1,9 +1,9 @@
 <?php
 
 use App\Actions\Platform\ConsumeImpersonationToken;
-use App\Enums\UserRole;
-use App\Models\ImpersonationToken;
-use App\Models\User;
+use App\Enums\Staff\UserRole;
+use App\Models\Platform\ImpersonationToken;
+use App\Models\Staff\User;
 
 beforeEach(fn () => setUpCentralTest());
 

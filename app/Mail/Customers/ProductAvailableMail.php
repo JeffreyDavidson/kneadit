@@ -4,7 +4,7 @@ namespace App\Mail\Customers;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -32,7 +32,7 @@ class ProductAvailableMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            html: 'emails.product-available',
+            html: 'emails.customers.product-available',
             with: [
                 'product' => $this->product,
                 'customerName' => $this->customerName,

@@ -1,6 +1,6 @@
 <?php
 
-use App\Queries\ActiveBakeriesQuery;
+use App\Queries\Platform\ActiveBakeriesQuery;
 
 beforeEach(function () {
     config(['database.connections.central' => config('database.connections.sqlite')]);

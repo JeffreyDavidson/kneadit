@@ -4,7 +4,7 @@ namespace App\Mail\Customers;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Customer;
+use App\Models\Customers\Customer;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -32,7 +32,7 @@ class RepeatOrderReminderMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.repeat-order-reminder',
+            view: 'emails.customers.repeat-order-reminder',
         );
     }
 

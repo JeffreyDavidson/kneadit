@@ -1,9 +1,9 @@
 <?php
 
 use App\Filament\Resources\Products\Pages\ListProducts;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\User;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

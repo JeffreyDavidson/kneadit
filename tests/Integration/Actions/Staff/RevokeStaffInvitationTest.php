@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\Staff\RevokeStaffInvitation;
-use App\Models\StaffInvitation;
+use App\Models\Staff\StaffInvitation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

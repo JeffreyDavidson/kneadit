@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\Suppliers\Pages\ListSuppliers;
-use App\Models\Supplier;
-use App\Models\User;
+use App\Models\Inventory\Supplier;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

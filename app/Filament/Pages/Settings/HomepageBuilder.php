@@ -20,7 +20,7 @@ class HomepageBuilder extends Page
 
     protected static ?string $title = 'Homepage Builder';
 
-    protected string $view = 'filament.pages.homepage-builder';
+    protected string $view = 'filament.pages.settings.homepage-builder';
 
     /** @var array<string, mixed> */
     public array $sections = [];

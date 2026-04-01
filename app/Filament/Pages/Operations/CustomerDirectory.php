@@ -3,12 +3,12 @@
 namespace App\Filament\Pages\Operations;
 
 use App\Actions\Customers\AddCustomerNote;
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Queries\CustomerDirectoryStatsQuery;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Queries\Customers\CustomerDirectoryStatsQuery;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
@@ -54,7 +54,7 @@ class CustomerDirectory extends Page
 
     protected static ?string $title = 'Customer Directory';
 
-    protected string $view = 'filament.pages.customer-directory';
+    protected string $view = 'filament.pages.operations.customer-directory';
 
     public string $search = '';
 

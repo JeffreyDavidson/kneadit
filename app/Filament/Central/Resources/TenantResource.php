@@ -8,7 +8,7 @@ use App\Filament\Central\Resources\TenantResource\RelationManagers\NotesRelation
 use App\Filament\Central\Resources\TenantResource\Schemas\TenantForm;
 use App\Filament\Central\Resources\TenantResource\Schemas\TenantInfolist;
 use App\Filament\Central\Resources\TenantResource\Tables\TenantsTable;
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

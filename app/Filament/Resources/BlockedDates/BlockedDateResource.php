@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\BlockedDates;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\BlockedDates\Pages\ListBlockedDates;
 use App\Filament\Resources\BlockedDates\Schemas\BlockedDateForm;
 use App\Filament\Resources\BlockedDates\Tables\BlockedDatesTable;
-use App\Models\BlockedDate;
+use App\Models\Operations\BlockedDate;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
