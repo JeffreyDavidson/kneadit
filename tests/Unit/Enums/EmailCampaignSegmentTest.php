@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\EmailCampaignSegment;
+use App\Enums\Marketing\EmailCampaignSegment;
 
 test('EmailCampaignSegment has expected cases', function () {
     expect(EmailCampaignSegment::cases())->toHaveCount(6)

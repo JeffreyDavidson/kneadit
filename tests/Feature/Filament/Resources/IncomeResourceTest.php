@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\IncomeSource;
+use App\Enums\Financial\IncomeSource;
 use App\Filament\Resources\Incomes\Pages\ListIncomes;
-use App\Models\Income;
-use App\Models\User;
+use App\Models\Financial\Income;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

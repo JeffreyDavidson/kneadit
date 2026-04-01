@@ -3,7 +3,7 @@
 namespace App\Mail\Platform;
 
 use App\Mail\BaseMailable;
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -24,7 +24,7 @@ class PaymentFailedMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            text: 'emails.payment-failed-text',
+            text: 'emails.platform.payment-failed-text',
         );
     }
 

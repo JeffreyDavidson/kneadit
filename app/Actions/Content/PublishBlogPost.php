@@ -2,7 +2,7 @@
 
 namespace App\Actions\Content;
 
-use App\Models\TenantBlogPost;
+use App\Models\Content\TenantBlogPost;
 
 class PublishBlogPost
 {

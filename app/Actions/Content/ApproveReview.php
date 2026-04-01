@@ -2,7 +2,7 @@
 
 namespace App\Actions\Content;
 
-use App\Models\Review;
+use App\Models\Engagement\Review;
 
 class ApproveReview
 {

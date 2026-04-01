@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Widgets;
 
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;

@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Central\Resources\AnnouncementResource\Pages\ListAnnouncements;
-use App\Models\PlatformAnnouncement;
-use App\Models\User;
+use App\Models\Platform\PlatformAnnouncement;
+use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 

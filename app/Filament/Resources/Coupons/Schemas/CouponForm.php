@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Coupons\Schemas;
 
-use App\Enums\CouponType;
+use App\Enums\Financial\CouponType;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

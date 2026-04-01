@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\EmailCampaignStatus;
+use App\Enums\Marketing\EmailCampaignStatus;
 
 test('EmailCampaignStatus has scheduled case for campaign scheduling', function () {
     $scheduled = EmailCampaignStatus::from('scheduled');

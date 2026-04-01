@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\GalleryCategory;
+use App\Enums\Content\GalleryCategory;
 use App\Http\Resources\GalleryPhotoResource;
-use App\Models\GalleryPhoto;
-use App\Models\User;
+use App\Models\Content\GalleryPhoto;
+use App\Models\Staff\User;
 
 beforeEach(function () {
     setUpTenantTest();

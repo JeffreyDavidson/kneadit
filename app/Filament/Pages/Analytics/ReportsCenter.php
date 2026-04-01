@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Analytics;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Reporting\ReportService;
 use Filament\Pages\Page;
@@ -31,7 +31,7 @@ class ReportsCenter extends Page
 
     protected static ?int $navigationSort = 14;
 
-    protected string $view = 'filament.pages.reports-center';
+    protected string $view = 'filament.pages.analytics.reports-center';
 
     public string $activeReport = '';
 

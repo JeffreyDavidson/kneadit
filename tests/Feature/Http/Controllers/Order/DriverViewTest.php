@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\OrderStatus;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\User;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 

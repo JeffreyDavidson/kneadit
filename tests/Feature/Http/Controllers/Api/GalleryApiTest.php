@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\GalleryPhoto;
+use App\Models\Content\GalleryPhoto;
 
 use function Pest\Laravel\withoutMiddleware;
 

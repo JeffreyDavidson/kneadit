@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\StaffInvitation;
-use App\Models\User;
+use App\Models\Staff\StaffInvitation;
+use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;

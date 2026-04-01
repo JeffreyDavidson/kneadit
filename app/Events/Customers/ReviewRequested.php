@@ -2,7 +2,7 @@
 
 namespace App\Events\Customers;
 
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

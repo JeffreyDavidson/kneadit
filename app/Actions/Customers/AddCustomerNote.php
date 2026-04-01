@@ -2,7 +2,7 @@
 
 namespace App\Actions\Customers;
 
-use App\Models\CustomerNote;
+use App\Models\Customers\CustomerNote;
 
 class AddCustomerNote
 {

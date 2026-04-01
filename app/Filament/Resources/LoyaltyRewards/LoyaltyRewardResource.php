@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\LoyaltyRewards;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
 use App\Filament\Resources\LoyaltyRewards\Schemas\LoyaltyRewardForm;
 use App\Filament\Resources\LoyaltyRewards\Tables\LoyaltyRewardsTable;
-use App\Models\LoyaltyReward;
+use App\Models\Engagement\LoyaltyReward;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

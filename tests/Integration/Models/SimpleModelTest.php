@@ -1,12 +1,12 @@
 <?php
 
-use App\Models\Customer;
-use App\Models\CustomerNote;
-use App\Models\CustomerProfile;
-use App\Models\CustomerReminder;
-use App\Models\Ingredient;
-use App\Models\StockAdjustment;
-use App\Models\User;
+use App\Models\Customers\Customer;
+use App\Models\Customers\CustomerNote;
+use App\Models\Customers\CustomerProfile;
+use App\Models\Customers\CustomerReminder;
+use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\StockAdjustment;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

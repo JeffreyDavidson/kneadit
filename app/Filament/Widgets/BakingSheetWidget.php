@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\OrderStatus;
-use App\Models\OrderItem;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Orders\OrderItem;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;

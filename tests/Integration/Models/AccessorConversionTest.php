@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\ExpenseCategory;
-use App\Models\Expense;
+use App\Enums\Financial\ExpenseCategory;
+use App\Models\Financial\Expense;
 
 beforeEach(function () {
     setUpTenantTest();

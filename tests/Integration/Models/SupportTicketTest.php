@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\SupportTicketPriority;
-use App\Enums\SupportTicketStatus;
-use App\Models\SupportReply;
-use App\Models\SupportTicket;
+use App\Enums\Platform\SupportTicketPriority;
+use App\Enums\Platform\SupportTicketStatus;
+use App\Models\Platform\SupportReply;
+use App\Models\Platform\SupportTicket;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 beforeEach(fn () => setUpCentralTest());

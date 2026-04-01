@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\RewardType;
-use App\Models\Customer;
-use App\Models\LoyaltyPoint;
-use App\Models\LoyaltyReward;
+use App\Enums\Engagement\RewardType;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Engagement\LoyaltyReward;
 
 beforeEach(function () {
     setUpTenantTest();

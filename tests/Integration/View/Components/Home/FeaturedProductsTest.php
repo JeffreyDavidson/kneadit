@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use App\View\Components\Home\FeaturedProducts;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

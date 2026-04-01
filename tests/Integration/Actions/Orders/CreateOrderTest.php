@@ -1,12 +1,12 @@
 <?php
 
 use App\Actions\Orders\CreateOrder;
-use App\DataTransferObjects\CreateOrderData;
-use App\Enums\DeliveryType;
-use App\Enums\OrderStatus;
+use App\DataTransferObjects\Orders\CreateOrderData;
+use App\Enums\Orders\DeliveryType;
+use App\Enums\Orders\OrderStatus;
 use App\Mail\Orders\OrderPlacedMail;
-use App\Models\Order;
-use App\Models\Product;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

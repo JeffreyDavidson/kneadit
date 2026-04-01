@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\SocialPosts\Schemas;
 
 use App\Actions\Content\GenerateSocialCaption;
-use App\Enums\SocialPlatform;
-use App\Enums\SocialPostStatus;
-use App\Models\Product;
+use App\Enums\Marketing\SocialPlatform;
+use App\Enums\Marketing\SocialPostStatus;
+use App\Models\Inventory\Product;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;

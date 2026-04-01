@@ -2,7 +2,7 @@
 
 namespace App\View\Components\Home;
 
-use App\Models\Category;
+use App\Models\Inventory\Category;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;

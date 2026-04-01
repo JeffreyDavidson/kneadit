@@ -2,7 +2,7 @@
 
 namespace App\Listeners\Orders;
 
-use App\Enums\OrderStatus;
+use App\Enums\Orders\OrderStatus;
 use App\Events\Orders\OrderStatusChanged;
 use App\Listeners\QueuedListener;
 use App\Mail\Orders\OrderBakingMail;

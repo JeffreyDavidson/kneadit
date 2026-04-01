@@ -2,8 +2,8 @@
 
 namespace App\Actions\Customers;
 
-use App\Models\Survey;
-use App\Models\SurveyResponse;
+use App\Models\Engagement\Survey;
+use App\Models\Engagement\SurveyResponse;
 
 class SubmitSurveyResponse
 {

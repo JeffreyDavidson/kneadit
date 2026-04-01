@@ -1,9 +1,9 @@
 <?php
 
 use App\Actions\Customers\TransitionCateringInquiryStatus;
-use App\Enums\CateringInquiryStatus;
+use App\Enums\Customers\CateringInquiryStatus;
 use App\Events\Marketing\CateringQuoteRequested;
-use App\Models\CateringInquiry;
+use App\Models\Customers\CateringInquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 

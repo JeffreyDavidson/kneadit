@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\Surveys\Pages\ListSurveys;
-use App\Models\Survey;
-use App\Models\User;
+use App\Models\Engagement\Survey;
+use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

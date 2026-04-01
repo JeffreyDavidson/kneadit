@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\TenantNote;
+use App\Models\Platform\TenantNote;
 
 beforeEach(fn () => setUpCentralTest());
 

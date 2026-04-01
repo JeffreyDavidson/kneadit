@@ -1,13 +1,13 @@
 <?php
 
 use App\Actions\Tenants\SendTenantNudge;
-use App\Models\PlatformMessage;
+use App\Models\Platform\PlatformMessage;
 
 beforeEach(fn () => setUpCentralTest());
 
 test('creates a nudge message for the tenant', function () {
     createTenant(['store_name' => 'Sweet Dreams']);
-    $tenant = App\Models\Tenant::query()->find('test-bakery');
+    $tenant = App\Models\Platform\Tenant::query()->find('test-bakery');
 
     $message = resolve(SendTenantNudge::class)($tenant);
 

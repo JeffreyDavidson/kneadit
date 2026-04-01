@@ -6,7 +6,7 @@ use App\Filament\Resources\Surveys\Pages\ListSurveys;
 use App\Filament\Resources\Surveys\Pages\ViewSurvey;
 use App\Filament\Resources\Surveys\Schemas\SurveyForm;
 use App\Filament\Resources\Surveys\Tables\SurveysTable;
-use App\Models\Survey;
+use App\Models\Engagement\Survey;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

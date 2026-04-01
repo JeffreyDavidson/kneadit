@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\SocialPosts;
 
-use App\Enums\SocialPostStatus;
-use App\Enums\SubscriptionTier;
+use App\Enums\Marketing\SocialPostStatus;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\SocialPosts\Pages\ListSocialPosts;
 use App\Filament\Resources\SocialPosts\Schemas\SocialPostForm;
 use App\Filament\Resources\SocialPosts\Tables\SocialPostsTable;
-use App\Models\SocialPost;
+use App\Models\Content\SocialPost;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;

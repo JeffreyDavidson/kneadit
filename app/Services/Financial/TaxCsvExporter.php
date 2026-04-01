@@ -2,11 +2,11 @@
 
 namespace App\Services\Financial;
 
-use App\Enums\PaymentStatus;
-use App\Models\Expense;
-use App\Models\Income;
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Financial\Expense;
+use App\Models\Financial\Income;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use Illuminate\Database\Eloquent\Collection;
 
 class TaxCsvExporter

@@ -35,7 +35,7 @@ test('redirects to onboarding when onboardingCompletedAt is null using TenantSet
     app()->instance(Stancl\Tenancy\Contracts\Tenant::class, $tenant);
     app()->bind('currentTenant', fn () => $tenant);
 
-    $user = App\Models\User::factory()->create();
+    $user = App\Models\Staff\User::factory()->create();
     $this->actingAs($user);
 
     $settings = new App\Services\Settings\TenantSettings(

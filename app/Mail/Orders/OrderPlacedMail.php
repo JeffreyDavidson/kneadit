@@ -4,7 +4,7 @@ namespace App\Mail\Orders;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -31,7 +31,7 @@ class OrderPlacedMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.order-placed',
+            view: 'emails.orders.order-placed',
             with: [
                 'order' => $this->order,
             ],

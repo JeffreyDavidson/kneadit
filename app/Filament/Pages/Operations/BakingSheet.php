@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Operations;
 
-use App\Enums\UserRole;
-use App\Queries\BakingSheetQuery;
+use App\Enums\Staff\UserRole;
+use App\Queries\Orders\BakingSheetQuery;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -31,7 +31,7 @@ class BakingSheet extends Page
 
     protected static ?int $navigationSort = 1;
 
-    protected string $view = 'filament.pages.baking-sheet';
+    protected string $view = 'filament.pages.operations.baking-sheet';
 
     public string $selectedDate = '';
 

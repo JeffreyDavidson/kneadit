@@ -2,7 +2,7 @@
 
 namespace App\View\Components\Home;
 
-use App\Models\BlogPost;
+use App\Models\Content\BlogPost;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;

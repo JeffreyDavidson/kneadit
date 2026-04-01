@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\CapacityLimits\Schemas;
 
-use App\Enums\DayOfWeek;
-use App\Models\CapacityLimit;
+use App\Enums\Staff\DayOfWeek;
+use App\Models\Operations\CapacityLimit;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;

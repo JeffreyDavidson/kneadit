@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Storefront;
 
-use App\DataTransferObjects\CreateOrderData;
+use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;

@@ -32,7 +32,7 @@ test('blog feed returns xml', function () {
 });
 
 test('billing plans page renders for authenticated user', function () {
-    $user = App\Models\User::factory()->owner()->create();
+    $user = App\Models\Staff\User::factory()->owner()->create();
 
     $this->actingAs($user)
         ->get('/billing/plans')

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\PlatformAnnouncement;
+use App\Models\Platform\PlatformAnnouncement;
 
 beforeEach(fn () => setUpCentralTest());
 

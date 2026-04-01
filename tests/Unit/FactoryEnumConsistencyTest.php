@@ -1,31 +1,31 @@
 <?php
 
-use App\Enums\CateringInquiryStatus;
-use App\Enums\EmailCampaignStatus;
-use App\Enums\ExpenseCategory;
-use App\Enums\IncomeSource;
-use App\Enums\PlatformSenderType;
-use App\Enums\ReferralStatus;
-use App\Enums\SenderType;
-use App\Enums\SocialPlatform;
-use App\Enums\SocialPostStatus;
-use App\Enums\SubscriptionTier;
-use App\Enums\SupportTicketPriority;
-use App\Enums\SupportTicketStatus;
-use App\Enums\UserRole;
-use App\Models\CateringInquiry;
-use App\Models\EmailCampaign;
-use App\Models\Expense;
-use App\Models\GiftCard;
-use App\Models\Income;
-use App\Models\OrderMessage;
-use App\Models\PlatformMessage;
-use App\Models\ProductImage;
-use App\Models\Referral;
-use App\Models\SocialPost;
-use App\Models\SupportTicket;
-use App\Models\Tenant;
-use App\Models\User;
+use App\Enums\Customers\CateringInquiryStatus;
+use App\Enums\Customers\ReferralStatus;
+use App\Enums\Financial\ExpenseCategory;
+use App\Enums\Financial\IncomeSource;
+use App\Enums\Marketing\EmailCampaignStatus;
+use App\Enums\Marketing\SocialPlatform;
+use App\Enums\Marketing\SocialPostStatus;
+use App\Enums\Orders\SenderType;
+use App\Enums\Platform\PlatformSenderType;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Platform\SupportTicketPriority;
+use App\Enums\Platform\SupportTicketStatus;
+use App\Enums\Staff\UserRole;
+use App\Models\Content\SocialPost;
+use App\Models\Customers\CateringInquiry;
+use App\Models\Customers\Referral;
+use App\Models\Engagement\EmailCampaign;
+use App\Models\Financial\Expense;
+use App\Models\Financial\GiftCard;
+use App\Models\Financial\Income;
+use App\Models\Inventory\ProductImage;
+use App\Models\Orders\OrderMessage;
+use App\Models\Platform\PlatformMessage;
+use App\Models\Platform\SupportTicket;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 
 test('social post factory produces valid enum values', function () {
     // Create many to exercise all randomElement possibilities
@@ -197,19 +197,19 @@ test('product image factory creates valid instance', function () {
 });
 
 test('gift card transaction factory uses enum type', function () {
-    $transaction = App\Models\GiftCardTransaction::factory()->make(['gift_card_id' => 1]);
+    $transaction = App\Models\Financial\GiftCardTransaction::factory()->make(['gift_card_id' => 1]);
 
-    expect($transaction->type)->toBeInstanceOf(App\Enums\GiftCardTransactionType::class);
+    expect($transaction->type)->toBeInstanceOf(App\Enums\Financial\GiftCardTransactionType::class);
 });
 
 test('gift card transaction factory redemption state uses enum', function () {
-    $transaction = App\Models\GiftCardTransaction::factory()->redemption()->make(['gift_card_id' => 1]);
+    $transaction = App\Models\Financial\GiftCardTransaction::factory()->redemption()->make(['gift_card_id' => 1]);
 
-    expect($transaction->type)->toBe(App\Enums\GiftCardTransactionType::Redemption);
+    expect($transaction->type)->toBe(App\Enums\Financial\GiftCardTransactionType::Redemption);
 });
 
 test('loyalty reward factory uses enum reward_type', function () {
-    $rewards = App\Models\LoyaltyReward::factory()->count(10)->make();
+    $rewards = App\Models\Engagement\LoyaltyReward::factory()->count(10)->make();
 
-    $rewards->each(fn ($reward) => expect($reward->reward_type)->toBeInstanceOf(App\Enums\RewardType::class));
+    $rewards->each(fn ($reward) => expect($reward->reward_type)->toBeInstanceOf(App\Enums\Engagement\RewardType::class));
 });

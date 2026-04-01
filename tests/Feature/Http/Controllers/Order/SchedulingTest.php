@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\BusinessSchedule;
+use App\Models\Operations\BusinessSchedule;
 use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\withoutMiddleware;

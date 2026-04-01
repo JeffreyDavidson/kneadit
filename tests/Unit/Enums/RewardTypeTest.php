@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\RewardType;
+use App\Enums\Engagement\RewardType;
 
 test('each reward type has a label', function () {
     foreach (RewardType::cases() as $type) {

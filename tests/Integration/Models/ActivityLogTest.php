@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\ActivityLog;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\User;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
+use App\Models\Operations\ActivityLog;
+use App\Models\Staff\User;
 
 use function Pest\Laravel\actingAs;
 

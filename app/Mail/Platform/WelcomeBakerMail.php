@@ -26,7 +26,7 @@ class WelcomeBakerMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.welcome-baker',
+            view: 'emails.platform.welcome-baker',
         );
     }
 }

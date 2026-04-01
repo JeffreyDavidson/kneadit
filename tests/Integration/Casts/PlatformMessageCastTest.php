@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\PlatformSenderType;
-use App\Models\PlatformMessage;
+use App\Enums\Platform\PlatformSenderType;
+use App\Models\Platform\PlatformMessage;
 
 beforeEach(fn () => setUpCentralTest());
 

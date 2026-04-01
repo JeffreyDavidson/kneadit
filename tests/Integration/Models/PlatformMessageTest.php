@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\PlatformMessage;
+use App\Models\Platform\PlatformMessage;
 
 beforeEach(fn () => setUpCentralTest());
 

@@ -7,7 +7,7 @@ use App\Filament\Central\Resources\BlogPostResource\Pages\EditBlogPost;
 use App\Filament\Central\Resources\BlogPostResource\Pages\ListBlogPosts;
 use App\Filament\Central\Resources\BlogPostResource\Schemas\BlogPostForm;
 use App\Filament\Central\Resources\BlogPostResource\Tables\BlogPostsTable;
-use App\Models\BlogPost;
+use App\Models\Content\BlogPost;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

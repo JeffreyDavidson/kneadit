@@ -2,9 +2,9 @@
 
 namespace App\Services\Analytics;
 
-use App\Enums\PageType;
-use App\Models\PageView;
-use App\Models\Product;
+use App\Enums\Content\PageType;
+use App\Models\Engagement\PageView;
+use App\Models\Inventory\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 

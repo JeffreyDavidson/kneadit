@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Operations;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Production\PrepScheduleService;
 use Filament\Pages\Page;
@@ -40,7 +40,7 @@ class WeeklyPrepPlanner extends Page
 
     protected static ?int $navigationSort = 4;
 
-    protected string $view = 'filament.pages.weekly-prep-planner';
+    protected string $view = 'filament.pages.operations.weekly-prep-planner';
 
     public ?string $selectedWeekStart = null;
 

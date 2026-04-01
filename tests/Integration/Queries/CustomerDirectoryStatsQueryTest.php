@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\User;
-use App\Queries\CustomerDirectoryStatsQuery;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
+use App\Queries\Customers\CustomerDirectoryStatsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

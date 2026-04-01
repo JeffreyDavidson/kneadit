@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\OrderStatus;
+use App\Enums\Orders\OrderStatus;
 use App\Events\Orders\OrderStatusChanged;
 use App\Listeners\Orders\SendOrderStatusEmailListener;
 use App\Mail\Orders\OrderBakingMail;
@@ -8,8 +8,8 @@ use App\Mail\Orders\OrderCancelledMail;
 use App\Mail\Orders\OrderConfirmedMail;
 use App\Mail\Orders\OrderDeliveredMail;
 use App\Mail\Orders\OrderReadyMail;
-use App\Models\Customer;
-use App\Models\Order;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

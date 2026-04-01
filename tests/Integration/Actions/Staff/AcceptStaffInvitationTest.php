@@ -1,9 +1,9 @@
 <?php
 
 use App\Actions\Staff\AcceptStaffInvitation;
-use App\Enums\UserRole;
-use App\Models\StaffInvitation;
-use App\Models\User;
+use App\Enums\Staff\UserRole;
+use App\Models\Staff\StaffInvitation;
+use App\Models\Staff\User;
 
 beforeEach(fn () => setUpTenantTest());
 

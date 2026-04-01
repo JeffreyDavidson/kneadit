@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Storefront;
 use App\Actions\Customers\CreateCustomerPhoto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreGalleryPhotoRequest;
-use App\Models\CustomerPhoto;
-use App\Models\Product;
+use App\Models\Customers\CustomerPhoto;
+use App\Models\Inventory\Product;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -39,7 +39,7 @@ class GalleryController extends Controller
 
         $content = settingsPageContent('gallery');
 
-        return view('gallery', [
+        return view('storefront.gallery', [
             'settings' => $settings,
             'photos' => $photos,
             'products' => $products,

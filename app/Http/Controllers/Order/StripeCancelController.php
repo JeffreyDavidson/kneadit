@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Order;
 
-use App\Enums\PaymentStatus;
+use App\Enums\Orders\PaymentStatus;
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Http\RedirectResponse;
 
 class StripeCancelController extends Controller

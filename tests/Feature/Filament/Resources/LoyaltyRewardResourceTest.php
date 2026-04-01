@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\RewardType;
+use App\Enums\Engagement\RewardType;
 use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
-use App\Models\LoyaltyReward;
-use App\Models\User;
+use App\Models\Engagement\LoyaltyReward;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

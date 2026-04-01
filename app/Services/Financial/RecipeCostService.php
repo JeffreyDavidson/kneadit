@@ -2,7 +2,7 @@
 
 namespace App\Services\Financial;
 
-use App\Models\Recipe;
+use App\Models\Inventory\Recipe;
 use Illuminate\Support\Collection;
 
 class RecipeCostService

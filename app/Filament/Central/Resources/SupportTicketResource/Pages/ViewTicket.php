@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Resources\SupportTicketResource\Pages;
 
-use App\Enums\SupportTicketStatus;
+use App\Enums\Platform\SupportTicketStatus;
 use App\Filament\Central\Resources\SupportTicketResource;
 use Filament\Resources\Pages\ViewRecord;
 use Livewire\Attributes\Rule;

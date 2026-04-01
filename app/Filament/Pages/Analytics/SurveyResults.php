@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Analytics;
 
-use App\Models\Survey;
+use App\Models\Engagement\Survey;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -21,7 +21,7 @@ class SurveyResults extends Page
 
     protected static ?string $title = 'Survey Results';
 
-    protected string $view = 'filament.pages.survey-results';
+    protected string $view = 'filament.pages.analytics.survey-results';
 
     public ?int $surveyId = null;
 

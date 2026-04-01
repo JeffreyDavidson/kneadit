@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Incomes\Schemas;
 
-use App\Enums\IncomeSource;
+use App\Enums\Financial\IncomeSource;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;

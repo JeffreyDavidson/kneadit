@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Resources\AnnouncementResource\Tables;
 
-use App\Enums\AnnouncementType;
+use App\Enums\Platform\AnnouncementType;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;

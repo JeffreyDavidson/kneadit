@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\CateringEventType;
-use App\Models\CateringInquiry;
+use App\Enums\Customers\CateringEventType;
+use App\Models\Customers\CateringInquiry;
 
 use function Pest\Laravel\withoutMiddleware;
 

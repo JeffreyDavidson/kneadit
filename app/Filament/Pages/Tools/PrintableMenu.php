@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Category;
+use App\Models\Inventory\Category;
 use App\Services\Settings\TenantSettings;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -44,7 +44,7 @@ class PrintableMenu extends Page
 
     protected static ?int $navigationSort = 16;
 
-    protected string $view = 'filament.pages.printable-menu';
+    protected string $view = 'filament.pages.tools.printable-menu';
 
     public string $activeView = 'menu';
 

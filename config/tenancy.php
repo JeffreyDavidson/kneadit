@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\TenantSQLiteDatabaseManager;
+use App\Services\Tenant\TenantSQLiteDatabaseManager;
 use Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper;
@@ -14,7 +14,7 @@ use Stancl\Tenancy\TenantDatabaseManagers\PostgreSQLDatabaseManager;
 use Stancl\Tenancy\UUIDGenerator;
 
 return [
-    'tenant_model' => App\Models\Tenant::class,
+    'tenant_model' => App\Models\Platform\Tenant::class,
     'id_generator' => UUIDGenerator::class,
 
     'domain_model' => Domain::class,

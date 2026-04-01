@@ -2,8 +2,8 @@
 
 namespace App\Events\Orders;
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Orders\Order;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\SubscriptionTier;
-use App\Models\AdminAuditLog;
+use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\AdminAuditLog;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 

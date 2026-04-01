@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Pages\Engagement\ReferralProgram;
-use App\Models\Tenant;
-use App\Models\User;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;

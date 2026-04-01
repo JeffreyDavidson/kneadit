@@ -2,10 +2,10 @@
 
 namespace App\Actions\Platform;
 
-use App\Enums\EmailCampaignStatus;
+use App\Enums\Marketing\EmailCampaignStatus;
 use App\Events\Marketing\CampaignEmailQueued;
-use App\Models\Customer;
-use App\Models\EmailCampaign;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\EmailCampaign;
 
 class SendEmailCampaign
 {

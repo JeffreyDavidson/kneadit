@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\RedeemLoyaltyRewardRequest;
-use App\Models\Customer;
-use App\Models\LoyaltyReward;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyReward;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
@@ -15,7 +15,7 @@ class LoyaltyController extends Controller
     {
         $customer = Customer::query()->where('email', $request->email)->first();
 
-        return view('loyalty', [
+        return view('storefront.loyalty', [
             ...$this->sharedViewData($settings),
             'customer' => $customer,
             'totalPoints' => $customer?->total_points ?? 0,
@@ -26,7 +26,7 @@ class LoyaltyController extends Controller
 
     public function show(TenantSettings $settings): View
     {
-        return view('loyalty', $this->sharedViewData($settings));
+        return view('storefront.loyalty', $this->sharedViewData($settings));
     }
 
     /** @return array<string, mixed> */

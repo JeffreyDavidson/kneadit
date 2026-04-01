@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Platform\LogPlatformActivity;
-use App\Enums\SubscriptionTier;
-use App\Models\PlatformActivity;
+use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\PlatformActivity;
 
 beforeEach(fn () => setUpCentralTest());
 

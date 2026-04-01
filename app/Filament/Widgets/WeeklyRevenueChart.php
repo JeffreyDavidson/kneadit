@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Expense;
-use App\Queries\RevenueQuery;
+use App\Models\Financial\Expense;
+use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;

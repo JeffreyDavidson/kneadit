@@ -24,7 +24,7 @@ class ScheduledCheckinMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            text: 'emails.scheduled-checkin-text',
+            text: 'emails.platform.scheduled-checkin-text',
         );
     }
 

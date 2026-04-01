@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\BlockedDates\Pages\ListBlockedDates;
-use App\Models\BlockedDate;
-use App\Models\User;
+use App\Models\Operations\BlockedDate;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

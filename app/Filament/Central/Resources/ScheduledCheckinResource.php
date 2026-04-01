@@ -5,7 +5,7 @@ namespace App\Filament\Central\Resources;
 use App\Filament\Central\Resources\ScheduledCheckinResource\Pages;
 use App\Filament\Central\Resources\ScheduledCheckinResource\Schemas\ScheduledCheckinForm;
 use App\Filament\Central\Resources\ScheduledCheckinResource\Tables\ScheduledCheckinsTable;
-use App\Models\ScheduledCheckin;
+use App\Models\Operations\ScheduledCheckin;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -2,8 +2,8 @@
 
 namespace App\View\Components\Home;
 
-use App\Models\Customer;
-use App\Models\Review;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\Review;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;

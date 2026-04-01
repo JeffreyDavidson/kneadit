@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Events\Marketing\PurchaseOrderRequested;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Inventory\ShoppingListService;
@@ -44,7 +44,7 @@ class SmartShoppingList extends Page
 
     protected static ?int $navigationSort = 3;
 
-    protected string $view = 'filament.pages.smart-shopping-list';
+    protected string $view = 'filament.pages.tools.smart-shopping-list';
 
     public string $startDate = '';
 

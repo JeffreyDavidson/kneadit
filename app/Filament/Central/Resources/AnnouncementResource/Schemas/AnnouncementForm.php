@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Resources\AnnouncementResource\Schemas;
 
-use App\Enums\AnnouncementType;
+use App\Enums\Platform\AnnouncementType;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;

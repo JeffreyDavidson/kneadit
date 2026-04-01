@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\ExpenseCategory;
+use App\Enums\Financial\ExpenseCategory;
 use App\Filament\Resources\Expenses\Pages\ListExpenses;
-use App\Models\Expense;
-use App\Models\User;
+use App\Models\Financial\Expense;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

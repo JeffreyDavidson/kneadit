@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\Content\FeatureReview;
-use App\Models\Review;
+use App\Models\Engagement\Review;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

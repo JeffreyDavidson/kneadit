@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\OrderStatus;
-use App\Models\Customer;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Customers\Customer;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;

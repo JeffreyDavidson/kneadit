@@ -1,7 +1,7 @@
 <?php
 
 use App\Filament\Central\Resources\TenantResource\Pages\ViewTenant;
-use App\Models\User;
+use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;

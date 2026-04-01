@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\Inventory\Category;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,7 +24,7 @@ class MenuController extends Controller
         $heroEyebrow = str_replace('{{store_name}}', $settings->storeName, $content['hero_eyebrow'] ?? $settings->storeName);
         $ctaDesc = str_replace('{{lead_time}}', (string) $settings->leadTimeHours, $content['cta_description'] ?? 'All orders need ' . $settings->leadTimeHours . ' hours notice. Place yours now.');
 
-        return view('menu', [
+        return view('storefront.menu', [
             'settings' => $settings,
             'categories' => $categories,
             'content' => $content,

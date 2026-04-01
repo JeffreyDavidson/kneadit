@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Customer;
+use App\Models\Customers\Customer;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
 

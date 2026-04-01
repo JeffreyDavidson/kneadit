@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Orders\Order;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;

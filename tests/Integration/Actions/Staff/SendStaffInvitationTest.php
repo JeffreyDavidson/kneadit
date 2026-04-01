@@ -1,10 +1,10 @@
 <?php
 
 use App\Actions\Staff\SendStaffInvitation;
-use App\Enums\UserRole;
-use App\Mail\StaffInvitationMail;
-use App\Models\StaffInvitation;
-use App\Models\User;
+use App\Enums\Staff\UserRole;
+use App\Mail\Platform\StaffInvitationMail;
+use App\Models\Staff\StaffInvitation;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(fn () => setUpTenantTest());

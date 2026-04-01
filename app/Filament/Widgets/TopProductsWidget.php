@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Queries\ProductSalesQuery;
+use App\Queries\Financial\ProductSalesQuery;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\ChartWidget;
 

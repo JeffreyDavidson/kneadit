@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\OrderStatus;
+use App\Enums\Orders\OrderStatus;
 
 test('OrderStatus has a label method', function () {
     expect(OrderStatus::Pending->getLabel())->toBe('Pending')

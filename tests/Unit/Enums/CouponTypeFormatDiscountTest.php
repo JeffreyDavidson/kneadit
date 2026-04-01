@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\CouponType;
+use App\Enums\Financial\CouponType;
 
 test('percentage type formats as percent off', function () {
     expect(CouponType::Percentage->formatDiscount(10))->toBe('10% off');

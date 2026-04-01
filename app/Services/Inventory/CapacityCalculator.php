@@ -2,8 +2,8 @@
 
 namespace App\Services\Inventory;
 
-use App\Models\CapacityLimit;
-use App\Models\Order;
+use App\Models\Operations\CapacityLimit;
+use App\Models\Orders\Order;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
 

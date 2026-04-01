@@ -1,10 +1,10 @@
 <?php
 
 use App\Actions\Platform\SendEmailCampaign;
-use App\Enums\EmailCampaignStatus;
-use App\Mail\CustomerBlastMail;
-use App\Models\Customer;
-use App\Models\EmailCampaign;
+use App\Enums\Marketing\EmailCampaignStatus;
+use App\Mail\Marketing\CustomerBlastMail;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\EmailCampaign;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(fn () => setUpCentralTest());

@@ -1,12 +1,12 @@
 <?php
 
 use App\Actions\Orders\CreateQuickOrder;
-use App\DataTransferObjects\CreateQuickOrderData;
-use App\Enums\DeliveryType;
-use App\Enums\PaymentMethod;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\User;
+use App\DataTransferObjects\Orders\CreateQuickOrderData;
+use App\Enums\Orders\DeliveryType;
+use App\Enums\Orders\PaymentMethod;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

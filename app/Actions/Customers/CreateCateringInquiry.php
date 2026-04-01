@@ -2,7 +2,7 @@
 
 namespace App\Actions\Customers;
 
-use App\Models\CateringInquiry;
+use App\Models\Customers\CateringInquiry;
 
 class CreateCateringInquiry
 {

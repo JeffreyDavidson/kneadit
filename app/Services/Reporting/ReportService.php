@@ -2,11 +2,11 @@
 
 namespace App\Services\Reporting;
 
-use App\Reports\CustomerReport;
-use App\Reports\FinancialReport;
-use App\Reports\InventoryReport;
-use App\Reports\ProductReport;
-use App\Reports\SalesReport;
+use App\Reports\Customers\CustomerReport;
+use App\Reports\Financial\FinancialReport;
+use App\Reports\Inventory\InventoryReport;
+use App\Reports\Inventory\ProductReport;
+use App\Reports\Orders\SalesReport;
 use App\ValueObjects\DateRange;
 
 class ReportService

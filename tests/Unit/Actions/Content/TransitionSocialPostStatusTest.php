@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Content\TransitionSocialPostStatus;
-use App\Enums\SocialPostStatus;
-use App\Models\SocialPost;
+use App\Enums\Marketing\SocialPostStatus;
+use App\Models\Content\SocialPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

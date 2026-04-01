@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\BlockedDate;
-use App\Services\AvailabilityService;
+use App\Models\Operations\BlockedDate;
+use App\Services\Scheduling\AvailabilityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

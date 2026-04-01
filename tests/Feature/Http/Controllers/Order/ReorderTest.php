@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 
 use function Pest\Laravel\withoutMiddleware;
 

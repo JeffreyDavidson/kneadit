@@ -1,14 +1,14 @@
 <?php
 
-use App\Enums\CouponType;
-use App\Enums\DeliveryType;
-use App\Enums\OrderStatus;
-use App\Models\Category;
-use App\Models\Coupon;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\User;
+use App\Enums\Financial\CouponType;
+use App\Enums\Orders\DeliveryType;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Customers\Customer;
+use App\Models\Financial\Coupon;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 
 use function Pest\Laravel\withoutMiddleware;
 

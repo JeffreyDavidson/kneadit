@@ -2,7 +2,7 @@
 
 namespace App\Services\Tenant;
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use Illuminate\Support\Str;
 
 class SaveOnboardingStep

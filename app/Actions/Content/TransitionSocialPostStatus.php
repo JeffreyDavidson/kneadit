@@ -2,8 +2,8 @@
 
 namespace App\Actions\Content;
 
-use App\Enums\SocialPostStatus;
-use App\Models\SocialPost;
+use App\Enums\Marketing\SocialPostStatus;
+use App\Models\Content\SocialPost;
 
 class TransitionSocialPostStatus
 {

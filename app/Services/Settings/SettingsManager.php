@@ -2,7 +2,7 @@
 
 namespace App\Services\Settings;
 
-use App\Models\Setting;
+use App\Models\Platform\Setting;
 
 class SettingsManager
 {

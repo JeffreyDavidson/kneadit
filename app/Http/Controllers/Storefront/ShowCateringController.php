@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\CustomerPhoto;
+use App\Models\Customers\CustomerPhoto;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
@@ -20,7 +20,7 @@ class ShowCateringController extends Controller
 
         $content = settingsPageContent('catering');
 
-        return view('catering', [
+        return view('storefront.catering', [
             'settings' => $settings,
             'cateringPhotos' => $cateringPhotos,
             'content' => $content,

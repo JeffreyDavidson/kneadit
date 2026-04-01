@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Settings;
 
-use App\Enums\UserRole;
-use App\Services\ForgeService;
+use App\Enums\Staff\UserRole;
+use App\Services\Platform\ForgeService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
@@ -40,7 +40,7 @@ class CustomDomain extends Page
 
     protected static ?int $navigationSort = 4;
 
-    protected string $view = 'filament.pages.custom-domain';
+    protected string $view = 'filament.pages.settings.custom-domain';
 
     protected static ?string $title = 'Custom Domain';
 
@@ -70,7 +70,7 @@ class CustomDomain extends Page
                         ->helperText('Enter your domain without http:// or www.'),
                 ]),
 
-            View::make('filament.pages.custom-domain-info'),
+            View::make('filament.pages.settings.custom-domain-info'),
         ]);
     }
 

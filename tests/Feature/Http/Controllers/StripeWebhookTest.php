@@ -1,10 +1,10 @@
 <?php
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\PaymentFailed;
 use App\Http\Controllers\Stripe\StripeWebhookController;
-use App\Models\Tenant;
-use App\Models\User;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\Event;
 
 beforeEach(function () {

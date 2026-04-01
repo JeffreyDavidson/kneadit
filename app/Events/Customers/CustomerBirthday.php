@@ -2,8 +2,8 @@
 
 namespace App\Events\Customers;
 
-use App\Models\Coupon;
-use App\Models\Customer;
+use App\Models\Customers\Customer;
+use App\Models\Financial\Coupon;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

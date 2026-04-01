@@ -2,7 +2,7 @@
 
 namespace App\Actions\Customers;
 
-use App\Models\Review;
+use App\Models\Engagement\Review;
 
 class SubmitApiReview
 {

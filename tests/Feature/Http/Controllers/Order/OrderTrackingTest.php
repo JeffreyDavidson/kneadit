@@ -1,11 +1,11 @@
 <?php
 
-use App\Models\Category;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Models\User;
+use App\Models\Customers\Customer;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
+use App\Models\Staff\User;
 
 use function Pest\Laravel\withoutMiddleware;
 

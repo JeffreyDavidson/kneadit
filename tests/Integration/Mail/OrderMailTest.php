@@ -7,7 +7,7 @@ use App\Mail\Orders\OrderConfirmedMail;
 use App\Mail\Orders\OrderDeliveredMail;
 use App\Mail\Orders\OrderPlacedMail;
 use App\Mail\Orders\OrderReadyMail;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

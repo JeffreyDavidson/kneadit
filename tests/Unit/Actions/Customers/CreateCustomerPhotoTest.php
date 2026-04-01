@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\Customers\CreateCustomerPhoto;
-use App\Models\CustomerPhoto;
+use App\Models\Customers\CustomerPhoto;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;

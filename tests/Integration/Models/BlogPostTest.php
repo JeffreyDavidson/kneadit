@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\BlogPost;
-use App\Models\User;
+use App\Models\Content\BlogPost;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 

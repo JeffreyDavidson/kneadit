@@ -2,9 +2,9 @@
 
 namespace App\Actions\Orders;
 
-use App\DataTransferObjects\CreateOrderData;
+use App\DataTransferObjects\Orders\CreateOrderData;
 use App\Events\Orders\OrderCreated;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use App\Pipes\Orders\ApplyCoupon;
 use App\Pipes\Orders\ApplyCouponUsage;
 use App\Pipes\Orders\ApplyGiftCard;

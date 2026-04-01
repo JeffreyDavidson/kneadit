@@ -7,7 +7,7 @@ use App\Filament\Central\Resources\MessageResource\Pages\ListMessages;
 use App\Filament\Central\Resources\ScheduledCheckinResource\Pages\ListScheduledCheckins;
 use App\Filament\Central\Resources\SupportTicketResource\Pages\ListTickets;
 use App\Filament\Central\Resources\TenantResource\Pages\ListTenants;
-use App\Models\User;
+use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 

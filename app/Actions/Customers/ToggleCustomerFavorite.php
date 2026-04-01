@@ -2,7 +2,7 @@
 
 namespace App\Actions\Customers;
 
-use App\Models\CustomerFavorite;
+use App\Models\Customers\CustomerFavorite;
 
 class ToggleCustomerFavorite
 {

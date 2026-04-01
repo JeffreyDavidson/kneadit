@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\GalleryPhoto;
+use App\Models\Content\GalleryPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\SeasonalItem;
+use App\Models\Inventory\SeasonalItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

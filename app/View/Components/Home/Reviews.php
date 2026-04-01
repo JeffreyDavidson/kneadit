@@ -2,7 +2,7 @@
 
 namespace App\View\Components\Home;
 
-use App\Models\Review;
+use App\Models\Engagement\Review;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;

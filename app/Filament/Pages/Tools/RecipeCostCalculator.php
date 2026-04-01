@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Recipe;
+use App\Models\Inventory\Recipe;
 use App\Services\Financial\RecipeCostService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -43,7 +43,7 @@ class RecipeCostCalculator extends Page
 
     protected static ?int $navigationSort = 13;
 
-    protected string $view = 'filament.pages.recipe-cost-calculator';
+    protected string $view = 'filament.pages.tools.recipe-cost-calculator';
 
     public ?int $selectedRecipeId = null;
 

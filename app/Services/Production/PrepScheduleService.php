@@ -2,7 +2,7 @@
 
 namespace App\Services\Production;
 
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;

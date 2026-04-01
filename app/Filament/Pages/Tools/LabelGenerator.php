@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\UserRole;
-use App\Models\Product;
+use App\Enums\Staff\UserRole;
+use App\Models\Inventory\Product;
 use App\Services\Settings\TenantSettings;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -31,7 +31,7 @@ class LabelGenerator extends Page
 
     protected static ?int $navigationSort = 13;
 
-    protected string $view = 'filament.pages.label-generator';
+    protected string $view = 'filament.pages.tools.label-generator';
 
     /** @var array<string, mixed> */
     public array $selectedProducts = [];

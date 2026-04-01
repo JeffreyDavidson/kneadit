@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Analytics;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Analytics\ReviewAnalyticsService;
 use Filament\Pages\Page;
@@ -40,7 +40,7 @@ class ReviewAnalytics extends Page
 
     protected static ?int $navigationSort = 4;
 
-    protected string $view = 'filament.pages.review-analytics';
+    protected string $view = 'filament.pages.analytics.review-analytics';
 
     private function service(): ReviewAnalyticsService
     {

@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\User;
-use App\Queries\BakingSheetQuery;
+use App\Models\Customers\Customer;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
+use App\Queries\Orders\BakingSheetQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

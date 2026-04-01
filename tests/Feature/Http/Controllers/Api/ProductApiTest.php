@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 
 use function Pest\Laravel\withoutMiddleware;
 

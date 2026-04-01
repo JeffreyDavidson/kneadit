@@ -2,11 +2,11 @@
 
 namespace App\Actions\Staff;
 
-use App\Enums\UserRole;
+use App\Enums\Staff\UserRole;
 use App\Events\Platform\StaffInvitationSent;
-use App\Exceptions\StaffInvitationException;
-use App\Models\StaffInvitation;
-use App\Models\User;
+use App\Exceptions\Staff\StaffInvitationException;
+use App\Models\Staff\StaffInvitation;
+use App\Models\Staff\User;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Str;
 

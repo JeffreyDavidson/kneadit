@@ -66,7 +66,7 @@ test('catering controller passes settings and content to view', function () {
 });
 
 test('submit review controller passes settings to view', function () {
-    $order = App\Models\Order::factory()->create();
+    $order = App\Models\Orders\Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get("/review/{$order->order_number}");
@@ -78,7 +78,7 @@ test('submit review controller passes settings to view', function () {
 });
 
 test('survey controller passes settings and content to view', function () {
-    $survey = App\Models\Survey::factory()->create(['is_active' => true]);
+    $survey = App\Models\Engagement\Survey::factory()->create(['is_active' => true]);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get("/survey/{$survey->id}");
@@ -124,7 +124,7 @@ test('order controller index passes settings to view', function () {
 });
 
 test('order confirmation controller passes settings and content to view', function () {
-    $order = App\Models\Order::factory()->create();
+    $order = App\Models\Orders\Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get("/order/confirmation/{$order->order_number}");

@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\UserRole;
-use App\Models\StaffInvitation;
-use App\Models\User;
+use App\Enums\Staff\UserRole;
+use App\Models\Staff\StaffInvitation;
+use App\Models\Staff\User;
 use Illuminate\Support\Str;
 
 beforeEach(fn () => setUpTenantTest());

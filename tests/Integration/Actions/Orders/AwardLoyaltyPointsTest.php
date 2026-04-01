@@ -1,11 +1,11 @@
 <?php
 
 use App\Actions\Orders\AwardLoyaltyPoints;
-use App\Enums\LoyaltyPointType;
-use App\Models\Customer;
-use App\Models\LoyaltyPoint;
-use App\Models\Order;
-use App\Models\User;
+use App\Enums\Engagement\LoyaltyPointType;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

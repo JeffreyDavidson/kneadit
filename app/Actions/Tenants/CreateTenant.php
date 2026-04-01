@@ -2,9 +2,9 @@
 
 namespace App\Actions\Tenants;
 
-use App\Enums\SubscriptionTier;
-use App\Models\Tenant;
-use App\Models\User;
+use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\DB;
 
 class CreateTenant

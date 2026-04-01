@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\WaitlistEntries\Tables;
 
 use App\Actions\Customers\UpdateWaitlistEntryStatus;
-use App\Enums\WaitlistStatus;
-use App\Models\WaitlistEntry;
+use App\Enums\Customers\WaitlistStatus;
+use App\Models\Customers\WaitlistEntry;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

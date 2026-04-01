@@ -3,8 +3,8 @@
 namespace App\Actions\Orders;
 
 use App\Actions\Inventory\AdjustIngredientStock;
-use App\Enums\StockAdjustmentType;
-use App\Models\Order;
+use App\Enums\Inventory\StockAdjustmentType;
+use App\Models\Orders\Order;
 use Illuminate\Support\Facades\DB;
 
 class DeductIngredients

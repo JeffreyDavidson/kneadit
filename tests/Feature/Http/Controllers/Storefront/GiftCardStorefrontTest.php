@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\GiftCardStatus;
-use App\Models\GiftCard;
-use App\Models\GiftCardTransaction;
+use App\Enums\Financial\GiftCardStatus;
+use App\Models\Financial\GiftCard;
+use App\Models\Financial\GiftCardTransaction;
 
 beforeEach(function () {
     setUpTenantTest();

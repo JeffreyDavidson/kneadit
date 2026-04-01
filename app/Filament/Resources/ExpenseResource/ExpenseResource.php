@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Filament\Resources\ExpenseResource;
+
+use App\Enums\Platform\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
+use App\Filament\Resources\ExpenseResource\Pages\ListExpenses;
+use App\Filament\Resources\ExpenseResource\Schemas\ExpenseForm;
+use App\Filament\Resources\ExpenseResource\Tables\ExpensesTable;
+use App\Models\Financial\Expense;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Laravel\Pennant\Feature;
+
+class ExpenseResource extends Resource
+{
+    use ShowsUpgradeBadge;
+
+    protected static ?string $model = Expense::class;
+
+    protected static ?string $recordTitleAttribute = 'description';
+
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowTrendingDown;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+
+    protected static ?int $navigationSort = 1;
+
+    public static function form(Schema $schema): Schema
+    {
+        return ExpenseForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return ExpensesTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListExpenses::route('/'),
+        ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::query()->count();
+    }
+}

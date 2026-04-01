@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\PricingCalculator;
+use App\Services\Financial\PricingCalculator;
 
 test('calculates recommended pricing', function () {
     $calculator = new PricingCalculator;

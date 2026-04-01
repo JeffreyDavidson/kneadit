@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Customers\UpdateWaitlistEntryStatus;
-use App\Enums\WaitlistStatus;
-use App\Models\WaitlistEntry;
+use App\Enums\Customers\WaitlistStatus;
+use App\Models\Customers\WaitlistEntry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

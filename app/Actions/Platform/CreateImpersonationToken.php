@@ -2,8 +2,8 @@
 
 namespace App\Actions\Platform;
 
-use App\Models\ImpersonationToken;
-use App\Models\Tenant;
+use App\Models\Platform\ImpersonationToken;
+use App\Models\Platform\Tenant;
 use Illuminate\Support\Str;
 
 class CreateImpersonationToken

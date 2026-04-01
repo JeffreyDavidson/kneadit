@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\ActivityLog;
+use App\Models\Operations\ActivityLog;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;

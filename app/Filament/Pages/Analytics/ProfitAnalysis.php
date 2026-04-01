@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Analytics;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Financial\ProfitAnalysisService;
 use Filament\Pages\Page;
@@ -40,7 +40,7 @@ class ProfitAnalysis extends Page
 
     protected static ?int $navigationSort = 7;
 
-    protected string $view = 'filament.pages.profit-analysis';
+    protected string $view = 'filament.pages.analytics.profit-analysis';
 
     public string $sortBy = 'margin_desc';
 

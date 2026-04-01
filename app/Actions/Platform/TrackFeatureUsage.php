@@ -2,7 +2,7 @@
 
 namespace App\Actions\Platform;
 
-use App\Models\FeatureUsageLog;
+use App\Models\Platform\FeatureUsageLog;
 use Illuminate\Support\Facades\Date;
 
 class TrackFeatureUsage

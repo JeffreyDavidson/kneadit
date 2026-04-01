@@ -5,7 +5,7 @@ namespace App\Filament\Resources\ContactMessages;
 use App\Filament\Resources\ContactMessages\Pages\ListContactMessages;
 use App\Filament\Resources\ContactMessages\Schemas\ContactMessageForm;
 use App\Filament\Resources\ContactMessages\Tables\ContactMessagesTable;
-use App\Models\ContactMessage;
+use App\Models\Customers\ContactMessage;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;

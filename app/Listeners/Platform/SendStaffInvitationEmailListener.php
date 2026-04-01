@@ -4,7 +4,7 @@ namespace App\Listeners\Platform;
 
 use App\Events\Platform\StaffInvitationSent;
 use App\Listeners\QueuedListener;
-use App\Mail\StaffInvitationMail;
+use App\Mail\Platform\StaffInvitationMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 

@@ -1,7 +1,7 @@
 <?php
 
 use App\Casts\StripTagsCast;
-use App\Models\ContactMessage;
+use App\Models\Customers\ContactMessage;
 
 it('has StripTagsCast on ContactMessage name, subject, and message columns', function () {
     $msg = new ContactMessage;

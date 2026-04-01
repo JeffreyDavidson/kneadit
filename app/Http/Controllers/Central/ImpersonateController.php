@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Central;
 
 use App\Actions\Platform\CreateImpersonationToken;
 use App\Http\Controllers\Controller;
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use Illuminate\Http\JsonResponse;
 
 class ReorderController extends Controller

@@ -1,9 +1,9 @@
 <?php
 
 use App\Filament\Resources\Reviews\Pages\ListReviews;
-use App\Models\Product;
-use App\Models\Review;
-use App\Models\User;
+use App\Models\Engagement\Review;
+use App\Models\Inventory\Product;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

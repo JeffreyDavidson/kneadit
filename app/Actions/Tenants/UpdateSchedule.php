@@ -2,7 +2,7 @@
 
 namespace App\Actions\Tenants;
 
-use App\Models\BusinessSchedule;
+use App\Models\Operations\BusinessSchedule;
 
 class UpdateSchedule
 {

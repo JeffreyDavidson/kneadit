@@ -1,7 +1,7 @@
 <?php
 
-use App\Filament\Pages\QuickOrder;
-use App\Models\User;
+use App\Filament\Pages\Operations\QuickOrder;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Central\Resources\SupportTicketResource\Schemas;
 
-use App\Enums\SupportTicketPriority;
-use App\Enums\SupportTicketStatus;
-use App\Models\Tenant;
+use App\Enums\Platform\SupportTicketPriority;
+use App\Enums\Platform\SupportTicketStatus;
+use App\Models\Platform\Tenant;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;

@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\PaymentStatus;
-use App\Models\Order;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;

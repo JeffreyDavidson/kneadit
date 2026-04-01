@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

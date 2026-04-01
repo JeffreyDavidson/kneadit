@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
@@ -47,7 +47,7 @@ class QrCodeGenerator extends Page
 
     protected static ?int $navigationSort = 15;
 
-    protected string $view = 'filament.pages.qr-code-generator';
+    protected string $view = 'filament.pages.tools.qr-code-generator';
 
     /** @var array<string, mixed> */
     public ?array $data = [];

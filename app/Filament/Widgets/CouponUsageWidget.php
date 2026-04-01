@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Coupon;
+use App\Models\Financial\Coupon;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
 

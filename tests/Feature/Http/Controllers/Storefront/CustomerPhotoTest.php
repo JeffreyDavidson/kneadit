@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CustomerPhoto;
+use App\Models\Customers\CustomerPhoto;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 

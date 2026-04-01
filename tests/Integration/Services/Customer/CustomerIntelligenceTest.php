@@ -1,10 +1,10 @@
 <?php
 
-use App\Enums\OrderStatus;
-use App\Enums\PaymentStatus;
-use App\Models\Customer;
-use App\Models\LoyaltyPoint;
-use App\Models\Order;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Orders\Order;
 use App\Services\Customer\CustomerIntelligence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;

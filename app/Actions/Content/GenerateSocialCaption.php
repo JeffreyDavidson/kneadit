@@ -2,7 +2,7 @@
 
 namespace App\Actions\Content;
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 

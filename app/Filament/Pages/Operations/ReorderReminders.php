@@ -2,11 +2,11 @@
 
 namespace App\Filament\Pages\Operations;
 
-use App\Enums\OrderStatus;
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Orders\OrderStatus;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -21,7 +21,7 @@ class ReorderReminders extends Page
 {
     use ShowsUpgradeBadge;
 
-    protected string $view = 'filament.pages.reorder-reminders';
+    protected string $view = 'filament.pages.operations.reorder-reminders';
 
     public static function canAccess(): bool
     {

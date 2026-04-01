@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\GiftCard;
+use App\Models\Financial\GiftCard;
 
 use function Pest\Laravel\withoutMiddleware;
 

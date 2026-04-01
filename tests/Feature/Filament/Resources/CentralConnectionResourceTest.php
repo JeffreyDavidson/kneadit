@@ -2,7 +2,7 @@
 
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Filament\Resources\EmailCampaigns\Pages\ListEmailCampaigns;
-use App\Models\User;
+use App\Models\Staff\User;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
 

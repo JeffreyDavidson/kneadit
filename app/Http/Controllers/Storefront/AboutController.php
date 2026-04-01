@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Queries\StorefrontStatsQuery;
+use App\Queries\Analytics\StorefrontStatsQuery;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
@@ -16,7 +16,7 @@ class AboutController extends Controller
     {
         $stats = StorefrontStatsQuery::get();
 
-        return view('about', [
+        return view('storefront.about', [
             'settings' => $settings,
             'content' => settingsPageContent('about'),
             'customerCount' => $stats['customer_count'],

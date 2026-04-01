@@ -1,12 +1,12 @@
 <?php
 
-use App\Enums\OrderStatus;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\OrderMessage;
-use App\Models\Product;
-use App\Models\User;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Customers\Customer;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
+use App\Models\Orders\OrderMessage;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

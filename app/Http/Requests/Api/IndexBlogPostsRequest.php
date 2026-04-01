@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
-use App\Enums\BlogPostCategory;
+use App\Enums\Content\BlogPostCategory;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

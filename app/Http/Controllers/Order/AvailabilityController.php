@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
-use App\Services\AvailabilityService;
+use App\Services\Scheduling\AvailabilityService;
 use Illuminate\Http\JsonResponse;
 
 class AvailabilityController extends Controller

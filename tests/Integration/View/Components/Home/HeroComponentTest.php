@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Customer;
-use App\Models\Review;
+use App\Models\Customers\Customer;
+use App\Models\Engagement\Review;
 use App\View\Components\Home\Hero;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

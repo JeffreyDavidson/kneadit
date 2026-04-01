@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\CouponType;
-use App\Models\Coupon;
-use App\Models\User;
+use App\Enums\Financial\CouponType;
+use App\Models\Financial\Coupon;
+use App\Models\Staff\User;
 
 beforeEach(function () {
     setUpTenantTest();

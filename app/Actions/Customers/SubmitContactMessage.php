@@ -2,7 +2,7 @@
 
 namespace App\Actions\Customers;
 
-use App\Models\ContactMessage;
+use App\Models\Customers\ContactMessage;
 
 class SubmitContactMessage
 {

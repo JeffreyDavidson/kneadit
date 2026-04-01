@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Inventory\ImportProducts;
-use App\Models\Category;
-use App\Models\Product;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 

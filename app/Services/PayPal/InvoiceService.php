@@ -2,7 +2,7 @@
 
 namespace App\Services\PayPal;
 
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

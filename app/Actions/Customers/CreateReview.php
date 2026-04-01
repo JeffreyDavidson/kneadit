@@ -2,8 +2,8 @@
 
 namespace App\Actions\Customers;
 
-use App\Models\Order;
-use App\Models\Review;
+use App\Models\Engagement\Review;
+use App\Models\Orders\Order;
 use Illuminate\Http\UploadedFile;
 
 class CreateReview

@@ -2,7 +2,7 @@
 
 namespace App\Services\Settings;
 
-use App\Models\PlatformSetting;
+use App\Models\Platform\PlatformSetting;
 
 class PlatformSettingsManager
 {

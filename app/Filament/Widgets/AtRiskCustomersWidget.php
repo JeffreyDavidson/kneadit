@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Customer;
-use App\Queries\AtRiskCustomersQuery;
+use App\Models\Customers\Customer;
+use App\Queries\Customers\AtRiskCustomersQuery;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;

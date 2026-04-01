@@ -7,7 +7,7 @@ use App\Mail\Platform\ScheduledCheckinMail;
 use App\Mail\Platform\TrialExpiredMail;
 use App\Mail\Platform\TrialReminderMail;
 use App\Mail\Platform\WelcomeBakerMail;
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

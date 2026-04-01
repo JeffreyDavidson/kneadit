@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\TenantBlogPost;
+use App\Models\Content\TenantBlogPost;
 use Illuminate\Contracts\View\View;
 
 class BlogController extends Controller

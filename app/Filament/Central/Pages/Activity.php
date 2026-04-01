@@ -2,8 +2,8 @@
 
 namespace App\Filament\Central\Pages;
 
-use App\Models\AdminAuditLog;
-use App\Models\PlatformActivity;
+use App\Models\Platform\AdminAuditLog;
+use App\Models\Platform\PlatformActivity;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;

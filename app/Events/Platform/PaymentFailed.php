@@ -2,8 +2,8 @@
 
 namespace App\Events\Platform;
 
-use App\Models\Tenant;
-use App\Models\User;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 

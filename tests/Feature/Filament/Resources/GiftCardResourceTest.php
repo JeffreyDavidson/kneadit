@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
-use App\Models\GiftCard;
-use App\Models\User;
+use App\Models\Financial\GiftCard;
+use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
@@ -104,7 +104,7 @@ test('can filter gift cards by depleted status', function () {
     $depleted = GiftCard::factory()->depleted()->create();
 
     Livewire::test(ListGiftCards::class)
-        ->filterTable('status', App\Enums\GiftCardStatus::Depleted->value)
+        ->filterTable('status', App\Enums\Financial\GiftCardStatus::Depleted->value)
         ->assertCanSeeTableRecords(collect([$depleted]))
         ->assertCanNotSeeTableRecords(collect([$active]));
 });

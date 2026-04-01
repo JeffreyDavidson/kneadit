@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages\Analytics;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Queries\StorefrontAnalyticsQuery;
+use App\Queries\Analytics\StorefrontAnalyticsQuery;
 use Carbon\Carbon;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -41,7 +41,7 @@ class StorefrontAnalytics extends Page
 
     protected static ?int $navigationSort = 10;
 
-    protected string $view = 'filament.pages.storefront-analytics';
+    protected string $view = 'filament.pages.analytics.storefront-analytics';
 
     public string $period = 'week';
 

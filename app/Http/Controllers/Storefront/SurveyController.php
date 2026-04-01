@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Storefront;
 use App\Actions\Customers\SubmitSurveyResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreSurveyResponseRequest;
-use App\Models\Survey;
+use App\Models\Engagement\Survey;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -28,7 +28,7 @@ class SurveyController extends Controller
     {
         $content = settingsPageContent('survey');
 
-        return view('survey', [
+        return view('storefront.survey', [
             'settings' => $settings,
             'survey' => $survey,
             'content' => $content,

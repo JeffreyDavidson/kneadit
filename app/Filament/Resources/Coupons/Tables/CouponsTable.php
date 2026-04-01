@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Coupons\Tables;
 
-use App\Enums\CouponType;
-use App\Models\Coupon;
+use App\Enums\Financial\CouponType;
+use App\Models\Financial\Coupon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

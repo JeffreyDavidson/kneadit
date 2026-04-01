@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\LoyaltyReward;
+use App\Models\Engagement\LoyaltyReward;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

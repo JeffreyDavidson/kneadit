@@ -1,7 +1,7 @@
 <?php
 
 use App\Casts\StripTagsCast;
-use App\Models\Review;
+use App\Models\Engagement\Review;
 
 it('has StripTagsCast on Review comment column', function () {
     $review = new Review;

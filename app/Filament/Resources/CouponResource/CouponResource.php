@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Filament\Resources\CouponResource;
+
+use App\Enums\Financial\CouponType;
+use App\Enums\Platform\SubscriptionTier;
+use App\Filament\Concerns\ShowsUpgradeBadge;
+use App\Filament\Resources\CouponResource\Pages\ListCoupons;
+use App\Filament\Resources\CouponResource\Schemas\CouponForm;
+use App\Filament\Resources\CouponResource\Tables\CouponsTable;
+use App\Models\Financial\Coupon;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
+use Laravel\Pennant\Feature;
+
+class CouponResource extends Resource
+{
+    use ShowsUpgradeBadge;
+
+    protected static ?string $model = Coupon::class;
+
+    protected static ?string $recordTitleAttribute = 'code';
+
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+
+    protected static ?int $navigationSort = 5;
+
+    public static function form(Schema $schema): Schema
+    {
+        return CouponForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return CouponsTable::configure($table);
+    }
+
+    public static function canAccess(): bool
+    {
+        return Feature::active('growth-features');
+    }
+
+    protected static function requiredTier(): SubscriptionTier
+    {
+        return SubscriptionTier::Growth;
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['code'];
+    }
+
+    /** @param Coupon $record */
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->code;
+    }
+
+    /** @param Coupon $record */
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Type' => $record->type->getLabel(),
+            'Value' => $record->type === CouponType::Percentage ? $record->value . '%' : (string) Number::currency($record->value),
+            'Active' => $record->is_active ? 'Yes' : 'No',
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListCoupons::route('/'),
+        ];
+    }
+}

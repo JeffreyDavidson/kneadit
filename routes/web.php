@@ -6,15 +6,15 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ShowOnboardingController;
-use App\Http\Controllers\BlogController;
-use App\Http\Controllers\BlogFeedController;
+use App\Http\Controllers\Central\BlogController;
+use App\Http\Controllers\Central\BlogFeedController;
+use App\Http\Controllers\Central\ChangelogController;
+use App\Http\Controllers\Central\DirectoryController;
 use App\Http\Controllers\Central\ExportController;
 use App\Http\Controllers\Central\ImpersonateController;
-use App\Http\Controllers\ChangelogController;
-use App\Http\Controllers\DirectoryController;
-use App\Http\Controllers\ReferralController;
-use App\Http\Controllers\RootController;
-use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\Central\ReferralController;
+use App\Http\Controllers\Central\RootController;
+use App\Http\Controllers\Central\SitemapController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -73,7 +73,7 @@ Route::get('impersonate/{tenant}', ImpersonateController::class)
 Route::get('ref/{code}', ReferralController::class)->name('referral.track');
 
 // Legal pages
-Route::get('pricing', fn () => view('pricing'))->name('pricing');
+Route::get('pricing', fn () => view('platform.pricing'))->name('pricing');
 Route::get('terms', fn () => view('legal.terms'))->name('terms');
 Route::get('privacy', fn () => view('legal.privacy'))->name('privacy');
 

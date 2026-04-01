@@ -1,7 +1,7 @@
 <?php
 
 use App\Filament\Pages\Settings\CustomDomain;
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Stancl\Tenancy\Contracts\Tenant;

@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Product;
-use App\Models\ProductImage;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\ProductImage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\Inventory\Category;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
@@ -20,7 +20,7 @@ class HomeController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        return view('home', [
+        return view('storefront.home', [
             'settings' => $settings,
             'categories' => $categories,
             'sections' => $settings->visibleHomepageSections(),

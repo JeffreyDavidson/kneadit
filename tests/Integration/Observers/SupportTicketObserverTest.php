@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\AdminAuditLog;
-use App\Models\SupportTicket;
+use App\Models\Platform\AdminAuditLog;
+use App\Models\Platform\SupportTicket;
 
 beforeEach(function () {
     setUpCentralTest();

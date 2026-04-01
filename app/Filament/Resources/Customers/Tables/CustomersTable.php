@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Customers\Tables;
 
-use App\Models\Customer;
+use App\Models\Customers\Customer;
 use App\Services\Customer\BirthdayCalculator;
 use App\Services\Customer\CustomerIntelligence;
 use Filament\Actions\BulkActionGroup;

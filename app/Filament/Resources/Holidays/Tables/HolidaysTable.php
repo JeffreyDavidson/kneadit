@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Holidays\Tables;
 
-use App\Enums\OrderStatus;
-use App\Models\Holiday;
-use App\Models\Order;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Operations\Holiday;
+use App\Models\Orders\Order;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;

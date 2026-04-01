@@ -30,10 +30,10 @@ test('price id to plan mapping uses SubscriptionTier::fromPriceId', function () 
         'pro' => 'price_test_pro',
     ]]);
 
-    expect(App\Enums\SubscriptionTier::fromPriceId('price_test_starter'))->toBe(App\Enums\SubscriptionTier::Starter)
-        ->and(App\Enums\SubscriptionTier::fromPriceId('price_test_growth'))->toBe(App\Enums\SubscriptionTier::Growth)
-        ->and(App\Enums\SubscriptionTier::fromPriceId('price_test_pro'))->toBe(App\Enums\SubscriptionTier::Pro)
-        ->and(App\Enums\SubscriptionTier::fromPriceId('price_unknown'))->toBeNull();
+    expect(App\Enums\Platform\SubscriptionTier::fromPriceId('price_test_starter'))->toBe(App\Enums\Platform\SubscriptionTier::Starter)
+        ->and(App\Enums\Platform\SubscriptionTier::fromPriceId('price_test_growth'))->toBe(App\Enums\Platform\SubscriptionTier::Growth)
+        ->and(App\Enums\Platform\SubscriptionTier::fromPriceId('price_test_pro'))->toBe(App\Enums\Platform\SubscriptionTier::Pro)
+        ->and(App\Enums\Platform\SubscriptionTier::fromPriceId('price_unknown'))->toBeNull();
 });
 
 test('webhook route uses custom controller', function () {

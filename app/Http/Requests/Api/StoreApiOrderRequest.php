@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Api;
 
-use App\DataTransferObjects\CreateOrderData;
-use App\Enums\DeliveryType;
+use App\DataTransferObjects\Orders\CreateOrderData;
+use App\Enums\Orders\DeliveryType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

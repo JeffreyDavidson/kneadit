@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\EmailCampaigns\Tables;
 
 use App\Actions\Platform\SendEmailCampaign;
-use App\Enums\EmailCampaignStatus;
-use App\Models\EmailCampaign;
+use App\Enums\Marketing\EmailCampaignStatus;
+use App\Models\Engagement\EmailCampaign;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

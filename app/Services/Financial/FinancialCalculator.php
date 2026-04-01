@@ -2,12 +2,12 @@
 
 namespace App\Services\Financial;
 
-use App\DataTransferObjects\FinancialSummary;
-use App\DataTransferObjects\MonthlyFinancials;
-use App\Enums\PaymentStatus;
-use App\Models\Expense;
-use App\Models\Income;
-use App\Models\Order;
+use App\DataTransferObjects\Financial\FinancialSummary;
+use App\DataTransferObjects\Financial\MonthlyFinancials;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Financial\Expense;
+use App\Models\Financial\Income;
+use App\Models\Orders\Order;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

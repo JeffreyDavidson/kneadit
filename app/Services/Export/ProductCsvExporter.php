@@ -2,7 +2,7 @@
 
 namespace App\Services\Export;
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 

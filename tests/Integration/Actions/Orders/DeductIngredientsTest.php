@@ -1,12 +1,12 @@
 <?php
 
 use App\Actions\Orders\DeductIngredients;
-use App\Enums\OrderStatus;
-use App\Models\Ingredient;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Models\Recipe;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\Recipe;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

@@ -4,8 +4,8 @@ namespace App\Mail\Customers;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailables\Content;
@@ -44,7 +44,7 @@ class ReviewRequestMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            html: 'emails.review-request',
+            html: 'emails.customers.review-request',
         );
     }
 }

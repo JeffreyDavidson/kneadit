@@ -2,7 +2,7 @@
 
 namespace App\Pipes\Orders;
 
-use App\Models\Customer;
+use App\Models\Customers\Customer;
 use Closure;
 
 class ResolveCustomer

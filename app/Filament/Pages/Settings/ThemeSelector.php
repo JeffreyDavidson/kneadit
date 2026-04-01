@@ -2,9 +2,9 @@
 
 namespace App\Filament\Pages\Settings;
 
-use App\Enums\StorefrontTheme;
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
+use App\Enums\Storefront\StorefrontTheme;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use BackedEnum;
 use Filament\Notifications\Notification;
@@ -41,7 +41,7 @@ class ThemeSelector extends Page
 
     protected static ?int $navigationSort = 5;
 
-    protected string $view = 'filament.pages.theme-selector';
+    protected string $view = 'filament.pages.settings.theme-selector';
 
     public function getTitle(): string
     {

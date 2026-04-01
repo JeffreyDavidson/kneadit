@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\SubscriptionTier;
-use App\Models\Tenant;
-use App\Models\User;
+use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;

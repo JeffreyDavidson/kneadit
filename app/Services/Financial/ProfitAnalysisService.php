@@ -2,7 +2,7 @@
 
 namespace App\Services\Financial;
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use Illuminate\Support\Collection;
 
 class ProfitAnalysisService

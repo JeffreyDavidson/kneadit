@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Recipes\Schemas;
 
-use App\Models\Ingredient;
-use App\Models\Product;
+use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Product;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;

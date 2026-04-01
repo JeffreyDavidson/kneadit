@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Storefront;
 use App\Actions\Customers\CreateReview;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreReviewRequest;
-use App\Models\Order;
-use App\Models\Review;
+use App\Models\Engagement\Review;
+use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ class ReviewController extends Controller
         $fiveStarCount = $reviews->where('rating', 5)->count();
         $fiveStarPct = $totalReviews > 0 ? round(($fiveStarCount / $totalReviews) * 100) : 0;
 
-        return view('reviews', [
+        return view('storefront.reviews', [
             'settings' => $settings,
             'reviews' => $reviews,
             'avgRating' => $avgRating,
@@ -46,7 +46,7 @@ class ReviewController extends Controller
             photo: $request->file('photo'),
         );
 
-        return view('submit-review', [
+        return view('storefront.submit-review', [
             ...$this->sharedViewData($settings, $order),
             'prefilledRating' => null,
             'success' => true,
@@ -57,7 +57,7 @@ class ReviewController extends Controller
     {
         $order->load(['customer', 'orderItems.product']);
 
-        return view('submit-review', [
+        return view('storefront.submit-review', [
             ...$this->sharedViewData($settings, $order),
             'prefilledRating' => $request->query('rating'),
         ]);

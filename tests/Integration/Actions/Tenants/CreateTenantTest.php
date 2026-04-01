@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Tenants\CreateTenant;
-use App\Models\Tenant;
-use App\Models\User;
+use App\Models\Platform\Tenant;
+use App\Models\Staff\User;
 
 beforeEach(function () {
     setUpCentralTest();

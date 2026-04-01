@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\GiftCard;
-use App\Models\GiftCardTransaction;
+use App\Models\Financial\GiftCard;
+use App\Models\Financial\GiftCardTransaction;
 use Filament\Widgets\Widget;
 
 class GiftCardBalanceWidget extends Widget

@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\SocialPlatform;
-use App\Enums\SocialPostStatus;
-use App\Models\Product;
-use App\Models\SocialPost;
+use App\Enums\Marketing\SocialPlatform;
+use App\Enums\Marketing\SocialPostStatus;
+use App\Models\Content\SocialPost;
+use App\Models\Inventory\Product;
 use Illuminate\Support\Carbon;
 
 beforeEach(fn () => setUpTenantTest());

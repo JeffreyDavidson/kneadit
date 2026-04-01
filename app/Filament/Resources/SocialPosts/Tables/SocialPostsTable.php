@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\SocialPosts\Tables;
 
 use App\Actions\Content\TransitionSocialPostStatus;
-use App\Enums\SocialPlatform;
-use App\Enums\SocialPostStatus;
-use App\Models\SocialPost;
+use App\Enums\Marketing\SocialPlatform;
+use App\Enums\Marketing\SocialPostStatus;
+use App\Models\Content\SocialPost;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

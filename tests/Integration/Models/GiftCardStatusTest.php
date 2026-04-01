@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\GiftCardStatus;
-use App\Models\GiftCard;
+use App\Enums\Financial\GiftCardStatus;
+use App\Models\Financial\GiftCard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

@@ -2,9 +2,9 @@
 
 namespace App\Services\Inventory;
 
-use App\Enums\OrderStatus;
-use App\Models\Ingredient;
-use App\Models\Order;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Inventory\Ingredient;
+use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

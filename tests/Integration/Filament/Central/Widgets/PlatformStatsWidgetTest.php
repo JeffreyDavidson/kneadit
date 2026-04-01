@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\SubscriptionTier;
-use App\Models\SupportTicket;
-use App\Models\Tenant;
+use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\SupportTicket;
+use App\Models\Platform\Tenant;
 
 beforeEach(fn () => setUpCentralTest());
 

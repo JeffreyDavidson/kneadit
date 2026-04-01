@@ -2,7 +2,7 @@
 
 namespace App\Listeners\Orders;
 
-use App\Enums\SenderType;
+use App\Enums\Orders\SenderType;
 use App\Events\Orders\OrderMessageSent;
 use App\Listeners\QueuedListener;
 use App\Mail\Orders\NewOrderMessageMail;

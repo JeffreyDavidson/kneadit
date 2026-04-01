@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\GiftCards\RedeemGiftCard;
-use App\Models\GiftCard;
+use App\Models\Financial\GiftCard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

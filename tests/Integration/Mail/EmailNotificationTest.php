@@ -1,13 +1,13 @@
 <?php
 
 use App\Actions\Orders\TransitionOrderStatus;
-use App\Enums\OrderStatus;
+use App\Enums\Orders\OrderStatus;
 use App\Mail\Orders\OrderBakingMail;
 use App\Mail\Orders\OrderConfirmedMail;
 use App\Mail\Orders\OrderReadyMail;
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\User;
+use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {

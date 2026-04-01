@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Storefront;
 
-use App\Enums\CateringEventType;
+use App\Enums\Customers\CateringEventType;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

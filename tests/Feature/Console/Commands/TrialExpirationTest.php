@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -122,13 +122,13 @@ test('no action when trial far away', function () {
 });
 
 test('command source sends at three intervals', function () {
-    $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirationsCommand.php'));
+    $source = file_get_contents(app_path('Console/Commands/Platform/CheckTrialExpirationsCommand.php'));
 
     expect($source)->toContain('trial_reminder_7d')->toContain('trial_reminder_3d')->toContain('trial_reminder_1d');
 });
 
 test('expired handler sends expiration email', function () {
-    $source = file_get_contents(app_path('Console/Commands/CheckTrialExpirationsCommand.php'));
+    $source = file_get_contents(app_path('Console/Commands/Platform/CheckTrialExpirationsCommand.php'));
 
-    expect(file_get_contents(resource_path('views/emails/trial-expired-text.blade.php')))->toContain('trial has expired')->toContain('storefront has been paused');
+    expect(file_get_contents(resource_path('views/emails/platform/trial-expired-text.blade.php')))->toContain('trial has expired')->toContain('storefront has been paused');
 });

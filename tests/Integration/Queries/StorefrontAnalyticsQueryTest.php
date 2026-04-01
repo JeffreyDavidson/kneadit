@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\PageView;
-use App\Queries\StorefrontAnalyticsQuery;
+use App\Models\Engagement\PageView;
+use App\Queries\Analytics\StorefrontAnalyticsQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

@@ -2,9 +2,9 @@
 
 namespace App\Actions\GiftCards;
 
-use App\DataTransferObjects\GiftCardRedemptionResult;
-use App\Enums\GiftCardTransactionType;
-use App\Models\GiftCard;
+use App\DataTransferObjects\GiftCards\GiftCardRedemptionResult;
+use App\Enums\Financial\GiftCardTransactionType;
+use App\Models\Financial\GiftCard;
 use Illuminate\Support\Facades\DB;
 
 class RedeemGiftCard

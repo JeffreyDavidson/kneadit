@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;

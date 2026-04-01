@@ -1,12 +1,12 @@
 <?php
 
-use App\Enums\ExpenseCategory;
-use App\Models\Category;
-use App\Models\Customer;
-use App\Models\Expense;
-use App\Models\Ingredient;
-use App\Models\Order;
-use App\Models\User;
+use App\Enums\Financial\ExpenseCategory;
+use App\Models\Customers\Customer;
+use App\Models\Financial\Expense;
+use App\Models\Inventory\Category;
+use App\Models\Inventory\Ingredient;
+use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use App\Services\Reporting\ReportService;
 
 beforeEach(function () {

@@ -26,7 +26,7 @@ class NewSubscriberNotificationMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.new-subscriber-notification',
+            view: 'emails.platform.new-subscriber-notification',
         );
     }
 }

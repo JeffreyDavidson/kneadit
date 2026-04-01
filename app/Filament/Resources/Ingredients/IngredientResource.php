@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Ingredients;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\Ingredients\Pages\ListIngredients;
 use App\Filament\Resources\Ingredients\Schemas\IngredientForm;
 use App\Filament\Resources\Ingredients\Tables\IngredientsTable;
-use App\Models\Ingredient;
+use App\Models\Inventory\Ingredient;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;

@@ -1,7 +1,7 @@
 <?php
 
 use App\Filament\Central\Widgets\OpenTickets;
-use App\Models\User;
+use App\Models\Staff\User;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 

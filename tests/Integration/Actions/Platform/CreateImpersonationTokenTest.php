@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Platform\CreateImpersonationToken;
-use App\Models\ImpersonationToken;
-use App\Models\Tenant;
+use App\Models\Platform\ImpersonationToken;
+use App\Models\Platform\Tenant;
 
 beforeEach(fn () => setUpCentralTest());
 

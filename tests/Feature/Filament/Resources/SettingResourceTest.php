@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\Settings\Pages\ListSettings;
-use App\Models\Setting;
-use App\Models\User;
+use App\Models\Platform\Setting;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -1,8 +1,8 @@
 <?php
 
 use App\Filament\Resources\GalleryPhotos\Pages\ListGalleryPhotos;
-use App\Models\GalleryPhoto;
-use App\Models\User;
+use App\Models\Content\GalleryPhoto;
+use App\Models\Staff\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Pennant\Feature;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\TenantBlogPost;
+use App\Models\Content\TenantBlogPost;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Http\Response;
 
@@ -18,7 +18,7 @@ class BlogFeedController extends Controller
             ->get();
 
         return response()
-            ->view('blog.feed', [
+            ->view('storefront.blog.feed', [
                 'settings' => $settings,
                 'posts' => $posts,
             ])

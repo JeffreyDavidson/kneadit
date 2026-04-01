@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Survey;
-use App\Models\SurveyResponse;
-use App\Models\User;
+use App\Models\Engagement\Survey;
+use App\Models\Engagement\SurveyResponse;
+use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

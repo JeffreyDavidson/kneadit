@@ -1,9 +1,9 @@
 <?php
 
-use App\Enums\CouponType;
+use App\Enums\Financial\CouponType;
 use App\Filament\Resources\Coupons\Pages\ListCoupons;
-use App\Models\Coupon;
-use App\Models\User;
+use App\Models\Financial\Coupon;
+use App\Models\Staff\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;

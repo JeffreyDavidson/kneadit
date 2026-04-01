@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\Tenants\GenerateReferralCode;
-use App\Models\Referral;
-use App\Models\Tenant;
+use App\Models\Customers\Referral;
+use App\Models\Platform\Tenant;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {

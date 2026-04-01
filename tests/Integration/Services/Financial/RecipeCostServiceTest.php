@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Product;
-use App\Models\Recipe;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\Recipe;
 use App\Services\Financial\RecipeCostService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

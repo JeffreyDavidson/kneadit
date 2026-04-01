@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Recipes;
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Filament\Resources\Recipes\Pages\ListRecipes;
 use App\Filament\Resources\Recipes\Schemas\RecipeForm;
 use App\Filament\Resources\Recipes\Tables\RecipesTable;
-use App\Models\Recipe;
+use App\Models\Inventory\Recipe;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

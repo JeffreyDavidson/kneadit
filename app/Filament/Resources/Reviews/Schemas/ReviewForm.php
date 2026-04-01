@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Reviews\Schemas;
 
-use App\Models\Product;
+use App\Models\Inventory\Product;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;

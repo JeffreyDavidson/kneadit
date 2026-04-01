@@ -2,11 +2,11 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\SubscriptionTier;
-use App\Enums\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Product;
-use App\Services\DescriptionGeneratorService;
+use App\Models\Inventory\Product;
+use App\Services\Content\DescriptionGeneratorService;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -42,7 +42,7 @@ class DescriptionGenerator extends Page
 
     protected static ?int $navigationSort = 12;
 
-    protected string $view = 'filament.pages.description-generator';
+    protected string $view = 'filament.pages.tools.description-generator';
 
     public ?string $selectedProductId = null;
 

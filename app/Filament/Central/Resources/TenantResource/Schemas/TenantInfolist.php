@@ -2,7 +2,7 @@
 
 namespace App\Filament\Central\Resources\TenantResource\Schemas;
 
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;

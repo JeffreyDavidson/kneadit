@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\SubscriptionTier;
+use App\Enums\Platform\SubscriptionTier;
 
 test('tier levels are ordered correctly', function () {
     expect(SubscriptionTier::Starter->level())->toBe(1)

@@ -3,7 +3,7 @@
 namespace App\Pipes\Orders;
 
 use App\Actions\GiftCards\RedeemGiftCard;
-use App\Models\GiftCard;
+use App\Models\Financial\GiftCard;
 use Closure;
 
 class ApplyGiftCard

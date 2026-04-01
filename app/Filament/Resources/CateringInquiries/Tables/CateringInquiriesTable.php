@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\CateringInquiries\Tables;
 
 use App\Actions\Customers\TransitionCateringInquiryStatus;
-use App\Enums\CateringEventType;
-use App\Enums\CateringInquiryStatus;
-use App\Models\CateringInquiry;
+use App\Enums\Customers\CateringEventType;
+use App\Enums\Customers\CateringInquiryStatus;
+use App\Models\Customers\CateringInquiry;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;

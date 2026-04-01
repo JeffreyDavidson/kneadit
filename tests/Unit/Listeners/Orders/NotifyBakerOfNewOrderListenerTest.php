@@ -3,7 +3,7 @@
 use App\Events\Orders\OrderCreated;
 use App\Listeners\Orders\NotifyBakerOfNewOrderListener;
 use App\Mail\Orders\NewOrderNotificationMail;
-use App\Models\Order;
+use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

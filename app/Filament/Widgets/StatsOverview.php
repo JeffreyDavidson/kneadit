@@ -2,11 +2,11 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
-use App\Models\PageView;
-use App\Models\WaitlistEntry;
-use App\Queries\RevenueQuery;
+use App\Enums\Orders\OrderStatus;
+use App\Models\Customers\WaitlistEntry;
+use App\Models\Engagement\PageView;
+use App\Models\Orders\Order;
+use App\Queries\Financial\RevenueQuery;
 use App\Services\Inventory\CapacityCalculator;
 use Carbon\Carbon;
 use Filament\Support\Icons\Heroicon;

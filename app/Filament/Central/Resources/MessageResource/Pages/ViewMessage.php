@@ -2,9 +2,9 @@
 
 namespace App\Filament\Central\Resources\MessageResource\Pages;
 
-use App\Enums\PlatformSenderType;
+use App\Enums\Platform\PlatformSenderType;
 use App\Filament\Central\Resources\MessageResource;
-use App\Models\PlatformMessage;
+use App\Models\Platform\PlatformMessage;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;

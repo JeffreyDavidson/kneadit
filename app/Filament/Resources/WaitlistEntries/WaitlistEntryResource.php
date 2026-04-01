@@ -5,7 +5,7 @@ namespace App\Filament\Resources\WaitlistEntries;
 use App\Filament\Resources\WaitlistEntries\Pages\ListWaitlistEntries;
 use App\Filament\Resources\WaitlistEntries\Schemas\WaitlistEntryForm;
 use App\Filament\Resources\WaitlistEntries\Tables\WaitlistEntriesTable;
-use App\Models\WaitlistEntry;
+use App\Models\Customers\WaitlistEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;

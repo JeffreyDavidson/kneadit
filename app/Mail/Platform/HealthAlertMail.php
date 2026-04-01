@@ -23,7 +23,7 @@ class HealthAlertMail extends BaseMailable
     public function content(): Content
     {
         return new Content(
-            text: 'emails.health-alert-text',
+            text: 'emails.platform.health-alert-text',
         );
     }
 

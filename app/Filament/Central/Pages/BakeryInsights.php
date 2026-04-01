@@ -5,7 +5,7 @@ namespace App\Filament\Central\Pages;
 use App\Actions\Tenants\ExtendTenantTrial;
 use App\Actions\Tenants\SendTenantNudge;
 use App\Filament\Central\Resources\TenantResource;
-use App\Models\Tenant;
+use App\Models\Platform\Tenant;
 use App\Services\Tenant\ChurnAlertService;
 use App\Services\Tenant\TenantHealthService;
 use App\Services\Tenant\TenantUsageService;

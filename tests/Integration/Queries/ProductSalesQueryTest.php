@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Queries\ProductSalesQuery;
+use App\Models\Inventory\Product;
+use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
+use App\Queries\Financial\ProductSalesQuery;
 use App\ValueObjects\DateRange;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

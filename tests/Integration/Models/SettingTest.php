@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Setting;
+use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

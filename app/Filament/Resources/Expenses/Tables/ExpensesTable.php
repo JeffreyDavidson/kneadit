@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Expenses\Tables;
 
-use App\Enums\ExpenseCategory;
+use App\Enums\Financial\ExpenseCategory;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

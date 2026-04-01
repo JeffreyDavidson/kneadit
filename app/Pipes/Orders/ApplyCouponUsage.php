@@ -2,7 +2,7 @@
 
 namespace App\Pipes\Orders;
 
-use App\Models\Coupon;
+use App\Models\Financial\Coupon;
 use App\Services\Coupon\CouponService;
 use Closure;
 
