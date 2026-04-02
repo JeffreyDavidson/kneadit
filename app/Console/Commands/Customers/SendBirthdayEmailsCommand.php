@@ -2,14 +2,9 @@
 
 namespace App\Console\Commands\Customers;
 
-use App\Events\Customers\CustomerBirthday;
-use App\Models\Customers\Customer;
-use App\Models\Platform\Tenant;
-use App\Services\Customer\BirthdayService;
-use App\Services\Tenant\TenancyManager;
+use App\Services\Engagement\EngagementDispatcher;
+use App\Services\Engagement\Engagements\BirthdayEmailEngagement;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Log;
 
 class SendBirthdayEmailsCommand extends Command
 {
@@ -17,68 +12,10 @@ class SendBirthdayEmailsCommand extends Command
 
     protected $description = 'Send happy birthday emails to customers with birthdays today';
 
-    public function handle(TenancyManager $tenancyManager, BirthdayService $birthdayService): int
+    public function handle(EngagementDispatcher $dispatcher, BirthdayEmailEngagement $engagement): int
     {
-        $tenants = Tenant::query()->cursor();
-        $failures = 0;
-
-        foreach ($tenants as $tenant) {
-            try {
-                $tenancyManager->withinTenant($tenant, function () use ($tenant, $birthdayService) {
-                    if (settings('birthday_program_enabled', '1') !== '1') {
-                        $this->info("Skipping {$tenant->id} — birthday program disabled");
-
-                        return;
-                    }
-
-                    $this->processTenant($tenant, $birthdayService);
-                });
-            } catch (\Exception $e) {
-                $this->error("Error processing {$tenant->id}: {$e->getMessage()}");
-                Log::warning('Birthday email processing failed', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
-                $failures++;
-            }
-        }
+        $failures = $dispatcher->dispatch($engagement, $this);
 
         return $failures > 0 ? self::FAILURE : self::SUCCESS;
-    }
-
-    protected function processTenant(Tenant $tenant, BirthdayService $birthdayService): void
-    {
-        $today = Date::today();
-        $discountPercent = (int) settings('birthday_discount_percentage', '15');
-        $couponValidDays = (int) settings('birthday_coupon_valid_days', '7');
-
-        $birthdayCustomers = Customer::query()->whereNotNull('birthday')
-            ->whereMonth('birthday', $today->month)
-            ->whereDay('birthday', $today->day)
-            ->get();
-
-        if ($birthdayCustomers->isEmpty()) {
-            $this->info("[{$tenant->id}] No birthdays today.");
-
-            return;
-        }
-
-        $sent = 0;
-
-        foreach ($birthdayCustomers as $customer) {
-            if (! $customer->email) {
-                continue;
-            }
-
-            try {
-                $coupon = $birthdayService->findOrCreateBirthdayCoupon($customer, $discountPercent, $couponValidDays);
-
-                CustomerBirthday::dispatch($customer, $coupon);
-                $sent++;
-                $this->info("✓ Sent birthday email to {$customer->name}");
-            } catch (\Exception $e) {
-                $this->error("✗ Failed for {$customer->name}: {$e->getMessage()}");
-                Log::warning('Birthday email send failed', ['customer' => $customer->name, 'error' => $e->getMessage()]);
-            }
-        }
-
-        $this->info("[{$tenant->id}] Sent {$sent} birthday emails.");
     }
 }
