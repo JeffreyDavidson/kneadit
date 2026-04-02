@@ -2,12 +2,24 @@
 
 namespace App\Providers;
 
+use App\DataTransferObjects\Settings\BrandingSettings;
+use App\DataTransferObjects\Settings\CateringSettings;
+use App\DataTransferObjects\Settings\EngagementSettings;
+use App\DataTransferObjects\Settings\HomepageSettings;
+use App\DataTransferObjects\Settings\LoyaltySettings;
+use App\DataTransferObjects\Settings\OnboardingSettings;
+use App\DataTransferObjects\Settings\OrderSettings;
+use App\DataTransferObjects\Settings\PaymentSettings;
+use App\DataTransferObjects\Settings\PolicySettings;
+use App\DataTransferObjects\Settings\StoreInfo;
+use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
+use App\Services\Settings\TenantSettingsRegistry;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -28,7 +40,21 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(SettingsManager::class);
         $this->app->singleton(PlatformSettingsManager::class);
-        $this->app->singleton(TenantSettings::class, fn () => TenantSettings::resolve());
+        $this->app->singleton(TenantSettingsRegistry::class);
+        $this->app->singleton(TenantSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->all());
+
+        // Each sub-DTO is directly injectable for focused services
+        $this->app->bind(StoreInfo::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->store());
+        $this->app->bind(BrandingSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->branding());
+        $this->app->bind(OrderSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->orders());
+        $this->app->bind(PaymentSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->payment());
+        $this->app->bind(LoyaltySettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->loyalty());
+        $this->app->bind(CateringSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->catering());
+        $this->app->bind(EngagementSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->engagement());
+        $this->app->bind(PolicySettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->policies());
+        $this->app->bind(WebhookSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->webhooks());
+        $this->app->bind(HomepageSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->homepage());
+        $this->app->bind(OnboardingSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->onboarding());
     }
 
     /**
