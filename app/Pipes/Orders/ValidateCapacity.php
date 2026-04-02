@@ -2,18 +2,21 @@
 
 namespace App\Pipes\Orders;
 
-use App\Services\Inventory\CapacityCalculator;
+use App\Exceptions\Orders\CapacityExceededException;
+use App\Services\Inventory\InventoryManager;
 use Closure;
 
 class ValidateCapacity
 {
     public function __construct(
-        private CapacityCalculator $calculator,
+        private InventoryManager $inventory,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
-        if (! $this->calculator->isAvailable($payload->data->deliveryDate)) {
+        try {
+            $this->inventory->guardCapacity($payload->data->deliveryDate);
+        } catch (CapacityExceededException) {
             $payload->cancelled = true;
 
             return $payload;

@@ -2,7 +2,6 @@
 
 namespace App\Services\Orders;
 
-use App\Actions\Orders\DeductIngredients;
 use App\Enums\Orders\OrderStatus;
 use App\Mail\Orders\OrderBakingMail;
 use App\Mail\Orders\OrderCancelledMail;
@@ -10,6 +9,7 @@ use App\Mail\Orders\OrderConfirmedMail;
 use App\Mail\Orders\OrderDeliveredMail;
 use App\Mail\Orders\OrderReadyMail;
 use App\Models\Orders\Order;
+use App\Services\Inventory\InventoryManager;
 use App\Services\Loyalty\LoyaltyLedger;
 use App\Services\Platform\WebhookService;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +19,7 @@ class OrderStatusEffectDispatcher
 {
     public function __construct(
         private LoyaltyLedger $loyaltyLedger,
-        private DeductIngredients $deductIngredients,
+        private InventoryManager $inventoryManager,
     ) {}
 
     public function dispatch(Order $order, OrderStatus $from, OrderStatus $to): void
@@ -80,7 +80,7 @@ class OrderStatusEffectDispatcher
 
     private function deductIngredients(Order $order, OrderStatus $from, OrderStatus $to): void
     {
-        ($this->deductIngredients)($order);
+        $this->inventoryManager->deductForOrder($order);
     }
 
     private function awardLoyaltyPoints(Order $order, OrderStatus $from, OrderStatus $to): void
