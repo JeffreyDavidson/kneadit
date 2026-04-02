@@ -3,11 +3,10 @@
 namespace App\Actions\Orders;
 
 use App\Enums\Orders\OrderStatus;
-use App\Events\Orders\OrderStatusChanged;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
 use App\Models\Orders\Order;
+use App\Services\Orders\OrderStatusEffectDispatcher;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class TransitionOrderStatus
 {
@@ -20,8 +19,7 @@ class TransitionOrderStatus
     ];
 
     public function __construct(
-        protected AwardLoyaltyPoints $awardLoyaltyPoints,
-        protected DeductIngredients $deductIngredients,
+        private OrderStatusEffectDispatcher $effects,
     ) {}
 
     public function __invoke(Order $order, OrderStatus $to): Order
@@ -33,31 +31,9 @@ class TransitionOrderStatus
 
         DB::transaction(function () use ($order, $to) {
             $order->update(['status' => $to]);
-
-            if ($to === OrderStatus::Baking) {
-                try {
-                    ($this->deductIngredients)($order);
-                } catch (\Exception $e) {
-                    Log::warning('Ingredient deduction failed', [
-                        'order' => $order->order_number,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
-            }
-
-            if ($to === OrderStatus::Delivered) {
-                try {
-                    ($this->awardLoyaltyPoints)($order);
-                } catch (\Exception $e) {
-                    Log::warning('Loyalty points award failed', [
-                        'order' => $order->order_number,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
-            }
         });
 
-        event(new OrderStatusChanged($order, $from, $to));
+        $this->effects->dispatch($order, $from, $to);
 
         return $order;
     }

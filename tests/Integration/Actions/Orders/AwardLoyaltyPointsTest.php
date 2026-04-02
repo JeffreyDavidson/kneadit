@@ -1,11 +1,11 @@
 <?php
 
-use App\Actions\Orders\AwardLoyaltyPoints;
 use App\Enums\Engagement\LoyaltyPointType;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\Services\Loyalty\LoyaltyLedger;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
@@ -28,7 +28,7 @@ test('awards points based on order total and points per dollar setting', functio
         ->delivered()
         ->create(['total' => 25.50, 'subtotal' => 25.50]);
 
-    resolve(AwardLoyaltyPoints::class)($order);
+    resolve(LoyaltyLedger::class)->creditOrder($order);
 
     $points = LoyaltyPoint::query()->where('order_id', $order->id)->first();
 
@@ -48,7 +48,7 @@ test('skips when loyalty is disabled', function () {
         ->delivered()
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
-    resolve(AwardLoyaltyPoints::class)($order);
+    resolve(LoyaltyLedger::class)->creditOrder($order);
 
     expect(LoyaltyPoint::query()->where('order_id', $order->id)->count())->toBe(0);
 });
@@ -60,9 +60,9 @@ test('does not double award points', function () {
         ->delivered()
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
-    $action = resolve(AwardLoyaltyPoints::class);
-    $action($order);
-    $action($order);
+    $ledger = resolve(LoyaltyLedger::class);
+    $ledger->creditOrder($order);
+    $ledger->creditOrder($order);
 
     expect(LoyaltyPoint::earned()->forOrder($order)->count())->toBe(1);
 });
@@ -74,7 +74,7 @@ test('skips when calculated points are zero', function () {
         ->delivered()
         ->create(['total' => 0.00, 'subtotal' => 0.00]);
 
-    resolve(AwardLoyaltyPoints::class)($order);
+    resolve(LoyaltyLedger::class)->creditOrder($order);
 
     expect(LoyaltyPoint::query()->where('order_id', $order->id)->count())->toBe(0);
 });

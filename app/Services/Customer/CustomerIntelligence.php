@@ -3,15 +3,19 @@
 namespace App\Services\Customer;
 
 use App\DataTransferObjects\Customers\CustomerMetrics;
-use App\Enums\Engagement\LoyaltyPointType;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use App\Services\Loyalty\CustomerLoyalty;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 
 class CustomerIntelligence
 {
+    public function __construct(
+        private CustomerLoyalty $customerLoyalty,
+    ) {}
+
     public function metrics(Customer $customer): CustomerMetrics
     {
         // 1 query: order aggregates
@@ -33,15 +37,7 @@ class CustomerIntelligence
             && $daysSinceLastOrder > $atRiskDays;
 
         // 1 query: loyalty point aggregates
-        $pointStats = $customer->loyaltyPoints()
-            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as earned', [LoyaltyPointType::Earned->value])
-            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as adjusted', [LoyaltyPointType::Adjusted->value])
-            ->selectRaw('coalesce(sum(case when type = ? then points else 0 end), 0) as redeemed', [LoyaltyPointType::Redeemed->value])
-            ->first();
-
-        $earned = (int) ($pointStats->earned ?? 0);
-        $adjusted = (int) ($pointStats->adjusted ?? 0);
-        $redeemed = (int) ($pointStats->redeemed ?? 0);
+        $balance = $this->customerLoyalty->balance($customer);
 
         return new CustomerMetrics(
             lifetimeValue: $lifetimeValue,
@@ -50,8 +46,8 @@ class CustomerIntelligence
             lastOrderDate: $lastOrderDate,
             daysSinceLastOrder: $daysSinceLastOrder,
             isAtRisk: $isAtRisk,
-            totalPoints: $earned + $adjusted - $redeemed,
-            lifetimePointsEarned: $earned,
+            totalPoints: $balance->total,
+            lifetimePointsEarned: $balance->earned,
         );
     }
 

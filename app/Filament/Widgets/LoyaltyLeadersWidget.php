@@ -2,8 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Customers\Customer;
-use App\Models\Engagement\LoyaltyPoint;
+use App\Services\Loyalty\LoyaltyAnalytics;
 use Filament\Widgets\Widget;
 
 class LoyaltyLeadersWidget extends Widget
@@ -17,38 +16,22 @@ class LoyaltyLeadersWidget extends Widget
     /** @return array<int, array<string, mixed>> */
     public function getTopCustomers(): array
     {
-        return Customer::query()->select('customers.id', 'customers.name')
-            ->selectRaw('SUM(loyalty_points.points) as total_points')
-            ->join('loyalty_points', 'loyalty_points.customer_id', '=', 'customers.id')
-            ->groupBy('customers.id', 'customers.name')
-            ->orderByRaw('SUM(loyalty_points.points) DESC')
-            ->limit(5)
-            ->get()
-            ->map(fn (Customer $c) => [
-                'name' => $c->name,
-                'points' => (int) $c->total_points,
-            ])
-            ->all();
+        return $this->analytics()->leaderboard();
     }
 
     public function getTotalPointsOutstanding(): int
     {
-        return (int) LoyaltyPoint::query()->sum('points');
+        return $this->analytics()->outstandingPoints();
     }
 
     /** @return array<int, array<string, mixed>> */
     public function getRecentAwards(): array
     {
-        return LoyaltyPoint::with('customer')
-            ->where('points', '>', 0)->latest()
-            ->limit(3)
-            ->get()
-            ->map(fn (LoyaltyPoint $lp) => [
-                'customer' => $lp->customer->name ?? 'Unknown',
-                'points' => $lp->points,
-                'description' => $lp->description ?? '',
-                'date' => $lp->created_at?->diffForHumans() ?? '',
-            ])
-            ->all();
+        return $this->analytics()->recentAwards();
+    }
+
+    private function analytics(): LoyaltyAnalytics
+    {
+        return resolve(LoyaltyAnalytics::class);
     }
 }
