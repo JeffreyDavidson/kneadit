@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Recipe;
+use App\Services\Financial\ProductFinancialService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -90,10 +91,11 @@ class PriceSuggestionTool extends Page
             return;
         }
 
+        $service = $this->financialService();
         $margins = [50, 60, 65, 70];
 
-        $this->marginComparisons = collect($margins)->map(function (int $margin) {
-            $suggestedPrice = $this->calculatePriceForMargin($margin);
+        $this->marginComparisons = collect($margins)->map(function (int $margin) use ($service) {
+            $suggestedPrice = $service->suggestPrice($this->selectedRecipe->cost, $margin);
             $currentPrice = $this->selectedRecipe->product->price ?? 0;
             $difference = $suggestedPrice - $currentPrice;
 
@@ -107,62 +109,59 @@ class PriceSuggestionTool extends Page
         });
     }
 
-    private function calculatePriceForMargin(float $marginPercentage): float
+    public function getSuggestedPrice(): float
     {
-        if (! $this->selectedRecipe || ! $this->selectedRecipe->cost || $marginPercentage <= 0) {
+        if (! $this->selectedRecipe || ! $this->selectedRecipe->cost) {
             return 0.0;
         }
 
-        // Price = Cost / (1 - Margin/100)
-        return $this->selectedRecipe->cost / (1 - ($marginPercentage / 100));
-    }
-
-    public function getSuggestedPrice(): float
-    {
-        return $this->calculatePriceForMargin($this->targetMarginPercentage);
+        return $this->financialService()->suggestPrice(
+            $this->selectedRecipe->cost,
+            $this->targetMarginPercentage,
+        );
     }
 
     public function getCurrentMargin(): ?float
     {
-        if (! $this->selectedRecipe ||
-            ! $this->selectedRecipe->product ||
-            ! $this->selectedRecipe->product->price ||
-            ! $this->selectedRecipe->cost) {
+        if (! $this->selectedRecipe?->product) {
             return null;
         }
 
-        $price = $this->selectedRecipe->product->price;
-        $cost = $this->selectedRecipe->cost;
+        $analysis = $this->financialService()->analyze(
+            $this->selectedRecipe->product,
+            $this->targetMarginPercentage,
+        );
 
-        return (($price - $cost) / $price) * 100;
+        return $analysis->currentMarginPercent;
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<string, mixed>|null */
     public function getMarginAtCurrentPrice(): ?array
     {
-        $currentMargin = $this->getCurrentMargin();
-
-        if ($currentMargin === null) {
+        if (! $this->selectedRecipe?->product) {
             return null;
         }
 
-        if (! $this->selectedRecipe || ! $this->selectedRecipe->product) {
-            return [];
+        $analysis = $this->financialService()->analyze(
+            $this->selectedRecipe->product,
+            $this->targetMarginPercentage,
+        );
+
+        if ($analysis->currentMarginPercent === null) {
+            return null;
         }
 
-        $profit = $this->selectedRecipe->product->price - $this->selectedRecipe->cost;
-
         return [
-            'margin' => $currentMargin,
-            'profit' => $profit,
-            'color' => $currentMargin >= 50 ? 'green' : ($currentMargin >= 30 ? 'yellow' : 'red'),
+            'margin' => $analysis->currentMarginPercent,
+            'profit' => $analysis->profitPerUnit,
+            'color' => $analysis->marginHealth->cssClass(),
         ];
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<string, mixed>|null */
     public function getPriceDifference(): ?array
     {
-        if (! $this->selectedRecipe || ! $this->selectedRecipe->product) {
+        if (! $this->selectedRecipe?->product) {
             return null;
         }
 
@@ -175,5 +174,10 @@ class PriceSuggestionTool extends Page
             'percentage' => $currentPrice > 0 ? (($difference / $currentPrice) * 100) : 0,
             'direction' => $difference > 0 ? 'increase' : 'decrease',
         ];
+    }
+
+    private function financialService(): ProductFinancialService
+    {
+        return resolve(ProductFinancialService::class);
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Filament\Pages\Analytics;
 
+use App\DataTransferObjects\Financial\ProductPortfolioSummary;
 use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Services\Financial\ProfitAnalysisService;
+use App\Services\Financial\ProductFinancialService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 
@@ -49,39 +49,8 @@ class ProfitAnalysis extends Page
         // This will trigger a re-render with the new sort order
     }
 
-    /** @return Collection<int, mixed> */
-    public function getProductAnalysis(): Collection
+    public function getPortfolioProperty(): ProductPortfolioSummary
     {
-        return resolve(ProfitAnalysisService::class)->getProductAnalysis($this->sortBy);
-    }
-
-    /** @return array<string, mixed> */
-    public function getOverallStats(): array
-    {
-        return resolve(ProfitAnalysisService::class)->getOverallStats($this->sortBy);
-    }
-
-    /** @return Collection<int, mixed> */
-    public function getTopProfitableProducts(): Collection
-    {
-        return resolve(ProfitAnalysisService::class)->getTopProfitableProducts($this->sortBy);
-    }
-
-    /** @return Collection<int, mixed> */
-    public function getLowestMarginProducts(): Collection
-    {
-        return resolve(ProfitAnalysisService::class)->getLowestMarginProducts($this->sortBy);
-    }
-
-    /** @return Collection<int, mixed> */
-    public function getMissingCostProducts(): Collection
-    {
-        return resolve(ProfitAnalysisService::class)->getMissingCostProducts($this->sortBy);
-    }
-
-    /** @return array<string, mixed> */
-    public function getTotalRevenuePotential(): array
-    {
-        return resolve(ProfitAnalysisService::class)->getTotalRevenuePotential($this->sortBy);
+        return resolve(ProductFinancialService::class)->portfolio($this->sortBy);
     }
 }

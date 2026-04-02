@@ -2,12 +2,14 @@
 
 namespace App\Filament\Pages\Tools;
 
+use App\DataTransferObjects\Financial\PricingRecommendation;
+use App\Enums\Financial\PricingPosition;
 use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Product;
 use App\Models\Platform\Setting;
-use App\Services\Financial\PricingCalculator;
+use App\Services\Financial\ProductFinancialService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -58,8 +60,7 @@ class PricingEngine extends Page
 
     public string $positioning = 'standard';
 
-    /** @var array<string, mixed> */
-    public ?array $result = null;
+    public ?PricingRecommendation $result = null;
 
     public function mount(): void
     {
@@ -107,13 +108,13 @@ class PricingEngine extends Page
             $currentPrice = $product?->price ? (float) $product->price : null;
         }
 
-        $this->result = resolve(PricingCalculator::class)->calculate(
+        $this->result = resolve(ProductFinancialService::class)->recommend(
             ingredientCost: $this->ingredientCost,
             prepTimeMinutes: $this->prepTimeMinutes,
             hourlyLaborRate: $this->hourlyLaborRate,
             overheadPercentage: $this->overheadPercentage,
-            targetProfitMargin: $this->targetProfitMargin,
-            positioning: $this->positioning,
+            targetMarginPercent: $this->targetProfitMargin,
+            positioning: PricingPosition::from($this->positioning),
             currentPrice: $currentPrice,
         );
     }
