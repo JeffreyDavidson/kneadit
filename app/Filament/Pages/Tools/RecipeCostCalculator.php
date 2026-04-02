@@ -2,11 +2,12 @@
 
 namespace App\Filament\Pages\Tools;
 
+use App\DataTransferObjects\Financial\ProductCostAnalysis;
 use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Recipe;
-use App\Services\Financial\RecipeCostService;
+use App\Services\Financial\ProductFinancialService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -51,11 +52,7 @@ class RecipeCostCalculator extends Page
 
     public float $targetMarginPercentage = 65.0;
 
-    public float $totalRecipeCost = 0.0;
-
-    public float $currentMargin = 0.0;
-
-    public float $suggestedPrice = 0.0;
+    public ?ProductCostAnalysis $analysis = null;
 
     /** @var Collection<int, mixed> */
     public Collection $recipes;
@@ -69,47 +66,27 @@ class RecipeCostCalculator extends Page
     {
         if ($this->selectedRecipeId) {
             $this->selectedRecipe = Recipe::with('product')->find($this->selectedRecipeId);
-            $this->calculateCosts();
+            $this->refreshAnalysis();
         } else {
             $this->selectedRecipe = null;
-            $this->resetCalculations();
+            $this->analysis = null;
         }
     }
 
     public function updatedTargetMarginPercentage(): void
     {
-        if ($this->selectedRecipe) {
-            $service = resolve(RecipeCostService::class);
-            $this->suggestedPrice = $service->calculateSuggestedPrice($this->totalRecipeCost, $this->targetMarginPercentage);
-        }
+        $this->refreshAnalysis();
     }
 
-    public function calculateCosts(): void
+    public function refreshAnalysis(): void
     {
-        $service = resolve(RecipeCostService::class);
-
-        $this->totalRecipeCost = $service->calculateCosts($this->selectedRecipe);
-
-        if ($this->totalRecipeCost <= 0) {
-            $this->resetCalculations();
+        if (! $this->selectedRecipe?->product) {
+            $this->analysis = null;
 
             return;
         }
 
-        $this->currentMargin = $service->calculateCurrentMargin($this->selectedRecipe, $this->totalRecipeCost);
-        $this->suggestedPrice = $service->calculateSuggestedPrice($this->totalRecipeCost, $this->targetMarginPercentage);
-    }
-
-    private function resetCalculations(): void
-    {
-        $this->totalRecipeCost = 0.0;
-        $this->currentMargin = 0.0;
-        $this->suggestedPrice = 0.0;
-    }
-
-    /** @return Collection<int, mixed> */
-    public function getFormattedIngredients(): Collection
-    {
-        return resolve(RecipeCostService::class)->getFormattedIngredients($this->selectedRecipe);
+        $this->analysis = resolve(ProductFinancialService::class)
+            ->analyze($this->selectedRecipe->product, $this->targetMarginPercentage);
     }
 }
