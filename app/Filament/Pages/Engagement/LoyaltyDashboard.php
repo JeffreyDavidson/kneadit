@@ -2,13 +2,12 @@
 
 namespace App\Filament\Pages\Engagement;
 
-use App\Enums\Engagement\LoyaltyPointType;
 use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
-use App\Models\Engagement\LoyaltyReward;
+use App\Services\Loyalty\LoyaltyAnalytics;
 use App\Services\Settings\TenantSettings;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -54,8 +53,8 @@ class LoyaltyDashboard extends Page
     public function mount(): void
     {
         $settings = app(TenantSettings::class);
-        $this->loyaltyEnabled = $settings->loyaltyEnabled;
-        $this->programName = $settings->loyaltyProgramName;
+        $this->loyaltyEnabled = $settings->loyalty->enabled;
+        $this->programName = $settings->loyalty->programName;
     }
 
     public function toggleLoyalty(): void
@@ -66,43 +65,38 @@ class LoyaltyDashboard extends Page
 
     public function getTotalPointsIssuedProperty(): int
     {
-        return (int) LoyaltyPoint::query()->where('type', LoyaltyPointType::Earned)->sum('points');
+        return $this->analytics()->metrics()->totalIssued;
     }
 
     public function getTotalPointsRedeemedProperty(): int
     {
-        return (int) LoyaltyPoint::query()->where('type', LoyaltyPointType::Redeemed)->sum('points');
+        return $this->analytics()->metrics()->totalRedeemed;
     }
 
     public function getActiveMembersProperty(): int
     {
-        return LoyaltyPoint::query()->distinct('customer_id')->count('customer_id');
+        return $this->analytics()->metrics()->activeMembers;
     }
 
     public function getAvailableRewardsCountProperty(): int
     {
-        return LoyaltyReward::query()->active()->count();
+        return $this->analytics()->metrics()->availableRewards;
     }
 
     /** @return Collection<int, Customer> */
     public function getTopCustomersProperty(): Collection
     {
-        return Customer::query()->select('customers.*')
-            ->join('loyalty_points', 'customers.id', '=', 'loyalty_points.customer_id')
-            ->groupBy('customers.id')
-            ->selectRaw("SUM(CASE WHEN loyalty_points.type = '" . LoyaltyPointType::Earned->value . "' THEN loyalty_points.points ELSE 0 END) - SUM(CASE WHEN loyalty_points.type = '" . LoyaltyPointType::Redeemed->value . "' THEN loyalty_points.points ELSE 0 END) as balance")
-            ->selectRaw("SUM(CASE WHEN loyalty_points.type = '" . LoyaltyPointType::Earned->value . "' THEN loyalty_points.points ELSE 0 END) as total_earned")
-            ->orderByDesc('balance')
-            ->limit(10)
-            ->get();
+        return $this->analytics()->topCustomers();
     }
 
     /** @return Collection<int, LoyaltyPoint> */
     public function getRecentActivityProperty(): Collection
     {
-        return LoyaltyPoint::with('customer')
-            ->latest('created_at')
-            ->limit(15)
-            ->get();
+        return $this->analytics()->recentActivity();
+    }
+
+    private function analytics(): LoyaltyAnalytics
+    {
+        return resolve(LoyaltyAnalytics::class);
     }
 }

@@ -6,21 +6,32 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\RedeemLoyaltyRewardRequest;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyReward;
+use App\Services\Loyalty\CustomerLoyalty;
 use App\Services\Settings\TenantSettings;
+use App\ValueObjects\LoyaltyBalance;
 use Illuminate\Contracts\View\View;
 
 class LoyaltyController extends Controller
 {
-    public function store(RedeemLoyaltyRewardRequest $request, TenantSettings $settings): View
+    public function store(RedeemLoyaltyRewardRequest $request, TenantSettings $settings, CustomerLoyalty $customerLoyalty): View
     {
         $customer = Customer::query()->where('email', $request->email)->first();
+
+        if ($customer) {
+            $snapshot = $customerLoyalty->snapshot($customer);
+            $balance = $snapshot['balance'];
+            $history = $snapshot['history'];
+        } else {
+            $balance = new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0);
+            $history = collect();
+        }
 
         return view('storefront.loyalty', [
             ...$this->sharedViewData($settings),
             'customer' => $customer,
-            'totalPoints' => $customer?->total_points ?? 0,
-            'lifetimeEarned' => $customer?->lifetime_points_earned ?? 0,
-            'history' => $customer?->loyaltyPoints()->latest('created_at')->limit(20)->get() ?? collect(),
+            'totalPoints' => $balance->total,
+            'lifetimeEarned' => $balance->earned,
+            'history' => $history,
         ]);
     }
 

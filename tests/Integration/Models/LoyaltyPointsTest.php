@@ -1,12 +1,12 @@
 <?php
 
-use App\Actions\Orders\AwardLoyaltyPoints;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\Services\Loyalty\LoyaltyLedger;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
@@ -81,7 +81,7 @@ test('points not double awarded', function () {
     resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
 
     // Manually award again to test idempotency
-    resolve(AwardLoyaltyPoints::class)($order->fresh());
+    resolve(LoyaltyLedger::class)->creditOrder($order->fresh());
 
     expect(LoyaltyPoint::query()->where('order_id', $order->id)->where('type', 'earned')->count())->toBe(1);
 });
