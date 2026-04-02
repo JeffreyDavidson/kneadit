@@ -24,24 +24,21 @@ test('send repeat order reminders command exists', function () {
 });
 
 test('paypal command uses TenancyManager for tenant context', function () {
-    $reflection = new ReflectionClass(CheckPayPalPaymentsCommand::class);
-    $source = file_get_contents($reflection->getFileName());
+    $source = file_get_contents((new ReflectionClass(CheckPayPalPaymentsCommand::class))->getFileName());
 
-    expect($source)->toContain('Tenant::query()->cursor()')->toContain('TenancyManager');
+    expect($source)->toContain('forEachTenant')->toContain('TenancyManager');
 });
 
-test('birthday command uses TenancyManager for tenant context', function () {
-    $reflection = new ReflectionClass(SendBirthdayDiscountsCommand::class);
-    $source = file_get_contents($reflection->getFileName());
+test('birthday command uses EngagementDispatcher for tenant context', function () {
+    $source = file_get_contents((new ReflectionClass(SendBirthdayDiscountsCommand::class))->getFileName());
 
-    expect($source)->toContain('Tenant::query()->cursor()')->toContain('TenancyManager');
+    expect($source)->toContain('EngagementDispatcher');
 });
 
-test('repeat reminders command uses TenancyManager for tenant context', function () {
-    $reflection = new ReflectionClass(SendRepeatOrderRemindersCommand::class);
-    $source = file_get_contents($reflection->getFileName());
+test('repeat reminders command uses EngagementDispatcher for tenant context', function () {
+    $source = file_get_contents((new ReflectionClass(SendRepeatOrderRemindersCommand::class))->getFileName());
 
-    expect($source)->toContain('Tenant::query()->cursor()')->toContain('TenancyManager');
+    expect($source)->toContain('EngagementDispatcher');
 });
 
 test('commands handle empty tenant list', function () {
