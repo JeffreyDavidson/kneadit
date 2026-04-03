@@ -2,12 +2,24 @@
 
 namespace App\Enums\Financial;
 
-enum MarginHealth: string
+use Filament\Support\Contracts\HasLabel;
+
+enum MarginHealth: string implements HasLabel
 {
     case Healthy = 'green';
     case Warning = 'yellow';
     case Critical = 'red';
     case Unknown = 'gray';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Healthy => 'Healthy',
+            self::Warning => 'Warning',
+            self::Critical => 'Critical',
+            self::Unknown => 'Unknown',
+        };
+    }
 
     public static function fromPercentage(?float $margin): self
     {

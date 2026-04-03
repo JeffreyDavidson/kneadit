@@ -64,6 +64,13 @@ test('disabled storefront view receives storeName from TenantSettings', function
         refundPolicy: '',
         pickupPolicy: '',
         additionalTerms: '',
+        birthdayProgramEnabled: false,
+        birthdayDiscountPercentage: 15,
+        birthdayCouponValidDays: 7,
+        reviewRequestsEnabled: false,
+        reviewRequestDelayHours: 24,
+        repeatRemindersEnabled: false,
+        repeatReminderDays: 30,
     );
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);
 

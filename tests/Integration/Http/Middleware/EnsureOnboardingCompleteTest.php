@@ -82,6 +82,13 @@ test('redirects to onboarding when onboardingCompletedAt is null using TenantSet
         refundPolicy: '',
         pickupPolicy: '',
         additionalTerms: '',
+        birthdayProgramEnabled: false,
+        birthdayDiscountPercentage: 15,
+        birthdayCouponValidDays: 7,
+        reviewRequestsEnabled: false,
+        reviewRequestDelayHours: 24,
+        repeatRemindersEnabled: false,
+        repeatReminderDays: 30,
     );
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);
 

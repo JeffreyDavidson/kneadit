@@ -26,7 +26,7 @@ test('send repeat order reminders command exists', function () {
 test('paypal command uses TenancyManager for tenant context', function () {
     $source = file_get_contents((new ReflectionClass(CheckPayPalPaymentsCommand::class))->getFileName());
 
-    expect($source)->toContain('forEachTenant')->toContain('TenancyManager');
+    expect($source)->toContain('withinTenant')->toContain('TenancyManager');
 });
 
 test('birthday command uses EngagementDispatcher for tenant context', function () {

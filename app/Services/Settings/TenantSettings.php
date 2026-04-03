@@ -2,9 +2,20 @@
 
 namespace App\Services\Settings;
 
+use App\DataTransferObjects\Settings\BrandingSettings;
+use App\DataTransferObjects\Settings\CateringSettings;
+use App\DataTransferObjects\Settings\EngagementSettings;
+use App\DataTransferObjects\Settings\HomepageSettings;
+use App\DataTransferObjects\Settings\LoyaltySettings;
+use App\DataTransferObjects\Settings\OnboardingSettings;
+use App\DataTransferObjects\Settings\OrderSettings;
+use App\DataTransferObjects\Settings\PaymentSettings;
+use App\DataTransferObjects\Settings\PolicySettings;
+use App\DataTransferObjects\Settings\StoreInfo;
+use App\DataTransferObjects\Settings\WebhookSettings;
 use Illuminate\Support\Facades\Storage;
 
-final readonly class TenantSettings
+final class TenantSettings
 {
     private const string DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
@@ -19,50 +30,169 @@ final readonly class TenantSettings
      * @param array<string, array<string, mixed>> $homepageSections
      */
     public function __construct(
-        public string $storeName,
-        public ?string $storeEmail,
-        public ?string $storePhone,
-        public ?string $storeAddress,
-        public ?string $storeWebsite,
-        public ?string $storeLogo,
-        public ?string $storeTagline,
-        public string $brandColorPrimary,
-        public ?string $onboardingCompletedAt,
-        public string $storefrontTheme,
-        public ?string $businessTagline,
-        public ?string $aboutUsText,
-        public ?string $heroImage,
-        public string $heroStyle,
-        public ?string $allergyDisclaimer,
-        public ?string $cateringHeroImage,
-        public ?string $loyaltyHeroImage,
-        public ?string $giftCardsHeroImage,
-        public int $leadTimeHours,
-        public bool $deliveryEnabled,
-        public string $freeDeliveryMinimum,
-        public array $deliveryFeeTiers,
-        public array $paymentMethodsAccepted,
-        public array $operatingHours,
-        public array $faqItems,
-        public string $loyaltyProgramName,
-        public string $loyaltyPointsPerDollar,
-        public bool $loyaltyEnabled,
-        public string $cateringMinimumGuests,
-        public string $cateringLeadTimeDays,
-        public array $socialMediaLinks,
-        public array $homepageSections,
-        public bool $cateringEnabled,
-        public ?string $storePhoto,
-        public bool $announcementEnabled,
-        public string $announcementText,
-        public string $announcementType,
-        public bool $showPolicies,
-        public string $cancellationPolicy,
-        public string $depositPolicy,
-        public string $refundPolicy,
-        public string $pickupPolicy,
-        public string $additionalTerms,
+        public readonly string $storeName,
+        public readonly ?string $storeEmail,
+        public readonly ?string $storePhone,
+        public readonly ?string $storeAddress,
+        public readonly ?string $storeWebsite,
+        public readonly ?string $storeLogo,
+        public readonly ?string $storeTagline,
+        public readonly string $brandColorPrimary,
+        public readonly ?string $onboardingCompletedAt,
+        public readonly string $storefrontTheme,
+        public readonly ?string $businessTagline,
+        public readonly ?string $aboutUsText,
+        public readonly ?string $heroImage,
+        public readonly string $heroStyle,
+        public readonly ?string $allergyDisclaimer,
+        public readonly ?string $cateringHeroImage,
+        public readonly ?string $loyaltyHeroImage,
+        public readonly ?string $giftCardsHeroImage,
+        public readonly int $leadTimeHours,
+        public readonly bool $deliveryEnabled,
+        public readonly string $freeDeliveryMinimum,
+        public readonly array $deliveryFeeTiers,
+        public readonly array $paymentMethodsAccepted,
+        public readonly array $operatingHours,
+        public readonly array $faqItems,
+        public readonly string $loyaltyProgramName,
+        public readonly string $loyaltyPointsPerDollar,
+        public readonly bool $loyaltyEnabled,
+        public readonly string $cateringMinimumGuests,
+        public readonly string $cateringLeadTimeDays,
+        public readonly array $socialMediaLinks,
+        public readonly array $homepageSections,
+        public readonly bool $cateringEnabled,
+        public readonly ?string $storePhoto,
+        public readonly bool $announcementEnabled,
+        public readonly string $announcementText,
+        public readonly string $announcementType,
+        public readonly bool $showPolicies,
+        public readonly string $cancellationPolicy,
+        public readonly string $depositPolicy,
+        public readonly string $refundPolicy,
+        public readonly string $pickupPolicy,
+        public readonly string $additionalTerms,
+        public readonly bool $birthdayProgramEnabled,
+        public readonly int $birthdayDiscountPercentage,
+        public readonly int $birthdayCouponValidDays,
+        public readonly bool $reviewRequestsEnabled,
+        public readonly int $reviewRequestDelayHours,
+        public readonly bool $repeatRemindersEnabled,
+        public readonly int $repeatReminderDays,
     ) {}
+
+    // ──────────────────────────────────────────────────────────
+    // Sub-DTO virtual properties
+    // ──────────────────────────────────────────────────────────
+
+    public StoreInfo $store {
+        get => new StoreInfo(
+            name: $this->storeName,
+            email: $this->storeEmail,
+            phone: $this->storePhone,
+            address: $this->storeAddress,
+            website: $this->storeWebsite,
+            photo: $this->storePhoto,
+            logo: $this->storeLogo,
+            tagline: $this->storeTagline,
+        );
+    }
+
+    public LoyaltySettings $loyalty {
+        get => new LoyaltySettings(
+            enabled: $this->loyaltyEnabled,
+            pointsPerDollar: $this->loyaltyPointsPerDollar,
+            programName: $this->loyaltyProgramName,
+        );
+    }
+
+    public OrderSettings $orders {
+        get => new OrderSettings(
+            leadTimeHours: $this->leadTimeHours,
+            deliveryEnabled: $this->deliveryEnabled,
+            freeDeliveryMinimum: $this->freeDeliveryMinimum,
+            deliveryFeeTiers: $this->deliveryFeeTiers,
+        );
+    }
+
+    public BrandingSettings $branding {
+        get => new BrandingSettings(
+            brandColorPrimary: $this->brandColorPrimary,
+            storefrontTheme: $this->storefrontTheme,
+            businessTagline: $this->businessTagline,
+            aboutUsText: $this->aboutUsText,
+            heroImage: $this->heroImage,
+            heroStyle: $this->heroStyle,
+            allergyDisclaimer: $this->allergyDisclaimer,
+            cateringHeroImage: $this->cateringHeroImage,
+            loyaltyHeroImage: $this->loyaltyHeroImage,
+            giftCardsHeroImage: $this->giftCardsHeroImage,
+        );
+    }
+
+    public PaymentSettings $payment {
+        get => new PaymentSettings(
+            methodsAccepted: $this->paymentMethodsAccepted,
+        );
+    }
+
+    public CateringSettings $catering {
+        get => new CateringSettings(
+            enabled: $this->cateringEnabled,
+            minimumGuests: $this->cateringMinimumGuests,
+            leadTimeDays: $this->cateringLeadTimeDays,
+        );
+    }
+
+    public EngagementSettings $engagement {
+        get => new EngagementSettings(
+            birthdayProgramEnabled: $this->birthdayProgramEnabled,
+            birthdayDiscountPercentage: $this->birthdayDiscountPercentage,
+            birthdayCouponValidDays: $this->birthdayCouponValidDays,
+            reviewRequestsEnabled: $this->reviewRequestsEnabled,
+            reviewRequestDelayHours: $this->reviewRequestDelayHours,
+            repeatRemindersEnabled: $this->repeatRemindersEnabled,
+            repeatReminderDays: $this->repeatReminderDays,
+            announcementEnabled: $this->announcementEnabled,
+            announcementText: $this->announcementText,
+            announcementType: $this->announcementType,
+        );
+    }
+
+    public PolicySettings $policies {
+        get => new PolicySettings(
+            showOnStorefront: $this->showPolicies,
+            cancellation: $this->cancellationPolicy,
+            deposit: $this->depositPolicy,
+            refund: $this->refundPolicy,
+            pickup: $this->pickupPolicy,
+            additionalTerms: $this->additionalTerms,
+        );
+    }
+
+    public HomepageSettings $homepage {
+        get => new HomepageSettings(
+            socialMediaLinks: $this->socialMediaLinks,
+            operatingHours: $this->operatingHours,
+            faqItems: $this->faqItems,
+            sections: $this->homepageSections,
+        );
+    }
+
+    public WebhookSettings $webhooks {
+        get => new WebhookSettings;
+    }
+
+    public OnboardingSettings $onboarding {
+        get => new OnboardingSettings(
+            completedAt: $this->onboardingCompletedAt,
+        );
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // Factory
+    // ──────────────────────────────────────────────────────────
 
     public static function resolve(): self
     {
@@ -110,8 +240,19 @@ final readonly class TenantSettings
             refundPolicy: (string) settings('refund_policy', ''),
             pickupPolicy: (string) settings('pickup_policy', ''),
             additionalTerms: (string) settings('additional_terms', ''),
+            birthdayProgramEnabled: settings('birthday_program_enabled', '0') === '1',
+            birthdayDiscountPercentage: (int) settings('birthday_discount_percentage', '15'),
+            birthdayCouponValidDays: (int) settings('birthday_coupon_valid_days', '7'),
+            reviewRequestsEnabled: settings('review_requests_enabled', '0') === '1',
+            reviewRequestDelayHours: (int) settings('review_request_delay_hours', '24'),
+            repeatRemindersEnabled: settings('repeat_reminders_enabled', '0') === '1',
+            repeatReminderDays: (int) settings('repeat_reminder_days', '30'),
         );
     }
+
+    // ──────────────────────────────────────────────────────────
+    // Convenience methods
+    // ──────────────────────────────────────────────────────────
 
     public function heroImageUrl(): string
     {

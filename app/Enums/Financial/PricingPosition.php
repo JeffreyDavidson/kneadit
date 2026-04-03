@@ -2,11 +2,22 @@
 
 namespace App\Enums\Financial;
 
-enum PricingPosition: string
+use Filament\Support\Contracts\HasLabel;
+
+enum PricingPosition: string implements HasLabel
 {
     case Economy = 'economy';
     case Standard = 'standard';
     case Premium = 'premium';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Economy => 'Economy',
+            self::Standard => 'Standard',
+            self::Premium => 'Premium',
+        };
+    }
 
     public function multiplier(): float
     {
