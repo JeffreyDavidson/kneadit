@@ -48,6 +48,13 @@ test('it returns store info from TenantSettings', function () {
         refundPolicy: '',
         pickupPolicy: '',
         additionalTerms: '',
+        birthdayProgramEnabled: false,
+        birthdayDiscountPercentage: 15,
+        birthdayCouponValidDays: 7,
+        reviewRequestsEnabled: false,
+        reviewRequestDelayHours: 24,
+        repeatRemindersEnabled: false,
+        repeatReminderDays: 30,
     );
 
     $controller = new StoreInfoController;

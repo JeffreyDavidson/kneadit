@@ -1,54 +1,59 @@
-# Controller Query Extraction + Architecture Improvements
+# Fix 28 Test Failures from Architecture Deepening
 
-## Work Item 1: Extract Queries from Controllers
-- [ ] Add `ReviewQueryBuilder::statistics()` method
-- [ ] Add `OrderQueryBuilder::forDeliveryOnDate()` method
-- [ ] Add `OrderQueryBuilder::forCustomerEmail()` method
-- [ ] Create `app/Queries/StorefrontStatsQuery.php`
-- [ ] Create `app/Queries/DriverDeliveryQuery.php`
-- [ ] Refactor ReviewsController
-- [ ] Refactor AboutController + Hero component
-- [ ] Refactor DriverController
-- [ ] Refactor TrackingController
-- [ ] Refactor LoyaltyController (deduplicate)
-- [ ] Refactor GalleryController
-- [ ] Refactor BlogFeedController
-- [ ] Refactor StripeWebhookController (deduplicate)
-- [ ] Refactor FavoriteController (Storefront)
-- [ ] Refactor InvitationController (deduplicate)
-- [ ] Create `tests/Arch/ControllerQueryTest.php`
+## Root Cause Analysis
 
-## Work Item 2: Order Creation Pipeline
-- [ ] Create `app/Pipes/Orders/OrderPipelineData.php`
-- [ ] Create pipe stages (8 classes)
-- [ ] Refactor `CreateOrder` action to use pipeline
-- [ ] Write unit tests for each pipe
-- [ ] Write integration test for full pipeline
+The architecture deepening refactors introduced new classes (Registry, Services, DTOs) that reference
+sub-DTO properties on TenantSettings (e.g., `$settings->loyalty->enabled`), but TenantSettings still
+had flat scalar properties (`$loyaltyEnabled`). Several new classes were referenced but never created.
 
-## Work Item 3: Webhook Processing Pipeline
-- [ ] Create `app/Pipes/Webhooks/WebhookData.php`
-- [ ] Create pipe stages (4 classes)
-- [ ] Refactor StripeWebhookController
-- [ ] Refactor StripeConnectWebhookController
+## Fix Plan
 
-## Work Item 4: Form Request → DTO
-- [ ] Add `toData()` to StoreOrderRequest
-- [ ] Add `toData()` to StoreApiOrderRequest
-- [ ] Add `toData()` to PurchaseGiftCardRequest
-- [ ] Update 3 controllers
+### Group 1: TenantSettings Sub-DTO Alignment (16 failures)
+- [x] Created 11 sub-DTO classes in `app/DataTransferObjects/Settings/`
+- [x] Added PHP 8.4 virtual property hooks to TenantSettings (changed from `final readonly` to `final` with per-property `readonly`)
+- [x] Added 7 new engagement properties to TenantSettings constructor + resolve()
+- [x] Updated 6 test files that construct TenantSettings directly
 
-## Work Item 5: TenantSettings DTO
-- [ ] Create `app/Services/Settings/TenantSettings.php`
-- [ ] Register in service container
-- [ ] Refactor 12+ storefront controllers
-- [ ] Refactor view components
+### Group 2: Missing CreateBirthdayCoupon Action (3 failures)
+- [x] Created `app/Actions/Customers/CreateBirthdayCoupon.php`
 
-## Work Item 6: API Response Standardization
-- [ ] Create `app/Http/Responses/ApiResponse.php`
-- [ ] Update ~15 controllers
+### Group 3: Missing CapacityExceededException (2 failures)
+- [x] Created `app/Exceptions/Orders/CapacityExceededException.php`
 
-## Work Item 7: Event-Driven Emails
-- [ ] Create PaymentFailed event + listener
-- [ ] Create HealthCheckFailed event + listener
-- [ ] Move MessageController Mail to existing event
-- [ ] Create arch test: no Mail:: in controllers
+### Group 4: PricingEngine Blade Array→DTO (1 failure)
+- [x] Updated blade template from `$result['ingredient_cost']` to `$result->ingredientCost`
+- [x] Implemented `Wireable` on `PricingRecommendation` DTO for Livewire serialization
+
+### Group 5: ProfitAnalysis Missing Methods (1 failure)
+- [x] Added `getOverallStats()`, `getTotalRevenuePotential()`, `getProductAnalysis()`, `getTopProfitableProducts()`, `getLowestMarginProducts()`, `getMissingCostProducts()` — all delegate to the `ProductPortfolioSummary` DTO
+
+### Group 6: RecipeCostCalculator Method Name (1 failure)
+- [x] Updated test to call `refreshAnalysis()` instead of non-existent `calculateCosts()`
+
+### Group 7: TenantAwareCommands forEachTenant (1 failure)
+- [x] Updated test assertion from `forEachTenant` to `withinTenant`
+
+### Group 8: PricingPosition + MarginHealth HasLabel (2 failures)
+- [x] Added `implements HasLabel` and `getLabel()` to both enums
+
+### Group 9: InventoryManager Closed Day Check (1 failure)
+- [x] Added `BusinessSchedule` lookup in `CapacityCalculator::isAvailable()` to check `is_open`
+
+## Review
+
+**Result: 1930 tests passing, 0 failures**
+
+### Files Created (14)
+- `app/DataTransferObjects/Settings/` — 11 sub-DTO classes (StoreInfo, LoyaltySettings, OrderSettings, BrandingSettings, PaymentSettings, CateringSettings, EngagementSettings, PolicySettings, HomepageSettings, WebhookSettings, OnboardingSettings)
+- `app/Actions/Customers/CreateBirthdayCoupon.php`
+- `app/Exceptions/Orders/CapacityExceededException.php`
+
+### Files Modified (13)
+- `app/Services/Settings/TenantSettings.php` — changed to `final class` with per-property `readonly`, added virtual properties + 7 engagement params
+- `app/DataTransferObjects/Financial/PricingRecommendation.php` — implemented `Wireable`
+- `app/Enums/Financial/PricingPosition.php` — added `HasLabel`
+- `app/Enums/Financial/MarginHealth.php` — added `HasLabel`
+- `app/Filament/Pages/Analytics/ProfitAnalysis.php` — added 6 blade-facing methods
+- `app/Services/Inventory/CapacityCalculator.php` — added BusinessSchedule closed-day check
+- `resources/views/filament/pages/tools/pricing-engine.blade.php` — array→object property access
+- 6 test files — updated TenantSettings constructor calls + assertion fixes

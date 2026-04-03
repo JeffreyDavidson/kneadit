@@ -2,6 +2,7 @@
 
 namespace App\Services\Inventory;
 
+use App\Models\Operations\BusinessSchedule;
 use App\Models\Operations\CapacityLimit;
 use App\Models\Orders\Order;
 use Carbon\Carbon;
@@ -27,6 +28,16 @@ class CapacityCalculator
 
     public function isAvailable(Carbon|string $date): bool
     {
+        $date = Date::parse($date);
+
+        $schedule = BusinessSchedule::query()
+            ->where('day_of_week', $date->dayOfWeek)
+            ->first();
+
+        if ($schedule && ! $schedule->is_open) {
+            return false;
+        }
+
         return $this->ordersOnDate($date) < $this->getMaxOrders($date);
     }
 

@@ -17,6 +17,6 @@ beforeEach(function () {
 test('recipe cost calculator can render and calculate', function () {
     Livewire::test(RecipeCostCalculator::class)
         ->assertOk()
-        ->call('calculateCosts')
+        ->call('refreshAnalysis')
         ->assertOk();
 });
