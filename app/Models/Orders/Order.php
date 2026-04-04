@@ -13,6 +13,8 @@ use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\Review;
 use App\Models\Engagement\SurveyResponse;
 use App\Models\Financial\Coupon;
+use App\Models\Financial\CouponTransaction;
+use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
 use App\Models\Staff\User;
 use App\Observers\Orders\OrderObserver;
@@ -77,6 +79,7 @@ class Order extends Model
         'delivery_type' => DeliveryType::Pickup,
         'delivery_fee' => 0,
         'discount_amount' => 0,
+        'gift_card_amount' => 0,
     ];
 
     public function getRouteKeyName(): string
@@ -102,6 +105,8 @@ class Order extends Model
         'notes',
         'user_id',
         'coupon_id',
+        'gift_card_id',
+        'gift_card_amount',
         'review_request_sent_at',
         'stripe_checkout_session_id',
         'stripe_payment_intent_id',
@@ -113,6 +118,7 @@ class Order extends Model
             'subtotal' => 'decimal:2',
             'delivery_fee' => 'decimal:2',
             'discount_amount' => 'decimal:2',
+            'gift_card_amount' => 'decimal:2',
             'total' => 'decimal:2',
             'delivery_date' => 'date',
             'delivery_time' => 'datetime:H:i',
@@ -146,6 +152,14 @@ class Order extends Model
     public function coupon(): BelongsTo
     {
         return $this->belongsTo(Coupon::class);
+    }
+
+    /**
+     * @return BelongsTo<GiftCard, $this>
+     */
+    public function giftCard(): BelongsTo
+    {
+        return $this->belongsTo(GiftCard::class);
     }
 
     /**
@@ -186,6 +200,14 @@ class Order extends Model
     public function surveyResponses(): HasMany
     {
         return $this->hasMany(SurveyResponse::class);
+    }
+
+    /**
+     * @return HasMany<CouponTransaction, $this>
+     */
+    public function couponTransactions(): HasMany
+    {
+        return $this->hasMany(CouponTransaction::class);
     }
 
     /**

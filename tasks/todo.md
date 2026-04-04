@@ -1,59 +1,52 @@
-# Fix 28 Test Failures from Architecture Deepening
+# Unified Discount Ledger — Design 3
 
-## Root Cause Analysis
+## Problem
+Coupon and gift card discount handling is asymmetric:
+- Gift card amount applied is invisible on the Order record
+- Coupons have no audit trail (just a `used_count` counter)
+- Gift card modifies `order.total` after it was already persisted
+- Pipeline ordering creates a two-write problem
 
-The architecture deepening refactors introduced new classes (Registry, Services, DTOs) that reference
-sub-DTO properties on TenantSettings (e.g., `$settings->loyalty->enabled`), but TenantSettings still
-had flat scalar properties (`$loyaltyEnabled`). Several new classes were referenced but never created.
+## Approach
+Mirror the existing GiftCardTransaction pattern for coupons. Fix pipeline so both
+discounts are calculated before persist and recorded after persist.
 
-## Fix Plan
+## Changes
 
-### Group 1: TenantSettings Sub-DTO Alignment (16 failures)
-- [x] Created 11 sub-DTO classes in `app/DataTransferObjects/Settings/`
-- [x] Added PHP 8.4 virtual property hooks to TenantSettings (changed from `final readonly` to `final` with per-property `readonly`)
-- [x] Added 7 new engagement properties to TenantSettings constructor + resolve()
-- [x] Updated 6 test files that construct TenantSettings directly
+### 1. Migrations
+- [ ] Add `gift_card_id` (FK, nullable) and `gift_card_amount` (decimal, default 0) to orders
+- [ ] Create `coupon_transactions` table mirroring `gift_card_transactions`
 
-### Group 2: Missing CreateBirthdayCoupon Action (3 failures)
-- [x] Created `app/Actions/Customers/CreateBirthdayCoupon.php`
+### 2. New Files
+- [ ] `CouponTransactionType` enum (Usage, Reversal)
+- [ ] `CouponTransaction` model + factory
+- [ ] `RecordGiftCardRedemption` pipe (post-persist, calls existing RedeemGiftCard action)
 
-### Group 3: Missing CapacityExceededException (2 failures)
-- [x] Created `app/Exceptions/Orders/CapacityExceededException.php`
+### 3. Modified Files
+- [ ] `Order` model — add gift_card_id, gift_card_amount to fillable/casts, add giftCard() and couponTransactions() relationships
+- [ ] `Coupon` model — add transactions() hasMany
+- [ ] `OrderPipelineData` — add giftCardAmount, giftCardId properties
+- [ ] `ApplyGiftCard` pipe — rewrite to pre-persist calculation only (no DB writes)
+- [ ] `ApplyCouponUsage` → rename to `RecordCouponUsage`, add CouponTransaction creation
+- [ ] `PersistOrder` pipe — add gift_card_id and gift_card_amount to create()
+- [ ] `CreateOrder` action — reorder pipeline
 
-### Group 4: PricingEngine Blade Array→DTO (1 failure)
-- [x] Updated blade template from `$result['ingredient_cost']` to `$result->ingredientCost`
-- [x] Implemented `Wireable` on `PricingRecommendation` DTO for Livewire serialization
+### 4. Pipeline: Before → After
+```
+BEFORE: CalculateOrderTotals → ValidateCapacity → ApplyCoupon → ResolveCustomer → PersistOrder → ApplyCouponUsage → ApplyGiftCard → PersistOrderItems
 
-### Group 5: ProfitAnalysis Missing Methods (1 failure)
-- [x] Added `getOverallStats()`, `getTotalRevenuePotential()`, `getProductAnalysis()`, `getTopProfitableProducts()`, `getLowestMarginProducts()`, `getMissingCostProducts()` — all delegate to the `ProductPortfolioSummary` DTO
+AFTER:  CalculateOrderTotals → ValidateCapacity → ApplyCoupon → ApplyGiftCard → ResolveCustomer → PersistOrder → RecordCouponUsage → RecordGiftCardRedemption → PersistOrderItems
+```
 
-### Group 6: RecipeCostCalculator Method Name (1 failure)
-- [x] Updated test to call `refreshAnalysis()` instead of non-existent `calculateCosts()`
+### 5. Tests
+- [ ] CouponTransaction model tests
+- [ ] RecordCouponUsage pipe creates transaction record
+- [ ] RecordGiftCardRedemption pipe calls RedeemGiftCard action
+- [ ] ApplyGiftCard pipe calculates without DB writes
+- [ ] Full pipeline integration test with both coupon + gift card
 
-### Group 7: TenantAwareCommands forEachTenant (1 failure)
-- [x] Updated test assertion from `forEachTenant` to `withinTenant`
-
-### Group 8: PricingPosition + MarginHealth HasLabel (2 failures)
-- [x] Added `implements HasLabel` and `getLabel()` to both enums
-
-### Group 9: InventoryManager Closed Day Check (1 failure)
-- [x] Added `BusinessSchedule` lookup in `CapacityCalculator::isAvailable()` to check `is_open`
-
-## Review
-
-**Result: 1930 tests passing, 0 failures**
-
-### Files Created (14)
-- `app/DataTransferObjects/Settings/` — 11 sub-DTO classes (StoreInfo, LoyaltySettings, OrderSettings, BrandingSettings, PaymentSettings, CateringSettings, EngagementSettings, PolicySettings, HomepageSettings, WebhookSettings, OnboardingSettings)
-- `app/Actions/Customers/CreateBirthdayCoupon.php`
-- `app/Exceptions/Orders/CapacityExceededException.php`
-
-### Files Modified (13)
-- `app/Services/Settings/TenantSettings.php` — changed to `final class` with per-property `readonly`, added virtual properties + 7 engagement params
-- `app/DataTransferObjects/Financial/PricingRecommendation.php` — implemented `Wireable`
-- `app/Enums/Financial/PricingPosition.php` — added `HasLabel`
-- `app/Enums/Financial/MarginHealth.php` — added `HasLabel`
-- `app/Filament/Pages/Analytics/ProfitAnalysis.php` — added 6 blade-facing methods
-- `app/Services/Inventory/CapacityCalculator.php` — added BusinessSchedule closed-day check
-- `resources/views/filament/pages/tools/pricing-engine.blade.php` — array→object property access
-- 6 test files — updated TenantSettings constructor calls + assertion fixes
+## Out of Scope
+- Reversal logic on cancellation (future work, effect dispatcher hook exists)
+- View/UI updates (invoice, order confirmation, Filament) — separate PR
+- Controller consolidation
+- Backfill migration for historical orders
