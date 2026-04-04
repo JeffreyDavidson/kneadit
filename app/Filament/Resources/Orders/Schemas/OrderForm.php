@@ -63,7 +63,7 @@ class OrderForm
                 Section::make('Pricing')
                     ->columnSpanFull()
                     ->components([
-                        Grid::make(4)
+                        Grid::make(5)
                             ->components([
                                 TextInput::make('subtotal')
                                     ->required()
@@ -78,6 +78,12 @@ class OrderForm
                                     ->default(0),
 
                                 TextInput::make('discount_amount')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->step(0.01)
+                                    ->default(0),
+
+                                TextInput::make('gift_card_amount')
                                     ->numeric()
                                     ->prefix('$')
                                     ->step(0.01)

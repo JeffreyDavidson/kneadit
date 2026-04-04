@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\Financial\CouponTransactionType;
+use App\Enums\Financial\GiftCardTransactionType;
 use App\Enums\Orders\OrderStatus;
 use App\Mail\Orders\OrderBakingMail;
 use App\Mail\Orders\OrderCancelledMail;
@@ -8,6 +10,10 @@ use App\Mail\Orders\OrderDeliveredMail;
 use App\Mail\Orders\OrderReadyMail;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Financial\Coupon;
+use App\Models\Financial\CouponTransaction;
+use App\Models\Financial\GiftCard;
+use App\Models\Financial\GiftCardTransaction;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use App\Services\Orders\OrderStatusEffectDispatcher;
@@ -137,4 +143,65 @@ test('pending status has no effects', function () {
 
     Mail::assertNothingQueued();
     Http::assertNothingSent();
+});
+
+test('cancellation decrements coupon used_count and creates reversal transaction', function () {
+    $coupon = Coupon::factory()->create(['used_count' => 3]);
+
+    $order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create(['coupon_id' => $coupon->id, 'discount_amount' => 5.00]);
+
+    resolve(OrderStatusEffectDispatcher::class)
+        ->dispatch($order, OrderStatus::Confirmed, OrderStatus::Cancelled);
+
+    expect($coupon->fresh()->used_count)->toBe(2);
+    expect(CouponTransaction::query()->where('order_id', $order->id)->count())->toBe(1);
+
+    $transaction = CouponTransaction::query()->where('order_id', $order->id)->first();
+    expect($transaction->type)->toBe(CouponTransactionType::Reversal)
+        ->and($transaction->coupon_id)->toBe($coupon->id);
+});
+
+test('cancellation restores gift card balance and creates refund transaction', function () {
+    $giftCard = GiftCard::factory()->create([
+        'initial_balance' => 50.00,
+        'current_balance' => 30.00,
+    ]);
+
+    $order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create([
+            'gift_card_id' => $giftCard->id,
+            'gift_card_amount' => 20.00,
+        ]);
+
+    resolve(OrderStatusEffectDispatcher::class)
+        ->dispatch($order, OrderStatus::Confirmed, OrderStatus::Cancelled);
+
+    expect($giftCard->fresh()->current_balance)->toBe('50.00');
+
+    $refund = GiftCardTransaction::query()
+        ->where('order_id', $order->id)
+        ->where('type', GiftCardTransactionType::Refund)
+        ->first();
+
+    expect($refund)->not->toBeNull()
+        ->and($refund->amount)->toBe('20.00')
+        ->and($refund->gift_card_id)->toBe($giftCard->id);
+});
+
+test('cancellation with no coupon or gift card does not fail', function () {
+    $order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create();
+
+    resolve(OrderStatusEffectDispatcher::class)
+        ->dispatch($order, OrderStatus::Confirmed, OrderStatus::Cancelled);
+
+    expect(CouponTransaction::query()->count())->toBe(0);
+    expect(GiftCardTransaction::query()->count())->toBe(0);
 });
