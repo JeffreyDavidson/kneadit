@@ -2,7 +2,7 @@
 
 namespace App\Actions\Stripe;
 
-use App\Enums\Orders\PaymentStatus;
+use App\Actions\Orders\MarkOrderPaid;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use Illuminate\Support\Facades\Log;
@@ -45,7 +45,7 @@ class HandleConnectCheckoutCompleted
 
             $order = Order::query()->where('stripe_checkout_session_id', $sessionId)->first();
             if ($order) {
-                $order->update(['payment_status' => PaymentStatus::Paid]);
+                app(MarkOrderPaid::class)($order);
                 Log::info('Order marked paid via webhook', [
                     'order' => $order->order_number,
                     'tenant' => $tenant->id,

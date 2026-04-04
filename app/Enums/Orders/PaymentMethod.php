@@ -15,4 +15,12 @@ enum PaymentMethod: string implements HasLabel
     {
         return ucfirst($this->value);
     }
+
+    public function isManual(): bool
+    {
+        return match ($this) {
+            self::Cash, self::Other => true,
+            self::Stripe, self::PayPal => false,
+        };
+    }
 }

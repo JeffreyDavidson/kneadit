@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Stripe;
 
+use App\Actions\Orders\MarkOrderPaid;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
@@ -73,8 +74,8 @@ class CheckPayPalPaymentsCommand extends Command
             }
 
             match ($status) {
-                'PAID' => tap($order, function (\stdClass $o) {
-                    $o->update(['payment_status' => PaymentStatus::Paid]);
+                'PAID' => tap($order, function (Order $o) {
+                    app(MarkOrderPaid::class)($o);
                     $this->info("  ✓ #{$o->order_number} paid");
                 }),
                 'CANCELLED' => tap($order, function (\stdClass $o) {
