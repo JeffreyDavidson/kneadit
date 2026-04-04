@@ -34,6 +34,8 @@ use Illuminate\Support\Carbon;
  * @property PaymentMethod $payment_method
  * @property DeliveryType $delivery_type
  * @property-read Coupon|null $coupon
+ * @property-read Collection<int, CouponTransaction> $couponTransactions
+ * @property-read int|null $coupon_transactions_count
  * @property-read Customer|null $customer
  * @property-read Collection<int, GiftCardTransaction> $giftCardTransactions
  * @property-read int|null $gift_card_transactions_count
@@ -96,6 +98,7 @@ class Order extends Model
         'subtotal',
         'delivery_fee',
         'discount_amount',
+        'gift_card_amount',
         'total',
         'paypal_invoice_id',
         'delivery_address',

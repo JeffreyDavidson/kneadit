@@ -70,6 +70,12 @@
                         <span>-${{ number_format($order->discount_amount, 2) }}</span>
                     </div>
                     @endif
+                    @if ($order->gift_card_amount > 0)
+                    <div class="flex justify-between text-green-400">
+                        <span>Gift Card</span>
+                        <span>-${{ number_format($order->gift_card_amount, 2) }}</span>
+                    </div>
+                    @endif
                     <div class="flex justify-between pt-3 border-t border-warm-700/20">
                         <span class="font-display text-lg font-bold text-warm-100">Total</span>
                         <span class="font-display text-2xl font-bold text-warm-400">${{ number_format($order->total, 2) }}</span>

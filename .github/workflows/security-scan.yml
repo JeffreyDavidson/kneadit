@@ -12,6 +12,17 @@ jobs:
   ward:
     name: Ward Security Scan
     runs-on: ubuntu-latest
+<<<<<<< HEAD
+||||||| parent of 22da488e (fix: update security scan workflow permissions and upgrade codeql action)
+    permissions:
+      security-events: write
+      contents: read
+=======
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+>>>>>>> 22da488e (fix: update security scan workflow permissions and upgrade codeql action)
 
     steps:
       - uses: actions/checkout@v4
@@ -41,6 +52,20 @@ jobs:
         if: github.event_name == 'pull_request'
         run: ward scan . --fail-on high --baseline /tmp/ward-baseline.json
 
+<<<<<<< HEAD
       - name: Run security scan (push/schedule)
         if: github.event_name != 'pull_request'
         run: ward scan . --fail-on critical
+||||||| parent of 22da488e (fix: update security scan workflow permissions and upgrade codeql action)
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ward-report.sarif
+=======
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ward-report.sarif
+>>>>>>> 22da488e (fix: update security scan workflow permissions and upgrade codeql action)
