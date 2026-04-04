@@ -73,6 +73,14 @@ class Coupon extends Model
         return $this->hasMany(Order::class);
     }
 
+    /**
+     * @return HasMany<CouponTransaction, $this>
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(CouponTransaction::class);
+    }
+
     /** @param Builder<Coupon> $query */
     #[Scope]
     protected function active(Builder $query): void

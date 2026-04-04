@@ -20,6 +20,8 @@ class PersistOrder
             'delivery_fee' => $payload->deliveryFee,
             'discount_amount' => $payload->discountAmount,
             'coupon_id' => $payload->couponId,
+            'gift_card_id' => $payload->giftCardId,
+            'gift_card_amount' => $payload->giftCardAmount,
             'total' => $payload->total,
             'notes' => $payload->data->notes,
             'status' => OrderStatus::Pending,
