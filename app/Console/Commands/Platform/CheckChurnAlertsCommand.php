@@ -4,7 +4,7 @@ namespace App\Console\Commands\Platform;
 
 use App\Actions\Platform\LogAuditEntry;
 use App\Models\Platform\Tenant;
-use App\Services\Tenant\TenancyManager;
+use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;

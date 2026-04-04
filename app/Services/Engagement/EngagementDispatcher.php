@@ -5,7 +5,7 @@ namespace App\Services\Engagement;
 use App\Contracts\Engagement\CustomerEngagement;
 use App\Models\Platform\Tenant;
 use App\Services\Settings\TenantSettings;
-use App\Services\Tenant\TenancyManager;
+use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Customer;
+namespace App\Services\Customers;
 
 use Illuminate\Support\Carbon;
 

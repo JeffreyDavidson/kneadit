@@ -8,7 +8,7 @@ use App\DataTransferObjects\Customers\CustomerMetrics;
 use App\Models\Concerns\LogsActivity;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
-use App\Services\Customer\CustomerIntelligence;
+use App\Services\Customers\CustomerIntelligence;
 use App\ValueObjects\Address;
 use Database\Factories\Customers\CustomerFactory;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;

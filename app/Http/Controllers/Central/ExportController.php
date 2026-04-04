@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Central;
 use App\Http\Controllers\Controller;
 use App\Models\Platform\Tenant;
 use App\Services\Export\CsvExportService;
-use App\Services\Tenant\TenancyManager;
+use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;

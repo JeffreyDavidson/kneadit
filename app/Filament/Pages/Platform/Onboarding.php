@@ -4,7 +4,7 @@ namespace App\Filament\Pages\Platform;
 
 use App\Enums\Staff\UserRole;
 use App\Models\Inventory\Category;
-use App\Services\Tenant\SaveOnboardingStep;
+use App\Services\Tenants\SaveOnboardingStep;
 use BackedEnum;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;

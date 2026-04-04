@@ -4,7 +4,7 @@ use App\Actions\GiftCards\CreateGiftCard;
 use App\Actions\GiftCards\RedeemGiftCard;
 use App\DataTransferObjects\GiftCards\CreateGiftCardData;
 use App\Models\Financial\GiftCard;
-use App\Services\GiftCard\GiftCardService;
+use App\Services\GiftCards\GiftCardService;
 
 use function Pest\Laravel\withoutMiddleware;
 

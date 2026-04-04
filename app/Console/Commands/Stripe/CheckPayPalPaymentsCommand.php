@@ -6,7 +6,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Services\PayPal\PaymentVerifier;
-use App\Services\Tenant\TenancyManager;
+use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 

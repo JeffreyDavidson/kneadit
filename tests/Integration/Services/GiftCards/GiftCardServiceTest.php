@@ -6,7 +6,7 @@ use App\DataTransferObjects\GiftCards\CreateGiftCardData;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
-use App\Services\GiftCard\GiftCardService;
+use App\Services\GiftCards\GiftCardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

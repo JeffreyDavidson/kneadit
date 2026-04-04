@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Tenant;
+namespace App\Services\Tenants;
 
 use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;

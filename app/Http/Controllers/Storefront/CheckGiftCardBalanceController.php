@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Storefront;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\CheckGiftCardBalanceRequest;
 use App\Http\Responses\ApiResponse;
-use App\Services\GiftCard\GiftCardService;
+use App\Services\GiftCards\GiftCardService;
 use Illuminate\Http\JsonResponse;
 
 class CheckGiftCardBalanceController extends Controller

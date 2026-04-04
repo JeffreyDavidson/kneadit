@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\Tenant\TenantHealthService;
+use App\Services\Tenants\TenantHealthService;
 
 beforeEach(function () {
     setUpCentralTest();

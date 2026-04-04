@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\GiftCard;
+namespace App\Services\GiftCards;
 
 use App\Models\Financial\GiftCard;
 use Illuminate\Support\Str;

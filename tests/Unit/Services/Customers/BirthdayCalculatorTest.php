@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\Customer\BirthdayCalculator;
+use App\Services\Customers\BirthdayCalculator;
 use Illuminate\Support\Facades\Date;
 
 it('detects today is a birthday', function () {

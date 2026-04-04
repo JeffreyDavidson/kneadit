@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Customer;
+namespace App\Services\Customers;
 
 use App\DataTransferObjects\Customers\CustomerMetrics;
 use App\Enums\Orders\OrderStatus;
