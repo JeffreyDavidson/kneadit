@@ -12,6 +12,10 @@ jobs:
   ward:
     name: Ward Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
 
     steps:
       - uses: actions/checkout@v4

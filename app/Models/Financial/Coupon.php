@@ -18,6 +18,8 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property CouponType $type
+ * @property-read Collection<int, CouponTransaction> $couponTransactions
+ * @property-read int|null $coupon_transactions_count
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
  *
@@ -63,6 +65,14 @@ class Coupon extends Model
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
+    }
+
+    /**
+     * @return HasMany<CouponTransaction, $this>
+     */
+    public function couponTransactions(): HasMany
+    {
+        return $this->transactions();
     }
 
     /**

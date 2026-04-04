@@ -25,3 +25,30 @@ test('API validates a valid coupon', function () {
     $response->assertOk()
         ->assertJsonPath('data.valid', true);
 });
+
+test('API returns error status for invalid coupon', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/api/coupon/validate', [
+            'code' => 'NONEXISTENT',
+            'subtotal' => 50.00,
+        ]);
+
+    $response->assertUnprocessable()
+        ->assertJsonPath('data', null);
+});
+
+test('API returns error status for expired coupon', function () {
+    Coupon::factory()->expired()->create([
+        'code' => 'EXPIRED10',
+        'value' => 10,
+    ]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/api/coupon/validate', [
+            'code' => 'EXPIRED10',
+            'subtotal' => 50.00,
+        ]);
+
+    $response->assertUnprocessable()
+        ->assertJsonPath('data', null);
+});
