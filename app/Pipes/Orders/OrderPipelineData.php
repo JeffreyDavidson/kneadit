@@ -18,6 +18,10 @@ class OrderPipelineData
 
     public ?int $couponId = null;
 
+    public ?int $giftCardId = null;
+
+    public float $giftCardAmount = 0;
+
     public ?Customer $customer = null;
 
     public ?Order $order = null;
