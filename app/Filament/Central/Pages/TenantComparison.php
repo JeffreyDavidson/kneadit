@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Pages;
 
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenancyManager;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -158,19 +159,18 @@ class TenantComparison extends Page
         ];
 
         try {
-            tenancy()->initialize($tenant);
-
-            $data['total_orders'] = DB::table('orders')->count();
-            $data['month_orders'] = DB::table('orders')
-                ->where('created_at', '>=', now()->startOfMonth())
-                ->count();
-            $data['total_products'] = DB::table('products')->count();
-            $data['total_categories'] = DB::table('categories')->count();
-            $data['avg_review'] = round((float) DB::table('reviews')->avg('rating'), 1);
-
-            tenancy()->end();
-        } catch (\Throwable $e) {
-            tenancy()->end();
+            $metrics = resolve(TenancyManager::class)->withinTenant($tenant, fn () => [
+                'total_orders' => DB::table('orders')->count(),
+                'month_orders' => DB::table('orders')
+                    ->where('created_at', '>=', now()->startOfMonth())
+                    ->count(),
+                'total_products' => DB::table('products')->count(),
+                'total_categories' => DB::table('categories')->count(),
+                'avg_review' => round((float) DB::table('reviews')->avg('rating'), 1),
+            ]);
+            $data = array_merge($data, $metrics);
+        } catch (\Throwable) {
+            // Tenant database may not be accessible
         }
 
         return $data;

@@ -3,10 +3,15 @@
 namespace App\Actions\Stripe;
 
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
 
 class HandleConnectAccountUpdated
 {
+    public function __construct(
+        private TenancyManager $tenancyManager,
+    ) {}
+
     public function __invoke(mixed $account): void
     {
         $accountId = data_get($account, 'id');
@@ -35,14 +40,13 @@ class HandleConnectAccountUpdated
         }
 
         try {
-            tenancy()->initialize($tenant);
-            settings(['stripe_connect_charges_enabled' => $chargesEnabled ? '1' : '0']);
+            $this->tenancyManager->withinTenant($tenant, function () use ($chargesEnabled, $tenantId) {
+                settings(['stripe_connect_charges_enabled' => $chargesEnabled ? '1' : '0']);
 
-            if ($chargesEnabled) {
-                Log::info('Stripe Connect fully enabled for tenant', ['tenant_id' => $tenantId]);
-            }
-
-            tenancy()->end();
+                if ($chargesEnabled) {
+                    Log::info('Stripe Connect fully enabled for tenant', ['tenant_id' => $tenantId]);
+                }
+            });
         } catch (\Exception $e) {
             Log::error('Failed to update tenant Stripe Connect status', [
                 'tenant_id' => $tenantId,

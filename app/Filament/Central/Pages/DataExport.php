@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Pages;
 
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenancyManager;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -51,19 +52,14 @@ class DataExport extends Page
         }
 
         try {
-            tenancy()->initialize($tenant);
-
-            $this->counts = [
+            $this->counts = resolve(TenancyManager::class)->withinTenant($tenant, fn () => [
                 'products' => DB::table('products')->count(),
                 'categories' => DB::table('categories')->count(),
                 'orders' => DB::table('orders')->count(),
                 'customers' => DB::table('users')->count(),
                 'reviews' => DB::table('reviews')->count(),
-            ];
-
-            tenancy()->end();
-        } catch (\Throwable $e) {
-            tenancy()->end();
+            ]);
+        } catch (\Throwable) {
             $this->counts = [];
         }
     }
