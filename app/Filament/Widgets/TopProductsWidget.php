@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Queries\Financial\ProductSalesQuery;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Cache;
 
 class TopProductsWidget extends ChartWidget
 {
@@ -23,21 +24,21 @@ class TopProductsWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $range = DateRange::thisMonth();
+        return Cache::flexible('top_products_' . (tenant()?->getTenantKey() ?? 'none'), [900, 1800], function (): array {
+            $products = ProductSalesQuery::topByRevenue(DateRange::thisMonth(), 5);
 
-        $products = ProductSalesQuery::topByRevenue($range, 5);
-
-        return [
-            'datasets' => [
-                [
-                    'label' => 'Revenue ($)',
-                    'data' => collect($products)->pluck('revenue')->all(),
-                    'backgroundColor' => ['#8B5E3C', '#D4A574', '#F5E6D3', '#A0522D', '#DEB887'],
-                    'borderRadius' => 6,
+            return [
+                'datasets' => [
+                    [
+                        'label' => 'Revenue ($)',
+                        'data' => collect($products)->pluck('revenue')->all(),
+                        'backgroundColor' => ['#8B5E3C', '#D4A574', '#F5E6D3', '#A0522D', '#DEB887'],
+                        'borderRadius' => 6,
+                    ],
                 ],
-            ],
-            'labels' => $products->pluck('name')->toArray(),
-        ];
+                'labels' => $products->pluck('name')->toArray(),
+            ];
+        });
     }
 
     protected function getOptions(): array
