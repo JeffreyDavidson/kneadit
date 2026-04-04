@@ -29,11 +29,10 @@ class TransitionOrderStatus
 
         throw_unless(in_array($to->value, $allowed), InvalidOrderTransitionException::class, $order, $from, $to);
 
-        DB::transaction(function () use ($order, $to) {
+        DB::transaction(function () use ($order, $from, $to) {
             $order->update(['status' => $to]);
+            $this->effects->dispatch($order, $from, $to);
         });
-
-        $this->effects->dispatch($order, $from, $to);
 
         return $order;
     }
