@@ -117,7 +117,7 @@
                                         <div class="css-barcode" style="display: inline-flex; gap: 1px; height: {{ $labelSize === 'small' ? '12px' : '18px' }};">
                                             @php
                                                 $code = str_pad($product->id, 8, '0', STR_PAD_LEFT);
-                                                $bars = str_split(md5($code));
+                                                $bars = str_split(hash('xxh128', $code));
                                             @endphp
                                             @foreach (array_slice($bars, 0, 20) as $bar)
                                                 <div style="width: {{ hexdec($bar) % 2 === 0 ? '1px' : '2px' }}; height: 100%; background: {{ hexdec($bar) % 3 === 0 ? 'white' : 'black' }};"></div>

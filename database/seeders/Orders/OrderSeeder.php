@@ -11,6 +11,7 @@ use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Date;
 
 class OrderSeeder extends Seeder
@@ -37,7 +38,7 @@ class OrderSeeder extends Seeder
 
         for ($i = 0; $i < 65; $i++) {
             $customer = $customers->random();
-            $requestedDate = Date::now()->subDays(rand(0, 60));
+            $requestedDate = Date::now()->subDays(random_int(0, 60));
 
             // Weight the status distribution - most delivered, fewer cancelled
             $statusWeights = [
@@ -54,10 +55,10 @@ class OrderSeeder extends Seeder
             // Payment status logic - most paid, some unpaid for recent orders
             $paymentStatus = PaymentStatus::Paid;
             if ($requestedDate->isAfter(Date::now()->subDays(7)) && in_array($status, [OrderStatus::Pending->value, OrderStatus::Confirmed->value])) {
-                $paymentStatus = rand(0, 100) < 30 ? PaymentStatus::Unpaid : PaymentStatus::Paid; // 30% chance unpaid for recent pending/confirmed
+                $paymentStatus = random_int(0, 100) < 30 ? PaymentStatus::Unpaid : PaymentStatus::Paid; // 30% chance unpaid for recent pending/confirmed
             }
 
-            $isDelivery = rand(0, 100) < 40; // 40% delivery, 60% pickup
+            $isDelivery = random_int(0, 100) < 40; // 40% delivery, 60% pickup
 
             $order = Order::query()->create([
                 'order_number' => 'ORD-' . str_pad($i + 1, 6, '0', STR_PAD_LEFT),
@@ -65,24 +66,24 @@ class OrderSeeder extends Seeder
                 'user_id' => $user->id,
                 'status' => $status,
                 'payment_status' => $paymentStatus,
-                'payment_method' => $paymentMethods[array_rand($paymentMethods)],
-                'delivery_address' => $isDelivery ? $deliveryAddresses[array_rand($deliveryAddresses)] : null,
+                'payment_method' => Arr::random($paymentMethods),
+                'delivery_address' => $isDelivery ? Arr::random($deliveryAddresses) : null,
                 'requested_date' => $requestedDate->toDateString(),
                 'requested_time' => $this->randomBusinessTime(),
                 'notes' => $this->randomOrderNotes(),
                 'subtotal' => 0, // Will be calculated after adding items
-                'delivery_fee' => $isDelivery ? rand(3, 8) : 0,
+                'delivery_fee' => $isDelivery ? random_int(3, 8) : 0,
                 'discount' => 0,
                 'total' => 0, // Will be calculated after adding items
             ]);
 
             // Add 1-5 items to each order
-            $itemCount = rand(1, 5);
+            $itemCount = random_int(1, 5);
             $subtotal = 0;
 
             for ($j = 0; $j < $itemCount; $j++) {
                 $product = $products->random();
-                $quantity = rand(1, 3);
+                $quantity = random_int(1, 3);
                 $unitPrice = $product->price;
 
                 OrderItem::query()->create([
@@ -108,7 +109,7 @@ class OrderSeeder extends Seeder
     private function weightedRandomSelect(array $weights): string
     {
         $totalWeight = array_sum($weights);
-        $random = rand(1, $totalWeight);
+        $random = random_int(1, $totalWeight);
         $currentWeight = 0;
 
         foreach ($weights as $item => $weight) {
@@ -126,8 +127,8 @@ class OrderSeeder extends Seeder
         $hours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]; // 8 AM to 5 PM
         $minutes = [0, 15, 30, 45];
 
-        $hour = $hours[array_rand($hours)];
-        $minute = $minutes[array_rand($minutes)];
+        $hour = Arr::random($hours);
+        $minute = Arr::random($minutes);
 
         return sprintf('%02d:%02d', $hour, $minute);
     }
@@ -147,7 +148,7 @@ class OrderSeeder extends Seeder
             'Cash payment on delivery',
         ];
 
-        return $notes[array_rand($notes)];
+        return Arr::random($notes);
     }
 
     private function randomSpecialInstructions(): ?string
@@ -165,6 +166,6 @@ class OrderSeeder extends Seeder
             'Write "Happy Birthday Sarah" on top',
         ];
 
-        return $instructions[array_rand($instructions)];
+        return Arr::random($instructions);
     }
 }

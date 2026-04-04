@@ -2,6 +2,7 @@
 
 namespace App\Services\Content;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
@@ -77,18 +78,15 @@ class DescriptionGeneratorService
         $adjectivePool = $this->adjectives[$categoryKey] ?? $this->defaultAdjectives;
 
         // Pick $count random templates
-        $selectedKeys = array_rand($templates, min($count, count($templates)));
-        if (! is_array($selectedKeys)) {
-            $selectedKeys = [$selectedKeys];
-        }
+        $selectedTemplates = Arr::random($templates, min($count, count($templates)));
 
         $descriptions = [];
-        foreach ($selectedKeys as $key) {
-            $adjective = $adjectivePool[array_rand($adjectivePool)];
+        foreach ($selectedTemplates as $template) {
+            $adjective = Arr::random($adjectivePool);
             $text = str_replace(
                 ['{product}', '{category}', '{adjective}', '{price}'],
                 [$product, $category ?: 'baked goods', $adjective, (string) ($price ? Number::currency($price) : '')],
-                $templates[$key],
+                $template,
             );
             $descriptions[] = $this->adjustLength($text, $length, $product, $category ?: 'baked goods', $adjectivePool);
         }
@@ -132,9 +130,10 @@ class DescriptionGeneratorService
             'Pair it with your favorite coffee or tea for the ultimate {category} experience.',
         ];
 
-        $adj = $adjectives[array_rand($adjectives)];
-        $extra1 = $extras[array_rand($extras)];
-        $extra2 = $extras[array_rand(array_diff_key($extras, [$extra1]))];
+        $adj = Arr::random($adjectives);
+        $selectedExtras = Arr::random($extras, 2);
+        $extra1 = $selectedExtras[0];
+        $extra2 = $selectedExtras[1];
 
         $replace = fn (string $s) => Str::replace(['{product}', '{category}', '{adjective}'], [$product, $category, $adj], $s);
 

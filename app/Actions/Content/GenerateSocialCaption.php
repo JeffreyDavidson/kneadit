@@ -3,6 +3,7 @@
 namespace App\Actions\Content;
 
 use App\Models\Inventory\Product;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
@@ -19,7 +20,7 @@ class GenerateSocialCaption
         $storeName = tenant()->store_name ?? tenant()->name ?? 'Our Bakery';
         $storeHashtag = Str::replace(' ', '', ucwords($storeName));
 
-        $template = self::TEMPLATES[array_rand(self::TEMPLATES)];
+        $template = Arr::random(self::TEMPLATES);
 
         return Str::replace(
             ['{product}', '{price}', '{store_hashtag}'],

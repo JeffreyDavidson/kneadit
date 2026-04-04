@@ -73,6 +73,7 @@ class ProductForm
                                 FileUpload::make('path')
                                     ->label('Image')
                                     ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->maxSize(5120)
                                     ->directory('products')
                                     ->visibility('public')

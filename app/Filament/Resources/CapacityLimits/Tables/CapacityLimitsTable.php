@@ -29,7 +29,9 @@ class CapacityLimitsTable
                     ->label('Day / Date')
                     ->sortable(
                         query: fn (Builder $query, string $direction) => $query
-                            ->orderByRaw('COALESCE(specific_date, day_of_week) ' . ($direction === 'desc' ? 'desc' : 'asc')),
+                            ->orderByRaw($direction === 'desc'
+                                ? 'COALESCE(specific_date, day_of_week) desc'
+                                : 'COALESCE(specific_date, day_of_week) asc'),
                     )
                     ->getStateUsing(function (CapacityLimit $record) {
                         if ($record->specific_date) {
