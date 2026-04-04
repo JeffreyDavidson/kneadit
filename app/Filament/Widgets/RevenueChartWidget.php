@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Number;
 
@@ -26,6 +27,18 @@ class RevenueChartWidget extends ChartWidget
     }
 
     protected function getData(): array
+    {
+        $cached = Cache::flexible('revenue_chart_' . (tenant()?->getTenantKey() ?? 'none'), [300, 600], function (): array {
+            return $this->computeData();
+        });
+
+        $this->heading = $cached['heading'];
+
+        return $cached['chart'];
+    }
+
+    /** @return array{heading: string, chart: array<string, mixed>} */
+    private function computeData(): array
     {
         $end = Date::today();
         $start = $end->copy()->subDays(29);
@@ -48,28 +61,30 @@ class RevenueChartWidget extends ChartWidget
             : ($currentTotal > 0 ? 100 : 0);
 
         $arrow = $change >= 0 ? '↑' : '↓';
-        $this->heading = "Revenue — Last 30 Days · \${$this->fmt($currentTotal)} ({$arrow} {$change}%)";
 
         return [
-            'datasets' => [
-                [
-                    'label' => 'This Period',
-                    'data' => $current,
-                    'borderColor' => '#8B5E3C',
-                    'backgroundColor' => 'rgba(139, 94, 60, 0.1)',
-                    'fill' => true,
-                    'tension' => 0.3,
+            'heading' => "Revenue — Last 30 Days · \${$this->fmt($currentTotal)} ({$arrow} {$change}%)",
+            'chart' => [
+                'datasets' => [
+                    [
+                        'label' => 'This Period',
+                        'data' => $current,
+                        'borderColor' => '#8B5E3C',
+                        'backgroundColor' => 'rgba(139, 94, 60, 0.1)',
+                        'fill' => true,
+                        'tension' => 0.3,
+                    ],
+                    [
+                        'label' => 'Previous Period',
+                        'data' => $previous,
+                        'borderColor' => '#D4A574',
+                        'backgroundColor' => 'transparent',
+                        'borderDash' => [5, 5],
+                        'tension' => 0.3,
+                    ],
                 ],
-                [
-                    'label' => 'Previous Period',
-                    'data' => $previous,
-                    'borderColor' => '#D4A574',
-                    'backgroundColor' => 'transparent',
-                    'borderDash' => [5, 5],
-                    'tension' => 0.3,
-                ],
+                'labels' => $labels,
             ],
-            'labels' => $labels,
         ];
     }
 
