@@ -2,6 +2,7 @@
 
 namespace App\Services\Orders;
 
+use App\Actions\Orders\ReverseOrderDiscounts;
 use App\Enums\Orders\OrderStatus;
 use App\Mail\Orders\OrderBakingMail;
 use App\Mail\Orders\OrderCancelledMail;
@@ -20,6 +21,7 @@ class OrderStatusEffectDispatcher
     public function __construct(
         private LoyaltyLedger $loyaltyLedger,
         private InventoryManager $inventoryManager,
+        private ReverseOrderDiscounts $reverseOrderDiscounts,
     ) {}
 
     public function dispatch(Order $order, OrderStatus $from, OrderStatus $to): void
@@ -30,6 +32,10 @@ class OrderStatusEffectDispatcher
             try {
                 $this->{$method}($order, $from, $to);
             } catch (\Throwable $e) {
+                if ($method === 'reverseDiscounts') {
+                    throw $e;
+                }
+
                 Log::warning("Order effect [{$method}] failed", [
                     'order' => $order->order_number,
                     'transition' => "{$from->value} -> {$to->value}",
@@ -52,7 +58,7 @@ class OrderStatusEffectDispatcher
             OrderStatus::Baking->value => ['sendEmail', 'deductIngredients', 'dispatchWebhook'],
             OrderStatus::Ready->value => ['sendEmail', 'dispatchWebhook'],
             OrderStatus::Delivered->value => ['sendEmail', 'awardLoyaltyPoints', 'dispatchWebhook'],
-            OrderStatus::Cancelled->value => ['sendEmail', 'dispatchWebhook'],
+            OrderStatus::Cancelled->value => ['sendEmail', 'reverseDiscounts', 'dispatchWebhook'],
         ];
     }
 
@@ -86,6 +92,11 @@ class OrderStatusEffectDispatcher
     private function awardLoyaltyPoints(Order $order, OrderStatus $from, OrderStatus $to): void
     {
         $this->loyaltyLedger->creditOrder($order);
+    }
+
+    private function reverseDiscounts(Order $order, OrderStatus $from, OrderStatus $to): void
+    {
+        ($this->reverseOrderDiscounts)($order, "Order cancelled (was {$from->value})");
     }
 
     private function dispatchWebhook(Order $order, OrderStatus $from, OrderStatus $to): void
