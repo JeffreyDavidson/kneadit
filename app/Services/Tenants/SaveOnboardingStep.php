@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Tenant;
+namespace App\Services\Tenants;
 
 use App\Models\Inventory\Product;
 use Illuminate\Support\Str;

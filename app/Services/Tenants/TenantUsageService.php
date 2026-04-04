@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Tenant;
+namespace App\Services\Tenants;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;

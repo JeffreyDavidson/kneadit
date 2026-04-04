@@ -2,7 +2,7 @@
 
 use App\Models\Customers\Customer;
 use App\Models\Financial\Coupon;
-use App\Services\Customer\BirthdayService;
+use App\Services\Customers\BirthdayService;
 use Illuminate\Support\Facades\Date;
 
 beforeEach(fn () => setUpTenantTest());

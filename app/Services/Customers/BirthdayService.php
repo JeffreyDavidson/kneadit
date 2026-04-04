@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Customer;
+namespace App\Services\Customers;
 
 use App\Enums\Financial\CouponType;
 use App\Models\Customers\Customer;

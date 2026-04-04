@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Customers\Tables;
 
 use App\Models\Customers\Customer;
-use App\Services\Customer\BirthdayCalculator;
-use App\Services\Customer\CustomerIntelligence;
+use App\Services\Customers\BirthdayCalculator;
+use App\Services\Customers\CustomerIntelligence;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

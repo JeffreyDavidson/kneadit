@@ -5,7 +5,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
-use App\Services\Customer\CustomerIntelligence;
+use App\Services\Customers\CustomerIntelligence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 

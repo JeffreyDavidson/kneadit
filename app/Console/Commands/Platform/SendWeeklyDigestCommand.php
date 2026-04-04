@@ -7,7 +7,7 @@ use App\Events\Platform\WeeklyDigestRequested;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Reporting\WeeklyDigestDataCollector;
-use App\Services\Tenant\TenancyManager;
+use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 

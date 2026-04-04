@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Platform\Tenant;
-use App\Services\Tenant\TenancyManager;
+use App\Services\Tenants\TenancyManager;
 use Stancl\Tenancy\Tenancy;
 
 beforeEach(function () {

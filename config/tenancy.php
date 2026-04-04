@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Services\Tenant\TenantSQLiteDatabaseManager;
+use App\Services\Tenants\TenantSQLiteDatabaseManager;
 use Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper;
 use Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper;
