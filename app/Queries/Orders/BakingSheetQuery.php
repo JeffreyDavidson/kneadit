@@ -13,8 +13,8 @@ class BakingSheetQuery
     public static function forDate(string $date): Collection
     {
         $groupConcat = DB::getDriverName() === 'sqlite'
-            ? "group_concat(customers.name, ', ')"
-            : "GROUP_CONCAT(customers.name SEPARATOR ', ')";
+            ? DB::raw("group_concat(customers.name, ', ') as customer_names")
+            : DB::raw("GROUP_CONCAT(customers.name SEPARATOR ', ') as customer_names");
 
         return OrderItem::query()
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
@@ -25,7 +25,7 @@ class BakingSheetQuery
             ->select([
                 'products.name as product_name',
                 DB::raw('SUM(order_items.quantity) as total_quantity'),
-                DB::raw("{$groupConcat} as customer_names"),
+                $groupConcat,
             ])
             ->groupBy('products.id', 'products.name')
             ->orderBy('products.name')

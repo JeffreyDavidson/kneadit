@@ -85,6 +85,7 @@ class SocialPostForm
                         FileUpload::make('image_path')
                             ->label('Image')
                             ->image()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->maxSize(5120)
                             ->directory('social-posts')
                             ->nullable(),

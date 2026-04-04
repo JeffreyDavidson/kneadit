@@ -288,6 +288,7 @@ class Onboarding extends Page
                                 FileUpload::make('store_logo')
                                     ->label('Bakery Logo')
                                     ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->directory('logos')
                                     ->maxSize(2048)
                                     ->helperText('Upload your bakery logo (max 2MB). PNG or JPG recommended.')

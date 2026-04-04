@@ -252,7 +252,7 @@ class ExpenseSeeder extends Seeder
 
         foreach ($expenses as $index => $expenseData) {
             // Spread expenses over the last 90 days
-            $daysAgo = rand(1, 90);
+            $daysAgo = random_int(1, 90);
             $date = Date::now()->subDays($daysAgo);
 
             Expense::query()->create([

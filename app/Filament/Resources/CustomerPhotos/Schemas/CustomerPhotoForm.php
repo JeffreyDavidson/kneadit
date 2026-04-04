@@ -37,6 +37,7 @@ class CustomerPhotoForm
                         FileUpload::make('photo_path')
                             ->label('Photo')
                             ->image()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->maxSize(5120)
                             ->directory('customer-photos')
                             ->disk('public')

@@ -82,7 +82,7 @@ class ReorderReminders extends Page
             ])
             ->where('orders.status', '!=', OrderStatus::Cancelled)
             ->groupBy('customers.email')
-            ->having(DB::raw('MAX(orders.delivery_date)'), '<=', $cutoff->toDateString())
+            ->havingRaw('MAX(orders.delivery_date) <= ?', [$cutoff->toDateString()])
             ->orderBy(DB::raw('MAX(orders.delivery_date)'), 'asc')
             ->get()
             ->map(function ($customer) {

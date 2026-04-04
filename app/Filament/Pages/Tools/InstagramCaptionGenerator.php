@@ -13,6 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
@@ -137,9 +138,9 @@ class InstagramCaptionGenerator extends Page
 
         // Generate 3 different caption variations
         for ($i = 0; $i < 3; $i++) {
-            $hook = $hooks[array_rand($hooks)];
+            $hook = Arr::random($hooks);
             $body = $this->generateCaptionBody($product, $style, $tone);
-            $selectedHashtags = $this->selectRandomHashtags($hashtags, rand(8, 15));
+            $selectedHashtags = $this->selectRandomHashtags($hashtags, random_int(8, 15));
 
             $captions[] = [
                 'text' => $hook . "\n\n" . $body . "\n\n" . implode(' ', $selectedHashtags),
@@ -257,8 +258,8 @@ class InstagramCaptionGenerator extends Page
             'weekend relaxation',
         ];
 
-        $template = $bodyTemplates[array_rand($bodyTemplates)];
-        $adjective = $toneWords[$tone][array_rand($toneWords[$tone])];
+        $template = Arr::random($bodyTemplates);
+        $adjective = Arr::random($toneWords[$tone]);
 
         return Str::replace([
             '{adjective}',
@@ -269,9 +270,9 @@ class InstagramCaptionGenerator extends Page
         ], [
             $adjective,
             Str::lower($product->name),
-            $ingredients[array_rand($ingredients)],
-            $callToActions[array_rand($callToActions)],
-            $occasions[array_rand($occasions)],
+            Arr::random($ingredients),
+            Arr::random($callToActions),
+            Arr::random($occasions),
         ], $template);
     }
 

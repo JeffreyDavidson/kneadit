@@ -141,11 +141,11 @@ class ReviewSeeder extends Seeder
             $email = $customerEmails[$index % count($customerEmails)];
 
             // Most reviews are approved, a few pending
-            $isApproved = rand(0, 100) < 85; // 85% approved
+            $isApproved = random_int(0, 100) < 85; // 85% approved
 
             // 2-3 featured reviews (only from 5-star reviews)
             $isFeatured = false;
-            if ($reviewData['rating'] == 5 && rand(0, 100) < 12) { // ~12% chance for 5-star reviews
+            if ($reviewData['rating'] == 5 && random_int(0, 100) < 12) { // ~12% chance for 5-star reviews
                 $isFeatured = true;
             }
 

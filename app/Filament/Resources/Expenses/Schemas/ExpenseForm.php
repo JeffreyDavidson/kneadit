@@ -45,6 +45,7 @@ class ExpenseForm
                         FileUpload::make('receipt_image')
                             ->label('Receipt Image')
                             ->image()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->directory('receipts')
                             ->maxSize(5120), // 5MB
 

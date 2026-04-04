@@ -509,7 +509,7 @@ class CentralSeeder extends Seeder
                         'tenant_id' => $tenant,
                         'feature' => $feature,
                         'usage_count' => $count,
-                        'last_used_at' => $now->copy()->subDays($d)->subHours(rand(1, 12))->toDateTimeString(),
+                        'last_used_at' => $now->copy()->subDays($d)->subHours(random_int(1, 12))->toDateTimeString(),
                         'date' => $date,
                         'created_at' => $now->copy()->subDays($d)->toDateTimeString(),
                     ];
