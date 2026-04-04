@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Pages;
 
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenancyManager;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -64,15 +65,14 @@ class OnboardingTracker extends Page
         ];
 
         try {
-            tenancy()->initialize($tenant);
-
-            $checks['has_products'] = DB::table('products')->count() > 0;
-            $checks['has_categories'] = DB::table('categories')->count() > 0;
-            $checks['has_orders'] = DB::table('orders')->count() > 0;
-
-            tenancy()->end();
-        } catch (\Throwable $e) {
-            tenancy()->end();
+            $tenantChecks = resolve(TenancyManager::class)->withinTenant($tenant, fn () => [
+                'has_products' => DB::table('products')->count() > 0,
+                'has_categories' => DB::table('categories')->count() > 0,
+                'has_orders' => DB::table('orders')->count() > 0,
+            ]);
+            $checks = array_merge($checks, $tenantChecks);
+        } catch (\Throwable) {
+            // Tenant database may not be accessible
         }
 
         return $checks;
