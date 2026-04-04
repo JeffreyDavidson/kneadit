@@ -5,10 +5,15 @@ namespace App\Actions\Stripe;
 use App\Actions\Orders\MarkOrderPaid;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
 
 class HandleConnectCheckoutCompleted
 {
+    public function __construct(
+        private TenancyManager $tenancyManager,
+    ) {}
+
     public function __invoke(mixed $session): void
     {
         $sessionId = data_get($session, 'id');
@@ -41,20 +46,17 @@ class HandleConnectCheckoutCompleted
         }
 
         try {
-            tenancy()->initialize($tenant);
-
-            $order = Order::query()->where('stripe_checkout_session_id', $sessionId)->first();
-            if ($order) {
-                app(MarkOrderPaid::class)($order);
-                Log::info('Order marked paid via webhook', [
-                    'order' => $order->order_number,
-                    'tenant' => $tenant->id,
-                ]);
-            }
-
-            tenancy()->end();
+            $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $tenant) {
+                $order = Order::query()->where('stripe_checkout_session_id', $sessionId)->first();
+                if ($order) {
+                    app(MarkOrderPaid::class)($order);
+                    Log::info('Order marked paid via webhook', [
+                        'order' => $order->order_number,
+                        'tenant' => $tenant->id,
+                    ]);
+                }
+            });
         } catch (\Exception $e) {
-            tenancy()->end();
             Log::warning('Error processing checkout session for tenant', [
                 'tenant' => $tenant->id,
                 'error' => $e->getMessage(),

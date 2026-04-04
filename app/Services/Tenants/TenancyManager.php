@@ -4,6 +4,7 @@ namespace App\Services\Tenants;
 
 use App\Models\Platform\Tenant;
 use App\Services\Settings\SettingsManager;
+use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use Illuminate\Support\Facades\Log;
 
@@ -27,6 +28,8 @@ class TenancyManager
             return $callback($tenant);
         } finally {
             tenancy()->end();
+            resolve(SettingsManager::class)->flushCache();
+            resolve(TenantSettingsRegistry::class)->flush();
         }
     }
 

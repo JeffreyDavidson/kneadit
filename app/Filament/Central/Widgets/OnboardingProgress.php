@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Widgets;
 
 use App\Models\Platform\Tenant;
+use App\Services\Tenants\TenancyManager;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\DB;
 
@@ -53,19 +54,22 @@ class OnboardingProgress extends Widget
         }
 
         try {
-            tenancy()->initialize($tenant);
-            if (DB::table('products')->count() > 0) {
-                $count++;
-            }
-            if (DB::table('categories')->count() > 0) {
-                $count++;
-            }
-            if (DB::table('orders')->count() > 0) {
-                $count++;
-            }
-            tenancy()->end();
-        } catch (\Throwable $e) {
-            tenancy()->end();
+            $count += resolve(TenancyManager::class)->withinTenant($tenant, function () {
+                $tenantCount = 0;
+                if (DB::table('products')->count() > 0) {
+                    $tenantCount++;
+                }
+                if (DB::table('categories')->count() > 0) {
+                    $tenantCount++;
+                }
+                if (DB::table('orders')->count() > 0) {
+                    $tenantCount++;
+                }
+
+                return $tenantCount;
+            });
+        } catch (\Throwable) {
+            // Tenant database may not be accessible
         }
 
         return $count;
