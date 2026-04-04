@@ -2,6 +2,7 @@
 
 namespace App\Services\Stripe;
 
+use App\Actions\Orders\MarkOrderPaid;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
@@ -124,9 +125,10 @@ class StripeCheckoutService
             }
 
             $order->update([
-                'payment_status' => PaymentStatus::Paid,
                 'stripe_payment_intent_id' => $session->payment_intent->id ?? $session->payment_intent,
             ]);
+
+            app(MarkOrderPaid::class)($order);
 
             Log::info('Order marked as paid via Stripe', ['order' => $order->order_number]);
 
