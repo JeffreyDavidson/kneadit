@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Filament\Support\AllowedFileTypes;
 use App\Models\Inventory\Category;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -73,7 +74,7 @@ class ProductForm
                                 FileUpload::make('path')
                                     ->label('Image')
                                     ->image()
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                                     ->maxSize(5120)
                                     ->directory('products')
                                     ->visibility('public')

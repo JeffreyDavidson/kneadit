@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Platform;
 
 use App\Enums\Staff\UserRole;
+use App\Filament\Support\AllowedFileTypes;
 use App\Models\Inventory\Category;
 use App\Services\Tenants\SaveOnboardingStep;
 use BackedEnum;
@@ -288,7 +289,7 @@ class Onboarding extends Page
                                 FileUpload::make('store_logo')
                                     ->label('Bakery Logo')
                                     ->image()
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                    ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                                     ->directory('logos')
                                     ->maxSize(2048)
                                     ->helperText('Upload your bakery logo (max 2MB). PNG or JPG recommended.')

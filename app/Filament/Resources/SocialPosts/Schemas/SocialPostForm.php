@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SocialPosts\Schemas;
 use App\Actions\Content\GenerateSocialCaption;
 use App\Enums\Marketing\SocialPlatform;
 use App\Enums\Marketing\SocialPostStatus;
+use App\Filament\Support\AllowedFileTypes;
 use App\Models\Inventory\Product;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -85,7 +86,7 @@ class SocialPostForm
                         FileUpload::make('image_path')
                             ->label('Image')
                             ->image()
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                             ->maxSize(5120)
                             ->directory('social-posts')
                             ->nullable(),
