@@ -98,7 +98,6 @@ class Order extends Model
         'subtotal',
         'delivery_fee',
         'discount_amount',
-        'gift_card_amount',
         'total',
         'paypal_invoice_id',
         'delivery_address',

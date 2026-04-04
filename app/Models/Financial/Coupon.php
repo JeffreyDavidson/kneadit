@@ -72,7 +72,7 @@ class Coupon extends Model
      */
     public function couponTransactions(): HasMany
     {
-        return $this->hasMany(CouponTransaction::class);
+        return $this->transactions();
     }
 
     /**

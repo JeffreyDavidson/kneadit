@@ -203,4 +203,5 @@ test('cancellation with no coupon or gift card does not fail', function () {
         ->dispatch($order, OrderStatus::Confirmed, OrderStatus::Cancelled);
 
     expect(CouponTransaction::query()->count())->toBe(0);
+    expect(GiftCardTransaction::query()->count())->toBe(0);
 });
