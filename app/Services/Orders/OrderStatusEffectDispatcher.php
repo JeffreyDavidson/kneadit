@@ -28,11 +28,14 @@ class OrderStatusEffectDispatcher
     {
         $effects = $this->effectMap()[$to->value] ?? [];
 
-        foreach ($effects as $method) {
+        foreach ($effects as $effect) {
+            $method = $effect['method'];
+            $critical = $effect['critical'] ?? false;
+
             try {
                 $this->{$method}($order, $from, $to);
             } catch (\Throwable $e) {
-                if ($method === 'reverseDiscounts') {
+                if ($critical) {
                     throw $e;
                 }
 
@@ -47,18 +50,39 @@ class OrderStatusEffectDispatcher
 
     /**
      * Declarative map: status => effects to run.
-     * Scan this to know exactly what every transition does.
      *
-     * @return array<string, array<int, string>>
+     * Each effect has a method name and an optional critical flag.
+     * Critical effects rethrow on failure, rolling back the status transition.
+     * Non-critical effects log a warning and continue.
+     *
+     * @return array<string, array<int, array{method: string, critical?: bool}>>
      */
     private function effectMap(): array
     {
         return [
-            OrderStatus::Confirmed->value => ['sendEmail', 'dispatchWebhook'],
-            OrderStatus::Baking->value => ['sendEmail', 'deductIngredients', 'dispatchWebhook'],
-            OrderStatus::Ready->value => ['sendEmail', 'dispatchWebhook'],
-            OrderStatus::Delivered->value => ['sendEmail', 'awardLoyaltyPoints', 'dispatchWebhook'],
-            OrderStatus::Cancelled->value => ['sendEmail', 'reverseDiscounts', 'dispatchWebhook'],
+            OrderStatus::Confirmed->value => [
+                ['method' => 'sendEmail'],
+                ['method' => 'dispatchWebhook'],
+            ],
+            OrderStatus::Baking->value => [
+                ['method' => 'sendEmail'],
+                ['method' => 'deductIngredients', 'critical' => true],
+                ['method' => 'dispatchWebhook'],
+            ],
+            OrderStatus::Ready->value => [
+                ['method' => 'sendEmail'],
+                ['method' => 'dispatchWebhook'],
+            ],
+            OrderStatus::Delivered->value => [
+                ['method' => 'sendEmail'],
+                ['method' => 'awardLoyaltyPoints'],
+                ['method' => 'dispatchWebhook'],
+            ],
+            OrderStatus::Cancelled->value => [
+                ['method' => 'sendEmail'],
+                ['method' => 'reverseDiscounts', 'critical' => true],
+                ['method' => 'dispatchWebhook'],
+            ],
         ];
     }
 
