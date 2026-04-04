@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\GalleryPhotos\Schemas;
 
 use App\Enums\Content\GalleryCategory;
+use App\Filament\Support\AllowedFileTypes;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -44,7 +45,7 @@ class GalleryPhotoForm
                         FileUpload::make('image_path')
                             ->label('Photo')
                             ->image()
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                             ->maxSize(5120)
                             ->required()
                             ->disk('public')

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BlogPosts\Schemas;
 
+use App\Filament\Support\AllowedFileTypes;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -40,7 +41,7 @@ class BlogPostForm
 
             FileUpload::make('featured_image')
                 ->image()
-                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                 ->maxSize(5120)
                 ->directory('blog-images')
                 ->disk('public'),

@@ -159,10 +159,13 @@
             $announcementEnabled = $settings->announcementEnabled ? '1' : '0';
             $announcementText = $settings->announcementText;
             $announcementType = $settings->announcementType;
+            $announcementDismissKey = $announcementText
+                ? 'announcement_dismissed_' . hash('xxh128', $announcementText)
+                : null;
         @endphp
 
-        @if ($announcementEnabled === '1' && $announcementText)
-        <div x-data="{ show: !localStorage.getItem('announcement_dismissed_{{ hash('xxh128', $announcementText) }}') }"
+        @if ($announcementEnabled === '1' && $announcementDismissKey)
+        <div x-data="{ show: !localStorage.getItem('{{ $announcementDismissKey }}') }"
              x-show="show"
              x-transition
              class="relative px-4 py-3 text-center text-sm font-medium"
@@ -179,7 +182,7 @@
                 @endif
              ">
             <span>{{ $announcementText }}</span>
-            <button @click="show = false; localStorage.setItem('announcement_dismissed_{{ hash('xxh128', $announcementText) }}', '1')"
+            <button @click="show = false; localStorage.setItem('{{ $announcementDismissKey }}', '1')"
                     class="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 text-lg leading-none"
                     aria-label="Dismiss">&times;</button>
         </div>

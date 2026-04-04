@@ -15,6 +15,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-go@v5
         with:
@@ -23,9 +25,22 @@ jobs:
       - name: Install Ward
         run: go install github.com/eljakani/ward@latest
 
+      # Generate baseline from the base branch so only NEW findings fail the build
+      - name: Generate baseline from base branch
+        if: github.event_name == 'pull_request'
+        run: |
+          git checkout ${{ github.event.pull_request.base.sha }}
+          ward init
+          ward scan . --update-baseline /tmp/ward-baseline.json || true
+          git checkout ${{ github.sha }}
+
       - name: Initialize Ward
         run: ward init
 
-      - name: Run security scan
-        continue-on-error: true
-        run: ward scan . --output sarif --fail-on critical
+      - name: Run security scan (PR)
+        if: github.event_name == 'pull_request'
+        run: ward scan . --fail-on high --baseline /tmp/ward-baseline.json
+
+      - name: Run security scan (push/schedule)
+        if: github.event_name != 'pull_request'
+        run: ward scan . --fail-on critical
