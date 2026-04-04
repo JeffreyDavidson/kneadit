@@ -7,6 +7,7 @@ use App\Enums\Financial\GiftCardTransactionType;
 use App\Models\Financial\CouponTransaction;
 use App\Models\Financial\GiftCardTransaction;
 use App\Models\Orders\Order;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 
 class ReverseOrderDiscounts
@@ -25,24 +26,21 @@ class ReverseOrderDiscounts
             return;
         }
 
-        $alreadyReversed = CouponTransaction::query()
-            ->where('order_id', $order->id)
-            ->where('type', CouponTransactionType::Reversal)
-            ->exists();
-
-        if ($alreadyReversed) {
+        try {
+            CouponTransaction::query()->create([
+                'coupon_id' => $order->coupon_id,
+                'order_id' => $order->id,
+                'amount' => -$order->discount_amount,
+                'type' => CouponTransactionType::Reversal,
+                'notes' => $reason,
+                'created_at' => now(),
+            ]);
+        } catch (UniqueConstraintViolationException) {
             return;
         }
 
-        $order->coupon?->decrement('used_count');
-
-        CouponTransaction::query()->create([
-            'coupon_id' => $order->coupon_id,
-            'order_id' => $order->id,
-            'amount' => -$order->discount_amount,
-            'type' => CouponTransactionType::Reversal,
-            'notes' => $reason,
-            'created_at' => now(),
+        $order->coupon?->update([
+            'used_count' => max(0, $order->coupon->used_count - 1),
         ]);
     }
 
@@ -52,24 +50,19 @@ class ReverseOrderDiscounts
             return;
         }
 
-        $alreadyReversed = GiftCardTransaction::query()
-            ->where('order_id', $order->id)
-            ->where('type', GiftCardTransactionType::Refund)
-            ->exists();
-
-        if ($alreadyReversed) {
+        try {
+            GiftCardTransaction::query()->create([
+                'gift_card_id' => $order->gift_card_id,
+                'order_id' => $order->id,
+                'amount' => $order->gift_card_amount,
+                'type' => GiftCardTransactionType::Refund,
+                'notes' => $reason,
+                'created_at' => now(),
+            ]);
+        } catch (UniqueConstraintViolationException) {
             return;
         }
 
         $order->giftCard?->increment('current_balance', $order->gift_card_amount);
-
-        GiftCardTransaction::query()->create([
-            'gift_card_id' => $order->gift_card_id,
-            'order_id' => $order->id,
-            'amount' => $order->gift_card_amount,
-            'type' => GiftCardTransactionType::Refund,
-            'notes' => $reason,
-            'created_at' => now(),
-        ]);
     }
 }

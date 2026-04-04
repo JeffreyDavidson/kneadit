@@ -32,6 +32,10 @@ class OrderStatusEffectDispatcher
             try {
                 $this->{$method}($order, $from, $to);
             } catch (\Throwable $e) {
+                if ($method === 'reverseDiscounts') {
+                    throw $e;
+                }
+
                 Log::warning("Order effect [{$method}] failed", [
                     'order' => $order->order_number,
                     'transition' => "{$from->value} -> {$to->value}",
