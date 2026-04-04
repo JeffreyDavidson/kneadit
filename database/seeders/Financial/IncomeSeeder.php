@@ -110,7 +110,7 @@ class IncomeSeeder extends Seeder
 
         foreach ($incomes as $index => $incomeData) {
             // Spread incomes over the last 60 days, with some concentration on weekends for farmers markets
-            $daysAgo = rand(1, 60);
+            $daysAgo = random_int(1, 60);
             $date = Date::now()->subDays($daysAgo);
 
             // If it's a farmers market income, try to put it on a weekend

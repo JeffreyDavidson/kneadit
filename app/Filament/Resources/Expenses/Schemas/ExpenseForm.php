@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Expenses\Schemas;
 
 use App\Enums\Financial\ExpenseCategory;
+use App\Filament\Support\AllowedFileTypes;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -45,6 +46,7 @@ class ExpenseForm
                         FileUpload::make('receipt_image')
                             ->label('Receipt Image')
                             ->image()
+                            ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                             ->directory('receipts')
                             ->maxSize(5120), // 5MB
 

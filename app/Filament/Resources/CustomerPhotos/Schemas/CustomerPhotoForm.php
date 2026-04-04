@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CustomerPhotos\Schemas;
 
+use App\Filament\Support\AllowedFileTypes;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -37,6 +38,7 @@ class CustomerPhotoForm
                         FileUpload::make('photo_path')
                             ->label('Photo')
                             ->image()
+                            ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                             ->maxSize(5120)
                             ->directory('customer-photos')
                             ->disk('public')
