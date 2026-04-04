@@ -75,13 +75,15 @@ class ViewOrder extends ViewRecord
 
                 Section::make('Financial Summary')
                     ->schema([
-                        Grid::make(4)
+                        Grid::make(5)
                             ->schema([
                                 TextEntry::make('subtotal')
                                     ->money('USD'),
                                 TextEntry::make('delivery_fee')
                                     ->money('USD'),
                                 TextEntry::make('discount_amount')
+                                    ->money('USD'),
+                                TextEntry::make('gift_card_amount')
                                     ->money('USD'),
                                 TextEntry::make('total')
                                     ->money('USD')

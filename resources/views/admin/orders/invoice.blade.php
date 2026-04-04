@@ -132,6 +132,12 @@
                         <td class="text-right">-${{ number_format($order->discount_amount, 2) }}</td>
                     </tr>
                 @endif
+                @if ($order->gift_card_amount > 0)
+                    <tr style="color: #059669;">
+                        <td><strong>Gift Card:</strong></td>
+                        <td class="text-right">-${{ number_format($order->gift_card_amount, 2) }}</td>
+                    </tr>
+                @endif
                 <tr>
                     <td><strong>TOTAL:</strong></td>
                     <td class="text-right"><strong>${{ number_format($order->total, 2) }}</strong></td>
