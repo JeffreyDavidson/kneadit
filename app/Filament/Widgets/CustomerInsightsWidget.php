@@ -20,7 +20,9 @@ class CustomerInsightsWidget extends Widget
 
     public function getNewCustomersThisWeek(): int
     {
-        return Cache::flexible('customer_insights_new_' . (tenant()?->getTenantKey() ?? 'none'), [900, 1800], function (): int {
+        $weekKey = Date::now()->startOfWeek()->format('Y-W');
+
+        return Cache::flexible("customer_insights_new_{$weekKey}_" . (tenant()?->getTenantKey() ?? 'none'), [900, 1800], function (): int {
             return Customer::query()->where('created_at', '>=', Date::now()->startOfWeek())->count();
         });
     }
@@ -42,7 +44,9 @@ class CustomerInsightsWidget extends Widget
     /** @return array<string, mixed> */
     public function getAvgOrderValue(): array
     {
-        return Cache::flexible('customer_insights_aov_' . (tenant()?->getTenantKey() ?? 'none'), [900, 1800], function (): array {
+        $monthKey = now()->format('Y-m');
+
+        return Cache::flexible("customer_insights_aov_{$monthKey}_" . (tenant()?->getTenantKey() ?? 'none'), [900, 1800], function (): array {
             $thisMonth = (float) Order::query()->active()
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
