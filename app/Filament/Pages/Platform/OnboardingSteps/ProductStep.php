@@ -24,6 +24,18 @@ final class ProductStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
+        $productId = settings('onboarding_product_id');
+        $product = $productId ? Product::query()->find($productId) : null;
+
+        if ($product) {
+            return [
+                'name' => $product->name,
+                'description' => $product->description ?? '',
+                'price' => (string) $product->price,
+                'category_id' => (string) $product->category_id,
+            ];
+        }
+
         return [
             'name' => '',
             'description' => '',
@@ -88,14 +100,20 @@ final class ProductStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        $slug = Str::slug($data['name']);
+        $existingId = settings('onboarding_product_id');
 
-        Product::query()->updateOrCreate(['slug' => $slug], [
-            'name' => $data['name'],
-            'description' => $data['description'],
-            'price' => $data['price'],
-            'category_id' => $data['category_id'],
-            'is_active' => true,
-        ]);
+        $product = Product::query()->updateOrCreate(
+            $existingId ? ['id' => $existingId] : ['slug' => Str::slug($data['name'])],
+            [
+                'name' => $data['name'],
+                'slug' => Str::slug($data['name']),
+                'description' => $data['description'],
+                'price' => $data['price'],
+                'category_id' => $data['category_id'],
+                'is_active' => true,
+            ],
+        );
+
+        settings(['onboarding_product_id' => $product->id]);
     }
 }

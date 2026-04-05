@@ -24,14 +24,14 @@ final class DeliveryStep extends OnboardingStep
     public static function defaults(TenantSettings $settings): array
     {
         return [
-            'delivery_enabled' => false,
-            'delivery_radius' => '',
-            'delivery_fee' => '',
-            'free_delivery_over' => false,
-            'free_delivery_threshold' => '',
-            'delivery_minimum_order' => '',
-            'pickup_enabled' => true,
-            'pickup_instructions' => '',
+            'delivery_enabled' => settings('delivery_enabled', '0') === '1',
+            'delivery_radius' => settings('delivery_radius', ''),
+            'delivery_fee' => settings('delivery_fee', ''),
+            'free_delivery_over' => (bool) settings('free_delivery_minimum'),
+            'free_delivery_threshold' => settings('free_delivery_minimum', ''),
+            'delivery_minimum_order' => settings('delivery_minimum_order', ''),
+            'pickup_enabled' => settings('pickup_enabled', '1') === '1',
+            'pickup_instructions' => settings('pickup_instructions', ''),
         ];
     }
 
@@ -108,7 +108,7 @@ final class DeliveryStep extends OnboardingStep
         settings(['delivery_enabled' => $data['delivery_enabled'] ? '1' : '0']);
         settings(['delivery_radius' => $data['delivery_radius']]);
         settings(['delivery_fee' => $data['delivery_fee']]);
-        settings(['free_delivery_threshold' => $data['free_delivery_over'] ? $data['free_delivery_threshold'] : null]);
+        settings(['free_delivery_minimum' => $data['free_delivery_over'] ? $data['free_delivery_threshold'] : null]);
         settings(['delivery_minimum_order' => $data['delivery_minimum_order']]);
         settings(['pickup_enabled' => $data['pickup_enabled'] ? '1' : '0']);
         settings(['pickup_instructions' => $data['pickup_instructions']]);

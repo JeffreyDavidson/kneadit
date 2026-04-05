@@ -59,8 +59,10 @@ final class ContactStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        settings(['store_email' => $data['email']]);
-        settings(['store_phone' => $data['phone']]);
-        settings(['store_address' => $data['address']]);
+        settings([
+            'store_email' => $data['email'],
+            'store_phone' => $data['phone'] ?? '',
+            'store_address' => $data['address'] ?? '',
+        ]);
     }
 }

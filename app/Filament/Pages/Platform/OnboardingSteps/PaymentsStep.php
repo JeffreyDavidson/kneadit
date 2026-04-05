@@ -22,11 +22,13 @@ final class PaymentsStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
+        $methods = settings('payment_methods');
+
         return [
-            'payment_methods' => ['cash'],
-            'paypal_client_id' => '',
-            'paypal_client_secret' => '',
-            'paypal_sandbox' => true,
+            'payment_methods' => $methods ? json_decode($methods, true) : ['cash'],
+            'paypal_client_id' => settings('paypal_client_id', ''),
+            'paypal_client_secret' => settings('paypal_client_secret', ''),
+            'paypal_sandbox' => settings('paypal_sandbox', '1') === '1',
         ];
     }
 
@@ -102,17 +104,6 @@ final class PaymentsStep extends OnboardingStep
             settings(['paypal_client_id' => $data['paypal_client_id']]);
             settings(['paypal_client_secret' => $data['paypal_client_secret']]);
             settings(['paypal_sandbox' => $data['paypal_sandbox'] ? '1' : '0']);
-
-            $tenant = tenant();
-            if ($tenant) {
-                if ($data['paypal_client_id']) {
-                    $tenant->paypal_client_id = $data['paypal_client_id'];
-                }
-                if ($data['paypal_client_secret']) {
-                    $tenant->paypal_client_secret = $data['paypal_client_secret'];
-                }
-                $tenant->save();
-            }
         }
     }
 }

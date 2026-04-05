@@ -221,7 +221,7 @@ test('delivery step saves all delivery settings', function () {
     expect(settings('delivery_enabled'))->toBe('1')
         ->and(settings('delivery_radius'))->toBe('15')
         ->and(settings('delivery_fee'))->toBe('5.00')
-        ->and(settings('free_delivery_threshold'))->toBe('50.00')
+        ->and(settings('free_delivery_minimum'))->toBe('50.00')
         ->and(settings('delivery_minimum_order'))->toBe('20.00')
         ->and(settings('pickup_enabled'))->toBe('1')
         ->and(settings('pickup_instructions'))->toBe('Ring the doorbell.');
@@ -256,7 +256,7 @@ test('free delivery threshold cleared when disabled', function () {
         'pickup_instructions' => '',
     ]);
 
-    expect(settings('free_delivery_threshold'))->toBeNull();
+    expect(settings('free_delivery_minimum'))->toBeNull();
 });
 
 test('payment step saves paypal credentials', function () {

@@ -23,11 +23,11 @@ final class ComplianceStep extends OnboardingStep
     public static function defaults(TenantSettings $settings): array
     {
         return [
-            'cottage_food_state' => '',
-            'revenue_cap' => '',
-            'license_number' => '',
+            'cottage_food_state' => settings('cottage_food_state', ''),
+            'revenue_cap' => settings('revenue_cap', ''),
+            'license_number' => settings('license_number', ''),
             'allergy_disclaimer' => settings('allergy_disclaimer', ''),
-            'acknowledged' => false,
+            'acknowledged' => settings('compliance_acknowledged', '0') === '1',
         ];
     }
 

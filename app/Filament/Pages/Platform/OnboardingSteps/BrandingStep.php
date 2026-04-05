@@ -22,11 +22,12 @@ final class BrandingStep extends OnboardingStep
     public static function defaults(TenantSettings $settings): array
     {
         $tenant = tenant();
+        $existingLogo = settings('store_logo') ?: $tenant?->store_logo;
 
         return [
             'color_primary' => $tenant?->brand_color_primary ?? '#6b4c3b',
             'color_secondary' => $tenant?->brand_color_secondary ?? '#d4a574',
-            'store_logo' => [],
+            'store_logo' => $existingLogo ? [$existingLogo] : [],
         ];
     }
 
@@ -74,10 +75,8 @@ final class BrandingStep extends OnboardingStep
                 ? collect($data['store_logo'])->first()
                 : null;
 
-            if ($logoPath) {
-                settings(['store_logo' => $logoPath]);
-                $tenant->store_logo = $logoPath;
-            }
+            settings(['store_logo' => $logoPath]);
+            $tenant->store_logo = $logoPath;
 
             $tenant->save();
         }
