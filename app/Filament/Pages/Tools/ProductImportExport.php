@@ -124,7 +124,7 @@ class ProductImportExport extends Page
                 ->schema([
                     FileUpload::make('csv_file')
                         ->label('CSV File')
-                        ->acceptedFileTypes(['text/csv', 'application/vnd.ms-excel', '.csv'])
+                        ->acceptedFileTypes(['text/csv', 'application/vnd.ms-excel'])
                         ->maxSize(5120)
                         ->directory('csv-imports')
                         ->visibility('private'),
