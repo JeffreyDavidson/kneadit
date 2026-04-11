@@ -220,6 +220,33 @@ function createCentralTables(): void
             $table->string('author')->nullable();
             $table->timestamps();
         },
+        'email_campaign_logs' => function ($table) {
+            $table->id();
+            $table->foreignId('campaign_id');
+            $table->string('tenant_id');
+            $table->string('email');
+            $table->string('status')->default('sent');
+            $table->timestamp('sent_at')->nullable();
+            $table->timestamp('opened_at')->nullable();
+            $table->timestamps();
+        },
+        'checkin_logs' => function ($table) {
+            $table->id();
+            $table->foreignId('checkin_id');
+            $table->string('tenant_id');
+            $table->timestamp('sent_at')->nullable();
+            $table->timestamps();
+        },
+        'referrals' => function ($table) {
+            $table->id();
+            $table->string('referrer_tenant_id');
+            $table->string('referred_tenant_id')->nullable();
+            $table->string('referral_code')->unique();
+            $table->string('referred_email')->nullable();
+            $table->string('status')->default('pending');
+            $table->integer('reward_months')->default(1);
+            $table->timestamps();
+        },
     ];
 
     foreach ($tables as $name => $callback) {
