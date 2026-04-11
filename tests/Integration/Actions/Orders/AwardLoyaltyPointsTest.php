@@ -76,3 +76,14 @@ test('floors fractional points', function () {
 
     expect(LoyaltyPoint::query()->first()->points)->toBe(30);
 });
+
+test('does not award points when order has no customer_id', function () {
+    settings(['loyalty_enabled' => '1']);
+    settings(['loyalty_points_per_dollar' => '10']);
+
+    $order = Order::factory()->make(['customer_id' => null, 'total' => 50.00]);
+
+    app(AwardLoyaltyPoints::class)($order);
+
+    expect(LoyaltyPoint::query()->count())->toBe(0);
+});

@@ -5,6 +5,7 @@ use App\Listeners\Orders\DispatchOrderCreatedWebhookListener;
 use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 uses(RefreshDatabase::class);
 
@@ -31,4 +32,31 @@ test('it dispatches order.created webhook with order data', function () {
             && $body['event'] === 'order.created'
             && $body['data']['order_number'] === $order->order_number;
     });
+});
+
+test('it does not dispatch webhook when no webhook url is configured', function () {
+    Http::fake();
+
+    settings(['webhook_url' => '']);
+
+    $order = Order::factory()->create();
+    $event = new OrderCreated($order);
+
+    $listener = new DispatchOrderCreatedWebhookListener;
+    $listener->handle($event);
+
+    Http::assertNothingSent();
+});
+
+test('failed method logs a warning with order number and error message', function () {
+    Log::shouldReceive('warning')
+        ->once()
+        ->with('Order created webhook dispatch failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-001'
+            && $context['error'] === 'Connection refused'));
+
+    $order = Order::factory()->create(['order_number' => 'ORD-001']);
+    $event = new OrderCreated($order);
+
+    $listener = new DispatchOrderCreatedWebhookListener;
+    $listener->failed($event, new RuntimeException('Connection refused'));
 });

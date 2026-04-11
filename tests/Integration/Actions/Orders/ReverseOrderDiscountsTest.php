@@ -139,3 +139,31 @@ test('is idempotent when called twice', function () {
         ->where('type', CouponTransactionType::Reversal)
         ->count())->toBe(1);
 });
+
+test('gift card reversal is idempotent when called twice', function () {
+    $giftCard = GiftCard::factory()->create([
+        'initial_balance' => 50.00,
+        'current_balance' => 30.00,
+    ]);
+    $order = Order::factory()
+        ->recycle(test()->user)
+        ->create([
+            'gift_card_id' => $giftCard->id,
+            'gift_card_amount' => 20.00,
+        ]);
+
+    GiftCardTransaction::factory()->redemption()->create([
+        'gift_card_id' => $giftCard->id,
+        'order_id' => $order->id,
+        'amount' => -20.00,
+    ]);
+
+    app(ReverseOrderDiscounts::class)($order, 'Order cancelled');
+    app(ReverseOrderDiscounts::class)($order, 'Order cancelled');
+
+    expect($giftCard->refresh()->current_balance)->toBe('50.00');
+    expect(GiftCardTransaction::query()
+        ->where('order_id', $order->id)
+        ->where('type', GiftCardTransactionType::Refund)
+        ->count())->toBe(1);
+});

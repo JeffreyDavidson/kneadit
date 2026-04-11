@@ -32,3 +32,14 @@ it('completes a pending referral for a tenant', function () {
 
     expect($referral->status)->toBe(ReferralStatus::Completed)->and($referral->referred_tenant_id)->toBe('new-bakery')->and($referral->referred_email)->toBe('baker@test.com');
 });
+
+it('does nothing when referral code is not found', function () {
+    $action = new CompleteReferral;
+    $action(
+        referralCode: 'NONEXISTENT',
+        tenantId: 'some-bakery',
+        email: 'test@test.com',
+    );
+
+    expect(Referral::query()->where('referral_code', 'NONEXISTENT')->exists())->toBeFalse();
+});

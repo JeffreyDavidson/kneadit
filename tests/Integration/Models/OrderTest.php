@@ -2,6 +2,13 @@
 
 use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
+use App\Models\Engagement\LoyaltyPoint;
+use App\Models\Engagement\Review;
+use App\Models\Engagement\SurveyResponse;
+use App\Models\Financial\Coupon;
+use App\Models\Financial\CouponTransaction;
+use App\Models\Financial\GiftCard;
+use App\Models\Financial\GiftCardTransaction;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
@@ -103,4 +110,79 @@ test('order item total price attribute', function () {
     ]);
 
     expect($item->total_price)->toBe(15.00);
+});
+
+test('order has loyalty points relationship', function () {
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+
+    LoyaltyPoint::factory()->create([
+        'customer_id' => $this->customer->id,
+        'order_id' => $order->id,
+    ]);
+
+    expect($order->loyaltyPoints)->toHaveCount(1);
+});
+
+test('order has reviews relationship', function () {
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+
+    Review::factory()->create(['order_id' => $order->id]);
+
+    expect($order->reviews)->toHaveCount(1);
+});
+
+test('order has survey responses relationship', function () {
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+
+    SurveyResponse::factory()->create(['order_id' => $order->id]);
+
+    expect($order->surveyResponses)->toHaveCount(1);
+});
+
+test('order has coupon transactions relationship', function () {
+    $coupon = Coupon::factory()->create();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+        'coupon_id' => $coupon->id,
+    ]);
+
+    CouponTransaction::factory()->create([
+        'coupon_id' => $coupon->id,
+        'order_id' => $order->id,
+    ]);
+
+    expect($order->couponTransactions)->toHaveCount(1);
+});
+
+test('order has gift card transactions relationship', function () {
+    $giftCard = GiftCard::factory()->create();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+        'gift_card_id' => $giftCard->id,
+    ]);
+
+    GiftCardTransaction::factory()->create([
+        'gift_card_id' => $giftCard->id,
+        'order_id' => $order->id,
+    ]);
+
+    expect($order->giftCardTransactions)->toHaveCount(1);
+});
+
+test('order belongs to coupon', function () {
+    $coupon = Coupon::factory()->create();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+        'coupon_id' => $coupon->id,
+    ]);
+
+    expect($order->coupon)->toBeInstanceOf(Coupon::class)
+        ->and($order->coupon->id)->toBe($coupon->id);
+});
+
+test('order belongs to gift card', function () {
+    $giftCard = GiftCard::factory()->create();
+    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+        'gift_card_id' => $giftCard->id,
+    ]);
+
+    expect($order->giftCard)->toBeInstanceOf(GiftCard::class)
+        ->and($order->giftCard->id)->toBe($giftCard->id);
 });

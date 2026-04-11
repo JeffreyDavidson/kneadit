@@ -15,6 +15,12 @@ beforeEach(function () {
     Mail::fake();
 });
 
+test('returns empty collection for date with no orders', function () {
+    $items = BakingSheetQuery::forDate('2099-12-31');
+
+    expect($items)->toBeEmpty();
+});
+
 test('returns aggregated baking items for a given date', function () {
     $user = User::factory()->owner()->create();
     $customer = Customer::factory()->create();

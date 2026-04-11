@@ -5,6 +5,7 @@ use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
 use App\Mail\Platform\NewSubscriberNotificationMail;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
@@ -30,4 +31,20 @@ test('it sends notification email to the platform admin', function () {
     $listener->handle($event);
 
     Mail::assertQueued(NewSubscriberNotificationMail::class, fn (NewSubscriberNotificationMail $mail) => $mail->hasTo('admin@kneadit.com'));
+});
+
+test('failed method logs a warning with tenant id and error message', function () {
+    Log::shouldReceive('warning')
+        ->once()
+        ->with('Platform new tenant notification failed', Mockery::on(fn (array $context) => $context['tenant'] === 'janes-bakery'
+            && $context['error'] === 'SMTP timeout'));
+
+    $user = User::factory()->create();
+    createTenant(['id' => 'janes-bakery', 'store_name' => 'Jane\'s Bakery']);
+    $tenant = Tenant::find('janes-bakery');
+
+    $event = new TenantOnboarded($user, $tenant, 'https://janes-bakery.kneadit.test/admin');
+
+    $listener = new NotifyPlatformOfNewTenantListener;
+    $listener->failed($event, new RuntimeException('SMTP timeout'));
 });

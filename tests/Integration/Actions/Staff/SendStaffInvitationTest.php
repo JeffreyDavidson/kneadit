@@ -29,3 +29,34 @@ it('creates an invitation and sends the email', function () {
 
     Mail::assertQueued(StaffInvitationMail::class);
 });
+
+it('throws when user is already a team member', function () {
+    User::factory()->create(['email' => 'existing@test.com']);
+
+    $inviter = User::factory()->owner()->create();
+
+    $action = resolve(SendStaffInvitation::class);
+    $action(
+        email: 'existing@test.com',
+        role: UserRole::Staff,
+        invitedBy: $inviter->id,
+    );
+})->throws(App\Exceptions\Staff\StaffInvitationException::class, 'already a team member');
+
+it('throws when a pending invitation already exists', function () {
+    $inviter = User::factory()->owner()->create();
+
+    StaffInvitation::factory()->create([
+        'email' => 'pending@test.com',
+        'expires_at' => now()->addDays(7),
+        'accepted_at' => null,
+        'invited_by' => $inviter->id,
+    ]);
+
+    $action = resolve(SendStaffInvitation::class);
+    $action(
+        email: 'pending@test.com',
+        role: UserRole::Staff,
+        invitedBy: $inviter->id,
+    );
+})->throws(App\Exceptions\Staff\StaffInvitationException::class, 'already pending');
