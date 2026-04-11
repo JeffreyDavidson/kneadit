@@ -44,33 +44,33 @@ These are write operations and domain services with zero tests. Highest risk.
 ## Tier 2: Data Layer — Models, Builders, Queries (low coverage)
 
 ### Builders (< 50% coverage)
-- [ ] `Builders/Inventory/ProductQueryBuilder` — 25.0%
-- [ ] `Builders/Content/BlogPostQueryBuilder` — 43.8%
-- [ ] `Builders/Orders/OrderQueryBuilder` — 43.8%
-- [ ] `Builders/Financial/ExpenseQueryBuilder` — 44.4%
-- [ ] `Builders/Financial/IncomeQueryBuilder` — 50.0%
-- [ ] `Builders/Customers/ReviewQueryBuilder` — 57.1%
+- [x] `Builders/Inventory/ProductQueryBuilder` — 25.0%
+- [x] `Builders/Content/BlogPostQueryBuilder` — 43.8%
+- [x] `Builders/Orders/OrderQueryBuilder` — 43.8%
+- [x] `Builders/Financial/ExpenseQueryBuilder` — 44.4%
+- [x] `Builders/Financial/IncomeQueryBuilder` — 50.0%
+- [x] `Builders/Customers/ReviewQueryBuilder` — 57.1%
 
 ### Queries (< 100%)
 - [ ] `Queries/Financial/ProductSalesQuery` — 50.0% (topByQuantity untested)
 - [ ] `Queries/Financial/RevenueQuery` — 75.0% (orderCount untested)
 
 ### Models (0% coverage)
-- [ ] `Models/Engagement/EmailCampaignLog` — 0%
-- [ ] `Models/Operations/CheckinLog` — 0%
-- [ ] `Models/Platform/PlatformSetting` — 0%
+- [x] `Models/Engagement/EmailCampaignLog` — 0%
+- [x] `Models/Operations/CheckinLog` — 0%
+- [x] `Models/Platform/PlatformSetting` — 0%
 
 ### Models (< 70% coverage)
-- [ ] `Models/Content/BlogPost` — 50.0%
-- [ ] `Models/Staff/User` — 46.4%
-- [ ] `Models/Customers/CustomerFavorite` — 50.0%
-- [ ] `Models/Customers/TenantNote` — 50.0%
-- [ ] `Models/Operations/BusinessSchedule` — 66.7%
+- [x] `Models/Content/BlogPost` — 50.0%
+- [x] `Models/Staff/User` — 46.4%
+- [x] `Models/Customers/CustomerFavorite` — 50.0%
+- [x] `Models/Customers/TenantNote` — 50.0%
+- [x] `Models/Operations/BusinessSchedule` — 66.7%
 - [ ] `Models/Operations/ScheduledCheckin` — 66.7%
-- [ ] `Models/Customers/Referral` — 66.7%
-- [ ] `Models/Customers/CustomerNote` — 66.7%
-- [ ] `Models/Engagement/PageView` — 60.0%
-- [ ] `Models/Customers/WaitlistEntry` — 69.2%
+- [x] `Models/Customers/Referral` — 66.7%
+- [x] `Models/Customers/CustomerNote` — 66.7%
+- [x] `Models/Engagement/PageView` — 60.0%
+- [x] `Models/Customers/WaitlistEntry` — 69.2%
 - [ ] `Models/Orders/OrderMessage` — 75.0%
 
 ---
@@ -213,3 +213,7 @@ For each tier, work through items in this order:
 4. Move to the next item
 
 **Target:** Get Tiers 1-4 to 80%+ coverage. Tiers 5-6 can stay lower for now.
+
+## Review
+
+Model integration tests added for: EmailCampaignLog, CheckinLog, PlatformSetting, BlogPost (url/resolveRouteBinding/casts), User (canAccessPanel/tenants/hasAccess/currentPlan/hasPlan), CustomerFavorite (relationships/scopes), CustomerNote (createdBy), BusinessSchedule (casts/accessor), Referral (casts/relationships), PageView (relationship/casts/timestamps), WaitlistEntry (product/forDate/statusLabel/casts).

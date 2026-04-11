@@ -23,8 +23,8 @@ class ProductQueryBuilder extends Builder
         return $this->where(function (Builder $query) {
             $query->whereDoesntHave('seasonalItems')
                 ->orWhereHas('seasonalItems', fn (Builder $sq) => $sq
-                    ->where('start_date', '<=', now())
-                    ->where('end_date', '>=', now()));
+                    ->where('available_from', '<=', now())
+                    ->where('available_until', '>=', now()));
         });
     }
 }

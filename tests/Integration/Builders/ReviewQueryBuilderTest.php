@@ -21,6 +21,36 @@ test('approved scope returns only approved reviews', function () {
         ->and($results->first()->id)->toBe($approved->id);
 });
 
+test('featured scope returns only featured reviews', function () {
+    Review::factory()->recycle($this->product)->featured()->create();
+    Review::factory()->recycle($this->product)->approved()->create();
+    Review::factory()->recycle($this->product)->create();
+
+    $results = Review::query()->featured()->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->is_featured)->toBeTrue();
+});
+
+test('withProduct eager loads the product relationship', function () {
+    Review::factory()->recycle($this->product)->create();
+
+    $results = Review::query()->withProduct()->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->relationLoaded('product'))->toBeTrue();
+});
+
+test('withComments returns only reviews that have non-empty comments', function () {
+    Review::factory()->recycle($this->product)->create(['comment' => 'Great bread!']);
+    Review::factory()->recycle($this->product)->create(['comment' => null]);
+    Review::factory()->recycle($this->product)->create(['comment' => '']);
+
+    $results = Review::query()->withComments()->get();
+
+    expect($results)->toHaveCount(1);
+});
+
 test('forDisplay returns approved reviews with product', function () {
     $approved = Review::factory()->recycle($this->product)->approved()->create();
     Review::factory()->recycle($this->product)->create();
@@ -29,4 +59,24 @@ test('forDisplay returns approved reviews with product', function () {
 
     expect($results)->toHaveCount(1)
         ->and($results->first()->relationLoaded('product'))->toBeTrue();
+});
+
+test('statistics returns average rating and total count for approved reviews', function () {
+    Review::factory()->recycle($this->product)->approved()->create(['rating' => 5]);
+    Review::factory()->recycle($this->product)->approved()->create(['rating' => 3]);
+    Review::factory()->recycle($this->product)->create(['rating' => 1]);
+
+    $stats = Review::query()->statistics();
+
+    expect((float) $stats->avg_rating)->toBe(4.0)
+        ->and((int) $stats->total_count)->toBe(2);
+});
+
+test('statistics returns zero values when no approved reviews exist', function () {
+    Review::factory()->recycle($this->product)->create(['rating' => 5]);
+
+    $stats = Review::query()->statistics();
+
+    expect((float) $stats->avg_rating)->toBe(0.0)
+        ->and((int) $stats->total_count)->toBe(0);
 });
