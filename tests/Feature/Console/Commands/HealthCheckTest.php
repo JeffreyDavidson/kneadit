@@ -1,6 +1,8 @@
 <?php
 
+use App\Events\Platform\HealthCheckFailed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 
 uses(RefreshDatabase::class);
@@ -71,4 +73,60 @@ test('health check detects homepage failure', function () {
 
     $this->artisan('health:check')
         ->assertFailed();
+});
+
+test('health check dispatches event on failure', function () {
+    Event::fake([HealthCheckFailed::class]);
+
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response('Server Error', 500)]);
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('alert dispatched')
+        ->assertFailed();
+
+    Event::assertDispatched(HealthCheckFailed::class, function ($event) {
+        return str_contains($event->message, 'Health Check Alert');
+    });
+});
+
+test('health check detects homepage connection failure', function () {
+    Http::preventStrayRequests();
+    Http::fake(['*' => fn () => throw new Illuminate\Http\Client\ConnectionException('Connection refused')]);
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Homepage unreachable')
+        ->assertFailed();
+});
+
+test('health check reports all passing checks', function () {
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response('OK', 200)]);
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('All health checks passed')
+        ->assertSuccessful();
+});
+
+test('health check detects non-writable storage logs', function () {
+    Event::fake([HealthCheckFailed::class]);
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response('OK', 200)]);
+
+    // Point storage to a non-existent directory
+    $nonExistentDir = sys_get_temp_dir() . '/kneadit_nonexistent_' . getmypid() . '_' . mt_rand();
+    $this->app->useStoragePath($nonExistentDir);
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Storage/logs')
+        ->assertFailed();
+});
+
+test('health check verifies tenant db directory', function () {
+    Http::preventStrayRequests();
+    Http::fake(['*' => Http::response('OK', 200)]);
+
+    $this->artisan('health:check')
+        ->expectsOutputToContain('Tenant DB directory')
+        ->assertSuccessful();
 });

@@ -160,16 +160,21 @@ These are write operations and domain services with zero tests. Highest risk.
 ## Tier 5: Console Commands
 
 ### Commands (0% coverage)
-- [ ] `Console/Commands/Stripe/CreateStripeProductsCommand` — 0%
-- [ ] `Console/Commands/Tenants/CreateDemoBakeriesCommand` — 0%
-- [ ] `Console/Commands/Tenants/CreateDemoTenantCommand` — 0%
-- [ ] `Console/Commands/Tenants/CreateOneTenantCommand` — 0%
+- [x] `Console/Commands/Stripe/CreateStripeProductsCommand` — 0% -> tested (5 tests)
+- [x] `Console/Commands/Tenants/CreateDemoBakeriesCommand` — 0% -> tested (6 tests)
+- [x] `Console/Commands/Tenants/CreateDemoTenantCommand` — 0% -> tested (4 tests)
+- [x] `Console/Commands/Tenants/CreateOneTenantCommand` — 0% -> tested (4 tests)
 
 ### Commands (< 50% coverage)
-- [ ] `Console/Commands/Stripe/CheckPayPalPaymentsCommand` — 4.7%
-- [ ] `Console/Commands/Platform/SendScheduledCheckinsCommand` — 13.8%
-- [ ] `Console/Commands/Platform/SendWeeklyDigestCommand` — 14.3%
-- [ ] `Console/Commands/Platform/CheckChurnAlertsCommand` — 50.8%
+- [x] `Console/Commands/Stripe/CheckPayPalPaymentsCommand` — 4.7% -> tested (6 tests)
+- [x] `Console/Commands/Platform/SendScheduledCheckinsCommand` — 13.8% -> tested (8 tests)
+- [x] `Console/Commands/Platform/SendWeeklyDigestCommand` — 14.3% -> tested (5 tests)
+- [x] `Console/Commands/Platform/CheckChurnAlertsCommand` — 50.8% -> tested (8 tests)
+
+### Commands (50-80% coverage)
+- [x] `Console/Commands/Platform/HealthCheckCommand` — 73.5% -> tested (11 tests)
+- [x] `Console/Commands/Operations/BackupDatabasesCommand` — 74.1% -> tested (10 tests)
+- [x] `Console/Commands/Platform/CheckTrialExpirationsCommand` — 78.0% -> tested (13 tests)
 
 ---
 
