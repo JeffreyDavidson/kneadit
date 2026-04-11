@@ -1,0 +1,51 @@
+<?php
+
+use App\Models\Orders\Order;
+use App\Services\Stripe\StripeCheckoutService;
+
+use function Pest\Laravel\withoutMiddleware;
+
+beforeEach(fn () => setUpTenantTest());
+
+test('redirects to order confirmation with success message', function () {
+    $order = Order::factory()->create();
+
+    $mock = Mockery::mock(StripeCheckoutService::class);
+    $mock->shouldReceive('handleCheckoutComplete')->never();
+    app()->instance(StripeCheckoutService::class, $mock);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get("/order/stripe/success/{$order->order_number}");
+
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Payment successful! Your order has been placed.');
+});
+
+test('calls handleCheckoutComplete when session_id is present', function () {
+    $order = Order::factory()->create();
+
+    $mock = Mockery::mock(StripeCheckoutService::class);
+    $mock->shouldReceive('handleCheckoutComplete')
+        ->once()
+        ->with('cs_test_123');
+    app()->instance(StripeCheckoutService::class, $mock);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get("/order/stripe/success/{$order->order_number}?session_id=cs_test_123");
+
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Payment successful! Your order has been placed.');
+});
+
+test('does not call handleCheckoutComplete when session_id is absent', function () {
+    $order = Order::factory()->create();
+
+    $mock = Mockery::mock(StripeCheckoutService::class);
+    $mock->shouldReceive('handleCheckoutComplete')->never();
+    app()->instance(StripeCheckoutService::class, $mock);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get("/order/stripe/success/{$order->order_number}");
+
+    $response->assertRedirect();
+});
