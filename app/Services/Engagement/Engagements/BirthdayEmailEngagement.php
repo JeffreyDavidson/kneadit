@@ -5,7 +5,7 @@ namespace App\Services\Engagement\Engagements;
 use App\Actions\Customers\CreateBirthdayCoupon;
 use App\Contracts\Engagement\CustomerEngagement;
 use App\Contracts\Engagement\EngagementRecipient;
-use App\Events\Customers\CustomerBirthdayDetected;
+use App\Events\Customers\CustomerBirthday;
 use App\Models\Customers\Customer;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Collection;
@@ -51,6 +51,6 @@ class BirthdayEmailEngagement implements CustomerEngagement
             $settings->engagement->birthdayCouponValidDays,
         );
 
-        CustomerBirthdayDetected::dispatch($customer, $coupon);
+        CustomerBirthday::dispatch($customer, $coupon);
     }
 }

@@ -1,8 +1,16 @@
 <?php
 
+use App\DataTransferObjects\Settings\BrandingSettings;
+use App\DataTransferObjects\Settings\CateringSettings;
+use App\DataTransferObjects\Settings\EngagementSettings;
+use App\DataTransferObjects\Settings\HomepageSettings;
 use App\DataTransferObjects\Settings\LoyaltySettings;
+use App\DataTransferObjects\Settings\OnboardingSettings;
 use App\DataTransferObjects\Settings\OrderSettings;
+use App\DataTransferObjects\Settings\PaymentSettings;
+use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
+use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 
@@ -33,13 +41,23 @@ test('flush() resets the cached instance', function () {
     expect($first)->not->toBe($second);
 });
 
-test('domain accessors return correct sub-DTOs', function () {
+test('each accessor returns the correct sub-DTO type', function (string $accessor, string $expectedClass) {
     $registry = resolve(TenantSettingsRegistry::class);
 
-    expect($registry->store())->toBeInstanceOf(StoreInfo::class);
-    expect($registry->orders())->toBeInstanceOf(OrderSettings::class);
-    expect($registry->loyalty())->toBeInstanceOf(LoyaltySettings::class);
-});
+    expect($registry->{$accessor}())->toBeInstanceOf($expectedClass);
+})->with([
+    'store' => ['store', StoreInfo::class],
+    'branding' => ['branding', BrandingSettings::class],
+    'orders' => ['orders', OrderSettings::class],
+    'payment' => ['payment', PaymentSettings::class],
+    'loyalty' => ['loyalty', LoyaltySettings::class],
+    'catering' => ['catering', CateringSettings::class],
+    'engagement' => ['engagement', EngagementSettings::class],
+    'policies' => ['policies', PolicySettings::class],
+    'webhooks' => ['webhooks', WebhookSettings::class],
+    'homepage' => ['homepage', HomepageSettings::class],
+    'onboarding' => ['onboarding', OnboardingSettings::class],
+]);
 
 test('sub-DTOs are resolvable from the container', function () {
     expect(resolve(StoreInfo::class))->toBeInstanceOf(StoreInfo::class);
