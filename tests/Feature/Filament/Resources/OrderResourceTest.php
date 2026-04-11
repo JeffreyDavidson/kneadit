@@ -82,3 +82,32 @@ test('can sort orders by total', function () {
         ->sortTable('total', 'desc')
         ->assertCanSeeTableRecords(collect([$expensive, $cheap]), inOrder: true);
 });
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\Orders\OrderResource::getGloballySearchableAttributes())
+        ->toBe(['customer.name', 'customer.email', 'status']);
+});
+
+test('resource returns global search result title', function () {
+    $order = Order::factory()->recycle($this->customer)->create();
+
+    expect(App\Filament\Resources\Orders\OrderResource::getGlobalSearchResultTitle($order))
+        ->toBe('Order #' . $order->order_number);
+});
+
+test('resource returns global search result details', function () {
+    $order = Order::factory()->recycle($this->customer)->create(['total' => 99.99]);
+
+    $details = App\Filament\Resources\Orders\OrderResource::getGlobalSearchResultDetails($order);
+
+    expect($details)
+        ->toHaveKey('Customer')
+        ->toHaveKey('Total')
+        ->toHaveKey('Status');
+});
+
+test('global search eloquent query eager loads customer', function () {
+    $query = App\Filament\Resources\Orders\OrderResource::getGlobalSearchEloquentQuery();
+
+    expect($query->getEagerLoads())->toHaveKey('customer');
+});

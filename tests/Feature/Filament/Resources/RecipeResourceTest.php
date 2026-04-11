@@ -92,3 +92,42 @@ test('edit recipe validates name is required', function () {
         ])
         ->assertHasFormErrors(['name' => 'required']);
 });
+
+test('can sort recipes by name', function () {
+    $alpha = Recipe::factory()->create(['name' => 'Alpha Bread']);
+    $zeta = Recipe::factory()->create(['name' => 'Zeta Cake']);
+
+    Livewire::test(ListRecipes::class)
+        ->sortTable('name')
+        ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
+        ->sortTable('name', 'desc')
+        ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
+});
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\Recipes\RecipeResource::getGloballySearchableAttributes())
+        ->toBe(['name']);
+});
+
+test('resource returns global search result title', function () {
+    $recipe = Recipe::factory()->create(['name' => 'Sourdough Bread']);
+
+    expect(App\Filament\Resources\Recipes\RecipeResource::getGlobalSearchResultTitle($recipe))
+        ->toBe('Sourdough Bread');
+});
+
+test('resource returns global search result details', function () {
+    $recipe = Recipe::factory()->create(['prep_time_minutes' => 120]);
+
+    $details = App\Filament\Resources\Recipes\RecipeResource::getGlobalSearchResultDetails($recipe);
+
+    expect($details)
+        ->toHaveKey('Product')
+        ->toHaveKey('Prep Time', '120 min');
+});
+
+test('global search eloquent query eager loads product', function () {
+    $query = App\Filament\Resources\Recipes\RecipeResource::getGlobalSearchEloquentQuery();
+
+    expect($query->getEagerLoads())->toHaveKey('product');
+});

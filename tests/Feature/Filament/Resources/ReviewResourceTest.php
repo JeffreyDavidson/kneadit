@@ -110,3 +110,31 @@ test('can sort reviews by customer name', function () {
         ->sortTable('customer_name', 'desc')
         ->assertCanSeeTableRecords(collect([$zach, $alice]), inOrder: true);
 });
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\Reviews\ReviewResource::getGloballySearchableAttributes())
+        ->toBe(['customer_name', 'customer_email']);
+});
+
+test('resource returns global search result title', function () {
+    $review = Review::factory()->recycle($this->product)->create(['customer_name' => 'Alice Baker']);
+
+    expect(App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchResultTitle($review))
+        ->toBe('Review by Alice Baker');
+});
+
+test('resource returns global search result details', function () {
+    $review = Review::factory()->recycle($this->product)->create(['rating' => 4]);
+
+    $details = App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchResultDetails($review);
+
+    expect($details)
+        ->toHaveKey('Rating')
+        ->toHaveKey('Product');
+});
+
+test('global search eloquent query eager loads product', function () {
+    $query = App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchEloquentQuery();
+
+    expect($query->getEagerLoads())->toHaveKey('product');
+});

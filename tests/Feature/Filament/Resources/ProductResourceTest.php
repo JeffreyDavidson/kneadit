@@ -118,3 +118,31 @@ test('can edit a product via table action', function () {
 
     expect($product->fresh()->name)->toBe('Updated Bread');
 });
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\Products\ProductResource::getGloballySearchableAttributes())
+        ->toBe(['name', 'description', 'category.name']);
+});
+
+test('resource returns global search result title', function () {
+    $product = Product::factory()->recycle($this->category)->create(['name' => 'Ciabatta']);
+
+    expect(App\Filament\Resources\Products\ProductResource::getGlobalSearchResultTitle($product))
+        ->toBe('Ciabatta');
+});
+
+test('resource returns global search result details', function () {
+    $product = Product::factory()->recycle($this->category)->create(['price' => 5.50]);
+
+    $details = App\Filament\Resources\Products\ProductResource::getGlobalSearchResultDetails($product);
+
+    expect($details)
+        ->toHaveKey('Category')
+        ->toHaveKey('Price');
+});
+
+test('global search eloquent query eager loads category', function () {
+    $query = App\Filament\Resources\Products\ProductResource::getGlobalSearchEloquentQuery();
+
+    expect($query->getEagerLoads())->toHaveKey('category');
+});

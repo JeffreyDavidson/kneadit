@@ -107,3 +107,30 @@ test('can filter contact messages by read status', function () {
         ->assertCanSeeTableRecords(collect([$read]))
         ->assertCanNotSeeTableRecords(collect([$unread]));
 });
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\ContactMessages\ContactMessageResource::getGloballySearchableAttributes())
+        ->toBe(['name', 'email', 'subject']);
+});
+
+test('resource returns global search result title', function () {
+    $message = ContactMessage::factory()->create(['subject' => 'Custom Cake Order']);
+
+    expect(App\Filament\Resources\ContactMessages\ContactMessageResource::getGlobalSearchResultTitle($message))
+        ->toBe('Custom Cake Order');
+});
+
+test('resource returns global search result details', function () {
+    $message = ContactMessage::factory()->create([
+        'name' => 'Jane Baker',
+        'email' => 'jane@example.com',
+        'is_read' => false,
+    ]);
+
+    $details = App\Filament\Resources\ContactMessages\ContactMessageResource::getGlobalSearchResultDetails($message);
+
+    expect($details)
+        ->toHaveKey('From', 'Jane Baker')
+        ->toHaveKey('Email', 'jane@example.com')
+        ->toHaveKey('Read', 'No');
+});
