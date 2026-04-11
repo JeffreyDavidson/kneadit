@@ -4,6 +4,7 @@ namespace App\Queries\Customers;
 
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
 
 class CustomerDirectoryStatsQuery
@@ -25,7 +26,7 @@ class CustomerDirectoryStatsQuery
         $atRiskCount = AtRiskCustomersQuery::count($atRiskDays);
 
         $topCustomer = Customer::query()
-            ->withSum(['orders' => fn ($q) => $q->active()], 'total')
+            ->withSum(['orders' => fn (Builder $q) => $q->active()], 'total')
             ->orderByDesc('orders_sum_total')
             ->first();
 

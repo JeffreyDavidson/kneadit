@@ -80,7 +80,7 @@ class CustomerPhotosTable
                     BulkAction::make('approve')
                         ->label('Approve')
                         ->icon(Heroicon::OutlinedCheckCircle)
-                        ->action(fn (Collection $records) => $records->each(fn ($record) => resolve(ApproveCustomerPhoto::class)($record)))
+                        ->action(fn (Collection $records) => $records->each(fn (mixed $record) => resolve(ApproveCustomerPhoto::class)($record)))
                         ->deselectRecordsAfterCompletion()
                         ->requiresConfirmation(),
                     DeleteBulkAction::make(),

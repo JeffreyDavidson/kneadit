@@ -71,8 +71,7 @@ class BlogPost extends Model
         return 'slug';
     }
 
-    /** @param mixed $value */
-    public function resolveRouteBinding($value, $field = null): ?self
+    public function resolveRouteBinding(mixed $value, mixed $field = null): ?self
     {
         return static::query()
             ->where($field ?? $this->getRouteKeyName(), $value)

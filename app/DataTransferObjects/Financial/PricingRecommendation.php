@@ -46,7 +46,7 @@ final readonly class PricingRecommendation implements Wireable
     /**
      * @param array<string, mixed> $value
      */
-    public static function fromLivewire($value): self
+    public static function fromLivewire(mixed $value): self
     {
         return new self(
             ingredientCost: (float) $value['ingredientCost'],

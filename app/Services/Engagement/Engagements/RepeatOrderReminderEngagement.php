@@ -5,7 +5,7 @@ namespace App\Services\Engagement\Engagements;
 use App\Contracts\Engagement\CustomerEngagement;
 use App\Contracts\Engagement\EngagementRecipient;
 use App\Enums\Orders\PaymentStatus;
-use App\Events\Customers\RepeatOrderReminderTriggered;
+use App\Events\Customers\RepeatOrderReminderDue;
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReminder;
 use App\Services\Settings\TenantSettings;
@@ -30,7 +30,7 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
             ->where('email', '!=', '')
             ->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
             ->with([
-                'orders' => fn ($q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date'),
+                'orders' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)->latest('delivery_date'),
                 'customerReminders',
             ])
             ->get()
@@ -75,6 +75,6 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
             ],
         );
 
-        RepeatOrderReminderTriggered::dispatch($customer, $recipient->context['days_since_last_order']);
+        RepeatOrderReminderDue::dispatch($customer, $recipient->context['days_since_last_order']);
     }
 }
