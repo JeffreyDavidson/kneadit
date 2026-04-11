@@ -47,3 +47,85 @@ test('it updates existing products on reimport', function () {
 
     expect(Product::query()->where('name', 'Sourdough Loaf')->first()->price)->toBe('9.00');
 });
+
+test('it skips rows with row-level errors from parser', function () {
+    $exporter = Mockery::mock(App\Services\Export\ProductCsvExporter::class);
+    $exporter->shouldReceive('parseForPreview')->andReturn([
+        'rows' => [
+            [
+                'name' => '',
+                'description' => 'Missing name product',
+                'price' => '5.00',
+                'category' => 'Breads',
+                'is_active' => '1',
+                '_line' => 2,
+                '_errors' => ['Name is required'],
+            ],
+            [
+                'name' => 'Valid Product',
+                'description' => 'Good product',
+                'price' => '10.00',
+                'category' => 'Breads',
+                'is_active' => '1',
+                '_line' => 3,
+                '_errors' => [],
+            ],
+        ],
+        'errors' => [],
+    ]);
+
+    $action = new ImportProducts($exporter);
+    $file = UploadedFile::fake()->createWithContent('products.csv', 'dummy');
+
+    $result = $action($file);
+
+    expect($result['created'])->toBe(1)
+        ->and($result['errors'])->toHaveCount(1)
+        ->and($result['errors'][0])->toContain('Name is required');
+});
+
+test('it includes cost when provided in csv', function () {
+    $csv = "name,description,price,cost,category,is_active\n"
+        . "Sourdough Loaf,Fresh baked,8.50,3.50,Breads,1\n";
+
+    $file = UploadedFile::fake()->createWithContent('products.csv', $csv);
+
+    $result = resolve(ImportProducts::class)($file);
+
+    expect($result['created'])->toBe(1)
+        ->and($result['errors'])->toBeEmpty();
+
+    $product = Product::query()->where('name', 'Sourdough Loaf')->first();
+    expect($product->cost)->toBe('3.50');
+});
+
+test('it catches throwable during product save and records error', function () {
+    $exporter = Mockery::mock(App\Services\Export\ProductCsvExporter::class);
+    $exporter->shouldReceive('parseForPreview')->andReturn([
+        'rows' => [
+            [
+                'name' => 'Test Product',
+                'description' => 'A product',
+                'price' => '10.00',
+                'category' => '',
+                'is_active' => '1',
+                'is_featured' => '0',
+                '_line' => 2,
+                '_errors' => [],
+            ],
+        ],
+        'errors' => [],
+    ]);
+
+    Product::creating(function () {
+        throw new RuntimeException('Simulated DB error');
+    });
+
+    $action = new ImportProducts($exporter);
+    $file = UploadedFile::fake()->createWithContent('products.csv', 'dummy');
+
+    $result = $action($file);
+
+    expect($result['errors'])->not->toBeEmpty()
+        ->and($result['errors'][0])->toContain('Simulated DB error');
+});

@@ -31,3 +31,23 @@ it('creates a new user and marks invitation as accepted', function () {
 
     expect($user)->toBeInstanceOf(User::class)->and($user->email)->toBe('new@test.com')->and($user->role)->toBe(UserRole::Staff)->and($invitation->refresh()->accepted_at)->not->toBeNull();
 });
+
+it('updates role when user already exists', function () {
+    $existingUser = User::factory()->staff()->create([
+        'email' => 'existing@test.com',
+    ]);
+
+    $invitation = StaffInvitation::factory()->create([
+        'email' => 'existing@test.com',
+        'role' => UserRole::Manager->value,
+        'token' => 'test-token-456',
+        'expires_at' => now()->addDays(7),
+    ]);
+
+    $action = new AcceptStaffInvitation;
+    $user = $action(invitation: $invitation);
+
+    expect($user->id)->toBe($existingUser->id)
+        ->and($user->refresh()->role)->toBe(UserRole::Manager)
+        ->and($invitation->refresh()->accepted_at)->not->toBeNull();
+});

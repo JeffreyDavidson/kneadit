@@ -30,3 +30,13 @@ test('does not update for unknown price id', function () {
     $tenant = DB::table('tenants')->where('id', 'test-bakery')->first();
     expect($tenant->plan)->toBe('starter');
 });
+
+test('does not update when tenant email is not found', function () {
+    resolve(SyncSubscriptionPlan::class)(
+        'nonexistent@test.com',
+        'price_growth',
+        ['price_growth' => 'growth']
+    );
+
+    expect(DB::table('tenants')->where('email', 'nonexistent@test.com')->exists())->toBeFalse();
+});

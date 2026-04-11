@@ -1,6 +1,10 @@
 <?php
 
 use App\Models\Customers\Customer;
+use App\Models\Customers\CustomerFavorite;
+use App\Models\Customers\CustomerPhoto;
+use App\Models\Customers\CustomerProfile;
+use App\Models\Customers\CustomerReminder;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -95,4 +99,48 @@ test('last order date returns most recent', function () {
     Order::query()->where('id', $order2->id)->update(['created_at' => now()->subDays(2)]);
 
     expect($customer->last_order_date->toDateString())->toBe(now()->subDays(2)->toDateString());
+});
+
+test('customer has customer reminders relationship', function () {
+    $customer = Customer::factory()->create();
+
+    CustomerReminder::factory()->for($customer)->create();
+
+    expect($customer->customerReminders)->toHaveCount(1);
+});
+
+test('customer has customer photos relationship via email', function () {
+    $customer = Customer::factory()->create(['email' => 'photo@test.com']);
+
+    CustomerPhoto::factory()->create(['customer_email' => 'photo@test.com']);
+
+    expect($customer->customerPhotos)->toHaveCount(1);
+});
+
+test('customer has customer favorites relationship via email', function () {
+    $customer = Customer::factory()->create(['email' => 'fav@test.com']);
+
+    CustomerFavorite::factory()->create(['customer_email' => 'fav@test.com']);
+
+    expect($customer->customerFavorites)->toHaveCount(1);
+});
+
+test('customer has customer profile relationship', function () {
+    $customer = Customer::factory()->create();
+
+    CustomerProfile::factory()->for($customer)->create();
+
+    expect($customer->customerProfile)->toBeInstanceOf(CustomerProfile::class);
+});
+
+test('full address returns formatted address', function () {
+    $customer = Customer::factory()->create([
+        'address' => '123 Main St',
+        'city' => 'Springfield',
+        'state' => 'IL',
+        'zip' => '62704',
+    ]);
+
+    expect($customer->full_address)->toContain('123 Main St')
+        ->and($customer->full_address)->toContain('Springfield');
 });

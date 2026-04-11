@@ -61,3 +61,54 @@ test('filters out draft releases', function () {
     expect($entries)->toHaveCount(1)
         ->and($entries->first()['title'])->toBe('Published Release');
 });
+
+test('falls back to config when GitHub API throws exception', function () {
+    Http::fake([
+        'api.github.com/*' => Http::response(fn () => throw new RuntimeException('Connection refused')),
+    ]);
+
+    config(['changelog' => [
+        ['date' => '2026-01-01', 'version' => '1.0.0', 'title' => 'Fallback', 'items' => ['Initial release']],
+    ]]);
+
+    $entries = resolve(ChangelogService::class)->entries();
+
+    expect($entries)->toHaveCount(1)
+        ->and($entries->first()['title'])->toBe('Fallback');
+});
+
+test('parses empty body into empty items array', function () {
+    Http::fake([
+        'api.github.com/repos/*' => Http::response([
+            [
+                'tag_name' => 'v1.0.0',
+                'name' => 'Empty Release',
+                'published_at' => '2026-01-01T00:00:00Z',
+                'draft' => false,
+                'body' => '',
+            ],
+        ]),
+    ]);
+
+    $entries = resolve(ChangelogService::class)->entries();
+
+    expect($entries->first()['items'])->toBe([]);
+});
+
+test('parses body with asterisk bullet points', function () {
+    Http::fake([
+        'api.github.com/repos/*' => Http::response([
+            [
+                'tag_name' => 'v1.0.0',
+                'name' => 'Release',
+                'published_at' => '2026-01-01T00:00:00Z',
+                'draft' => false,
+                'body' => "* First item\n* Second item\nNot a bullet",
+            ],
+        ]),
+    ]);
+
+    $entries = resolve(ChangelogService::class)->entries();
+
+    expect($entries->first()['items'])->toHaveCount(2);
+});

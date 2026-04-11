@@ -6,6 +6,7 @@ use App\Mail\Orders\OrderPlacedMail;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 uses(RefreshDatabase::class);
@@ -39,4 +40,17 @@ test('it loads order items before sending', function () {
     $listener->handle($event);
 
     Mail::assertQueued(OrderPlacedMail::class);
+});
+
+test('failed method logs a warning with order number and error message', function () {
+    Log::shouldReceive('warning')
+        ->once()
+        ->with('Order placed email failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-001'
+            && $context['error'] === 'SMTP timeout'));
+
+    $order = Order::factory()->create(['order_number' => 'ORD-001']);
+    $event = new OrderCreated($order);
+
+    $listener = new SendOrderPlacedEmailListener;
+    $listener->failed($event, new RuntimeException('SMTP timeout'));
 });

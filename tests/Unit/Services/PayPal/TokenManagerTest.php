@@ -30,3 +30,47 @@ it('fetches and caches an access token', function () {
 
     Http::assertSentCount(1);
 });
+
+test('uses production URL when sandbox is false', function () {
+    config([
+        'services.paypal.sandbox' => false,
+        'services.paypal.client_id' => 'test-id',
+        'services.paypal.client_secret' => 'test-secret',
+    ]);
+
+    $manager = new TokenManager;
+
+    expect($manager->getBaseUrl())->toBe('https://api-m.paypal.com');
+});
+
+test('returns null when API response fails', function () {
+    config([
+        'services.paypal.sandbox' => true,
+        'services.paypal.client_id' => 'test-id',
+        'services.paypal.client_secret' => 'test-secret',
+    ]);
+
+    Http::fake([
+        'api-m.sandbox.paypal.com/v1/oauth2/token' => Http::response(['error' => 'unauthorized'], 401),
+    ]);
+
+    $manager = new TokenManager;
+
+    expect($manager->getAccessToken())->toBeNull();
+});
+
+test('returns null when API throws exception', function () {
+    config([
+        'services.paypal.sandbox' => true,
+        'services.paypal.client_id' => 'test-id',
+        'services.paypal.client_secret' => 'test-secret',
+    ]);
+
+    Http::fake([
+        'api-m.sandbox.paypal.com/v1/oauth2/token' => Http::response(fn () => throw new Exception('Connection refused')),
+    ]);
+
+    $manager = new TokenManager;
+
+    expect($manager->getAccessToken())->toBeNull();
+});

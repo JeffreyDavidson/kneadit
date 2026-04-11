@@ -205,3 +205,42 @@ test('cancellation with no coupon or gift card does not fail', function () {
     expect(CouponTransaction::query()->count())->toBe(0);
     expect(GiftCardTransaction::query()->count())->toBe(0);
 });
+
+test('critical effect failure rethrows exception', function () {
+    // The Baking status has deductIngredients as a critical effect.
+    // If deductForOrder throws, the exception should propagate.
+    $inventoryManager = Mockery::mock(App\Services\Inventory\InventoryManager::class);
+    $inventoryManager->shouldReceive('deductForOrder')
+        ->andThrow(new RuntimeException('Inventory deduction failed'));
+
+    app()->instance(App\Services\Inventory\InventoryManager::class, $inventoryManager);
+
+    $order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create();
+
+    expect(fn () => resolve(OrderStatusEffectDispatcher::class)
+        ->dispatch($order, OrderStatus::Confirmed, OrderStatus::Baking))
+        ->toThrow(RuntimeException::class, 'Inventory deduction failed');
+});
+
+test('non-critical effect failure logs warning and continues', function () {
+    // Confirmed status has sendEmail (non-critical) and dispatchWebhook (non-critical).
+    // If email fails, webhook should still be dispatched.
+    $order = Order::factory()
+        ->for($this->customer)
+        ->recycle($this->user)
+        ->create();
+
+    // Make Mail throw to simulate a non-critical sendEmail failure
+    Mail::shouldReceive('to')->andThrow(new RuntimeException('Mail server down'));
+
+    settings(['webhook_url' => 'https://hooks.example.com/test']);
+
+    resolve(OrderStatusEffectDispatcher::class)
+        ->dispatch($order, OrderStatus::Pending, OrderStatus::Confirmed);
+
+    // Webhook should still have been sent
+    Http::assertSent(fn ($request) => $request->hasHeader('X-KneadIt-Event', 'order.updated'));
+});
