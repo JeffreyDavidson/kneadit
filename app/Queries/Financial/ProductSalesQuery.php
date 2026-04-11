@@ -5,6 +5,7 @@ namespace App\Queries\Financial;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Orders\OrderItem;
 use App\ValueObjects\DateRange;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 class ProductSalesQuery
@@ -20,7 +21,7 @@ class ProductSalesQuery
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
 
         return OrderItem::query()
-            ->whereIn('order_id', function ($q) use ($dates) {
+            ->whereIn('order_id', function (Builder $q) use ($dates) {
                 $q->select('id')
                     ->from('orders')
                     ->whereNotIn('status', [OrderStatus::Cancelled->value])
@@ -50,7 +51,7 @@ class ProductSalesQuery
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
 
         return OrderItem::query()
-            ->whereIn('order_id', function ($q) use ($dates) {
+            ->whereIn('order_id', function (Builder $q) use ($dates) {
                 $q->select('id')
                     ->from('orders')
                     ->whereNotIn('status', [OrderStatus::Cancelled->value])

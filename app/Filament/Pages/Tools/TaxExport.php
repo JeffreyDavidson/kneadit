@@ -139,9 +139,9 @@ class TaxExport extends Page
     /** @return array<int, string> */
     protected function getAvailableYears(): array
     {
-        $orderYears = Order::query()->pluck('created_at')->map(fn ($d) => $d->year);
-        $expenseYears = Expense::query()->pluck('date')->map(fn ($d) => $d->year);
-        $incomeYears = Income::query()->pluck('date')->map(fn ($d) => $d->year);
+        $orderYears = Order::query()->pluck('created_at')->map(fn (mixed $d) => $d->year);
+        $expenseYears = Expense::query()->pluck('date')->map(fn (mixed $d) => $d->year);
+        $incomeYears = Income::query()->pluck('date')->map(fn (mixed $d) => $d->year);
 
         $allYears = $orderYears->merge($expenseYears)->merge($incomeYears)
             ->unique()->sort()->reverse()->values();

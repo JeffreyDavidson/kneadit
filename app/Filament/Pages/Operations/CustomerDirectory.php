@@ -97,7 +97,7 @@ class CustomerDirectory extends Page
         $query = Customer::query()
             ->withCount('orders')
             ->withSum('orders', 'total')
-            ->with(['orders' => function ($query) {
+            ->with(['orders' => function (mixed $query) {
                 $query->latest()->take(1);
             }]);
 

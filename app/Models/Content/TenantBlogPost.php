@@ -49,7 +49,7 @@ class TenantBlogPost extends Model
         return 'slug';
     }
 
-    public function resolveRouteBinding($value, $field = null): ?self
+    public function resolveRouteBinding(mixed $value, mixed $field = null): ?self
     {
         return $this->newQuery()
             ->published()
