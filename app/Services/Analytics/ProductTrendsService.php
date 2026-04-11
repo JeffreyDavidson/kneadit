@@ -6,7 +6,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Models\Inventory\Category;
 use App\Models\Orders\OrderItem;
 use App\ValueObjects\DateRange;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Date;
 
 class ProductTrendsService
@@ -43,7 +43,7 @@ class ProductTrendsService
      */
     private function groupByCategory(array $currentCounts, array $prevCounts): array
     {
-        $categories = Category::with(['products' => fn (Builder $q) => $q->orderBy('sort_order')->orderBy('name')])->orderBy('sort_order')->get();
+        $categories = Category::with(['products' => fn (HasMany $q) => $q->orderBy('sort_order')->orderBy('name')])->orderBy('sort_order')->get();
 
         $grouped = [];
         foreach ($categories as $category) {

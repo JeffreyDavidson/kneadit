@@ -102,8 +102,10 @@ class PrepScheduleService
                     $quantity = $orderItem->quantity;
 
                     if ($productSummary->has($productName)) {
-                        $productSummary[$productName]['total_quantity'] += $quantity;
-                        $productSummary[$productName]['orders_count'] += 1;
+                        $existing = $productSummary[$productName];
+                        $existing['total_quantity'] += $quantity;
+                        $existing['orders_count'] += 1;
+                        $productSummary[$productName] = $existing;
                     } else {
                         $productSummary[$productName] = [
                             'product_name' => $productName,
