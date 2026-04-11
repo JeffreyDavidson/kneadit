@@ -44,3 +44,16 @@ test('money avoids float precision issues', function () {
 
     expect($a->add($b)->dollars())->toBe(0.30);
 });
+
+test('money __toString returns formatted currency', function () {
+    $money = Money::fromDollars(42.50);
+
+    expect((string) $money)->toBe('$42.50');
+});
+
+test('money fromDollars accepts string input', function () {
+    $money = Money::fromDollars('19.99');
+
+    expect($money->cents())->toBe(1999)
+        ->and($money->dollars())->toBe(19.99);
+});

@@ -33,3 +33,41 @@ test('address fromArray handles both address and street keys', function () {
     expect($a->street)->toBe('123 Main St')
         ->and($b->street)->toBe('456 Oak Ave');
 });
+
+test('address toArray returns correct keys', function () {
+    $address = new Address(
+        street: '123 Baker St',
+        city: 'Springfield',
+        state: 'IL',
+        zip: '62701',
+    );
+
+    expect($address->toArray())->toBe([
+        'address' => '123 Baker St',
+        'city' => 'Springfield',
+        'state' => 'IL',
+        'zip' => '62701',
+    ]);
+});
+
+test('address toArray returns nulls for empty address', function () {
+    $address = new Address;
+
+    expect($address->toArray())->toBe([
+        'address' => null,
+        'city' => null,
+        'state' => null,
+        'zip' => null,
+    ]);
+});
+
+test('address __toString returns formatted string', function () {
+    $address = new Address(
+        street: '123 Baker St',
+        city: 'Springfield',
+        state: 'IL',
+        zip: '62701',
+    );
+
+    expect((string) $address)->toBe('123 Baker St, Springfield, IL 62701');
+});

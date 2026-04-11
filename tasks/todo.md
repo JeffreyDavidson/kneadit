@@ -81,22 +81,22 @@ These are write operations and domain services with zero tests. Highest risk.
 - [ ] `Http/Controllers/Billing/BillingPortalController` — 0%
 - [ ] `Http/Controllers/Central/ConsumeImpersonationController` — 0%
 - [ ] `Http/Controllers/Central/ImpersonateController` — 0%
-- [ ] `Http/Controllers/Central/SitemapController` — 0%
-- [ ] `Http/Controllers/Order/StripeSuccessController` — 0%
-- [ ] `Http/Controllers/Storefront/SubmitOrderController` — 0%
+- [x] `Http/Controllers/Central/SitemapController` — 0%
+- [x] `Http/Controllers/Order/StripeSuccessController` — 0%
+- [x] `Http/Controllers/Storefront/SubmitOrderController` — 0%
 - [ ] `Http/Controllers/Stripe/StripeConnectController` — 0%
 
 ### Controllers (< 50% coverage)
 - [ ] `Http/Controllers/Billing/SwapPlanController` — 18.2%
 - [ ] `Http/Controllers/Billing/CheckoutSuccessController` — 22.2%
 - [ ] `Http/Controllers/Billing/CheckoutController` — 33.3%
-- [ ] `Http/Controllers/Api/ReviewController` — 37.5%
+- [x] `Http/Controllers/Api/ReviewController` — 37.5%
 - [ ] `Http/Controllers/Stripe/StripeWebhookController` — 42.6%
-- [ ] `Http/Controllers/Central/ExportController` — 45.9%
+- [x] `Http/Controllers/Central/ExportController` — 45.9%
 - [ ] `Http/Controllers/Stripe/StripeConnectWebhookController` — 46.2%
 
 ### Middleware (< 70% coverage)
-- [ ] `Http/Middleware/EnsureOnboardingComplete` — 50.0%
+- [x] `Http/Middleware/EnsureOnboardingComplete` — 50.0%
 
 ---
 
@@ -217,3 +217,43 @@ For each tier, work through items in this order:
 ## Review
 
 Model integration tests added for: EmailCampaignLog, CheckinLog, PlatformSetting, BlogPost (url/resolveRouteBinding/casts), User (canAccessPanel/tenants/hasAccess/currentPlan/hasPlan), CustomerFavorite (relationships/scopes), CustomerNote (createdBy), BusinessSchedule (casts/accessor), Referral (casts/relationships), PageView (relationship/casts/timestamps), WaitlistEntry (product/forDate/statusLabel/casts).
+
+---
+
+## Tier 3b: Unit Tests for Enums, DTOs, Value Objects, Contracts
+
+### Enums (0% coverage)
+- [x] Create `tests/Unit/Enums/EnumCoverageTest.php` for 9 zero-coverage enums
+- [x] Add MarginHealth tests (fromPercentage, cssClass)
+- [x] Add PricingPosition tests (multiplier)
+- [x] Add BlogPostCategory tests (options, color)
+
+### Settings DTOs (0% coverage)
+- [x] Create `tests/Unit/DataTransferObjects/Settings/SettingsDtoTest.php`
+
+### Financial DTO
+- [x] Create `tests/Unit/DataTransferObjects/Financial/PricingRecommendationTest.php`
+
+### Value Objects
+- [x] Add missing tests to AddressTest.php (toArray, __toString)
+- [x] Add missing tests to MoneyTest.php (__toString, fromDollars string)
+
+### Contracts
+- [x] Create `tests/Unit/Contracts/EngagementRecipientTest.php`
+
+### Finalize
+- [x] Run pint
+- [x] Run tests (113 passed, 255 assertions)
+- [x] Update review section
+
+### Review
+All tests passing. Added 113 unit tests covering:
+- 9 zero-coverage enums via dataset-driven label tests + SenderType boolean helpers
+- 3 partial-coverage enums: MarginHealth (fromPercentage with 8 boundary cases, cssClass), PricingPosition (multiplier), BlogPostCategory (options, color)
+- 8 zero-coverage Settings DTOs + StoreInfo (logoUrl), OrderSettings (leadTimeDays with 5 boundary cases)
+- BrandingSettings: all 4 hero image URL methods (with/without image)
+- HomepageSettings: visibleSections filtering and sorting
+- PricingRecommendation: construction, toLivewire, fromLivewire, null currentPrice, round-trip
+- Address: toArray, __toString
+- Money: __toString, fromDollars(string)
+- EngagementRecipient: construction and default context
