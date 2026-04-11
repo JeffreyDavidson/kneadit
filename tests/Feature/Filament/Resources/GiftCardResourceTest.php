@@ -108,3 +108,36 @@ test('can filter gift cards by depleted status', function () {
         ->assertCanSeeTableRecords(collect([$depleted]))
         ->assertCanNotSeeTableRecords(collect([$active]));
 });
+
+test('can render the view gift card page', function () {
+    $giftCard = GiftCard::factory()->create();
+
+    Livewire::test(App\Filament\Resources\GiftCards\Pages\ViewGiftCard::class, ['record' => $giftCard->getRouteKey()])
+        ->assertOk();
+});
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\GiftCards\GiftCardResource::getGloballySearchableAttributes())
+        ->toBe(['code', 'purchaser_name', 'recipient_name']);
+});
+
+test('resource returns global search result title', function () {
+    $giftCard = GiftCard::factory()->create(['code' => 'ABCD-1234-EFGH-5678']);
+
+    expect(App\Filament\Resources\GiftCards\GiftCardResource::getGlobalSearchResultTitle($giftCard))
+        ->toBe('Gift Card: ABCD-1234-EFGH-5678');
+});
+
+test('resource returns global search result details', function () {
+    $giftCard = GiftCard::factory()->create([
+        'current_balance' => 50.00,
+        'recipient_name' => 'Bob',
+    ]);
+
+    $details = App\Filament\Resources\GiftCards\GiftCardResource::getGlobalSearchResultDetails($giftCard);
+
+    expect($details)
+        ->toHaveKey('Balance')
+        ->toHaveKey('Recipient', 'Bob')
+        ->toHaveKey('Active');
+});

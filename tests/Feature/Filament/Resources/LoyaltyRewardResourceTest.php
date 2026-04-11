@@ -120,3 +120,27 @@ test('can sort loyalty rewards by points required', function () {
         ->sortTable('points_required', 'desc')
         ->assertCanSeeTableRecords(collect([$high, $low]), inOrder: true);
 });
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\LoyaltyRewards\LoyaltyRewardResource::getGloballySearchableAttributes())
+        ->toBe(['name']);
+});
+
+test('resource returns global search result title', function () {
+    $reward = LoyaltyReward::factory()->create(['name' => 'Free Cookie']);
+
+    expect(App\Filament\Resources\LoyaltyRewards\LoyaltyRewardResource::getGlobalSearchResultTitle($reward))
+        ->toBe('Free Cookie');
+});
+
+test('resource returns global search result details', function () {
+    $reward = LoyaltyReward::factory()->create([
+        'points_required' => 200,
+    ]);
+
+    $details = App\Filament\Resources\LoyaltyRewards\LoyaltyRewardResource::getGlobalSearchResultDetails($reward);
+
+    expect($details)
+        ->toHaveKey('Points', '200')
+        ->toHaveKey('Type');
+});

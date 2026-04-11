@@ -41,224 +41,105 @@ These are write operations and domain services with zero tests. Highest risk.
 
 ---
 
-## Tier 2: Data Layer — Models, Builders, Queries (low coverage)
+## Tier 6: Filament Resource Coverage
 
-### Builders (< 50% coverage)
-- [x] `Builders/Inventory/ProductQueryBuilder` — 25.0%
-- [x] `Builders/Content/BlogPostQueryBuilder` — 43.8%
-- [x] `Builders/Orders/OrderQueryBuilder` — 43.8%
-- [x] `Builders/Financial/ExpenseQueryBuilder` — 44.4%
-- [x] `Builders/Financial/IncomeQueryBuilder` — 50.0%
-- [x] `Builders/Customers/ReviewQueryBuilder` — 57.1%
+### Tenant Resources - New Test Files
+- [x] Create CateringInquiryResourceTest (24 tests)
 
-### Queries (< 100%)
-- [ ] `Queries/Financial/ProductSalesQuery` — 50.0% (topByQuantity untested)
-- [ ] `Queries/Financial/RevenueQuery` — 75.0% (orderCount untested)
+### Tenant Resources - Add Tests to Existing Files
+- [x] EmailCampaignResourceTest - add create, edit, table columns, global search (+12 tests)
+- [x] GiftCardResourceTest - add ViewGiftCard page test, global search (+4 tests)
+- [x] OrderResourceTest - add global search coverage (+4 tests)
+- [x] BlogPostResourceTest - add table columns, search, filter, sort, global search (+8 tests)
+- [x] SocialPostResourceTest - add navigation badge, filter by platform, global search (+7 tests)
+- [x] WaitlistEntryResourceTest - add navigation badge, sort, global search (+6 tests)
+- [x] SurveyResourceTest - add ViewSurvey page, sort, global search (+5 tests)
+- [x] CustomerResourceTest - add global search coverage (+3 tests)
+- [x] ProductResourceTest - add global search coverage (+4 tests)
+- [x] IngredientResourceTest - add global search coverage (+3 tests)
+- [x] LoyaltyRewardResourceTest - add global search coverage (+3 tests)
+- [x] CouponResourceTest - add global search coverage (+3 tests)
+- [x] ContactMessageResourceTest - add global search coverage (+3 tests)
+- [x] ReviewResourceTest - add global search coverage (+4 tests)
+- [x] RecipeResourceTest - add sort, global search coverage (+4 tests)
 
-### Models (0% coverage)
-- [x] `Models/Engagement/EmailCampaignLog` — 0%
-- [x] `Models/Operations/CheckinLog` — 0%
-- [x] `Models/Platform/PlatformSetting` — 0%
+### Central Resources
+- [x] CentralViewPagesTest - add ViewMessage, ticket reply, ticket status, tenant stats (+6 tests)
+- [x] Create CentralTenantResourceTest (12 tests)
+- [x] Create CentralSupportTicketResourceTest (4 tests)
+- [x] Create CentralMessageResourceTest (9 tests)
 
-### Models (< 70% coverage)
-- [x] `Models/Content/BlogPost` — 50.0%
-- [x] `Models/Staff/User` — 46.4%
-- [x] `Models/Customers/CustomerFavorite` — 50.0%
-- [x] `Models/Customers/TenantNote` — 50.0%
-- [x] `Models/Operations/BusinessSchedule` — 66.7%
-- [ ] `Models/Operations/ScheduledCheckin` — 66.7%
-- [x] `Models/Customers/Referral` — 66.7%
-- [x] `Models/Customers/CustomerNote` — 66.7%
-- [x] `Models/Engagement/PageView` — 60.0%
-- [x] `Models/Customers/WaitlistEntry` — 69.2%
-- [ ] `Models/Orders/OrderMessage` — 75.0%
-
----
-
-## Tier 3: HTTP Layer — Controllers & Middleware
-
-### Controllers (0% coverage)
-- [ ] `Http/Controllers/Billing/BillingPortalController` — 0%
-- [ ] `Http/Controllers/Central/ConsumeImpersonationController` — 0%
-- [ ] `Http/Controllers/Central/ImpersonateController` — 0%
-- [x] `Http/Controllers/Central/SitemapController` — 0%
-- [x] `Http/Controllers/Order/StripeSuccessController` — 0%
-- [x] `Http/Controllers/Storefront/SubmitOrderController` — 0%
-- [ ] `Http/Controllers/Stripe/StripeConnectController` — 0%
-
-### Controllers (< 50% coverage)
-- [ ] `Http/Controllers/Billing/SwapPlanController` — 18.2%
-- [ ] `Http/Controllers/Billing/CheckoutSuccessController` — 22.2%
-- [ ] `Http/Controllers/Billing/CheckoutController` — 33.3%
-- [x] `Http/Controllers/Api/ReviewController` — 37.5%
-- [ ] `Http/Controllers/Stripe/StripeWebhookController` — 42.6%
-- [x] `Http/Controllers/Central/ExportController` — 45.9%
-- [ ] `Http/Controllers/Stripe/StripeConnectWebhookController` — 46.2%
-
-### Middleware (< 70% coverage)
-- [x] `Http/Middleware/EnsureOnboardingComplete` — 50.0%
-
----
-
-## Tier 4: Support Classes — DTOs, Enums, ValueObjects, Listeners
-
-### Settings DTOs (0% coverage — 8 files)
-- [ ] `DataTransferObjects/Settings/BrandingSettings` — 0%
-- [ ] `DataTransferObjects/Settings/CateringSettings` — 0%
-- [ ] `DataTransferObjects/Settings/EngagementSettings` — 0%
-- [ ] `DataTransferObjects/Settings/HomepageSettings` — 0%
-- [ ] `DataTransferObjects/Settings/OnboardingSettings` — 0%
-- [ ] `DataTransferObjects/Settings/PaymentSettings` — 0%
-- [ ] `DataTransferObjects/Settings/PolicySettings` — 0%
-- [ ] `DataTransferObjects/Settings/WebhookSettings` — 0%
-
-### Other DTOs (< 100%)
-- [ ] `DataTransferObjects/Settings/StoreInfo` — 25.0%
-- [ ] `DataTransferObjects/Settings/OrderSettings` — 50.0%
-- [ ] `DataTransferObjects/Financial/PricingRecommendation` — 51.9%
-
-### Enums (0% coverage — 9 enums)
-- [ ] `Enums/Content/CaptionStyle` — 0%
-- [ ] `Enums/Content/PageType` — 0%
-- [ ] `Enums/Customers/ReferralStatus` — 0%
-- [ ] `Enums/Financial/CouponTransactionType` — 0%
-- [ ] `Enums/Financial/GiftCardTransactionType` — 0%
-- [ ] `Enums/Inventory/StockAdjustmentType` — 0%
-- [ ] `Enums/Inventory/StockStatus` — 0%
-- [ ] `Enums/Orders/SenderType` — 0%
-- [ ] `Enums/Storefront/StorefrontTheme` — 0%
-
-### Enums (< 100%)
-- [ ] `Enums/Financial/MarginHealth` — 50.0%
-- [ ] `Enums/Financial/PricingPosition` — 50.0%
-- [ ] `Enums/Content/BlogPostCategory` — 60.0%
-- [ ] `Enums/Staff/UserRole` — 84.6%
-
-### Listeners (< 50% coverage)
-- [ ] `Listeners/Customers/SendBirthdayDiscountEmailListener` — 20.0%
-- [ ] `Listeners/Customers/SendReviewRequestEmailListener` — 33.3%
-- [ ] `Listeners/Platform/SendPaymentFailedEmailListener` — 20.0%
-- [ ] `Listeners/Platform/SendTrialExpiredEmailListener` — 20.0%
-- [ ] `Listeners/Platform/SendTrialReminderEmailListener` — 20.0%
-- [ ] `Listeners/Marketing/SendCateringQuoteEmailListener` — 20.0%
-- [ ] `Listeners/Customers/SendHappyBirthdayEmailListener` — 42.9%
-- [ ] `Listeners/Customers/SendRepeatOrderReminderEmailListener` — 42.9%
-- [ ] `Listeners/Marketing/SendCampaignEmailListener` — 42.9%
-- [ ] `Listeners/Platform/SendScheduledCheckinEmailListener` — 42.9%
-- [ ] `Listeners/Platform/SendStaffInvitationEmailListener` — 42.9%
-- [ ] `Listeners/Orders/SendOrderPlacedEmailListener` — 44.4%
-
-### ValueObjects (< 100%)
-- [ ] `ValueObjects/Address` — 66.7%
-- [ ] `ValueObjects/Money` — 92.3%
-
-### Contracts
-- [ ] `Contracts/Engagement/EngagementRecipient` — 0%
-
----
-
-## Tier 5: Console Commands
-
-### Commands (0% coverage)
-- [x] `Console/Commands/Stripe/CreateStripeProductsCommand` — 0% -> tested (5 tests)
-- [x] `Console/Commands/Tenants/CreateDemoBakeriesCommand` — 0% -> tested (6 tests)
-- [x] `Console/Commands/Tenants/CreateDemoTenantCommand` — 0% -> tested (4 tests)
-- [x] `Console/Commands/Tenants/CreateOneTenantCommand` — 0% -> tested (4 tests)
-
-### Commands (< 50% coverage)
-- [x] `Console/Commands/Stripe/CheckPayPalPaymentsCommand` — 4.7% -> tested (6 tests)
-- [x] `Console/Commands/Platform/SendScheduledCheckinsCommand` — 13.8% -> tested (8 tests)
-- [x] `Console/Commands/Platform/SendWeeklyDigestCommand` — 14.3% -> tested (5 tests)
-- [x] `Console/Commands/Platform/CheckChurnAlertsCommand` — 50.8% -> tested (8 tests)
-
-### Commands (50-80% coverage)
-- [x] `Console/Commands/Platform/HealthCheckCommand` — 73.5% -> tested (11 tests)
-- [x] `Console/Commands/Operations/BackupDatabasesCommand` — 74.1% -> tested (10 tests)
-- [x] `Console/Commands/Platform/CheckTrialExpirationsCommand` — 78.0% -> tested (13 tests)
-
----
-
-## Tier 6: Filament Admin UI (lowest priority)
-
-These are admin panel pages/forms. They have value but lower risk than business logic.
-Listed only items at 0% or below 30%.
-
-### Filament Pages (0% or < 30%)
-- [ ] `Filament/Pages/Platform/OnboardingSteps/CompleteStep` — 0%
-- [ ] `Filament/Pages/Platform/OnboardingSteps/OnboardingStepRegistry` — 0%
-- [ ] `Filament/Pages/Platform/OnboardingSteps/PreviewStep` — 0%
-- [ ] `Filament/Central/Pages/DataExport` — 8.5%
-- [ ] `Filament/Central/Pages/TenantComparison` — 9.5%
-- [ ] `Filament/Central/Pages/BakeryInsights` — 11.4%
-- [ ] `Filament/Pages/Tools/InstagramCaptionGenerator` — 15.8%
-- [ ] `Filament/Pages/Tools/PriceSuggestionTool` — 17.1%
-- [ ] `Filament/Pages/Platform/Messages` — 17.9%
-- [ ] `Filament/Pages/Analytics/SurveyResults` — 20.8%
-- [ ] `Filament/Pages/Settings/CustomDomain` — 22.5%
-- [ ] `Filament/Pages/Operations/StaffManagement` — 23.4%
-- [ ] `Filament/Central/Pages/OnboardingTracker` — 23.8%
-- [ ] `Filament/Pages/Analytics/ReportsCenter` — 25.0%
-- [ ] `Filament/Pages/Tools/ShoppingListGenerator` — 27.4%
-- [ ] `Filament/Pages/Settings/ThemeSelector` — 28.6%
-- [ ] `Filament/Pages/Platform/Onboarding` — 29.2%
-
-### Filament Resource Forms/Views (0%)
-- [ ] All `Schemas/*Form` files at 0% (forms are exercised by create/edit feature tests)
-- [ ] All `Pages/View*` files at 0% (view pages)
-- [ ] All `RelationManagers/*` at 0%
-
----
-
-## Approach
-
-For each tier, work through items in this order:
-1. Read the source to understand what needs testing
-2. Write tests at the correct level (Unit/Integration/Feature per our definitions)
-3. Run coverage on that file to verify improvement
-4. Move to the next item
-
-**Target:** Get Tiers 1-4 to 80%+ coverage. Tiers 5-6 can stay lower for now.
+### Finish
+- [x] Run Pint
+- [x] Run tests (472 passed, 1490 assertions)
+- [x] Add review section
 
 ## Review
+Added ~122 new Filament Resource feature tests across 22 files (3 new, 19 modified).
 
-Model integration tests added for: EmailCampaignLog, CheckinLog, PlatformSetting, BlogPost (url/resolveRouteBinding/casts), User (canAccessPanel/tenants/hasAccess/currentPlan/hasPlan), CustomerFavorite (relationships/scopes), CustomerNote (createdBy), BusinessSchedule (casts/accessor), Referral (casts/relationships), PageView (relationship/casts/timestamps), WaitlistEntry (product/forDate/statusLabel/casts).
+Coverage areas exercised:
+- Global search methods (getGloballySearchableAttributes, getGlobalSearchResultTitle, getGlobalSearchResultDetails, getGlobalSearchEloquentQuery)
+- Navigation badges (getNavigationBadge, getNavigationBadgeColor) for SocialPosts, WaitlistEntries, SupportTickets, Messages
+- View pages: ViewGiftCard, ViewSurvey, ViewMessage (render + mark as read + reply + thread)
+- View ticket page: reply, status update, resolve with timestamp
+- Tenant stats on ViewTenant page
+- Form schemas exercised through create/edit flows (CateringInquiry, EmailCampaign full CRUD)
+- Table features: column rendering, search, sort, filter for previously untested resources
+- Fixed Pest.php support_tickets table schema to include resolved_at and admin_notes columns
+
+Note: SupportTicketResource table tests are limited because the SupportTicketsTable has a type mismatch bug (color closures type-hint `string $state` but receive SupportTicketStatus enum). This is a pre-existing issue.
 
 ---
 
-## Tier 3b: Unit Tests for Enums, DTOs, Value Objects, Contracts
+## Tier 7: Filament Pages & Widgets Coverage
 
-### Enums (0% coverage)
-- [x] Create `tests/Unit/Enums/EnumCoverageTest.php` for 9 zero-coverage enums
-- [x] Add MarginHealth tests (fromPercentage, cssClass)
-- [x] Add PricingPosition tests (multiplier)
-- [x] Add BlogPostCategory tests (options, color)
+### Central Pages
+- [x] FeatureUsage (2%) -> 17 tests
+- [x] DataExport (9%) -> 9 tests
+- [x] TenantComparison (10%) -> 17 tests
+- [x] OnboardingTracker (24%) -> 13 tests
 
-### Settings DTOs (0% coverage)
-- [x] Create `tests/Unit/DataTransferObjects/Settings/SettingsDtoTest.php`
+### Tenant Pages - Analytics
+- [x] SurveyResults (21%) -> 6 tests
+- [x] ReportsCenter (25%) -> 11 tests
+- [x] ProductTrends (54%) -> 9 tests
+- [x] StorefrontAnalytics (74%) -> 10 tests
 
-### Financial DTO
-- [x] Create `tests/Unit/DataTransferObjects/Financial/PricingRecommendationTest.php`
+### Tenant Pages - Operations
+- [x] StaffManagement (23%) -> 9 tests
+- [x] HolidayPlanningCalendar (35%) -> 12 tests
+- [x] WeeklyPrepPlanner (50%) -> 8 tests
+- [x] DeliveryRoutePlanner (53%) -> 6 tests
+- [x] OrderCalendar (59%) -> 14 tests
+- [x] SeasonalItems (60%) -> 12 tests
 
-### Value Objects
-- [x] Add missing tests to AddressTest.php (toArray, __toString)
-- [x] Add missing tests to MoneyTest.php (__toString, fromDollars string)
+### Tenant Pages - Tools
+- [x] InstagramCaptionGenerator (16%) -> 11 tests
+- [x] PriceSuggestionTool (17%) -> 14 tests
+- [x] ShoppingListGenerator (27%) -> 8 tests
+- [x] ThemeSelector (29%) -> 3 tests
+- [x] SmartShoppingList (39%) -> 7 tests
+- [x] RecipeCostCalculator (41%) -> 9 tests
+- [x] DescriptionGenerator (44%) -> 9 tests
+- [x] ProductImportExport (49%) -> 7 tests
+- [x] PricingEngine (51%) -> 10 tests
 
-### Contracts
-- [x] Create `tests/Unit/Contracts/EngagementRecipientTest.php`
+### Tenant Pages - Settings/Platform
+- [x] CustomDomain (23%) -> 6 tests
+- [x] HomepageBuilder (42%) -> 13 tests
+- [x] Messages (18%) -> 10 tests
+- [x] OnboardingSteps (0-20%) -> 6 tests (CompleteStep + PreviewStep)
+- [x] ActivityLogPage (43%) -> 17 tests
 
-### Finalize
-- [x] Run pint
-- [x] Run tests (113 passed, 255 assertions)
-- [x] Update review section
+### Widgets
+- [x] UpcomingHolidayWidget (15%) -> 4 tests
+- [x] InboxWidget (33%) -> 1 test
+- [x] BirthdayWidget (40%) -> 6 tests
+- [x] UpcomingOrdersWidget (41%) -> 6 tests
+- [x] OnboardingProgress (27%) -> 8 tests
 
 ### Review
-All tests passing. Added 113 unit tests covering:
-- 9 zero-coverage enums via dataset-driven label tests + SenderType boolean helpers
-- 3 partial-coverage enums: MarginHealth (fromPercentage with 8 boundary cases, cssClass), PricingPosition (multiplier), BlogPostCategory (options, color)
-- 8 zero-coverage Settings DTOs + StoreInfo (logoUrl), OrderSettings (leadTimeDays with 5 boundary cases)
-- BrandingSettings: all 4 hero image URL methods (with/without image)
-- HomepageSettings: visibleSections filtering and sorting
-- PricingRecommendation: construction, toLivewire, fromLivewire, null currentPrice, round-trip
-- Address: toArray, __toString
-- Money: __toString, fromDollars(string)
-- EngagementRecipient: construction and default context
+Added 296 new tests across 29 new test files (380 total Integration/Filament tests including pre-existing).
+All 380 Integration/Filament tests pass. All 540 Feature/Filament tests pass (no regressions).
+
+Test approach: Direct instantiation of page/widget classes and method calls, matching the existing Integration test pattern. Protected methods accessed via ReflectionMethod where needed. RefreshDatabase used only for tests needing main-migration tables (holidays). Central test setup used for pages/widgets that depend on central-connection models (PlatformMessage).

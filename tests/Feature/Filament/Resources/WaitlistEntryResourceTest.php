@@ -90,3 +90,51 @@ test('create waitlist entry validates required fields', function (array $data, a
     'requested date is required' => [['requested_date' => null], ['requested_date' => 'required']],
     'status is required' => [['status' => null], ['status' => 'required']],
 ]);
+
+test('can sort waitlist entries by customer name', function () {
+    $alice = WaitlistEntry::factory()->create(['customer_name' => 'Alice']);
+    $zach = WaitlistEntry::factory()->create(['customer_name' => 'Zach']);
+
+    Livewire::test(ListWaitlistEntries::class)
+        ->sortTable('customer_name')
+        ->assertCanSeeTableRecords(collect([$alice, $zach]), inOrder: true)
+        ->sortTable('customer_name', 'desc')
+        ->assertCanSeeTableRecords(collect([$zach, $alice]), inOrder: true);
+});
+
+test('navigation badge shows waiting entry count', function () {
+    WaitlistEntry::factory()->count(2)->create(['status' => App\Enums\Customers\WaitlistStatus::Waiting]);
+    WaitlistEntry::factory()->create(['status' => App\Enums\Customers\WaitlistStatus::Notified]);
+
+    expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getNavigationBadge())
+        ->toBe('2');
+});
+
+test('navigation badge returns null when no waiting entries', function () {
+    WaitlistEntry::factory()->create(['status' => App\Enums\Customers\WaitlistStatus::Notified]);
+
+    expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getNavigationBadge())
+        ->toBeNull();
+});
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getGloballySearchableAttributes())
+        ->toBe(['customer_email', 'customer_name']);
+});
+
+test('resource returns global search result title', function () {
+    $entry = WaitlistEntry::factory()->create(['customer_name' => 'Alice Baker']);
+
+    expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getGlobalSearchResultTitle($entry))
+        ->toBe('Alice Baker');
+});
+
+test('resource returns global search result details', function () {
+    $entry = WaitlistEntry::factory()->create(['customer_email' => 'alice@example.com']);
+
+    $details = App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getGlobalSearchResultDetails($entry);
+
+    expect($details)
+        ->toHaveKey('Email', 'alice@example.com')
+        ->toHaveKey('Product');
+});

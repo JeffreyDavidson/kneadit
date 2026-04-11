@@ -95,3 +95,46 @@ test('edit survey validates title is required', function () {
         ])
         ->assertHasFormErrors(['title' => 'required']);
 });
+
+test('can render the view survey page', function () {
+    $survey = Survey::factory()->create();
+
+    Livewire::test(App\Filament\Resources\Surveys\Pages\ViewSurvey::class, ['record' => $survey->getRouteKey()])
+        ->assertOk();
+});
+
+test('can sort surveys by title', function () {
+    $alpha = Survey::factory()->create(['title' => 'Alpha Survey']);
+    $zeta = Survey::factory()->create(['title' => 'Zeta Survey']);
+
+    Livewire::test(ListSurveys::class)
+        ->sortTable('title')
+        ->assertCanSeeTableRecords(collect([$alpha, $zeta]), inOrder: true)
+        ->sortTable('title', 'desc')
+        ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
+});
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\Surveys\SurveyResource::getGloballySearchableAttributes())
+        ->toBe(['title']);
+});
+
+test('resource returns global search result title', function () {
+    $survey = Survey::factory()->create(['title' => 'Customer Feedback']);
+
+    expect(App\Filament\Resources\Surveys\SurveyResource::getGlobalSearchResultTitle($survey))
+        ->toBe('Customer Feedback');
+});
+
+test('resource returns global search result details', function () {
+    $survey = Survey::factory()->create([
+        'is_active' => true,
+        'responses_count' => 15,
+    ]);
+
+    $details = App\Filament\Resources\Surveys\SurveyResource::getGlobalSearchResultDetails($survey);
+
+    expect($details)
+        ->toHaveKey('Status', 'Active')
+        ->toHaveKey('Responses', '15');
+});

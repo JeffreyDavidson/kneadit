@@ -109,3 +109,29 @@ test('can sort ingredients by name', function () {
         ->sortTable('name', 'desc')
         ->assertCanSeeTableRecords(collect([$yeast, $butter]), inOrder: true);
 });
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\Ingredients\IngredientResource::getGloballySearchableAttributes())
+        ->toBe(['name', 'supplier']);
+});
+
+test('resource returns global search result title', function () {
+    $ingredient = Ingredient::factory()->create(['name' => 'Bread Flour']);
+
+    expect(App\Filament\Resources\Ingredients\IngredientResource::getGlobalSearchResultTitle($ingredient))
+        ->toBe('Bread Flour');
+});
+
+test('resource returns global search result details', function () {
+    $ingredient = Ingredient::factory()->create([
+        'supplier' => 'King Arthur',
+        'current_stock' => 50,
+        'unit' => 'lbs',
+    ]);
+
+    $details = App\Filament\Resources\Ingredients\IngredientResource::getGlobalSearchResultDetails($ingredient);
+
+    expect($details)
+        ->toHaveKey('Supplier', 'King Arthur')
+        ->toHaveKey('Stock');
+});

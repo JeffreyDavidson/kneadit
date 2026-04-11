@@ -126,6 +126,8 @@ function createCentralTables(): void
             $table->text('body');
             $table->string('status')->default('open');
             $table->string('priority')->default('normal');
+            $table->text('admin_notes')->nullable();
+            $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
         },
         'support_replies' => function ($table) {
