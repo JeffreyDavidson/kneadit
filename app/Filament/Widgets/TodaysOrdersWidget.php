@@ -31,10 +31,9 @@ class TodaysOrdersWidget extends BaseWidget
                     ->label('Order #'),
                 TextColumn::make('customer_name')
                     ->label('Customer'),
-                TextColumn::make('fulfillment_type')
+                TextColumn::make('delivery_type')
                     ->label('Type')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state) => ucfirst($state)),
+                    ->badge(),
                 TextColumn::make('delivery_time')
                     ->label('Time')
                     ->time('g:i A'),
