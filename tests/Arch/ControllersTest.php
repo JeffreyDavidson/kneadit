@@ -11,7 +11,7 @@ $controllerFiles = collect(glob(__DIR__ . '/../../app/Http/Controllers/**/*.php'
 
         return str_replace(['/', '.php'], ['\\', ''], 'App\\' . $relative);
     })
-    ->reject(fn ($class) => $class === 'App\\Http\\Controllers\\Controller')
+    ->reject(fn ($class) => $class === \App\Http\Controllers\Controller::class)
     ->filter(fn ($class) => class_exists($class))
     ->reject(fn ($class): bool => (new ReflectionClass($class))->isAbstract())
     ->values();
@@ -47,8 +47,8 @@ arch('controllers should not use DB facade directly')
     ->expect('Illuminate\Support\Facades\DB')
     ->not->toBeUsedIn('App\Http\Controllers')
     ->ignoring([
-        'App\Http\Controllers\Central\ImpersonateController',
-        'App\Http\Controllers\Central\ConsumeImpersonationController',
+        \App\Http\Controllers\Central\ImpersonateController::class,
+        \App\Http\Controllers\Central\ConsumeImpersonationController::class,
     ]);
 
 foreach ($controllerFiles as $controllerClass) {

@@ -21,7 +21,7 @@ class ActivityLogFactory extends Factory
             'user_name' => fake()->name(),
             'action' => fake()->randomElement(['created', 'updated', 'deleted']),
             'description' => fake()->sentence(),
-            'model_type' => 'App\\Models\\Orders\\Order',
+            'model_type' => \App\Models\Orders\Order::class,
             'model_id' => fake()->numberBetween(1, 100),
             'properties' => null,
             'ip_address' => fake()->ipv4(),
