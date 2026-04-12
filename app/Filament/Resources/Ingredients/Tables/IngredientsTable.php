@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Ingredients\Tables;
 
 use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\Inventory\StockAdjustmentType;
-use App\Enums\Inventory\StockStatus;
 use App\Models\Inventory\Ingredient;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -38,19 +37,7 @@ class IngredientsTable
                 TextColumn::make('stock_status')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn (Ingredient $record) => $record->stock_status)
-                    ->formatStateUsing(fn (mixed $state) => match ($state) {
-                        StockStatus::Good => 'Good',
-                        StockStatus::Low => 'Low',
-                        StockStatus::Out => 'Out of Stock',
-                        default => $state,
-                    })
-                    ->color(fn (mixed $state) => match ($state) {
-                        StockStatus::Good => 'success',
-                        StockStatus::Low => 'warning',
-                        StockStatus::Out => 'danger',
-                        default => 'gray',
-                    }),
+                    ->getStateUsing(fn (Ingredient $record) => $record->stock_status),
 
                 TextColumn::make('cost_per_unit')
                     ->money('USD')

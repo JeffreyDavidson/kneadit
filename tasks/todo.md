@@ -89,7 +89,25 @@ These are write operations and domain services with zero tests. Highest risk.
 - [x] Run test suite — 2929 passed, 3 pre-existing tenant DB collision failures
 - [x] Add review section
 
-### Review
+### Review — SubscriptionTier Enum Cast Fix (2026-04-11)
+
+Fixed 8 files broken by casting `Tenant.plan` to `SubscriptionTier` enum:
+
+**Source files (3):**
+- `TenantUsageService.php` — replaced `Str::lower($tenant->plan)` with `$tenant->plan->value`, compared against `SubscriptionTier::Pro` enum
+- `Analytics.php` — `getMostPopularPlan()` now handles enum return from `value('plan')`, always returns string
+- `TenantResource.php` — replaced `ucfirst($record->plan)` with `$record->plan->getLabel()`
+
+**Test files (5):**
+- `StripeWebhookTest.php` — assertions now compare against `SubscriptionTier` enum values, factory data uses enum
+- `TenantUsageServiceTest.php` — `createTenant` calls use `SubscriptionTier::Starter` / `::Pro` instead of strings
+- `AnalyticsPageTest.php` — already used enums (no change needed)
+- `PlatformStatsWidgetTest.php` — `$t->plan->value` for array key lookup
+- `BirthdayWidgetTest.php` — `->first()->customer->name` instead of `->first()->name` (widget returns stdClass with customer property)
+
+2914 tests passing. 1 pre-existing failure (TenantDatabaseAlreadyExistsException — test ordering collision, unrelated).
+
+### Previous Review
 
 Added ~65 new tests across 4 new test files and 14 modified test files. All new tests pass individually and in the full suite.
 

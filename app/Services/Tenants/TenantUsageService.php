@@ -7,7 +7,6 @@ use App\Models\Platform\Tenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class TenantUsageService
 {
@@ -21,10 +20,11 @@ class TenantUsageService
         $results = collect();
 
         foreach (Tenant::all() as $tenant) {
-            $plan = Str::lower($tenant->plan ?? 'starter');
+            $tier = $tenant->plan ?? SubscriptionTier::Starter;
+            $plan = $tier->value;
             $limits = config('kneadit.plans.' . $plan . '.limits', config('kneadit.plans.starter.limits'));
 
-            if ($plan === 'pro') {
+            if ($tier === SubscriptionTier::Pro) {
                 continue;
             }
 

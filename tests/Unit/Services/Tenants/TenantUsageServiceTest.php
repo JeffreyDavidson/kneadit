@@ -27,7 +27,7 @@ test('getTenantUsageData returns tenants approaching limits', function () {
         'id' => 'high-usage',
         'name' => 'High Usage Baker',
         'email' => 'high@test.com',
-        'plan' => 'starter',
+        'plan' => SubscriptionTier::Starter,
         'store_name' => 'High Usage Bakery',
     ]);
 
@@ -49,7 +49,7 @@ test('getTenantUsageData skips pro tenants', function () {
         'id' => 'pro-bakery',
         'name' => 'Pro Baker',
         'email' => 'pro@test.com',
-        'plan' => 'pro',
+        'plan' => SubscriptionTier::Pro,
     ]);
 
     $tenancyManager = Mockery::mock(TenancyManager::class);
@@ -71,7 +71,7 @@ test('getTenantUsageData skips tenants below 80 percent usage', function () {
         'id' => 'low-usage',
         'name' => 'Low Usage Baker',
         'email' => 'low@test.com',
-        'plan' => 'starter',
+        'plan' => SubscriptionTier::Starter,
     ]);
 
     $tenancyManager = Mockery::mock(TenancyManager::class);
@@ -89,7 +89,7 @@ test('getTenantUsageData handles exception gracefully', function () {
         'id' => 'error-bakery',
         'name' => 'Error Baker',
         'email' => 'error@test.com',
-        'plan' => 'starter',
+        'plan' => SubscriptionTier::Starter,
     ]);
 
     $tenancyManager = Mockery::mock(TenancyManager::class);
@@ -111,7 +111,7 @@ test('getTenantUsageData marks at_limit when at 100 percent', function () {
         'id' => 'maxed-bakery',
         'name' => 'Maxed Baker',
         'email' => 'maxed@test.com',
-        'plan' => 'starter',
+        'plan' => SubscriptionTier::Starter,
     ]);
 
     $tenancyManager = Mockery::mock(TenancyManager::class);

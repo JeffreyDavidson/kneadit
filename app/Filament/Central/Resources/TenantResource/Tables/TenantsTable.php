@@ -48,13 +48,6 @@ class TenantsTable
 
                 TextColumn::make('plan')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'starter' => 'warning',
-                        'growth' => 'info',
-                        'pro' => 'success',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state) => ucfirst($state))
                     ->sortable(),
 
                 IconColumn::make('is_active')

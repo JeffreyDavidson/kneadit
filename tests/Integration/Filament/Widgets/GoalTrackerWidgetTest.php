@@ -12,7 +12,7 @@ test('open edit modal sets modal state for monthly', function () {
 
     expect(test()->widget->showEditModal)->toBeTrue()
         ->and(test()->widget->editingType)->toBe('monthly')
-        ->and(test()->widget->editingGoal)->toBeString();
+        ->and(test()->widget->editingGoal)->toBe('5000');
 });
 
 test('open edit modal sets modal state for yearly', function () {
@@ -20,7 +20,7 @@ test('open edit modal sets modal state for yearly', function () {
 
     expect(test()->widget->showEditModal)->toBeTrue()
         ->and(test()->widget->editingType)->toBe('yearly')
-        ->and(test()->widget->editingGoal)->toBeString();
+        ->and(test()->widget->editingGoal)->toBe('50000');
 });
 
 test('close edit modal hides modal', function () {

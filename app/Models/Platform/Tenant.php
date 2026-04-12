@@ -2,6 +2,7 @@
 
 namespace App\Models\Platform;
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Models\Customers\Referral;
 use Database\Factories\Platform\TenantFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -85,6 +86,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     protected function casts(): array
     {
         return [
+            'plan' => SubscriptionTier::class,
             'trial_ends_at' => 'datetime',
             'storefront_enabled' => 'boolean',
             'is_active' => 'boolean',
