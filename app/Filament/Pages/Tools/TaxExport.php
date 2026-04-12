@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -139,9 +140,9 @@ class TaxExport extends Page
     /** @return array<int, string> */
     protected function getAvailableYears(): array
     {
-        $orderYears = Order::query()->pluck('created_at')->map(fn ($d) => $d->year);
-        $expenseYears = Expense::query()->pluck('date')->map(fn ($d) => $d->year);
-        $incomeYears = Income::query()->pluck('date')->map(fn ($d) => $d->year);
+        $orderYears = Order::query()->pluck('created_at')->map(fn (Carbon $d) => $d->year);
+        $expenseYears = Expense::query()->pluck('date')->map(fn (Carbon $d) => $d->year);
+        $incomeYears = Income::query()->pluck('date')->map(fn (Carbon $d) => $d->year);
 
         $allYears = $orderYears->merge($expenseYears)->merge($incomeYears)
             ->unique()->sort()->reverse()->values();

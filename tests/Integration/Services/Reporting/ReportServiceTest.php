@@ -5,6 +5,7 @@ use App\Models\Customers\Customer;
 use App\Models\Financial\Expense;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use App\Services\Reporting\ReportService;
@@ -52,11 +53,19 @@ test('sales report respects date range', function () {
     expect($report['totalOrders'])->toBe(1)->and((float) $report['totalRevenue'])->toBe(30.00);
 });
 
-test('customer report counts new customers', function () {
-    $countBefore = Customer::query()->count();
-    Customer::factory()->create();
+test('customer report returns data for date range', function () {
+    $report = $this->service->customerReport('2026-03-01', '2026-03-31');
 
-    expect(Customer::query()->count())->toBe($countBefore + 1);
+    expect($report)->toBeArray();
+});
+
+test('product performance report returns data for date range', function () {
+    Product::factory()->recycle($this->category)->create(['name' => 'Sourdough', 'price' => 10.00]);
+
+    $report = $this->service->productPerformanceReport('2026-03-01', '2026-03-31');
+
+    expect($report)->toBeArray()
+        ->and($report)->toHaveKey('products');
 });
 
 test('financial summary calculates profit', function () {

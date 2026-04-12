@@ -1,18 +1,17 @@
 <?php
 
-use App\Filament\Pages\Platform\Onboarding;
+use App\Filament\Pages\Platform\OnboardingSteps\PaymentsStep;
+use App\Services\Settings\TenantSettings;
 
 beforeEach(fn () => setUpTenantTest());
 
 test('payment step stores payment methods as json array', function () {
-    $page = new Onboarding;
-    $page->payment_methods = ['cash', 'paypal', 'stripe'];
-    $page->paypal_client_id = 'test_id';
-    $page->paypal_client_secret = 'test_secret';
-    $page->paypal_sandbox = true;
-
-    $reflection = new ReflectionMethod($page, 'savePaymentStep');
-    $reflection->invoke($page);
+    PaymentsStep::save([
+        'payment_methods' => ['cash', 'paypal', 'stripe'],
+        'paypal_client_id' => 'test_id',
+        'paypal_client_secret' => 'test_secret',
+        'paypal_sandbox' => true,
+    ]);
 
     $stored = settings('payment_methods');
     expect($stored)->not->toBeNull();
@@ -22,33 +21,29 @@ test('payment step stores payment methods as json array', function () {
 });
 
 test('payment step sets legacy payment method to first value', function () {
-    $page = new Onboarding;
-    $page->payment_methods = ['stripe', 'cash'];
-    $page->paypal_client_id = '';
-    $page->paypal_client_secret = '';
-    $page->paypal_sandbox = false;
-
-    $reflection = new ReflectionMethod($page, 'savePaymentStep');
-    $reflection->invoke($page);
+    PaymentsStep::save([
+        'payment_methods' => ['stripe', 'cash'],
+        'paypal_client_id' => '',
+        'paypal_client_secret' => '',
+        'paypal_sandbox' => false,
+    ]);
 
     expect(settings('payment_method'))->toBe('stripe');
 });
 
 test('payment step defaults to cash when empty', function () {
-    $page = new Onboarding;
-    $page->payment_methods = [];
-    $page->paypal_client_id = '';
-    $page->paypal_client_secret = '';
-    $page->paypal_sandbox = false;
-
-    $reflection = new ReflectionMethod($page, 'savePaymentStep');
-    $reflection->invoke($page);
+    PaymentsStep::save([
+        'payment_methods' => [],
+        'paypal_client_id' => '',
+        'paypal_client_secret' => '',
+        'paypal_sandbox' => false,
+    ]);
 
     expect(settings('payment_method'))->toBe('cash');
 });
 
-test('payment methods property defaults to cash', function () {
-    $page = new Onboarding;
+test('payment methods defaults to cash when none stored', function () {
+    $defaults = PaymentsStep::defaults(app(TenantSettings::class));
 
-    expect($page->payment_methods)->toBe(['cash']);
+    expect($defaults['payment_methods'])->toBe(['cash']);
 });

@@ -114,9 +114,15 @@ class Analytics extends Page
 
     public function getMostPopularPlan(): string
     {
-        return Tenant::query()->select('plan', DB::raw('count(*) as count'))
+        $plan = Tenant::query()->select('plan', DB::raw('count(*) as count'))
             ->groupBy('plan')
             ->orderByDesc('count')
-            ->value('plan') ?? 'N/A';
+            ->value('plan');
+
+        if ($plan instanceof \App\Enums\Platform\SubscriptionTier) {
+            return $plan->value;
+        }
+
+        return $plan ?? 'N/A';
     }
 }

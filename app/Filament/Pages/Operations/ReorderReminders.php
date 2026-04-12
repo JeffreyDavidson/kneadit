@@ -85,7 +85,7 @@ class ReorderReminders extends Page
             ->having(DB::raw('MAX(orders.delivery_date)'), '<=', $cutoff->toDateString())
             ->orderBy(DB::raw('MAX(orders.delivery_date)'), 'asc')
             ->get()
-            ->map(function ($customer) {
+            ->map(function (mixed $customer) {
                 $customer->days_since = (int) floor(Date::parse($customer->last_order_date)->diffInDays(now()));
 
                 return $customer;

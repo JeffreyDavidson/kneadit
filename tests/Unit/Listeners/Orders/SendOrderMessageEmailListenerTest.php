@@ -7,6 +7,7 @@ use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 uses(RefreshDatabase::class);
@@ -56,4 +57,34 @@ test('it does not send email when the order is missing', function () {
     $listener->handle($event);
 
     Mail::assertNothingQueued();
+});
+
+test('it does not send email when customer sends message but no store email is configured', function () {
+    Mail::fake();
+    settings(['store_email' => '']);
+
+    $customer = Customer::factory()->create();
+    $order = Order::factory()->for($customer)->create();
+    $message = OrderMessage::factory()->fromCustomer()->for($order)->create();
+
+    $event = new OrderMessageSent($message);
+
+    $listener = new SendOrderMessageEmailListener;
+    $listener->handle($event);
+
+    Mail::assertNothingQueued();
+});
+
+test('failed method logs a warning with order number and error message', function () {
+    Log::shouldReceive('warning')
+        ->once()
+        ->with('Order message email failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-001'
+            && $context['error'] === 'SMTP timeout'));
+
+    $order = Order::factory()->create(['order_number' => 'ORD-001']);
+    $message = OrderMessage::factory()->fromCustomer()->for($order)->create();
+    $event = new OrderMessageSent($message);
+
+    $listener = new SendOrderMessageEmailListener;
+    $listener->failed($event, new RuntimeException('SMTP timeout'));
 });

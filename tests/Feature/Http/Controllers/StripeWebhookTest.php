@@ -65,3 +65,101 @@ test('SubscriptionTier::fromPriceId maps stripe price to tier', function () {
         ->and(SubscriptionTier::fromPriceId('price_growth'))->toBe(SubscriptionTier::Growth)
         ->and(SubscriptionTier::fromPriceId('price_unknown'))->toBeNull();
 });
+
+test('handleCustomerSubscriptionUpdated calls SyncSubscriptionPlan', function () {
+    $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeWebhookController.php'));
+
+    expect($source)
+        ->toContain('handleCustomerSubscriptionUpdated')
+        ->toContain('SyncSubscriptionPlan')
+        ->toContain('StripeCustomerLookupQuery::find')
+        ->toContain('tenantEmail')
+        ->toContain('stripePriceId');
+});
+
+test('SyncSubscriptionPlan updates tenant plan from stripe price id', function () {
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_id', 'growth' => 'price_growth_id']]);
+
+    $user = User::factory()->owner()->create(['stripe_id' => 'cus_sync_test']);
+    $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => SubscriptionTier::Starter]);
+
+    $priceMap = array_flip(config('kneadit.stripe_prices'));
+
+    app(App\Actions\Stripe\SyncSubscriptionPlan::class)(
+        tenantEmail: $user->email,
+        stripePriceId: 'price_growth_id',
+        priceMap: $priceMap,
+    );
+
+    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Growth);
+});
+
+test('SyncSubscriptionPlan does nothing for unknown price id', function () {
+    config(['kneadit.stripe_prices' => ['starter' => 'price_starter_id']]);
+
+    $user = User::factory()->owner()->create(['stripe_id' => 'cus_unknown_price']);
+    $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => SubscriptionTier::Starter]);
+
+    app(App\Actions\Stripe\SyncSubscriptionPlan::class)(
+        tenantEmail: $user->email,
+        stripePriceId: 'price_nonexistent',
+        priceMap: array_flip(config('kneadit.stripe_prices')),
+    );
+
+    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Starter);
+});
+
+test('handleCustomerSubscriptionDeleted calls parent and logs', function () {
+    $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeWebhookController.php'));
+
+    expect($source)
+        ->toContain('handleCustomerSubscriptionDeleted')
+        ->toContain('parent::handleCustomerSubscriptionDeleted')
+        ->toContain('subscription fully canceled')
+        ->toContain('StripeCustomerLookupQuery::find');
+});
+
+test('handleInvoicePaymentFailed skips when no customer id in payload', function () {
+    Event::fake([PaymentFailed::class]);
+
+    $controller = new StripeWebhookController;
+    $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
+
+    $method->invoke($controller, [
+        'id' => 'evt_no_customer_' . uniqid(),
+        'data' => [
+            'object' => [
+                'customer' => null,
+                'amount_due' => 1000,
+            ],
+        ],
+    ]);
+
+    Event::assertNotDispatched(PaymentFailed::class);
+});
+
+test('handleInvoicePaymentFailed skips when user not found for customer', function () {
+    Event::fake([PaymentFailed::class]);
+
+    $controller = new StripeWebhookController;
+    $method = new ReflectionMethod($controller, 'handleInvoicePaymentFailed');
+
+    $method->invoke($controller, [
+        'id' => 'evt_no_user_' . uniqid(),
+        'data' => [
+            'object' => [
+                'customer' => 'cus_does_not_exist',
+                'amount_due' => 1000,
+            ],
+        ],
+    ]);
+
+    Event::assertNotDispatched(PaymentFailed::class);
+});
+
+test('alreadyProcessed returns false for missing event id', function () {
+    $controller = new StripeWebhookController;
+    $method = new ReflectionMethod($controller, 'alreadyProcessed');
+
+    expect($method->invoke($controller, []))->toBeFalse();
+});

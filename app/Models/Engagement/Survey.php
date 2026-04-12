@@ -50,7 +50,7 @@ class Survey extends Model
         return $this->hasMany(SurveyResponse::class);
     }
 
-    public function resolveRouteBinding($value, $field = null): ?self
+    public function resolveRouteBinding(mixed $value, mixed $field = null): ?self
     {
         return $this->newQuery()
             ->where('is_active', true)

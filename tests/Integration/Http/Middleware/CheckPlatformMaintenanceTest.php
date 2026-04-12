@@ -44,3 +44,33 @@ test('passes through for unaffected service during maintenance', function () {
 
     expect($response->getContent())->toBe('OK');
 });
+
+test('detects api service for api routes', function () {
+    platformSettings([
+        'maintenance_mode' => '1',
+        'affected_services' => json_encode(['api']),
+        'maintenance_message' => 'API down',
+    ]);
+
+    $middleware = new CheckPlatformMaintenance;
+    $request = Request::create('/api/orders');
+
+    $response = $middleware->handle($request, fn () => new Response('OK'));
+
+    expect($response->getStatusCode())->toBe(503);
+});
+
+test('detects admin service for admin routes', function () {
+    platformSettings([
+        'maintenance_mode' => '1',
+        'affected_services' => json_encode(['admin']),
+        'maintenance_message' => 'Admin down',
+    ]);
+
+    $middleware = new CheckPlatformMaintenance;
+    $request = Request::create('/admin/dashboard');
+
+    $response = $middleware->handle($request, fn () => new Response('OK'));
+
+    expect($response->getStatusCode())->toBe(503);
+});

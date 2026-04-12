@@ -33,14 +33,7 @@ class RecentTenants extends TableWidget
                     ->toggleable(),
 
                 TextColumn::make('plan')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'starter' => 'gray',
-                        'growth' => 'info',
-                        'pro' => 'success',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state) => ucfirst($state)),
+                    ->badge(),
 
                 IconColumn::make('is_active')
                     ->label('Active')

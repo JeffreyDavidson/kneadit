@@ -118,3 +118,20 @@ test('all zip export returns zip content type', function () {
     $response->assertOk();
     expect($response->headers->get('content-type'))->toContain('application/zip');
 });
+
+test('non-existent tenant returns 404', function () {
+    $response = actingAs(createAdmin())
+        ->get('/admin/export/non-existent-tenant/products');
+
+    $response->assertNotFound();
+});
+
+test('non-admin user is forbidden from exporting', function () {
+    $id = insertTenant();
+    $user = User::factory()->create(['role' => UserRole::Owner]);
+
+    $response = actingAs($user)
+        ->get("/admin/export/{$id}/products");
+
+    $response->assertForbidden();
+});

@@ -22,6 +22,7 @@ use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -41,20 +42,20 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(SettingsManager::class);
         $this->app->singleton(PlatformSettingsManager::class);
         $this->app->singleton(TenantSettingsRegistry::class);
-        $this->app->singleton(TenantSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->all());
+        $this->app->singleton(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
 
         // Each sub-DTO is directly injectable for focused services
-        $this->app->bind(StoreInfo::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->store());
-        $this->app->bind(BrandingSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->branding());
-        $this->app->bind(OrderSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->orders());
-        $this->app->bind(PaymentSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->payment());
-        $this->app->bind(LoyaltySettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->loyalty());
-        $this->app->bind(CateringSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->catering());
-        $this->app->bind(EngagementSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->engagement());
-        $this->app->bind(PolicySettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->policies());
-        $this->app->bind(WebhookSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->webhooks());
-        $this->app->bind(HomepageSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->homepage());
-        $this->app->bind(OnboardingSettings::class, fn ($app) => $app->make(TenantSettingsRegistry::class)->onboarding());
+        $this->app->bind(StoreInfo::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->store());
+        $this->app->bind(BrandingSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->branding());
+        $this->app->bind(OrderSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->orders());
+        $this->app->bind(PaymentSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->payment());
+        $this->app->bind(LoyaltySettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->loyalty());
+        $this->app->bind(CateringSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->catering());
+        $this->app->bind(EngagementSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->engagement());
+        $this->app->bind(PolicySettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->policies());
+        $this->app->bind(WebhookSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->webhooks());
+        $this->app->bind(HomepageSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->homepage());
+        $this->app->bind(OnboardingSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->onboarding());
     }
 
     /**

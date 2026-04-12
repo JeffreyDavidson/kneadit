@@ -13,6 +13,24 @@ pest()->extend(TestCase::class)->in('Feature', 'Integration', 'Unit', 'Browser')
 
 /*
 |--------------------------------------------------------------------------
+| Tenant Database Cleanup
+|--------------------------------------------------------------------------
+| Tenant::factory()->create() triggers Stancl's CreateDatabase job which
+| writes real SQLite files to the database/ directory. These accumulate
+| across test runs and cause TenantDatabaseAlreadyExistsException when
+| a new test generates the same slug.
+*/
+
+beforeAll(function () {
+    foreach (glob(database_path('tenant*')) ?: [] as $file) {
+        if (is_file($file) && is_writable($file)) {
+            unlink($file);
+        }
+    }
+});
+
+/*
+|--------------------------------------------------------------------------
 | Tenant Test Helpers
 |--------------------------------------------------------------------------
 */
@@ -126,6 +144,8 @@ function createCentralTables(): void
             $table->text('body');
             $table->string('status')->default('open');
             $table->string('priority')->default('normal');
+            $table->text('admin_notes')->nullable();
+            $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
         },
         'support_replies' => function ($table) {
@@ -218,6 +238,33 @@ function createCentralTables(): void
             $table->string('tenant_id');
             $table->text('body');
             $table->string('author')->nullable();
+            $table->timestamps();
+        },
+        'email_campaign_logs' => function ($table) {
+            $table->id();
+            $table->foreignId('campaign_id');
+            $table->string('tenant_id');
+            $table->string('email');
+            $table->string('status')->default('sent');
+            $table->timestamp('sent_at')->nullable();
+            $table->timestamp('opened_at')->nullable();
+            $table->timestamps();
+        },
+        'checkin_logs' => function ($table) {
+            $table->id();
+            $table->foreignId('checkin_id');
+            $table->string('tenant_id');
+            $table->timestamp('sent_at')->nullable();
+            $table->timestamps();
+        },
+        'referrals' => function ($table) {
+            $table->id();
+            $table->string('referrer_tenant_id');
+            $table->string('referred_tenant_id')->nullable();
+            $table->string('referral_code')->unique();
+            $table->string('referred_email')->nullable();
+            $table->string('status')->default('pending');
+            $table->integer('reward_months')->default(1);
             $table->timestamps();
         },
     ];

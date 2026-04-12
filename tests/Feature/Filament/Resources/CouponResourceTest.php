@@ -101,3 +101,26 @@ test('can sort coupons by code', function () {
         ->sortTable('code', 'desc')
         ->assertCanSeeTableRecords(collect([$zeta, $alpha]), inOrder: true);
 });
+
+test('resource returns globally searchable attributes', function () {
+    expect(App\Filament\Resources\Coupons\CouponResource::getGloballySearchableAttributes())
+        ->toBe(['code']);
+});
+
+test('resource returns global search result title', function () {
+    $coupon = Coupon::factory()->create(['code' => 'SPRING20']);
+
+    expect(App\Filament\Resources\Coupons\CouponResource::getGlobalSearchResultTitle($coupon))
+        ->toBe('SPRING20');
+});
+
+test('resource returns global search result details', function () {
+    $coupon = Coupon::factory()->percentage()->create(['value' => 20]);
+
+    $details = App\Filament\Resources\Coupons\CouponResource::getGlobalSearchResultDetails($coupon);
+
+    expect($details)
+        ->toHaveKey('Type')
+        ->toHaveKey('Value')
+        ->toHaveKey('Active');
+});

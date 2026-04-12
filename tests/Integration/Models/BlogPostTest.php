@@ -2,6 +2,7 @@
 
 use App\Models\Content\BlogPost;
 use App\Models\Staff\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
@@ -50,4 +51,51 @@ test('published at can be set', function () {
     expect($post->is_published)->toBeTrue()->and($post->published_at)->not->toBeNull();
 });
 
-// tags_are_cast_to_array removed — blog_posts table doesn't have a tags column yet
+test('is published is cast to boolean', function () {
+    $post = BlogPost::factory()->published()->create();
+
+    expect($post->fresh()->is_published)->toBeBool();
+});
+
+test('published at is cast to datetime', function () {
+    $post = BlogPost::factory()->published()->create();
+
+    expect($post->fresh()->published_at)->toBeInstanceOf(Carbon::class);
+});
+
+test('route key name is slug', function () {
+    $post = new BlogPost;
+
+    expect($post->getRouteKeyName())->toBe('slug');
+});
+
+test('url accessor returns route to blog show', function () {
+    $post = BlogPost::factory()->published()->create([
+        'slug' => 'test-blog-post',
+    ]);
+
+    expect($post->url)->toContain('test-blog-post');
+});
+
+test('resolve route binding returns published post by slug', function () {
+    $post = BlogPost::factory()->published()->create([
+        'slug' => 'published-post',
+    ]);
+
+    $resolved = (new BlogPost)->resolveRouteBinding('published-post');
+
+    expect($resolved)->not->toBeNull()
+        ->and($resolved->id)->toBe($post->id);
+});
+
+test('resolve route binding returns null for unpublished post', function () {
+    BlogPost::factory()->create([
+        'slug' => 'draft-post',
+        'is_published' => false,
+        'published_at' => null,
+    ]);
+
+    $resolved = (new BlogPost)->resolveRouteBinding('draft-post');
+
+    expect($resolved)->toBeNull();
+});

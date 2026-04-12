@@ -19,3 +19,17 @@ test('returns default for missing key', function () {
 
     expect($manager->get('nonexistent', 'fallback'))->toBe('fallback');
 });
+
+test('set updates in-memory cache when already loaded', function () {
+    $manager = resolve(PlatformSettingsManager::class);
+    $manager->flushCache();
+
+    // Load cache by calling get
+    $manager->get('any_key');
+
+    // Set a value — this should update the in-memory cache
+    $manager->set('live_key', 'live_value');
+
+    // Should read from cache, not require another loadAll
+    expect($manager->get('live_key'))->toBe('live_value');
+});

@@ -39,7 +39,7 @@ class RevenueQuery
             ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue')
             ->groupBy('date')
             ->pluck('revenue', 'date')
-            ->map(fn ($v) => (float) $v)
+            ->map(fn (mixed $v): float => (float) $v)
             ->all();
     }
 

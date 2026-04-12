@@ -18,7 +18,7 @@ class FinancialReport
 
         $deductible = (float) Expense::query()->whereYear('date', $year)->sum('deductible_amount');
 
-        $monthly = $summary->monthlyBreakdown->map(fn ($m) => [
+        $monthly = $summary->monthlyBreakdown->map(fn (mixed $m) => [
             'month' => substr($m->monthName, 0, 3),
             'revenue' => $m->revenue,
             'expenses' => $m->expenses,

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Central\Resources\MessageResource\Tables;
 
-use App\Enums\Platform\PlatformSenderType;
 use App\Filament\Central\Resources\MessageResource;
 use App\Models\Platform\PlatformMessage;
 use App\Models\Platform\Tenant;
@@ -45,12 +44,7 @@ class MessagesTable
                     ->falseColor('warning'),
                 TextColumn::make('sender_type')
                     ->label('From')
-                    ->badge()
-                    ->color(fn (string $state) => match ($state) {
-                        PlatformSenderType::Admin->value => 'info',
-                        PlatformSenderType::Tenant->value => 'warning',
-                        default => 'gray',
-                    }),
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->label('Received')
                     ->since()

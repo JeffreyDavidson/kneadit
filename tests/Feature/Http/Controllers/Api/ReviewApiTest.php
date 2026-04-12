@@ -16,3 +16,79 @@ test('reviews endpoint returns approved reviews', function () {
     $response->assertOk()
         ->assertJsonCount(2, 'data');
 });
+
+test('reviews endpoint filters by featured when requested', function () {
+    Review::factory()->approved()->create(['is_featured' => false]);
+    Review::factory()->featured()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->getJson('/api/reviews?featured=1');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data');
+});
+
+test('reviews endpoint returns all approved when featured is not requested', function () {
+    Review::factory()->approved()->create(['is_featured' => false]);
+    Review::factory()->featured()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->getJson('/api/reviews');
+
+    $response->assertOk()
+        ->assertJsonCount(2, 'data');
+});
+
+test('store review creates review and returns 201', function () {
+    $product = App\Models\Inventory\Product::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/api/reviews', [
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'product_id' => $product->id,
+            'rating' => 5,
+            'comment' => 'Absolutely delicious!',
+        ]);
+
+    $response->assertCreated()
+        ->assertJsonPath('message', 'Review submitted and pending approval.');
+
+    $this->assertDatabaseHas('reviews', [
+        'customer_name' => 'Jane Doe',
+        'customer_email' => 'jane@example.com',
+        'product_id' => $product->id,
+        'rating' => 5,
+        'is_approved' => false,
+    ]);
+});
+
+test('store review fails validation with missing fields', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/api/reviews', []);
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors([
+            'customer_name',
+            'customer_email',
+            'product_id',
+            'rating',
+            'comment',
+        ]);
+});
+
+test('store review fails validation with invalid rating', function () {
+    $product = App\Models\Inventory\Product::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->postJson('/api/reviews', [
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'product_id' => $product->id,
+            'rating' => 6,
+            'comment' => 'Great!',
+        ]);
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors(['rating']);
+});

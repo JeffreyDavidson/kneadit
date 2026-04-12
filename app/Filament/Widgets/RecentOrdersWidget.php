@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Orders\OrderStatus;
 use App\Models\Orders\Order;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
@@ -34,16 +33,7 @@ class RecentOrdersWidget extends BaseWidget
                 TextColumn::make('total')
                     ->money('usd'),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (string $state) => match ($state) {
-                        OrderStatus::Pending->value => 'warning',
-                        OrderStatus::Confirmed->value => 'info',
-                        OrderStatus::Baking->value => 'primary',
-                        OrderStatus::Ready->value => 'success',
-                        OrderStatus::Delivered->value => 'gray',
-                        OrderStatus::Cancelled->value => 'danger',
-                        default => 'gray',
-                    }),
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->label('When')
                     ->since(),
