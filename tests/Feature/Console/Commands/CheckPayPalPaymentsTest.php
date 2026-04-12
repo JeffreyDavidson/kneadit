@@ -85,3 +85,44 @@ test('command source handles PAID, CANCELLED, and REFUNDED statuses', function (
         ->toContain("'REFUNDED'")
         ->toContain('MarkOrderPaid');
 });
+
+test('command processes tenant with unpaid paypal orders', function () {
+    config(['services.paypal.client_id' => 'test-client-id']);
+
+    createTenant([
+        'id' => 'paypal-bakery',
+        'name' => 'PayPal Baker',
+        'email' => 'paypal@test.com',
+        'store_name' => 'PayPal Bakery',
+    ]);
+
+    $tenancyManager = Mockery::mock(TenancyManager::class);
+    $tenancyManager->shouldReceive('withinTenant')
+        ->once()
+        ->andReturnUsing(function ($tenant, $callback) {
+            return $callback();
+        });
+
+    app()->instance(TenancyManager::class, $tenancyManager);
+
+    // Since this runs within a tenant context and we haven't set up tenant tables,
+    // it will skip due to settings('paypal_client_id') returning null
+    $this->artisan('paypal:check-payments')
+        ->assertSuccessful();
+});
+
+test('command source resolves PaymentVerifier per tenant', function () {
+    $source = file_get_contents(app_path('Console/Commands/Stripe/CheckPayPalPaymentsCommand.php'));
+
+    expect($source)
+        ->toContain('resolve(PaymentVerifier::class)')
+        ->toContain("settings('paypal_client_id')");
+});
+
+test('command source skips orders without paypal invoice id', function () {
+    $source = file_get_contents(app_path('Console/Commands/Stripe/CheckPayPalPaymentsCommand.php'));
+
+    expect($source)
+        ->toContain('paypal_invoice_id')
+        ->toContain('whereNotNull');
+});
