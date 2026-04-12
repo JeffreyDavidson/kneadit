@@ -19,6 +19,7 @@ a:hover{color:var(--golden)}
 .form-group input{width:100%;padding:.85rem 1.25rem;border-radius:14px;border:2px solid var(--walnut);background:rgba(28,20,16,.5);color:var(--cream);font-family:var(--font-sans);font-size:1rem;outline:none;transition:border-color .2s}
 .form-group input:focus{border-color:var(--honey)}
 .form-group input::placeholder{color:var(--cinnamon)}
+.form-group input[type="checkbox"]{width:auto;padding:0;border:none;background:none;border-radius:0}
 .form-error{font-size:.8rem;color:var(--berry);margin-top:.35rem}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .auth-btn{display:block;width:100%;padding:.85rem;border-radius:14px;border:none;background:var(--honey);color:var(--white);font-family:var(--font-sans);font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s,transform .2s;margin-top:.5rem}
