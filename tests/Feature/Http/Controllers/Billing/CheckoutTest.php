@@ -14,3 +14,18 @@ test('checkout returns 404 for invalid plan', function () {
         ->post('/billing/checkout/nonexistent-plan')
         ->assertNotFound();
 });
+
+test('checkout returns 404 for valid tier but no configured price', function () {
+    config(['kneadit.stripe_prices' => ['starter' => null]]);
+
+    $user = User::factory()->owner()->create();
+
+    $this->actingAs($user)
+        ->post('/billing/checkout/starter')
+        ->assertNotFound();
+});
+
+test('checkout requires authentication', function () {
+    $this->post('/billing/checkout/starter')
+        ->assertRedirect('/login');
+});

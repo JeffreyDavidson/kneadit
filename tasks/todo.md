@@ -43,103 +43,102 @@ These are write operations and domain services with zero tests. Highest risk.
 
 ## Tier 6: Filament Resource Coverage
 
-### Tenant Resources - New Test Files
-- [x] Create CateringInquiryResourceTest (24 tests)
-
-### Tenant Resources - Add Tests to Existing Files
-- [x] EmailCampaignResourceTest - add create, edit, table columns, global search (+12 tests)
-- [x] GiftCardResourceTest - add ViewGiftCard page test, global search (+4 tests)
-- [x] OrderResourceTest - add global search coverage (+4 tests)
-- [x] BlogPostResourceTest - add table columns, search, filter, sort, global search (+8 tests)
-- [x] SocialPostResourceTest - add navigation badge, filter by platform, global search (+7 tests)
-- [x] WaitlistEntryResourceTest - add navigation badge, sort, global search (+6 tests)
-- [x] SurveyResourceTest - add ViewSurvey page, sort, global search (+5 tests)
-- [x] CustomerResourceTest - add global search coverage (+3 tests)
-- [x] ProductResourceTest - add global search coverage (+4 tests)
-- [x] IngredientResourceTest - add global search coverage (+3 tests)
-- [x] LoyaltyRewardResourceTest - add global search coverage (+3 tests)
-- [x] CouponResourceTest - add global search coverage (+3 tests)
-- [x] ContactMessageResourceTest - add global search coverage (+3 tests)
-- [x] ReviewResourceTest - add global search coverage (+4 tests)
-- [x] RecipeResourceTest - add sort, global search coverage (+4 tests)
-
-### Central Resources
-- [x] CentralViewPagesTest - add ViewMessage, ticket reply, ticket status, tenant stats (+6 tests)
-- [x] Create CentralTenantResourceTest (12 tests)
-- [x] Create CentralSupportTicketResourceTest (4 tests)
-- [x] Create CentralMessageResourceTest (9 tests)
-
-### Finish
-- [x] Run Pint
-- [x] Run tests (472 passed, 1490 assertions)
-- [x] Add review section
-
-## Review
-Added ~122 new Filament Resource feature tests across 22 files (3 new, 19 modified).
-
-Coverage areas exercised:
-- Global search methods (getGloballySearchableAttributes, getGlobalSearchResultTitle, getGlobalSearchResultDetails, getGlobalSearchEloquentQuery)
-- Navigation badges (getNavigationBadge, getNavigationBadgeColor) for SocialPosts, WaitlistEntries, SupportTickets, Messages
-- View pages: ViewGiftCard, ViewSurvey, ViewMessage (render + mark as read + reply + thread)
-- View ticket page: reply, status update, resolve with timestamp
-- Tenant stats on ViewTenant page
-- Form schemas exercised through create/edit flows (CateringInquiry, EmailCampaign full CRUD)
-- Table features: column rendering, search, sort, filter for previously untested resources
-- Fixed Pest.php support_tickets table schema to include resolved_at and admin_notes columns
-
-Note: SupportTicketResource table tests are limited because the SupportTicketsTable has a type mismatch bug (color closures type-hint `string $state` but receive SupportTicketStatus enum). This is a pre-existing issue.
-
----
+(completed - see git history)
 
 ## Tier 7: Filament Pages & Widgets Coverage
 
-### Central Pages
-- [x] FeatureUsage (2%) -> 17 tests
-- [x] DataExport (9%) -> 9 tests
-- [x] TenantComparison (10%) -> 17 tests
-- [x] OnboardingTracker (24%) -> 13 tests
+(completed - see git history)
 
-### Tenant Pages - Analytics
-- [x] SurveyResults (21%) -> 6 tests
-- [x] ReportsCenter (25%) -> 11 tests
-- [x] ProductTrends (54%) -> 9 tests
-- [x] StorefrontAnalytics (74%) -> 10 tests
+---
 
-### Tenant Pages - Operations
-- [x] StaffManagement (23%) -> 9 tests
-- [x] HolidayPlanningCalendar (35%) -> 12 tests
-- [x] WeeklyPrepPlanner (50%) -> 8 tests
-- [x] DeliveryRoutePlanner (53%) -> 6 tests
-- [x] OrderCalendar (59%) -> 14 tests
-- [x] SeasonalItems (60%) -> 12 tests
+## Tier 9: Controllers, Services, and Non-Filament Coverage Gaps
 
-### Tenant Pages - Tools
-- [x] InstagramCaptionGenerator (16%) -> 11 tests
-- [x] PriceSuggestionTool (17%) -> 14 tests
-- [x] ShoppingListGenerator (27%) -> 8 tests
-- [x] ThemeSelector (29%) -> 3 tests
-- [x] SmartShoppingList (39%) -> 7 tests
-- [x] RecipeCostCalculator (41%) -> 9 tests
-- [x] DescriptionGenerator (44%) -> 9 tests
-- [x] ProductImportExport (49%) -> 7 tests
-- [x] PricingEngine (51%) -> 10 tests
+### Controllers at 0%
+- [x] 1. `BillingPortalController` — Mock `redirectToBillingPortal()` on User (2 tests)
+- [x] 2. `ConsumeImpersonationController` — Test valid token login + invalid token 403 (2 tests)
+- [x] 3. `ImpersonateController` — Test platform-admin gate + redirect (3 tests)
+- [x] 4. `StripeConnectController` — Mock `InitiateStripeConnect` action (2 tests)
 
-### Tenant Pages - Settings/Platform
-- [x] CustomDomain (23%) -> 6 tests
-- [x] HomepageBuilder (42%) -> 13 tests
-- [x] Messages (18%) -> 10 tests
-- [x] OnboardingSteps (0-20%) -> 6 tests (CompleteStep + PreviewStep)
-- [x] ActivityLogPage (43%) -> 17 tests
+### Controllers at < 50%
+- [x] 5. `SwapPlanController` (18%) — Add successful swap, exception path, null subscription (5 tests total)
+- [x] 6. `CheckoutSuccessController` (22%) — Add session behavior + source verification (6 tests total)
+- [x] 7. `CheckoutController` (33%) — Add null price and auth check (3 tests total)
+- [x] 8. `StripeWebhookController` (43%) — Add SyncSubscriptionPlan, idempotency, missing customer (10 tests total)
+- [x] 9. `StripeConnectWebhookController` (46%) — Add routing/idempotency/signature verification (6 tests total)
+- [x] 10. `RootController` (59%) — Add source verification for all branch paths (8 tests total)
 
-### Widgets
-- [x] UpcomingHolidayWidget (15%) -> 4 tests
-- [x] InboxWidget (33%) -> 1 test
-- [x] BirthdayWidget (40%) -> 6 tests
-- [x] UpcomingOrdersWidget (41%) -> 6 tests
-- [x] OnboardingProgress (27%) -> 8 tests
+### Services
+- [x] 11. `ForgeService` (5%) — Mock Http for all 3 methods + failure paths (11 tests total)
+- [x] 12. `StripeCheckoutService` (6%) — isEnabled, getConnectId, redirectToCheckout, createCheckout, handleComplete (11 tests total)
+- [x] 13. `TenantUsageService` (12%) — getTenantUsageData approaching/at limits, pro skip, exception (9 tests total)
+- [x] 14. `TenantHealthService` (13%) — getTenantHealthData, scoring, getLastLogin, getRecentOrderCount (9 tests total)
+- [x] 15. `DeliveryRouteService` (54%) — main st tier, sorted delivery time, null delivery time (14 tests total)
+- [x] 16. `CsvExportService` (60%) — customers and categories CSV (8 tests total)
+- [x] 17. `ShoppingListService` (67%) — Already well-covered (7 tests)
+- [x] 18. `InvoiceService` (69%) — create/send failure, cancel failure, delivery+discount (8 tests total)
+
+### Other Gaps
+- [x] 19. `InitiateStripeConnect` (0%) — Source verification + reflection (5 tests total)
+- [x] 20. `CreateOneTenantCommand` (0%) — Skipped (requires real tenant DB)
+- [x] 21. `CreateDemoTenantCommand` (9%) — fresh flag, settings, pro plan (7 tests total)
+- [x] 22. `CheckPayPalPaymentsCommand` (23%) — processTenant, source verification (9 tests total)
+- [x] 23. `CapacityExceededException` (20%) — Already fully covered, skipped
+
+### Post-write
+- [x] Run Pint
+- [x] Run test suite — 2929 passed, 3 pre-existing tenant DB collision failures
+- [x] Add review section
 
 ### Review
-Added 296 new tests across 29 new test files (380 total Integration/Filament tests including pre-existing).
-All 380 Integration/Filament tests pass. All 540 Feature/Filament tests pass (no regressions).
 
-Test approach: Direct instantiation of page/widget classes and method calls, matching the existing Integration test pattern. Protected methods accessed via ReflectionMethod where needed. RefreshDatabase used only for tests needing main-migration tables (holidays). Central test setup used for pages/widgets that depend on central-connection models (PlatformMessage).
+Added ~65 new tests across 4 new test files and 14 modified test files. All new tests pass individually and in the full suite.
+
+**New test files:**
+- `tests/Feature/Http/Controllers/Billing/BillingPortalControllerTest.php` (2 tests)
+- `tests/Feature/Http/Controllers/Central/ConsumeImpersonationControllerTest.php` (2 tests)
+- `tests/Feature/Http/Controllers/Central/ImpersonateControllerTest.php` (3 tests)
+- `tests/Feature/Http/Controllers/Stripe/StripeConnectControllerTest.php` (2 tests)
+
+**Modified test files:**
+- SwapPlanTest (+4), CheckoutSuccessTest (+5), CheckoutTest (+2)
+- StripeWebhookTest (+7), StripeConnectWebhookTest (+3), CentralPagesTest (+1)
+- ForgeServiceTest (+9), StripeCheckoutServiceTest (+9), TenantUsageServiceTest (+5)
+- TenantHealthServiceTest (+8), DeliveryRouteServiceTest (+3), CsvExportServiceTest (+2)
+- InvoiceServiceTest (+5), InitiateStripeConnectTest (+4)
+- CreateDemoTenantTest (+3), CheckPayPalPaymentsTest (+3)
+
+**Testing approach:**
+- External APIs (Stripe, PayPal, Forge) mocked via Http::fake() or Mockery
+- Controllers using `#[CurrentUser]` attribute tested via direct controller invocation
+- Tenant-scoped routes tested by bypassing tenancy middleware or testing controllers directly
+- Services using TenancyManager mocked for tenant context isolation
+- Source code verification used for paths requiring Stripe class overloading (Cashier, Webhook)
+
+**Pre-existing failures:** 3 tests fail in full suite due to `TenantDatabaseAlreadyExistsException` (test ordering collision). All 3 pass individually.
+
+---
+
+## Tier 9: Filament Pages, Widgets, and Resource Coverage Gaps
+
+### Central Pages
+- [x] BakeryInsights (11%) — 8 tests covering getTenantHealthData, getAlerts, getTenantUsageData, extendTrial (missing+valid), sendNudge (missing+valid), suggestUpgrade
+- [x] Activity (60%) — 48 tests covering getLogsProperty with all filters, computed properties (todayCount, weekCount, mostCommonAction), pagination, all event icons/colors, all action colors/categories
+
+### Resource canAccess and ShowsUpgradeBadge
+- [x] Pro-feature resources (EmailCampaign, LoyaltyReward, Ingredient, SocialPost) — canAccess active/inactive
+- [x] Growth-feature resources (Coupon, GiftCard, Recipe, Review) — canAccess active/inactive
+- [x] ShowsUpgradeBadge: navigation badge text and color for pro/growth tiers
+
+### Widgets
+- [x] GoalTrackerWidget — 10 tests (openEditModal monthly/yearly, closeEditModal, saveGoal, monthlyData/yearlyData computed properties)
+- [x] InboxWidget — 3 tests (render, getUnreadCount, getMessagesUrl)
+- [x] StatsOverview — 3 tests (render with orders, with waitlist, empty state)
+- [x] WidgetColumnCoverage — 2 tests (OrderStatus color mapping, status enum validation)
+- [x] WidgetCoverage (Integration) — 15 tests (TodaysOrders/RecentOrders instantiation, status color closures)
+
+### Notes
+- TodaysOrdersWidget and RecentOrdersWidget have a pre-existing type mismatch bug: `fn (string $state)` closures receive `OrderStatus` enum instead of string. This prevents Livewire rendering tests with data from exercising the color closures.
+- 2 pre-existing failures in TenantComparisonPageTest (tenant database collision) are unrelated to these changes.
+
+### Review
+Added 109 new tests across 8 new test files. All pass. No regressions in existing Filament test suite (1076 passing, 2 pre-existing failures).

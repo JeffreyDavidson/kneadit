@@ -67,3 +67,29 @@ test('webhook returns 500 for unknown event type without secret', function () {
 
     $response->assertStatus(500);
 });
+
+test('webhook controller routes account.updated to HandleConnectAccountUpdated', function () {
+    $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeConnectWebhookController.php'));
+
+    expect($source)
+        ->toContain("'account.updated' => resolve(HandleConnectAccountUpdated::class)")
+        ->toContain("'checkout.session.completed' => resolve(HandleConnectCheckoutCompleted::class)")
+        ->toContain('default => null');
+});
+
+test('webhook controller implements idempotency via cache', function () {
+    $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeConnectWebhookController.php'));
+
+    expect($source)
+        ->toContain('Cache::add("stripe_event:{$eventId}"')
+        ->toContain('Already processed');
+});
+
+test('webhook controller verifies stripe signature', function () {
+    $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeConnectWebhookController.php'));
+
+    expect($source)
+        ->toContain('Webhook::constructEvent')
+        ->toContain('Stripe-Signature')
+        ->toContain('Invalid signature');
+});

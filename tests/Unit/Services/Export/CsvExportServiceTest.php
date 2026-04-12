@@ -147,3 +147,43 @@ it('generates CSV as a string via toString', function () {
     // Should at least have headers
     expect($content)->toContain('ID,Name,Slug,Description');
 });
+
+it('writes customers CSV with data from users table', function () {
+    DB::table('users')->insert([
+        'id' => 1,
+        'name' => 'Jane Doe',
+        'email' => 'jane@example.com',
+        'password' => bcrypt('password'),
+        'created_at' => '2026-01-01 00:00:00',
+        'updated_at' => '2026-01-01 00:00:00',
+    ]);
+
+    $service = new CsvExportService;
+    $content = $service->toString('customers');
+
+    expect($content)
+        ->toContain('ID,Name,Email')
+        ->toContain('Jane Doe')
+        ->toContain('jane@example.com');
+});
+
+it('writes categories CSV with data', function () {
+    DB::table('categories')->insert([
+        'id' => 1,
+        'name' => 'Pastries',
+        'slug' => 'pastries',
+        'description' => 'Fresh pastries',
+        'is_active' => true,
+        'sort_order' => 0,
+        'created_at' => '2026-01-01 00:00:00',
+        'updated_at' => '2026-01-01 00:00:00',
+    ]);
+
+    $service = new CsvExportService;
+    $content = $service->toString('categories');
+
+    expect($content)
+        ->toContain('Pastries')
+        ->toContain('pastries')
+        ->toContain('Fresh pastries');
+});

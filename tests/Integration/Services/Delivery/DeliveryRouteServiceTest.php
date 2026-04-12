@@ -118,3 +118,50 @@ test('it returns route stats for empty collection', function () {
         ->estimated_total_time->toBe(0)
         ->average_distance_time->toBe(0.0);
 });
+
+test('it calculates close distance tier for main st addresses', function () {
+    $result = resolve(DeliveryRouteService::class)->calculateDistanceTier('456 Main St Suite 200');
+
+    expect($result)
+        ->tier->toBe('Close')
+        ->color->toBe('green')
+        ->estimated_minutes->toBe(10);
+});
+
+test('it loads orders sorted by delivery time', function () {
+    $date = now()->format('Y-m-d');
+
+    Order::factory()->create([
+        'delivery_date' => $date,
+        'delivery_time' => '16:00',
+        'delivery_address' => '100 South Rd',
+        'total' => 30.00,
+    ]);
+
+    Order::factory()->create([
+        'delivery_date' => $date,
+        'delivery_time' => '10:00',
+        'delivery_address' => '200 North Ave',
+        'total' => 40.00,
+    ]);
+
+    $result = resolve(DeliveryRouteService::class)->loadOrders($date);
+
+    expect($result)->toHaveCount(2)
+        ->and($result->first()['delivery_time'])->toBe('10:00');
+});
+
+test('it handles order with null delivery time', function () {
+    $date = now()->format('Y-m-d');
+
+    Order::factory()->create([
+        'delivery_date' => $date,
+        'delivery_time' => null,
+        'delivery_address' => '300 Elm St',
+    ]);
+
+    $result = resolve(DeliveryRouteService::class)->loadOrders($date);
+
+    expect($result)->toHaveCount(1)
+        ->and($result->first()['delivery_time'])->toBe('Not specified');
+});
