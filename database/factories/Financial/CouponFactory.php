@@ -4,15 +4,15 @@ namespace Database\Factories\Financial;
 
 use App\Enums\Financial\CouponType;
 use App\Models\Financial\Coupon;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Coupon>
  */
+#[UseModel(Coupon::class)]
 class CouponFactory extends Factory
 {
-    protected $model = Coupon::class;
-
     /**
      * @return array<string, mixed>
      */

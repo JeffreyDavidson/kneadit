@@ -4,6 +4,7 @@ namespace App\Models\Staff;
 
 use App\Enums\Staff\UserRole;
 use Database\Factories\Staff\StaffInvitationFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -24,19 +25,11 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('email', 'role', 'token', 'accepted_at', 'expires_at', 'invited_by')]
 class StaffInvitation extends Model
 {
     /** @use HasFactory<StaffInvitationFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'email',
-        'role',
-        'token',
-        'accepted_at',
-        'expires_at',
-        'invited_by',
-    ];
 
     protected function casts(): array
     {

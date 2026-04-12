@@ -4,16 +4,16 @@ namespace Database\Factories\Inventory;
 
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Category>
  */
+#[UseModel(Category::class)]
 class CategoryFactory extends Factory
 {
-    protected $model = Category::class;
-
     /**
      * Define the model's default state.
      *

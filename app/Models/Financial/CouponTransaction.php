@@ -5,6 +5,8 @@ namespace App\Models\Financial;
 use App\Enums\Financial\CouponTransactionType;
 use App\Models\Orders\Order;
 use Database\Factories\Financial\CouponTransactionFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,21 +19,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[WithoutTimestamps]
+#[Fillable('coupon_id', 'amount', 'type', 'order_id', 'notes', 'created_at')]
 class CouponTransaction extends Model
 {
     /** @use HasFactory<CouponTransactionFactory> */
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'coupon_id',
-        'amount',
-        'type',
-        'order_id',
-        'notes',
-        'created_at',
-    ];
 
     protected function casts(): array
     {

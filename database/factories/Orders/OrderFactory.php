@@ -9,15 +9,15 @@ use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Models\Orders\OrderMessage;
 use App\Models\Staff\User;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Order>
  */
+#[UseModel(Order::class)]
 class OrderFactory extends Factory
 {
-    protected $model = Order::class;
-
     /**
      * @return array<string, mixed>
      */

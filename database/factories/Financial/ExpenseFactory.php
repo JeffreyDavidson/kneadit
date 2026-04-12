@@ -4,14 +4,14 @@ namespace Database\Factories\Financial;
 
 use App\Enums\Financial\ExpenseCategory;
 use App\Models\Financial\Expense;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Expense> */
+#[UseModel(Expense::class)]
 class ExpenseFactory extends Factory
 {
-    protected $model = Expense::class;
-
     /**
      * @return array<string, mixed>
      */

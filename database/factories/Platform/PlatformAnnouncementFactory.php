@@ -4,15 +4,15 @@ namespace Database\Factories\Platform;
 
 use App\Enums\Platform\AnnouncementType;
 use App\Models\Platform\PlatformAnnouncement;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<PlatformAnnouncement>
  */
+#[UseModel(PlatformAnnouncement::class)]
 class PlatformAnnouncementFactory extends Factory
 {
-    protected $model = PlatformAnnouncement::class;
-
     /**
      * @return array<string, mixed>
      */

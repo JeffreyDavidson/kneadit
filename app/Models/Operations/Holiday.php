@@ -4,6 +4,7 @@ namespace App\Models\Operations;
 
 use Carbon\Carbon;
 use Database\Factories\Operations\HolidayFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -37,21 +38,11 @@ use Illuminate\Support\Facades\Date;
  *
  * @mixin \Eloquent
  */
+#[Fillable('name', 'date', 'lead_days', 'order_deadline', 'prep_start', 'max_orders', 'notes', 'is_active')]
 class Holiday extends Model
 {
     /** @use HasFactory<HolidayFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'name',
-        'date',
-        'lead_days',
-        'order_deadline',
-        'prep_start',
-        'max_orders',
-        'notes',
-        'is_active',
-    ];
 
     protected function casts(): array
     {

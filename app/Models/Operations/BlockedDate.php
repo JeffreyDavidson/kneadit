@@ -3,6 +3,7 @@
 namespace App\Models\Operations;
 
 use Database\Factories\Operations\BlockedDateFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -17,18 +18,11 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('date', 'reason', 'is_all_day', 'open_time', 'close_time')]
 class BlockedDate extends Model
 {
     /** @use HasFactory<BlockedDateFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'date',
-        'reason',
-        'is_all_day',
-        'open_time',
-        'close_time',
-    ];
 
     protected function casts(): array
     {

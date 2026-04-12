@@ -3,14 +3,14 @@
 namespace Database\Factories\Operations;
 
 use App\Models\Operations\ActivityLog;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<ActivityLog> */
+#[UseModel(ActivityLog::class)]
 class ActivityLogFactory extends Factory
 {
-    protected $model = ActivityLog::class;
-
     /**
      * @return array<string, mixed>
      */

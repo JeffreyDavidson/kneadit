@@ -3,14 +3,14 @@
 namespace Database\Factories\Platform;
 
 use App\Models\Platform\TenantNote;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<TenantNote> */
+#[UseModel(TenantNote::class)]
 class TenantNoteFactory extends Factory
 {
-    protected $model = TenantNote::class;
-
     /**
      * @return array<string, mixed>
      */

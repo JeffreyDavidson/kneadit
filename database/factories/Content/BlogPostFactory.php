@@ -3,16 +3,16 @@
 namespace Database\Factories\Content;
 
 use App\Models\Content\BlogPost;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
  * @extends Factory<BlogPost>
  */
+#[UseModel(BlogPost::class)]
 class BlogPostFactory extends Factory
 {
-    protected $model = BlogPost::class;
-
     /**
      * @return array<string, mixed>
      */

@@ -3,6 +3,7 @@
 namespace App\Models\Operations;
 
 use Database\Factories\Operations\BusinessScheduleFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,19 +18,11 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
+#[Fillable('day_of_week', 'is_open', 'open_time', 'close_time', 'order_cutoff_time', 'max_orders')]
 class BusinessSchedule extends Model
 {
     /** @use HasFactory<BusinessScheduleFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'day_of_week',
-        'is_open',
-        'open_time',
-        'close_time',
-        'order_cutoff_time',
-        'max_orders',
-    ];
 
     protected function casts(): array
     {

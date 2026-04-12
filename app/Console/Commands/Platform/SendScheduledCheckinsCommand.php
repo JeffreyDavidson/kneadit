@@ -6,16 +6,16 @@ use App\Events\Platform\ScheduledCheckinDue;
 use App\Models\Operations\CheckinLog;
 use App\Models\Operations\ScheduledCheckin;
 use App\Models\Platform\Tenant;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 
+#[Signature('checkins:send')]
+#[Description('Send scheduled check-in emails to tenants based on their signup date')]
 class SendScheduledCheckinsCommand extends Command
 {
-    protected $signature = 'checkins:send';
-
-    protected $description = 'Send scheduled check-in emails to tenants based on their signup date';
-
     public function handle(): int
     {
         $checkins = ScheduledCheckin::query()->where('is_active', true)->get();

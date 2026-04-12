@@ -3,15 +3,15 @@
 namespace App\Console\Commands\Tenants;
 
 use App\Models\Platform\Tenant;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;
 
+#[Signature('tenant:bakeries {--fresh : Drop and recreate all demo tenants}')]
+#[Description('Create 5 demo bakery tenants for local testing')]
 class CreateDemoBakeriesCommand extends Command
 {
-    protected $signature = 'tenant:bakeries {--fresh : Drop and recreate all demo tenants}';
-
-    protected $description = 'Create 5 demo bakery tenants for local testing';
-
     public function handle(): int
     {
         $bakeries = [

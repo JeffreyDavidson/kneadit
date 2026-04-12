@@ -3,6 +3,8 @@
 namespace App\Models\Platform;
 
 use Database\Factories\Platform\TenantNoteFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,14 +32,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('tenant_id', 'body', 'author')]
 class TenantNote extends Model
 {
     /** @use HasFactory<TenantNoteFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = ['tenant_id', 'body', 'author'];
 
     /**
      * @return BelongsTo<Tenant, $this>

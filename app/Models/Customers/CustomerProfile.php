@@ -3,6 +3,7 @@
 namespace App\Models\Customers;
 
 use Database\Factories\Customers\CustomerProfileFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,16 +18,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[Fillable('customer_id', 'birthday', 'notes')]
 class CustomerProfile extends Model
 {
     /** @use HasFactory<CustomerProfileFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'customer_id',
-        'birthday',
-        'notes',
-    ];
 
     protected function casts(): array
     {

@@ -3,15 +3,15 @@
 namespace Database\Factories\Inventory;
 
 use App\Models\Inventory\Supplier;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Supplier>
  */
+#[UseModel(Supplier::class)]
 class SupplierFactory extends Factory
 {
-    protected $model = Supplier::class;
-
     /**
      * @return array<string, mixed>
      */

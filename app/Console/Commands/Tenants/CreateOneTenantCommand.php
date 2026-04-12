@@ -3,24 +3,18 @@
 namespace App\Console\Commands\Tenants;
 
 use App\Models\Platform\Tenant;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Hidden;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
+#[Signature('tenant:create-one {id : Tenant subdomain/id} {name : Owner name} {email : Owner email} {store_name : Bakery name} {brand_primary : Primary brand color} {brand_secondary : Secondary brand color}')]
+#[Description('Create a single demo tenant (called by tenant:bakeries)')]
+#[Hidden]
 class CreateOneTenantCommand extends Command
 {
-    protected $signature = 'tenant:create-one
-                            {id : Tenant subdomain/id}
-                            {name : Owner name}
-                            {email : Owner email}
-                            {store_name : Bakery name}
-                            {brand_primary : Primary brand color}
-                            {brand_secondary : Secondary brand color}';
-
-    protected $description = 'Create a single demo tenant (called by tenant:bakeries)';
-
-    protected $hidden = true;
-
     public function handle(): int
     {
         $id = $this->argument('id');

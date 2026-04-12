@@ -3,17 +3,17 @@
 namespace App\Console\Commands\Platform;
 
 use App\Events\Platform\HealthCheckFailed;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
+#[Signature('health:check')]
+#[Description('Run platform health checks and alert on failures')]
 class HealthCheckCommand extends Command
 {
-    protected $signature = 'health:check';
-
-    protected $description = 'Run platform health checks and alert on failures';
-
     public function handle(): int
     {
         $issues = [];

@@ -5,16 +5,16 @@ namespace Database\Factories\Inventory;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\ProductImage;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Product>
  */
+#[UseModel(Product::class)]
 class ProductFactory extends Factory
 {
-    protected $model = Product::class;
-
     /**
      * Define the model's default state.
      *

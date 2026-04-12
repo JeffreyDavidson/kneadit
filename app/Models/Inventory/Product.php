@@ -10,6 +10,7 @@ use App\Models\Engagement\PageView;
 use App\Models\Engagement\Review;
 use App\Models\Orders\OrderItem;
 use Database\Factories\Inventory\ProductFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -54,6 +55,7 @@ use Illuminate\Support\Facades\Storage;
  *
  * @mixin \Eloquent
  */
+#[Fillable('name', 'slug', 'description', 'price', 'category_id', 'is_active', 'is_featured', 'image', 'cost')]
 #[UseEloquentBuilder(ProductQueryBuilder::class)]
 class Product extends Model
 {
@@ -61,18 +63,6 @@ class Product extends Model
     use HasFactory;
 
     use LogsActivity;
-
-    protected $fillable = [
-        'name',
-        'slug',
-        'description',
-        'price',
-        'category_id',
-        'is_active',
-        'is_featured',
-        'image',
-        'cost',
-    ];
 
     protected function casts(): array
     {

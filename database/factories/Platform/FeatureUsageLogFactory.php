@@ -3,14 +3,14 @@
 namespace Database\Factories\Platform;
 
 use App\Models\Platform\FeatureUsageLog;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<FeatureUsageLog> */
+#[UseModel(FeatureUsageLog::class)]
 class FeatureUsageLogFactory extends Factory
 {
-    protected $model = FeatureUsageLog::class;
-
     /**
      * @return array<string, mixed>
      */

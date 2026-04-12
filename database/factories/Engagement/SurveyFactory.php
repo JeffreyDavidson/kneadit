@@ -3,15 +3,15 @@
 namespace Database\Factories\Engagement;
 
 use App\Models\Engagement\Survey;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Survey>
  */
+#[UseModel(Survey::class)]
 class SurveyFactory extends Factory
 {
-    protected $model = Survey::class;
-
     /**
      * @return array<string, mixed>
      */

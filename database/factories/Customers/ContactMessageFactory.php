@@ -3,14 +3,14 @@
 namespace Database\Factories\Customers;
 
 use App\Models\Customers\ContactMessage;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<ContactMessage> */
+#[UseModel(ContactMessage::class)]
 class ContactMessageFactory extends Factory
 {
-    protected $model = ContactMessage::class;
-
     /**
      * @return array<string, mixed>
      */

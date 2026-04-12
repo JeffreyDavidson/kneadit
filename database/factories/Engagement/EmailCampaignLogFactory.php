@@ -5,14 +5,14 @@ namespace Database\Factories\Engagement;
 use App\Enums\Marketing\EmailDeliveryStatus;
 use App\Models\Engagement\EmailCampaign;
 use App\Models\Engagement\EmailCampaignLog;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<EmailCampaignLog> */
+#[UseModel(EmailCampaignLog::class)]
 class EmailCampaignLogFactory extends Factory
 {
-    protected $model = EmailCampaignLog::class;
-
     /**
      * @return array<string, mixed>
      */

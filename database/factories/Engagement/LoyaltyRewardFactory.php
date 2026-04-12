@@ -4,15 +4,15 @@ namespace Database\Factories\Engagement;
 
 use App\Enums\Engagement\RewardType;
 use App\Models\Engagement\LoyaltyReward;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<LoyaltyReward>
  */
+#[UseModel(LoyaltyReward::class)]
 class LoyaltyRewardFactory extends Factory
 {
-    protected $model = LoyaltyReward::class;
-
     /**
      * @return array<string, mixed>
      */

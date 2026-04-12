@@ -4,6 +4,7 @@ namespace App\Models\Operations;
 
 use Carbon\Carbon;
 use Database\Factories\Operations\CapacityLimitFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,19 +26,11 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
+#[Fillable('date', 'specific_date', 'day_of_week', 'max_orders', 'is_blocked', 'notes')]
 class CapacityLimit extends Model
 {
     /** @use HasFactory<CapacityLimitFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'date',
-        'specific_date',
-        'day_of_week',
-        'max_orders',
-        'is_blocked',
-        'notes',
-    ];
 
     protected function casts(): array
     {

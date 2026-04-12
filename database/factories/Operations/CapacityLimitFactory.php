@@ -3,14 +3,14 @@
 namespace Database\Factories\Operations;
 
 use App\Models\Operations\CapacityLimit;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<CapacityLimit> */
+#[UseModel(CapacityLimit::class)]
 class CapacityLimitFactory extends Factory
 {
-    protected $model = CapacityLimit::class;
-
     /**
      * @return array<string, mixed>
      */

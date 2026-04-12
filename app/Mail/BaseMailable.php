@@ -6,16 +6,15 @@ use App\Services\Settings\TenantSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Queue\Attributes\Backoff;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\SerializesModels;
 
+#[Tries(3)]
+#[Backoff([10, 60, 300])]
 abstract class BaseMailable extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
-
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
 
     /**
      * @return array<string, mixed>

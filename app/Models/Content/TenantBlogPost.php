@@ -3,7 +3,9 @@
 namespace App\Models\Content;
 
 use Database\Factories\Content\TenantBlogPostFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,24 +18,12 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
+#[Table('blog_posts')]
+#[Fillable('title', 'slug', 'excerpt', 'body', 'featured_image', 'tags', 'author_name', 'is_published', 'published_at')]
 class TenantBlogPost extends Model
 {
     /** @use HasFactory<TenantBlogPostFactory> */
     use HasFactory;
-
-    protected $table = 'blog_posts';
-
-    protected $fillable = [
-        'title',
-        'slug',
-        'excerpt',
-        'body',
-        'featured_image',
-        'tags',
-        'author_name',
-        'is_published',
-        'published_at',
-    ];
 
     protected function casts(): array
     {

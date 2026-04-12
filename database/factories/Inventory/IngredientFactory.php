@@ -3,15 +3,15 @@
 namespace Database\Factories\Inventory;
 
 use App\Models\Inventory\Ingredient;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Ingredient>
  */
+#[UseModel(Ingredient::class)]
 class IngredientFactory extends Factory
 {
-    protected $model = Ingredient::class;
-
     /**
      * @return array<string, mixed>
      */

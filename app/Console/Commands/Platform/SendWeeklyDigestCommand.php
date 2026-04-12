@@ -8,15 +8,15 @@ use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Reporting\WeeklyDigestDataCollector;
 use App\Services\Tenants\TenancyManager;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
+#[Signature('digest:weekly')]
+#[Description('Send weekly digest email to bakery owners')]
 class SendWeeklyDigestCommand extends Command
 {
-    protected $signature = 'digest:weekly';
-
-    protected $description = 'Send weekly digest email to bakery owners';
-
     public function handle(TenancyManager $tenancyManager): int
     {
         $tenants = Tenant::query()->cursor();

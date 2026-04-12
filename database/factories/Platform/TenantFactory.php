@@ -4,15 +4,15 @@ namespace Database\Factories\Platform;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Tenant>
  */
+#[UseModel(Tenant::class)]
 class TenantFactory extends Factory
 {
-    protected $model = Tenant::class;
-
     /**
      * @return array<string, mixed>
      */
