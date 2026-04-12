@@ -40,16 +40,15 @@ class TodaysOrdersWidget extends BaseWidget
                     ->time('g:i A'),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state) => match ($state) {
-                        OrderStatus::Pending->value => 'warning',
-                        OrderStatus::Confirmed->value => 'info',
-                        OrderStatus::Baking->value => 'primary',
-                        OrderStatus::Ready->value => 'success',
-                        OrderStatus::Delivered->value => 'gray',
-                        OrderStatus::Cancelled->value => 'danger',
-                        default => 'gray',
+                    ->color(fn (OrderStatus $state) => match ($state) {
+                        OrderStatus::Pending => 'warning',
+                        OrderStatus::Confirmed => 'info',
+                        OrderStatus::Baking => 'primary',
+                        OrderStatus::Ready => 'success',
+                        OrderStatus::Delivered => 'gray',
+                        OrderStatus::Cancelled => 'danger',
                     })
-                    ->formatStateUsing(fn (string $state) => ucfirst($state)),
+                    ->formatStateUsing(fn (OrderStatus $state) => ucfirst($state->value)),
                 TextColumn::make('total')
                     ->money('usd'),
             ])
