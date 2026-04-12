@@ -54,14 +54,7 @@ class TenantInfolist
                     ->schema([
                         Grid::make(3)->schema([
                             TextEntry::make('plan')
-                                ->badge()
-                                ->color(fn (string $state): string => match ($state) {
-                                    'starter' => 'warning',
-                                    'growth' => 'info',
-                                    'pro' => 'success',
-                                    default => 'gray',
-                                })
-                                ->formatStateUsing(fn (string $state) => ucfirst($state)),
+                                ->badge(),
                             TextEntry::make('is_active')
                                 ->label('Active')
                                 ->badge()

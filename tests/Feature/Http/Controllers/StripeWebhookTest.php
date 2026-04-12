@@ -81,7 +81,7 @@ test('SyncSubscriptionPlan updates tenant plan from stripe price id', function (
     config(['kneadit.stripe_prices' => ['starter' => 'price_starter_id', 'growth' => 'price_growth_id']]);
 
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_sync_test']);
-    $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => 'starter']);
+    $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => SubscriptionTier::Starter]);
 
     $priceMap = array_flip(config('kneadit.stripe_prices'));
 
@@ -91,14 +91,14 @@ test('SyncSubscriptionPlan updates tenant plan from stripe price id', function (
         priceMap: $priceMap,
     );
 
-    expect($tenant->fresh()->plan)->toBe('growth');
+    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Growth);
 });
 
 test('SyncSubscriptionPlan does nothing for unknown price id', function () {
     config(['kneadit.stripe_prices' => ['starter' => 'price_starter_id']]);
 
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_unknown_price']);
-    $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => 'starter']);
+    $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => SubscriptionTier::Starter]);
 
     app(App\Actions\Stripe\SyncSubscriptionPlan::class)(
         tenantEmail: $user->email,
@@ -106,7 +106,7 @@ test('SyncSubscriptionPlan does nothing for unknown price id', function () {
         priceMap: array_flip(config('kneadit.stripe_prices')),
     );
 
-    expect($tenant->fresh()->plan)->toBe('starter');
+    expect($tenant->fresh()->plan)->toBe(SubscriptionTier::Starter);
 });
 
 test('handleCustomerSubscriptionDeleted calls parent and logs', function () {

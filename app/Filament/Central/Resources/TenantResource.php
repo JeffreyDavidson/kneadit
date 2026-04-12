@@ -32,7 +32,7 @@ class TenantResource extends Resource
     {
         return [
             'Owner' => $record->name,
-            'Plan' => ucfirst($record->plan),
+            'Plan' => $record->plan->getLabel(),
         ];
     }
 

@@ -2,9 +2,10 @@
 
 namespace App\Enums\Platform;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum SubscriptionTier: string implements HasLabel
+enum SubscriptionTier: string implements HasColor, HasLabel
 {
     case Starter = 'starter';
     case Growth = 'growth';
@@ -13,6 +14,15 @@ enum SubscriptionTier: string implements HasLabel
     public function getLabel(): string
     {
         return ucfirst($this->value);
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Starter => 'warning',
+            self::Growth => 'info',
+            self::Pro => 'success',
+        };
     }
 
     public function level(): int
