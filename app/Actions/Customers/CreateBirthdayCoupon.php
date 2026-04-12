@@ -5,13 +5,12 @@ namespace App\Actions\Customers;
 use App\Enums\Financial\CouponType;
 use App\Models\Customers\Customer;
 use App\Models\Financial\Coupon;
-use Illuminate\Support\Str;
 
 class CreateBirthdayCoupon
 {
     public function __invoke(Customer $customer, int $discountPercentage, int $validDays = 7): ?Coupon
     {
-        $code = 'BDAY-' . strtoupper(Str::random(6));
+        $code = 'BDAY-' . strtoupper(bin2hex(random_bytes(3)));
 
         return Coupon::query()->create([
             'code' => $code,
