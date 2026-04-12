@@ -13,7 +13,7 @@ use App\Http\Controllers\Stripe\StripeConnectController;
 use App\Http\Middleware\EnsureStorefrontEnabled;
 use App\Http\Middleware\ResolveInvitation;
 use App\Http\Middleware\TrackPageView;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -69,7 +69,7 @@ Route::middleware([
 
     // Tenant Storefront API (JSON, no CSRF)
     Route::prefix('api')
-        ->withoutMiddleware(VerifyCsrfToken::class)
+        ->withoutMiddleware(PreventRequestForgery::class)
         ->group(function () {
             require __DIR__ . '/tenant/api.php';
         });
