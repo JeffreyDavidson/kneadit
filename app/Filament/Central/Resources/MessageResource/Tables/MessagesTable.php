@@ -46,10 +46,9 @@ class MessagesTable
                 TextColumn::make('sender_type')
                     ->label('From')
                     ->badge()
-                    ->color(fn (string $state) => match ($state) {
-                        PlatformSenderType::Admin->value => 'info',
-                        PlatformSenderType::Tenant->value => 'warning',
-                        default => 'gray',
+                    ->color(fn (PlatformSenderType $state) => match ($state) {
+                        PlatformSenderType::Admin => 'info',
+                        PlatformSenderType::Tenant => 'warning',
                     }),
                 TextColumn::make('created_at')
                     ->label('Received')
