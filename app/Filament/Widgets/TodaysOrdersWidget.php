@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Orders\OrderStatus;
 use App\Models\Orders\Order;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -38,16 +37,7 @@ class TodaysOrdersWidget extends BaseWidget
                     ->label('Time')
                     ->time('g:i A'),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (OrderStatus $state) => match ($state) {
-                        OrderStatus::Pending => 'warning',
-                        OrderStatus::Confirmed => 'info',
-                        OrderStatus::Baking => 'primary',
-                        OrderStatus::Ready => 'success',
-                        OrderStatus::Delivered => 'gray',
-                        OrderStatus::Cancelled => 'danger',
-                    })
-                    ->formatStateUsing(fn (OrderStatus $state) => ucfirst($state->value)),
+                    ->badge(),
                 TextColumn::make('total')
                     ->money('usd'),
             ])

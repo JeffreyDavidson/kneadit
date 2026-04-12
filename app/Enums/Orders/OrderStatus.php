@@ -22,11 +22,11 @@ enum OrderStatus: string implements HasColor, HasLabel
     public function getColor(): string
     {
         return match ($this) {
-            self::Pending => 'gray',
-            self::Confirmed => 'warning',
-            self::Baking => 'info',
+            self::Pending => 'warning',
+            self::Confirmed => 'info',
+            self::Baking => 'primary',
             self::Ready => 'success',
-            self::Delivered => 'primary',
+            self::Delivered => 'gray',
             self::Cancelled => 'danger',
         };
     }

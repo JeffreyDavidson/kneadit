@@ -18,20 +18,13 @@ pest()->extend(TestCase::class)->in('Feature', 'Integration', 'Unit', 'Browser')
 | Tenant::factory()->create() triggers Stancl's CreateDatabase job which
 | writes real SQLite files to the database/ directory. These accumulate
 | across test runs and cause TenantDatabaseAlreadyExistsException when
-| a new test generates the same slug. This hook cleans them up after
-| every test.
+| a new test generates the same slug.
 */
 
-/*
- * Clean up stale tenant SQLite databases left from previous test runs.
- * Tenant::factory()->create() triggers Stancl's CreateDatabase job
- * which writes real files to database/. These accumulate and cause
- * TenantDatabaseAlreadyExistsException on subsequent runs.
- */
 beforeAll(function () {
     foreach (glob(database_path('tenant*')) ?: [] as $file) {
-        if (is_file($file)) {
-            @unlink($file);
+        if (is_file($file) && is_writable($file)) {
+            unlink($file);
         }
     }
 });
