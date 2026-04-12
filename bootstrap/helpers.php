@@ -2,6 +2,8 @@
 
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 if (! function_exists('settings')) {
     /**
@@ -34,6 +36,25 @@ if (! function_exists('settingsPageContent')) {
     function settingsPageContent(string $page): array
     {
         return resolve(SettingsManager::class)->pageContentAll($page);
+    }
+}
+
+if (! function_exists('clean')) {
+    /**
+     * Sanitize HTML content, allowing safe tags for rich text display.
+     */
+    function clean(?string $html): string
+    {
+        if ($html === null || $html === '') {
+            return '';
+        }
+
+        $config = (new HtmlSanitizerConfig)
+            ->allowSafeElements()
+            ->allowRelativeLinks()
+            ->allowRelativeMedias();
+
+        return (new HtmlSanitizer($config))->sanitize($html);
     }
 }
 
