@@ -5,6 +5,8 @@ namespace App\Models\Engagement;
 use App\Enums\Marketing\EmailCampaignSegment;
 use App\Enums\Marketing\EmailCampaignStatus;
 use Database\Factories\Engagement\EmailCampaignFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,23 +46,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('name', 'subject', 'body', 'target_segment', 'status', 'scheduled_at', 'sent_at', 'recipient_count')]
 class EmailCampaign extends Model
 {
     /** @use HasFactory<EmailCampaignFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'name',
-        'subject',
-        'body',
-        'target_segment',
-        'status',
-        'scheduled_at',
-        'sent_at',
-        'recipient_count',
-    ];
 
     protected function casts(): array
     {

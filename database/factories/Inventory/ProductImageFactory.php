@@ -4,15 +4,15 @@ namespace Database\Factories\Inventory;
 
 use App\Models\Inventory\Product;
 use App\Models\Inventory\ProductImage;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<ProductImage>
  */
+#[UseModel(ProductImage::class)]
 class ProductImageFactory extends Factory
 {
-    protected $model = ProductImage::class;
-
     /**
      * @return array<string, mixed>
      */

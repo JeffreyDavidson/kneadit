@@ -8,9 +8,9 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 dataset('staffPolicies', [
-    'BlogPost' => ['App\Policies\Content\BlogPostPolicy', 'App\Models\Content\BlogPost'],
-    'Order' => ['App\Policies\Orders\OrderPolicy', 'App\Models\Orders\Order'],
-    'Product' => ['App\Policies\Inventory\ProductPolicy', 'App\Models\Inventory\Product'],
+    'BlogPost' => [App\Policies\Content\BlogPostPolicy::class, App\Models\Content\BlogPost::class],
+    'Order' => [App\Policies\Orders\OrderPolicy::class, App\Models\Orders\Order::class],
+    'Product' => [App\Policies\Inventory\ProductPolicy::class, App\Models\Inventory\Product::class],
 ]);
 
 test('staff policies allow staff users', function (string $policyClass, string $modelClass) {

@@ -11,6 +11,7 @@ use App\Models\Orders\Order;
 use App\Services\Customers\CustomerIntelligence;
 use App\ValueObjects\Address;
 use Database\Factories\Customers\CustomerFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -56,6 +57,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'notes', 'birthday')]
 #[UseEloquentBuilder(CustomerQueryBuilder::class)]
 class Customer extends Model
 {
@@ -63,18 +65,6 @@ class Customer extends Model
     use HasFactory;
 
     use LogsActivity;
-
-    protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'address',
-        'city',
-        'state',
-        'zip',
-        'notes',
-        'birthday',
-    ];
 
     protected function casts(): array
     {

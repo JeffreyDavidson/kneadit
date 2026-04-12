@@ -6,6 +6,7 @@ use App\Enums\Marketing\SocialPlatform;
 use App\Enums\Marketing\SocialPostStatus;
 use App\Models\Inventory\Product;
 use Database\Factories\Content\SocialPostFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,20 +26,11 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('platform', 'caption', 'product_id', 'image_path', 'scheduled_for', 'status', 'notes')]
 class SocialPost extends Model
 {
     /** @use HasFactory<SocialPostFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'platform',
-        'caption',
-        'product_id',
-        'image_path',
-        'scheduled_for',
-        'status',
-        'notes',
-    ];
 
     protected function casts(): array
     {

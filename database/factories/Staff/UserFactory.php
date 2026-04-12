@@ -4,6 +4,7 @@ namespace Database\Factories\Staff;
 
 use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -11,10 +12,9 @@ use Illuminate\Support\Str;
 /**
  * @extends Factory<User>
  */
+#[UseModel(User::class)]
 class UserFactory extends Factory
 {
-    protected $model = User::class;
-
     /**
      * The current password being used by the factory.
      */

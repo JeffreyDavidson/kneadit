@@ -4,6 +4,7 @@ namespace App\Models\Platform;
 
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\Platform\SettingFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,17 +16,13 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
+#[Fillable('key', 'value')]
 class Setting extends Model
 {
     /** @use HasFactory<SettingFactory> */
     use HasFactory;
 
     use LogsActivity;
-
-    protected $fillable = [
-        'key',
-        'value',
-    ];
 
     protected static function newFactory(): SettingFactory
     {

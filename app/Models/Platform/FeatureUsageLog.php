@@ -3,6 +3,10 @@
 namespace App\Models\Platform;
 
 use Database\Factories\Platform\FeatureUsageLogFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -25,25 +29,14 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Table('feature_usage_logs')]
+#[WithoutTimestamps]
+#[Connection('central')]
+#[Fillable('tenant_id', 'feature', 'usage_count', 'last_used_at', 'date', 'created_at')]
 class FeatureUsageLog extends Model
 {
     /** @use HasFactory<FeatureUsageLogFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $table = 'feature_usage_logs';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'tenant_id',
-        'feature',
-        'usage_count',
-        'last_used_at',
-        'date',
-        'created_at',
-    ];
 
     protected function casts(): array
     {

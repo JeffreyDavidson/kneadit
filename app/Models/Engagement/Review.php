@@ -8,6 +8,7 @@ use App\Models\Concerns\LogsActivity;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use Database\Factories\Engagement\ReviewFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[Fillable('customer_name', 'customer_email', 'product_id', 'order_id', 'rating', 'comment', 'photo_path', 'is_approved', 'is_featured')]
 #[UseEloquentBuilder(ReviewQueryBuilder::class)]
 class Review extends Model
 {
@@ -34,18 +36,6 @@ class Review extends Model
     use HasFactory;
 
     use LogsActivity;
-
-    protected $fillable = [
-        'customer_name',
-        'customer_email',
-        'product_id',
-        'order_id',
-        'rating',
-        'comment',
-        'photo_path',
-        'is_approved',
-        'is_featured',
-    ];
 
     protected function casts(): array
     {

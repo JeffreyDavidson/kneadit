@@ -5,14 +5,14 @@ namespace Database\Factories\Customers;
 use App\Enums\Customers\CateringEventType;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Models\Customers\CateringInquiry;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<CateringInquiry> */
+#[UseModel(CateringInquiry::class)]
 class CateringInquiryFactory extends Factory
 {
-    protected $model = CateringInquiry::class;
-
     /**
      * @return array<string, mixed>
      */

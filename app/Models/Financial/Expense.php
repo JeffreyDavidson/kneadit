@@ -6,6 +6,7 @@ use App\Builders\Financial\ExpenseQueryBuilder;
 use App\Enums\Financial\ExpenseCategory;
 use App\Observers\Financial\ExpenseObserver;
 use Database\Factories\Financial\ExpenseFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -28,23 +29,13 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('description', 'amount', 'category', 'date', 'receipt_image', 'notes', 'business_percentage', 'deductible_amount')]
 #[UseEloquentBuilder(ExpenseQueryBuilder::class)]
 #[ObservedBy(ExpenseObserver::class)]
 class Expense extends Model
 {
     /** @use HasFactory<ExpenseFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'description',
-        'amount',
-        'category',
-        'date',
-        'receipt_image',
-        'notes',
-        'business_percentage',
-        'deductible_amount',
-    ];
 
     protected function casts(): array
     {

@@ -20,7 +20,7 @@ class CheckoutSuccessController extends Controller
     public function __invoke(Request $request): RedirectResponse
     {
         if (! $request->user() && $request->has('session_id')) {
-            $checkoutSession = Cashier::stripe()->checkout->sessions->retrieve($request->get('session_id'));
+            $checkoutSession = Cashier::stripe()->checkout->sessions->retrieve($request->input('session_id'));
 
             if ($checkoutSession->status === 'complete'
                 && $checkoutSession->customer

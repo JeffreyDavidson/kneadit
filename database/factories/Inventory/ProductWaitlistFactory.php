@@ -4,14 +4,14 @@ namespace Database\Factories\Inventory;
 
 use App\Models\Inventory\Product;
 use App\Models\Inventory\ProductWaitlist;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<ProductWaitlist> */
+#[UseModel(ProductWaitlist::class)]
 class ProductWaitlistFactory extends Factory
 {
-    protected $model = ProductWaitlist::class;
-
     /**
      * @return array<string, mixed>
      */

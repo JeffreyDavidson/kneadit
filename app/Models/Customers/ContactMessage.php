@@ -4,6 +4,7 @@ namespace App\Models\Customers;
 
 use App\Casts\StripTagsCast;
 use Database\Factories\Customers\ContactMessageFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,18 +20,11 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
+#[Fillable('name', 'email', 'subject', 'message', 'is_read')]
 class ContactMessage extends Model
 {
     /** @use HasFactory<ContactMessageFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'name',
-        'email',
-        'subject',
-        'message',
-        'is_read',
-    ];
 
     protected function casts(): array
     {

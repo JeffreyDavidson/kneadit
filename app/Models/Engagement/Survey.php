@@ -3,6 +3,7 @@
 namespace App\Models\Engagement;
 
 use Database\Factories\Engagement\SurveyFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,18 +21,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @mixin \Eloquent
  */
+#[Fillable('title', 'description', 'questions', 'is_active', 'responses_count')]
 class Survey extends Model
 {
     /** @use HasFactory<SurveyFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'questions',
-        'is_active',
-        'responses_count',
-    ];
 
     protected function casts(): array
     {

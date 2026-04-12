@@ -19,6 +19,7 @@ use App\Models\Financial\GiftCardTransaction;
 use App\Models\Staff\User;
 use App\Observers\Orders\OrderObserver;
 use Database\Factories\Orders\OrderFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
@@ -65,6 +66,7 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('order_number', 'customer_id', 'status', 'payment_status', 'payment_method', 'subtotal', 'delivery_fee', 'discount_amount', 'total', 'paypal_invoice_id', 'delivery_address', 'delivery_type', 'delivery_date', 'delivery_time', 'notes', 'user_id', 'coupon_id', 'gift_card_id', 'gift_card_amount', 'review_request_sent_at', 'stripe_checkout_session_id', 'stripe_payment_intent_id')]
 #[ObservedBy(OrderObserver::class)]
 #[UseEloquentBuilder(OrderQueryBuilder::class)]
 class Order extends Model
@@ -88,31 +90,6 @@ class Order extends Model
     {
         return 'order_number';
     }
-
-    protected $fillable = [
-        'order_number',
-        'customer_id',
-        'status',
-        'payment_status',
-        'payment_method',
-        'subtotal',
-        'delivery_fee',
-        'discount_amount',
-        'total',
-        'paypal_invoice_id',
-        'delivery_address',
-        'delivery_type',
-        'delivery_date',
-        'delivery_time',
-        'notes',
-        'user_id',
-        'coupon_id',
-        'gift_card_id',
-        'gift_card_amount',
-        'review_request_sent_at',
-        'stripe_checkout_session_id',
-        'stripe_payment_intent_id',
-    ];
 
     protected function casts(): array
     {

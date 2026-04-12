@@ -3,6 +3,7 @@
 namespace App\Models\Inventory;
 
 use Database\Factories\Inventory\RecipeFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,19 +26,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  *
  * @mixin \Eloquent
  */
+#[Fillable('product_id', 'name', 'ingredients', 'instructions', 'prep_time_minutes', 'cost')]
 class Recipe extends Model
 {
     /** @use HasFactory<RecipeFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'product_id',
-        'name',
-        'ingredients',
-        'instructions',
-        'prep_time_minutes',
-        'cost',
-    ];
 
     protected function casts(): array
     {

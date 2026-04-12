@@ -4,6 +4,8 @@ namespace App\Models\Platform;
 
 use App\Enums\Platform\AnnouncementType;
 use Database\Factories\Platform\PlatformAnnouncementFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,23 +44,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('title', 'body', 'type', 'target_plans', 'is_active', 'starts_at', 'ends_at', 'is_dismissable')]
 class PlatformAnnouncement extends Model
 {
     /** @use HasFactory<PlatformAnnouncementFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'title',
-        'body',
-        'type',
-        'target_plans',
-        'is_active',
-        'starts_at',
-        'ends_at',
-        'is_dismissable',
-    ];
 
     protected function casts(): array
     {

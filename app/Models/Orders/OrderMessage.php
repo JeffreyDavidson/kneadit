@@ -4,6 +4,7 @@ namespace App\Models\Orders;
 
 use App\Enums\Orders\SenderType;
 use Database\Factories\Orders\OrderMessageFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,18 +21,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[Fillable('order_id', 'sender_type', 'sender_name', 'message', 'is_read')]
 class OrderMessage extends Model
 {
     /** @use HasFactory<OrderMessageFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'order_id',
-        'sender_type',
-        'sender_name',
-        'message',
-        'is_read',
-    ];
 
     protected function casts(): array
     {

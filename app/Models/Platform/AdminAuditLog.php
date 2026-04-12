@@ -3,7 +3,11 @@
 namespace App\Models\Platform;
 
 use Database\Factories\Platform\AdminAuditLogFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,27 +43,14 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Table('admin_audit_logs')]
+#[WithoutTimestamps]
+#[Connection('central')]
+#[Fillable('admin_id', 'action', 'target_type', 'target_id', 'description', 'metadata', 'ip_address', 'created_at')]
 class AdminAuditLog extends Model
 {
     /** @use HasFactory<AdminAuditLogFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $table = 'admin_audit_logs';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'admin_id',
-        'action',
-        'target_type',
-        'target_id',
-        'description',
-        'metadata',
-        'ip_address',
-        'created_at',
-    ];
 
     protected function casts(): array
     {

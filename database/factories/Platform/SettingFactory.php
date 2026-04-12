@@ -3,14 +3,14 @@
 namespace Database\Factories\Platform;
 
 use App\Models\Platform\Setting;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Setting> */
+#[UseModel(Setting::class)]
 class SettingFactory extends Factory
 {
-    protected $model = Setting::class;
-
     /**
      * @return array<string, mixed>
      */

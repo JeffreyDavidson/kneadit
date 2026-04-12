@@ -6,20 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Platform\Tenant;
 use App\Services\Export\CsvExportService;
 use App\Services\Tenants\TenancyManager;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Attributes\Controllers\Authorize;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportController extends Controller
 {
+    #[Authorize('platform-admin')]
     public function __invoke(
         string $tenantId,
         string $type,
         CsvExportService $csvExport,
         TenancyManager $tenancyManager,
     ): StreamedResponse|BinaryFileResponse {
-        Gate::authorize('platform-admin');
-
         $validTypes = [...$csvExport->validTypes(), 'all'];
         abort_unless(in_array($type, $validTypes, true), 404, 'Invalid export type.');
 

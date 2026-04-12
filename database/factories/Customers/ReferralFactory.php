@@ -4,15 +4,15 @@ namespace Database\Factories\Customers;
 
 use App\Enums\Customers\ReferralStatus;
 use App\Models\Customers\Referral;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Referral> */
+#[UseModel(Referral::class)]
 class ReferralFactory extends Factory
 {
-    protected $model = Referral::class;
-
     /**
      * @return array<string, mixed>
      */

@@ -6,14 +6,14 @@ use App\Enums\Platform\SupportTicketPriority;
 use App\Enums\Platform\SupportTicketStatus;
 use App\Models\Platform\SupportReply;
 use App\Models\Platform\SupportTicket;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<SupportTicket> */
+#[UseModel(SupportTicket::class)]
 class SupportTicketFactory extends Factory
 {
-    protected $model = SupportTicket::class;
-
     /**
      * @return array<string, mixed>
      */

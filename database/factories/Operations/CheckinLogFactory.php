@@ -4,14 +4,14 @@ namespace Database\Factories\Operations;
 
 use App\Models\Operations\CheckinLog;
 use App\Models\Operations\ScheduledCheckin;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<CheckinLog> */
+#[UseModel(CheckinLog::class)]
 class CheckinLogFactory extends Factory
 {
-    protected $model = CheckinLog::class;
-
     /**
      * @return array<string, mixed>
      */

@@ -3,16 +3,16 @@
 namespace Database\Factories\Operations;
 
 use App\Models\Operations\Holiday;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Date;
 
 /**
  * @extends Factory<Holiday>
  */
+#[UseModel(Holiday::class)]
 class HolidayFactory extends Factory
 {
-    protected $model = Holiday::class;
-
     /**
      * @return array<string, mixed>
      */

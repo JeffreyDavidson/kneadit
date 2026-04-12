@@ -5,15 +5,15 @@ namespace Database\Factories\Orders;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<OrderItem>
  */
+#[UseModel(OrderItem::class)]
 class OrderItemFactory extends Factory
 {
-    protected $model = OrderItem::class;
-
     /**
      * @return array<string, mixed>
      */

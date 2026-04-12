@@ -4,14 +4,14 @@ namespace Database\Factories\Customers;
 
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerProfile;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<CustomerProfile> */
+#[UseModel(CustomerProfile::class)]
 class CustomerProfileFactory extends Factory
 {
-    protected $model = CustomerProfile::class;
-
     /**
      * @return array<string, mixed>
      */

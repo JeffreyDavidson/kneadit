@@ -6,6 +6,7 @@ use App\Casts\StripTagsCast;
 use App\Enums\Financial\GiftCardStatus;
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\Financial\GiftCardFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -30,25 +31,13 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('code', 'initial_balance', 'current_balance', 'purchaser_name', 'purchaser_email', 'recipient_name', 'recipient_email', 'message', 'is_active', 'expires_at')]
 class GiftCard extends Model
 {
     /** @use HasFactory<GiftCardFactory> */
     use HasFactory;
 
     use LogsActivity;
-
-    protected $fillable = [
-        'code',
-        'initial_balance',
-        'current_balance',
-        'purchaser_name',
-        'purchaser_email',
-        'recipient_name',
-        'recipient_email',
-        'message',
-        'is_active',
-        'expires_at',
-    ];
 
     protected function casts(): array
     {

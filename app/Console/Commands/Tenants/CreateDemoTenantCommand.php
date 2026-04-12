@@ -4,15 +4,15 @@ namespace App\Console\Commands\Tenants;
 
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
+#[Signature('tenant:demo {--fresh : Drop and recreate the demo tenant}')]
+#[Description('Create a demo tenant for local testing')]
 class CreateDemoTenantCommand extends Command
 {
-    protected $signature = 'tenant:demo {--fresh : Drop and recreate the demo tenant}';
-
-    protected $description = 'Create a demo tenant for local testing';
-
     public function handle(): int
     {
         $subdomain = 'demo';

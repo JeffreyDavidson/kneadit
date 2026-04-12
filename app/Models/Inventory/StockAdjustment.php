@@ -4,6 +4,8 @@ namespace App\Models\Inventory;
 
 use App\Enums\Inventory\StockAdjustmentType;
 use Database\Factories\Inventory\StockAdjustmentFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,19 +20,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[WithoutTimestamps]
+#[Fillable('ingredient_id', 'quantity', 'type', 'notes')]
 class StockAdjustment extends Model
 {
     /** @use HasFactory<StockAdjustmentFactory> */
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'ingredient_id',
-        'quantity',
-        'type',
-        'notes',
-    ];
 
     protected function casts(): array
     {

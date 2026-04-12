@@ -5,14 +5,14 @@ namespace Database\Factories\Content;
 use App\Enums\Marketing\SocialPlatform;
 use App\Enums\Marketing\SocialPostStatus;
 use App\Models\Content\SocialPost;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<SocialPost> */
+#[UseModel(SocialPost::class)]
 class SocialPostFactory extends Factory
 {
-    protected $model = SocialPost::class;
-
     /**
      * @return array<string, mixed>
      */

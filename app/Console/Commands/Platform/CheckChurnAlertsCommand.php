@@ -5,17 +5,17 @@ namespace App\Console\Commands\Platform;
 use App\Actions\Platform\LogAuditEntry;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+#[Signature('churn:check')]
+#[Description('Check for churn risk indicators and log alerts')]
 class CheckChurnAlertsCommand extends Command
 {
-    protected $signature = 'churn:check';
-
-    protected $description = 'Check for churn risk indicators and log alerts';
-
     public function handle(TenancyManager $tenancyManager): int
     {
         $tenants = Tenant::query()->cursor();

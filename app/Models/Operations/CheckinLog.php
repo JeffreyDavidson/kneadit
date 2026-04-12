@@ -3,6 +3,8 @@
 namespace App\Models\Operations;
 
 use Database\Factories\Operations\CheckinLogFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,18 +32,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('checkin_id', 'tenant_id', 'sent_at')]
 class CheckinLog extends Model
 {
     /** @use HasFactory<CheckinLogFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'checkin_id',
-        'tenant_id',
-        'sent_at',
-    ];
 
     protected function casts(): array
     {

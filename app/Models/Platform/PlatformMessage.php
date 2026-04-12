@@ -4,6 +4,8 @@ namespace App\Models\Platform;
 
 use App\Enums\Platform\PlatformSenderType;
 use Database\Factories\Platform\PlatformMessageFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -50,21 +52,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('tenant_id', 'parent_id', 'sender_type', 'subject', 'body', 'is_read')]
 class PlatformMessage extends Model
 {
     /** @use HasFactory<PlatformMessageFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'tenant_id',
-        'parent_id',
-        'sender_type',
-        'subject',
-        'body',
-        'is_read',
-    ];
 
     protected function casts(): array
     {

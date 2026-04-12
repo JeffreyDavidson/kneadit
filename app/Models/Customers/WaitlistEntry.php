@@ -8,6 +8,7 @@ use App\Enums\Customers\WaitlistStatus;
 use App\Models\Inventory\Product;
 use Carbon\Carbon;
 use Database\Factories\Customers\WaitlistEntryFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -30,20 +31,11 @@ use Illuminate\Support\Facades\Date;
  *
  * @mixin \Eloquent
  */
+#[Fillable('customer_name', 'customer_email', 'customer_phone', 'requested_date', 'product_id', 'notes', 'status')]
 class WaitlistEntry extends Model
 {
     /** @use HasFactory<WaitlistEntryFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'customer_name',
-        'customer_email',
-        'customer_phone',
-        'requested_date',
-        'product_id',
-        'notes',
-        'status',
-    ];
 
     protected function casts(): array
     {

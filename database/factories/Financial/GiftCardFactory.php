@@ -4,15 +4,15 @@ namespace Database\Factories\Financial;
 
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<GiftCard>
  */
+#[UseModel(GiftCard::class)]
 class GiftCardFactory extends Factory
 {
-    protected $model = GiftCard::class;
-
     /**
      * @return array<string, mixed>
      */

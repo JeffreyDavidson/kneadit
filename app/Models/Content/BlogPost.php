@@ -6,6 +6,8 @@ use App\Builders\Content\BlogPostQueryBuilder;
 use App\Enums\Content\BlogPostCategory;
 use App\Observers\Content\BlogPostObserver;
 use Database\Factories\Content\BlogPostFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,27 +29,14 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('title', 'slug', 'excerpt', 'body', 'featured_image', 'category', 'meta_title', 'meta_description', 'is_published', 'published_at')]
 #[ObservedBy(BlogPostObserver::class)]
 #[UseEloquentBuilder(BlogPostQueryBuilder::class)]
 class BlogPost extends Model
 {
     /** @use HasFactory<BlogPostFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'title',
-        'slug',
-        'excerpt',
-        'body',
-        'featured_image',
-        'category',
-        'meta_title',
-        'meta_description',
-        'is_published',
-        'published_at',
-    ];
 
     protected function casts(): array
     {

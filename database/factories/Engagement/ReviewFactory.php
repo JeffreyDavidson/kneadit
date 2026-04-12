@@ -4,15 +4,15 @@ namespace Database\Factories\Engagement;
 
 use App\Models\Engagement\Review;
 use App\Models\Inventory\Product;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Review>
  */
+#[UseModel(Review::class)]
 class ReviewFactory extends Factory
 {
-    protected $model = Review::class;
-
     /**
      * @return array<string, mixed>
      */

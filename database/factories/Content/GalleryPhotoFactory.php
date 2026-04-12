@@ -3,15 +3,15 @@
 namespace Database\Factories\Content;
 
 use App\Models\Content\GalleryPhoto;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<GalleryPhoto>
  */
+#[UseModel(GalleryPhoto::class)]
 class GalleryPhotoFactory extends Factory
 {
-    protected $model = GalleryPhoto::class;
-
     /**
      * @return array<string, mixed>
      */

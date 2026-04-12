@@ -3,6 +3,9 @@
 namespace App\Models\Platform;
 
 use Database\Factories\Platform\PlatformActivityFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,22 +27,13 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[WithoutTimestamps]
+#[Connection('central')]
+#[Fillable('event', 'tenant_id', 'description', 'metadata', 'created_at')]
 class PlatformActivity extends Model
 {
     /** @use HasFactory<PlatformActivityFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'event',
-        'tenant_id',
-        'description',
-        'metadata',
-        'created_at',
-    ];
 
     protected function casts(): array
     {
