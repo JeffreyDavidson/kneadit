@@ -23,20 +23,9 @@ class SupportTicketsTable
                     ->placeholder('Not set')
                     ->searchable(),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (SupportTicketStatus $state): string => match ($state) {
-                        SupportTicketStatus::Open => 'danger',
-                        SupportTicketStatus::InProgress => 'warning',
-                        SupportTicketStatus::Resolved => 'success',
-                        SupportTicketStatus::Closed => 'gray',
-                    }),
+                    ->badge(),
                 TextColumn::make('priority')
-                    ->badge()
-                    ->color(fn (SupportTicketPriority $state): string => match ($state) {
-                        SupportTicketPriority::High => 'danger',
-                        SupportTicketPriority::Normal => 'info',
-                        SupportTicketPriority::Low => 'gray',
-                    }),
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->since()
                     ->sortable(),
