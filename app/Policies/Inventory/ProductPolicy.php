@@ -2,9 +2,8 @@
 
 namespace App\Policies\Inventory;
 
-use App\Policies\Platform\RolePolicy;
-
 use App\Enums\Staff\UserRole;
+use App\Policies\Platform\RolePolicy;
 
 class ProductPolicy extends RolePolicy
 {

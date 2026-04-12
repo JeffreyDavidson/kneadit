@@ -4,6 +4,7 @@ namespace App\Models\Content;
 
 use App\Enums\Content\GalleryCategory;
 use Database\Factories\Content\GalleryPhotoFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,18 +22,11 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin \Eloquent
  */
+#[Fillable('title', 'image_path', 'category', 'sort_order', 'is_visible')]
 class GalleryPhoto extends Model
 {
     /** @use HasFactory<GalleryPhotoFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'title',
-        'image_path',
-        'category',
-        'sort_order',
-        'is_visible',
-    ];
 
     protected function casts(): array
     {

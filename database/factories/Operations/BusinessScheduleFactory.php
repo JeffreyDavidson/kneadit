@@ -3,15 +3,15 @@
 namespace Database\Factories\Operations;
 
 use App\Models\Operations\BusinessSchedule;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<BusinessSchedule>
  */
+#[UseModel(BusinessSchedule::class)]
 class BusinessScheduleFactory extends Factory
 {
-    protected $model = BusinessSchedule::class;
-
     /**
      * @return array<string, mixed>
      */

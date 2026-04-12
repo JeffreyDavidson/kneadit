@@ -3,14 +3,14 @@
 namespace Database\Factories\Operations;
 
 use App\Models\Operations\ScheduledCheckin;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<ScheduledCheckin> */
+#[UseModel(ScheduledCheckin::class)]
 class ScheduledCheckinFactory extends Factory
 {
-    protected $model = ScheduledCheckin::class;
-
     /**
      * @return array<string, mixed>
      */

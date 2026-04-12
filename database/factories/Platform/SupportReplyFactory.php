@@ -5,14 +5,14 @@ namespace Database\Factories\Platform;
 use App\Enums\Platform\SupportReplyAuthorType;
 use App\Models\Platform\SupportReply;
 use App\Models\Platform\SupportTicket;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<SupportReply> */
+#[UseModel(SupportReply::class)]
 class SupportReplyFactory extends Factory
 {
-    protected $model = SupportReply::class;
-
     /**
      * @return array<string, mixed>
      */

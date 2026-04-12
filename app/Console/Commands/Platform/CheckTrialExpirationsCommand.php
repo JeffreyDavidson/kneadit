@@ -6,15 +6,15 @@ use App\Events\Platform\TrialExpired;
 use App\Events\Platform\TrialReminding;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
+#[Signature('trial:check')]
+#[Description('Send trial expiration reminder emails and restrict expired accounts')]
 class CheckTrialExpirationsCommand extends Command
 {
-    protected $signature = 'trial:check';
-
-    protected $description = 'Send trial expiration reminder emails and restrict expired accounts';
-
     public function handle(): int
     {
         $this->sendReminders(7, 'trial_reminder_7d');

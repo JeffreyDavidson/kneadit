@@ -4,6 +4,7 @@ namespace App\Models\Customers;
 
 use App\Models\Staff\User;
 use Database\Factories\Customers\CustomerNoteFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,16 +20,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[Fillable('customer_id', 'note', 'created_by')]
 class CustomerNote extends Model
 {
     /** @use HasFactory<CustomerNoteFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'customer_id',
-        'note',
-        'created_by',
-    ];
 
     /**
      * @return BelongsTo<Customer, $this>

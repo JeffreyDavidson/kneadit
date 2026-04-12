@@ -5,16 +5,16 @@ namespace Database\Factories\Staff;
 use App\Enums\Staff\UserRole;
 use App\Models\Staff\StaffInvitation;
 use App\Models\Staff\User;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
  * @extends Factory<StaffInvitation>
  */
+#[UseModel(StaffInvitation::class)]
 class StaffInvitationFactory extends Factory
 {
-    protected $model = StaffInvitation::class;
-
     /**
      * @return array<string, mixed>
      */

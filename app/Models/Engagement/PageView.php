@@ -4,6 +4,8 @@ namespace App\Models\Engagement;
 
 use App\Models\Inventory\Product;
 use Database\Factories\Engagement\PageViewFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,21 +22,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[WithoutTimestamps]
+#[Fillable('page', 'product_id', 'session_id', 'ip_address', 'user_agent', 'created_at')]
 class PageView extends Model
 {
     /** @use HasFactory<PageViewFactory> */
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'page',
-        'product_id',
-        'session_id',
-        'ip_address',
-        'user_agent',
-        'created_at',
-    ];
 
     protected function casts(): array
     {

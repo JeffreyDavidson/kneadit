@@ -4,6 +4,8 @@ namespace App\Models\Engagement;
 
 use App\Models\Orders\Order;
 use Database\Factories\Engagement\SurveyResponseFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,21 +21,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[WithoutTimestamps]
+#[Fillable('survey_id', 'customer_name', 'customer_email', 'answers', 'order_id', 'created_at')]
 class SurveyResponse extends Model
 {
     /** @use HasFactory<SurveyResponseFactory> */
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'survey_id',
-        'customer_name',
-        'customer_email',
-        'answers',
-        'order_id',
-        'created_at',
-    ];
 
     protected function casts(): array
     {

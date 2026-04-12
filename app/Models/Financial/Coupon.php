@@ -7,6 +7,7 @@ use App\Models\Concerns\LogsActivity;
 use App\Models\Orders\Order;
 use App\Observers\Engagement\CouponObserver;
 use Database\Factories\Financial\CouponFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,23 +36,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('code', 'type', 'value', 'min_order_amount', 'max_uses', 'used_count', 'starts_at', 'expires_at', 'is_active')]
 #[ObservedBy(CouponObserver::class)]
 class Coupon extends Model
 {
     /** @use HasFactory<CouponFactory> */
     use HasFactory, LogsActivity;
-
-    protected $fillable = [
-        'code',
-        'type',
-        'value',
-        'min_order_amount',
-        'max_uses',
-        'used_count',
-        'starts_at',
-        'expires_at',
-        'is_active',
-    ];
 
     protected function casts(): array
     {

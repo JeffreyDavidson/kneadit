@@ -5,6 +5,7 @@ namespace App\Models\Engagement;
 use App\Enums\Engagement\RewardType;
 use App\Models\Inventory\Product;
 use Database\Factories\Engagement\LoyaltyRewardFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -26,20 +27,11 @@ use Illuminate\Support\Number;
  *
  * @mixin \Eloquent
  */
+#[Fillable('name', 'description', 'points_required', 'reward_type', 'reward_value', 'product_id', 'is_active')]
 class LoyaltyReward extends Model
 {
     /** @use HasFactory<LoyaltyRewardFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'name',
-        'description',
-        'points_required',
-        'reward_type',
-        'reward_value',
-        'product_id',
-        'is_active',
-    ];
 
     protected function casts(): array
     {

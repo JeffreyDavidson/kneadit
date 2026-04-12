@@ -4,6 +4,7 @@ namespace App\Models\Orders;
 
 use App\Models\Inventory\Product;
 use Database\Factories\Orders\OrderItemFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,18 +25,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[Fillable('order_id', 'product_id', 'quantity', 'unit_price', 'special_instructions')]
 class OrderItem extends Model
 {
     /** @use HasFactory<OrderItemFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'order_id',
-        'product_id',
-        'quantity',
-        'unit_price',
-        'special_instructions',
-    ];
 
     protected function casts(): array
     {

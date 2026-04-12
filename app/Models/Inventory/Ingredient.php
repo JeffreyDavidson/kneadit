@@ -5,6 +5,7 @@ namespace App\Models\Inventory;
 use App\Enums\Inventory\StockStatus;
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\Inventory\IngredientFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,22 +31,13 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  *
  * @mixin \Eloquent
  */
+#[Fillable('name', 'unit', 'current_stock', 'low_stock_threshold', 'cost_per_unit', 'supplier', 'notes')]
 class Ingredient extends Model
 {
     /** @use HasFactory<IngredientFactory> */
     use HasFactory;
 
     use LogsActivity;
-
-    protected $fillable = [
-        'name',
-        'unit',
-        'current_stock',
-        'low_stock_threshold',
-        'cost_per_unit',
-        'supplier',
-        'notes',
-    ];
 
     protected function casts(): array
     {

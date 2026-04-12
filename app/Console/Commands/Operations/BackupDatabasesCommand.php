@@ -2,16 +2,16 @@
 
 namespace App\Console\Commands\Operations;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
+#[Signature('backup:databases {--keep=7 : Number of days to retain backups}')]
+#[Description('Backup central and all tenant SQLite databases')]
 class BackupDatabasesCommand extends Command
 {
-    protected $signature = 'backup:databases {--keep=7 : Number of days to retain backups}';
-
-    protected $description = 'Backup central and all tenant SQLite databases';
-
     public function handle(): int
     {
         $backupDir = $this->getBackupDir();

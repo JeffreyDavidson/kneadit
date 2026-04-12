@@ -3,6 +3,8 @@
 namespace App\Models\Platform;
 
 use Database\Factories\Platform\PlatformSettingFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -21,17 +23,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('key', 'value')]
 class PlatformSetting extends Model
 {
     /** @use HasFactory<PlatformSettingFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'key',
-        'value',
-    ];
 
     protected static function newFactory(): PlatformSettingFactory
     {

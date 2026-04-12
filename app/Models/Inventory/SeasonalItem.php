@@ -3,6 +3,7 @@
 namespace App\Models\Inventory;
 
 use Database\Factories\Inventory\SeasonalItemFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -28,17 +29,11 @@ use Illuminate\Support\Facades\Date;
  *
  * @mixin \Eloquent
  */
+#[Fillable('product_id', 'available_from', 'available_until', 'notes')]
 class SeasonalItem extends Model
 {
     /** @use HasFactory<SeasonalItemFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'product_id',
-        'available_from',
-        'available_until',
-        'notes',
-    ];
 
     protected function casts(): array
     {

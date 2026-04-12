@@ -5,6 +5,8 @@ namespace App\Models\Financial;
 use App\Enums\Financial\GiftCardTransactionType;
 use App\Models\Orders\Order;
 use Database\Factories\Financial\GiftCardTransactionFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,21 +25,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[WithoutTimestamps]
+#[Fillable('gift_card_id', 'amount', 'type', 'order_id', 'notes', 'created_at')]
 class GiftCardTransaction extends Model
 {
     /** @use HasFactory<GiftCardTransactionFactory> */
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'gift_card_id',
-        'amount',
-        'type',
-        'order_id',
-        'notes',
-        'created_at',
-    ];
 
     protected function casts(): array
     {

@@ -4,14 +4,14 @@ namespace Database\Factories\Engagement;
 
 use App\Models\Engagement\PageView;
 use App\Models\Inventory\Product;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<PageView> */
+#[UseModel(PageView::class)]
 class PageViewFactory extends Factory
 {
-    protected $model = PageView::class;
-
     /**
      * @return array<string, mixed>
      */

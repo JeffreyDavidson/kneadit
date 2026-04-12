@@ -3,15 +3,15 @@
 namespace Database\Factories\Customers;
 
 use App\Models\Customers\CustomerPhoto;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<CustomerPhoto>
  */
+#[UseModel(CustomerPhoto::class)]
 class CustomerPhotoFactory extends Factory
 {
-    protected $model = CustomerPhoto::class;
-
     /**
      * @return array<string, mixed>
      */

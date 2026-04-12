@@ -4,6 +4,8 @@ namespace App\Models\Engagement;
 
 use App\Enums\Marketing\EmailDeliveryStatus;
 use Database\Factories\Engagement\EmailCampaignLogFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -37,21 +39,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('campaign_id', 'tenant_id', 'email', 'status', 'sent_at', 'opened_at')]
 class EmailCampaignLog extends Model
 {
     /** @use HasFactory<EmailCampaignLogFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'campaign_id',
-        'tenant_id',
-        'email',
-        'status',
-        'sent_at',
-        'opened_at',
-    ];
 
     protected function casts(): array
     {

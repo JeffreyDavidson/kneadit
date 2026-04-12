@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->validateCsrfTokens(except: [
+        $middleware->preventRequestForgery(except: [
             'stripe/*',
         ]);
 
@@ -36,8 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'subscribed' => EnsureSubscribed::class,
         ]);
 
-        $middleware->redirectGuestsTo('/login');
-        $middleware->redirectUsersTo('/billing/plans');
+        $middleware->redirectTo(guests: '/login', users: '/billing/plans');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->dontReportDuplicates();

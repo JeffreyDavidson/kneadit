@@ -3,6 +3,7 @@
 namespace App\Models\Customers;
 
 use Database\Factories\Customers\CustomerReminderFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,17 +20,11 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('customer_id', 'last_order_date', 'reminder_sent_at', 'next_reminder_date')]
 class CustomerReminder extends Model
 {
     /** @use HasFactory<CustomerReminderFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'customer_id',
-        'last_order_date',
-        'reminder_sent_at',
-        'next_reminder_date',
-    ];
 
     protected function casts(): array
     {

@@ -5,15 +5,15 @@ namespace Database\Factories\Financial;
 use App\Enums\Financial\GiftCardTransactionType;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<GiftCardTransaction>
  */
+#[UseModel(GiftCardTransaction::class)]
 class GiftCardTransactionFactory extends Factory
 {
-    protected $model = GiftCardTransaction::class;
-
     /**
      * @return array<string, mixed>
      */

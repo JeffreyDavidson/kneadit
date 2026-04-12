@@ -5,7 +5,9 @@ namespace App\Models\Operations;
 use App\Models\Staff\User;
 use App\Observers\Platform\ActivityLogObserver;
 use Database\Factories\Operations\ActivityLogFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,25 +22,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[WithoutTimestamps]
+#[Fillable('user_id', 'user_name', 'action', 'model_type', 'model_id', 'description', 'properties', 'ip_address', 'created_at')]
 #[ObservedBy(ActivityLogObserver::class)]
 class ActivityLog extends Model
 {
     /** @use HasFactory<ActivityLogFactory> */
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'user_id',
-        'user_name',
-        'action',
-        'model_type',
-        'model_id',
-        'description',
-        'properties',
-        'ip_address',
-        'created_at',
-    ];
 
     protected function casts(): array
     {

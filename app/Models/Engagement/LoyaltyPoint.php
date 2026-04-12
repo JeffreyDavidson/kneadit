@@ -7,8 +7,10 @@ use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Observers\Engagement\LoyaltyPointObserver;
 use Database\Factories\Engagement\LoyaltyPointFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,21 +35,13 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[WithoutTimestamps]
+#[Fillable('customer_id', 'points', 'type', 'description', 'order_id')]
 #[ObservedBy(LoyaltyPointObserver::class)]
 class LoyaltyPoint extends Model
 {
     /** @use HasFactory<LoyaltyPointFactory> */
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'customer_id',
-        'points',
-        'type',
-        'description',
-        'order_id',
-    ];
 
     protected function casts(): array
     {

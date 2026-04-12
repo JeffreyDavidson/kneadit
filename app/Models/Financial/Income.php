@@ -5,6 +5,7 @@ namespace App\Models\Financial;
 use App\Builders\Financial\IncomeQueryBuilder;
 use App\Enums\Financial\IncomeSource;
 use Database\Factories\Financial\IncomeFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,19 +25,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Fillable('description', 'amount', 'source', 'date', 'notes')]
 #[UseEloquentBuilder(IncomeQueryBuilder::class)]
 class Income extends Model
 {
     /** @use HasFactory<IncomeFactory> */
     use HasFactory;
-
-    protected $fillable = [
-        'description',
-        'amount',
-        'source',
-        'date',
-        'notes',
-    ];
 
     protected function casts(): array
     {

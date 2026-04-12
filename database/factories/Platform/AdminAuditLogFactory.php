@@ -3,14 +3,14 @@
 namespace Database\Factories\Platform;
 
 use App\Models\Platform\AdminAuditLog;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<AdminAuditLog> */
+#[UseModel(AdminAuditLog::class)]
 class AdminAuditLogFactory extends Factory
 {
-    protected $model = AdminAuditLog::class;
-
     /**
      * @return array<string, mixed>
      */

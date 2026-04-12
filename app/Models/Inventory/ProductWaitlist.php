@@ -3,6 +3,9 @@
 namespace App\Models\Inventory;
 
 use Database\Factories\Inventory\ProductWaitlistFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,20 +20,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin \Eloquent
  */
+#[Table('product_waitlists')]
+#[WithoutTimestamps]
+#[Fillable('product_id', 'customer_email', 'customer_name', 'notified_at', 'created_at')]
 class ProductWaitlist extends Model
 {
     /** @use HasFactory<ProductWaitlistFactory> */
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'product_id',
-        'customer_email',
-        'customer_name',
-        'notified_at',
-        'created_at',
-    ];
 
     protected function casts(): array
     {
@@ -39,8 +35,6 @@ class ProductWaitlist extends Model
             'created_at' => 'datetime',
         ];
     }
-
-    protected $table = 'product_waitlists';
 
     /**
      * @return BelongsTo<Product, $this>

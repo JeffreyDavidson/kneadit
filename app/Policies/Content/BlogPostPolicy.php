@@ -2,9 +2,8 @@
 
 namespace App\Policies\Content;
 
-use App\Policies\Platform\RolePolicy;
-
 use App\Enums\Staff\UserRole;
+use App\Policies\Platform\RolePolicy;
 
 class BlogPostPolicy extends RolePolicy
 {

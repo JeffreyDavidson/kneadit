@@ -4,14 +4,14 @@ namespace Database\Factories\Customers;
 
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerReminder;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<CustomerReminder> */
+#[UseModel(CustomerReminder::class)]
 class CustomerReminderFactory extends Factory
 {
-    protected $model = CustomerReminder::class;
-
     /**
      * @return array<string, mixed>
      */

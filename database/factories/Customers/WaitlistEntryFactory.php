@@ -5,15 +5,15 @@ namespace Database\Factories\Customers;
 use App\Enums\Customers\WaitlistStatus;
 use App\Models\Customers\WaitlistEntry;
 use App\Models\Inventory\Product;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<WaitlistEntry>
  */
+#[UseModel(WaitlistEntry::class)]
 class WaitlistEntryFactory extends Factory
 {
-    protected $model = WaitlistEntry::class;
-
     /**
      * @return array<string, mixed>
      */

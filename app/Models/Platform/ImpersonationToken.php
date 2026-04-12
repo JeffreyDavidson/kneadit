@@ -2,22 +2,17 @@
 
 namespace App\Models\Platform;
 
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[WithoutTimestamps]
+#[Connection('central')]
+#[Fillable('token', 'tenant_id', 'expires_at', 'created_at')]
 class ImpersonationToken extends Model
 {
-    public $timestamps = false;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'token',
-        'tenant_id',
-        'expires_at',
-        'created_at',
-    ];
-
     protected function casts(): array
     {
         return [

@@ -3,13 +3,11 @@
 namespace App\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Attributes\Backoff;
+use Illuminate\Queue\Attributes\Timeout;
+use Illuminate\Queue\Attributes\Tries;
 
-abstract class QueuedListener implements ShouldQueue
-{
-    public int $timeout = 60;
-
-    public int $tries = 3;
-
-    /** @var array<int, int> */
-    public array $backoff = [10, 60, 300];
-}
+#[Timeout(60)]
+#[Tries(3)]
+#[Backoff([10, 60, 300])]
+abstract class QueuedListener implements ShouldQueue {}

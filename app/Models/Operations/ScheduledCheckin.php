@@ -3,6 +3,8 @@
 namespace App\Models\Operations;
 
 use Database\Factories\Operations\ScheduledCheckinFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,20 +38,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('name', 'days_after_signup', 'subject', 'body', 'is_active')]
 class ScheduledCheckin extends Model
 {
     /** @use HasFactory<ScheduledCheckinFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'name',
-        'days_after_signup',
-        'subject',
-        'body',
-        'is_active',
-    ];
 
     protected function casts(): array
     {

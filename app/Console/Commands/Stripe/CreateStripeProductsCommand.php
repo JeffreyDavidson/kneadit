@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands\Stripe;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Laravel\Cashier\Cashier;
 
+#[Signature('stripe:create-products')]
+#[Description('Create KneadIt subscription products and prices in Stripe')]
 class CreateStripeProductsCommand extends Command
 {
-    protected $signature = 'stripe:create-products';
-
-    protected $description = 'Create KneadIt subscription products and prices in Stripe';
-
     public function handle(): int
     {
         $stripe = Cashier::stripe();

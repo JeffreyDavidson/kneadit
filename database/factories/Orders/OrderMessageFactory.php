@@ -5,15 +5,15 @@ namespace Database\Factories\Orders;
 use App\Enums\Orders\SenderType;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderMessage;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<OrderMessage>
  */
+#[UseModel(OrderMessage::class)]
 class OrderMessageFactory extends Factory
 {
-    protected $model = OrderMessage::class;
-
     /**
      * @return array<string, mixed>
      */

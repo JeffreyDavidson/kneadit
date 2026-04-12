@@ -8,15 +8,15 @@ use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Services\PayPal\PaymentVerifier;
 use App\Services\Tenants\TenancyManager;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
+#[Signature('paypal:check-payments')]
+#[Description('Check PayPal invoice payment statuses and update orders across all tenants')]
 class CheckPayPalPaymentsCommand extends Command
 {
-    protected $signature = 'paypal:check-payments';
-
-    protected $description = 'Check PayPal invoice payment statuses and update orders across all tenants';
-
     public function handle(TenancyManager $tenancyManager): int
     {
         // Skip entirely if PayPal isn't configured at the platform level

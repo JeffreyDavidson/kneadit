@@ -4,14 +4,14 @@ namespace Database\Factories\Inventory;
 
 use App\Models\Inventory\Product;
 use App\Models\Inventory\SeasonalItem;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<SeasonalItem> */
+#[UseModel(SeasonalItem::class)]
 class SeasonalItemFactory extends Factory
 {
-    protected $model = SeasonalItem::class;
-
     /**
      * @return array<string, mixed>
      */

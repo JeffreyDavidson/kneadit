@@ -3,15 +3,15 @@
 namespace Database\Factories\Operations;
 
 use App\Models\Operations\BlockedDate;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<BlockedDate>
  */
+#[UseModel(BlockedDate::class)]
 class BlockedDateFactory extends Factory
 {
-    protected $model = BlockedDate::class;
-
     /**
      * @return array<string, mixed>
      */

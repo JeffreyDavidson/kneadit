@@ -4,6 +4,8 @@ namespace App\Models\Platform;
 
 use App\Enums\Platform\SupportReplyAuthorType;
 use Database\Factories\Platform\SupportReplyFactory;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,19 +35,12 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
+#[Connection('central')]
+#[Fillable('ticket_id', 'author_type', 'author_name', 'body')]
 class SupportReply extends Model
 {
     /** @use HasFactory<SupportReplyFactory> */
     use HasFactory;
-
-    protected $connection = 'central';
-
-    protected $fillable = [
-        'ticket_id',
-        'author_type',
-        'author_name',
-        'body',
-    ];
 
     /**
      * @return array<string, mixed>
