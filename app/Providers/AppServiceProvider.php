@@ -69,8 +69,8 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('platform-admin', fn (User $user): bool => $user->role === UserRole::PlatformAdmin);
 
-        Feature::define('growth-features', fn (): bool => SubscriptionTier::tryFrom(tenant()?->plan)?->meetsRequirement(SubscriptionTier::Growth) ?? false);
-        Feature::define('pro-features', fn (): bool => SubscriptionTier::tryFrom(tenant()?->plan)?->meetsRequirement(SubscriptionTier::Pro) ?? false);
+        Feature::define('growth-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Growth) ?? false);
+        Feature::define('pro-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Pro) ?? false);
         FilamentView::registerRenderHook(
             'panels::body.end',
             fn () => Blade::render(<<<'HTML'
