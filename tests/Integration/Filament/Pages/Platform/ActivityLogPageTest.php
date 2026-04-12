@@ -53,10 +53,10 @@ test('get activities property filters by action', function () {
 });
 
 test('get activities property filters by model type', function () {
-    ActivityLog::factory()->create(['model_type' => \App\Models\Orders\Order::class]);
-    ActivityLog::factory()->create(['model_type' => \App\Models\Inventory\Product::class]);
+    ActivityLog::factory()->create(['model_type' => App\Models\Orders\Order::class]);
+    ActivityLog::factory()->create(['model_type' => App\Models\Inventory\Product::class]);
 
-    test()->page->filterModelType = \App\Models\Orders\Order::class;
+    test()->page->filterModelType = App\Models\Orders\Order::class;
     $result = test()->page->getActivitiesProperty();
 
     expect($result->total())->toBe(1);
@@ -93,7 +93,7 @@ test('get action types property returns array', function () {
 });
 
 test('get model types property returns array of arrays', function () {
-    ActivityLog::factory()->create(['model_type' => \App\Models\Orders\Order::class]);
+    ActivityLog::factory()->create(['model_type' => App\Models\Orders\Order::class]);
 
     $types = test()->page->getModelTypesProperty();
 

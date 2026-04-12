@@ -36,8 +36,8 @@ arch('exceptions should be classes')
 
 arch('mailables should extend BaseMailable')
     ->expect('App\Mail')
-    ->toExtend(\App\Mail\BaseMailable::class)
-    ->ignoring([\App\Mail\BaseMailable::class, 'App\Mail\Concerns']);
+    ->toExtend(App\Mail\BaseMailable::class)
+    ->ignoring([App\Mail\BaseMailable::class, 'App\Mail\Concerns']);
 
 arch('controllers should not use compact() for view data')
     ->expect('compact')
@@ -139,8 +139,8 @@ arch('mail classes should not call settings() directly')
 
 arch('all listeners should extend QueuedListener')
     ->expect('App\Listeners')
-    ->toExtend(\App\Listeners\QueuedListener::class)
-    ->ignoring(\App\Listeners\QueuedListener::class);
+    ->toExtend(App\Listeners\QueuedListener::class)
+    ->ignoring(App\Listeners\QueuedListener::class);
 
 test('all listeners have retry configuration', function () {
     $listenerFiles = glob(__DIR__ . '/../../app/Listeners/*.php');
