@@ -117,6 +117,8 @@ test('navigation badge color is null when accessible', function () {
 });
 
 // --- Test stubs ---
+// These inline classes trigger PSR-4 warnings but are intentional test fixtures.
+// They must be in the global namespace to be called statically from Pest closures.
 
 class GrowthBadgeStub
 {
