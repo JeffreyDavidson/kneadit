@@ -3,23 +3,28 @@
 namespace App\Listeners\Customers;
 
 use App\Events\Customers\BirthdayDiscountGenerated;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Customers\BirthdayDiscountMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendBirthdayDiscountEmailListener extends QueuedListener
+class SendBirthdayDiscountEmailListener extends SendEmailListener
 {
-    public function handle(BirthdayDiscountGenerated $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->customer->email)->send(new BirthdayDiscountMail($event->customer, $event->coupon));
+        /** @var BirthdayDiscountGenerated $event */
+        return $event->customer->email;
     }
 
-    public function failed(BirthdayDiscountGenerated $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Birthday discount email failed', [
-            'customer' => $event->customer->name,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var BirthdayDiscountGenerated $event */
+        return new BirthdayDiscountMail($event->customer, $event->coupon);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var BirthdayDiscountGenerated $event */
+        return ['customer' => $event->customer->name];
     }
 }

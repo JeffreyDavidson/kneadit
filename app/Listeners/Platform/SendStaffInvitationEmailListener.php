@@ -3,25 +3,28 @@
 namespace App\Listeners\Platform;
 
 use App\Events\Platform\StaffInvitationSent;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Platform\StaffInvitationMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendStaffInvitationEmailListener extends QueuedListener
+class SendStaffInvitationEmailListener extends SendEmailListener
 {
-    public function handle(StaffInvitationSent $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->invitation->email)->send(
-            new StaffInvitationMail($event->invitation, $event->storeName, $event->acceptUrl),
-        );
+        /** @var StaffInvitationSent $event */
+        return $event->invitation->email;
     }
 
-    public function failed(StaffInvitationSent $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Staff invitation email failed', [
-            'email' => $event->invitation->email,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var StaffInvitationSent $event */
+        return new StaffInvitationMail($event->invitation, $event->storeName, $event->acceptUrl);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var StaffInvitationSent $event */
+        return ['email' => $event->invitation->email];
     }
 }

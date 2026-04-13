@@ -3,29 +3,34 @@
 namespace App\Listeners\Marketing;
 
 use App\Events\Marketing\PurchaseOrderRequested;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Orders\PurchaseOrderMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendPurchaseOrderEmailListener extends QueuedListener
+class SendPurchaseOrderEmailListener extends SendEmailListener
 {
-    public function handle(PurchaseOrderRequested $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->supplierEmail)->send(new PurchaseOrderMail(
+        /** @var PurchaseOrderRequested $event */
+        return $event->supplierEmail;
+    }
+
+    protected function getMailable(object $event): Mailable
+    {
+        /** @var PurchaseOrderRequested $event */
+        return new PurchaseOrderMail(
             supplierName: $event->supplierName,
             storeName: $event->storeName,
             items: $event->items,
             total: $event->total,
             requestedDate: $event->requestedDate,
-        ));
+        );
     }
 
-    public function failed(PurchaseOrderRequested $event, \Throwable $exception): void
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
     {
-        Log::warning('Purchase order email failed', [
-            'supplier' => $event->supplierName,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var PurchaseOrderRequested $event */
+        return ['supplier' => $event->supplierName];
     }
 }

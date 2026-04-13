@@ -3,25 +3,28 @@
 namespace App\Listeners\Customers;
 
 use App\Events\Customers\CustomerBirthday;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Customers\HappyBirthdayMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendHappyBirthdayEmailListener extends QueuedListener
+class SendHappyBirthdayEmailListener extends SendEmailListener
 {
-    public function handle(CustomerBirthday $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->customer->email)->send(
-            new HappyBirthdayMail($event->customer, $event->coupon),
-        );
+        /** @var CustomerBirthday $event */
+        return $event->customer->email;
     }
 
-    public function failed(CustomerBirthday $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Happy birthday email failed', [
-            'customer' => $event->customer->name,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var CustomerBirthday $event */
+        return new HappyBirthdayMail($event->customer, $event->coupon);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var CustomerBirthday $event */
+        return ['customer' => $event->customer->name];
     }
 }
