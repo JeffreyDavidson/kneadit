@@ -150,7 +150,7 @@ class TenantComparison extends Page
         $data = [
             'id' => $tenant->id,
             'name' => $tenant->store_name ?? $tenant->name,
-            'plan' => $tenant->plan ?? 'free',
+            'plan' => $tenant->plan?->value ?? 'trial',
             'total_orders' => 0,
             'month_orders' => 0,
             'total_products' => 0,

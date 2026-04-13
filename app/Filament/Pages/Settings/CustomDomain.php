@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Settings;
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Services\Platform\ForgeService;
 use BackedEnum;
@@ -76,9 +77,9 @@ class CustomDomain extends Page
 
     public function save(): void
     {
-        $plan = tenant()->plan ?? 'free';
+        $plan = tenant()->plan;
 
-        if (! in_array($plan, ['growth', 'pro'])) {
+        if (! $plan?->meetsRequirement(SubscriptionTier::Growth)) {
             Notification::make()
                 ->title('Custom domains are available on Growth and Pro plans')
                 ->warning()
