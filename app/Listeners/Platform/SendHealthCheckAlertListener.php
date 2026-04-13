@@ -3,16 +3,26 @@
 namespace App\Listeners\Platform;
 
 use App\Events\Platform\HealthCheckFailed;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Platform\HealthAlertMail;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendHealthCheckAlertListener extends QueuedListener
+class SendHealthCheckAlertListener extends SendEmailListener
 {
-    public function handle(HealthCheckFailed $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to(config('mail.platform_notify'))->send(
-            new HealthAlertMail($event->message),
-        );
+        return config('mail.platform_notify');
+    }
+
+    protected function getMailable(object $event): Mailable
+    {
+        /** @var HealthCheckFailed $event */
+        return new HealthAlertMail($event->message);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        return ['check' => class_basename($event)];
     }
 }

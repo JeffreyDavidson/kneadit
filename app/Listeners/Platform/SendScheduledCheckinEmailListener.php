@@ -3,25 +3,28 @@
 namespace App\Listeners\Platform;
 
 use App\Events\Platform\ScheduledCheckinDue;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Platform\ScheduledCheckinMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendScheduledCheckinEmailListener extends QueuedListener
+class SendScheduledCheckinEmailListener extends SendEmailListener
 {
-    public function handle(ScheduledCheckinDue $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->tenantEmail)->send(
-            new ScheduledCheckinMail($event->body, $event->subject),
-        );
+        /** @var ScheduledCheckinDue $event */
+        return $event->tenantEmail;
     }
 
-    public function failed(ScheduledCheckinDue $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Scheduled checkin email failed', [
-            'email' => $event->tenantEmail,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var ScheduledCheckinDue $event */
+        return new ScheduledCheckinMail($event->body, $event->subject);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var ScheduledCheckinDue $event */
+        return ['email' => $event->tenantEmail];
     }
 }

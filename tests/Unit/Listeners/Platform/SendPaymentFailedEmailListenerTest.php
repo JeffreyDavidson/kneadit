@@ -27,7 +27,7 @@ test('it sends payment failed email to the user', function () {
 test('failed method logs a warning with user email and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Payment failed email could not be sent', Mockery::on(fn (array $context) => $context['user'] === 'baker@example.com'
+        ->with('SendPaymentFailedEmailListener failed', Mockery::on(fn (array $context) => $context['user'] === 'baker@example.com'
             && $context['error'] === 'SMTP timeout'));
 
     $user = User::factory()->create(['email' => 'baker@example.com']);

@@ -29,7 +29,7 @@ test('it sends happy birthday email to the customer', function () {
 test('failed method logs a warning with customer name and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Happy birthday email failed', Mockery::on(fn (array $context) => $context['customer'] === 'Jane Doe'
+        ->with('SendHappyBirthdayEmailListener failed', Mockery::on(fn (array $context) => $context['customer'] === 'Jane Doe'
             && $context['error'] === 'SMTP timeout'));
 
     $customer = Customer::factory()->create(['name' => 'Jane Doe']);

@@ -27,7 +27,7 @@ test('it sends catering quote email to the customer', function () {
 test('failed method logs a warning with inquiry id and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Catering quote email failed', Mockery::on(fn (array $context) => $context['inquiry'] === 1
+        ->with('SendCateringQuoteEmailListener failed', Mockery::on(fn (array $context) => $context['inquiry'] === 1
             && $context['error'] === 'SMTP timeout'));
 
     $inquiry = CateringInquiry::factory()->create(['id' => 1]);

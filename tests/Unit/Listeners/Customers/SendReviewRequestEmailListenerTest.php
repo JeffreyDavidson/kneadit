@@ -29,7 +29,7 @@ test('it sends review request email to the customer', function () {
 test('failed method logs a warning with order number and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Review request email failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-001'
+        ->with('SendReviewRequestEmailListener failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-001'
             && $context['error'] === 'SMTP timeout'));
 
     $order = Order::factory()->create(['order_number' => 'ORD-001']);

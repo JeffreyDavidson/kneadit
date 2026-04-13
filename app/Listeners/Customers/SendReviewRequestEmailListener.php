@@ -3,25 +3,30 @@
 namespace App\Listeners\Customers;
 
 use App\Events\Customers\ReviewRequested;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Customers\ReviewRequestMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendReviewRequestEmailListener extends QueuedListener
+class SendReviewRequestEmailListener extends SendEmailListener
 {
-    public function handle(ReviewRequested $event): void
+    protected function getRecipient(object $event): ?string
     {
-        $event->order->loadMissing('orderItems.product');
-
-        Mail::to($event->order->customer?->email)->send(new ReviewRequestMail($event->order));
+        /** @var ReviewRequested $event */
+        return $event->order->customer?->email;
     }
 
-    public function failed(ReviewRequested $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Review request email failed', [
-            'order' => $event->order->order_number,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var ReviewRequested $event */
+        $event->order->loadMissing('orderItems.product');
+
+        return new ReviewRequestMail($event->order);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var ReviewRequested $event */
+        return ['order' => $event->order->order_number];
     }
 }

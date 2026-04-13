@@ -4,29 +4,33 @@ namespace App\Listeners\Platform;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\TenantOnboarded;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Platform\NewSubscriberNotificationMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class NotifyPlatformOfNewTenantListener extends QueuedListener
+class NotifyPlatformOfNewTenantListener extends SendEmailListener
 {
-    public function handle(TenantOnboarded $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to(config('mail.platform_notify'))->send(new NewSubscriberNotificationMail(
+        return config('mail.platform_notify');
+    }
+
+    protected function getMailable(object $event): Mailable
+    {
+        /** @var TenantOnboarded $event */
+        return new NewSubscriberNotificationMail(
             bakerName: $event->user->name,
             bakerEmail: $event->user->email,
             storeName: $event->tenant->store_name ?? $event->tenant->name,
             subdomain: (string) $event->tenant->id,
             plan: SubscriptionTier::Starter->value,
-        ));
+        );
     }
 
-    public function failed(TenantOnboarded $event, \Throwable $exception): void
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
     {
-        Log::warning('Platform new tenant notification failed', [
-            'tenant' => $event->tenant->id,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var TenantOnboarded $event */
+        return ['tenant' => $event->tenant->id];
     }
 }

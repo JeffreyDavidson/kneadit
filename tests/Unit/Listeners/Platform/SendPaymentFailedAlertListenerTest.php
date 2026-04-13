@@ -28,7 +28,7 @@ test('it sends health alert to platform admin', function () {
 test('failed method logs a warning with user email and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Payment failed platform alert could not be sent', Mockery::on(fn (array $context) => $context['user'] === 'jane@example.com'
+        ->with('SendPaymentFailedAlertListener failed', Mockery::on(fn (array $context) => $context['user'] === 'jane@example.com'
             && $context['error'] === 'SMTP timeout'));
 
     $user = User::factory()->create(['email' => 'jane@example.com']);
