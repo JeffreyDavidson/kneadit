@@ -3,25 +3,28 @@
 namespace App\Listeners\Customers;
 
 use App\Events\Customers\RepeatOrderReminderDue;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Customers\RepeatOrderReminderMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendRepeatOrderReminderEmailListener extends QueuedListener
+class SendRepeatOrderReminderEmailListener extends SendEmailListener
 {
-    public function handle(RepeatOrderReminderDue $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->customer->email)->send(
-            new RepeatOrderReminderMail($event->customer, $event->daysSinceLastOrder),
-        );
+        /** @var RepeatOrderReminderDue $event */
+        return $event->customer->email;
     }
 
-    public function failed(RepeatOrderReminderDue $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Repeat order reminder email failed', [
-            'customer' => $event->customer->name,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var RepeatOrderReminderDue $event */
+        return new RepeatOrderReminderMail($event->customer, $event->daysSinceLastOrder);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var RepeatOrderReminderDue $event */
+        return ['customer' => $event->customer->name];
     }
 }

@@ -4,29 +4,34 @@ namespace App\Listeners\Platform;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Events\Platform\TenantOnboarded;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Platform\WelcomeBakerMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendWelcomeBakerEmailListener extends QueuedListener
+class SendWelcomeBakerEmailListener extends SendEmailListener
 {
-    public function handle(TenantOnboarded $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->user->email)->send(new WelcomeBakerMail(
+        /** @var TenantOnboarded $event */
+        return $event->user->email;
+    }
+
+    protected function getMailable(object $event): Mailable
+    {
+        /** @var TenantOnboarded $event */
+        return new WelcomeBakerMail(
             bakerName: $event->user->name,
             storeName: $event->tenant->store_name ?? $event->tenant->name,
             adminUrl: $event->adminUrl,
             plan: SubscriptionTier::Starter->value,
             trialEndsAt: now()->addDays(config('kneadit.trial_days', 30))->format('F j, Y'),
-        ));
+        );
     }
 
-    public function failed(TenantOnboarded $event, \Throwable $exception): void
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
     {
-        Log::warning('Welcome baker email failed', [
-            'tenant' => $event->tenant->id,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var TenantOnboarded $event */
+        return ['tenant' => $event->tenant->id];
     }
 }

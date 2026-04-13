@@ -3,23 +3,33 @@
 namespace App\Listeners\Platform;
 
 use App\Events\Platform\TrialReminding;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Platform\TrialReminderMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendTrialReminderEmailListener extends QueuedListener
+class SendTrialReminderEmailListener extends SendEmailListener
 {
-    public function handle(TrialReminding $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->user->email)->queue(new TrialReminderMail($event->user, $event->storeName, $event->daysLeft));
+        /** @var TrialReminding $event */
+        return $event->user->email;
     }
 
-    public function failed(TrialReminding $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Trial reminder email failed', [
-            'email' => $event->user->email,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var TrialReminding $event */
+        return new TrialReminderMail($event->user, $event->storeName, $event->daysLeft);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var TrialReminding $event */
+        return ['email' => $event->user->email];
+    }
+
+    protected function shouldQueueMail(): bool
+    {
+        return true;
     }
 }

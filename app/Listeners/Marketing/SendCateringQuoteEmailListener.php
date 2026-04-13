@@ -3,23 +3,28 @@
 namespace App\Listeners\Marketing;
 
 use App\Events\Marketing\CateringQuoteRequested;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Marketing\CateringQuoteMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendCateringQuoteEmailListener extends QueuedListener
+class SendCateringQuoteEmailListener extends SendEmailListener
 {
-    public function handle(CateringQuoteRequested $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->inquiry->customer_email)->send(new CateringQuoteMail($event->inquiry));
+        /** @var CateringQuoteRequested $event */
+        return $event->inquiry->customer_email;
     }
 
-    public function failed(CateringQuoteRequested $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Catering quote email failed', [
-            'inquiry' => $event->inquiry->id,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var CateringQuoteRequested $event */
+        return new CateringQuoteMail($event->inquiry);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var CateringQuoteRequested $event */
+        return ['inquiry' => $event->inquiry->id];
     }
 }

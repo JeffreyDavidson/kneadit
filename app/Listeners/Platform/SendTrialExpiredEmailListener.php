@@ -3,23 +3,33 @@
 namespace App\Listeners\Platform;
 
 use App\Events\Platform\TrialExpired;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Platform\TrialExpiredMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendTrialExpiredEmailListener extends QueuedListener
+class SendTrialExpiredEmailListener extends SendEmailListener
 {
-    public function handle(TrialExpired $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->user->email)->queue(new TrialExpiredMail($event->user, $event->tenantId));
+        /** @var TrialExpired $event */
+        return $event->user->email;
     }
 
-    public function failed(TrialExpired $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Trial expired email failed', [
-            'email' => $event->user->email,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var TrialExpired $event */
+        return new TrialExpiredMail($event->user, $event->tenantId);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var TrialExpired $event */
+        return ['email' => $event->user->email];
+    }
+
+    protected function shouldQueueMail(): bool
+    {
+        return true;
     }
 }
