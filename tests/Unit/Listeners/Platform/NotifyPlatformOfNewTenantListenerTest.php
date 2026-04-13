@@ -36,7 +36,7 @@ test('it sends notification email to the platform admin', function () {
 test('failed method logs a warning with tenant id and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Platform new tenant notification failed', Mockery::on(fn (array $context) => $context['tenant'] === 'janes-bakery'
+        ->with('NotifyPlatformOfNewTenantListener failed', Mockery::on(fn (array $context) => $context['tenant'] === 'janes-bakery'
             && $context['error'] === 'SMTP timeout'));
 
     $user = User::factory()->create();

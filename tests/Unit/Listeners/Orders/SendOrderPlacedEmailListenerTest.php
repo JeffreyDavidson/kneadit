@@ -45,7 +45,7 @@ test('it loads order items before sending', function () {
 test('failed method logs a warning with order number and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Order placed email failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-001'
+        ->with('SendOrderPlacedEmailListener failed', Mockery::on(fn (array $context) => $context['order'] === 'ORD-001'
             && $context['error'] === 'SMTP timeout'));
 
     $order = Order::factory()->create(['order_number' => 'ORD-001']);
