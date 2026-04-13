@@ -13,3 +13,9 @@ test('OrderStatus has a color for every case', function () {
         expect($case->getColor())->toBeString();
     }
 });
+
+test('OrderStatus has an icon for every case', function () {
+    foreach (OrderStatus::cases() as $case) {
+        expect($case->getIcon())->toBeInstanceOf(Filament\Support\Icons\Heroicon::class);
+    }
+});
