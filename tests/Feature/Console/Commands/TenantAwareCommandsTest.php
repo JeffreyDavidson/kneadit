@@ -1,6 +1,6 @@
 <?php
 
-use App\Console\Commands\Customers\SendBirthdayDiscountsCommand;
+use App\Console\Commands\Customers\SendBirthdayEmailsCommand;
 use App\Console\Commands\Customers\SendRepeatOrderRemindersCommand;
 use App\Console\Commands\Stripe\CheckPayPalPaymentsCommand;
 
@@ -13,8 +13,8 @@ test('check paypal payments command exists', function () {
         ->assertSuccessful();
 });
 
-test('send birthday discounts command exists', function () {
-    $this->artisan('birthday:send-discounts')
+test('send birthday emails command exists', function () {
+    $this->artisan('birthday:send-emails')
         ->assertSuccessful();
 });
 
@@ -30,7 +30,7 @@ test('paypal command uses TenancyManager for tenant context', function () {
 });
 
 test('birthday command uses EngagementDispatcher for tenant context', function () {
-    $source = file_get_contents((new ReflectionClass(SendBirthdayDiscountsCommand::class))->getFileName());
+    $source = file_get_contents((new ReflectionClass(SendBirthdayEmailsCommand::class))->getFileName());
 
     expect($source)->toContain('EngagementDispatcher');
 });
@@ -43,6 +43,6 @@ test('repeat reminders command uses EngagementDispatcher for tenant context', fu
 
 test('commands handle empty tenant list', function () {
     $this->artisan('paypal:check-payments')->assertSuccessful();
-    $this->artisan('birthday:send-discounts')->assertSuccessful();
+    $this->artisan('birthday:send-emails')->assertSuccessful();
     $this->artisan('orders:send-repeat-reminders')->assertSuccessful();
 });

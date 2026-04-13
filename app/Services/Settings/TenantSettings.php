@@ -74,6 +74,7 @@ final class TenantSettings
         public readonly string $pickupPolicy,
         public readonly string $additionalTerms,
         public readonly bool $birthdayProgramEnabled,
+        public readonly bool $birthdayCouponEnabled,
         public readonly int $birthdayDiscountPercentage,
         public readonly int $birthdayCouponValidDays,
         public readonly bool $reviewRequestsEnabled,
@@ -148,6 +149,7 @@ final class TenantSettings
     public EngagementSettings $engagement {
         get => new EngagementSettings(
             birthdayProgramEnabled: $this->birthdayProgramEnabled,
+            birthdayCouponEnabled: $this->birthdayCouponEnabled,
             birthdayDiscountPercentage: $this->birthdayDiscountPercentage,
             birthdayCouponValidDays: $this->birthdayCouponValidDays,
             reviewRequestsEnabled: $this->reviewRequestsEnabled,
@@ -241,6 +243,7 @@ final class TenantSettings
             pickupPolicy: (string) settings('pickup_policy', ''),
             additionalTerms: (string) settings('additional_terms', ''),
             birthdayProgramEnabled: settings('birthday_program_enabled', '0') === '1',
+            birthdayCouponEnabled: settings('birthday_coupon_enabled', '1') === '1',
             birthdayDiscountPercentage: (int) settings('birthday_discount_percentage', '15'),
             birthdayCouponValidDays: (int) settings('birthday_coupon_valid_days', '7'),
             reviewRequestsEnabled: settings('review_requests_enabled', '0') === '1',

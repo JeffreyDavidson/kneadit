@@ -211,6 +211,7 @@ test('CateringSettings stores all properties', function () {
 test('EngagementSettings stores all properties', function () {
     $dto = new EngagementSettings(
         birthdayProgramEnabled: true,
+        birthdayCouponEnabled: true,
         birthdayDiscountPercentage: 15,
         birthdayCouponValidDays: 7,
         reviewRequestsEnabled: true,
@@ -224,6 +225,7 @@ test('EngagementSettings stores all properties', function () {
 
     expect($dto)
         ->birthdayProgramEnabled->toBeTrue()
+        ->birthdayCouponEnabled->toBeTrue()
         ->birthdayDiscountPercentage->toBe(15)
         ->birthdayCouponValidDays->toBe(7)
         ->reviewRequestsEnabled->toBeTrue()
