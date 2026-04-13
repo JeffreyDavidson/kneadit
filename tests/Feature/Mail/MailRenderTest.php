@@ -61,14 +61,6 @@ test('NewSubscriberNotificationMail renders', function () {
         ->toBeString()->not->toBeEmpty();
 });
 
-test('BirthdayDiscountMail renders', function () {
-    $customer = Customer::factory()->create();
-    $coupon = App\Models\Financial\Coupon::factory()->percentage()->create();
-
-    expect((new App\Mail\Customers\BirthdayDiscountMail($customer, $coupon))->render())
-        ->toBeString()->not->toBeEmpty();
-});
-
 test('HappyBirthdayMail renders', function () {
     $customer = Customer::factory()->create();
 

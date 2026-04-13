@@ -6,6 +6,7 @@ final readonly class EngagementSettings
 {
     public function __construct(
         public bool $birthdayProgramEnabled,
+        public bool $birthdayCouponEnabled,
         public int $birthdayDiscountPercentage,
         public int $birthdayCouponValidDays,
         public bool $reviewRequestsEnabled,
