@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Platform;
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -43,7 +44,7 @@ class UpgradePlan extends Page
         $this->currentPlan = tenant()->plan?->value ?? 'starter';
 
         $this->plans = [
-            'starter' => [
+            SubscriptionTier::Starter->value => [
                 'name' => 'Starter',
                 'price' => 9,
                 'features' => [
@@ -57,7 +58,7 @@ class UpgradePlan extends Page
                     'Settings & Onboarding',
                 ],
             ],
-            'growth' => [
+            SubscriptionTier::Growth->value => [
                 'name' => 'Growth',
                 'price' => 19,
                 'features' => [
@@ -75,7 +76,7 @@ class UpgradePlan extends Page
                     'Printable Menu & QR Codes',
                 ],
             ],
-            'pro' => [
+            SubscriptionTier::Pro->value => [
                 'name' => 'Pro',
                 'price' => 29,
                 'features' => [

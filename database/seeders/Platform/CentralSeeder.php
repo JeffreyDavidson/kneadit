@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Platform;
 
+use App\Enums\Platform\SubscriptionTier;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -72,7 +73,7 @@ class CentralSeeder extends Seeder
                 'id' => 'sweet-surrender',
                 'name' => 'Maria Lopez',
                 'email' => 'maria@sweetsurrender.com',
-                'plan' => 'starter',
+                'plan' => SubscriptionTier::Starter->value,
                 'trial_ends_at' => $now->copy()->addDays(10)->toDateTimeString(),
                 'store_name' => 'Sweet Surrender Bakery',
                 'store_logo' => null,
@@ -89,7 +90,7 @@ class CentralSeeder extends Seeder
                 'id' => 'rolling-pin',
                 'name' => 'James Chen',
                 'email' => 'james@therollingpin.com',
-                'plan' => 'growth',
+                'plan' => SubscriptionTier::Growth->value,
                 'trial_ends_at' => $now->copy()->subDays(15)->toDateTimeString(),
                 'store_name' => 'The Rolling Pin',
                 'store_logo' => null,
@@ -106,7 +107,7 @@ class CentralSeeder extends Seeder
                 'id' => 'flour-and-fancy',
                 'name' => 'Sophie Williams',
                 'email' => 'sophie@flourandfancy.com',
-                'plan' => 'starter',
+                'plan' => SubscriptionTier::Starter->value,
                 'trial_ends_at' => $now->copy()->subDays(3)->toDateTimeString(),
                 'store_name' => 'Flour & Fancy',
                 'store_logo' => null,
@@ -123,7 +124,7 @@ class CentralSeeder extends Seeder
                 'id' => 'cake-boss',
                 'name' => 'Anthony Rossi',
                 'email' => 'anthony@cakebosskitchen.com',
-                'plan' => 'growth',
+                'plan' => SubscriptionTier::Growth->value,
                 'trial_ends_at' => null,
                 'store_name' => 'Cake Boss Kitchen',
                 'store_logo' => null,
@@ -140,7 +141,7 @@ class CentralSeeder extends Seeder
                 'id' => 'sugar-rush',
                 'name' => 'Priya Patel',
                 'email' => 'priya@sugarrushsweets.com',
-                'plan' => 'pro',
+                'plan' => SubscriptionTier::Pro->value,
                 'trial_ends_at' => null,
                 'store_name' => 'Sugar Rush Sweets',
                 'store_logo' => null,

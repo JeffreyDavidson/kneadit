@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Tenants;
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Hidden;
@@ -25,7 +26,7 @@ class CreateOneTenantCommand extends Command
             'id' => $id,
             'name' => $this->argument('name'),
             'email' => $this->argument('email'),
-            'plan' => 'pro',
+            'plan' => SubscriptionTier::Pro,
             'trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30)),
             'store_name' => $this->argument('store_name'),
             'brand_color_primary' => $this->argument('brand_primary'),
