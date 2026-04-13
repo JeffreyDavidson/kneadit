@@ -105,16 +105,15 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     /**
      * Check if user has at least the given plan tier.
      */
-    public function hasPlan(string $plan): bool
+    public function hasPlan(SubscriptionTier $plan): bool
     {
         $current = $this->currentPlan();
-        $required = SubscriptionTier::tryFrom($plan);
 
-        if (! $current || ! $required) {
+        if (! $current) {
             return false;
         }
 
-        return $current->meetsRequirement($required);
+        return $current->meetsRequirement($plan);
     }
 
     /**
