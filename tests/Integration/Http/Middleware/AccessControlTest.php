@@ -13,11 +13,11 @@ beforeEach(fn () => setUpTenantTest());
 function setTenantPlanForAccess(string $plan): void
 {
     $tenant = new class($plan) implements Tenant {
-        public string $plan;
+        public ?SubscriptionTier $plan;
 
         public function __construct(string $plan)
         {
-            $this->plan = $plan;
+            $this->plan = SubscriptionTier::from($plan);
         }
 
         public function getTenantKeyName(): string
