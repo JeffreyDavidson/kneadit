@@ -39,7 +39,7 @@ class OnboardingTracker extends Page
                 'subdomain' => $tenant->id,
                 'owner' => $tenant->name,
                 'email' => $tenant->email,
-                'plan' => $tenant->plan ?? 'free',
+                'plan' => $tenant->plan?->value ?? 'trial',
                 'created_at' => $tenant->created_at,
                 'days_since_signup' => $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0,
                 'checks' => $checks,

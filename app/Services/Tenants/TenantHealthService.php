@@ -29,7 +29,7 @@ class TenantHealthService
                 'name' => $tenant->store_name ?? $tenant->name,
                 'owner' => $tenant->name,
                 'email' => $tenant->email,
-                'plan' => $tenant->plan ?? 'free',
+                'plan' => $tenant->plan?->value ?? 'trial',
                 'health_score' => $totalScore,
                 'login_score' => $tenantScores['login'],
                 'order_score' => $tenantScores['order'],
