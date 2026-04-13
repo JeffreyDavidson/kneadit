@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Tenants;
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use Illuminate\Console\Attributes\Description;
@@ -46,7 +47,7 @@ class CreateDemoTenantCommand extends Command
             'id' => $subdomain,
             'name' => 'Demo Baker',
             'email' => 'demo@getkneadit.app',
-            'plan' => 'pro',
+            'plan' => SubscriptionTier::Pro,
             'trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30)),
             'store_name' => 'Sweet Dreams Bakery',
             'brand_color_primary' => '#d4920c',

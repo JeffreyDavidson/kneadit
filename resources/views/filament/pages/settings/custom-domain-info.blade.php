@@ -33,7 +33,7 @@
     <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
         <p class="text-sm text-gray-600 dark:text-gray-400">
             💡 <strong>Custom domains are available on Growth and Pro plans.</strong>
-            Your current plan: <span class="font-semibold capitalize">{{ tenant()->plan ?? 'free' }}</span>
+            Your current plan: <span class="font-semibold capitalize">{{ tenant()->plan?->value ?? 'trial' }}</span>
         </p>
     </div>
 </div>
