@@ -63,14 +63,6 @@ test('HappyBirthday has correct subject with customer name', function () {
         ->and($mail->envelope()->subject)->toContain('Birthday');
 });
 
-test('BirthdayDiscount has correct subject', function () {
-    $customer = Customer::factory()->create();
-    $coupon = App\Models\Financial\Coupon::factory()->create();
-    $mail = new App\Mail\Customers\BirthdayDiscountMail($customer, $coupon);
-
-    expect($mail->envelope()->subject)->toContain('Birthday');
-});
-
 test('ReviewRequest has correct subject with store name', function () {
     $order = Order::factory()->create();
     $mail = new App\Mail\Customers\ReviewRequestMail($order);

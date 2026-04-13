@@ -5,13 +5,13 @@ namespace App\Services\Engagement\Engagements;
 use App\Actions\Customers\CreateBirthdayCoupon;
 use App\Contracts\Engagement\CustomerEngagement;
 use App\Contracts\Engagement\EngagementRecipient;
-use App\Events\Customers\BirthdayDiscountGenerated;
+use App\Events\Customers\CustomerBirthday;
 use App\Models\Customers\Customer;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 
-class BirthdayDiscountEngagement implements CustomerEngagement
+class BirthdayEngagement implements CustomerEngagement
 {
     public function __construct(
         private CreateBirthdayCoupon $createBirthdayCoupon,
@@ -45,15 +45,14 @@ class BirthdayDiscountEngagement implements CustomerEngagement
         /** @var Customer $customer */
         $customer = $recipient->model;
 
-        $coupon = ($this->createBirthdayCoupon)(
-            $customer,
-            $settings->engagement->birthdayDiscountPercentage,
-        );
+        $coupon = $settings->engagement->birthdayCouponEnabled
+            ? ($this->createBirthdayCoupon)(
+                $customer,
+                $settings->engagement->birthdayDiscountPercentage,
+                $settings->engagement->birthdayCouponValidDays,
+            )
+            : null;
 
-        if (! $coupon) {
-            return;
-        }
-
-        BirthdayDiscountGenerated::dispatch($customer, $coupon);
+        CustomerBirthday::dispatch($customer, $coupon);
     }
 }

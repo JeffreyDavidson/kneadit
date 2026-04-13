@@ -14,7 +14,6 @@ Schedule::withoutOverlapping()
     ->runInBackground()
     ->group(function () {
         Schedule::command('paypal:check-payments')->hourly();
-        Schedule::command('birthday:send-discounts')->dailyAt('09:00');
         Schedule::command('birthday:send-emails')->dailyAt('08:00');
         Schedule::command('orders:send-repeat-reminders')->dailyAt('10:00');
         Schedule::command('digest:weekly')->weeklyOn(1, '8:00');

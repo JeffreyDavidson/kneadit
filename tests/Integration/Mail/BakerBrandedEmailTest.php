@@ -2,7 +2,6 @@
 
 use App\Enums\Orders\PaymentMethod;
 use App\Mail\Concerns\BakerBranded;
-use App\Mail\Customers\BirthdayDiscountMail;
 use App\Mail\Customers\HappyBirthdayMail;
 use App\Mail\Customers\ProductAvailableMail;
 use App\Mail\Customers\RepeatOrderReminderMail;
@@ -91,7 +90,6 @@ test('all customer mailables use baker branded trait', function () {
         OrderDeliveredMail::class,
         ReviewRequestMail::class,
         HappyBirthdayMail::class,
-        BirthdayDiscountMail::class,
         CustomerBlastMail::class,
         ProductAvailableMail::class,
         WeeklyDigestMail::class,

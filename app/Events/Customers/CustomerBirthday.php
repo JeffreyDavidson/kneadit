@@ -13,6 +13,6 @@ class CustomerBirthday implements ShouldDispatchAfterCommit
 
     public function __construct(
         public readonly Customer $customer,
-        public readonly Coupon $coupon,
+        public readonly ?Coupon $coupon = null,
     ) {}
 }
