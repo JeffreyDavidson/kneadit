@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Order;
+namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ApplyDiscountRequest extends FormRequest
+class IndexReviewsRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,8 +17,8 @@ class ApplyDiscountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string', 'max:50'],
-            'subtotal' => ['required', 'numeric', 'min:0'],
+            'featured' => ['sometimes', 'in:true,false,1,0'],
+            'product_id' => ['sometimes', 'integer'],
         ];
     }
 }
