@@ -11,6 +11,33 @@ beforeEach(function () {
     resolve(SettingsManager::class)->flushCache();
 });
 
+test('setMany saves multiple settings in a single transaction', function () {
+    $manager = resolve(SettingsManager::class);
+
+    $manager->setMany([
+        'store_name' => 'Test Bakery',
+        'store_email' => 'test@example.com',
+        'store_phone' => '555-0100',
+    ]);
+
+    $manager->flushCache();
+
+    expect($manager->get('store_name'))->toBe('Test Bakery')
+        ->and($manager->get('store_email'))->toBe('test@example.com')
+        ->and($manager->get('store_phone'))->toBe('555-0100');
+});
+
+test('setMany overwrites existing settings', function () {
+    $manager = resolve(SettingsManager::class);
+
+    $manager->set('store_name', 'Old Name');
+    $manager->setMany(['store_name' => 'New Name']);
+
+    $manager->flushCache();
+
+    expect($manager->get('store_name'))->toBe('New Name');
+});
+
 test('pageContent returns value for nested key', function () {
     $manager = resolve(SettingsManager::class);
 

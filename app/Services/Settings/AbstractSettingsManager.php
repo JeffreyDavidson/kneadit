@@ -2,6 +2,8 @@
 
 namespace App\Services\Settings;
 
+use Illuminate\Support\Facades\DB;
+
 abstract class AbstractSettingsManager
 {
     /** @var array<string, array<string, mixed>> */
@@ -30,6 +32,16 @@ abstract class AbstractSettingsManager
         if (isset($this->cache[$cacheKey])) {
             $this->cache[$cacheKey][$key] = $value;
         }
+    }
+
+    /** @param array<string, mixed> $settings */
+    public function setMany(array $settings): void
+    {
+        DB::transaction(function () use ($settings) {
+            foreach ($settings as $key => $value) {
+                $this->set($key, $value);
+            }
+        });
     }
 
     public function loadAll(): void

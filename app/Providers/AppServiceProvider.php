@@ -65,6 +65,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::preventLazyLoading(! app()->isProduction());
 
+        Blade::directive('money', fn (string $expression) => "<?php echo '\$' . number_format({$expression}, 2); ?>");
+
         RateLimiter::for('webhooks', fn () => Limit::perMinute(30));
 
         Gate::define('platform-admin', fn (User $user): bool => $user->role === UserRole::PlatformAdmin);

@@ -33,8 +33,7 @@ test('reviews controller passes settings, content, and stats to view', function 
     $response->assertOk()
         ->assertViewHas('settings')
         ->assertViewHas('content')
-        ->assertViewHas('fiveStarCount')
-        ->assertViewHas('fiveStarPct')
+        ->assertViewHas('vm')
         ->assertViewHas('featured');
 });
 
@@ -47,13 +46,12 @@ test('gift cards controller passes settings and content to view', function () {
         ->assertViewHas('content');
 });
 
-test('loyalty controller show passes settings and content to view', function () {
+test('loyalty controller show passes vm to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->get('/rewards');
 
     $response->assertOk()
-        ->assertViewHas('settings')
-        ->assertViewHas('content');
+        ->assertViewHas('vm');
 });
 
 test('catering controller passes settings and content to view', function () {

@@ -79,6 +79,12 @@
 - Controllers and Filament pages are thin callers — delegate business logic to actions
 - Do NOT put write logic in observers, services (for writes), or controller methods
 
+### View Layer
+- **`@money()` Blade directive** — registered in `AppServiceProvider::boot()`, outputs `$X.XX`. Use for all monetary formatting in Blade; do NOT use for loyalty points or rating numbers.
+- **ViewModels (`app/ViewModels/`)** — encapsulate all data for a page. Controller builds the ViewModel and passes it as `$vm` to the view. See `ReviewsPageViewModel` as the established example.
+- **Presenters (`app/Presenters/`)** — wrap a single model to provide display-formatting methods. See `OrderTrackingPresenter` as the established example.
+- **Reusable Blade components (`components/storefront/`)** — shared markup with `@props` and named slots. See `product-card` as the established pattern.
+
 ### Models
 - Models should ONLY contain: relationships, casts, scopes, and `Attribute`-style accessors
 - No business logic, static helpers, or complex calculations — extract to Services or Actions

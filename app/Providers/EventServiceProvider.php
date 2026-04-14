@@ -10,6 +10,7 @@ use App\Events\Marketing\CampaignEmailQueued;
 use App\Events\Marketing\CateringQuoteRequested;
 use App\Events\Marketing\PurchaseOrderRequested;
 use App\Events\Orders\OrderCreated;
+use App\Events\Orders\OrderMessageSent;
 use App\Events\Platform\HealthCheckFailed;
 use App\Events\Platform\PaymentFailed;
 use App\Events\Platform\ScheduledCheckinDue;
@@ -26,6 +27,7 @@ use App\Listeners\Marketing\SendCampaignEmailListener;
 use App\Listeners\Marketing\SendCateringQuoteEmailListener;
 use App\Listeners\Marketing\SendPurchaseOrderEmailListener;
 use App\Listeners\Orders\NotifyBakerOfNewOrderListener;
+use App\Listeners\Orders\SendOrderMessageEmailListener;
 use App\Listeners\Orders\SendOrderPlacedEmailListener;
 use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
 use App\Listeners\Platform\SendHealthCheckAlertListener;
@@ -74,6 +76,9 @@ class EventServiceProvider extends ServiceProvider
         OrderCreated::class => [
             SendOrderPlacedEmailListener::class,
             NotifyBakerOfNewOrderListener::class,
+        ],
+        OrderMessageSent::class => [
+            SendOrderMessageEmailListener::class,
         ],
         TenantOnboarded::class => [
             NotifyPlatformOfNewTenantListener::class,
