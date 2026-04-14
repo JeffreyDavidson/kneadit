@@ -24,7 +24,7 @@
     @foreach ($orderItems as $item)
         <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8; display: flex; justify-content: space-between;">
             <span style="color: {{ $secondaryColor }};">{{ $item->product->name }} × {{ $item->quantity }}</span>
-            <span style="font-weight: 600; color: {{ $secondaryColor }};">${{ number_format($item->unit_price * $item->quantity, 2) }}</span>
+            <span style="font-weight: 600; color: {{ $secondaryColor }};">${{ number_format($item->total_price, 2) }}</span>
         </div>
     @endforeach
 

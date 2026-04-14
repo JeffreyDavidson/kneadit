@@ -48,7 +48,7 @@
                 {{ $item->product?->name ?? 'Item' }} × {{ $item->quantity }}
             </td>
             <td style="padding: 8px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right; font-size: 14px;">
-                ${{ number_format($item->unit_price * $item->quantity, 2) }}
+                ${{ number_format($item->total_price, 2) }}
             </td>
         </tr>
         @endforeach

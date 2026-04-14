@@ -106,7 +106,7 @@
                             </td>
                             <td class="text-right">{{ $item->quantity }}</td>
                             <td class="text-right">${{ number_format($item->unit_price, 2) }}</td>
-                            <td class="text-right font-semibold">${{ number_format($item->unit_price * $item->quantity, 2) }}</td>
+                            <td class="text-right font-semibold">${{ number_format($item->total_price, 2) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
