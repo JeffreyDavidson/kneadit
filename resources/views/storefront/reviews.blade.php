@@ -21,7 +21,7 @@
     <div class="max-w-5xl mx-auto px-4 py-12">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ number_format($vm->avgRating, 1) }}</span>
+                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->formattedAvgRating }}</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Average Rating</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
