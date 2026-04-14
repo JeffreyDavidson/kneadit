@@ -2,6 +2,7 @@
 
 namespace App\Models\Inventory;
 
+use App\Support\ProfitMargin;
 use Database\Factories\Inventory\RecipeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -48,17 +49,13 @@ class Recipe extends Model
         return $this->belongsTo(Product::class);
     }
 
-    /** @return Attribute<mixed, never> */
+    /** @return Attribute<float|null, never> */
     protected function profitMargin(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                if (! $this->product || ! $this->cost || $this->product->price <= 0) {
-                    return null;
-                }
-
-                return round((($this->product->price - $this->cost) / $this->product->price) * 100, 1);
-            },
+            get: fn () => $this->product && $this->cost
+                ? ProfitMargin::calculate((float) $this->product->price, (float) $this->cost, 1)
+                : null,
         );
     }
 

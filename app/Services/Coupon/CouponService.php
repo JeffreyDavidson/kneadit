@@ -12,23 +12,7 @@ class CouponService
 {
     public function isValid(Coupon $coupon): bool
     {
-        if (! $coupon->is_active) {
-            return false;
-        }
-
-        if ($coupon->starts_at && $coupon->starts_at->isFuture()) {
-            return false;
-        }
-
-        if ($coupon->expires_at && $coupon->expires_at->isPast()) {
-            return false;
-        }
-
-        if ($coupon->max_uses !== null && $coupon->used_count >= $coupon->max_uses) {
-            return false;
-        }
-
-        return true;
+        return $coupon->isValid();
     }
 
     /**

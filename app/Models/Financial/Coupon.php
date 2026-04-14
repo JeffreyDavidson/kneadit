@@ -81,6 +81,27 @@ class Coupon extends Model
         return $this->hasMany(CouponTransaction::class);
     }
 
+    public function isValid(): bool
+    {
+        if (! $this->is_active) {
+            return false;
+        }
+
+        if ($this->starts_at?->isFuture()) {
+            return false;
+        }
+
+        if ($this->expires_at?->isPast()) {
+            return false;
+        }
+
+        if ($this->max_uses !== null && $this->used_count >= $this->max_uses) {
+            return false;
+        }
+
+        return true;
+    }
+
     /** @param Builder<Coupon> $query */
     #[Scope]
     protected function active(Builder $query): void

@@ -4,24 +4,20 @@ namespace App\Http\Controllers\Stripe;
 
 use App\Actions\Stripe\SyncSubscriptionPlan;
 use App\Events\Platform\PaymentFailed;
+use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
 use App\Queries\Platform\StripeCustomerLookupQuery;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Symfony\Component\HttpFoundation\Response;
 
 class StripeWebhookController extends WebhookController
 {
+    use EnsuresWebhookIdempotency;
+
     /** @param array<string, mixed> $payload */
     protected function alreadyProcessed(array $payload): bool
     {
-        $eventId = $payload['id'] ?? null;
-
-        if (! $eventId) {
-            return false;
-        }
-
-        return ! Cache::add("stripe_event:{$eventId}", true, now()->addHours(24));
+        return $this->eventAlreadyProcessed($payload['id'] ?? null);
     }
 
     /** @param array<string, mixed> $payload */

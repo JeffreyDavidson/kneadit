@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Stripe;
 use App\Actions\Stripe\HandleConnectAccountUpdated;
 use App\Actions\Stripe\HandleConnectCheckoutCompleted;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Stripe\Concerns\EnsuresWebhookIdempotency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Stripe\Webhook;
 
 class StripeConnectWebhookController extends Controller
 {
+    use EnsuresWebhookIdempotency;
+
     /**
      * Handle Stripe Connect webhook events.
      *
@@ -45,9 +47,7 @@ class StripeConnectWebhookController extends Controller
         $type = $event->type;
         $data = $event->data->object ?? null;
 
-        // Idempotency: skip already-processed events
-        $eventId = $event->id;
-        if ($eventId && ! Cache::add("stripe_event:{$eventId}", true, now()->addHours(24))) {
+        if ($this->eventAlreadyProcessed($event->id)) {
             return response('Already processed', 200);
         }
 
