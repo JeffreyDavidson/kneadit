@@ -2,6 +2,7 @@
 
 namespace App\Models\Financial;
 
+use App\Builders\Financial\CouponQueryBuilder;
 use App\Enums\Financial\CouponType;
 use App\Models\Concerns\LogsActivity;
 use App\Models\Orders\Order;
@@ -9,8 +10,7 @@ use App\Observers\Engagement\CouponObserver;
 use Database\Factories\Financial\CouponFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,11 +25,9 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $orders_count
  *
  * @method static \Database\Factories\CouponFactory factory($count = null, $state = [])
- * @method static Builder<static>|Coupon newModelQuery()
- * @method static Builder<static>|Coupon newQuery()
- * @method static Builder<static>|Coupon query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Coupon active()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Coupon valid()
+ * @method static CouponQueryBuilder|Coupon newModelQuery()
+ * @method static CouponQueryBuilder|Coupon newQuery()
+ * @method static CouponQueryBuilder|Coupon query()
  *
  * @property Carbon|null $starts_at
  * @property Carbon|null $expires_at
@@ -38,6 +36,7 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable('code', 'type', 'value', 'min_order_amount', 'max_uses', 'used_count', 'starts_at', 'expires_at', 'is_active')]
 #[ObservedBy(CouponObserver::class)]
+#[UseEloquentBuilder(CouponQueryBuilder::class)]
 class Coupon extends Model
 {
     /** @use HasFactory<CouponFactory> */
@@ -100,29 +99,6 @@ class Coupon extends Model
         }
 
         return true;
-    }
-
-    /** @param Builder<Coupon> $query */
-    #[Scope]
-    protected function active(Builder $query): void
-    {
-        $query->where('is_active', true);
-    }
-
-    /** @param Builder<Coupon> $query */
-    #[Scope]
-    protected function valid(Builder $query): void
-    {
-        $query->active()
-            ->where(function (Builder $q) {
-                $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
-            })
-            ->where(function (Builder $q) {
-                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
-            })
-            ->where(function (Builder $q) {
-                $q->whereNull('max_uses')->orWhereColumn('used_count', '<', 'max_uses');
-            });
     }
 
     protected static function newFactory(): CouponFactory

@@ -94,20 +94,87 @@
 
 ---
 
-## Files Created (12)
-- `app/Support/ProfitMargin.php`
-- `app/Http/Controllers/Stripe/Concerns/EnsuresWebhookIdempotency.php`
-- `app/Enums/Engagement/SurveyQuestionType.php`
-- `app/Actions/Staff/CreateUser.php`
-- `app/Actions/Stripe/ReauthenticateFromCheckoutSession.php`
-- `app/Http/Requests/Api/IndexProductsRequest.php`
-- `app/Filament/Pages/Settings/Schemas/ManageSettingsForm.php`
-- `app/Filament/Pages/Operations/Schemas/QuickOrderForm.php`
-- `app/Filament/Pages/Tools/Schemas/ProductImportExportForm.php`
+## Round 9: Review Class Extraction
 
-## Test Results
-- **Unit:** 293 passed
-- **Integration:** 1,533 passed
-- **Feature:** 1,026 passed
-- **Total: 2,852 tests, 5,910 assertions, 0 failures**
-- Pint: clean
+### 9A. PlatformEventType enum
+- [x] Created `app/Enums/Platform/PlatformEventType.php` backed enum with 5 cases
+- [x] Implemented `HasLabel`, `HasColor`, `HasIcon` with mappings from Activity.php
+- [x] Updated `Activity.php` to delegate `getEventIcon`/`getEventColor` to enum via `tryFrom()` with fallback defaults
+
+### 9B. HomepageBuilder access control
+- [x] Added `use RequiresManagerRole;` trait to HomepageBuilder.php
+
+### Verification
+- [x] All 3 files pass `php -l`
+
+### 9C. TaxExport form schema extraction
+- [x] Created `app/Filament/Pages/Tools/Schemas/TaxExportForm.php` with `configure()` and `getComponents()`
+- [x] Moved `getFormSchema()` inline components and `getAvailableYears()` to schema class
+- [x] Updated `TaxExport.php` to delegate `form()` and `content()` to `TaxExportForm`
+- [x] Removed 10 unused imports from `TaxExport.php`
+- [x] All files pass `php -l`
+
+### 9D. CustomerPresenter
+- [x] Created `app/Presenters/CustomerPresenter.php` wrapping a Customer model
+- [x] Exposed `toDetailArray(): array` returning same structure as `getCustomerDetails()`
+- [x] Updated `CustomerDirectory::getCustomerDetails()` to use `CustomerPresenter`
+- [x] Added `CustomerPresenter` import to `CustomerDirectory.php`
+- [x] All files pass `php -l` and Pint clean
+
+### 9E. Custom Query Builders for Models with Scopes
+
+#### Task 2A: LoyaltyPointQueryBuilder
+- [x] Created `app/Builders/Engagement/LoyaltyPointQueryBuilder.php` with `earned()`, `redeemed()`, `adjusted()`, `forOrder()` methods
+- [x] Updated `LoyaltyPoint` model: added `#[UseEloquentBuilder]`, removed `#[Scope]` methods and unused `Scope`/`Builder` imports
+
+#### Task 2B: GiftCardQueryBuilder
+- [x] Created `app/Builders/Financial/GiftCardQueryBuilder.php` with `usable()` method
+- [x] Updated `GiftCard` model: added `#[UseEloquentBuilder]`, removed `#[Scope]` method and unused `Scope`/`Builder` imports
+
+#### Task 2C: OrderQueryBuilder + FinancialCalculator
+- [x] Added `paidInMonth(int $year, int $month)` method to `OrderQueryBuilder`
+- [x] Updated `FinancialCalculator` to use builder scopes (`paidInYear`, `paidInMonth`, `forYear`, `forMonth`, `cogs`, `byCategory`) instead of inline query conditions
+- [x] Removed unused `PaymentStatus`, `ExpenseCategory`, `DB` imports from `FinancialCalculator`
+
+#### Verification
+- [x] All 6 files pass `php -l`
+- [x] Pint: clean
+
+---
+
+## Round 10: ViewModel Improvement + Observer Tests
+
+### 10A. Add formattedAvgRating to ReviewsPageViewModel
+- [x] Add `public readonly string $formattedAvgRating` property
+- [x] Update `reviews.blade.php` to use `$vm->formattedAvgRating`
+- [x] Add 3 tests for the new property (whole number, fractional, zero)
+
+### 10B. Observer Tests
+- [x] Create `tests/Unit/Observers/Orders/OrderObserverTest.php` (3 tests)
+- [x] Create `tests/Unit/Observers/Engagement/CouponObserverTest.php` (3 tests)
+- [x] All files pass `php -l`
+- [x] All 15 tests pass, Pint clean
+
+---
+
+## Round 11: Query Objects & Custom Eloquent Builders
+
+### 11A. TopLoyaltyCustomersQuery
+- [x] Created `app/Queries/Loyalty/TopLoyaltyCustomersQuery.php` — static `get(int $limit)` with multi-join CASE WHEN balance logic
+- [x] Updated `LoyaltyAnalytics::topCustomers()` to delegate to the query object
+- [x] Created `tests/Integration/Queries/Loyalty/TopLoyaltyCustomersQueryTest.php` (4 tests)
+
+### 11B. CouponQueryBuilder
+- [x] Created `app/Builders/Financial/CouponQueryBuilder.php` with `active()` and `valid()` methods
+- [x] Updated `Coupon` model: added `#[UseEloquentBuilder]`, removed `#[Scope]` methods and unused imports
+- [x] Moved test from `tests/Integration/Models/CouponScopeTest.php` → `tests/Integration/Builders/CouponQueryBuilderTest.php`
+
+### 11C. ContactMessageQueryBuilder
+- [x] Created `app/Builders/Customers/ContactMessageQueryBuilder.php` with `read()` and `unread()` methods
+- [x] Updated `ContactMessage` model: added `#[UseEloquentBuilder]`, removed `#[Scope]` methods and unused imports
+- [x] Moved test from `tests/Integration/Models/ContactMessageScopeTest.php` → `tests/Integration/Builders/ContactMessageQueryBuilderTest.php` (added `read()` test)
+
+### Verification
+- [x] All files pass `php -l` and Pint
+- [x] 9 new/migrated tests pass
+- [x] Full integration suite: 1,538 tests, 0 failures
