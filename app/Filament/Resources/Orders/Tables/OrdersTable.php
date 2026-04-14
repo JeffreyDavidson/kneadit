@@ -94,83 +94,11 @@ class OrdersTable
                     }),
             ])
             ->recordActions([
-                Action::make('confirm')
-                    ->icon(Heroicon::OutlinedCheckCircle)
-                    ->color('warning')
-                    ->requiresConfirmation()
-                    ->modalHeading('Confirm Order')
-                    ->modalDescription('Are you sure you want to confirm this order?')
-                    ->action(function (Order $record) {
-                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Confirmed);
-                        Notification::make()
-                            ->title('Order confirmed')
-                            ->success()
-                            ->send();
-                    })
-                    ->visible(fn (Order $record) => in_array(OrderStatus::Confirmed, TransitionOrderStatus::allowedTransitions($record))),
-
-                Action::make('start_baking')
-                    ->label('Start Baking')
-                    ->icon(Heroicon::OutlinedFire)
-                    ->color('info')
-                    ->requiresConfirmation()
-                    ->modalHeading('Start Baking')
-                    ->modalDescription('Mark this order as currently being baked?')
-                    ->action(function (Order $record) {
-                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Baking);
-                        Notification::make()
-                            ->title('Order marked as baking')
-                            ->success()
-                            ->send();
-                    })
-                    ->visible(fn (Order $record) => in_array(OrderStatus::Baking, TransitionOrderStatus::allowedTransitions($record))),
-
-                Action::make('mark_ready')
-                    ->label('Mark Ready')
-                    ->icon(Heroicon::OutlinedClock)
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading('Mark Ready')
-                    ->modalDescription('Mark this order as ready for pickup/delivery?')
-                    ->action(function (Order $record) {
-                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Ready);
-                        Notification::make()
-                            ->title('Order marked as ready')
-                            ->success()
-                            ->send();
-                    })
-                    ->visible(fn (Order $record) => in_array(OrderStatus::Ready, TransitionOrderStatus::allowedTransitions($record))),
-
-                Action::make('mark_delivered')
-                    ->label('Mark Delivered')
-                    ->icon(Heroicon::OutlinedTruck)
-                    ->color('primary')
-                    ->requiresConfirmation()
-                    ->modalHeading('Mark Delivered')
-                    ->modalDescription('Mark this order as delivered/completed?')
-                    ->action(function (Order $record) {
-                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Delivered);
-                        Notification::make()
-                            ->title('Order marked as delivered')
-                            ->success()
-                            ->send();
-                    })
-                    ->visible(fn (Order $record) => in_array(OrderStatus::Delivered, TransitionOrderStatus::allowedTransitions($record))),
-
-                Action::make('cancel')
-                    ->icon(Heroicon::OutlinedXCircle)
-                    ->color('danger')
-                    ->requiresConfirmation()
-                    ->modalHeading('Cancel Order')
-                    ->modalDescription('Are you sure you want to cancel this order? This action cannot be undone.')
-                    ->action(function (Order $record) {
-                        resolve(TransitionOrderStatus::class)($record, OrderStatus::Cancelled);
-                        Notification::make()
-                            ->title('Order cancelled')
-                            ->warning()
-                            ->send();
-                    })
-                    ->visible(fn (Order $record) => in_array(OrderStatus::Cancelled, TransitionOrderStatus::allowedTransitions($record))),
+                self::statusTransitionAction('confirm', OrderStatus::Confirmed, Heroicon::OutlinedCheckCircle, 'warning', 'Confirm Order', 'Are you sure you want to confirm this order?', 'Order confirmed'),
+                self::statusTransitionAction('start_baking', OrderStatus::Baking, Heroicon::OutlinedFire, 'info', 'Start Baking', 'Mark this order as currently being baked?', 'Order marked as baking', 'Start Baking'),
+                self::statusTransitionAction('mark_ready', OrderStatus::Ready, Heroicon::OutlinedClock, 'success', 'Mark Ready', 'Mark this order as ready for pickup/delivery?', 'Order marked as ready', 'Mark Ready'),
+                self::statusTransitionAction('mark_delivered', OrderStatus::Delivered, Heroicon::OutlinedTruck, 'primary', 'Mark Delivered', 'Mark this order as delivered/completed?', 'Order marked as delivered', 'Mark Delivered'),
+                self::statusTransitionAction('cancel', OrderStatus::Cancelled, Heroicon::OutlinedXCircle, 'danger', 'Cancel Order', 'Are you sure you want to cancel this order? This action cannot be undone.', 'Order cancelled', notificationColor: 'warning'),
 
                 Action::make('send_paypal_invoice')
                     ->label('Send PayPal Invoice')
@@ -214,5 +142,33 @@ class OrdersTable
             ->defaultSort('created_at', 'desc')
             ->emptyStateHeading('No orders yet')
             ->emptyStateDescription('Orders will appear here as customers place them.');
+    }
+
+    private static function statusTransitionAction(
+        string $name,
+        OrderStatus $targetStatus,
+        Heroicon $icon,
+        string $color,
+        string $heading,
+        string $description,
+        string $notificationTitle,
+        ?string $label = null,
+        string $notificationColor = 'success',
+    ): Action {
+        return Action::make($name)
+            ->label($label)
+            ->icon($icon)
+            ->color($color)
+            ->requiresConfirmation()
+            ->modalHeading($heading)
+            ->modalDescription($description)
+            ->action(function (Order $record) use ($targetStatus, $notificationTitle, $notificationColor) {
+                resolve(TransitionOrderStatus::class)($record, $targetStatus);
+                Notification::make()
+                    ->title($notificationTitle)
+                    ->color($notificationColor)
+                    ->send();
+            })
+            ->visible(fn (Order $record) => in_array($targetStatus, TransitionOrderStatus::allowedTransitions($record)));
     }
 }
