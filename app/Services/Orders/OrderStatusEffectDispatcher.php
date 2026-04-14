@@ -4,11 +4,7 @@ namespace App\Services\Orders;
 
 use App\Actions\Orders\ReverseOrderDiscounts;
 use App\Enums\Orders\OrderStatus;
-use App\Mail\Orders\OrderBakingMail;
-use App\Mail\Orders\OrderCancelledMail;
-use App\Mail\Orders\OrderConfirmedMail;
-use App\Mail\Orders\OrderDeliveredMail;
-use App\Mail\Orders\OrderReadyMail;
+use App\Mail\Orders\OrderStatusMail;
 use App\Models\Orders\Order;
 use App\Services\Inventory\InventoryManager;
 use App\Services\Loyalty\LoyaltyLedger;
@@ -94,18 +90,7 @@ class OrderStatusEffectDispatcher
 
         $order->loadMissing('orderItems.product');
 
-        $mailable = match ($to) {
-            OrderStatus::Confirmed => new OrderConfirmedMail($order),
-            OrderStatus::Baking => new OrderBakingMail($order),
-            OrderStatus::Ready => new OrderReadyMail($order),
-            OrderStatus::Delivered => new OrderDeliveredMail($order),
-            OrderStatus::Cancelled => new OrderCancelledMail($order),
-            default => null,
-        };
-
-        if ($mailable) {
-            Mail::to($order->customer->email)->queue($mailable);
-        }
+        Mail::to($order->customer->email)->queue(new OrderStatusMail($order, $to));
     }
 
     private function deductIngredients(Order $order, OrderStatus $from, OrderStatus $to): void
