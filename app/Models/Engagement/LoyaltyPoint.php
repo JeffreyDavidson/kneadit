@@ -2,6 +2,7 @@
 
 namespace App\Models\Engagement;
 
+use App\Builders\Engagement\LoyaltyPointQueryBuilder;
 use App\Enums\Engagement\LoyaltyPointType;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
@@ -9,9 +10,8 @@ use App\Observers\Engagement\LoyaltyPointObserver;
 use Database\Factories\Engagement\LoyaltyPointFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,6 +38,7 @@ use Illuminate\Support\Carbon;
 #[WithoutTimestamps]
 #[Fillable('customer_id', 'points', 'type', 'description', 'order_id')]
 #[ObservedBy(LoyaltyPointObserver::class)]
+#[UseEloquentBuilder(LoyaltyPointQueryBuilder::class)]
 class LoyaltyPoint extends Model
 {
     /** @use HasFactory<LoyaltyPointFactory> */
@@ -49,34 +50,6 @@ class LoyaltyPoint extends Model
             'created_at' => 'datetime',
             'type' => LoyaltyPointType::class,
         ];
-    }
-
-    /** @param Builder<LoyaltyPoint> $query */
-    #[Scope]
-    protected function earned(Builder $query): void
-    {
-        $query->where('type', LoyaltyPointType::Earned);
-    }
-
-    /** @param Builder<LoyaltyPoint> $query */
-    #[Scope]
-    protected function redeemed(Builder $query): void
-    {
-        $query->where('type', LoyaltyPointType::Redeemed);
-    }
-
-    /** @param Builder<LoyaltyPoint> $query */
-    #[Scope]
-    protected function adjusted(Builder $query): void
-    {
-        $query->where('type', LoyaltyPointType::Adjusted);
-    }
-
-    /** @param Builder<LoyaltyPoint> $query */
-    #[Scope]
-    protected function forOrder(Builder $query, Order $order): void
-    {
-        $query->where('order_id', $order->id);
     }
 
     /**
