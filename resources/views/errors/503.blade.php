@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Be Right Back | KneadIt</title>
+<title>{{ __('errors.503.title', ['app' => config('app.name')]) }}</title>
 <link rel="icon" href="/images/logo-icon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,8 +14,8 @@
 <body>
 <div class="wrap">
     <div class="code">503</div>
-    <h1>Dough is rising</h1>
-    <p>We're doing some quick maintenance. We'll be back in just a moment — your bakery data is safe.</p>
+    <h1>{{ __('errors.503.heading') }}</h1>
+    <p>{{ __('errors.503.message') }}</p>
     <div class="dots"><span></span><span></span><span></span></div>
 </div>
 </body>

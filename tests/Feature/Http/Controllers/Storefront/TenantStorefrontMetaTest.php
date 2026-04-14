@@ -15,7 +15,7 @@ test('404 page exists', function () {
 test('404 page contains bakery themed copy', function () {
     $content = file_get_contents(resource_path('views/errors/404.blade.php'));
 
-    expect($content)->toContain('Nothing baking here')->toContain('404');
+    expect($content)->toContain("__('errors.404.heading')")->toContain('404');
 });
 
 test('nonexistent route returns 404', function () {
