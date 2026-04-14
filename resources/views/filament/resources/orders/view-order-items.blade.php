@@ -50,10 +50,10 @@
                         {{ $item->quantity }}
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                        ${{ number_format($item->price, 2) }}
+                        @money($item->price)
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                        ${{ number_format($item->price * $item->quantity, 2) }}
+                        @money($item->price * $item->quantity)
                     </td>
                 </tr>
             @endforeach
@@ -64,7 +64,7 @@
                     Subtotal:
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                    ${{ number_format($getRecord()->subtotal, 2) }}
+                    @money($getRecord()->subtotal)
                 </td>
             </tr>
             @if ($getRecord()->delivery_fee > 0)
@@ -73,7 +73,7 @@
                         Delivery Fee:
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                        ${{ number_format($getRecord()->delivery_fee, 2) }}
+                        @money($getRecord()->delivery_fee)
                     </td>
                 </tr>
             @endif
@@ -92,7 +92,7 @@
                     Total:
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-lg font-bold text-gray-900">
-                    ${{ number_format($getRecord()->total, 2) }}
+                    @money($getRecord()->total)
                 </td>
             </tr>
         </tfoot>
