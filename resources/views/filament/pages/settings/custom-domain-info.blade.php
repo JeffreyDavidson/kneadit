@@ -4,7 +4,7 @@
         <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-2">📋 DNS Setup Instructions</h4>
         <ol class="list-decimal list-inside space-y-1 text-sm text-blue-800 dark:text-blue-300">
             <li>Go to your domain registrar's DNS settings</li>
-            <li>Add an <strong>A record</strong> pointing to: <code class="rounded bg-blue-100 px-1.5 py-0.5 font-mono text-xs dark:bg-blue-800">137.184.194.56</code></li>
+            <li>Add an <strong>A record</strong> pointing to: <code class="rounded bg-blue-100 px-1.5 py-0.5 font-mono text-xs dark:bg-blue-800">{{ config('services.forge.server_ip') }}</code></li>
             <li>Save the changes and wait for DNS propagation (up to 48 hours)</li>
             <li>Come back here and click "Verify DNS"</li>
         </ol>
