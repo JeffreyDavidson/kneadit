@@ -26,7 +26,7 @@ class ApplyGiftCardController extends Controller
             'gift_card_id' => $card->id,
             'code' => $card->code,
             'available_balance' => (float) $card->current_balance,
-            'applicable_amount' => min((float) $card->current_balance, (float) $request->subtotal),
+            'applicable_amount' => min((float) $card->current_balance, (float) $request->validated('subtotal')),
         ], 'Gift card applied successfully.');
     }
 }
