@@ -8,6 +8,7 @@ use App\Http\Requests\Storefront\StoreReviewRequest;
 use App\Models\Engagement\Review;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
+use App\ViewModels\Storefront\ReviewsPageViewModel;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -17,23 +18,14 @@ class ReviewController extends Controller
     {
         $reviews = Review::query()->forDisplay()->paginate(12);
         $stats = Review::query()->statistics();
-
-        $content = settingsPageContent('reviews');
-
-        $avgRating = (float) $stats->avg_rating;
-        $totalReviews = (int) $stats->total_count;
-        $fiveStarCount = $reviews->where('rating', 5)->count();
-        $fiveStarPct = $totalReviews > 0 ? round(($fiveStarCount / $totalReviews) * 100) : 0;
+        $starCounts = Review::query()->ratingBreakdown();
 
         return view('storefront.reviews', [
             'settings' => $settings,
             'reviews' => $reviews,
-            'avgRating' => $avgRating,
-            'totalReviews' => $totalReviews,
-            'content' => $content,
-            'fiveStarCount' => $fiveStarCount,
-            'fiveStarPct' => $fiveStarPct,
+            'content' => settingsPageContent('reviews'),
             'featured' => $reviews->first(),
+            'vm' => new ReviewsPageViewModel($reviews, $stats, $starCounts),
         ]);
     }
 

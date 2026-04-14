@@ -55,4 +55,21 @@ class ReviewQueryBuilder extends Builder
             ->selectRaw('COALESCE(AVG(rating), 0) as avg_rating, COUNT(*) as total_count')
             ->first();
     }
+
+    /** @return array<int, int> keyed by star rating (5→1), value is count */
+    public function ratingBreakdown(): array
+    {
+        $results = $this->approved()
+            ->toBase()
+            ->selectRaw('rating, COUNT(*) as count')
+            ->groupBy('rating')
+            ->pluck('count', 'rating');
+
+        $breakdown = [];
+        for ($star = 5; $star >= 1; $star--) {
+            $breakdown[$star] = (int) ($results[$star] ?? 0);
+        }
+
+        return $breakdown;
+    }
 }
