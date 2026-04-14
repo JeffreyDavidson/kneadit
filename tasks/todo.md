@@ -178,3 +178,28 @@
 - [x] All files pass `php -l` and Pint
 - [x] 9 new/migrated tests pass
 - [x] Full integration suite: 1,538 tests, 0 failures
+
+---
+
+## Round 12: Observer DI Fix + InvoicePayloadBuilder Extraction
+
+### 12A. ProductImageObserver — Constructor Injection
+- [x] Replaced `app(SyncProductPrimaryImage::class)` service locator with constructor-injected `$this->syncPrimaryImage`
+- [x] Matches pattern in `OrderObserver` and `BlogPostObserver`
+- [x] Existing 3 observer tests pass unchanged
+
+### 12B. InvoicePayloadBuilder Extraction
+- [x] Created `app/Services/PayPal/InvoicePayloadBuilder.php` — payload construction extracted from `InvoiceService`
+- [x] Injects `TenantSettings` for `storeName`, `storeAddress`, `storePhone` (3 of 7 settings calls replaced)
+- [x] 4 remaining settings keys (`store_city`, `store_state`, `store_zip`, `paypal_invoice_terms`) not on TenantSettings — kept as `settings()` calls
+- [x] Private helpers: `buildInvoicer()`, `buildRecipient()`, `buildItems()`, `buildAmountBreakdown()`, `parseCustomerName()`, `formatCustomerPhone()`
+- [x] Updated `InvoiceService` — injects `InvoicePayloadBuilder` via constructor, delegates payload building. Dropped from 209 → 112 lines.
+- [x] Updated `InvoiceServiceTest` — mocks `InvoicePayloadBuilder` in `beforeEach`, keeping tests focused on HTTP behavior
+- [x] Created `tests/Integration/Services/PayPal/InvoicePayloadBuilderTest.php` — 11 tests covering payload structure, delivery fee, discount breakdown, name parsing, phone formatting, decimal formatting
+
+### Verification
+- [x] All files pass `php -l` and Pint
+- [x] ProductImageObserver: 3 passed
+- [x] InvoicePayloadBuilder: 11 passed
+- [x] InvoiceService (regression): 8 passed
+- [x] Full integration suite: 1,549 tests, 0 failures
