@@ -16,8 +16,8 @@ class LoyaltyAnalytics
     public function metrics(): LoyaltyMetrics
     {
         return $this->metricsCache ??= new LoyaltyMetrics(
-            totalIssued: (int) LoyaltyPoint::query()->where('type', LoyaltyPointType::Earned)->sum('points'),
-            totalRedeemed: (int) LoyaltyPoint::query()->where('type', LoyaltyPointType::Redeemed)->sum('points'),
+            totalIssued: (int) LoyaltyPoint::query()->earned()->sum('points'),
+            totalRedeemed: (int) LoyaltyPoint::query()->redeemed()->sum('points'),
             activeMembers: LoyaltyPoint::query()->distinct('customer_id')->count('customer_id'),
             availableRewards: LoyaltyReward::query()->active()->count(),
         );
