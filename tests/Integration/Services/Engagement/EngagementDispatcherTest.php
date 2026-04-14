@@ -55,6 +55,7 @@ function makeFakeTenantSettings(array $overrides = []): TenantSettings
         'pickupPolicy' => '',
         'additionalTerms' => '',
         'birthdayProgramEnabled' => false,
+        'birthdayCouponEnabled' => false,
         'birthdayDiscountPercentage' => 15,
         'birthdayCouponValidDays' => 7,
         'reviewRequestsEnabled' => false,

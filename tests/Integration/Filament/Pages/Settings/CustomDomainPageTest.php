@@ -22,7 +22,7 @@ test('ssl status defaults to null', function () {
 test('check dns sets null when no domain', function () {
     test()->page->custom_domain = '';
 
-    $method = new ReflectionMethod(CustomDomain::class, 'checkDns');
+    $method = new ReflectionMethod(CustomDomain::class, 'refreshDnsStatus');
     $method->invoke(test()->page);
 
     expect(test()->page->dns_status)->toBeNull();
@@ -31,14 +31,14 @@ test('check dns sets null when no domain', function () {
 test('check dns sets pending for unknown domain', function () {
     test()->page->custom_domain = 'nonexistent-test-domain-12345.com';
 
-    $method = new ReflectionMethod(CustomDomain::class, 'checkDns');
+    $method = new ReflectionMethod(CustomDomain::class, 'refreshDnsStatus');
     $method->invoke(test()->page);
 
-    expect(test()->page->dns_status)->toBe('pending');
+    expect(test()->page->dns_status)->toBe(App\Enums\Platform\DnsVerificationStatus::Pending);
 });
 
 test('provision ssl sets manual status when forge not configured', function () {
-    $method = new ReflectionMethod(CustomDomain::class, 'provisionSsl');
+    $method = new ReflectionMethod(CustomDomain::class, 'handleSslProvisioning');
     $method->invoke(test()->page, 'test.com');
 
     expect(test()->page->ssl_status)->toBe('manual');

@@ -29,7 +29,7 @@ trait LogsActivity
                 'user_id' => auth()->id(),
                 'user_name' => auth()?->user()?->name ?? 'System',
                 'action' => $action,
-                'model_type' => get_class($model),
+                'model_type' => $model::class,
                 'model_id' => $model->getKey(),
                 'description' => class_basename($model) . " #{$model->getKey()} was {$action}",
                 'properties' => ! empty($changes) ? ['changes' => $changes] : null,

@@ -7,9 +7,13 @@ use App\Models\Platform\SupportTicket;
 
 class SupportTicketObserver
 {
+    public function __construct(
+        private LogAuditEntry $logAuditEntry,
+    ) {}
+
     public function created(SupportTicket $ticket): void
     {
-        resolve(LogAuditEntry::class)(
+        ($this->logAuditEntry)(
             action: 'ticket_opened',
             description: 'Support ticket opened: ' . $ticket->subject,
             targetType: 'support_ticket',

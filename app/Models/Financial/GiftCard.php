@@ -2,13 +2,13 @@
 
 namespace App\Models\Financial;
 
+use App\Builders\Financial\GiftCardQueryBuilder;
 use App\Casts\StripTagsCast;
 use App\Enums\Financial\GiftCardStatus;
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\Financial\GiftCardFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,6 +32,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('code', 'initial_balance', 'current_balance', 'purchaser_name', 'purchaser_email', 'recipient_name', 'recipient_email', 'message', 'is_active', 'expires_at')]
+#[UseEloquentBuilder(GiftCardQueryBuilder::class)]
 class GiftCard extends Model
 {
     /** @use HasFactory<GiftCardFactory> */
@@ -64,15 +65,6 @@ class GiftCard extends Model
         return Attribute::make(
             get: fn () => $this->status === GiftCardStatus::Active,
         );
-    }
-
-    /** @param Builder<GiftCard> $query */
-    #[Scope]
-    protected function usable(Builder $query): void
-    {
-        $query->where('is_active', true)
-            ->where('current_balance', '>', 0)
-            ->where(fn (Builder $q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 
     /** @return Attribute<GiftCardStatus, never> */

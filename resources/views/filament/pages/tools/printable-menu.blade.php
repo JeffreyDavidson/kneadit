@@ -83,7 +83,7 @@
                             <div style="flex: 1; min-width: 0;">
                                 <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
                                     <h3 style="font-size: 17px; font-weight: 600; margin: 0; font-family: {{ $isElegant ? "'Playfair Display', Georgia, serif" : "'Inter', sans-serif" }};">{{ $product->name }}</h3>
-                                    <span style="font-size: 17px; font-weight: 700; white-space: nowrap; color: {{ $isElegant ? '#3E2723' : '#D97706' }};">${{ number_format($product->price, 2) }}</span>
+                                    <span style="font-size: 17px; font-weight: 700; white-space: nowrap; color: {{ $isElegant ? '#3E2723' : '#D97706' }};">@money($product->price)</span>
                                 </div>
                                 @if ($product->description)
                                     <p style="font-size: 13px; color: #666; margin: 4px 0 0 0; line-height: 1.4;">{{ $product->description }}</p>
@@ -104,7 +104,7 @@
                         @foreach ($category->products as $product)
                             <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; font-size: 14px;">
                                 <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 8px;">{{ $product->name }}</span>
-                                <span style="white-space: nowrap; font-weight: 600;">${{ number_format($product->price, 2) }}</span>
+                                <span style="white-space: nowrap; font-weight: 600;">@money($product->price)</span>
                             </div>
                         @endforeach
                     </div>

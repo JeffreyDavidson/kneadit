@@ -2,11 +2,11 @@
 
 namespace App\Services\Engagement\Engagements;
 
-use App\Actions\Customers\CreateBirthdayCoupon;
 use App\Contracts\Engagement\CustomerEngagement;
 use App\Contracts\Engagement\EngagementRecipient;
 use App\Events\Customers\CustomerBirthday;
 use App\Models\Customers\Customer;
+use App\Services\Customers\BirthdayService;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Date;
 class BirthdayEngagement implements CustomerEngagement
 {
     public function __construct(
-        private CreateBirthdayCoupon $createBirthdayCoupon,
+        private BirthdayService $birthdayService,
     ) {}
 
     public function isEnabled(TenantSettings $settings): bool
@@ -46,7 +46,7 @@ class BirthdayEngagement implements CustomerEngagement
         $customer = $recipient->model;
 
         $coupon = $settings->engagement->birthdayCouponEnabled
-            ? ($this->createBirthdayCoupon)(
+            ? $this->birthdayService->findOrCreateBirthdayCoupon(
                 $customer,
                 $settings->engagement->birthdayDiscountPercentage,
                 $settings->engagement->birthdayCouponValidDays,

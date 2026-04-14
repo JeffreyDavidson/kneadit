@@ -19,9 +19,8 @@ class PlatformStats extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $planPrices = ['starter' => 9, 'growth' => 19, 'pro' => 29];
         $activeTenants = Tenant::query()->where('is_active', true)->get();
-        $mrr = $activeTenants->sum(fn (Tenant $t) => $planPrices[$t->plan] ?? 0);
+        $mrr = $activeTenants->sum(fn (Tenant $t) => $t->plan?->priceInDollars() ?? 0);
 
         $totalTenants = Tenant::query()->count();
         $trialTenants = Tenant::query()->whereNotNull('trial_ends_at')

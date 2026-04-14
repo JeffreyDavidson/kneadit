@@ -1,4 +1,4 @@
-
+@use(App\Enums\Orders\DeliveryType)
 <x-layouts.storefront>
 <x-slot:styles>
 <link rel="stylesheet" href="{{ asset('css/order-confirmation.css') }}">
@@ -48,7 +48,7 @@
                             <span class="font-medium text-warm-200">{{ $item->product->name ?? 'Product' }}</span>
                             <span class="text-sm ml-2 text-warm-500">× {{ $item->quantity }}</span>
                         </div>
-                        <span class="font-semibold text-warm-300">${{ number_format($item->total_price, 2) }}</span>
+                        <span class="font-semibold text-warm-300">@money($item->total_price)</span>
                     </div>
                     @endforeach
                 </div>
@@ -56,29 +56,29 @@
                 <div class="space-y-2 pt-4 text-sm border-t border-warm-700/20">
                     <div class="flex justify-between">
                         <span class="text-warm-500">Subtotal</span>
-                        <span class="text-warm-300">${{ number_format($order->subtotal, 2) }}</span>
+                        <span class="text-warm-300">@money($order->subtotal)</span>
                     </div>
                     @if ($order->delivery_fee > 0)
                     <div class="flex justify-between">
                         <span class="text-warm-500">Delivery Fee</span>
-                        <span class="text-warm-300">${{ number_format($order->delivery_fee, 2) }}</span>
+                        <span class="text-warm-300">@money($order->delivery_fee)</span>
                     </div>
                     @endif
                     @if ($order->discount_amount > 0)
                     <div class="flex justify-between text-green-400">
                         <span>Discount @if ($order->coupon)({{ $order->coupon->code }})@endif</span>
-                        <span>-${{ number_format($order->discount_amount, 2) }}</span>
+                        <span>-@money($order->discount_amount)</span>
                     </div>
                     @endif
                     @if ($order->gift_card_amount > 0)
                     <div class="flex justify-between text-green-400">
                         <span>Gift Card</span>
-                        <span>-${{ number_format($order->gift_card_amount, 2) }}</span>
+                        <span>-@money($order->gift_card_amount)</span>
                     </div>
                     @endif
                     <div class="flex justify-between pt-3 border-t border-warm-700/20">
                         <span class="font-display text-lg font-bold text-warm-100">Total</span>
-                        <span class="font-display text-2xl font-bold text-warm-400">${{ number_format($order->total, 2) }}</span>
+                        <span class="font-display text-2xl font-bold text-warm-400">@money($order->total)</span>
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                 <div class="flex items-center gap-3 mb-6">
                     <span class="block w-8 h-px bg-warm-500"></span>
                     <h2 class="font-display text-xl font-semibold text-warm-100">
-                        {{ $order->delivery_type->value === 'delivery' ? 'Delivery' : 'Pickup' }} Details
+                        {{ $order->delivery_type === DeliveryType::Delivery ? 'Delivery' : 'Pickup' }} Details
                     </h2>
                 </div>
 
@@ -110,7 +110,7 @@
                         @endif
                     </div>
 
-                    @if ($order->delivery_type->value === 'delivery' && $order->delivery_address)
+                    @if ($order->delivery_type === DeliveryType::Delivery && $order->delivery_address)
                     <div>
                         <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Delivery Address</span>
                         <p class="text-warm-200">{{ $order->delivery_address }}</p>
@@ -149,14 +149,14 @@
                     </div>
                     <h3 class="font-display text-lg font-semibold mb-2 text-warm-200">
                         @if (isset($step['description_delivery']) || isset($step['description_pickup']))
-                            {{ $order->delivery_type->value === 'delivery' ? 'Delivery' : 'Pickup' }}
+                            {{ $order->delivery_type === DeliveryType::Delivery ? 'Delivery' : 'Pickup' }}
                         @else
                             {{ $step['title'] }}
                         @endif
                     </h3>
                     <p class="text-sm text-warm-500">
                         @if (isset($step['description_delivery']) || isset($step['description_pickup']))
-                            @if ($order->delivery_type->value === 'delivery')
+                            @if ($order->delivery_type === DeliveryType::Delivery)
                                 {{ $step['description_delivery'] ?? 'We\'ll deliver your fresh items right to your door.' }}
                             @else
                                 {{ $step['description_pickup'] ?? 'Your items will be warm and ready for you to pick up.' }}

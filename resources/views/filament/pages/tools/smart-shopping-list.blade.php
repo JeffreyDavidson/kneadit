@@ -56,7 +56,7 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="text-lg font-bold text-gray-900 dark:text-white">
-                            ${{ number_format($group['total'], 2) }}
+                            @money($group['total'])
                         </span>
                         @if ($group['supplier']['id'] && $group['supplier']['email'])
                             <button wire:click="sendPurchaseOrder({{ $group['supplier']['id'] }})"
@@ -96,8 +96,8 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-3 text-right font-medium">{{ $item['needed'] }} {{ $item['unit'] }}</td>
-                                <td class="px-6 py-3 text-right">${{ number_format($item['unit_price'], 2) }}</td>
-                                <td class="px-6 py-3 text-right font-medium">${{ number_format($item['subtotal'], 2) }}</td>
+                                <td class="px-6 py-3 text-right">@money($item['unit_price'])</td>
+                                <td class="px-6 py-3 text-right font-medium">@money($item['subtotal'])</td>
                                 <td class="px-6 py-3 text-center">
                                     @if ($item['lead_time_days'])
                                         {{ $item['lead_time_days'] }}d
@@ -117,7 +117,7 @@
                 <div class="flex items-center justify-between">
                     <span class="text-lg font-semibold text-gray-900 dark:text-white">Grand Total</span>
                     <span class="text-2xl font-bold text-gray-900 dark:text-white">
-                        ${{ number_format($supplierGroups->sum('total'), 2) }}
+                        @money($supplierGroups->sum('total'))
                     </span>
                 </div>
             </div>

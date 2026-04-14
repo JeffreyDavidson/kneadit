@@ -1,12 +1,9 @@
 <?php
 
+use App\Enums\Orders\OrderStatus;
 use App\Mail\Orders\NewOrderNotificationMail;
-use App\Mail\Orders\OrderBakingMail;
-use App\Mail\Orders\OrderCancelledMail;
-use App\Mail\Orders\OrderConfirmedMail;
-use App\Mail\Orders\OrderDeliveredMail;
 use App\Mail\Orders\OrderPlacedMail;
-use App\Mail\Orders\OrderReadyMail;
+use App\Mail\Orders\OrderStatusMail;
 use App\Models\Orders\Order;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -22,17 +19,17 @@ beforeEach(function () {
     test()->order = Order::factory()->create();
 });
 
-test('order mailables have correct envelope subjects', function (string $mailClass, string $expectedSubjectFragment) {
-    $mail = new $mailClass(test()->order);
+test('order mailables have correct envelope subjects', function (string $mailClass, array $args, string $expectedSubjectFragment) {
+    $mail = new $mailClass(...$args);
     $subject = $mail->envelope()->subject;
 
     expect($subject)->toContain($expectedSubjectFragment);
 })->with([
-    'OrderPlacedMail' => [OrderPlacedMail::class, 'Received — Test Bakery'],
-    'OrderConfirmedMail' => [OrderConfirmedMail::class, 'Confirmed — Test Bakery'],
-    'OrderReadyMail' => [OrderReadyMail::class, 'is Ready!'],
-    'OrderBakingMail' => [OrderBakingMail::class, 'is Being Prepared'],
-    'OrderDeliveredMail' => [OrderDeliveredMail::class, 'Delivered'],
-    'OrderCancelledMail' => [OrderCancelledMail::class, 'Cancelled'],
-    'NewOrderNotificationMail' => [NewOrderNotificationMail::class, 'New Order #'],
+    'OrderPlacedMail' => [OrderPlacedMail::class, fn () => [test()->order], 'Received — Test Bakery'],
+    'OrderStatusMail (Confirmed)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Confirmed], 'Confirmed — Test Bakery'],
+    'OrderStatusMail (Ready)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Ready], 'is Ready!'],
+    'OrderStatusMail (Baking)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Baking], 'is Being Prepared'],
+    'OrderStatusMail (Delivered)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Delivered], 'Delivered'],
+    'OrderStatusMail (Cancelled)' => [OrderStatusMail::class, fn () => [test()->order, OrderStatus::Cancelled], 'Cancelled'],
+    'NewOrderNotificationMail' => [NewOrderNotificationMail::class, fn () => [test()->order], 'New Order #'],
 ]);

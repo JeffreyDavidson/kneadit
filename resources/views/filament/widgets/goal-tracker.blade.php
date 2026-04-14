@@ -33,7 +33,7 @@
                 </div>
                 <div class="goal-footer">
                     <div>
-                        <span class="goal-revenue">${{ number_format($monthly['revenue'], 2) }}</span>
+                        <span class="goal-revenue">@money($monthly['revenue'])</span>
                         <span class="goal-of"> / ${{ number_format($monthly['goal'], 0) }}</span>
                     </div>
                     <span class="goal-pct" style="color: {{ $monthly['percentage'] >= 100 ? 'var(--status-success)' : 'var(--brand-900)' }};">{{ $monthly['percentage'] }}%</span>
@@ -56,7 +56,7 @@
                 </div>
                 <div class="goal-footer">
                     <div>
-                        <span class="goal-revenue">${{ number_format($yearly['revenue'], 2) }}</span>
+                        <span class="goal-revenue">@money($yearly['revenue'])</span>
                         <span class="goal-of"> / ${{ number_format($yearly['goal'], 0) }}</span>
                     </div>
                     <span class="goal-pct" style="color: {{ $yearly['percentage'] >= 100 ? 'var(--status-success)' : 'var(--brand-900)' }};">{{ $yearly['percentage'] }}%</span>

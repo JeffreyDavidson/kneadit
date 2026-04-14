@@ -63,24 +63,15 @@
             {{-- Product Cards Grid --}}
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($category->products as $product)
-                <div class="menu-card bg-warm-800">
-                    <div class="relative overflow-hidden aspect-[4/3]">
-                        @if ($product->image)
-                            <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                        @else
-                            <x-storefront.image-placeholder :name="$product->name" text-size="text-6xl" />
-                        @endif
-                        {{-- Price badge --}}
-                        <div class="absolute top-4 right-4 px-4 py-2 rounded-full text-sm font-bold backdrop-blur-sm" style="background: rgba(28,20,16,0.8); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.2);">
-                            ${{ number_format($product->price, 2) }}
-                        </div>
-                        {{-- Seasonal badge --}}
+                <x-storefront.product-card :product="$product" card-class="menu-card bg-warm-800" description-class="mb-3">
+                    <x-slot:badge>
                         @if ($product->seasonal_badge)
                         <div class="absolute top-4 left-4 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-warm-500 text-warm-900">
                             {{ $product->seasonal_badge }}
                         </div>
                         @endif
-                        {{-- Hover overlay --}}
+                    </x-slot:badge>
+                    <x-slot:overlay>
                         <div class="menu-card-overlay absolute inset-0 flex items-center justify-center bg-warm-900/50">
                             @if ($product->is_active)
                             <a href="{{ route('order.create') }}" class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold bg-warm-500 text-warm-900">
@@ -92,12 +83,8 @@
                             </span>
                             @endif
                         </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-display text-xl font-semibold mb-1 text-warm-100">{{ $product->name }}</h3>
-                        @if ($product->description)
-                        <p class="text-sm leading-relaxed line-clamp-2 mb-3 text-warm-500">{{ $product->description }}</p>
-                        @endif
+                    </x-slot:overlay>
+                    <x-slot:footer>
                         @if (!$product->is_active)
                         <div x-data="{ showWaitlist: false, submitted: false }">
                             <button x-show="!showWaitlist && !submitted" @click="showWaitlist = true"
@@ -112,8 +99,8 @@
                             </form>
                         </div>
                         @endif
-                    </div>
-                </div>
+                    </x-slot:footer>
+                </x-storefront.product-card>
                 @endforeach
             </div>
         </section>

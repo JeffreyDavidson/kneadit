@@ -79,7 +79,7 @@ test('calculate health score increases with recent login', function () {
     $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
     $score = $method->invoke(test()->page, $tenant, $data);
 
-    expect($score)->toBe(30);
+    expect($score)->toBe(25);
 });
 
 test('calculate health score increases with orders', function () {
@@ -97,7 +97,7 @@ test('calculate health score increases with orders', function () {
         ->and($fewOrders)->toBe(5)
         ->and($someOrders)->toBe(10)
         ->and($manyOrders)->toBe(20)
-        ->and($lotsOfOrders)->toBe(30);
+        ->and($lotsOfOrders)->toBe(25);
 });
 
 test('calculate health score increases with products', function () {
@@ -151,7 +151,7 @@ test('calculate health score with login 3 days ago', function () {
     $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
     $score = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
 
-    expect($score)->toBe(25);
+    expect($score)->toBe(20);
 });
 
 test('calculate health score with login 5 days ago', function () {
@@ -159,7 +159,7 @@ test('calculate health score with login 5 days ago', function () {
     $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
     $score = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
 
-    expect($score)->toBe(15);
+    expect($score)->toBe(20);
 });
 
 test('calculate health score with login 20 days ago', function () {

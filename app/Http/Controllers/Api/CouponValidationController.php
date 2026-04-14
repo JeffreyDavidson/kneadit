@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Order\ApplyCouponRequest;
+use App\Http\Requests\Order\ApplyDiscountRequest;
 use App\Http\Responses\ApiResponse;
 use App\Services\Coupon\CouponService;
 use Illuminate\Http\JsonResponse;
 
 class CouponValidationController extends Controller
 {
-    public function __invoke(ApplyCouponRequest $request, CouponService $couponService): JsonResponse
+    public function __invoke(ApplyDiscountRequest $request, CouponService $couponService): JsonResponse
     {
         $validated = $request->validated();
 

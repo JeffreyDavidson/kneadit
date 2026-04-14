@@ -36,6 +36,7 @@
 - Some resources (LoyaltyRewards, CustomerPhotos, GalleryPhotos) have inline table config in the Resource file
 - Custom CSS: `public/css/filament-custom.css` (cache-busted via `?v=filemtime()`)
 - Server: cold-moon (`forge@137.184.194.56`), site at `/home/forge/getkneadit.app/current`
+- Server IP is configured in `config('services.forge.server_ip')` — don't hardcode it in PHP or Blade files
 
 ## Code Patterns
 
@@ -56,6 +57,17 @@
 - Inject via method injection in controllers: `public function show(TenantSettings $settings)`
 - In closures/components where DI isn't available: `app(TenantSettings::class)`
 
+### Settings Managers
+- `AbstractSettingsManager` (`app/Services/Settings/AbstractSettingsManager.php`) provides shared get/set/loadAll/flushCache logic
+- `SettingsManager` (tenant-scoped) and `PlatformSettingsManager` extend it, implementing `cacheKey()` and `modelClass()`
+- New settings scopes should extend `AbstractSettingsManager`
+
+### Filament Pages
+- **Access control:** Use the `RequiresManagerRole` trait (`app/Filament/Concerns/RequiresManagerRole.php`) for pages requiring manager access. Pages that also need a feature flag override `canAccess()` using `static::hasManagerAccess() && Feature::active('...')`.
+- **Large pages:** When a Filament page exceeds ~200 lines of form/schema config, extract independent sections into static schema classes under a `Schemas/` subdirectory (e.g., `Schemas/PageContent/MenuTabSchema.php` with `public static function make(): Tab`). See `ManagePageContent` for the pattern.
+- **Business logic:** Extract DNS checking, API calls, image generation, and similar logic to service classes. Filament pages should be thin coordinators that call services and send notifications. See `CustomDomainService`, `AppIconGeneratorService`, `CaptionGeneratorService` for examples.
+- **Status transition actions:** Use a factory method for near-identical Filament table actions that vary only in name/label/icon/color/target. See `OrdersTable::statusTransitionAction()`.
+
 ### Authorization
 - Platform-level abilities use Gates defined in `AppServiceProvider::boot()` (e.g., `platform-admin`)
 - Use `Gate::authorize('platform-admin')` in controllers, not inline role checks
@@ -66,6 +78,12 @@
 - Actions are invokable via `__invoke()` and resolved from the container: `app(CreateOrder::class)($data)`
 - Controllers and Filament pages are thin callers — delegate business logic to actions
 - Do NOT put write logic in observers, services (for writes), or controller methods
+
+### View Layer
+- **`@money()` Blade directive** — registered in `AppServiceProvider::boot()`, outputs `$X.XX`. Use for all monetary formatting in Blade; do NOT use for loyalty points or rating numbers.
+- **ViewModels (`app/ViewModels/`)** — encapsulate all data for a page. Controller builds the ViewModel and passes it as `$vm` to the view. See `ReviewsPageViewModel` as the established example.
+- **Presenters (`app/Presenters/`)** — wrap a single model to provide display-formatting methods. See `OrderTrackingPresenter` as the established example.
+- **Reusable Blade components (`components/storefront/`)** — shared markup with `@props` and named slots. See `product-card` as the established pattern.
 
 ### Models
 - Models should ONLY contain: relationships, casts, scopes, and `Attribute`-style accessors
@@ -81,8 +99,22 @@
 - Use the `casts()` method (not `$casts` property) for consistency
 - Never use hardcoded strings when an enum exists — use the enum value/case directly
 
+### Mailables
+- Order status emails use a single `OrderStatusMail($order, OrderStatus $status)` — subject and view are resolved from the status via a `match` expression. Do NOT create individual mailable classes per status.
+- To add a new order status email: add a case to `OrderStatusMail::resolveSubject()` and create the Blade view at `emails.orders.order-{status}`.
+
+### Birthday Coupons
+- `BirthdayService::findOrCreateBirthdayCoupon()` generates deterministic codes (`BDAY-{customer_id}-{year}`) using `firstOrCreate` — safe to retry without creating duplicates.
+- The birthday program toggle (`birthdayProgramEnabled`) and coupon toggle (`birthdayCouponEnabled`) are separate — the program can send a birthday email without a coupon.
+
 ### Code Reviews
 - Reviews must check both macro (architecture, extraction patterns) AND micro (dead code, missing enum casts, string-vs-enum mismatches, unreachable default arms, redundant `tryFrom()` on already-cast values)
+
+### Extraction Guidelines
+- **Don't extract standard validation rules** into custom Rule classes. `['required', 'string', 'max:255']` in FormRequests is idiomatic Laravel — only create Rule classes for actual custom logic.
+- **Don't split cohesive services** just for line count. If private methods are shared across public methods, the class is cohesive. Check dependency direction before splitting.
+- **Don't create DTOs for Livewire page properties.** Livewire requires individual public properties for form binding — a DTO can't replace them.
+- **Models with `#[WithoutTimestamps]`** need their observers that set `created_at` manually — those observers are NOT no-ops.
 
 ### Exceptions
 - Custom exceptions should store relevant context as `public readonly` constructor-promoted properties

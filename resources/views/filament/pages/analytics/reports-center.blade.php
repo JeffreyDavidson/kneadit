@@ -78,13 +78,19 @@
         <div class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 @foreach ([
-                    ['Total Orders', number_format($reportData['totalOrders'])],
-                    ['Total Revenue', '$' . number_format($reportData['totalRevenue'], 2)],
-                    ['Avg Order Value', '$' . number_format($reportData['avgOrderValue'], 2)],
-                ] as [$label, $value])
+                    ['Total Orders', $reportData['totalOrders'], false],
+                    ['Total Revenue', $reportData['totalRevenue'], true],
+                    ['Avg Order Value', $reportData['avgOrderValue'], true],
+                ] as [$label, $value, $isMoney])
                     <div class="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
                         <div class="text-sm text-gray-500">{{ $label }}</div>
-                        <div class="text-2xl font-bold">{{ $value }}</div>
+                        <div class="text-2xl font-bold">
+                            @if ($isMoney)
+                                @money($value)
+                            @else
+                                {{ number_format($value) }}
+                            @endif
+                        </div>
                     </div>
                 @endforeach
             </div>
@@ -117,7 +123,7 @@
                                 <tr class="border-b dark:border-gray-800">
                                     <td class="py-2">{{ $p['name'] }}</td>
                                     <td class="text-right py-2">{{ $p['units_sold'] }}</td>
-                                    <td class="text-right py-2">${{ number_format($p['revenue'], 2) }}</td>
+                                    <td class="text-right py-2">@money($p['revenue'])</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -132,7 +138,7 @@
                     <div class="bar-chart pb-6">
                         @foreach ($reportData['revenueByDay'] as $day)
                             <div class="bar" style="height: {{ ($day['revenue'] / $maxRev) * 100 }}%"
-                                title="{{ $day['date'] }}: ${{ number_format($day['revenue'], 2) }}">
+                                title="{{ $day['date'] }}: @money($day['revenue'])">
                                 <span class="bar-label">{{ \Carbon\Carbon::parse($day['date'])->format('m/d') }}</span>
                             </div>
                         @endforeach
@@ -173,7 +179,7 @@
                                     <td class="py-2">{{ $c['name'] }}</td>
                                     <td class="py-2 text-gray-500">{{ $c['email'] }}</td>
                                     <td class="text-right py-2">{{ $c['order_count'] }}</td>
-                                    <td class="text-right py-2">${{ number_format($c['total_spend'], 2) }}</td>
+                                    <td class="text-right py-2">@money($c['total_spend'])</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -215,8 +221,8 @@
                         @foreach ($reportData['products'] as $p)
                             <tr class="border-b dark:border-gray-800">
                                 <td class="py-2">{{ $p['name'] }}</td>
-                                <td class="text-right py-2">${{ number_format($p['price'], 2) }}</td>
-                                <td class="text-right py-2">${{ number_format($p['cost'], 2) }}</td>
+                                <td class="text-right py-2">@money($p['price'])</td>
+                                <td class="text-right py-2">@money($p['cost'])</td>
                                 <td class="text-right py-2">
                                     @if ($p['margin'] !== null)
                                         <span class="{{ $p['margin'] >= 50 ? 'text-success-600' : ($p['margin'] >= 30 ? 'text-warning-600' : 'text-danger-600') }}">
@@ -227,7 +233,7 @@
                                     @endif
                                 </td>
                                 <td class="text-right py-2">{{ $p['units_sold'] }}</td>
-                                <td class="text-right py-2">${{ number_format($p['revenue'], 2) }}</td>
+                                <td class="text-right py-2">@money($p['revenue'])</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -240,14 +246,14 @@
         <div class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 @foreach ([
-                    ['Revenue', '$' . number_format($reportData['totalRevenue'], 2), 'text-success-600'],
-                    ['Expenses', '$' . number_format($reportData['totalExpenses'], 2), 'text-danger-600'],
-                    ['Profit', '$' . number_format($reportData['profit'], 2), $reportData['profit'] >= 0 ? 'text-success-600' : 'text-danger-600'],
-                    ['Tax Deductible', '$' . number_format($reportData['deductible'], 2), 'text-primary-600'],
+                    ['Revenue', $reportData['totalRevenue'], 'text-success-600'],
+                    ['Expenses', $reportData['totalExpenses'], 'text-danger-600'],
+                    ['Profit', $reportData['profit'], $reportData['profit'] >= 0 ? 'text-success-600' : 'text-danger-600'],
+                    ['Tax Deductible', $reportData['deductible'], 'text-primary-600'],
                 ] as [$label, $value, $color])
                     <div class="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
                         <div class="text-sm text-gray-500">{{ $label }}</div>
-                        <div class="text-2xl font-bold {{ $color }}">{{ $value }}</div>
+                        <div class="text-2xl font-bold {{ $color }}">@money($value)</div>
                     </div>
                 @endforeach
             </div>
@@ -265,9 +271,9 @@
                         @foreach ($reportData['monthly'] as $m)
                             <tr class="border-b dark:border-gray-800">
                                 <td class="py-2">{{ $m['month'] }}</td>
-                                <td class="text-right py-2">${{ number_format($m['revenue'], 2) }}</td>
-                                <td class="text-right py-2">${{ number_format($m['expenses'], 2) }}</td>
-                                <td class="text-right py-2 {{ $m['profit'] >= 0 ? 'text-success-600' : 'text-danger-600' }}">${{ number_format($m['profit'], 2) }}</td>
+                                <td class="text-right py-2">@money($m['revenue'])</td>
+                                <td class="text-right py-2">@money($m['expenses'])</td>
+                                <td class="text-right py-2 {{ $m['profit'] >= 0 ? 'text-success-600' : 'text-danger-600' }}">@money($m['profit'])</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -285,7 +291,7 @@
                                 <div class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-6 overflow-hidden">
                                     <div class="bg-primary-500 h-full rounded-full" style="width: {{ ($cat['amount'] / $maxExp) * 100 }}%"></div>
                                 </div>
-                                <div class="text-sm font-medium w-24 text-right">${{ number_format($cat['amount'], 2) }}</div>
+                                <div class="text-sm font-medium w-24 text-right">@money($cat['amount'])</div>
                             </div>
                         @endforeach
                     </div>

@@ -45,7 +45,7 @@
 
     <div style="margin-top: 16px; padding-top: 12px; border-top: 2px solid {{ $primaryColor }}; text-align: center;">
         <span style="color: #888; font-size: 13px;">Your Quote</span><br>
-        <span style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">${{ number_format($inquiry->quoted_amount, 2) }}</span>
+        <span style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">@money($inquiry->quoted_amount)</span>
     </div>
 </div>
 

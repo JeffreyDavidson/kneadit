@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col justify-center p-10 md:p-16">
-                    <span class="font-display text-3xl md:text-4xl font-bold mb-2 text-warm-400">${{ number_format($star->price, 2) }}</span>
+                    <span class="font-display text-3xl md:text-4xl font-bold mb-2 text-warm-400">@money($star->price)</span>
                     <h3 class="font-display text-3xl md:text-4xl font-bold mb-4 text-warm-100">{{ $star->name }}</h3>
                     @if ($star->description)
                     <p class="text-base leading-relaxed mb-8 text-warm-400">{{ Str::limit($star->description, 200) }}</p>
@@ -90,31 +90,15 @@
         {{-- Grid of remaining products --}}
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($featuredProducts->skip(1) as $product)
-            <div class="product-showcase-card bg-warm-800">
-                <div class="relative overflow-hidden aspect-[4/3]">
-                    @if ($product->image)
-                        <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                    @else
-                        <x-storefront.image-placeholder :name="$product->name" text-size="text-6xl" />
-                    @endif
-                    {{-- Price badge --}}
-                    <div class="absolute top-4 right-4 px-4 py-2 rounded-full text-sm font-bold backdrop-blur-sm" style="background: rgba(28,20,16,0.8); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.2);">
-                        ${{ number_format($product->price, 2) }}
-                    </div>
-                    {{-- Hover overlay with CTA --}}
+            <x-storefront.product-card :product="$product" card-class="product-showcase-card bg-warm-800">
+                <x-slot:overlay>
                     <div class="product-overlay absolute inset-0 flex items-center justify-center bg-warm-900/50">
                         <span class="product-cta inline-block px-6 py-3 rounded-full text-sm font-semibold bg-warm-500 text-warm-900">
                             Add to Order
                         </span>
                     </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="font-display text-xl font-semibold mb-1 text-warm-100">{{ $product->name }}</h3>
-                    @if ($product->description)
-                    <p class="text-sm leading-relaxed line-clamp-2 text-warm-500">{{ $product->description }}</p>
-                    @endif
-                </div>
-            </div>
+                </x-slot:overlay>
+            </x-storefront.product-card>
             @endforeach
         </div>
         @endif

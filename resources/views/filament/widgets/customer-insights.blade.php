@@ -31,7 +31,7 @@
                 <div>
                     <div style="font-size: 0.78rem; color: var(--brand-600); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Avg Order Value</div>
                     <div style="font-size: 1.5rem; font-weight: 700; color: var(--brand-900);">
-                        ${{ number_format($avg['value'], 2) }}
+                        @money($avg['value'])
                         <span style="font-size: 0.85rem; color: {{ $avg['trend'] === 'up' ? 'var(--status-success)' : 'var(--status-danger)' }};">
                             {{ $avg['trend'] === 'up' ? '↑' : '↓' }}
                         </span>

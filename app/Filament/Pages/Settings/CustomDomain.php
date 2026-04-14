@@ -2,9 +2,10 @@
 
 namespace App\Filament\Pages\Settings;
 
+use App\Enums\Platform\DnsVerificationStatus;
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
-use App\Services\Platform\ForgeService;
+use App\Filament\Concerns\RequiresManagerRole;
+use App\Services\Platform\CustomDomainService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
@@ -15,23 +16,11 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
-use Stancl\Tenancy\Database\Models\Domain;
 
 class CustomDomain extends Page
 {
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return true;
-    }
-
     use InteractsWithFormActions;
+    use RequiresManagerRole;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;
 
@@ -47,7 +36,7 @@ class CustomDomain extends Page
 
     public ?string $custom_domain = '';
 
-    public ?string $dns_status = null;
+    public ?DnsVerificationStatus $dns_status = null;
 
     public ?string $ssl_status = null;
 
@@ -55,7 +44,7 @@ class CustomDomain extends Page
     {
         $this->custom_domain = tenant()->custom_domain ?? '';
         if ($this->custom_domain) {
-            $this->checkDns();
+            $this->refreshDnsStatus();
         }
     }
 
@@ -77,6 +66,7 @@ class CustomDomain extends Page
 
     public function save(): void
     {
+        $domainService = resolve(CustomDomainService::class);
         $plan = tenant()->plan;
 
         if (! $plan?->meetsRequirement(SubscriptionTier::Growth)) {
@@ -91,13 +81,19 @@ class CustomDomain extends Page
         $domain = trim((string) $this->custom_domain);
 
         if (empty($domain)) {
-            $this->removeCustomDomain();
+            $domainService->removeDomain(tenant());
+            $this->dns_status = null;
+            $this->ssl_status = null;
+
+            Notification::make()
+                ->title('Custom domain removed')
+                ->success()
+                ->send();
 
             return;
         }
 
-        // Validate domain format
-        if (! preg_match('/^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$/', $domain)) {
+        if (! $domainService->isValidFormat($domain)) {
             Notification::make()
                 ->title('Invalid domain format')
                 ->danger()
@@ -106,75 +102,73 @@ class CustomDomain extends Page
             return;
         }
 
-        $tenant = tenant();
+        $domainService->addDomain(tenant(), $domain);
+        $this->refreshDnsStatus();
 
-        // Update tenant custom_domain
-        $tenant->update(['custom_domain' => $domain]);
-
-        // Add to Stancl domains table if not already there
-        $existingDomain = Domain::query()->where('domain', $domain)->first();
-        if (! $existingDomain) {
-            $tenant->domains()->create(['domain' => $domain]);
-        }
-
-        // Add domain alias to Forge if configured
-        if (ForgeService::isConfigured()) {
-            $forge = resolve(ForgeService::class);
-            $forge->addDomainAlias($domain);
-        }
-
-        $this->checkDns();
+        $serverIp = $domainService->serverIp();
 
         Notification::make()
             ->title('Custom domain saved')
-            ->body($this->dns_status === 'verified'
+            ->body($this->dns_status === DnsVerificationStatus::Verified
                 ? 'DNS is correctly configured! SSL will be provisioned automatically.'
-                : 'Please configure your DNS records — point an A record to 137.184.194.56')
+                : "Please configure your DNS records — point an A record to {$serverIp}")
             ->success()
             ->send();
 
-        // Auto-provision SSL if DNS is already verified
-        if ($this->dns_status === 'verified') {
-            $this->provisionSsl($domain);
+        if ($this->dns_status === DnsVerificationStatus::Verified) {
+            $this->handleSslProvisioning($domain);
         }
     }
 
     public function verifyDns(): void
     {
-        $this->checkDns();
+        $this->refreshDnsStatus();
 
-        if ($this->dns_status === 'verified') {
+        if ($this->dns_status === DnsVerificationStatus::Verified) {
             Notification::make()
                 ->title('DNS Verified!')
                 ->body('Your domain is correctly pointing to our servers. Provisioning SSL...')
                 ->success()
                 ->send();
 
-            // Auto-provision SSL when DNS is verified
-            $this->provisionSsl((string) $this->custom_domain);
+            $this->handleSslProvisioning((string) $this->custom_domain);
         } else {
+            $serverIp = resolve(CustomDomainService::class)->serverIp();
+
             Notification::make()
                 ->title('DNS Not Configured')
-                ->body('Your domain is not yet pointing to 137.184.194.56. DNS changes can take up to 48 hours.')
+                ->body("Your domain is not yet pointing to {$serverIp}. DNS changes can take up to 48 hours.")
                 ->warning()
                 ->send();
         }
     }
 
-    protected function provisionSsl(string $domain): void
+    private function refreshDnsStatus(): void
     {
-        if (! ForgeService::isConfigured()) {
+        if (empty($this->custom_domain)) {
+            $this->dns_status = null;
+
+            return;
+        }
+
+        $this->dns_status = resolve(CustomDomainService::class)->isDnsVerified($this->custom_domain)
+            ? DnsVerificationStatus::Verified
+            : DnsVerificationStatus::Pending;
+    }
+
+    private function handleSslProvisioning(string $domain): void
+    {
+        $result = resolve(CustomDomainService::class)->provisionSsl($domain);
+
+        if ($result === null) {
             $this->ssl_status = 'manual';
 
             return;
         }
 
-        $forge = resolve(ForgeService::class);
-        $success = $forge->obtainSslCertificate($domain);
+        $this->ssl_status = $result ? 'provisioning' : 'failed';
 
-        $this->ssl_status = $success ? 'provisioning' : 'failed';
-
-        if ($success) {
+        if ($result) {
             Notification::make()
                 ->title('SSL Certificate Requested')
                 ->body('Let\'s Encrypt is issuing your certificate. This usually takes 1-2 minutes.')
@@ -187,43 +181,6 @@ class CustomDomain extends Page
                 ->danger()
                 ->send();
         }
-    }
-
-    protected function checkDns(): void
-    {
-        if (empty($this->custom_domain)) {
-            $this->dns_status = null;
-
-            return;
-        }
-
-        $ip = gethostbyname($this->custom_domain);
-        $this->dns_status = ($ip === '137.184.194.56') ? 'verified' : 'pending';
-    }
-
-    protected function removeCustomDomain(): void
-    {
-        $tenant = tenant();
-        $oldDomain = $tenant->custom_domain;
-
-        if ($oldDomain) {
-            Domain::query()->where('domain', $oldDomain)->where('tenant_id', $tenant->id)->delete();
-
-            // Remove from Forge if configured
-            if (ForgeService::isConfigured()) {
-                $forge = resolve(ForgeService::class);
-                $forge->removeDomainAlias($oldDomain);
-            }
-        }
-
-        $tenant->update(['custom_domain' => null]);
-        $this->dns_status = null;
-        $this->ssl_status = null;
-
-        Notification::make()
-            ->title('Custom domain removed')
-            ->success()
-            ->send();
     }
 
     /** @return array<int, Action> */
