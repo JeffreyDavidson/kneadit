@@ -42,6 +42,24 @@ enum SubscriptionTier: string implements HasColor, HasLabel
         return $this->level() >= $required->level();
     }
 
+    public function priceInDollars(): int
+    {
+        return (int) (config("kneadit.plans.{$this->value}.price_monthly", 0) / 100);
+    }
+
+    public function labelWithPrice(): string
+    {
+        return "{$this->getLabel()} (\${$this->priceInDollars()}/mo)";
+    }
+
+    /** @return array<string, int> */
+    public static function priceMap(): array
+    {
+        return collect(self::cases())
+            ->mapWithKeys(fn (self $tier) => [$tier->value => $tier->priceInDollars()])
+            ->all();
+    }
+
     public static function fromPriceId(string $priceId): ?self
     {
         $plan = array_search($priceId, config('kneadit.stripe_prices', []), true);

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources\TenantResource\Schemas;
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -38,11 +39,9 @@ class TenantForm
                                 ->email()
                                 ->required(),
                             Select::make('plan')
-                                ->options([
-                                    'starter' => 'Starter ($9/mo)',
-                                    'growth' => 'Growth ($19/mo)',
-                                    'pro' => 'Pro ($29/mo)',
-                                ])
+                                ->options(collect(SubscriptionTier::cases())
+                                    ->mapWithKeys(fn (SubscriptionTier $tier) => [$tier->value => $tier->labelWithPrice()])
+                                    ->all())
                                 ->required(),
                         ]),
                     ]),

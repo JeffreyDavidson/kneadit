@@ -18,6 +18,7 @@ class OrderStatusEffectDispatcher
         private LoyaltyLedger $loyaltyLedger,
         private InventoryManager $inventoryManager,
         private ReverseOrderDiscounts $reverseOrderDiscounts,
+        private WebhookService $webhookService,
     ) {}
 
     public function dispatch(Order $order, OrderStatus $from, OrderStatus $to): void
@@ -110,7 +111,7 @@ class OrderStatusEffectDispatcher
 
     private function dispatchWebhook(Order $order, OrderStatus $from, OrderStatus $to): void
     {
-        WebhookService::dispatch('order.updated', [
+        $this->webhookService->dispatch('order.updated', [
             'order_number' => $order->order_number,
             'status' => $to->value,
             'previous_status' => $from->value,
