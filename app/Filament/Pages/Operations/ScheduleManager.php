@@ -4,9 +4,9 @@ namespace App\Filament\Pages\Operations;
 
 use App\Actions\Tenants\UpdateSchedule;
 use App\Enums\Platform\SubscriptionTier;
+use App\Enums\Staff\DayOfWeek;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Operations\BusinessSchedule;
 use App\Services\Scheduling\ScheduleService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -77,8 +77,8 @@ class ScheduleManager extends Page
     public function content(Schema $schema): Schema
     {
         $daySchemas = [];
-        foreach (BusinessSchedule::DAYS as $dayNum => $dayName) {
-            $daySchemas[] = Section::make($dayName)
+        foreach (DayOfWeek::phpWeekOrder() as $dayNum => $day) {
+            $daySchemas[] = Section::make($day->getLabel())
                 ->schema([
                     Grid::make(5)->schema([
                         Toggle::make("schedule.{$dayNum}.is_open")

@@ -4,6 +4,7 @@ namespace App\Services\Financial;
 
 use App\DataTransferObjects\Financial\FinancialSummary;
 use App\DataTransferObjects\Financial\MonthlyFinancials;
+use App\Enums\Financial\ExpenseCategory;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Financial\Expense;
 use App\Models\Financial\Income;
@@ -106,7 +107,7 @@ class FinancialCalculator
     private function cogs(int $year, float $totalExpenses): array
     {
         $cogsAmount = (float) Expense::query()->whereYear('date', $year)
-            ->whereIn('category', ['ingredients', 'packaging'])
+            ->whereIn('category', [ExpenseCategory::Ingredients, ExpenseCategory::Packaging])
             ->sum('amount');
 
         $cogsPercentage = $totalExpenses > 0
