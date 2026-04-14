@@ -1,59 +1,113 @@
-# Class Extraction Opportunities — Execution Summary
+# Full Application Refactoring Audit — Execution Summary
 
-## Completed
+## Status: ✅ Complete — 2,852 tests passing, 0 failures
 
-### Phase 1 — Dead Code & Bug Fixes
-- [x] **1a.** Deleted `AwardLoyaltyPoints` action + test (dead code, replaced by `LoyaltyLedger::creditOrder()`)
-- [x] **1b.** Fixed `BlogPostObserver::updating()` to use `GenerateUniqueSlug` with `$excludeId` parameter. Added 3 regression tests.
-- [x] **1c.** Replaced inline `$item->unit_price * $item->quantity` with `$item->total_price` in 4 email/invoice templates.
-- [x] **1d.** Deleted `CreateBirthdayCoupon` action. Updated `BirthdayEngagement` to use idempotent `BirthdayService::findOrCreateBirthdayCoupon()`.
-- [x] **1e.** SKIPPED — Both observers use `#[WithoutTimestamps]`, so the `created_at` assignment is necessary.
+---
 
-### Phase 2 — Boilerplate Consolidation
-- [x] **2a.** Created `RequiresManagerRole` trait with `hasManagerAccess()` helper. Applied to 37 Filament pages (10 simple, 19 pro-features, 8 growth-features).
-- [x] **2b.** Created `AbstractSettingsManager` base class. `SettingsManager` and `PlatformSettingsManager` now extend it (~80% dedup removed).
-- [x] **2c.** Consolidated 5 identical order status mailables (`OrderConfirmedMail`, `OrderBakingMail`, `OrderReadyMail`, `OrderDeliveredMail`, `OrderCancelledMail`) into single `OrderStatusMail($order, OrderStatus $status)`. Updated dispatcher and 6 test files.
-- [x] **2d.** Merged identical `ApplyCouponRequest`/`ApplyGiftCardRequest` into `ApplyDiscountRequest`. Skipped custom Rule classes (over-engineering for standard validation arrays).
+## Round 1: Functional Bugs
 
-### Phase 3 — Service Decomposition
-- [x] **3a.** SKIPPED — `ProductFinancialService` is cohesive at 259 lines. Split would add dependency overhead without meaningful benefit.
-- [x] **3b.** Extracted `CustomDomainService` from CustomDomain Filament page (DNS checking, Forge API, domain management). Moved hardcoded IP to `config('services.forge.server_ip')`.
-- [x] **3c.** Extracted `AppIconGeneratorService` from `AppIconController` (GD image generation).
-- [x] **3d.** SKIPPED — `AcceptInvitationRequest::authorize()` logic is tightly request-contextual. Policy adds indirection without benefit.
-- [x] **3e.** SKIPPED — Webhook payload is single-use inline array. DTO over-engineering.
+### 1A. `SendEmailCampaign` ignores `target_segment` — Fixed
+- Injected `TenancyManager`, added `filteredTenants()` method matching `EmailCampaignSegment` to tenant `plan`/`is_active`/`trial_ends_at`
+- Context-aware: tenant panel sends to current tenant; central panel iterates filtered tenants
+- 7 tests covering All/Starter/Growth/Trial/Inactive segments + email deduplication
 
-### Phase 4 — Filament Page Extractions
-- [x] **4a.** Extracted 12 tab schema classes from `ManagePageContent` (560 lines → 105 lines).
-- [x] **4b.** SKIPPED — Livewire requires individual public properties for form binding. DTO can't replace them.
-- [x] **4c.** Extracted `CaptionGeneratorService` from `InstagramCaptionGenerator` (316 lines → 118 lines for page).
-- [x] **4d.** Created `statusTransitionAction()` factory method in `OrdersTable` (5 near-identical actions → 5 one-liner calls).
+### 1B. `ReviewsPageViewModel::$fiveStarPct` uses paginated subset — Fixed
+- Added `ratingBreakdown()` to `ReviewQueryBuilder` (single grouped query for per-star counts)
+- ViewModel now accepts `array $starCounts` from DB instead of computing from paginated collection
+- Added regression test proving global counts are used
 
-## Files Changed
+---
 
-### Deleted
-- `app/Actions/Orders/AwardLoyaltyPoints.php`
-- `tests/Integration/Actions/Orders/AwardLoyaltyPointsTest.php`
-- `app/Actions/Customers/CreateBirthdayCoupon.php`
-- `tests/Integration/Actions/Customers/CreateBirthdayCouponTest.php`
-- `app/Mail/Orders/OrderBakingMail.php`
-- `app/Mail/Orders/OrderReadyMail.php`
-- `app/Mail/Orders/OrderDeliveredMail.php`
-- `app/Mail/Orders/OrderCancelledMail.php`
-- `app/Mail/Orders/OrderConfirmedMail.php`
-- `app/Http/Requests/Order/ApplyCouponRequest.php`
-- `app/Http/Requests/Order/ApplyGiftCardRequest.php`
+## Round 2: Enum Consistency
 
-### Created
-- `app/Filament/Concerns/RequiresManagerRole.php`
-- `app/Services/Settings/AbstractSettingsManager.php`
-- `app/Mail/Orders/OrderStatusMail.php`
-- `app/Http/Requests/Order/ApplyDiscountRequest.php`
-- `app/Services/Platform/CustomDomainService.php`
-- `app/Services/Support/AppIconGeneratorService.php`
-- `app/Services/Content/CaptionGeneratorService.php`
-- `app/Filament/Pages/Settings/Schemas/PageContent/` (12 tab schema classes)
+### 2A. Blade `.value === 'string'` → enum comparison
+- `order-confirmation.blade.php`: `DeliveryType::Delivery` (4 occurrences)
+- `new-order-notification.blade.php`: `PaymentStatus::Paid` (2 occurrences)
+
+### 2B. FinancialCalculator hardcoded categories
+- `['ingredients', 'packaging']` → `[ExpenseCategory::Ingredients, ExpenseCategory::Packaging]`
+
+### 2C. BusinessSchedule::DAYS → DayOfWeek enum
+- Added `fromPhpDayIndex()` and `phpWeekOrder()` to `DayOfWeek`
+- Removed `DAYS` constant, updated ScheduleManager + Blade template
+
+---
+
+## Round 3: Duplication Removal
+
+### 3A. Profit margin
+- Created `app/Support/ProfitMargin::calculate()` — used by `Product::margin()` and `Recipe::profitMargin()`
+
+### 3B. Coupon validation
+- Added `Coupon::isValid()` model method; `CouponService::isValid()` delegates
+
+### 3C. Webhook idempotency
+- Created `EnsuresWebhookIdempotency` trait — used by both Stripe webhook controllers
+
+---
+
+## Round 4: Hardcoded Values & Quick Wins
+
+### 4A. Subscription tier strings/prices
+- Added `priceInDollars()`, `labelWithPrice()`, `priceMap()` to `SubscriptionTier`
+- Updated 5 Filament Central files
+
+### 4B. CSS cache-buster: `time()` → `filemtime()`
+### 4C. WebhookService: `static` → instance method + constructor injection
+### 4D. SupportTicketObserver: `resolve()` → constructor injection
+### 4E. LogsActivity: `get_class()` → `::class`
+
+---
+
+## Round 5: Email Template Consistency
+
+### 5A. 19 `number_format()` → `@money` replacements across 9 templates
+### 5B. 3 hardcoded `#d4920c` → `{{ $primaryColor }}` in welcome-baker
+
+---
+
+## Round 6: Controller Extractions
+
+### 6A. `app/Actions/Staff/CreateUser.php` — extracted from RegisterController
+### 6B. `app/Http/Requests/Api/IndexProductsRequest.php` — added for ProductController
+### 6C. `app/Actions/Stripe/ReauthenticateFromCheckoutSession.php` — extracted from CheckoutSuccessController
+
+---
+
+## Round 7: Filament Page Extractions
+
+| Page | Before | After | Schema File |
+|------|--------|-------|-------------|
+| ManageSettings | 369 lines | 163 lines | ManageSettingsForm.php (220 lines) |
+| QuickOrder | 278 lines | 78 lines | QuickOrderForm.php (215 lines) |
+| ProductImportExport | 233 lines | 81 lines | ProductImportExportForm.php (175 lines) |
+
+---
+
+## Round 8: View Layer Improvements
+
+### 8A. Central Analytics: 12 queries → 1 grouped query (SQLite/MySQL compatible)
+### 8B. `date()/strtotime()` → `now()->addDays()->format()` in order.blade.php
+### 8C. Contact.blade.php Carbon — left as-is (clean inline usage)
+### 8D. Created `SurveyQuestionType` enum, updated survey.blade.php comparisons
+### 8E. Inline JS extraction — deferred (lowest priority, tightly coupled to Alpine)
+
+---
+
+## Files Created (12)
+- `app/Support/ProfitMargin.php`
+- `app/Http/Controllers/Stripe/Concerns/EnsuresWebhookIdempotency.php`
+- `app/Enums/Engagement/SurveyQuestionType.php`
+- `app/Actions/Staff/CreateUser.php`
+- `app/Actions/Stripe/ReauthenticateFromCheckoutSession.php`
+- `app/Http/Requests/Api/IndexProductsRequest.php`
+- `app/Filament/Pages/Settings/Schemas/ManageSettingsForm.php`
+- `app/Filament/Pages/Operations/Schemas/QuickOrderForm.php`
+- `app/Filament/Pages/Tools/Schemas/ProductImportExportForm.php`
 
 ## Test Results
-- 140 tests related to changes: all passing
-- 33 pre-existing failures (TenantSettings constructor, QrCodeGenerator) — unrelated to this work
-- Pint: all clean
+- **Unit:** 293 passed
+- **Integration:** 1,533 passed
+- **Feature:** 1,026 passed
+- **Total: 2,852 tests, 5,910 assertions, 0 failures**
+- Pint: clean
