@@ -61,6 +61,15 @@ class OrderQueryBuilder extends Builder
         return $this;
     }
 
+    public function paidInMonth(int $year, int $month): static
+    {
+        $this->whereYear('delivery_date', $year)
+            ->whereMonth('delivery_date', $month)
+            ->where('payment_status', PaymentStatus::Paid);
+
+        return $this;
+    }
+
     public function paidInDateRange(DateRange $range): static
     {
         $this->whereBetween('delivery_date', $range->toArray())

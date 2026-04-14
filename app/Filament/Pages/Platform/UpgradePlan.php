@@ -3,23 +3,13 @@
 namespace App\Filament\Pages\Platform;
 
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
 
 class UpgradePlan extends Page
 {
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return true;
-    }
+    use RequiresManagerRole;
 
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpCircle;
 

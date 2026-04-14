@@ -66,7 +66,7 @@
             @endif
 
             <div class="order-footer">
-                <span class="order-total">${{ number_format($order->total, 2) }}</span>
+                <span class="order-total">@money($order->total)</span>
                 <form action="{{ route('driver.delivered', $order) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn-delivered" onclick="return confirm('Mark as delivered?')">

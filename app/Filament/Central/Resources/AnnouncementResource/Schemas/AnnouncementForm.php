@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Resources\AnnouncementResource\Schemas;
 
 use App\Enums\Platform\AnnouncementType;
+use App\Enums\Platform\SubscriptionTier;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
@@ -34,9 +35,9 @@ class AnnouncementForm
                             ->label('Target Plans')
                             ->options([
                                 'all' => 'All Plans',
-                                'starter' => 'Starter',
-                                'growth' => 'Growth',
-                                'pro' => 'Pro',
+                                ...collect(SubscriptionTier::cases())
+                                    ->mapWithKeys(fn (SubscriptionTier $tier) => [$tier->value => $tier->getLabel()])
+                                    ->all(),
                             ])
                             ->required()
                             ->rule('min:1')

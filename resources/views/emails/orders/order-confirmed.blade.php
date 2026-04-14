@@ -24,16 +24,16 @@
     @foreach ($orderItems as $item)
         <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8; display: flex; justify-content: space-between;">
             <span style="color: {{ $secondaryColor }};">{{ $item->product->name }} × {{ $item->quantity }}</span>
-            <span style="font-weight: 600; color: {{ $secondaryColor }};">${{ number_format($item->unit_price * $item->quantity, 2) }}</span>
+            <span style="font-weight: 600; color: {{ $secondaryColor }};">@money($item->total_price)</span>
         </div>
     @endforeach
 
     <div style="margin-top: 12px; padding-top: 10px; border-top: 2px solid {{ $primaryColor }}; text-align: right;">
         @if ($order->delivery_fee > 0)
-            <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Subtotal: ${{ number_format($order->subtotal, 2) }}</div>
-            <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Delivery Fee: ${{ number_format($order->delivery_fee, 2) }}</div>
+            <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Subtotal: @money($order->subtotal)</div>
+            <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Delivery Fee: @money($order->delivery_fee)</div>
         @endif
-        <div style="font-size: 20px; font-weight: 700; color: {{ $secondaryColor }};">Total: ${{ number_format($order->total, 2) }}</div>
+        <div style="font-size: 20px; font-weight: 700; color: {{ $secondaryColor }};">Total: @money($order->total)</div>
     </div>
 </div>
 

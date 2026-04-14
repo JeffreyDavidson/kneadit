@@ -41,13 +41,13 @@
                 <td style="padding: 8px 12px; border-bottom: 1px solid #e8d0b0;">{{ $item['name'] }}</td>
                 <td style="padding: 8px 12px; border-bottom: 1px solid #e8d0b0;">{{ $item['sku'] ?? '—' }}</td>
                 <td style="padding: 8px 12px; text-align: right; border-bottom: 1px solid #e8d0b0;">{{ $item['needed'] }} {{ $item['unit'] }}</td>
-                <td style="padding: 8px 12px; text-align: right; border-bottom: 1px solid #e8d0b0;">${{ number_format($item['unit_price'], 2) }}</td>
-                <td style="padding: 8px 12px; text-align: right; border-bottom: 1px solid #e8d0b0;">${{ number_format($item['subtotal'], 2) }}</td>
+                <td style="padding: 8px 12px; text-align: right; border-bottom: 1px solid #e8d0b0;">@money($item['unit_price'])</td>
+                <td style="padding: 8px 12px; text-align: right; border-bottom: 1px solid #e8d0b0;">@money($item['subtotal'])</td>
             </tr>
             @endforeach
             <tr>
                 <td colspan="4" style="padding: 8px 12px; text-align: right; font-weight: 700;">Total:</td>
-                <td style="padding: 8px 12px; text-align: right; font-weight: 700;">${{ number_format($total, 2) }}</td>
+                <td style="padding: 8px 12px; text-align: right; font-weight: 700;">@money($total)</td>
             </tr>
         </tbody>
     </table>

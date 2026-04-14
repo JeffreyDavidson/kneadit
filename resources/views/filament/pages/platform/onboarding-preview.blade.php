@@ -54,7 +54,7 @@
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: {{ $page->delivery['delivery_enabled'] ? '#6ee7b7' : '#6b4c3b' }};">
                         <span style="font-size: 11px;">{{ $page->delivery['delivery_enabled'] ? '●' : '○' }}</span>
-                        Delivery{{ $page->delivery['delivery_enabled'] && $page->delivery['delivery_fee'] ? ' — $' . number_format((float)$page->delivery['delivery_fee'], 2) : '' }}
+                        Delivery{{ $page->delivery['delivery_enabled'] && $page->delivery['delivery_fee'] ? ' — ' : '' }}@if($page->delivery['delivery_enabled'] && $page->delivery['delivery_fee'])@money((float)$page->delivery['delivery_fee'])@endif
                     </span>
                     <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: {{ $page->delivery['pickup_enabled'] ? '#6ee7b7' : '#6b4c3b' }};">
                         <span style="font-size: 11px;">{{ $page->delivery['pickup_enabled'] ? '●' : '○' }}</span>
@@ -122,7 +122,7 @@
                         <div style="color: #d4a574; font-size: 12px; margin-top: 4px; max-width: 400px;">{{ Str::limit($page->product['description'], 80) }}</div>
                     @endif
                 </div>
-                <div style="color: #fef9ef; font-size: 24px; font-weight: 700;">${{ number_format((float)$page->product['price'], 2) }}</div>
+                <div style="color: #fef9ef; font-size: 24px; font-weight: 700;">@money((float)$page->product['price'])</div>
             </div>
         </div>
         @endif

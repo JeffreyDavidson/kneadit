@@ -3,29 +3,23 @@
 namespace App\Filament\Pages\Engagement;
 
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Content\SocialPost;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
 
 class SocialCalendar extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return Feature::active('pro-features');
+        return static::hasManagerAccess() && Feature::active('pro-features');
     }
 
     protected static function requiredTier(): SubscriptionTier

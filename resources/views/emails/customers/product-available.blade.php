@@ -23,7 +23,7 @@
         <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="max-width: 200px; border-radius: 8px; margin-bottom: 15px;">
     @endif
     <div style="font-size: 20px; font-weight: 700; color: {{ $secondaryColor }}; margin-bottom: 5px;">{{ $product->name }}</div>
-    <div style="font-size: 16px; color: #8b6844;">${{ number_format($product->price, 2) }}</div>
+    <div style="font-size: 16px; color: #8b6844;">@money($product->price)</div>
 </div>
 
 <p style="margin: 0 0 20px;">Don't miss out — order now before it's gone again!</p>

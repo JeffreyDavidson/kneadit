@@ -4,12 +4,10 @@ namespace App\Services\Financial;
 
 use App\DataTransferObjects\Financial\FinancialSummary;
 use App\DataTransferObjects\Financial\MonthlyFinancials;
-use App\Enums\Orders\PaymentStatus;
 use App\Models\Financial\Expense;
 use App\Models\Financial\Income;
 use App\Models\Orders\Order;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class FinancialCalculator
 {
@@ -34,14 +32,11 @@ class FinancialCalculator
     /** @return array{totalRevenue: float, totalExpenses: float, netProfit: float} */
     private function yearlyTotals(int $year): array
     {
-        $orderRevenue = (float) Order::query()->whereYear('delivery_date', $year)
-            ->where('payment_status', PaymentStatus::Paid)
-            ->sum('total');
-
-        $otherIncome = (float) Income::query()->whereYear('date', $year)->sum('amount');
+        $orderRevenue = (float) Order::query()->paidInYear($year)->sum('total');
+        $otherIncome = (float) Income::query()->forYear($year)->sum('amount');
         $totalRevenue = $orderRevenue + $otherIncome;
 
-        $totalExpenses = (float) Expense::query()->whereYear('date', $year)->sum('amount');
+        $totalExpenses = (float) Expense::query()->forYear($year)->sum('amount');
 
         return [
             'totalRevenue' => $totalRevenue,
@@ -56,18 +51,9 @@ class FinancialCalculator
         $breakdown = collect();
 
         for ($month = 1; $month <= 12; $month++) {
-            $monthRevenue = (float) Order::query()->whereYear('delivery_date', $year)
-                ->whereMonth('delivery_date', $month)
-                ->where('payment_status', PaymentStatus::Paid)
-                ->sum('total');
-
-            $monthIncome = (float) Income::query()->whereYear('date', $year)
-                ->whereMonth('date', $month)
-                ->sum('amount');
-
-            $monthExpenses = (float) Expense::query()->whereYear('date', $year)
-                ->whereMonth('date', $month)
-                ->sum('amount');
+            $monthRevenue = (float) Order::query()->paidInMonth($year, $month)->sum('total');
+            $monthIncome = (float) Income::query()->forMonth($year, $month)->sum('amount');
+            $monthExpenses = (float) Expense::query()->forMonth($year, $month)->sum('amount');
 
             $totalMonthRevenue = $monthRevenue + $monthIncome;
 
@@ -90,9 +76,8 @@ class FinancialCalculator
             return collect();
         }
 
-        return Expense::query()->whereYear('date', $year)
-            ->select('category', DB::raw('SUM(amount) as total_amount'))
-            ->groupBy('category')
+        return Expense::query()->forYear($year)
+            ->byCategory()
             ->get()
             ->map(fn (Expense $expense) => [
                 'category' => $expense->category->getLabel(),
@@ -105,9 +90,7 @@ class FinancialCalculator
     /** @return array{cogsAmount: float, cogsPercentage: float} */
     private function cogs(int $year, float $totalExpenses): array
     {
-        $cogsAmount = (float) Expense::query()->whereYear('date', $year)
-            ->whereIn('category', ['ingredients', 'packaging'])
-            ->sum('amount');
+        $cogsAmount = (float) Expense::query()->forYear($year)->cogs()->sum('amount');
 
         $cogsPercentage = $totalExpenses > 0
             ? round(($cogsAmount / $totalExpenses) * 100, 1)

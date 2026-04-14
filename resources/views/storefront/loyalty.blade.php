@@ -1,16 +1,5 @@
 @php
-/** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Engagement\LoyaltyReward> $rewards */
-/** @var string $programName */
-/** @var string $pointsPerDollar */
-/** @var bool $loyaltyEnabled */
-/** @var string $heroImageUrl */
-/** @var array<string, string> $content */
-/** @var array<int, array<string, string>> $howSteps */
-
-/** @var \App\Models\Customers\Customer|null $customer */
-/** @var int $totalPoints */
-/** @var int $lifetimeEarned */
-/** @var \Illuminate\Support\Collection $history */
+/** @var \App\ViewModels\Storefront\LoyaltyPageViewModel $vm */
 @endphp
 
 <x-layouts.storefront>
@@ -18,22 +7,22 @@
 <link rel="stylesheet" href="{{ asset('css/loyalty.css') }}">
 
 {{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->loyaltyHeroImageUrl()" image-alt="Fresh baked goods" image-class="loyalty-hero-img">
+<x-storefront.hero-section :image="$vm->settings->loyaltyHeroImageUrl()" image-alt="Fresh baked goods" image-class="loyalty-hero-img">
     <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
-        <x-storefront.eyebrow line-opacity="0.4" class="loyalty-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Rewards Program' }}</x-storefront.eyebrow>
+        <x-storefront.eyebrow line-opacity="0.4" class="loyalty-fade-1 mb-6">{{ $vm->content['hero_eyebrow'] ?? 'Rewards Program' }}</x-storefront.eyebrow>
         <h1 class="loyalty-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
-            {{ $settings->storeName }} {{ $settings->loyaltyProgramName }}
+            {{ $vm->settings->storeName }} {{ $vm->settings->loyaltyProgramName }}
         </h1>
         <p class="loyalty-fade-3 font-script text-2xl md:text-3xl text-warm-400">
-            {{ $content['hero_subtitle'] ?? 'Earn points with every order, unlock delicious rewards' }}
+            {{ $vm->content['hero_subtitle'] ?? 'Earn points with every order, unlock delicious rewards' }}
         </p>
     </div>
 </x-storefront.hero-section>
 
-@if (!$settings->loyaltyEnabled)
+@if (!$vm->settings->loyaltyEnabled)
 <section class="py-20 px-4 bg-warm-50">
     <div class="max-w-lg mx-auto text-center rounded-2xl p-12 bg-white border border-warm-200">
-        <p class="font-display text-xl text-warm-700">{{ $content['paused_message'] ?? 'Our loyalty program is currently paused. Check back soon!' }}</p>
+        <p class="font-display text-xl text-warm-700">{{ $vm->content['paused_message'] ?? 'Our loyalty program is currently paused. Check back soon!' }}</p>
     </div>
 </section>
 @else
@@ -45,11 +34,11 @@
         {{-- Points Lookup --}}
         <div class="max-w-xl mx-auto mb-16">
             <div class="rounded-2xl p-8" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);">
-                <h2 class="font-display text-2xl font-bold mb-4 text-center text-warm-900">{{ $content['check_heading'] ?? 'Check Your Points' }}</h2>
+                <h2 class="font-display text-2xl font-bold mb-4 text-center text-warm-900">{{ $vm->content['check_heading'] ?? 'Check Your Points' }}</h2>
                 <form action="{{ route('rewards.check') }}" method="POST" class="flex flex-col sm:flex-row gap-3">
                     @csrf
                     <input type="email" name="email" placeholder="Enter your email address"
-                           value="{{ old('email', $customer->email ?? '') }}" required class="input-field flex-1">
+                           value="{{ old('email', $vm->customer->email ?? '') }}" required class="input-field flex-1">
                     <button type="submit" class="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 whitespace-nowrap bg-warm-500 text-warm-900">
                         Check Balance
                     </button>
@@ -58,57 +47,52 @@
         </div>
 
         {{-- Customer Results --}}
-        @isset($customer)
+        @if ($vm->hasCustomer)
         <div class="mb-16">
-            <p class="font-script text-2xl text-center mb-8 text-warm-500">Welcome back, {{ $customer->name }}!</p>
+            <p class="font-script text-2xl text-center mb-8 text-warm-500">Welcome back, {{ $vm->customer->name }}!</p>
 
             {{-- Points Display --}}
             <div class="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-10">
                 <div class="rounded-2xl p-8 text-center relative overflow-hidden bg-warm-900">
                     <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(30%, -30%);"></div>
                     <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">Available Points</p>
-                    <p class="font-display text-5xl font-bold text-warm-500">{{ number_format($totalPoints) }}</p>
+                    <p class="font-display text-5xl font-bold text-warm-500">{{ $vm->formattedTotalPoints }}</p>
                 </div>
                 <div class="rounded-2xl p-8 text-center bg-white border border-warm-200">
                     <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">Lifetime Earned</p>
-                    <p class="font-display text-5xl font-bold text-warm-900">{{ number_format($lifetimeEarned) }}</p>
+                    <p class="font-display text-5xl font-bold text-warm-900">{{ $vm->formattedLifetimeEarned }}</p>
                 </div>
             </div>
 
             {{-- Progress to next reward --}}
-            @if ($rewards->count())
-            @php
-                $nextReward = $rewards->where('points_required', '>', $totalPoints)->sortBy('points_required')->first();
-            @endphp
-            @if ($nextReward)
+            @if ($vm->nextReward)
             <div class="max-w-2xl mx-auto mb-10 rounded-2xl p-6 bg-white border border-warm-200">
                 <div class="flex justify-between items-center mb-3">
-                    <span class="text-sm font-semibold text-warm-700">Next Reward: {{ $nextReward->name }}</span>
-                    <span class="text-sm font-bold text-warm-500">{{ number_format($totalPoints) }} / {{ number_format($nextReward->points_required) }} pts</span>
+                    <span class="text-sm font-semibold text-warm-700">Next Reward: {{ $vm->nextReward->name }}</span>
+                    <span class="text-sm font-bold text-warm-500">{{ $vm->formattedTotalPoints }} / {{ $vm->formattedNextRewardRequired() }} pts</span>
                 </div>
                 <div class="w-full rounded-full h-3 overflow-hidden bg-warm-200">
-                    <div class="h-full rounded-full transition-all duration-700" style="background: linear-gradient(90deg, var(--warm-500), var(--warm-400)); width: {{ min(100, ($totalPoints / $nextReward->points_required) * 100) }}%;"></div>
+                    <div class="h-full rounded-full transition-all duration-700" style="background: linear-gradient(90deg, var(--warm-500), var(--warm-400)); width: {{ $vm->nextRewardProgressPercent() }}%;"></div>
                 </div>
-                <p class="text-xs mt-2 text-right text-warm-500">{{ number_format($nextReward->points_required - $totalPoints) }} points to go!</p>
+                <p class="text-xs mt-2 text-right text-warm-500">{{ $vm->formattedPointsToNextReward() }} points to go!</p>
             </div>
-            @endif
             @endif
 
             {{-- Transaction History --}}
-            @if ($history->count())
+            @if ($vm->history->count())
             <div class="max-w-2xl mx-auto rounded-2xl overflow-hidden bg-white border border-warm-200">
                 <div class="px-6 py-4" style="border-bottom: 1px solid var(--warm-200);">
                     <h3 class="font-display text-lg font-bold text-warm-900">Points History</h3>
                 </div>
                 <div class="divide-y" style="border-color: var(--warm-100);">
-                    @foreach ($history as $entry)
+                    @foreach ($vm->history as $entry)
                     <div class="flex justify-between items-center px-6 py-4 hover:bg-opacity-50 transition-colors" style="hover: var(--warm-50);">
                         <div>
                             <p class="font-semibold text-warm-900">{{ $entry->description }}</p>
                             <p class="text-sm text-warm-500">{{ $entry->created_at->format('M j, Y') }}</p>
                         </div>
-                        <span class="font-display text-lg font-bold {{ $entry->type === 'earned' ? 'text-green-600' : ($entry->type === 'redeemed' ? 'text-red-600' : 'text-yellow-600') }}">
-                            {{ $entry->type === 'redeemed' ? '-' : '+' }}{{ number_format($entry->points) }}
+                        <span class="font-display text-lg font-bold {{ $vm->historyEntryColorClass($entry->type) }}">
+                            {{ $vm->historyEntrySign($entry->type) }}{{ $vm->formattedEntryPoints($entry->points) }}
                         </span>
                     </div>
                     @endforeach
@@ -116,27 +100,26 @@
             </div>
             @endif
         </div>
-        @endisset
+        @endif
 
-        @if (isset($customer) && !$customer)
+        @if ($vm->customerNotFound)
         <div class="max-w-xl mx-auto mb-16 rounded-2xl p-8 text-center bg-white border border-warm-200">
             <p class="text-warm-700">We couldn't find an account with that email. Points are earned automatically when your orders are delivered!</p>
         </div>
         @endif
 
         {{-- Available Rewards --}}
-        @if ($rewards->count())
+        @if ($vm->rewards->count())
         <div class="mb-16">
             <div class="text-center mb-10">
-                <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">{{ $content['rewards_eyebrow'] ?? 'Unlock' }}</p>
-                <h2 class="font-display text-3xl font-bold text-warm-900">{{ $content['rewards_heading'] ?? 'Available Rewards' }}</h2>
+                <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">{{ $vm->content['rewards_eyebrow'] ?? 'Unlock' }}</p>
+                <h2 class="font-display text-3xl font-bold text-warm-900">{{ $vm->content['rewards_heading'] ?? 'Available Rewards' }}</h2>
             </div>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                @foreach ($rewards as $reward)
-                @php $canRedeem = isset($totalPoints) && $totalPoints >= $reward->points_required; @endphp
+                @foreach ($vm->rewards as $reward)
                 <div class="rounded-2xl p-6 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden"
-                     style="background: white; border: 2px solid {{ $canRedeem ? 'var(--warm-500)' : 'var(--warm-200)' }};">
-                    @if ($canRedeem)
+                     style="background: white; border: 2px solid {{ $vm->canRedeem($reward) ? 'var(--warm-500)' : 'var(--warm-200)' }};">
+                    @if ($vm->canRedeem($reward))
                     <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold bg-warm-500 text-warm-900">Redeemable!</div>
                     @endif
                     <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-warm-100">
@@ -147,7 +130,7 @@
                     <p class="text-sm mb-3 text-warm-600">{{ $reward->description }}</p>
                     @endif
                     <div class="inline-block px-4 py-2 rounded-full bg-warm-100">
-                        <span class="font-display font-bold text-warm-800">{{ number_format($reward->points_required) }}</span>
+                        <span class="font-display font-bold text-warm-800">{{ $vm->formattedRewardPoints($reward) }}</span>
                         <span class="text-sm text-warm-500">pts</span>
                     </div>
                     <p class="text-xs mt-2 text-warm-500">{{ $reward->reward_type_label }}</p>
@@ -163,8 +146,8 @@
 <x-storefront.dark-section :show-radial="false" padding="py-20">
     <div class="max-w-4xl mx-auto px-4">
         <div class="text-center mb-12">
-            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">{{ $content['how_it_works_eyebrow'] ?? 'Simple as' }}</p>
-            <h2 class="font-display text-3xl md:text-4xl font-bold text-white">{{ $content['how_it_works_heading'] ?? 'How It Works' }}</h2>
+            <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">{{ $vm->content['how_it_works_eyebrow'] ?? 'Simple as' }}</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-white">{{ $vm->content['how_it_works_heading'] ?? 'How It Works' }}</h2>
         </div>
         @php
             $howSvgs = [
@@ -174,7 +157,7 @@
             ];
         @endphp
         <div class="grid sm:grid-cols-3 gap-10 text-center">
-            @foreach ($howSteps as $i => $step)
+            @foreach ($vm->howSteps as $i => $step)
 
             <div>
                 <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style="background: rgba(232,176,74,0.1); border: 1px solid rgba(232,176,74,0.2);">

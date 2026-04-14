@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\Enums\Platform\PlatformEventType;
 use App\Models\Platform\AdminAuditLog;
 use App\Models\Platform\PlatformActivity;
 use BackedEnum;
@@ -60,26 +61,14 @@ class Activity extends Page
 
     public static function getEventIcon(string $event): Heroicon
     {
-        return match ($event) {
-            'tenant_created' => Heroicon::OutlinedPlusCircle,
-            'tenant_deactivated' => Heroicon::OutlinedXCircle,
-            'plan_changed' => Heroicon::OutlinedArrowPath,
-            'storefront_toggled' => Heroicon::OutlinedGlobeAlt,
-            'trial_expired' => Heroicon::OutlinedClock,
-            default => Heroicon::OutlinedInformationCircle,
-        };
+        return PlatformEventType::tryFrom($event)?->getIcon()
+            ?? Heroicon::OutlinedInformationCircle;
     }
 
     public static function getEventColor(string $event): string
     {
-        return match ($event) {
-            'tenant_created' => '#d4920c',
-            'tenant_deactivated' => '#ef4444',
-            'plan_changed' => '#e8b04a',
-            'storefront_toggled' => '#8b6844',
-            'trial_expired' => '#f5d88e',
-            default => '#d4920c',
-        };
+        return PlatformEventType::tryFrom($event)?->getColor()
+            ?? '#d4920c';
     }
 
     // ── Admin Actions (Audit Trail) Methods ──

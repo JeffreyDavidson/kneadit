@@ -3,29 +3,23 @@
 namespace App\Filament\Pages\Operations;
 
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Orders\Order;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
 
 class OrderCalendar extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return Feature::active('growth-features');
+        return static::hasManagerAccess() && Feature::active('growth-features');
     }
 
     protected static function requiredTier(): SubscriptionTier

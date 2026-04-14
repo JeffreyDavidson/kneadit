@@ -40,7 +40,7 @@
                         @endif
                     </div>
                 </div>
-                <div class="item-price">${{ number_format($item->total_price, 2) }}</div>
+                <div class="item-price">@money($item->total_price)</div>
             </div>
         @endforeach
     </div>
@@ -48,7 +48,7 @@
     <div class="order-total">
         <div style="display: flex; justify-content: space-between;">
             <span class="total-label">Order Total:</span>
-            <span class="total-amount">${{ number_format($order->total, 2) }}</span>
+            <span class="total-amount">@money($order->total)</span>
         </div>
     </div>
 </div>

@@ -2,26 +2,16 @@
 
 namespace App\Filament\Pages\Operations;
 
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Queries\Orders\BakingSheetQuery;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 
 class BakingSheet extends Page
 {
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return true;
-    }
+    use RequiresManagerRole;
 
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedPrinter;
 

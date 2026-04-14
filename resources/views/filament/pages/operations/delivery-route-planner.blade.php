@@ -55,7 +55,7 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-green-600">Total Revenue</p>
-                            <p class="text-2xl font-bold text-green-900">${{ number_format($stats['total_revenue'], 2) }}</p>
+                            <p class="text-2xl font-bold text-green-900">@money($stats['total_revenue'])</p>
                         </div>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
                                         {{ $order['delivery_time'] }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        ${{ number_format($order['total'], 2) }}
+                                        @money($order['total'])
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium

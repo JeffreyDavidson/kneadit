@@ -16,17 +16,9 @@ class RevenueOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $planPrices = [
-            'starter' => 9,
-            'growth' => 19,
-            'pro' => 29,
-        ];
-
         $activeTenants = Tenant::query()->where('is_active', true)->get();
 
-        $mrr = $activeTenants->sum(function (Tenant $tenant) use ($planPrices) {
-            return $planPrices[$tenant->plan?->value] ?? 0;
-        });
+        $mrr = $activeTenants->sum(fn (Tenant $tenant) => $tenant->plan?->priceInDollars() ?? 0);
 
         $arr = $mrr * 12;
 

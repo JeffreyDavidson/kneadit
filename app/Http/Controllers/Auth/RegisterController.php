@@ -2,29 +2,20 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Staff\CreateUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\Staff\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
-    public function store(RegisterRequest $request): RedirectResponse
+    public function store(RegisterRequest $request, CreateUser $createUser): RedirectResponse
     {
-        $validated = $request->validated();
+        $user = $createUser($request->validated());
 
-        $user = User::query()->create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => $validated['password'],
-        ]);
-
-        session(['bakery_name' => $validated['bakery_name']]);
-
-        event(new Registered($user));
+        session(['bakery_name' => $request->validated('bakery_name')]);
 
         Auth::login($user);
 

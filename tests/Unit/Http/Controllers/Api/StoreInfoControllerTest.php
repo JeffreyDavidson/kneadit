@@ -49,6 +49,7 @@ test('it returns store info from TenantSettings', function () {
         pickupPolicy: '',
         additionalTerms: '',
         birthdayProgramEnabled: false,
+        birthdayCouponEnabled: false,
         birthdayDiscountPercentage: 15,
         birthdayCouponValidDays: 7,
         reviewRequestsEnabled: false,

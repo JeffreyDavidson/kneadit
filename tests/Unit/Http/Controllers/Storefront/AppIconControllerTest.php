@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Storefront\AppIconController;
 use App\Services\Settings\TenantSettings;
+use App\Services\Support\AppIconGeneratorService;
 
 test('it generates icon using brandColorPrimary from TenantSettings', function () {
     $settings = new TenantSettings(
@@ -49,6 +50,7 @@ test('it generates icon using brandColorPrimary from TenantSettings', function (
         pickupPolicy: '',
         additionalTerms: '',
         birthdayProgramEnabled: false,
+        birthdayCouponEnabled: false,
         birthdayDiscountPercentage: 15,
         birthdayCouponValidDays: 7,
         reviewRequestsEnabled: false,
@@ -58,7 +60,7 @@ test('it generates icon using brandColorPrimary from TenantSettings', function (
     );
 
     $controller = new AppIconController;
-    $response = $controller('192', $settings);
+    $response = $controller('192', $settings, new AppIconGeneratorService);
 
     // Verify the image background uses the settings color (#ff5500 = rgb(255, 85, 0))
     $img = imagecreatefromstring($response->getContent());
