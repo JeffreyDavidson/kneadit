@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Settings;
 
+use App\Enums\Platform\DnsVerificationStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Services\Platform\CustomDomainService;
@@ -35,7 +36,7 @@ class CustomDomain extends Page
 
     public ?string $custom_domain = '';
 
-    public ?string $dns_status = null;
+    public ?DnsVerificationStatus $dns_status = null;
 
     public ?string $ssl_status = null;
 
@@ -108,13 +109,13 @@ class CustomDomain extends Page
 
         Notification::make()
             ->title('Custom domain saved')
-            ->body($this->dns_status === 'verified'
+            ->body($this->dns_status === DnsVerificationStatus::Verified
                 ? 'DNS is correctly configured! SSL will be provisioned automatically.'
                 : "Please configure your DNS records — point an A record to {$serverIp}")
             ->success()
             ->send();
 
-        if ($this->dns_status === 'verified') {
+        if ($this->dns_status === DnsVerificationStatus::Verified) {
             $this->handleSslProvisioning($domain);
         }
     }
@@ -123,7 +124,7 @@ class CustomDomain extends Page
     {
         $this->refreshDnsStatus();
 
-        if ($this->dns_status === 'verified') {
+        if ($this->dns_status === DnsVerificationStatus::Verified) {
             Notification::make()
                 ->title('DNS Verified!')
                 ->body('Your domain is correctly pointing to our servers. Provisioning SSL...')
@@ -151,8 +152,8 @@ class CustomDomain extends Page
         }
 
         $this->dns_status = resolve(CustomDomainService::class)->isDnsVerified($this->custom_domain)
-            ? 'verified'
-            : 'pending';
+            ? DnsVerificationStatus::Verified
+            : DnsVerificationStatus::Pending;
     }
 
     private function handleSslProvisioning(string $domain): void

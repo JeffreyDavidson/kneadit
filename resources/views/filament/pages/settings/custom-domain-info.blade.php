@@ -14,11 +14,11 @@
     @if ($this->dns_status)
         <div @class([
             'rounded-xl border p-4',
-            'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' => $this->dns_status === 'verified',
-            'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20' => $this->dns_status === 'pending',
+            'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' => $this->dns_status === \App\Enums\Platform\DnsVerificationStatus::Verified,
+            'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20' => $this->dns_status === \App\Enums\Platform\DnsVerificationStatus::Pending,
         ])>
             <div class="flex items-center gap-2">
-                @if ($this->dns_status === 'verified')
+                @if ($this->dns_status === \App\Enums\Platform\DnsVerificationStatus::Verified)
                     <span class="text-green-600">✅</span>
                     <span class="text-sm font-medium text-green-800 dark:text-green-200">DNS Verified — Your domain is active!</span>
                 @else
