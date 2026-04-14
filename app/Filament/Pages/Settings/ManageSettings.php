@@ -3,7 +3,7 @@
 namespace App\Filament\Pages\Settings;
 
 use App\Actions\Tenants\SaveTenantSettings;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -20,22 +20,11 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
 
 class ManageSettings extends Page
 {
     use InteractsWithFormActions;
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return true;
-    }
+    use RequiresManagerRole;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 

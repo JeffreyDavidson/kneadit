@@ -6,7 +6,7 @@ use App\Actions\Orders\CreateQuickOrder;
 use App\DataTransferObjects\Orders\CreateQuickOrderData;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\PaymentMethod;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Customers\Customer;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
@@ -29,23 +29,13 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Number;
 
 class QuickOrder extends Page
 {
+    use RequiresManagerRole;
+
     protected string $view = 'filament-panels::pages.page';
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return true;
-    }
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPlusCircle;
 

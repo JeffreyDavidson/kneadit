@@ -4,7 +4,7 @@ namespace App\Filament\Pages\Tools;
 
 use App\Enums\Financial\TaxExportType;
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Financial\Expense;
 use App\Models\Financial\Income;
@@ -22,25 +22,19 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TaxExport extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     protected string $view = 'filament.pages.tools.tax-export';
 
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return Feature::active('pro-features');
+        return static::hasManagerAccess() && Feature::active('pro-features');
     }
 
     protected static function requiredTier(): SubscriptionTier

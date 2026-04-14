@@ -4,7 +4,7 @@ namespace App\Filament\Pages\Operations;
 
 use App\Actions\Customers\AddCustomerNote;
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
@@ -24,17 +24,12 @@ use Laravel\Pennant\Feature;
 
 class CustomerDirectory extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return Feature::active('growth-features');
+        return static::hasManagerAccess() && Feature::active('growth-features');
     }
 
     protected static function requiredTier(): SubscriptionTier

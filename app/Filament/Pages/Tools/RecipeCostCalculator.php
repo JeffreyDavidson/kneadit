@@ -4,29 +4,23 @@ namespace App\Filament\Pages\Tools;
 
 use App\DataTransferObjects\Financial\ProductCostAnalysis;
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Recipe;
 use App\Services\Financial\ProductFinancialService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 
 class RecipeCostCalculator extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return Feature::active('growth-features');
+        return static::hasManagerAccess() && Feature::active('growth-features');
     }
 
     protected static function requiredTier(): SubscriptionTier

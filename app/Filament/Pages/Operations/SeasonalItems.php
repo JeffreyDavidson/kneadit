@@ -3,7 +3,7 @@
 namespace App\Filament\Pages\Operations;
 
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\SeasonalItem;
@@ -19,22 +19,16 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 
 class SeasonalItems extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return Feature::active('pro-features');
+        return static::hasManagerAccess() && Feature::active('pro-features');
     }
 
     protected static function requiredTier(): SubscriptionTier
