@@ -15,9 +15,9 @@
                             </div>
                             @if ($isOpen)
                                 <div class="text-xs text-green-600 dark:text-green-500 mt-1">
-                                    {{ $day['open_time'] ? \Carbon\Carbon::parse($day['open_time'])->format('g:ia') : '' }}
+                                    {{ $day['open_time'] ? \Carbon\Carbon::createFromFormat('H:i', $day['open_time'])->format('g:ia') : '' }}
                                     -
-                                    {{ $day['close_time'] ? \Carbon\Carbon::parse($day['close_time'])->format('g:ia') : '' }}
+                                    {{ $day['close_time'] ? \Carbon\Carbon::createFromFormat('H:i', $day['close_time'])->format('g:ia') : '' }}
                                 </div>
                             @else
                                 <div class="text-xs text-gray-400 mt-1">Closed</div>

@@ -115,7 +115,7 @@
                             <span class="font-medium text-warm-800">{{ ucfirst($day) }}</span>
                             <span class="text-warm-600">
                                 @if (isset($hours['open'], $hours['close']))
-                                    {{ \Carbon\Carbon::createFromFormat('H:i', $hours['open'])->format('g:i A') }} – {{ \Carbon\Carbon::createFromFormat('H:i', $hours['close'])->format('g:i A') }}
+                                    @time($hours['open']) – @time($hours['close'])
                                 @else
                                     Closed
                                 @endif

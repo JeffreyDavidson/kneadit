@@ -67,6 +67,8 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::directive('money', fn (string $expression) => "<?php echo '\$' . number_format({$expression}, 2); ?>");
 
+        Blade::directive('time', fn (string $expression) => "<?php echo \\Carbon\\Carbon::createFromFormat('H:i', {$expression})->format('g:i A'); ?>");
+
         RateLimiter::for('webhooks', fn () => Limit::perMinute(30));
 
         Gate::define('platform-admin', fn (User $user): bool => $user->role === UserRole::PlatformAdmin);
