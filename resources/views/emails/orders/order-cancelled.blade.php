@@ -40,7 +40,7 @@
                         @endif
                     </div>
                 </div>
-                <div class="item-price">${{ number_format($item->total_price, 2) }}</div>
+                <div class="item-price">@money($item->total_price)</div>
             </div>
         @endforeach
     </div>
@@ -48,7 +48,7 @@
     <div class="order-total" style="background-color: #721c24;">
         <div style="display: flex; justify-content: space-between;">
             <span class="total-label">Cancelled Amount:</span>
-            <span class="total-amount">${{ number_format($order->total, 2) }}</span>
+            <span class="total-amount">@money($order->total)</span>
         </div>
     </div>
 </div>
@@ -58,7 +58,7 @@
         <div class="info-label">💳 Refund Information</div>
         <p style="margin: 5px 0;">Your payment has been cancelled and you will not be charged.</p>
         <p style="margin: 5px 0;"><strong>Original Payment Method:</strong> {{ $order->payment_method->getLabel() }}</p>
-        <p style="margin: 5px 0;"><strong>Refund Amount:</strong> ${{ number_format($order->total, 2) }}</p>
+        <p style="margin: 5px 0;"><strong>Refund Amount:</strong> @money($order->total)</p>
         <p style="margin: 10px 0 5px; color: #0c5460;"><em>If you were already charged, the refund will be processed within 3-5 business days.</em></p>
     </div>
 @endif

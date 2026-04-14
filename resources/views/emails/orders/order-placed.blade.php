@@ -34,7 +34,7 @@
             @endif
             <tr>
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Total</td>
-                <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 700; text-align: right; font-size: 18px;">${{ number_format($order->total, 2) }}</td>
+                <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 700; text-align: right; font-size: 18px;">@money($order->total)</td>
             </tr>
         </table>
     </div>
@@ -48,7 +48,7 @@
                 {{ $item->product?->name ?? 'Item' }} × {{ $item->quantity }}
             </td>
             <td style="padding: 8px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right; font-size: 14px;">
-                ${{ number_format($item->total_price, 2) }}
+                @money($item->total_price)
             </td>
         </tr>
         @endforeach
