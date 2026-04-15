@@ -27,7 +27,7 @@ class CustomerForm
                                 TextInput::make('email')
                                     ->email()
                                     ->required()
-                                    ->unique(ignoreRecord: true),
+                                    ->unique(),
                             ]),
 
                         Grid::make(2)

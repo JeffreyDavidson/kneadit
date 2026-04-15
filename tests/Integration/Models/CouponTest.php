@@ -13,12 +13,12 @@ beforeEach(function () {
     test()->user = User::factory()->owner()->create();
 });
 
-test('coupon has couponTransactions relationship', function () {
+test('coupon has transactions relationship', function () {
     $coupon = Coupon::factory()->create();
 
     CouponTransaction::factory()->create(['coupon_id' => $coupon->id]);
 
-    expect($coupon->couponTransactions)->toHaveCount(1);
+    expect($coupon->transactions)->toHaveCount(1);
 });
 
 test('coupon has orders relationship', function () {

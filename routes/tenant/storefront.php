@@ -12,16 +12,18 @@ use App\Http\Controllers\Storefront\LoyaltyController;
 use App\Http\Controllers\Storefront\MenuController;
 use App\Http\Controllers\Storefront\ProductWaitlistController;
 use App\Http\Controllers\Storefront\PurchaseGiftCardController;
-use App\Http\Controllers\Storefront\ReviewController;
+use App\Http\Controllers\Storefront\ReviewsIndexController;
 use App\Http\Controllers\Storefront\ShowCateringController;
 use App\Http\Controllers\Storefront\ShowGiftCardsController;
+use App\Http\Controllers\Storefront\ShowReviewFormController;
+use App\Http\Controllers\Storefront\StoreReviewController;
 use App\Http\Controllers\Storefront\SubmitCateringInquiryController;
 use App\Http\Controllers\Storefront\SurveyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('menu', MenuController::class)->name('storefront.menu');
 Route::get('about', AboutController::class)->name('storefront.about');
-Route::get('reviews', [ReviewController::class, 'index'])->name('storefront.reviews');
+Route::get('reviews', ReviewsIndexController::class)->name('storefront.reviews');
 Route::get('gallery', [GalleryController::class, 'show'])->name('storefront.gallery');
 Route::post('gallery', [GalleryController::class, 'store'])->name('gallery.submit')->middleware('throttle:10,1');
 
@@ -33,9 +35,9 @@ Route::get('rewards', [LoyaltyController::class, 'show'])->name('storefront.rewa
 Route::post('rewards/check', [LoyaltyController::class, 'store'])->name('rewards.check')->middleware('throttle:10,1');
 
 // Gift Cards
-Route::get('gift-cards', ShowGiftCardsController::class)->name('storefront.gift-cards');
-Route::post('gift-cards/purchase', PurchaseGiftCardController::class)->name('gift-cards.purchase')->middleware('throttle:5,1');
-Route::post('gift-cards/balance', CheckGiftCardBalanceController::class)->name('gift-cards.balance')->middleware('throttle:10,1');
+Route::get('gift-cards', ShowGiftCardsController::class)->name('storefront.giftCards');
+Route::post('gift-cards/purchase', PurchaseGiftCardController::class)->name('giftCards.purchase')->middleware('throttle:5,1');
+Route::post('gift-cards/balance', CheckGiftCardBalanceController::class)->name('giftCards.balance')->middleware('throttle:10,1');
 
 // Catering
 Route::get('catering', ShowCateringController::class)->name('storefront.catering');
@@ -47,12 +49,12 @@ Route::get('blog/feed.xml', StorefrontBlogFeedController::class)->name('storefro
 Route::get('blog/{post}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
 
 // Review submission (from email link)
-Route::get('review/{order}', [ReviewController::class, 'show'])->name('storefront.submit-review');
-Route::post('review/{order}', [ReviewController::class, 'store'])->name('storefront.store-review')->middleware('throttle:10,1');
+Route::get('review/{order}', ShowReviewFormController::class)->name('storefront.submitReview');
+Route::post('review/{order}', StoreReviewController::class)->name('storefront.storeReview')->middleware('throttle:10,1');
 
 // Surveys
 Route::get('survey/{survey}', [SurveyController::class, 'show'])->name('storefront.survey');
 Route::post('survey/{survey}', [SurveyController::class, 'store'])->name('survey.submit')->middleware('throttle:10,1');
 
 // Product waitlist
-Route::post('waitlist/product', ProductWaitlistController::class)->name('product-waitlist.join')->middleware('throttle:10,1');
+Route::post('waitlist/product', ProductWaitlistController::class)->name('productWaitlist.join')->middleware('throttle:10,1');

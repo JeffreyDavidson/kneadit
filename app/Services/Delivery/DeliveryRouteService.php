@@ -2,6 +2,7 @@
 
 namespace App\Services\Delivery;
 
+use App\Enums\Orders\DeliveryDistanceTier;
 use App\Models\Orders\Order;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -44,20 +45,17 @@ class DeliveryRouteService
     {
         $address = Str::lower($deliveryAddress);
 
-        if (Str::contains($address, 'downtown') ||
-            Str::contains($address, 'center') ||
-            Str::contains($address, 'main st')) {
-            return ['tier' => 'Close', 'color' => 'green', 'estimated_minutes' => 10];
-        }
+        $tier = match (true) {
+            Str::contains($address, ['downtown', 'center', 'main st']) => DeliveryDistanceTier::Close,
+            Str::contains($address, ['west', 'east', 'north', 'south']) => DeliveryDistanceTier::Medium,
+            default => DeliveryDistanceTier::Far,
+        };
 
-        if (Str::contains($address, 'west') ||
-            Str::contains($address, 'east') ||
-            Str::contains($address, 'north') ||
-            Str::contains($address, 'south')) {
-            return ['tier' => 'Medium', 'color' => 'yellow', 'estimated_minutes' => 20];
-        }
-
-        return ['tier' => 'Far', 'color' => 'red', 'estimated_minutes' => 35];
+        return [
+            'tier' => $tier->getLabel(),
+            'color' => $tier->getColor(),
+            'estimated_minutes' => $tier->estimatedMinutes(),
+        ];
     }
 
     /**

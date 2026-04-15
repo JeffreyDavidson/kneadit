@@ -2,9 +2,10 @@
 
 namespace App\Enums\Marketing;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum EmailCampaignStatus: string implements HasLabel
+enum EmailCampaignStatus: string implements HasColor, HasLabel
 {
     case Draft = 'draft';
     case Scheduled = 'scheduled';
@@ -14,5 +15,15 @@ enum EmailCampaignStatus: string implements HasLabel
     public function getLabel(): string
     {
         return ucfirst($this->value);
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Draft => 'gray',
+            self::Scheduled => 'info',
+            self::Sending => 'warning',
+            self::Sent => 'success',
+        };
     }
 }

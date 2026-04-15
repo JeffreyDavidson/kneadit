@@ -12,7 +12,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -25,7 +24,8 @@ class SocialPostsTable
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->with(['product']))
             ->columns([
-                BadgeColumn::make('platform')
+                TextColumn::make('platform')
+                    ->badge()
                     ->sortable(),
 
                 TextColumn::make('caption')
@@ -42,7 +42,8 @@ class SocialPostsTable
                     ->sortable()
                     ->placeholder('Not scheduled'),
 
-                BadgeColumn::make('status'),
+                TextColumn::make('status')
+                    ->badge(),
 
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -59,6 +60,7 @@ class SocialPostsTable
                 Action::make('schedule')
                     ->icon(Heroicon::OutlinedCalendar)
                     ->color('warning')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->modalHeading('Schedule Post')
                     ->modalDescription('Mark this post as scheduled?')
@@ -75,6 +77,7 @@ class SocialPostsTable
                     ->label('Mark Posted')
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->modalHeading('Mark as Posted')
                     ->modalDescription('Mark this post as posted?')
@@ -91,6 +94,7 @@ class SocialPostsTable
                     ->label('Revert to Draft')
                     ->icon(Heroicon::OutlinedArrowUturnLeft)
                     ->color('gray')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->modalHeading('Revert to Draft')
                     ->modalDescription('Move this post back to draft status?')

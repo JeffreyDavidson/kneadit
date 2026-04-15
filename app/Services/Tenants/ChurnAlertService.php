@@ -44,7 +44,7 @@ class ChurnAlertService
         }
 
         $trialEnds = Date::parse($tenant->trial_ends_at);
-        if (! $trialEnds->isFuture() || $trialEnds->diffInHours(now()) > config('monitoring.churn_trial_alert_hours', 48)) {
+        if (! $trialEnds->isFuture() || abs($trialEnds->diffInHours(now())) > config('monitoring.churn_trial_alert_hours', 48)) {
             return;
         }
 
@@ -114,7 +114,7 @@ class ChurnAlertService
     /** @param Collection<int, array<string, mixed>> $alerts */
     private function checkLowHealth(Tenant $tenant, int $healthScore, int $daysSinceSignup, Collection $alerts): void
     {
-        if ($healthScore >= 40) {
+        if ($healthScore >= config('monitoring.churn_low_health_threshold', 40)) {
             return;
         }
 

@@ -114,9 +114,9 @@
             <p class="text-warm-600">Minimum {{ $settings->cateringMinimumGuests }} guests · Please allow at least {{ $settings->cateringLeadTimeDays }} days lead time</p>
         </div>
 
-        @if (session('success'))
-        <x-storefront.alert variant="light"><p class="font-semibold">{{ session('success') }}</p></x-storefront.alert>
-        @endif
+        @session('success')
+        <x-storefront.alert variant="light"><p class="font-semibold">{{ $value }}</p></x-storefront.alert>
+        @endsession
 
         @if ($errors->any())
         <x-storefront.alert type="error" variant="light">
@@ -148,11 +148,11 @@
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Event Type *</label>
                     <select name="event_type" required class="input-field">
                         <option value="">Select event type...</option>
-                        <option value="wedding" {{ old('event_type') === 'wedding' ? 'selected' : '' }}>Wedding</option>
-                        <option value="corporate" {{ old('event_type') === 'corporate' ? 'selected' : '' }}>Corporate Event</option>
-                        <option value="birthday" {{ old('event_type') === 'birthday' ? 'selected' : '' }}>Birthday Party</option>
-                        <option value="holiday" {{ old('event_type') === 'holiday' ? 'selected' : '' }}>Holiday Gathering</option>
-                        <option value="other" {{ old('event_type') === 'other' ? 'selected' : '' }}>Other</option>
+                        <option value="wedding" @selected(old('event_type') === 'wedding')>Wedding</option>
+                        <option value="corporate" @selected(old('event_type') === 'corporate')>Corporate Event</option>
+                        <option value="birthday" @selected(old('event_type') === 'birthday')>Birthday Party</option>
+                        <option value="holiday" @selected(old('event_type') === 'holiday')>Holiday Gathering</option>
+                        <option value="other" @selected(old('event_type') === 'other')>Other</option>
                     </select>
                 </div>
                 <div>

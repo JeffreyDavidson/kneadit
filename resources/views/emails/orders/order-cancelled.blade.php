@@ -11,7 +11,7 @@
 @endphp
 
 
-@section('title', 'Order Cancelled - KneadIt Bakery')
+@section('title', "Order Cancelled - {$storeName}")
 
 @section('badge-color', '#dc3545')
 
@@ -27,23 +27,10 @@
 <div class="order-details">
     <div class="order-number">Order #{{ $order->order_number }}</div>
 
-    <div class="order-items">
-        <h4 style="margin-bottom: 10px; color: #8b4513;">Cancelled Items:</h4>
-        @foreach ($orderItems as $item)
-            <div class="order-item">
-                <div>
-                    <div class="item-name">{{ $item->product->name }}</div>
-                    <div class="item-details">
-                        Quantity: {{ $item->quantity }}
-                        @if ($item->special_instructions)
-                            <br><em>{{ $item->special_instructions }}</em>
-                        @endif
-                    </div>
-                </div>
-                <div class="item-price">@money($item->total_price)</div>
-            </div>
-        @endforeach
-    </div>
+    @include('emails.partials.order-items', [
+        'orderItems' => $orderItems,
+        'heading' => 'Cancelled Items:',
+    ])
 
     <div class="order-total" style="background-color: #721c24;">
         <div style="display: flex; justify-content: space-between;">
@@ -84,14 +71,14 @@
         <li><strong>Priority booking</strong> for future orders</li>
         <li><strong>Free consultation</strong> for custom orders</li>
     </ul>
-    <p style="margin: 10px 0 5px; color: #856404;"><em>Contact us to claim your discount code: (555) 123-BAKE</em></p>
+    <p style="margin: 10px 0 5px; color: #856404;"><em>Contact us to claim your discount code: {{ $storePhone ?? '' }}</em></p>
 </div>
 
 @if ($order->delivery_date?->isFuture())
     <div style="background-color: #d4edda; border-radius: 6px; padding: 15px; margin: 20px 0; border-left: 4px solid #28a745;">
         <div class="info-label">🗓️ Reschedule Your Order</div>
         <p style="margin: 5px 0;">Since your original date was {{ $order->delivery_date?->format('M j, Y') ?? 'TBD' }}, you may still have time to place a new order!</p>
-        <p style="margin: 5px 0;"><strong>Call us at (555) 123-BAKE</strong> and we'll help you find an alternative solution.</p>
+        <p style="margin: 5px 0;"><strong>Call us at {{ $storePhone ?? '' }}</strong> and we'll help you find an alternative solution.</p>
     </div>
 @endif
 
@@ -104,9 +91,9 @@
     </div>
 @endif
 
-<p><strong>Questions or concerns?</strong> Please don't hesitate to contact us. We're here to help and want to ensure you have a positive experience with KneadIt Bakery.</p>
+<p><strong>Questions or concerns?</strong> Please don't hesitate to contact us. We're here to help and want to ensure you have a positive experience with {{ $storeName }}.</p>
 
 <p style="color: #666; font-size: 14px;">
-    <em>Contact us: (555) 123-BAKE | hello@kneaditbakery.com</em>
+    <em>Contact us: {{ $storePhone ?? '' }} | {{ $storeEmail ?? '' }}</em>
 </p>
 @endsection

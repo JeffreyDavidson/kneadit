@@ -16,7 +16,8 @@ arch('console command classes must end with Command')
 
 arch('controllers must end with Controller')
     ->expect('App\Http\Controllers')
-    ->toHaveSuffix('Controller');
+    ->toHaveSuffix('Controller')
+    ->ignoring('App\Http\Controllers\Stripe\Concerns');
 
 arch('policies must end with Policy')
     ->expect('App\Policies')

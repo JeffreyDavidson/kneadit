@@ -17,8 +17,8 @@ class TokenManager
 
     public function __construct()
     {
-        $this->clientId = config('services.paypal.client_id');
-        $this->clientSecret = config('services.paypal.client_secret');
+        $this->clientId = settings('paypal_client_id') ?: config('services.paypal.client_id');
+        $this->clientSecret = settings('paypal_client_secret') ?: config('services.paypal.client_secret');
         $this->baseUrl = config('services.paypal.sandbox', true)
             ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';
@@ -44,7 +44,7 @@ class TokenManager
                 return $this->accessToken;
             }
 
-            Log::error('Failed to get PayPal access token', ['response' => $response->json()]);
+            Log::error('Failed to get PayPal access token', ['status' => $response->status()]);
 
             return null;
         } catch (\Exception $e) {

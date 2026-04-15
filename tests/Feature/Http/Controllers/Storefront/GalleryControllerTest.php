@@ -1,15 +1,21 @@
 <?php
 
 use App\Models\Customers\CustomerPhoto;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\withoutMiddleware;
 
-uses(RefreshDatabase::class);
-
 beforeEach(fn () => setUpTenantTest());
+
+test('gallery controller passes settings and content to view', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.gallery', [], false));
+
+    $response->assertOk()
+        ->assertViewHas('settings')
+        ->assertViewHas('content');
+});
 
 test('can submit a gallery photo', function () {
     Storage::fake('public');

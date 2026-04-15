@@ -14,7 +14,7 @@ test('swap plan returns 404 for invalid plan', function () {
     $user = User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->post('/billing/swap/nonexistent-plan')
+        ->post(route('billing.swap', 'nonexistent-plan'))
         ->assertNotFound();
 });
 
@@ -60,8 +60,8 @@ test('swap plan shows error when stripe throws exception', function () {
 });
 
 test('swap plan requires authentication', function () {
-    $this->post('/billing/swap/starter')
-        ->assertRedirect('/login');
+    $this->post(route('billing.swap', 'starter'))
+        ->assertRedirect(route('login'));
 });
 
 test('swap plan handles null subscription gracefully', function () {

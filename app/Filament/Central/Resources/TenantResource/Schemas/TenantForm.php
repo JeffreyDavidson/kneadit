@@ -25,7 +25,7 @@ class TenantForm
                             TextInput::make('id')
                                 ->label('Subdomain / ID')
                                 ->required()
-                                ->unique(ignoreRecord: true)
+                                ->unique()
                                 ->alphaDash()
                                 ->placeholder('sweet-bakes')
                                 ->helperText('This becomes their subdomain: sweet-bakes.getkneadit.app')

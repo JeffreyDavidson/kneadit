@@ -50,7 +50,7 @@ class AvailabilityService
             return ['date' => $dateStr, 'available' => false, 'reason' => 'Closed', 'remaining_capacity' => 0];
         }
 
-        $maxOrders = $schedule->max_orders ?? (int) settings('default_daily_capacity', 100);
+        $maxOrders = $schedule->max_orders ?? (int) settings('default_daily_capacity', 20);
         $currentOrders = Order::query()->whereDate('delivery_date', $dateStr)
             ->whereNotIn('status', [OrderStatus::Cancelled])
             ->count();

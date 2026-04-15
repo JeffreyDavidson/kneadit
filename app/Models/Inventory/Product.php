@@ -9,6 +9,7 @@ use App\Models\Customers\CustomerPhoto;
 use App\Models\Engagement\PageView;
 use App\Models\Engagement\Review;
 use App\Models\Orders\OrderItem;
+use App\Presenters\ProductPresenter;
 use App\Support\ProfitMargin;
 use Database\Factories\Inventory\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -104,6 +105,8 @@ class Product extends Model
     {
         return Attribute::make(
             get: function () {
+                $this->loadMissing('primaryImage');
+
                 if ($primary = $this->primaryImage) {
                     return Storage::disk('public')->url($primary->path);
                 }
@@ -194,12 +197,13 @@ class Product extends Model
     {
         return Attribute::make(
             get: function () {
-                $seasonalItems = $this->seasonalItems;
-                if ($seasonalItems->isEmpty()) {
+                $this->loadMissing('seasonalItems');
+
+                if ($this->seasonalItems->isEmpty()) {
                     return true;
                 }
 
-                return $seasonalItems->contains(fn (SeasonalItem $item) => $item->is_currently_available);
+                return $this->seasonalItems->contains(fn (SeasonalItem $item) => $item->is_currently_available);
             },
         );
     }
@@ -208,17 +212,7 @@ class Product extends Model
     protected function seasonalBadge(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                $seasonal = $this->seasonalItems->first();
-                if (! $seasonal) {
-                    return null;
-                }
-                if ($seasonal->is_currently_available) {
-                    return 'Limited Time';
-                }
-
-                return 'Available ' . $seasonal->available_from?->format('M') . ' - ' . $seasonal->available_until?->format('M');
-            },
+            get: fn () => (new ProductPresenter($this))->seasonalBadge(),
         );
     }
 

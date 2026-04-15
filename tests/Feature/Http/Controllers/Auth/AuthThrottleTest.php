@@ -7,7 +7,7 @@ beforeEach(function () {
 
 test('register endpoint is rate limited', function () {
     for ($i = 0; $i < 6; $i++) {
-        $this->post('/register', [
+        $this->post(route('register'), [
             'name' => 'Test',
             'email' => "test{$i}@example.com",
             'password' => 'password123',
@@ -17,7 +17,7 @@ test('register endpoint is rate limited', function () {
         ]);
     }
 
-    $response = $this->post('/register', [
+    $response = $this->post(route('register'), [
         'name' => 'Test',
         'email' => 'final@example.com',
         'password' => 'password123',

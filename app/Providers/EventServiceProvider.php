@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Events\Customers\BirthdayDiscountGenerated;
 use App\Events\Customers\CustomerBirthday;
 use App\Events\Customers\RepeatOrderReminderDue;
 use App\Events\Customers\ReviewRequested;
@@ -19,7 +18,6 @@ use App\Events\Platform\TenantOnboarded;
 use App\Events\Platform\TrialExpired;
 use App\Events\Platform\TrialReminding;
 use App\Events\Platform\WeeklyDigestRequested;
-use App\Listeners\Customers\SendBirthdayDiscountEmailListener;
 use App\Listeners\Customers\SendHappyBirthdayEmailListener;
 use App\Listeners\Customers\SendRepeatOrderReminderEmailListener;
 use App\Listeners\Customers\SendReviewRequestEmailListener;
@@ -52,9 +50,6 @@ class EventServiceProvider extends ServiceProvider
 {
     /** @var array<class-string, list<class-string>> */
     protected array $listen = [
-        BirthdayDiscountGenerated::class => [
-            SendBirthdayDiscountEmailListener::class,
-        ],
         CustomerBirthday::class => [
             SendHappyBirthdayEmailListener::class,
         ],

@@ -2,7 +2,6 @@
 
 namespace App\Models\Operations;
 
-use Carbon\Carbon;
 use Database\Factories\Operations\HolidayFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -10,24 +9,27 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
 /**
  * @property int $id
  * @property string $name
- * @property \Illuminate\Support\Carbon $date
+ * @property Carbon $date
  * @property int $lead_days
  * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $order_deadline
- * @property \Illuminate\Support\Carbon|null $prep_start
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $order_deadline
+ * @property Carbon|null $prep_start
  * @property int|null $max_orders
  * @property bool $is_active
  * @property-read int $days_away
  * @property-read bool $is_in_prep_period
  * @property-read bool $is_upcoming
- * @property-read Carbon $start_prep_by\n * @property-read int $days_until_deadline\n * @property-read bool $is_deadline_passed
+ * @property-read Carbon $start_prep_by
+ * @property-read int $days_until_deadline
+ * @property-read bool $is_deadline_passed
  *
  * @method static Builder<static>|Holiday active()
  * @method static \Database\Factories\HolidayFactory factory($count = null, $state = [])
@@ -48,8 +50,10 @@ class Holiday extends Model
     {
         return [
             'date' => 'date',
+            'lead_days' => 'integer',
             'order_deadline' => 'date',
             'prep_start' => 'date',
+            'max_orders' => 'integer',
             'is_active' => 'boolean',
         ];
     }
@@ -66,7 +70,7 @@ class Holiday extends Model
     protected function startPrepBy(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->date->subDays($this->lead_days ?? 7),
+            get: fn () => $this->date->copy()->subDays($this->lead_days ?? 7),
         );
     }
 

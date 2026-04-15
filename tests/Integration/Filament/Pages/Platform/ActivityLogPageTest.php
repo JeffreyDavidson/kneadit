@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Operations\ActivityAction;
 use App\Filament\Pages\Platform\ActivityLogPage;
 use App\Models\Operations\ActivityLog;
 
@@ -89,7 +90,7 @@ test('get action types property returns array', function () {
 
     $types = test()->page->getActionTypesProperty();
 
-    expect($types)->toBeArray()->toContain('created')->toContain('updated');
+    expect($types)->toBeArray()->toContain(ActivityAction::Created)->toContain(ActivityAction::Updated);
 });
 
 test('get model types property returns array of arrays', function () {

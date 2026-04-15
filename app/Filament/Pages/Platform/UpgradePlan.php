@@ -24,14 +24,14 @@ class UpgradePlan extends Page
 
     protected string $view = 'filament.pages.platform.upgrade-plan';
 
-    public string $currentPlan = 'starter';
+    public string $currentPlan = SubscriptionTier::Starter->value;
 
     /** @var array<string, mixed> */
     public array $plans = [];
 
     public function mount(): void
     {
-        $this->currentPlan = tenant()->plan?->value ?? 'starter';
+        $this->currentPlan = tenant()->plan?->value ?? SubscriptionTier::Starter->value;
 
         $this->plans = [
             SubscriptionTier::Starter->value => [

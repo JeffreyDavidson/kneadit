@@ -5,16 +5,14 @@ namespace App\Filament\Resources\CateringInquiries\Tables;
 use App\Actions\Customers\TransitionCateringInquiryStatus;
 use App\Enums\Customers\CateringEventType;
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Filament\Filters\DateRangeFilter;
 use App\Models\Customers\CateringInquiry;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\DatePicker;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class CateringInquiriesTable
 {
@@ -50,33 +48,14 @@ class CateringInquiriesTable
                     ->options(CateringInquiryStatus::class),
                 SelectFilter::make('event_type')
                     ->options(CateringEventType::class),
-                Filter::make('event_date')
-                    ->schema([
-                        DatePicker::make('from'),
-                        DatePicker::make('until'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when($data['from'], fn (Builder $q, string $date) => $q->whereDate('event_date', '>=', $date))
-                            ->when($data['until'], fn (Builder $q, string $date) => $q->whereDate('event_date', '<=', $date));
-                    })
-                    ->indicateUsing(function (array $data): array {
-                        $indicators = [];
-                        if ($data['from'] ?? null) {
-                            $indicators[] = 'From ' . \Illuminate\Support\Facades\Date::parse($data['from'])->toFormattedDateString();
-                        }
-                        if ($data['until'] ?? null) {
-                            $indicators[] = 'Until ' . \Illuminate\Support\Facades\Date::parse($data['until'])->toFormattedDateString();
-                        }
-
-                        return $indicators;
-                    }),
+                DateRangeFilter::make('event_date'),
             ])
             ->recordActions([
                 Action::make('send_quote')
                     ->label('Send Quote')
                     ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('info')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->modalHeading('Send Quote to Customer')
                     ->modalDescription(fn (CateringInquiry $record) => "Send a quote of \${$record->quoted_amount} to {$record->customer_email}?")
@@ -86,6 +65,7 @@ class CateringInquiriesTable
                     ->label('Confirm')
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->visible(fn (CateringInquiry $record) => $record->status === CateringInquiryStatus::Quoted)
                     ->action(fn (CateringInquiry $record) => resolve(TransitionCateringInquiryStatus::class)($record, CateringInquiryStatus::Confirmed)),

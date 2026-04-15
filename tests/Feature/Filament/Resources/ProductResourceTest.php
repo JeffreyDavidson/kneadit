@@ -13,8 +13,8 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
-    $this->category = Category::factory()->create();
+    test()->actingAs(User::factory()->owner()->create());
+    test()->category = Category::factory()->create();
 });
 
 test('can render products list page', function () {
@@ -23,7 +23,7 @@ test('can render products list page', function () {
 });
 
 test('can list products in the table', function () {
-    $products = Product::factory()->recycle($this->category)->count(3)->create();
+    $products = Product::factory()->recycle(test()->category)->count(3)->create();
 
     Livewire::test(ListProducts::class)
         ->assertCanSeeTableRecords($products);
@@ -40,7 +40,7 @@ test('can search products by name', function () {
 });
 
 test('can render product table columns', function (string $column) {
-    Product::factory()->recycle($this->category)->create();
+    Product::factory()->recycle(test()->category)->create();
 
     Livewire::test(ListProducts::class)
         ->assertCanRenderTableColumn($column);
@@ -58,7 +58,7 @@ test('can create a product via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Product::class, [
+    test()->assertDatabaseHas(Product::class, [
         'name' => 'Ciabatta Roll',
         'slug' => 'ciabatta-roll',
     ]);
@@ -105,7 +105,7 @@ test('can sort products by name', function () {
 });
 
 test('can edit a product via table action', function () {
-    $product = Product::factory()->recycle($this->category)->create();
+    $product = Product::factory()->recycle(test()->category)->create();
 
     Livewire::test(ListProducts::class)
         ->callAction(TestAction::make('edit')->table($product), data: [
@@ -125,14 +125,14 @@ test('resource returns globally searchable attributes', function () {
 });
 
 test('resource returns global search result title', function () {
-    $product = Product::factory()->recycle($this->category)->create(['name' => 'Ciabatta']);
+    $product = Product::factory()->recycle(test()->category)->create(['name' => 'Ciabatta']);
 
     expect(App\Filament\Resources\Products\ProductResource::getGlobalSearchResultTitle($product))
         ->toBe('Ciabatta');
 });
 
 test('resource returns global search result details', function () {
-    $product = Product::factory()->recycle($this->category)->create(['price' => 5.50]);
+    $product = Product::factory()->recycle(test()->category)->create(['price' => 5.50]);
 
     $details = App\Filament\Resources\Products\ProductResource::getGlobalSearchResultDetails($product);
 

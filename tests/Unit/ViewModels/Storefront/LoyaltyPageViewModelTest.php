@@ -7,7 +7,7 @@ use App\Services\Settings\TenantSettings;
 use App\ValueObjects\LoyaltyBalance;
 use App\ViewModels\Storefront\LoyaltyPageViewModel;
 
-function makeTenantSettings(): TenantSettings
+function makeLoyaltyTenantSettings(): TenantSettings
 {
     return new TenantSettings(
         storeName: 'Test Bakery',
@@ -67,7 +67,7 @@ function makeTenantSettings(): TenantSettings
 function makeLoyaltyVm(array $overrides = []): LoyaltyPageViewModel
 {
     $defaults = [
-        'settings' => makeTenantSettings(),
+        'settings' => makeLoyaltyTenantSettings(),
         'customer' => null,
         'balance' => new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
         'history' => collect(),

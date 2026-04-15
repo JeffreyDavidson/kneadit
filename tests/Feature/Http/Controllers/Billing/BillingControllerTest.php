@@ -15,7 +15,7 @@ test('checkout rejects invalid plan', function () {
     $user = User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->post('/billing/checkout/nonexistent')
+        ->post(route('billing.checkout', 'nonexistent'))
         ->assertNotFound();
 });
 
@@ -23,7 +23,7 @@ test('swap rejects invalid plan', function () {
     $user = User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->post('/billing/swap/nonexistent')
+        ->post(route('billing.swap', 'nonexistent'))
         ->assertNotFound();
 });
 
@@ -33,6 +33,6 @@ test('checkout rejects plan without configured price', function () {
     $user = User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->post('/billing/checkout/starter')
+        ->post(route('billing.checkout', 'starter'))
         ->assertNotFound();
 });

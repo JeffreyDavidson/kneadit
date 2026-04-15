@@ -41,6 +41,7 @@ class FeatureUsageLog extends Model
     protected function casts(): array
     {
         return [
+            'usage_count' => 'integer',
             'last_used_at' => 'datetime',
             'date' => 'date',
             'created_at' => 'datetime',

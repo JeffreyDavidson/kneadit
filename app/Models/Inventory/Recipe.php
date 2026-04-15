@@ -37,6 +37,7 @@ class Recipe extends Model
     {
         return [
             'ingredients' => 'json',
+            'prep_time_minutes' => 'integer',
             'cost' => 'decimal:2',
         ];
     }
@@ -53,9 +54,13 @@ class Recipe extends Model
     protected function profitMargin(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->product && $this->cost
-                ? ProfitMargin::calculate((float) $this->product->price, (float) $this->cost, 1)
-                : null,
+            get: function () {
+                $this->loadMissing('product');
+
+                return $this->product && $this->cost
+                    ? ProfitMargin::calculate((float) $this->product->price, (float) $this->cost, 1)
+                    : null;
+            },
         );
     }
 

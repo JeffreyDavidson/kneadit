@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[ObservedBy(ProductImageObserver::class)]
 class ProductImage extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductImageFactory> */
+    /** @use HasFactory<ProductImageFactory> */
     use HasFactory;
 
     protected function casts(): array

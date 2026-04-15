@@ -2,12 +2,15 @@
 
 namespace App\Filament\Pages\Dashboard;
 
+use App\Filament\Concerns\RequiresManagerRole;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 
 class DashboardConfig extends Page
 {
+    use RequiresManagerRole;
+
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     protected static ?string $navigationLabel = 'Dashboard Configuration';

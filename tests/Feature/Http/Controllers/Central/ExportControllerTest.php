@@ -3,13 +3,10 @@
 use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-
-uses(RefreshDatabase::class);
 
 function createAdmin(): User
 {
@@ -32,20 +29,14 @@ function insertTenant(string $id = 'test-bakery'): string
 }
 
 beforeEach(function () {
+    setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
-    config(['database.connections.central' => config('database.connections.sqlite')]);
-
-    DB::purge('central');
-    $pdo = DB::connection('sqlite')->getPdo();
-    DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
-
-    createCentralTables();
 });
 
 test('unauthenticated request returns 403', function () {
     $id = insertTenant();
 
-    $response = get("/admin/export/{$id}/products");
+    $response = get(route('central.export', [$id, 'products']));
 
     $response->assertForbidden();
 });
@@ -54,7 +45,7 @@ test('invalid export type returns 404', function () {
     $id = insertTenant();
 
     $response = actingAs(createAdmin())
-        ->get("/admin/export/{$id}/invalid");
+        ->get(route('central.export', [$id, 'invalid']));
 
     $response->assertNotFound();
 });
@@ -63,7 +54,7 @@ test('products csv export returns correct content type', function () {
     $id = insertTenant();
 
     $response = actingAs(createAdmin())
-        ->get("/admin/export/{$id}/products");
+        ->get(route('central.export', [$id, 'products']));
 
     $response->assertOk();
     expect($response->headers->get('content-type'))->toContain('text/csv');
@@ -73,7 +64,7 @@ test('categories csv export works', function () {
     $id = insertTenant();
 
     $response = actingAs(createAdmin())
-        ->get("/admin/export/{$id}/categories");
+        ->get(route('central.export', [$id, 'categories']));
 
     $response->assertOk();
     expect($response->headers->get('content-type'))->toContain('text/csv');
@@ -83,7 +74,7 @@ test('orders csv export works', function () {
     $id = insertTenant();
 
     $response = actingAs(createAdmin())
-        ->get("/admin/export/{$id}/orders");
+        ->get(route('central.export', [$id, 'orders']));
 
     $response->assertOk();
     expect($response->headers->get('content-type'))->toContain('text/csv');
@@ -93,7 +84,7 @@ test('customers csv export works', function () {
     $id = insertTenant();
 
     $response = actingAs(createAdmin())
-        ->get("/admin/export/{$id}/customers");
+        ->get(route('central.export', [$id, 'customers']));
 
     $response->assertOk();
     expect($response->headers->get('content-type'))->toContain('text/csv');
@@ -103,7 +94,7 @@ test('reviews csv export works', function () {
     $id = insertTenant();
 
     $response = actingAs(createAdmin())
-        ->get("/admin/export/{$id}/reviews");
+        ->get(route('central.export', [$id, 'reviews']));
 
     $response->assertOk();
     expect($response->headers->get('content-type'))->toContain('text/csv');
@@ -113,7 +104,7 @@ test('all zip export returns zip content type', function () {
     $id = insertTenant();
 
     $response = actingAs(createAdmin())
-        ->get("/admin/export/{$id}/all");
+        ->get(route('central.export', [$id, 'all']));
 
     $response->assertOk();
     expect($response->headers->get('content-type'))->toContain('application/zip');
@@ -121,7 +112,7 @@ test('all zip export returns zip content type', function () {
 
 test('non-existent tenant returns 404', function () {
     $response = actingAs(createAdmin())
-        ->get('/admin/export/non-existent-tenant/products');
+        ->get(route('central.export', ['non-existent-tenant', 'products']));
 
     $response->assertNotFound();
 });
@@ -131,7 +122,7 @@ test('non-admin user is forbidden from exporting', function () {
     $user = User::factory()->create(['role' => UserRole::Owner]);
 
     $response = actingAs($user)
-        ->get("/admin/export/{$id}/products");
+        ->get(route('central.export', [$id, 'products']));
 
     $response->assertForbidden();
 });

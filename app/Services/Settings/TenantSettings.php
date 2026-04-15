@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Storage;
 
 final class TenantSettings
 {
+    public const string DEFAULT_BRAND_COLOR = '#d4920c';
+
     private const string DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
     private const string CATERING_HERO_IMAGE = 'https://images.unsplash.com/photo-1555244162-803834f70033?w=1920&q=80';
@@ -56,7 +58,7 @@ final class TenantSettings
         public readonly array $operatingHours,
         public readonly array $faqItems,
         public readonly string $loyaltyProgramName,
-        public readonly string $loyaltyPointsPerDollar,
+        public readonly int $loyaltyPointsPerDollar,
         public readonly bool $loyaltyEnabled,
         public readonly string $cateringMinimumGuests,
         public readonly string $cateringLeadTimeDays,
@@ -206,7 +208,7 @@ final class TenantSettings
             storeWebsite: settings('store_website'),
             storeLogo: settings('store_logo'),
             storeTagline: settings('store_tagline'),
-            brandColorPrimary: (string) (tenant()?->brand_color_primary ?? '#d4920c'),
+            brandColorPrimary: (string) (tenant()?->brand_color_primary ?? self::DEFAULT_BRAND_COLOR),
             onboardingCompletedAt: settings('onboarding_completed_at'),
             storefrontTheme: (string) settings('storefront_theme', 'classic'),
             businessTagline: settings('business_tagline'),
@@ -225,7 +227,7 @@ final class TenantSettings
             operatingHours: (array) json_decode((string) settings('operating_hours', '{}'), true),
             faqItems: (array) json_decode((string) settings('faq_items', '[]'), true),
             loyaltyProgramName: (string) settings('loyalty_program_name', 'Rewards'),
-            loyaltyPointsPerDollar: (string) settings('loyalty_points_per_dollar', '10'),
+            loyaltyPointsPerDollar: (int) settings('loyalty_points_per_dollar', '10'),
             loyaltyEnabled: settings('loyalty_enabled', '1') === '1',
             cateringMinimumGuests: (string) settings('catering_minimum_guests', '10'),
             cateringLeadTimeDays: (string) settings('catering_lead_time_days', '14'),

@@ -29,13 +29,7 @@ class RecentActivityWidget extends BaseWidget
                 TextColumn::make('user_name')
                     ->label('User'),
                 TextColumn::make('action')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'created' => 'success',
-                        'updated' => 'info',
-                        'deleted' => 'danger',
-                        default => 'gray',
-                    }),
+                    ->badge(),
                 TextColumn::make('description')
                     ->label('Description')
                     ->limit(60),

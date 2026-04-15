@@ -3,7 +3,6 @@
 namespace App\Services\Loyalty;
 
 use App\Enums\Engagement\LoyaltyPointType;
-use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
@@ -47,30 +46,8 @@ class LoyaltyLedger
         ]);
     }
 
-    public function redeem(Customer $customer, int $points, string $description): LoyaltyPoint
-    {
-        return LoyaltyPoint::query()->create([
-            'customer_id' => $customer->id,
-            'points' => $points,
-            'type' => LoyaltyPointType::Redeemed,
-            'description' => $description,
-        ]);
-    }
-
-    public function adjust(Customer $customer, int $points, string $description): LoyaltyPoint
-    {
-        return LoyaltyPoint::query()->create([
-            'customer_id' => $customer->id,
-            'points' => $points,
-            'type' => LoyaltyPointType::Adjusted,
-            'description' => $description,
-        ]);
-    }
-
     private function calculatePoints(Order $order): int
     {
-        $pointsPerDollar = (int) $this->settings->loyalty->pointsPerDollar;
-
-        return (int) floor((float) $order->total * $pointsPerDollar);
+        return (int) floor((float) $order->total * $this->settings->loyalty->pointsPerDollar);
     }
 }

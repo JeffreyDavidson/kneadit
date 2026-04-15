@@ -7,8 +7,7 @@ use App\Models\Financial\Coupon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -26,12 +25,8 @@ class CouponsTable
                     ->searchable()
                     ->sortable(),
 
-                BadgeColumn::make('type')
-                    ->colors([
-                        'primary' => CouponType::Percentage->value,
-                        'success' => CouponType::Fixed->value,
-                    ])
-                    ->formatStateUsing(fn (mixed $state): string => ucfirst($state instanceof CouponType ? $state->value : $state)),
+                TextColumn::make('type')
+                    ->badge(),
 
                 TextColumn::make('value')
                     ->money('USD')
@@ -61,7 +56,8 @@ class CouponsTable
                     ->sortable()
                     ->placeholder('Never'),
 
-                BooleanColumn::make('is_active'),
+                IconColumn::make('is_active')
+                    ->boolean(),
             ])
             ->filters([
                 SelectFilter::make('type')

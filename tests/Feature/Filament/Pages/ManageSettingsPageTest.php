@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('manage settings page can save store name', function () {

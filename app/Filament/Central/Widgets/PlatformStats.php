@@ -39,7 +39,7 @@ class PlatformStats extends StatsOverviewWidget
         for ($i = 5; $i >= 0; $i--) {
             $monthEnd = now()->subMonths($i)->endOfMonth();
             $activeInMonth = $allTenants->filter(fn (Tenant $t) => $t->is_active && $t->created_at <= $monthEnd);
-            $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $planPrices[$t->plan] ?? 0);
+            $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $t->plan?->priceInDollars() ?? 0);
             $bakeryChart[] = $allTenants->filter(fn (Tenant $t) => $t->created_at <= $monthEnd)->count();
             $trialChart[] = $allTenants->filter(fn (Tenant $t) => $t->trial_ends_at && $t->trial_ends_at > $monthEnd && $t->created_at <= $monthEnd)->count();
         }

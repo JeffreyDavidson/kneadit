@@ -54,7 +54,7 @@
             @endforeach
         </div>
 
-        <form action="{{ route('storefront.store-review', $order) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+        <form action="{{ route('storefront.storeReview', $order) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
             @csrf
 
             {{-- Star Rating --}}

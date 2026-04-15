@@ -10,7 +10,7 @@ use Stancl\Tenancy\Contracts\Tenant as TenantContract;
 
 beforeEach(function () {
     setUpCentralTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 
     DB::table('tenants')->insert([
         'id' => 'test-bakery',

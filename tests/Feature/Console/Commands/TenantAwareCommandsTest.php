@@ -2,7 +2,7 @@
 
 use App\Console\Commands\Customers\SendBirthdayEmailsCommand;
 use App\Console\Commands\Customers\SendRepeatOrderRemindersCommand;
-use App\Console\Commands\Stripe\CheckPayPalPaymentsCommand;
+use App\Console\Commands\PayPal\CheckPayPalPaymentsCommand;
 
 beforeEach(function () {
     setUpCentralTest();

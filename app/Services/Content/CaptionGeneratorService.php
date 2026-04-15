@@ -2,6 +2,7 @@
 
 namespace App\Services\Content;
 
+use App\Enums\Content\CaptionStyle;
 use App\Models\Inventory\Product;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -11,7 +12,7 @@ class CaptionGeneratorService
     /**
      * @return array<int, array{text: string, variation: int}>
      */
-    public function generate(Product $product, string $style, string $tone, int $count = 3): array
+    public function generate(Product $product, CaptionStyle $style, string $tone, int $count = 3): array
     {
         $hooks = $this->hooksByStyle($style);
         $hashtags = $this->hashtagsByCategory($product->category->name ?? 'bakery');
@@ -33,7 +34,7 @@ class CaptionGeneratorService
     }
 
     /** @return array<int, string> */
-    private function hooksByStyle(string $style): array
+    private function hooksByStyle(CaptionStyle $style): array
     {
         $hooks = [
             'playful' => [
@@ -94,7 +95,7 @@ class CaptionGeneratorService
             ],
         ];
 
-        return $hooks[$style] ?? $hooks['playful'];
+        return $hooks[$style->value] ?? $hooks[CaptionStyle::Playful->value];
     }
 
     private function buildBody(Product $product, string $tone): string

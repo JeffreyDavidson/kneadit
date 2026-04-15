@@ -2,6 +2,7 @@
 
 namespace App\Actions\Tenants;
 
+use App\Enums\Orders\PaymentMethod;
 use App\Services\Settings\SettingsManager;
 
 class SaveTenantSettings
@@ -24,7 +25,7 @@ class SaveTenantSettings
             'repeat_reminders_enabled' => $data['repeat_reminders_enabled'],
             'birthday_program_enabled' => $data['birthday_program_enabled'],
             'payment_methods' => json_encode($data['payment_methods']),
-            'payment_method' => $data['payment_methods'][0] ?? 'cash',
+            'payment_method' => $data['payment_methods'][0] ?? PaymentMethod::Cash->value,
             'allergy_disclaimer' => $data['allergy_disclaimer'],
             'revenue_cap' => $data['revenue_cap'],
             'cancellation_policy' => $data['cancellation_policy'],
@@ -35,7 +36,7 @@ class SaveTenantSettings
             'show_policies_on_storefront' => $data['show_policies_on_storefront'] ? '1' : '0',
         ];
 
-        if (in_array('paypal', $data['payment_methods'] ?? [])) {
+        if (in_array(PaymentMethod::PayPal->value, $data['payment_methods'] ?? [])) {
             $settings['paypal_client_id'] = $data['paypal_client_id'];
             $settings['paypal_client_secret'] = $data['paypal_client_secret'];
             $settings['paypal_sandbox'] = $data['paypal_sandbox'] ? '1' : '0';

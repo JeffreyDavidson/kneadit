@@ -18,9 +18,9 @@
         <h1>{{ __('auth.forgot_password.heading') }}</h1>
         <p class="subtitle">{{ __('auth.forgot_password.subtitle') }}</p>
 
-        @if (session('status'))
-            <div class="status-msg">{{ session('status') }}</div>
-        @endif
+        @session('status')
+            <div class="status-msg">{{ $value }}</div>
+        @endsession
 
         <form method="POST" action="{{ route('password.email') }}">
             @csrf

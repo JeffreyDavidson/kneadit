@@ -12,7 +12,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('can list settings in the table', function () {
@@ -30,7 +30,7 @@ test('can create a setting via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Setting::class, [
+    test()->assertDatabaseHas(Setting::class, [
         'key' => 'bakery_tagline',
     ]);
 });

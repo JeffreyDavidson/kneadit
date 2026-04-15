@@ -2,6 +2,7 @@
 
 namespace App\Models\Operations;
 
+use App\Enums\Operations\ActivityAction;
 use App\Models\Staff\User;
 use App\Observers\Platform\ActivityLogObserver;
 use Database\Factories\Operations\ActivityLogFactory;
@@ -33,6 +34,7 @@ class ActivityLog extends Model
     protected function casts(): array
     {
         return [
+            'action' => ActivityAction::class,
             'properties' => 'array',
             'created_at' => 'datetime',
         ];

@@ -47,10 +47,10 @@ class OrderStatusMail extends BaseMailable
 
         return match ($this->status) {
             OrderStatus::Confirmed => "Order #{$number} Confirmed — {$storeName}",
-            OrderStatus::Baking => "Your Order #{$number} is Being Prepared - KneadIt Bakery",
+            OrderStatus::Baking => "Your Order #{$number} is Being Prepared — {$storeName}",
             OrderStatus::Ready => "Order #{$number} is Ready! — {$storeName}",
-            OrderStatus::Delivered => "Order #{$number} Delivered - KneadIt Bakery",
-            OrderStatus::Cancelled => "Order #{$number} Cancelled - KneadIt Bakery",
+            OrderStatus::Delivered => "Order #{$number} Delivered — {$storeName}",
+            OrderStatus::Cancelled => "Order #{$number} Cancelled — {$storeName}",
             default => "Order #{$number} Update — {$storeName}",
         };
     }

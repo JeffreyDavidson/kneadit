@@ -1,11 +1,8 @@
 <?php
 
 use App\Models\Financial\GiftCard;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;
-
-uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
@@ -17,7 +14,7 @@ test('check balance returns card details for valid code', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-cards.balance', [], false), [
+        ->postJson(route('giftCards.balance', [], false), [
             'code' => 'BAL-CHECK-1234',
         ]);
 
@@ -27,7 +24,7 @@ test('check balance returns card details for valid code', function () {
 
 test('check balance returns 404 for invalid code', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-cards.balance', [], false), [
+        ->postJson(route('giftCards.balance', [], false), [
             'code' => 'INVALID-CODE',
         ]);
 

@@ -10,7 +10,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -40,12 +39,13 @@ class ReviewsTable
                     ->searchable()
                     ->placeholder('General review'),
 
-                BadgeColumn::make('rating')
-                    ->colors([
-                        'danger' => fn (int $state) => $state <= 2,
-                        'warning' => 3,
-                        'success' => fn (int $state) => $state >= 4,
-                    ])
+                TextColumn::make('rating')
+                    ->badge()
+                    ->color(fn (int $state): string => match (true) {
+                        $state <= 2 => 'danger',
+                        $state === 3 => 'warning',
+                        default => 'success',
+                    })
                     ->formatStateUsing(fn (int $state) => $state . ' ★'),
 
                 TextColumn::make('comment')
@@ -100,12 +100,14 @@ class ReviewsTable
                 Action::make('approve')
                     ->icon(Heroicon::OutlinedCheck)
                     ->color('success')
+                    ->authorize('update')
                     ->action(fn (Review $record) => resolve(ApproveReview::class)($record))
                     ->visible(fn (Review $record) => ! $record->is_approved),
 
                 Action::make('feature')
                     ->icon(Heroicon::OutlinedStar)
                     ->color('warning')
+                    ->authorize('update')
                     ->action(fn (Review $record) => resolve(FeatureReview::class)($record))
                     ->visible(fn (Review $record) => ! $record->is_featured && $record->is_approved),
 

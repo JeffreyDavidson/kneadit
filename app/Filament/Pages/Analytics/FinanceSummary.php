@@ -88,7 +88,7 @@ class FinanceSummary extends Page
         $this->loadFinancialData();
     }
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Action::make('export')

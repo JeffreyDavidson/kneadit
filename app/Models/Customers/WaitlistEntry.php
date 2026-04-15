@@ -6,7 +6,6 @@ use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Customers\WaitlistStatus;
 use App\Models\Inventory\Product;
-use Carbon\Carbon;
 use Database\Factories\Customers\WaitlistEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -15,6 +14,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 
 /**

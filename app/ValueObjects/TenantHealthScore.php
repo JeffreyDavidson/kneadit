@@ -39,7 +39,7 @@ final readonly class TenantHealthScore
         };
     }
 
-    public function color(): string
+    public function filamentColor(): string
     {
         return match ($this->grade()) {
             'healthy' => 'success',

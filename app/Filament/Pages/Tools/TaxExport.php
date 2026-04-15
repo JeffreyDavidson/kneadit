@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Tools;
 
+use App\Enums\Financial\TaxExportType;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
@@ -79,11 +80,11 @@ class TaxExport extends Page
     protected function generateExport(array $data): StreamedResponse
     {
         $year = (int) $data['year'];
-        $type = $data['export_type'];
+        $type = TaxExportType::from($data['export_type']);
         $dateFrom = $data['date_from'] ?? "{$year}-01-01";
         $dateTo = $data['date_to'] ?? "{$year}-12-31";
 
-        $filename = "tax-export-{$year}-{$type}.csv";
+        $filename = "tax-export-{$year}-{$type->value}.csv";
 
         return response()->streamDownload(function () use ($type, $dateFrom, $dateTo) {
             $handle = fopen('php://output', 'w');
@@ -91,28 +92,28 @@ class TaxExport extends Page
 
             $exporter = resolve(TaxCsvExporter::class);
 
-            if (in_array($type, ['all', 'orders'])) {
+            if (in_array($type, [TaxExportType::All, TaxExportType::Orders])) {
                 $exporter->writeOrdersCsv($handle, $dateFrom, $dateTo);
-                if ($type === 'all') {
+                if ($type === TaxExportType::All) {
                     fputcsv($handle, []);
                 }
             }
 
-            if (in_array($type, ['all', 'expenses'])) {
+            if (in_array($type, [TaxExportType::All, TaxExportType::Expenses])) {
                 $exporter->writeExpensesCsv($handle, $dateFrom, $dateTo);
-                if ($type === 'all') {
+                if ($type === TaxExportType::All) {
                     fputcsv($handle, []);
                 }
             }
 
-            if (in_array($type, ['all', 'income'])) {
+            if (in_array($type, [TaxExportType::All, TaxExportType::Income])) {
                 $exporter->writeIncomeCsv($handle, $dateFrom, $dateTo);
-                if ($type === 'all') {
+                if ($type === TaxExportType::All) {
                     fputcsv($handle, []);
                 }
             }
 
-            if (in_array($type, ['all', 'summary'])) {
+            if (in_array($type, [TaxExportType::All, TaxExportType::Summary])) {
                 $exporter->writeSummaryCsv($handle, $dateFrom, $dateTo);
             }
 

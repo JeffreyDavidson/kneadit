@@ -2,10 +2,11 @@
 
 namespace App\Enums\Content;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Collection;
 
-enum BlogPostCategory: string implements HasLabel
+enum BlogPostCategory: string implements HasColor, HasLabel
 {
     case Guides = 'guides';
     case Laws = 'laws';
@@ -30,7 +31,7 @@ enum BlogPostCategory: string implements HasLabel
             ->prepend('All Posts', 'all');
     }
 
-    public function color(): string
+    public function getColor(): string
     {
         return match ($this) {
             self::Guides => 'primary',

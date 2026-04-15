@@ -20,13 +20,7 @@ class BlogPostsTable
                     ->searchable()
                     ->limit(50),
                 TextColumn::make('category')
-                    ->badge()
-                    ->colors([
-                        'primary' => 'guides',
-                        'success' => 'tips',
-                        'warning' => 'laws',
-                        'info' => 'news',
-                    ]),
+                    ->badge(),
                 IconColumn::make('is_published')
                     ->boolean()
                     ->label('Published'),
@@ -44,7 +38,7 @@ class BlogPostsTable
                         'news' => 'KneadIt News',
                     ]),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])

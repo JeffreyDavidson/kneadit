@@ -28,7 +28,7 @@ class ScheduledCheckinsTable
                     ->sortable(),
             ])
             ->defaultSort('days_after_signup', 'asc')
-            ->actions([
+            ->recordActions([
                 Actions\EditAction::make()
                     ->slideOver(),
             ])

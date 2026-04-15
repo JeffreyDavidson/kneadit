@@ -1,9 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
-
 beforeEach(fn () => setUpTenantTest());
 
 test('all named routes can be generated without errors', function () {

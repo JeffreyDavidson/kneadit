@@ -52,6 +52,7 @@ class Referral extends Model
     {
         return [
             'status' => ReferralStatus::class,
+            'reward_months' => 'integer',
         ];
     }
 

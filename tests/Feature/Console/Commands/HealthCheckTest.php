@@ -1,13 +1,11 @@
 <?php
 
 use App\Events\Platform\HealthCheckFailed;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 
-uses(RefreshDatabase::class);
-
 beforeEach(function () {
+    setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
     config(['mail.platform_notify' => 'test@example.com']);
 
@@ -15,6 +13,10 @@ beforeEach(function () {
     $tempStorage = sys_get_temp_dir() . '/kneadit_test_storage_' . getmypid();
     @mkdir($tempStorage . '/logs', 0755, true);
     $this->app->useStoragePath($tempStorage);
+
+    // Ensure tenant DB directory exists and is writable for health check
+    $tenantDbDir = database_path();
+    config(['tenancy.tenant_db_path' => $tenantDbDir]);
 });
 
 afterEach(function () {

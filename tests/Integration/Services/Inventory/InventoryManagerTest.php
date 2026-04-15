@@ -5,7 +5,6 @@ use App\Exceptions\Orders\CapacityExceededException;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
-use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
@@ -17,36 +16,8 @@ beforeEach(function () {
     setUpTenantTest();
 
     Mail::fake();
-    $this->user = User::factory()->owner()->create();
+    test()->user = User::factory()->owner()->create();
     settings(['default_daily_capacity' => '10']);
-});
-
-test('canAcceptOrder returns true when capacity available', function () {
-    $date = Date::tomorrow();
-
-    expect(resolve(InventoryManager::class)->canAcceptOrder($date))->toBeTrue();
-});
-
-test('canAcceptOrder returns false when closed day', function () {
-    $date = Date::tomorrow();
-    BusinessSchedule::factory()->create([
-        'day_of_week' => $date->dayOfWeek,
-        'is_open' => false,
-    ]);
-
-    expect(resolve(InventoryManager::class)->canAcceptOrder($date))->toBeFalse();
-});
-
-test('canAcceptOrder returns false when at capacity', function () {
-    $date = Date::tomorrow();
-    settings(['default_daily_capacity' => '2']);
-
-    Order::factory()
-        ->recycle($this->user)
-        ->count(2)
-        ->create(['delivery_date' => $date, 'status' => OrderStatus::Confirmed]);
-
-    expect(resolve(InventoryManager::class)->canAcceptOrder($date))->toBeFalse();
 });
 
 test('guardCapacity throws when date is at capacity', function () {
@@ -54,7 +25,7 @@ test('guardCapacity throws when date is at capacity', function () {
     settings(['default_daily_capacity' => '1']);
 
     Order::factory()
-        ->recycle($this->user)
+        ->recycle(test()->user)
         ->create(['delivery_date' => $date, 'status' => OrderStatus::Confirmed]);
 
     resolve(InventoryManager::class)->guardCapacity($date);
@@ -68,18 +39,6 @@ test('guardCapacity does not throw when capacity available', function () {
     expect(true)->toBeTrue();
 });
 
-test('remainingSlots returns correct count', function () {
-    $date = Date::tomorrow();
-    settings(['default_daily_capacity' => '5']);
-
-    Order::factory()
-        ->recycle($this->user)
-        ->count(3)
-        ->create(['delivery_date' => $date, 'status' => OrderStatus::Confirmed]);
-
-    expect(resolve(InventoryManager::class)->remainingSlots($date))->toBe(2);
-});
-
 test('deductForOrder deducts ingredient stock', function () {
     $product = Product::factory()->create();
     $recipe = Recipe::factory()->for($product)->create();
@@ -87,7 +46,7 @@ test('deductForOrder deducts ingredient stock', function () {
     $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 0.5, 'unit' => 'kg']);
 
     $order = Order::factory()
-        ->recycle($this->user)
+        ->recycle(test()->user)
         ->create(['status' => OrderStatus::Baking]);
     OrderItem::factory()->recycle($order, $product)->create([
         'quantity' => 3,

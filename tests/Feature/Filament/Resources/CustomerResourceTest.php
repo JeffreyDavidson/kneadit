@@ -12,7 +12,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('can render customers list page', function () {
@@ -36,7 +36,7 @@ test('can create a customer via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Customer::class, [
+    test()->assertDatabaseHas(Customer::class, [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
     ]);

@@ -30,7 +30,7 @@ class CategoryForm
                         TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
-                            ->unique(ignoreRecord: true),
+                            ->unique(),
 
                         Textarea::make('description')
                             ->rows(3),

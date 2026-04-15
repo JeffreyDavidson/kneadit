@@ -54,7 +54,7 @@ test('store review creates review and returns 201', function () {
     $response->assertCreated()
         ->assertJsonPath('message', 'Review submitted and pending approval.');
 
-    $this->assertDatabaseHas('reviews', [
+    test()->assertDatabaseHas('reviews', [
         'customer_name' => 'Jane Doe',
         'customer_email' => 'jane@example.com',
         'product_id' => $product->id,

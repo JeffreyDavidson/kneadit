@@ -37,7 +37,7 @@ class SupportTicketsTable
                 SelectFilter::make('priority')
                     ->options(SupportTicketPriority::class),
             ])
-            ->actions([
+            ->recordActions([
                 Actions\ViewAction::make(),
                 Actions\EditAction::make()
                     ->slideOver(),

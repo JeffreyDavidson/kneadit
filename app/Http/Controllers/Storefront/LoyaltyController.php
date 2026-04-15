@@ -14,23 +14,6 @@ use Illuminate\Contracts\View\View;
 
 class LoyaltyController extends Controller
 {
-    public function show(TenantSettings $settings): View
-    {
-        $content = settingsPageContent('loyalty');
-
-        $vm = new LoyaltyPageViewModel(
-            settings: $settings,
-            customer: null,
-            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
-            history: collect(),
-            rewards: LoyaltyReward::query()->active()->orderBy('points_required')->get(),
-            content: $content,
-            howSteps: $content['how_it_works_steps'] ?? config('kneadit.default_loyalty_steps'),
-        );
-
-        return view('storefront.loyalty', ['vm' => $vm]);
-    }
-
     public function store(RedeemLoyaltyRewardRequest $request, TenantSettings $settings, CustomerLoyalty $customerLoyalty): View
     {
         $customer = Customer::query()->where('email', $request->email)->first();
@@ -57,6 +40,27 @@ class LoyaltyController extends Controller
             customerNotFound: $customer === null,
         );
 
-        return view('storefront.loyalty', ['vm' => $vm]);
+        return view('storefront.loyalty', [
+            'vm' => $vm,
+        ]);
+    }
+
+    public function show(TenantSettings $settings): View
+    {
+        $content = settingsPageContent('loyalty');
+
+        $vm = new LoyaltyPageViewModel(
+            settings: $settings,
+            customer: null,
+            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
+            history: collect(),
+            rewards: LoyaltyReward::query()->active()->orderBy('points_required')->get(),
+            content: $content,
+            howSteps: $content['how_it_works_steps'] ?? config('kneadit.default_loyalty_steps'),
+        );
+
+        return view('storefront.loyalty', [
+            'vm' => $vm,
+        ]);
     }
 }

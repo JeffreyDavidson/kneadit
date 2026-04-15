@@ -4,6 +4,7 @@ namespace App\Models\Engagement;
 
 use App\Enums\Engagement\RewardType;
 use App\Models\Inventory\Product;
+use App\Presenters\LoyaltyRewardPresenter;
 use Database\Factories\Engagement\LoyaltyRewardFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -12,7 +13,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Number;
 
 /**
  * @property RewardType $reward_type
@@ -36,6 +36,7 @@ class LoyaltyReward extends Model
     protected function casts(): array
     {
         return [
+            'points_required' => 'integer',
             'reward_value' => 'decimal:2',
             'is_active' => 'boolean',
             'reward_type' => RewardType::class,
@@ -57,15 +58,11 @@ class LoyaltyReward extends Model
         $query->where('is_active', true);
     }
 
-    /** @return Attribute<mixed, never> */
+    /** @return Attribute<string, never> */
     protected function rewardTypeLabel(): Attribute
     {
         return Attribute::make(
-            get: fn () => match ($this->reward_type) {
-                RewardType::PercentageDiscount => $this->reward_value . '% Off',
-                RewardType::FixedDiscount => Number::currency((float) $this->reward_value) . ' Off',
-                RewardType::FreeProduct => 'Free ' . ($this->product->name ?? 'Product'),
-            },
+            get: fn () => (new LoyaltyRewardPresenter($this))->rewardTypeLabel(),
         );
     }
 
