@@ -4,38 +4,15 @@ namespace App\Services\Settings;
 
 use App\Models\Platform\PlatformSetting;
 
-class PlatformSettingsManager
+class PlatformSettingsManager extends AbstractSettingsManager
 {
-    /** @var array<string, mixed>|null */
-    protected ?array $cache = null;
-
-    public function get(string $key, mixed $default = null): mixed
+    protected function cacheKey(): string
     {
-        $this->loadAll();
-
-        return $this->cache[$key] ?? $default;
+        return 'platform';
     }
 
-    public function set(string $key, mixed $value): void
+    protected function modelClass(): string
     {
-        PlatformSetting::query()->updateOrCreate(['key' => $key], ['value' => $value]);
-
-        if ($this->cache !== null) {
-            $this->cache[$key] = $value;
-        }
-    }
-
-    public function loadAll(): void
-    {
-        if ($this->cache !== null) {
-            return;
-        }
-
-        $this->cache = PlatformSetting::query()->pluck('value', 'key')->all();
-    }
-
-    public function flushCache(): void
-    {
-        $this->cache = null;
+        return PlatformSetting::class;
     }
 }

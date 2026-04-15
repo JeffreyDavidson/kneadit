@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Platform;
 
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Pages\Platform\OnboardingSteps\OnboardingStepRegistry;
 use App\Services\Settings\TenantSettings;
 use BackedEnum;
@@ -10,20 +10,10 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Auth;
 
 class Onboarding extends Page
 {
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return true;
-    }
+    use RequiresManagerRole;
 
     protected static bool $shouldRegisterNavigation = false;
 

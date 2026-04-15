@@ -2,7 +2,6 @@
 
 namespace App\Filament\Central\Resources\AnnouncementResource\Tables;
 
-use App\Enums\Platform\AnnouncementType;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -20,8 +19,7 @@ class AnnouncementsTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('type')
-                    ->badge()
-                    ->color(fn (AnnouncementType $state): string => $state->color()),
+                    ->badge(),
                 TextColumn::make('target_plans')
                     ->label('Target')
                     ->formatStateUsing(fn (mixed $state) => empty($state) ? 'All Plans' : (is_array($state) ? implode(', ', $state) : 'All Plans'))

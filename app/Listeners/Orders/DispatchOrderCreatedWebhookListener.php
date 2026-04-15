@@ -14,6 +14,10 @@ class DispatchOrderCreatedWebhookListener extends QueuedListener implements Shou
 {
     public int $timeout = 30;
 
+    public function __construct(
+        private WebhookService $webhookService,
+    ) {}
+
     /** @return array<int, object> */
     public function middleware(): array
     {
@@ -25,7 +29,7 @@ class DispatchOrderCreatedWebhookListener extends QueuedListener implements Shou
         $order = $event->order;
         $order->loadMissing('orderItems.product');
 
-        WebhookService::dispatch('order.created', [
+        $this->webhookService->dispatch('order.created', [
             'order_number' => $order->order_number,
             'customer_name' => $order->customer?->name,
             'customer_email' => $order->customer?->email,

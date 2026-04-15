@@ -4,7 +4,7 @@ namespace App\Filament\Pages\Tools;
 
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
@@ -12,23 +12,17 @@ use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
 
 class ShoppingListGenerator extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return Feature::active('pro-features');
+        return static::hasManagerAccess() && Feature::active('pro-features');
     }
 
     protected static function requiredTier(): SubscriptionTier

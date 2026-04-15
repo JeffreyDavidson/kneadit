@@ -22,7 +22,7 @@ test('it dispatches order.created webhook with order data', function () {
 
     $event = new OrderCreated($order);
 
-    $listener = new DispatchOrderCreatedWebhookListener;
+    $listener = resolve(DispatchOrderCreatedWebhookListener::class);
     $listener->handle($event);
 
     Http::assertSent(function ($request) use ($order) {
@@ -42,7 +42,7 @@ test('it does not dispatch webhook when no webhook url is configured', function 
     $order = Order::factory()->create();
     $event = new OrderCreated($order);
 
-    $listener = new DispatchOrderCreatedWebhookListener;
+    $listener = resolve(DispatchOrderCreatedWebhookListener::class);
     $listener->handle($event);
 
     Http::assertNothingSent();
@@ -57,6 +57,6 @@ test('failed method logs a warning with order number and error message', functio
     $order = Order::factory()->create(['order_number' => 'ORD-001']);
     $event = new OrderCreated($order);
 
-    $listener = new DispatchOrderCreatedWebhookListener;
+    $listener = resolve(DispatchOrderCreatedWebhookListener::class);
     $listener->failed($event, new RuntimeException('Connection refused'));
 });

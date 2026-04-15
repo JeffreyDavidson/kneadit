@@ -16,3 +16,13 @@ test('unread scope returns only unread messages', function () {
     expect($results)->toHaveCount(1)
         ->and($results->first()->id)->toBe($unread->id);
 });
+
+test('read scope returns only read messages', function () {
+    ContactMessage::factory()->create(['is_read' => false]);
+    $read = ContactMessage::factory()->create(['is_read' => true]);
+
+    $results = ContactMessage::query()->read()->get();
+
+    expect($results)->toHaveCount(1)
+        ->and($results->first()->id)->toBe($read->id);
+});

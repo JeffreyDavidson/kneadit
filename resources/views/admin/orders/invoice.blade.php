@@ -105,8 +105,8 @@
                                 @endif
                             </td>
                             <td class="text-right">{{ $item->quantity }}</td>
-                            <td class="text-right">${{ number_format($item->unit_price, 2) }}</td>
-                            <td class="text-right font-semibold">${{ number_format($item->unit_price * $item->quantity, 2) }}</td>
+                            <td class="text-right">@money($item->unit_price)</td>
+                            <td class="text-right font-semibold">@money($item->total_price)</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -118,12 +118,12 @@
             <table class="totals-table">
                 <tr>
                     <td><strong>Subtotal:</strong></td>
-                    <td class="text-right">${{ number_format($order->subtotal, 2) }}</td>
+                    <td class="text-right">@money($order->subtotal)</td>
                 </tr>
                 @if ($order->delivery_fee > 0)
                     <tr>
                         <td><strong>Delivery Fee:</strong></td>
-                        <td class="text-right">${{ number_format($order->delivery_fee, 2) }}</td>
+                        <td class="text-right">@money($order->delivery_fee)</td>
                     </tr>
                 @endif
                 @if ($order->discount_amount > 0)
@@ -140,7 +140,7 @@
                 @endif
                 <tr>
                     <td><strong>TOTAL:</strong></td>
-                    <td class="text-right"><strong>${{ number_format($order->total, 2) }}</strong></td>
+                    <td class="text-right"><strong>@money($order->total)</strong></td>
                 </tr>
             </table>
         </div>

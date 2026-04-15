@@ -2,6 +2,7 @@
 
 namespace App\Models\Operations;
 
+use App\Enums\Staff\DayOfWeek;
 use Database\Factories\Operations\BusinessScheduleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -33,21 +34,11 @@ class BusinessSchedule extends Model
         ];
     }
 
-    public const DAYS = [
-        0 => 'Sunday',
-        1 => 'Monday',
-        2 => 'Tuesday',
-        3 => 'Wednesday',
-        4 => 'Thursday',
-        5 => 'Friday',
-        6 => 'Saturday',
-    ];
-
     /** @return Attribute<string, never> */
     protected function dayName(): Attribute
     {
         return Attribute::make(
-            get: fn () => self::DAYS[$this->day_of_week] ?? 'Unknown',
+            get: fn () => DayOfWeek::fromPhpDayIndex($this->day_of_week)?->getLabel() ?? 'Unknown',
         );
     }
 

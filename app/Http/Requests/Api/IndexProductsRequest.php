@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Order;
+namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ApplyGiftCardRequest extends FormRequest
+class IndexProductsRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,8 +17,8 @@ class ApplyGiftCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string'],
-            'subtotal' => ['required', 'numeric', 'min:0'],
+            'category' => ['sometimes', 'string'],
+            'featured' => ['sometimes', 'in:true,false,1,0'],
         ];
     }
 }

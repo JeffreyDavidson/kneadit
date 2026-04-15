@@ -4,43 +4,40 @@ namespace App\Listeners\Orders;
 
 use App\Enums\Orders\SenderType;
 use App\Events\Orders\OrderMessageSent;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Orders\NewOrderMessageMail;
 use App\Services\Settings\TenantSettings;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendOrderMessageEmailListener extends QueuedListener
+class SendOrderMessageEmailListener extends SendEmailListener
 {
-    public function handle(OrderMessageSent $event): void
+    protected function getRecipient(object $event): ?string
     {
+        /** @var OrderMessageSent $event */
         $message = $event->message;
         $order = $message->order;
 
         if (! $order) {
-            return;
+            return null;
         }
 
         if ($message->sender_type === SenderType::Customer) {
-            // Customer sent a message — notify the baker
-            $storeEmail = app(TenantSettings::class)->storeEmail;
-            if ($storeEmail) {
-                Mail::to($storeEmail)->send(new NewOrderMessageMail($message));
-            }
-        } else {
-            // Baker sent a message — notify the customer
-            $customerEmail = $order->customer?->email;
-            if ($customerEmail) {
-                Mail::to($customerEmail)->send(new NewOrderMessageMail($message));
-            }
+            return app(TenantSettings::class)->storeEmail ?: null;
         }
+
+        return $order->customer?->email;
     }
 
-    public function failed(OrderMessageSent $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Order message email failed', [
-            'order' => $event->message->order?->order_number,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var OrderMessageSent $event */
+        return new NewOrderMessageMail($event->message);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var OrderMessageSent $event */
+        return ['order' => $event->message->order?->order_number];
     }
 }

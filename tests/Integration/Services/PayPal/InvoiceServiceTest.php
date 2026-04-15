@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Orders\Order;
+use App\Services\PayPal\InvoicePayloadBuilder;
 use App\Services\PayPal\InvoiceService;
 use App\Services\PayPal\TokenManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -8,7 +9,12 @@ use Illuminate\Support\Facades\Http;
 
 uses(RefreshDatabase::class);
 
-beforeEach(fn () => setUpTenantTest());
+beforeEach(function () {
+    setUpTenantTest();
+
+    test()->payloadBuilder = Mockery::mock(InvoicePayloadBuilder::class);
+    test()->payloadBuilder->shouldReceive('build')->andReturn(['detail' => [], 'items' => []]);
+});
 
 test('creates and sends invoice successfully', function () {
     Http::preventStrayRequests();
@@ -23,7 +29,7 @@ test('creates and sends invoice successfully', function () {
 
     $order = Order::factory()->create();
 
-    $service = new InvoiceService($tokenManager);
+    $service = new InvoiceService($tokenManager, test()->payloadBuilder);
     $invoiceId = $service->createAndSend($order);
 
     expect($invoiceId)->toBe('INV-123')
@@ -36,7 +42,7 @@ test('returns null when no access token', function () {
 
     $order = Order::factory()->create();
 
-    $service = new InvoiceService($tokenManager);
+    $service = new InvoiceService($tokenManager, test()->payloadBuilder);
     $result = $service->createAndSend($order);
 
     expect($result)->toBeNull();
@@ -52,7 +58,7 @@ test('cancels an invoice successfully', function () {
     $tokenManager->shouldReceive('getAccessToken')->andReturn('test-token');
     $tokenManager->shouldReceive('getBaseUrl')->andReturn('https://api-m.sandbox.paypal.com');
 
-    $service = new InvoiceService($tokenManager);
+    $service = new InvoiceService($tokenManager, test()->payloadBuilder);
     $result = $service->cancel('INV-456');
 
     expect($result)->toBeTrue();
@@ -70,7 +76,7 @@ test('returns null when create invoice API call fails', function () {
 
     $order = Order::factory()->create();
 
-    $service = new InvoiceService($tokenManager);
+    $service = new InvoiceService($tokenManager, test()->payloadBuilder);
     $result = $service->createAndSend($order);
 
     expect($result)->toBeNull();
@@ -89,7 +95,7 @@ test('returns null when send invoice API call fails', function () {
 
     $order = Order::factory()->create();
 
-    $service = new InvoiceService($tokenManager);
+    $service = new InvoiceService($tokenManager, test()->payloadBuilder);
     $result = $service->createAndSend($order);
 
     expect($result)->toBeNull();
@@ -99,7 +105,7 @@ test('cancel returns false when no access token', function () {
     $tokenManager = Mockery::mock(TokenManager::class);
     $tokenManager->shouldReceive('getAccessToken')->andReturn(null);
 
-    $service = new InvoiceService($tokenManager);
+    $service = new InvoiceService($tokenManager, test()->payloadBuilder);
     $result = $service->cancel('INV-123');
 
     expect($result)->toBeFalse();
@@ -115,7 +121,7 @@ test('cancel returns false when API call fails', function () {
     $tokenManager->shouldReceive('getAccessToken')->andReturn('test-token');
     $tokenManager->shouldReceive('getBaseUrl')->andReturn('https://api-m.sandbox.paypal.com');
 
-    $service = new InvoiceService($tokenManager);
+    $service = new InvoiceService($tokenManager, test()->payloadBuilder);
     $result = $service->cancel('INV-999');
 
     expect($result)->toBeFalse();
@@ -139,7 +145,7 @@ test('creates invoice with delivery fee and discount', function () {
         'total' => 22.50,
     ]);
 
-    $service = new InvoiceService($tokenManager);
+    $service = new InvoiceService($tokenManager, test()->payloadBuilder);
     $result = $service->createAndSend($order);
 
     expect($result)->toBe('INV-DELIVERY');

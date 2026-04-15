@@ -79,7 +79,7 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-orange-600">Revenue</p>
-                            <p class="text-2xl font-bold text-orange-900">${{ number_format($summary['total_revenue'], 2) }}</p>
+                            <p class="text-2xl font-bold text-orange-900">@money($summary['total_revenue'])</p>
                         </div>
                     </div>
                 </div>
@@ -193,7 +193,7 @@
                                                             {{ $order->delivery_time ? \Carbon\Carbon::parse($order->delivery_time)->format('H:i') : 'Time not specified' }}
                                                         </span>
                                                     </div>
-                                                    <span class="text-sm font-medium text-gray-900">${{ number_format($order->total, 2) }}</span>
+                                                    <span class="text-sm font-medium text-gray-900">@money($order->total)</span>
                                                 </div>
                                                 <div class="text-sm text-gray-600">
                                                     @foreach ($order->orderItems as $item)

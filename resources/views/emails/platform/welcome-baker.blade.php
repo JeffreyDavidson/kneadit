@@ -24,7 +24,7 @@
 
         {{-- Header --}}
         <div style="background: linear-gradient(135deg, #1c1410 0%, #2a1f18 100%); text-align: center; padding: 40px 20px;">
-            <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: #d4920c;">KneadIt</h1>
+            <h1 style="margin: 0; font-size: 32px; font-weight: 700; color: {{ $primaryColor }};">KneadIt</h1>
             <p style="margin: 8px 0 0; color: #d4a574; font-size: 14px;">Your bakery management platform</p>
         </div>
 
@@ -52,7 +52,7 @@
 
             {{-- CTA --}}
             <div style="text-align: center; margin: 28px 0;">
-                <a href="{{ $adminUrl }}" style="display: inline-block; background: #d4920c; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+                <a href="{{ $adminUrl }}" style="display: inline-block; background: {{ $primaryColor }}; color: #ffffff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
                     Go to Your Dashboard →
                 </a>
             </div>
@@ -74,7 +74,7 @@
 
         {{-- Footer --}}
         <div style="background: #1c1410; color: #fef9ef; text-align: center; padding: 24px 20px; font-size: 13px;">
-            <p style="margin: 0 0 4px; font-weight: 600; color: #d4920c;">KneadIt</p>
+            <p style="margin: 0 0 4px; font-weight: 600; color: {{ $primaryColor }};">KneadIt</p>
             <p style="margin: 0; opacity: 0.6;">The bakery management platform for cottage food bakers</p>
         </div>
     </div>

@@ -2,21 +2,17 @@
 
 namespace App\Enums\Platform;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum AnnouncementType: string implements HasLabel
+enum AnnouncementType: string implements HasColor, HasLabel
 {
     case Info = 'info';
     case Warning = 'warning';
     case Success = 'success';
     case Maintenance = 'maintenance';
 
-    public function getLabel(): string
-    {
-        return ucfirst($this->value);
-    }
-
-    public function color(): string
+    public function getColor(): string
     {
         return match ($this) {
             self::Info => 'info',
@@ -24,5 +20,10 @@ enum AnnouncementType: string implements HasLabel
             self::Success => 'success',
             self::Maintenance => 'gray',
         };
+    }
+
+    public function getLabel(): string
+    {
+        return ucfirst($this->value);
     }
 }
