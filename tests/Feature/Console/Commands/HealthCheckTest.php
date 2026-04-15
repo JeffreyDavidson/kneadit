@@ -13,6 +13,10 @@ beforeEach(function () {
     $tempStorage = sys_get_temp_dir() . '/kneadit_test_storage_' . getmypid();
     @mkdir($tempStorage . '/logs', 0755, true);
     $this->app->useStoragePath($tempStorage);
+
+    // Ensure tenant DB directory exists and is writable for health check
+    $tenantDbDir = database_path();
+    config(['tenancy.tenant_db_path' => $tenantDbDir]);
 });
 
 afterEach(function () {
