@@ -2,11 +2,8 @@
 
 use App\Models\Inventory\Product;
 use App\Models\Inventory\ProductWaitlist;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;
-
-uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

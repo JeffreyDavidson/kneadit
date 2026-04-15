@@ -3,11 +3,8 @@
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;
-
-uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

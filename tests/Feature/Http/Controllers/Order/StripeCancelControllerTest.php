@@ -2,11 +2,8 @@
 
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;
-
-uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

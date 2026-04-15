@@ -1,13 +1,10 @@
 <?php
 
 use App\Models\Customers\CustomerPhoto;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\withoutMiddleware;
-
-uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

@@ -1,21 +1,10 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-
 use function Pest\Laravel\postJson;
 
-uses(RefreshDatabase::class);
-
 beforeEach(function () {
+    setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
-    config(['database.connections.central' => config('database.connections.sqlite')]);
-
-    DB::purge('central');
-    $pdo = DB::connection('sqlite')->getPdo();
-    DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
-
-    createCentralTables();
 });
 
 test('webhook returns 400 for invalid signature when secret configured', function () {

@@ -43,7 +43,7 @@ test('SupportTicketPriority has a label method', function () {
 });
 
 test('AnnouncementType has a label method', function () {
-    expect(App\Enums\Platform\AnnouncementType::Info->getLabel())->toBe('Info');
+    expect(App\Enums\Platform\AnnouncementType::Info->getLabel())->toBe('Info (Gold)');
 });
 
 test('SupportReplyAuthorType has a label method', function () {

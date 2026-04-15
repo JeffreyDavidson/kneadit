@@ -1,11 +1,8 @@
 <?php
 
 use App\Models\Financial\Coupon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use function Pest\Laravel\withoutMiddleware;
-
-uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
