@@ -20,7 +20,7 @@ return [
         'subtitle' => 'Create your account and get baking in minutes.',
         'bakery_name' => 'Bakery Name',
         'bakery_name_placeholder' => 'Sweet Flour Studio',
-        'terms_agreement' => 'I agree to the <a href=":terms_url" target="_blank">Terms of Service</a> and <a href=":privacy_url" target="_blank">Privacy Policy</a>',
+        'terms_agreement' => 'I agree to the <a href=":terms_url" target="_blank" rel="noopener noreferrer">Terms of Service</a> and <a href=":privacy_url" target="_blank" rel="noopener noreferrer">Privacy Policy</a>',
         'submit' => 'Create Account',
         'has_account' => "Already have an account? Log in at your bakery's subdomain.",
         'forgot_password' => 'Forgot your password?',
