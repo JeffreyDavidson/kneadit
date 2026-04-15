@@ -6,7 +6,7 @@ use App\Enums\Engagement\RewardType;
 use App\Models\Engagement\LoyaltyReward;
 use Illuminate\Support\Number;
 
-class LoyaltyRewardPresenter
+final class LoyaltyRewardPresenter
 {
     public function __construct(
         public readonly LoyaltyReward $reward,

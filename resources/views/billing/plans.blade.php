@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Choose Your Plan — KneadIt</title>
+    <title>Choose Your Plan — {{ config('app.name') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/billing.css') }}">
 @include('partials.fathom')
 </head>
 <body>
-    @if (session('success'))
-        <div class="success-banner">{{ session('success') }}</div>
-    @endif
+    @session('success')
+        <div class="success-banner">{{ $value }}</div>
+    @endsession
 
     <div class="container">
         <div class="header">

@@ -11,7 +11,7 @@
 @endphp
 
 
-@section('title', 'Order Delivered! - KneadIt Bakery')
+@section('title', "Order Delivered! - {$storeName}")
 
 @section('badge-color', '#28a745')
 
@@ -27,23 +27,11 @@
 <div class="order-details">
     <div class="order-number">Order #{{ $order->order_number }}</div>
 
-    <div class="order-items">
-        <h4 style="margin-bottom: 10px; color: #8b4513;">Delivered Items:</h4>
-        @foreach ($orderItems as $item)
-            <div class="order-item">
-                <div>
-                    <div class="item-name">✅ {{ $item->product->name }}</div>
-                    <div class="item-details">
-                        Quantity: {{ $item->quantity }}
-                        @if ($item->special_instructions)
-                            <br><em>{{ $item->special_instructions }}</em>
-                        @endif
-                    </div>
-                </div>
-                <div class="item-price">@money($item->total_price)</div>
-            </div>
-        @endforeach
-    </div>
+    @include('emails.partials.order-items', [
+        'orderItems' => $orderItems,
+        'heading' => 'Delivered Items:',
+        'itemPrefix' => '✅ ',
+    ])
 
     <div class="order-total">
         <div style="display: flex; justify-content: space-between;">
@@ -76,13 +64,12 @@
     <p style="margin: 5px 0;">How was your experience? Your feedback helps us continue to improve and serve you better!</p>
     <p style="margin: 5px 0;">
         <strong>Share your thoughts:</strong><br>
-        📧 Email us at hello@kneaditbakery.com<br>
-        📱 Tag us on social media @kneaditbakery<br>
+        📧 Email us at {{ $storeEmail ?? '' }}<br>
         ⭐ Leave a review on our website
     </p>
 </div>
 
-<p>Thank you for choosing KneadIt Bakery! It was our pleasure to create and deliver these fresh treats for you.</p>
+<p>Thank you for choosing {{ $storeName }}! It was our pleasure to create and deliver these fresh treats for you.</p>
 
 <p><strong>Come back soon!</strong> We're always baking up something new and delicious. Check out our website for daily specials and seasonal items.</p>
 
@@ -94,6 +81,6 @@
 @endif
 
 <p style="color: #666; font-size: 14px;">
-    <em>Questions or concerns about your delivery? Contact us at (555) 123-BAKE or reply to this email.</em>
+    <em>Questions or concerns about your delivery? Contact us at {{ $storePhone ?? '' }} or reply to this email.</em>
 </p>
 @endsection

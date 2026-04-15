@@ -31,9 +31,9 @@ a{color:var(--honey);text-decoration:none}
         <h1>{{ __('auth.verify_email.heading') }}</h1>
         <p>{!! __('auth.verify_email.description', ['email' => e(auth()->user()->email)]) !!}</p>
 
-        @if (session('message'))
-            <div class="success">{{ session('message') }}</div>
-        @endif
+        @session('message')
+            <div class="success">{{ $value }}</div>
+        @endsession
 
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf

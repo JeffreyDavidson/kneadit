@@ -43,7 +43,7 @@
 
         {{-- Body --}}
         <div class="prose prose-lg max-w-none text-warm-700">
-            {!! $post->body !!}
+            {!! clean($post->body) !!}
         </div>
     </div>
 </article>

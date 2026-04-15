@@ -19,6 +19,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rules\Password;
 use Laravel\Cashier\Billable;
 use Laravel\Cashier\Subscription;
 
@@ -71,6 +72,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     use Billable, HasFactory, Notifiable;
 
     public const string CENTRAL_PANEL_ID = 'central';
+
+    public static function passwordRule(): Password
+    {
+        return Password::min(8)->letters()->numbers();
+    }
 
     protected function casts(): array
     {

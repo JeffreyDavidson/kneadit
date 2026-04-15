@@ -7,7 +7,7 @@ use App\Models\Customers\CustomerNote;
 use App\Models\Orders\Order;
 use Illuminate\Support\Number;
 
-class CustomerPresenter
+final class CustomerPresenter
 {
     public function __construct(
         public readonly Customer $customer,

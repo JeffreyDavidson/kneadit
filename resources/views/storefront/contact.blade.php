@@ -63,11 +63,11 @@
             <div class="md:col-span-3">
                 <x-storefront.eyebrow align="left" line-opacity="0.5" class="mb-8">{{ $content['form_eyebrow'] ?? 'Send a Message' }}</x-storefront.eyebrow>
 
-                @if (session('success'))
+                @session('success')
                 <x-storefront.alert variant="light">
-                    <p class="font-medium">{{ session('success') }}</p>
+                    <p class="font-medium">{{ $value }}</p>
                 </x-storefront.alert>
-                @endif
+                @endsession
 
                 <div class="p-8 md:p-10 rounded-2xl" style="background: white; box-shadow: 0 8px 40px rgba(28,20,16,0.08); border: 1px solid var(--warm-200);">
                     <form action="{{ route('contact.store') }}" method="POST" class="space-y-6">

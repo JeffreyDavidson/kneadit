@@ -5,7 +5,7 @@ namespace App\Filament\Pages\Tools;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Services\Orders\ShoppingListService;
+use App\Services\Orders\OrderIngredientAggregator;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -56,7 +56,7 @@ class ShoppingListGenerator extends Page
         $this->shoppingList = collect();
     }
 
-    public function generateShoppingList(ShoppingListService $service): void
+    public function generateShoppingList(OrderIngredientAggregator $service): void
     {
         $this->shoppingList = $service->generate($this->startDate, $this->endDate);
         $this->checkedItems = [];

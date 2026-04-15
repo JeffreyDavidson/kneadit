@@ -1,7 +1,7 @@
 <?php
 
 use App\Filament\Pages\Tools\ShoppingListGenerator;
-use App\Services\Orders\ShoppingListService;
+use App\Services\Orders\OrderIngredientAggregator;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -55,14 +55,14 @@ test('generate shopping list resets checked items', function () {
     test()->page->mount();
     test()->page->checkedItems = [0 => true, 1 => true];
 
-    test()->page->generateShoppingList(resolve(ShoppingListService::class));
+    test()->page->generateShoppingList(resolve(OrderIngredientAggregator::class));
 
     expect(test()->page->checkedItems)->toBeEmpty();
 });
 
 test('generate shopping list populates list', function () {
     test()->page->mount();
-    test()->page->generateShoppingList(resolve(ShoppingListService::class));
+    test()->page->generateShoppingList(resolve(OrderIngredientAggregator::class));
 
     expect(test()->page->shoppingList)->toBeInstanceOf(Illuminate\Support\Collection::class);
 });

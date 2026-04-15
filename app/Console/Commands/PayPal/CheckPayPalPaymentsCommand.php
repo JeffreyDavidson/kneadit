@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\Stripe;
+namespace App\Console\Commands\PayPal;
 
 use App\Actions\Orders\MarkOrderPaid;
 use App\Enums\Orders\PaymentStatus;
@@ -78,11 +78,11 @@ class CheckPayPalPaymentsCommand extends Command
                     app(MarkOrderPaid::class)($o);
                     $this->info("  ✓ #{$o->order_number} paid");
                 }),
-                'CANCELLED' => tap($order, function (\stdClass $o) {
+                'CANCELLED' => tap($order, function (Order $o) {
                     $o->update(['payment_status' => PaymentStatus::Cancelled]);
                     $this->warn("  ⚠ #{$o->order_number} cancelled");
                 }),
-                'REFUNDED' => tap($order, function (\stdClass $o) {
+                'REFUNDED' => tap($order, function (Order $o) {
                     $o->update(['payment_status' => PaymentStatus::Refunded]);
                     $this->warn("  ⚠ #{$o->order_number} refunded");
                 }),

@@ -83,7 +83,7 @@
                         Discount:
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-600">
-                        -${{ number_format($getRecord()->discount_amount, 2) }}
+                        -@money($getRecord()->discount_amount)
                     </td>
                 </tr>
             @endif

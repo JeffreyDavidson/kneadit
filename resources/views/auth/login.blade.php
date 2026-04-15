@@ -33,7 +33,7 @@
             </div>
 
             <label class="remember-row">
-                <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                <input type="checkbox" name="remember" @checked(old('remember'))>
                 {{ __('auth.login.remember_me') }}
             </label>
 

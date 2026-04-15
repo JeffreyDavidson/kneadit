@@ -48,7 +48,7 @@
                                 <div class="flex-shrink-0">
                                     <input type="checkbox"
                                            wire:click="toggleItem({{ $index }})"
-                                           {{ isset($checkedItems[$index]) ? 'checked' : '' }}
+                                           @checked(isset($checkedItems[$index]))
                                            class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500" />
                                 </div>
                                 <div class="flex-1 {{ isset($checkedItems[$index]) ? 'line-through text-gray-500' : '' }}">

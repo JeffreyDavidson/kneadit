@@ -4,7 +4,7 @@ namespace App\Presenters;
 
 use App\Models\Inventory\Product;
 
-class ProductPresenter
+final class ProductPresenter
 {
     public function __construct(
         public readonly Product $product,
