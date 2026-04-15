@@ -1,13 +1,11 @@
 <?php
 
 use App\Events\Platform\HealthCheckFailed;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 
-uses(RefreshDatabase::class);
-
 beforeEach(function () {
+    setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
     config(['mail.platform_notify' => 'test@example.com']);
 

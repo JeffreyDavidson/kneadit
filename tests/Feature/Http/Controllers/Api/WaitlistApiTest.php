@@ -1,10 +1,6 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
 use function Pest\Laravel\withoutMiddleware;
-
-uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

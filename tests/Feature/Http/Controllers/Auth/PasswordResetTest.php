@@ -2,8 +2,6 @@
 
 use App\Models\Staff\User;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
@@ -11,17 +9,9 @@ use Illuminate\Support\Facades\Password;
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
 
-uses(RefreshDatabase::class);
-
 beforeEach(function () {
+    setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
-    config(['database.connections.central' => config('database.connections.sqlite')]);
-
-    DB::purge('central');
-    $pdo = DB::connection('sqlite')->getPdo();
-    DB::connection('central')->setPdo($pdo)->setReadPdo($pdo);
-
-    createCentralTables();
 });
 
 test('forgot password page loads', function () {

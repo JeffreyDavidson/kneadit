@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
+    setUpTenantTest();
     config([
         'services.paypal.client_id' => 'test-id',
         'services.paypal.client_secret' => 'test-secret',

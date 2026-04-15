@@ -6,9 +6,6 @@ use App\Mail\Orders\OrderStatusMail;
 use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 

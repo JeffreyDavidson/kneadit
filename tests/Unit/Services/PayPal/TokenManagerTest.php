@@ -3,6 +3,8 @@
 use App\Services\PayPal\TokenManager;
 use Illuminate\Support\Facades\Http;
 
+beforeEach(fn () => setUpTenantTest());
+
 it('fetches and caches an access token', function () {
     config([
         'services.paypal.client_id' => 'test-id',
