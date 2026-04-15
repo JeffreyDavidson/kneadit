@@ -1,5 +1,7 @@
 <?php
 
+use App\Actions\Loyalty\AdjustLoyaltyPoints;
+use App\Actions\Loyalty\RedeemLoyaltyPoints;
 use App\Enums\Engagement\LoyaltyPointType;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
@@ -95,8 +97,7 @@ test('returns null when calculated points are zero', function () {
 });
 
 test('redeems points for a customer', function () {
-    $point = resolve(LoyaltyLedger::class)
-        ->redeem($this->customer, 50, 'Free cookie reward');
+    $point = resolve(RedeemLoyaltyPoints::class)($this->customer, 50, 'Free cookie reward');
 
     expect($point)
         ->points->toBe(50)
@@ -106,8 +107,7 @@ test('redeems points for a customer', function () {
 });
 
 test('adjusts points for a customer', function () {
-    $point = resolve(LoyaltyLedger::class)
-        ->adjust($this->customer, 25, 'Admin correction');
+    $point = resolve(AdjustLoyaltyPoints::class)($this->customer, 25, 'Admin correction');
 
     expect($point)
         ->points->toBe(25)
