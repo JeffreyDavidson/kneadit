@@ -5,6 +5,7 @@ namespace App\Services\Coupon;
 use App\DataTransferObjects\Orders\CouponValidationResult;
 use App\Enums\Financial\CouponType;
 use App\Models\Financial\Coupon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
@@ -31,30 +32,27 @@ class CouponService
         return true;
     }
 
-    /**
-     * Validate a coupon code against the given subtotal.
-     *
-     * Uses lockForUpdate() for thread safety when checking validity.
-     */
     public function validate(string $code, float $subtotal): CouponValidationResult
     {
-        $coupon = Coupon::query()->where('code', Str::upper(trim($code)))->lockForUpdate()->first();
+        return DB::transaction(function () use ($code, $subtotal) {
+            $coupon = Coupon::query()->where('code', Str::upper(trim($code)))->lockForUpdate()->first();
 
-        if (! $coupon) {
-            return CouponValidationResult::invalid('Coupon not found.');
-        }
+            if (! $coupon) {
+                return CouponValidationResult::invalid('Coupon not found.');
+            }
 
-        if (! $this->isValid($coupon)) {
-            return CouponValidationResult::invalid('This coupon is no longer valid.');
-        }
+            if (! $this->isValid($coupon)) {
+                return CouponValidationResult::invalid('This coupon is no longer valid.');
+            }
 
-        if ($coupon->min_order_amount && $subtotal < (float) $coupon->min_order_amount) {
-            return CouponValidationResult::invalid('Minimum order of ' . Number::currency($coupon->min_order_amount) . ' required for this coupon.');
-        }
+            if ($coupon->min_order_amount && $subtotal < (float) $coupon->min_order_amount) {
+                return CouponValidationResult::invalid('Minimum order of ' . Number::currency($coupon->min_order_amount) . ' required for this coupon.');
+            }
 
-        $discount = $this->calculateDiscount($coupon, $subtotal);
+            $discount = $this->calculateDiscount($coupon, $subtotal);
 
-        return CouponValidationResult::valid($coupon, $discount);
+            return CouponValidationResult::valid($coupon, $discount);
+        });
     }
 
     /**

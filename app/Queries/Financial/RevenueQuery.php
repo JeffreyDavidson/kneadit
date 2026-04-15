@@ -17,7 +17,7 @@ class RevenueQuery
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
 
         return (float) Order::query()
-            ->active()
+            ->active()->paid()
             ->whereBetween('delivery_date', $dates)
             ->sum('total');
     }
@@ -33,7 +33,7 @@ class RevenueQuery
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
 
         return Order::query()
-            ->active()
+            ->active()->paid()
             ->whereBetween('delivery_date', $dates)
             ->toBase()
             ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue')
