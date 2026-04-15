@@ -2,7 +2,7 @@
 
 namespace App\Services\Stripe;
 
-use App\Actions\Orders\MarkOrderPaid;
+use App\Actions\Stripe\HandleCheckoutComplete;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
@@ -124,15 +124,9 @@ class StripeCheckoutService
                 return null;
             }
 
-            $order->update([
-                'stripe_payment_intent_id' => $session->payment_intent->id ?? $session->payment_intent,
-            ]);
+            $paymentIntentId = $session->payment_intent->id ?? $session->payment_intent;
 
-            app(MarkOrderPaid::class)($order);
-
-            Log::info('Order marked as paid via Stripe', ['order' => $order->order_number]);
-
-            return $order;
+            return app(HandleCheckoutComplete::class)($order, $paymentIntentId);
         } catch (\Exception $e) {
             Log::error('Failed to verify checkout session', [
                 'session_id' => $sessionId,
@@ -152,7 +146,7 @@ class StripeCheckoutService
             $product = $item->product;
             $lineItems[] = [
                 'price_data' => [
-                    'currency' => 'usd',
+                    'currency' => config('cashier.currency', 'usd'),
                     'product_data' => [
                         'name' => $product ? $product->name : 'Item',
                         'description' => $item->special_instructions ?: null,
@@ -166,7 +160,7 @@ class StripeCheckoutService
         if ($order->delivery_fee > 0) {
             $lineItems[] = [
                 'price_data' => [
-                    'currency' => 'usd',
+                    'currency' => config('cashier.currency', 'usd'),
                     'product_data' => ['name' => 'Delivery Fee'],
                     'unit_amount' => (int) round($order->delivery_fee * 100),
                 ],
@@ -186,7 +180,7 @@ class StripeCheckoutService
 
         $coupon = $this->stripe->coupons->create([
             'amount_off' => (int) round($order->discount_amount * 100),
-            'currency' => 'usd',
+            'currency' => config('cashier.currency', 'usd'),
             'duration' => 'once',
             'name' => 'Order Discount',
         ], ['stripe_account' => $connectId]);

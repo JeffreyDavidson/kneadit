@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Settings\Schemas;
 
+use App\Enums\Orders\PaymentMethod;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Textarea;
@@ -98,16 +99,16 @@ class ManageSettingsForm
                         CheckboxList::make('payment_methods')
                             ->label('Accepted Payment Methods')
                             ->options([
-                                'stripe' => 'Stripe — Credit cards, Apple Pay, Google Pay',
-                                'paypal' => 'PayPal — Accept payments through PayPal Business',
-                                'cash' => 'Cash / Manual — In person (cash, Venmo, Zelle, etc.)',
+                                PaymentMethod::Stripe->value => 'Stripe — Credit cards, Apple Pay, Google Pay',
+                                PaymentMethod::PayPal->value => 'PayPal — Accept payments through PayPal Business',
+                                PaymentMethod::Cash->value => 'Cash / Manual — In person (cash, Venmo, Zelle, etc.)',
                             ])
                             ->required()
                             ->live()
                             ->columnSpanFull(),
 
                         View::make('filament.pages.shared.stripe-connect-status')
-                            ->visible(fn (Get $get) => in_array('stripe', $get('payment_methods') ?? [])),
+                            ->visible(fn (Get $get) => in_array(PaymentMethod::Stripe->value, $get('payment_methods') ?? [])),
 
                         Grid::make(2)
                             ->schema([
@@ -118,12 +119,12 @@ class ManageSettingsForm
                                     ->label('PayPal Client Secret')
                                     ->password(),
                             ])
-                            ->visible(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
+                            ->visible(fn (Get $get) => in_array(PaymentMethod::PayPal->value, $get('payment_methods') ?? [])),
 
                         Toggle::make('paypal_sandbox')
                             ->label('PayPal Sandbox Mode')
                             ->helperText('Enable to test payments without real money')
-                            ->visible(fn (Get $get) => in_array('paypal', $get('payment_methods') ?? [])),
+                            ->visible(fn (Get $get) => in_array(PaymentMethod::PayPal->value, $get('payment_methods') ?? [])),
                     ]),
 
                 // Compliance Section

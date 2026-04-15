@@ -11,7 +11,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('can list waitlist entries in the table', function () {
@@ -69,7 +69,7 @@ test('can create a waitlist entry via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(WaitlistEntry::class, [
+    test()->assertDatabaseHas(WaitlistEntry::class, [
         'customer_name' => 'Jane Doe',
     ]);
 });

@@ -118,7 +118,7 @@ class InstagramCaptionGenerator extends Page
 
         $this->captions = resolve(CaptionGeneratorService::class)->generate(
             $product,
-            $formData['style'] ?? 'playful',
+            CaptionStyle::tryFrom($formData['style'] ?? '') ?? CaptionStyle::Playful,
             $formData['tone'] ?? 'warm',
         );
     }

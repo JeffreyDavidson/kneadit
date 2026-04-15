@@ -21,6 +21,7 @@ class ViewGiftCard extends ViewRecord
             Action::make('toggle_active')
                 ->label(fn () => $this->record->is_active ? 'Deactivate' : 'Activate')
                 ->color(fn () => $this->record->is_active ? 'danger' : 'success')
+                ->authorize('update')
                 ->requiresConfirmation()
                 ->action(function () {
                     resolve(ToggleGiftCardActive::class)($this->record);
@@ -30,6 +31,7 @@ class ViewGiftCard extends ViewRecord
                 ->label('Add Credit')
                 ->icon(Heroicon::OutlinedPlusCircle)
                 ->color('success')
+                ->authorize('update')
                 ->schema([
                     TextInput::make('amount')
                         ->required()

@@ -14,7 +14,7 @@ test('can join product waitlist via json', function () {
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('product-waitlist.join', [], false), [
+        ->postJson(route('productWaitlist.join', [], false), [
             'product_id' => $product->id,
             'customer_email' => 'waitlist@example.com',
             'customer_name' => 'Jane Doe',
@@ -35,7 +35,7 @@ test('duplicate waitlist entry updates existing record', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('product-waitlist.join', [], false), [
+        ->postJson(route('productWaitlist.join', [], false), [
             'product_id' => $product->id,
             'customer_email' => 'repeat@example.com',
         ]);

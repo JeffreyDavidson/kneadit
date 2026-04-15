@@ -116,12 +116,14 @@ test('BlogPostCategory::options returns all cases plus All Posts', function () {
     expect($options)
         ->toHaveCount(count(BlogPostCategory::cases()) + 1)
         ->first()->toBe('All Posts');
-
-    foreach (BlogPostCategory::cases() as $case) {
-        expect($options)->toHaveKey($case->value);
-    }
 });
 
-test('BlogPostCategory::color returns a non-empty string for every case', function (BlogPostCategory $case) {
-    expect($case->color())->toBeString()->not->toBeEmpty();
+test('BlogPostCategory::options includes case', function (BlogPostCategory $case) {
+    $options = BlogPostCategory::options();
+
+    expect($options)->toHaveKey($case->value);
+})->with(BlogPostCategory::cases());
+
+test('BlogPostCategory::getColor returns a non-empty string for every case', function (BlogPostCategory $case) {
+    expect($case->getColor())->toBeString()->not->toBeEmpty();
 })->with(BlogPostCategory::cases());

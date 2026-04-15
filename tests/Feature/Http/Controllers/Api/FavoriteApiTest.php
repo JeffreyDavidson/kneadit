@@ -40,7 +40,7 @@ test('favorites toggle adds product to favorites', function () {
     $response->assertOk()
         ->assertJsonPath('data.favorited', true);
 
-    $this->assertDatabaseHas('customer_favorites', [
+    test()->assertDatabaseHas('customer_favorites', [
         'customer_email' => 'alice@test.com',
         'product_id' => $product->id,
     ]);

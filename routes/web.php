@@ -5,7 +5,9 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\SendVerificationNotificationController;
 use App\Http\Controllers\Auth\ShowOnboardingController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Central\BlogController;
 use App\Http\Controllers\Central\BlogFeedController;
 use App\Http\Controllers\Central\ChangelogController;
@@ -15,8 +17,6 @@ use App\Http\Controllers\Central\ImpersonateController;
 use App\Http\Controllers\Central\ReferralController;
 use App\Http\Controllers\Central\RootController;
 use App\Http\Controllers\Central\SitemapController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/billing.php';
@@ -26,23 +26,13 @@ require __DIR__ . '/admin.php';
 Route::middleware('web')->group(function () {
     Route::get('register', [RegisterController::class, 'show'])->name('register')->middleware('guest');
     Route::post('register', [RegisterController::class, 'store'])->middleware(['guest', 'throttle:5,1']);
-    Route::get('login', function () {
-        return redirect('/');
-    })->name('login')->middleware('guest');
+    Route::redirect('login', '/')->name('login')->middleware('guest');
     Route::post('logout', LogoutController::class)->name('logout')->middleware('auth');
 
     // Email verification
-    Route::get('email/verify', fn () => view('auth.verify-email'))->middleware('auth')->name('verification.notice');
-    Route::get('email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        $request->fulfill();
-
-        return redirect('/')->with('verified', true);
-    })->middleware(['auth', 'signed'])->name('verification.verify');
-    Route::post('email/verification-notification', function (Request $request) {
-        $request->user()->sendEmailVerificationNotification();
-
-        return back()->with('message', 'Verification link sent!');
-    })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+    Route::view('email/verify', 'auth.verify-email')->middleware('auth')->name('verification.notice');
+    Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)->middleware(['auth', 'signed'])->name('verification.verify');
+    Route::post('email/verification-notification', SendVerificationNotificationController::class)->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
     // Password reset
     Route::get('forgot-password', [ForgotPasswordController::class, 'show'])->name('password.request')->middleware('guest');
@@ -73,9 +63,9 @@ Route::get('impersonate/{tenant}', ImpersonateController::class)
 Route::get('ref/{code}', ReferralController::class)->name('referral.track');
 
 // Legal pages
-Route::get('pricing', fn () => view('platform.pricing'))->name('pricing');
-Route::get('terms', fn () => view('legal.terms'))->name('terms');
-Route::get('privacy', fn () => view('legal.privacy'))->name('privacy');
+Route::view('pricing', 'platform.pricing')->name('pricing');
+Route::view('terms', 'legal.terms')->name('terms');
+Route::view('privacy', 'legal.privacy')->name('privacy');
 
 // SEO
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');

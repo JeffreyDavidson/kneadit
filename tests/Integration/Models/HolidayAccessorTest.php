@@ -19,6 +19,20 @@ test('is_upcoming returns false for past holidays', function () {
     expect($holiday->is_upcoming)->toBeFalse();
 });
 
+test('start_prep_by does not mutate the date attribute', function () {
+    $holiday = Holiday::factory()->create([
+        'date' => now()->addDays(14),
+        'lead_days' => 3,
+    ]);
+
+    $originalDate = $holiday->date->toDateString();
+
+    $prepDate = $holiday->start_prep_by;
+
+    expect($prepDate->toDateString())->not->toBe($originalDate)
+        ->and($holiday->date->toDateString())->toBe($originalDate);
+});
+
 test('days_away calculates correct number of days', function () {
     $holiday = Holiday::factory()->create(['date' => now()->addDays(5)->startOfDay()]);
 

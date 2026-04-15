@@ -6,5 +6,5 @@ beforeEach(function () {
 });
 
 test('forgot password page renders', function () {
-    $this->get('/forgot-password')->assertOk();
+    $this->get(route('password.request'))->assertOk();
 });

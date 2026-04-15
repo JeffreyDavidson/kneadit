@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Settings;
 
 use App\Actions\Tenants\SaveTenantSettings;
+use App\Enums\Orders\PaymentMethod;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Pages\Settings\Schemas\ManageSettingsForm;
 use BackedEnum;
@@ -53,7 +54,7 @@ class ManageSettings extends Page
     public ?string $revenue_cap = '250000';
 
     /** @var array<int, string> */
-    public ?array $payment_methods = ['cash'];
+    public ?array $payment_methods = [PaymentMethod::Cash->value];
 
     public ?string $paypal_client_id = '';
 
@@ -96,7 +97,7 @@ class ManageSettings extends Page
         $this->allergy_disclaimer = settings('allergy_disclaimer', 'Please inform us of any allergies or dietary restrictions when placing your order.');
         $this->revenue_cap = settings('revenue_cap', '250000');
         $methods = settings('payment_methods');
-        $this->payment_methods = $methods ? json_decode($methods, true) : ['cash'];
+        $this->payment_methods = $methods ? json_decode($methods, true) : [PaymentMethod::Cash->value];
         $this->paypal_client_id = settings('paypal_client_id', '');
         $this->paypal_client_secret = settings('paypal_client_secret', '');
         $this->paypal_sandbox = (bool) settings('paypal_sandbox', true);

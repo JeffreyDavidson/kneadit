@@ -11,7 +11,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 
     $fakeTenant = Mockery::mock(Tenant::class)->shouldIgnoreMissing();
     $fakeTenant->shouldReceive('getTenantKey')->andReturn('test-bakery');

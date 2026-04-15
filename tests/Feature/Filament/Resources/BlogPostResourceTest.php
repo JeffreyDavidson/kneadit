@@ -10,7 +10,7 @@ use Livewire\Livewire;
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('can render blog posts list page', function () {
@@ -33,7 +33,7 @@ test('can create a blog post', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(TenantBlogPost::class, [
+    test()->assertDatabaseHas(TenantBlogPost::class, [
         'title' => 'Our New Sourdough Recipe',
         'slug' => 'our-new-sourdough-recipe',
     ]);

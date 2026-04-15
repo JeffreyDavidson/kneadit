@@ -2,13 +2,22 @@
 
 namespace App\Enums\Financial;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Number;
 
-enum CouponType: string implements HasLabel
+enum CouponType: string implements HasColor, HasLabel
 {
     case Percentage = 'percentage';
     case Fixed = 'fixed';
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Percentage => 'primary',
+            self::Fixed => 'success',
+        };
+    }
 
     public function getLabel(): string
     {

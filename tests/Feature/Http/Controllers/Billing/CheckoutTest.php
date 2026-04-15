@@ -11,7 +11,7 @@ test('checkout returns 404 for invalid plan', function () {
     $user = User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->post('/billing/checkout/nonexistent-plan')
+        ->post(route('billing.checkout', 'nonexistent-plan'))
         ->assertNotFound();
 });
 
@@ -21,11 +21,11 @@ test('checkout returns 404 for valid tier but no configured price', function () 
     $user = User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->post('/billing/checkout/starter')
+        ->post(route('billing.checkout', 'starter'))
         ->assertNotFound();
 });
 
 test('checkout requires authentication', function () {
-    $this->post('/billing/checkout/starter')
-        ->assertRedirect('/login');
+    $this->post(route('billing.checkout', 'starter'))
+        ->assertRedirect(route('login'));
 });

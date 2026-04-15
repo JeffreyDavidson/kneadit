@@ -12,7 +12,7 @@ use Livewire\Livewire;
 
 beforeEach(function () {
     setUpCentralTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
     Feature::define('pro-features', fn () => true);
 });
 
@@ -31,7 +31,7 @@ test('can create an email campaign via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(EmailCampaign::class, [
+    test()->assertDatabaseHas(EmailCampaign::class, [
         'subject' => 'Spring Sale Announcement',
     ]);
 });

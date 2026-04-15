@@ -29,13 +29,7 @@ class EmailCampaignsTable
                     ->label('Segment')
                     ->badge(),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (EmailCampaignStatus $state): string => match ($state) {
-                        EmailCampaignStatus::Draft => 'gray',
-                        EmailCampaignStatus::Scheduled => 'info',
-                        EmailCampaignStatus::Sending => 'warning',
-                        EmailCampaignStatus::Sent => 'success',
-                    }),
+                    ->badge(),
                 TextColumn::make('recipient_count')
                     ->label('Recipients')
                     ->sortable(),
@@ -51,12 +45,13 @@ class EmailCampaignsTable
                 SelectFilter::make('status')
                     ->options(EmailCampaignStatus::class),
             ])
-            ->actions([
+            ->recordActions([
                 Actions\EditAction::make()->slideOver(),
                 Actions\Action::make('send_now')
                     ->label('Send Now')
                     ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('success')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->modalHeading('Send Campaign Now')
                     ->modalDescription('Are you sure you want to send this campaign immediately?')
@@ -66,6 +61,7 @@ class EmailCampaignsTable
                     ->label('Schedule')
                     ->icon(Heroicon::OutlinedClock)
                     ->color('info')
+                    ->authorize('update')
                     ->schema([
                         DateTimePicker::make('scheduled_at')
                             ->label('Schedule At')

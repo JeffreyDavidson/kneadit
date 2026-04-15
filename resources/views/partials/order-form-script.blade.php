@@ -216,7 +216,7 @@ function orderForm() {
             this.isApplyingGiftCard = true;
             this.giftCardError = '';
             try {
-                const response = await fetch('{{ route("gift-card.apply") }}', {
+                const response = await fetch('{{ route("giftCard.apply") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

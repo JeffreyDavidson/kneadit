@@ -14,7 +14,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
     Feature::define('growth-features', fn () => true);
 });
 
@@ -28,7 +28,7 @@ test('can create a coupon via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Coupon::class, [
+    test()->assertDatabaseHas(Coupon::class, [
         'code' => 'SPRING20',
         'value' => 20,
     ]);

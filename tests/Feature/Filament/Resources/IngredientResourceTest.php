@@ -13,7 +13,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
     Feature::define('pro-features', fn () => true);
 });
 
@@ -35,7 +35,7 @@ test('can create an ingredient via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Ingredient::class, [
+    test()->assertDatabaseHas(Ingredient::class, [
         'name' => 'Bread Flour',
         'unit' => 'lbs',
     ]);

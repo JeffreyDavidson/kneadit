@@ -8,7 +8,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('order form page renders', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/order');
+        ->get(route('order.create', [], false));
 
     $response->assertOk();
 });
@@ -17,7 +17,7 @@ test('order confirmation page renders', function () {
     $order = Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/order/confirmation/{$order->order_number}");
+        ->get(route('order.confirmation', ['order' => $order->order_number], false));
 
     $response->assertOk();
 });

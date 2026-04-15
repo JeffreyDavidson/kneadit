@@ -12,7 +12,7 @@ test('invoice page renders for an order', function () {
     $order = Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/admin/orders/{$order->order_number}/invoice");
+        ->get(route('admin.orders.invoice', $order, false));
 
     $response->assertOk();
 });

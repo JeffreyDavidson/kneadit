@@ -15,7 +15,7 @@ test('it calculates close distance tier for downtown addresses', function () {
 
     expect($result)
         ->tier->toBe('Close')
-        ->color->toBe('green')
+        ->color->toBe('success')
         ->estimated_minutes->toBe(10);
 });
 
@@ -24,7 +24,7 @@ test('it calculates close distance tier for center addresses', function () {
 
     expect($result)
         ->tier->toBe('Close')
-        ->color->toBe('green')
+        ->color->toBe('success')
         ->estimated_minutes->toBe(10);
 });
 
@@ -33,7 +33,7 @@ test('it calculates medium distance tier for directional addresses', function (s
 
     expect($result)
         ->tier->toBe('Medium')
-        ->color->toBe('yellow')
+        ->color->toBe('warning')
         ->estimated_minutes->toBe(20);
 })->with([
     '500 West Oak Dr',
@@ -47,7 +47,7 @@ test('it calculates far distance tier for unrecognized addresses', function () {
 
     expect($result)
         ->tier->toBe('Far')
-        ->color->toBe('red')
+        ->color->toBe('danger')
         ->estimated_minutes->toBe(35);
 });
 
@@ -91,12 +91,12 @@ test('it returns route stats from delivery orders', function () {
         [
             'id' => 1,
             'total' => 50.00,
-            'distance_tier' => ['tier' => 'Close', 'color' => 'green', 'estimated_minutes' => 10],
+            'distance_tier' => ['tier' => 'Close', 'color' => 'success', 'estimated_minutes' => 10],
         ],
         [
             'id' => 2,
             'total' => 30.00,
-            'distance_tier' => ['tier' => 'Far', 'color' => 'red', 'estimated_minutes' => 35],
+            'distance_tier' => ['tier' => 'Far', 'color' => 'danger', 'estimated_minutes' => 35],
         ],
     ]);
 
@@ -124,7 +124,7 @@ test('it calculates close distance tier for main st addresses', function () {
 
     expect($result)
         ->tier->toBe('Close')
-        ->color->toBe('green')
+        ->color->toBe('success')
         ->estimated_minutes->toBe(10);
 });
 

@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers\Order;
 
-use App\Enums\Orders\PaymentStatus;
+use App\Actions\Stripe\CancelStripeCheckout;
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
 use Illuminate\Http\RedirectResponse;
 
 class StripeCancelController extends Controller
 {
-    /**
-     * Stripe checkout cancel callback.
-     */
-    public function __invoke(Order $order): RedirectResponse
+    public function __invoke(Order $order, CancelStripeCheckout $cancelCheckout): RedirectResponse
     {
-        $order->update([
-            'payment_status' => PaymentStatus::Unpaid,
-        ]);
+        $cancelCheckout($order);
 
         return to_route('order.confirmation', $order)
             ->with('warning', 'Payment was not completed. You can pay later or contact the baker.');

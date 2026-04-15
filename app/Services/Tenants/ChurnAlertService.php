@@ -114,7 +114,7 @@ class ChurnAlertService
     /** @param Collection<int, array<string, mixed>> $alerts */
     private function checkLowHealth(Tenant $tenant, int $healthScore, int $daysSinceSignup, Collection $alerts): void
     {
-        if ($healthScore >= 40) {
+        if ($healthScore >= config('monitoring.churn_low_health_threshold', 40)) {
             return;
         }
 

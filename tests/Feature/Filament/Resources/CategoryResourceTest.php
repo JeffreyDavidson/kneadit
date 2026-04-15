@@ -12,7 +12,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('can list categories in the table', function () {
@@ -30,7 +30,7 @@ test('can create a category via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Category::class, [
+    test()->assertDatabaseHas(Category::class, [
         'name' => 'Pastries',
         'slug' => 'pastries',
     ]);

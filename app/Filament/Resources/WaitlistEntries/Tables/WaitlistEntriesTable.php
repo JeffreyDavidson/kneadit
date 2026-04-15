@@ -12,7 +12,6 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -46,13 +45,8 @@ class WaitlistEntriesTable
                     ->date()
                     ->sortable(),
 
-                BadgeColumn::make('status')
-                    ->colors([
-                        'warning' => WaitlistStatus::Waiting->value,
-                        'info' => WaitlistStatus::Notified->value,
-                        'success' => WaitlistStatus::Converted->value,
-                        'danger' => WaitlistStatus::Removed->value,
-                    ]),
+                TextColumn::make('status')
+                    ->badge(),
 
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -95,6 +89,7 @@ class WaitlistEntriesTable
                 Action::make('notify')
                     ->icon(Heroicon::OutlinedBell)
                     ->color('info')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
                         resolve(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Notified);
@@ -109,6 +104,7 @@ class WaitlistEntriesTable
                 Action::make('convert')
                     ->icon(Heroicon::OutlinedCheck)
                     ->color('success')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
                         resolve(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Converted);
@@ -123,6 +119,7 @@ class WaitlistEntriesTable
                 Action::make('remove')
                     ->icon(Heroicon::OutlinedXMark)
                     ->color('danger')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->action(function (WaitlistEntry $record) {
                         resolve(UpdateWaitlistEntryStatus::class)($record, WaitlistStatus::Removed);

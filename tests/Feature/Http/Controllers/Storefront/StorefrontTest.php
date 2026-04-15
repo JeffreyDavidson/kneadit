@@ -122,7 +122,7 @@ test('contact form submission works with valid data', function () {
         ]);
 
     $response->assertRedirect();
-    $this->assertDatabaseHas('contact_messages', [
+    test()->assertDatabaseHas('contact_messages', [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
         'subject' => 'Question about orders',

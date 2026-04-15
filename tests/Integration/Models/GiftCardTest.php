@@ -13,14 +13,14 @@ beforeEach(function () {
 });
 
 test('gift cards page loads', function () {
-    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.gift-cards', absolute: false));
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.giftCards', absolute: false));
 
     $response->assertOk();
 });
 
 test('gift card can be purchased with valid data', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-cards.purchase', absolute: false), [
+        ->postJson(route('giftCards.purchase', absolute: false), [
             'purchaser_name' => 'John Doe',
             'purchaser_email' => 'john@example.com',
             'recipient_name' => 'Jane Doe',
@@ -46,7 +46,7 @@ test('gift card balance check works', function () {
     ]));
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-cards.balance', absolute: false), [
+        ->postJson(route('giftCards.balance', absolute: false), [
             'code' => $card->code,
         ]);
 
@@ -56,7 +56,7 @@ test('gift card balance check works', function () {
 
 test('gift card balance check returns 404 for invalid code', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-cards.balance', absolute: false), [
+        ->postJson(route('giftCards.balance', absolute: false), [
             'code' => 'INVALID-CODE-HERE',
         ]);
 
@@ -113,7 +113,7 @@ test('expired gift card cannot be redeemed', function () {
 
 test('gift card purchase validates required fields', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-cards.purchase', absolute: false), []);
+        ->postJson(route('giftCards.purchase', absolute: false), []);
 
     $response->assertUnprocessable();
     $response->assertJsonValidationErrors(['purchaser_name', 'purchaser_email', 'initial_balance']);

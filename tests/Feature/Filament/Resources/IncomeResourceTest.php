@@ -14,7 +14,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
     Feature::define('growth-features', fn () => true);
 });
 
@@ -35,7 +35,7 @@ test('can create an income via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Income::class, [
+    test()->assertDatabaseHas(Income::class, [
         'description' => 'Farmers market sales',
     ]);
 });

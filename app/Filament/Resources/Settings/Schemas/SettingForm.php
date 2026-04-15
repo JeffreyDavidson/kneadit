@@ -18,7 +18,7 @@ class SettingForm
                     ->components([
                         TextInput::make('key')
                             ->required()
-                            ->unique(ignoreRecord: true)
+                            ->unique()
                             ->maxLength(255)
                             ->helperText('Unique identifier for this setting'),
 

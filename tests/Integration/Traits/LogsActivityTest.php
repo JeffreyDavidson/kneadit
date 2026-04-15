@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Operations\ActivityAction;
 use App\Models\Inventory\Product;
 use App\Models\Operations\ActivityLog;
 use App\Models\Staff\User;
@@ -19,7 +20,7 @@ test('creating a model logs activity', function () {
 
     expect($log)->not->toBeNull()
         ->and($log->model_id)->toBe($product->id)
-        ->and($log->action)->toBe('created');
+        ->and($log->action)->toBe(ActivityAction::Created);
 });
 
 test('updating a model logs activity with changes', function () {

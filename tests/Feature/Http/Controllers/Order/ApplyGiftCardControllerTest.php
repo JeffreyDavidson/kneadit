@@ -17,7 +17,7 @@ test('apply valid gift card returns balance', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-card.apply', [], false), [
+        ->postJson(route('giftCard.apply', [], false), [
             'code' => 'GIFT-TEST-1234',
             'subtotal' => 50.00,
         ]);
@@ -34,7 +34,7 @@ test('apply valid gift card returns balance', function () {
 
 test('apply nonexistent gift card returns error', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-card.apply', [], false), [
+        ->postJson(route('giftCard.apply', [], false), [
             'code' => 'INVALID-CODE',
             'subtotal' => 50.00,
         ]);
@@ -51,7 +51,7 @@ test('gift card caps applicable amount at subtotal', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-card.apply', [], false), [
+        ->postJson(route('giftCard.apply', [], false), [
             'code' => 'GIFT-BIG-BALANCE',
             'subtotal' => 30.00,
         ]);

@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Tools;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
+use App\Services\Content\QrCodeService;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
@@ -13,9 +14,7 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\HtmlString;
 use Laravel\Pennant\Feature;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class QrCodeGenerator extends Page
@@ -116,67 +115,52 @@ class QrCodeGenerator extends Page
 
     public function generateQrCode(): void
     {
-        $baseUrl = 'http://' . tenant()->domains->first()->domain;
         $page = $this->data['page'] ?? '';
         $size = (int) ($this->data['size'] ?? 300);
         $color = $this->data['color'] ?? '#3E2723';
         $format = $this->data['format'] ?? 'svg';
 
-        $this->currentUrl = $baseUrl . ($page ? '/' . $page : '');
+        $this->currentUrl = $this->buildUrl($page);
 
-        // Parse hex color to RGB
-        $hex = ltrim($color, '#');
-        $r = hexdec(substr($hex, 0, 2));
-        $g = hexdec(substr($hex, 2, 2));
-        $b = hexdec(substr($hex, 4, 2));
+        $service = app(QrCodeService::class);
 
-        $qr = QrCode::size($size)->color((int) $r, (int) $g, (int) $b)->margin(1);
-
-        if ($format === 'png') {
-            $qr = $qr->format('png');
-            /** @var string $pngData */
-            $pngData = $qr->generate($this->currentUrl);
-            $this->qrCodeSvg = base64_encode($pngData);
-        } else {
-            /** @var HtmlString $svg */
-            $svg = $qr->generate($this->currentUrl);
-            $this->qrCodeSvg = $svg->toHtml();
-        }
+        $this->qrCodeSvg = $format === 'png'
+            ? base64_encode($service->generatePng($this->currentUrl, $size, $color))
+            : $service->generateSvg($this->currentUrl, $size, $color);
     }
 
     public function downloadQrCode(): StreamedResponse
     {
-        $baseUrl = 'http://' . tenant()->domains->first()->domain;
         $page = $this->data['page'] ?? '';
         $size = (int) ($this->data['size'] ?? 300);
         $color = $this->data['color'] ?? '#3E2723';
         $format = $this->data['format'] ?? 'svg';
 
-        $url = $baseUrl . ($page ? '/' . $page : '');
+        $url = $this->buildUrl($page);
 
-        $hex = ltrim($color, '#');
-        $r = hexdec(substr($hex, 0, 2));
-        $g = hexdec(substr($hex, 2, 2));
-        $b = hexdec(substr($hex, 4, 2));
-
-        $qr = QrCode::size($size)->color((int) $r, (int) $g, (int) $b)->margin(1);
+        $service = app(QrCodeService::class);
 
         if ($format === 'png') {
-            /** @var string $content */
-            $content = $qr->format('png')->generate($url);
+            $content = $service->generatePng($url, $size, $color);
             $filename = 'qr-code.' . ($page ?: 'home') . '.png';
 
-            return Response::streamDownload(fn () => print ((string) $content), $filename, [
+            return Response::streamDownload(fn () => print ($content), $filename, [
                 'Content-Type' => 'image/png',
             ]);
-        } else {
-            /** @var string $content */
-            $content = $qr->generate($url);
-            $filename = 'qr-code.' . ($page ?: 'home') . '.svg';
-
-            return Response::streamDownload(fn () => print ((string) $content), $filename, [
-                'Content-Type' => 'image/svg+xml',
-            ]);
         }
+
+        $content = $service->generateSvg($url, $size, $color);
+        $filename = 'qr-code.' . ($page ?: 'home') . '.svg';
+
+        return Response::streamDownload(fn () => print ($content), $filename, [
+            'Content-Type' => 'image/svg+xml',
+        ]);
+    }
+
+    private function buildUrl(string $page): string
+    {
+        $baseUrl = 'http://' . tenant()->domains->first()->domain;
+
+        return $baseUrl . ($page ? "/{$page}" : '');
     }
 }

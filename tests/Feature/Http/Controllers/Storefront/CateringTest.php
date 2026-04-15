@@ -10,7 +10,7 @@ beforeEach(function () {
 });
 
 test('catering page loads', function () {
-    $response = withoutMiddleware(tenantMiddleware())->get('/catering');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.catering', [], false));
 
     $response->assertOk();
 });
@@ -20,7 +20,7 @@ test('catering inquiry can be submitted with valid data', function () {
     settings(['catering_minimum_guests' => '5']);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/catering', [
+        ->post(route('catering.submit', [], false), [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'customer_phone' => '555-1234',
@@ -33,8 +33,8 @@ test('catering inquiry can be submitted with valid data', function () {
             'venue_address' => '123 Wedding Ln',
         ]);
 
-    $response->assertRedirect(route('storefront.catering'));
-    $this->assertDatabaseHas('catering_inquiries', [
+    $response->assertRedirect(route('storefront.catering', [], false));
+    test()->assertDatabaseHas('catering_inquiries', [
         'customer_name' => 'Jane Doe',
         'customer_email' => 'jane@example.com',
         'event_type' => CateringEventType::Wedding->value,
@@ -42,7 +42,7 @@ test('catering inquiry can be submitted with valid data', function () {
 });
 
 test('catering validation rejects missing required fields', function () {
-    $response = withoutMiddleware(tenantMiddleware())->post('/catering', []);
+    $response = withoutMiddleware(tenantMiddleware())->post(route('catering.submit', [], false), []);
 
     $response->assertSessionHasErrors(['customer_name', 'customer_email', 'event_type', 'event_date', 'guest_count', 'details']);
 });
@@ -52,7 +52,7 @@ test('catering validation rejects past event dates', function () {
     settings(['catering_minimum_guests' => '5']);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/catering', [
+        ->post(route('catering.submit', [], false), [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'event_type' => CateringEventType::Birthday->value,
@@ -69,7 +69,7 @@ test('inquiry is saved with default status', function () {
     settings(['catering_minimum_guests' => '5']);
 
     withoutMiddleware(tenantMiddleware())
-        ->post('/catering', [
+        ->post(route('catering.submit', [], false), [
             'customer_name' => 'Bob',
             'customer_email' => 'bob@example.com',
             'event_type' => CateringEventType::Corporate->value,

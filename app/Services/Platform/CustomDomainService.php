@@ -2,8 +2,6 @@
 
 namespace App\Services\Platform;
 
-use Stancl\Tenancy\Database\Models\Domain;
-
 class CustomDomainService
 {
     public function serverIp(): string
@@ -21,34 +19,6 @@ class CustomDomainService
         $ip = gethostbyname($domain);
 
         return $ip === $this->serverIp();
-    }
-
-    public function addDomain(mixed $tenant, string $domain): void
-    {
-        $tenant->update(['custom_domain' => $domain]);
-
-        if (! Domain::query()->where('domain', $domain)->exists()) {
-            $tenant->domains()->create(['domain' => $domain]);
-        }
-
-        if (ForgeService::isConfigured()) {
-            resolve(ForgeService::class)->addDomainAlias($domain);
-        }
-    }
-
-    public function removeDomain(mixed $tenant): void
-    {
-        $oldDomain = $tenant->custom_domain;
-
-        if ($oldDomain) {
-            Domain::query()->where('domain', $oldDomain)->where('tenant_id', $tenant->id)->delete();
-
-            if (ForgeService::isConfigured()) {
-                resolve(ForgeService::class)->removeDomainAlias($oldDomain);
-            }
-        }
-
-        $tenant->update(['custom_domain' => null]);
     }
 
     public function provisionSsl(string $domain): ?bool

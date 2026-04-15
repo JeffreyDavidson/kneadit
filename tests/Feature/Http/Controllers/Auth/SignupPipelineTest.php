@@ -130,7 +130,7 @@ test('successful onboarding creates tenant record', function () {
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub]);
 
-    $this->assertDatabaseHas('tenants', ['id' => $sub]);
+    test()->assertDatabaseHas('tenants', ['id' => $sub]);
 });
 
 test('successful onboarding creates domain record with correct subdomain', function () {
@@ -151,7 +151,7 @@ test('successful onboarding creates tenant user with same email', function () {
 
     $tenant = Tenant::query()->find($sub);
     $tenant->run(function () use ($user) {
-        $this->assertDatabaseHas('users', ['email' => $user->email]);
+        test()->assertDatabaseHas('users', ['email' => $user->email]);
     });
 });
 
@@ -162,7 +162,7 @@ test('successful onboarding seeds store name setting in tenant', function () {
 
     $tenant = Tenant::query()->find($sub);
     $tenant->run(function () {
-        $this->assertDatabaseHas('settings', [
+        test()->assertDatabaseHas('settings', [
             'key' => 'store_name',
             'value' => 'Artisan Breads',
         ]);
@@ -176,7 +176,7 @@ test('successful onboarding seeds store email setting in tenant', function () {
 
     $tenant = Tenant::query()->find($sub);
     $tenant->run(function () use ($user) {
-        $this->assertDatabaseHas('settings', [
+        test()->assertDatabaseHas('settings', [
             'key' => 'store_email',
             'value' => $user->email,
         ]);
@@ -192,7 +192,7 @@ test('onboarding with storefront choice own stores external website', function (
         'external_website' => 'https://mybakery.com',
     ]);
 
-    $this->assertDatabaseHas('tenants', [
+    test()->assertDatabaseHas('tenants', [
         'id' => $sub,
         'external_website' => 'https://mybakery.com',
     ]);
@@ -306,7 +306,7 @@ test('subdomain is lowercased', function () {
 
     submitOnboarding($user, ['subdomain' => $sub]);
 
-    $this->assertDatabaseHas('tenants', ['id' => $lower]);
+    test()->assertDatabaseHas('tenants', ['id' => $lower]);
 });
 
 test('tenant gets starter plan by default', function () {
@@ -314,7 +314,7 @@ test('tenant gets starter plan by default', function () {
     $sub = uniqueSubdomain();
     submitOnboarding($user, ['subdomain' => $sub]);
 
-    $this->assertDatabaseHas('tenants', [
+    test()->assertDatabaseHas('tenants', [
         'id' => $sub,
         'plan' => SubscriptionTier::Starter,
     ]);

@@ -8,14 +8,10 @@ test('OrderStatus has a label method', function () {
         ->and(OrderStatus::Cancelled->getLabel())->toBe('Cancelled');
 });
 
-test('OrderStatus has a color for every case', function () {
-    foreach (OrderStatus::cases() as $case) {
-        expect($case->getColor())->toBeString();
-    }
-});
+test('OrderStatus has a color for every case', function (OrderStatus $case) {
+    expect($case->getColor())->toBeString();
+})->with(OrderStatus::cases());
 
-test('OrderStatus has an icon for every case', function () {
-    foreach (OrderStatus::cases() as $case) {
-        expect($case->getIcon())->toBeInstanceOf(Filament\Support\Icons\Heroicon::class);
-    }
-});
+test('OrderStatus has an icon for every case', function (OrderStatus $case) {
+    expect($case->getIcon())->toBeInstanceOf(Filament\Support\Icons\Heroicon::class);
+})->with(OrderStatus::cases());

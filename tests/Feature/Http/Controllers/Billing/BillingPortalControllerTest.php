@@ -16,11 +16,11 @@ test('billing portal redirects authenticated user to stripe portal', function ()
         ->andReturn(new RedirectResponse('https://billing.stripe.com/session/test'));
 
     $this->actingAs($user)
-        ->get('/billing/portal')
+        ->get(route('billing.portal'))
         ->assertRedirect('https://billing.stripe.com/session/test');
 });
 
 test('billing portal requires authentication', function () {
-    $this->get('/billing/portal')
-        ->assertRedirect('/login');
+    $this->get(route('billing.portal'))
+        ->assertRedirect(route('login'));
 });

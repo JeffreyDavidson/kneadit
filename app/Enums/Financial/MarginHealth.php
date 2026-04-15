@@ -2,9 +2,10 @@
 
 namespace App\Enums\Financial;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum MarginHealth: string implements HasLabel
+enum MarginHealth: string implements HasColor, HasLabel
 {
     case Healthy = 'green';
     case Warning = 'yellow';
@@ -18,6 +19,16 @@ enum MarginHealth: string implements HasLabel
             self::Warning => 'Warning',
             self::Critical => 'Critical',
             self::Unknown => 'Unknown',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Healthy => 'success',
+            self::Warning => 'warning',
+            self::Critical => 'danger',
+            self::Unknown => 'gray',
         };
     }
 

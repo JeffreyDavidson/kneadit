@@ -15,7 +15,7 @@ test('referral link stores code in session and redirects to register', function 
         'referral_code' => 'test-bakery-abc1',
     ]);
 
-    $this->get('/ref/test-bakery-abc1')
-        ->assertRedirect('/register')
+    $this->get(route('referral.track', 'test-bakery-abc1'))
+        ->assertRedirect(route('register'))
         ->assertSessionHas('referral_code', 'test-bakery-abc1');
 });

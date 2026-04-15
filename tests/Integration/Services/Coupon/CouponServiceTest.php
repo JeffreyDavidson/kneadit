@@ -63,8 +63,7 @@ test('isValid returns false for future start date coupon', function () {
 test('apply increments used count', function () {
     $coupon = Coupon::factory()->create(['used_count' => 0]);
 
-    $service = new CouponService;
-    $service->apply($coupon);
+    app(App\Actions\Financial\ApplyCoupon::class)($coupon);
 
     expect($coupon->fresh()->used_count)->toBe(1);
 });

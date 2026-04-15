@@ -48,7 +48,7 @@
         $loyaltyEnabled = $settings->loyaltyEnabled;
         $loyaltyName = $settings->loyaltyProgramName;
         $exploreActive = request()->routeIs('storefront.blog*', 'storefront.gallery', 'storefront.reviews', 'storefront.about', 'storefront.catering');
-        $accountActive = request()->routeIs('order.track', 'storefront.gift-cards', 'storefront.rewards');
+        $accountActive = request()->routeIs('order.track', 'storefront.giftCards', 'storefront.rewards');
     @endphp
 
     <!-- Navigation -->
@@ -96,7 +96,7 @@
                          class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl"
                          style="background: var(--warm-800); border: 1px solid rgba(139, 104, 68, 0.25);">
                         <a href="{{ route('order.track') }}" class="nav-dropdown-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
-                        <a href="{{ route('storefront.gift-cards') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.gift-cards') ? 'active' : '' }}">Gift Cards</a>
+                        <a href="{{ route('storefront.giftCards') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.giftCards') ? 'active' : '' }}">Gift Cards</a>
                         @if ($loyaltyEnabled)
                         <a href="{{ route('storefront.rewards') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ $loyaltyName }}</a>
                         @endif
@@ -142,7 +142,7 @@
                     </button>
                     <div x-show="account" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('order.track') }}" class="block nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
-                        <a href="{{ route('storefront.gift-cards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.gift-cards') ? 'active' : '' }}">Gift Cards</a>
+                        <a href="{{ route('storefront.giftCards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.giftCards') ? 'active' : '' }}">Gift Cards</a>
                         @if ($loyaltyEnabled)
                         <a href="{{ route('storefront.rewards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ $loyaltyName }}</a>
                         @endif

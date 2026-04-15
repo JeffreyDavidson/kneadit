@@ -11,7 +11,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('can purchase a gift card', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-cards.purchase', [], false), [
+        ->postJson(route('giftCards.purchase', [], false), [
             'purchaser_name' => 'Jane Doe',
             'purchaser_email' => 'jane@example.com',
             'initial_balance' => 25.00,
@@ -25,7 +25,7 @@ test('can purchase a gift card', function () {
 
 test('purchase gift card validates required fields', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->postJson(route('gift-cards.purchase', [], false), []);
+        ->postJson(route('giftCards.purchase', [], false), []);
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors(['purchaser_name', 'purchaser_email', 'initial_balance']);

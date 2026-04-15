@@ -200,7 +200,7 @@ function giftCardPage() {
             this.purchaseError = '';
 
             try {
-                const response = await fetch('{{ route("gift-cards.purchase") }}', {
+                const response = await fetch('{{ route("giftCards.purchase") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -229,7 +229,7 @@ function giftCardPage() {
             this.balanceResult = null;
 
             try {
-                const response = await fetch('{{ route("gift-cards.balance") }}', {
+                const response = await fetch('{{ route("giftCards.balance") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
