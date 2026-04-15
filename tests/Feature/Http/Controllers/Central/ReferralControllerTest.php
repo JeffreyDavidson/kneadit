@@ -3,6 +3,8 @@
 use App\Models\Customers\Referral;
 use App\Models\Platform\Tenant;
 
+use function Pest\Laravel\get;
+
 beforeEach(function () {
     setUpCentralTest();
     config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
@@ -15,7 +17,7 @@ test('referral link stores code in session and redirects to register', function 
         'referral_code' => 'test-bakery-abc1',
     ]);
 
-    $this->get(route('referral.track', 'test-bakery-abc1'))
+    get(route('referral.track', 'test-bakery-abc1'))
         ->assertRedirect(route('register'))
         ->assertSessionHas('referral_code', 'test-bakery-abc1');
 });

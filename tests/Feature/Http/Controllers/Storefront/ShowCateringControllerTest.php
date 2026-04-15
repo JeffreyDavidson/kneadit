@@ -15,6 +15,15 @@ test('catering page loads', function () {
     $response->assertOk();
 });
 
+test('catering controller passes settings and content to view', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.catering', [], false));
+
+    $response->assertOk()
+        ->assertViewHas('settings')
+        ->assertViewHas('content');
+});
+
 test('catering inquiry can be submitted with valid data', function () {
     settings(['catering_lead_time_days' => '1']);
     settings(['catering_minimum_guests' => '5']);

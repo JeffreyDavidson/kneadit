@@ -5,15 +5,16 @@ use Illuminate\Support\Facades\Http;
 use function Pest\Laravel\get;
 
 beforeEach(function () {
+    setUpCentralTest();
+    config(['tenancy.central_domains' => ['localhost', 'kneadit.test']]);
+
     Http::fake([
         'api.github.com/*' => Http::response([], 404),
     ]);
 });
 
-test('changelog page loads', function () {
-    $response = get('/changelog');
-
-    $response->assertOk();
+test('changelog page renders', function () {
+    get(route('changelog'))->assertOk();
 });
 
 test('changelog displays version entries', function () {

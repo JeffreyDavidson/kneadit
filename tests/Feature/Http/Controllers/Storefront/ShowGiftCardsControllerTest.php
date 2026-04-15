@@ -16,6 +16,16 @@ function makeGiftCard(array $overrides = []): GiftCard
     ], $overrides));
 }
 
+test('gift cards controller passes settings and content to view', function () {
+    $response = test()
+        ->withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.giftCards', [], false));
+
+    $response->assertOk()
+        ->assertViewHas('settings')
+        ->assertViewHas('content');
+});
+
 test('gift card model exists', function () {
     expect(class_exists(GiftCard::class))->toBeTrue();
 });

@@ -9,6 +9,15 @@ beforeEach(function () {
     setUpTenantTest();
 });
 
+test('loyalty controller show passes vm to view', function () {
+    $response = test()
+        ->withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.rewards', [], false));
+
+    $response->assertOk()
+        ->assertViewHas('vm');
+});
+
 test('loyalty point model exists', function () {
     expect(class_exists(LoyaltyPoint::class))->toBeTrue();
 });

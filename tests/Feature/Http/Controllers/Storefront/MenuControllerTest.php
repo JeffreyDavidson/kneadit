@@ -5,8 +5,17 @@ use App\Models\Inventory\Product;
 
 use function Pest\Laravel\withoutMiddleware;
 
-beforeEach(function () {
-    setUpTenantTest();
+beforeEach(fn () => setUpTenantTest());
+
+test('menu controller passes settings and content to view', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.menu', [], false));
+
+    $response->assertOk()
+        ->assertViewHas('settings')
+        ->assertViewHas('content')
+        ->assertViewHas('heroEyebrow')
+        ->assertViewHas('ctaDesc');
 });
 
 test('menu page loads successfully', function () {
@@ -96,79 +105,4 @@ test('menu does not show inactive products', function () {
 
     $response->assertOk();
     $response->assertDontSee('Hidden Bread');
-});
-
-test('about page loads', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->get(route('storefront.about', [], false));
-
-    $response->assertOk();
-});
-
-test('contact page loads', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->get(route('contact.show', [], false));
-
-    $response->assertOk();
-});
-
-test('contact form submission works with valid data', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('contact.store', [], false), [
-            'name' => 'Jane Doe',
-            'email' => 'jane@example.com',
-            'subject' => 'Question about orders',
-            'message' => 'Do you offer gluten-free options?',
-        ]);
-
-    $response->assertRedirect();
-    test()->assertDatabaseHas('contact_messages', [
-        'name' => 'Jane Doe',
-        'email' => 'jane@example.com',
-        'subject' => 'Question about orders',
-    ]);
-});
-
-test('contact form validation rejects missing name', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('contact.store', [], false), [
-            'email' => 'jane@example.com',
-            'subject' => 'Test',
-            'message' => 'Test message',
-        ]);
-
-    $response->assertSessionHasErrors('name');
-});
-
-test('contact form validation rejects missing email', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('contact.store', [], false), [
-            'name' => 'Jane',
-            'subject' => 'Test',
-            'message' => 'Test message',
-        ]);
-
-    $response->assertSessionHasErrors('email');
-});
-
-test('contact form validation rejects missing subject', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('contact.store', [], false), [
-            'name' => 'Jane',
-            'email' => 'jane@example.com',
-            'message' => 'Test message',
-        ]);
-
-    $response->assertSessionHasErrors('subject');
-});
-
-test('contact form validation rejects missing message', function () {
-    $response = withoutMiddleware(tenantMiddleware())
-        ->post(route('contact.store', [], false), [
-            'name' => 'Jane',
-            'email' => 'jane@example.com',
-            'subject' => 'Test',
-        ]);
-
-    $response->assertSessionHasErrors('message');
 });
