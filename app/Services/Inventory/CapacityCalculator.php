@@ -2,6 +2,7 @@
 
 namespace App\Services\Inventory;
 
+use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
 use App\Models\Operations\CapacityLimit;
 use App\Models\Orders\Order;
@@ -29,6 +30,10 @@ class CapacityCalculator
     public function isAvailable(Carbon|string $date): bool
     {
         $date = Date::parse($date);
+
+        if (BlockedDate::query()->where('date', $date->toDateString())->where('is_all_day', true)->exists()) {
+            return false;
+        }
 
         $schedule = BusinessSchedule::query()
             ->where('day_of_week', $date->dayOfWeek)
