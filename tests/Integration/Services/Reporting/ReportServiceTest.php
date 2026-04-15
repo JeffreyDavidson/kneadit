@@ -8,14 +8,18 @@ use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
-use App\Services\Reporting\ReportService;
+use App\Reports\Customers\CustomerReport;
+use App\Reports\Financial\FinancialReport;
+use App\Reports\Inventory\InventoryReport;
+use App\Reports\Inventory\ProductReport;
+use App\Reports\Orders\SalesReport;
+use App\ValueObjects\DateRange;
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->user = User::factory()->owner()->create();
-    $this->service = resolve(ReportService::class);
-    $this->customer = Customer::factory()->create();
-    $this->category = Category::factory()->create(['name' => 'Bread', 'slug' => 'bread']);
+    test()->user = User::factory()->owner()->create();
+    test()->customer = Customer::factory()->create();
+    test()->category = Category::factory()->create(['name' => 'Bread', 'slug' => 'bread']);
 });
 
 function createPaidOrder(float $total, string $date): Order
@@ -31,38 +35,36 @@ function createPaidOrder(float $total, string $date): Order
         ]);
 }
 
-test('service exists', function () {
-    expect($this->service)->toBeInstanceOf(ReportService::class);
-});
-
 test('sales report returns correct totals', function () {
     createPaidOrder(50.00, '2026-03-01');
     createPaidOrder(30.00, '2026-03-02');
 
-    $report = $this->service->salesReport('2026-03-01', '2026-03-31');
+    $report = resolve(SalesReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report['totalOrders'])->toBe(2)->and((float) $report['totalRevenue'])->toBe(80.00);
+    expect($report['totalOrders'])->toBe(2)
+        ->and((float) $report['totalRevenue'])->toBe(80.00);
 });
 
 test('sales report respects date range', function () {
     createPaidOrder(50.00, '2026-02-15');
     createPaidOrder(30.00, '2026-03-15');
 
-    $report = $this->service->salesReport('2026-03-01', '2026-03-31');
+    $report = resolve(SalesReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
-    expect($report['totalOrders'])->toBe(1)->and((float) $report['totalRevenue'])->toBe(30.00);
+    expect($report['totalOrders'])->toBe(1)
+        ->and((float) $report['totalRevenue'])->toBe(30.00);
 });
 
 test('customer report returns data for date range', function () {
-    $report = $this->service->customerReport('2026-03-01', '2026-03-31');
+    $report = resolve(CustomerReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
     expect($report)->toBeArray();
 });
 
 test('product performance report returns data for date range', function () {
-    Product::factory()->recycle($this->category)->create(['name' => 'Sourdough', 'price' => 10.00]);
+    Product::factory()->recycle(test()->category)->create(['name' => 'Sourdough', 'price' => 10.00]);
 
-    $report = $this->service->productPerformanceReport('2026-03-01', '2026-03-31');
+    $report = resolve(ProductReport::class)->generate(DateRange::fromStrings('2026-03-01', '2026-03-31'));
 
     expect($report)->toBeArray()
         ->and($report)->toHaveKey('products');
@@ -78,9 +80,11 @@ test('financial summary calculates profit', function () {
         'deductible_amount' => 30.00,
     ]);
 
-    $report = $this->service->financialSummary(2026);
+    $report = resolve(FinancialReport::class)->generate(2026);
 
-    expect((float) $report['totalRevenue'])->toBe(100.00)->and((float) $report['totalExpenses'])->toBe(30.00)->and((float) $report['profit'])->toBe(70.00);
+    expect((float) $report['totalRevenue'])->toBe(100.00)
+        ->and((float) $report['totalExpenses'])->toBe(30.00)
+        ->and((float) $report['profit'])->toBe(70.00);
 });
 
 test('inventory report flags low stock', function () {
@@ -99,7 +103,7 @@ test('inventory report flags low stock', function () {
         'cost_per_unit' => 2.00,
     ]);
 
-    $report = $this->service->inventoryReport();
+    $report = resolve(InventoryReport::class)->generate();
 
     expect($report['lowStockItems'])->toBe(1);
     $flour = collect($report['ingredients'])->firstWhere('name', 'Flour');

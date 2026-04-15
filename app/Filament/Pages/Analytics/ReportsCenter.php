@@ -5,7 +5,12 @@ namespace App\Filament\Pages\Analytics;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Services\Reporting\ReportService;
+use App\Reports\Customers\CustomerReport;
+use App\Reports\Financial\FinancialReport;
+use App\Reports\Inventory\InventoryReport;
+use App\Reports\Inventory\ProductReport;
+use App\Reports\Orders\SalesReport;
+use App\ValueObjects\DateRange;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Laravel\Pennant\Feature;
@@ -56,14 +61,14 @@ class ReportsCenter extends Page
     public function generateReport(string $type): void
     {
         $this->activeReport = $type;
-        $service = resolve(ReportService::class);
+        $dateRange = DateRange::fromStrings($this->startDate, $this->endDate);
 
         $this->reportData = match ($type) {
-            'sales' => $service->salesReport($this->startDate, $this->endDate),
-            'customers' => $service->customerReport($this->startDate, $this->endDate),
-            'products' => $service->productPerformanceReport($this->startDate, $this->endDate),
-            'financial' => $service->financialSummary($this->selectedYear),
-            'inventory' => $service->inventoryReport(),
+            'sales' => resolve(SalesReport::class)->generate($dateRange),
+            'customers' => resolve(CustomerReport::class)->generate($dateRange),
+            'products' => resolve(ProductReport::class)->generate($dateRange),
+            'financial' => resolve(FinancialReport::class)->generate($this->selectedYear),
+            'inventory' => resolve(InventoryReport::class)->generate(),
             default => [],
         };
     }

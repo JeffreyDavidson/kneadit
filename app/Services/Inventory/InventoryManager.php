@@ -33,22 +33,6 @@ class InventoryManager
     }
 
     /**
-     * Non-throwing check for read contexts (calendar UI, API).
-     */
-    public function canAcceptOrder(Carbon|string $date): bool
-    {
-        return $this->capacityCalculator->isAvailable($date);
-    }
-
-    /**
-     * How many more orders can this date take?
-     */
-    public function remainingSlots(Carbon|string $date): int
-    {
-        return $this->capacityCalculator->remainingSlots($date);
-    }
-
-    /**
      * Deduct all ingredients for an order's items.
      * Walks order -> items -> products -> recipes -> ingredients
      * in a DB transaction, creating StockAdjustment audit records.
