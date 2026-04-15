@@ -15,7 +15,9 @@ class RegisterController extends Controller
     {
         $user = $createUser($request->validated());
 
-        session(['bakery_name' => $request->validated('bakery_name')]);
+        session([
+            'bakery_name' => $request->validated('bakery_name'),
+        ]);
 
         Auth::login($user);
 

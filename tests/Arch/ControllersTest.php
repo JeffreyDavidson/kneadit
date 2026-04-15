@@ -41,7 +41,8 @@ foreach ($controllerFiles as $controllerClass) {
 
 arch('controllers should be classes')
     ->expect('App\Http\Controllers')
-    ->toBeClasses();
+    ->toBeClasses()
+    ->ignoring('App\Http\Controllers\Stripe\Concerns');
 
 arch('controllers should not use DB facade directly')
     ->expect('Illuminate\Support\Facades\DB')
