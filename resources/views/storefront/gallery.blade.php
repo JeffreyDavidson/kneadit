@@ -116,9 +116,9 @@
             <p class="text-lg text-warm-400">{{ $content['upload_description'] ?? 'Show off your order! Photos will appear after approval.' }}</p>
         </div>
 
-        @if (session('success'))
-        <x-storefront.alert>{{ session('success') }}</x-storefront.alert>
-        @endif
+        @session('success')
+        <x-storefront.alert>{{ $value }}</x-storefront.alert>
+        @endsession
 
         @if ($errors->any())
         <x-storefront.alert type="error">
@@ -175,7 +175,7 @@
                     <select name="product_id" class="gallery-input">
                         <option value="">— Select a product —</option>
                         @foreach ($products as $product)
-                        <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>
+                        <option value="{{ $product->id }}" @selected(old('product_id') == $product->id)>{{ $product->name }}</option>
                         @endforeach
                     </select>
                 </div>

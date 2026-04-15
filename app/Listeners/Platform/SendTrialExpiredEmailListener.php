@@ -27,9 +27,4 @@ class SendTrialExpiredEmailListener extends SendEmailListener
         /** @var TrialExpired $event */
         return ['email' => $event->user->email];
     }
-
-    protected function shouldQueueMail(): bool
-    {
-        return true;
-    }
 }

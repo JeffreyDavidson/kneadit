@@ -55,7 +55,7 @@
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" class="sr-only peer"
                                    wire:click="toggleVisibility('{{ $key }}')"
-                                   {{ $isVisible ? 'checked' : '' }}>
+                                   @checked($isVisible)>
                             <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
                         </label>
                     </div>
@@ -84,7 +84,7 @@
                                     <select wire:change="updateSectionField('{{ $key }}', 'count', $event.target.value)"
                                             class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach ([3, 6, 9] as $opt)
-                                            <option value="{{ $opt }}" {{ ($config['count'] ?? 6) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                            <option value="{{ $opt }}" @selected(($config['count'] ?? 6) == $opt)>{{ $opt }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -123,7 +123,7 @@
                                     <select wire:change="updateSectionField('{{ $key }}', 'count', $event.target.value)"
                                             class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach ([3, 6] as $opt)
-                                            <option value="{{ $opt }}" {{ ($config['count'] ?? 3) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                            <option value="{{ $opt }}" @selected(($config['count'] ?? 3) == $opt)>{{ $opt }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -147,7 +147,7 @@
                                     <select wire:change="updateSectionField('{{ $key }}', 'count', $event.target.value)"
                                             class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach ([4, 8] as $opt)
-                                            <option value="{{ $opt }}" {{ ($config['count'] ?? 4) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                            <option value="{{ $opt }}" @selected(($config['count'] ?? 4) == $opt)>{{ $opt }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -171,7 +171,7 @@
                                     <select wire:change="updateSectionField('{{ $key }}', 'count', $event.target.value)"
                                             class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach ([3, 6] as $opt)
-                                            <option value="{{ $opt }}" {{ ($config['count'] ?? 3) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                                            <option value="{{ $opt }}" @selected(($config['count'] ?? 3) == $opt)>{{ $opt }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -202,7 +202,7 @@
                                     <select wire:change="updateSectionField('{{ $key }}', 'button_link', $event.target.value)"
                                             class="fi-input block w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white">
                                         @foreach (['order' => 'Order Page', 'menu' => 'Menu Page', 'contact' => 'Contact Page'] as $val => $label)
-                                            <option value="{{ $val }}" {{ ($config['button_link'] ?? 'order') === $val ? 'selected' : '' }}>{{ $label }}</option>
+                                            <option value="{{ $val }}" @selected(($config['button_link'] ?? 'order') === $val)>{{ $label }}</option>
                                         @endforeach
                                     </select>
                                 </div>

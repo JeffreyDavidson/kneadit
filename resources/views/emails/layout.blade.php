@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'KneadIt Bakery')</title>
+    <title>@yield('title', $storeName ?? config('app.name'))</title>
 </head>
 {{-- Variables provided by BaseMailable::buildViewData(): $storeName, $primaryColor, $secondaryColor, $storeEmail, $storePhone, $storeAddress, $logoUrl --}}
 <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #1c1410; background-color: #f5f0e8; margin: 0; padding: 20px;">

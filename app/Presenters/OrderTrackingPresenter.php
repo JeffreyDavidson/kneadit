@@ -5,7 +5,7 @@ namespace App\Presenters;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Orders\Order;
 
-class OrderTrackingPresenter
+final class OrderTrackingPresenter
 {
     public readonly bool $isCancelled;
 

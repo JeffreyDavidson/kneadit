@@ -44,7 +44,7 @@ class TokenManager
                 return $this->accessToken;
             }
 
-            Log::error('Failed to get PayPal access token', ['response' => $response->json()]);
+            Log::error('Failed to get PayPal access token', ['status' => $response->status()]);
 
             return null;
         } catch (\Exception $e) {

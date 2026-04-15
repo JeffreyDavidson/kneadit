@@ -19,9 +19,9 @@
     </div>
 </div>
 
-@if (session('success'))
-    <div class="flash flash-success">✅ {{ session('success') }}</div>
-@endif
+@session('success')
+    <div class="flash flash-success">✅ {{ $value }}</div>
+@endsession
 
 <div class="pull-hint">Pull down to refresh</div>
 

@@ -76,7 +76,7 @@
                 @endif
                 <div class="info-item">
                     <span class="info-label">Payment:</span>
-                    <span class="info-value">{{ ucfirst($order->payment_method?->value ?? 'N/A') }}</span>
+                    <span class="info-value">{{ $order->payment_method?->getLabel() ?? 'N/A' }}</span>
                 </div>
             </div>
         </div>
@@ -129,13 +129,13 @@
                 @if ($order->discount_amount > 0)
                     <tr style="color: #059669;">
                         <td><strong>Discount:</strong></td>
-                        <td class="text-right">-${{ number_format($order->discount_amount, 2) }}</td>
+                        <td class="text-right">-@money($order->discount_amount)</td>
                     </tr>
                 @endif
                 @if ($order->gift_card_amount > 0)
                     <tr style="color: #059669;">
                         <td><strong>Gift Card:</strong></td>
-                        <td class="text-right">-${{ number_format($order->gift_card_amount, 2) }}</td>
+                        <td class="text-right">-@money($order->gift_card_amount)</td>
                     </tr>
                 @endif
                 <tr>

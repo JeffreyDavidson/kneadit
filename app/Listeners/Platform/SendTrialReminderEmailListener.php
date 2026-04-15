@@ -27,9 +27,4 @@ class SendTrialReminderEmailListener extends SendEmailListener
         /** @var TrialReminding $event */
         return ['email' => $event->user->email];
     }
-
-    protected function shouldQueueMail(): bool
-    {
-        return true;
-    }
 }

@@ -6,6 +6,7 @@ use App\DataTransferObjects\Orders\CreateQuickOrderData;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
+use App\Events\Orders\OrderCreated;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
@@ -15,7 +16,7 @@ class CreateQuickOrder
 {
     public function __invoke(CreateQuickOrderData $data): Order
     {
-        return DB::transaction(function () use ($data) {
+        $order = DB::transaction(function () use ($data) {
             $customer = $this->findOrCreateCustomer($data);
 
             $subtotal = collect($data->orderItems)->sum(fn (array $item) => $item['quantity'] * $item['unit_price']);
@@ -50,6 +51,10 @@ class CreateQuickOrder
 
             return $order;
         });
+
+        event(new OrderCreated($order));
+
+        return $order;
     }
 
     private function findOrCreateCustomer(CreateQuickOrderData $data): Customer

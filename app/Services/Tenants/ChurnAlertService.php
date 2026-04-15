@@ -44,7 +44,7 @@ class ChurnAlertService
         }
 
         $trialEnds = Date::parse($tenant->trial_ends_at);
-        if (! $trialEnds->isFuture() || $trialEnds->diffInHours(now()) > config('monitoring.churn_trial_alert_hours', 48)) {
+        if (! $trialEnds->isFuture() || abs($trialEnds->diffInHours(now())) > config('monitoring.churn_trial_alert_hours', 48)) {
             return;
         }
 

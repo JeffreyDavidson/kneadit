@@ -68,7 +68,7 @@ test('command handles tenant processing exceptions gracefully', function () {
 });
 
 test('command source uses TenancyManager for tenant context', function () {
-    $source = file_get_contents(app_path('Console/Commands/Stripe/CheckPayPalPaymentsCommand.php'));
+    $source = file_get_contents(app_path('Console/Commands/PayPal/CheckPayPalPaymentsCommand.php'));
 
     expect($source)
         ->toContain('withinTenant')
@@ -77,7 +77,7 @@ test('command source uses TenancyManager for tenant context', function () {
 });
 
 test('command source handles PAID, CANCELLED, and REFUNDED statuses', function () {
-    $source = file_get_contents(app_path('Console/Commands/Stripe/CheckPayPalPaymentsCommand.php'));
+    $source = file_get_contents(app_path('Console/Commands/PayPal/CheckPayPalPaymentsCommand.php'));
 
     expect($source)
         ->toContain("'PAID'")
@@ -112,7 +112,7 @@ test('command processes tenant with unpaid paypal orders', function () {
 });
 
 test('command source resolves PaymentVerifier per tenant', function () {
-    $source = file_get_contents(app_path('Console/Commands/Stripe/CheckPayPalPaymentsCommand.php'));
+    $source = file_get_contents(app_path('Console/Commands/PayPal/CheckPayPalPaymentsCommand.php'));
 
     expect($source)
         ->toContain('resolve(PaymentVerifier::class)')
@@ -120,7 +120,7 @@ test('command source resolves PaymentVerifier per tenant', function () {
 });
 
 test('command source skips orders without paypal invoice id', function () {
-    $source = file_get_contents(app_path('Console/Commands/Stripe/CheckPayPalPaymentsCommand.php'));
+    $source = file_get_contents(app_path('Console/Commands/PayPal/CheckPayPalPaymentsCommand.php'));
 
     expect($source)
         ->toContain('paypal_invoice_id')

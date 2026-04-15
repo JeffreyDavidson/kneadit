@@ -8,7 +8,7 @@ use App\Models\Orders\Order;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class ShoppingListService
+class OrderIngredientAggregator
 {
     /**
      * @return Collection<int, array{name: string, quantity: float, unit: string, in_stock: float|null, stock_unit: string|null, needs_purchase: bool, deficit: float}>

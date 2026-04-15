@@ -53,7 +53,6 @@ class CheckTrialExpirationsCommand extends Command
 
             try {
                 $storeName = $tenant->store_name ?: $tenant->name;
-                $daysText = $daysLeft === 1 ? 'tomorrow' : "in {$daysLeft} days";
 
                 TrialReminding::dispatch($user, $storeName, $daysLeft);
 

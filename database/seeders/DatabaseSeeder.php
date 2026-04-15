@@ -13,6 +13,7 @@ use Database\Seeders\Financial\IncomeSeeder;
 use Database\Seeders\Inventory\CategorySeeder;
 use Database\Seeders\Inventory\ProductSeeder;
 use Database\Seeders\Inventory\RecipeSeeder;
+use Database\Seeders\Operations\BusinessScheduleSeeder;
 use Database\Seeders\Operations\CapacityLimitSeeder;
 use Database\Seeders\Operations\SettingSeeder;
 use Database\Seeders\Orders\OrderSeeder;
@@ -92,6 +93,8 @@ class DatabaseSeeder extends Seeder
             RecipeSeeder::class,
             ReviewSeeder::class,
             WaitlistEntrySeeder::class,
+            BusinessScheduleSeeder::class,
+            BlogPostSeeder::class,
         ]);
 
         if ($this->command) {

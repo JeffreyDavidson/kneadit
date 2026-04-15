@@ -11,4 +11,4 @@
 /** @var string $body */
 @endphp
 
-{!! $body !!}
+{!! clean($body) !!}
