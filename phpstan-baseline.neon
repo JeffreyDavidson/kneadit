@@ -1,0 +1,1543 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method App\\Actions\\Content\\GenerateSocialCaption\:\:__invoke\(\) should return string but returns iterable\<string\>\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Actions/Content/GenerateSocialCaption.php
+
+		-
+			message: '#^Unable to resolve the template type TSubject in call to static method Illuminate\\Support\\Str\:\:replace\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Actions/Content/GenerateSocialCaption.php
+
+		-
+			message: '#^Call to method create\(\) on an unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Actions/GiftCards/CreateGiftCard.php
+
+		-
+			message: '#^Call to method lockForUpdate\(\) on an unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Actions/GiftCards/RedeemGiftCard.php
+
+		-
+			message: '#^Call to method create\(\) on an unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Actions/Loyalty/AdjustLoyaltyPoints.php
+
+		-
+			message: '#^Call to method create\(\) on an unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Actions/Loyalty/RedeemLoyaltyPoints.php
+
+		-
+			message: '#^Method App\\Actions\\Platform\\SendEmailCampaign\:\:filteredTenants\(\) should return Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Platform\\Tenant\> but returns Stancl\\Tenancy\\Database\\TenantCollection\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Actions/Platform/SendEmailCampaign.php
+
+		-
+			message: '#^Parameter \#1 \$tenant of method App\\Services\\Tenants\\TenancyManager\:\:withinTenant\(\) expects App\\Models\\Platform\\Tenant, App\\Models\\Platform\\Tenant\|Stancl\\Tenancy\\Database\\TenantCollection given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/Stripe/HandleConnectAccountUpdated.php
+
+		-
+			message: '#^Offset ''is_open'' on array\{is_open\: bool, open_time\: string\|null, close_time\: string\|null, order_cutoff_time\: string\|null, max_orders\: int\|null\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 5
+			path: app/Actions/Tenants/UpdateSchedule.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Content\\BlogPost\:\:\$category\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Builders/Content/BlogPostQueryBuilder.php
+
+		-
+			message: '#^Method App\\Builders\\Customers\\ReviewQueryBuilder\:\:statistics\(\) should return object\{avg_rating\: float, total_count\: int\} but returns stdClass\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Builders/Customers/ReviewQueryBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$column of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Financial\\Coupon\>\:\:where\(\) expects array\<int\|string, mixed\>\|\(Closure\(static\)\: static\)\|\(Closure\(static\)\: void\)\|Illuminate\\Contracts\\Database\\Query\\Expression\|string, Closure\(Illuminate\\Database\\Eloquent\\Builder\)\: App\\Builders\\Financial\\CouponQueryBuilder given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Builders/Financial/CouponQueryBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$column of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Financial\\GiftCard\>\:\:where\(\) expects array\<int\|string, mixed\>\|\(Closure\(static\)\: static\)\|\(Closure\(static\)\: void\)\|Illuminate\\Contracts\\Database\\Query\\Expression\|string, Closure\(Illuminate\\Database\\Eloquent\\Builder\)\: App\\Builders\\Financial\\GiftCardQueryBuilder given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Builders/Financial/GiftCardQueryBuilder.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Filament/Central/Pages/OnboardingTracker.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Filament/Central/Pages/OnboardingTracker.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),array\<string, mixed\>\>\:\:sortBy\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Filament/Central/Pages/OnboardingTracker.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Filament/Central/Pages/OnboardingTracker.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<\(int\|string\),array\<string, mixed\>\>\:\:values\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Filament/Central/Pages/OnboardingTracker.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/Central/Pages/OnboardingTracker.php
+
+		-
+			message: '#^Parameter \#1 \$tenantIds of static method App\\Queries\\Platform\\TenantComparisonQuery\:\:comparison\(\) expects array\<int, string\>, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Central/Pages/TenantComparison.php
+
+		-
+			message: '#^Call to an undefined method App\\Filament\\Central\\Resources\\MessageResource\\Pages\\ListMessages\:\:sendSuccessNotification\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/Central/Resources/MessageResource/Pages/ListMessages.php
+
+		-
+			message: '#^Cannot access property \$id on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Filament/Central/Resources/MessageResource/Pages/ViewMessage.php
+
+		-
+			message: '#^Cannot access property \$is_read on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Filament/Central/Resources/MessageResource/Pages/ViewMessage.php
+
+		-
+			message: '#^Cannot access property \$subject on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Filament/Central/Resources/MessageResource/Pages/ViewMessage.php
+
+		-
+			message: '#^Cannot access property \$tenant_id on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Filament/Central/Resources/MessageResource/Pages/ViewMessage.php
+
+		-
+			message: '#^Cannot call method update\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Central/Resources/MessageResource/Pages/ViewMessage.php
+
+		-
+			message: '#^Cannot call method load\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Central/Resources/SupportTicketResource/Pages/ViewTicket.php
+
+		-
+			message: '#^Cannot call method refresh\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Central/Resources/SupportTicketResource/Pages/ViewTicket.php
+
+		-
+			message: '#^Cannot call method replies\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Central/Resources/SupportTicketResource/Pages/ViewTicket.php
+
+		-
+			message: '#^Cannot call method update\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Central/Resources/SupportTicketResource/Pages/ViewTicket.php
+
+		-
+			message: '#^Cannot call method getLabel\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Central/Resources/TenantResource.php
+
+		-
+			message: '#^Cannot access property \$id on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Filament/Central/Resources/TenantResource/Pages/ViewTenant.php
+
+		-
+			message: '#^Cannot call method run\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Central/Resources/TenantResource/Pages/ViewTenant.php
+
+		-
+			message: '#^Cannot call method priceInDollars\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Filament/Central/Widgets/PlatformStats.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: mixed\)\|string\|null, Closure\(App\\Models\\Platform\\Tenant\)\: mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Central/Widgets/PlatformStats.php
+
+		-
+			message: '#^Unable to resolve the template type TReturnType in call to method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Filament/Central/Widgets/PlatformStats.php
+
+		-
+			message: '#^Unable to resolve the template type TReturnType in call to method Illuminate\\Support\\Collection\<int,App\\Models\\Platform\\Tenant\>\:\:sum\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Filament/Central/Widgets/PlatformStats.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type string\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Filament/Central/Widgets/PlatformStats.php
+
+		-
+			message: '#^Cannot call method priceInDollars\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Central/Widgets/RevenueOverview.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: mixed\)\|string\|null, Closure\(App\\Models\\Platform\\Tenant\)\: mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Central/Widgets/RevenueOverview.php
+
+		-
+			message: '#^Unable to resolve the template type TReturnType in call to method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Filament/Central/Widgets/RevenueOverview.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type string\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/Central/Widgets/RevenueOverview.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\Pages\\Analytics\\ProfitAnalysis\:\:\$portfolio\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Filament/Pages/Analytics/ProfitAnalysis.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\Pages\\Analytics\\SurveyResults\:\:\$survey\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/Pages/Analytics/SurveyResults.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\Pages\\Operations\\CustomerDirectory\:\:\$noteForm\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Filament/Pages/Operations/CustomerDirectory.php
+
+		-
+			message: '#^Parameter \#3 \$createdBy of callable App\\Actions\\Customers\\AddCustomerNote expects int, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Pages/Operations/CustomerDirectory.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\Pages\\Operations\\QuickOrder\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Filament/Pages/Operations/QuickOrder.php
+
+		-
+			message: '#^Parameter \#1 \$schedule of callable App\\Actions\\Tenants\\UpdateSchedule expects array\<int, array\{is_open\: bool, open_time\: string\|null, close_time\: string\|null, order_cutoff_time\: string\|null, max_orders\: int\|null\}\>, array\<int\|string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Pages/Operations/ScheduleManager.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Filament/Pages/Platform/OnboardingSteps/BrandingStep.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Filament/Pages/Platform/OnboardingSteps/BrandingStep.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>brand_color_primary" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/Pages/Platform/OnboardingSteps/BrandingStep.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>brand_color_secondary" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/Pages/Platform/OnboardingSteps/BrandingStep.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/Pages/Platform/OnboardingSteps/ContactStep.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventory\\Product\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventory\\Product\>\:\:\$category_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/Platform/OnboardingSteps/ProductStep.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventory\\Product\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventory\\Product\>\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/Platform/OnboardingSteps/ProductStep.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventory\\Product\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventory\\Product\>\:\:\$price\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/Platform/OnboardingSteps/ProductStep.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Filament/Pages/Platform/OnboardingSteps/WelcomeStep.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>store_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/Pages/Platform/OnboardingSteps/WelcomeStep.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Filament/Pages/Platform/UpgradePlan.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\Pages\\Tools\\InstagramCaptionGenerator\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/Tools/InstagramCaptionGenerator.php
+
+		-
+			message: '#^Cannot access property \$cost on App\\Models\\Inventory\\Recipe\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Filament/Pages/Tools/PriceSuggestionTool.php
+
+		-
+			message: '#^Parameter \#1 \$cost of method App\\Services\\Financial\\ProductFinancialService\:\:suggestPrice\(\) expects float, float\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Pages/Tools/PriceSuggestionTool.php
+
+		-
+			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Builder\)\: Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Pages/Tools/PrintableMenu.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\Pages\\Tools\\ProductImportExport\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/Tools/ProductImportExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\Pages\\Tools\\QrCodeGenerator\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/Tools/QrCodeGenerator.php
+
+		-
+			message: '#^Access to an undefined property Livewire\\Component\:\:\$importResults\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/Tools/Schemas/ProductImportExportForm.php
+
+		-
+			message: '#^Access to an undefined property Livewire\\Component\:\:\$previewData\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/Pages/Tools/Schemas/ProductImportExportForm.php
+
+		-
+			message: '#^Access to an undefined property Livewire\\Component\:\:\$previewErrors\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/Pages/Tools/Schemas/ProductImportExportForm.php
+
+		-
+			message: '#^Access to an undefined property Livewire\\Component\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/Tools/Schemas/TaxExportForm.php
+
+		-
+			message: '#^Call to an undefined method Livewire\\Component\:\:generateExport\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/Pages/Tools/Schemas/TaxExportForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Filament\\Pages\\Tools\\TaxExport\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/Tools/TaxExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Content\\TenantBlogPost\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/BlogPosts/BlogPostResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Content\\TenantBlogPost\:\:\$published_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/BlogPosts/BlogPostResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Content\\TenantBlogPost\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/BlogPosts/BlogPostResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Content\\TenantBlogPost\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Filament/Resources/BlogPosts/Tables/BlogPostsTable.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Financial\\Coupon\>\:\:valid\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/Resources/Coupons/Tables/CouponsTable.php
+
+		-
+			message: '#^Parameter \#1 \$photo of callable App\\Actions\\Content\\ApproveCustomerPhoto expects App\\Models\\Customers\\CustomerPhoto, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Resources/CustomerPhotos/Tables/CustomerPhotosTable.php
+
+		-
+			message: '#^Cannot access property \$is_active on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Filament/Resources/GiftCards/Pages/ViewGiftCard.php
+
+		-
+			message: '#^Parameter \#1 \$card of callable App\\Actions\\GiftCards\\AddGiftCardCredit expects App\\Models\\Financial\\GiftCard, Illuminate\\Database\\Eloquent\\Model\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Resources/GiftCards/Pages/ViewGiftCard.php
+
+		-
+			message: '#^Parameter \#1 \$giftCard of callable App\\Actions\\GiftCards\\ToggleGiftCardActive expects App\\Models\\Financial\\GiftCard, Illuminate\\Database\\Eloquent\\Model\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Resources/GiftCards/Pages/ViewGiftCard.php
+
+		-
+			message: '#^Cannot access property \$paypal_invoice_id on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Filament/Resources/Orders/Pages/ViewOrder.php
+
+		-
+			message: '#^Parameter \#1 \$order of callable App\\Actions\\Orders\\AddOrderNote expects App\\Models\\Orders\\Order, Illuminate\\Database\\Eloquent\\Model\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Resources/Orders/Pages/ViewOrder.php
+
+		-
+			message: '#^Parameter \#1 \$order of callable App\\Actions\\Orders\\TransitionOrderStatus expects App\\Models\\Orders\\Order, Illuminate\\Database\\Eloquent\\Model\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Resources/Orders/Pages/ViewOrder.php
+
+		-
+			message: '#^Parameter \#1 \$order of static method App\\Actions\\Orders\\TransitionOrderStatus\:\:allowedTransitions\(\) expects App\\Models\\Orders\\Order, Illuminate\\Database\\Eloquent\\Model\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Resources/Orders/Pages/ViewOrder.php
+
+		-
+			message: '#^Parameter \$order of callable App\\Actions\\Orders\\SendOrderMessage expects App\\Models\\Orders\\Order, Illuminate\\Database\\Eloquent\\Model\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Filament/Resources/Orders/Pages/ViewOrder.php
+
+		-
+			message: '#^Call to method where\(\) on an unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Filament/Widgets/GiftCardBalanceWidget.php
+
+		-
+			message: '#^Parameter \#1 \$message of static method App\\Http\\Responses\\ApiResponse\:\:error\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/CouponValidationController.php
+
+		-
+			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/MenuController.php
+
+		-
+			message: '#^Parameter \#1 \$data of callable App\\Actions\\Staff\\CreateUser expects array\{name\: string, email\: string, password\: string\}, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/RegisterController.php
+
+		-
+			message: '#^Cannot call method sendEmailVerificationNotification\(\) on App\\Models\\Staff\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/SendVerificationNotificationController.php
+
+		-
+			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, App\\Enums\\Platform\\SubscriptionTier\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Billing/CheckoutController.php
+
+		-
+			message: '#^Call to function abort_unless\(\) with arguments bool, 404 and ''Invalid export type\.'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Http/Controllers/Central/ExportController.php
+
+		-
+			message: '#^Parameter \#1 \$message of static method App\\Http\\Responses\\ApiResponse\:\:error\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Order/ApplyCouponController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Order/ApplyCouponController.php
+
+		-
+			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany, 0\: ''products…''\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Storefront/MenuController.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type mixed\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Middleware/EnsureOnboardingComplete.php
+
+		-
+			message: '#^Cannot access property \$email on App\\Models\\Staff\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Requests/Auth/AcceptInvitationRequest.php
+
+		-
+			message: '#^Method App\\Http\\Responses\\ApiResponse\:\:error\(\) has parameter \$errors with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Responses/ApiResponse.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>brand_color_secondary" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Mail/BaseMailable.php
+
+		-
+			message: '#^Cannot call method getLabel\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Mail/Platform/StaffInvitationMail.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Content\\BlogPost\:\:factory\(\) return type contains unknown class Database\\Factories\\BlogPostFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Content/BlogPost.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Content\\GalleryPhoto\:\:factory\(\) return type contains unknown class Database\\Factories\\GalleryPhotoFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Content/GalleryPhoto.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Content\\SocialPost\:\:factory\(\) return type contains unknown class Database\\Factories\\SocialPostFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Content/SocialPost.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Content\\TenantBlogPost\:\:factory\(\) return type contains unknown class Database\\Factories\\TenantBlogPostFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Content/TenantBlogPost.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\CateringInquiry\:\:factory\(\) return type contains unknown class Database\\Factories\\CateringInquiryFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/CateringInquiry.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Customers/CateringInquiry.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Customers/CateringInquiry.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\ContactMessage\:\:factory\(\) return type contains unknown class Database\\Factories\\ContactMessageFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/ContactMessage.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\ContactMessage\:\:newModelQuery\(\) return type contains generic type App\\Builders\\Customers\\ContactMessageQueryBuilder\<App\\Models\\Customers\\ContactMessage\> but class App\\Builders\\Customers\\ContactMessageQueryBuilder is not generic\.$#'
+			identifier: generics.notGeneric
+			count: 1
+			path: app/Models/Customers/ContactMessage.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\ContactMessage\:\:newQuery\(\) return type contains generic type App\\Builders\\Customers\\ContactMessageQueryBuilder\<App\\Models\\Customers\\ContactMessage\> but class App\\Builders\\Customers\\ContactMessageQueryBuilder is not generic\.$#'
+			identifier: generics.notGeneric
+			count: 1
+			path: app/Models/Customers/ContactMessage.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\ContactMessage\:\:query\(\) return type contains generic type App\\Builders\\Customers\\ContactMessageQueryBuilder\<App\\Models\\Customers\\ContactMessage\> but class App\\Builders\\Customers\\ContactMessageQueryBuilder is not generic\.$#'
+			identifier: generics.notGeneric
+			count: 1
+			path: app/Models/Customers/ContactMessage.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\Customer\:\:factory\(\) return type contains unknown class Database\\Factories\\CustomerFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/Customer.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Customers/Customer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Customers/Customer.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\CustomerFavorite\:\:factory\(\) return type contains unknown class Database\\Factories\\CustomerFavoriteFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/CustomerFavorite.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\CustomerNote\:\:factory\(\) return type contains unknown class Database\\Factories\\CustomerNoteFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/CustomerNote.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\CustomerPhoto\:\:factory\(\) return type contains unknown class Database\\Factories\\CustomerPhotoFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/CustomerPhoto.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\CustomerProfile\:\:factory\(\) return type contains unknown class Database\\Factories\\CustomerProfileFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/CustomerProfile.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\CustomerReminder\:\:factory\(\) return type contains unknown class Database\\Factories\\CustomerReminderFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/CustomerReminder.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\Referral\:\:factory\(\) return type contains unknown class Database\\Factories\\ReferralFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/Referral.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Customers\\WaitlistEntry\:\:factory\(\) return type contains unknown class Database\\Factories\\WaitlistEntryFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Customers/WaitlistEntry.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\EmailCampaign\:\:factory\(\) return type contains unknown class Database\\Factories\\EmailCampaignFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/EmailCampaign.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\EmailCampaignLog\:\:factory\(\) return type contains unknown class Database\\Factories\\EmailCampaignLogFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/EmailCampaignLog.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\LoyaltyPoint\:\:adjusted\(\) return type contains unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/LoyaltyPoint.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\LoyaltyPoint\:\:earned\(\) return type contains unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/LoyaltyPoint.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\LoyaltyPoint\:\:factory\(\) return type contains unknown class Database\\Factories\\LoyaltyPointFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/LoyaltyPoint.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\LoyaltyPoint\:\:forOrder\(\) return type contains unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/LoyaltyPoint.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\LoyaltyPoint\:\:newModelQuery\(\) return type contains unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/LoyaltyPoint.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\LoyaltyPoint\:\:newQuery\(\) return type contains unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/LoyaltyPoint.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\LoyaltyPoint\:\:query\(\) return type contains unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/LoyaltyPoint.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\LoyaltyPoint\:\:redeemed\(\) return type contains unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/LoyaltyPoint.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\LoyaltyReward\:\:factory\(\) return type contains unknown class Database\\Factories\\LoyaltyRewardFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/LoyaltyReward.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\PageView\:\:factory\(\) return type contains unknown class Database\\Factories\\PageViewFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/PageView.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\Review\:\:factory\(\) return type contains unknown class Database\\Factories\\ReviewFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/Review.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Engagement/Review.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Engagement/Review.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\Survey\:\:factory\(\) return type contains unknown class Database\\Factories\\SurveyFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/Survey.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Engagement\\SurveyResponse\:\:factory\(\) return type contains unknown class Database\\Factories\\SurveyResponseFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Engagement/SurveyResponse.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\Coupon\:\:factory\(\) return type contains unknown class Database\\Factories\\CouponFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Financial/Coupon.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\Coupon\:\:newModelQuery\(\) return type contains generic type App\\Builders\\Financial\\CouponQueryBuilder\<App\\Models\\Financial\\Coupon\> but class App\\Builders\\Financial\\CouponQueryBuilder is not generic\.$#'
+			identifier: generics.notGeneric
+			count: 1
+			path: app/Models/Financial/Coupon.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\Coupon\:\:newQuery\(\) return type contains generic type App\\Builders\\Financial\\CouponQueryBuilder\<App\\Models\\Financial\\Coupon\> but class App\\Builders\\Financial\\CouponQueryBuilder is not generic\.$#'
+			identifier: generics.notGeneric
+			count: 1
+			path: app/Models/Financial/Coupon.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\Coupon\:\:query\(\) return type contains generic type App\\Builders\\Financial\\CouponQueryBuilder\<App\\Models\\Financial\\Coupon\> but class App\\Builders\\Financial\\CouponQueryBuilder is not generic\.$#'
+			identifier: generics.notGeneric
+			count: 1
+			path: app/Models/Financial/Coupon.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Financial/Coupon.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Financial/Coupon.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\Expense\:\:factory\(\) return type contains unknown class Database\\Factories\\ExpenseFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Financial/Expense.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\GiftCard\:\:factory\(\) return type contains unknown class Database\\Factories\\GiftCardFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Financial/GiftCard.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\GiftCard\:\:newModelQuery\(\) return type contains unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Financial/GiftCard.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\GiftCard\:\:newQuery\(\) return type contains unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Financial/GiftCard.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\GiftCard\:\:query\(\) return type contains unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Financial/GiftCard.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\GiftCard\:\:usable\(\) return type contains unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Financial/GiftCard.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Financial/GiftCard.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Financial/GiftCard.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\GiftCardTransaction\:\:factory\(\) return type contains unknown class Database\\Factories\\GiftCardTransactionFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Financial/GiftCardTransaction.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Financial\\Income\:\:factory\(\) return type contains unknown class Database\\Factories\\IncomeFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Financial/Income.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Inventory\\Category\:\:factory\(\) return type contains unknown class Database\\Factories\\CategoryFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Inventory/Category.php
+
+		-
+			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany\} given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Models/Inventory/Category.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Inventory/Category.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Inventory/Category.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Inventory\\Ingredient\:\:factory\(\) return type contains unknown class Database\\Factories\\IngredientFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Inventory/Ingredient.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Inventory/Ingredient.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Inventory/Ingredient.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Inventory\\Product\:\:factory\(\) return type contains unknown class Database\\Factories\\ProductFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Inventory/Product.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Inventory/Product.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Inventory/Product.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Inventory\\ProductWaitlist\:\:factory\(\) return type contains unknown class Database\\Factories\\ProductWaitlistFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Inventory/ProductWaitlist.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Inventory\\Recipe\:\:factory\(\) return type contains unknown class Database\\Factories\\RecipeFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Inventory/Recipe.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Inventory\\SeasonalItem\:\:factory\(\) return type contains unknown class Database\\Factories\\SeasonalItemFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Inventory/SeasonalItem.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Inventory\\StockAdjustment\:\:factory\(\) return type contains unknown class Database\\Factories\\StockAdjustmentFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Inventory/StockAdjustment.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Inventory\\Supplier\:\:factory\(\) return type contains unknown class Database\\Factories\\SupplierFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Inventory/Supplier.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Inventory/Supplier.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Inventory/Supplier.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Operations\\ActivityLog\:\:factory\(\) return type contains unknown class Database\\Factories\\ActivityLogFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Operations/ActivityLog.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Operations\\BlockedDate\:\:factory\(\) return type contains unknown class Database\\Factories\\BlockedDateFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Operations/BlockedDate.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Operations\\BusinessSchedule\:\:factory\(\) return type contains unknown class Database\\Factories\\BusinessScheduleFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Operations/BusinessSchedule.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Operations\\CapacityLimit\:\:factory\(\) return type contains unknown class Database\\Factories\\CapacityLimitFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Operations/CapacityLimit.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Operations\\CheckinLog\:\:factory\(\) return type contains unknown class Database\\Factories\\CheckinLogFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Operations/CheckinLog.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Operations\\Holiday\:\:factory\(\) return type contains unknown class Database\\Factories\\HolidayFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Operations/Holiday.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Operations\\ScheduledCheckin\:\:factory\(\) return type contains unknown class Database\\Factories\\ScheduledCheckinFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Operations/ScheduledCheckin.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Orders\\Order\:\:factory\(\) return type contains unknown class Database\\Factories\\OrderFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Orders/Order.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Orders/Order.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Orders/Order.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Orders\\OrderItem\:\:factory\(\) return type contains unknown class Database\\Factories\\OrderItemFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Orders/OrderItem.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Orders\\OrderMessage\:\:factory\(\) return type contains unknown class Database\\Factories\\OrderMessageFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Orders/OrderMessage.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\AdminAuditLog\:\:factory\(\) return type contains unknown class Database\\Factories\\AdminAuditLogFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/AdminAuditLog.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\FeatureUsageLog\:\:factory\(\) return type contains unknown class Database\\Factories\\FeatureUsageLogFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/FeatureUsageLog.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\PlatformActivity\:\:factory\(\) return type contains unknown class Database\\Factories\\PlatformActivityFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/PlatformActivity.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\PlatformAnnouncement\:\:factory\(\) return type contains unknown class Database\\Factories\\PlatformAnnouncementFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/PlatformAnnouncement.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\PlatformMessage\:\:factory\(\) return type contains unknown class Database\\Factories\\PlatformMessageFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/PlatformMessage.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\PlatformSetting\:\:factory\(\) return type contains unknown class Database\\Factories\\PlatformSettingFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/PlatformSetting.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\Setting\:\:factory\(\) return type contains unknown class Database\\Factories\\SettingFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/Setting.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Platform/Setting.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Platform/Setting.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\SupportReply\:\:factory\(\) return type contains unknown class Database\\Factories\\SupportReplyFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/SupportReply.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\SupportTicket\:\:factory\(\) return type contains unknown class Database\\Factories\\SupportTicketFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/SupportTicket.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\Tenant\:\:factory\(\) return type contains unknown class Database\\Factories\\TenantFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/Tenant.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Platform\\TenantNote\:\:factory\(\) return type contains unknown class Database\\Factories\\TenantNoteFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Platform/TenantNote.php
+
+		-
+			message: '#^Method App\\Models\\Staff\\StaffInvitation\:\:pending\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Staff/StaffInvitation.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Staff\\StaffInvitation\:\:factory\(\) return type contains unknown class Database\\Factories\\StaffInvitationFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Staff/StaffInvitation.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Staff\\User\:\:factory\(\) return type contains unknown class Database\\Factories\\UserFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Staff/User.php
+
+		-
+			message: '#^Parameter \#1 \$priceId of static method App\\Enums\\Platform\\SubscriptionTier\:\:fromPriceId\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Staff/User.php
+
+		-
+			message: '#^Call to method lockForUpdate\(\) on an unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Pipes/Orders/ApplyGiftCard.php
+
+		-
+			message: '#^Cannot access property \$id on App\\Models\\Customers\\Customer\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Pipes/Orders/PersistOrder.php
+
+		-
+			message: '#^Cannot call method orderItems\(\) on App\\Models\\Orders\\Order\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Pipes/Orders/PersistOrderItems.php
+
+		-
+			message: '#^Cannot access property \$id on App\\Models\\Orders\\Order\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Pipes/Orders/RecordCouponUsage.php
+
+		-
+			message: '#^Cannot access property \$order_number on App\\Models\\Orders\\Order\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Pipes/Orders/RecordCouponUsage.php
+
+		-
+			message: '#^Call to method find\(\) on an unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Pipes/Orders/RecordGiftCardRedemption.php
+
+		-
+			message: '#^Cannot access property \$id on App\\Models\\Orders\\Order\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Pipes/Orders/RecordGiftCardRedemption.php
+
+		-
+			message: '#^Cannot access offset ''events'' on Illuminate\\Contracts\\Foundation\\Application\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: app/Providers/EventServiceProvider.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:active\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Queries/Customers/CustomerDirectoryStatsQuery.php
+
+		-
+			message: '#^Method App\\Queries\\Platform\\ActiveBakeriesQuery\:\:get\(\) should return Illuminate\\Support\\Collection\<int, array\{name\: string, url\: string, color\: string\}\> but returns Illuminate\\Support\\Collection\<\(int\|string\), array\{name\: string, url\: non\-falsy\-string, color\: string\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Queries/Platform/ActiveBakeriesQuery.php
+
+		-
+			message: '#^Cannot call method format\(\) on Illuminate\\Support\\Carbon\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Queries/Platform/TenantAnalyticsQuery.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:avg\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model\)\: float\)\|int\|string\|null, Closure\(App\\Models\\Platform\\Tenant\)\: float given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Queries/Platform/TenantAnalyticsQuery.php
+
+		-
+			message: '#^Parameter \#1 \$groupBy of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:groupBy\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: non\-falsy\-string\)\|list\<Closure\|string\>\|string, Closure\(App\\Models\\Platform\\Tenant\)\: non\-falsy\-string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Queries/Platform/TenantAnalyticsQuery.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Queries/Platform/TenantComparisonQuery.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Queries/Platform/TenantComparisonQuery.php
+
+		-
+			message: '#^Cannot call method format\(\) on Carbon\\Carbon\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Reports/Customers/CustomerReport.php
+
+		-
+			message: '#^Cannot call method format\(\) on Carbon\\Carbon\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Analytics/ReviewAnalyticsService.php
+
+		-
+			message: '#^Method App\\Services\\Content\\CaptionGeneratorService\:\:buildBody\(\) should return string but returns iterable\<string\>\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Content/CaptionGeneratorService.php
+
+		-
+			message: '#^Offset ''playful''\|''professional''\|''seasonal''\|''storytelling'' on array\{playful\: array\{''Fresh out of the…'', ''Weekend treat alert…'', ''Who said you can\\''t…'', ''Plot twist\: this…'', ''Current mood\:…'', ''Breaking news\:…'', ''Fun fact\: this is…'', ''Warning\: may cause…'', \.\.\.\}, professional\: array\{''Crafted with…'', ''Where tradition…'', ''Artisan quality,…'', ''Experience the…'', ''Handcrafted using…'', ''Excellence in every…'', ''Proudly serving our…'', ''Made fresh daily…'', \.\.\.\}, seasonal\: array\{''Embracing the…'', ''Spring has sprung,…'', ''Summer vibes and…'', ''Fall favorites are…'', ''Winter comfort in…'', ''Celebrating the…'', ''Fresh seasonal…'', ''Limited time…'', \.\.\.\}, storytelling\: array\{''There\\''s something…'', ''Every morning, our…'', ''The recipe for this…'', ''Behind every…'', ''What started as a…'', ''In our kitchen,…'', ''The secret…'', ''From flour to…'', \.\.\.\}\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Content/CaptionGeneratorService.php
+
+		-
+			message: '#^Unable to resolve the template type TSubject in call to static method Illuminate\\Support\\Str\:\:replace\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Services/Content/CaptionGeneratorService.php
+
+		-
+			message: '#^Cannot call method toHtml\(\) on SimpleSoftwareIO\\QrCode\\Illuminate\\Support\\HtmlString\|string\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Content/QrCodeService.php
+
+		-
+			message: '#^Method App\\Services\\Content\\QrCodeService\:\:generatePng\(\) should return string but returns SimpleSoftwareIO\\QrCode\\Illuminate\\Support\\HtmlString\|string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Content/QrCodeService.php
+
+		-
+			message: '#^Cannot access property \$email on App\\Models\\Customers\\Customer\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/Engagement/Engagements/ReviewRequestEngagement.php
+
+		-
+			message: '#^Cannot access property \$name on App\\Models\\Customers\\Customer\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/Engagement/Engagements/ReviewRequestEngagement.php
+
+		-
+			message: '#^Method App\\Services\\Financial\\ProductFinancialService\:\:formatIngredients\(\) should return Illuminate\\Support\\Collection\<int, array\{name\: string, quantity\: float, unit\: string, cost_per_unit\: float, total_cost\: float\}\> but returns Illuminate\\Support\\Collection\<int, array\{name\: string, quantity\: float\|int, unit\: string, cost_per_unit\: float\|int, total_cost\: float\|int\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Financial/ProductFinancialService.php
+
+		-
+			message: '#^Method App\\Services\\Financial\\ProductFinancialService\:\:loadProductAnalysis\(\) should return Illuminate\\Support\\Collection\<int, array\<string, mixed\>\> but returns Illuminate\\Support\\Collection\<int, array\{id\: int, name\: string, price\: float, cost\: float, margin_percentage\: float\|null, margin_amount\: float\|null, has_cost_data\: bool, color_class\: string\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Financial/ProductFinancialService.php
+
+		-
+			message: '#^Call to method where\(\) on an unknown class App\\Models\\Financial\\Builder\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Services/GiftCards/GiftCardService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Customers\\Customer\:\:\$balance\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Loyalty/LoyaltyAnalytics.php
+
+		-
+			message: '#^Call to method distinct\(\) on an unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Loyalty/LoyaltyAnalytics.php
+
+		-
+			message: '#^Call to method earned\(\) on an unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Loyalty/LoyaltyAnalytics.php
+
+		-
+			message: '#^Call to method redeemed\(\) on an unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Loyalty/LoyaltyAnalytics.php
+
+		-
+			message: '#^Call to method sum\(\) on an unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Loyalty/LoyaltyAnalytics.php
+
+		-
+			message: '#^Call to method create\(\) on an unknown class App\\Models\\Engagement\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Loyalty/LoyaltyLedger.php
+
+		-
+			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:aggregateIngredients\(\) has parameter \$orderItems with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/Orders/OrderIngredientAggregator.php
+
+		-
+			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:aggregateIngredients\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/Orders/OrderIngredientAggregator.php
+
+		-
+			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:crossReferenceInventory\(\) has parameter \$aggregated with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/Orders/OrderIngredientAggregator.php
+
+		-
+			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:crossReferenceInventory\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/Orders/OrderIngredientAggregator.php
+
+		-
+			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:fetchOrderItems\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/Orders/OrderIngredientAggregator.php
+
+		-
+			message: '#^Cannot access property \$email on App\\Models\\Customers\\Customer\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/Orders/OrderStatusEffectDispatcher.php
+
+		-
+			message: '#^Method App\\Services\\PayPal\\InvoicePayloadBuilder\:\:formatCustomerPhone\(\) should return array\<int, array\<string, string\>\> but returns array\<int, array\<string, string\|null\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/PayPal/InvoicePayloadBuilder.php
+
+		-
+			message: '#^Method App\\Services\\Platform\\ChangelogService\:\:fetchFromGitHub\(\) should return Illuminate\\Support\\Collection\<int, array\{date\: string, version\: string, title\: string, items\: array\<int, string\>\}\> but returns Illuminate\\Support\\Collection\<int, array\{date\: string, version\: string, title\: mixed, items\: array\<int, string\>\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Platform/ChangelogService.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 2
+			path: app/Services/Platform/ChangelogService.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 2
+			path: app/Services/Platform/ChangelogService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>is_open" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Scheduling/ScheduleService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>brand_color_primary" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Settings/TenantSettings.php
+
+		-
+			message: '#^Parameter \#2 \$paymentIntentId of callable App\\Actions\\Stripe\\HandleCheckoutComplete expects string, string\|Stripe\\PaymentIntent\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Stripe/StripeCheckoutService.php
+
+		-
+			message: '#^Parameter \#1 \$width of function imagecreatetruecolor expects int\<1, max\>, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Support/AppIconGeneratorService.php
+
+		-
+			message: '#^Parameter \#2 \$height of function imagecreatetruecolor expects int\<1, max\>, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Support/AppIconGeneratorService.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/Tenants/TenantHealthService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Tenants/TenantHealthService.php
+
+		-
+			message: '#^Cannot access property \$value on App\\Enums\\Platform\\SubscriptionTier\:\:Starter\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/Tenants/TenantUsageService.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between App\\Enums\\Platform\\SubscriptionTier\:\:Starter\|string and App\\Enums\\Platform\\SubscriptionTier\:\:Pro will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Services/Tenants/TenantUsageService.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 1
+			path: app/ValueObjects/TenantHealthScore.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$avg_rating\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/ViewModels/Storefront/ReviewsPageViewModel.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$total_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/ViewModels/Storefront/ReviewsPageViewModel.php
+
+		-
+			message: '#^Constructor of class App\\ViewModels\\Storefront\\ReviewsPageViewModel has an unused parameter \$reviews\.$#'
+			identifier: constructor.unusedParameter
+			count: 1
+			path: app/ViewModels/Storefront/ReviewsPageViewModel.php
+
+		-
+			message: '#^Method App\\ViewModels\\Storefront\\ReviewsPageViewModel\:\:__construct\(\) has parameter \$reviews with generic class Illuminate\\Pagination\\LengthAwarePaginator but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/ViewModels/Storefront/ReviewsPageViewModel.php
