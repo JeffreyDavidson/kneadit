@@ -27,7 +27,7 @@ class CouponForm
                                 TextInput::make('code')
                                     ->required()
                                     ->maxLength(50)
-                                    ->unique(ignoreRecord: true)
+                                    ->unique()
                                     ->alphaNum()
                                     ->formatStateUsing(fn (?string $state): ?string => $state ? Str::upper($state) : $state)
                                     ->dehydrateStateUsing(fn (?string $state): ?string => $state ? Str::upper($state) : $state),

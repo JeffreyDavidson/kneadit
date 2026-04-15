@@ -26,13 +26,7 @@ class EmailCampaignsTable
                     ->limit(50),
 
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (EmailCampaignStatus $state): string => match ($state) {
-                        EmailCampaignStatus::Draft => 'gray',
-                        EmailCampaignStatus::Scheduled => 'info',
-                        EmailCampaignStatus::Sending => 'warning',
-                        EmailCampaignStatus::Sent => 'success',
-                    }),
+                    ->badge(),
 
                 TextColumn::make('recipient_count')
                     ->label('Recipients')
@@ -54,11 +48,12 @@ class EmailCampaignsTable
                 SelectFilter::make('status')
                     ->options(EmailCampaignStatus::class),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('send')
                     ->label('Send Campaign')
                     ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('success')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->modalHeading('Send Campaign')
                     ->modalDescription('This will send this email to all customers. Are you sure?')

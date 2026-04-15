@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Engagement;
 
 use App\Actions\Tenants\GenerateReferralCode;
 use App\Enums\Customers\ReferralStatus;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Customers\Referral;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -14,6 +15,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ReferralProgram extends Page
 {
+    use RequiresManagerRole;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserPlus;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';

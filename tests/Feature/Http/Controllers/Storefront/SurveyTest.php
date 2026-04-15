@@ -20,7 +20,7 @@ test('survey page loads for active survey', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/survey/{$survey->id}");
+        ->get(route('storefront.survey', $survey, false));
 
     $response->assertOk();
     $response->assertSee('Customer Satisfaction');
@@ -32,7 +32,7 @@ test('survey returns 404 for inactive survey', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/survey/{$survey->id}");
+        ->get(route('storefront.survey', $survey, false));
 
     $response->assertNotFound();
 });
@@ -43,14 +43,14 @@ test('survey response can be submitted', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post("/survey/{$survey->id}", [
+        ->post(route('survey.submit', $survey, false), [
             'customer_name' => 'Alice',
             'customer_email' => 'alice@example.com',
             'answers' => ['4'],
         ]);
 
     $response->assertRedirect();
-    $this->assertDatabaseHas('survey_responses', [
+    test()->assertDatabaseHas('survey_responses', [
         'survey_id' => $survey->id,
         'customer_name' => 'Alice',
     ]);
@@ -65,7 +65,7 @@ test('survey response saves answers as json', function () {
     ]);
 
     withoutMiddleware(tenantMiddleware())
-        ->post("/survey/{$survey->id}", [
+        ->post(route('survey.submit', $survey, false), [
             'customer_name' => 'Bob',
             'customer_email' => 'bob@example.com',
             'answers' => ['5', 'Great bread!'],
@@ -81,7 +81,7 @@ test('survey response increments responses count', function () {
     ]);
 
     withoutMiddleware(tenantMiddleware())
-        ->post("/survey/{$survey->id}", [
+        ->post(route('survey.submit', $survey, false), [
             'answers' => ['Nice!'],
         ]);
 
@@ -94,7 +94,7 @@ test('rating questions accept valid values', function () {
     ]);
 
     withoutMiddleware(tenantMiddleware())
-        ->post("/survey/{$survey->id}", [
+        ->post(route('survey.submit', $survey, false), [
             'answers' => ['3'],
         ]);
 
@@ -108,7 +108,7 @@ test('text questions accept string answers', function () {
     ]);
 
     withoutMiddleware(tenantMiddleware())
-        ->post("/survey/{$survey->id}", [
+        ->post(route('survey.submit', $survey, false), [
             'answers' => ['I love your croissants!'],
         ]);
 

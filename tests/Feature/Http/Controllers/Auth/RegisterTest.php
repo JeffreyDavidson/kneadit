@@ -6,11 +6,11 @@ beforeEach(function () {
 });
 
 test('register page renders for guests', function () {
-    $this->get('/register')->assertOk();
+    $this->get(route('register'))->assertOk();
 });
 
 test('user can register with valid data', function () {
-    $this->post('/register', [
+    $this->post(route('register'), [
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => 'password123',
@@ -19,11 +19,11 @@ test('user can register with valid data', function () {
         'terms' => true,
     ])->assertRedirect();
 
-    $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
-    $this->assertAuthenticated();
+    test()->assertDatabaseHas('users', ['email' => 'jane@example.com']);
+    test()->assertAuthenticated();
 });
 
 test('register validates required fields', function () {
-    $this->post('/register', [])
+    $this->post(route('register'), [])
         ->assertSessionHasErrors(['name', 'email', 'password', 'bakery_name', 'terms']);
 });

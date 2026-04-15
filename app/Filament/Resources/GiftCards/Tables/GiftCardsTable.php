@@ -3,12 +3,10 @@
 namespace App\Filament\Resources\GiftCards\Tables;
 
 use App\Enums\Financial\GiftCardStatus;
-use App\Models\Financial\GiftCard;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -42,14 +40,8 @@ class GiftCardsTable
                     ->searchable()
                     ->placeholder('—'),
 
-                BadgeColumn::make('status')
-                    ->getStateUsing(fn (GiftCard $record) => $record->status->value)
-                    ->colors([
-                        'success' => GiftCardStatus::Active->value,
-                        'danger' => GiftCardStatus::Expired->value,
-                        'warning' => GiftCardStatus::Depleted->value,
-                        'secondary' => GiftCardStatus::Inactive->value,
-                    ]),
+                TextColumn::make('status')
+                    ->badge(),
 
                 TextColumn::make('created_at')
                     ->date()

@@ -9,7 +9,7 @@ beforeEach(function () {
 });
 
 test('blog index page loads', function () {
-    $response = withoutMiddleware(tenantMiddleware())->get('/blog');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.blog', [], false));
 
     $response->assertOk();
 });
@@ -26,7 +26,7 @@ test('blog shows only published posts', function () {
         'body' => 'Draft content',
     ]);
 
-    $response = withoutMiddleware(tenantMiddleware())->get('/blog');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.blog', [], false));
 
     $response->assertOk();
     $response->assertSee('Published Post');
@@ -39,7 +39,7 @@ test('blog hides draft posts', function () {
         'body' => 'Not ready yet',
     ]);
 
-    $response = withoutMiddleware(tenantMiddleware())->get('/blog');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.blog', [], false));
 
     $response->assertOk();
     $response->assertDontSee('My Draft');
@@ -54,7 +54,7 @@ test('blog paginates at six per page', function () {
         ]);
     }
 
-    $response = withoutMiddleware(tenantMiddleware())->get('/blog');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.blog', [], false));
 
     $response->assertOk();
     $response->assertSee('Post Number 1');
@@ -63,39 +63,39 @@ test('blog paginates at six per page', function () {
 });
 
 test('individual blog post loads by slug', function () {
-    BlogPost::factory()->published()->create([
+    $post = BlogPost::factory()->published()->create([
         'title' => 'Sourdough Tips',
         'slug' => 'sourdough-tips',
         'body' => 'Here are some tips for sourdough.',
         'published_at' => now()->subDay(),
     ]);
 
-    $response = withoutMiddleware(tenantMiddleware())->get('/blog/sourdough-tips');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.blog.show', $post, false));
 
     $response->assertOk();
     $response->assertSee('Sourdough Tips');
 });
 
 test('returns 404 for nonexistent slug', function () {
-    $response = withoutMiddleware(tenantMiddleware())->get('/blog/does-not-exist');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.blog.show', 'does-not-exist', false));
 
     $response->assertNotFound();
 });
 
 test('returns 404 for draft post slug', function () {
-    BlogPost::factory()->create([
+    $post = BlogPost::factory()->create([
         'title' => 'Secret Draft',
         'slug' => 'secret-draft',
         'body' => 'Hidden content',
     ]);
 
-    $response = withoutMiddleware(tenantMiddleware())->get('/blog/secret-draft');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.blog.show', $post, false));
 
     $response->assertNotFound();
 });
 
 test('rss feed returns xml content type', function () {
-    $response = withoutMiddleware(tenantMiddleware())->get('/blog/feed.xml');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.blog.feed', [], false));
 
     $response->assertOk();
     $response->assertHeader('Content-Type', 'application/rss+xml; charset=UTF-8');
@@ -108,7 +108,7 @@ test('rss feed contains published posts', function () {
         'published_at' => now()->subDay(),
     ]);
 
-    $response = withoutMiddleware(tenantMiddleware())->get('/blog/feed.xml');
+    $response = withoutMiddleware(tenantMiddleware())->get(route('storefront.blog.feed', [], false));
 
     $response->assertOk();
     $response->assertSee('Feed Post');

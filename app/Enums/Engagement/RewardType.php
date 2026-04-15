@@ -2,9 +2,10 @@
 
 namespace App\Enums\Engagement;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum RewardType: string implements HasLabel
+enum RewardType: string implements HasColor, HasLabel
 {
     case PercentageDiscount = 'percentage_discount';
     case FixedDiscount = 'fixed_discount';
@@ -19,7 +20,7 @@ enum RewardType: string implements HasLabel
         };
     }
 
-    public function color(): string
+    public function getColor(): string
     {
         return match ($this) {
             self::PercentageDiscount => 'info',

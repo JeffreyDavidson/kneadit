@@ -29,7 +29,7 @@ class BlogPostForm
                     TextInput::make('slug')
                         ->required()
                         ->maxLength(255)
-                        ->unique(ignoreRecord: true),
+                        ->unique(),
                     Select::make('category')
                         ->options([
                             'guides' => 'Getting Started',

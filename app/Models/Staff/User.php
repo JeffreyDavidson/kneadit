@@ -70,6 +70,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     /** @use HasFactory<UserFactory> */
     use Billable, HasFactory, Notifiable;
 
+    public const string CENTRAL_PANEL_ID = 'central';
+
     protected function casts(): array
     {
         return [
@@ -81,7 +83,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($panel->getId() === 'central') {
+        if ($panel->getId() === self::CENTRAL_PANEL_ID) {
             return $this->role === UserRole::PlatformAdmin;
         }
 

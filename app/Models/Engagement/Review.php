@@ -40,6 +40,7 @@ class Review extends Model
     protected function casts(): array
     {
         return [
+            'rating' => 'integer',
             'is_approved' => 'boolean',
             'is_featured' => 'boolean',
             'comment' => StripTagsCast::class,

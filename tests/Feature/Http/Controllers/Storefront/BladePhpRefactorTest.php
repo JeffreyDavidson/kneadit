@@ -6,9 +6,16 @@ use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(fn () => setUpTenantTest());
 
+test('storefront home page renders', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get('/');
+
+    $response->assertOk();
+});
+
 test('menu controller passes settings and content to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/menu');
+        ->get(route('storefront.menu', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -19,7 +26,7 @@ test('menu controller passes settings and content to view', function () {
 
 test('gallery controller passes settings and content to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/gallery');
+        ->get(route('storefront.gallery', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -28,7 +35,7 @@ test('gallery controller passes settings and content to view', function () {
 
 test('reviews controller passes settings, content, and stats to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/reviews');
+        ->get(route('storefront.reviews', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -39,7 +46,7 @@ test('reviews controller passes settings, content, and stats to view', function 
 
 test('gift cards controller passes settings and content to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/gift-cards');
+        ->get(route('storefront.giftCards', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -48,7 +55,7 @@ test('gift cards controller passes settings and content to view', function () {
 
 test('loyalty controller show passes vm to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/rewards');
+        ->get(route('storefront.rewards', [], false));
 
     $response->assertOk()
         ->assertViewHas('vm');
@@ -56,7 +63,7 @@ test('loyalty controller show passes vm to view', function () {
 
 test('catering controller passes settings and content to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/catering');
+        ->get(route('storefront.catering', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -67,7 +74,7 @@ test('submit review controller passes settings to view', function () {
     $order = App\Models\Orders\Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/review/{$order->order_number}");
+        ->get(route('storefront.submitReview', $order->order_number, false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -79,7 +86,7 @@ test('survey controller passes settings and content to view', function () {
     $survey = App\Models\Engagement\Survey::factory()->create(['is_active' => true]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/survey/{$survey->id}");
+        ->get(route('storefront.survey', $survey, false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -88,7 +95,7 @@ test('survey controller passes settings and content to view', function () {
 
 test('about controller passes settings and content to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/about');
+        ->get(route('storefront.about', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -97,7 +104,7 @@ test('about controller passes settings and content to view', function () {
 
 test('contact controller passes settings and content to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/contact');
+        ->get(route('contact.show', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -106,7 +113,7 @@ test('contact controller passes settings and content to view', function () {
 
 test('order tracking controller passes settings and content to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/track');
+        ->get(route('order.track', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings')
@@ -115,7 +122,7 @@ test('order tracking controller passes settings and content to view', function (
 
 test('order controller index passes settings to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/order');
+        ->get(route('order.create', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings', fn (TenantSettings $s) => is_int($s->leadTimeHours) && is_bool($s->deliveryEnabled));
@@ -125,7 +132,7 @@ test('order confirmation controller passes settings and content to view', functi
     $order = App\Models\Orders\Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/order/confirmation/{$order->order_number}");
+        ->get(route('order.confirmation', ['order' => $order->order_number], false));
 
     $response->assertOk()
         ->assertViewHas('settings')

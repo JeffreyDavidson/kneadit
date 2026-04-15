@@ -21,7 +21,12 @@ class RootController extends Controller
             return view('platform.welcome');
         }
 
-        // Tenant subdomain — initialize tenancy and serve storefront or redirect
+        // Tech debt: This manually invokes InitializeTenancyByDomainOrSubdomain middleware
+        // instead of relying on route-level middleware. Ideally, the root "/" route should be
+        // split into a central-only route and a tenant-only route, each with proper middleware
+        // applied in the route file. This would eliminate the manual resolve() call and the
+        // nested closure. Skipped for now because it requires reworking how the root domain
+        // dispatches between central and tenant contexts across the entire route configuration.
         $middleware = resolve(InitializeTenancyByDomainOrSubdomain::class);
 
         return $middleware->handle(request(), function (Request $request) {

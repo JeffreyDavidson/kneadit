@@ -77,6 +77,7 @@ class CateringInquiriesTable
                     ->label('Send Quote')
                     ->icon(Heroicon::OutlinedPaperAirplane)
                     ->color('info')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->modalHeading('Send Quote to Customer')
                     ->modalDescription(fn (CateringInquiry $record) => "Send a quote of \${$record->quoted_amount} to {$record->customer_email}?")
@@ -86,6 +87,7 @@ class CateringInquiriesTable
                     ->label('Confirm')
                     ->icon(Heroicon::OutlinedCheckCircle)
                     ->color('success')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->visible(fn (CateringInquiry $record) => $record->status === CateringInquiryStatus::Quoted)
                     ->action(fn (CateringInquiry $record) => resolve(TransitionCateringInquiryStatus::class)($record, CateringInquiryStatus::Confirmed)),

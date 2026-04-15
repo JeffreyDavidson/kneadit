@@ -15,7 +15,7 @@ test('redirects to order confirmation with success message', function () {
     app()->instance(StripeCheckoutService::class, $mock);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/order/stripe/success/{$order->order_number}");
+        ->get(route('order.stripe.success', $order, false));
 
     $response->assertRedirect()
         ->assertSessionHas('success', 'Payment successful! Your order has been placed.');
@@ -31,7 +31,7 @@ test('calls handleCheckoutComplete when session_id is present', function () {
     app()->instance(StripeCheckoutService::class, $mock);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/order/stripe/success/{$order->order_number}?session_id=cs_test_123");
+        ->get(route('order.stripe.success', ['order' => $order, 'session_id' => 'cs_test_123'], false));
 
     $response->assertRedirect()
         ->assertSessionHas('success', 'Payment successful! Your order has been placed.');
@@ -45,7 +45,7 @@ test('does not call handleCheckoutComplete when session_id is absent', function 
     app()->instance(StripeCheckoutService::class, $mock);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/order/stripe/success/{$order->order_number}");
+        ->get(route('order.stripe.success', $order, false));
 
     $response->assertRedirect();
 });

@@ -8,7 +8,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -30,15 +29,8 @@ class ExpensesTable
                     ->searchable()
                     ->limit(50),
 
-                BadgeColumn::make('category')
-                    ->formatStateUsing(fn (mixed $state) => $state instanceof ExpenseCategory ? $state->getLabel() : (ExpenseCategory::tryFrom($state)?->getLabel() ?? $state))
-                    ->colors([
-                        'primary' => 'ingredients',
-                        'success' => 'packaging',
-                        'warning' => 'equipment',
-                        'info' => 'delivery',
-                        'gray' => 'other',
-                    ]),
+                TextColumn::make('category')
+                    ->badge(),
 
                 TextColumn::make('amount')
                     ->money('USD')

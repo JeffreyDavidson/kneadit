@@ -93,7 +93,7 @@
                                 🔔 Notify Me When Available
                             </button>
                             <span x-show="submitted" class="text-xs font-medium text-warm-400">✓ We'll notify you!</span>
-                            <form x-show="showWaitlist" @submit.prevent="fetch('{{ route('product-waitlist.join') }}', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'},body:JSON.stringify({product_id:{{ $product->id }},customer_email:$refs.email{{ $product->id }}.value})}).then(()=>{submitted=true;showWaitlist=false})" class="flex gap-1 mt-2">
+                            <form x-show="showWaitlist" @submit.prevent="fetch('{{ route('productWaitlist.join') }}', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'},body:JSON.stringify({product_id:{{ $product->id }},customer_email:$refs.email{{ $product->id }}.value})}).then(()=>{submitted=true;showWaitlist=false})" class="flex gap-1 mt-2">
                                 <input x-ref="email{{ $product->id }}" type="email" required placeholder="Email" class="text-sm rounded-lg border px-2 py-1 w-full" style="border-color: rgba(139,104,68,0.3); background: var(--warm-800); color: var(--warm-200);">
                                 <button type="submit" class="text-sm px-3 py-1 rounded-lg font-semibold flex-shrink-0 bg-warm-500 text-warm-900">Go</button>
                             </form>

@@ -14,7 +14,6 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -36,9 +35,11 @@ class OrdersTable
                     ->sortable()
                     ->searchable(),
 
-                BadgeColumn::make('status'),
+                TextColumn::make('status')
+                    ->badge(),
 
-                BadgeColumn::make('payment_status')
+                TextColumn::make('payment_status')
+                    ->badge()
                     ->label('Payment'),
 
                 TextColumn::make('total')
@@ -104,6 +105,7 @@ class OrdersTable
                     ->label('Send PayPal Invoice')
                     ->icon(Heroicon::OutlinedCreditCard)
                     ->color('warning')
+                    ->authorize('update')
                     ->requiresConfirmation()
                     ->modalHeading('Send PayPal Invoice')
                     ->modalDescription('This will create and send a PayPal invoice to the customer for payment.')
@@ -159,6 +161,7 @@ class OrdersTable
             ->label($label)
             ->icon($icon)
             ->color($color)
+            ->authorize('update')
             ->requiresConfirmation()
             ->modalHeading($heading)
             ->modalDescription($description)

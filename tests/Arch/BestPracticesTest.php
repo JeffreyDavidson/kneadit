@@ -103,8 +103,15 @@ test('model static calls in controllers must use explicit query()', function () 
         ->merge(glob(__DIR__ . '/../../app/Http/Controllers/*.php'))
         ->reject(fn ($file) => str_ends_with($file, 'Controller.php') && basename($file) === 'Controller.php');
 
-    $modelClasses = collect(glob(__DIR__ . '/../../app/Models/*.php'))
-        ->map(fn ($file) => pathinfo($file, PATHINFO_FILENAME))
+    $modelClasses = collect(
+        new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(__DIR__ . '/../../app/Models', FilesystemIterator::SKIP_DOTS),
+        ),
+    )
+        ->filter(fn ($file) => $file->getExtension() === 'php')
+        ->reject(fn ($file) => str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR))
+        ->map(fn ($file) => $file->getBasename('.php'))
+        ->values()
         ->all();
 
     $violations = [];
@@ -170,13 +177,24 @@ test('all listeners have retry configuration', function () {
 });
 
 test('all models have factories', function () {
-    $modelFiles = collect(glob(__DIR__ . '/../../app/Models/*.php'))
-        ->map(fn ($file) => pathinfo($file, PATHINFO_FILENAME))
+    $modelFiles = collect(
+        new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(__DIR__ . '/../../app/Models', FilesystemIterator::SKIP_DOTS),
+        ),
+    )
+        ->filter(fn ($file) => $file->getExtension() === 'php')
+        ->reject(fn ($file) => str_contains($file->getPathname(), DIRECTORY_SEPARATOR . 'Concerns' . DIRECTORY_SEPARATOR))
+        ->map(fn ($file) => $file->getBasename('.php'))
         ->reject(fn ($name) => in_array($name, ['ImpersonationToken', 'Tenant']))
         ->values();
 
-    $factoryFiles = collect(glob(__DIR__ . '/../../database/factories/*.php'))
-        ->map(fn ($file) => str_replace('Factory', '', pathinfo($file, PATHINFO_FILENAME)))
+    $factoryFiles = collect(
+        new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(__DIR__ . '/../../database/factories', FilesystemIterator::SKIP_DOTS),
+        ),
+    )
+        ->filter(fn ($file) => $file->getExtension() === 'php')
+        ->map(fn ($file) => str_replace('Factory', '', $file->getBasename('.php')))
         ->values()
         ->all();
 

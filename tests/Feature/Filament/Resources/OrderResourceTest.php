@@ -12,8 +12,8 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
-    $this->customer = Customer::factory()->create();
+    test()->actingAs(User::factory()->owner()->create());
+    test()->customer = Customer::factory()->create();
 });
 
 test('can render the orders list page', function () {
@@ -22,29 +22,29 @@ test('can render the orders list page', function () {
 });
 
 test('can list orders in the table', function () {
-    $orders = Order::factory()->recycle($this->customer)->count(3)->create();
+    $orders = Order::factory()->recycle(test()->customer)->count(3)->create();
 
     Livewire::test(ListOrders::class)
         ->assertCanSeeTableRecords($orders);
 });
 
 test('can render table columns', function (string $column) {
-    Order::factory()->recycle($this->customer)->create();
+    Order::factory()->recycle(test()->customer)->create();
 
     Livewire::test(ListOrders::class)
         ->assertCanRenderTableColumn($column);
 })->with(['order_number', 'customer.name', 'status', 'payment_status', 'total', 'delivery_date']);
 
 test('can render the view order page', function () {
-    $order = Order::factory()->recycle($this->customer)->create();
+    $order = Order::factory()->recycle(test()->customer)->create();
 
     Livewire::test(ViewOrder::class, ['record' => $order->getRouteKey()])
         ->assertOk();
 });
 
 test('can search orders by order number', function () {
-    $target = Order::factory()->recycle($this->customer)->create();
-    $other = Order::factory()->recycle($this->customer)->create();
+    $target = Order::factory()->recycle(test()->customer)->create();
+    $other = Order::factory()->recycle(test()->customer)->create();
 
     Livewire::test(ListOrders::class)
         ->searchTable($target->order_number)
@@ -53,8 +53,8 @@ test('can search orders by order number', function () {
 });
 
 test('can filter orders by status', function () {
-    $pending = Order::factory()->recycle($this->customer)->create();
-    $delivered = Order::factory()->recycle($this->customer)->delivered()->create();
+    $pending = Order::factory()->recycle(test()->customer)->create();
+    $delivered = Order::factory()->recycle(test()->customer)->delivered()->create();
 
     Livewire::test(ListOrders::class)
         ->filterTable('status', App\Enums\Orders\OrderStatus::Delivered->value)
@@ -63,8 +63,8 @@ test('can filter orders by status', function () {
 });
 
 test('can filter orders by payment status', function () {
-    $unpaid = Order::factory()->recycle($this->customer)->create();
-    $paid = Order::factory()->recycle($this->customer)->paid()->create();
+    $unpaid = Order::factory()->recycle(test()->customer)->create();
+    $paid = Order::factory()->recycle(test()->customer)->paid()->create();
 
     Livewire::test(ListOrders::class)
         ->filterTable('payment_status', App\Enums\Orders\PaymentStatus::Paid->value)
@@ -73,8 +73,8 @@ test('can filter orders by payment status', function () {
 });
 
 test('can sort orders by total', function () {
-    $cheap = Order::factory()->recycle($this->customer)->create(['subtotal' => 10, 'total' => 10]);
-    $expensive = Order::factory()->recycle($this->customer)->create(['subtotal' => 100, 'total' => 100]);
+    $cheap = Order::factory()->recycle(test()->customer)->create(['subtotal' => 10, 'total' => 10]);
+    $expensive = Order::factory()->recycle(test()->customer)->create(['subtotal' => 100, 'total' => 100]);
 
     Livewire::test(ListOrders::class)
         ->sortTable('total')
@@ -89,14 +89,14 @@ test('resource returns globally searchable attributes', function () {
 });
 
 test('resource returns global search result title', function () {
-    $order = Order::factory()->recycle($this->customer)->create();
+    $order = Order::factory()->recycle(test()->customer)->create();
 
     expect(App\Filament\Resources\Orders\OrderResource::getGlobalSearchResultTitle($order))
         ->toBe('Order #' . $order->order_number);
 });
 
 test('resource returns global search result details', function () {
-    $order = Order::factory()->recycle($this->customer)->create(['total' => 99.99]);
+    $order = Order::factory()->recycle(test()->customer)->create(['total' => 99.99]);
 
     $details = App\Filament\Resources\Orders\OrderResource::getGlobalSearchResultDetails($order);
 

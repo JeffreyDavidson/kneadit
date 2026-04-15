@@ -68,6 +68,7 @@ class IngredientsTable
                 Action::make('record_stock')
                     ->label('Record Stock')
                     ->icon(Heroicon::OutlinedPlusCircle)
+                    ->authorize('update')
                     ->schema([
                         Select::make('type')
                             ->options([

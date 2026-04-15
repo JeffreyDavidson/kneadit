@@ -10,7 +10,7 @@ beforeEach(fn () => setUpTenantTest());
 test('activity log created_at defaults to now when not set', function () {
     $log = ActivityLog::factory()->create([
         'user_name' => 'Test User',
-        'action' => 'test',
+        'action' => 'created',
         'description' => 'Test description',
     ]);
 

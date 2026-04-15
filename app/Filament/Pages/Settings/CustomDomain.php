@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages\Settings;
 
+use App\Actions\Platform\AddCustomDomain;
+use App\Actions\Platform\RemoveCustomDomain;
 use App\Enums\Platform\DnsVerificationStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
@@ -81,7 +83,7 @@ class CustomDomain extends Page
         $domain = trim((string) $this->custom_domain);
 
         if (empty($domain)) {
-            $domainService->removeDomain(tenant());
+            app(RemoveCustomDomain::class)(tenant());
             $this->dns_status = null;
             $this->ssl_status = null;
 
@@ -102,7 +104,7 @@ class CustomDomain extends Page
             return;
         }
 
-        $domainService->addDomain(tenant(), $domain);
+        app(AddCustomDomain::class)(tenant(), $domain);
         $this->refreshDnsStatus();
 
         $serverIp = $domainService->serverIp();

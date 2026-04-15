@@ -8,7 +8,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -29,15 +28,8 @@ class IncomesTable
                     ->searchable()
                     ->limit(50),
 
-                BadgeColumn::make('source')
-                    ->formatStateUsing(fn (mixed $state) => $state instanceof IncomeSource ? $state->getLabel() : (IncomeSource::tryFrom($state)?->getLabel() ?? $state))
-                    ->colors([
-                        'success' => 'farmers_market',
-                        'primary' => 'cash_sale',
-                        'info' => 'paypal_direct',
-                        'warning' => 'catering',
-                        'gray' => 'other',
-                    ]),
+                TextColumn::make('source')
+                    ->badge(),
 
                 TextColumn::make('amount')
                     ->money('USD')

@@ -6,7 +6,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('driver page renders', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/driver');
+        ->get(route('driver.index', [], false));
 
     $response->assertOk();
 });

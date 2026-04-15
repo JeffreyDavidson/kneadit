@@ -11,8 +11,8 @@ test('authenticated user can logout', function () {
     $user = User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->post('/logout')
-        ->assertRedirect('/');
+        ->post(route('logout'))
+        ->assertRedirect(route('home'));
 
-    $this->assertGuest();
+    test()->assertGuest();
 });

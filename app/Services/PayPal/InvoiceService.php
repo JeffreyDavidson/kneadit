@@ -2,6 +2,7 @@
 
 namespace App\Services\PayPal;
 
+use App\Actions\Orders\RecordPayPalInvoice;
 use App\Models\Orders\Order;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -58,7 +59,7 @@ class InvoiceService
                 return null;
             }
 
-            $order->update(['paypal_invoice_id' => $invoiceId]);
+            app(RecordPayPalInvoice::class)($order, $invoiceId);
 
             Log::info('PayPal invoice created and sent', [
                 'order_id' => $order->id,

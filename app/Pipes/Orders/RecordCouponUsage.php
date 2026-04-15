@@ -2,15 +2,15 @@
 
 namespace App\Pipes\Orders;
 
+use App\Actions\Financial\ApplyCoupon;
 use App\Enums\Financial\CouponTransactionType;
 use App\Models\Financial\Coupon;
-use App\Services\Coupon\CouponService;
 use Closure;
 
 class RecordCouponUsage
 {
     public function __construct(
-        private CouponService $couponService,
+        private ApplyCoupon $applyCoupon,
     ) {}
 
     public function handle(OrderPipelineData $payload, Closure $next): mixed
@@ -22,7 +22,7 @@ class RecordCouponUsage
         $coupon = Coupon::query()->find($payload->couponId);
 
         if ($coupon) {
-            $this->couponService->apply($coupon);
+            ($this->applyCoupon)($coupon);
 
             $coupon->transactions()->create([
                 'amount' => $payload->discountAmount,

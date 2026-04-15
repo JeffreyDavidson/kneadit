@@ -2,17 +2,14 @@
 
 namespace App\Filament\Pages\Tools;
 
-use App\Enums\Orders\OrderStatus;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Models\Inventory\Ingredient;
-use App\Models\Orders\Order;
+use App\Services\Orders\ShoppingListService;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Laravel\Pennant\Feature;
 
 class ShoppingListGenerator extends Page
@@ -49,7 +46,6 @@ class ShoppingListGenerator extends Page
     /** @var Collection<int, mixed> */
     public Collection $shoppingList;
 
-    /** @var array<string, mixed> */
     /** @var array<int, bool> */
     public array $checkedItems = [];
 
@@ -60,67 +56,9 @@ class ShoppingListGenerator extends Page
         $this->shoppingList = collect();
     }
 
-    public function generateShoppingList(): void
+    public function generateShoppingList(ShoppingListService $service): void
     {
-        // Get all order items within the date range
-        $orderItems = Order::query()
-            ->with(['orderItems.product.recipes'])
-            ->whereBetween('delivery_date', [$this->startDate, $this->endDate])
-            ->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking])
-            ->get()
-            ->flatMap(function (Order $order) {
-                return $order->orderItems;
-            });
-
-        $aggregatedIngredients = collect();
-
-        foreach ($orderItems as $orderItem) {
-            $product = $orderItem->product;
-            $quantity = $orderItem->quantity;
-
-            // Get recipes for this product
-            foreach (($product->recipes ?? collect()) as $recipe) {
-                if ($recipe->ingredients) {
-                    foreach ($recipe->ingredients as $ingredient) {
-                        $ingredientName = $ingredient['name'] ?? '';
-                        $ingredientQuantity = $ingredient['quantity'] ?? 0;
-                        $ingredientUnit = $ingredient['unit'] ?? '';
-
-                        if ($ingredientName) {
-                            $key = $ingredientName . '|' . $ingredientUnit;
-                            $totalQuantity = ($ingredientQuantity * $quantity);
-
-                            if ($aggregatedIngredients->has($key)) {
-                                $aggregatedIngredients[$key]['quantity'] += $totalQuantity;
-                            } else {
-                                $aggregatedIngredients[$key] = [
-                                    'name' => $ingredientName,
-                                    'quantity' => $totalQuantity,
-                                    'unit' => $ingredientUnit,
-                                ];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Cross-reference with ingredient inventory
-        $inventoryIngredients = Ingredient::all()->keyBy(fn (Ingredient $i) => Str::lower($i->name));
-
-        $aggregatedIngredients = $aggregatedIngredients->map(function (array $item) use ($inventoryIngredients) {
-            $key = Str::lower($item['name']);
-            $tracked = $inventoryIngredients->get($key);
-            $item['in_stock'] = $tracked ? (float) $tracked->current_stock : null;
-            $item['stock_unit'] = $tracked?->unit;
-            $item['needs_purchase'] = $tracked ? $item['quantity'] > (float) $tracked->current_stock : true;
-            $item['deficit'] = $tracked ? max(0, $item['quantity'] - (float) $tracked->current_stock) : $item['quantity'];
-
-            return $item;
-        });
-
-        // Sort by ingredient name
-        $this->shoppingList = $aggregatedIngredients->sortBy('name')->values();
+        $this->shoppingList = $service->generate($this->startDate, $this->endDate);
         $this->checkedItems = [];
     }
 
@@ -133,7 +71,7 @@ class ShoppingListGenerator extends Page
         }
     }
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Action::make('generate')

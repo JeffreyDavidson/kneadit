@@ -42,7 +42,7 @@ class AnnouncementsTable
                 TernaryFilter::make('is_active')
                     ->label('Active'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->slideOver(),
             ])

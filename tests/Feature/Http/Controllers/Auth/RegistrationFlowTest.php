@@ -41,8 +41,8 @@ test('user can register with valid data', function () {
     ]);
 
     $response->assertRedirect(route('billing.plans'));
-    $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
-    $this->assertAuthenticated();
+    test()->assertDatabaseHas('users', ['email' => 'jane@example.com']);
+    test()->assertAuthenticated();
     expect(session('bakery_name'))->toBe('Sunshine Bakery');
 });
 

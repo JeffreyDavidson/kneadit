@@ -20,7 +20,7 @@ function createReviewProduct(): Product
 
 test('reviews page loads', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/reviews');
+        ->get(route('storefront.reviews', [], false));
 
     $response->assertOk();
 });
@@ -36,7 +36,7 @@ test('reviews page shows approved reviews', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/reviews');
+        ->get(route('storefront.reviews', [], false));
 
     $response->assertOk();
     $response->assertSee('Happy Customer');
@@ -54,7 +54,7 @@ test('reviews page hides unapproved reviews', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/reviews');
+        ->get(route('storefront.reviews', [], false));
 
     $response->assertOk();
     $response->assertDontSee('This should not be visible yet');
@@ -78,7 +78,7 @@ test('reviews page shows average rating', function () {
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/reviews');
+        ->get(route('storefront.reviews', [], false));
 
     $response->assertOk();
     // Average is 4.0
@@ -87,7 +87,7 @@ test('reviews page shows average rating', function () {
 
 test('empty reviews page shows empty state', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->get('/reviews');
+        ->get(route('storefront.reviews', [], false));
 
     $response->assertOk();
     expect(Review::query()->count())->toBe(0);

@@ -63,7 +63,7 @@ class MessagesTable
             ])
             ->defaultSort('is_read', 'asc')
             ->recordUrl(fn (Model $record) => MessageResource::getUrl('view', ['record' => $record->getKey()]))
-            ->actions([
+            ->recordActions([
                 Actions\ViewAction::make()
                     ->url(fn (Model $record) => MessageResource::getUrl('view', ['record' => $record->getKey()])),
             ]);

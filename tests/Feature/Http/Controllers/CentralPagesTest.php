@@ -6,27 +6,27 @@ beforeEach(function () {
 });
 
 test('changelog page renders', function () {
-    $this->get('/changelog')->assertOk();
+    $this->get(route('changelog'))->assertOk();
 });
 
 test('blog index page renders', function () {
-    $this->get('/resources')->assertOk();
+    $this->get(route('blog.index'))->assertOk();
 });
 
 test('directory page renders', function () {
-    $this->get('/directory')->assertOk();
+    $this->get(route('directory'))->assertOk();
 });
 
 test('register page renders', function () {
-    $this->get('/register')->assertOk();
+    $this->get(route('register'))->assertOk();
 });
 
 test('forgot password page renders', function () {
-    $this->get('/forgot-password')->assertOk();
+    $this->get(route('password.request'))->assertOk();
 });
 
 test('blog feed returns xml', function () {
-    $this->get('/resources/feed.xml')
+    $this->get(route('blog.feed'))
         ->assertOk()
         ->assertHeader('Content-Type', 'application/rss+xml; charset=UTF-8');
 });
@@ -35,7 +35,7 @@ test('billing plans page renders for authenticated user', function () {
     $user = App\Models\Staff\User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->get('/billing/plans')
+        ->get(route('billing.plans'))
         ->assertOk();
 });
 

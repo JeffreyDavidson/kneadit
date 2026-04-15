@@ -15,6 +15,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -137,9 +138,9 @@ class ViewOrder extends ViewRecord
                 ->action(function (array $data): void {
                     try {
                         resolve(TransitionOrderStatus::class)($this->record, OrderStatus::from($data['status']));
-                        $this->notify('success', 'Order status updated successfully.');
+                        Notification::make()->title('Order status updated successfully.')->success()->send();
                     } catch (InvalidOrderTransitionException $e) {
-                        $this->notify('danger', $e->getMessage());
+                        Notification::make()->title($e->getMessage())->danger()->send();
                     }
                 }),
 
@@ -150,7 +151,7 @@ class ViewOrder extends ViewRecord
                 ->visible(fn (): bool => ! $this->record->paypal_invoice_id)
                 ->action(function (): void {
                     // This would integrate with PayPal service
-                    $this->notify('info', 'PayPal invoice functionality coming soon.');
+                    Notification::make()->title('PayPal invoice functionality coming soon.')->info()->send();
                 }),
 
             Action::make('printInvoice')
@@ -179,7 +180,7 @@ class ViewOrder extends ViewRecord
                         senderType: SenderType::Baker,
                     );
 
-                    $this->notify('success', 'Message sent to customer.');
+                    Notification::make()->title('Message sent to customer.')->success()->send();
                 }),
 
             Action::make('addNote')
@@ -194,7 +195,7 @@ class ViewOrder extends ViewRecord
                 ->action(function (array $data): void {
                     resolve(AddOrderNote::class)($this->record, $data['note']);
 
-                    $this->notify('success', 'Note added successfully.');
+                    Notification::make()->title('Note added successfully.')->success()->send();
                 }),
         ];
     }

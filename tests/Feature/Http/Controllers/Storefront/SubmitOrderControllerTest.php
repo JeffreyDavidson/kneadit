@@ -84,7 +84,7 @@ test('successful order creation redirects to confirmation', function () {
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/order', [
+        ->post(route('order.store', [], false), [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'delivery_type' => 'pickup',
@@ -106,7 +106,7 @@ test('returns error when date is fully booked', function () {
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/order', [
+        ->post(route('order.store', [], false), [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'delivery_type' => 'pickup',
@@ -136,7 +136,7 @@ test('redirects to stripe checkout when payment url is returned', function () {
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/order', [
+        ->post(route('order.store', [], false), [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'delivery_type' => 'pickup',
@@ -151,7 +151,7 @@ test('redirects to stripe checkout when payment url is returned', function () {
 
 test('validation fails when required fields are missing', function () {
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/order', []);
+        ->post(route('order.store', [], false), []);
 
     $response->assertSessionHasErrors([
         'customer_name',
@@ -166,7 +166,7 @@ test('validation fails with invalid email', function () {
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->post('/order', [
+        ->post(route('order.store', [], false), [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'not-an-email',
             'delivery_type' => 'pickup',

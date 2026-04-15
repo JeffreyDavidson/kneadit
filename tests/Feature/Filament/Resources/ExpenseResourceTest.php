@@ -14,7 +14,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
     Feature::define('growth-features', fn () => true);
 });
 
@@ -36,7 +36,7 @@ test('can create an expense via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Expense::class, [
+    test()->assertDatabaseHas(Expense::class, [
         'description' => 'Flour delivery',
     ]);
 });

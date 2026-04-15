@@ -22,6 +22,7 @@ class ViewTenant extends ViewRecord
                 ->label('Login as Baker')
                 ->icon(Heroicon::OutlinedFingerPrint)
                 ->color('warning')
+                ->authorize('platform-admin')
                 ->url(fn () => URL::signedRoute('tenant.impersonate', ['tenant' => $this->record->id]))
                 ->openUrlInNewTab(),
             Actions\Action::make('visit')

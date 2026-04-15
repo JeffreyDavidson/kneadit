@@ -10,7 +10,7 @@ test('invitation page renders for valid token', function () {
     $invitation = StaffInvitation::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
-        ->get("/invite/{$invitation->token}");
+        ->get(route('invitation.show', $invitation->token, false));
 
     $response->assertOk();
 });

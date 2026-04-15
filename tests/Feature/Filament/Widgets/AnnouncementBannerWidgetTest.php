@@ -6,7 +6,7 @@ use Livewire\Livewire;
 
 beforeEach(function () {
     setUpCentralTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('announcement banner widget can render', function () {

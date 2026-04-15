@@ -2,6 +2,7 @@
 
 use App\Filament\Central\Pages\TenantComparison;
 use App\Models\Platform\Tenant;
+use App\Queries\Platform\TenantComparisonQuery;
 
 beforeEach(function () {
     setUpCentralTest();
@@ -59,8 +60,7 @@ test('calculate health score returns zero for inactive tenant', function () {
         'setup_completed' => 0,
     ];
 
-    $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
-    $score = $method->invoke(test()->page, $tenant, $data);
+    $score = TenantComparisonQuery::calculateHealthScore($tenant, $data);
 
     expect($score)->toBe(0);
 });
@@ -76,8 +76,7 @@ test('calculate health score increases with recent login', function () {
         'setup_completed' => 0,
     ];
 
-    $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
-    $score = $method->invoke(test()->page, $tenant, $data);
+    $score = TenantComparisonQuery::calculateHealthScore($tenant, $data);
 
     expect($score)->toBe(25);
 });
@@ -85,13 +84,11 @@ test('calculate health score increases with recent login', function () {
 test('calculate health score increases with orders', function () {
     $tenant = Tenant::factory()->create(['last_login_at' => null]);
 
-    $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
-
-    $noOrders = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
-    $fewOrders = $method->invoke(test()->page, $tenant, ['total_orders' => 3, 'total_products' => 0, 'setup_completed' => 0]);
-    $someOrders = $method->invoke(test()->page, $tenant, ['total_orders' => 10, 'total_products' => 0, 'setup_completed' => 0]);
-    $manyOrders = $method->invoke(test()->page, $tenant, ['total_orders' => 25, 'total_products' => 0, 'setup_completed' => 0]);
-    $lotsOfOrders = $method->invoke(test()->page, $tenant, ['total_orders' => 50, 'total_products' => 0, 'setup_completed' => 0]);
+    $noOrders = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
+    $fewOrders = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 3, 'total_products' => 0, 'setup_completed' => 0]);
+    $someOrders = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 10, 'total_products' => 0, 'setup_completed' => 0]);
+    $manyOrders = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 25, 'total_products' => 0, 'setup_completed' => 0]);
+    $lotsOfOrders = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 50, 'total_products' => 0, 'setup_completed' => 0]);
 
     expect($noOrders)->toBe(0)
         ->and($fewOrders)->toBe(5)
@@ -103,12 +100,10 @@ test('calculate health score increases with orders', function () {
 test('calculate health score increases with products', function () {
     $tenant = Tenant::factory()->create(['last_login_at' => null]);
 
-    $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
-
-    $few = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 2, 'setup_completed' => 0]);
-    $some = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 5, 'setup_completed' => 0]);
-    $more = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 15, 'setup_completed' => 0]);
-    $many = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 25, 'setup_completed' => 0]);
+    $few = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 0, 'total_products' => 2, 'setup_completed' => 0]);
+    $some = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 0, 'total_products' => 5, 'setup_completed' => 0]);
+    $more = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 0, 'total_products' => 15, 'setup_completed' => 0]);
+    $many = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 0, 'total_products' => 25, 'setup_completed' => 0]);
 
     expect($few)->toBe(5)
         ->and($some)->toBe(10)
@@ -119,8 +114,7 @@ test('calculate health score increases with products', function () {
 test('calculate health score capped at 100', function () {
     $tenant = Tenant::factory()->create(['last_login_at' => now()]);
 
-    $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
-    $score = $method->invoke(test()->page, $tenant, ['total_orders' => 100, 'total_products' => 50, 'setup_completed' => 7]);
+    $score = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 100, 'total_products' => 50, 'setup_completed' => 7]);
 
     expect($score)->toBeLessThanOrEqual(100);
 });
@@ -148,24 +142,24 @@ test('get leaderboard summary stats with no tenants', function () {
 
 test('calculate health score with login 3 days ago', function () {
     $tenant = Tenant::factory()->create(['last_login_at' => now()->subDays(2)]);
-    $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
-    $score = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
+
+    $score = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
 
     expect($score)->toBe(20);
 });
 
 test('calculate health score with login 5 days ago', function () {
     $tenant = Tenant::factory()->create(['last_login_at' => now()->subDays(5)]);
-    $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
-    $score = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
+
+    $score = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
 
     expect($score)->toBe(20);
 });
 
 test('calculate health score with login 20 days ago', function () {
     $tenant = Tenant::factory()->create(['last_login_at' => now()->subDays(20)]);
-    $method = new ReflectionMethod(TenantComparison::class, 'calculateHealthScore');
-    $score = $method->invoke(test()->page, $tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
+
+    $score = TenantComparisonQuery::calculateHealthScore($tenant, ['total_orders' => 0, 'total_products' => 0, 'setup_completed' => 0]);
 
     expect($score)->toBe(5);
 });

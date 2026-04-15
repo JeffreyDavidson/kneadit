@@ -82,7 +82,7 @@ class TenantsTable
                 TernaryFilter::make('storefront_enabled')
                     ->label('Storefront'),
             ])
-            ->actions([
+            ->recordActions([
                 Actions\ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make()->slideOver(),
@@ -90,6 +90,7 @@ class TenantsTable
                         ->label('Login as Baker')
                         ->icon(Heroicon::OutlinedFingerPrint)
                         ->color('warning')
+                        ->authorize('platform-admin')
                         ->url(fn (Tenant $record) => URL::signedRoute('tenant.impersonate', ['tenant' => $record->id]))
                         ->openUrlInNewTab(),
                     Actions\Action::make('visit')
@@ -104,6 +105,7 @@ class TenantsTable
                 BulkAction::make('activate')
                     ->label('Activate')
                     ->icon(Heroicon::OutlinedCheckCircle)
+                    ->authorize('platform-admin')
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['is_active' => true]))
                     ->deselectRecordsAfterCompletion(),
@@ -111,12 +113,14 @@ class TenantsTable
                     ->label('Deactivate')
                     ->icon(Heroicon::OutlinedXCircle)
                     ->color('danger')
+                    ->authorize('platform-admin')
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['is_active' => false]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('enable_storefront')
                     ->label('Enable Storefront')
                     ->icon(Heroicon::OutlinedBuildingStorefront)
+                    ->authorize('platform-admin')
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['storefront_enabled' => true]))
                     ->deselectRecordsAfterCompletion(),
@@ -124,18 +128,21 @@ class TenantsTable
                     ->label('Disable Storefront')
                     ->icon(Heroicon::OutlinedBuildingStorefront)
                     ->color('danger')
+                    ->authorize('platform-admin')
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['storefront_enabled' => false]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('extend_trial')
                     ->label('Extend Trial 30 Days')
                     ->icon(Heroicon::OutlinedClock)
+                    ->authorize('platform-admin')
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30))]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('change_plan')
                     ->label('Change Plan')
                     ->icon(Heroicon::OutlinedArrowPath)
+                    ->authorize('platform-admin')
                     ->schema([
                         Select::make('plan')
                             ->label('New Plan')

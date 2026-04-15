@@ -15,7 +15,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('can list catering inquiries in the table', function () {
@@ -40,7 +40,7 @@ test('can create a catering inquiry via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(CateringInquiry::class, [
+    test()->assertDatabaseHas(CateringInquiry::class, [
         'customer_name' => 'Jane Smith',
         'customer_email' => 'jane@example.com',
     ]);

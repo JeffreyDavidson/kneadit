@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Analytics;
 
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Engagement\Survey;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -9,6 +10,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SurveyResults extends Page
 {
+    use RequiresManagerRole;
+
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Communication';

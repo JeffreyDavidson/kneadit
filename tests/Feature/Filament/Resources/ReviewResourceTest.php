@@ -14,13 +14,13 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
     Feature::define('growth-features', fn () => true);
-    $this->product = Product::factory()->create();
+    test()->product = Product::factory()->create();
 });
 
 test('can list reviews in the table', function () {
-    $reviews = Review::factory()->recycle($this->product)->count(3)->create();
+    $reviews = Review::factory()->recycle(test()->product)->count(3)->create();
 
     Livewire::test(ListReviews::class)
         ->assertCanSeeTableRecords($reviews);
@@ -37,21 +37,21 @@ test('can create a review via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Review::class, [
+    test()->assertDatabaseHas(Review::class, [
         'customer_name' => 'Happy Customer',
         'rating' => 5,
     ]);
 });
 
 test('can render review table columns', function (string $column) {
-    Review::factory()->recycle($this->product)->create();
+    Review::factory()->recycle(test()->product)->create();
 
     Livewire::test(ListReviews::class)
         ->assertCanRenderTableColumn($column);
 })->with(['customer_name', 'product.name', 'rating', 'is_approved', 'is_featured']);
 
 test('can edit a review via table action', function () {
-    $review = Review::factory()->recycle($this->product)->create();
+    $review = Review::factory()->recycle(test()->product)->create();
 
     Livewire::test(ListReviews::class)
         ->callAction(TestAction::make('edit')->table($review), data: [
@@ -67,7 +67,7 @@ test('can edit a review via table action', function () {
 
 test('can filter reviews by approval status', function () {
     $approved = Review::factory()->approved()->create();
-    $pending = Review::factory()->recycle($this->product)->create();
+    $pending = Review::factory()->recycle(test()->product)->create();
 
     Livewire::test(ListReviews::class)
         ->filterTable('is_approved', 1)
@@ -117,14 +117,14 @@ test('resource returns globally searchable attributes', function () {
 });
 
 test('resource returns global search result title', function () {
-    $review = Review::factory()->recycle($this->product)->create(['customer_name' => 'Alice Baker']);
+    $review = Review::factory()->recycle(test()->product)->create(['customer_name' => 'Alice Baker']);
 
     expect(App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchResultTitle($review))
         ->toBe('Review by Alice Baker');
 });
 
 test('resource returns global search result details', function () {
-    $review = Review::factory()->recycle($this->product)->create(['rating' => 4]);
+    $review = Review::factory()->recycle(test()->product)->create(['rating' => 4]);
 
     $details = App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchResultDetails($review);
 

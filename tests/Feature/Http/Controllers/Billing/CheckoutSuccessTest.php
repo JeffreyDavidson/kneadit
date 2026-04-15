@@ -11,16 +11,16 @@ test('checkout success redirects authenticated user to onboarding', function () 
     $user = User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->get('/billing/success')
-        ->assertRedirect('/onboarding');
+        ->get(route('billing.success'))
+        ->assertRedirect(route('onboarding.show'));
 });
 
 test('checkout success skips stripe check for authenticated user with session_id', function () {
     $user = User::factory()->owner()->create();
 
     $this->actingAs($user)
-        ->get('/billing/success?session_id=cs_should_not_matter')
-        ->assertRedirect('/onboarding');
+        ->get(route('billing.success', ['session_id' => 'cs_should_not_matter']))
+        ->assertRedirect(route('onboarding.show'));
 });
 
 test('checkout success controller checks session status and customer', function () {

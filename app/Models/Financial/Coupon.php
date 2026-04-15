@@ -19,8 +19,8 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property CouponType $type
- * @property-read Collection<int, CouponTransaction> $couponTransactions
- * @property-read int|null $coupon_transactions_count
+ * @property-read Collection<int, CouponTransaction> $transactions
+ * @property-read int|null $transactions_count
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
  *
@@ -57,14 +57,6 @@ class Coupon extends Model
     }
 
     /**
-     * @return HasMany<CouponTransaction, $this>
-     */
-    public function couponTransactions(): HasMany
-    {
-        return $this->transactions();
-    }
-
-    /**
      * @return HasMany<Order, $this>
      */
     public function orders(): HasMany
@@ -78,27 +70,6 @@ class Coupon extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(CouponTransaction::class);
-    }
-
-    public function isValid(): bool
-    {
-        if (! $this->is_active) {
-            return false;
-        }
-
-        if ($this->starts_at?->isFuture()) {
-            return false;
-        }
-
-        if ($this->expires_at?->isPast()) {
-            return false;
-        }
-
-        if ($this->max_uses !== null && $this->used_count >= $this->max_uses) {
-            return false;
-        }
-
-        return true;
     }
 
     protected static function newFactory(): CouponFactory

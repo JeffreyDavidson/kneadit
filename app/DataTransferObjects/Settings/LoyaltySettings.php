@@ -6,7 +6,7 @@ final readonly class LoyaltySettings
 {
     public function __construct(
         public bool $enabled,
-        public string $pointsPerDollar,
+        public int $pointsPerDollar,
         public string $programName,
     ) {}
 }

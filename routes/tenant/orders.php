@@ -41,4 +41,4 @@ Route::get('availability', AvailabilityController::class)->name('order.availabil
 Route::post('coupon/apply', ApplyCouponController::class)->name('coupon.apply')->middleware('throttle:10,1');
 
 // Gift card validation (AJAX)
-Route::post('gift-card/apply', ApplyGiftCardController::class)->name('gift-card.apply')->middleware('throttle:10,1');
+Route::post('gift-card/apply', ApplyGiftCardController::class)->name('giftCard.apply')->middleware('throttle:10,1');

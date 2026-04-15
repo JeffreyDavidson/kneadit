@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     setUpCentralTest();
-    $this->actingAs(User::factory()->platformAdmin()->create());
+    test()->actingAs(User::factory()->platformAdmin()->create());
     Filament::setCurrentPanel(Filament::getPanel('central'));
 });
 

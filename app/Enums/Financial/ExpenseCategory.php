@@ -2,9 +2,10 @@
 
 namespace App\Enums\Financial;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum ExpenseCategory: string implements HasLabel
+enum ExpenseCategory: string implements HasColor, HasLabel
 {
     case Supplies = 'supplies';
     case Ingredients = 'ingredients';
@@ -16,6 +17,22 @@ enum ExpenseCategory: string implements HasLabel
     case Education = 'education';
     case Equipment = 'equipment';
     case Other = 'other';
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Ingredients => 'primary',
+            self::Packaging => 'success',
+            self::Equipment => 'warning',
+            self::Delivery => 'info',
+            self::Other => 'gray',
+            self::Supplies => 'purple',
+            self::BoothFees => 'orange',
+            self::Marketing => 'pink',
+            self::Insurance => 'slate',
+            self::Education => 'teal',
+        };
+    }
 
     public function getLabel(): string
     {

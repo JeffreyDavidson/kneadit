@@ -5,7 +5,7 @@ namespace App\Filament\Resources\ContactMessages\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -40,7 +40,8 @@ class ContactMessagesTable
                         return $state;
                     }),
 
-                BooleanColumn::make('is_read'),
+                IconColumn::make('is_read')
+                    ->boolean(),
 
                 TextColumn::make('created_at')
                     ->dateTime()

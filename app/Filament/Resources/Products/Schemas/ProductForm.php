@@ -36,7 +36,7 @@ class ProductForm
                         TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
-                            ->unique(ignoreRecord: true),
+                            ->unique(),
 
                         TextInput::make('price')
                             ->required()

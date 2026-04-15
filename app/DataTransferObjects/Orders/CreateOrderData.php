@@ -19,6 +19,7 @@ final readonly class CreateOrderData
         public ?string $deliveryAddress = null,
         public ?string $deliveryTier = null,
         public ?string $notes = null,
+        public ?string $couponCode = null,
         public ?int $couponId = null,
         public ?int $giftCardId = null,
     ) {}
@@ -42,6 +43,7 @@ final readonly class CreateOrderData
             deliveryAddress: $data['delivery_address'] ?? null,
             deliveryTier: $data['delivery_tier'] ?? null,
             notes: $data['notes'] ?? null,
+            couponCode: $data['coupon_code'] ?? null,
             couponId: isset($data['coupon_id']) ? (int) $data['coupon_id'] : null,
             giftCardId: isset($data['gift_card_id']) ? (int) $data['gift_card_id'] : null,
         );

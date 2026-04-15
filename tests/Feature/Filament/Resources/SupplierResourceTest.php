@@ -13,7 +13,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
     Feature::define('pro-features', fn () => true);
 });
 
@@ -34,7 +34,7 @@ test('can create a supplier via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(Supplier::class, [
+    test()->assertDatabaseHas(Supplier::class, [
         'name' => 'Flour Mill Co.',
     ]);
 });

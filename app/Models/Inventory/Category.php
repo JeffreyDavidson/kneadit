@@ -34,6 +34,7 @@ class Category extends Model
     protected function casts(): array
     {
         return [
+            'sort_order' => 'integer',
             'is_active' => 'boolean',
         ];
     }

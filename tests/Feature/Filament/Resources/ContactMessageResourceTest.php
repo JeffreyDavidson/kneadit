@@ -12,7 +12,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
 });
 
 test('can list contact messages in the table', function () {
@@ -32,7 +32,7 @@ test('can create a contact message via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(ContactMessage::class, [
+    test()->assertDatabaseHas(ContactMessage::class, [
         'name' => 'Jane Customer',
         'subject' => 'Custom cake inquiry',
     ]);

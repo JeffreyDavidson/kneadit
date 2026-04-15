@@ -1,19 +1,15 @@
 <?php
 
-namespace App\Services\Customers;
+namespace App\Actions\Customers;
 
 use App\Enums\Financial\CouponType;
 use App\Models\Customers\Customer;
 use App\Models\Financial\Coupon;
 use Illuminate\Support\Facades\Date;
 
-class BirthdayService
+class CreateBirthdayCoupon
 {
-    /**
-     * Find or create a birthday coupon for a customer.
-     * Returns the coupon, or null if discount is 0.
-     */
-    public function findOrCreateBirthdayCoupon(Customer $customer, int $discountPercent, int $validDays = 7): ?Coupon
+    public function __invoke(Customer $customer, int $discountPercent, int $validDays = 7): ?Coupon
     {
         if ($discountPercent <= 0) {
             return null;

@@ -36,7 +36,7 @@ test('loyalty reward can be created', function () {
         'reward_value' => 0,
     ]);
 
-    $this->assertDatabaseHas('loyalty_rewards', ['name' => 'Free Cookie']);
+    test()->assertDatabaseHas('loyalty_rewards', ['name' => 'Free Cookie']);
     expect($reward->is_active)->toBeTrue();
 });
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Analytics;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Reporting\ReportService;
 use Filament\Pages\Page;
@@ -11,11 +12,12 @@ use Laravel\Pennant\Feature;
 
 class ReportsCenter extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     public static function canAccess(): bool
     {
-        return Feature::active('growth-features');
+        return static::hasManagerAccess() && Feature::active('growth-features');
     }
 
     protected static function requiredTier(): SubscriptionTier

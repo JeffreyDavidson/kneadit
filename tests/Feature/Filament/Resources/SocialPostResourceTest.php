@@ -14,7 +14,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->actingAs(User::factory()->owner()->create());
+    test()->actingAs(User::factory()->owner()->create());
     Feature::define('pro-features', fn () => true);
 });
 
@@ -63,7 +63,7 @@ test('can create a social post via slide-over', function () {
         ])
         ->assertHasNoFormErrors();
 
-    $this->assertDatabaseHas(SocialPost::class, [
+    test()->assertDatabaseHas(SocialPost::class, [
         'caption' => 'Fresh bread straight from the oven!',
     ]);
 });

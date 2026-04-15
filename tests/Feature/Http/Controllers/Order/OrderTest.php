@@ -15,12 +15,12 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(function () {
     setUpTenantTest();
 
-    $this->category = Category::factory()->create([
+    test()->category = Category::factory()->create([
         'name' => 'Breads',
         'slug' => 'breads',
     ]);
 
-    $this->product = Product::factory()->for($this->category)->create([
+    test()->product = Product::factory()->for(test()->category)->create([
         'name' => 'Sourdough Loaf',
         'slug' => 'sourdough-loaf',
         'price' => 12.50,
@@ -45,7 +45,7 @@ test('order validation passes with valid data', function () {
             'delivery_type' => DeliveryType::Pickup->value,
             'delivery_date' => $deliveryDate,
             'items' => [
-                ['product_id' => $this->product->id, 'quantity' => 2],
+                ['product_id' => test()->product->id, 'quantity' => 2],
             ],
         ]);
 
@@ -59,7 +59,7 @@ test('order validation rejects missing customer name', function () {
             'delivery_type' => DeliveryType::Pickup->value,
             'delivery_date' => now()->addDays(3)->toDateString(),
             'items' => [
-                ['product_id' => $this->product->id, 'quantity' => 1],
+                ['product_id' => test()->product->id, 'quantity' => 1],
             ],
         ]);
 
@@ -73,7 +73,7 @@ test('order validation rejects missing email', function () {
             'delivery_type' => DeliveryType::Pickup->value,
             'delivery_date' => now()->addDays(3)->toDateString(),
             'items' => [
-                ['product_id' => $this->product->id, 'quantity' => 1],
+                ['product_id' => test()->product->id, 'quantity' => 1],
             ],
         ]);
 
@@ -87,7 +87,7 @@ test('order validation rejects missing delivery date', function () {
             'customer_email' => 'john@example.com',
             'delivery_type' => DeliveryType::Pickup->value,
             'items' => [
-                ['product_id' => $this->product->id, 'quantity' => 1],
+                ['product_id' => test()->product->id, 'quantity' => 1],
             ],
         ]);
 
