@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verify Your Email | KneadIt</title>
+<title>{{ __('auth.verify_email.title', ['app' => config('app.name')]) }}</title>
 <link rel="icon" href="/images/logo-icon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,10 +26,10 @@ a{color:var(--honey);text-decoration:none}
 </head>
 <body>
 <div class="auth-container">
-    <div class="auth-brand"><a href="/"><img src="/images/logo-transparent.png" alt="KneadIt" style="height:5rem;width:auto"></a></div>
+    <div class="auth-brand"><a href="/"><img src="/images/logo-transparent.png" alt="{{ config('app.name') }}" style="height:5rem;width:auto"></a></div>
     <div class="auth-card">
-        <h1>Check your email</h1>
-        <p>We sent a verification link to <strong>{{ auth()->user()->email }}</strong>. Click the link to verify your account.</p>
+        <h1>{{ __('auth.verify_email.heading') }}</h1>
+        <p>{!! __('auth.verify_email.description', ['email' => e(auth()->user()->email)]) !!}</p>
 
         @if (session('message'))
             <div class="success">{{ session('message') }}</div>
@@ -37,11 +37,11 @@ a{color:var(--honey);text-decoration:none}
 
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
-            <button type="submit" class="auth-btn">Resend Verification Email</button>
+            <button type="submit" class="auth-btn">{{ __('auth.verify_email.resend') }}</button>
         </form>
 
         <p style="margin-top:1.5rem;font-size:.875rem">
-            <a href="/">Continue to KneadIt →</a>
+            <a href="/">{{ __('auth.verify_email.continue', ['app' => config('app.name')]) }}</a>
         </p>
     </div>
 </div>
