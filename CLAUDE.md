@@ -93,6 +93,7 @@
 - Hook path configured via `git config core.hooksPath .githooks`
 - Branches: `main` (production deploy) and `develop` (staging)
 - Commit format: `type: description` (feat/fix/hotfix/refactor/style/docs/chore/test)
+- Do NOT add `Co-Authored-By` lines to commits — attribution is disabled in settings.json
 
 ===
 
