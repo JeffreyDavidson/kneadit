@@ -3,32 +3,26 @@
 namespace App\Filament\Pages\Analytics;
 
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Services\Analytics\ProductTrendsService;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Laravel\Pennant\Feature;
 use Livewire\Attributes\Url;
 
 class ProductTrends extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     protected string $view = 'filament.pages.analytics.product-trends';
 
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return Feature::active('pro-features');
+        return static::hasManagerAccess() && Feature::active('pro-features');
     }
 
     protected static function requiredTier(): SubscriptionTier

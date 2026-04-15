@@ -3,23 +3,28 @@
 namespace App\Listeners\Platform;
 
 use App\Events\Platform\PaymentFailed;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Platform\PaymentFailedMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendPaymentFailedEmailListener extends QueuedListener
+class SendPaymentFailedEmailListener extends SendEmailListener
 {
-    public function handle(PaymentFailed $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->user->email)->send(new PaymentFailedMail($event->user));
+        /** @var PaymentFailed $event */
+        return $event->user->email;
     }
 
-    public function failed(PaymentFailed $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Payment failed email could not be sent', [
-            'user' => $event->user->email,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var PaymentFailed $event */
+        return new PaymentFailedMail($event->user);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var PaymentFailed $event */
+        return ['user' => $event->user->email];
     }
 }

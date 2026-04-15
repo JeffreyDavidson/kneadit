@@ -25,7 +25,7 @@ test('it sends scheduled checkin email to the tenant', function () {
 test('failed method logs a warning with email and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Scheduled checkin email failed', Mockery::on(fn (array $context) => $context['email'] === 'baker@example.com'
+        ->with('SendScheduledCheckinEmailListener failed', Mockery::on(fn (array $context) => $context['email'] === 'baker@example.com'
             && $context['error'] === 'SMTP timeout'));
 
     $event = new ScheduledCheckinDue('baker@example.com', 'How are things going?', 'Week 1 Check-in');

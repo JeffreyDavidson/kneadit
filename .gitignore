@@ -12,9 +12,11 @@
 /.vscode
 /.zed
 /.claude
+/.context
 /_specs
 /_plans
 /_tasks
+/tasks
 /docs
 /auth.json
 /node_modules

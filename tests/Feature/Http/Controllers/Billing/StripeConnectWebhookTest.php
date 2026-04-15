@@ -78,11 +78,14 @@ test('webhook controller routes account.updated to HandleConnectAccountUpdated',
 });
 
 test('webhook controller implements idempotency via cache', function () {
-    $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeConnectWebhookController.php'));
+    $controllerSource = file_get_contents(app_path('Http/Controllers/Stripe/StripeConnectWebhookController.php'));
+    $traitSource = file_get_contents(app_path('Http/Controllers/Stripe/Concerns/EnsuresWebhookIdempotency.php'));
 
-    expect($source)
-        ->toContain('Cache::add("stripe_event:{$eventId}"')
-        ->toContain('Already processed');
+    expect($controllerSource)
+        ->toContain('EnsuresWebhookIdempotency')
+        ->toContain('Already processed')
+        ->and($traitSource)
+        ->toContain('Cache::add("stripe_event:{$eventId}"');
 });
 
 test('webhook controller verifies stripe signature', function () {

@@ -4,11 +4,7 @@ namespace App\Services\Orders;
 
 use App\Actions\Orders\ReverseOrderDiscounts;
 use App\Enums\Orders\OrderStatus;
-use App\Mail\Orders\OrderBakingMail;
-use App\Mail\Orders\OrderCancelledMail;
-use App\Mail\Orders\OrderConfirmedMail;
-use App\Mail\Orders\OrderDeliveredMail;
-use App\Mail\Orders\OrderReadyMail;
+use App\Mail\Orders\OrderStatusMail;
 use App\Models\Orders\Order;
 use App\Services\Inventory\InventoryManager;
 use App\Services\Loyalty\LoyaltyLedger;
@@ -22,6 +18,7 @@ class OrderStatusEffectDispatcher
         private LoyaltyLedger $loyaltyLedger,
         private InventoryManager $inventoryManager,
         private ReverseOrderDiscounts $reverseOrderDiscounts,
+        private WebhookService $webhookService,
     ) {}
 
     public function dispatch(Order $order, OrderStatus $from, OrderStatus $to): void
@@ -94,18 +91,7 @@ class OrderStatusEffectDispatcher
 
         $order->loadMissing('orderItems.product');
 
-        $mailable = match ($to) {
-            OrderStatus::Confirmed => new OrderConfirmedMail($order),
-            OrderStatus::Baking => new OrderBakingMail($order),
-            OrderStatus::Ready => new OrderReadyMail($order),
-            OrderStatus::Delivered => new OrderDeliveredMail($order),
-            OrderStatus::Cancelled => new OrderCancelledMail($order),
-            default => null,
-        };
-
-        if ($mailable) {
-            Mail::to($order->customer->email)->queue($mailable);
-        }
+        Mail::to($order->customer->email)->queue(new OrderStatusMail($order, $to));
     }
 
     private function deductIngredients(Order $order, OrderStatus $from, OrderStatus $to): void
@@ -125,7 +111,7 @@ class OrderStatusEffectDispatcher
 
     private function dispatchWebhook(Order $order, OrderStatus $from, OrderStatus $to): void
     {
-        WebhookService::dispatch('order.updated', [
+        $this->webhookService->dispatch('order.updated', [
             'order_number' => $order->order_number,
             'status' => $to->value,
             'previous_status' => $from->value,

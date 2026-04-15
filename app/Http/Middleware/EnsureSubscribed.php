@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Platform\SubscriptionTier;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,9 @@ class EnsureSubscribed
             return to_route('billing.plans');
         }
 
-        abort_if($plan && ! $request->user()->hasPlan($plan), 403, 'Your current plan does not include this feature. Please upgrade.');
+        $tier = $plan ? SubscriptionTier::tryFrom($plan) : null;
+
+        abort_if($tier && ! $request->user()->hasPlan($tier), 403, 'Your current plan does not include this feature. Please upgrade.');
 
         return $next($request);
     }

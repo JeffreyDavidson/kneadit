@@ -35,11 +35,10 @@ it('calculates health scores for tenants', function () {
     $tenancyManager = Mockery::mock(TenancyManager::class);
     $tenancyManager->shouldReceive('withinTenant')
         ->andReturnUsing(function ($tenant, $callback) {
-            // Return tenant scores directly instead of running in tenant context
             return [
-                'login' => 25,
-                'order' => 25,
-                'product' => 20,
+                'days_since_login' => 1,
+                'total_orders' => 50,
+                'total_products' => 20,
                 'has_products' => true,
                 'has_categories' => true,
                 'has_orders' => true,

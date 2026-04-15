@@ -86,15 +86,15 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Revenue Potential Analysis</h3>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="text-center p-4 bg-blue-50 rounded-lg">
-                    <div class="text-2xl font-bold text-blue-600">${{ number_format($potential['total_revenue_potential'], 2) }}</div>
+                    <div class="text-2xl font-bold text-blue-600">@money($potential['total_revenue_potential'])</div>
                     <div class="text-sm text-blue-700">Potential Revenue</div>
                 </div>
                 <div class="text-center p-4 bg-red-50 rounded-lg">
-                    <div class="text-2xl font-bold text-red-600">${{ number_format($potential['total_costs'], 2) }}</div>
+                    <div class="text-2xl font-bold text-red-600">@money($potential['total_costs'])</div>
                     <div class="text-sm text-red-700">Total Costs</div>
                 </div>
                 <div class="text-center p-4 bg-green-50 rounded-lg">
-                    <div class="text-2xl font-bold text-green-600">${{ number_format($potential['total_profit_potential'], 2) }}</div>
+                    <div class="text-2xl font-bold text-green-600">@money($potential['total_profit_potential'])</div>
                     <div class="text-sm text-green-700">Potential Profit</div>
                 </div>
                 <div class="text-center p-4 bg-purple-50 rounded-lg">
@@ -156,14 +156,14 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     @if ($product['price'])
-                                        ${{ number_format($product['price'], 2) }}
+                                        @money($product['price'])
                                     @else
                                         <span class="text-gray-400">—</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     @if ($product['cost'])
-                                        ${{ number_format($product['cost'], 2) }}
+                                        @money($product['cost'])
                                     @else
                                         <span class="text-gray-400">—</span>
                                     @endif
@@ -180,7 +180,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     @if ($product['margin_amount'] !== null)
                                         <span class="font-medium text-{{ $product['color_class'] }}-600">
-                                            ${{ number_format($product['margin_amount'], 2) }}
+                                            @money($product['margin_amount'])
                                         </span>
                                     @else
                                         <span class="text-gray-400">—</span>
@@ -227,7 +227,7 @@
                                     <p class="text-xs text-gray-600">{{ $product['margin_percentage'] }}% margin</p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-sm font-bold text-green-600">${{ number_format($product['margin_amount'], 2) }}</p>
+                                    <p class="text-sm font-bold text-green-600">@money($product['margin_amount'])</p>
                                     <p class="text-xs text-gray-500">profit per unit</p>
                                 </div>
                             </div>
@@ -301,7 +301,7 @@
                             <div class="flex-1">
                                 <p class="text-sm font-medium text-gray-900">{{ $product['name'] }}</p>
                                 @if ($product['price'])
-                                    <p class="text-xs text-gray-600">Price: ${{ number_format($product['price'], 2) }}</p>
+                                    <p class="text-xs text-gray-600">Price: @money($product['price'])</p>
                                 @else
                                     <p class="text-xs text-red-600">No price set</p>
                                 @endif

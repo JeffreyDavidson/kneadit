@@ -65,7 +65,7 @@
                             <x-admin.badge :type="$urgency" :label="$customer->days_since . ' days'" />
                         </td>
                         <td style="text-align: center; font-weight: 600; color: var(--brand-900);">{{ $customer->total_orders }}</td>
-                        <td style="text-align: right; font-weight: 700; color: var(--brand-900);">${{ number_format($customer->total_spent, 2) }}</td>
+                        <td style="text-align: right; font-weight: 700; color: var(--brand-900);">@money($customer->total_spent)</td>
                         <td style="text-align: right;">
                             @php
                                 $subject = rawurlencode('We miss you at ' . app(\App\Services\Settings\TenantSettings::class)->storeName . '!');

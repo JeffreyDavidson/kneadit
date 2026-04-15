@@ -4,8 +4,7 @@ use App\Http\Requests\Api\CheckGiftCardBalanceRequest;
 use App\Http\Requests\Api\StoreApiContactRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
-use App\Http\Requests\Order\ApplyCouponRequest;
-use App\Http\Requests\Order\ApplyGiftCardRequest;
+use App\Http\Requests\Order\ApplyDiscountRequest;
 use App\Http\Requests\Order\PurchaseGiftCardRequest;
 use App\Http\Requests\Order\RedeemLoyaltyRewardRequest;
 use App\Http\Requests\Storefront\StoreContactMessageRequest;
@@ -16,8 +15,7 @@ use App\Http\Requests\Storefront\TrackOrderRequest;
 dataset('requestsWithRequiredFields', [
     'ForgotPasswordRequest' => [ForgotPasswordRequest::class, ['email']],
     'ResetPasswordRequest' => [ResetPasswordRequest::class, ['token', 'email', 'password']],
-    'ApplyCouponRequest' => [ApplyCouponRequest::class, ['code', 'subtotal']],
-    'ApplyGiftCardRequest' => [ApplyGiftCardRequest::class, ['code', 'subtotal']],
+    'ApplyDiscountRequest' => [ApplyDiscountRequest::class, ['code', 'subtotal']],
     'CheckGiftCardBalanceRequest' => [CheckGiftCardBalanceRequest::class, ['code']],
     'RedeemLoyaltyRewardRequest' => [RedeemLoyaltyRewardRequest::class, ['email']],
     'TrackOrderRequest' => [TrackOrderRequest::class, ['email']],
@@ -31,7 +29,7 @@ dataset('requestsWithRequiredFields', [
     'StoreReviewRequest' => [App\Http\Requests\Storefront\StoreReviewRequest::class, ['rating']],
     'StoreProductWaitlistRequest' => [App\Http\Requests\Storefront\StoreProductWaitlistRequest::class, ['product_id', 'customer_email']],
     'StoreApiFavoriteRequest' => [App\Http\Requests\Api\StoreApiFavoriteRequest::class, ['email', 'product_id']],
-    'StoreApiOrderRequest' => [App\Http\Requests\Api\StoreApiOrderRequest::class, ['customer_name', 'customer_email', 'customer_phone', 'items', 'delivery_date']],
+    'StoreApiOrderRequest' => [App\Http\Requests\Api\StoreApiOrderRequest::class, ['customer_name', 'customer_email', 'items', 'delivery_date', 'delivery_type']],
     'StoreOnboardingRequest' => [App\Http\Requests\Storefront\StoreOnboardingRequest::class, ['store_name', 'subdomain', 'storefront_choice']],
     'StoreGalleryPhotoRequest' => [App\Http\Requests\Storefront\StoreGalleryPhotoRequest::class, ['customer_name', 'customer_email', 'photo']],
     // StoreCateringInquiry excluded — rules() calls settings() which needs tenant DB

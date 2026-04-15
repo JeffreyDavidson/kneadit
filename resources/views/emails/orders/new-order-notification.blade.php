@@ -1,3 +1,4 @@
+@use(App\Enums\Orders\PaymentStatus)
 @extends('emails.layout')
 
 @php
@@ -40,15 +41,15 @@
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Payment</td>
                 <td style="padding: 6px 0; color: {{ $secondaryColor }}; text-align: right;">
                     <span style="padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;
-                        background: {{ $order->payment_status->value === 'paid' ? '#d4f5d4' : '#fef3c7' }};
-                        color: {{ $order->payment_status->value === 'paid' ? '#065f46' : '#92400e' }};">
+                        background: {{ $order->payment_status === PaymentStatus::Paid ? '#d4f5d4' : '#fef3c7' }};
+                        color: {{ $order->payment_status === PaymentStatus::Paid ? '#065f46' : '#92400e' }};">
                         {{ $order->payment_status->getLabel() }} ({{ $order->payment_method->getLabel() }})
                     </span>
                 </td>
             </tr>
             <tr>
                 <td style="padding: 6px 0; color: #6b4c3b; font-size: 14px;">Total</td>
-                <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 700; text-align: right; font-size: 18px;">${{ number_format($order->total, 2) }}</td>
+                <td style="padding: 6px 0; color: {{ $secondaryColor }}; font-weight: 700; text-align: right; font-size: 18px;">@money($order->total)</td>
             </tr>
         </table>
     </div>
@@ -65,7 +66,7 @@
                 @endif
             </td>
             <td style="padding: 8px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right; font-size: 14px;">
-                ${{ number_format($item->unit_price * $item->quantity, 2) }}
+                @money($item->total_price)
             </td>
         </tr>
         @endforeach

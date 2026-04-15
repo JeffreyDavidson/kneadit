@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Settings;
 
+use App\Filament\Concerns\RequiresManagerRole;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -10,6 +11,8 @@ use Filament\Support\Icons\Heroicon;
 
 class HomepageBuilder extends Page
 {
+    use RequiresManagerRole;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Settings';

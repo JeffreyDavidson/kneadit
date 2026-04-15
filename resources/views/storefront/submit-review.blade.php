@@ -49,7 +49,7 @@
             @foreach ($order->orderItems as $item)
                 <div class="flex justify-between text-sm py-1">
                     <span class="text-warm-700">{{ $item->quantity }}× {{ $item->product->name ?? 'Item' }}</span>
-                    <span class="text-warm-500">${{ number_format($item->total_price, 2) }}</span>
+                    <span class="text-warm-500">@money($item->total_price)</span>
                 </div>
             @endforeach
         </div>

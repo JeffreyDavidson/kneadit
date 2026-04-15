@@ -3,9 +3,11 @@
 namespace App\Enums\Orders;
 
 use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Icons\Heroicon;
 
-enum OrderStatus: string implements HasColor, HasLabel
+enum OrderStatus: string implements HasColor, HasIcon, HasLabel
 {
     case Pending = 'pending';
     case Confirmed = 'confirmed';
@@ -28,6 +30,30 @@ enum OrderStatus: string implements HasColor, HasLabel
             self::Ready => 'success',
             self::Delivered => 'gray',
             self::Cancelled => 'danger',
+        };
+    }
+
+    public function getIcon(): Heroicon
+    {
+        return match ($this) {
+            self::Pending => Heroicon::OutlinedClock,
+            self::Confirmed => Heroicon::OutlinedCheckCircle,
+            self::Baking => Heroicon::OutlinedFire,
+            self::Ready => Heroicon::OutlinedCube,
+            self::Delivered => Heroicon::OutlinedTruck,
+            self::Cancelled => Heroicon::OutlinedXCircle,
+        };
+    }
+
+    public function badgeClasses(): string
+    {
+        return match ($this) {
+            self::Pending => 'bg-yellow-100 text-yellow-800',
+            self::Confirmed => 'bg-green-100 text-green-800',
+            self::Baking => 'bg-blue-100 text-blue-800',
+            self::Ready => 'bg-emerald-100 text-emerald-800',
+            self::Delivered => 'bg-gray-100 text-gray-800',
+            self::Cancelled => 'bg-red-100 text-red-800',
         };
     }
 

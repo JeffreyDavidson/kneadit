@@ -1,4 +1,4 @@
-
+@use(App\Enums\Engagement\SurveyQuestionType)
 <x-layouts.storefront>
 <x-slot:styles>
 <link rel="stylesheet" href="{{ asset('css/survey.css') }}">
@@ -79,7 +79,7 @@
                 </div>
 
                 <div class="pl-12">
-                    @if ($question['type'] === 'rating')
+                    @if ($question['type'] === SurveyQuestionType::Rating->value)
                     <div x-data="{ rating: 0 }" class="flex gap-2 items-center">
                         @for ($star = 1; $star <= 5; $star++)
                         <button type="button"
@@ -94,10 +94,10 @@
                         <span class="ml-3 text-sm font-semibold text-warm-500" x-show="rating > 0" x-text="['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'][rating]"></span>
                     </div>
 
-                    @elseif ($question['type'] === 'text')
+                    @elseif ($question['type'] === SurveyQuestionType::Text->value)
                     <textarea name="answers[{{ $index }}]" rows="3" class="input-field" placeholder="Type your answer..."></textarea>
 
-                    @elseif ($question['type'] === 'multiple_choice')
+                    @elseif ($question['type'] === SurveyQuestionType::MultipleChoice->value)
                     <div class="space-y-2">
                         @foreach ($question['options'] ?? [] as $option)
                         <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl transition-all duration-200 hover:shadow-sm" style="border: 1px solid var(--warm-200);" onmouseover="this.style.borderColor='var(--warm-400)'" onmouseout="this.style.borderColor='var(--warm-200)'">

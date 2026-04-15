@@ -2,7 +2,6 @@
 
 use App\Enums\Orders\PaymentMethod;
 use App\Mail\Concerns\BakerBranded;
-use App\Mail\Customers\BirthdayDiscountMail;
 use App\Mail\Customers\HappyBirthdayMail;
 use App\Mail\Customers\ProductAvailableMail;
 use App\Mail\Customers\RepeatOrderReminderMail;
@@ -10,12 +9,8 @@ use App\Mail\Customers\ReviewRequestMail;
 use App\Mail\Marketing\CateringQuoteMail;
 use App\Mail\Marketing\CustomerBlastMail;
 use App\Mail\Orders\NewOrderMessageMail;
-use App\Mail\Orders\OrderBakingMail;
-use App\Mail\Orders\OrderCancelledMail;
-use App\Mail\Orders\OrderConfirmedMail;
-use App\Mail\Orders\OrderDeliveredMail;
 use App\Mail\Orders\OrderPlacedMail;
-use App\Mail\Orders\OrderReadyMail;
+use App\Mail\Orders\OrderStatusMail;
 use App\Mail\Platform\WeeklyDigestMail;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
@@ -75,7 +70,7 @@ test('from name defaults when no store name', function () {
 test('order confirmed uses baker branded from', function () {
     settings(['store_name' => 'Flour Power']);
 
-    $mail = new OrderConfirmedMail($this->order);
+    $mail = new OrderStatusMail($this->order, App\Enums\Orders\OrderStatus::Confirmed);
     $envelope = $mail->envelope();
 
     expect($envelope->from->name)->toContain('Flour Power via KneadIt');
@@ -84,14 +79,9 @@ test('order confirmed uses baker branded from', function () {
 test('all customer mailables use baker branded trait', function () {
     $mailables = [
         OrderPlacedMail::class,
-        OrderConfirmedMail::class,
-        OrderReadyMail::class,
-        OrderBakingMail::class,
-        OrderCancelledMail::class,
-        OrderDeliveredMail::class,
+        OrderStatusMail::class,
         ReviewRequestMail::class,
         HappyBirthdayMail::class,
-        BirthdayDiscountMail::class,
         CustomerBlastMail::class,
         ProductAvailableMail::class,
         WeeklyDigestMail::class,

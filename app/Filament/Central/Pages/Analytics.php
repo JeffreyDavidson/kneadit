@@ -25,14 +25,25 @@ class Analytics extends Page
     /** @return array<int, array<string, mixed>> */
     public function getSignupsByMonth(): array
     {
+        $startDate = Date::now()->subMonths(11)->startOfMonth();
+
+        $dateExpr = DB::getDriverName() === 'sqlite'
+            ? "strftime('%Y-%m', created_at)"
+            : "DATE_FORMAT(created_at, '%Y-%m')";
+
+        $counts = Tenant::query()
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw("{$dateExpr} as month, COUNT(*) as count")
+            ->groupBy('month')
+            ->pluck('count', 'month');
+
         $months = collect();
         for ($i = 11; $i >= 0; $i--) {
             $date = Date::now()->subMonths($i);
+            $key = $date->format('Y-m');
             $months->push([
                 'label' => $date->format('M Y'),
-                'count' => Tenant::query()->whereYear('created_at', $date->year)
-                    ->whereMonth('created_at', $date->month)
-                    ->count(),
+                'count' => (int) ($counts[$key] ?? 0),
             ]);
         }
 

@@ -8,7 +8,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Products</label>
                     <select wire:model.live="selectedProducts" multiple class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm" size="6">
                         @foreach ($this->getProducts() as $product)
-                            <option value="{{ $product['id'] }}">{{ $product['name'] }} — ${{ number_format($product['price'], 2) }}</option>
+                            <option value="{{ $product['id'] }}">{{ $product['name'] }} — @money($product['price'])</option>
                         @endforeach
                     </select>
                     <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
@@ -91,7 +91,7 @@
                                         {{ $product->name }}
                                     </div>
                                     <div style="font-size: {{ $labelSize === 'small' ? '10px' : '14px' }}; font-weight: bold; color: #8b4513; margin-top: 2px;">
-                                        ${{ number_format($product->price, 2) }}
+                                        @money($product->price)
                                     </div>
                                 </div>
 

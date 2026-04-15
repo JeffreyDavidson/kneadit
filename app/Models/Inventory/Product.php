@@ -9,6 +9,7 @@ use App\Models\Customers\CustomerPhoto;
 use App\Models\Engagement\PageView;
 use App\Models\Engagement\Review;
 use App\Models\Orders\OrderItem;
+use App\Support\ProfitMargin;
 use Database\Factories\Inventory\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
@@ -225,13 +226,9 @@ class Product extends Model
     protected function margin(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                if ($this->cost && $this->price) {
-                    return round(($this->price - $this->cost) / $this->price * 100, 2);
-                }
-
-                return null;
-            },
+            get: fn () => $this->cost && $this->price
+                ? ProfitMargin::calculate((float) $this->price, (float) $this->cost)
+                : null,
         );
     }
 

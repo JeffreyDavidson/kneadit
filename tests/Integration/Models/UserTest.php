@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
 use Filament\Panel;
@@ -35,13 +36,7 @@ test('current plan returns null when no subscription exists', function () {
 test('has plan returns false when no subscription exists', function () {
     $user = User::factory()->owner()->create();
 
-    expect($user->hasPlan('starter'))->toBeFalse();
-});
-
-test('has plan returns false for invalid plan name', function () {
-    $user = User::factory()->owner()->create();
-
-    expect($user->hasPlan('nonexistent'))->toBeFalse();
+    expect($user->hasPlan(SubscriptionTier::Starter))->toBeFalse();
 });
 
 test('current plan returns plan key matching stripe price', function () {
@@ -59,7 +54,7 @@ test('current plan returns plan key matching stripe price', function () {
         'updated_at' => now(),
     ]);
 
-    expect($user->currentPlan())->toBe('starter');
+    expect($user->currentPlan())->toBe(SubscriptionTier::Starter);
 });
 
 test('current plan returns null for unknown stripe price', function () {

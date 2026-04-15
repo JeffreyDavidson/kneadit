@@ -3,30 +3,30 @@
 namespace App\Listeners\Orders;
 
 use App\Events\Orders\OrderCreated;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Orders\OrderPlacedMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendOrderPlacedEmailListener extends QueuedListener
+class SendOrderPlacedEmailListener extends SendEmailListener
 {
-    public function handle(OrderCreated $event): void
+    protected function getRecipient(object $event): ?string
     {
-        $order = $event->order;
-        $order->loadMissing('orderItems.product');
-
-        if (! $order->customer?->email) {
-            return;
-        }
-
-        Mail::to($order->customer->email)->send(new OrderPlacedMail($order));
+        /** @var OrderCreated $event */
+        return $event->order->customer?->email;
     }
 
-    public function failed(OrderCreated $event, \Throwable $exception): void
+    protected function getMailable(object $event): Mailable
     {
-        Log::warning('Order placed email failed', [
-            'order' => $event->order->order_number,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var OrderCreated $event */
+        $event->order->loadMissing('orderItems.product');
+
+        return new OrderPlacedMail($event->order);
+    }
+
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
+    {
+        /** @var OrderCreated $event */
+        return ['order' => $event->order->order_number];
     }
 }

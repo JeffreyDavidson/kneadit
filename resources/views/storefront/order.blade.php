@@ -12,7 +12,7 @@
         </h1>
         <p class="text-lg max-w-2xl text-warm-400">
             Choose your items, tell us when you need them, and we'll have everything freshly prepared.
-            Orders need {{ $settings->leadTimeHours }} hours notice — ready {{ date('l, F j', strtotime('+' . $settings->leadTimeDays() . ' days')) }} or later.
+            Orders need {{ $settings->leadTimeHours }} hours notice — ready {{ now()->addDays($settings->leadTimeDays())->format('l, F j') }} or later.
         </p>
     </div>
 </section>
@@ -62,7 +62,7 @@
                                 @endif
                                 {{-- Price badge --}}
                                 <div class="absolute top-3 left-3 px-3 py-1.5 rounded-full text-sm font-bold backdrop-blur-sm" style="background: rgba(28,20,16,0.8); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.2);">
-                                    ${{ number_format($product->price, 2) }}
+                                    @money($product->price)
                                 </div>
                             </div>
 
@@ -252,13 +252,13 @@
                                 <select x-model="form.delivery_tier" @change="calculateDeliveryFee()" class="order-input">
                                     <option value="">Select distance</option>
                                     @foreach ($settings->deliveryFeeTiers as $index => $tier)
-                                    <option value="{{ $index }}">{{ $tier['description'] }} (${{ number_format($tier['fee'], 2) }})</option>
+                                    <option value="{{ $index }}">{{ $tier['description'] }} (@money($tier['fee']))</option>
                                     @endforeach
                                 </select>
                             </div>
                             @if ($settings->freeDeliveryMinimum)
                             <p class="text-sm text-warm-500">
-                                🚚 Free delivery on orders over ${{ number_format((float)$settings->freeDeliveryMinimum, 2) }}!
+                                🚚 Free delivery on orders over @money((float)$settings->freeDeliveryMinimum)!
                             </p>
                             @endif
                         </div>

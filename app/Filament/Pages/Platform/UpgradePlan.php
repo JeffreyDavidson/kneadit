@@ -2,23 +2,14 @@
 
 namespace App\Filament\Pages\Platform;
 
-use App\Enums\Staff\UserRole;
+use App\Enums\Platform\SubscriptionTier;
+use App\Filament\Concerns\RequiresManagerRole;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
 
 class UpgradePlan extends Page
 {
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return true;
-    }
+    use RequiresManagerRole;
 
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpCircle;
 
@@ -40,10 +31,10 @@ class UpgradePlan extends Page
 
     public function mount(): void
     {
-        $this->currentPlan = tenant()->plan ?? 'starter';
+        $this->currentPlan = tenant()->plan?->value ?? 'starter';
 
         $this->plans = [
-            'starter' => [
+            SubscriptionTier::Starter->value => [
                 'name' => 'Starter',
                 'price' => 9,
                 'features' => [
@@ -57,7 +48,7 @@ class UpgradePlan extends Page
                     'Settings & Onboarding',
                 ],
             ],
-            'growth' => [
+            SubscriptionTier::Growth->value => [
                 'name' => 'Growth',
                 'price' => 19,
                 'features' => [
@@ -75,7 +66,7 @@ class UpgradePlan extends Page
                     'Printable Menu & QR Codes',
                 ],
             ],
-            'pro' => [
+            SubscriptionTier::Pro->value => [
                 'name' => 'Pro',
                 'price' => 29,
                 'features' => [

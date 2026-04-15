@@ -35,7 +35,7 @@ test('it sends welcome email to the baker', function () {
 test('failed method logs a warning with tenant id and error message', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('Welcome baker email failed', Mockery::on(fn (array $context) => $context['tenant'] === 'janes-bakery'
+        ->with('SendWelcomeBakerEmailListener failed', Mockery::on(fn (array $context) => $context['tenant'] === 'janes-bakery'
             && $context['error'] === 'SMTP timeout'));
 
     $user = User::factory()->create();

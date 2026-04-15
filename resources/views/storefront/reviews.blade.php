@@ -9,34 +9,32 @@
         <h1 class="review-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
             {{ $content['hero_title'] ?? 'Kind Words' }}
         </h1>
-        @if ($totalReviews > 0)
-        <p class="review-fade-2 font-script text-2xl md:text-3xl text-warm-400">{{ $totalReviews }} {{ Str::plural('review', $totalReviews) }} from happy customers</p>
+        @if ($vm->totalReviews > 0)
+        <p class="review-fade-2 font-script text-2xl md:text-3xl text-warm-400">{{ $vm->totalReviews }} {{ Str::plural('review', $vm->totalReviews) }} from happy customers</p>
         @endif
     </div>
 </x-storefront.hero-section>
 
 {{-- Stats Strip --}}
-@if ($totalReviews > 0)
+@if ($vm->totalReviews > 0)
 <section class="bg-warm-800">
     <div class="max-w-5xl mx-auto px-4 py-12">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ number_format($avgRating, 1) }}</span>
+                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->formattedAvgRating }}</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Average Rating</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $totalReviews }}</span>
+                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->totalReviews }}</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Total Reviews</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $fiveStarPct }}%</span>
+                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->fiveStarPct }}%</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">5-Star Reviews</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
                 <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">
-                    @for ($i = 1; $i <= 5; $i++)
-                        <span style="color: {{ $i <= round($avgRating) ? 'var(--warm-500)' : 'rgba(139,104,68,0.3)' }};">★</span>
-                    @endfor
+                    <x-storefront.star-rating :rating="round($vm->avgRating)" size="lg" empty-color="--warm-300" />
                 </span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Overall</span>
             </div>
@@ -72,11 +70,7 @@
         </div>
 
         <div class="space-y-4">
-            @for ($star = 5; $star >= 1; $star--)
-            @php
-                $count = $reviews->where('rating', $star)->count();
-                $pct = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
-            @endphp
+            @foreach ($vm->ratingBreakdown as $star => $data)
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-1 flex-shrink-0" style="width: 80px;">
                     <span class="font-display font-semibold text-warm-300">{{ $star }}</span>
@@ -85,11 +79,11 @@
                     </svg>
                 </div>
                 <div class="flex-1 rating-bar-track bg-warm-800">
-                    <div class="rating-bar-fill" style="width: {{ $pct }}%; background: var(--warm-500);"></div>
+                    <div class="rating-bar-fill" style="width: {{ $data['pct'] }}%; background: var(--warm-500);"></div>
                 </div>
-                <span class="text-sm font-medium flex-shrink-0" style="color: var(--warm-400); width: 40px; text-align: right;">{{ $count }}</span>
+                <span class="text-sm font-medium flex-shrink-0" style="color: var(--warm-400); width: 40px; text-align: right;">{{ $data['count'] }}</span>
             </div>
-            @endfor
+            @endforeach
         </div>
     </div>
 </x-storefront.dark-section>

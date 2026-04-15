@@ -10,7 +10,6 @@ test('all expected commands are scheduled', function () {
 
     $expectedCommands = [
         'paypal:check-payments',
-        'birthday:send-discounts',
         'birthday:send-emails',
         'orders:send-repeat-reminders',
         'digest:weekly',

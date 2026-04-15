@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reset Password | KneadIt</title>
+<title>{{ __('auth.forgot_password.title', ['app' => config('app.name')]) }}</title>
 <link rel="icon" href="/images/logo-icon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,10 +13,10 @@
 </head>
 <body>
 <div class="auth-container">
-    <div class="auth-brand"><a href="/"><img src="/images/logo-transparent.png" alt="KneadIt" style="height:5rem;width:auto"></a></div>
+    <div class="auth-brand"><a href="/"><img src="/images/logo-transparent.png" alt="{{ config('app.name') }}" style="height:5rem;width:auto"></a></div>
     <div class="auth-card">
-        <h1>Reset your password</h1>
-        <p class="subtitle">Enter your email and we'll send you a link to reset your password.</p>
+        <h1>{{ __('auth.forgot_password.heading') }}</h1>
+        <p class="subtitle">{{ __('auth.forgot_password.subtitle') }}</p>
 
         @if (session('status'))
             <div class="status-msg">{{ session('status') }}</div>
@@ -26,16 +26,16 @@
             @csrf
 
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required autofocus>
+                <label for="email">{{ __('forms.labels.email') }}</label>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="{{ __('forms.placeholders.email') }}" required autofocus>
                 @error('email') <div class="form-error">{{ $message }}</div> @enderror
             </div>
 
-            <button type="submit" class="auth-btn">Send Reset Link</button>
+            <button type="submit" class="auth-btn">{{ __('auth.forgot_password.submit') }}</button>
         </form>
 
         <div class="auth-footer">
-            <a href="/register">Back to registration</a>
+            <a href="/register">{{ __('auth.forgot_password.back') }}</a>
         </div>
     </div>
 </div>

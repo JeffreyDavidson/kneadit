@@ -1,7 +1,8 @@
 <?php
 
+use App\Enums\Orders\OrderStatus;
 use App\Mail\Customers\RepeatOrderReminderMail;
-use App\Mail\Orders\OrderDeliveredMail;
+use App\Mail\Orders\OrderStatusMail;
 use App\Mail\Platform\WelcomeBakerMail;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
@@ -11,11 +12,11 @@ uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('OrderDeliveredMail renders', function () {
+test('OrderStatusMail renders for delivered status', function () {
     $order = Order::factory()->create();
-    $order->load('customer', 'orderItems');
+    $order->load('customer', 'orderItems.product');
 
-    expect((new OrderDeliveredMail($order))->render())->toBeString()->not->toBeEmpty();
+    expect((new OrderStatusMail($order, OrderStatus::Delivered))->render())->toBeString()->not->toBeEmpty();
 });
 
 test('RepeatOrderReminderMail renders', function () {
@@ -39,9 +40,22 @@ test('order-based mail classes render without errors', function (string $mailCla
 })->with([
     'NewOrderNotification' => [App\Mail\Orders\NewOrderNotificationMail::class],
     'OrderPlaced' => [App\Mail\Orders\OrderPlacedMail::class],
-    'OrderConfirmed' => [App\Mail\Orders\OrderConfirmedMail::class],
-    'OrderReady' => [App\Mail\Orders\OrderReadyMail::class],
     'ReviewRequest' => [App\Mail\Customers\ReviewRequestMail::class],
+]);
+
+test('OrderStatusMail renders for all statuses', function (OrderStatus $status) {
+    $order = Order::factory()->create(['delivery_date' => now()->addDays(3), 'delivery_time' => now()]);
+    $order->load('customer', 'orderItems.product');
+
+    $html = (new OrderStatusMail($order, $status))->render();
+
+    expect($html)->toBeString()->not->toBeEmpty();
+})->with([
+    'Confirmed' => [OrderStatus::Confirmed],
+    'Baking' => [OrderStatus::Baking],
+    'Ready' => [OrderStatus::Ready],
+    'Delivered' => [OrderStatus::Delivered],
+    'Cancelled' => [OrderStatus::Cancelled],
 ]);
 
 test('StaffInvitationMail renders', function () {
@@ -58,14 +72,6 @@ test('CustomerBlastMail renders', function () {
 
 test('NewSubscriberNotificationMail renders', function () {
     expect((new App\Mail\Platform\NewSubscriberNotificationMail('Jane', 'jane@example.com', 'Sweet Bakery', 'sweet-bakery', 'starter'))->render())
-        ->toBeString()->not->toBeEmpty();
-});
-
-test('BirthdayDiscountMail renders', function () {
-    $customer = Customer::factory()->create();
-    $coupon = App\Models\Financial\Coupon::factory()->percentage()->create();
-
-    expect((new App\Mail\Customers\BirthdayDiscountMail($customer, $coupon))->render())
         ->toBeString()->not->toBeEmpty();
 });
 
@@ -88,20 +94,6 @@ test('PurchaseOrderMail renders', function () {
 
     expect((new App\Mail\Orders\PurchaseOrderMail('Acme Supplies', 'Sweet Bakery', $items, 100.00, '2026-04-15'))->render())
         ->toBeString()->not->toBeEmpty();
-});
-
-test('OrderBakingMail renders', function () {
-    $order = Order::factory()->create(['delivery_date' => now()->addDays(3), 'delivery_time' => now()]);
-    $order->load('customer', 'orderItems.product');
-
-    expect((new App\Mail\Orders\OrderBakingMail($order))->render())->toBeString()->not->toBeEmpty();
-});
-
-test('OrderCancelledMail renders', function () {
-    $order = Order::factory()->create(['delivery_date' => now()->addDays(3)]);
-    $order->load('customer', 'orderItems.product');
-
-    expect((new App\Mail\Orders\OrderCancelledMail($order))->render())->toBeString()->not->toBeEmpty();
 });
 
 test('CateringQuoteMail renders', function () {

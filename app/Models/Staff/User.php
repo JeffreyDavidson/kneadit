@@ -89,9 +89,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     }
 
     /**
-     * Get the user's current subscription plan key.
+     * Get the user's current subscription plan tier.
      */
-    public function currentPlan(): ?string
+    public function currentPlan(): ?SubscriptionTier
     {
         $subscription = $this->subscription('default');
 
@@ -99,29 +99,21 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             return null;
         }
 
-        $priceId = $subscription->stripe_price;
-
-        return match ($priceId) {
-            config('kneadit.stripe_prices.starter') => 'starter',
-            config('kneadit.stripe_prices.growth') => 'growth',
-            config('kneadit.stripe_prices.pro') => 'pro',
-            default => null,
-        };
+        return SubscriptionTier::fromPriceId($subscription->stripe_price);
     }
 
     /**
      * Check if user has at least the given plan tier.
      */
-    public function hasPlan(string $plan): bool
+    public function hasPlan(SubscriptionTier $plan): bool
     {
-        $current = SubscriptionTier::tryFrom($this->currentPlan() ?? '');
-        $required = SubscriptionTier::tryFrom($plan);
+        $current = $this->currentPlan();
 
-        if (! $current || ! $required) {
+        if (! $current) {
             return false;
         }
 
-        return $current->meetsRequirement($required);
+        return $current->meetsRequirement($plan);
     }
 
     /**

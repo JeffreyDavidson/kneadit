@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Customers;
 
 use App\Services\Engagement\EngagementDispatcher;
-use App\Services\Engagement\Engagements\BirthdayEmailEngagement;
+use App\Services\Engagement\Engagements\BirthdayEngagement;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -12,7 +12,7 @@ use Illuminate\Console\Command;
 #[Description('Send happy birthday emails to customers with birthdays today')]
 class SendBirthdayEmailsCommand extends Command
 {
-    public function handle(EngagementDispatcher $dispatcher, BirthdayEmailEngagement $engagement): int
+    public function handle(EngagementDispatcher $dispatcher, BirthdayEngagement $engagement): int
     {
         $failures = $dispatcher->dispatch($engagement, $this);
 

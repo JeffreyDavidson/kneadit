@@ -18,7 +18,7 @@ beforeEach(function () {
     $fakeTenant->shouldReceive('getTenantKeyName')->andReturn('id');
     $fakeTenant->domains = collect([(object) ['domain' => 'test-bakery.getkneadit.test']]);
     $fakeTenant->id = 'test-bakery';
-    $fakeTenant->plan = 'pro';
+    $fakeTenant->plan = App\Enums\Platform\SubscriptionTier::Pro;
 
     app()->instance(Tenant::class, $fakeTenant);
     Feature::define('pro-features', fn () => true);

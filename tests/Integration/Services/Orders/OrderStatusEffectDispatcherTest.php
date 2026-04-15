@@ -3,11 +3,7 @@
 use App\Enums\Financial\CouponTransactionType;
 use App\Enums\Financial\GiftCardTransactionType;
 use App\Enums\Orders\OrderStatus;
-use App\Mail\Orders\OrderBakingMail;
-use App\Mail\Orders\OrderCancelledMail;
-use App\Mail\Orders\OrderConfirmedMail;
-use App\Mail\Orders\OrderDeliveredMail;
-use App\Mail\Orders\OrderReadyMail;
+use App\Mail\Orders\OrderStatusMail;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Financial\Coupon;
@@ -29,15 +25,15 @@ beforeEach(function () {
     $this->customer = Customer::factory()->create(['email' => 'customer@example.com']);
 });
 
-dataset('statusToMailable', [
-    'confirmed' => [OrderStatus::Pending, OrderStatus::Confirmed, OrderConfirmedMail::class],
-    'baking' => [OrderStatus::Confirmed, OrderStatus::Baking, OrderBakingMail::class],
-    'ready' => [OrderStatus::Baking, OrderStatus::Ready, OrderReadyMail::class],
-    'delivered' => [OrderStatus::Ready, OrderStatus::Delivered, OrderDeliveredMail::class],
-    'cancelled' => [OrderStatus::Confirmed, OrderStatus::Cancelled, OrderCancelledMail::class],
+dataset('statusTransitions', [
+    'confirmed' => [OrderStatus::Pending, OrderStatus::Confirmed],
+    'baking' => [OrderStatus::Confirmed, OrderStatus::Baking],
+    'ready' => [OrderStatus::Baking, OrderStatus::Ready],
+    'delivered' => [OrderStatus::Ready, OrderStatus::Delivered],
+    'cancelled' => [OrderStatus::Confirmed, OrderStatus::Cancelled],
 ]);
 
-test('sends the correct email for each status', function (OrderStatus $from, OrderStatus $to, string $mailableClass) {
+test('sends the correct email for each status', function (OrderStatus $from, OrderStatus $to) {
     $order = Order::factory()
         ->for($this->customer)
         ->recycle($this->user)
@@ -45,8 +41,8 @@ test('sends the correct email for each status', function (OrderStatus $from, Ord
 
     resolve(OrderStatusEffectDispatcher::class)->dispatch($order, $from, $to);
 
-    Mail::assertQueued($mailableClass, fn ($mail) => $mail->hasTo('customer@example.com'));
-})->with('statusToMailable');
+    Mail::assertQueued(OrderStatusMail::class, fn (OrderStatusMail $mail) => $mail->status === $to && $mail->hasTo('customer@example.com'));
+})->with('statusTransitions');
 
 test('does not send email when order has no customer', function () {
     $order = Order::factory()
@@ -128,7 +124,7 @@ test('one effect failure does not block others', function () {
         ->dispatch($order, OrderStatus::Pending, OrderStatus::Confirmed);
 
     // Both email and webhook should have been attempted
-    Mail::assertQueued(OrderConfirmedMail::class);
+    Mail::assertQueued(OrderStatusMail::class);
     Http::assertSentCount(1);
 });
 

@@ -55,7 +55,7 @@
                             </div>
                             <div>
                                 <span class="font-medium text-gray-700">Current Price:</span>
-                                <p class="text-gray-900">${{ number_format($selectedRecipe->product->price, 2) }}</p>
+                                <p class="text-gray-900">@money($selectedRecipe->product->price)</p>
                             </div>
                             <div>
                                 <span class="font-medium text-gray-700">Prep Time:</span>
@@ -100,10 +100,10 @@
                                                 {{ number_format($ingredient['quantity'], 2) }} {{ $ingredient['unit'] }}
                                             </td>
                                             <td class="px-4 py-3 text-sm text-gray-600">
-                                                ${{ number_format($ingredient['cost_per_unit'], 2) }}
+                                                @money($ingredient['cost_per_unit'])
                                             </td>
                                             <td class="px-4 py-3 text-sm font-medium text-gray-900">
-                                                ${{ number_format($ingredient['total_cost'], 2) }}
+                                                @money($ingredient['total_cost'])
                                             </td>
                                         </tr>
                                     @endforeach
@@ -124,7 +124,7 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-blue-600">Total Recipe Cost</p>
-                                <p class="text-2xl font-bold text-blue-900">${{ number_format($totalRecipeCost, 2) }}</p>
+                                <p class="text-2xl font-bold text-blue-900">@money($totalRecipeCost)</p>
                             </div>
                         </div>
                     </div>
@@ -170,7 +170,7 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-orange-600">Suggested Price</p>
-                                <p class="text-2xl font-bold text-orange-900">${{ number_format($suggestedPrice, 2) }}</p>
+                                <p class="text-2xl font-bold text-orange-900">@money($suggestedPrice)</p>
                             </div>
                         </div>
                     </div>
@@ -183,7 +183,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div>
                                 <p class="text-gray-600">Current selling price:</p>
-                                <p class="text-lg font-bold text-gray-900">${{ number_format($selectedRecipe->product->price, 2) }}</p>
+                                <p class="text-lg font-bold text-gray-900">@money($selectedRecipe->product->price)</p>
                             </div>
                             <div>
                                 <p class="text-gray-600">Price difference:</p>
@@ -200,11 +200,11 @@
                             <div class="mt-3 p-3 {{ $priceDiff > 0 ? 'bg-red-100 border border-red-200 text-red-700' : 'bg-green-100 border border-green-200 text-green-700' }} rounded-md">
                                 @if ($priceDiff > 0)
                                     <p class="text-sm">
-                                        💡 Consider increasing the price by ${{ number_format($priceDiff, 2) }} to achieve your target margin of {{ number_format($targetMarginPercentage, 1) }}%.
+                                        💡 Consider increasing the price by @money($priceDiff) to achieve your target margin of {{ number_format($targetMarginPercentage, 1) }}%.
                                     </p>
                                 @else
                                     <p class="text-sm">
-                                        ✅ Your current price already exceeds the target margin. You could lower the price by ${{ number_format(abs($priceDiff), 2) }} and still maintain your target margin.
+                                        ✅ Your current price already exceeds the target margin. You could lower the price by @money(abs($priceDiff)) and still maintain your target margin.
                                     </p>
                                 @endif
                             </div>

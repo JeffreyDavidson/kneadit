@@ -21,18 +21,18 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-green-50 p-6 rounded-lg">
                     <div class="text-sm text-green-600 font-medium">Total Revenue</div>
-                    <div class="text-3xl font-bold text-green-900">${{ number_format($totalRevenue, 2) }}</div>
+                    <div class="text-3xl font-bold text-green-900">@money($totalRevenue)</div>
                 </div>
 
                 <div class="bg-red-50 p-6 rounded-lg">
                     <div class="text-sm text-red-600 font-medium">Total Expenses</div>
-                    <div class="text-3xl font-bold text-red-900">${{ number_format($totalExpenses, 2) }}</div>
+                    <div class="text-3xl font-bold text-red-900">@money($totalExpenses)</div>
                 </div>
 
                 <div class="bg-blue-50 p-6 rounded-lg">
                     <div class="text-sm text-blue-600 font-medium">Net Profit</div>
                     <div class="text-3xl font-bold {{ $netProfit >= 0 ? 'text-green-900' : 'text-red-900' }}">
-                        ${{ number_format($netProfit, 2) }}
+                        @money($netProfit)
                     </div>
                 </div>
             </div>
@@ -46,8 +46,8 @@
 
             <div class="space-y-4">
                 <div class="flex justify-between items-center text-sm">
-                    <span>Current Revenue: <strong>${{ number_format($totalRevenue, 2) }}</strong></span>
-                    <span>Cap: <strong>${{ number_format($revenueCap, 2) }}</strong></span>
+                    <span>Current Revenue: <strong>@money($totalRevenue)</strong></span>
+                    <span>Cap: <strong>@money($revenueCap)</strong></span>
                 </div>
 
                 <div class="w-full bg-gray-200 rounded-full h-6">
@@ -61,13 +61,13 @@
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
                         <div class="text-yellow-800">
                             <strong>Warning:</strong> You're approaching the FL cottage food revenue cap!
-                            Remaining: ${{ number_format($revenueCap - $totalRevenue, 2) }}
+                            Remaining: @money($revenueCap - $totalRevenue)
                         </div>
                     </div>
                 @elseif ($revenueCapProgress >= 100)
                     <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
                         <div class="text-red-800">
-                            <strong>Alert:</strong> You've exceeded the FL cottage food revenue cap by ${{ number_format($totalRevenue - $revenueCap, 2) }}!
+                            <strong>Alert:</strong> You've exceeded the FL cottage food revenue cap by @money($totalRevenue - $revenueCap)!
                         </div>
                     </div>
                 @endif
@@ -95,10 +95,10 @@
                         @foreach ($monthlyBreakdown as $month)
                         <tr class="border-t">
                             <td class="px-4 py-3 font-medium">{{ $month['month_name'] }}</td>
-                            <td class="px-4 py-3 text-right text-green-600">${{ number_format($month['revenue'], 2) }}</td>
-                            <td class="px-4 py-3 text-right text-red-600">${{ number_format($month['expenses'], 2) }}</td>
+                            <td class="px-4 py-3 text-right text-green-600">@money($month['revenue'])</td>
+                            <td class="px-4 py-3 text-right text-red-600">@money($month['expenses'])</td>
                             <td class="px-4 py-3 text-right font-medium {{ $month['net'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                ${{ number_format($month['net'], 2) }}
+                                @money($month['net'])
                             </td>
                         </tr>
                         @endforeach
@@ -121,7 +121,7 @@
                     <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                         <span class="font-medium">{{ $expense['category'] }}</span>
                         <div class="text-right">
-                            <div class="font-bold">${{ number_format($expense['amount'], 2) }}</div>
+                            <div class="font-bold">@money($expense['amount'])</div>
                             <div class="text-sm text-gray-600">{{ $expense['percentage'] }}%</div>
                         </div>
                     </div>
@@ -139,7 +139,7 @@
                 <div class="space-y-4">
                     <div class="bg-yellow-50 p-6 rounded-lg">
                         <div class="text-sm text-yellow-600 font-medium">COGS (Ingredients + Packaging)</div>
-                        <div class="text-3xl font-bold text-yellow-900">${{ number_format($cogsAmount, 2) }}</div>
+                        <div class="text-3xl font-bold text-yellow-900">@money($cogsAmount)</div>
                         <div class="text-sm text-yellow-700 mt-2">{{ $cogsPercentage }}% of total expenses</div>
                     </div>
 

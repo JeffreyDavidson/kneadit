@@ -15,7 +15,7 @@
                         <option value="">Choose a recipe...</option>
                         @foreach ($recipes as $recipe)
                             <option value="{{ $recipe->id }}">
-                                {{ $recipe->name }} - Cost: ${{ number_format($recipe->cost, 2) }}
+                                {{ $recipe->name }} - Cost: @money($recipe->cost)
                                 @if ($recipe->product)
                                     | Product: {{ $recipe->product->name }}
                                 @endif
@@ -59,7 +59,7 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-blue-600">Recipe Cost</p>
-                                <p class="text-2xl font-bold text-blue-900">${{ number_format($selectedRecipe->cost, 2) }}</p>
+                                <p class="text-2xl font-bold text-blue-900">@money($selectedRecipe->cost)</p>
                             </div>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-purple-600">Suggested Price</p>
-                                <p class="text-2xl font-bold text-purple-900">${{ number_format($this->getSuggestedPrice(), 2) }}</p>
+                                <p class="text-2xl font-bold text-purple-900">@money($this->getSuggestedPrice())</p>
                                 <p class="text-xs text-purple-600">at {{ number_format($targetMarginPercentage, 1) }}% margin</p>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                                 </div>
                                 <div class="ml-3">
                                     <p class="text-sm font-medium text-green-600">Current Price</p>
-                                    <p class="text-2xl font-bold text-green-900">${{ number_format($selectedRecipe->product->price, 2) }}</p>
+                                    <p class="text-2xl font-bold text-green-900">@money($selectedRecipe->product->price)</p>
                                     <p class="text-xs text-green-600">{{ $selectedRecipe->product->name }}</p>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@
                                     <div class="ml-3">
                                         <p class="text-sm font-medium text-{{ $currentMarginData['color'] }}-600">Current Margin</p>
                                         <p class="text-2xl font-bold text-{{ $currentMarginData['color'] }}-900">{{ number_format($currentMarginData['margin'], 1) }}%</p>
-                                        <p class="text-xs text-{{ $currentMarginData['color'] }}-600">${{ number_format($currentMarginData['profit'], 2) }} profit</p>
+                                        <p class="text-xs text-{{ $currentMarginData['color'] }}-600">@money($currentMarginData['profit']) profit</p>
                                     </div>
                                 </div>
                             </div>
@@ -205,10 +205,10 @@
                                                 @endif
                                             </td>
                                             <td class="px-4 py-3 text-sm {{ $comparison['is_target'] ? 'font-bold text-blue-900' : 'text-gray-600' }}">
-                                                ${{ number_format($comparison['price'], 2) }}
+                                                @money($comparison['price'])
                                             </td>
                                             <td class="px-4 py-3 text-sm {{ $comparison['is_target'] ? 'font-bold text-blue-900' : 'text-gray-600' }}">
-                                                ${{ number_format($comparison['price'] - $selectedRecipe->cost, 2) }}
+                                                @money($comparison['price'] - $selectedRecipe->cost)
                                             </td>
                                             @if ($selectedRecipe->product)
                                                 <td class="px-4 py-3 text-sm">

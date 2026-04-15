@@ -3,30 +3,35 @@
 namespace App\Listeners\Platform;
 
 use App\Events\Platform\WeeklyDigestRequested;
-use App\Listeners\QueuedListener;
+use App\Listeners\SendEmailListener;
 use App\Mail\Platform\WeeklyDigestMail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
 
-class SendWeeklyDigestEmailListener extends QueuedListener
+class SendWeeklyDigestEmailListener extends SendEmailListener
 {
-    public function handle(WeeklyDigestRequested $event): void
+    protected function getRecipient(object $event): ?string
     {
-        Mail::to($event->user->email)->send(new WeeklyDigestMail(
+        /** @var WeeklyDigestRequested $event */
+        return $event->user->email;
+    }
+
+    protected function getMailable(object $event): Mailable
+    {
+        /** @var WeeklyDigestRequested $event */
+        return new WeeklyDigestMail(
             stats: $event->stats,
             topProducts: $event->topProducts,
             atRiskCustomers: $event->atRiskCustomers,
             upcomingCount: $event->upcomingCount,
             storeName: $event->storeName,
             adminUrl: $event->adminUrl,
-        ));
+        );
     }
 
-    public function failed(WeeklyDigestRequested $event, \Throwable $exception): void
+    /** @return array<string, mixed> */
+    protected function getFailureContext(object $event): array
     {
-        Log::warning('Weekly digest email failed', [
-            'user' => $event->user->email,
-            'error' => $exception->getMessage(),
-        ]);
+        /** @var WeeklyDigestRequested $event */
+        return ['user' => $event->user->email];
     }
 }

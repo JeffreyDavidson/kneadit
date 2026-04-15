@@ -3,9 +3,11 @@
 namespace App\Enums\Customers;
 
 use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
+use Filament\Support\Icons\Heroicon;
 
-enum CateringInquiryStatus: string implements HasColor, HasLabel
+enum CateringInquiryStatus: string implements HasColor, HasIcon, HasLabel
 {
     case Inquiry = 'inquiry';
     case Quoted = 'quoted';
@@ -21,6 +23,17 @@ enum CateringInquiryStatus: string implements HasColor, HasLabel
             self::Confirmed => 'Confirmed',
             self::Completed => 'Completed',
             self::Cancelled => 'Cancelled',
+        };
+    }
+
+    public function getIcon(): Heroicon
+    {
+        return match ($this) {
+            self::Inquiry => Heroicon::OutlinedSparkles,
+            self::Quoted => Heroicon::OutlinedDocumentText,
+            self::Confirmed => Heroicon::OutlinedCheckCircle,
+            self::Completed => Heroicon::OutlinedCheckBadge,
+            self::Cancelled => Heroicon::OutlinedXCircle,
         };
     }
 

@@ -21,3 +21,11 @@ test('it appends number when slug already exists', function () {
 
     expect($slug)->toBe('my-great-post-2');
 });
+
+test('it excludes given id when checking uniqueness', function () {
+    $post = TenantBlogPost::factory()->create(['slug' => 'my-great-post']);
+
+    $slug = (new GenerateUniqueSlug)(TenantBlogPost::class, 'My Great Post', $post->id);
+
+    expect($slug)->toBe('my-great-post');
+});

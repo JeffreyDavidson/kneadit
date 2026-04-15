@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Resources\TenantResource\Tables;
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use Filament\Actions;
 use Filament\Actions\BulkAction;
@@ -75,11 +76,7 @@ class TenantsTable
             ])
             ->filters([
                 SelectFilter::make('plan')
-                    ->options([
-                        'starter' => 'Starter',
-                        'growth' => 'Growth',
-                        'pro' => 'Pro',
-                    ]),
+                    ->options(SubscriptionTier::class),
                 TernaryFilter::make('is_active')
                     ->label('Active'),
                 TernaryFilter::make('storefront_enabled')
@@ -142,11 +139,9 @@ class TenantsTable
                     ->schema([
                         Select::make('plan')
                             ->label('New Plan')
-                            ->options([
-                                'starter' => 'Starter ($9/mo)',
-                                'growth' => 'Growth ($19/mo)',
-                                'pro' => 'Pro ($29/mo)',
-                            ])
+                            ->options(collect(SubscriptionTier::cases())
+                                ->mapWithKeys(fn (SubscriptionTier $tier) => [$tier->value => $tier->labelWithPrice()])
+                                ->all())
                             ->required(),
                     ])
                     ->action(fn (Collection $records, array $data) => $records->each->update(['plan' => $data['plan']]))

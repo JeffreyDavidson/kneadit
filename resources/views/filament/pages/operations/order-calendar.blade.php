@@ -1,3 +1,5 @@
+@use(App\Enums\Orders\OrderStatus)
+
 <x-filament-panels::page>
     <div class="space-y-6">
         <!-- Calendar Header -->
@@ -95,14 +97,10 @@
                                     @endif
                                 </div>
                                 <div class="text-right">
-                                    <span class="inline-block px-2 py-1 text-xs rounded-full
-                                        {{ $order->status === \App\Enums\Orders\OrderStatus::Confirmed ? 'bg-green-100 text-green-800' : '' }}
-                                        {{ $order->status === \App\Enums\Orders\OrderStatus::Pending ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                        {{ $order->status === \App\Enums\Orders\OrderStatus::Baking ? 'bg-blue-100 text-blue-800' : '' }}
-                                        {{ $order->status === \App\Enums\Orders\OrderStatus::Delivered ? 'bg-gray-100 text-gray-800' : '' }}">
+                                    <span class="inline-block px-2 py-1 text-xs rounded-full {{ $order->status->badgeClasses() }}">
                                         {{ $order->status->getLabel() }}
                                     </span>
-                                    <p class="text-sm font-medium text-gray-900 mt-1">${{ number_format($order->total, 2) }}</p>
+                                    <p class="text-sm font-medium text-gray-900 mt-1">@money($order->total)</p>
                                 </div>
                             </div>
 

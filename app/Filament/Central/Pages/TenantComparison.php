@@ -2,8 +2,10 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\DataTransferObjects\Platform\TenantMetrics;
 use App\Models\Platform\Tenant;
 use App\Services\Tenants\TenancyManager;
+use App\ValueObjects\TenantHealthScore;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -57,20 +59,31 @@ class TenantComparison extends Page
 
         /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
-            $data = $this->collectTenantMetrics($tenant);
-            $data['days_since_signup'] = $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0;
+            $metrics = $this->collectTenantMetrics($tenant);
 
             $setupChecks = [
                 ! empty($tenant->store_name),
                 ! empty($tenant->store_logo),
                 (bool) $tenant->storefront_enabled,
                 ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== '#d4920c',
-                $data['total_products'] > 0,
-                $data['total_categories'] > 0,
-                $data['total_orders'] > 0,
+                $metrics->totalProducts > 0,
+                $metrics->totalCategories > 0,
+                $metrics->totalOrders > 0,
             ];
 
-            $data['setup_completed'] = collect($setupChecks)->filter()->count();
+            $data = [
+                'id' => $metrics->id,
+                'name' => $metrics->name,
+                'plan' => $metrics->plan,
+                'total_orders' => $metrics->totalOrders,
+                'month_orders' => $metrics->monthOrders,
+                'total_products' => $metrics->totalProducts,
+                'total_categories' => $metrics->totalCategories,
+                'avg_review' => $metrics->avgReview,
+                'days_since_signup' => $tenant->created_at ? (int) Date::parse($tenant->created_at)->diffInDays(now()) : 0,
+                'setup_completed' => collect($setupChecks)->filter()->count(),
+            ];
+
             $data['health_score'] = $this->calculateHealthScore($tenant, $data);
 
             $results[] = $data;
@@ -79,47 +92,20 @@ class TenantComparison extends Page
         return $results;
     }
 
-    /** @param array<string, mixed> $data */
     protected function calculateHealthScore(Tenant $tenant, array $data): int
     {
-        $score = 0;
+        $daysSinceLogin = $tenant->last_login_at
+            ? (int) Date::parse($tenant->last_login_at)->diffInDays(now())
+            : null;
 
-        if ($tenant->last_login_at) {
-            $daysSinceLogin = Date::parse($tenant->last_login_at)->diffInDays(now());
-            if ($daysSinceLogin < 1) {
-                $score += 30;
-            } elseif ($daysSinceLogin < 3) {
-                $score += 25;
-            } elseif ($daysSinceLogin < 7) {
-                $score += 15;
-            } elseif ($daysSinceLogin < 30) {
-                $score += 5;
-            }
-        }
+        $healthScore = new TenantHealthScore(
+            daysSinceLogin: $daysSinceLogin,
+            orderCount: $data['total_orders'],
+            productCount: $data['total_products'],
+            setupCompleted: $data['setup_completed'],
+        );
 
-        if ($data['total_orders'] >= 50) {
-            $score += 30;
-        } elseif ($data['total_orders'] >= 20) {
-            $score += 20;
-        } elseif ($data['total_orders'] >= 5) {
-            $score += 10;
-        } elseif ($data['total_orders'] > 0) {
-            $score += 5;
-        }
-
-        if ($data['total_products'] >= 20) {
-            $score += 20;
-        } elseif ($data['total_products'] >= 10) {
-            $score += 15;
-        } elseif ($data['total_products'] >= 3) {
-            $score += 10;
-        } elseif ($data['total_products'] > 0) {
-            $score += 5;
-        }
-
-        $score += (int) round(($data['setup_completed'] / 7) * 20);
-
-        return min($score, 100);
+        return $healthScore->score;
     }
 
     // ── Revenue Leaderboard Methods ──
@@ -133,10 +119,19 @@ class TenantComparison extends Page
         /** @var Tenant $tenant */
         foreach ($tenants as $tenant) {
             $metrics = $this->collectTenantMetrics($tenant);
-            $metrics['owner'] = $tenant->name;
-            $metrics['email'] = $tenant->email;
 
-            $results[] = $metrics;
+            $results[] = [
+                'id' => $metrics->id,
+                'name' => $metrics->name,
+                'plan' => $metrics->plan,
+                'total_orders' => $metrics->totalOrders,
+                'month_orders' => $metrics->monthOrders,
+                'total_products' => $metrics->totalProducts,
+                'total_categories' => $metrics->totalCategories,
+                'avg_review' => $metrics->avgReview,
+                'owner' => $tenant->name,
+                'email' => $tenant->email,
+            ];
         }
 
         usort($results, fn (array $a, array $b) => $b['total_orders'] <=> $a['total_orders']);
@@ -144,20 +139,8 @@ class TenantComparison extends Page
         return $results;
     }
 
-    /** @return array<string, mixed> */
-    private function collectTenantMetrics(Tenant $tenant): array
+    private function collectTenantMetrics(Tenant $tenant): TenantMetrics
     {
-        $data = [
-            'id' => $tenant->id,
-            'name' => $tenant->store_name ?? $tenant->name,
-            'plan' => $tenant->plan ?? 'free',
-            'total_orders' => 0,
-            'month_orders' => 0,
-            'total_products' => 0,
-            'total_categories' => 0,
-            'avg_review' => 0,
-        ];
-
         try {
             $metrics = resolve(TenancyManager::class)->withinTenant($tenant, fn () => [
                 'total_orders' => DB::table('orders')->count(),
@@ -168,12 +151,20 @@ class TenantComparison extends Page
                 'total_categories' => DB::table('categories')->count(),
                 'avg_review' => round((float) DB::table('reviews')->avg('rating'), 1),
             ]);
-            $data = array_merge($data, $metrics);
         } catch (\Throwable) {
-            // Tenant database may not be accessible
+            $metrics = [];
         }
 
-        return $data;
+        return new TenantMetrics(
+            id: $tenant->id,
+            name: $tenant->store_name ?? $tenant->name,
+            plan: $tenant->plan?->value ?? 'trial',
+            totalOrders: $metrics['total_orders'] ?? 0,
+            monthOrders: $metrics['month_orders'] ?? 0,
+            totalProducts: $metrics['total_products'] ?? 0,
+            totalCategories: $metrics['total_categories'] ?? 0,
+            avgReview: $metrics['avg_review'] ?? 0,
+        );
     }
 
     /** @return array<string, mixed> */

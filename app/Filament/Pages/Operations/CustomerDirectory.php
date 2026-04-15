@@ -4,10 +4,10 @@ namespace App\Filament\Pages\Operations;
 
 use App\Actions\Customers\AddCustomerNote;
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
+use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customers\Customer;
-use App\Models\Orders\Order;
+use App\Presenters\CustomerPresenter;
 use App\Queries\Customers\CustomerDirectoryStatsQuery;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
@@ -24,17 +24,12 @@ use Laravel\Pennant\Feature;
 
 class CustomerDirectory extends Page
 {
+    use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        if (! $user || ! $user->hasMinRole(UserRole::Manager)) {
-            return false;
-        }
-
-        return Feature::active('growth-features');
+        return static::hasManagerAccess() && Feature::active('growth-features');
     }
 
     protected static function requiredTier(): SubscriptionTier
@@ -138,40 +133,7 @@ class CustomerDirectory extends Page
             return null;
         }
 
-        return [
-            'id' => $customer->id,
-            'name' => $customer->name,
-            'email' => $customer->email,
-            'phone' => $customer->phone,
-            'address' => $customer->full_address,
-            'orders' => $customer->orders->map(function (Order $order) {
-                return [
-                    'id' => $order->id,
-                    'order_number' => $order->order_number,
-                    'status' => $order->status->getLabel(),
-                    'payment_status' => $order->payment_status->getLabel(),
-                    'total' => Number::currency($order->total),
-                    'date' => $order->created_at?->format('M j, Y'),
-                    'delivery_date' => $order->delivery_date?->format('M j, Y'),
-                ];
-            }),
-            'notes' => $customer->customerNotes->map(function (CustomerNote $note) {
-                return [
-                    'id' => $note->id,
-                    'note' => $note->note,
-                    'created_by' => $note->createdBy->name ?? 'Unknown',
-                    'created_at' => $note->created_at?->format('M j, Y g:i A'),
-                ];
-            }),
-            'stats' => [
-                'total_orders' => $customer->orders->count(),
-                'total_spent' => $customer->orders->sum('total'),
-                'avg_order_value' => $customer->orders->count() > 0
-                    ? $customer->orders->sum('total') / $customer->orders->count()
-                    : 0,
-                'last_order' => $customer->orders->first()?->created_at?->format('M j, Y'),
-            ],
-        ];
+        return (new CustomerPresenter($customer))->toDetailArray();
     }
 
     public function addNote(int $customerId): void
