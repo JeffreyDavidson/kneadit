@@ -33,4 +33,9 @@ class ImpersonationToken extends Model
     {
         return $this->belongsTo(Tenant::class);
     }
+
+    protected static function newFactory(): ImpersonationTokenFactory
+    {
+        return ImpersonationTokenFactory::new();
+    }
 }

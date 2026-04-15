@@ -13,6 +13,11 @@ enum StockAdjustmentType: string implements HasLabel
 
     public function getLabel(): string
     {
-        return ucfirst($this->value);
+        return match ($this) {
+            self::Purchase => 'Purchase (add)',
+            self::Usage => 'Usage (subtract)',
+            self::Waste => 'Waste (subtract)',
+            self::Adjustment => 'Adjustment',
+        };
     }
 }
