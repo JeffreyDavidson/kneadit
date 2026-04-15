@@ -1,18 +1,16 @@
 <?php
 
 use App\Models\Staff\StaffInvitation;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(fn () => setUpTenantTest());
 
 test('it accepts a pending invitation and redirects to admin', function () {
     $invitation = StaffInvitation::factory()->create();
 
-    $response = $this
-        ->withoutMiddleware(tenantMiddleware())
-        ->post(route('invitation.accept', $invitation->token), [
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('invitation.accept', $invitation->token, false), [
             'name' => 'New Staff',
             'password' => 'password123',
             'password_confirmation' => 'password123',

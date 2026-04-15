@@ -9,6 +9,17 @@ beforeEach(function () {
     setUpTenantTest();
 });
 
+test('survey controller passes settings and content to view', function () {
+    $survey = Survey::factory()->create(['is_active' => true]);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.survey', $survey, false));
+
+    $response->assertOk()
+        ->assertViewHas('settings')
+        ->assertViewHas('content');
+});
+
 test('survey page loads for active survey', function () {
     $survey = Survey::factory()->create([
         'title' => 'Customer Satisfaction',

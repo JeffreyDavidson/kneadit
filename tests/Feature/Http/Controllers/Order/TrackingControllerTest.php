@@ -20,6 +20,15 @@ test('tracking page loads', function () {
     $response->assertOk();
 });
 
+test('order tracking controller passes settings and content to view', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('order.track', [], false));
+
+    $response->assertOk()
+        ->assertViewHas('settings')
+        ->assertViewHas('content');
+});
+
 test('tracking with valid email returns orders', function () {
     $user = User::factory()->owner()->create();
     $customer = Customer::factory()->create(['email' => 'jane@example.com']);

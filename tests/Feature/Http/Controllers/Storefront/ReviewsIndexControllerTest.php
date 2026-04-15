@@ -25,6 +25,17 @@ test('reviews page loads', function () {
     $response->assertOk();
 });
 
+test('reviews controller passes settings, content, and stats to view', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('storefront.reviews', [], false));
+
+    $response->assertOk()
+        ->assertViewHas('settings')
+        ->assertViewHas('content')
+        ->assertViewHas('vm')
+        ->assertViewHas('featured');
+});
+
 test('reviews page shows approved reviews', function () {
     $product = createReviewProduct();
 
