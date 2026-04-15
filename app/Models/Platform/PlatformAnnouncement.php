@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $title
  * @property string $body
- * @property string $type
+ * @property AnnouncementType $type
  * @property array<array-key, mixed>|null $target_plans
  * @property bool $is_active
  * @property Carbon|null $starts_at

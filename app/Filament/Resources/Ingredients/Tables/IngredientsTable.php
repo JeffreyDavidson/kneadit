@@ -71,12 +71,7 @@ class IngredientsTable
                     ->authorize('update')
                     ->schema([
                         Select::make('type')
-                            ->options([
-                                'purchase' => 'Purchase (add)',
-                                'usage' => 'Usage (subtract)',
-                                'waste' => 'Waste (subtract)',
-                                'adjustment' => 'Adjustment',
-                            ])
+                            ->options(StockAdjustmentType::class)
                             ->required(),
                         TextInput::make('quantity')
                             ->numeric()
@@ -88,10 +83,11 @@ class IngredientsTable
                     ])
                     ->action(function (Ingredient $record, array $data) {
                         $qty = (float) $data['quantity'];
-                        if (in_array($data['type'], ['usage', 'waste'])) {
+                        $type = StockAdjustmentType::from($data['type']);
+                        if (in_array($type, [StockAdjustmentType::Usage, StockAdjustmentType::Waste])) {
                             $qty = -$qty;
                         }
-                        resolve(AdjustIngredientStock::class)($record, $qty, $data['type'], $data['notes'] ?? null);
+                        resolve(AdjustIngredientStock::class)($record, $qty, $type, $data['notes'] ?? null);
                     }),
                 EditAction::make()
                     ->slideOver()

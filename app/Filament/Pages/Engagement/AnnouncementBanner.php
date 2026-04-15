@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Engagement;
 
+use App\Enums\Platform\AnnouncementType;
 use App\Filament\Concerns\RequiresManagerRole;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -67,13 +68,8 @@ class AnnouncementBanner extends Page
 
                         Select::make('announcement_type')
                             ->label('Banner Style')
-                            ->options([
-                                'info' => '📢 Info (Gold)',
-                                'warning' => '⚠️ Warning (Orange)',
-                                'success' => '✅ Success (Green)',
-                                'holiday' => '🎄 Holiday (Festive Red/Green)',
-                            ])
-                            ->default('info'),
+                            ->options(AnnouncementType::class)
+                            ->default(AnnouncementType::Info),
                     ]),
 
                 Section::make('Preview')
