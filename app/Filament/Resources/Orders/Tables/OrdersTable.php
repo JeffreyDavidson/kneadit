@@ -5,17 +5,16 @@ namespace App\Filament\Resources\Orders\Tables;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
+use App\Filament\Filters\DateRangeFilter;
 use App\Models\Orders\Order;
 use App\Services\PayPal\InvoiceService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -66,33 +65,7 @@ class OrdersTable
                 SelectFilter::make('payment_status')
                     ->options(PaymentStatus::class),
 
-                Filter::make('delivery_date')
-                    ->schema([
-                        DatePicker::make('from'),
-                        DatePicker::make('until'),
-                    ])
-                    ->query(function (Builder $query, array $data) {
-                        return $query
-                            ->when(
-                                $data['from'],
-                                fn (Builder $query, string $date) => $query->whereDate('delivery_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['until'],
-                                fn (Builder $query, string $date) => $query->whereDate('delivery_date', '<=', $date),
-                            );
-                    })
-                    ->indicateUsing(function (array $data): array {
-                        $indicators = [];
-                        if ($data['from'] ?? null) {
-                            $indicators[] = 'From ' . \Illuminate\Support\Facades\Date::parse($data['from'])->toFormattedDateString();
-                        }
-                        if ($data['until'] ?? null) {
-                            $indicators[] = 'Until ' . \Illuminate\Support\Facades\Date::parse($data['until'])->toFormattedDateString();
-                        }
-
-                        return $indicators;
-                    }),
+                DateRangeFilter::make('delivery_date'),
             ])
             ->recordActions([
                 self::statusTransitionAction('confirm', OrderStatus::Confirmed, Heroicon::OutlinedCheckCircle, 'warning', 'Confirm Order', 'Are you sure you want to confirm this order?', 'Order confirmed'),
