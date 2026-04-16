@@ -34,6 +34,8 @@ function makeLoyaltyTenantSettings(): TenantSettings
         leadTimeHours: 24,
         deliveryEnabled: true,
         freeDeliveryMinimum: '50',
+        minimumPickupOrderAmount: '0',
+        minimumDeliveryOrderAmount: '0',
         deliveryFeeTiers: [],
         paymentMethodsAccepted: [],
         operatingHours: [],

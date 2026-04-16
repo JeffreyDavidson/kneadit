@@ -79,6 +79,20 @@ function orderForm() {
             return this.availabilityData.find(d => d.date === dateStr);
         },
 
+        get currentMinimumOrder() {
+            const pickupMin = {{ (float) ($settings->minimumPickupOrderAmount ?: 0) }};
+            const deliveryMin = {{ (float) ($settings->minimumDeliveryOrderAmount ?: 0) }};
+            return this.form.delivery_type === 'delivery' ? deliveryMin : pickupMin;
+        },
+
+        get meetsMinimumOrder() {
+            return this.currentMinimumOrder <= 0 || this.subtotal >= this.currentMinimumOrder;
+        },
+
+        get amountBelowMinimum() {
+            return Math.max(0, this.currentMinimumOrder - this.subtotal);
+        },
+
         get canSubmit() {
             return this.cartItems.length > 0 &&
                    this.form.customer_name &&
@@ -86,6 +100,7 @@ function orderForm() {
                    this.form.delivery_date &&
                    (this.form.delivery_type === 'pickup' ||
                     (this.form.delivery_address && this.form.delivery_tier)) &&
+                   this.meetsMinimumOrder &&
                    !this.capacityError &&
                    !this.isSubmitting;
         },

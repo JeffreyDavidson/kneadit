@@ -19,3 +19,21 @@ test('manage settings page can save store name', function () {
 
     expect(settings('store_name'))->toBe('New Bakery Name');
 });
+
+test('manage settings page can save minimum order amounts', function () {
+    Livewire::test(ManageSettings::class)
+        ->set('minimum_pickup_order_amount', '10')
+        ->set('minimum_delivery_order_amount', '25')
+        ->call('save');
+
+    expect(settings('minimum_pickup_order_amount'))->toBe('10')
+        ->and(settings('minimum_delivery_order_amount'))->toBe('25');
+});
+
+test('minimum order amounts load from saved settings on mount', function () {
+    settings(['minimum_pickup_order_amount' => '5', 'minimum_delivery_order_amount' => '20']);
+
+    Livewire::test(ManageSettings::class)
+        ->assertSet('minimum_pickup_order_amount', '5')
+        ->assertSet('minimum_delivery_order_amount', '20');
+});
