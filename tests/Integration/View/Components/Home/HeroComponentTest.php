@@ -21,3 +21,25 @@ test('loads store name and customer metrics', function () {
         ->and($component->avgRating)->toBe(5.0)
         ->and($component->topReview)->not->toBeNull();
 });
+
+test('uses configured hero tagline and CTA text', function () {
+    settings([
+        'hero_tagline' => 'Freshly baked daily',
+        'hero_primary_cta_text' => 'Place Your Order',
+        'hero_secondary_cta_text' => 'See Our Menu',
+    ]);
+
+    $component = new Hero;
+
+    expect($component->heroTagline)->toBe('Freshly baked daily')
+        ->and($component->primaryCtaText)->toBe('Place Your Order')
+        ->and($component->secondaryCtaText)->toBe('See Our Menu');
+});
+
+test('hero CTA text falls back to defaults when not set', function () {
+    $component = new Hero;
+
+    expect($component->primaryCtaText)->toBe('Order Now')
+        ->and($component->secondaryCtaText)->toBe('Browse Menu')
+        ->and($component->heroTagline)->toBeNull();
+});
