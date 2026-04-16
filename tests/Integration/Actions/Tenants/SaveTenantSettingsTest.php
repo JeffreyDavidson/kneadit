@@ -101,7 +101,13 @@ test('does not save paypal settings when paypal is not a payment method', functi
     expect(settings('paypal_client_id'))->toBe('old-value');
 });
 
-test('saves catering event types as a json array', function () {
+test('saves order journey steps as JSON', function () {
+    $steps = [
+        ['title' => 'Confirmed', 'description' => 'Order received.'],
+        ['title' => 'Baking', 'description' => 'Fresh from the oven.'],
+        ['title' => 'Ready', 'description_delivery' => 'On the way.', 'description_pickup' => 'Ready for pickup.'],
+    ];
+
     $data = [
         'store_name' => 'Test Bakery',
         'store_email' => 'info@test.com',
@@ -110,7 +116,7 @@ test('saves catering event types as a json array', function () {
         'default_daily_capacity' => 10,
         'minimum_order_lead_hours' => 24,
         'delivery_fee_tiers' => '[]',
-        'repeat_reminders_enabled' => true,
+        'repeat_reminders_enabled' => false,
         'birthday_program_enabled' => false,
         'payment_methods' => ['cash'],
         'allergy_disclaimer' => '',
@@ -121,11 +127,10 @@ test('saves catering event types as a json array', function () {
         'pickup_policy' => '',
         'additional_terms' => '',
         'show_policies_on_storefront' => false,
-        'catering_event_types' => ['Kids Party', 'School Function', '   ', ''],
+        'order_journey_steps' => $steps,
     ];
 
     app(SaveTenantSettings::class)($data);
 
-    expect(json_decode(settings('catering_event_types'), true))
-        ->toBe(['Kids Party', 'School Function']);
+    expect(json_decode(settings('order_journey_steps'), true))->toEqual($steps);
 });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Customers\CateringEventType;
 use App\Models\Customers\CateringInquiry;
 
 use function Pest\Laravel\withoutMiddleware;
@@ -32,7 +33,7 @@ test('catering inquiry can be submitted with valid data', function () {
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
             'customer_phone' => '555-1234',
-            'event_type' => 'Wedding',
+            'event_type' => CateringEventType::Wedding->value,
             'event_date' => now()->addDays(30)->format('Y-m-d'),
             'guest_count' => 50,
             'budget' => '5000',
@@ -45,7 +46,7 @@ test('catering inquiry can be submitted with valid data', function () {
     test()->assertDatabaseHas('catering_inquiries', [
         'customer_name' => 'Jane Doe',
         'customer_email' => 'jane@example.com',
-        'event_type' => 'Wedding',
+        'event_type' => CateringEventType::Wedding->value,
     ]);
 });
 
@@ -63,7 +64,7 @@ test('catering validation rejects past event dates', function () {
         ->post(route('catering.submit', [], false), [
             'customer_name' => 'Jane Doe',
             'customer_email' => 'jane@example.com',
-            'event_type' => 'Birthday Party',
+            'event_type' => CateringEventType::Birthday->value,
             'event_date' => now()->subDay()->format('Y-m-d'),
             'guest_count' => 10,
             'details' => 'Birthday party',
@@ -80,7 +81,7 @@ test('inquiry is saved with default status', function () {
         ->post(route('catering.submit', [], false), [
             'customer_name' => 'Bob',
             'customer_email' => 'bob@example.com',
-            'event_type' => 'Corporate Event',
+            'event_type' => CateringEventType::Corporate->value,
             'event_date' => now()->addDays(30)->format('Y-m-d'),
             'guest_count' => 20,
             'details' => 'Corporate event',

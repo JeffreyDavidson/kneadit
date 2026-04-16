@@ -135,7 +135,6 @@ test('passes through when onboarding is complete', function () {
         loyaltyEnabled: true,
         cateringMinimumGuests: '10',
         cateringLeadTimeDays: '14',
-        cateringEventTypes: ['Wedding', 'Corporate Event'],
         socialMediaLinks: [],
         homepageSections: [],
         cateringEnabled: false,
@@ -157,8 +156,6 @@ test('passes through when onboarding is complete', function () {
         reviewRequestDelayHours: 24,
         repeatRemindersEnabled: false,
         repeatReminderDays: 30,
-        giftCardPresetAmounts: [10, 25, 50, 100],
-        giftCardDefaultAmount: 25,
     );
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);
 
@@ -230,7 +227,6 @@ test('redirects to onboarding when onboardingCompletedAt is null using TenantSet
         loyaltyEnabled: true,
         cateringMinimumGuests: '10',
         cateringLeadTimeDays: '14',
-        cateringEventTypes: ['Wedding', 'Corporate Event'],
         socialMediaLinks: [],
         homepageSections: [],
         cateringEnabled: false,
@@ -252,8 +248,6 @@ test('redirects to onboarding when onboardingCompletedAt is null using TenantSet
         reviewRequestDelayHours: 24,
         repeatRemindersEnabled: false,
         repeatReminderDays: 30,
-        giftCardPresetAmounts: [10, 25, 50, 100],
-        giftCardDefaultAmount: 25,
     );
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Customers\CateringEventType;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Filament\Resources\CateringInquiries\CateringInquiryResource;
 use App\Filament\Resources\CateringInquiries\Pages\ListCateringInquiries;
@@ -30,7 +31,7 @@ test('can create a catering inquiry via slide-over', function () {
             'customer_name' => 'Jane Smith',
             'customer_email' => 'jane@example.com',
             'customer_phone' => '555-0100',
-            'event_type' => 'Wedding',
+            'event_type' => CateringEventType::Wedding->value,
             'event_date' => now()->addMonth()->format('Y-m-d'),
             'guest_count' => 50,
             'budget' => 2000,
@@ -50,7 +51,7 @@ test('create catering inquiry validates required fields', function (array $data,
         ->callAction(CreateAction::class, data: [
             'customer_name' => 'Test',
             'customer_email' => 'test@example.com',
-            'event_type' => 'Birthday Party',
+            'event_type' => CateringEventType::Birthday->value,
             'event_date' => now()->addWeek()->format('Y-m-d'),
             'guest_count' => 20,
             'details' => 'Test details here.',
@@ -75,7 +76,7 @@ test('can edit a catering inquiry via table action', function () {
         ->callAction(TestAction::make('edit')->table($inquiry), data: [
             'customer_name' => 'Updated Name',
             'customer_email' => $inquiry->customer_email,
-            'event_type' => $inquiry->event_type,
+            'event_type' => $inquiry->event_type->value,
             'event_date' => $inquiry->event_date->format('Y-m-d'),
             'guest_count' => $inquiry->guest_count,
             'details' => $inquiry->details,
@@ -114,11 +115,11 @@ test('can filter catering inquiries by status', function () {
 });
 
 test('can filter catering inquiries by event type', function () {
-    $wedding = CateringInquiry::factory()->create(['event_type' => 'Wedding']);
-    $corporate = CateringInquiry::factory()->create(['event_type' => 'Corporate Event']);
+    $wedding = CateringInquiry::factory()->create(['event_type' => CateringEventType::Wedding]);
+    $corporate = CateringInquiry::factory()->create(['event_type' => CateringEventType::Corporate]);
 
     Livewire::test(ListCateringInquiries::class)
-        ->filterTable('event_type', 'Wedding')
+        ->filterTable('event_type', CateringEventType::Wedding->value)
         ->assertCanSeeTableRecords(collect([$wedding]))
         ->assertCanNotSeeTableRecords(collect([$corporate]));
 });
@@ -160,7 +161,7 @@ test('resource returns global search result title', function () {
 test('resource returns global search result details', function () {
     $inquiry = CateringInquiry::factory()->create([
         'customer_email' => 'jane@example.com',
-        'event_type' => 'Wedding',
+        'event_type' => CateringEventType::Wedding,
     ]);
 
     $details = CateringInquiryResource::getGlobalSearchResultDetails($inquiry);

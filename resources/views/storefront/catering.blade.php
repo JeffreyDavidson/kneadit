@@ -148,9 +148,11 @@
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Event Type *</label>
                     <select name="event_type" required class="input-field">
                         <option value="">Select event type...</option>
-                        @foreach ($settings->cateringEventTypes as $eventType)
-                            <option value="{{ $eventType }}" @selected(old('event_type') === $eventType)>{{ $eventType }}</option>
-                        @endforeach
+                        <option value="wedding" @selected(old('event_type') === 'wedding')>Wedding</option>
+                        <option value="corporate" @selected(old('event_type') === 'corporate')>Corporate Event</option>
+                        <option value="birthday" @selected(old('event_type') === 'birthday')>Birthday Party</option>
+                        <option value="holiday" @selected(old('event_type') === 'holiday')>Holiday Gathering</option>
+                        <option value="other" @selected(old('event_type') === 'other')>Other</option>
                     </select>
                 </div>
                 <div>

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\CateringInquiries\Schemas;
 
 use App\Enums\Customers\CateringInquiryStatus;
-use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -37,10 +36,13 @@ class CateringInquiryForm
                 ->columns(2)
                 ->schema([
                     Select::make('event_type')
-                        ->options(fn () => array_combine(
-                            app(TenantSettings::class)->cateringEventTypes,
-                            app(TenantSettings::class)->cateringEventTypes,
-                        ))
+                        ->options([
+                            'wedding' => '💒 Wedding',
+                            'corporate' => '🏢 Corporate',
+                            'birthday' => '🎂 Birthday',
+                            'holiday' => '🎄 Holiday',
+                            'other' => '🎉 Other',
+                        ])
                         ->required(),
                     DatePicker::make('event_date')
                         ->required()

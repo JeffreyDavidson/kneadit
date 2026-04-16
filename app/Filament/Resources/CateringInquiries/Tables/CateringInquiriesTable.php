@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\CateringInquiries\Tables;
 
 use App\Actions\Customers\TransitionCateringInquiryStatus;
+use App\Enums\Customers\CateringEventType;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Filament\Filters\DateRangeFilter;
 use App\Models\Customers\CateringInquiry;
-use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
@@ -47,10 +47,7 @@ class CateringInquiriesTable
                 SelectFilter::make('status')
                     ->options(CateringInquiryStatus::class),
                 SelectFilter::make('event_type')
-                    ->options(fn () => array_combine(
-                        app(TenantSettings::class)->cateringEventTypes,
-                        app(TenantSettings::class)->cateringEventTypes,
-                    )),
+                    ->options(CateringEventType::class),
                 DateRangeFilter::make('event_date'),
             ])
             ->recordActions([

@@ -34,10 +34,7 @@ class SaveTenantSettings
             'pickup_policy' => $data['pickup_policy'],
             'additional_terms' => $data['additional_terms'],
             'show_policies_on_storefront' => $data['show_policies_on_storefront'] ? '1' : '0',
-            'catering_event_types' => json_encode(array_values(array_filter(
-                $data['catering_event_types'] ?? [],
-                fn ($value) => is_string($value) && trim($value) !== '',
-            ))),
+            'order_journey_steps' => json_encode(array_values($data['order_journey_steps'] ?? [])),
         ];
 
         if (in_array(PaymentMethod::PayPal->value, $data['payment_methods'] ?? [])) {
