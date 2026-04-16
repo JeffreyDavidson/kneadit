@@ -11,7 +11,7 @@
         @else
             <x-storefront.image-placeholder :name="$product->name" text-size="text-6xl" />
         @endif
-        <div class="absolute top-4 right-4 px-4 py-2 rounded-full text-sm font-bold backdrop-blur-sm" style="background: rgba(28,20,16,0.8); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.2);">
+        <div class="absolute top-4 right-4 px-4 py-2 rounded-full text-sm font-bold backdrop-blur-sm bg-warm-900/80 text-warm-400 border border-warm-500/20">
             @money($product->price)
         </div>
         {{ $badge ?? '' }}
