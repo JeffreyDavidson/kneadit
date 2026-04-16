@@ -34,4 +34,10 @@ enum CateringEventType: string implements HasColor, HasLabel
             self::Other => 'gray',
         };
     }
+
+    /** @return array<int, string> */
+    public static function defaultLabels(): array
+    {
+        return ['Wedding', 'Corporate Event', 'Birthday Party', 'Holiday Gathering', 'Other'];
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Settings\Schemas;
 use App\Enums\Orders\PaymentMethod;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -73,6 +74,18 @@ class ManageSettingsForm
                             ->placeholder('{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}')
                             ->helperText('JSON format: distance ranges and fees')
                             ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
+
+                // Catering Section
+                Section::make('Catering')
+                    ->description('Configure catering inquiry options')
+                    ->schema([
+                        TagsInput::make('catering_event_types')
+                            ->label('Event Types')
+                            ->placeholder('Add an event type')
+                            ->helperText('Customers select from these options on the catering inquiry form (e.g. Wedding, Corporate Event, Birthday Party).')
+                            ->reorderable()
                             ->columnSpanFull(),
                     ]),
 

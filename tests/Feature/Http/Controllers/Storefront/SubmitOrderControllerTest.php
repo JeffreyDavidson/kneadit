@@ -46,6 +46,7 @@ beforeEach(function () {
         loyaltyEnabled: true,
         cateringMinimumGuests: '10',
         cateringLeadTimeDays: '14',
+        cateringEventTypes: ['Wedding', 'Corporate Event'],
         socialMediaLinks: [],
         homepageSections: [],
         cateringEnabled: false,
