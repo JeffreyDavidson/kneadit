@@ -146,3 +146,53 @@ test('mount loads saved sections merged with defaults', function () {
     expect(test()->page->sections['hero']['visible'])->toBeFalse()
         ->and(test()->page->sections['about']['visible'])->toBeTrue(); // default
 });
+
+test('mount loads hero tagline and CTA text from settings', function () {
+    settings([
+        'hero_tagline' => 'Baked with love',
+        'hero_primary_cta_text' => 'Place Your Order',
+        'hero_secondary_cta_text' => 'See Our Menu',
+    ]);
+
+    test()->page->mount();
+
+    expect(test()->page->hero_tagline)->toBe('Baked with love')
+        ->and(test()->page->hero_primary_cta_text)->toBe('Place Your Order')
+        ->and(test()->page->hero_secondary_cta_text)->toBe('See Our Menu');
+});
+
+test('mount falls back to default CTA text when unset', function () {
+    test()->page->mount();
+
+    expect(test()->page->hero_primary_cta_text)->toBe('Order Now')
+        ->and(test()->page->hero_secondary_cta_text)->toBe('Browse Menu')
+        ->and(test()->page->hero_tagline)->toBeNull();
+});
+
+test('save persists hero tagline and CTA text', function () {
+    test()->page->mount();
+    test()->page->hero_tagline = 'Fresh every morning';
+    test()->page->hero_primary_cta_text = 'Start Your Order';
+    test()->page->hero_secondary_cta_text = 'View Our Menu';
+
+    test()->page->save();
+
+    expect(settings('hero_tagline'))->toBe('Fresh every morning')
+        ->and(settings('hero_primary_cta_text'))->toBe('Start Your Order')
+        ->and(settings('hero_secondary_cta_text'))->toBe('View Our Menu');
+});
+
+test('reset to defaults restores hero CTA text', function () {
+    settings([
+        'hero_tagline' => 'Custom',
+        'hero_primary_cta_text' => 'Custom Primary',
+        'hero_secondary_cta_text' => 'Custom Secondary',
+    ]);
+    test()->page->mount();
+
+    test()->page->resetToDefaults();
+
+    expect(test()->page->hero_tagline)->toBe('Where every bite tells a story')
+        ->and(test()->page->hero_primary_cta_text)->toBe('Order Now')
+        ->and(test()->page->hero_secondary_cta_text)->toBe('Browse Menu');
+});

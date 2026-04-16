@@ -28,6 +28,12 @@ class HomepageBuilder extends Page
     /** @var array<string, mixed> */
     public array $sections = [];
 
+    public ?string $hero_tagline = null;
+
+    public string $hero_primary_cta_text = '';
+
+    public string $hero_secondary_cta_text = '';
+
     /** @var array<string, mixed> */
     protected array $sectionMeta = [
         'hero' => ['label' => 'Hero Banner', 'description' => 'Full-screen welcome banner with store name and tagline'],
@@ -44,6 +50,14 @@ class HomepageBuilder extends Page
     public function mount(): void
     {
         $this->loadSections();
+        $this->loadHeroContent();
+    }
+
+    protected function loadHeroContent(): void
+    {
+        $this->hero_tagline = settings('hero_tagline');
+        $this->hero_primary_cta_text = (string) settings('hero_primary_cta_text', 'Order Now');
+        $this->hero_secondary_cta_text = (string) settings('hero_secondary_cta_text', 'Browse Menu');
     }
 
     /** @return array<string, mixed> */
@@ -116,7 +130,12 @@ class HomepageBuilder extends Page
     public function save(): void
     {
         try {
-            settings(['homepage_sections' => json_encode($this->sections)]);
+            settings([
+                'homepage_sections' => json_encode($this->sections),
+                'hero_tagline' => $this->hero_tagline,
+                'hero_primary_cta_text' => $this->hero_primary_cta_text,
+                'hero_secondary_cta_text' => $this->hero_secondary_cta_text,
+            ]);
 
             Notification::make()
                 ->title('Homepage sections saved!')
@@ -134,7 +153,16 @@ class HomepageBuilder extends Page
     public function resetToDefaults(): void
     {
         $this->sections = $this->getDefaults();
-        settings(['homepage_sections' => json_encode($this->sections)]);
+        $this->hero_tagline = 'Where every bite tells a story';
+        $this->hero_primary_cta_text = 'Order Now';
+        $this->hero_secondary_cta_text = 'Browse Menu';
+
+        settings([
+            'homepage_sections' => json_encode($this->sections),
+            'hero_tagline' => $this->hero_tagline,
+            'hero_primary_cta_text' => $this->hero_primary_cta_text,
+            'hero_secondary_cta_text' => $this->hero_secondary_cta_text,
+        ]);
 
         Notification::make()
             ->title('Homepage reset to defaults')
