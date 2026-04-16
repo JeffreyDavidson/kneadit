@@ -99,7 +99,7 @@
 
         <div class="grid md:grid-cols-2 gap-8 mb-16">
             @foreach ($reviews->skip(1) as $review)
-            <div class="review-card p-8 rounded-2xl bg-white border border-warm-200">
+            <div class="review-card p-8 rounded-2xl bg-white border border-warm-200 shadow-sm">
                 <div class="flex items-start gap-4 mb-5">
                     <x-storefront.avatar-initial :name="$review->customer_name" size="lg" class="flex-shrink-0" />
                     <div class="flex-1 min-w-0">

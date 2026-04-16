@@ -13,7 +13,7 @@
             {{ $content['hero_subtitle'] ?? 'Let us make your celebration unforgettable' }}
         </p>
         <div class="catering-fade-3">
-            <a href="#inquiry-form" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
+            <a href="#inquiry-form" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900">
                 {{ $content['hero_button'] ?? 'Request a Quote' }}
             </a>
         </div>
@@ -182,7 +182,7 @@
             </div>
 
             <div class="mt-8 text-center">
-                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2" :disabled="submitting">
+                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2" :disabled="submitting">
                     <span class="spinner" x-show="submitting" x-cloak></span>
                     <span x-text="submitting ? 'Submitting...' : 'Submit Inquiry'"></span>
                 </button>
