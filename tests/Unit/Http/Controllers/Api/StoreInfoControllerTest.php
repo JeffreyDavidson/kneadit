@@ -56,6 +56,8 @@ test('it returns store info from TenantSettings', function () {
         reviewRequestDelayHours: 24,
         repeatRemindersEnabled: false,
         repeatReminderDays: 30,
+        giftCardPresetAmounts: [10, 25, 50, 100],
+        giftCardDefaultAmount: 25,
     );
 
     $controller = new StoreInfoController;

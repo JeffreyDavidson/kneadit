@@ -78,6 +78,10 @@ class ManageSettings extends Page
 
     public bool $show_policies_on_storefront = false;
 
+    public ?string $gift_card_preset_amounts = '';
+
+    public ?int $gift_card_default_amount = 25;
+
     public function mount(): void
     {
         $this->loadSettings();
@@ -110,6 +114,9 @@ class ManageSettings extends Page
         $this->pickup_policy = settings('pickup_policy', '');
         $this->additional_terms = settings('additional_terms', '');
         $this->show_policies_on_storefront = (bool) settings('show_policies_on_storefront', false);
+
+        $this->gift_card_preset_amounts = settings('gift_card_preset_amounts', '10,25,50,100');
+        $this->gift_card_default_amount = (int) settings('gift_card_default_amount', 25);
     }
 
     public function content(Schema $schema): Schema
@@ -155,6 +162,8 @@ class ManageSettings extends Page
         $this->pickup_policy = '';
         $this->additional_terms = '';
         $this->show_policies_on_storefront = false;
+        $this->gift_card_preset_amounts = '10,25,50,100';
+        $this->gift_card_default_amount = 25;
 
         Notification::make()
             ->title('Settings reset to defaults')

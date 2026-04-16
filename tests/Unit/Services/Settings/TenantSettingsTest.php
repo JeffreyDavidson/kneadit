@@ -55,6 +55,8 @@ test('it can be constructed with all properties', function () {
         reviewRequestDelayHours: 24,
         repeatRemindersEnabled: false,
         repeatReminderDays: 30,
+        giftCardPresetAmounts: [10, 25, 50, 100],
+        giftCardDefaultAmount: 25,
     );
 
     expect($settings->storeName)->toBe('Test Bakery')
@@ -118,6 +120,8 @@ function makeTenantSettings(array $overrides = []): TenantSettings
         'reviewRequestDelayHours' => 24,
         'repeatRemindersEnabled' => false,
         'repeatReminderDays' => 30,
+        'giftCardPresetAmounts' => [10, 25, 50, 100],
+        'giftCardDefaultAmount' => 25,
     ], $overrides));
 }
 
@@ -212,6 +216,30 @@ test('onboardingCompletedAt is accessible and nullable', function () {
 
     expect($withValue->onboardingCompletedAt)->toBe('2026-01-15 10:00:00')
         ->and($withNull->onboardingCompletedAt)->toBeNull();
+});
+
+test('giftCardPresetAmounts defaults to standard amounts', function () {
+    $settings = makeTenantSettings();
+
+    expect($settings->giftCardPresetAmounts)->toBe([10, 25, 50, 100]);
+});
+
+test('giftCardPresetAmounts can be customized', function () {
+    $settings = makeTenantSettings(['giftCardPresetAmounts' => [5, 15, 30, 75]]);
+
+    expect($settings->giftCardPresetAmounts)->toBe([5, 15, 30, 75]);
+});
+
+test('giftCardDefaultAmount defaults to 25', function () {
+    $settings = makeTenantSettings();
+
+    expect($settings->giftCardDefaultAmount)->toBe(25);
+});
+
+test('giftCardDefaultAmount can be customized', function () {
+    $settings = makeTenantSettings(['giftCardDefaultAmount' => 50]);
+
+    expect($settings->giftCardDefaultAmount)->toBe(50);
 });
 
 test('it is bound as a singleton in the container', function () {

@@ -55,7 +55,7 @@ class ReviewRequestMail extends BaseMailable
             $this->placeholders(),
         );
 
-        if ($resolved) {
+        if ($resolved && $resolved['body']) {
             return new Content(
                 view: 'emails.custom-template',
                 with: ['customBody' => $resolved['body']],
@@ -73,7 +73,7 @@ class ReviewRequestMail extends BaseMailable
     private function placeholders(): array
     {
         return [
-            'customer_name' => $this->order->customer?->name ?? 'there',
+            'customer_name' => $this->order->customer->name ?? 'there',
             'order_number' => $this->order->order_number,
             'review_url' => $this->reviewUrl,
             'store_name' => $this->storeName,

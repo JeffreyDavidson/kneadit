@@ -68,13 +68,8 @@ class ManageEmailTemplates extends Page
 
     public function editTemplate(string $typeValue): void
     {
-        $type = EmailTemplateType::from($typeValue);
-        $existing = EmailTemplate::query()->where('email_type', $type)->first();
-
         $this->mountAction('editEmailTemplate', [
             'email_type' => $typeValue,
-            'subject' => $existing?->subject ?? $type->defaultSubject(),
-            'body' => $existing?->body ?? '',
         ]);
     }
 
@@ -97,9 +92,8 @@ class ManageEmailTemplates extends Page
                                 ->helperText("Available placeholders: {$placeholderList}"),
                             Textarea::make('body')
                                 ->label('Email Body (HTML)')
-                                ->required()
                                 ->rows(12)
-                                ->helperText("Available placeholders: {$placeholderList}"),
+                                ->helperText("Leave empty to use the default email template. Available placeholders: {$placeholderList}"),
                         ])
                         ->columnSpanFull(),
                 ];
@@ -109,8 +103,8 @@ class ManageEmailTemplates extends Page
                 $existing = EmailTemplate::query()->where('email_type', $type)->first();
 
                 return [
-                    'subject' => $existing?->subject ?? $type->defaultSubject(),
-                    'body' => $existing?->body ?? '',
+                    'subject' => $existing->subject ?? $type->defaultSubject(),
+                    'body' => $existing->body ?? '',
                 ];
             })
             ->action(function (array $data, array $arguments): void {
@@ -120,7 +114,7 @@ class ManageEmailTemplates extends Page
                     ['email_type' => $type],
                     [
                         'subject' => $data['subject'],
-                        'body' => $data['body'],
+                        'body' => $data['body'] ?? '',
                     ],
                 );
 
