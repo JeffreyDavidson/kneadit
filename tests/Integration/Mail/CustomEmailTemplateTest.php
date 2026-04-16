@@ -70,6 +70,21 @@ test('OrderPlacedMail uses default view when no template exists', function () {
     expect($content->view)->toBe('emails.orders.order-placed');
 });
 
+test('OrderPlacedMail uses custom subject but default view when body is empty', function () {
+    $order = Order::factory()->create();
+
+    EmailTemplate::create([
+        'email_type' => EmailTemplateType::OrderPlaced,
+        'subject' => 'Subject only for #{order_number}',
+        'body' => '',
+    ]);
+
+    $mail = new OrderPlacedMail($order);
+
+    expect($mail->envelope()->subject)->toContain("Subject only for #{$order->order_number}")
+        ->and($mail->content()->view)->toBe('emails.orders.order-placed');
+});
+
 test('OrderStatusMail uses custom template for specific status', function () {
     $order = Order::factory()->create();
 

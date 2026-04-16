@@ -46,7 +46,7 @@ class OrderStatusMail extends BaseMailable
         if ($type) {
             $resolved = app(EmailTemplateRenderer::class)->resolve($type, $this->placeholders());
 
-            if ($resolved) {
+            if ($resolved && $resolved['body']) {
                 return new Content(
                     view: 'emails.custom-template',
                     with: ['customBody' => $resolved['body']],

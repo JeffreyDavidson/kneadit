@@ -41,7 +41,7 @@ class RepeatOrderReminderMail extends BaseMailable
             $this->placeholders(),
         );
 
-        if ($resolved) {
+        if ($resolved && $resolved['body']) {
             return new Content(
                 view: 'emails.custom-template',
                 with: ['customBody' => $resolved['body']],

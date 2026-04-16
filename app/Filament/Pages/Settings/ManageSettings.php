@@ -162,6 +162,8 @@ class ManageSettings extends Page
         $this->pickup_policy = '';
         $this->additional_terms = '';
         $this->show_policies_on_storefront = false;
+        $this->gift_card_preset_amounts = '10,25,50,100';
+        $this->gift_card_default_amount = 25;
 
         Notification::make()
             ->title('Settings reset to defaults')
