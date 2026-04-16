@@ -181,7 +181,7 @@
                 @elseif ($announcementType === 'holiday')
                     background: linear-gradient(135deg, #c41e3a, #1a6b2a); color: #fff; border-bottom: 2px solid #ffd700;
                 @else
-                    background: #fff3cd; color: #664d03; border-bottom: 2px solid var(--warm-500);
+                    background: var(--warm-200); color: var(--warm-900); border-bottom: 2px solid var(--warm-500);
                 @endif
              ">
             <span>{{ $announcementText }}</span>
@@ -269,17 +269,17 @@
     </footer>
 
     {{-- PWA Install Prompt --}}
-    <div id="pwaInstall" style="display:none;position:fixed;bottom:5rem;right:1.5rem;background:#1c1410;color:#faf4e8;padding:1rem 1.25rem;border-radius:16px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.4);font-size:.85rem;max-width:280px;border:1px solid rgba(212,146,12,.15)">
+    <div id="pwaInstall" style="display:none;position:fixed;bottom:5rem;right:1.5rem;background:var(--warm-900);color:var(--warm-200);padding:1rem 1.25rem;border-radius:16px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.4);font-size:.85rem;max-width:280px;border:1px solid rgba(212,146,12,.15)">
         <div style="display:flex;align-items:start;gap:.75rem">
             <div style="flex:1">
-                <strong style="color:#d4920c;font-size:.9rem">Add to Home Screen</strong>
-                <p style="margin:.25rem 0 .75rem;color:#8b6844;line-height:1.4;font-size:.8rem">Quick access to your favorite bakery — no app store needed.</p>
+                <strong style="color:var(--warm-500);font-size:.9rem">Add to Home Screen</strong>
+                <p style="margin:.25rem 0 .75rem;color:var(--warm-600);line-height:1.4;font-size:.8rem">Quick access to your favorite bakery — no app store needed.</p>
                 <div style="display:flex;gap:.5rem">
-                    <button id="pwaInstallBtn" style="padding:.4rem 1rem;border-radius:50px;background:#d4920c;color:#fff;border:none;font-weight:700;font-size:.75rem;cursor:pointer">Install</button>
-                    <button onclick="dismissPwa()" style="padding:.4rem .75rem;border-radius:50px;background:transparent;color:#8b6844;border:1px solid #4a3728;font-size:.75rem;cursor:pointer">Not now</button>
+                    <button id="pwaInstallBtn" style="padding:.4rem 1rem;border-radius:50px;background:var(--warm-500);color:#fff;border:none;font-weight:700;font-size:.75rem;cursor:pointer">Install</button>
+                    <button onclick="dismissPwa()" style="padding:.4rem .75rem;border-radius:50px;background:transparent;color:var(--warm-600);border:1px solid var(--warm-700);font-size:.75rem;cursor:pointer">Not now</button>
                 </div>
             </div>
-            <button onclick="dismissPwa()" style="background:none;border:none;color:#8b6844;cursor:pointer;font-size:1.1rem;padding:0;line-height:1" aria-label="Dismiss install prompt">&times;</button>
+            <button onclick="dismissPwa()" style="background:none;border:none;color:var(--warm-600);cursor:pointer;font-size:1.1rem;padding:0;line-height:1" aria-label="Dismiss install prompt">&times;</button>
         </div>
     </div>
     <script>
@@ -290,12 +290,12 @@
     </script>
 
     {{-- Cookie Consent Banner --}}
-    <div id="cookieConsent" role="region" aria-label="Cookie consent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1c1410;color:#faf4e8;padding:1rem 1.5rem;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,.3);font-size:.85rem;line-height:1.5">
+    <div id="cookieConsent" role="region" aria-label="Cookie consent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--warm-900);color:var(--warm-200);padding:1rem 1.5rem;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,.3);font-size:.85rem;line-height:1.5">
         <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
             <p style="margin:0;flex:1;min-width:200px">We use cookies to improve your experience. By continuing to browse, you agree to our use of cookies.
-                <a href="/privacy" style="color:#d4920c;text-decoration:underline">Privacy Policy</a>
+                <a href="/privacy" style="color:var(--warm-500);text-decoration:underline">Privacy Policy</a>
             </p>
-            <button onclick="acceptCookies()" style="padding:.5rem 1.5rem;border-radius:50px;background:#d4920c;color:#fff;border:none;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap;transition:background .2s">Accept</button>
+            <button onclick="acceptCookies()" style="padding:.5rem 1.5rem;border-radius:50px;background:var(--warm-500);color:#fff;border:none;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap;transition:background .2s">Accept</button>
         </div>
     </div>
     <script>
