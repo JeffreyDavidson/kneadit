@@ -259,6 +259,45 @@
             border: none;
         }
 
+        /* ===== Accessibility: Focus indicators ===== */
+        .btn-primary:focus-visible,
+        .btn-secondary:focus-visible {
+            outline: 2px solid var(--warm-500);
+            outline-offset: 2px;
+        }
+
+        .nav-link:focus-visible,
+        .nav-dropdown-link:focus-visible {
+            outline: 2px solid var(--warm-400);
+            outline-offset: 2px;
+        }
+
+        .input-field:focus-visible {
+            outline: 2px solid var(--warm-500);
+            outline-offset: -2px;
+        }
+
+        a:focus-visible {
+            outline: 2px solid var(--warm-500);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--warm-500);
+            outline-offset: 2px;
+        }
+
+        /* ===== Accessibility: Reduced motion ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
         @media (max-width: 768px) {
             .nav-mobile {
                 display: block;

@@ -26,7 +26,7 @@
             @if ($settings->storeAddress)
             <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
-                    <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </div>
                 <p class="text-xs uppercase tracking-[0.2em] mb-2 text-warm-500">Address</p>
                 <p class="text-sm text-warm-300">{{ $settings->storeAddress }}</p>
@@ -35,7 +35,7 @@
             @if ($settings->storePhone)
             <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
-                    <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                 </div>
                 <p class="text-xs uppercase tracking-[0.2em] mb-2 text-warm-500">Phone</p>
                 <p class="text-sm"><a href="tel:{{ $settings->storePhone }}" class="text-warm-300">{{ $settings->storePhone }}</a></p>
@@ -44,7 +44,7 @@
             @if ($settings->storeEmail)
             <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
-                    <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 </div>
                 <p class="text-xs uppercase tracking-[0.2em] mb-2 text-warm-500">Email</p>
                 <p class="text-sm"><a href="mailto:{{ $settings->storeEmail }}" class="text-warm-300">{{ $settings->storeEmail }}</a></p>
@@ -75,26 +75,26 @@
                         <div class="grid sm:grid-cols-2 gap-6">
                             <div>
                                 <label for="name" class="block text-sm font-medium mb-2 text-warm-800">Full Name</label>
-                                <input type="text" id="name" name="name" value="{{ old('name') }}" required class="contact-input @error('name') border-red-500 @enderror" placeholder="Jane Smith">
-                                @error('name')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                                <input type="text" id="name" name="name" value="{{ old('name') }}" required class="contact-input @error('name') border-red-500 @enderror" placeholder="Jane Smith" @error('name') aria-invalid="true" aria-describedby="name-error" @enderror>
+                                @error('name')<p id="name-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>@enderror
                             </div>
                             <div>
                                 <label for="email" class="block text-sm font-medium mb-2 text-warm-800">Email</label>
-                                <input type="email" id="email" name="email" value="{{ old('email') }}" required class="contact-input @error('email') border-red-500 @enderror" placeholder="jane@example.com">
-                                @error('email')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                                <input type="email" id="email" name="email" value="{{ old('email') }}" required class="contact-input @error('email') border-red-500 @enderror" placeholder="jane@example.com" @error('email') aria-invalid="true" aria-describedby="email-error" @enderror>
+                                @error('email')<p id="email-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>@enderror
                             </div>
                         </div>
 
                         <div>
                             <label for="subject" class="block text-sm font-medium mb-2 text-warm-800">Subject</label>
-                            <input type="text" id="subject" name="subject" value="{{ old('subject') }}" required class="contact-input @error('subject') border-red-500 @enderror" placeholder="What's this about?">
-                            @error('subject')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                            <input type="text" id="subject" name="subject" value="{{ old('subject') }}" required class="contact-input @error('subject') border-red-500 @enderror" placeholder="What's this about?" @error('subject') aria-invalid="true" aria-describedby="subject-error" @enderror>
+                            @error('subject')<p id="subject-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>@enderror
                         </div>
 
                         <div>
                             <label for="message" class="block text-sm font-medium mb-2 text-warm-800">Message</label>
-                            <textarea id="message" name="message" rows="6" required class="contact-input @error('message') border-red-500 @enderror" placeholder="Tell us how we can help...">{{ old('message') }}</textarea>
-                            @error('message')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                            <textarea id="message" name="message" rows="6" required class="contact-input @error('message') border-red-500 @enderror" placeholder="Tell us how we can help..." @error('message') aria-invalid="true" aria-describedby="message-error" @enderror>{{ old('message') }}</textarea>
+                            @error('message')<p id="message-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>@enderror
                         </div>
 
                         <button type="submit" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900">
