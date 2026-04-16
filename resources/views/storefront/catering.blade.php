@@ -13,7 +13,7 @@
             {{ $content['hero_subtitle'] ?? 'Let us make your celebration unforgettable' }}
         </p>
         <div class="catering-fade-3">
-            <a href="#inquiry-form" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
+            <a href="#inquiry-form" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900">
                 {{ $content['hero_button'] ?? 'Request a Quote' }}
             </a>
         </div>
@@ -115,7 +115,7 @@
         </div>
 
         @session('success')
-        <x-storefront.alert variant="light"><p class="font-semibold">{{ $value }}</p></x-storefront.alert>
+        <x-storefront.alert variant="light" :dismiss-after="5000"><p class="font-semibold">{{ $value }}</p></x-storefront.alert>
         @endsession
 
         @if ($errors->any())
@@ -128,7 +128,7 @@
         </x-storefront.alert>
         @endif
 
-        <form method="POST" action="{{ route('catering.submit') }}" class="rounded-2xl p-8 md:p-10" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);">
+        <form method="POST" action="{{ route('catering.submit') }}" class="rounded-2xl p-8 md:p-10" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);" x-data="{ submitting: false }" @submit="submitting = true">
             @csrf
 
             <div class="grid md:grid-cols-2 gap-6">
@@ -182,8 +182,9 @@
             </div>
 
             <div class="mt-8 text-center">
-                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
-                    Submit Inquiry
+                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2" :disabled="submitting">
+                    <span class="spinner" x-show="submitting" x-cloak></span>
+                    <span x-text="submitting ? 'Submitting...' : 'Submit Inquiry'"></span>
                 </button>
             </div>
         </form>

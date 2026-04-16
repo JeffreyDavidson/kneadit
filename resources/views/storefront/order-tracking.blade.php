@@ -14,7 +14,7 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Track Your Order" image-class="track-hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
         <x-storefront.eyebrow class="track-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Order Status' }}</x-storefront.eyebrow>
-        <h1 class="track-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
+        <h1 class="track-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
             {{ $content['hero_title'] ?? 'Track Your Order' }}
         </h1>
         <p class="track-fade-2 text-lg max-w-lg mx-auto text-warm-400">

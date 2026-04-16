@@ -42,16 +42,16 @@
     border: 1px solid rgba(212,146,12,0.15);
 }
 .order-qty-btn {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
     border-radius: 0.625rem;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 1rem;
-    border: 1.5px solid rgba(212,146,12,0.3);
-    background: rgba(212,146,12,0.1);
+    border: 1.5px solid color-mix(in srgb, var(--warm-500) 30%, transparent);
+    background: color-mix(in srgb, var(--warm-500) 10%, transparent);
     color: var(--warm-400);
     cursor: pointer;
     transition: all 0.2s;

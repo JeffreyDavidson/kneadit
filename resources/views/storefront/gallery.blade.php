@@ -6,7 +6,7 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->storeName . ' gallery'" image-class="gallery-hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
         <x-storefront.eyebrow class="gallery-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'From Our Customers' }}</x-storefront.eyebrow>
-        <h1 class="gallery-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
+        <h1 class="gallery-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
             {{ $content['hero_title'] ?? 'Customer Gallery' }}
         </h1>
         <p class="gallery-fade-2 font-script text-2xl md:text-3xl text-warm-400">
@@ -30,8 +30,9 @@
                      @click="lightboxSrc = src; lightboxCaption = caption; lightboxAuthor = author; lightbox = true"
                      class="bg-warm-200">
                     @if ($photo->is_featured)
-                    <div class="absolute top-3 left-3 z-10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-warm-500 text-warm-900">
-                        ⭐ Featured
+                    <div class="absolute top-3 left-3 z-10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-warm-500 text-warm-900 inline-flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"/></svg>
+                        Featured
                     </div>
                     @endif
                     <img
@@ -65,7 +66,7 @@
         <div class="max-w-2xl mx-auto text-center py-16">
             {{-- Decorative icon --}}
             <div class="w-20 h-20 rounded-full mx-auto mb-8 flex items-center justify-center bg-warm-200">
-                <svg class="w-10 h-10 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-10 h-10 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/>
                 </svg>
@@ -95,10 +96,11 @@
     <div x-show="lightbox" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-50 flex items-center justify-center p-4"
          style="background: rgba(28,20,16,0.92); backdrop-filter: blur(8px);"
-         @click.self="lightbox = false" @keydown.escape.window="lightbox = false">
-        <button @click="lightbox = false" class="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110" style="background: rgba(255,255,255,0.1); color: var(--warm-300);">&times;</button>
+         @click.self="lightbox = false" @keydown.escape.window="lightbox = false"
+         role="dialog" aria-label="Photo lightbox">
+        <button @click="lightbox = false" class="absolute top-6 right-6 w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110" style="background: rgba(255,255,255,0.1); color: var(--warm-300);" aria-label="Close lightbox">&times;</button>
         <div class="max-w-4xl w-full" @click.stop>
-            <img :src="lightboxSrc" alt="" class="w-full max-h-[75vh] object-contain rounded-xl">
+            <img :src="lightboxSrc" :alt="lightboxCaption || 'Customer photo'" class="w-full max-h-[75vh] object-contain rounded-xl">
             <div class="mt-4 text-center" x-show="lightboxCaption || lightboxAuthor">
                 <p x-show="lightboxCaption" class="italic text-lg text-warm-300" x-text="'\"' + lightboxCaption + '\"'"></p>
                 <p x-show="lightboxAuthor" class="text-sm mt-2 font-semibold text-warm-500" x-text="'— ' + lightboxAuthor"></p>
@@ -117,7 +119,7 @@
         </div>
 
         @session('success')
-        <x-storefront.alert>{{ $value }}</x-storefront.alert>
+        <x-storefront.alert :dismiss-after="5000">{{ $value }}</x-storefront.alert>
         @endsession
 
         @if ($errors->any())
@@ -131,16 +133,16 @@
         @endif
 
         <div class="p-8 md:p-10 rounded-2xl bg-warm-800 border border-warm-700/20">
-            <form action="{{ route('gallery.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('gallery.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{ submitting: false }" @submit="submitting = true">
                 @csrf
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium mb-2 text-warm-300">Your Name *</label>
-                        <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="gallery-input">
+                        <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="storefront-input-dark">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2 text-warm-300">Your Email *</label>
-                        <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="gallery-input">
+                        <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="storefront-input-dark">
                     </div>
                 </div>
 
@@ -152,7 +154,7 @@
                            onmouseout="this.style.borderColor='rgba(212,146,12,0.25)';this.style.background='rgba(212,146,12,0.03)'">
                         <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required class="hidden" @change="fileName = $event.target.files[0]?.name || ''">
                         <div x-show="!fileName">
-                            <svg class="w-10 h-10 mx-auto mb-3" style="color: var(--warm-500); opacity: 0.6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-10 h-10 mx-auto mb-3" style="color: var(--warm-500); opacity: 0.6;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
                             </svg>
                             <p class="font-medium mb-1 text-warm-300">Click to upload or drag & drop</p>
@@ -167,12 +169,12 @@
 
                 <div>
                     <label class="block text-sm font-medium mb-2 text-warm-300">Caption</label>
-                    <textarea name="caption" rows="3" class="gallery-input">{{ old('caption') }}</textarea>
+                    <textarea name="caption" rows="3" class="storefront-input-dark">{{ old('caption') }}</textarea>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-2 text-warm-300">Which product? (optional)</label>
-                    <select name="product_id" class="gallery-input">
+                    <select name="product_id" class="storefront-input-dark">
                         <option value="">— Select a product —</option>
                         @foreach ($products as $product)
                         <option value="{{ $product->id }}" @selected(old('product_id') == $product->id)>{{ $product->name }}</option>
@@ -180,8 +182,9 @@
                     </select>
                 </div>
 
-                <button type="submit" class="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-warm-500 text-warm-900">
-                    Submit Photo
+                <button type="submit" class="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2" :disabled="submitting">
+                    <span class="spinner" x-show="submitting" x-cloak></span>
+                    <span x-text="submitting ? 'Uploading...' : 'Submit Photo'"></span>
                 </button>
             </form>
         </div>

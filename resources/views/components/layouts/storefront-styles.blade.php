@@ -120,6 +120,26 @@
             background: var(--warm-300);
         }
 
+        .btn-primary:disabled,
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
         .nav-link {
             color: var(--warm-200);
             text-decoration: none;
@@ -130,7 +150,7 @@
         }
 
         .nav-link:hover {
-            background: rgba(212, 146, 12, 0.2);
+            background: color-mix(in srgb, var(--warm-500) 20%, transparent);
             color: var(--warm-400);
         }
 
@@ -143,20 +163,20 @@
             display: block;
             color: var(--warm-200);
             text-decoration: none;
-            padding: 8px 20px;
+            padding: 10px 20px;
             font-weight: 500;
             font-size: 0.9rem;
             transition: all 0.2s ease;
         }
 
         .nav-dropdown-link:hover {
-            background: rgba(212, 146, 12, 0.15);
+            background: color-mix(in srgb, var(--warm-500) 15%, transparent);
             color: var(--warm-400);
         }
 
         .nav-dropdown-link.active {
             color: var(--warm-400);
-            background: rgba(212, 146, 12, 0.1);
+            background: color-mix(in srgb, var(--warm-500) 10%, transparent);
         }
 
         .card {
@@ -179,6 +199,46 @@
         .input-field:focus {
             outline: none;
             border-color: var(--warm-500);
+        }
+
+        .storefront-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid var(--warm-200);
+            background: white;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--warm-900);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+        .storefront-input:focus {
+            border-color: var(--warm-500);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--warm-500) 10%, transparent);
+        }
+        .storefront-input::placeholder {
+            color: var(--warm-400);
+        }
+
+        .storefront-input-dark {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid color-mix(in srgb, var(--warm-600) 25%, transparent);
+            background: var(--warm-800);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--warm-200);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+        .storefront-input-dark:focus {
+            border-color: var(--warm-500);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--warm-500) 15%, transparent);
+        }
+        .storefront-input-dark::placeholder {
+            color: var(--warm-600);
         }
 
         .text-primary {
@@ -257,6 +317,45 @@
         [data-theme="modern"] .card {
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
             border: none;
+        }
+
+        /* ===== Accessibility: Focus indicators ===== */
+        .btn-primary:focus-visible,
+        .btn-secondary:focus-visible {
+            outline: 2px solid var(--warm-500);
+            outline-offset: 2px;
+        }
+
+        .nav-link:focus-visible,
+        .nav-dropdown-link:focus-visible {
+            outline: 2px solid var(--warm-400);
+            outline-offset: 2px;
+        }
+
+        .input-field:focus-visible {
+            outline: 2px solid var(--warm-500);
+            outline-offset: -2px;
+        }
+
+        a:focus-visible {
+            outline: 2px solid var(--warm-500);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--warm-500);
+            outline-offset: 2px;
+        }
+
+        /* ===== Accessibility: Reduced motion ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
 
         @media (max-width: 768px) {

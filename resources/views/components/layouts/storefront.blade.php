@@ -68,9 +68,10 @@
                 <!-- Explore Dropdown -->
                 <div class="relative">
                     <button @click="explore = !explore; account = false"
-                            class="nav-link font-display inline-flex items-center gap-1 {{ $exploreActive ? 'active' : '' }}">
+                            class="nav-link font-display inline-flex items-center gap-1 {{ $exploreActive ? 'active' : '' }}"
+                            :aria-expanded="explore">
                         Explore
-                        <svg class="w-3.5 h-3.5 transition-transform" :class="explore ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="w-3.5 h-3.5 transition-transform" :class="explore ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div x-show="explore" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                          class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl"
@@ -88,9 +89,10 @@
                 <!-- My Account Dropdown -->
                 <div class="relative">
                     <button @click="account = !account; explore = false"
-                            class="nav-link font-display inline-flex items-center gap-1 {{ $accountActive ? 'active' : '' }}">
+                            class="nav-link font-display inline-flex items-center gap-1 {{ $accountActive ? 'active' : '' }}"
+                            :aria-expanded="account">
                         My Account
-                        <svg class="w-3.5 h-3.5 transition-transform" :class="account ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="w-3.5 h-3.5 transition-transform" :class="account ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div x-show="account" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                          class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl"
@@ -112,8 +114,9 @@
                     <a href="{{ url('/') }}" class="font-script text-lg" style="color: var(--warm-400); text-decoration: none;">
                         {{ $storeName }}
                     </a>
-                    <button @click="open = !open" class="nav-link font-display ml-4" style="padding: 8px 12px;">
-                        <span x-text="open ? '✕' : '☰'"></span>
+                    <button @click="open = !open" class="nav-link font-display ml-4" style="padding: 8px 12px;" aria-label="Toggle navigation" :aria-expanded="open">
+                        <svg x-show="!open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        <svg x-show="open" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
                 <div x-show="open" x-collapse class="mt-4 space-y-1">
@@ -121,9 +124,9 @@
                     <a href="{{ route('order.create') }}" class="block nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
 
                     <!-- Mobile Explore Group -->
-                    <button @click="explore = !explore" class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $exploreActive ? 'active' : '' }}">
+                    <button @click="explore = !explore" class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $exploreActive ? 'active' : '' }}" :aria-expanded="explore">
                         Explore
-                        <svg class="w-3.5 h-3.5 transition-transform" :class="explore ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="w-3.5 h-3.5 transition-transform" :class="explore ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div x-show="explore" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('storefront.blog') }}" class="block nav-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}">Blog</a>
@@ -136,9 +139,9 @@
                     </div>
 
                     <!-- Mobile Account Group -->
-                    <button @click="account = !account" class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $accountActive ? 'active' : '' }}">
+                    <button @click="account = !account" class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $accountActive ? 'active' : '' }}" :aria-expanded="account">
                         My Account
-                        <svg class="w-3.5 h-3.5 transition-transform" :class="account ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="w-3.5 h-3.5 transition-transform" :class="account ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div x-show="account" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('order.track') }}" class="block nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
@@ -178,7 +181,7 @@
                 @elseif ($announcementType === 'holiday')
                     background: linear-gradient(135deg, #c41e3a, #1a6b2a); color: #fff; border-bottom: 2px solid #ffd700;
                 @else
-                    background: #fff3cd; color: #664d03; border-bottom: 2px solid var(--warm-500);
+                    background: var(--warm-200); color: var(--warm-900); border-bottom: 2px solid var(--warm-500);
                 @endif
              ">
             <span>{{ $announcementText }}</span>
@@ -266,17 +269,17 @@
     </footer>
 
     {{-- PWA Install Prompt --}}
-    <div id="pwaInstall" style="display:none;position:fixed;bottom:5rem;right:1.5rem;background:#1c1410;color:#faf4e8;padding:1rem 1.25rem;border-radius:16px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.4);font-size:.85rem;max-width:280px;border:1px solid rgba(212,146,12,.15)">
+    <div id="pwaInstall" style="display:none;position:fixed;bottom:5rem;right:1.5rem;background:var(--warm-900);color:var(--warm-200);padding:1rem 1.25rem;border-radius:16px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.4);font-size:.85rem;max-width:280px;border:1px solid rgba(212,146,12,.15)">
         <div style="display:flex;align-items:start;gap:.75rem">
             <div style="flex:1">
-                <strong style="color:#d4920c;font-size:.9rem">Add to Home Screen</strong>
-                <p style="margin:.25rem 0 .75rem;color:#8b6844;line-height:1.4;font-size:.8rem">Quick access to your favorite bakery — no app store needed.</p>
+                <strong style="color:var(--warm-500);font-size:.9rem">Add to Home Screen</strong>
+                <p style="margin:.25rem 0 .75rem;color:var(--warm-600);line-height:1.4;font-size:.8rem">Quick access to your favorite bakery — no app store needed.</p>
                 <div style="display:flex;gap:.5rem">
-                    <button id="pwaInstallBtn" style="padding:.4rem 1rem;border-radius:50px;background:#d4920c;color:#fff;border:none;font-weight:700;font-size:.75rem;cursor:pointer">Install</button>
-                    <button onclick="dismissPwa()" style="padding:.4rem .75rem;border-radius:50px;background:transparent;color:#8b6844;border:1px solid #4a3728;font-size:.75rem;cursor:pointer">Not now</button>
+                    <button id="pwaInstallBtn" style="padding:.4rem 1rem;border-radius:50px;background:var(--warm-500);color:#fff;border:none;font-weight:700;font-size:.75rem;cursor:pointer">Install</button>
+                    <button onclick="dismissPwa()" style="padding:.4rem .75rem;border-radius:50px;background:transparent;color:var(--warm-600);border:1px solid var(--warm-700);font-size:.75rem;cursor:pointer">Not now</button>
                 </div>
             </div>
-            <button onclick="dismissPwa()" style="background:none;border:none;color:#8b6844;cursor:pointer;font-size:1.1rem;padding:0;line-height:1">&times;</button>
+            <button onclick="dismissPwa()" style="background:none;border:none;color:var(--warm-600);cursor:pointer;font-size:1.1rem;padding:0;line-height:1" aria-label="Dismiss install prompt">&times;</button>
         </div>
     </div>
     <script>
@@ -287,12 +290,12 @@
     </script>
 
     {{-- Cookie Consent Banner --}}
-    <div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1c1410;color:#faf4e8;padding:1rem 1.5rem;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,.3);font-size:.85rem;line-height:1.5">
+    <div id="cookieConsent" role="region" aria-label="Cookie consent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--warm-900);color:var(--warm-200);padding:1rem 1.5rem;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,.3);font-size:.85rem;line-height:1.5">
         <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
             <p style="margin:0;flex:1;min-width:200px">We use cookies to improve your experience. By continuing to browse, you agree to our use of cookies.
-                <a href="/privacy" style="color:#d4920c;text-decoration:underline">Privacy Policy</a>
+                <a href="/privacy" style="color:var(--warm-500);text-decoration:underline">Privacy Policy</a>
             </p>
-            <button onclick="acceptCookies()" style="padding:.5rem 1.5rem;border-radius:50px;background:#d4920c;color:#fff;border:none;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap;transition:background .2s">Accept</button>
+            <button onclick="acceptCookies()" style="padding:.5rem 1.5rem;border-radius:50px;background:var(--warm-500);color:#fff;border:none;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap;transition:background .2s">Accept</button>
         </div>
     </div>
     <script>
