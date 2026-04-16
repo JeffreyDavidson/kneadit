@@ -119,7 +119,7 @@
         </div>
 
         @session('success')
-        <x-storefront.alert>{{ $value }}</x-storefront.alert>
+        <x-storefront.alert :dismiss-after="5000">{{ $value }}</x-storefront.alert>
         @endsession
 
         @if ($errors->any())
@@ -133,16 +133,16 @@
         @endif
 
         <div class="p-8 md:p-10 rounded-2xl bg-warm-800 border border-warm-700/20">
-            <form action="{{ route('gallery.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('gallery.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{ submitting: false }" @submit="submitting = true">
                 @csrf
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium mb-2 text-warm-300">Your Name *</label>
-                        <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="gallery-input">
+                        <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="storefront-input-dark">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2 text-warm-300">Your Email *</label>
-                        <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="gallery-input">
+                        <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="storefront-input-dark">
                     </div>
                 </div>
 
@@ -169,12 +169,12 @@
 
                 <div>
                     <label class="block text-sm font-medium mb-2 text-warm-300">Caption</label>
-                    <textarea name="caption" rows="3" class="gallery-input">{{ old('caption') }}</textarea>
+                    <textarea name="caption" rows="3" class="storefront-input-dark">{{ old('caption') }}</textarea>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-2 text-warm-300">Which product? (optional)</label>
-                    <select name="product_id" class="gallery-input">
+                    <select name="product_id" class="storefront-input-dark">
                         <option value="">— Select a product —</option>
                         @foreach ($products as $product)
                         <option value="{{ $product->id }}" @selected(old('product_id') == $product->id)>{{ $product->name }}</option>
@@ -182,8 +182,9 @@
                     </select>
                 </div>
 
-                <button type="submit" class="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-warm-500 text-warm-900">
-                    Submit Photo
+                <button type="submit" class="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2" :disabled="submitting">
+                    <span class="spinner" x-show="submitting" x-cloak></span>
+                    <span x-text="submitting ? 'Uploading...' : 'Submit Photo'"></span>
                 </button>
             </form>
         </div>
