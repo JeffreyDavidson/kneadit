@@ -120,8 +120,8 @@
 
                     <div x-show="cartItems.length === 0" class="text-center py-8 mb-4">
                         <div class="text-4xl mb-3 opacity-30">🧺</div>
-                        <p class="text-sm text-warm-600">Your cart is empty</p>
-                        <p class="text-xs mt-1 text-warm-700">Add items to get started</p>
+                        <p class="text-sm text-warm-600">{{ $content['empty_cart_heading'] ?? 'Your cart is empty' }}</p>
+                        <p class="text-xs mt-1 text-warm-700">{{ $content['empty_cart_subtext'] ?? 'Add items to get started' }}</p>
                     </div>
 
                     {{-- Coupon Section --}}
@@ -137,7 +137,7 @@
                                     :disabled="!couponCode || isApplyingCoupon"
                                     class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30"
                                     :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
-                                <span x-text="isApplyingCoupon ? '...' : 'Apply'"></span>
+                                <span x-text="isApplyingCoupon ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
                             </button>
                         </div>
                         <div x-show="couponError" class="text-red-400 text-sm mt-2" x-text="couponError"></div>
@@ -159,7 +159,7 @@
                                     :disabled="!giftCardCode || isApplyingGiftCard"
                                     class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30"
                                     :class="isApplyingGiftCard ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'">
-                                <span x-text="isApplyingGiftCard ? '...' : 'Apply'"></span>
+                                <span x-text="isApplyingGiftCard ? '...' : {{ Js::from($content['apply_button'] ?? 'Apply') }}"></span>
                             </button>
                         </div>
                         <div x-show="giftCardError" class="text-red-400 text-sm mt-2" x-text="giftCardError"></div>
@@ -319,7 +319,7 @@
                             class="w-full mt-6 py-4 rounded-full text-lg font-semibold transition-all duration-300"
                             :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-lg'"
                             style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
-                        <span x-text="isSubmitting ? 'Placing Order...' : 'Place Order →'"></span>
+                        <span x-text="isSubmitting ? 'Placing Order...' : {{ Js::from($content['place_order_button'] ?? 'Place Order →') }}"></span>
                     </button>
 
                     <div x-show="submitError" class="text-red-400 text-sm mt-3 text-center" x-text="submitError"></div>

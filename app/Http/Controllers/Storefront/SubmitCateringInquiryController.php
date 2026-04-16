@@ -13,7 +13,9 @@ class SubmitCateringInquiryController extends Controller
     {
         $createInquiry($request->validated());
 
-        return to_route('storefront.catering')
-            ->with('success', 'Thank you for your inquiry! We\'ll review your request and get back to you with a custom quote soon.');
+        $message = settingsPageContent('catering')['flash_success']
+            ?? "Thank you for your inquiry! We'll review your request and get back to you with a custom quote soon.";
+
+        return to_route('storefront.catering')->with('success', $message);
     }
 }

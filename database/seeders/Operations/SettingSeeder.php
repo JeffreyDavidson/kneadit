@@ -110,6 +110,18 @@ class SettingSeeder extends Seeder
                 'value' => 'split',
             ],
             [
+                'key' => 'hero_tagline',
+                'value' => 'Where every bite tells a story',
+            ],
+            [
+                'key' => 'hero_primary_cta_text',
+                'value' => 'Order Now',
+            ],
+            [
+                'key' => 'hero_secondary_cta_text',
+                'value' => 'Browse Menu',
+            ],
+            [
                 'key' => 'about_us_text',
                 'value' => 'KneadIt Bakery is a family-owned artisan bakery located in the heart of Central Florida. We specialize in handcrafted breads, pastries, cakes, and seasonal specialties using traditional techniques and the finest local ingredients. From our signature sourdough to custom wedding cakes, every item is made fresh daily with passion and attention to detail.',
             ],
@@ -196,6 +208,10 @@ class SettingSeeder extends Seeder
         $settings[] = ['key' => 'catering_enabled', 'value' => '0'];
         $settings[] = ['key' => 'catering_minimum_guests', 'value' => '10'];
         $settings[] = ['key' => 'catering_lead_time_days', 'value' => '14'];
+        $settings[] = [
+            'key' => 'order_journey_steps',
+            'value' => json_encode(config('kneadit.default_journey_steps')),
+        ];
 
         // Homepage sections configuration
         $settings[] = [
@@ -336,11 +352,6 @@ class SettingSeeder extends Seeder
                     'details_heading' => 'Order Details',
                     'journey_eyebrow' => 'What Happens Next',
                     'journey_heading' => 'Your Order Journey',
-                    'journey_steps' => [
-                        ['title' => 'Confirmation', 'description' => "You'll receive an email confirmation with your order details shortly."],
-                        ['title' => 'Preparation', 'description' => 'Our bakers will craft your items fresh on your scheduled date.'],
-                        ['title' => 'Delivery', 'description_delivery' => "We'll deliver your fresh items right to your door.", 'description_pickup' => 'Your items will be warm and ready for you to pick up.'],
-                    ],
                 ],
                 'submit_review' => [
                     'hero_eyebrow' => "We'd Love to Hear From You",

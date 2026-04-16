@@ -13,6 +13,8 @@ class SubmitOrderController extends Controller
 {
     public function __invoke(StoreOrderRequest $request, CreateOrder $createOrder, StripeCheckoutService $stripeService): RedirectResponse
     {
+        $content = settingsPageContent('order');
+
         try {
             $order = $createOrder($request->toData());
         } catch (MinimumOrderAmountNotMetException $e) {
@@ -26,7 +28,9 @@ class SubmitOrderController extends Controller
         }
 
         if (! $order) {
-            return back()->withErrors(['delivery_date' => 'Sorry, this date is fully booked. Please choose another date.']);
+            return back()->withErrors([
+                'delivery_date' => $content['flash_full'] ?? 'Sorry, this date is fully booked. Please choose another date.',
+            ]);
         }
 
         $checkoutUrl = $stripeService->redirectToCheckout($order);
@@ -35,6 +39,6 @@ class SubmitOrderController extends Controller
         }
 
         return to_route('order.confirmation', $order)
-            ->with('success', 'Order submitted successfully!');
+            ->with('success', $content['flash_success'] ?? 'Order submitted successfully!');
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages\Settings\Schemas\PageContent;
 
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -31,21 +30,6 @@ class OrderConfirmationTabSchema
                     TextInput::make('pageContent.order_confirmation.journey_heading')
                         ->label('Journey Heading'),
                 ]),
-                Repeater::make('pageContent.order_confirmation.journey_steps')
-                    ->label('Journey Steps')
-                    ->schema([
-                        TextInput::make('title')->required(),
-                        TextInput::make('description')
-                            ->label('Description (general/pickup)'),
-                        TextInput::make('description_delivery')
-                            ->label('Description (delivery variant)')
-                            ->helperText('Leave blank if same as above'),
-                        TextInput::make('description_pickup')
-                            ->label('Description (pickup variant)')
-                            ->helperText('Leave blank if same as above'),
-                    ])
-                    ->defaultItems(3)
-                    ->maxItems(5),
             ]);
     }
 }
