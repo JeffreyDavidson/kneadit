@@ -45,6 +45,10 @@ class ManageSettings extends Page
 
     public ?string $delivery_fee_tiers = '';
 
+    public ?string $minimum_pickup_order_amount = '0';
+
+    public ?string $minimum_delivery_order_amount = '0';
+
     public bool $repeat_reminders_enabled = false;
 
     public bool $birthday_program_enabled = false;
@@ -92,6 +96,8 @@ class ManageSettings extends Page
         $this->default_daily_capacity = settings('default_daily_capacity', null);
         $this->minimum_order_lead_hours = settings('minimum_order_lead_hours', 48);
         $this->delivery_fee_tiers = settings('delivery_fee_tiers', '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}');
+        $this->minimum_pickup_order_amount = settings('minimum_pickup_order_amount', '0');
+        $this->minimum_delivery_order_amount = settings('minimum_delivery_order_amount', '0');
         $this->repeat_reminders_enabled = settings('repeat_reminders_enabled', false);
         $this->birthday_program_enabled = settings('birthday_program_enabled', false);
         $this->allergy_disclaimer = settings('allergy_disclaimer', 'Please inform us of any allergies or dietary restrictions when placing your order.');
@@ -145,6 +151,8 @@ class ManageSettings extends Page
         $this->default_daily_capacity = null;
         $this->minimum_order_lead_hours = 48;
         $this->delivery_fee_tiers = '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}';
+        $this->minimum_pickup_order_amount = '0';
+        $this->minimum_delivery_order_amount = '0';
         $this->repeat_reminders_enabled = false;
         $this->birthday_program_enabled = false;
         $this->allergy_disclaimer = 'Please inform us of any allergies or dietary restrictions when placing your order.';

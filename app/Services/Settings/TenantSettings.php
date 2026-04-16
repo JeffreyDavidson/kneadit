@@ -53,6 +53,8 @@ final class TenantSettings
         public readonly int $leadTimeHours,
         public readonly bool $deliveryEnabled,
         public readonly string $freeDeliveryMinimum,
+        public readonly string $minimumPickupOrderAmount,
+        public readonly string $minimumDeliveryOrderAmount,
         public readonly array $deliveryFeeTiers,
         public readonly array $paymentMethodsAccepted,
         public readonly array $operatingHours,
@@ -115,6 +117,8 @@ final class TenantSettings
             leadTimeHours: $this->leadTimeHours,
             deliveryEnabled: $this->deliveryEnabled,
             freeDeliveryMinimum: $this->freeDeliveryMinimum,
+            minimumPickupOrderAmount: $this->minimumPickupOrderAmount,
+            minimumDeliveryOrderAmount: $this->minimumDeliveryOrderAmount,
             deliveryFeeTiers: $this->deliveryFeeTiers,
         );
     }
@@ -222,6 +226,8 @@ final class TenantSettings
             leadTimeHours: (int) settings('order_lead_time_hours', '24'),
             deliveryEnabled: settings('delivery_enabled', '1') === '1',
             freeDeliveryMinimum: (string) settings('free_delivery_minimum', '50'),
+            minimumPickupOrderAmount: (string) settings('minimum_pickup_order_amount', '0'),
+            minimumDeliveryOrderAmount: (string) settings('minimum_delivery_order_amount', '0'),
             deliveryFeeTiers: (array) json_decode((string) settings('delivery_fee_tiers', '[]'), true),
             paymentMethodsAccepted: (array) json_decode((string) settings('payment_methods_accepted', '[]'), true),
             operatingHours: (array) json_decode((string) settings('operating_hours', '{}'), true),

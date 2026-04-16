@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Orders\CreateOrder;
+use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
@@ -37,6 +38,8 @@ beforeEach(function () {
         leadTimeHours: 24,
         deliveryEnabled: true,
         freeDeliveryMinimum: '50',
+        minimumPickupOrderAmount: '0',
+        minimumDeliveryOrderAmount: '0',
         deliveryFeeTiers: [],
         paymentMethodsAccepted: [],
         operatingHours: [],
@@ -160,6 +163,36 @@ test('validation fails when required fields are missing', function () {
         'delivery_date',
         'items',
     ]);
+});
+
+test('returns error when order subtotal is below minimum', function () {
+    $createOrder = Mockery::mock(CreateOrder::class);
+    $createOrder->shouldReceive('__invoke')
+        ->once()
+        ->andThrow(new MinimumOrderAmountNotMetException(
+            deliveryType: 'pickup',
+            subtotal: 5.00,
+            minimum: 15.00,
+        ));
+    app()->instance(CreateOrder::class, $createOrder);
+
+    $product = Product::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_type' => 'pickup',
+            'delivery_date' => now()->addDays(2)->toDateString(),
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 1],
+            ],
+        ]);
+
+    $response->assertRedirect()
+        ->assertSessionHasErrors(['items']);
+
+    expect(session('errors')->first('items'))->toContain('Minimum pickup order is $15.00');
 });
 
 test('validation fails with invalid email', function () {

@@ -26,6 +26,8 @@ test('it returns store info from TenantSettings', function () {
         leadTimeHours: 24,
         deliveryEnabled: true,
         freeDeliveryMinimum: '50',
+        minimumPickupOrderAmount: '0',
+        minimumDeliveryOrderAmount: '0',
         deliveryFeeTiers: [],
         paymentMethodsAccepted: [],
         operatingHours: ['mon' => '8am-5pm'],

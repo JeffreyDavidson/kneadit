@@ -74,6 +74,25 @@ class ManageSettingsForm
                             ->helperText('JSON format: distance ranges and fees')
                             ->rows(3)
                             ->columnSpanFull(),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('minimum_pickup_order_amount')
+                                    ->label('Minimum Pickup Order')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->minValue(0)
+                                    ->default('0')
+                                    ->helperText('Minimum order subtotal for pickup (0 = no minimum)'),
+
+                                TextInput::make('minimum_delivery_order_amount')
+                                    ->label('Minimum Delivery Order')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->minValue(0)
+                                    ->default('0')
+                                    ->helperText('Minimum order subtotal for delivery (0 = no minimum)'),
+                            ]),
                     ]),
 
                 // Notification Settings Section

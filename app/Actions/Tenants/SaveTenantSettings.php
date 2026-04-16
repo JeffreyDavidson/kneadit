@@ -22,6 +22,8 @@ class SaveTenantSettings
             'default_daily_capacity' => $data['default_daily_capacity'],
             'minimum_order_lead_hours' => $data['minimum_order_lead_hours'],
             'delivery_fee_tiers' => $data['delivery_fee_tiers'],
+            'minimum_pickup_order_amount' => $data['minimum_pickup_order_amount'] ?? '0',
+            'minimum_delivery_order_amount' => $data['minimum_delivery_order_amount'] ?? '0',
             'repeat_reminders_enabled' => $data['repeat_reminders_enabled'],
             'birthday_program_enabled' => $data['birthday_program_enabled'],
             'payment_methods' => json_encode($data['payment_methods']),

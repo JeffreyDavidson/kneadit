@@ -8,6 +8,7 @@ use App\Models\Orders\Order;
 use App\Pipes\Orders\ApplyCoupon;
 use App\Pipes\Orders\ApplyGiftCard;
 use App\Pipes\Orders\CalculateOrderTotals;
+use App\Pipes\Orders\EnforceMinimumOrderAmount;
 use App\Pipes\Orders\OrderPipelineData;
 use App\Pipes\Orders\PersistOrder;
 use App\Pipes\Orders\PersistOrderItems;
@@ -28,6 +29,7 @@ class CreateOrder
             ->send($payload)
             ->through([
                 CalculateOrderTotals::class,
+                EnforceMinimumOrderAmount::class,
                 ValidateCapacity::class,
                 ApplyCoupon::class,
                 ApplyGiftCard::class,

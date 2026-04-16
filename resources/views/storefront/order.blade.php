@@ -307,6 +307,12 @@
                     </div>
                     @endif
 
+                    {{-- Minimum order notice --}}
+                    <div x-show="cartItems.length > 0 && !meetsMinimumOrder"
+                         class="mt-6 p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-sm text-amber-300">
+                        <span x-text="`Minimum ${form.delivery_type === 'delivery' ? 'delivery' : 'pickup'} order is $${currentMinimumOrder.toFixed(2)}. Add $${amountBelowMinimum.toFixed(2)} more to continue.`"></span>
+                    </div>
+
                     {{-- Submit --}}
                     <button type="submit"
                             :disabled="!canSubmit || isSubmitting"
