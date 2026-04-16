@@ -94,7 +94,7 @@
                             </button>
                             <span x-show="submitted" class="text-xs font-medium text-warm-400">✓ We'll notify you!</span>
                             <form x-show="showWaitlist" @submit.prevent="fetch('{{ route('productWaitlist.join') }}', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'},body:JSON.stringify({product_id:{{ $product->id }},customer_email:$refs.email{{ $product->id }}.value})}).then(()=>{submitted=true;showWaitlist=false})" class="flex gap-1 mt-2">
-                                <input x-ref="email{{ $product->id }}" type="email" required placeholder="Email" class="text-sm rounded-lg border px-2 py-1 w-full" style="border-color: rgba(139,104,68,0.3); background: var(--warm-800); color: var(--warm-200);">
+                                <input x-ref="email{{ $product->id }}" type="email" required placeholder="Email" class="text-sm rounded-lg border border-warm-600/30 px-2 py-1 w-full bg-warm-800 text-warm-200">
                                 <button type="submit" class="text-sm px-3 py-1 rounded-lg font-semibold flex-shrink-0 bg-warm-500 text-warm-900">Go</button>
                             </form>
                         </div>
@@ -114,7 +114,7 @@
 
 {{-- CTA Section --}}
 <section class="relative py-24 overflow-hidden bg-warm-800">
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 50%, rgba(212,146,12,0.06), transparent 60%);"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--warm-500) 6%, transparent), transparent 60%);" aria-hidden="true"></div>
     <div class="relative z-10 text-center max-w-2xl mx-auto px-4">
         <p class="font-script text-2xl mb-4 text-warm-500">{{ $content['cta_script'] ?? 'Ready to order?' }}</p>
         <h2 class="font-display text-3xl md:text-5xl font-bold mb-6 text-warm-100">

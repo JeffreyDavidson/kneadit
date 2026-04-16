@@ -2,7 +2,7 @@
 {{-- Dark Hero Banner --}}
 <section class="relative overflow-hidden" style="background: var(--warm-900); padding-top: 2rem;">
     <x-storefront.grain-texture />
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 70% 0%, rgba(212,146,12,0.08), transparent 60%);"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 70% 0%, color-mix(in srgb, var(--warm-500) 8%, transparent), transparent 60%);" aria-hidden="true"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 py-16 md:py-24">
 
@@ -30,7 +30,7 @@
             <div class="lg:col-span-2 space-y-10">
                 <div class="flex items-center gap-4">
                     <h2 class="font-display text-2xl font-bold whitespace-nowrap text-warm-100">Select Your Items</h2>
-                    <div class="flex-1 h-px" style="background: rgba(139,104,68,0.25);"></div>
+                    <div class="flex-1 h-px bg-warm-600/25"></div>
                 </div>
 
                 @foreach ($categories as $category)
@@ -47,8 +47,7 @@
                             {{-- Favorite Heart --}}
                             <button type="button"
                                     @click="toggleFavorite({{ $product->id }})"
-                                    class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-sm transition-all"
-                                    style="background: rgba(28,20,16,0.6);"
+                                    class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-sm transition-all bg-warm-900/60"
                                     :class="isFavorite({{ $product->id }}) ? '' : 'hover:scale-110'"
                                     :aria-label="isFavorite({{ $product->id }}) ? 'Remove {{ $product->name }} from favorites' : 'Add {{ $product->name }} to favorites'">
                                 <svg x-show="isFavorite({{ $product->id }})" class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg>
@@ -63,7 +62,7 @@
                                     <x-storefront.image-placeholder :name="$product->name" />
                                 @endif
                                 {{-- Price badge --}}
-                                <div class="absolute top-3 left-3 px-3 py-1.5 rounded-full text-sm font-bold backdrop-blur-sm" style="background: rgba(28,20,16,0.8); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.2);">
+                                <div class="absolute top-3 left-3 px-3 py-1.5 rounded-full text-sm font-bold backdrop-blur-sm bg-warm-900/80 text-warm-400 border border-warm-500/20">
                                     @money($product->price)
                                 </div>
                             </div>
@@ -138,7 +137,7 @@
                                     :disabled="!couponCode || isApplyingCoupon"
                                     class="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
                                     :class="isApplyingCoupon ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
-                                    style="background: rgba(212,146,12,0.15); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.3);">
+                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30">
                                 <span x-text="isApplyingCoupon ? '...' : 'Apply'"></span>
                             </button>
                         </div>
@@ -159,9 +158,8 @@
                             <button type="button"
                                     @click="applyGiftCard()"
                                     :disabled="!giftCardCode || isApplyingGiftCard"
-                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-                                    :class="isApplyingGiftCard ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'"
-                                    style="background: rgba(212,146,12,0.15); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.3);">
+                                    class="px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-warm-500/15 text-warm-400 border border-warm-500/30"
+                                    :class="isApplyingGiftCard ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'">
                                 <span x-text="isApplyingGiftCard ? '...' : 'Apply'"></span>
                             </button>
                         </div>
@@ -228,15 +226,15 @@
                         </div>
 
                         <div class="space-y-3">
-                            <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(139,104,68,0.15);"
-                                   :style="form.delivery_type === 'pickup' ? 'border-color: var(--warm-500); background: rgba(212,146,12,0.08);' : ''">
+                            <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all bg-white/[0.03] border border-warm-600/15"
+                                   :class="form.delivery_type === 'pickup' ? 'border-warm-500 bg-warm-500/[0.08]' : ''">
                                 <input type="radio" x-model="form.delivery_type" value="pickup" @change="calculateDeliveryFee()" class="order-radio mr-3">
                                 <span class="text-warm-200">Pickup <span class="text-sm text-warm-500">(Free)</span></span>
                             </label>
 
                             @if ($settings->deliveryEnabled)
-                            <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(139,104,68,0.15);"
-                                   :style="form.delivery_type === 'delivery' ? 'border-color: var(--warm-500); background: rgba(212,146,12,0.08);' : ''">
+                            <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all bg-white/[0.03] border border-warm-600/15"
+                                   :class="form.delivery_type === 'delivery' ? 'border-warm-500 bg-warm-500/[0.08]' : ''">
                                 <input type="radio" x-model="form.delivery_type" value="delivery" @change="calculateDeliveryFee()" class="order-radio mr-3">
                                 <span class="text-warm-200">Delivery</span>
                             </label>
