@@ -98,7 +98,7 @@
          style="background: rgba(28,20,16,0.92); backdrop-filter: blur(8px);"
          @click.self="lightbox = false" @keydown.escape.window="lightbox = false"
          role="dialog" aria-label="Photo lightbox">
-        <button @click="lightbox = false" class="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110" style="background: rgba(255,255,255,0.1); color: var(--warm-300);" aria-label="Close lightbox">&times;</button>
+        <button @click="lightbox = false" class="absolute top-6 right-6 w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110" style="background: rgba(255,255,255,0.1); color: var(--warm-300);" aria-label="Close lightbox">&times;</button>
         <div class="max-w-4xl w-full" @click.stop>
             <img :src="lightboxSrc" :alt="lightboxCaption || 'Customer photo'" class="w-full max-h-[75vh] object-contain rounded-xl">
             <div class="mt-4 text-center" x-show="lightboxCaption || lightboxAuthor">
