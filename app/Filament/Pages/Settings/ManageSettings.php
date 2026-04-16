@@ -82,6 +82,10 @@ class ManageSettings extends Page
     /** @var array<int, string> */
     public array $catering_event_types = [];
 
+    public ?string $gift_card_preset_amounts = '';
+
+    public ?int $gift_card_default_amount = 25;
+
     public function mount(): void
     {
         $this->loadSettings();
@@ -120,6 +124,9 @@ class ManageSettings extends Page
         $this->catering_event_types = is_array($decoded) && $decoded !== []
             ? array_values(array_filter($decoded, fn ($v) => is_string($v) && trim($v) !== ''))
             : CateringEventType::defaultLabels();
+
+        $this->gift_card_preset_amounts = settings('gift_card_preset_amounts', '10,25,50,100');
+        $this->gift_card_default_amount = (int) settings('gift_card_default_amount', 25);
     }
 
     public function content(Schema $schema): Schema
@@ -166,6 +173,8 @@ class ManageSettings extends Page
         $this->additional_terms = '';
         $this->show_policies_on_storefront = false;
         $this->catering_event_types = CateringEventType::defaultLabels();
+        $this->gift_card_preset_amounts = '10,25,50,100';
+        $this->gift_card_default_amount = 25;
 
         Notification::make()
             ->title('Settings reset to defaults')

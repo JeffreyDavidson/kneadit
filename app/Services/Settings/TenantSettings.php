@@ -86,6 +86,9 @@ final class TenantSettings
         public readonly int $reviewRequestDelayHours,
         public readonly bool $repeatRemindersEnabled,
         public readonly int $repeatReminderDays,
+        /** @var array<int, int> */
+        public readonly array $giftCardPresetAmounts,
+        public readonly int $giftCardDefaultAmount,
     ) {}
 
     // ──────────────────────────────────────────────────────────
@@ -257,6 +260,8 @@ final class TenantSettings
             reviewRequestDelayHours: (int) settings('review_request_delay_hours', '24'),
             repeatRemindersEnabled: settings('repeat_reminders_enabled', '0') === '1',
             repeatReminderDays: (int) settings('repeat_reminder_days', '30'),
+            giftCardPresetAmounts: array_map('intval', array_filter(explode(',', (string) settings('gift_card_preset_amounts', '10,25,50,100')))),
+            giftCardDefaultAmount: (int) settings('gift_card_default_amount', '25'),
         );
     }
 
