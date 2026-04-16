@@ -35,6 +35,7 @@ test('it returns store info from TenantSettings', function () {
         loyaltyEnabled: true,
         cateringMinimumGuests: '10',
         cateringLeadTimeDays: '14',
+        cateringEventTypes: ['Wedding', 'Corporate Event'],
         socialMediaLinks: ['facebook' => 'https://fb.com/sweet', 'instagram' => 'https://ig.com/sweet'],
         homepageSections: [],
         cateringEnabled: false,

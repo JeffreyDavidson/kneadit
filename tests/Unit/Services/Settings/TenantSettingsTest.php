@@ -34,6 +34,7 @@ test('it can be constructed with all properties', function () {
         loyaltyEnabled: true,
         cateringMinimumGuests: '10',
         cateringLeadTimeDays: '14',
+        cateringEventTypes: ['Wedding', 'Corporate Event'],
         socialMediaLinks: [],
         homepageSections: [],
         cateringEnabled: false,
@@ -97,6 +98,7 @@ function makeTenantSettings(array $overrides = []): TenantSettings
         'loyaltyEnabled' => true,
         'cateringMinimumGuests' => '10',
         'cateringLeadTimeDays' => '14',
+        'cateringEventTypes' => ['Wedding', 'Corporate Event'],
         'socialMediaLinks' => [],
         'homepageSections' => [],
         'cateringEnabled' => false,
@@ -213,6 +215,32 @@ test('onboardingCompletedAt is accessible and nullable', function () {
     expect($withValue->onboardingCompletedAt)->toBe('2026-01-15 10:00:00')
         ->and($withNull->onboardingCompletedAt)->toBeNull();
 });
+
+test('cateringEventTypes falls back to enum default labels when not configured', function () {
+    setUpTenantTest();
+
+    $settings = TenantSettings::resolve();
+
+    expect($settings->cateringEventTypes)->toBe(App\Enums\Customers\CateringEventType::defaultLabels());
+})->uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
+
+test('cateringEventTypes resolves from a stored json array', function () {
+    setUpTenantTest();
+    settings(['catering_event_types' => json_encode(['Kids Party', 'School Function'])]);
+
+    $settings = TenantSettings::resolve();
+
+    expect($settings->cateringEventTypes)->toBe(['Kids Party', 'School Function']);
+})->uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
+
+test('cateringEventTypes falls back to defaults when the stored json is empty', function () {
+    setUpTenantTest();
+    settings(['catering_event_types' => json_encode([])]);
+
+    $settings = TenantSettings::resolve();
+
+    expect($settings->cateringEventTypes)->toBe(App\Enums\Customers\CateringEventType::defaultLabels());
+})->uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 test('it is bound as a singleton in the container', function () {
     setUpTenantTest();
