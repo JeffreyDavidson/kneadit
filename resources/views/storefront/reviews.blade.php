@@ -20,18 +20,18 @@
 <section class="bg-warm-800">
     <div class="max-w-5xl mx-auto px-4 py-12">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-             x-data="{ shown: false, countUp(el, target, suffix = '') { let current = 0; const step = target / 30; const interval = setInterval(() => { current = Math.min(current + step, target); el.textContent = (Number.isInteger(target) ? Math.round(current) : current.toFixed(1)) + suffix; if (current >= target) clearInterval(interval); }, 30); } }"
-             x-intersect.once="shown = true; $nextTick(() => { countUp($refs.avg, {{ $vm->avgRating }}); countUp($refs.total, {{ $vm->totalReviews }}); countUp($refs.pct, {{ $vm->fiveStarPct }}, '%'); })">
+             x-data="{ reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches, countUp(el, target, suffix = '') { if (this.reduced) { el.textContent = (Number.isInteger(target) ? target : target.toFixed(1)) + suffix; return; } let current = 0; const step = target / 30; const interval = setInterval(() => { current = Math.min(current + step, target); el.textContent = (Number.isInteger(target) ? Math.round(current) : current.toFixed(1)) + suffix; if (current >= target) clearInterval(interval); }, 30); } }"
+             x-intersect.once="$nextTick(() => { countUp($refs.avg, {{ $vm->avgRating }}); countUp($refs.total, {{ $vm->totalReviews }}); countUp($refs.pct, {{ $vm->fiveStarPct }}, '%'); })">
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span x-ref="avg" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">0</span>
+                <span x-ref="avg" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->formattedAvgRating }}</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Average Rating</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span x-ref="total" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">0</span>
+                <span x-ref="total" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->totalReviews }}</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Total Reviews</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span x-ref="pct" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">0%</span>
+                <span x-ref="pct" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->fiveStarPct }}%</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">5-Star Reviews</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
@@ -71,7 +71,10 @@
             <x-storefront.eyebrow line-opacity="0.5" class="mb-4">{{ $content['rating_eyebrow'] ?? 'Rating Breakdown' }}</x-storefront.eyebrow>
         </div>
 
-        <div class="space-y-4" x-data="{ shown: false }" x-intersect.once="shown = true">
+        <div class="space-y-4"
+             x-data="{ shown: false, reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches }"
+             x-init="if (!reduced) { $el.querySelectorAll('.rating-bar-fill').forEach(b => b.style.width = '0%'); }"
+             x-intersect.once="shown = true; if (!reduced) { $el.querySelectorAll('.rating-bar-fill').forEach(b => b.style.width = b.dataset.pct + '%'); }">
             @foreach ($vm->ratingBreakdown as $star => $data)
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-1 flex-shrink-0" style="width: 80px;">
@@ -81,7 +84,7 @@
                     </svg>
                 </div>
                 <div class="flex-1 rating-bar-track bg-warm-800">
-                    <div class="rating-bar-fill" :style="shown ? 'width: {{ $data['pct'] }}%; background: var(--warm-500);' : 'width: 0%; background: var(--warm-500);'"></div>
+                    <div class="rating-bar-fill" data-pct="{{ $data['pct'] }}" style="width: {{ $data['pct'] }}%; background: var(--warm-500);"></div>
                 </div>
                 <span class="text-sm font-medium flex-shrink-0 text-warm-400" style="width: 40px; text-align: right;">{{ $data['count'] }}</span>
             </div>
@@ -101,9 +104,10 @@
 
         <div class="grid md:grid-cols-2 gap-8 mb-16">
             @foreach ($reviews->skip(1) as $review)
-            <div class="review-card p-8 rounded-2xl bg-white border border-warm-200 shadow-sm opacity-0 translate-y-4"
-                 x-data x-intersect.once="$el.style.transitionDelay = '{{ $loop->index * 75 }}ms'; $el.classList.remove('opacity-0', 'translate-y-4'); $el.classList.add('opacity-100', 'translate-y-0')"
-                 style="transition: opacity 0.5s ease-out, transform 0.5s ease-out;">
+            <div class="review-card p-8 rounded-2xl bg-white border border-warm-200 shadow-sm"
+                 x-data="{ reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches }"
+                 x-init="if (!reduced) { $el.style.opacity = '0'; $el.style.transform = 'translateY(1rem)'; $el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'; }"
+                 x-intersect.once="if (!reduced) { $el.style.transitionDelay = '{{ $loop->index * 75 }}ms'; $el.style.opacity = '1'; $el.style.transform = 'translateY(0)'; }">
                 <div class="flex items-start gap-4 mb-5">
                     <x-storefront.avatar-initial :name="$review->customer_name" size="lg" class="flex-shrink-0" />
                     <div class="flex-1 min-w-0">

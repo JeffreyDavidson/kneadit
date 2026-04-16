@@ -21,18 +21,18 @@
 @if (count($categories) > 1)
 <div class="sticky top-14 md:top-16 z-30 bg-warm-900 border-b border-warm-700/15">
     <div class="max-w-7xl mx-auto px-4">
-        <nav class="flex overflow-x-auto gap-2 py-4 scrollbar-hide scrollbar-none" x-data="{ active: '' }" role="tablist">
+        <nav class="flex overflow-x-auto gap-2 py-4 scrollbar-hide scrollbar-none" x-data="{ active: '' }" aria-label="Menu categories">
             <a href="#all" @click="active = ''"
-               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-2.5 rounded-full text-warm-400 bg-warm-700/15"
+               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-3 rounded-full text-warm-400 bg-warm-700/15"
                :class="active === '' ? 'active' : ''"
-               role="tab">
+               :aria-current="active === '' ? 'true' : 'false'">
                 All
             </a>
             @foreach ($categories as $cat)
             <a href="#category-{{ $cat->id }}" @click="active = '{{ $cat->id }}'"
-               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-2.5 rounded-full text-warm-400 bg-warm-700/15"
+               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-3 rounded-full text-warm-400 bg-warm-700/15"
                :class="active === '{{ $cat->id }}' ? 'active' : ''"
-               role="tab">
+               :aria-current="active === '{{ $cat->id }}' ? 'true' : 'false'">
                 {{ $cat->name }}
             </a>
             @endforeach
