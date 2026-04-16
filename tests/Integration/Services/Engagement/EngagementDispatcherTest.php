@@ -46,6 +46,7 @@ function makeFakeTenantSettings(array $overrides = []): TenantSettings
         'loyaltyEnabled' => true,
         'cateringMinimumGuests' => '10',
         'cateringLeadTimeDays' => '14',
+        'cateringEventTypes' => ['Wedding', 'Corporate Event'],
         'socialMediaLinks' => [],
         'homepageSections' => [],
         'cateringEnabled' => false,
@@ -67,6 +68,8 @@ function makeFakeTenantSettings(array $overrides = []): TenantSettings
         'reviewRequestDelayHours' => 24,
         'repeatRemindersEnabled' => false,
         'repeatReminderDays' => 30,
+        'giftCardPresetAmounts' => [10, 25, 50, 100],
+        'giftCardDefaultAmount' => 25,
     ], $overrides));
 }
 

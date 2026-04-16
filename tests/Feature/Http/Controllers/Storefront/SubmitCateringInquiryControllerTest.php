@@ -46,6 +46,7 @@ beforeEach(function () {
         loyaltyEnabled: false,
         cateringMinimumGuests: '10',
         cateringLeadTimeDays: '14',
+        cateringEventTypes: CateringEventType::defaultLabels(),
         socialMediaLinks: [],
         homepageSections: [],
         cateringEnabled: true,
@@ -67,6 +68,8 @@ beforeEach(function () {
         reviewRequestDelayHours: 24,
         repeatRemindersEnabled: false,
         repeatReminderDays: 30,
+        giftCardPresetAmounts: [10, 25, 50, 100],
+        giftCardDefaultAmount: 25,
     ));
 });
 
@@ -75,7 +78,7 @@ function validInquiryPayload(): array
     return [
         'customer_name' => 'Jane Doe',
         'customer_email' => 'jane@example.com',
-        'event_type' => CateringEventType::Wedding->value,
+        'event_type' => 'Wedding',
         'event_date' => now()->addDays(30)->toDateString(),
         'guest_count' => 25,
         'details' => 'Outdoor reception, 25 people, mostly vegetarian.',

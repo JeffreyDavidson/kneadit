@@ -196,12 +196,14 @@ test('CateringSettings stores all properties', function () {
         enabled: true,
         minimumGuests: '10',
         leadTimeDays: '3',
+        eventTypes: ['Wedding', 'Birthday Party'],
     );
 
     expect($dto)
         ->enabled->toBeTrue()
         ->minimumGuests->toBe('10')
-        ->leadTimeDays->toBe('3');
+        ->leadTimeDays->toBe('3')
+        ->eventTypes->toBe(['Wedding', 'Birthday Party']);
 });
 
 // ---------------------------------------------------------------------------

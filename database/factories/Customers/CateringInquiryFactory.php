@@ -22,7 +22,7 @@ class CateringInquiryFactory extends Factory
             'customer_name' => fake()->name(),
             'customer_email' => fake()->safeEmail(),
             'customer_phone' => fake()->numerify('###-###-####'),
-            'event_type' => fake()->randomElement(CateringEventType::cases()),
+            'event_type' => fake()->randomElement(CateringEventType::defaultLabels()),
             'event_date' => fake()->dateTimeBetween('+1 week', '+3 months'),
             'guest_count' => fake()->numberBetween(10, 200),
             'budget' => fake()->optional()->randomFloat(2, 200, 5000),
