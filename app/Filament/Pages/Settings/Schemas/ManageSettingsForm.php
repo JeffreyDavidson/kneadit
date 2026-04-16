@@ -6,6 +6,7 @@ use App\Enums\Orders\PaymentMethod;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -119,6 +120,18 @@ class ManageSettingsForm
                             ->columnSpanFull(),
                     ]),
 
+                // Catering Section
+                Section::make('Catering')
+                    ->description('Configure catering inquiry options')
+                    ->schema([
+                        TagsInput::make('catering_event_types')
+                            ->label('Event Types')
+                            ->placeholder('Add an event type')
+                            ->helperText('Customers select from these options on the catering inquiry form (e.g. Wedding, Corporate Event, Birthday Party).')
+                            ->reorderable()
+                            ->columnSpanFull(),
+                    ]),
+
                 // Notification Settings Section
                 Section::make('Notification Settings')
                     ->description('Configure automated notifications and programs')
@@ -221,6 +234,26 @@ class ManageSettingsForm
                         Toggle::make('show_policies_on_storefront')
                             ->label('Show Policies on Storefront')
                             ->helperText('Display your policies in the storefront footer'),
+                    ]),
+
+                // Gift Card Settings
+                Section::make('Gift Cards')
+                    ->description('Configure gift card purchase options on your storefront')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('gift_card_preset_amounts')
+                                    ->label('Preset Amounts')
+                                    ->placeholder('10,25,50,100')
+                                    ->helperText('Comma-separated dollar amounts shown as quick-select buttons'),
+
+                                TextInput::make('gift_card_default_amount')
+                                    ->label('Default Selected Amount')
+                                    ->numeric()
+                                    ->default(25)
+                                    ->prefix('$')
+                                    ->helperText('The amount pre-selected when the page loads'),
+                            ]),
                     ]),
 
                 // Integrations Section

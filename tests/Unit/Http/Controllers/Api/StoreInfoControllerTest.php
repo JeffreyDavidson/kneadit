@@ -40,6 +40,7 @@ test('it returns store info from TenantSettings', function () {
         loyaltyEnabled: true,
         cateringMinimumGuests: '10',
         cateringLeadTimeDays: '14',
+        cateringEventTypes: ['Wedding', 'Corporate Event'],
         socialMediaLinks: ['facebook' => 'https://fb.com/sweet', 'instagram' => 'https://ig.com/sweet'],
         homepageSections: [],
         cateringEnabled: false,
@@ -61,6 +62,8 @@ test('it returns store info from TenantSettings', function () {
         reviewRequestDelayHours: 24,
         repeatRemindersEnabled: false,
         repeatReminderDays: 30,
+        giftCardPresetAmounts: [10, 25, 50, 100],
+        giftCardDefaultAmount: 25,
     );
 
     $controller = new StoreInfoController;

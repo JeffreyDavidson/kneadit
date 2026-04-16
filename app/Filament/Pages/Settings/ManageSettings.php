@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Settings;
 
 use App\Actions\Tenants\SaveTenantSettings;
+use App\Enums\Customers\CateringEventType;
 use App\Enums\Orders\PaymentMethod;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Pages\Settings\Schemas\ManageSettingsForm;
@@ -82,6 +83,13 @@ class ManageSettings extends Page
 
     public bool $show_policies_on_storefront = false;
 
+    /** @var array<int, string> */
+    public array $catering_event_types = [];
+
+    public ?string $gift_card_preset_amounts = '';
+
+    public ?int $gift_card_default_amount = 25;
+
     /** @var array<int, array<string, string>> */
     public array $order_journey_steps = [];
 
@@ -119,6 +127,15 @@ class ManageSettings extends Page
         $this->pickup_policy = settings('pickup_policy', '');
         $this->additional_terms = settings('additional_terms', '');
         $this->show_policies_on_storefront = (bool) settings('show_policies_on_storefront', false);
+
+        $eventTypes = settings('catering_event_types');
+        $decoded = $eventTypes ? json_decode($eventTypes, true) : null;
+        $this->catering_event_types = is_array($decoded) && $decoded !== []
+            ? array_values(array_filter($decoded, fn ($v) => is_string($v) && trim($v) !== ''))
+            : CateringEventType::defaultLabels();
+
+        $this->gift_card_preset_amounts = settings('gift_card_preset_amounts', '10,25,50,100');
+        $this->gift_card_default_amount = (int) settings('gift_card_default_amount', 25);
 
         $storedSteps = settings('order_journey_steps');
         $this->order_journey_steps = $storedSteps
@@ -171,6 +188,9 @@ class ManageSettings extends Page
         $this->pickup_policy = '';
         $this->additional_terms = '';
         $this->show_policies_on_storefront = false;
+        $this->catering_event_types = CateringEventType::defaultLabels();
+        $this->gift_card_preset_amounts = '10,25,50,100';
+        $this->gift_card_default_amount = 25;
         $this->order_journey_steps = config('kneadit.default_journey_steps');
 
         Notification::make()
