@@ -2,10 +2,12 @@
 
 namespace App\Mail\Orders;
 
+use App\Enums\Marketing\EmailTemplateType;
 use App\Enums\Orders\OrderStatus;
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Orders\Order;
+use App\Services\Email\EmailTemplateRenderer;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -21,15 +23,37 @@ class OrderStatusMail extends BaseMailable
 
     public function envelope(): Envelope
     {
+        $type = $this->templateType();
+
+        if ($type) {
+            $resolved = app(EmailTemplateRenderer::class)->resolve($type, $this->placeholders());
+            $subject = $resolved['subject'] ?? $this->resolveDefaultSubject();
+        } else {
+            $subject = $this->resolveDefaultSubject();
+        }
+
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: $this->resolveSubject(),
+            subject: $subject,
         );
     }
 
     public function content(): Content
     {
+        $type = $this->templateType();
+
+        if ($type) {
+            $resolved = app(EmailTemplateRenderer::class)->resolve($type, $this->placeholders());
+
+            if ($resolved) {
+                return new Content(
+                    view: 'emails.custom-template',
+                    with: ['customBody' => $resolved['body']],
+                );
+            }
+        }
+
         return new Content(
             html: "emails.orders.order-{$this->status->value}",
             with: [
@@ -40,7 +64,35 @@ class OrderStatusMail extends BaseMailable
         );
     }
 
-    private function resolveSubject(): string
+    private function templateType(): ?EmailTemplateType
+    {
+        return match ($this->status) {
+            OrderStatus::Confirmed => EmailTemplateType::OrderConfirmed,
+            OrderStatus::Baking => EmailTemplateType::OrderBaking,
+            OrderStatus::Ready => EmailTemplateType::OrderReady,
+            OrderStatus::Delivered => EmailTemplateType::OrderDelivered,
+            OrderStatus::Cancelled => EmailTemplateType::OrderCancelled,
+            default => null,
+        };
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function placeholders(): array
+    {
+        $settings = app(TenantSettings::class);
+
+        return [
+            'customer_name' => $this->order->customer?->name ?? 'there',
+            'order_number' => $this->order->order_number,
+            'order_total' => '$' . number_format($this->order->total / 100, 2),
+            'delivery_date' => $this->order->delivery_date?->format('M j, Y') ?? '',
+            'store_name' => $settings->storeName,
+        ];
+    }
+
+    private function resolveDefaultSubject(): string
     {
         $number = $this->order->order_number;
         $storeName = app(TenantSettings::class)->storeName;

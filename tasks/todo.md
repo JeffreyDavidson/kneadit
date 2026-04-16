@@ -1,170 +1,134 @@
-# Full Application Refactor Audit (Round 3)
+# Customizable Email Templates (Pro Feature)
 
-## Plan
-
-Third comprehensive audit focusing on views, events/listeners, config, security, and cross-cutting patterns. Organized by severity.
-
----
-
-## Critical — Security Issues
-
-- [ ] **XSS: Storefront blog body unescaped** — `resources/views/storefront/blog/show.blade.php:46`: Uses `{!! $post->body !!}` without `clean()`. The central blog view correctly uses `{!! clean($post->body) !!}`. Fix: add the `clean()` wrapper.
-- [ ] **XSS: Scheduled checkin email** — `resources/views/emails/platform/scheduled-checkin-text.blade.php:14`: `{!! $body !!}` renders unescaped. Add `clean()`.
-- [ ] **Sensitive data in logs** — `app/Services/PayPal/TokenManager.php:47`: Logs full PayPal API response body on failure. Should log only status code and error message.
+## Goal
+Allow Pro-tier tenants to customize the subject line and body content of customer-facing emails, while providing sensible defaults that work out of the box for all tenants.
 
 ---
 
-## Critical — Bugs (Multi-Tenant Data Leaks)
+## Architecture
 
-- [ ] **Hardcoded contact info in order emails** — Three email templates use literal phone/email instead of tenant's `$storePhone`/`$storeEmail`:
-  - `emails/orders/order-cancelled.blade.php:87,94,110`: `(555) 123-BAKE` and `hello@kneaditbakery.com`
-  - `emails/orders/order-delivered.blade.php:79,80,97`: `hello@kneaditbakery.com`, `@kneaditbakery`, `(555) 123-BAKE`
-  - `emails/orders/order-baking.blade.php:68`: `123 Baker Street, Sweet City, SC 12345`
-- [ ] **Hardcoded "KneadIt Bakery" brand in email templates** — Four email templates use literal `KneadIt Bakery` in `@section('title')` and body where `$storeName` should be used:
-  - `emails/orders/order-cancelled.blade.php:14,107`
-  - `emails/orders/order-baking.blade.php:14,78`
-  - `emails/orders/order-delivered.blade.php:14,85`
-  - `emails/layout.blade.php:6` (default title)
-- [ ] **Phantom event/listener in EventServiceProvider** — `app/Providers/EventServiceProvider.php:5,22,55-57`: References non-existent `BirthdayDiscountGenerated` event and `SendBirthdayDiscountEmailListener`. Will cause runtime error if dispatched.
-- [ ] **CreateQuickOrder skips OrderCreated event** — `app/Actions/Orders/CreateQuickOrder.php`: Unlike `CreateOrder`, quick orders don't dispatch `OrderCreated`, so no customer email, baker notification, or webhook fires.
+### New Enum: `EmailTemplateType` (backed string enum)
+Defines every customizable email type. Cases:
+- `OrderPlaced`
+- `OrderConfirmed`
+- `OrderBaking`
+- `OrderReady`
+- `OrderDelivered`
+- `OrderCancelled`
+- `ReviewRequest`
+- `HappyBirthday`
+- `RepeatOrderReminder`
+- `ProductAvailable`
 
----
+Each case provides:
+- `label()` — human-readable name (e.g., "Order Placed")
+- `description()` — what the email does (e.g., "Sent when a customer submits an order")
+- `availablePlaceholders()` — array of placeholder strings for that type
+- `defaultSubject()` — matches current hardcoded subjects
 
-## High Priority — Behavioral Inconsistencies
+### New Model: `EmailTemplate` (tenant DB)
+- `id`, `email_type` (cast to `EmailTemplateType`), `subject`, `body` (longText), `timestamps`
+- No factory/seeder — templates are created on-demand when a tenant customizes
 
-- [ ] **Double-queuing mail in 2 listeners** — `app/Listeners/Platform/SendTrialExpiredEmailListener.php:31-34` and `SendTrialReminderEmailListener.php:31-34`: Override `shouldQueueMail()` to `true`, causing mail to be queued a second time from an already-queued listener. Remove the overrides.
-- [ ] **CheckPayPalPaymentsCommand type bug** — `app/Console/Commands/Stripe/CheckPayPalPaymentsCommand.php:81,85`: Uses `\stdClass $o` instead of `Order $o` in `tap()` closures for CANCELLED and REFUNDED cases.
-- [ ] **CheckPayPalPaymentsCommand wrong directory** — File is in `Commands/Stripe/` but handles PayPal. Move to `Commands/PayPal/` or `Commands/Payments/`.
-- [ ] **Missing config key** — `config/monitoring.php` doesn't define `churn_low_health_threshold` even though it's referenced in `ChurnAlertService.php:117`.
+### New Service: `EmailTemplateRenderer`
+1. Look up `EmailTemplate` for the given `EmailTemplateType`
+2. If found → use custom subject/body
+3. If not → return `null` so the Mailable falls back to the existing Blade view
+4. Replace `{placeholder}` tokens with actual values in subject and body
+5. Return a simple DTO with `subject` and `body`
 
----
+### Changes to Mailables
+Each of the 10 customer-facing Mailables:
+- `envelope()` → checks renderer for custom subject, falls back to current hardcoded subject
+- `content()` → when custom body exists, uses a generic `emails.custom-template` view that wraps the body in the existing layout; otherwise uses the current Blade view unchanged
 
-## High Priority — Blade View Issues
+**Zero disruption for non-Pro tenants** — they keep the existing Blade templates exactly as-is.
 
-- [ ] **Missing `@session` directive** — 8 files use `@if(session('...'))` instead of `@session('...')`:
-  - `billing/plans.blade.php:12`, `storefront/contact.blade.php:66`, `storefront/survey.blade.php:7`
-  - `storefront/catering.blade.php:117`, `auth/forgot-password.blade.php:21`, `storefront/driver.blade.php:22`
-  - `storefront/gallery.blade.php:119`, `auth/verify-email.blade.php:34`
-- [ ] **Missing `@selected` directive** — 12+ occurrences of raw ternary `{{ old('x') === 'y' ? 'selected' : '' }}`:
-  - `storefront/catering.blade.php:151-155` (5 occurrences)
-  - `storefront/gallery.blade.php:178`
-  - `filament/pages/settings/homepage-builder.blade.php:87,126,150,174,205` (5 occurrences)
-  - `filament/pages/tools/shopping-list-generator.blade.php:51`
-- [ ] **Missing `@checked` directive** — 2 occurrences:
-  - `auth/login.blade.php:36`
-  - `filament/pages/settings/homepage-builder.blade.php:58`
-- [ ] **Inconsistent `@money` usage** — Several views use `number_format()` with manual `$` prefix instead of the custom `@money()` directive:
-  - `billing/plans.blade.php:33,36`, `admin/orders/invoice.blade.php:132,138`
-  - `filament/resources/orders/view-order-items.blade.php:86`
-  - `filament/widgets/catering-pipeline-widget.blade.php:20`
-  - `filament/widgets/goal-tracker.blade.php:37,60`
-  - `filament/central/pages/view-tenant.blade.php:12`
+### New Blade View: `emails/custom-template.blade.php`
+Extends `emails.layout`, renders `{!! $customBody !!}` in the content section. Only used when a tenant has a custom template.
 
----
-
-## Medium Priority — Code Duplication in Views
-
-- [ ] **Social media icons duplicated 3 times** — Same SVG blocks in `components/layouts/storefront.blade.php:242-257`, `partials/home/social.blade.php:10-45`, `storefront/about.blade.php:143-159`. Extract to `<x-storefront.social-links>`.
-- [ ] **Order items list duplicated 10+ times** — Same iteration pattern across storefront, admin, and email views. Extract storefront version to `<x-storefront.order-items-list>`, email version to `@include('emails.partials.order-items')`.
-- [ ] **Delivery/pickup info block duplicated in 3 email templates** — Extract to `@include('emails.partials.delivery-info')`.
-- [ ] **Hardcoded tagline** — `storefront layout:228`: `Baked with love, served with care` should come from settings.
-- [ ] **Hardcoded fallback about text** — `storefront/about.blade.php:73-74`: Fallback paragraphs should be in a lang file.
-- [ ] **Hardcoded billing page title** — `billing/plans.blade.php:6`: `Choose Your Plan -- KneadIt` hardcoded.
+### New Filament Page: `ManageEmailTemplates`
+- Settings navigation group
+- Gated: `Feature::active('pro-features')` + `RequiresManagerRole`
+- Table of all `EmailTemplateType` cases showing name, description, status (Default / Customized)
+- Edit slide-over per type:
+  - Available placeholders listed (read-only reference)
+  - Subject input (pre-filled with default)
+  - Body textarea (pre-filled with default)
+  - Reset to default action (deletes the `EmailTemplate` row)
 
 ---
 
-## Medium Priority — Architecture
+## Implementation Steps
 
-- [ ] **Dead `$daysText` variable** — `app/Console/Commands/Platform/CheckTrialExpirationsCommand.php:56`: Assigned but never used.
-- [ ] **`CheckChurnAlertsCommand` has 90 lines of business logic** — Lines 19-109 should be in a service or action. A `ChurnAlertService` already exists at `app/Services/Tenants/ChurnAlertService.php` — check if this command duplicates its logic.
-- [ ] **`SendPaymentFailedAlertListener` reuses `HealthAlertMail`** — `app/Listeners/Platform/SendPaymentFailedAlertListener.php:19`: Should use a dedicated `PaymentFailedAlertMail` instead.
-- [ ] **Duplicate `ShoppingListService` class names** — `app/Services/Orders/ShoppingListService.php` and `app/Services/Inventory/ShoppingListService.php`. Rename or consolidate.
-- [ ] **Password validation rule duplicated 3 times** — `Password::min(8)->letters()->numbers()` in `RegisterRequest`, `ResetPasswordRequest`, `AcceptInvitationRequest`. Extract to a shared location.
-
----
-
-## Medium Priority — Enum Migrations
-
-- [ ] **7 migrations use `enum()` columns instead of `string()`** — All have PHP backed enums + model casts already. Create new migrations to alter these columns to `string`:
-  - `platform_announcements.type`, `expenses.category`, `waitlist_entries.status`
-  - `incomes.source`, `coupons.type`, `social_posts.platform`, `social_posts.status`
+- [x] 1. Create `EmailTemplateType` enum with cases, labels, descriptions, placeholders, default subjects
+- [x] 2. Create migration + `EmailTemplate` model + factory
+- [x] 3. Create `EmailTemplateRenderer` service
+- [x] 4. Create `emails/custom-template.blade.php` view
+- [x] 5. Update 6 Mailables (covering 10 email types) to use renderer
+- [x] 6. Create `ManageEmailTemplates` Filament page with slide-over edit + reset
+- [x] 7. Write tests (71 new tests: enum, renderer, mailable integration, Filament page)
+- [x] 8. Run full test suite (3,292 pass) + Pint (clean)
 
 ---
 
-## Low Priority — View Quality
+## Placeholders by Email Type
 
-- [ ] **Inline `style` attributes in storefront views** — `storefront/contact.blade.php`, `storefront/order.blade.php`, `admin/orders/invoice.blade.php` use inline styles instead of Tailwind classes.
-- [ ] **50+ inline `onmouseover`/`onclick` handlers** — Should use CSS `:hover` or Alpine.js instead of inline JavaScript event handlers.
-- [ ] **Large embedded JavaScript blocks** — `partials/order-form-script.blade.php` (351 lines), `storefront/order-tracking.blade.php` (87 lines), `storefront/gift-cards.blade.php` (86 lines) should be compiled JS modules.
-- [ ] **`ucfirst()` on enum value** — `admin/orders/invoice.blade.php:79`: Should use `$order->payment_method?->getLabel()`.
-- [ ] **Config calls in Blade** — `billing/plans.blade.php:19,23,69` and `billing/success.blade.php:15` call `config('kneadit.plans')` directly instead of receiving data from the controller.
-
----
-
-## Low Priority — Miscellaneous
-
-- [ ] **`ImpersonationToken` model missing factory** — No factory exists at `database/factories/Platform/`.
-- [ ] **`TenantSeeder` vs `DatabaseSeeder` mismatch** — `TenantSeeder` includes `BlogPostSeeder` and `BusinessScheduleSeeder` but `DatabaseSeeder::seedTenantData()` does not.
-- [ ] **`TenantHealthScore::color()` has UI logic in value object** — `app/ValueObjects/TenantHealthScore.php:37-42`: Returns Filament color names. Move to presenter or widget.
-- [ ] **Presenters not `final`** — All 4 presenters are `class` instead of `final class`.
-- [ ] **Storefront layout `@php` blocks** — `components/layouts/storefront.blade.php:45-52,158-164,195-203,230-237`: Variable preparation belongs in a ViewComposer.
-- [ ] **`app(TenantSettings::class)` used where constructor injection would work** — Several Filament pages and `LoyaltyLedger` use `app()` instead of DI.
+| Email Type | Placeholders |
+|---|---|
+| Order Placed | `{customer_name}`, `{order_number}`, `{order_total}`, `{store_name}` |
+| Order Confirmed | `{customer_name}`, `{order_number}`, `{order_total}`, `{delivery_date}`, `{store_name}` |
+| Order Baking | `{customer_name}`, `{order_number}`, `{store_name}` |
+| Order Ready | `{customer_name}`, `{order_number}`, `{store_name}` |
+| Order Delivered | `{customer_name}`, `{order_number}`, `{store_name}` |
+| Order Cancelled | `{customer_name}`, `{order_number}`, `{order_total}`, `{store_name}` |
+| Review Request | `{customer_name}`, `{order_number}`, `{review_url}`, `{store_name}` |
+| Happy Birthday | `{customer_name}`, `{coupon_code}`, `{coupon_amount}`, `{store_name}` |
+| Repeat Order Reminder | `{customer_name}`, `{days_since_last_order}`, `{store_name}` |
+| Product Available | `{customer_name}`, `{product_name}`, `{store_name}` |
 
 ---
 
-## What's Done Well (No Changes Needed)
-
-- All events use constructor property promotion with `public readonly`
-- All observers registered via `#[ObservedBy]`
-- All observers delegate to Actions (no business logic)
-- All listeners extend `QueuedListener` (all queued with proper retry/timeout config)
-- All commands follow `XxxCommand` naming convention
-- All FormRequests use array notation for validation rules
-- All FormRequests have explicit `authorize()` methods
-- No `env()` calls in Blade views
-- No `settings()` calls in Blade views (consistently uses `$settings` DTO)
-- All models use `#[Fillable]` (no mass assignment risks)
-- All raw SQL uses parameterized queries (no SQL injection risks)
-- All 23 DTOs use `final readonly class`
-- All 6 value objects use `final readonly class`
+## What This Does NOT Change
+- Email layout (header/footer/branding) — unchanged
+- BakerBranded from/reply-to — unchanged
+- BaseMailable view data injection — unchanged
+- Platform emails — not customizable
+- Email campaign system — separate feature
+- Non-Pro tenants — no change whatsoever
 
 ---
 
-## Review — Test Suite Reorganization (2026-04-15)
+## Review
 
-### Summary
+### Files Created (8)
+- `app/Enums/Marketing/EmailTemplateType.php` — backed string enum with 10 cases, each providing label, description, placeholders, and default subject
+- `app/Models/Marketing/EmailTemplate.php` — tenant-scoped model with `email_type` (enum cast), `subject`, `body`
+- `database/factories/Marketing/EmailTemplateFactory.php` — factory for arch test compliance
+- `database/migrations/tenant/2026_04_16_032058_create_email_templates_table.php` — tenant migration
+- `app/Services/Email/EmailTemplateRenderer.php` — resolves custom template or returns null for fallback
+- `resources/views/emails/custom-template.blade.php` — simple layout wrapper for custom body content
+- `app/Filament/Pages/Settings/ManageEmailTemplates.php` — Pro-gated Filament page with edit slide-over and reset
+- `resources/views/filament/pages/settings/manage-email-templates.blade.php` — card-based UI showing all 10 email types
 
-Reorganized the test suite to establish strict 1:1 mapping between `app/` files and `tests/` files, eliminating catch-all test files and ensuring consistent naming.
+### Files Modified (6)
+- `app/Mail/Orders/OrderPlacedMail.php` — checks renderer for custom subject/body
+- `app/Mail/Orders/OrderStatusMail.php` — maps 5 statuses to template types, checks renderer
+- `app/Mail/Customers/ReviewRequestMail.php` — checks renderer
+- `app/Mail/Customers/HappyBirthdayMail.php` — checks renderer
+- `app/Mail/Customers/RepeatOrderReminderMail.php` — checks renderer
+- `app/Mail/Customers/ProductAvailableMail.php` — checks renderer
 
-### Phase 1: Moved 9 misplaced test files
-- `OnboardingTest` -> `Auth/OnboardingTest`
-- `InvoiceTest` -> `Central/InvoiceControllerTest`
-- `ReferralTest` -> `Central/ReferralControllerTest`
-- `DriverTest` -> `Storefront/DriverDashboardControllerTest`
-- `MarkOrderDeliveredControllerTest` -> `Storefront/MarkOrderDeliveredControllerTest`
-- `AcceptInvitationControllerTest` -> `Auth/AcceptInvitationControllerTest`
-- `StripeWebhookTest` -> `Stripe/StripeWebhookControllerTest`
-- `StripeConnectWebhookTest` -> `Stripe/StripeConnectWebhookControllerTest`
-- `ShowInvitationControllerTest` -> `Auth/ShowInvitationControllerTest` (merged with `InvitationTest`)
-- Normalized `$this->` to Pest global functions in all moved files
-
-### Phase 2: Split 3 catch-all files + renamed 9 files
-- **CentralPagesTest.php** (8 tests) -> 6 new controller test files + 2 tests added to existing files
-- **BladePhpRefactorTest.php** (14 tests) -> 7 new controller test files + 7 tests merged into existing files
-- **StorefrontTest.php** (12 tests) -> menu tests merged into `MenuControllerTest`, contact tests into `ContactControllerTest`
-- Root-level `ContactControllerTest` and `BlogControllerTest` merged into Storefront equivalents
-- `ChangelogTest` moved from Storefront to Central (correct controller location)
-- `OrderFormTest` and `OrderTest` deleted (all tests covered by dedicated per-controller files)
-- 7 existing files renamed to match controller names exactly (e.g., `ReviewTest` -> `ReviewsIndexControllerTest`)
-
-### Phase 3: Created 15 new test files
-- **Tier 1 (6 files):** ApplyCoupon, CreateBirthdayCoupon, AdjustLoyaltyPoints, RedeemLoyaltyPoints, HandleCheckoutComplete, CancelStripeCheckout
-- **Tier 2 (4 files):** AddCustomDomain, RemoveCustomDomain, CreateUser, RecordPayPalInvoice
-- **Tier 3 (5 files):** VerifyEmailController, SendVerificationNotificationController, CaptionGeneratorService, QrCodeService, ReauthenticateFromCheckoutSession
+### Tests Created (4 files, 71 tests)
+- `tests/Unit/Enums/Marketing/EmailTemplateTypeTest.php` — 50 tests (enum labels, descriptions, placeholders, subjects)
+- `tests/Unit/Services/Email/EmailTemplateRendererTest.php` — 6 tests (resolve, fallback, placeholder replacement)
+- `tests/Integration/Mail/CustomEmailTemplateTest.php` — 10 tests (each Mailable with/without custom templates)
+- `tests/Integration/Filament/Pages/Settings/ManageEmailTemplatesPageTest.php` — 5 tests (page data, status tracking, reset)
 
 ### Test Results
-- Feature tests: 999 passing
-- Integration tests: 1571 passing
-- New tests: 38 tests, all passing
+- Full suite: 3,292 tests, 7,141 assertions — all passing
 - Pint: clean
-- Pre-existing failures (unrelated): 1 enum label test, 6 PayPal settings table tests, 4 arch tests
+- No regressions in existing mail tests
+
+### Related Issue
+- #31 — per-email toggle (future follow-up, not part of this implementation)
