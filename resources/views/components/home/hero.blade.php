@@ -54,14 +54,14 @@
             {{ $storeName }}
         </h1>
         <p class="hero-fade-2 font-script text-2xl md:text-3xl mb-10 text-warm-300">
-            {{ $tagline ?: 'Where every bite tells a story' }}
+            {{ $heroTagline ?: ($tagline ?: 'Where every bite tells a story') }}
         </p>
         <div class="hero-fade-3 flex flex-col sm:flex-row gap-4 justify-center">
             <a href="{{ route('order.create') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
-                Order Now
+                {{ $primaryCtaText }}
             </a>
             <a href="{{ route('storefront.menu') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105" style="border: 2px solid rgba(232,176,74,0.4); color: var(--warm-300);">
-                Browse Menu
+                {{ $secondaryCtaText }}
             </a>
         </div>
     </div>
@@ -96,10 +96,10 @@
 
             <div class="hero-fade-3 flex flex-wrap gap-4">
                 <a href="{{ route('order.create') }}" class="inline-block px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900">
-                    Place Your Order
+                    {{ $primaryCtaText }}
                 </a>
                 <a href="{{ route('storefront.menu') }}" class="inline-flex items-center gap-2 px-6 py-4 font-semibold transition-all duration-200 text-warm-400">
-                    Our Menu
+                    {{ $secondaryCtaText }}
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </a>
             </div>

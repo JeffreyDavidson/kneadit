@@ -110,6 +110,18 @@ class SettingSeeder extends Seeder
                 'value' => 'split',
             ],
             [
+                'key' => 'hero_tagline',
+                'value' => 'Where every bite tells a story',
+            ],
+            [
+                'key' => 'hero_primary_cta_text',
+                'value' => 'Order Now',
+            ],
+            [
+                'key' => 'hero_secondary_cta_text',
+                'value' => 'Browse Menu',
+            ],
+            [
                 'key' => 'about_us_text',
                 'value' => 'KneadIt Bakery is a family-owned artisan bakery located in the heart of Central Florida. We specialize in handcrafted breads, pastries, cakes, and seasonal specialties using traditional techniques and the finest local ingredients. From our signature sourdough to custom wedding cakes, every item is made fresh daily with passion and attention to detail.',
             ],
