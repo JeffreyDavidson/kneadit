@@ -6,7 +6,7 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->storeName . ' gallery'" image-class="gallery-hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
         <x-storefront.eyebrow class="gallery-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'From Our Customers' }}</x-storefront.eyebrow>
-        <h1 class="gallery-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
+        <h1 class="gallery-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
             {{ $content['hero_title'] ?? 'Customer Gallery' }}
         </h1>
         <p class="gallery-fade-2 font-script text-2xl md:text-3xl text-warm-400">
