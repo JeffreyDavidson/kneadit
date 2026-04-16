@@ -14,9 +14,12 @@ class PurchaseGiftCardController extends Controller
     {
         $card = $createGiftCard($request->toData());
 
+        $message = settingsPageContent('gift_cards')['flash_purchased']
+            ?? 'Gift card purchased successfully.';
+
         return ApiResponse::success([
             'code' => $card->code,
             'balance' => $card->current_balance,
-        ], 'Gift card purchased successfully.');
+        ], $message);
     }
 }

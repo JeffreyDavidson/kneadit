@@ -1,3 +1,123 @@
+# Issue #36 — Configurable Storefront Microcopy
+
+## Investigation Summary
+
+The existing `page_content` system already covers headings/descriptions on each storefront page:
+- Stored in `settings['page_content']` as nested JSON keyed by page (`menu`, `catering`, `contact`, etc.)
+- Edited via `app/Filament/Pages/Settings/ManagePageContent.php` with a tab schema per page in `app/Filament/Pages/Settings/Schemas/PageContent/`
+- Consumed in controllers via `settingsPageContent($page)` helper, then `$content['key'] ?? 'default'` in views
+
+**Gap (issue #36):** Button labels, form placeholders, empty states, and flash messages are still hardcoded and have no `$content` fallback wired up.
+
+## Approach
+
+Extend the existing `page_content` system rather than introducing a new `microcopy` setting. Each tab schema gets a new "Buttons & Messages" section with the configurable copy keys for that page. Threading happens in three places:
+1. **Tab schemas** — add new TextInput fields under each page
+2. **Blade views** — replace hardcoded strings with `$content['key'] ?? 'Default'`
+3. **Controllers** — pull flash messages from settings before redirecting
+
+## Scope (Phase 1 — recommended for this PR)
+
+Pick the highest-impact, hardcoded-everywhere strings to keep PR reviewable:
+
+### Menu page
+- [ ] "Add to Order" button (`menu.blade.php:78`)
+- [ ] "Our menu is being updated. Check back soon." empty state (`menu.blade.php:12`)
+
+### Order page
+- [ ] "Place Order →" button (`order.blade.php:316`)
+- [ ] "Apply" coupon button (`order.blade.php:140`)
+- [ ] "Your cart is empty" / "Add items to get started" empty state (`order.blade.php:123`)
+- [ ] "Order submitted successfully!" flash (`SubmitOrderController.php:27`)
+- [ ] "Sorry, this date is fully booked..." flash (`SubmitOrderController.php`)
+
+### Catering page
+- [ ] "Submit Inquiry" button (`catering.blade.php:187`)
+- [ ] "Thank you for your inquiry!..." flash (`SubmitCateringInquiryController.php:17`)
+
+### Contact page
+- [ ] "Send Message" button (`contact.blade.php:102`)
+
+### Gift Cards page
+- [ ] "Check Balance" button (`gift-cards.blade.php:111`)
+- [ ] "Gift card purchased successfully." flash (`PurchaseGiftCardController.php:20`)
+
+### Reviews page
+- [ ] Already has `$content['empty_heading']` — no change needed
+
+### Order tracking
+- [ ] "No messages yet. Say hello!" — defer to Phase 2 (lives in inline JS, needs data-binding)
+
+## Out of Scope (Phase 2+)
+
+- Form labels (Name, Email, Phone, etc.) on catering/contact/gift-cards forms — many strings, mostly form-validation-coupled
+- Birthday field help text "(for special treats 🎂)" — single instance, low impact
+- JS error messages in `partials/order-form-script.blade.php` — needs JS module refactor first
+- Tier gating (Growth+/Pro restriction) — see decision below
+
+## Tier Gating Decision
+
+Issue suggests gating to Growth+/Pro. Current `page_content` is **tier-agnostic** — every tenant edits all page content. Adding tier gates here would:
+1. Be inconsistent with existing UX
+2. Hide settings that already work for Starter tenants today
+
+**Recommendation:** No gating in Phase 1. If tier gating is desired later, gate the entire `ManagePageContent` page (or specific tabs) rather than splitting microcopy across tiers. Check with Jeffrey before doing this.
+
+## Implementation Steps
+
+1. Update each affected tab schema in `app/Filament/Pages/Settings/Schemas/PageContent/` to add fields for buttons / empty states / flash messages
+2. Update Blade views to use `$content['key'] ?? 'Default'` pattern
+3. Update 3 controllers to pull flash messages from `settingsPageContent($page)`
+4. Write/update tests:
+   - Feature tests for each controller verifying default + customized flash message
+   - Pest test that the new tab schemas register the fields
+5. Run `vendor/bin/pint --dirty --format agent`
+6. Run `php artisan test --compact` on affected test files
+
+## Review (2026-04-16)
+
+### Schema changes
+- Added `Buttons & Messages` section to `MenuTabSchema` (`add_to_order_button`, `empty_message`)
+- Created new `OrderTabSchema` with three sections: Buttons (`place_order_button`, `apply_button`), Empty Cart (`empty_cart_heading`, `empty_cart_subtext`), Flash Messages (`flash_success`, `flash_full`)
+- Registered `OrderTabSchema` in `ManagePageContent` between Menu and About tabs
+- Added `Buttons & Messages` section to `CateringTabSchema` (`submit_button`, `flash_success`)
+- Added `Buttons & Messages` section to `ContactTabSchema` (`send_button`, `flash_success`)
+- Added `Buttons & Messages` section to `GiftCardsTabSchema` (`check_balance_button`, `flash_purchased`)
+
+### Blade view updates
+- `storefront/menu.blade.php` — "Add to Order" button + "Our menu is being updated…" empty state
+- `storefront/order.blade.php` — "Place Order →" button, "Apply" buttons (coupon + gift card), empty cart heading/subtext (`Js::from()` used inside Alpine x-text expressions for safe JS string injection)
+- `storefront/catering.blade.php` — "Submit Inquiry" button (Js::from)
+- `storefront/contact.blade.php` — "Send Message" button (Js::from)
+- `storefront/gift-cards.blade.php` — "Check Balance" button (Js::from)
+
+### Controller updates
+- `ShowOrderFormController` — now passes `$content` from `settingsPageContent('order')`
+- `SubmitOrderController` — pulls `flash_success` and `flash_full` from order page content
+- `SubmitCateringInquiryController` — pulls `flash_success` from catering page content
+- `PurchaseGiftCardController` — pulls `flash_purchased` from gift_cards page content
+- `ContactController::store` — pulls `flash_success` from contact page content
+
+### Tests
+- `SubmitOrderControllerTest` — 2 new tests (custom success message, custom fully-booked error)
+- `ContactControllerTest` — 1 new test (custom success message)
+- `PurchaseGiftCardControllerTest` — 1 new test (custom success message)
+- `SubmitCateringInquiryControllerTest` — created (3 tests covering default flash, custom flash, validation)
+- `ShowOrderFormControllerTest` — 1 new test (passes $content to view)
+
+### Verification
+- `vendor/bin/pint --dirty --format agent` — pass
+- All 24 affected feature tests pass
+- ManagePageContent page test still passes
+- SettingsManager integration tests still pass
+
+### Decisions made
+- Skipped tier gating to match existing tier-agnostic `page_content` UX
+- Used `Js::from()` for Alpine.js x-text strings (safer than raw string interpolation; prevents JS injection if tenant copy contains quotes/newlines)
+- Did not extract a new "microcopy" setting key; extended `page_content` JSON to keep one source of truth
+
+---
+
 # Full Application Refactor Audit (Round 3)
 
 ## Plan

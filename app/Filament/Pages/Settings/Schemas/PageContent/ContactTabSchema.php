@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Settings\Schemas\PageContent;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 
 class ContactTabSchema
@@ -34,6 +35,14 @@ class ContactTabSchema
                     TextInput::make('pageContent.contact.faq_heading')
                         ->label('FAQ Heading'),
                 ]),
+                Section::make('Buttons & Messages')->schema([
+                    TextInput::make('pageContent.contact.send_button')
+                        ->label('"Send Message" Button')
+                        ->placeholder('Send Message'),
+                    TextInput::make('pageContent.contact.flash_success')
+                        ->label('Message Received Confirmation')
+                        ->placeholder("Thank you for your message! We'll get back to you soon."),
+                ])->compact(),
             ]);
     }
 }
