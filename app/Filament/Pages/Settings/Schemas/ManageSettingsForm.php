@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Settings\Schemas;
 use App\Enums\Orders\PaymentMethod;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -73,6 +74,29 @@ class ManageSettingsForm
                             ->placeholder('{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}')
                             ->helperText('JSON format: distance ranges and fees')
                             ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
+
+                // Order Journey Section
+                Section::make('Order Journey')
+                    ->description('Customize the "What Happens Next" steps shown on the order confirmation page. The final step supports separate delivery and pickup copy.')
+                    ->schema([
+                        Repeater::make('order_journey_steps')
+                            ->label('Journey Steps')
+                            ->schema([
+                                TextInput::make('title')
+                                    ->required(),
+                                TextInput::make('description')
+                                    ->label('Description (general/pickup)'),
+                                TextInput::make('description_delivery')
+                                    ->label('Description (delivery variant)')
+                                    ->helperText('Leave blank if same as above'),
+                                TextInput::make('description_pickup')
+                                    ->label('Description (pickup variant)')
+                                    ->helperText('Leave blank if same as above'),
+                            ])
+                            ->defaultItems(3)
+                            ->maxItems(6)
                             ->columnSpanFull(),
                     ]),
 

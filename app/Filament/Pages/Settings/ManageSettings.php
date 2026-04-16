@@ -78,6 +78,9 @@ class ManageSettings extends Page
 
     public bool $show_policies_on_storefront = false;
 
+    /** @var array<int, array<string, string>> */
+    public array $order_journey_steps = [];
+
     public function mount(): void
     {
         $this->loadSettings();
@@ -110,6 +113,11 @@ class ManageSettings extends Page
         $this->pickup_policy = settings('pickup_policy', '');
         $this->additional_terms = settings('additional_terms', '');
         $this->show_policies_on_storefront = (bool) settings('show_policies_on_storefront', false);
+
+        $storedSteps = settings('order_journey_steps');
+        $this->order_journey_steps = $storedSteps
+            ? (json_decode($storedSteps, true) ?: config('kneadit.default_journey_steps'))
+            : config('kneadit.default_journey_steps');
     }
 
     public function content(Schema $schema): Schema
@@ -155,6 +163,7 @@ class ManageSettings extends Page
         $this->pickup_policy = '';
         $this->additional_terms = '';
         $this->show_policies_on_storefront = false;
+        $this->order_journey_steps = config('kneadit.default_journey_steps');
 
         Notification::make()
             ->title('Settings reset to defaults')

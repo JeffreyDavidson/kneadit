@@ -15,11 +15,16 @@ class ShowOrderConfirmationController extends Controller
 
         $content = settingsPageContent('order_confirmation');
 
+        $storedSteps = settings('order_journey_steps');
+        $journeySteps = $storedSteps
+            ? (json_decode($storedSteps, true) ?: config('kneadit.default_journey_steps'))
+            : config('kneadit.default_journey_steps');
+
         return view('storefront.order-confirmation', [
             'settings' => $settings,
             'order' => $order,
             'content' => $content,
-            'journeySteps' => $content['journey_steps'] ?? config('kneadit.default_journey_steps'),
+            'journeySteps' => $journeySteps,
         ]);
     }
 }
