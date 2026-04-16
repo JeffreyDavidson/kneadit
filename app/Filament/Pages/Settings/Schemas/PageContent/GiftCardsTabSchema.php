@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Settings\Schemas\PageContent;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 
 class GiftCardsTabSchema
@@ -45,6 +46,14 @@ class GiftCardsTabSchema
                     TextInput::make('pageContent.gift_cards.success_description')
                         ->label('Success Description'),
                 ]),
+                Section::make('Buttons & Messages')->schema([
+                    TextInput::make('pageContent.gift_cards.check_balance_button')
+                        ->label('"Check Balance" Button')
+                        ->placeholder('Check Balance'),
+                    TextInput::make('pageContent.gift_cards.flash_purchased')
+                        ->label('Purchase Success Message')
+                        ->placeholder('Gift card purchased successfully.'),
+                ])->compact(),
             ]);
     }
 }

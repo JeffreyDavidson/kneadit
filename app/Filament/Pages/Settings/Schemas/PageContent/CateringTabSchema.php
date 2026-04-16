@@ -72,6 +72,14 @@ class CateringTabSchema
                     TextInput::make('pageContent.catering.form_heading')
                         ->label('Form Heading'),
                 ]),
+                Section::make('Buttons & Messages')->schema([
+                    TextInput::make('pageContent.catering.submit_button')
+                        ->label('"Submit Inquiry" Button')
+                        ->placeholder('Submit Inquiry'),
+                    TextInput::make('pageContent.catering.flash_success')
+                        ->label('Inquiry Received Message')
+                        ->placeholder("Thank you for your inquiry! We'll review your request and get back to you with a custom quote soon."),
+                ])->compact(),
             ]);
     }
 }

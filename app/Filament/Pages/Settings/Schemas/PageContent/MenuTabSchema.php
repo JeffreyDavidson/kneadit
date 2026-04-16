@@ -39,6 +39,14 @@ class MenuTabSchema
                         ->label('CTA Description')
                         ->helperText('Use {{lead_time}} for order lead time hours'),
                 ])->compact(),
+                Section::make('Buttons & Messages')->schema([
+                    TextInput::make('pageContent.menu.add_to_order_button')
+                        ->label('"Add to Order" Button')
+                        ->placeholder('Add to Order'),
+                    TextInput::make('pageContent.menu.empty_message')
+                        ->label('Empty Menu Message')
+                        ->placeholder('Our menu is being updated. Check back soon.'),
+                ])->compact(),
             ]);
     }
 }

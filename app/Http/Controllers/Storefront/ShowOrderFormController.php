@@ -20,6 +20,7 @@ class ShowOrderFormController extends Controller
         return view('storefront.order', [
             'settings' => $settings,
             'categories' => $categories,
+            'content' => settingsPageContent('order'),
         ]);
     }
 }

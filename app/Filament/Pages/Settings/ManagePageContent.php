@@ -11,6 +11,7 @@ use App\Filament\Pages\Settings\Schemas\PageContent\GiftCardsTabSchema;
 use App\Filament\Pages\Settings\Schemas\PageContent\LoyaltyTabSchema;
 use App\Filament\Pages\Settings\Schemas\PageContent\MenuTabSchema;
 use App\Filament\Pages\Settings\Schemas\PageContent\OrderConfirmationTabSchema;
+use App\Filament\Pages\Settings\Schemas\PageContent\OrderTabSchema;
 use App\Filament\Pages\Settings\Schemas\PageContent\OrderTrackingTabSchema;
 use App\Filament\Pages\Settings\Schemas\PageContent\ReviewsTabSchema;
 use App\Filament\Pages\Settings\Schemas\PageContent\SubmitReviewTabSchema;
@@ -59,6 +60,7 @@ class ManagePageContent extends Page
                         Tabs::make('pages')
                             ->schema([
                                 MenuTabSchema::make(),
+                                OrderTabSchema::make(),
                                 AboutTabSchema::make(),
                                 ContactTabSchema::make(),
                                 ReviewsTabSchema::make(),
