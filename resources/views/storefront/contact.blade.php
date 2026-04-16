@@ -64,41 +64,42 @@
                 <x-storefront.eyebrow align="left" line-opacity="0.5" class="mb-8">{{ $content['form_eyebrow'] ?? 'Send a Message' }}</x-storefront.eyebrow>
 
                 @session('success')
-                <x-storefront.alert variant="light">
+                <x-storefront.alert variant="light" :dismiss-after="5000">
                     <p class="font-medium">{{ $value }}</p>
                 </x-storefront.alert>
                 @endsession
 
                 <div class="p-8 md:p-10 rounded-2xl" style="background: white; box-shadow: 0 8px 40px rgba(28,20,16,0.08); border: 1px solid var(--warm-200);">
-                    <form action="{{ route('contact.store') }}" method="POST" class="space-y-6">
+                    <form action="{{ route('contact.store') }}" method="POST" class="space-y-6" x-data="{ submitting: false }" @submit="submitting = true">
                         @csrf
                         <div class="grid sm:grid-cols-2 gap-6">
                             <div>
                                 <label for="name" class="block text-sm font-medium mb-2 text-warm-800">Full Name</label>
-                                <input type="text" id="name" name="name" value="{{ old('name') }}" required class="contact-input @error('name') border-red-500 @enderror" placeholder="Jane Smith" @error('name') aria-invalid="true" aria-describedby="name-error" @enderror>
+                                <input type="text" id="name" name="name" value="{{ old('name') }}" required class="storefront-input @error('name') border-red-500 @enderror" placeholder="Jane Smith" @error('name') aria-invalid="true" aria-describedby="name-error" @enderror>
                                 @error('name')<p id="name-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>@enderror
                             </div>
                             <div>
                                 <label for="email" class="block text-sm font-medium mb-2 text-warm-800">Email</label>
-                                <input type="email" id="email" name="email" value="{{ old('email') }}" required class="contact-input @error('email') border-red-500 @enderror" placeholder="jane@example.com" @error('email') aria-invalid="true" aria-describedby="email-error" @enderror>
+                                <input type="email" id="email" name="email" value="{{ old('email') }}" required class="storefront-input @error('email') border-red-500 @enderror" placeholder="jane@example.com" @error('email') aria-invalid="true" aria-describedby="email-error" @enderror>
                                 @error('email')<p id="email-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>@enderror
                             </div>
                         </div>
 
                         <div>
                             <label for="subject" class="block text-sm font-medium mb-2 text-warm-800">Subject</label>
-                            <input type="text" id="subject" name="subject" value="{{ old('subject') }}" required class="contact-input @error('subject') border-red-500 @enderror" placeholder="What's this about?" @error('subject') aria-invalid="true" aria-describedby="subject-error" @enderror>
+                            <input type="text" id="subject" name="subject" value="{{ old('subject') }}" required class="storefront-input @error('subject') border-red-500 @enderror" placeholder="What's this about?" @error('subject') aria-invalid="true" aria-describedby="subject-error" @enderror>
                             @error('subject')<p id="subject-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>@enderror
                         </div>
 
                         <div>
                             <label for="message" class="block text-sm font-medium mb-2 text-warm-800">Message</label>
-                            <textarea id="message" name="message" rows="6" required class="contact-input @error('message') border-red-500 @enderror" placeholder="Tell us how we can help..." @error('message') aria-invalid="true" aria-describedby="message-error" @enderror>{{ old('message') }}</textarea>
+                            <textarea id="message" name="message" rows="6" required class="storefront-input @error('message') border-red-500 @enderror" placeholder="Tell us how we can help..." @error('message') aria-invalid="true" aria-describedby="message-error" @enderror>{{ old('message') }}</textarea>
                             @error('message')<p id="message-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>@enderror
                         </div>
 
-                        <button type="submit" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900">
-                            Send Message
+                        <button type="submit" class="inline-flex items-center gap-2 px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none" :disabled="submitting">
+                            <span class="spinner" x-show="submitting" x-cloak></span>
+                            <span x-text="submitting ? 'Sending...' : 'Send Message'"></span>
                         </button>
                     </form>
                 </div>

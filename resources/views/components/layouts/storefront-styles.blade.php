@@ -120,6 +120,26 @@
             background: var(--warm-300);
         }
 
+        .btn-primary:disabled,
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
         .nav-link {
             color: var(--warm-200);
             text-decoration: none;
@@ -179,6 +199,46 @@
         .input-field:focus {
             outline: none;
             border-color: var(--warm-500);
+        }
+
+        .storefront-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid var(--warm-200);
+            background: white;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--warm-900);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+        .storefront-input:focus {
+            border-color: var(--warm-500);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--warm-500) 10%, transparent);
+        }
+        .storefront-input::placeholder {
+            color: var(--warm-400);
+        }
+
+        .storefront-input-dark {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid color-mix(in srgb, var(--warm-600) 25%, transparent);
+            background: var(--warm-800);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--warm-200);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+        .storefront-input-dark:focus {
+            border-color: var(--warm-500);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--warm-500) 15%, transparent);
+        }
+        .storefront-input-dark::placeholder {
+            color: var(--warm-600);
         }
 
         .text-primary {
