@@ -130,7 +130,7 @@
         }
 
         .nav-link:hover {
-            background: rgba(212, 146, 12, 0.2);
+            background: color-mix(in srgb, var(--warm-500) 20%, transparent);
             color: var(--warm-400);
         }
 
@@ -143,20 +143,20 @@
             display: block;
             color: var(--warm-200);
             text-decoration: none;
-            padding: 8px 20px;
+            padding: 10px 20px;
             font-weight: 500;
             font-size: 0.9rem;
             transition: all 0.2s ease;
         }
 
         .nav-dropdown-link:hover {
-            background: rgba(212, 146, 12, 0.15);
+            background: color-mix(in srgb, var(--warm-500) 15%, transparent);
             color: var(--warm-400);
         }
 
         .nav-dropdown-link.active {
             color: var(--warm-400);
-            background: rgba(212, 146, 12, 0.1);
+            background: color-mix(in srgb, var(--warm-500) 10%, transparent);
         }
 
         .card {

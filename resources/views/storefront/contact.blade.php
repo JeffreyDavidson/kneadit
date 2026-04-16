@@ -6,7 +6,7 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->storeName . ' contact'" image-class="contact-hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
         <x-storefront.eyebrow class="contact-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Get in Touch' }}</x-storefront.eyebrow>
-        <h1 class="contact-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
+        <h1 class="contact-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
             {!! nl2br(e($content['hero_title'] ?? "We'd Love to\nHear From You")) !!}
         </h1>
         <p class="contact-fade-2 font-script text-2xl md:text-3xl text-warm-400">

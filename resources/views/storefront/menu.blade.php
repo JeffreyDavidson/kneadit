@@ -5,7 +5,7 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->storeName . ' menu'" image-class="menu-hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
         <x-storefront.eyebrow class="menu-fade-1 mb-6">{{ $heroEyebrow }}</x-storefront.eyebrow>
-        <h1 class="menu-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
+        <h1 class="menu-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
             {{ $content['hero_title'] ?? 'Our Menu' }}
         </h1>
         <p class="menu-fade-2 font-script text-2xl md:text-3xl text-warm-400">
@@ -19,20 +19,20 @@
 
 {{-- Category Filter Tabs --}}
 @if (count($categories) > 1)
-<div class="sticky top-16 z-30 bg-warm-900 border-b border-warm-700/15">
+<div class="sticky top-14 md:top-16 z-30 bg-warm-900 border-b border-warm-700/15">
     <div class="max-w-7xl mx-auto px-4">
-        <nav class="flex overflow-x-auto gap-2 py-4 scrollbar-hide scrollbar-none" x-data="{ active: '' }">
+        <nav class="flex overflow-x-auto gap-2 py-4 scrollbar-hide scrollbar-none" x-data="{ active: '' }" role="tablist">
             <a href="#all" @click="active = ''"
-               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-2.5 rounded-full"
+               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-2.5 rounded-full text-warm-400 bg-warm-700/15"
                :class="active === '' ? 'active' : ''"
-               class="text-warm-400 bg-warm-700/15">
+               role="tab">
                 All
             </a>
             @foreach ($categories as $cat)
             <a href="#category-{{ $cat->id }}" @click="active = '{{ $cat->id }}'"
-               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-2.5 rounded-full"
+               class="category-tab whitespace-nowrap text-sm font-semibold px-5 py-2.5 rounded-full text-warm-400 bg-warm-700/15"
                :class="active === '{{ $cat->id }}' ? 'active' : ''"
-               class="text-warm-400 bg-warm-700/15">
+               role="tab">
                 {{ $cat->name }}
             </a>
             @endforeach
