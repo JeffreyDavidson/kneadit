@@ -11,6 +11,8 @@ final readonly class OrderSettings
         public int $leadTimeHours,
         public bool $deliveryEnabled,
         public string $freeDeliveryMinimum,
+        public string $minimumPickupOrderAmount,
+        public string $minimumDeliveryOrderAmount,
         public array $deliveryFeeTiers,
     ) {}
 
