@@ -40,7 +40,7 @@ class OrderPlacedMail extends BaseMailable
             $this->placeholders(),
         );
 
-        if ($resolved) {
+        if ($resolved && $resolved['body']) {
             return new Content(
                 view: 'emails.custom-template',
                 with: ['customBody' => $resolved['body']],
@@ -59,7 +59,7 @@ class OrderPlacedMail extends BaseMailable
     private function placeholders(): array
     {
         return [
-            'customer_name' => $this->order->customer?->name ?? 'there',
+            'customer_name' => $this->order->customer->name ?? 'there',
             'order_number' => $this->order->order_number,
             'order_total' => '$' . number_format($this->order->total / 100, 2),
             'store_name' => app(TenantSettings::class)->storeName,

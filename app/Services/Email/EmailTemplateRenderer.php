@@ -14,7 +14,7 @@ class EmailTemplateRenderer
      * to fall back to its default Blade view.
      *
      * @param array<string, string> $placeholders
-     * @return array{subject: string, body: string}|null
+     * @return array{subject: string, body: string|null}|null
      */
     public function resolve(EmailTemplateType $type, array $placeholders = []): ?array
     {
@@ -28,7 +28,9 @@ class EmailTemplateRenderer
 
         return [
             'subject' => $this->replacePlaceholders($template->subject, $placeholders),
-            'body' => $this->replacePlaceholders($template->body, $placeholders),
+            'body' => $template->body
+                ? $this->replacePlaceholders($template->body, $placeholders)
+                : null,
         ];
     }
 

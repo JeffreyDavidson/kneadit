@@ -180,6 +180,26 @@ class ManageSettingsForm
                             ->helperText('Display your policies in the storefront footer'),
                     ]),
 
+                // Gift Card Settings
+                Section::make('Gift Cards')
+                    ->description('Configure gift card purchase options on your storefront')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('gift_card_preset_amounts')
+                                    ->label('Preset Amounts')
+                                    ->placeholder('10,25,50,100')
+                                    ->helperText('Comma-separated dollar amounts shown as quick-select buttons'),
+
+                                TextInput::make('gift_card_default_amount')
+                                    ->label('Default Selected Amount')
+                                    ->numeric()
+                                    ->default(25)
+                                    ->prefix('$')
+                                    ->helperText('The amount pre-selected when the page loads'),
+                            ]),
+                    ]),
+
                 // Integrations Section
                 Section::make('Integrations')
                     ->description('Connect KneadIt to other tools via webhooks')
