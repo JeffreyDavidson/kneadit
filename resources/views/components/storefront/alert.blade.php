@@ -1,6 +1,7 @@
 @props([
     'type' => 'success',
     'variant' => 'dark',
+    'dismissAfter' => null,
 ])
 
 @php
@@ -12,6 +13,16 @@
     };
 @endphp
 
-<div class="rounded-2xl p-5 mb-6 {{ $type === 'success' ? 'text-center' : '' }}" style="{{ $styles }}">
+<div class="rounded-2xl p-5 mb-6 {{ $type === 'success' ? 'text-center' : '' }}"
+     style="{{ $styles }}"
+     @if ($dismissAfter)
+     x-data="{ visible: true }"
+     x-show="visible"
+     x-transition:leave="transition ease-in duration-300"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     x-init="setTimeout(() => visible = false, {{ $dismissAfter }})"
+     @endif
+>
     {{ $slot }}
 </div>

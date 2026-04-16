@@ -6,7 +6,7 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->storeName . ' Reviews'" image-class="review-hero-img" min-height="60vh" gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[60vh]">
         <x-storefront.eyebrow class="review-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'What People Say' }}</x-storefront.eyebrow>
-        <h1 class="review-fade-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
+        <h1 class="review-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
             {{ $content['hero_title'] ?? 'Kind Words' }}
         </h1>
         @if ($vm->totalReviews > 0)
@@ -19,17 +19,19 @@
 @if ($vm->totalReviews > 0)
 <section class="bg-warm-800">
     <div class="max-w-5xl mx-auto px-4 py-12">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
+             x-data="{ reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches, countUp(el, target, suffix = '') { if (this.reduced) { el.textContent = (Number.isInteger(target) ? target : target.toFixed(1)) + suffix; return; } let current = 0; const step = target / 30; const interval = setInterval(() => { current = Math.min(current + step, target); el.textContent = (Number.isInteger(target) ? Math.round(current) : current.toFixed(1)) + suffix; if (current >= target) clearInterval(interval); }, 30); } }"
+             x-intersect.once="$nextTick(() => { countUp($refs.avg, {{ $vm->avgRating }}); countUp($refs.total, {{ $vm->totalReviews }}); countUp($refs.pct, {{ $vm->fiveStarPct }}, '%'); })">
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->formattedAvgRating }}</span>
+                <span x-ref="avg" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->formattedAvgRating }}</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Average Rating</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->totalReviews }}</span>
+                <span x-ref="total" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->totalReviews }}</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Total Reviews</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->fiveStarPct }}%</span>
+                <span x-ref="pct" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->fiveStarPct }}%</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">5-Star Reviews</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
@@ -69,19 +71,22 @@
             <x-storefront.eyebrow line-opacity="0.5" class="mb-4">{{ $content['rating_eyebrow'] ?? 'Rating Breakdown' }}</x-storefront.eyebrow>
         </div>
 
-        <div class="space-y-4">
+        <div class="space-y-4"
+             x-data="{ shown: false, reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches }"
+             x-init="if (!reduced) { $el.querySelectorAll('.rating-bar-fill').forEach(b => b.style.width = '0%'); }"
+             x-intersect.once="shown = true; if (!reduced) { $el.querySelectorAll('.rating-bar-fill').forEach(b => b.style.width = b.dataset.pct + '%'); }">
             @foreach ($vm->ratingBreakdown as $star => $data)
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-1 flex-shrink-0" style="width: 80px;">
                     <span class="font-display font-semibold text-warm-300">{{ $star }}</span>
-                    <svg class="w-4 h-4 text-warm-500" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4 text-warm-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                     </svg>
                 </div>
                 <div class="flex-1 rating-bar-track bg-warm-800">
-                    <div class="rating-bar-fill" style="width: {{ $data['pct'] }}%; background: var(--warm-500);"></div>
+                    <div class="rating-bar-fill" data-pct="{{ $data['pct'] }}" style="width: {{ $data['pct'] }}%; background: var(--warm-500);"></div>
                 </div>
-                <span class="text-sm font-medium flex-shrink-0" style="color: var(--warm-400); width: 40px; text-align: right;">{{ $data['count'] }}</span>
+                <span class="text-sm font-medium flex-shrink-0 text-warm-400" style="width: 40px; text-align: right;">{{ $data['count'] }}</span>
             </div>
             @endforeach
         </div>
@@ -99,7 +104,10 @@
 
         <div class="grid md:grid-cols-2 gap-8 mb-16">
             @foreach ($reviews->skip(1) as $review)
-            <div class="review-card p-8 rounded-2xl bg-white border border-warm-200">
+            <div class="review-card p-8 rounded-2xl bg-white border border-warm-200 shadow-sm"
+                 x-data="{ reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches }"
+                 x-init="if (!reduced) { $el.style.opacity = '0'; $el.style.transform = 'translateY(1rem)'; $el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'; }"
+                 x-intersect.once="if (!reduced) { $el.style.transitionDelay = '{{ $loop->index * 75 }}ms'; $el.style.opacity = '1'; $el.style.transform = 'translateY(0)'; }">
                 <div class="flex items-start gap-4 mb-5">
                     <x-storefront.avatar-initial :name="$review->customer_name" size="lg" class="flex-shrink-0" />
                     <div class="flex-1 min-w-0">
