@@ -18,6 +18,9 @@ test('it can be constructed with all properties', function () {
         aboutUsText: 'We bake.',
         heroImage: 'heroes/main.jpg',
         heroStyle: 'split',
+        heroTagline: 'Where every bite tells a story',
+        heroPrimaryCtaText: 'Order Now',
+        heroSecondaryCtaText: 'Browse Menu',
         allergyDisclaimer: 'May contain nuts.',
         cateringHeroImage: 'heroes/catering.jpg',
         loyaltyHeroImage: 'heroes/loyalty.jpg',
@@ -25,6 +28,8 @@ test('it can be constructed with all properties', function () {
         leadTimeHours: 24,
         deliveryEnabled: true,
         freeDeliveryMinimum: '50',
+        minimumPickupOrderAmount: '0',
+        minimumDeliveryOrderAmount: '0',
         deliveryFeeTiers: [],
         paymentMethodsAccepted: [],
         operatingHours: [],
@@ -84,6 +89,9 @@ function makeTenantSettings(array $overrides = []): TenantSettings
         'aboutUsText' => null,
         'heroImage' => null,
         'heroStyle' => 'split',
+        'heroTagline' => null,
+        'heroPrimaryCtaText' => 'Order Now',
+        'heroSecondaryCtaText' => 'Browse Menu',
         'allergyDisclaimer' => null,
         'cateringHeroImage' => null,
         'loyaltyHeroImage' => null,
@@ -91,6 +99,8 @@ function makeTenantSettings(array $overrides = []): TenantSettings
         'leadTimeHours' => 24,
         'deliveryEnabled' => true,
         'freeDeliveryMinimum' => '50',
+        'minimumPickupOrderAmount' => '0',
+        'minimumDeliveryOrderAmount' => '0',
         'deliveryFeeTiers' => [],
         'paymentMethodsAccepted' => [],
         'operatingHours' => [],
@@ -269,6 +279,28 @@ test('giftCardDefaultAmount can be customized', function () {
 
     expect($settings->giftCardDefaultAmount)->toBe(50);
 });
+
+test('hero CTA and tagline properties are accessible', function () {
+    $settings = makeTenantSettings([
+        'heroTagline' => 'Freshly baked daily',
+        'heroPrimaryCtaText' => 'Place Your Order',
+        'heroSecondaryCtaText' => 'See What\'s Fresh',
+    ]);
+
+    expect($settings->heroTagline)->toBe('Freshly baked daily')
+        ->and($settings->heroPrimaryCtaText)->toBe('Place Your Order')
+        ->and($settings->heroSecondaryCtaText)->toBe('See What\'s Fresh');
+});
+
+test('hero CTA properties fall back to defaults when unset in settings', function () {
+    setUpTenantTest();
+
+    $settings = TenantSettings::resolve();
+
+    expect($settings->heroPrimaryCtaText)->toBe('Order Now')
+        ->and($settings->heroSecondaryCtaText)->toBe('Browse Menu')
+        ->and($settings->heroTagline)->toBeNull();
+})->uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 test('it is bound as a singleton in the container', function () {
     setUpTenantTest();

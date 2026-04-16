@@ -404,6 +404,8 @@ test('OrderSettings stores all properties', function () {
         leadTimeHours: 48,
         deliveryEnabled: true,
         freeDeliveryMinimum: '50.00',
+        minimumPickupOrderAmount: '10.00',
+        minimumDeliveryOrderAmount: '25.00',
         deliveryFeeTiers: [['min' => 0, 'max' => 25, 'fee' => 5.00]],
     );
 
@@ -411,6 +413,8 @@ test('OrderSettings stores all properties', function () {
         ->leadTimeHours->toBe(48)
         ->deliveryEnabled->toBeTrue()
         ->freeDeliveryMinimum->toBe('50.00')
+        ->minimumPickupOrderAmount->toBe('10.00')
+        ->minimumDeliveryOrderAmount->toBe('25.00')
         ->deliveryFeeTiers->toHaveCount(1);
 });
 
@@ -422,6 +426,8 @@ test('OrderSettings leadTimeDays converts hours to days rounding up', function (
         leadTimeHours: $hours,
         deliveryEnabled: false,
         freeDeliveryMinimum: '0',
+        minimumPickupOrderAmount: '0',
+        minimumDeliveryOrderAmount: '0',
         deliveryFeeTiers: [],
     );
 

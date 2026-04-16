@@ -46,6 +46,10 @@ class ManageSettings extends Page
 
     public ?string $delivery_fee_tiers = '';
 
+    public ?string $minimum_pickup_order_amount = '0';
+
+    public ?string $minimum_delivery_order_amount = '0';
+
     public bool $repeat_reminders_enabled = false;
 
     public bool $birthday_program_enabled = false;
@@ -86,6 +90,9 @@ class ManageSettings extends Page
 
     public ?int $gift_card_default_amount = 25;
 
+    /** @var array<int, array<string, string>> */
+    public array $order_journey_steps = [];
+
     public function mount(): void
     {
         $this->loadSettings();
@@ -100,6 +107,8 @@ class ManageSettings extends Page
         $this->default_daily_capacity = settings('default_daily_capacity', null);
         $this->minimum_order_lead_hours = settings('minimum_order_lead_hours', 48);
         $this->delivery_fee_tiers = settings('delivery_fee_tiers', '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}');
+        $this->minimum_pickup_order_amount = settings('minimum_pickup_order_amount', '0');
+        $this->minimum_delivery_order_amount = settings('minimum_delivery_order_amount', '0');
         $this->repeat_reminders_enabled = settings('repeat_reminders_enabled', false);
         $this->birthday_program_enabled = settings('birthday_program_enabled', false);
         $this->allergy_disclaimer = settings('allergy_disclaimer', 'Please inform us of any allergies or dietary restrictions when placing your order.');
@@ -127,6 +136,11 @@ class ManageSettings extends Page
 
         $this->gift_card_preset_amounts = settings('gift_card_preset_amounts', '10,25,50,100');
         $this->gift_card_default_amount = (int) settings('gift_card_default_amount', 25);
+
+        $storedSteps = settings('order_journey_steps');
+        $this->order_journey_steps = $storedSteps
+            ? (json_decode($storedSteps, true) ?: config('kneadit.default_journey_steps'))
+            : config('kneadit.default_journey_steps');
     }
 
     public function content(Schema $schema): Schema
@@ -162,6 +176,8 @@ class ManageSettings extends Page
         $this->default_daily_capacity = null;
         $this->minimum_order_lead_hours = 48;
         $this->delivery_fee_tiers = '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}';
+        $this->minimum_pickup_order_amount = '0';
+        $this->minimum_delivery_order_amount = '0';
         $this->repeat_reminders_enabled = false;
         $this->birthday_program_enabled = false;
         $this->allergy_disclaimer = 'Please inform us of any allergies or dietary restrictions when placing your order.';
@@ -175,6 +191,7 @@ class ManageSettings extends Page
         $this->catering_event_types = CateringEventType::defaultLabels();
         $this->gift_card_preset_amounts = '10,25,50,100';
         $this->gift_card_default_amount = 25;
+        $this->order_journey_steps = config('kneadit.default_journey_steps');
 
         Notification::make()
             ->title('Settings reset to defaults')

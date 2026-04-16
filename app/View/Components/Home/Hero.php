@@ -21,6 +21,12 @@ class Hero extends Component
 
     public string $heroImageUrl;
 
+    public ?string $heroTagline;
+
+    public string $primaryCtaText;
+
+    public string $secondaryCtaText;
+
     public int $customerCount;
 
     public ?float $avgRating;
@@ -36,6 +42,9 @@ class Hero extends Component
         $this->aboutUs = $settings->aboutUsText;
         $this->heroStyle = $settings->heroStyle;
         $this->heroImageUrl = $settings->heroImageUrl();
+        $this->heroTagline = $settings->heroTagline;
+        $this->primaryCtaText = $settings->heroPrimaryCtaText;
+        $this->secondaryCtaText = $settings->heroSecondaryCtaText;
 
         $this->customerCount = Cache::flexible('hero_customer_count', [3600, 7200], fn () => Customer::query()->count());
         $this->avgRating = Cache::flexible('hero_avg_rating', [3600, 7200], function () {

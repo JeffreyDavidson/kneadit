@@ -108,7 +108,7 @@
                                     class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 whitespace-nowrap"
                                     :class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
                                     style="border: 2px solid var(--warm-300); color: var(--warm-700);">
-                                <span x-text="isCheckingBalance ? 'Checking...' : 'Check Balance'"></span>
+                                <span x-text="isCheckingBalance ? 'Checking...' : {{ Js::from($content['check_balance_button'] ?? 'Check Balance') }}"></span>
                             </button>
                         </form>
                         <div x-show="balanceError" class="text-red-600 text-sm mt-2" x-text="balanceError"></div>

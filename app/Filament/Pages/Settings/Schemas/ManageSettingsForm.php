@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Settings\Schemas;
 use App\Enums\Orders\PaymentMethod;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -74,6 +75,48 @@ class ManageSettingsForm
                             ->placeholder('{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}')
                             ->helperText('JSON format: distance ranges and fees')
                             ->rows(3)
+                            ->columnSpanFull(),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('minimum_pickup_order_amount')
+                                    ->label('Minimum Pickup Order')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->minValue(0)
+                                    ->default('0')
+                                    ->helperText('Minimum order subtotal for pickup (0 = no minimum)'),
+
+                                TextInput::make('minimum_delivery_order_amount')
+                                    ->label('Minimum Delivery Order')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->minValue(0)
+                                    ->default('0')
+                                    ->helperText('Minimum order subtotal for delivery (0 = no minimum)'),
+                            ]),
+                    ]),
+
+                // Order Journey Section
+                Section::make('Order Journey')
+                    ->description('Customize the "What Happens Next" steps shown on the order confirmation page. The final step supports separate delivery and pickup copy.')
+                    ->schema([
+                        Repeater::make('order_journey_steps')
+                            ->label('Journey Steps')
+                            ->schema([
+                                TextInput::make('title')
+                                    ->required(),
+                                TextInput::make('description')
+                                    ->label('Description (general/pickup)'),
+                                TextInput::make('description_delivery')
+                                    ->label('Description (delivery variant)')
+                                    ->helperText('Leave blank if same as above'),
+                                TextInput::make('description_pickup')
+                                    ->label('Description (pickup variant)')
+                                    ->helperText('Leave blank if same as above'),
+                            ])
+                            ->defaultItems(3)
+                            ->maxItems(6)
                             ->columnSpanFull(),
                     ]),
 

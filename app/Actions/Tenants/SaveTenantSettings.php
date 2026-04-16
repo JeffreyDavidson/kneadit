@@ -22,6 +22,8 @@ class SaveTenantSettings
             'default_daily_capacity' => $data['default_daily_capacity'],
             'minimum_order_lead_hours' => $data['minimum_order_lead_hours'],
             'delivery_fee_tiers' => $data['delivery_fee_tiers'],
+            'minimum_pickup_order_amount' => $data['minimum_pickup_order_amount'] ?? '0',
+            'minimum_delivery_order_amount' => $data['minimum_delivery_order_amount'] ?? '0',
             'repeat_reminders_enabled' => $data['repeat_reminders_enabled'],
             'birthday_program_enabled' => $data['birthday_program_enabled'],
             'payment_methods' => json_encode($data['payment_methods']),
@@ -34,6 +36,7 @@ class SaveTenantSettings
             'pickup_policy' => $data['pickup_policy'],
             'additional_terms' => $data['additional_terms'],
             'show_policies_on_storefront' => $data['show_policies_on_storefront'] ? '1' : '0',
+            'order_journey_steps' => json_encode(array_values($data['order_journey_steps'] ?? [])),
             'catering_event_types' => json_encode(array_values(array_filter(
                 $data['catering_event_types'] ?? [],
                 fn ($value) => is_string($value) && trim($value) !== '',
