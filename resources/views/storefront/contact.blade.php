@@ -161,11 +161,16 @@
             <x-storefront.eyebrow line-opacity="0.5" class="mb-4">{{ $content['faq_eyebrow'] ?? 'FAQ' }}</x-storefront.eyebrow>
             <h2 class="font-display text-3xl md:text-5xl font-bold text-warm-100">{{ $content['faq_heading'] ?? 'Common Questions' }}</h2>
         </div>
-        <div class="grid md:grid-cols-2 gap-x-12 gap-y-8">
+        <div class="grid md:grid-cols-2 gap-x-12 gap-y-4">
             @foreach ($settings->faqItems as $faq)
-            <div class="p-6 rounded-2xl bg-warm-800 border border-warm-700/15">
-                <h3 class="font-display text-lg font-semibold mb-3 text-warm-200">{{ $faq['question'] }}</h3>
-                <p class="leading-relaxed text-sm text-warm-400">{{ $faq['answer'] }}</p>
+            <div class="rounded-2xl bg-warm-800 border border-warm-700/15 overflow-hidden" x-data="{ open: false }">
+                <button @click="open = !open" class="flex items-center justify-between w-full p-6 text-left" :aria-expanded="open">
+                    <h3 class="font-display text-lg font-semibold text-warm-200 pr-4">{{ $faq['question'] }}</h3>
+                    <svg class="w-5 h-5 flex-shrink-0 text-warm-500 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div x-show="open" x-collapse>
+                    <p class="leading-relaxed text-sm text-warm-400 px-6 pb-6">{{ $faq['answer'] }}</p>
+                </div>
             </div>
             @endforeach
         </div>
