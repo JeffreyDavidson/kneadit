@@ -75,7 +75,7 @@
                         <div class="menu-card-overlay absolute inset-0 flex items-center justify-center bg-warm-900/50">
                             @if ($product->is_active)
                             <a href="{{ route('order.create') }}" class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold bg-warm-500 text-warm-900">
-                                Add to Order
+                                {{ $content['add_to_order_button'] ?? 'Add to Order' }}
                             </a>
                             @else
                             <span class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold" style="background: rgba(255,255,255,0.15); color: var(--warm-300); backdrop-filter: blur(4px);">
@@ -106,7 +106,7 @@
         </section>
         @empty
         <div class="py-24 text-center">
-            <p class="font-display text-2xl text-warm-400">Our menu is being updated. Check back soon.</p>
+            <p class="font-display text-2xl text-warm-400">{{ $content['empty_message'] ?? 'Our menu is being updated. Check back soon.' }}</p>
         </div>
         @endforelse
     </div>

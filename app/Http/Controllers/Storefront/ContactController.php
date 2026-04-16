@@ -15,7 +15,10 @@ class ContactController extends Controller
     {
         $submitMessage($request->validated());
 
-        return back()->with('success', 'Thank you for your message! We\'ll get back to you soon.');
+        $message = settingsPageContent('contact')['flash_success']
+            ?? "Thank you for your message! We'll get back to you soon.";
+
+        return back()->with('success', $message);
     }
 
     public function show(TenantSettings $settings): View

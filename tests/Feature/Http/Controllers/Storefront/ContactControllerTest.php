@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Platform\Setting;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 
 use function Pest\Laravel\withoutMiddleware;
@@ -46,6 +48,27 @@ test('contact form submission works with valid data', function () {
         'email' => 'jane@example.com',
         'subject' => 'Question about orders',
     ]);
+});
+
+test('contact form success message can be customized via page content', function () {
+    Setting::factory()->create([
+        'key' => 'page_content',
+        'value' => json_encode([
+            'contact' => ['flash_success' => 'Got it — talk soon!'],
+        ]),
+    ]);
+    resolve(SettingsManager::class)->flushCache();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('contact.store', [], false), [
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
+            'subject' => 'Hi',
+            'message' => 'Just saying hello.',
+        ]);
+
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Got it — talk soon!');
 });
 
 test('contact form validation rejects missing name', function () {

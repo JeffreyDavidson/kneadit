@@ -99,7 +99,7 @@
 
                         <button type="submit" class="inline-flex items-center gap-2 px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none" :disabled="submitting">
                             <span class="spinner" x-show="submitting" x-cloak></span>
-                            <span x-text="submitting ? 'Sending...' : 'Send Message'"></span>
+                            <span x-text="submitting ? 'Sending...' : {{ Js::from($content['send_button'] ?? 'Send Message') }}"></span>
                         </button>
                     </form>
                 </div>

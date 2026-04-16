@@ -3,6 +3,8 @@
 use App\Actions\Orders\CreateOrder;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
+use App\Models\Platform\Setting;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Stripe\StripeCheckoutService;
 
@@ -160,6 +162,71 @@ test('validation fails when required fields are missing', function () {
         'delivery_date',
         'items',
     ]);
+});
+
+test('success flash message can be customized via page content', function () {
+    Setting::factory()->create([
+        'key' => 'page_content',
+        'value' => json_encode([
+            'order' => ['flash_success' => 'Yay! Your order is in.'],
+        ]),
+    ]);
+    resolve(SettingsManager::class)->flushCache();
+
+    $order = Order::factory()->create();
+
+    $createOrder = Mockery::mock(CreateOrder::class);
+    $createOrder->shouldReceive('__invoke')->once()->andReturn($order);
+    app()->instance(CreateOrder::class, $createOrder);
+
+    $stripeService = Mockery::mock(StripeCheckoutService::class);
+    $stripeService->shouldReceive('redirectToCheckout')->once()->andReturnNull();
+    app()->instance(StripeCheckoutService::class, $stripeService);
+
+    $product = Product::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_type' => 'pickup',
+            'delivery_date' => now()->addDays(2)->toDateString(),
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 1],
+            ],
+        ]);
+
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Yay! Your order is in.');
+});
+
+test('fully booked error message can be customized via page content', function () {
+    Setting::factory()->create([
+        'key' => 'page_content',
+        'value' => json_encode([
+            'order' => ['flash_full' => 'No room on that day, friend.'],
+        ]),
+    ]);
+    resolve(SettingsManager::class)->flushCache();
+
+    $createOrder = Mockery::mock(CreateOrder::class);
+    $createOrder->shouldReceive('__invoke')->once()->andReturnNull();
+    app()->instance(CreateOrder::class, $createOrder);
+
+    $product = Product::factory()->create();
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.store', [], false), [
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_type' => 'pickup',
+            'delivery_date' => now()->addDays(2)->toDateString(),
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 1],
+            ],
+        ]);
+
+    $response->assertSessionHasErrors(['delivery_date' => 'No room on that day, friend.']);
 });
 
 test('validation fails with invalid email', function () {
