@@ -84,7 +84,7 @@ class OrderStatusMail extends BaseMailable
         $settings = app(TenantSettings::class);
 
         return [
-            'customer_name' => $this->order->customer?->name ?? 'there',
+            'customer_name' => $this->order->customer->name ?? 'there',
             'order_number' => $this->order->order_number,
             'order_total' => '$' . number_format($this->order->total / 100, 2),
             'delivery_date' => $this->order->delivery_date?->format('M j, Y') ?? '',

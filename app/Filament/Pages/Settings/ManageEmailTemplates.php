@@ -103,8 +103,8 @@ class ManageEmailTemplates extends Page
                 $existing = EmailTemplate::query()->where('email_type', $type)->first();
 
                 return [
-                    'subject' => $existing?->subject ?? $type->defaultSubject(),
-                    'body' => $existing?->body ?? '',
+                    'subject' => $existing->subject ?? $type->defaultSubject(),
+                    'body' => $existing->body ?? '',
                 ];
             })
             ->action(function (array $data, array $arguments): void {

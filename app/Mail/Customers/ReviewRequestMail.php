@@ -73,7 +73,7 @@ class ReviewRequestMail extends BaseMailable
     private function placeholders(): array
     {
         return [
-            'customer_name' => $this->order->customer?->name ?? 'there',
+            'customer_name' => $this->order->customer->name ?? 'there',
             'order_number' => $this->order->order_number,
             'review_url' => $this->reviewUrl,
             'store_name' => $this->storeName,
