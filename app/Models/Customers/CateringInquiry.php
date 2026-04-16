@@ -4,7 +4,6 @@ namespace App\Models\Customers;
 
 use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
-use App\Enums\Customers\CateringEventType;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\Customers\CateringInquiryFactory;
@@ -15,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property CateringInquiryStatus $status
- * @property CateringEventType $event_type
+ * @property string $event_type
  * @property-read string $event_type_label
  * @property-read string $status_label
  *
@@ -38,7 +37,6 @@ class CateringInquiry extends Model
     {
         return [
             'status' => CateringInquiryStatus::class,
-            'event_type' => CateringEventType::class,
             'event_date' => 'date',
             'guest_count' => 'integer',
             'budget' => 'decimal:2',
@@ -54,7 +52,7 @@ class CateringInquiry extends Model
     protected function eventTypeLabel(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->event_type->getLabel(),
+            get: fn () => (string) $this->event_type,
         );
     }
 

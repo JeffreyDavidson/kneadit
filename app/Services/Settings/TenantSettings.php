@@ -13,6 +13,7 @@ use App\DataTransferObjects\Settings\PaymentSettings;
 use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
+use App\Enums\Customers\CateringEventType;
 use Illuminate\Support\Facades\Storage;
 
 final class TenantSettings
@@ -30,6 +31,7 @@ final class TenantSettings
      * @param array<int, array<string, mixed>> $faqItems
      * @param array<string, string> $socialMediaLinks
      * @param array<string, array<string, mixed>> $homepageSections
+     * @param array<int, string> $cateringEventTypes
      */
     public function __construct(
         public readonly string $storeName,
@@ -62,6 +64,7 @@ final class TenantSettings
         public readonly bool $loyaltyEnabled,
         public readonly string $cateringMinimumGuests,
         public readonly string $cateringLeadTimeDays,
+        public readonly array $cateringEventTypes,
         public readonly array $socialMediaLinks,
         public readonly array $homepageSections,
         public readonly bool $cateringEnabled,
@@ -148,6 +151,7 @@ final class TenantSettings
             enabled: $this->cateringEnabled,
             minimumGuests: $this->cateringMinimumGuests,
             leadTimeDays: $this->cateringLeadTimeDays,
+            eventTypes: $this->cateringEventTypes,
         );
     }
 
@@ -234,6 +238,7 @@ final class TenantSettings
             loyaltyEnabled: settings('loyalty_enabled', '1') === '1',
             cateringMinimumGuests: (string) settings('catering_minimum_guests', '10'),
             cateringLeadTimeDays: (string) settings('catering_lead_time_days', '14'),
+            cateringEventTypes: self::resolveCateringEventTypes(),
             socialMediaLinks: (array) json_decode((string) settings('social_media_links', '{}'), true),
             homepageSections: (array) json_decode((string) settings('homepage_sections', '{}'), true),
             cateringEnabled: settings('catering_enabled', '0') === '1',
@@ -307,6 +312,24 @@ final class TenantSettings
     public function leadTimeDays(): int
     {
         return (int) ceil($this->leadTimeHours / 24);
+    }
+
+    /** @return array<int, string> */
+    private static function resolveCateringEventTypes(): array
+    {
+        $stored = settings('catering_event_types');
+
+        if (! $stored) {
+            return CateringEventType::defaultLabels();
+        }
+
+        $decoded = json_decode((string) $stored, true);
+        $values = array_values(array_filter(
+            is_array($decoded) ? $decoded : [],
+            fn ($value) => is_string($value) && trim($value) !== '',
+        ));
+
+        return $values === [] ? CateringEventType::defaultLabels() : $values;
     }
 
     /** @return \Illuminate\Support\Collection<string, array<string, mixed>> */
