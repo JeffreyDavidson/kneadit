@@ -16,14 +16,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string|null $excerpt
+ * @property string $body
+ * @property string|null $featured_image
+ * @property BlogPostCategory $category
+ * @property string|null $meta_title
+ * @property string|null $meta_description
+ * @property bool $is_published
+ * @property Carbon|null $published_at
  * @property-read string $url
  *
  * @method static BlogPostQueryBuilder|BlogPost newModelQuery()
  * @method static BlogPostQueryBuilder|BlogPost newQuery()
  * @method static BlogPostQueryBuilder|BlogPost published()
  * @method static BlogPostQueryBuilder|BlogPost query()
- *
- * @property Carbon|null $published_at
  *
  * @mixin \Eloquent
  */

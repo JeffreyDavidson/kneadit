@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Response;
 use Laravel\Pennant\Feature;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * @property-read Schema $form
+ */
 class QrCodeGenerator extends Page
 {
     use RequiresManagerRole;

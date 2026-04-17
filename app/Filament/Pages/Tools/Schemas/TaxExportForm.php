@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Tools\Schemas;
 
 use App\Enums\Financial\TaxExportType;
+use App\Filament\Pages\Tools\TaxExport;
 use App\Models\Financial\Expense;
 use App\Models\Financial\Income;
 use App\Models\Orders\Order;
@@ -15,7 +16,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Carbon;
-use Livewire\Component as Livewire;
 
 class TaxExportForm
 {
@@ -60,7 +60,7 @@ class TaxExportForm
                             ->label('Download CSV Export')
                             ->icon(Heroicon::OutlinedArrowDownTray)
                             ->color('primary')
-                            ->action(function (Livewire $livewire) {
+                            ->action(function (TaxExport $livewire) {
                                 $data = $livewire->form->getState();
 
                                 return $livewire->generateExport($data);

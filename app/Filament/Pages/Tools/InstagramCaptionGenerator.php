@@ -16,6 +16,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Laravel\Pennant\Feature;
 
+/**
+ * @property-read Schema $form
+ */
 class InstagramCaptionGenerator extends Page
 {
     use RequiresManagerRole;
