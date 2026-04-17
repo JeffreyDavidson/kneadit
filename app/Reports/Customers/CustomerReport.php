@@ -38,7 +38,7 @@ class CustomerReport
 
         $acquisitionByMonth = Customer::query()->whereBetween('created_at', $range->toArray())
             ->get()
-            ->groupBy(fn (Customer $c) => $c->created_at->format('Y-m'))
+            ->groupBy(fn (Customer $c) => $c->created_at?->format('Y-m') ?? '')
             ->map(fn (mixed $customers) => $customers->count())
             ->sortKeys()
             ->all();

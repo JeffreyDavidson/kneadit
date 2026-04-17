@@ -9,6 +9,9 @@ use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property-read PlatformMessage $record
+ */
 class ViewMessage extends ViewRecord
 {
     protected static string $resource = MessageResource::class;
