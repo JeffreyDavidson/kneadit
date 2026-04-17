@@ -136,8 +136,8 @@ class ProductAnalysisService
     }
 
     /**
-     * @param Collection<int, array<string, mixed>> $products
-     * @return Collection<int, array<string, mixed>>
+     * @param Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> $products
+     * @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}>
      */
     private function sortProducts(Collection $products, string $sortBy): Collection
     {

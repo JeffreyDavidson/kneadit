@@ -87,25 +87,25 @@ class ProfitAnalysis extends Page
         ];
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function getProductAnalysis(): Collection
     {
         return $this->portfolio->products;
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function getTopProfitableProducts(): Collection
     {
         return $this->portfolio->topProfitable();
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function getLowestMarginProducts(): Collection
     {
         return $this->portfolio->lowestMargin();
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function getMissingCostProducts(): Collection
     {
         return $this->portfolio->missingCosts();

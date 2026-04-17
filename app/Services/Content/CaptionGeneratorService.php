@@ -95,7 +95,7 @@ class CaptionGeneratorService
             ],
         ];
 
-        return $hooks[$style->value] ?? $hooks[CaptionStyle::Playful->value];
+        return $hooks[$style->value];
     }
 
     private function buildBody(Product $product, string $tone): string
@@ -149,7 +149,7 @@ class CaptionGeneratorService
                 Arr::random($callToActions),
                 Arr::random($occasions),
             ],
-            Arr::random($templates),
+            (string) Arr::random($templates),
         );
     }
 

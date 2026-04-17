@@ -124,9 +124,10 @@ class StripeCheckoutService
                 return null;
             }
 
-            $paymentIntentId = $session->payment_intent->id ?? $session->payment_intent;
+            $paymentIntent = $session->payment_intent;
+            $paymentIntentId = is_object($paymentIntent) ? $paymentIntent->id : $paymentIntent;
 
-            return app(HandleCheckoutComplete::class)($order, $paymentIntentId);
+            return app(HandleCheckoutComplete::class)($order, (string) ($paymentIntentId ?? ''));
         } catch (\Exception $e) {
             Log::error('Failed to verify checkout session', [
                 'session_id' => $sessionId,

@@ -154,6 +154,6 @@ class InvoicePayloadBuilder
             return [];
         }
 
-        return [['country_code' => '1', 'national_number' => preg_replace('/\D/', '', $phone), 'phone_type' => 'MOBILE']];
+        return [['country_code' => '1', 'national_number' => (string) preg_replace('/\D/', '', $phone), 'phone_type' => 'MOBILE']];
     }
 }

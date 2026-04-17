@@ -41,13 +41,16 @@ class ChangelogService
                 return $this->fallback();
             }
 
-            return collect($response->json())
+            /** @var array<int, array<string, mixed>> $releases */
+            $releases = $response->json() ?? [];
+
+            return collect($releases)
                 ->reject(fn (array $release) => $release['draft'] ?? false)
                 ->map(fn (array $release) => [
-                    'date' => substr($release['published_at'] ?? $release['created_at'], 0, 10),
-                    'version' => ltrim($release['tag_name'] ?? '', 'v'),
-                    'title' => $release['name'] ?? $release['tag_name'] ?? 'Release',
-                    'items' => $this->parseBodyToItems($release['body'] ?? ''),
+                    'date' => substr((string) ($release['published_at'] ?? $release['created_at'] ?? ''), 0, 10),
+                    'version' => ltrim((string) ($release['tag_name'] ?? ''), 'v'),
+                    'title' => (string) ($release['name'] ?? $release['tag_name'] ?? 'Release'),
+                    'items' => $this->parseBodyToItems((string) ($release['body'] ?? '')),
                 ])
                 ->values();
         } catch (\Throwable $e) {
@@ -85,6 +88,9 @@ class ChangelogService
      */
     private function fallback(): Collection
     {
-        return collect(config('changelog', []));
+        /** @var array<int, array{date: string, version: string, title: string, items: array<int, string>}> $configured */
+        $configured = config('changelog', []);
+
+        return collect($configured);
     }
 }
