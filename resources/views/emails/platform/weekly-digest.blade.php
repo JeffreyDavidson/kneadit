@@ -79,7 +79,7 @@
                     <tr style="border-bottom: 1px solid #f0e6d6;">
                         <td style="padding: 8px 5px; font-size: 14px;">{{ $customer->name }}</td>
                         <td style="padding: 8px 5px; text-align: right; font-size: 13px; color: #6b5c4d;">
-                            {{ $customer->days_since_last_order }}d ago
+                            {{ $customer->daysSinceLastOrder() }}d ago
                         </td>
                     </tr>
                 @endforeach

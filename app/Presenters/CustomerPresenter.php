@@ -2,16 +2,81 @@
 
 namespace App\Presenters;
 
+use App\DataTransferObjects\Customers\CustomerMetrics;
 use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerNote;
 use App\Models\Orders\Order;
+use App\Services\Customers\CustomerIntelligence;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Number;
 
 final class CustomerPresenter
 {
+    private ?CustomerMetrics $memo = null;
+
+    private CustomerIntelligence $intelligence;
+
     public function __construct(
         public readonly Customer $customer,
-    ) {}
+        ?CustomerIntelligence $intelligence = null,
+    ) {
+        $this->intelligence = $intelligence ?? resolve(CustomerIntelligence::class);
+    }
+
+    public static function for(Customer $customer): self
+    {
+        return new self($customer);
+    }
+
+    public function totalPoints(): int
+    {
+        return $this->metrics()->totalPoints;
+    }
+
+    public function lifetimePointsEarned(): int
+    {
+        return $this->metrics()->lifetimePointsEarned;
+    }
+
+    public function lifetimeValue(): float
+    {
+        return $this->metrics()->lifetimeValue;
+    }
+
+    public function orderCount(): int
+    {
+        return $this->metrics()->orderCount;
+    }
+
+    public function lastOrderDate(): ?Carbon
+    {
+        return $this->metrics()->lastOrderDate;
+    }
+
+    public function averageOrderValue(): float
+    {
+        return $this->metrics()->averageOrderValue;
+    }
+
+    public function daysSinceLastOrder(): ?int
+    {
+        return $this->metrics()->daysSinceLastOrder;
+    }
+
+    public function isAtRisk(): bool
+    {
+        return $this->metrics()->isAtRisk;
+    }
+
+    public function __get(string $key): mixed
+    {
+        return $this->customer->{$key};
+    }
+
+    private function metrics(): CustomerMetrics
+    {
+        return $this->memo ??= $this->intelligence->metrics($this->customer);
+    }
 
     /** @return array<string, mixed> */
     public function toDetailArray(): array
