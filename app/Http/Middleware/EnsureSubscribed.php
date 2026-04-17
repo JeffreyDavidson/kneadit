@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Enums\Platform\SubscriptionTier;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureSubscribed
@@ -21,7 +22,7 @@ class EnsureSubscribed
 
         $tier = $plan ? SubscriptionTier::tryFrom($plan) : null;
 
-        abort_if($tier && ! $request->user()->hasPlan($tier), 403, 'Your current plan does not include this feature. Please upgrade.');
+        abort_if($tier && ! Gate::forUser($request->user())->allows('has-plan', $tier), 403, 'Your current plan does not include this feature. Please upgrade.');
 
         return $next($request);
     }

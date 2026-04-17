@@ -2,9 +2,9 @@
 
 namespace App\Services\Analytics;
 
+use App\Actions\Analytics\RecordPageView;
+use App\Actions\Analytics\RecordProductImpressions;
 use App\Enums\Content\PageType;
-use App\Models\Engagement\PageView;
-use App\Models\Inventory\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 
@@ -21,6 +21,11 @@ class PageViewTracker
         'order.track' => PageType::Track,
         'contact.show' => PageType::Contact,
     ];
+
+    public function __construct(
+        protected RecordPageView $recordPageView,
+        protected RecordProductImpressions $recordProductImpressions,
+    ) {}
 
     public function detectPage(?string $routeName, string $path): ?string
     {
@@ -45,24 +50,25 @@ class PageViewTracker
             return;
         }
 
-        $sessionId = $request->session()->getId();
-
         if ($this->isThrottled($request, "pv_tracked:{$page}")) {
             return;
         }
 
         $request->session()->put("pv_tracked:{$page}", now()->toISOString());
 
-        try {
-            PageView::query()->create([
-                'page' => $page,
-                'session_id' => $sessionId,
-                'ip_address' => $request->ip(),
-                'user_agent' => substr($request->userAgent() ?? '', 0, 255),
-                'created_at' => now(),
-            ]);
+        $data = [
+            'page' => $page,
+            'session_id' => $request->session()->getId(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ];
 
-            $this->trackProductViews($request, $page, $sessionId);
+        try {
+            ($this->recordPageView)($data);
+
+            if ($this->shouldTrackProductImpressions($request, $page)) {
+                ($this->recordProductImpressions)($data);
+            }
         } catch (\Exception) {
             // Silently fail if page_views table doesn't exist yet
         }
@@ -75,33 +81,19 @@ class PageViewTracker
         return $trackedAt && now()->diffInMinutes(Date::parse($trackedAt)) < 60;
     }
 
-    protected function trackProductViews(Request $request, string $page, string $sessionId): void
+    protected function shouldTrackProductImpressions(Request $request, string $page): bool
     {
         if (! in_array($page, ['menu', 'home'])) {
-            return;
+            return false;
         }
 
         $throttleKey = "pv_products_tracked:{$page}";
         if ($this->isThrottled($request, $throttleKey)) {
-            return;
+            return false;
         }
 
         $request->session()->put($throttleKey, now()->toISOString());
 
-        $products = Product::query()->active()->pluck('id');
-        $ipAddress = $request->ip();
-        $userAgent = substr($request->userAgent() ?? '', 0, 255);
-        $timestamp = now();
-
-        $records = $products->map(fn (int $productId) => [
-            'page' => $page,
-            'product_id' => $productId,
-            'session_id' => $sessionId,
-            'ip_address' => $ipAddress,
-            'user_agent' => $userAgent,
-            'created_at' => $timestamp,
-        ])->all();
-
-        PageView::query()->insert($records);
+        return true;
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
 use Filament\Panel;
+use Illuminate\Support\Facades\Gate;
 
 beforeEach(fn () => setUpCentralTest());
 
@@ -27,19 +27,19 @@ test('can access non-central panel for any role', function (string $factoryState
     expect($user->canAccessPanel($panel))->toBeTrue();
 })->with(['owner', 'manager', 'staff']);
 
-test('current plan returns null when no subscription exists', function () {
+test('current_plan returns null when no subscription exists', function () {
     $user = User::factory()->owner()->create();
 
-    expect($user->currentPlan())->toBeNull();
+    expect($user->current_plan)->toBeNull();
 });
 
-test('has plan returns false when no subscription exists', function () {
+test('has-plan gate returns false when no subscription exists', function () {
     $user = User::factory()->owner()->create();
 
-    expect($user->hasPlan(SubscriptionTier::Starter))->toBeFalse();
+    expect(Gate::forUser($user)->allows('has-plan', SubscriptionTier::Starter))->toBeFalse();
 });
 
-test('current plan returns plan key matching stripe price', function () {
+test('current_plan returns plan key matching stripe price', function () {
     config(['kneadit.stripe_prices.starter' => 'price_starter_test']);
 
     $user = User::factory()->owner()->create();
@@ -54,10 +54,10 @@ test('current plan returns plan key matching stripe price', function () {
         'updated_at' => now(),
     ]);
 
-    expect($user->currentPlan())->toBe(SubscriptionTier::Starter);
+    expect($user->current_plan)->toBe(SubscriptionTier::Starter);
 });
 
-test('current plan returns null for unknown stripe price', function () {
+test('current_plan returns null for unknown stripe price', function () {
     config(['kneadit.stripe_prices' => ['starter' => 'price_known']]);
 
     $user = User::factory()->owner()->create();
@@ -72,35 +72,35 @@ test('current plan returns null for unknown stripe price', function () {
         'updated_at' => now(),
     ]);
 
-    expect($user->currentPlan())->toBeNull();
+    expect($user->current_plan)->toBeNull();
 });
 
-test('has access returns false with no subscription or trial', function () {
+test('has_access returns false with no subscription or trial', function () {
     $user = User::factory()->owner()->create();
 
-    expect($user->hasAccess())->toBeFalse();
+    expect($user->has_access)->toBeFalse();
 });
 
-test('isOwner returns true for owner role', function () {
+test('is_owner returns true for owner role', function () {
     $user = User::factory()->owner()->create();
 
-    expect($user->isOwner())->toBeTrue()
-        ->and($user->isManager())->toBeFalse()
-        ->and($user->isStaff())->toBeFalse();
+    expect($user->is_owner)->toBeTrue()
+        ->and($user->is_manager)->toBeFalse()
+        ->and($user->is_staff)->toBeFalse();
 });
 
-test('isManager returns true for manager role', function () {
+test('is_manager returns true for manager role', function () {
     $user = User::factory()->manager()->create();
 
-    expect($user->isManager())->toBeTrue()
-        ->and($user->isOwner())->toBeFalse();
+    expect($user->is_manager)->toBeTrue()
+        ->and($user->is_owner)->toBeFalse();
 });
 
-test('isStaff returns true for staff role', function () {
+test('is_staff returns true for staff role', function () {
     $user = User::factory()->staff()->create();
 
-    expect($user->isStaff())->toBeTrue()
-        ->and($user->isOwner())->toBeFalse();
+    expect($user->is_staff)->toBeTrue()
+        ->and($user->is_owner)->toBeFalse();
 });
 
 test('tenants relationship returns related tenants', function () {
@@ -108,22 +108,9 @@ test('tenants relationship returns related tenants', function () {
 
     createTenant(['id' => 'user-tenant-1', 'email' => 'user1@test.com']);
 
-    // Manually insert the user_id on tenant for relationship test
     Illuminate\Support\Facades\DB::table('tenants')
         ->where('id', 'user-tenant-1')
         ->update(['user_id' => $user->id]);
 
-    // This test only works if the tenants table has a user_id column
-    // If it doesn't, the relationship just returns empty
     expect($user->tenants)->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class);
-});
-
-test('hasMinRole checks hierarchical role requirement', function () {
-    $owner = User::factory()->owner()->create();
-    $staff = User::factory()->staff()->create();
-
-    expect($owner->hasMinRole(UserRole::Staff))->toBeTrue()
-        ->and($owner->hasMinRole(UserRole::Owner))->toBeTrue()
-        ->and($staff->hasMinRole(UserRole::Owner))->toBeFalse()
-        ->and($staff->hasMinRole(UserRole::Staff))->toBeTrue();
 });

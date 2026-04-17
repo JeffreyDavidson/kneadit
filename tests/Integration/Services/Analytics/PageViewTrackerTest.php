@@ -10,61 +10,61 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('detectPage returns correct page type for storefront.menu', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     expect($tracker->detectPage('storefront.menu', '/menu'))->toBe('menu');
 });
 
 test('detectPage returns correct page type for storefront.home', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     expect($tracker->detectPage('storefront.home', '/'))->toBe('home');
 });
 
 test('detectPage returns correct page type for storefront.about', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     expect($tracker->detectPage('storefront.about', '/about'))->toBe('about');
 });
 
 test('detectPage returns correct page type for storefront.reviews', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     expect($tracker->detectPage('storefront.reviews', '/reviews'))->toBe('reviews');
 });
 
 test('detectPage returns correct page type for order.create', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     expect($tracker->detectPage('order.create', '/order'))->toBe('order');
 });
 
 test('detectPage returns correct page type for contact.show', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     expect($tracker->detectPage('contact.show', '/contact'))->toBe('contact');
 });
 
 test('detectPage returns home for empty path', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     expect($tracker->detectPage(null, '/'))->toBe('home');
 });
 
 test('detectPage returns null for unknown routes', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     expect($tracker->detectPage('admin.dashboard', '/admin/dashboard'))->toBeNull();
 });
 
 test('detectPage returns null for unknown route with non-empty path', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     expect($tracker->detectPage(null, '/some/random/path'))->toBeNull();
 });
 
 test('track creates a PageView record for known pages', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     $request = Request::create('/menu', 'GET');
     $request->setLaravelSession(app('session.store'));
@@ -82,7 +82,7 @@ test('track creates a PageView record for known pages', function () {
 });
 
 test('track does not create record for unknown pages', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     $request = Request::create('/admin/dashboard', 'GET');
     $request->setLaravelSession(app('session.store'));
@@ -99,7 +99,7 @@ test('track does not create record for unknown pages', function () {
 });
 
 test('track throttles duplicate views within 60 minutes', function () {
-    $tracker = new PageViewTracker;
+    $tracker = app(PageViewTracker::class);
 
     $session = app('session.store');
 

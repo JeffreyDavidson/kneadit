@@ -25,7 +25,7 @@ class StaffManagement extends Page
     {
         $user = Auth::user();
 
-        if (! $user || ! $user->hasMinRole(UserRole::Owner)) {
+        if (! $user || ! $user->role->meetsRequirement(UserRole::Owner)) {
             return false;
         }
 

@@ -11,26 +11,26 @@ abstract class RolePolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->hasMinRole($this->minimumRole);
+        return $user->role->meetsRequirement($this->minimumRole);
     }
 
     public function view(User $user, mixed $model): bool
     {
-        return $user->hasMinRole($this->minimumRole);
+        return $user->role->meetsRequirement($this->minimumRole);
     }
 
     public function create(User $user): bool
     {
-        return $user->hasMinRole($this->minimumRole);
+        return $user->role->meetsRequirement($this->minimumRole);
     }
 
     public function update(User $user, mixed $model): bool
     {
-        return $user->hasMinRole($this->minimumRole);
+        return $user->role->meetsRequirement($this->minimumRole);
     }
 
     public function delete(User $user, mixed $model): bool
     {
-        return $user->hasMinRole($this->minimumRole);
+        return $user->role->meetsRequirement($this->minimumRole);
     }
 }

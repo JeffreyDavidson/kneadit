@@ -11,6 +11,7 @@ use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,6 +38,11 @@ use Laravel\Cashier\Subscription;
  * @property string|null $pm_type
  * @property string|null $pm_last_four
  * @property string|null $trial_ends_at
+ * @property-read bool $is_owner
+ * @property-read bool $is_manager
+ * @property-read bool $is_staff
+ * @property-read bool $has_access
+ * @property-read SubscriptionTier|null $current_plan
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Subscription> $subscriptions
@@ -96,55 +102,48 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return true;
     }
 
-    /**
-     * Get the user's current subscription plan tier.
-     */
-    public function currentPlan(): ?SubscriptionTier
+    /** @return Attribute<bool, never> */
+    protected function isOwner(): Attribute
     {
-        $subscription = $this->subscription('default');
-
-        if (! $subscription) {
-            return null;
-        }
-
-        return SubscriptionTier::fromPriceId($subscription->stripe_price);
+        return Attribute::make(
+            get: fn (): bool => $this->role === UserRole::Owner,
+        );
     }
 
-    /**
-     * Check if user has at least the given plan tier.
-     */
-    public function hasPlan(SubscriptionTier $plan): bool
+    /** @return Attribute<bool, never> */
+    protected function isManager(): Attribute
     {
-        $current = $this->currentPlan();
-
-        if (! $current) {
-            return false;
-        }
-
-        return $current->meetsRequirement($plan);
+        return Attribute::make(
+            get: fn (): bool => $this->role === UserRole::Manager,
+        );
     }
 
-    /**
-     * Check if user has an active subscription or is on trial.
-     */
-    public function hasAccess(): bool
+    /** @return Attribute<bool, never> */
+    protected function isStaff(): Attribute
     {
-        return $this->subscribed('default') || $this->onTrial();
+        return Attribute::make(
+            get: fn (): bool => $this->role === UserRole::Staff,
+        );
     }
 
-    public function isOwner(): bool
+    /** @return Attribute<SubscriptionTier|null, never> */
+    protected function currentPlan(): Attribute
     {
-        return $this->role === UserRole::Owner;
+        return Attribute::make(
+            get: function (): ?SubscriptionTier {
+                $priceId = $this->subscription('default')?->stripe_price;
+
+                return $priceId ? SubscriptionTier::fromPriceId($priceId) : null;
+            },
+        );
     }
 
-    public function isManager(): bool
+    /** @return Attribute<bool, never> */
+    protected function hasAccess(): Attribute
     {
-        return $this->role === UserRole::Manager;
-    }
-
-    public function isStaff(): bool
-    {
-        return $this->role === UserRole::Staff;
+        return Attribute::make(
+            get: fn (): bool => $this->subscribed('default') || $this->onTrial(),
+        );
     }
 
     /**
@@ -153,11 +152,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function tenants(): HasMany
     {
         return $this->hasMany(Tenant::class);
-    }
-
-    public function hasMinRole(UserRole $role): bool
-    {
-        return $this->role->meetsRequirement($role);
     }
 
     protected static function newFactory(): UserFactory
