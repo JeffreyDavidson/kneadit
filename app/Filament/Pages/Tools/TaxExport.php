@@ -16,6 +16,9 @@ use Filament\Support\Icons\Heroicon;
 use Laravel\Pennant\Feature;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * @property-read Schema $form
+ */
 class TaxExport extends Page
 {
     use RequiresManagerRole;

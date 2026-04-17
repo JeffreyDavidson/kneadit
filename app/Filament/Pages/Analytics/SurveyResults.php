@@ -8,6 +8,9 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * @property-read Survey|null $survey
+ */
 class SurveyResults extends Page
 {
     use RequiresManagerRole;

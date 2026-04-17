@@ -13,6 +13,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Laravel\Pennant\Feature;
 
+/**
+ * @property-read Schema $form
+ */
 class ProductImportExport extends Page
 {
     use RequiresManagerRole;

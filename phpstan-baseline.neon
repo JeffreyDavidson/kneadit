@@ -31,12 +31,6 @@ parameters:
 			path: app/Actions/Tenants/UpdateSchedule.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Content\\BlogPost\:\:\$category\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Builders/Content/BlogPostQueryBuilder.php
-
-		-
 			message: '#^Method App\\Builders\\Customers\\ReviewQueryBuilder\:\:statistics\(\) should return object\{avg_rating\: float, total_count\: int\} but returns stdClass\|null\.$#'
 			identifier: return.type
 			count: 1
@@ -157,34 +151,10 @@ parameters:
 			path: app/Filament/Central/Widgets/RevenueOverview.php
 
 		-
-			message: '#^Access to an undefined property App\\Filament\\Pages\\Analytics\\ProfitAnalysis\:\:\$portfolio\.$#'
-			identifier: property.notFound
-			count: 6
-			path: app/Filament/Pages/Analytics/ProfitAnalysis.php
-
-		-
-			message: '#^Access to an undefined property App\\Filament\\Pages\\Analytics\\SurveyResults\:\:\$survey\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Filament/Pages/Analytics/SurveyResults.php
-
-		-
-			message: '#^Access to an undefined property App\\Filament\\Pages\\Operations\\CustomerDirectory\:\:\$noteForm\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Filament/Pages/Operations/CustomerDirectory.php
-
-		-
 			message: '#^Parameter \#3 \$createdBy of callable App\\Actions\\Customers\\AddCustomerNote expects int, int\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Filament/Pages/Operations/CustomerDirectory.php
-
-		-
-			message: '#^Access to an undefined property App\\Filament\\Pages\\Operations\\QuickOrder\:\:\$form\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Filament/Pages/Operations/QuickOrder.php
 
 		-
 			message: '#^Parameter \#1 \$schedule of callable App\\Actions\\Tenants\\UpdateSchedule expects array\<int, array\{is_open\: bool, open_time\: string\|null, close_time\: string\|null, order_cutoff_time\: string\|null, max_orders\: int\|null\}\>, array\<int\|string, mixed\> given\.$#'
@@ -205,30 +175,6 @@ parameters:
 			path: app/Filament/Pages/Platform/OnboardingSteps/BrandingStep.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Inventory\\Product\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventory\\Product\>\:\:\$category_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Pages/Platform/OnboardingSteps/ProductStep.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Inventory\\Product\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventory\\Product\>\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Pages/Platform/OnboardingSteps/ProductStep.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Inventory\\Product\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventory\\Product\>\:\:\$price\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Pages/Platform/OnboardingSteps/ProductStep.php
-
-		-
-			message: '#^Access to an undefined property App\\Filament\\Pages\\Tools\\InstagramCaptionGenerator\:\:\$form\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Pages/Tools/InstagramCaptionGenerator.php
-
-		-
 			message: '#^Cannot access property \$cost on App\\Models\\Inventory\\Recipe\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -247,76 +193,10 @@ parameters:
 			path: app/Filament/Pages/Tools/PrintableMenu.php
 
 		-
-			message: '#^Access to an undefined property App\\Filament\\Pages\\Tools\\ProductImportExport\:\:\$form\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Pages/Tools/ProductImportExport.php
-
-		-
-			message: '#^Access to an undefined property App\\Filament\\Pages\\Tools\\QrCodeGenerator\:\:\$form\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Pages/Tools/QrCodeGenerator.php
-
-		-
-			message: '#^Access to an undefined property Livewire\\Component\:\:\$importResults\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Pages/Tools/Schemas/ProductImportExportForm.php
-
-		-
-			message: '#^Access to an undefined property Livewire\\Component\:\:\$previewData\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Filament/Pages/Tools/Schemas/ProductImportExportForm.php
-
-		-
-			message: '#^Access to an undefined property Livewire\\Component\:\:\$previewErrors\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Filament/Pages/Tools/Schemas/ProductImportExportForm.php
-
-		-
-			message: '#^Access to an undefined property Livewire\\Component\:\:\$form\.$#'
-			identifier: property.notFound
+			message: '#^Call to protected method generateExport\(\) of class App\\Filament\\Pages\\Tools\\TaxExport\.$#'
+			identifier: method.protected
 			count: 1
 			path: app/Filament/Pages/Tools/Schemas/TaxExportForm.php
-
-		-
-			message: '#^Call to an undefined method Livewire\\Component\:\:generateExport\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Filament/Pages/Tools/Schemas/TaxExportForm.php
-
-		-
-			message: '#^Access to an undefined property App\\Filament\\Pages\\Tools\\TaxExport\:\:\$form\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Pages/Tools/TaxExport.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Content\\TenantBlogPost\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Resources/BlogPosts/BlogPostResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Content\\TenantBlogPost\:\:\$published_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Resources/BlogPosts/BlogPostResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Content\\TenantBlogPost\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Resources/BlogPosts/BlogPostResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Content\\TenantBlogPost\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Filament/Resources/BlogPosts/Tables/BlogPostsTable.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Financial\\Coupon\>\:\:valid\(\)\.$#'
@@ -377,12 +257,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Filament/Resources/Orders/Pages/ViewOrder.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Customers\\Customer\:\:\$last_order_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Filament/Widgets/ReorderRemindersWidget.php
 
 		-
 			message: '#^Parameter \#1 \$message of static method App\\Http\\Responses\\ApiResponse\:\:error\(\) expects string, string\|null given\.$#'
@@ -529,12 +403,6 @@ parameters:
 			path: app/Queries/Platform/TenantAnalyticsQuery.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Customers\\Customer\:\:\$order_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Reports/Customers/CustomerReport.php
-
-		-
 			message: '#^Cannot call method format\(\) on Carbon\\Carbon\|null\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -599,12 +467,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: app/Services/Financial/ProductAnalysisService.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Customers\\Customer\:\:\$balance\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/Loyalty/LoyaltyAnalytics.php
 
 		-
 			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:aggregateIngredients\(\) has parameter \$orderItems with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
@@ -683,18 +545,6 @@ parameters:
 			identifier: match.unhandled
 			count: 1
 			path: app/ValueObjects/TenantHealthScore.php
-
-		-
-			message: '#^Access to an undefined property object\:\:\$avg_rating\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/ViewModels/Storefront/ReviewsPageViewModel.php
-
-		-
-			message: '#^Access to an undefined property object\:\:\$total_count\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/ViewModels/Storefront/ReviewsPageViewModel.php
 
 		-
 			message: '#^Constructor of class App\\ViewModels\\Storefront\\ReviewsPageViewModel has an unused parameter \$reviews\.$#'
