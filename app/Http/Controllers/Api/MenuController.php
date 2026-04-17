@@ -16,7 +16,9 @@ class MenuController extends Controller
         $categories = Category::query()->active()
             ->orderBy('sort_order')
             ->with([
-                'products' => fn (HasMany $q) => $q->where('is_active', true),
+                'products' => function (HasMany $q): void {
+                    $q->where('is_active', true);
+                },
             ])
             ->get();
 

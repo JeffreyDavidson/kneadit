@@ -97,7 +97,7 @@ class OrderIngredientAggregator
             $item['stock_unit'] = $tracked?->unit;
             $item['needs_purchase'] = $tracked ? $item['quantity'] > $currentStock : true;
             $item['deficit'] = $tracked
-                ? max(0, $item['quantity'] - $currentStock)
+                ? (float) max(0, $item['quantity'] - $currentStock)
                 : $item['quantity'];
 
             return $item;

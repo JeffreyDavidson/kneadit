@@ -22,10 +22,10 @@ class GenerateSocialCaption
 
         $template = Arr::random(self::TEMPLATES);
 
-        return Str::replace(
+        return (string) Str::replace(
             ['{product}', '{price}', '{store_hashtag}'],
             [$product->name, (string) Number::currency($product->price), $storeHashtag],
-            $template,
+            (string) $template,
         );
     }
 }
