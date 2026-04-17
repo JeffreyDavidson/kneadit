@@ -25,7 +25,7 @@ test('favorites index validates email is required', function () {
         ->getJson('/api/favorites');
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors(['email']);
+        ->assertJsonPath('errors.0.source.pointer', '/data/attributes/email');
 });
 
 test('favorites toggle adds product to favorites', function () {
