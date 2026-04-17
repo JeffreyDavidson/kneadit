@@ -55,42 +55,6 @@ parameters:
 			path: app/Builders/Financial/GiftCardQueryBuilder.php
 
 		-
-			message: '#^Cannot access property \$value on string\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Filament/Central/Pages/OnboardingTracker.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Filament/Central/Pages/OnboardingTracker.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),array\<string, mixed\>\>\:\:sortBy\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: app/Filament/Central/Pages/OnboardingTracker.php
-
-		-
-			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 1
-			path: app/Filament/Central/Pages/OnboardingTracker.php
-
-		-
-			message: '#^Return type of call to method Illuminate\\Support\\Collection\<\(int\|string\),array\<string, mixed\>\>\:\:values\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 1
-			path: app/Filament/Central/Pages/OnboardingTracker.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Filament/Central/Pages/OnboardingTracker.php
-
-		-
 			message: '#^Parameter \#1 \$tenantIds of static method App\\Queries\\Platform\\TenantComparisonQuery\:\:comparison\(\) expects array\<int, string\>, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -157,12 +121,6 @@ parameters:
 			path: app/Filament/Central/Resources/SupportTicketResource/Pages/ViewTicket.php
 
 		-
-			message: '#^Cannot call method getLabel\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Filament/Central/Resources/TenantResource.php
-
-		-
 			message: '#^Cannot access property \$id on Illuminate\\Database\\Eloquent\\Model\|int\|string\|null\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -175,56 +133,26 @@ parameters:
 			path: app/Filament/Central/Resources/TenantResource/Pages/ViewTenant.php
 
 		-
-			message: '#^Cannot call method priceInDollars\(\) on string\.$#'
-			identifier: method.nonObject
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
 			count: 2
 			path: app/Filament/Central/Widgets/PlatformStats.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: mixed\)\|string\|null, Closure\(App\\Models\\Platform\\Tenant\)\: mixed given\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: int\)\|string\|null, Closure\(App\\Models\\Platform\\Tenant\)\: int given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Filament/Central/Widgets/PlatformStats.php
 
 		-
-			message: '#^Unable to resolve the template type TReturnType in call to method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: app/Filament/Central/Widgets/PlatformStats.php
-
-		-
-			message: '#^Unable to resolve the template type TReturnType in call to method Illuminate\\Support\\Collection\<int,App\\Models\\Platform\\Tenant\>\:\:sum\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: app/Filament/Central/Widgets/PlatformStats.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type string\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Filament/Central/Widgets/PlatformStats.php
-
-		-
-			message: '#^Cannot call method priceInDollars\(\) on string\.$#'
-			identifier: method.nonObject
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
 			count: 1
 			path: app/Filament/Central/Widgets/RevenueOverview.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: mixed\)\|string\|null, Closure\(App\\Models\\Platform\\Tenant\)\: mixed given\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: int\)\|string\|null, Closure\(App\\Models\\Platform\\Tenant\)\: int given\.$#'
 			identifier: argument.type
-			count: 1
-			path: app/Filament/Central/Widgets/RevenueOverview.php
-
-		-
-			message: '#^Unable to resolve the template type TReturnType in call to method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: app/Filament/Central/Widgets/RevenueOverview.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type string\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Filament/Central/Widgets/RevenueOverview.php
 
@@ -277,24 +205,6 @@ parameters:
 			path: app/Filament/Pages/Platform/OnboardingSteps/BrandingStep.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>brand_color_primary" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Filament/Pages/Platform/OnboardingSteps/BrandingStep.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>brand_color_secondary" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Filament/Pages/Platform/OnboardingSteps/BrandingStep.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Filament/Pages/Platform/OnboardingSteps/ContactStep.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Inventory\\Product\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Inventory\\Product\>\:\:\$category_id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -311,24 +221,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Filament/Pages/Platform/OnboardingSteps/ProductStep.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: app/Filament/Pages/Platform/OnboardingSteps/WelcomeStep.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>store_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Filament/Pages/Platform/OnboardingSteps/WelcomeStep.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Filament/Pages/Platform/UpgradePlan.php
 
 		-
 			message: '#^Access to an undefined property App\\Filament\\Pages\\Tools\\InstagramCaptionGenerator\:\:\$form\.$#'
@@ -535,22 +427,10 @@ parameters:
 			path: app/Http/Controllers/Order/ApplyCouponController.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Controllers/Order/ApplyCouponController.php
-
-		-
 			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany, 0\: ''products…''\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Storefront/MenuController.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type mixed\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Middleware/EnsureOnboardingComplete.php
 
 		-
 			message: '#^Cannot access property \$email on App\\Models\\Staff\\User\|null\.$#'
@@ -563,12 +443,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Responses/ApiResponse.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>brand_color_secondary" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Mail/BaseMailable.php
 
 		-
 			message: '#^Cannot call method getLabel\(\) on string\.$#'
@@ -937,18 +811,6 @@ parameters:
 			path: app/Models/Staff/User.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Auth\\AuthManager\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Observers/LogsActivityObserver.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Observers/LogsActivityObserver.php
-
-		-
 			message: '#^Cannot access property \$id on App\\Models\\Customers\\Customer\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -1013,18 +875,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Queries/Platform/TenantAnalyticsQuery.php
-
-		-
-			message: '#^Cannot access property \$value on string\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Queries/Platform/TenantComparisonQuery.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Queries/Platform/TenantComparisonQuery.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Customers\\Customer\:\:\$order_count\.$#'
@@ -1159,18 +1009,6 @@ parameters:
 			path: app/Services/Platform/ChangelogService.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>is_open" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Services/Scheduling/ScheduleService.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>brand_color_primary" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Services/Settings/TenantSettings.php
-
-		-
 			message: '#^Parameter \#2 \$paymentIntentId of callable App\\Actions\\Stripe\\HandleCheckoutComplete expects string, string\|Stripe\\PaymentIntent\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1187,30 +1025,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Services/Support/AppIconGeneratorService.php
-
-		-
-			message: '#^Cannot access property \$value on string\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Services/Tenants/TenantHealthService.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Services/Tenants/TenantHealthService.php
-
-		-
-			message: '#^Cannot access property \$value on App\\Enums\\Platform\\SubscriptionTier\:\:Starter\|string\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Services/Tenants/TenantUsageService.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between App\\Enums\\Platform\\SubscriptionTier\:\:Starter\|string and App\\Enums\\Platform\\SubscriptionTier\:\:Pro will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Services/Tenants/TenantUsageService.php
 
 		-
 			message: '#^Match expression does not handle remaining value\: string$#'
