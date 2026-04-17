@@ -5,7 +5,11 @@ namespace App\Builders\Financial;
 use App\Models\Financial\Coupon;
 use Illuminate\Database\Eloquent\Builder;
 
-/** @extends Builder<Coupon> */
+/**
+ * @template TModel of Coupon
+ *
+ * @extends Builder<TModel>
+ */
 class CouponQueryBuilder extends Builder
 {
     public function active(): static
