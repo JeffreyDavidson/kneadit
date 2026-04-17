@@ -45,6 +45,7 @@ final readonly class TenantHealthScore
             'healthy' => 'success',
             'at-risk' => 'warning',
             'critical' => 'danger',
+            default => 'gray',
         };
     }
 

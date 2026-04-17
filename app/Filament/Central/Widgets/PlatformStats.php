@@ -19,6 +19,7 @@ class PlatformStats extends StatsOverviewWidget
 
     protected function getStats(): array
     {
+        /** @var Collection<int, Tenant> $activeTenants */
         $activeTenants = Tenant::query()->where('is_active', true)->get();
         $mrr = $activeTenants->sum(fn (Tenant $t) => $t->plan->priceInDollars() ?? 0);
 

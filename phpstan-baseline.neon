@@ -25,28 +25,10 @@ parameters:
 			path: app/Actions/Stripe/HandleConnectAccountUpdated.php
 
 		-
-			message: '#^Offset ''is_open'' on array\{is_open\: bool, open_time\: string\|null, close_time\: string\|null, order_cutoff_time\: string\|null, max_orders\: int\|null\} on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 5
-			path: app/Actions/Tenants/UpdateSchedule.php
-
-		-
 			message: '#^Method App\\Builders\\Customers\\ReviewQueryBuilder\:\:statistics\(\) should return object\{avg_rating\: float, total_count\: int\} but returns stdClass\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Builders/Customers/ReviewQueryBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$column of method Illuminate\\Database\\Eloquent\\Builder\<TModel of App\\Models\\Financial\\Coupon\>\:\:where\(\) expects array\<int\|string, mixed\>\|\(Closure\(static\)\: static\)\|\(Closure\(static\)\: void\)\|Illuminate\\Contracts\\Database\\Query\\Expression\|string, Closure\(Illuminate\\Database\\Eloquent\\Builder\)\: App\\Builders\\Financial\\CouponQueryBuilder\<TModel\> given\.$#'
-			identifier: argument.type
-			count: 3
-			path: app/Builders/Financial/CouponQueryBuilder.php
-
-		-
-			message: '#^Parameter \#1 \$column of method Illuminate\\Database\\Eloquent\\Builder\<TModel of App\\Models\\Financial\\GiftCard\>\:\:where\(\) expects array\<int\|string, mixed\>\|\(Closure\(static\)\: static\)\|\(Closure\(static\)\: void\)\|Illuminate\\Contracts\\Database\\Query\\Expression\|string, Closure\(Illuminate\\Database\\Eloquent\\Builder\)\: App\\Builders\\Financial\\GiftCardQueryBuilder\<TModel\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Builders/Financial/GiftCardQueryBuilder.php
 
 		-
 			message: '#^Parameter \#1 \$tenantIds of static method App\\Queries\\Platform\\TenantComparisonQuery\:\:comparison\(\) expects array\<int, string\>, array\<string, mixed\> given\.$#'
@@ -55,32 +37,14 @@ parameters:
 			path: app/Filament/Central/Pages/TenantComparison.php
 
 		-
-			message: '#^Call to an undefined method App\\Filament\\Central\\Resources\\MessageResource\\Pages\\ListMessages\:\:sendSuccessNotification\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Filament/Central/Resources/MessageResource/Pages/ListMessages.php
-
-		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
 			count: 2
 			path: app/Filament/Central/Widgets/PlatformStats.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: int\)\|string\|null, Closure\(App\\Models\\Platform\\Tenant\)\: int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Filament/Central/Widgets/PlatformStats.php
-
-		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
-			count: 1
-			path: app/Filament/Central/Widgets/RevenueOverview.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: int\)\|string\|null, Closure\(App\\Models\\Platform\\Tenant\)\: int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Filament/Central/Widgets/RevenueOverview.php
 
@@ -139,12 +103,6 @@ parameters:
 			path: app/Filament/Resources/CustomerPhotos/Tables/CustomerPhotosTable.php
 
 		-
-			message: '#^Parameter \#1 \$message of static method App\\Http\\Responses\\ApiResponse\:\:error\(\) expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/CouponValidationController.php
-
-		-
 			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany\} given\.$#'
 			identifier: argument.type
 			count: 1
@@ -169,40 +127,16 @@ parameters:
 			path: app/Http/Controllers/Central/ExportController.php
 
 		-
-			message: '#^Parameter \#1 \$message of static method App\\Http\\Responses\\ApiResponse\:\:error\(\) expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Order/ApplyCouponController.php
-
-		-
 			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany, 0\: ''products…''\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Storefront/MenuController.php
 
 		-
-			message: '#^Method App\\Http\\Responses\\ApiResponse\:\:error\(\) has parameter \$errors with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Http/Responses/ApiResponse.php
-
-		-
 			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany\} given\.$#'
 			identifier: argument.type
 			count: 2
 			path: app/Models/Inventory/Category.php
-
-		-
-			message: '#^Method App\\Models\\Staff\\StaffInvitation\:\:pending\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/Staff/StaffInvitation.php
-
-		-
-			message: '#^Cannot access offset ''events'' on Illuminate\\Contracts\\Foundation\\Application\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: app/Providers/EventServiceProvider.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:active\(\)\.$#'
@@ -247,21 +181,9 @@ parameters:
 			path: app/Services/Content/CaptionGeneratorService.php
 
 		-
-			message: '#^Call to method toHtml\(\) on an unknown class SimpleSoftwareIO\\QrCode\\Illuminate\\Support\\HtmlString\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/Content/QrCodeService.php
-
-		-
-			message: '#^Cannot cast SimpleSoftwareIO\\QrCode\\Illuminate\\Support\\HtmlString\|string\|null to string\.$#'
+			message: '#^Cannot cast SimpleSoftwareIO\\QrCode\\Illuminate\\Support\\HtmlString\|string to string\.$#'
 			identifier: cast.string
-			count: 1
-			path: app/Services/Content/QrCodeService.php
-
-		-
-			message: '#^Method App\\Services\\Content\\QrCodeService\:\:generatePng\(\) should return string but returns SimpleSoftwareIO\\QrCode\\Illuminate\\Support\\HtmlString\|string\|null\.$#'
-			identifier: return.type
-			count: 1
+			count: 2
 			path: app/Services/Content/QrCodeService.php
 
 		-
@@ -277,32 +199,8 @@ parameters:
 			path: app/Services/Financial/ProductAnalysisService.php
 
 		-
-			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:aggregateIngredients\(\) has parameter \$orderItems with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Services/Orders/OrderIngredientAggregator.php
-
-		-
-			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:aggregateIngredients\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Services/Orders/OrderIngredientAggregator.php
-
-		-
-			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:crossReferenceInventory\(\) has parameter \$aggregated with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Services/Orders/OrderIngredientAggregator.php
-
-		-
-			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:crossReferenceInventory\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Services/Orders/OrderIngredientAggregator.php
-
-		-
-			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:fetchOrderItems\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
+			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:crossReferenceInventory\(\) should return Illuminate\\Support\\Collection\<string, array\{name\: string, quantity\: float, unit\: string, in_stock\: float\|null, stock_unit\: string\|null, needs_purchase\: bool, deficit\: float\}\> but returns Illuminate\\Support\\Collection\<string, array\{name\: string, quantity\: float, unit\: string, in_stock\: float\|null, stock_unit\: string\|null, needs_purchase\: bool, deficit\: float\|int\}\>\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Services/Orders/OrderIngredientAggregator.php
 
@@ -347,21 +245,3 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Services/Support/AppIconGeneratorService.php
-
-		-
-			message: '#^Match expression does not handle remaining value\: string$#'
-			identifier: match.unhandled
-			count: 1
-			path: app/ValueObjects/TenantHealthScore.php
-
-		-
-			message: '#^Constructor of class App\\ViewModels\\Storefront\\ReviewsPageViewModel has an unused parameter \$reviews\.$#'
-			identifier: constructor.unusedParameter
-			count: 1
-			path: app/ViewModels/Storefront/ReviewsPageViewModel.php
-
-		-
-			message: '#^Method App\\ViewModels\\Storefront\\ReviewsPageViewModel\:\:__construct\(\) has parameter \$reviews with generic class Illuminate\\Pagination\\LengthAwarePaginator but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/ViewModels/Storefront/ReviewsPageViewModel.php

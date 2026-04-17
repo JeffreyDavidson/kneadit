@@ -5,6 +5,7 @@ namespace App\Services\Orders;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -23,6 +24,7 @@ class OrderIngredientAggregator
             ->values();
     }
 
+    /** @return Collection<int, OrderItem> */
     private function fetchOrderItems(string $startDate, string $endDate): Collection
     {
         return Order::query()
@@ -33,6 +35,10 @@ class OrderIngredientAggregator
             ->flatMap(fn (Order $order) => $order->orderItems);
     }
 
+    /**
+     * @param Collection<int, OrderItem> $orderItems
+     * @return Collection<string, array{name: string, quantity: float, unit: string}>
+     */
     private function aggregateIngredients(Collection $orderItems): Collection
     {
         $aggregated = collect();
@@ -74,6 +80,10 @@ class OrderIngredientAggregator
         return $aggregated;
     }
 
+    /**
+     * @param Collection<string, array{name: string, quantity: float, unit: string}> $aggregated
+     * @return Collection<string, array{name: string, quantity: float, unit: string, in_stock: float|null, stock_unit: string|null, needs_purchase: bool, deficit: float}>
+     */
     private function crossReferenceInventory(Collection $aggregated): Collection
     {
         $inventoryIngredients = Ingredient::all()
