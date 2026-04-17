@@ -3,9 +3,12 @@
 namespace App\Actions\Orders;
 
 use App\Enums\Orders\OrderStatus;
+use App\Events\Orders\OrderCancelled;
+use App\Events\Orders\OrderDelivered;
+use App\Events\Orders\OrderStatusChanged;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
 use App\Models\Orders\Order;
-use App\Services\Orders\OrderStatusEffectDispatcher;
+use App\Services\Inventory\InventoryManager;
 use Illuminate\Support\Facades\DB;
 
 class TransitionOrderStatus
@@ -19,7 +22,8 @@ class TransitionOrderStatus
     ];
 
     public function __construct(
-        private OrderStatusEffectDispatcher $effects,
+        private InventoryManager $inventoryManager,
+        private ReverseOrderDiscounts $reverseOrderDiscounts,
     ) {}
 
     public function __invoke(Order $order, OrderStatus $to): Order
@@ -31,8 +35,25 @@ class TransitionOrderStatus
 
         DB::transaction(function () use ($order, $from, $to) {
             $order->update(['status' => $to]);
-            $this->effects->dispatch($order, $from, $to);
+
+            if ($to === OrderStatus::Baking) {
+                $this->inventoryManager->deductForOrder($order);
+            }
+
+            if ($to === OrderStatus::Cancelled) {
+                ($this->reverseOrderDiscounts)($order, "Order cancelled (was {$from->value})");
+            }
         });
+
+        OrderStatusChanged::dispatch($order, $from, $to);
+
+        if ($to === OrderStatus::Delivered) {
+            OrderDelivered::dispatch($order, $from);
+        }
+
+        if ($to === OrderStatus::Cancelled) {
+            OrderCancelled::dispatch($order, $from);
+        }
 
         return $order;
     }
