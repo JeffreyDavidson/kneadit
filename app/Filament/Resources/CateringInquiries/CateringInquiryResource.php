@@ -57,7 +57,7 @@ class CateringInquiryResource extends Resource
     {
         return [
             'Email' => $record->customer_email ?? 'N/A',
-            'Event' => $record->event_type_label,
+            'Event' => $record->event_type,
         ];
     }
 
