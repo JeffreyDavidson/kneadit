@@ -4,6 +4,7 @@ namespace App\Reports\Inventory;
 
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Inventory\Product;
+use App\Support\ProfitMargin;
 use App\ValueObjects\DateRange;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,9 @@ class ProductReport
             ->withSum(['orderItems as revenue' => fn (EloquentBuilder $q) => $q->whereHas('order', fn (EloquentBuilder $o) => $o->whereBetween('delivery_date', $range->toArray())->where('payment_status', PaymentStatus::Paid))], DB::raw('quantity * unit_price'))
             ->get()
             ->map(function (Product $p) {
-                $margin = $p->price > 0 && $p->cost > 0 ? round((($p->price - $p->cost) / $p->price) * 100, 1) : null;
+                $margin = $p->cost > 0
+                    ? ProfitMargin::calculate((float) $p->price, (float) $p->cost, 1)
+                    : null;
 
                 return [
                     'name' => $p->name,

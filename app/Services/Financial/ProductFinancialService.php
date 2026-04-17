@@ -9,6 +9,7 @@ use App\Enums\Financial\MarginHealth;
 use App\Enums\Financial\PricingPosition;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
+use App\Support\ProfitMargin;
 use Illuminate\Support\Collection;
 
 class ProductFinancialService
@@ -25,9 +26,7 @@ class ProductFinancialService
         $price = (float) ($product->price ?? 0);
         $ingredients = $this->formatIngredients($product->recipes->first());
 
-        $margin = ($cost > 0 && $price > 0)
-            ? (($price - $cost) / $price) * 100
-            : null;
+        $margin = $cost > 0 ? ProfitMargin::calculate($price, $cost) : null;
 
         $suggestedPrice = ($cost > 0 && $targetMarginPercent > 0)
             ? $cost / (1 - ($targetMarginPercent / 100))
@@ -37,7 +36,7 @@ class ProductFinancialService
             cost: $cost,
             price: $price,
             suggestedPrice: $suggestedPrice,
-            currentMarginPercent: $margin ? round($margin, 2) : null,
+            currentMarginPercent: $margin,
             profitPerUnit: $price - $cost,
             marginHealth: MarginHealth::fromPercentage($margin),
             ingredients: $ingredients,
