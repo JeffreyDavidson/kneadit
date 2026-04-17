@@ -10,7 +10,7 @@ beforeEach(function () {
     User::factory()->owner()->create();
 });
 
-it('transforms a gallery photo into the expected API shape', function () {
+it('projects a gallery photo into the JSON:API shape', function () {
     $photo = GalleryPhoto::factory()->create([
         'title' => 'Birthday Cake',
         'image_path' => 'photos/cake.jpg',
@@ -18,13 +18,18 @@ it('transforms a gallery photo into the expected API shape', function () {
     ]);
 
     $resource = new GalleryPhotoResource($photo);
-    $data = $resource->toArray(request());
+    $request = request();
 
-    expect($data)
-        ->toHaveKeys(['id', 'title', 'image_path', 'category'])
+    expect($resource->toType($request))->toBe('gallery-photos')
+        ->and($resource->toId($request))->toBe((string) $photo->id);
+
+    $attributes = $resource->toAttributes($request);
+
+    expect($attributes)
+        ->toHaveKeys(['title', 'image_path', 'category'])
         ->toMatchArray([
             'title' => 'Birthday Cake',
             'image_path' => 'photos/cake.jpg',
-            'category' => GalleryCategory::Products,
+            'category' => GalleryCategory::Products->value,
         ]);
 });

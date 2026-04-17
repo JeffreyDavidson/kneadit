@@ -6,18 +6,22 @@ use App\Actions\Customers\ToggleCustomerFavorite;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\IndexFavoritesRequest;
 use App\Http\Requests\Api\StoreApiFavoriteRequest;
+use App\Http\Resources\FavoriteResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Customers\CustomerFavorite;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class FavoriteController extends Controller
 {
-    public function index(IndexFavoritesRequest $request): JsonResponse
+    public function index(IndexFavoritesRequest $request): AnonymousResourceCollection
     {
-        $productIds = CustomerFavorite::query()->forCustomer($request->validated('email'))
-            ->pluck('product_id');
+        $favorites = CustomerFavorite::query()
+            ->forCustomer($request->validated('email'))
+            ->with('product')
+            ->get();
 
-        return ApiResponse::success($productIds, 'Favorites retrieved successfully.');
+        return FavoriteResource::collection($favorites);
     }
 
     public function store(StoreApiFavoriteRequest $request, ToggleCustomerFavorite $toggleFavorite): JsonResponse
