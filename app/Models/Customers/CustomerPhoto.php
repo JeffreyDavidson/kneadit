@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Product|null $product
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerPhoto approved()
- * @method static \Database\Factories\CustomerPhotoFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerPhoto featured()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerPhoto newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerPhoto newQuery()

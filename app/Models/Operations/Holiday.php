@@ -32,7 +32,6 @@ use Illuminate\Support\Facades\Date;
  * @property-read bool $is_deadline_passed
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday active()
- * @method static \Database\Factories\HolidayFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday query()

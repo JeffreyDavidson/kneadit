@@ -24,7 +24,6 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
  *
- * @method static \Database\Factories\CouponFactory factory($count = null, $state = [])
  * @method static CouponQueryBuilder|Coupon newModelQuery()
  * @method static CouponQueryBuilder|Coupon newQuery()
  * @method static CouponQueryBuilder|Coupon query()

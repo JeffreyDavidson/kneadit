@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property-read Order|null $order
  *
- * @method static \Database\Factories\OrderMessageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderMessage query()

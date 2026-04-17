@@ -13,7 +13,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $next_reminder_date
  * @property-read Customer|null $customer
  *
- * @method static \Database\Factories\CustomerReminderFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerReminder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerReminder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerReminder query()

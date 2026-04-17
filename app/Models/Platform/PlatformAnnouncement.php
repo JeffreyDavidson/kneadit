@@ -26,7 +26,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement active()
- * @method static \Database\Factories\PlatformAnnouncementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement query()

@@ -19,7 +19,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read ScheduledCheckin $checkin
  *
- * @method static \Database\Factories\CheckinLogFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog query()

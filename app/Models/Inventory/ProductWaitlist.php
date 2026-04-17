@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property-read Product|null $product
  *
- * @method static \Database\Factories\ProductWaitlistFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductWaitlist newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductWaitlist newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductWaitlist query()

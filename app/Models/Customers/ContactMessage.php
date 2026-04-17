@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @method static \Database\Factories\ContactMessageFactory factory($count = null, $state = [])
  * @method static ContactMessageQueryBuilder|ContactMessage newModelQuery()
  * @method static ContactMessageQueryBuilder|ContactMessage newQuery()
  * @method static ContactMessageQueryBuilder|ContactMessage query()

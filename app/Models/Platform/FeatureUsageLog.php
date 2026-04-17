@@ -20,7 +20,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon $date
  * @property Carbon|null $created_at
  *
- * @method static \Database\Factories\FeatureUsageLogFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|FeatureUsageLog query()

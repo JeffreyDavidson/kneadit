@@ -17,7 +17,6 @@ use Illuminate\Support\Carbon;
  * @property SocialPostStatus $status
  * @property-read Product|null $product
  *
- * @method static \Database\Factories\SocialPostFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialPost newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialPost newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SocialPost query()

@@ -42,7 +42,6 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property-read Referral|null $referral
  *
  * @method static \Stancl\Tenancy\Database\TenantCollection<int, static> all($columns = ['*'])
- * @method static \Database\Factories\TenantFactory factory($count = null, $state = [])
  * @method static \Stancl\Tenancy\Database\TenantCollection<int, static> get($columns = ['*'])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant newQuery()

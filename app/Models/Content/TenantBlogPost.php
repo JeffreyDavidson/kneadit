@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @method static \Database\Factories\TenantBlogPostFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost query()

@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property-read User|null $user
  *
- * @method static \Database\Factories\ActivityLogFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog query()

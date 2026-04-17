@@ -18,7 +18,6 @@ use Illuminate\Support\Carbon;
  * @property-read string $category_label
  * @property float $deductible_amount
  *
- * @method static \Database\Factories\ExpenseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense query()

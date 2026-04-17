@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Date;
  * @property-read string $status_label
  * @property-read Product|null $product
  *
- * @method static \Database\Factories\WaitlistEntryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry forDate(\Carbon\Carbon|string $date)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry newQuery()

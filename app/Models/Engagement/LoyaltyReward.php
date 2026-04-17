@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Product|null $product
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward active()
- * @method static \Database\Factories\LoyaltyRewardFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward query()

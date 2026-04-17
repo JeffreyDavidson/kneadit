@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property-read Ingredient|null $ingredient
  *
- * @method static \Database\Factories\StockAdjustmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StockAdjustment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StockAdjustment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StockAdjustment query()

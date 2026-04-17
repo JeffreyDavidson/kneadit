@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property-read int|null $inventory_ingredients_count
  * @property-read Product|null $product
  *
- * @method static \Database\Factories\RecipeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recipe newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recipe newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recipe query()
