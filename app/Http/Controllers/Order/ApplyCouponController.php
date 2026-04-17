@@ -7,6 +7,7 @@ use App\Http\Requests\Order\ApplyDiscountRequest;
 use App\Http\Responses\ApiResponse;
 use App\Services\Coupon\CouponService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class ApplyCouponController extends Controller
 {
@@ -15,7 +16,9 @@ class ApplyCouponController extends Controller
         $result = $couponService->validate($request->validated('code'), (float) $request->validated('subtotal'));
 
         if (! $result->valid) {
-            return ApiResponse::error($result->error);
+            throw ValidationException::withMessages([
+                'code' => $result->errorMessage(),
+            ]);
         }
 
         $coupon = $result->coupon;

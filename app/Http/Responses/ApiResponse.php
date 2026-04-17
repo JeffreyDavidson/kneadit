@@ -19,6 +19,9 @@ class ApiResponse
         return self::success($data, $message, 201);
     }
 
+    /**
+     * @param array<string, mixed>|null $errors
+     */
     public static function error(string $message, int $status = 422, ?array $errors = null): JsonResponse
     {
         $response = [
