@@ -16,6 +16,6 @@ trait RequiresManagerRole
     {
         $user = Auth::user();
 
-        return $user && $user->hasMinRole(UserRole::Manager);
+        return $user && $user->role->meetsRequirement(UserRole::Manager);
     }
 }

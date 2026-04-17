@@ -8,70 +8,66 @@ uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('user model has role methods', function () {
-    $user = new User;
-
-    expect(method_exists($user, 'isOwner'))->toBeTrue()->and(method_exists($user, 'isManager'))->toBeTrue()->and(method_exists($user, 'isStaff'))->toBeTrue()->and(method_exists($user, 'hasMinRole'))->toBeTrue();
-});
-
 test('role is cast to UserRole enum', function () {
     $user = User::factory()->create(['role' => UserRole::Owner]);
 
     expect($user->role)->toBe(UserRole::Owner);
 });
 
-test('is owner returns true for owner role', function () {
+test('is_owner returns true for owner role', function () {
     $user = User::factory()->create(['role' => UserRole::Owner]);
 
-    expect($user->isOwner())->toBeTrue();
+    expect($user->is_owner)->toBeTrue();
 });
 
-test('is owner returns false for manager', function () {
+test('is_owner returns false for manager', function () {
     $user = User::factory()->create(['role' => UserRole::Manager]);
 
-    expect($user->isOwner())->toBeFalse();
+    expect($user->is_owner)->toBeFalse();
 });
 
-test('is owner returns false for staff', function () {
+test('is_owner returns false for staff', function () {
     $user = User::factory()->create(['role' => UserRole::Staff]);
 
-    expect($user->isOwner())->toBeFalse();
+    expect($user->is_owner)->toBeFalse();
 });
 
-test('is manager returns true for manager', function () {
+test('is_manager returns true for manager', function () {
     $user = User::factory()->create(['role' => UserRole::Manager]);
 
-    expect($user->isManager())->toBeTrue();
+    expect($user->is_manager)->toBeTrue();
 });
 
-test('is staff returns true for staff', function () {
+test('is_staff returns true for staff', function () {
     $user = User::factory()->create(['role' => UserRole::Staff]);
 
-    expect($user->isStaff())->toBeTrue();
+    expect($user->is_staff)->toBeTrue();
 });
 
-test('has min role staff is true for all roles', function (string $role) {
+test('role meetsRequirement staff is true for all roles', function (string $role) {
     $user = User::factory()->create(['role' => $role]);
 
-    expect($user->hasMinRole(UserRole::Staff))->toBeTrue();
+    expect($user->role->meetsRequirement(UserRole::Staff))->toBeTrue();
 })->with(['staff', 'manager', 'owner']);
 
-test('has min role manager is false for staff', function () {
+test('role meetsRequirement manager is false for staff', function () {
     $user = User::factory()->create(['role' => UserRole::Staff]);
 
-    expect($user->hasMinRole(UserRole::Manager))->toBeFalse();
+    expect($user->role->meetsRequirement(UserRole::Manager))->toBeFalse();
 });
 
-test('has min role manager is true for manager and owner', function (string $role) {
+test('role meetsRequirement manager is true for manager and owner', function (string $role) {
     $user = User::factory()->create(['role' => $role]);
 
-    expect($user->hasMinRole(UserRole::Manager))->toBeTrue();
+    expect($user->role->meetsRequirement(UserRole::Manager))->toBeTrue();
 })->with(['manager', 'owner']);
 
-test('has min role owner is true only for owner', function () {
+test('role meetsRequirement owner is true only for owner', function () {
     $owner = User::factory()->create(['role' => UserRole::Owner]);
     $manager = User::factory()->create(['role' => UserRole::Manager]);
     $staff = User::factory()->create(['role' => UserRole::Staff]);
 
-    expect($owner->hasMinRole(UserRole::Owner))->toBeTrue()->and($manager->hasMinRole(UserRole::Owner))->toBeFalse()->and($staff->hasMinRole(UserRole::Owner))->toBeFalse();
+    expect($owner->role->meetsRequirement(UserRole::Owner))->toBeTrue()
+        ->and($manager->role->meetsRequirement(UserRole::Owner))->toBeFalse()
+        ->and($staff->role->meetsRequirement(UserRole::Owner))->toBeFalse();
 });
