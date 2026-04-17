@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\GalleryPhotos\Tables;
 
+use App\Filament\Actions\SlideOverEditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -56,7 +56,7 @@ class GalleryPhotosTable
                     ->native(false),
             ])
             ->recordActions([
-                EditAction::make()->slideOver()->modalWidth('md'),
+                SlideOverEditAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

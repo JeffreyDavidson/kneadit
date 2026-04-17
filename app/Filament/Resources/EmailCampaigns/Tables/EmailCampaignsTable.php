@@ -4,11 +4,11 @@ namespace App\Filament\Resources\EmailCampaigns\Tables;
 
 use App\Actions\Platform\SendEmailCampaign;
 use App\Enums\Marketing\EmailCampaignStatus;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Engagement\EmailCampaign;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -59,9 +59,7 @@ class EmailCampaignsTable
                     ->modalDescription('This will send this email to all customers. Are you sure?')
                     ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Draft)
                     ->action(fn (EmailCampaign $record) => resolve(SendEmailCampaign::class)($record)),
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

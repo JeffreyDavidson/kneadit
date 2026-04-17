@@ -4,11 +4,11 @@ namespace App\Filament\Resources\CateringInquiries\Tables;
 
 use App\Actions\Customers\TransitionCateringInquiryStatus;
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\DateRangeFilter;
 use App\Models\Customers\CateringInquiry;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
-use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -72,9 +72,7 @@ class CateringInquiriesTable
                     ->requiresConfirmation()
                     ->visible(fn (CateringInquiry $record) => $record->status === CateringInquiryStatus::Quoted)
                     ->action(fn (CateringInquiry $record) => resolve(TransitionCateringInquiryStatus::class)($record, CateringInquiryStatus::Confirmed)),
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->emptyStateHeading('No catering inquiries yet')
             ->emptyStateDescription('Inquiries will appear here when customers submit them.');

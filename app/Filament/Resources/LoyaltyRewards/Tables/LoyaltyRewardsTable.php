@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\LoyaltyRewards\Tables;
 
 use App\Enums\Engagement\RewardType;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Engagement\LoyaltyReward;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -49,9 +49,7 @@ class LoyaltyRewardsTable
                     ->label('Active'),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->defaultSort('points_required')
             ->emptyStateHeading('No loyalty rewards yet')

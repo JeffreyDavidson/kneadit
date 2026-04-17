@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Surveys\Tables;
 
-use Filament\Actions\EditAction;
+use App\Filament\Actions\SlideOverEditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -37,9 +37,7 @@ class SurveysTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->defaultSort('created_at', 'desc')
             ->emptyStateHeading('No surveys yet')

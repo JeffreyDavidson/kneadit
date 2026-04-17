@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\CustomerPhotos\Tables;
 
 use App\Actions\Content\ApproveCustomerPhoto;
+use App\Filament\Actions\SlideOverEditAction;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -72,7 +72,7 @@ class CustomerPhotosTable
                     ->native(false),
             ])
             ->recordActions([
-                EditAction::make()->slideOver()->modalWidth('md'),
+                SlideOverEditAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

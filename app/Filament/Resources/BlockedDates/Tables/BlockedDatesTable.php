@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\BlockedDates\Tables;
 
+use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Operations\BlockedDate;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -50,9 +50,7 @@ class BlockedDatesTable
                     ->label('All Day'),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
