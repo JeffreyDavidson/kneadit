@@ -17,7 +17,7 @@ class TenantAnalyticsQuery
         $counts = Tenant::query()
             ->where('created_at', '>=', $startDate)
             ->get(['created_at'])
-            ->groupBy(fn (Tenant $tenant) => $tenant->created_at->format('Y-m'))
+            ->groupBy(fn (Tenant $tenant) => $tenant->created_at?->format('Y-m') ?? '')
             ->map(fn ($group) => $group->count());
 
         $months = collect();

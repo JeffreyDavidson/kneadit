@@ -3,12 +3,16 @@
 namespace App\Filament\Central\Resources\TenantResource\Pages;
 
 use App\Filament\Central\Resources\TenantResource;
+use App\Models\Platform\Tenant;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 
+/**
+ * @property-read Tenant $record
+ */
 class ViewTenant extends ViewRecord
 {
     protected static string $resource = TenantResource::class;

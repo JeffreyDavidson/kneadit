@@ -8,11 +8,12 @@ class QrCodeService
 {
     public function generateSvg(string $url, int $size, string $hexColor): string
     {
-        return QrCode::size($size)
+        $svg = QrCode::size($size)
             ->color(...$this->parseHexColor($hexColor))
             ->margin(1)
-            ->generate($url)
-            ->toHtml();
+            ->generate($url);
+
+        return $svg instanceof \Illuminate\Support\HtmlString ? $svg->toHtml() : (string) $svg;
     }
 
     public function generatePng(string $url, int $size, string $hexColor): string

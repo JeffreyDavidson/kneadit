@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
+ * @property UserRole $role
  * @property-read User|null $inviter
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newModelQuery()

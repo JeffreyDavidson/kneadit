@@ -30,11 +30,16 @@ class ReviewRequestEngagement implements CustomerEngagement
             ->whereHas('customer', fn (Builder $q) => $q->whereNotNull('email'))
             ->with('customer')
             ->get()
-            ->map(fn (Order $order) => new EngagementRecipient(
-                email: $order->customer->email,
-                name: $order->customer->name,
-                model: $order,
-            ));
+            ->map(function (Order $order) {
+                /** @var \App\Models\Customers\Customer $customer */
+                $customer = $order->customer;
+
+                return new EngagementRecipient(
+                    email: $customer->email,
+                    name: $customer->name,
+                    model: $order,
+                );
+            });
     }
 
     public function dispatchForRecipient(EngagementRecipient $recipient, TenantSettings $settings): void

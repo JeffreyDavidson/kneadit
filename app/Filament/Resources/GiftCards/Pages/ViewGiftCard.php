@@ -5,12 +5,16 @@ namespace App\Filament\Resources\GiftCards\Pages;
 use App\Actions\GiftCards\AddGiftCardCredit;
 use App\Actions\GiftCards\ToggleGiftCardActive;
 use App\Filament\Resources\GiftCards\GiftCardResource;
+use App\Models\Financial\GiftCard;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 
+/**
+ * @property-read GiftCard $record
+ */
 class ViewGiftCard extends ViewRecord
 {
     protected static string $resource = GiftCardResource::class;

@@ -20,7 +20,9 @@ class AcceptInvitationRequest extends FormRequest
             ->where('token', $this->route('token'))
             ->first();
 
-        return ! $invitation || Auth::user()->email === $invitation->email;
+        $user = Auth::user();
+
+        return ! $invitation || ($user !== null && $user->email === $invitation->email);
     }
 
     /**
