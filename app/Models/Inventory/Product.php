@@ -3,16 +3,17 @@
 namespace App\Models\Inventory;
 
 use App\Builders\Inventory\ProductQueryBuilder;
-use App\Models\Concerns\LogsActivity;
 use App\Models\Content\SocialPost;
 use App\Models\Customers\CustomerPhoto;
 use App\Models\Engagement\PageView;
 use App\Models\Engagement\Review;
 use App\Models\Orders\OrderItem;
+use App\Observers\LogsActivityObserver;
 use App\Presenters\ProductPresenter;
 use App\Support\ProfitMargin;
 use Database\Factories\Inventory\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -58,13 +59,12 @@ use Illuminate\Support\Facades\Storage;
  * @mixin \Eloquent
  */
 #[Fillable('name', 'slug', 'description', 'price', 'category_id', 'is_active', 'is_featured', 'image', 'cost')]
+#[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(ProductQueryBuilder::class)]
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
     use HasFactory;
-
-    use LogsActivity;
 
     protected function casts(): array
     {

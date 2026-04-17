@@ -1,26 +1,34 @@
 <?php
 
-namespace App\Models\Concerns;
+namespace App\Observers;
 
 use App\Enums\Operations\ActivityAction;
 use App\Models\Operations\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
-trait LogsActivity
+class LogsActivityObserver
 {
-    protected static function bootLogsActivity(): void
+    public function created(Model $model): void
     {
-        static::created(fn ($model) => static::logAction($model, ActivityAction::Created));
-        static::updated(fn ($model) => static::logAction($model, ActivityAction::Updated, $model->getChanges()));
-        static::deleted(fn ($model) => static::logAction($model, ActivityAction::Deleted));
+        $this->log($model, ActivityAction::Created);
+    }
+
+    public function updated(Model $model): void
+    {
+        $this->log($model, ActivityAction::Updated, $model->getChanges());
+    }
+
+    public function deleted(Model $model): void
+    {
+        $this->log($model, ActivityAction::Deleted);
     }
 
     /**
      * @param array<string, mixed> $changes
      */
-    protected static function logAction(Model $model, ActivityAction $action, array $changes = []): void
+    private function log(Model $model, ActivityAction $action, array $changes = []): void
     {
-        // Prevent recursive logging
         if ($model instanceof ActivityLog) {
             return;
         }
@@ -36,8 +44,13 @@ trait LogsActivity
                 'properties' => ! empty($changes) ? ['changes' => $changes] : null,
                 'ip_address' => request()->ip(),
             ]);
-        } catch (\Throwable) {
-            // Silently fail — don't break the app if logging fails
+        } catch (\Throwable $e) {
+            Log::warning('Activity log failed', [
+                'model' => $model::class,
+                'id' => $model->getKey(),
+                'action' => $action->value,
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 }

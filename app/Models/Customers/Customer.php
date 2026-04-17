@@ -5,13 +5,14 @@ namespace App\Models\Customers;
 use App\Builders\Customers\CustomerQueryBuilder;
 use App\Casts\PhoneNumberCast;
 use App\DataTransferObjects\Customers\CustomerMetrics;
-use App\Models\Concerns\LogsActivity;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
+use App\Observers\LogsActivityObserver;
 use App\Services\Customers\CustomerIntelligence;
 use App\ValueObjects\Address;
 use Database\Factories\Customers\CustomerFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -58,13 +59,12 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'notes', 'birthday')]
+#[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(CustomerQueryBuilder::class)]
 class Customer extends Model
 {
     /** @use HasFactory<CustomerFactory> */
     use HasFactory;
-
-    use LogsActivity;
 
     protected function casts(): array
     {
