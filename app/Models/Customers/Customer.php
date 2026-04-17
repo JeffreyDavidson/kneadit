@@ -4,11 +4,9 @@ namespace App\Models\Customers;
 
 use App\Builders\Customers\CustomerQueryBuilder;
 use App\Casts\PhoneNumberCast;
-use App\DataTransferObjects\Customers\CustomerMetrics;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Observers\LogsActivityObserver;
-use App\Services\Customers\CustomerIntelligence;
 use App\ValueObjects\Address;
 use Database\Factories\Customers\CustomerFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -32,29 +30,20 @@ use Illuminate\Support\Carbon;
  * @property-read CustomerProfile|null $customerProfile
  * @property-read Collection<int, CustomerReminder> $customerReminders
  * @property-read int|null $customer_reminders_count
- * @property-read float $average_order_value
- * @property-read int|null $days_since_last_order
  * @property-read string $full_address
- * @property-read bool $is_at_risk
- * @property-read Carbon|null $last_order_date
- * @property-read int $lifetime_points_earned
- * @property-read float $lifetime_value
- * @property-read int $order_count
- * @property-read int $total_points
  * @property-read Collection<int, LoyaltyPoint> $loyaltyPoints
  * @property-read int|null $loyalty_points_count
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
+ * @property-read string|null $last_order_date Populated by CustomerIntelligence::enrichQuery()
+ * @property-read float|null $orders_sum_total Populated by CustomerIntelligence::enrichQuery()
+ * @property-read float|null $total_spend
+ * @property Carbon|null $birthday
  *
  * @method static \Database\Factories\CustomerFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer query()
- *
- * @property-read float|null $orders_sum_total
- * @property-read string|null $last_order_at
- * @property-read float|null $total_spend
- * @property Carbon|null $birthday
  *
  * @mixin \Eloquent
  */
@@ -128,79 +117,6 @@ class Customer extends Model
     public function customerProfile(): HasOne
     {
         return $this->hasOne(CustomerProfile::class);
-    }
-
-    /**
-     * Memoized per-instance. Uses app() because models cannot use constructor injection.
-     * Prefer CustomerIntelligence::enrichQuery() for list views to avoid per-row queries.
-     */
-    private function getMetrics(): CustomerMetrics
-    {
-        return once(fn () => resolve(CustomerIntelligence::class)->metrics($this));
-    }
-
-    /** @return Attribute<int, never> */
-    protected function totalPoints(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getMetrics()->totalPoints,
-        );
-    }
-
-    /** @return Attribute<int, never> */
-    protected function lifetimePointsEarned(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getMetrics()->lifetimePointsEarned,
-        );
-    }
-
-    /** @return Attribute<float, never> */
-    protected function lifetimeValue(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getMetrics()->lifetimeValue,
-        );
-    }
-
-    /** @return Attribute<int, never> */
-    protected function orderCount(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getMetrics()->orderCount,
-        );
-    }
-
-    /** @return Attribute<Carbon|null, never> */
-    protected function lastOrderDate(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getMetrics()->lastOrderDate,
-        );
-    }
-
-    /** @return Attribute<float, never> */
-    protected function averageOrderValue(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getMetrics()->averageOrderValue,
-        );
-    }
-
-    /** @return Attribute<int|null, never> */
-    protected function daysSinceLastOrder(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getMetrics()->daysSinceLastOrder,
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isAtRisk(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->getMetrics()->isAtRisk,
-        );
     }
 
     /** @return Attribute<Address, never> */

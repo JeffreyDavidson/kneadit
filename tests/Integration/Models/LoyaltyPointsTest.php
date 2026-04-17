@@ -6,6 +6,7 @@ use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
+use App\Services\Customers\CustomerIntelligence;
 use App\Services\Loyalty\LoyaltyLedger;
 use Illuminate\Support\Facades\Mail;
 
@@ -91,7 +92,7 @@ test('total points calculated correctly', function () {
     LoyaltyPoint::factory()->earned(50)->for($this->customer)->create();
     LoyaltyPoint::factory()->redeemed(30)->for($this->customer)->create();
 
-    expect($this->customer->total_points)->toBe(120); // 100 + 50 - 30
+    expect(resolve(CustomerIntelligence::class)->metrics($this->customer)->totalPoints)->toBe(120); // 100 + 50 - 30
 });
 
 test('lifetime points only counts earned', function () {
@@ -99,5 +100,5 @@ test('lifetime points only counts earned', function () {
     LoyaltyPoint::factory()->earned(50)->for($this->customer)->create();
     LoyaltyPoint::factory()->redeemed(30)->for($this->customer)->create();
 
-    expect($this->customer->lifetime_points_earned)->toBe(150);
+    expect(resolve(CustomerIntelligence::class)->metrics($this->customer)->lifetimePointsEarned)->toBe(150);
 });

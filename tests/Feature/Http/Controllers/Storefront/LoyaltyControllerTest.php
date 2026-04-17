@@ -4,6 +4,7 @@ use App\Enums\Engagement\RewardType;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\LoyaltyReward;
+use App\Services\Customers\CustomerIntelligence;
 
 beforeEach(function () {
     setUpTenantTest();
@@ -33,7 +34,7 @@ test('customer total points calculation', function () {
     LoyaltyPoint::factory()->for($customer)->earned(50)->create(['description' => 'Order #2']);
     LoyaltyPoint::factory()->for($customer)->redeemed(30)->create(['description' => 'Reward redeemed']);
 
-    expect($customer->total_points)->toBe(120);
+    expect(resolve(CustomerIntelligence::class)->metrics($customer)->totalPoints)->toBe(120);
 });
 
 test('loyalty reward can be created', function () {
@@ -77,7 +78,7 @@ test('customer lifetime points earned', function () {
     LoyaltyPoint::factory()->for($customer)->earned(200)->create(['description' => 'Big order']);
     LoyaltyPoint::factory()->for($customer)->redeemed(50)->create(['description' => 'Reward']);
 
-    expect($customer->lifetime_points_earned)->toBe(200);
+    expect(resolve(CustomerIntelligence::class)->metrics($customer)->lifetimePointsEarned)->toBe(200);
 });
 
 test('loyalty points belong to customer', function () {
