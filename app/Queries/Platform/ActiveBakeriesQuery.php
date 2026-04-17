@@ -20,9 +20,10 @@ class ActiveBakeriesQuery
             ->with('domains')
             ->get()
             ->map(fn (Tenant $t) => [
-                'name' => $t->store_name ?? $t->name,
+                'name' => (string) ($t->store_name ?? $t->name),
                 'url' => 'http://' . $t->domains->first()?->domain,
                 'color' => $t->brand_color_primary ?? '#d4920c',
-            ]);
+            ])
+            ->values();
     }
 }

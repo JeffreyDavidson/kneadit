@@ -13,7 +13,7 @@ class CheckoutController extends Controller
     public function __invoke(#[CurrentUser] User $user, string $plan): Checkout
     {
         $tier = SubscriptionTier::tryFrom($plan);
-        abort_unless($tier, 404, 'Plan not found.');
+        abort_unless($tier !== null, 404, 'Plan not found.');
 
         $priceId = config("kneadit.stripe_prices.{$tier->value}");
         abort_unless($priceId, 404, 'Plan not found.');

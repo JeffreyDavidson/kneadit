@@ -57,14 +57,18 @@ class Category extends Model
     #[Scope]
     protected function withActiveProducts(Builder $query): void
     {
-        $query->with(['products' => fn (HasMany $q) => $q->where('is_active', true)->orderBy('name')]);
+        $query->with(['products' => function (HasMany $q): void {
+            $q->where('is_active', true)->orderBy('name');
+        }]);
     }
 
     /** @param Builder<Category> $query */
     #[Scope]
     protected function withFeaturedProducts(Builder $query): void
     {
-        $query->with(['products' => fn (HasMany $q) => $q->where('is_active', true)->where('is_featured', true)]);
+        $query->with(['products' => function (HasMany $q): void {
+            $q->where('is_active', true)->where('is_featured', true);
+        }]);
     }
 
     protected static function newFactory(): CategoryFactory

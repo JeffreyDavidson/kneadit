@@ -19,6 +19,7 @@ class ExportController extends Controller
         CsvExportService $csvExport,
         TenancyManager $tenancyManager,
     ): StreamedResponse|BinaryFileResponse {
+        /** @var array<int, string> $validTypes */
         $validTypes = [...$csvExport->validTypes(), 'all'];
         abort_unless(in_array($type, $validTypes, true), 404, 'Invalid export type.');
 

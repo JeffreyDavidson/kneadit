@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Method App\\Actions\\Content\\GenerateSocialCaption\:\:__invoke\(\) should return string but returns iterable\<string\>\|string\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Actions/Content/GenerateSocialCaption.php
-
-		-
-			message: '#^Unable to resolve the template type TSubject in call to static method Illuminate\\Support\\Str\:\:replace\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: app/Actions/Content/GenerateSocialCaption.php
-
-		-
 			message: '#^Method App\\Actions\\Platform\\SendEmailCampaign\:\:filteredTenants\(\) should return Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Platform\\Tenant\> but returns Stancl\\Tenancy\\Database\\TenantCollection\.$#'
 			identifier: return.type
 			count: 1
@@ -25,34 +13,10 @@ parameters:
 			path: app/Actions/Stripe/HandleConnectAccountUpdated.php
 
 		-
-			message: '#^Method App\\Builders\\Customers\\ReviewQueryBuilder\:\:statistics\(\) should return object\{avg_rating\: float, total_count\: int\} but returns stdClass\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Builders/Customers/ReviewQueryBuilder.php
-
-		-
 			message: '#^Parameter \#1 \$tenantIds of static method App\\Queries\\Platform\\TenantComparisonQuery\:\:comparison\(\) expects array\<int, string\>, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Filament/Central/Pages/TenantComparison.php
-
-		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 2
-			path: app/Filament/Central/Widgets/PlatformStats.php
-
-		-
-			message: '#^Expression on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.expr
-			count: 1
-			path: app/Filament/Central/Widgets/RevenueOverview.php
-
-		-
-			message: '#^Parameter \#3 \$createdBy of callable App\\Actions\\Customers\\AddCustomerNote expects int, int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Filament/Pages/Operations/CustomerDirectory.php
 
 		-
 			message: '#^Parameter \#1 \$schedule of callable App\\Actions\\Tenants\\UpdateSchedule expects array\<int, array\{is_open\: bool, open_time\: string\|null, close_time\: string\|null, order_cutoff_time\: string\|null, max_orders\: int\|null\}\>, array\<int\|string, mixed\> given\.$#'
@@ -73,37 +37,19 @@ parameters:
 			path: app/Filament/Pages/Platform/OnboardingSteps/BrandingStep.php
 
 		-
-			message: '#^Parameter \#1 \$cost of method App\\Services\\Financial\\PricingRecommendationService\:\:suggestPrice\(\) expects float, float\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Filament/Pages/Tools/PriceSuggestionTool.php
-
-		-
-			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Builder\)\: Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\} given\.$#'
+			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Builder\)\: void\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Filament/Pages/Tools/PrintableMenu.php
 
 		-
-			message: '#^Call to protected method generateExport\(\) of class App\\Filament\\Pages\\Tools\\TaxExport\.$#'
-			identifier: method.protected
-			count: 1
-			path: app/Filament/Pages/Tools/Schemas/TaxExportForm.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Financial\\Coupon\>\:\:valid\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Filament/Resources/Coupons/Tables/CouponsTable.php
-
-		-
-			message: '#^Parameter \#1 \$photo of callable App\\Actions\\Content\\ApproveCustomerPhoto expects App\\Models\\Customers\\CustomerPhoto, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: mixed, Closure\(App\\Models\\Customers\\CustomerPhoto\)\: void given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Filament/Resources/CustomerPhotos/Tables/CustomerPhotosTable.php
 
 		-
-			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany\} given\.$#'
+			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: void\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Api/MenuController.php
@@ -115,37 +61,19 @@ parameters:
 			path: app/Http/Controllers/Auth/RegisterController.php
 
 		-
-			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, App\\Enums\\Platform\\SubscriptionTier\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Billing/CheckoutController.php
-
-		-
-			message: '#^Call to function abort_unless\(\) with arguments bool, 404 and ''Invalid export type\.'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/Http/Controllers/Central/ExportController.php
-
-		-
-			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany, 0\: ''products…''\} given\.$#'
+			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: void, 0\: ''products…''\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Storefront/MenuController.php
 
 		-
-			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: Illuminate\\Database\\Eloquent\\Relations\\HasMany\} given\.$#'
+			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Relations\\HasMany\)\: void\} given\.$#'
 			identifier: argument.type
 			count: 2
 			path: app/Models/Inventory/Category.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:active\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Queries/Customers/CustomerDirectoryStatsQuery.php
-
-		-
-			message: '#^Method App\\Queries\\Platform\\ActiveBakeriesQuery\:\:get\(\) should return Illuminate\\Support\\Collection\<int, array\{name\: string, url\: string, color\: string\}\> but returns Illuminate\\Support\\Collection\<\(int\|string\), array\{name\: string, url\: non\-falsy\-string, color\: string\}\>\.$#'
+			message: '#^Method App\\Queries\\Platform\\ActiveBakeriesQuery\:\:get\(\) should return Illuminate\\Support\\Collection\<int, array\{name\: string, url\: string, color\: string\}\> but returns Illuminate\\Support\\Collection\<int, array\{name\: string, url\: non\-falsy\-string, color\: string\}\>\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Queries/Platform/ActiveBakeriesQuery.php
@@ -163,8 +91,8 @@ parameters:
 			path: app/Queries/Platform/TenantAnalyticsQuery.php
 
 		-
-			message: '#^Method App\\Services\\Content\\CaptionGeneratorService\:\:buildBody\(\) should return string but returns iterable\<string\>\|string\.$#'
-			identifier: return.type
+			message: '#^Cannot cast iterable\<string\>\|string to string\.$#'
+			identifier: cast.string
 			count: 1
 			path: app/Services/Content/CaptionGeneratorService.php
 
@@ -181,28 +109,10 @@ parameters:
 			path: app/Services/Content/CaptionGeneratorService.php
 
 		-
-			message: '#^Cannot cast SimpleSoftwareIO\\QrCode\\Illuminate\\Support\\HtmlString\|string to string\.$#'
-			identifier: cast.string
-			count: 2
-			path: app/Services/Content/QrCodeService.php
-
-		-
-			message: '#^Method App\\Services\\Financial\\ProductAnalysisService\:\:formatIngredients\(\) should return Illuminate\\Support\\Collection\<int, array\{name\: string, quantity\: float, unit\: string, cost_per_unit\: float, total_cost\: float\}\> but returns Illuminate\\Support\\Collection\<int, array\{name\: string, quantity\: float\|int, unit\: string, cost_per_unit\: float\|int, total_cost\: float\|int\}\>\.$#'
-			identifier: return.type
+			message: '#^Parameter \#1 \$products of method App\\Services\\Financial\\ProductAnalysisService\:\:sortProducts\(\) expects Illuminate\\Support\\Collection\<int, array\<string, mixed\>\>, Illuminate\\Support\\Collection\<int, array\{id\: int, name\: string, price\: float, cost\: float, margin_percentage\: float\|null, margin_amount\: float\|null, has_cost_data\: bool, color_class\: string\}\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: app/Services/Financial/ProductAnalysisService.php
-
-		-
-			message: '#^Method App\\Services\\Financial\\ProductAnalysisService\:\:loadProductAnalysis\(\) should return Illuminate\\Support\\Collection\<int, array\<string, mixed\>\> but returns Illuminate\\Support\\Collection\<int, array\{id\: int, name\: string, price\: float, cost\: float, margin_percentage\: float\|null, margin_amount\: float\|null, has_cost_data\: bool, color_class\: string\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/Financial/ProductAnalysisService.php
-
-		-
-			message: '#^Method App\\Services\\Orders\\OrderIngredientAggregator\:\:crossReferenceInventory\(\) should return Illuminate\\Support\\Collection\<string, array\{name\: string, quantity\: float, unit\: string, in_stock\: float\|null, stock_unit\: string\|null, needs_purchase\: bool, deficit\: float\}\> but returns Illuminate\\Support\\Collection\<string, array\{name\: string, quantity\: float, unit\: string, in_stock\: float\|null, stock_unit\: string\|null, needs_purchase\: bool, deficit\: float\|int\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/Orders/OrderIngredientAggregator.php
 
 		-
 			message: '#^Method App\\Services\\PayPal\\InvoicePayloadBuilder\:\:formatCustomerPhone\(\) should return array\<int, array\<string, string\>\> but returns array\<int, array\<string, string\|null\>\>\.$#'
@@ -233,15 +143,3 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Services/Stripe/StripeCheckoutService.php
-
-		-
-			message: '#^Parameter \#1 \$width of function imagecreatetruecolor expects int\<1, max\>, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/Support/AppIconGeneratorService.php
-
-		-
-			message: '#^Parameter \#2 \$height of function imagecreatetruecolor expects int\<1, max\>, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/Support/AppIconGeneratorService.php

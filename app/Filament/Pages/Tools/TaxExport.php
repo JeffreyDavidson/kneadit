@@ -80,7 +80,7 @@ class TaxExport extends Page
     }
 
     /** @param array<string, mixed> $data */
-    protected function generateExport(array $data): StreamedResponse
+    public function generateExport(array $data): StreamedResponse
     {
         $year = (int) $data['year'];
         $type = TaxExportType::from($data['export_type']);

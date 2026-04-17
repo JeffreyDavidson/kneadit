@@ -8,6 +8,7 @@ class AppIconGeneratorService
 {
     public function generate(int $size, string $hexColor, string $storeName): string
     {
+        $size = max(1, $size);
         $img = imagecreatetruecolor($size, $size);
         $r = hexdec(substr($hexColor, 1, 2));
         $g = hexdec(substr($hexColor, 3, 2));

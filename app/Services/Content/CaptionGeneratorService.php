@@ -140,7 +140,7 @@ class CaptionGeneratorService
             'weekend relaxation',
         ];
 
-        return Str::replace(
+        return (string) Str::replace(
             ['{adjective}', '{product}', '{ingredient_focus}', '{call_to_action}', '{occasion}'],
             [
                 Arr::random($toneWords[$tone] ?? $toneWords['warm']),

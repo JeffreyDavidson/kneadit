@@ -50,10 +50,15 @@ class ReviewQueryBuilder extends Builder
      */
     public function statistics(): object
     {
-        return $this->approved()
+        $stats = $this->approved()
             ->toBase()
             ->selectRaw('COALESCE(AVG(rating), 0) as avg_rating, COUNT(*) as total_count')
             ->first();
+
+        return (object) [
+            'avg_rating' => (float) ($stats->avg_rating ?? 0),
+            'total_count' => (int) ($stats->total_count ?? 0),
+        ];
     }
 
     /** @return array<int, int> keyed by star rating (5→1), value is count */
