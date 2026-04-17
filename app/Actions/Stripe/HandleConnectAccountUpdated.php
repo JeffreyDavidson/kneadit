@@ -33,7 +33,7 @@ class HandleConnectAccountUpdated
         ]);
 
         $tenant = Tenant::query()->find($tenantId);
-        if (! $tenant) {
+        if (! $tenant instanceof Tenant) {
             Log::warning('Tenant not found for Stripe Connect update', ['tenant_id' => $tenantId]);
 
             return;

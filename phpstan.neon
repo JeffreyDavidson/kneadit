@@ -1,7 +1,6 @@
 includes:
     - vendor/larastan/larastan/extension.neon
     - vendor/mrpunyapal/peststan/extension.neon
-    - phpstan-baseline.neon
 
 parameters:
     paths:
@@ -17,4 +16,8 @@ parameters:
         # Collection<Model> callback type — Larastan resolves to generic Model instead of concrete class
         -
             identifier: argument.type
-            message: '#callback of method Illuminate\\(Database\\Eloquent\\|Support\\)Collection.+::(map|mapWithKeys|sum|avg|filter|sortBy)\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model#'
+            message: '#of method Illuminate\\(Database\\Eloquent\\|Support\\)Collection<[^>]+>::(map|mapWithKeys|sum|avg|filter|sortBy|each|groupBy)\(\) expects \(?callable\(Illuminate\\Database\\Eloquent\\Model#'
+        # Builder::with() closure type — Larastan expects Relation<*,*,*> return but HasMany-typed closures are valid
+        -
+            identifier: argument.type
+            message: '#of method Illuminate\\Database\\Eloquent\\Builder<[^>]+>::with\(\) expects#'

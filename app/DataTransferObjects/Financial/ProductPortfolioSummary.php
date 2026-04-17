@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 final readonly class ProductPortfolioSummary
 {
     /**
-     * @param Collection<int, array<string, mixed>> $products
+     * @param Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> $products
      * @param array{high: int, medium: int, low: int} $marginBreakdown
      */
     public function __construct(
@@ -27,7 +27,7 @@ final readonly class ProductPortfolioSummary
         return $this->totalProducts - $this->productsWithCosts;
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function topProfitable(int $limit = 5): Collection
     {
         return $this->products
@@ -37,7 +37,7 @@ final readonly class ProductPortfolioSummary
             ->take($limit);
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function lowestMargin(int $limit = 5): Collection
     {
         return $this->products
@@ -47,7 +47,7 @@ final readonly class ProductPortfolioSummary
             ->take($limit);
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function missingCosts(): Collection
     {
         return $this->products
