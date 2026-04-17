@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property-read Collection<int, Supplier> $suppliers
  * @property-read int|null $suppliers_count
  *
- * @method static \Database\Factories\IngredientFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient query()

@@ -15,7 +15,6 @@ use Illuminate\Support\Carbon;
 /**
  * @property-read string $source_label
  *
- * @method static \Database\Factories\IncomeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income query()

@@ -40,7 +40,6 @@ use Illuminate\Support\Carbon;
  * @property-read float|null $total_spend
  * @property Carbon|null $birthday
  *
- * @method static \Database\Factories\CustomerFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Customer query()

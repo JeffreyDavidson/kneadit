@@ -24,7 +24,6 @@ use Illuminate\Support\Carbon;
  *
  * @method static LoyaltyPointQueryBuilder|LoyaltyPoint adjusted()
  * @method static LoyaltyPointQueryBuilder|LoyaltyPoint earned()
- * @method static \Database\Factories\LoyaltyPointFactory factory($count = null, $state = [])
  * @method static LoyaltyPointQueryBuilder|LoyaltyPoint forOrder(\App\Models\Orders\Order $order)
  * @method static LoyaltyPointQueryBuilder|LoyaltyPoint newModelQuery()
  * @method static LoyaltyPointQueryBuilder|LoyaltyPoint newQuery()

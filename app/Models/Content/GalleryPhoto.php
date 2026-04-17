@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property GalleryCategory $category
  *
- * @method static \Database\Factories\GalleryPhotoFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto ordered()

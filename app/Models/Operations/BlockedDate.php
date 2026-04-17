@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * @method static \Database\Factories\BlockedDateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BlockedDate query()

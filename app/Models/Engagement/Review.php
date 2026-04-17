@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Order|null $order
  * @property-read Product|null $product
  *
- * @method static \Database\Factories\ReviewFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Review query()

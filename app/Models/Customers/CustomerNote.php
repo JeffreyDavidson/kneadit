@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read User|null $createdBy
  * @property-read Customer|null $customer
  *
- * @method static \Database\Factories\CustomerNoteFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerNote query()

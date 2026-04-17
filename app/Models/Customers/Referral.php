@@ -25,7 +25,6 @@ use Illuminate\Support\Carbon;
  * @property-read Tenant|null $referred
  * @property-read Tenant $referrer
  *
- * @method static \Database\Factories\ReferralFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral query()

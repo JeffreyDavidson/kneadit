@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Order|null $order
  * @property-read Product|null $product
  *
- * @method static \Database\Factories\OrderItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|OrderItem query()

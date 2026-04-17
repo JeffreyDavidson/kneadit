@@ -31,7 +31,6 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $replies_count
  * @property-read Tenant $tenant
  *
- * @method static \Database\Factories\PlatformMessageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage fromAdmin()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage fromTenant()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage newModelQuery()

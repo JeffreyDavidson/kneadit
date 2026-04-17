@@ -19,7 +19,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static \Database\Factories\CapacityLimitFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapacityLimit newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapacityLimit newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CapacityLimit query()

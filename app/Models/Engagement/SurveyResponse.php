@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Order|null $order
  * @property-read Survey|null $survey
  *
- * @method static \Database\Factories\SurveyResponseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SurveyResponse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SurveyResponse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SurveyResponse query()
