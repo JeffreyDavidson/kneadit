@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\ContactMessages\Tables;
 
+use App\Filament\Actions\SlideOverEditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -51,9 +51,7 @@ class ContactMessagesTable
                 TernaryFilter::make('is_read'),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

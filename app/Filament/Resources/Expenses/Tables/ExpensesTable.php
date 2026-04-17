@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\Expenses\Tables;
 
 use App\Enums\Financial\ExpenseCategory;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\AmountRangeFilter;
 use App\Filament\Filters\DateRangeFilter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -63,9 +63,7 @@ class ExpensesTable
                 AmountRangeFilter::make('amount'),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

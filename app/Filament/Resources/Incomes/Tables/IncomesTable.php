@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\Incomes\Tables;
 
 use App\Enums\Financial\IncomeSource;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\AmountRangeFilter;
 use App\Filament\Filters\DateRangeFilter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -47,9 +47,7 @@ class IncomesTable
                 AmountRangeFilter::make('amount'),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

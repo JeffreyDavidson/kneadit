@@ -4,12 +4,12 @@ namespace App\Filament\Resources\Ingredients\Tables;
 
 use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\Inventory\StockAdjustmentType;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Inventory\Ingredient;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
@@ -89,9 +89,7 @@ class IngredientsTable
                         }
                         resolve(AdjustIngredientStock::class)($record, $qty, $type, $data['notes'] ?? null);
                     }),
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
