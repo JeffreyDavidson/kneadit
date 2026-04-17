@@ -5,9 +5,10 @@ namespace App\Models\Financial;
 use App\Builders\Financial\GiftCardQueryBuilder;
 use App\Casts\StripTagsCast;
 use App\Enums\Financial\GiftCardStatus;
-use App\Models\Concerns\LogsActivity;
+use App\Observers\LogsActivityObserver;
 use Database\Factories\Financial\GiftCardFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -32,13 +33,12 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('code', 'initial_balance', 'current_balance', 'purchaser_name', 'purchaser_email', 'recipient_name', 'recipient_email', 'message', 'is_active', 'expires_at')]
+#[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(GiftCardQueryBuilder::class)]
 class GiftCard extends Model
 {
     /** @use HasFactory<GiftCardFactory> */
     use HasFactory;
-
-    use LogsActivity;
 
     protected function casts(): array
     {

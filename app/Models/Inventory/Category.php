@@ -2,9 +2,10 @@
 
 namespace App\Models\Inventory;
 
-use App\Models\Concerns\LogsActivity;
+use App\Observers\LogsActivityObserver;
 use Database\Factories\Inventory\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -24,12 +25,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @mixin \Eloquent
  */
 #[Fillable('name', 'slug', 'description', 'is_active', 'sort_order')]
+#[ObservedBy(LogsActivityObserver::class)]
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
     use HasFactory;
-
-    use LogsActivity;
 
     protected function casts(): array
     {

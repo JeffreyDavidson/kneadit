@@ -5,9 +5,10 @@ namespace App\Models\Customers;
 use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Customers\CateringInquiryStatus;
-use App\Models\Concerns\LogsActivity;
+use App\Observers\LogsActivityObserver;
 use Database\Factories\Customers\CateringInquiryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,12 +27,11 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  */
 #[Fillable('customer_name', 'customer_email', 'customer_phone', 'event_type', 'event_date', 'guest_count', 'budget', 'details', 'dietary_requirements', 'venue_address', 'status', 'quoted_amount', 'notes')]
+#[ObservedBy(LogsActivityObserver::class)]
 class CateringInquiry extends Model
 {
     /** @use HasFactory<CateringInquiryFactory> */
     use HasFactory;
-
-    use LogsActivity;
 
     protected function casts(): array
     {
