@@ -20,7 +20,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property string $id
  * @property string $name
  * @property string $email
- * @property string $plan
+ * @property SubscriptionTier $plan
  * @property Carbon|null $trial_ends_at
  * @property string|null $store_name
  * @property string|null $store_logo

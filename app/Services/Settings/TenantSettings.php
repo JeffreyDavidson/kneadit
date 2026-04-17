@@ -222,7 +222,7 @@ final class TenantSettings
             storeWebsite: settings('store_website'),
             storeLogo: settings('store_logo'),
             storeTagline: settings('store_tagline'),
-            brandColorPrimary: (string) (tenant()?->brand_color_primary ?? self::DEFAULT_BRAND_COLOR),
+            brandColorPrimary: (string) (tenant()->brand_color_primary ?? self::DEFAULT_BRAND_COLOR),
             onboardingCompletedAt: settings('onboarding_completed_at'),
             storefrontTheme: (string) settings('storefront_theme', 'classic'),
             businessTagline: settings('business_tagline'),

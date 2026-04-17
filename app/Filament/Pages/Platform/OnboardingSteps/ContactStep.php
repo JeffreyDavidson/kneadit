@@ -22,7 +22,7 @@ final class ContactStep extends OnboardingStep
         $tenant = tenant();
 
         return [
-            'email' => settings('store_email') ?: ($tenant?->email ?? ''),
+            'email' => settings('store_email') ?: ($tenant->email ?? ''),
             'phone' => settings('store_phone', ''),
             'address' => settings('store_address', ''),
         ];

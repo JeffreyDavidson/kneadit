@@ -24,7 +24,7 @@ class ApplyCouponController extends Controller
             'coupon_id' => $coupon?->id,
             'code' => $coupon?->code,
             'discount_amount' => $result->discount,
-            'label' => $coupon?->type?->formatDiscount((float) ($coupon?->value ?? 0)),
+            'label' => $coupon?->type?->formatDiscount((float) ($coupon->value ?? 0)),
         ], 'Coupon applied successfully.');
     }
 }

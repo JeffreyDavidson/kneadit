@@ -36,7 +36,7 @@ class LogsActivityObserver
         try {
             ActivityLog::query()->create([
                 'user_id' => auth()->id(),
-                'user_name' => auth()?->user()?->name ?? 'System',
+                'user_name' => auth()->user()->name ?? 'System',
                 'action' => $action,
                 'model_type' => $model::class,
                 'model_id' => $model->getKey(),
