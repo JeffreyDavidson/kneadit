@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property CateringInquiryStatus $status
  * @property string $event_type
- * @property-read string $event_type_label
  * @property-read string $status_label
  *
  * @method static \Database\Factories\CateringInquiryFactory factory($count = null, $state = [])
@@ -46,14 +45,6 @@ class CateringInquiry extends Model
             'dietary_requirements' => StripTagsCast::class,
             'venue_address' => StripTagsCast::class,
         ];
-    }
-
-    /** @return Attribute<mixed, never> */
-    protected function eventTypeLabel(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => (string) $this->event_type,
-        );
     }
 
     /** @return Attribute<mixed, never> */
