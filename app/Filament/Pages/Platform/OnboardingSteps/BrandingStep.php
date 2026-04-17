@@ -71,8 +71,10 @@ final class BrandingStep extends OnboardingStep
             $tenant->brand_color_primary = $data['color_primary'];
             $tenant->brand_color_secondary = $data['color_secondary'];
 
-            $logoPath = ! empty($data['store_logo'])
-                ? collect($data['store_logo'])->first()
+            /** @var array<int, string>|string|null $storeLogo */
+            $storeLogo = $data['store_logo'] ?? null;
+            $logoPath = ! empty($storeLogo)
+                ? (is_array($storeLogo) ? ($storeLogo[0] ?? null) : $storeLogo)
                 : null;
 
             settings(['store_logo' => $logoPath]);
