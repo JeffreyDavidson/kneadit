@@ -7,7 +7,11 @@ use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Builder;
 
-/** @extends Builder<LoyaltyPoint> */
+/**
+ * @template TModel of LoyaltyPoint
+ *
+ * @extends Builder<TModel>
+ */
 class LoyaltyPointQueryBuilder extends Builder
 {
     public function earned(): static

@@ -6,7 +6,11 @@ use App\Enums\Content\BlogPostCategory;
 use App\Models\Content\BlogPost;
 use Illuminate\Database\Eloquent\Builder;
 
-/** @extends Builder<BlogPost> */
+/**
+ * @template TModel of BlogPost
+ *
+ * @extends Builder<TModel>
+ */
 class BlogPostQueryBuilder extends Builder
 {
     public function published(): static

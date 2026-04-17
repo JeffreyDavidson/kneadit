@@ -23,11 +23,11 @@ use Illuminate\Support\Facades\Date;
  * @property-read Product|null $product
  *
  * @method static \Database\Factories\WaitlistEntryFactory factory($count = null, $state = [])
- * @method static Builder<static>|WaitlistEntry forDate(\Carbon\Carbon|string $date)
- * @method static Builder<static>|WaitlistEntry newModelQuery()
- * @method static Builder<static>|WaitlistEntry newQuery()
- * @method static Builder<static>|WaitlistEntry query()
- * @method static Builder<static>|WaitlistEntry waiting()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry forDate(\Carbon\Carbon|string $date)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry waiting()
  *
  * @mixin \Eloquent
  */

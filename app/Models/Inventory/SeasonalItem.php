@@ -16,13 +16,13 @@ use Illuminate\Support\Facades\Date;
 /**
  * @property-read Product|null $product
  *
- * @method static Builder<static>|SeasonalItem current()
- * @method static Builder<static>|SeasonalItem expired()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem current()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem expired()
  * @method static \Database\Factories\SeasonalItemFactory factory($count = null, $state = [])
- * @method static Builder<static>|SeasonalItem newModelQuery()
- * @method static Builder<static>|SeasonalItem newQuery()
- * @method static Builder<static>|SeasonalItem query()
- * @method static Builder<static>|SeasonalItem upcoming()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem upcoming()
  *
  * @property Carbon|null $available_from
  * @property Carbon|null $available_until

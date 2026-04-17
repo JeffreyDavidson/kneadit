@@ -5,7 +5,11 @@ namespace App\Builders\Financial;
 use App\Models\Financial\GiftCard;
 use Illuminate\Database\Eloquent\Builder;
 
-/** @extends Builder<GiftCard> */
+/**
+ * @template TModel of GiftCard
+ *
+ * @extends Builder<TModel>
+ */
 class GiftCardQueryBuilder extends Builder
 {
     public function usable(): static

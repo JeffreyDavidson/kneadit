@@ -22,14 +22,14 @@ use Illuminate\Support\Carbon;
  * @property-read Customer|null $customer
  * @property-read Order|null $order
  *
- * @method static Builder<static>|LoyaltyPoint adjusted()
- * @method static Builder<static>|LoyaltyPoint earned()
+ * @method static LoyaltyPointQueryBuilder|LoyaltyPoint adjusted()
+ * @method static LoyaltyPointQueryBuilder|LoyaltyPoint earned()
  * @method static \Database\Factories\LoyaltyPointFactory factory($count = null, $state = [])
- * @method static Builder<static>|LoyaltyPoint forOrder(\App\Models\Orders\Order $order)
- * @method static Builder<static>|LoyaltyPoint newModelQuery()
- * @method static Builder<static>|LoyaltyPoint newQuery()
- * @method static Builder<static>|LoyaltyPoint query()
- * @method static Builder<static>|LoyaltyPoint redeemed()
+ * @method static LoyaltyPointQueryBuilder|LoyaltyPoint forOrder(\App\Models\Orders\Order $order)
+ * @method static LoyaltyPointQueryBuilder|LoyaltyPoint newModelQuery()
+ * @method static LoyaltyPointQueryBuilder|LoyaltyPoint newQuery()
+ * @method static LoyaltyPointQueryBuilder|LoyaltyPoint query()
+ * @method static LoyaltyPointQueryBuilder|LoyaltyPoint redeemed()
  *
  * @property Carbon|null $created_at
  *

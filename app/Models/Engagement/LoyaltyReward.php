@@ -19,11 +19,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read string $reward_type_label
  * @property-read Product|null $product
  *
- * @method static Builder<static>|LoyaltyReward active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward active()
  * @method static \Database\Factories\LoyaltyRewardFactory factory($count = null, $state = [])
- * @method static Builder<static>|LoyaltyReward newModelQuery()
- * @method static Builder<static>|LoyaltyReward newQuery()
- * @method static Builder<static>|LoyaltyReward query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward query()
  *
  * @mixin \Eloquent
  */
