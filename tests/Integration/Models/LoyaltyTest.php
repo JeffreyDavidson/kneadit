@@ -4,6 +4,7 @@ use App\Enums\Engagement\RewardType;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\LoyaltyReward;
+use App\Services\Customers\CustomerIntelligence;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -63,7 +64,7 @@ test('points are calculated correctly with earned and redeemed', function () {
     LoyaltyPoint::factory()->for($customer)->earned(200)->create();
     LoyaltyPoint::factory()->for($customer)->redeemed(50)->create();
 
-    expect($customer->total_points)->toBe(150);
+    expect(resolve(CustomerIntelligence::class)->metrics($customer)->totalPoints)->toBe(150);
 });
 
 test('loyalty program name is configurable', function () {
@@ -89,7 +90,7 @@ test('lifetime points earned only counts earned type', function () {
     LoyaltyPoint::factory()->for($customer)->earned(300)->create();
     LoyaltyPoint::factory()->for($customer)->redeemed(100)->create();
 
-    expect($customer->lifetime_points_earned)->toBe(300);
+    expect(resolve(CustomerIntelligence::class)->metrics($customer)->lifetimePointsEarned)->toBe(300);
 });
 
 test('reward type labels are correct', function () {
