@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,10 +19,10 @@ use Illuminate\Support\Carbon;
  * @property-read string $url
  *
  * @method static \Database\Factories\BlogPostFactory factory($count = null, $state = [])
- * @method static Builder<static>|BlogPost newModelQuery()
- * @method static Builder<static>|BlogPost newQuery()
- * @method static Builder<static>|BlogPost published()
- * @method static Builder<static>|BlogPost query()
+ * @method static BlogPostQueryBuilder|BlogPost newModelQuery()
+ * @method static BlogPostQueryBuilder|BlogPost newQuery()
+ * @method static BlogPostQueryBuilder|BlogPost published()
+ * @method static BlogPostQueryBuilder|BlogPost query()
  *
  * @property Carbon|null $published_at
  *

@@ -23,10 +23,10 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $transactions_count
  *
  * @method static \Database\Factories\GiftCardFactory factory($count = null, $state = [])
- * @method static Builder<static>|GiftCard newModelQuery()
- * @method static Builder<static>|GiftCard newQuery()
- * @method static Builder<static>|GiftCard query()
- * @method static Builder<static>|GiftCard usable()
+ * @method static GiftCardQueryBuilder|GiftCard newModelQuery()
+ * @method static GiftCardQueryBuilder|GiftCard newQuery()
+ * @method static GiftCardQueryBuilder|GiftCard query()
+ * @method static GiftCardQueryBuilder|GiftCard usable()
  *
  * @property Carbon|null $expires_at
  *
