@@ -1429,12 +1429,6 @@ parameters:
 			path: app/Services/Orders/OrderIngredientAggregator.php
 
 		-
-			message: '#^Cannot access property \$email on App\\Models\\Customers\\Customer\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Services/Orders/OrderStatusEffectDispatcher.php
-
-		-
 			message: '#^Method App\\Services\\PayPal\\InvoicePayloadBuilder\:\:formatCustomerPhone\(\) should return array\<int, array\<string, string\>\> but returns array\<int, array\<string, string\|null\>\>\.$#'
 			identifier: return.type
 			count: 1
