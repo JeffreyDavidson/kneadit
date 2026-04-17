@@ -2,27 +2,34 @@
 
 namespace App\Services\Financial;
 
-use App\DataTransferObjects\Financial\PricingRecommendation;
 use App\DataTransferObjects\Financial\ProductCostAnalysis;
 use App\DataTransferObjects\Financial\ProductPortfolioSummary;
 use App\Enums\Financial\MarginHealth;
-use App\Enums\Financial\PricingPosition;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
 use App\Support\ProfitMargin;
 use Illuminate\Support\Collection;
 
-class ProductFinancialService
+/**
+ * Single-product and portfolio-wide cost/margin analysis.
+ *
+ * Delegates cost resolution to ProductCostResolver so analyze() and
+ * portfolio() agree on how an individual product's cost is determined.
+ */
+class ProductAnalysisService
 {
+    public function __construct(
+        private ProductCostResolver $costResolver,
+    ) {}
+
     /**
-     * Analyze a product's cost, margin, and suggested price.
-     * Answers: "What does it cost, what margin am I making, what should I charge?"
+     * Analyze a single product: cost, margin, and a suggested price.
      */
     public function analyze(Product $product, float $targetMarginPercent = 65.0): ProductCostAnalysis
     {
         $product->loadMissing('recipes');
 
-        $cost = $this->resolveCost($product);
+        $cost = $this->costResolver->resolve($product);
         $price = (float) ($product->price ?? 0);
         $ingredients = $this->formatIngredients($product->recipes->first());
 
@@ -40,54 +47,6 @@ class ProductFinancialService
             profitPerUnit: $price - $cost,
             marginHealth: MarginHealth::fromPercentage($margin),
             ingredients: $ingredients,
-        );
-    }
-
-    /**
-     * Full pricing recommendation with labor, overhead, positioning, and bulk tiers.
-     */
-    public function recommend(
-        float $ingredientCost,
-        int $prepTimeMinutes,
-        float $hourlyLaborRate,
-        float $overheadPercentage,
-        int $targetMarginPercent,
-        PricingPosition $positioning = PricingPosition::Standard,
-        ?float $currentPrice = null,
-    ): PricingRecommendation {
-        $laborCost = ($prepTimeMinutes / 60) * $hourlyLaborRate;
-        $baseCost = $ingredientCost + $laborCost;
-        $overheadAmount = $baseCost * ($overheadPercentage / 100);
-        $totalCost = $baseCost + $overheadAmount;
-
-        $marginDecimal = $targetMarginPercent / 100;
-        $recommendedPrice = $marginDecimal < 1
-            ? $totalCost / (1 - $marginDecimal)
-            : $totalCost * 3;
-
-        $recommendedPrice *= $positioning->multiplier();
-        $recommendedPrice = $this->roundPrice($recommendedPrice);
-
-        $minPrice = $this->roundPrice($totalCost * 1.15);
-        $maxPrice = $this->roundPrice($totalCost / (1 - 0.70) * $positioning->multiplier());
-
-        return new PricingRecommendation(
-            ingredientCost: round($ingredientCost, 2),
-            laborCost: round($laborCost, 2),
-            overhead: round($overheadAmount, 2),
-            totalCost: round($totalCost, 2),
-            recommendedPrice: $recommendedPrice,
-            minPrice: $minPrice,
-            maxPrice: $maxPrice,
-            currentPrice: $currentPrice,
-            profitPerUnit: round($recommendedPrice - $totalCost, 2),
-            actualMarginPercent: $recommendedPrice > 0
-                ? round((($recommendedPrice - $totalCost) / $recommendedPrice) * 100, 1)
-                : 0,
-            bulkTiers: [
-                ['qty' => 6, 'label' => '6-pack', 'unit_price' => $this->roundPrice($recommendedPrice * 0.90), 'total' => round($recommendedPrice * 0.90 * 6, 2)],
-                ['qty' => 12, 'label' => 'Dozen', 'unit_price' => $this->roundPrice($recommendedPrice * 0.85), 'total' => round($recommendedPrice * 0.85 * 12, 2)],
-            ],
         );
     }
 
@@ -127,59 +86,6 @@ class ProductFinancialService
     }
 
     /**
-     * Simple suggested price from cost and target margin.
-     */
-    public function suggestPrice(float $cost, float $targetMarginPercent): float
-    {
-        if ($cost <= 0 || $targetMarginPercent <= 0) {
-            return 0.0;
-        }
-
-        return $cost / (1 - ($targetMarginPercent / 100));
-    }
-
-    /**
-     * Resolve the best available cost for a product.
-     * Priority: Product.cost > Recipe.cost > calculated from ingredients.
-     */
-    private function resolveCost(Product $product): float
-    {
-        if ($product->cost && $product->cost > 0) {
-            return (float) $product->cost;
-        }
-
-        $recipe = $product->recipes->where('cost', '>', 0)->first();
-        if ($recipe) {
-            return (float) $recipe->cost;
-        }
-
-        // Fall back to calculating from ingredients JSON
-        $recipe = $product->recipes->first();
-        if ($recipe) {
-            return $this->calculateRecipeCost($recipe);
-        }
-
-        return 0.0;
-    }
-
-    private function calculateRecipeCost(Recipe $recipe): float
-    {
-        if (! $recipe->ingredients) {
-            return 0.0;
-        }
-
-        $totalCost = 0.0;
-
-        foreach ($recipe->ingredients as $ingredient) {
-            $cost = $ingredient['cost'] ?? 0;
-            $quantity = $ingredient['quantity'] ?? 0;
-            $totalCost += ($cost * $quantity);
-        }
-
-        return $totalCost;
-    }
-
-    /**
      * @return Collection<int, array{name: string, quantity: float, unit: string, cost_per_unit: float, total_cost: float}>
      */
     private function formatIngredients(?Recipe $recipe): Collection
@@ -209,23 +115,18 @@ class ProductFinancialService
             ->where('is_active', true)
             ->get()
             ->map(function (Product $product) {
-                $cost = $this->resolveCost($product);
+                $cost = $this->costResolver->resolve($product);
                 $price = (float) $product->price;
-                $margin = null;
-                $marginAmount = null;
-
-                if ($cost > 0 && $price > 0) {
-                    $margin = (($price - $cost) / $price) * 100;
-                    $marginAmount = $price - $cost;
-                }
+                $margin = $cost > 0 ? ProfitMargin::calculate($price, $cost) : null;
+                $marginAmount = $margin !== null ? $price - $cost : null;
 
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
                     'price' => $price,
                     'cost' => $cost,
-                    'margin_percentage' => $margin ? round($margin, 2) : null,
-                    'margin_amount' => $marginAmount ? round($marginAmount, 2) : null,
+                    'margin_percentage' => $margin,
+                    'margin_amount' => $marginAmount !== null ? round($marginAmount, 2) : null,
                     'has_cost_data' => $cost > 0,
                     'color_class' => MarginHealth::fromPercentage($margin)->cssClass(),
                 ];
@@ -245,14 +146,5 @@ class ProductFinancialService
             'price_asc' => $products->sortBy('price'),
             default => $products->sortByDesc('margin_percentage'),
         };
-    }
-
-    private function roundPrice(float $price): float
-    {
-        if ($price < 5) {
-            return round(ceil($price * 4) / 4 - 0.01, 2);
-        }
-
-        return round(floor($price) + 0.99, 2);
     }
 }

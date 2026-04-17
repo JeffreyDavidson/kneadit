@@ -6,7 +6,8 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Recipe;
-use App\Services\Financial\ProductFinancialService;
+use App\Services\Financial\PricingRecommendationService;
+use App\Services\Financial\ProductAnalysisService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -85,11 +86,11 @@ class PriceSuggestionTool extends Page
             return;
         }
 
-        $service = $this->financialService();
+        $pricing = $this->pricingService();
         $margins = [50, 60, 65, 70];
 
-        $this->marginComparisons = collect($margins)->map(function (int $margin) use ($service) {
-            $suggestedPrice = $service->suggestPrice($this->selectedRecipe->cost, $margin);
+        $this->marginComparisons = collect($margins)->map(function (int $margin) use ($pricing) {
+            $suggestedPrice = $pricing->suggestPrice($this->selectedRecipe->cost, $margin);
             $currentPrice = $this->selectedRecipe->product->price ?? 0;
             $difference = $suggestedPrice - $currentPrice;
 
@@ -109,7 +110,7 @@ class PriceSuggestionTool extends Page
             return 0.0;
         }
 
-        return $this->financialService()->suggestPrice(
+        return $this->pricingService()->suggestPrice(
             $this->selectedRecipe->cost,
             $this->targetMarginPercentage,
         );
@@ -121,7 +122,7 @@ class PriceSuggestionTool extends Page
             return null;
         }
 
-        $analysis = $this->financialService()->analyze(
+        $analysis = $this->analysisService()->analyze(
             $this->selectedRecipe->product,
             $this->targetMarginPercentage,
         );
@@ -136,7 +137,7 @@ class PriceSuggestionTool extends Page
             return null;
         }
 
-        $analysis = $this->financialService()->analyze(
+        $analysis = $this->analysisService()->analyze(
             $this->selectedRecipe->product,
             $this->targetMarginPercentage,
         );
@@ -170,8 +171,13 @@ class PriceSuggestionTool extends Page
         ];
     }
 
-    private function financialService(): ProductFinancialService
+    private function pricingService(): PricingRecommendationService
     {
-        return resolve(ProductFinancialService::class);
+        return resolve(PricingRecommendationService::class);
+    }
+
+    private function analysisService(): ProductAnalysisService
+    {
+        return resolve(ProductAnalysisService::class);
     }
 }

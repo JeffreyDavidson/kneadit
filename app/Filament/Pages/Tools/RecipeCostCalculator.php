@@ -7,7 +7,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Recipe;
-use App\Services\Financial\ProductFinancialService;
+use App\Services\Financial\ProductAnalysisService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -80,7 +80,7 @@ class RecipeCostCalculator extends Page
             return;
         }
 
-        $this->analysis = resolve(ProductFinancialService::class)
+        $this->analysis = resolve(ProductAnalysisService::class)
             ->analyze($this->selectedRecipe->product, $this->targetMarginPercentage);
     }
 }

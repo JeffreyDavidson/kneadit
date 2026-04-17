@@ -6,7 +6,7 @@ use App\DataTransferObjects\Financial\ProductPortfolioSummary;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Services\Financial\ProductFinancialService;
+use App\Services\Financial\ProductAnalysisService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -46,7 +46,7 @@ class ProfitAnalysis extends Page
 
     public function getPortfolioProperty(): ProductPortfolioSummary
     {
-        return resolve(ProductFinancialService::class)->portfolio($this->sortBy);
+        return resolve(ProductAnalysisService::class)->portfolio($this->sortBy);
     }
 
     /**
