@@ -22,7 +22,14 @@ it('transforms a product into the expected API shape', function () {
 
     $product->load('category');
     $resource = new ProductResource($product);
-    $data = $resource->toArray(request());
+    $request = request();
 
-    expect($data)->toHaveKeys(['id', 'name', 'slug', 'description', 'price', 'image', 'category_id', 'category_name', 'is_featured'])->toMatchArray(['name' => 'Sourdough', 'category_name' => 'Bread']);
+    expect($resource->toType($request))->toBe('products')
+        ->and($resource->toId($request))->toBe((string) $product->id);
+
+    $attributes = $resource->toAttributes($request);
+
+    expect($attributes)
+        ->toHaveKeys(['name', 'slug', 'description', 'price', 'image', 'is_featured'])
+        ->toMatchArray(['name' => 'Sourdough']);
 });
