@@ -367,12 +367,6 @@ parameters:
 			path: app/Filament/Pages/Tools/PriceSuggestionTool.php
 
 		-
-			message: '#^Parameter \#1 \$cost of method App\\Services\\Financial\\ProductFinancialService\:\:suggestPrice\(\) expects float, float\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Filament/Pages/Tools/PriceSuggestionTool.php
-
-		-
 			message: '#^Parameter \#1 \$relations of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Inventory\\Category\>\:\:with\(\) expects array\<array\|\(Closure\(Illuminate\\Database\\Eloquent\\Relations\\Relation\<\*, \*, \*\>\)\: mixed\)\|string\>\|string, array\{products\: Closure\(Illuminate\\Database\\Eloquent\\Builder\)\: Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\} given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1343,18 +1337,6 @@ parameters:
 			identifier: property.nonObject
 			count: 1
 			path: app/Services/Engagement/Engagements/ReviewRequestEngagement.php
-
-		-
-			message: '#^Method App\\Services\\Financial\\ProductFinancialService\:\:formatIngredients\(\) should return Illuminate\\Support\\Collection\<int, array\{name\: string, quantity\: float, unit\: string, cost_per_unit\: float, total_cost\: float\}\> but returns Illuminate\\Support\\Collection\<int, array\{name\: string, quantity\: float\|int, unit\: string, cost_per_unit\: float\|int, total_cost\: float\|int\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/Financial/ProductFinancialService.php
-
-		-
-			message: '#^Method App\\Services\\Financial\\ProductFinancialService\:\:loadProductAnalysis\(\) should return Illuminate\\Support\\Collection\<int, array\<string, mixed\>\> but returns Illuminate\\Support\\Collection\<int, array\{id\: int, name\: string, price\: float, cost\: float, margin_percentage\: float\|null, margin_amount\: float\|null, has_cost_data\: bool, color_class\: string\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/Financial/ProductFinancialService.php
 
 		-
 			message: '#^Call to method where\(\) on an unknown class App\\Models\\Financial\\Builder\.$#'
