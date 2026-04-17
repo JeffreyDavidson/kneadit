@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\GiftCards\Tables;
 
 use App\Enums\Financial\GiftCardStatus;
+use App\Filament\Actions\SlideOverEditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -64,9 +64,7 @@ class GiftCardsTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

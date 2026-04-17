@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Categories\Tables;
 
+use App\Filament\Actions\SlideOverEditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -47,9 +47,7 @@ class CategoriesTable
                     ]),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

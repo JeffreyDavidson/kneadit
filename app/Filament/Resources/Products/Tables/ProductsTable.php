@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Inventory\Product;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -80,9 +80,7 @@ class ProductsTable
                     ]),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
