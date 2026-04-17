@@ -184,9 +184,11 @@ function orderForm() {
         async loadFavorites() {
             if (!this.form.customer_email) return;
             try {
-                const response = await fetch(`{{ route('api.favorites.index') }}?email=${encodeURIComponent(this.form.customer_email)}`);
-                const data = await response.json();
-                this.favorites = data.favorites || [];
+                const response = await fetch(`{{ route('api.favorites.index') }}?email=${encodeURIComponent(this.form.customer_email)}`, {
+                    headers: { 'Accept': 'application/vnd.api+json' },
+                });
+                const payload = await response.json();
+                this.favorites = (payload.data || []).map(row => row.attributes.product_id);
             } catch (error) {
                 console.error('Error loading favorites:', error);
             }

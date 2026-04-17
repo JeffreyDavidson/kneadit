@@ -2,12 +2,12 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Engagement\Review;
+use App\Models\Customers\CustomerFavorite;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/** @mixin Review */
-class ReviewResource extends JsonApiResource
+/** @mixin CustomerFavorite */
+class FavoriteResource extends JsonApiResource
 {
     /** @var array<string, class-string> */
     protected array $relationships = [
@@ -21,17 +21,15 @@ class ReviewResource extends JsonApiResource
 
     public function toType(Request $request): string
     {
-        return 'reviews';
+        return 'favorites';
     }
 
     /** @return array<string, mixed> */
     public function toAttributes(Request $request): array
     {
         return [
-            'customer_name' => $this->resource->customer_name,
-            'rating' => $this->resource->rating,
-            'comment' => $this->resource->comment,
-            'created_at' => $this->resource->created_at?->toISOString(),
+            'customer_email' => $this->resource->customer_email,
+            'product_id' => $this->resource->product_id,
         ];
     }
 }
