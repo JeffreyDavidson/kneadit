@@ -15,7 +15,7 @@ class ShowPlansController extends Controller
     {
         return view('billing.plans', [
             'plans' => config('kneadit.plans'),
-            'currentPlan' => $request->user()?->currentPlan()?->value,
+            'currentPlan' => $request->user()?->current_plan?->value,
             'bakeryName' => session('bakery_name'),
         ]);
     }

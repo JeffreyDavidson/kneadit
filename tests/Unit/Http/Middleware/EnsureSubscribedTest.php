@@ -1,11 +1,11 @@
 <?php
 
-use App\Enums\Platform\SubscriptionTier;
 use App\Http\Middleware\EnsureSubscribed;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 uses(RefreshDatabase::class);
 
@@ -63,7 +63,8 @@ test('redirects unsubscribed non-trial users to billing', function () {
 test('aborts with 403 for wrong plan when plan parameter specified', function () {
     $user = Mockery::mock(User::factory()->owner()->create())->makePartial();
     $user->shouldReceive('subscribed')->with('default')->andReturn(true);
-    $user->shouldReceive('hasPlan')->with(SubscriptionTier::Pro)->andReturn(false);
+
+    Gate::define('has-plan', fn () => false);
 
     $request = Request::create('/admin');
     $request->setUserResolver(fn () => $user);
