@@ -95,8 +95,8 @@ class ProductAnalysisService
         }
 
         return collect($recipe->ingredients)->map(function (array $ingredient) {
-            $cost = $ingredient['cost'] ?? 0;
-            $quantity = $ingredient['quantity'] ?? 0;
+            $cost = (float) ($ingredient['cost'] ?? 0);
+            $quantity = (float) ($ingredient['quantity'] ?? 0);
 
             return [
                 'name' => $ingredient['name'] ?? '',
@@ -108,7 +108,9 @@ class ProductAnalysisService
         });
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /**
+     * @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}>
+     */
     private function loadProductAnalysis(): Collection
     {
         return Product::with(['recipes'])

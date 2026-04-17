@@ -4,6 +4,7 @@ namespace App\Filament\Resources\CustomerPhotos\Tables;
 
 use App\Actions\Content\ApproveCustomerPhoto;
 use App\Filament\Actions\SlideOverEditAction;
+use App\Models\Customers\CustomerPhoto;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -80,7 +81,7 @@ class CustomerPhotosTable
                     BulkAction::make('approve')
                         ->label('Approve')
                         ->icon(Heroicon::OutlinedCheckCircle)
-                        ->action(fn (Collection $records) => $records->each(fn (mixed $record) => resolve(ApproveCustomerPhoto::class)($record)))
+                        ->action(fn (Collection $records) => $records->each(fn (CustomerPhoto $record) => resolve(ApproveCustomerPhoto::class)($record)))
                         ->deselectRecordsAfterCompletion()
                         ->requiresConfirmation(),
                     DeleteBulkAction::make(),

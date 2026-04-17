@@ -146,7 +146,7 @@ class CustomerDirectory extends Page
         resolve(AddCustomerNote::class)(
             $customerId,
             ($this->noteData ?? [])['note'] ?? '',
-            Auth::id(),
+            (int) Auth::id(),
         );
 
         $this->noteData = [];

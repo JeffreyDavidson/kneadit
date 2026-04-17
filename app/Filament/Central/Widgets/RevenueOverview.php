@@ -20,7 +20,7 @@ class RevenueOverview extends StatsOverviewWidget
         /** @var Collection<int, Tenant> $activeTenants */
         $activeTenants = Tenant::query()->where('is_active', true)->get();
 
-        $mrr = $activeTenants->sum(fn (Tenant $tenant) => $tenant->plan->priceInDollars() ?? 0);
+        $mrr = $activeTenants->sum(fn (Tenant $tenant) => $tenant->plan->priceInDollars());
 
         $arr = $mrr * 12;
 
