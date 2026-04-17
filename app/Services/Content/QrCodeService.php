@@ -13,16 +13,18 @@ class QrCodeService
             ->margin(1)
             ->generate($url);
 
-        return $svg instanceof \Illuminate\Support\HtmlString ? $svg->toHtml() : (string) $svg;
+        return (string) ($svg ?? '');
     }
 
     public function generatePng(string $url, int $size, string $hexColor): string
     {
-        return QrCode::size($size)
+        $png = QrCode::size($size)
             ->color(...$this->parseHexColor($hexColor))
             ->margin(1)
             ->format('png')
             ->generate($url);
+
+        return (string) ($png ?? '');
     }
 
     /**

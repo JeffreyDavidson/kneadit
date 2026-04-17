@@ -110,9 +110,11 @@ class EventServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $events = $this->app->make('events');
+
         foreach ($this->listen as $event => $listeners) {
             foreach ($listeners as $listener) {
-                $this->app['events']->listen($event, $listener);
+                $events->listen($event, $listener);
             }
         }
     }

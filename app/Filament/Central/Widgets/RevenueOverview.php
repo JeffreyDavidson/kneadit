@@ -6,6 +6,7 @@ use App\Models\Platform\Tenant;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Number;
 
 class RevenueOverview extends StatsOverviewWidget
@@ -16,6 +17,7 @@ class RevenueOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
+        /** @var Collection<int, Tenant> $activeTenants */
         $activeTenants = Tenant::query()->where('is_active', true)->get();
 
         $mrr = $activeTenants->sum(fn (Tenant $tenant) => $tenant->plan->priceInDollars() ?? 0);

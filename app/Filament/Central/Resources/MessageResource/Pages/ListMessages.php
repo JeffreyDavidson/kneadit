@@ -44,8 +44,6 @@ class ListMessages extends ListRecords
                         'subject' => $data['subject'],
                         'body' => $data['body'],
                     ]);
-
-                    $this->sendSuccessNotification();
                 })
                 ->successNotificationTitle('Message sent'),
         ];

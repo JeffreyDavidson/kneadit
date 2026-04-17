@@ -48,6 +48,7 @@ class StaffInvitation extends Model
         return $this->belongsTo(User::class, 'invited_by');
     }
 
+    /** @param  Builder<StaffInvitation>  $query */
     #[Scope]
     protected function pending(Builder $query): void
     {
