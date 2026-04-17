@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $event_type
  * @property-read string $status_label
  *
- * @method static \Database\Factories\CateringInquiryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry query()

@@ -24,7 +24,6 @@ use Illuminate\Support\Carbon;
  * @property string|null $ip_address
  * @property Carbon|null $created_at
  *
- * @method static \Database\Factories\AdminAuditLogFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog forAction(string $action)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog forTarget(string $type, ?string $id = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog newModelQuery()

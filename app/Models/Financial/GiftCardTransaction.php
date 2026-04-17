@@ -16,7 +16,6 @@ use Illuminate\Support\Carbon;
  * @property-read GiftCard|null $giftCard
  * @property-read Order|null $order
  *
- * @method static \Database\Factories\GiftCardTransactionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GiftCardTransaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GiftCardTransaction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GiftCardTransaction query()

@@ -22,7 +22,6 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, GiftCardTransaction> $transactions
  * @property-read int|null $transactions_count
  *
- * @method static \Database\Factories\GiftCardFactory factory($count = null, $state = [])
  * @method static GiftCardQueryBuilder|GiftCard newModelQuery()
  * @method static GiftCardQueryBuilder|GiftCard newQuery()
  * @method static GiftCardQueryBuilder|GiftCard query()

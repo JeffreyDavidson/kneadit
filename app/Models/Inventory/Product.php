@@ -50,9 +50,6 @@ use Illuminate\Support\Facades\Storage;
  * @property-read int|null $social_posts_count
  * @property-read Collection<int, ProductWaitlist> $waitlistEntries
  * @property-read int|null $waitlist_entries_count
- *
- * @method static \Database\Factories\ProductFactory factory($count = null, $state = [])
- *
  * @property Carbon|null $available_from
  * @property Carbon|null $available_until
  *

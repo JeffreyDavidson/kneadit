@@ -21,7 +21,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read SupportTicket $ticket
  *
- * @method static \Database\Factories\SupportReplyFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply query()

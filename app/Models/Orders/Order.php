@@ -52,7 +52,6 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $survey_responses_count
  * @property-read User|null $user
  *
- * @method static \Database\Factories\OrderFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order paid()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order byStatus(\App\Enums\Orders\OrderStatus $status)

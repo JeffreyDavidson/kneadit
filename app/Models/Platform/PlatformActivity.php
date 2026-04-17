@@ -20,7 +20,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property-read Tenant|null $tenant
  *
- * @method static \Database\Factories\PlatformActivityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformActivity query()

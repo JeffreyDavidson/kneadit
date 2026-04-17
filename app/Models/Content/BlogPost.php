@@ -18,7 +18,6 @@ use Illuminate\Support\Carbon;
 /**
  * @property-read string $url
  *
- * @method static \Database\Factories\BlogPostFactory factory($count = null, $state = [])
  * @method static BlogPostQueryBuilder|BlogPost newModelQuery()
  * @method static BlogPostQueryBuilder|BlogPost newQuery()
  * @method static BlogPostQueryBuilder|BlogPost published()

@@ -16,7 +16,6 @@ use Illuminate\Support\Carbon;
 /**
  * @property-read User|null $inviter
  *
- * @method static \Database\Factories\StaffInvitationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation query()

@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Date;
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem current()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem expired()
- * @method static \Database\Factories\SeasonalItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem query()

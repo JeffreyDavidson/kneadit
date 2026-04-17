@@ -19,7 +19,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Tenant $tenant
  *
- * @method static \Database\Factories\TenantNoteFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote query()

@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property-read Product|null $product
  *
- * @method static \Database\Factories\CustomerFavoriteFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerFavorite forCustomer(string $email)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerFavorite forProduct(int $productId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerFavorite newModelQuery()
