@@ -12,6 +12,9 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
 
+/**
+ * @property-read ProductPortfolioSummary $portfolio
+ */
 class ProfitAnalysis extends Page
 {
     use RequiresManagerRole;

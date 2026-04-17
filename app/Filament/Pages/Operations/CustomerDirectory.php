@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Number;
 use Laravel\Pennant\Feature;
 
+/**
+ * @property-read Schema $noteForm
+ */
 class CustomerDirectory extends Page
 {
     use RequiresManagerRole;

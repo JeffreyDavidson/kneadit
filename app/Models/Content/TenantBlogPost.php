@@ -11,8 +11,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string|null $excerpt
+ * @property string $body
+ * @property string|null $featured_image
+ * @property array<int, string>|null $tags
+ * @property string|null $author_name
+ * @property bool $is_published
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost published()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost query()
  *
  * @mixin \Eloquent
