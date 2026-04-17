@@ -22,8 +22,8 @@ final class WelcomeStep extends OnboardingStep
 
         return [
             'bakery_name' => settings('store_name')
-                ?: ($tenant?->store_name ?? $tenant?->name ?? ''),
-            'owner_name' => $tenant?->name ?? '',
+                ?: ($tenant->store_name ?? $tenant->name ?? ''),
+            'owner_name' => $tenant->name ?? '',
         ];
     }
 
