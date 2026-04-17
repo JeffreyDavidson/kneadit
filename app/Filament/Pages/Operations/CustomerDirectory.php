@@ -136,7 +136,7 @@ class CustomerDirectory extends Page
             return null;
         }
 
-        return (new CustomerPresenter($customer))->toDetailArray();
+        return CustomerPresenter::for($customer)->toDetailArray();
     }
 
     public function addNote(int $customerId): void

@@ -10,7 +10,7 @@
 /** @var string|null $logoUrl */
 /** @var array<string, mixed> $stats */
 /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Orders\OrderItem> $topProducts */
-/** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Customers\Customer> $atRiskCustomers */
+/** @var \Illuminate\Support\Collection<int, \App\Presenters\CustomerPresenter> $atRiskCustomers */
 /** @var int $upcomingCount */
 /** @var string $adminUrl */
 @endphp
