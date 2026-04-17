@@ -4,7 +4,7 @@ use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(fn () => setUpTenantTest());
 
-test('API creates a waitlist entry', function () {
+test('API creates a waitlist entry and returns JSON:API envelope', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->postJson('/api/waitlist', [
             'customer_name' => 'Jane',
@@ -14,5 +14,9 @@ test('API creates a waitlist entry', function () {
         ]);
 
     $response->assertCreated()
-        ->assertJsonStructure(['data' => ['id'], 'message']);
+        ->assertHeader('Content-Type', 'application/vnd.api+json')
+        ->assertJsonPath('data.type', 'waitlist-entries')
+        ->assertJsonStructure([
+            'data' => ['id', 'type', 'attributes' => ['customer_name', 'customer_email', 'requested_date', 'status']],
+        ]);
 });
