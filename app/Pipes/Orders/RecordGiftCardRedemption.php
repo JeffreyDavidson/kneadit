@@ -18,6 +18,8 @@ class RecordGiftCardRedemption
             return $next($payload);
         }
 
+        assert($payload->order !== null, 'Order must be persisted before RecordGiftCardRedemption');
+
         $giftCard = GiftCard::query()->find($payload->giftCardId);
 
         if ($giftCard) {

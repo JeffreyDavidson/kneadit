@@ -10,6 +10,8 @@ class PersistOrder
 {
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
+        assert($payload->customer !== null, 'Customer must be resolved before PersistOrder');
+
         $payload->order = Order::query()->create([
             'customer_id' => $payload->customer->id,
             'delivery_date' => $payload->data->deliveryDate,

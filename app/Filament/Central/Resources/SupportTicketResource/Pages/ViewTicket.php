@@ -4,9 +4,13 @@ namespace App\Filament\Central\Resources\SupportTicketResource\Pages;
 
 use App\Enums\Platform\SupportTicketStatus;
 use App\Filament\Central\Resources\SupportTicketResource;
+use App\Models\Platform\SupportTicket;
 use Filament\Resources\Pages\ViewRecord;
 use Livewire\Attributes\Rule;
 
+/**
+ * @property-read SupportTicket $record
+ */
 class ViewTicket extends ViewRecord
 {
     protected static string $resource = SupportTicketResource::class;
