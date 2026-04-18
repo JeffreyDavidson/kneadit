@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Pages\Platform\Onboarding;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -20,11 +21,12 @@ final class ContactStep extends OnboardingStep
     public static function defaults(TenantSettings $settings): array
     {
         $tenant = tenant();
+        $manager = app(SettingsManager::class);
 
         return [
-            'email' => settings('store_email') ?: ($tenant->email ?? ''),
-            'phone' => settings('store_phone', ''),
-            'address' => settings('store_address', ''),
+            'email' => $manager->get('store_email') ?: ($tenant->email ?? ''),
+            'phone' => $manager->get('store_phone', ''),
+            'address' => $manager->get('store_address', ''),
         ];
     }
 
@@ -59,7 +61,7 @@ final class ContactStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        settings([
+        app(SettingsManager::class)->setMany([
             'store_email' => $data['email'],
             'store_phone' => $data['phone'] ?? '',
             'store_address' => $data['address'] ?? '',

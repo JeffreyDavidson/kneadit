@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Pages\Platform\Onboarding;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -23,15 +24,17 @@ final class DeliveryStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
+        $manager = app(SettingsManager::class);
+
         return [
-            'delivery_enabled' => settings('delivery_enabled', '0') === '1',
-            'delivery_radius' => settings('delivery_radius', ''),
-            'delivery_fee' => settings('delivery_fee', ''),
-            'free_delivery_over' => (bool) settings('free_delivery_minimum'),
-            'free_delivery_threshold' => settings('free_delivery_minimum', ''),
-            'delivery_minimum_order' => settings('delivery_minimum_order', ''),
-            'pickup_enabled' => settings('pickup_enabled', '1') === '1',
-            'pickup_instructions' => settings('pickup_instructions', ''),
+            'delivery_enabled' => $manager->get('delivery_enabled', '0') === '1',
+            'delivery_radius' => $manager->get('delivery_radius', ''),
+            'delivery_fee' => $manager->get('delivery_fee', ''),
+            'free_delivery_over' => (bool) $manager->get('free_delivery_minimum'),
+            'free_delivery_threshold' => $manager->get('free_delivery_minimum', ''),
+            'delivery_minimum_order' => $manager->get('delivery_minimum_order', ''),
+            'pickup_enabled' => $manager->get('pickup_enabled', '1') === '1',
+            'pickup_instructions' => $manager->get('pickup_instructions', ''),
         ];
     }
 
@@ -105,12 +108,14 @@ final class DeliveryStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        settings(['delivery_enabled' => $data['delivery_enabled'] ? '1' : '0']);
-        settings(['delivery_radius' => $data['delivery_radius']]);
-        settings(['delivery_fee' => $data['delivery_fee']]);
-        settings(['free_delivery_minimum' => $data['free_delivery_over'] ? $data['free_delivery_threshold'] : null]);
-        settings(['delivery_minimum_order' => $data['delivery_minimum_order']]);
-        settings(['pickup_enabled' => $data['pickup_enabled'] ? '1' : '0']);
-        settings(['pickup_instructions' => $data['pickup_instructions']]);
+        app(SettingsManager::class)->setMany([
+            'delivery_enabled' => $data['delivery_enabled'] ? '1' : '0',
+            'delivery_radius' => $data['delivery_radius'],
+            'delivery_fee' => $data['delivery_fee'],
+            'free_delivery_minimum' => $data['free_delivery_over'] ? $data['free_delivery_threshold'] : null,
+            'delivery_minimum_order' => $data['delivery_minimum_order'],
+            'pickup_enabled' => $data['pickup_enabled'] ? '1' : '0',
+            'pickup_instructions' => $data['pickup_instructions'],
+        ]);
     }
 }

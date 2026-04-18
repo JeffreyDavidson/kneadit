@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Pages\Platform\Onboarding;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -21,7 +22,7 @@ final class WelcomeStep extends OnboardingStep
         $tenant = tenant();
 
         return [
-            'bakery_name' => settings('store_name')
+            'bakery_name' => app(SettingsManager::class)->get('store_name')
                 ?: ($tenant->store_name ?? $tenant->name ?? ''),
             'owner_name' => $tenant->name ?? '',
         ];
@@ -53,7 +54,7 @@ final class WelcomeStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        settings(['store_name' => $data['bakery_name']]);
+        app(SettingsManager::class)->set('store_name', $data['bakery_name']);
 
         $tenant = tenant();
         if ($tenant) {
