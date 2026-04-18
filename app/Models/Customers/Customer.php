@@ -9,7 +9,10 @@ use App\Models\Orders\Order;
 use App\Observers\LogsActivityObserver;
 use App\ValueObjects\Address;
 use Database\Factories\Customers\CustomerFactory;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -49,19 +52,22 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
-#[Fillable('name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'notes', 'birthday')]
+#[Fillable('name', 'email', 'password', 'phone', 'address', 'city', 'state', 'zip', 'notes', 'birthday')]
+#[Hidden('password', 'remember_token')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(CustomerQueryBuilder::class)]
-class Customer extends Model
+class Customer extends Model implements Authenticatable
 {
     /** @use HasFactory<CustomerFactory> */
-    use HasFactory;
+    use AuthenticatableTrait, HasFactory;
 
     protected function casts(): array
     {
         return [
             'birthday' => 'date',
             'phone' => PhoneNumberCast::class,
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
         ];
     }
 
