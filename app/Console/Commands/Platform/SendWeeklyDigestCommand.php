@@ -7,6 +7,7 @@ use App\Events\Platform\WeeklyDigestRequested;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
 use App\Services\Reporting\WeeklyDigestDataCollector;
+use App\Services\Settings\SettingsManager;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -25,7 +26,7 @@ class SendWeeklyDigestCommand extends Command
         foreach ($tenants as $tenant) {
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($tenant) {
-                    if (settings('weekly_digest_enabled', '1') !== '1') {
+                    if (app(SettingsManager::class)->get('weekly_digest_enabled', '1') !== '1') {
                         $this->info("Skipping {$tenant->id} — digest disabled");
 
                         return;

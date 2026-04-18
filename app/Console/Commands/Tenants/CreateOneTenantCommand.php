@@ -4,6 +4,7 @@ namespace App\Console\Commands\Tenants;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
+use App\Services\Settings\SettingsManager;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Hidden;
 use Illuminate\Console\Attributes\Signature;
@@ -56,8 +57,10 @@ class CreateOneTenantCommand extends Command
                 'updated_at' => now(),
             ]);
 
-            settings(['store_name' => $tenant->store_name]);
-            settings(['store_email' => $tenant->email]);
+            app(SettingsManager::class)->setMany([
+                'store_name' => $tenant->store_name,
+                'store_email' => $tenant->email,
+            ]);
 
             Artisan::call('db:seed', ['--force' => true]);
         });

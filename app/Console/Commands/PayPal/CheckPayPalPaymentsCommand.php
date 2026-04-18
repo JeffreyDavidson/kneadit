@@ -7,6 +7,7 @@ use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
 use App\Models\Platform\Tenant;
 use App\Services\PayPal\PaymentVerifier;
+use App\Services\Settings\SettingsManager;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -30,7 +31,7 @@ class CheckPayPalPaymentsCommand extends Command
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($tenant) {
                     // Skip tenants without PayPal configured
-                    $clientId = settings('paypal_client_id');
+                    $clientId = app(SettingsManager::class)->get('paypal_client_id');
                     if (! $clientId) {
                         return;
                     }
