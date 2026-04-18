@@ -6,6 +6,12 @@
         </div>
 
         <div class="card p-8">
+            @if (session('status'))
+                <div class="mb-5 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+                    {{ session('status') }}
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('account.login') }}" class="space-y-5">
                 @csrf
 
@@ -29,10 +35,15 @@
                     @enderror
                 </label>
 
-                <label class="flex items-center gap-2 text-sm text-warm-700">
-                    <input type="checkbox" name="remember" value="1" class="rounded border-warm-300">
-                    Keep me signed in
-                </label>
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2 text-sm text-warm-700">
+                        <input type="checkbox" name="remember" value="1" class="rounded border-warm-300">
+                        Keep me signed in
+                    </label>
+                    <a href="{{ route('account.password.request') }}" class="text-sm font-semibold text-warm-700 hover:text-warm-900 hover:underline">
+                        Forgot password?
+                    </a>
+                </div>
 
                 <button type="submit"
                     class="w-full rounded-full bg-warm-800 text-white font-semibold py-3 hover:bg-warm-900 transition">

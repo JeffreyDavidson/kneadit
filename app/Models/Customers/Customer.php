@@ -10,7 +10,9 @@ use App\Observers\LogsActivityObserver;
 use App\ValueObjects\Address;
 use Database\Factories\Customers\CustomerFactory;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 
 /**
@@ -56,10 +59,15 @@ use Illuminate\Support\Carbon;
 #[Hidden('password', 'remember_token')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(CustomerQueryBuilder::class)]
-class Customer extends Model implements Authenticatable
+class Customer extends Model implements Authenticatable, CanResetPassword
 {
     /** @use HasFactory<CustomerFactory> */
-    use AuthenticatableTrait, HasFactory;
+    use AuthenticatableTrait, CanResetPasswordTrait, HasFactory, Notifiable;
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\Customers\CustomerPasswordResetNotification($token));
+    }
 
     protected function casts(): array
     {
