@@ -10,9 +10,11 @@ use App\Observers\LogsActivityObserver;
 use App\ValueObjects\Address;
 use Database\Factories\Customers\CustomerFactory;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -59,14 +61,19 @@ use Illuminate\Support\Carbon;
 #[Hidden('password', 'remember_token')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(CustomerQueryBuilder::class)]
-class Customer extends Model implements Authenticatable, CanResetPassword
+class Customer extends Model implements Authenticatable, CanResetPassword, MustVerifyEmail
 {
     /** @use HasFactory<CustomerFactory> */
-    use AuthenticatableTrait, CanResetPasswordTrait, HasFactory, Notifiable;
+    use AuthenticatableTrait, CanResetPasswordTrait, HasFactory, MustVerifyEmailTrait, Notifiable;
 
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new \App\Notifications\Customers\CustomerPasswordResetNotification($token));
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new \App\Notifications\Customers\CustomerVerifyEmailNotification);
     }
 
     protected function casts(): array
