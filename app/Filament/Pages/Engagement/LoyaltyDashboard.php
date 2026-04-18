@@ -8,6 +8,7 @@ use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Services\Loyalty\LoyaltyAnalytics;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -54,7 +55,7 @@ class LoyaltyDashboard extends Page
     public function toggleLoyalty(): void
     {
         $this->loyaltyEnabled = ! $this->loyaltyEnabled;
-        settings(['loyalty_enabled' => $this->loyaltyEnabled ? '1' : '0']);
+        app(SettingsManager::class)->set('loyalty_enabled', $this->loyaltyEnabled ? '1' : '0');
     }
 
     public function getTotalPointsIssuedProperty(): int
