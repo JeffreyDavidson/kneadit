@@ -5,6 +5,8 @@ namespace App\Models\Operations;
 use App\Enums\Staff\DayOfWeek;
 use Database\Factories\Operations\BusinessScheduleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +41,12 @@ class BusinessSchedule extends Model
         return Attribute::make(
             get: fn () => DayOfWeek::fromPhpDayIndex($this->day_of_week)?->getLabel() ?? 'Unknown',
         );
+    }
+
+    #[Scope]
+    protected function forDay(Builder $query, int $dayOfWeek): void
+    {
+        $query->where('day_of_week', $dayOfWeek);
     }
 
     protected static function newFactory(): BusinessScheduleFactory
