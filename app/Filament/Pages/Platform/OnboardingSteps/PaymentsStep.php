@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Enums\Orders\PaymentMethod;
 use App\Filament\Pages\Platform\Onboarding;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
@@ -23,13 +24,14 @@ final class PaymentsStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
-        $methods = settings('payment_methods');
+        $manager = app(SettingsManager::class);
+        $methods = $manager->get('payment_methods');
 
         return [
             'payment_methods' => $methods ? json_decode($methods, true) : [PaymentMethod::Cash->value],
-            'paypal_client_id' => settings('paypal_client_id', ''),
-            'paypal_client_secret' => settings('paypal_client_secret', ''),
-            'paypal_sandbox' => settings('paypal_sandbox', '1') === '1',
+            'paypal_client_id' => $manager->get('paypal_client_id', ''),
+            'paypal_client_secret' => $manager->get('paypal_client_secret', ''),
+            'paypal_sandbox' => $manager->get('paypal_sandbox', '1') === '1',
         ];
     }
 
@@ -98,13 +100,17 @@ final class PaymentsStep extends OnboardingStep
     {
         $methods = $data['payment_methods'] ?? [PaymentMethod::Cash->value];
 
-        settings(['payment_methods' => json_encode($methods)]);
-        settings(['payment_method' => $methods[0] ?? PaymentMethod::Cash->value]);
+        $settings = [
+            'payment_methods' => json_encode($methods),
+            'payment_method' => $methods[0] ?? PaymentMethod::Cash->value,
+        ];
 
         if (in_array(PaymentMethod::PayPal->value, $methods)) {
-            settings(['paypal_client_id' => $data['paypal_client_id']]);
-            settings(['paypal_client_secret' => $data['paypal_client_secret']]);
-            settings(['paypal_sandbox' => $data['paypal_sandbox'] ? '1' : '0']);
+            $settings['paypal_client_id'] = $data['paypal_client_id'];
+            $settings['paypal_client_secret'] = $data['paypal_client_secret'];
+            $settings['paypal_sandbox'] = $data['paypal_sandbox'] ? '1' : '0';
         }
+
+        app(SettingsManager::class)->setMany($settings);
     }
 }

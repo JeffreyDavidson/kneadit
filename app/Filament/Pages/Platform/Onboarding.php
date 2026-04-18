@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Platform;
 
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Pages\Platform\OnboardingSteps\OnboardingStepRegistry;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use BackedEnum;
 use Filament\Notifications\Notification;
@@ -58,7 +59,7 @@ class Onboarding extends Page
 
     public function mount(): void
     {
-        if (settings('onboarding_completed_at')) {
+        if (app(SettingsManager::class)->get('onboarding_completed_at')) {
             $this->redirect(url('/admin'));
 
             return;
@@ -84,7 +85,7 @@ class Onboarding extends Page
 
     public function completeOnboarding(): void
     {
-        settings(['onboarding_completed_at' => now()->toISOString()]);
+        app(SettingsManager::class)->set('onboarding_completed_at', now()->toISOString());
 
         Notification::make()
             ->title('Welcome aboard!')
