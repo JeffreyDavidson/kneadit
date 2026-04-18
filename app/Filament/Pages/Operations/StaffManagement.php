@@ -25,7 +25,7 @@ class StaffManagement extends Page
     {
         $user = Auth::user();
 
-        if (! $user || ! $user->role->meetsRequirement(UserRole::Owner)) {
+        if (! $user instanceof User || ! $user->role->meetsRequirement(UserRole::Owner)) {
             return false;
         }
 
