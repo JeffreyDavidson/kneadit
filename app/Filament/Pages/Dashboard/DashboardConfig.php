@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Dashboard;
 
 use App\Filament\Concerns\RequiresManagerRole;
+use App\Services\Settings\SettingsManager;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -86,7 +87,7 @@ class DashboardConfig extends Page
 
     protected function loadWidgets(): void
     {
-        $saved = settings('dashboard_widgets');
+        $saved = app(SettingsManager::class)->get('dashboard_widgets');
         $config = $saved ? json_decode($saved, true) : null;
 
         if (! $config) {
@@ -159,7 +160,7 @@ class DashboardConfig extends Page
             ];
         }
 
-        settings(['dashboard_widgets' => json_encode($config)]);
+        app(SettingsManager::class)->set('dashboard_widgets', json_encode($config));
 
         Notification::make()
             ->title('Dashboard layout saved!')
@@ -170,8 +171,10 @@ class DashboardConfig extends Page
 
     public function resetDefaults(): void
     {
-        settings(['dashboard_widgets' => json_encode($this->getDefaults())]);
-        settings(['dashboard_grid_layout' => null]);
+        app(SettingsManager::class)->setMany([
+            'dashboard_widgets' => json_encode($this->getDefaults()),
+            'dashboard_grid_layout' => null,
+        ]);
         $this->loadWidgets();
 
         Notification::make()
