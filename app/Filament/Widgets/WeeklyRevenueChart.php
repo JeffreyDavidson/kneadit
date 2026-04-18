@@ -2,15 +2,17 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Financial\Expense;
 use App\Queries\Financial\RevenueQuery;
 use App\ValueObjects\DateRange;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\Cache;
 
 class WeeklyRevenueChart extends ChartWidget
 {
+    use CachesWidgetData;
+
     protected static ?int $sort = 5;
 
     protected ?string $heading = 'Weekly Financial Overview';
@@ -24,7 +26,7 @@ class WeeklyRevenueChart extends ChartWidget
 
     protected function getData(): array
     {
-        return Cache::flexible('weekly_revenue_' . (tenant()?->getTenantKey() ?? 'none'), [300, 600], function (): array {
+        return $this->cached('main', [300, 600], function (): array {
             $range = DateRange::thisWeek();
             $period = CarbonPeriod::create($range->start, $range->end);
 
@@ -63,5 +65,10 @@ class WeeklyRevenueChart extends ChartWidget
                 'labels' => $labels,
             ];
         });
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'weekly_revenue';
     }
 }

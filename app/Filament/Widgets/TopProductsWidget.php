@@ -2,13 +2,15 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Queries\Financial\ProductSalesQuery;
 use App\ValueObjects\DateRange;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\Cache;
 
 class TopProductsWidget extends ChartWidget
 {
+    use CachesWidgetData;
+
     protected static ?int $sort = 7;
 
     protected ?string $heading = 'Top Products This Month';
@@ -24,7 +26,7 @@ class TopProductsWidget extends ChartWidget
 
     protected function getData(): array
     {
-        return Cache::flexible('top_products_' . (tenant()?->getTenantKey() ?? 'none'), [900, 1800], function (): array {
+        return $this->cached('main', [900, 1800], function (): array {
             $products = ProductSalesQuery::topByRevenue(DateRange::thisMonth(), 5);
 
             return [
@@ -49,5 +51,10 @@ class TopProductsWidget extends ChartWidget
                 'legend' => ['display' => false],
             ],
         ];
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'top_products';
     }
 }

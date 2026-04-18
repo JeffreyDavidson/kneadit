@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\Orders\OrderStatus;
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Customers\WaitlistEntry;
 use App\Models\Engagement\PageView;
 use App\Models\Orders\Order;
@@ -12,19 +13,20 @@ use Carbon\Carbon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Number;
 
 class StatsOverview extends BaseWidget
 {
+    use CachesWidgetData;
+
     protected ?string $pollingInterval = null;
 
     protected static ?int $sort = 1;
 
     protected function getStats(): array
     {
-        return Cache::flexible('stats_overview_' . (tenant()?->getTenantKey() ?? 'none'), [60, 120], function (): array {
+        return $this->cached('main', [60, 120], function (): array {
             $today = Date::today();
             $weekStart = Date::now()->startOfWeek();
 
@@ -97,5 +99,10 @@ class StatsOverview extends BaseWidget
                     ->all(),
             ];
         });
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'stats_overview';
     }
 }

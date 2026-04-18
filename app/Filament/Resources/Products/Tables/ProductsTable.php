@@ -20,9 +20,11 @@ class ProductsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->withCount([
-                'waitlistEntries' => fn (Builder $q) => $q->whereNull('notified_at'),
-            ]))
+            ->modifyQueryUsing(fn (Builder $query) => $query
+                ->with('category')
+                ->withCount([
+                    'waitlistEntries' => fn (Builder $q) => $q->whereNull('notified_at'),
+                ]))
             ->columns([
                 ImageColumn::make('image')
                     ->circular(),
