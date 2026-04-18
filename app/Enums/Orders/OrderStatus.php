@@ -57,6 +57,42 @@ enum OrderStatus: string implements HasColor, HasIcon, HasLabel
         };
     }
 
+    public function hexColor(): string
+    {
+        return match ($this) {
+            self::Pending => '#F59E0B',
+            self::Confirmed => '#3B82F6',
+            self::Baking => '#8B5E3C',
+            self::Ready => '#10B981',
+            self::Delivered => '#6B7280',
+            self::Cancelled => '#EF4444',
+        };
+    }
+
+    public function hexBackground(): string
+    {
+        return match ($this) {
+            self::Pending => '#FEF3C7',
+            self::Confirmed => '#DBEAFE',
+            self::Baking => '#F5E6D3',
+            self::Ready => '#D1FAE5',
+            self::Delivered => '#F3F4F6',
+            self::Cancelled => '#FEE2E2',
+        };
+    }
+
+    /** @return array<string, mixed> */
+    public function toFunnelStage(int $count = 0): array
+    {
+        return [
+            'key' => $this->value,
+            'label' => $this->getLabel(),
+            'color' => $this->hexColor(),
+            'bg' => $this->hexBackground(),
+            'count' => $count,
+        ];
+    }
+
     /** @return array<int, self> */
     public static function trackableStatuses(): array
     {

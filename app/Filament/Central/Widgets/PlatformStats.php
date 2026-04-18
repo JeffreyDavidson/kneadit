@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Widgets;
 
 use App\Enums\Platform\SupportTicketStatus;
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
 use Filament\Support\Icons\Heroicon;
@@ -13,80 +14,99 @@ use Illuminate\Support\Number;
 
 class PlatformStats extends StatsOverviewWidget
 {
+    use CachesWidgetData;
+
     protected ?string $pollingInterval = null;
 
     protected static ?int $sort = 0;
 
     protected function getStats(): array
     {
-        /** @var Collection<int, Tenant> $activeTenants */
-        $activeTenants = Tenant::query()->where('is_active', true)->get();
-        $mrr = $activeTenants->sum(fn (Tenant $t) => $t->plan->priceInDollars());
+        $data = $this->cached('main', [900, 1800], function (): array {
+            /** @var Collection<int, Tenant> $activeTenants */
+            $activeTenants = Tenant::query()->where('is_active', true)->get();
+            $mrr = $activeTenants->sum(fn (Tenant $t) => $t->plan->priceInDollars());
 
-        $totalTenants = Tenant::query()->count();
-        $trialTenants = Tenant::query()->whereNotNull('trial_ends_at')
-            ->where('trial_ends_at', '>', now())
-            ->count();
+            $totalTenants = Tenant::query()->count();
+            $trialTenants = Tenant::query()->whereNotNull('trial_ends_at')
+                ->where('trial_ends_at', '>', now())
+                ->count();
 
-        $openTickets = SupportTicket::query()->where('status', SupportTicketStatus::Open)->count();
+            $openTickets = SupportTicket::query()->where('status', SupportTicketStatus::Open)->count();
 
-        // Sparkline data: last 6 months (1 query + in-memory filtering)
-        /** @var Collection<int, Tenant> $allTenants */
-        $allTenants = Tenant::query()->select('plan', 'is_active', 'created_at', 'trial_ends_at')->get();
-        $mrrChart = [];
-        $bakeryChart = [];
-        $trialChart = [];
+            /** @var Collection<int, Tenant> $allTenants */
+            $allTenants = Tenant::query()->select('plan', 'is_active', 'created_at', 'trial_ends_at')->get();
+            $mrrChart = [];
+            $bakeryChart = [];
+            $trialChart = [];
 
-        for ($i = 5; $i >= 0; $i--) {
-            $monthEnd = now()->subMonths($i)->endOfMonth();
-            $activeInMonth = $allTenants->filter(fn (Tenant $t) => $t->is_active && $t->created_at <= $monthEnd);
-            $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $t->plan->priceInDollars());
-            $bakeryChart[] = $allTenants->filter(fn (Tenant $t) => $t->created_at <= $monthEnd)->count();
-            $trialChart[] = $allTenants->filter(fn (Tenant $t) => $t->trial_ends_at && $t->trial_ends_at > $monthEnd && $t->created_at <= $monthEnd)->count();
-        }
+            for ($i = 5; $i >= 0; $i--) {
+                $monthEnd = now()->subMonths($i)->endOfMonth();
+                $activeInMonth = $allTenants->filter(fn (Tenant $t) => $t->is_active && $t->created_at <= $monthEnd);
+                $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $t->plan->priceInDollars());
+                $bakeryChart[] = $allTenants->filter(fn (Tenant $t) => $t->created_at <= $monthEnd)->count();
+                $trialChart[] = $allTenants->filter(fn (Tenant $t) => $t->trial_ends_at && $t->trial_ends_at > $monthEnd && $t->created_at <= $monthEnd)->count();
+            }
 
-        // Ticket sparkline: last 6 days (1 grouped query)
-        $sixDaysAgo = now()->subDays(5)->startOfDay();
-        $ticketCounts = SupportTicket::query()
-            ->where('created_at', '>=', $sixDaysAgo)
-            ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
-            ->groupBy('day')
-            ->pluck('total', 'day');
+            $sixDaysAgo = now()->subDays(5)->startOfDay();
+            $ticketCounts = SupportTicket::query()
+                ->where('created_at', '>=', $sixDaysAgo)
+                ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
+                ->groupBy('day')
+                ->pluck('total', 'day');
 
-        $ticketChart = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $day = now()->subDays($i)->format('Y-m-d');
-            $ticketChart[] = (int) ($ticketCounts[$day] ?? 0);
-        }
+            $ticketChart = [];
+            for ($i = 5; $i >= 0; $i--) {
+                $day = now()->subDays($i)->format('Y-m-d');
+                $ticketChart[] = (int) ($ticketCounts[$day] ?? 0);
+            }
+
+            return [
+                'mrr' => $mrr,
+                'activePaying' => $activeTenants->count(),
+                'totalTenants' => $totalTenants,
+                'trialTenants' => $trialTenants,
+                'openTickets' => $openTickets,
+                'mrrChart' => $mrrChart,
+                'bakeryChart' => $bakeryChart,
+                'trialChart' => $trialChart,
+                'ticketChart' => $ticketChart,
+            ];
+        });
 
         return [
-            Stat::make('MRR', Number::currency($mrr))
-                ->description($activeTenants->count() . ' paying')
+            Stat::make('MRR', Number::currency($data['mrr']))
+                ->description($data['activePaying'] . ' paying')
                 ->color('success')
                 ->icon(Heroicon::OutlinedCurrencyDollar)
-                ->chart($mrrChart)
+                ->chart($data['mrrChart'])
                 ->chartColor('success'),
 
-            Stat::make('Total Bakeries', $totalTenants)
-                ->description($activeTenants->count() . ' active')
+            Stat::make('Total Bakeries', $data['totalTenants'])
+                ->description($data['activePaying'] . ' active')
                 ->color('success')
                 ->icon(Heroicon::OutlinedBuildingStorefront)
-                ->chart($bakeryChart)
+                ->chart($data['bakeryChart'])
                 ->chartColor('success'),
 
-            Stat::make('On Trial', $trialTenants)
+            Stat::make('On Trial', $data['trialTenants'])
                 ->description('Free trial')
                 ->color('warning')
                 ->icon(Heroicon::OutlinedClock)
-                ->chart($trialChart)
+                ->chart($data['trialChart'])
                 ->chartColor('warning'),
 
-            Stat::make('Open Tickets', $openTickets)
-                ->description($openTickets > 0 ? 'Needs attention' : 'All clear')
-                ->color($openTickets > 0 ? 'danger' : 'success')
+            Stat::make('Open Tickets', $data['openTickets'])
+                ->description($data['openTickets'] > 0 ? 'Needs attention' : 'All clear')
+                ->color($data['openTickets'] > 0 ? 'danger' : 'success')
                 ->icon(Heroicon::OutlinedInbox)
-                ->chart($ticketChart)
-                ->chartColor($openTickets > 0 ? 'danger' : 'success'),
+                ->chart($data['ticketChart'])
+                ->chartColor($data['openTickets'] > 0 ? 'danger' : 'success'),
         ];
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'platform_stats';
     }
 }

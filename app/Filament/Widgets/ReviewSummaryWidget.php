@@ -2,12 +2,14 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Engagement\Review;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Cache;
 
 class ReviewSummaryWidget extends Widget
 {
+    use CachesWidgetData;
+
     protected static ?int $sort = 19;
 
     protected int|string|array $columnSpan = 1;
@@ -16,16 +18,12 @@ class ReviewSummaryWidget extends Widget
 
     public function getAverageRating(): float
     {
-        return Cache::flexible('review_summary_avg_' . (tenant()?->getTenantKey() ?? 'none'), [3600, 7200], function (): float {
-            return round((float) Review::query()->approved()->avg('rating'), 1);
-        });
+        return $this->cached('avg', [3600, 7200], fn (): float => round((float) Review::query()->approved()->avg('rating'), 1));
     }
 
     public function getTotalReviews(): int
     {
-        return Cache::flexible('review_summary_total_' . (tenant()?->getTenantKey() ?? 'none'), [3600, 7200], function (): int {
-            return Review::query()->approved()->count();
-        });
+        return $this->cached('total', [3600, 7200], fn (): int => Review::query()->approved()->count());
     }
 
     public function getRecentReview(): ?Review
@@ -36,7 +34,7 @@ class ReviewSummaryWidget extends Widget
     /** @return array<int, array<string, mixed>> */
     public function getRatingDistribution(): array
     {
-        return Cache::flexible('review_summary_dist_' . (tenant()?->getTenantKey() ?? 'none'), [3600, 7200], function (): array {
+        return $this->cached('dist', [3600, 7200], function (): array {
             $counts = Review::query()->approved()
                 ->selectRaw('rating, count(*) as count')
                 ->groupBy('rating')
@@ -56,5 +54,10 @@ class ReviewSummaryWidget extends Widget
 
             return $distribution;
         });
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'review_summary';
     }
 }
