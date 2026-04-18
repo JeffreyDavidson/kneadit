@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Ingredients\Schemas;
 
+use App\Enums\Inventory\Allergen;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -71,6 +73,12 @@ class IngredientForm
 
                         Textarea::make('notes')
                             ->rows(3),
+
+                        CheckboxList::make('allergens')
+                            ->label('Allergens')
+                            ->helperText('Used to generate allergen statements on product labels.')
+                            ->options(Allergen::class)
+                            ->columns(3),
                     ]),
             ]);
     }
