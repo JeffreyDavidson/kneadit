@@ -34,6 +34,14 @@ class CustomerFactory extends Factory
     }
 
     /**
+     * Customer has a login password set.
+     */
+    public function withPassword(string $password = 'password123'): static
+    {
+        return $this->state(fn (array $attributes) => ['password' => $password]);
+    }
+
+    /**
      * Customer has a full address.
      */
     public function withAddress(): static
