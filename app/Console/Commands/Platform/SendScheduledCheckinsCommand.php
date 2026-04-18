@@ -2,72 +2,27 @@
 
 namespace App\Console\Commands\Platform;
 
-use App\Events\Platform\ScheduledCheckinDue;
-use App\Models\Operations\CheckinLog;
-use App\Models\Operations\ScheduledCheckin;
-use App\Models\Platform\Tenant;
+use App\Actions\Platform\ProcessScheduledCheckins;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Log;
 
 #[Signature('checkins:send')]
 #[Description('Send scheduled check-in emails to tenants based on their signup date')]
 class SendScheduledCheckinsCommand extends Command
 {
-    public function handle(): int
+    public function handle(ProcessScheduledCheckins $action): int
     {
-        $checkins = ScheduledCheckin::query()->where('is_active', true)->get();
+        $summary = $action();
 
-        if ($checkins->isEmpty()) {
+        if ($summary['no_active_checkins']) {
             $this->info('No active check-ins found.');
 
             return self::SUCCESS;
         }
 
-        $sentCount = 0;
+        $this->info(sprintf('Logged %d check-in(s).', $summary['sent']));
 
-        foreach ($checkins as $checkin) {
-            $targetDate = Date::today()->subDays($checkin->days_after_signup);
-
-            $tenants = Tenant::query()->whereDate('created_at', $targetDate)->get();
-
-            /** @var Tenant $tenant */
-            foreach ($tenants as $tenant) {
-                $alreadySent = CheckinLog::query()->where('checkin_id', $checkin->id)
-                    ->where('tenant_id', $tenant->id)
-                    ->exists();
-
-                if ($alreadySent) {
-                    continue;
-                }
-
-                if (! $tenant->email) {
-                    $this->warn("Skipping tenant {$tenant->id} — no email address.");
-
-                    continue;
-                }
-
-                try {
-                    ScheduledCheckinDue::dispatch($tenant->email, $checkin->body, $checkin->subject);
-
-                    CheckinLog::query()->create([
-                        'checkin_id' => $checkin->id,
-                        'tenant_id' => $tenant->id,
-                        'sent_at' => now(),
-                    ]);
-
-                    $sentCount++;
-                } catch (\Exception $e) {
-                    Log::error('Failed to send checkin to tenant', ['tenant' => $tenant->id, 'error' => $e->getMessage()]);
-                    $this->error("Failed to send checkin to {$tenant->id}: {$e->getMessage()}");
-                }
-            }
-        }
-
-        $this->info("Logged {$sentCount} check-in(s).");
-
-        return self::SUCCESS;
+        return $summary['failures'] > 0 ? self::FAILURE : self::SUCCESS;
     }
 }
