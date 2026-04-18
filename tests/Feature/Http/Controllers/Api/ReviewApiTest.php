@@ -39,7 +39,7 @@ test('reviews endpoint returns all approved when featured is not requested', fun
         ->assertJsonCount(2, 'data');
 });
 
-test('store review creates review and returns 201', function () {
+test('store review creates review and returns a JSON:API resource', function () {
     $product = App\Models\Inventory\Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -52,7 +52,10 @@ test('store review creates review and returns 201', function () {
         ]);
 
     $response->assertCreated()
-        ->assertJsonPath('message', 'Review submitted and pending approval.');
+        ->assertHeader('Content-Type', 'application/vnd.api+json')
+        ->assertJsonPath('data.type', 'reviews')
+        ->assertJsonPath('data.attributes.customer_name', 'Jane Doe')
+        ->assertJsonPath('data.attributes.rating', 5);
 
     test()->assertDatabaseHas('reviews', [
         'customer_name' => 'Jane Doe',

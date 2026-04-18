@@ -4,18 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
-use App\Http\Responses\ApiResponse;
 use App\Models\Inventory\Category;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CategoryController extends Controller
 {
-    public function __invoke(): JsonResponse
+    public function __invoke(): AnonymousResourceCollection
     {
         $categories = Category::query()->active()
             ->orderBy('sort_order')
             ->get();
 
-        return ApiResponse::success(CategoryResource::collection($categories), 'Categories retrieved successfully.');
+        return CategoryResource::collection($categories);
     }
 }

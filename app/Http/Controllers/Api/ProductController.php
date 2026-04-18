@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\IndexProductsRequest;
 use App\Http\Resources\ProductResource;
-use App\Http\Responses\ApiResponse;
 use App\Models\Inventory\Product;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ProductController extends Controller
 {
-    public function __invoke(IndexProductsRequest $request): JsonResponse
+    public function __invoke(IndexProductsRequest $request): AnonymousResourceCollection
     {
         $query = Product::query()->active()->with('category');
 
@@ -24,6 +23,6 @@ class ProductController extends Controller
             $query->where('is_featured', true);
         }
 
-        return ApiResponse::success(ProductResource::collection($query->get()), 'Products retrieved successfully.');
+        return ProductResource::collection($query->get());
     }
 }
