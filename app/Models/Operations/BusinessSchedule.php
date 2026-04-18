@@ -14,9 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property-read string $day_name
  *
- * @method static BusinessScheduleQueryBuilder<static> newModelQuery()
- * @method static BusinessScheduleQueryBuilder<static> newQuery()
- * @method static BusinessScheduleQueryBuilder<static> query()
+ * @method static BusinessScheduleQueryBuilder newModelQuery()
+ * @method static BusinessScheduleQueryBuilder newQuery()
+ * @method static BusinessScheduleQueryBuilder query()
  *
  * @mixin \Eloquent
  */
