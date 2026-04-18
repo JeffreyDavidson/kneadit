@@ -4,15 +4,12 @@ namespace App\Services\Scheduling;
 
 use App\Enums\Orders\OrderStatus;
 use App\Models\Operations\BlockedDate;
+use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
 use Illuminate\Support\Facades\Date;
 
 class AvailabilityService
 {
-    public function __construct(
-        protected ScheduleService $scheduleService,
-    ) {}
-
     /**
      * Get availability for the next N days.
      *
@@ -44,7 +41,7 @@ class AvailabilityService
             return ['date' => $dateStr, 'available' => false, 'reason' => $blocked->reason ?? 'Blocked', 'remaining_capacity' => 0];
         }
 
-        $schedule = $this->scheduleService->forDay($dayOfWeek);
+        $schedule = BusinessSchedule::query()->forDay($dayOfWeek)->first();
 
         if (! ($schedule->is_open ?? false)) {
             return ['date' => $dateStr, 'available' => false, 'reason' => 'Closed', 'remaining_capacity' => 0];
