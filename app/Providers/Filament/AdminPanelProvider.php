@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard\Dashboard;
 use App\Http\Middleware\EnsureOnboardingComplete;
+use App\Services\Settings\SettingsManager;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -85,27 +86,35 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->font('Inter')
             ->favicon(asset('images/logo-icon.png'))
-            ->renderHook('panels::head.end', fn () => new HtmlString(
-                '<link rel="icon" type="image/png" sizes="32x32" href="' . asset('images/favicon-32x32.png') . '">'
-                . '<link rel="icon" type="image/png" sizes="16x16" href="' . asset('images/favicon-16x16.png') . '">'
-                . '<link rel="apple-touch-icon" sizes="180x180" href="' . asset('images/favicon-180x180.png') . '">'
-                .
-                '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">'
-                . '<style>:root{'
-                . '--brand-900:' . rescue(fn () => settings('brand_color_900', '#3d2314'), '#3d2314', false) . ';'
-                . '--brand-800:' . rescue(fn () => settings('brand_color_800', '#4a3225'), '#4a3225', false) . ';'
-                . '--brand-700:' . rescue(fn () => settings('brand_color_700', '#6b4c3b'), '#6b4c3b', false) . ';'
-                . '--brand-600:' . rescue(fn () => settings('brand_color_600', '#8b5e3c'), '#8b5e3c', false) . ';'
-                . '--brand-500:' . rescue(fn () => settings('brand_color_500', '#a08060'), '#a08060', false) . ';'
-                . '--brand-400:' . rescue(fn () => settings('brand_color_400', '#c4a882'), '#c4a882', false) . ';'
-                . '--brand-300:' . rescue(fn () => settings('brand_color_300', '#d4a574'), '#d4a574', false) . ';'
-                . '--brand-200:' . rescue(fn () => settings('brand_color_200', '#e8d0b0'), '#e8d0b0', false) . ';'
-                . '--brand-150:' . rescue(fn () => settings('brand_color_150', '#f3ebe0'), '#f3ebe0', false) . ';'
-                . '--brand-100:' . rescue(fn () => settings('brand_color_100', '#f5e6d0'), '#f5e6d0', false) . ';'
-                . '--brand-50:' . rescue(fn () => settings('brand_color_50', '#fdf8f2'), '#fdf8f2', false) . ';'
-                . '--accent-gold:' . rescue(fn () => settings('brand_color_300', '#d4a574'), '#d4a574', false) . ';'
-                . '}</style>',
-            ))
+            ->renderHook('panels::head.end', function () {
+                $manager = app(SettingsManager::class);
+                $color = fn (string $key, string $default): string => (string) rescue(
+                    fn () => $manager->get($key, $default),
+                    $default,
+                    false,
+                );
+
+                return new HtmlString(
+                    '<link rel="icon" type="image/png" sizes="32x32" href="' . asset('images/favicon-32x32.png') . '">'
+                    . '<link rel="icon" type="image/png" sizes="16x16" href="' . asset('images/favicon-16x16.png') . '">'
+                    . '<link rel="apple-touch-icon" sizes="180x180" href="' . asset('images/favicon-180x180.png') . '">'
+                    . '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '?v=' . filemtime(public_path('css/filament-custom.css')) . '">'
+                    . '<style>:root{'
+                    . '--brand-900:' . $color('brand_color_900', '#3d2314') . ';'
+                    . '--brand-800:' . $color('brand_color_800', '#4a3225') . ';'
+                    . '--brand-700:' . $color('brand_color_700', '#6b4c3b') . ';'
+                    . '--brand-600:' . $color('brand_color_600', '#8b5e3c') . ';'
+                    . '--brand-500:' . $color('brand_color_500', '#a08060') . ';'
+                    . '--brand-400:' . $color('brand_color_400', '#c4a882') . ';'
+                    . '--brand-300:' . $color('brand_color_300', '#d4a574') . ';'
+                    . '--brand-200:' . $color('brand_color_200', '#e8d0b0') . ';'
+                    . '--brand-150:' . $color('brand_color_150', '#f3ebe0') . ';'
+                    . '--brand-100:' . $color('brand_color_100', '#f5e6d0') . ';'
+                    . '--brand-50:' . $color('brand_color_50', '#fdf8f2') . ';'
+                    . '--accent-gold:' . $color('brand_color_300', '#d4a574') . ';'
+                    . '}</style>',
+                );
+            })
             ->renderHook('panels::global-search.after', fn () => new HtmlString(
                 '<a href="' . route('filament.admin.pages.dashboard-config') . '" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#8b6844;transition:background 0.15s;" title="Customize Dashboard" onmouseover="this.style.background=\'rgba(212,165,116,0.12)\'" onmouseout="this.style.background=\'transparent\'">'
                 . '<svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px;" viewBox="0 0 20 20" fill="currentColor">'
