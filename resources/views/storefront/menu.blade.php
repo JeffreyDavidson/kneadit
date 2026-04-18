@@ -63,11 +63,12 @@
             {{-- Product Cards Grid --}}
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($category->products as $product)
+                @php($badge = \App\Presenters\ProductPresenter::for($product)->seasonalBadge())
                 <x-storefront.product-card :product="$product" card-class="menu-card bg-warm-800" description-class="mb-3">
                     <x-slot:badge>
-                        @if ($product->seasonal_badge)
+                        @if ($badge)
                         <div class="absolute top-4 left-4 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-warm-500 text-warm-900">
-                            {{ $product->seasonal_badge }}
+                            {{ $badge }}
                         </div>
                         @endif
                     </x-slot:badge>
