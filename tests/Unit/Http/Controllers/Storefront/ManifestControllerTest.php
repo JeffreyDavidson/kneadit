@@ -64,6 +64,7 @@ test('it uses brandColorPrimary from TenantSettings for theme_color', function (
         repeatReminderDays: 30,
         giftCardPresetAmounts: [10, 25, 50, 100],
         giftCardDefaultAmount: 25,
+        defaultDailyCapacity: 20,
     );
 
     $controller = new ManifestController;

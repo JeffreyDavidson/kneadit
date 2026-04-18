@@ -6,10 +6,15 @@ use App\Enums\Orders\OrderStatus;
 use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\Date;
 
 class AvailabilityService
 {
+    public function __construct(
+        private TenantSettings $settings,
+    ) {}
+
     /**
      * Get availability for the next N days.
      *
@@ -47,7 +52,7 @@ class AvailabilityService
             return ['date' => $dateStr, 'available' => false, 'reason' => 'Closed', 'remaining_capacity' => 0];
         }
 
-        $maxOrders = $schedule->max_orders ?? (int) settings('default_daily_capacity', 20);
+        $maxOrders = $schedule->max_orders ?? $this->settings->orders->defaultDailyCapacity;
         $currentOrders = Order::query()->whereDate('delivery_date', $dateStr)
             ->whereNotIn('status', [OrderStatus::Cancelled])
             ->count();
