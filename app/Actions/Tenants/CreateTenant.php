@@ -5,6 +5,7 @@ namespace App\Actions\Tenants;
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Settings\SettingsManager;
 use Illuminate\Support\Facades\DB;
 
 class CreateTenant
@@ -46,13 +47,17 @@ class CreateTenant
                 'updated_at' => now(),
             ]);
 
-            settings(['store_name' => $storeName]);
-            settings(['store_email' => $user->email]);
-            settings(['storefront_enabled' => $useKneadItStorefront ? '1' : '0']);
+            $settings = [
+                'store_name' => $storeName,
+                'store_email' => $user->email,
+                'storefront_enabled' => $useKneadItStorefront ? '1' : '0',
+            ];
 
             if (! $useKneadItStorefront && $externalWebsite) {
-                settings(['external_website' => $externalWebsite]);
+                $settings['external_website'] = $externalWebsite;
             }
+
+            app(SettingsManager::class)->setMany($settings);
         });
 
         return $tenant;

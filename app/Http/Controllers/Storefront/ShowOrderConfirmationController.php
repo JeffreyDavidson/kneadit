@@ -4,18 +4,19 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
 class ShowOrderConfirmationController extends Controller
 {
-    public function __invoke(Order $order, TenantSettings $settings): View
+    public function __invoke(Order $order, TenantSettings $settings, SettingsManager $manager): View
     {
         $order->load('orderItems.product');
 
         $content = settingsPageContent('order_confirmation');
 
-        $storedSteps = settings('order_journey_steps');
+        $storedSteps = $manager->get('order_journey_steps');
         $journeySteps = $storedSteps
             ? (json_decode($storedSteps, true) ?: config('kneadit.default_journey_steps'))
             : config('kneadit.default_journey_steps');
