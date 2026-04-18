@@ -3,15 +3,17 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\Orders\OrderStatus;
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Contracts\Database\Query\Builder;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 
 class CustomerInsightsWidget extends Widget
 {
+    use CachesWidgetData;
+
     protected static ?int $sort = 8;
 
     protected int|string|array $columnSpan = 1;
@@ -22,14 +24,12 @@ class CustomerInsightsWidget extends Widget
     {
         $weekKey = Date::now()->startOfWeek()->format('Y-W');
 
-        return Cache::flexible("customer_insights_new_{$weekKey}_" . (tenant()?->getTenantKey() ?? 'none'), [900, 1800], function (): int {
-            return Customer::query()->where('created_at', '>=', Date::now()->startOfWeek())->count();
-        });
+        return $this->cached("new_{$weekKey}", [900, 1800], fn (): int => Customer::query()->where('created_at', '>=', Date::now()->startOfWeek())->count());
     }
 
     public function getRepeatCustomerRate(): float
     {
-        return Cache::flexible('customer_insights_repeat_' . (tenant()?->getTenantKey() ?? 'none'), [3600, 7200], function (): float {
+        return $this->cached('repeat', [3600, 7200], function (): float {
             $totalWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled))->count();
             if ($totalWithOrders === 0) {
                 return 0;
@@ -46,7 +46,7 @@ class CustomerInsightsWidget extends Widget
     {
         $monthKey = now()->format('Y-m');
 
-        return Cache::flexible("customer_insights_aov_{$monthKey}_" . (tenant()?->getTenantKey() ?? 'none'), [900, 1800], function (): array {
+        return $this->cached("aov_{$monthKey}", [900, 1800], function (): array {
             $thisMonth = (float) Order::query()->active()
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
@@ -62,5 +62,10 @@ class CustomerInsightsWidget extends Widget
                 'trend' => $thisMonth >= $lastMonth ? 'up' : 'down',
             ];
         });
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'customer_insights';
     }
 }
