@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <title>KneadIt | Business Management for Cottage Food Bakers</title>
 <meta name="description" content="Orders, invoicing, recipes, finances, storefronts — built specifically for home bakers who sell. Stop managing chaos, start baking.">
 <meta property="og:title" content="KneadIt | Your Bakery, Managed">
@@ -718,9 +719,13 @@ function handleContact(e) {
   if (!name || !email || !message) return false;
   btn.disabled = true;
   btn.textContent = 'Sending...';
-  fetch('/contact.php', {
+  fetch('{{ route('marketing.contact') }}', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+    },
     body: JSON.stringify({ name, email, message })
   })
   .then(r => r.json())

@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Central\BlogController;
 use App\Http\Controllers\Central\BlogFeedController;
 use App\Http\Controllers\Central\ChangelogController;
+use App\Http\Controllers\Central\ContactController;
 use App\Http\Controllers\Central\DirectoryController;
 use App\Http\Controllers\Central\ExportController;
 use App\Http\Controllers\Central\ImpersonateController;
@@ -81,6 +82,11 @@ Route::get('resources/{post}', [BlogController::class, 'show'])->name('blog.show
 
 // Root route — serves landing page on central domains, storefront on tenant subdomains
 Route::get('/', RootController::class)->name('home');
+
+// Central marketing contact form
+Route::post('contact-us', ContactController::class)
+    ->middleware(['web', 'throttle:5,1'])
+    ->name('marketing.contact');
 
 // Public bakery directory
 Route::get('directory', DirectoryController::class)->name('directory');
