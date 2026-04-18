@@ -41,7 +41,6 @@ use Laravel\Cashier\Subscription;
  * @property-read bool $is_owner
  * @property-read bool $is_manager
  * @property-read bool $is_staff
- * @property-read bool $has_access
  * @property-read SubscriptionTier|null $current_plan
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
@@ -134,14 +133,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
                 return $priceId ? SubscriptionTier::fromPriceId($priceId) : null;
             },
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function hasAccess(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): bool => $this->subscribed('default') || $this->onTrial(),
         );
     }
 
