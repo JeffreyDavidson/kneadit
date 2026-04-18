@@ -14,8 +14,9 @@ trait RequiresManagerRole
 
     protected static function hasManagerAccess(): bool
     {
-        $user = Auth::user();
+        $user = Auth::guard('web')->user();
 
-        return $user && $user->hasMinRole(UserRole::Manager);
+        return $user instanceof \App\Models\Staff\User
+            && $user->role->meetsRequirement(UserRole::Manager);
     }
 }

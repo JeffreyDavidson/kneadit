@@ -13,11 +13,11 @@ class UpdateSchedule
     {
         foreach ($schedule as $dayOfWeek => $data) {
             BusinessSchedule::query()->updateOrCreate(['day_of_week' => $dayOfWeek], [
-                'is_open' => $data['is_open'] ?? false,
-                'open_time' => ($data['is_open'] ?? false) ? ($data['open_time'] ?: null) : null,
-                'close_time' => ($data['is_open'] ?? false) ? ($data['close_time'] ?: null) : null,
-                'order_cutoff_time' => ($data['is_open'] ?? false) ? ($data['order_cutoff_time'] ?: null) : null,
-                'max_orders' => ($data['is_open'] ?? false) ? ($data['max_orders'] ?: null) : null,
+                'is_open' => $data['is_open'],
+                'open_time' => $data['is_open'] ? ($data['open_time'] ?: null) : null,
+                'close_time' => $data['is_open'] ? ($data['close_time'] ?: null) : null,
+                'order_cutoff_time' => $data['is_open'] ? ($data['order_cutoff_time'] ?: null) : null,
+                'max_orders' => $data['is_open'] ? ($data['max_orders'] ?: null) : null,
             ]);
         }
     }

@@ -31,12 +31,11 @@ use Illuminate\Support\Facades\Date;
  * @property-read int $days_until_deadline
  * @property-read bool $is_deadline_passed
  *
- * @method static Builder<static>|Holiday active()
- * @method static \Database\Factories\HolidayFactory factory($count = null, $state = [])
- * @method static Builder<static>|Holiday newModelQuery()
- * @method static Builder<static>|Holiday newQuery()
- * @method static Builder<static>|Holiday query()
- * @method static Builder<static>|Holiday upcoming()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday upcoming()
  *
  * @mixin \Eloquent
  */

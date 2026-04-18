@@ -184,9 +184,11 @@ function orderForm() {
         async loadFavorites() {
             if (!this.form.customer_email) return;
             try {
-                const response = await fetch(`{{ route('api.favorites.index') }}?email=${encodeURIComponent(this.form.customer_email)}`);
-                const data = await response.json();
-                this.favorites = data.favorites || [];
+                const response = await fetch(`{{ route('api.favorites.index') }}?email=${encodeURIComponent(this.form.customer_email)}`, {
+                    headers: { 'Accept': 'application/vnd.api+json' },
+                });
+                const payload = await response.json();
+                this.favorites = (payload.data || []).map(row => row.attributes.product_id);
             } catch (error) {
                 console.error('Error loading favorites:', error);
             }
@@ -206,20 +208,22 @@ function orderForm() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.api+json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        customer_email: this.form.customer_email,
+                        email: this.form.customer_email,
                         product_id: productId
                     })
                 });
-                const data = await response.json();
-                if (data.success) {
-                    if (data.is_favorite) {
+                if (!response.ok) return;
+                const payload = await response.json();
+                if (payload.data?.attributes?.favorited) {
+                    if (!this.favorites.includes(productId)) {
                         this.favorites.push(productId);
-                    } else {
-                        this.favorites = this.favorites.filter(id => id !== productId);
                     }
+                } else {
+                    this.favorites = this.favorites.filter(id => id !== productId);
                 }
             } catch (error) {
                 console.error('Error toggling favorite:', error);

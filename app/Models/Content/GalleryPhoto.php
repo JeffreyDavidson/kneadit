@@ -13,12 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property GalleryCategory $category
  *
- * @method static \Database\Factories\GalleryPhotoFactory factory($count = null, $state = [])
- * @method static Builder<static>|GalleryPhoto newModelQuery()
- * @method static Builder<static>|GalleryPhoto newQuery()
- * @method static Builder<static>|GalleryPhoto ordered()
- * @method static Builder<static>|GalleryPhoto query()
- * @method static Builder<static>|GalleryPhoto visible()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto visible()
  *
  * @mixin \Eloquent
  */

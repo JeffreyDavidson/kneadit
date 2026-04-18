@@ -147,7 +147,7 @@ class TenantComparisonQuery
         return new TenantMetrics(
             id: $tenant->id,
             name: $tenant->store_name ?? $tenant->name,
-            plan: $tenant->plan?->value ?? 'trial',
+            plan: $tenant->plan->value ?? 'trial',
             totalOrders: $metrics['total_orders'] ?? 0,
             monthOrders: $metrics['month_orders'] ?? 0,
             totalProducts: $metrics['total_products'] ?? 0,

@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Customers\Tables;
 
+use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Customers\Customer;
 use App\Services\Customers\BirthdayCalculator;
 use App\Services\Customers\CustomerIntelligence;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -127,9 +127,7 @@ class CustomersTable
                     ),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

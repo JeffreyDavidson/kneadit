@@ -65,7 +65,7 @@ class ReviewAnalyticsService
         $monthlyData = Review::query()
             ->where('created_at', '>=', now()->subMonths(12))
             ->get()
-            ->groupBy(fn (Review $review) => $review->created_at->format('Y-m'))
+            ->groupBy(fn (Review $review) => $review->created_at?->format('Y-m') ?? '')
             ->map(fn (Collection $reviews, string $month) => (object) [
                 'month' => $month,
                 'count' => $reviews->count(),

@@ -81,7 +81,7 @@ test('dispatch handles failed request gracefully', function () {
 
 test('webhook dispatchers call WebhookService', function () {
     $createdSource = file_get_contents(app_path('Listeners/Orders/DispatchOrderCreatedWebhookListener.php'));
-    $updatedSource = file_get_contents(app_path('Services/Orders/OrderStatusEffectDispatcher.php'));
+    $updatedSource = file_get_contents(app_path('Listeners/Orders/DispatchOrderWebhookListener.php'));
 
     expect($createdSource)->toContain('webhookService->dispatch')
         ->and($createdSource)->toContain('order.created')

@@ -5,13 +5,13 @@ namespace App\Filament\Resources\Orders\Tables;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\DateRangeFilter;
 use App\Models\Orders\Order;
 use App\Services\PayPal\InvoiceService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -105,9 +105,7 @@ class OrdersTable
                         in_array($record->status, [OrderStatus::Confirmed, OrderStatus::Baking, OrderStatus::Ready]),
                     ),
 
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

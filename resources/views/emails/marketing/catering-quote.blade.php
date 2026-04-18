@@ -23,7 +23,7 @@
 
     <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8;">
         <span style="color: #888; font-size: 13px;">Event Type</span><br>
-        <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $inquiry->event_type_label }}</span>
+        <span style="color: {{ $secondaryColor }}; font-weight: 600;">{{ $inquiry->event_type }}</span>
     </div>
 
     <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8;">

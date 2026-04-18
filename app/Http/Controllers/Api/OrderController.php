@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Orders\CreateOrder;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreApiOrderRequest;
-use App\Http\Responses\ApiResponse;
+use App\Http\Resources\OrderResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
@@ -15,13 +16,11 @@ class OrderController extends Controller
         $order = $createOrder($request->toData());
 
         if (! $order) {
-            return ApiResponse::error('This date is fully booked or no valid items in order.');
+            throw ValidationException::withMessages([
+                'delivery_date' => 'This date is fully booked or no valid items in order.',
+            ]);
         }
 
-        return ApiResponse::created([
-            'order_number' => $order->order_number,
-            'total' => $order->total,
-            'status' => $order->status,
-        ], 'Order submitted successfully.');
+        return OrderResource::make($order)->response()->setStatusCode(201);
     }
 }

@@ -19,6 +19,8 @@ class RecordCouponUsage
             return $next($payload);
         }
 
+        assert($payload->order !== null, 'Order must be persisted before RecordCouponUsage');
+
         $coupon = Coupon::query()->find($payload->couponId);
 
         if ($coupon) {

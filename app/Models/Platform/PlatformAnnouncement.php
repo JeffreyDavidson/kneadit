@@ -25,22 +25,21 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static Builder<static>|PlatformAnnouncement active()
- * @method static \Database\Factories\PlatformAnnouncementFactory factory($count = null, $state = [])
- * @method static Builder<static>|PlatformAnnouncement newModelQuery()
- * @method static Builder<static>|PlatformAnnouncement newQuery()
- * @method static Builder<static>|PlatformAnnouncement query()
- * @method static Builder<static>|PlatformAnnouncement whereBody($value)
- * @method static Builder<static>|PlatformAnnouncement whereCreatedAt($value)
- * @method static Builder<static>|PlatformAnnouncement whereEndsAt($value)
- * @method static Builder<static>|PlatformAnnouncement whereId($value)
- * @method static Builder<static>|PlatformAnnouncement whereIsActive($value)
- * @method static Builder<static>|PlatformAnnouncement whereIsDismissable($value)
- * @method static Builder<static>|PlatformAnnouncement whereStartsAt($value)
- * @method static Builder<static>|PlatformAnnouncement whereTargetPlans($value)
- * @method static Builder<static>|PlatformAnnouncement whereTitle($value)
- * @method static Builder<static>|PlatformAnnouncement whereType($value)
- * @method static Builder<static>|PlatformAnnouncement whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereEndsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereIsDismissable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereStartsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereTargetPlans($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

@@ -47,7 +47,7 @@ class EnsureOnboardingComplete
             }
         } catch (\Throwable $e) {
             Log::warning('Failed to check onboarding status', [
-                'tenant' => tenant()?->getTenantKey(),
+                'tenant' => tenant()->getTenantKey(),
                 'error' => $e->getMessage(),
             ]);
 

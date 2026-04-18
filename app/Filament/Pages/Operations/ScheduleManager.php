@@ -112,7 +112,9 @@ class ScheduleManager extends Page
 
     public function save(): void
     {
-        resolve(UpdateSchedule::class)($this->schedule);
+        /** @var array<int, array{is_open: bool, open_time: string|null, close_time: string|null, order_cutoff_time: string|null, max_orders: int|null}> $schedule */
+        $schedule = $this->schedule;
+        resolve(UpdateSchedule::class)($schedule);
 
         Notification::make()
             ->title('Schedule saved successfully!')

@@ -73,6 +73,9 @@ class SendEmailCampaign
             EmailCampaignSegment::Inactive => $query->where('is_active', false),
         };
 
-        return $query->get();
+        /** @var EloquentCollection<int, Tenant> $tenants */
+        $tenants = new EloquentCollection($query->get()->all());
+
+        return $tenants;
     }
 }

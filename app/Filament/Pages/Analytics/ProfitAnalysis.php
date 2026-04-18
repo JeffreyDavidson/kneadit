@@ -6,12 +6,15 @@ use App\DataTransferObjects\Financial\ProductPortfolioSummary;
 use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
-use App\Services\Financial\ProductFinancialService;
+use App\Services\Financial\ProductAnalysisService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
 
+/**
+ * @property-read ProductPortfolioSummary $portfolio
+ */
 class ProfitAnalysis extends Page
 {
     use RequiresManagerRole;
@@ -46,7 +49,7 @@ class ProfitAnalysis extends Page
 
     public function getPortfolioProperty(): ProductPortfolioSummary
     {
-        return resolve(ProductFinancialService::class)->portfolio($this->sortBy);
+        return resolve(ProductAnalysisService::class)->portfolio($this->sortBy);
     }
 
     /**
@@ -84,25 +87,25 @@ class ProfitAnalysis extends Page
         ];
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function getProductAnalysis(): Collection
     {
         return $this->portfolio->products;
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function getTopProfitableProducts(): Collection
     {
         return $this->portfolio->topProfitable();
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function getLowestMarginProducts(): Collection
     {
         return $this->portfolio->lowestMargin();
     }
 
-    /** @return Collection<int, array<string, mixed>> */
+    /** @return Collection<int, array{id: int, name: string, price: float, cost: float, margin_percentage: float|null, margin_amount: float|null, has_cost_data: bool, color_class: string}> */
     public function getMissingCostProducts(): Collection
     {
         return $this->portfolio->missingCosts();

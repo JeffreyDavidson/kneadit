@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Tools\Schemas;
 
 use App\Actions\Inventory\ImportProducts;
+use App\Filament\Pages\Tools\ProductImportExport as Livewire;
 use App\Services\Export\ProductCsvExporter;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -13,7 +14,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Http\UploadedFile;
-use Livewire\Component as Livewire;
 
 class ProductImportExportForm
 {

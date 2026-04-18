@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Inventory;
 
+use App\Enums\Inventory\Allergen;
 use App\Models\Inventory\Ingredient;
 use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -40,5 +41,15 @@ class IngredientFactory extends Factory
     public function outOfStock(): static
     {
         return $this->state(fn (array $attributes) => ['current_stock' => 0]);
+    }
+
+    /**
+     * Tag the ingredient with the given allergens.
+     *
+     * @param array<int, Allergen> $allergens
+     */
+    public function withAllergens(array $allergens): static
+    {
+        return $this->state(fn (array $attributes) => ['allergens' => $allergens]);
     }
 }

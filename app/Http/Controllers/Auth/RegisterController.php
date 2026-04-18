@@ -13,7 +13,9 @@ class RegisterController extends Controller
 {
     public function store(RegisterRequest $request, CreateUser $createUser): RedirectResponse
     {
-        $user = $createUser($request->validated());
+        /** @var array{name: string, email: string, password: string} $data */
+        $data = $request->validated();
+        $user = $createUser($data);
 
         session([
             'bakery_name' => $request->validated('bakery_name'),

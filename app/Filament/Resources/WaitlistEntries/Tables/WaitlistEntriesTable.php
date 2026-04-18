@@ -4,12 +4,12 @@ namespace App\Filament\Resources\WaitlistEntries\Tables;
 
 use App\Actions\Customers\UpdateWaitlistEntryStatus;
 use App\Enums\Customers\WaitlistStatus;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\DateRangeFilter;
 use App\Models\Customers\WaitlistEntry;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -104,9 +104,7 @@ class WaitlistEntriesTable
                     })
                     ->visible(fn (WaitlistEntry $record) => $record->status !== WaitlistStatus::Removed),
 
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

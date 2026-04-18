@@ -3,9 +3,10 @@
 namespace App\Models\Inventory;
 
 use App\Casts\PhoneNumberCast;
-use App\Models\Concerns\LogsActivity;
+use App\Observers\LogsActivityObserver;
 use Database\Factories\Inventory\SupplierFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property-read Collection<int, Ingredient> $ingredients
  * @property-read int|null $ingredients_count
  *
- * @method static \Database\Factories\SupplierFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier query()
@@ -26,12 +26,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @mixin \Eloquent
  */
 #[Fillable('name', 'contact_name', 'email', 'phone', 'website', 'address', 'notes', 'is_active')]
+#[ObservedBy(LogsActivityObserver::class)]
 class Supplier extends Model
 {
     /** @use HasFactory<SupplierFactory> */
     use HasFactory;
-
-    use LogsActivity;
 
     protected function casts(): array
     {

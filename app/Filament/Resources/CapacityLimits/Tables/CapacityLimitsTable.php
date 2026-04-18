@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\CapacityLimits\Tables;
 
 use App\Enums\Staff\DayOfWeek;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Operations\CapacityLimit;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -68,7 +68,7 @@ class CapacityLimitsTable
                     ->label('Blocked'),
             ])
             ->recordActions([
-                EditAction::make()->slideOver()->modalWidth('md'),
+                SlideOverEditAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

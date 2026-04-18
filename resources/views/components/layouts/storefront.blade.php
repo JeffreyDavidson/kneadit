@@ -102,6 +102,15 @@
                         @if ($loyaltyEnabled)
                         <a href="{{ route('storefront.rewards') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ $loyaltyName }}</a>
                         @endif
+                        @auth('customer')
+                            <a href="{{ route('account.dashboard') }}" class="nav-dropdown-link font-display {{ request()->routeIs('account.dashboard') ? 'active' : '' }}">My dashboard</a>
+                            <form method="POST" action="{{ route('account.logout') }}">@csrf
+                                <button type="submit" class="nav-dropdown-link font-display w-full text-left">Sign out</button>
+                            </form>
+                        @else
+                            <a href="{{ route('account.login.show') }}" class="nav-dropdown-link font-display {{ request()->routeIs('account.login.show') ? 'active' : '' }}">Sign in</a>
+                            <a href="{{ route('account.register.show') }}" class="nav-dropdown-link font-display {{ request()->routeIs('account.register.show') ? 'active' : '' }}">Create account</a>
+                        @endauth
                     </div>
                 </div>
 
@@ -149,6 +158,15 @@
                         @if ($loyaltyEnabled)
                         <a href="{{ route('storefront.rewards') }}" class="block nav-link font-display {{ request()->routeIs('storefront.rewards') ? 'active' : '' }}">{{ $loyaltyName }}</a>
                         @endif
+                        @auth('customer')
+                            <a href="{{ route('account.dashboard') }}" class="block nav-link font-display {{ request()->routeIs('account.dashboard') ? 'active' : '' }}">My dashboard</a>
+                            <form method="POST" action="{{ route('account.logout') }}">@csrf
+                                <button type="submit" class="block nav-link font-display w-full text-left">Sign out</button>
+                            </form>
+                        @else
+                            <a href="{{ route('account.login.show') }}" class="block nav-link font-display {{ request()->routeIs('account.login.show') ? 'active' : '' }}">Sign in</a>
+                            <a href="{{ route('account.register.show') }}" class="block nav-link font-display {{ request()->routeIs('account.register.show') ? 'active' : '' }}">Create account</a>
+                        @endauth
                     </div>
 
                     <a href="{{ route('contact.show') }}" class="block nav-link font-display {{ request()->routeIs('contact.show') ? 'active' : '' }}">Contact</a>

@@ -4,9 +4,9 @@ namespace App\Models\Financial;
 
 use App\Builders\Financial\CouponQueryBuilder;
 use App\Enums\Financial\CouponType;
-use App\Models\Concerns\LogsActivity;
 use App\Models\Orders\Order;
 use App\Observers\Engagement\CouponObserver;
+use App\Observers\LogsActivityObserver;
 use Database\Factories\Financial\CouponFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -24,7 +24,6 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
  *
- * @method static \Database\Factories\CouponFactory factory($count = null, $state = [])
  * @method static CouponQueryBuilder|Coupon newModelQuery()
  * @method static CouponQueryBuilder|Coupon newQuery()
  * @method static CouponQueryBuilder|Coupon query()
@@ -35,12 +34,12 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('code', 'type', 'value', 'min_order_amount', 'max_uses', 'used_count', 'starts_at', 'expires_at', 'is_active')]
-#[ObservedBy(CouponObserver::class)]
+#[ObservedBy([CouponObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(CouponQueryBuilder::class)]
 class Coupon extends Model
 {
     /** @use HasFactory<CouponFactory> */
-    use HasFactory, LogsActivity;
+    use HasFactory;
 
     protected function casts(): array
     {

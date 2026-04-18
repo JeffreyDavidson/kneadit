@@ -10,7 +10,7 @@ class ActiveBakeriesQuery
     /**
      * Get all active tenants with storefronts enabled.
      *
-     * @return Collection<int, array{name: string, url: string, color: string}>
+     * @return Collection<int, array{name: string, url: non-falsy-string, color: string}>
      */
     public static function get(): Collection
     {
@@ -19,10 +19,11 @@ class ActiveBakeriesQuery
             ->where('storefront_enabled', true)
             ->with('domains')
             ->get()
-            ->map(fn (Tenant $t) => [
-                'name' => $t->store_name ?? $t->name,
+            ->map(fn (Tenant $t): array => [
+                'name' => (string) ($t->store_name ?? $t->name),
                 'url' => 'http://' . $t->domains->first()?->domain,
                 'color' => $t->brand_color_primary ?? '#d4920c',
-            ]);
+            ])
+            ->values();
     }
 }

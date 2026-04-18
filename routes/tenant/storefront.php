@@ -3,6 +3,16 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Storefront\AboutController;
+use App\Http\Controllers\Storefront\Account\CustomerDashboardController;
+use App\Http\Controllers\Storefront\Account\LoginCustomerController;
+use App\Http\Controllers\Storefront\Account\LogoutCustomerController;
+use App\Http\Controllers\Storefront\Account\RegisterCustomerController;
+use App\Http\Controllers\Storefront\Account\ResendCustomerVerificationController;
+use App\Http\Controllers\Storefront\Account\ResetPasswordController;
+use App\Http\Controllers\Storefront\Account\SendPasswordResetLinkController;
+use App\Http\Controllers\Storefront\Account\ShowEmailVerifyNoticeController;
+use App\Http\Controllers\Storefront\Account\ShowResetPasswordController;
+use App\Http\Controllers\Storefront\Account\VerifyCustomerEmailController;
 use App\Http\Controllers\Storefront\BlogController as StorefrontBlogController;
 use App\Http\Controllers\Storefront\BlogFeedController as StorefrontBlogFeedController;
 use App\Http\Controllers\Storefront\CheckGiftCardBalanceController;
@@ -58,3 +68,32 @@ Route::post('survey/{survey}', [SurveyController::class, 'store'])->name('survey
 
 // Product waitlist
 Route::post('waitlist/product', ProductWaitlistController::class)->name('productWaitlist.join')->middleware('throttle:10,1');
+
+// Customer accounts
+Route::middleware('guest:customer')->group(function () {
+    Route::view('account/register', 'storefront.account.register')->name('account.register.show');
+    Route::post('account/register', RegisterCustomerController::class)->name('account.register')->middleware('throttle:5,1');
+
+    Route::view('account/login', 'storefront.account.login')->name('account.login.show');
+    Route::post('account/login', LoginCustomerController::class)->name('account.login')->middleware('throttle:5,1');
+
+    Route::view('account/forgot-password', 'storefront.account.forgot-password')->name('account.password.request');
+    Route::post('account/forgot-password', SendPasswordResetLinkController::class)->name('account.password.email')->middleware('throttle:5,1');
+
+    Route::get('account/password/reset/{token}', ShowResetPasswordController::class)->name('account.password.reset');
+    Route::post('account/password/reset', ResetPasswordController::class)->name('account.password.update')->middleware('throttle:5,1');
+});
+
+Route::middleware('auth:customer')->group(function () {
+    Route::get('account', CustomerDashboardController::class)->name('account.dashboard');
+    Route::post('account/logout', LogoutCustomerController::class)->name('account.logout');
+
+    // Email verification
+    Route::get('account/email/verify', ShowEmailVerifyNoticeController::class)->name('account.email.verify.notice');
+    Route::get('account/email/verify/{id}/{hash}', VerifyCustomerEmailController::class)
+        ->middleware('signed')
+        ->name('account.email.verify');
+    Route::post('account/email/verification-notification', ResendCustomerVerificationController::class)
+        ->middleware('throttle:6,1')
+        ->name('account.email.verify.send');
+});

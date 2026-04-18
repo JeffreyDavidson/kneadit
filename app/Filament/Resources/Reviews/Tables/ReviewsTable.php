@@ -4,11 +4,11 @@ namespace App\Filament\Resources\Reviews\Tables;
 
 use App\Actions\Content\ApproveReview;
 use App\Actions\Content\FeatureReview;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Engagement\Review;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -111,9 +111,7 @@ class ReviewsTable
                     ->action(fn (Review $record) => resolve(FeatureReview::class)($record))
                     ->visible(fn (Review $record) => ! $record->is_featured && $record->is_approved),
 
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

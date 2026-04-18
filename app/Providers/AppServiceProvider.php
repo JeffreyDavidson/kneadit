@@ -21,9 +21,11 @@ use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use Filament\Support\Facades\FilamentView;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
@@ -65,6 +67,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::preventLazyLoading(! app()->isProduction());
 
+        // Send unauthenticated storefront customers to their own login page instead of
+        // the platform /login (which is for bakery staff).
+        Authenticate::redirectUsing(
+            fn (Request $request): string => $request->is('account*') ? route('account.login.show') : route('login'),
+        );
+
         Blade::directive('money', fn (string $expression) => "<?php echo '\$' . number_format({$expression}, 2); ?>");
 
         Blade::directive('time', fn (string $expression) => "<?php echo \\Carbon\\Carbon::createFromFormat('H:i', {$expression})->format('g:i A'); ?>");
@@ -72,6 +80,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('webhooks', fn () => Limit::perMinute(30));
 
         Gate::define('platform-admin', fn (User $user): bool => $user->role === UserRole::PlatformAdmin);
+
+        Gate::define('has-plan', fn (User $user, SubscriptionTier $tier): bool => $user->current_plan?->meetsRequirement($tier) ?? false);
 
         Feature::define('growth-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Growth) ?? false);
         Feature::define('pro-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Pro) ?? false);

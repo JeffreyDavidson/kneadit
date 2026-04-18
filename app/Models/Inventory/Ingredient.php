@@ -2,10 +2,13 @@
 
 namespace App\Models\Inventory;
 
+use App\Enums\Inventory\Allergen;
 use App\Enums\Inventory\StockStatus;
-use App\Models\Concerns\LogsActivity;
+use App\Observers\LogsActivityObserver;
 use Database\Factories\Inventory\IngredientFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
+ * @property \Illuminate\Support\Collection<int, Allergen>|null $allergens
  * @property-read Collection<int, Recipe> $recipes
  * @property-read int|null $recipes_count
  * @property-read Collection<int, StockAdjustment> $stockAdjustments
@@ -22,7 +26,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property-read Collection<int, Supplier> $suppliers
  * @property-read int|null $suppliers_count
  *
- * @method static \Database\Factories\IngredientFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient query()
@@ -31,13 +34,12 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  *
  * @mixin \Eloquent
  */
-#[Fillable('name', 'unit', 'current_stock', 'low_stock_threshold', 'cost_per_unit', 'supplier', 'notes')]
+#[Fillable('name', 'unit', 'current_stock', 'low_stock_threshold', 'cost_per_unit', 'supplier', 'notes', 'allergens')]
+#[ObservedBy(LogsActivityObserver::class)]
 class Ingredient extends Model
 {
     /** @use HasFactory<IngredientFactory> */
     use HasFactory;
-
-    use LogsActivity;
 
     protected function casts(): array
     {
@@ -45,6 +47,7 @@ class Ingredient extends Model
             'current_stock' => 'decimal:2',
             'low_stock_threshold' => 'decimal:2',
             'cost_per_unit' => 'decimal:2',
+            'allergens' => AsEnumCollection::of(Allergen::class),
         ];
     }
 

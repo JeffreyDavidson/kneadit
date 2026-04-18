@@ -7,7 +7,7 @@ use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(fn () => setUpTenantTest());
 
-test('can create order via API', function () {
+test('can create order via API and receive JSON:API envelope', function () {
     Mail::fake();
     $product = Product::factory()->create(['is_active' => true]);
 
@@ -24,5 +24,9 @@ test('can create order via API', function () {
         ]);
 
     $response->assertCreated()
-        ->assertJsonStructure(['data' => ['order_number', 'total'], 'message']);
+        ->assertHeader('Content-Type', 'application/vnd.api+json')
+        ->assertJsonPath('data.type', 'orders')
+        ->assertJsonStructure([
+            'data' => ['id', 'type', 'attributes' => ['order_number', 'total', 'status']],
+        ]);
 });

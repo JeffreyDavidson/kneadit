@@ -14,9 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
+ * @property UserRole $role
  * @property-read User|null $inviter
  *
- * @method static \Database\Factories\StaffInvitationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation query()
@@ -48,6 +48,7 @@ class StaffInvitation extends Model
         return $this->belongsTo(User::class, 'invited_by');
     }
 
+    /** @param  Builder<StaffInvitation>  $query */
     #[Scope]
     protected function pending(Builder $query): void
     {

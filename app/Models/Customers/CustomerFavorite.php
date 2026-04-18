@@ -14,12 +14,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property-read Product|null $product
  *
- * @method static \Database\Factories\CustomerFavoriteFactory factory($count = null, $state = [])
- * @method static Builder<static>|CustomerFavorite forCustomer(string $email)
- * @method static Builder<static>|CustomerFavorite forProduct(int $productId)
- * @method static Builder<static>|CustomerFavorite newModelQuery()
- * @method static Builder<static>|CustomerFavorite newQuery()
- * @method static Builder<static>|CustomerFavorite query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerFavorite forCustomer(string $email)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerFavorite forProduct(int $productId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerFavorite newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerFavorite newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerFavorite query()
  *
  * @mixin \Eloquent
  */

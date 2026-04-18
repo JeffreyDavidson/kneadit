@@ -4,19 +4,28 @@ namespace App\Http\Resources;
 
 use App\Models\Content\GalleryPhoto;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
 /** @mixin GalleryPhoto */
-class GalleryPhotoResource extends JsonResource
+class GalleryPhotoResource extends JsonApiResource
 {
+    public function toId(Request $request): string
+    {
+        return (string) $this->resource->getKey();
+    }
+
+    public function toType(Request $request): string
+    {
+        return 'gallery-photos';
+    }
+
     /** @return array<string, mixed> */
-    public function toArray(Request $request): array
+    public function toAttributes(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'image_path' => $this->image_path,
-            'category' => $this->category,
+            'title' => $this->resource->title,
+            'image_path' => $this->resource->image_path,
+            'category' => $this->resource->category->value,
         ];
     }
 }

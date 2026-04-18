@@ -19,8 +19,9 @@ class PlatformStats extends StatsOverviewWidget
 
     protected function getStats(): array
     {
+        /** @var Collection<int, Tenant> $activeTenants */
         $activeTenants = Tenant::query()->where('is_active', true)->get();
-        $mrr = $activeTenants->sum(fn (Tenant $t) => $t->plan?->priceInDollars() ?? 0);
+        $mrr = $activeTenants->sum(fn (Tenant $t) => $t->plan->priceInDollars());
 
         $totalTenants = Tenant::query()->count();
         $trialTenants = Tenant::query()->whereNotNull('trial_ends_at')
@@ -39,7 +40,7 @@ class PlatformStats extends StatsOverviewWidget
         for ($i = 5; $i >= 0; $i--) {
             $monthEnd = now()->subMonths($i)->endOfMonth();
             $activeInMonth = $allTenants->filter(fn (Tenant $t) => $t->is_active && $t->created_at <= $monthEnd);
-            $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $t->plan?->priceInDollars() ?? 0);
+            $mrrChart[] = (int) $activeInMonth->sum(fn (Tenant $t) => $t->plan->priceInDollars());
             $bakeryChart[] = $allTenants->filter(fn (Tenant $t) => $t->created_at <= $monthEnd)->count();
             $trialChart[] = $allTenants->filter(fn (Tenant $t) => $t->trial_ends_at && $t->trial_ends_at > $monthEnd && $t->created_at <= $monthEnd)->count();
         }

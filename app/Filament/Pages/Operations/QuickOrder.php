@@ -14,6 +14,9 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
+/**
+ * @property-read Schema $form
+ */
 class QuickOrder extends Page
 {
     use RequiresManagerRole;

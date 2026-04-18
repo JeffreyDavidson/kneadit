@@ -67,11 +67,11 @@ test('it returns store info from TenantSettings', function () {
     );
 
     $controller = new StoreInfoController;
-    $response = $controller($settings);
-    $data = $response->getData(true);
+    $resource = $controller($settings);
+    $attributes = $resource->toAttributes(request());
 
-    expect($data['data']['store_name'])->toBe('Sweet Crumbs')
-        ->and($data['data']['email'])->toBe('hello@sweetcrumbs.com')
-        ->and($data['data']['phone'])->toBe('555-1234')
-        ->and($data['data']['address'])->toBe('42 Baker St');
+    expect($attributes['store_name'])->toBe('Sweet Crumbs')
+        ->and($attributes['email'])->toBe('hello@sweetcrumbs.com')
+        ->and($attributes['phone'])->toBe('555-1234')
+        ->and($attributes['address'])->toBe('42 Baker St');
 });

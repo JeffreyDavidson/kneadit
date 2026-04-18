@@ -4,16 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GalleryPhotoResource;
-use App\Http\Responses\ApiResponse;
 use App\Models\Content\GalleryPhoto;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class GalleryController extends Controller
 {
-    public function __invoke(): JsonResponse
+    public function __invoke(): AnonymousResourceCollection
     {
         $photos = GalleryPhoto::query()->visible()->ordered()->get();
 
-        return ApiResponse::success(GalleryPhotoResource::collection($photos), 'Gallery retrieved successfully.');
+        return GalleryPhotoResource::collection($photos);
     }
 }

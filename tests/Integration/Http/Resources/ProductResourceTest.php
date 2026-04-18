@@ -10,7 +10,7 @@ beforeEach(function () {
     User::factory()->owner()->create();
 });
 
-it('transforms a product into the expected API shape', function () {
+it('transforms a product into the expected JSON:API shape', function () {
     $category = Category::factory()->create(['name' => 'Bread', 'slug' => 'bread', 'is_active' => true]);
     $product = Product::factory()->for($category)->featured()->create([
         'name' => 'Sourdough',
@@ -22,7 +22,14 @@ it('transforms a product into the expected API shape', function () {
 
     $product->load('category');
     $resource = new ProductResource($product);
-    $data = $resource->toArray(request());
+    $request = request();
 
-    expect($data)->toHaveKeys(['id', 'name', 'slug', 'description', 'price', 'image', 'category_id', 'category_name', 'is_featured'])->toMatchArray(['name' => 'Sourdough', 'category_name' => 'Bread']);
+    expect($resource->toType($request))->toBe('products')
+        ->and($resource->toId($request))->toBe((string) $product->id);
+
+    $attributes = $resource->toAttributes($request);
+
+    expect($attributes)
+        ->toHaveKeys(['name', 'slug', 'description', 'price', 'image', 'is_featured'])
+        ->toMatchArray(['name' => 'Sourdough']);
 });

@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources\Coupons\Tables;
 
+use App\Builders\Financial\CouponQueryBuilder;
 use App\Enums\Financial\CouponType;
+use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Financial\Coupon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -72,7 +73,7 @@ class CouponsTable
                         'maxed_out' => 'Max Uses Reached',
                     ])
                     ->query(function (Builder $query, array $state) {
-                        /** @var Builder<Coupon> $query */
+                        /** @var CouponQueryBuilder<Coupon> $query */
                         return match ($state['value'] ?? null) {
                             'valid' => $query->valid(),
                             'expired' => $query->where('expires_at', '<', now()),
@@ -82,9 +83,7 @@ class CouponsTable
                     }),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('md'),
+                SlideOverEditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

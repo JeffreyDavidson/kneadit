@@ -5,15 +5,17 @@ namespace App\Services\Reporting;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
+use App\Presenters\CustomerPresenter;
 use App\Queries\Customers\AtRiskCustomersQuery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class WeeklyDigestDataCollector
 {
-    /** @return array{stats: array<string, mixed>, topProducts: Collection<int, OrderItem>, atRiskCustomers: Collection<int, Customer>, upcomingCount: int, storeName: string, adminUrl: string} */
+    /** @return array{stats: array<string, mixed>, topProducts: Collection<int, OrderItem>, atRiskCustomers: SupportCollection<int, CustomerPresenter>, upcomingCount: int, storeName: string, adminUrl: string} */
     public function collect(): array
     {
         $weekStart = now()->subWeek()->startOfWeek();
@@ -43,7 +45,8 @@ class WeeklyDigestDataCollector
                 ->limit(5)
                 ->with('product')
                 ->get(),
-            'atRiskCustomers' => AtRiskCustomersQuery::get(config('analytics.at_risk_threshold_days', 30), 5),
+            'atRiskCustomers' => AtRiskCustomersQuery::get(config('analytics.at_risk_threshold_days', 30), 5)
+                ->map(fn (Customer $customer) => CustomerPresenter::for($customer)),
             'upcomingCount' => Order::query()
                 ->whereBetween('delivery_date', [$nextWeekStart, $nextWeekEnd])
                 ->active()

@@ -9,7 +9,7 @@ use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Inventory\Product;
 use App\Models\Platform\Setting;
-use App\Services\Financial\ProductFinancialService;
+use App\Services\Financial\PricingRecommendationService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -102,7 +102,7 @@ class PricingEngine extends Page
             $currentPrice = $product?->price ? (float) $product->price : null;
         }
 
-        $this->result = resolve(ProductFinancialService::class)->recommend(
+        $this->result = resolve(PricingRecommendationService::class)->recommend(
             ingredientCost: $this->ingredientCost,
             prepTimeMinutes: $this->prepTimeMinutes,
             hourlyLaborRate: $this->hourlyLaborRate,

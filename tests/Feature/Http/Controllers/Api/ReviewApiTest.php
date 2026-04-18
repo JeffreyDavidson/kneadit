@@ -39,7 +39,7 @@ test('reviews endpoint returns all approved when featured is not requested', fun
         ->assertJsonCount(2, 'data');
 });
 
-test('store review creates review and returns 201', function () {
+test('store review creates review and returns a JSON:API resource', function () {
     $product = App\Models\Inventory\Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -52,7 +52,10 @@ test('store review creates review and returns 201', function () {
         ]);
 
     $response->assertCreated()
-        ->assertJsonPath('message', 'Review submitted and pending approval.');
+        ->assertHeader('Content-Type', 'application/vnd.api+json')
+        ->assertJsonPath('data.type', 'reviews')
+        ->assertJsonPath('data.attributes.customer_name', 'Jane Doe')
+        ->assertJsonPath('data.attributes.rating', 5);
 
     test()->assertDatabaseHas('reviews', [
         'customer_name' => 'Jane Doe',
@@ -67,14 +70,16 @@ test('store review fails validation with missing fields', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->postJson('/api/reviews', []);
 
-    $response->assertUnprocessable()
-        ->assertJsonValidationErrors([
-            'customer_name',
-            'customer_email',
-            'product_id',
-            'rating',
-            'comment',
-        ]);
+    $response->assertUnprocessable();
+
+    $pointers = collect($response->json('errors'))->pluck('source.pointer')->all();
+    expect($pointers)->toContain(
+        '/data/attributes/customer_name',
+        '/data/attributes/customer_email',
+        '/data/attributes/product_id',
+        '/data/attributes/rating',
+        '/data/attributes/comment',
+    );
 });
 
 test('store review fails validation with invalid rating', function () {
@@ -90,5 +95,5 @@ test('store review fails validation with invalid rating', function () {
         ]);
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors(['rating']);
+        ->assertJsonPath('errors.0.source.pointer', '/data/attributes/rating');
 });

@@ -7,7 +7,6 @@ use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
-use App\Models\Concerns\LogsActivity;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\Review;
@@ -17,6 +16,7 @@ use App\Models\Financial\CouponTransaction;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
 use App\Models\Staff\User;
+use App\Observers\LogsActivityObserver;
 use App\Observers\Orders\OrderObserver;
 use Database\Factories\Orders\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -52,7 +52,6 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $survey_responses_count
  * @property-read User|null $user
  *
- * @method static \Database\Factories\OrderFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order paid()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order byStatus(\App\Enums\Orders\OrderStatus $status)
@@ -67,14 +66,12 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('order_number', 'customer_id', 'status', 'payment_status', 'payment_method', 'subtotal', 'delivery_fee', 'discount_amount', 'total', 'paypal_invoice_id', 'delivery_address', 'delivery_type', 'delivery_date', 'delivery_time', 'notes', 'user_id', 'coupon_id', 'gift_card_id', 'gift_card_amount', 'review_request_sent_at', 'stripe_checkout_session_id', 'stripe_payment_intent_id')]
-#[ObservedBy(OrderObserver::class)]
+#[ObservedBy([OrderObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(OrderQueryBuilder::class)]
 class Order extends Model
 {
     /** @use HasFactory<OrderFactory> */
     use HasFactory;
-
-    use LogsActivity;
 
     protected $attributes = [
         'status' => OrderStatus::Pending,

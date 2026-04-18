@@ -42,7 +42,10 @@ class TenantComparison extends Page
     /** @return array<int, array<string, mixed>> */
     public function getComparisonData(): array
     {
-        return TenantComparisonQuery::comparison($this->selectedTenants);
+        /** @var array<int, string> $tenantIds */
+        $tenantIds = array_values(array_map('strval', $this->selectedTenants));
+
+        return TenantComparisonQuery::comparison($tenantIds);
     }
 
     /** @return array<int, array<string, mixed>> */

@@ -16,7 +16,12 @@ class MenuController extends Controller
     public function __invoke(TenantSettings $settings): View
     {
         $categories = Category::query()->active()
-            ->with(['products' => fn (HasMany $q) => $q->where('is_active', true)->orderBy('name'), 'products.seasonalItems'])
+            ->with([
+                'products' => function (HasMany $q): void {
+                    $q->where('is_active', true)->orderBy('name');
+                },
+                'products.seasonalItems',
+            ])
             ->orderBy('sort_order')
             ->get();
 

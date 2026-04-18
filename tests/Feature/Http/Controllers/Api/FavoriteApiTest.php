@@ -7,7 +7,7 @@ use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(fn () => setUpTenantTest());
 
-test('favorites index returns product ids for customer email', function () {
+test('favorites index returns favorites for customer email as JSON:API', function () {
     $product = Product::factory()->create();
     CustomerFavorite::factory()->recycle($product)->create([
         'customer_email' => 'alice@test.com',
@@ -17,7 +17,11 @@ test('favorites index returns product ids for customer email', function () {
         ->getJson('/api/favorites?email=alice@test.com');
 
     $response->assertOk()
-        ->assertJsonPath('data', [$product->id]);
+        ->assertHeader('Content-Type', 'application/vnd.api+json')
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.type', 'favorites')
+        ->assertJsonPath('data.0.attributes.customer_email', 'alice@test.com')
+        ->assertJsonPath('data.0.attributes.product_id', $product->id);
 });
 
 test('favorites index validates email is required', function () {
@@ -25,10 +29,10 @@ test('favorites index validates email is required', function () {
         ->getJson('/api/favorites');
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors(['email']);
+        ->assertJsonPath('errors.0.source.pointer', '/data/attributes/email');
 });
 
-test('favorites toggle adds product to favorites', function () {
+test('favorites toggle adds product to favorites and returns JSON:API envelope', function () {
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -38,7 +42,11 @@ test('favorites toggle adds product to favorites', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('data.favorited', true);
+        ->assertHeader('Content-Type', 'application/vnd.api+json')
+        ->assertJsonPath('data.type', 'favorite-toggles')
+        ->assertJsonPath('data.attributes.favorited', true)
+        ->assertJsonPath('data.attributes.customer_email', 'alice@test.com')
+        ->assertJsonPath('data.attributes.product_id', $product->id);
 
     test()->assertDatabaseHas('customer_favorites', [
         'customer_email' => 'alice@test.com',

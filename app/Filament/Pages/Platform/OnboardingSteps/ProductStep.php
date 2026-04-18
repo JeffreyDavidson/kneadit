@@ -25,7 +25,7 @@ final class ProductStep extends OnboardingStep
     public static function defaults(TenantSettings $settings): array
     {
         $productId = settings('onboarding_product_id');
-        $product = $productId ? Product::query()->find($productId) : null;
+        $product = $productId ? Product::query()->find((int) $productId) : null;
 
         if ($product) {
             return [

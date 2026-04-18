@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Number;
 use Laravel\Pennant\Feature;
 
+/**
+ * @property-read Schema $noteForm
+ */
 class CustomerDirectory extends Page
 {
     use RequiresManagerRole;
@@ -133,7 +136,7 @@ class CustomerDirectory extends Page
             return null;
         }
 
-        return (new CustomerPresenter($customer))->toDetailArray();
+        return CustomerPresenter::for($customer)->toDetailArray();
     }
 
     public function addNote(int $customerId): void
@@ -143,7 +146,7 @@ class CustomerDirectory extends Page
         resolve(AddCustomerNote::class)(
             $customerId,
             ($this->noteData ?? [])['note'] ?? '',
-            Auth::id(),
+            (int) Auth::id(),
         );
 
         $this->noteData = [];

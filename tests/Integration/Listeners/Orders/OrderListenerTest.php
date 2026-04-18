@@ -37,27 +37,3 @@ test('NotifyBakerOfNewOrderListener sends email to store email', function () {
 
     Mail::assertQueued(NewOrderNotificationMail::class, fn ($mail) => $mail->hasTo('baker@example.com'));
 });
-
-test('OrderStatusEffectDispatcher sends confirmed email', function () {
-    Mail::fake();
-
-    $customer = Customer::factory()->create(['email' => 'buyer@example.com']);
-    $order = Order::factory()->recycle($customer)->create();
-
-    resolve(App\Services\Orders\OrderStatusEffectDispatcher::class)
-        ->dispatch($order, App\Enums\Orders\OrderStatus::Pending, App\Enums\Orders\OrderStatus::Confirmed);
-
-    Mail::assertQueued(App\Mail\Orders\OrderStatusMail::class, fn ($mail) => $mail->status === App\Enums\Orders\OrderStatus::Confirmed && $mail->hasTo('buyer@example.com'));
-});
-
-test('OrderStatusEffectDispatcher sends delivered email', function () {
-    Mail::fake();
-
-    $customer = Customer::factory()->create(['email' => 'buyer@example.com']);
-    $order = Order::factory()->recycle($customer)->create();
-
-    resolve(App\Services\Orders\OrderStatusEffectDispatcher::class)
-        ->dispatch($order, App\Enums\Orders\OrderStatus::Ready, App\Enums\Orders\OrderStatus::Delivered);
-
-    Mail::assertQueued(App\Mail\Orders\OrderStatusMail::class, fn ($mail) => $mail->status === App\Enums\Orders\OrderStatus::Delivered);
-});

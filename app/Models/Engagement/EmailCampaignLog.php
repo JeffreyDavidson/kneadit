@@ -23,7 +23,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read EmailCampaign $campaign
  *
- * @method static \Database\Factories\EmailCampaignLogFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog query()

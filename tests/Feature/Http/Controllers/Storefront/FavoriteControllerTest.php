@@ -31,7 +31,7 @@ test('can toggle a favorite on', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('data.favorited', true);
+        ->assertJsonPath('data.attributes.favorited', true);
 
     expect(CustomerFavorite::query()->count())->toBe(1);
 });
@@ -50,7 +50,7 @@ test('can toggle a favorite off', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('data.favorited', false);
+        ->assertJsonPath('data.attributes.favorited', false);
 
     expect(CustomerFavorite::query()->count())->toBe(0);
 });

@@ -16,7 +16,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static \Database\Factories\PlatformSettingFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformSetting newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformSetting newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformSetting query()

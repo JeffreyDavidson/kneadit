@@ -9,6 +9,7 @@ use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\SenderType;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
 use App\Filament\Resources\Orders\OrderResource;
+use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -23,6 +24,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 
+/**
+ * @property-read Order $record
+ */
 class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;

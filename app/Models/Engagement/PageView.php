@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property-read Product|null $product
  *
- * @method static \Database\Factories\PageViewFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PageView newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PageView newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PageView query()

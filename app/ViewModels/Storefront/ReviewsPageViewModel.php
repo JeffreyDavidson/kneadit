@@ -2,6 +2,7 @@
 
 namespace App\ViewModels\Storefront;
 
+use App\Models\Engagement\Review;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ReviewsPageViewModel
@@ -17,8 +18,12 @@ class ReviewsPageViewModel
     /** @var array<int, array{count: int, pct: float}> keyed 5→1 */
     public readonly array $ratingBreakdown;
 
-    /** @param array<int, int> $starCounts keyed by star rating (5→1) */
-    public function __construct(LengthAwarePaginator $reviews, object $stats, array $starCounts)
+    /**
+     * @param LengthAwarePaginator<int, Review> $reviews
+     * @param object{avg_rating: float, total_count: int} $stats
+     * @param array<int, int> $starCounts keyed by star rating (5→1)
+     */
+    public function __construct(public readonly LengthAwarePaginator $reviews, object $stats, array $starCounts)
     {
         $this->avgRating = (float) $stats->avg_rating;
         $this->formattedAvgRating = number_format($this->avgRating, 1);

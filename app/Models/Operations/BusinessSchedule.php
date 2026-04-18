@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property-read string $day_name
  *
- * @method static \Database\Factories\BusinessScheduleFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BusinessSchedule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BusinessSchedule newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BusinessSchedule query()

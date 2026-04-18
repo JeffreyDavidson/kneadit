@@ -20,7 +20,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property string $id
  * @property string $name
  * @property string $email
- * @property string $plan
+ * @property SubscriptionTier $plan
  * @property Carbon|null $trial_ends_at
  * @property string|null $store_name
  * @property string|null $store_logo
@@ -42,7 +42,6 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property-read Referral|null $referral
  *
  * @method static \Stancl\Tenancy\Database\TenantCollection<int, static> all($columns = ['*'])
- * @method static \Database\Factories\TenantFactory factory($count = null, $state = [])
  * @method static \Stancl\Tenancy\Database\TenantCollection<int, static> get($columns = ['*'])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Tenant newQuery()

@@ -5,7 +5,11 @@ namespace App\Builders\Customers;
 use App\Models\Customers\ContactMessage;
 use Illuminate\Database\Eloquent\Builder;
 
-/** @extends Builder<ContactMessage> */
+/**
+ * @template TModel of ContactMessage
+ *
+ * @extends Builder<TModel>
+ */
 class ContactMessageQueryBuilder extends Builder
 {
     public function read(): static

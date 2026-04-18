@@ -23,7 +23,6 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, CheckinLog> $logs
  * @property-read int|null $logs_count
  *
- * @method static \Database\Factories\ScheduledCheckinFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin query()
