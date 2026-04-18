@@ -2,11 +2,11 @@
 
 namespace App\Models\Operations;
 
+use App\Builders\Operations\BusinessScheduleQueryBuilder;
 use App\Enums\Staff\DayOfWeek;
 use Database\Factories\Operations\BusinessScheduleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,13 +14,14 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property-read string $day_name
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BusinessSchedule newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BusinessSchedule newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|BusinessSchedule query()
+ * @method static BusinessScheduleQueryBuilder<static> newModelQuery()
+ * @method static BusinessScheduleQueryBuilder<static> newQuery()
+ * @method static BusinessScheduleQueryBuilder<static> query()
  *
  * @mixin \Eloquent
  */
 #[Fillable('day_of_week', 'is_open', 'open_time', 'close_time', 'order_cutoff_time', 'max_orders')]
+#[UseEloquentBuilder(BusinessScheduleQueryBuilder::class)]
 class BusinessSchedule extends Model
 {
     /** @use HasFactory<BusinessScheduleFactory> */
@@ -41,12 +42,6 @@ class BusinessSchedule extends Model
         return Attribute::make(
             get: fn () => DayOfWeek::fromPhpDayIndex($this->day_of_week)?->getLabel() ?? 'Unknown',
         );
-    }
-
-    #[Scope]
-    protected function forDay(Builder $query, int $dayOfWeek): void
-    {
-        $query->where('day_of_week', $dayOfWeek);
     }
 
     protected static function newFactory(): BusinessScheduleFactory
