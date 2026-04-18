@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Inventory\Product;
+use App\Presenters\RecipePresenter;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -27,7 +28,8 @@ class MarginAlertWidget extends BaseWidget
         $lowMarginIds = once(fn () => Product::with('recipe.inventoryIngredients')
             ->whereHas('recipe')
             ->get()
-            ->filter(fn (Product $product) => ($product->recipe->profit_margin ?? 100) < 30)
+            ->filter(fn (Product $product) => $product->recipe
+                && (RecipePresenter::for($product->recipe)->profitMargin() ?? 100) < 30)
             ->pluck('id')
             ->all());
 
@@ -43,8 +45,11 @@ class MarginAlertWidget extends BaseWidget
                 TextColumn::make('recipe.cost_per_serving')
                     ->label('Cost')
                     ->money('usd'),
-                TextColumn::make('recipe.profit_margin')
+                TextColumn::make('margin')
                     ->label('Margin')
+                    ->getStateUsing(fn (Product $record): ?float => $record->recipe
+                        ? RecipePresenter::for($record->recipe)->profitMargin()
+                        : null)
                     ->formatStateUsing(fn (mixed $state) => $state !== null ? (string) Number::format($state, 1) . '%' : '—')
                     ->badge()
                     ->color('danger'),
