@@ -7,6 +7,9 @@ use App\Http\Controllers\Storefront\Account\CustomerDashboardController;
 use App\Http\Controllers\Storefront\Account\LoginCustomerController;
 use App\Http\Controllers\Storefront\Account\LogoutCustomerController;
 use App\Http\Controllers\Storefront\Account\RegisterCustomerController;
+use App\Http\Controllers\Storefront\Account\ResetPasswordController;
+use App\Http\Controllers\Storefront\Account\SendPasswordResetLinkController;
+use App\Http\Controllers\Storefront\Account\ShowResetPasswordController;
 use App\Http\Controllers\Storefront\BlogController as StorefrontBlogController;
 use App\Http\Controllers\Storefront\BlogFeedController as StorefrontBlogFeedController;
 use App\Http\Controllers\Storefront\CheckGiftCardBalanceController;
@@ -70,6 +73,12 @@ Route::middleware('guest:customer')->group(function () {
 
     Route::view('account/login', 'storefront.account.login')->name('account.login.show');
     Route::post('account/login', LoginCustomerController::class)->name('account.login')->middleware('throttle:5,1');
+
+    Route::view('account/forgot-password', 'storefront.account.forgot-password')->name('account.password.request');
+    Route::post('account/forgot-password', SendPasswordResetLinkController::class)->name('account.password.email')->middleware('throttle:5,1');
+
+    Route::get('account/password/reset/{token}', ShowResetPasswordController::class)->name('account.password.reset');
+    Route::post('account/password/reset', ResetPasswordController::class)->name('account.password.update')->middleware('throttle:5,1');
 });
 
 Route::middleware('auth:customer')->group(function () {
