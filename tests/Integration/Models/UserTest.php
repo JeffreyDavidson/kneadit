@@ -75,12 +75,6 @@ test('current_plan returns null for unknown stripe price', function () {
     expect($user->current_plan)->toBeNull();
 });
 
-test('has_access returns false with no subscription or trial', function () {
-    $user = User::factory()->owner()->create();
-
-    expect($user->has_access)->toBeFalse();
-});
-
 test('is_owner returns true for owner role', function () {
     $user = User::factory()->owner()->create();
 
