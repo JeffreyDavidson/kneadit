@@ -2,10 +2,8 @@
 
 namespace App\Models\Inventory;
 
-use App\Support\ProfitMargin;
 use Database\Factories\Inventory\RecipeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property array<int, array{name?: string, cost?: float, quantity?: float, unit?: string}> $ingredients
- * @property-read float|null $profit_margin
  * @property-read Collection<int, Ingredient> $inventoryIngredients
  * @property-read int|null $inventory_ingredients_count
  * @property-read Product|null $product
@@ -47,20 +44,6 @@ class Recipe extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    /** @return Attribute<float|null, never> */
-    protected function profitMargin(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                $this->loadMissing('product');
-
-                return $this->product && $this->cost
-                    ? ProfitMargin::calculate((float) $this->product->price, (float) $this->cost, 1)
-                    : null;
-            },
-        );
     }
 
     /**
