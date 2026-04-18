@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Enums\Staff\DayOfWeek;
 use App\Filament\Pages\Platform\Onboarding;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
@@ -32,7 +33,7 @@ final class BusinessHoursStep extends OnboardingStep
         }
 
         // Override with existing settings if available
-        $existingHours = settings('operating_hours');
+        $existingHours = app(SettingsManager::class)->get('operating_hours');
         if ($existingHours) {
             $hours = json_decode($existingHours, true);
             if (is_array($hours)) {
@@ -96,6 +97,6 @@ final class BusinessHoursStep extends OnboardingStep
             }
         }
 
-        settings(['operating_hours' => json_encode($hours)]);
+        app(SettingsManager::class)->set('operating_hours', json_encode($hours));
     }
 }

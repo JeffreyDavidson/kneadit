@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Pages\Platform\Onboarding;
 use App\Filament\Support\AllowedFileTypes;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -22,7 +23,7 @@ final class BrandingStep extends OnboardingStep
     public static function defaults(TenantSettings $settings): array
     {
         $tenant = tenant();
-        $existingLogo = settings('store_logo') ?: $tenant?->store_logo;
+        $existingLogo = app(SettingsManager::class)->get('store_logo') ?: $tenant?->store_logo;
 
         return [
             'color_primary' => $tenant->brand_color_primary ?? '#6b4c3b',
@@ -63,8 +64,10 @@ final class BrandingStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        settings(['brand_color_primary' => $data['color_primary']]);
-        settings(['brand_color_secondary' => $data['color_secondary']]);
+        $settings = [
+            'brand_color_primary' => $data['color_primary'],
+            'brand_color_secondary' => $data['color_secondary'],
+        ];
 
         $tenant = tenant();
         if ($tenant) {
@@ -77,10 +80,12 @@ final class BrandingStep extends OnboardingStep
                 ? (is_array($storeLogo) ? ($storeLogo[0] ?? null) : $storeLogo)
                 : null;
 
-            settings(['store_logo' => $logoPath]);
+            $settings['store_logo'] = $logoPath;
             $tenant->store_logo = $logoPath;
 
             $tenant->save();
         }
+
+        app(SettingsManager::class)->setMany($settings);
     }
 }

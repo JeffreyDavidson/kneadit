@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Platform\OnboardingSteps;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -24,7 +25,7 @@ final class ProductStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
-        $productId = settings('onboarding_product_id');
+        $productId = app(SettingsManager::class)->get('onboarding_product_id');
         $product = $productId ? Product::query()->find((int) $productId) : null;
 
         if ($product) {
@@ -100,7 +101,8 @@ final class ProductStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        $existingId = settings('onboarding_product_id');
+        $manager = app(SettingsManager::class);
+        $existingId = $manager->get('onboarding_product_id');
 
         $product = Product::query()->updateOrCreate(
             $existingId ? ['id' => $existingId] : ['slug' => Str::slug($data['name'])],
@@ -114,6 +116,6 @@ final class ProductStep extends OnboardingStep
             ],
         );
 
-        settings(['onboarding_product_id' => $product->id]);
+        $manager->set('onboarding_product_id', $product->id);
     }
 }
