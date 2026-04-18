@@ -4,21 +4,19 @@ namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
 use App\Models\Staff\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 
 class ShowPlansController extends Controller
 {
     /**
      * Show the plan selection page.
      */
-    public function __invoke(Request $request): View
+    public function __invoke(#[CurrentUser] ?User $user): View
     {
-        $user = $request->user();
-
         return view('billing.plans', [
             'plans' => config('kneadit.plans'),
-            'currentPlan' => $user instanceof User ? $user->current_plan?->value : null,
+            'currentPlan' => $user?->current_plan?->value,
             'bakeryName' => session('bakery_name'),
         ]);
     }
