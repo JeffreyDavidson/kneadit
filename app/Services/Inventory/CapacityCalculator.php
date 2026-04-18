@@ -6,11 +6,16 @@ use App\Models\Operations\BlockedDate;
 use App\Models\Operations\BusinessSchedule;
 use App\Models\Operations\CapacityLimit;
 use App\Models\Orders\Order;
+use App\Services\Settings\TenantSettings;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
 
 class CapacityCalculator
 {
+    public function __construct(
+        private TenantSettings $settings,
+    ) {}
+
     public function forDate(Carbon|string $date): ?CapacityLimit
     {
         return CapacityLimit::query()->whereDate('date', Date::parse($date))->first();
@@ -24,7 +29,7 @@ class CapacityCalculator
             return $limit->max_orders;
         }
 
-        return (int) settings('default_daily_capacity', 20);
+        return $this->settings->orders->defaultDailyCapacity;
     }
 
     public function isAvailable(Carbon|string $date): bool

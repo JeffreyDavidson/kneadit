@@ -7,7 +7,7 @@ beforeEach(fn () => setUpTenantTest());
 it('returns default capacity when no limit exists for a date', function () {
     settings(['default_daily_capacity' => 25]);
 
-    $calculator = new CapacityCalculator;
+    $calculator = resolve(CapacityCalculator::class);
     $max = $calculator->getMaxOrders('2026-04-01');
 
     expect($max)->toBe(25);
