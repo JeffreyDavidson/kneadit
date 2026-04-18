@@ -63,6 +63,7 @@ test('it can be constructed with all properties', function () {
         repeatReminderDays: 30,
         giftCardPresetAmounts: [10, 25, 50, 100],
         giftCardDefaultAmount: 25,
+        defaultDailyCapacity: 20,
     );
 
     expect($settings->storeName)->toBe('Test Bakery')
@@ -134,6 +135,7 @@ function makeTenantSettings(array $overrides = []): TenantSettings
         'repeatReminderDays' => 30,
         'giftCardPresetAmounts' => [10, 25, 50, 100],
         'giftCardDefaultAmount' => 25,
+        'defaultDailyCapacity' => 20,
     ], $overrides));
 }
 

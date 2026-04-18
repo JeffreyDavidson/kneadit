@@ -407,6 +407,7 @@ test('OrderSettings stores all properties', function () {
         minimumPickupOrderAmount: '10.00',
         minimumDeliveryOrderAmount: '25.00',
         deliveryFeeTiers: [['min' => 0, 'max' => 25, 'fee' => 5.00]],
+        defaultDailyCapacity: 20,
     );
 
     expect($dto)
@@ -415,7 +416,8 @@ test('OrderSettings stores all properties', function () {
         ->freeDeliveryMinimum->toBe('50.00')
         ->minimumPickupOrderAmount->toBe('10.00')
         ->minimumDeliveryOrderAmount->toBe('25.00')
-        ->deliveryFeeTiers->toHaveCount(1);
+        ->deliveryFeeTiers->toHaveCount(1)
+        ->defaultDailyCapacity->toBe(20);
 });
 
 test('OrderSettings leadTimeDays converts hours to days rounding up', function (
@@ -429,6 +431,7 @@ test('OrderSettings leadTimeDays converts hours to days rounding up', function (
         minimumPickupOrderAmount: '0',
         minimumDeliveryOrderAmount: '0',
         deliveryFeeTiers: [],
+        defaultDailyCapacity: 20,
     );
 
     expect($dto->leadTimeDays())->toBe($expectedDays);

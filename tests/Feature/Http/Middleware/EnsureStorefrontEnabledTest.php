@@ -97,6 +97,7 @@ test('disabled storefront view receives storeName from TenantSettings', function
         repeatReminderDays: 30,
         giftCardPresetAmounts: [10, 25, 50, 100],
         giftCardDefaultAmount: 25,
+        defaultDailyCapacity: 20,
     );
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);
 

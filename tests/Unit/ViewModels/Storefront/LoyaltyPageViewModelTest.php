@@ -69,6 +69,7 @@ function makeLoyaltyTenantSettings(): TenantSettings
         repeatReminderDays: 30,
         giftCardPresetAmounts: [10, 25, 50, 100],
         giftCardDefaultAmount: 25,
+        defaultDailyCapacity: 20,
     );
 }
 
