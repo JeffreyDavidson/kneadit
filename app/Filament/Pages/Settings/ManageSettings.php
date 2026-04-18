@@ -3,10 +3,10 @@
 namespace App\Filament\Pages\Settings;
 
 use App\Actions\Tenants\SaveTenantSettings;
-use App\Enums\Customers\CateringEventType;
 use App\Enums\Orders\PaymentMethod;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Pages\Settings\Schemas\ManageSettingsForm;
+use App\Services\Settings\TenantSettingsDefaults;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -100,47 +100,52 @@ class ManageSettings extends Page
 
     protected function loadSettings(): void
     {
-        $this->store_name = settings('store_name', '');
-        $this->store_email = settings('store_email', '');
-        $this->store_phone = settings('store_phone', '');
-        $this->store_address = settings('store_address', '');
-        $this->default_daily_capacity = settings('default_daily_capacity', null);
-        $this->minimum_order_lead_hours = settings('minimum_order_lead_hours', 48);
-        $this->delivery_fee_tiers = settings('delivery_fee_tiers', '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}');
-        $this->minimum_pickup_order_amount = settings('minimum_pickup_order_amount', '0');
-        $this->minimum_delivery_order_amount = settings('minimum_delivery_order_amount', '0');
-        $this->repeat_reminders_enabled = settings('repeat_reminders_enabled', false);
-        $this->birthday_program_enabled = settings('birthday_program_enabled', false);
-        $this->allergy_disclaimer = settings('allergy_disclaimer', 'Please inform us of any allergies or dietary restrictions when placing your order.');
-        $this->revenue_cap = settings('revenue_cap', '250000');
-        $methods = settings('payment_methods');
-        $this->payment_methods = $methods ? json_decode($methods, true) : [PaymentMethod::Cash->value];
-        $this->paypal_client_id = settings('paypal_client_id', '');
-        $this->paypal_client_secret = settings('paypal_client_secret', '');
-        $this->paypal_sandbox = (bool) settings('paypal_sandbox', true);
-        $this->webhook_url = settings('webhook_url', '');
-        $this->webhook_secret = settings('webhook_secret', '');
+        $defaults = TenantSettingsDefaults::all();
 
-        $this->cancellation_policy = settings('cancellation_policy', '');
-        $this->deposit_policy = settings('deposit_policy', '');
-        $this->refund_policy = settings('refund_policy', '');
-        $this->pickup_policy = settings('pickup_policy', '');
-        $this->additional_terms = settings('additional_terms', '');
-        $this->show_policies_on_storefront = (bool) settings('show_policies_on_storefront', false);
+        $this->store_name = settings('store_name', $defaults['store_name']);
+        $this->store_email = settings('store_email', $defaults['store_email']);
+        $this->store_phone = settings('store_phone', $defaults['store_phone']);
+        $this->store_address = settings('store_address', $defaults['store_address']);
+        $this->default_daily_capacity = settings('default_daily_capacity', $defaults['default_daily_capacity']);
+        $this->minimum_order_lead_hours = settings('minimum_order_lead_hours', $defaults['minimum_order_lead_hours']);
+        $this->delivery_fee_tiers = settings('delivery_fee_tiers', $defaults['delivery_fee_tiers']);
+        $this->minimum_pickup_order_amount = settings('minimum_pickup_order_amount', $defaults['minimum_pickup_order_amount']);
+        $this->minimum_delivery_order_amount = settings('minimum_delivery_order_amount', $defaults['minimum_delivery_order_amount']);
+        $this->repeat_reminders_enabled = settings('repeat_reminders_enabled', $defaults['repeat_reminders_enabled']);
+        $this->birthday_program_enabled = settings('birthday_program_enabled', $defaults['birthday_program_enabled']);
+        $this->allergy_disclaimer = settings('allergy_disclaimer', $defaults['allergy_disclaimer']);
+        $this->revenue_cap = settings('revenue_cap', $defaults['revenue_cap']);
+
+        $methods = settings('payment_methods');
+        $this->payment_methods = $methods ? json_decode($methods, true) : $defaults['payment_methods'];
+
+        $this->paypal_client_id = settings('paypal_client_id', $defaults['paypal_client_id']);
+        $this->paypal_client_secret = settings('paypal_client_secret', $defaults['paypal_client_secret']);
+        $this->paypal_sandbox = (bool) settings('paypal_sandbox', $defaults['paypal_sandbox']);
+        $this->webhook_url = settings('webhook_url', $defaults['webhook_url']);
+        $this->webhook_secret = settings('webhook_secret', $defaults['webhook_secret']);
+
+        $this->cancellation_policy = settings('cancellation_policy', $defaults['cancellation_policy']);
+        $this->deposit_policy = settings('deposit_policy', $defaults['deposit_policy']);
+        $this->refund_policy = settings('refund_policy', $defaults['refund_policy']);
+        $this->pickup_policy = settings('pickup_policy', $defaults['pickup_policy']);
+        $this->additional_terms = settings('additional_terms', $defaults['additional_terms']);
+        $this->show_policies_on_storefront = (bool) settings('show_policies_on_storefront', $defaults['show_policies_on_storefront']);
 
         $eventTypes = settings('catering_event_types');
         $decoded = $eventTypes ? json_decode($eventTypes, true) : null;
         $this->catering_event_types = is_array($decoded) && $decoded !== []
             ? array_values(array_filter($decoded, fn ($v) => is_string($v) && trim($v) !== ''))
-            : CateringEventType::defaultLabels();
+            : $defaults['catering_event_types'];
 
-        $this->gift_card_preset_amounts = settings('gift_card_preset_amounts', '10,25,50,100');
-        $this->gift_card_default_amount = (int) settings('gift_card_default_amount', 25);
+        $this->gift_card_preset_amounts = settings('gift_card_preset_amounts', $defaults['gift_card_preset_amounts']);
+        $this->gift_card_default_amount = (int) settings('gift_card_default_amount', $defaults['gift_card_default_amount']);
 
         $storedSteps = settings('order_journey_steps');
-        $this->order_journey_steps = $storedSteps
-            ? (json_decode($storedSteps, true) ?: config('kneadit.default_journey_steps'))
-            : config('kneadit.default_journey_steps');
+        $decodedSteps = $storedSteps ? json_decode($storedSteps, true) : null;
+        $this->order_journey_steps = is_array($decodedSteps) && $decodedSteps !== []
+            ? $decodedSteps
+            : $defaults['order_journey_steps'];
     }
 
     public function content(Schema $schema): Schema
@@ -151,7 +156,7 @@ class ManageSettings extends Page
     public function save(): void
     {
         try {
-            resolve(SaveTenantSettings::class)(get_object_vars($this));
+            resolve(SaveTenantSettings::class)($this->toSettingsArray());
 
             Notification::make()
                 ->title('Settings saved successfully!')
@@ -168,34 +173,71 @@ class ManageSettings extends Page
 
     public function resetToDefaults(): void
     {
-        // Reset to default values
-        $this->store_name = '';
-        $this->store_email = '';
-        $this->store_phone = '';
-        $this->store_address = '';
-        $this->default_daily_capacity = null;
-        $this->minimum_order_lead_hours = 48;
-        $this->delivery_fee_tiers = '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}';
-        $this->minimum_pickup_order_amount = '0';
-        $this->minimum_delivery_order_amount = '0';
-        $this->repeat_reminders_enabled = false;
-        $this->birthday_program_enabled = false;
-        $this->allergy_disclaimer = 'Please inform us of any allergies or dietary restrictions when placing your order.';
-        $this->revenue_cap = '250000';
-        $this->cancellation_policy = '';
-        $this->deposit_policy = '';
-        $this->refund_policy = '';
-        $this->pickup_policy = '';
-        $this->additional_terms = '';
-        $this->show_policies_on_storefront = false;
-        $this->catering_event_types = CateringEventType::defaultLabels();
-        $this->gift_card_preset_amounts = '10,25,50,100';
-        $this->gift_card_default_amount = 25;
-        $this->order_journey_steps = config('kneadit.default_journey_steps');
+        $defaults = TenantSettingsDefaults::all();
+
+        $this->store_name = $defaults['store_name'];
+        $this->store_email = $defaults['store_email'];
+        $this->store_phone = $defaults['store_phone'];
+        $this->store_address = $defaults['store_address'];
+        $this->default_daily_capacity = $defaults['default_daily_capacity'];
+        $this->minimum_order_lead_hours = $defaults['minimum_order_lead_hours'];
+        $this->delivery_fee_tiers = $defaults['delivery_fee_tiers'];
+        $this->minimum_pickup_order_amount = $defaults['minimum_pickup_order_amount'];
+        $this->minimum_delivery_order_amount = $defaults['minimum_delivery_order_amount'];
+        $this->repeat_reminders_enabled = $defaults['repeat_reminders_enabled'];
+        $this->birthday_program_enabled = $defaults['birthday_program_enabled'];
+        $this->allergy_disclaimer = $defaults['allergy_disclaimer'];
+        $this->revenue_cap = $defaults['revenue_cap'];
+        $this->cancellation_policy = $defaults['cancellation_policy'];
+        $this->deposit_policy = $defaults['deposit_policy'];
+        $this->refund_policy = $defaults['refund_policy'];
+        $this->pickup_policy = $defaults['pickup_policy'];
+        $this->additional_terms = $defaults['additional_terms'];
+        $this->show_policies_on_storefront = $defaults['show_policies_on_storefront'];
+        $this->catering_event_types = $defaults['catering_event_types'];
+        $this->gift_card_preset_amounts = $defaults['gift_card_preset_amounts'];
+        $this->gift_card_default_amount = $defaults['gift_card_default_amount'];
+        $this->order_journey_steps = $defaults['order_journey_steps'];
 
         Notification::make()
             ->title('Settings reset to defaults')
             ->info()
             ->send();
+    }
+
+    /** @return array<string, mixed> */
+    private function toSettingsArray(): array
+    {
+        return [
+            'store_name' => $this->store_name,
+            'store_email' => $this->store_email,
+            'store_phone' => $this->store_phone,
+            'store_address' => $this->store_address,
+            'default_daily_capacity' => $this->default_daily_capacity,
+            'minimum_order_lead_hours' => $this->minimum_order_lead_hours,
+            'delivery_fee_tiers' => $this->delivery_fee_tiers,
+            'minimum_pickup_order_amount' => $this->minimum_pickup_order_amount,
+            'minimum_delivery_order_amount' => $this->minimum_delivery_order_amount,
+            'repeat_reminders_enabled' => $this->repeat_reminders_enabled,
+            'birthday_program_enabled' => $this->birthday_program_enabled,
+            'allergy_disclaimer' => $this->allergy_disclaimer,
+            'revenue_cap' => $this->revenue_cap,
+            'payment_methods' => $this->payment_methods,
+            'paypal_client_id' => $this->paypal_client_id,
+            'paypal_client_secret' => $this->paypal_client_secret,
+            'paypal_sandbox' => $this->paypal_sandbox,
+            'webhook_url' => $this->webhook_url,
+            'webhook_secret' => $this->webhook_secret,
+            'cancellation_policy' => $this->cancellation_policy,
+            'deposit_policy' => $this->deposit_policy,
+            'refund_policy' => $this->refund_policy,
+            'pickup_policy' => $this->pickup_policy,
+            'additional_terms' => $this->additional_terms,
+            'show_policies_on_storefront' => $this->show_policies_on_storefront,
+            'catering_event_types' => $this->catering_event_types,
+            'gift_card_preset_amounts' => $this->gift_card_preset_amounts,
+            'gift_card_default_amount' => $this->gift_card_default_amount,
+            'order_journey_steps' => $this->order_journey_steps,
+        ];
     }
 }
