@@ -5,6 +5,26 @@
 @endphp
 <x-layouts.storefront>
     <section class="max-w-4xl mx-auto px-4 py-12">
+        @if (session('status'))
+            <div class="mb-6 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        @if (! $customer->hasVerifiedEmail())
+            <div class="mb-6 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <p class="text-sm text-amber-900">
+                    <strong>Verify your email</strong> to see past orders tied to {{ $customer->email }}.
+                </p>
+                <form method="POST" action="{{ route('account.email.verify.send') }}">
+                    @csrf
+                    <button type="submit" class="text-sm font-semibold text-amber-900 hover:underline">
+                        Resend verification email &rarr;
+                    </button>
+                </form>
+            </div>
+        @endif
+
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-10 gap-4">
             <div>
                 <p class="font-script text-xl text-warm-500 mb-1">Welcome back,</p>

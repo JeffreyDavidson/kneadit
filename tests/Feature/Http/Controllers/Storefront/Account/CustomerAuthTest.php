@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('register creates a customer, hashes the password, and signs them in', function () {
+test('register creates a customer, hashes the password, and sends them to verify', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->post(route('account.register', [], false), [
             'name' => 'Jane Doe',
@@ -20,17 +20,18 @@ test('register creates a customer, hashes the password, and signs them in', func
             'password_confirmation' => 'password123',
         ]);
 
-    $response->assertRedirect(route('account.dashboard', [], false));
+    $response->assertRedirect(route('account.email.verify.notice', [], false));
 
     $customer = Customer::query()->where('email', 'jane@example.com')->firstOrFail();
 
     expect($customer->name)->toBe('Jane Doe')
         ->and(Hash::check('password123', $customer->password))->toBeTrue()
-        ->and(auth('customer')->id())->toBe($customer->id);
+        ->and(auth('customer')->id())->toBe($customer->id)
+        ->and($customer->email_verified_at)->toBeNull();
 });
 
-test('register rejects an email that already has a customer', function () {
-    Customer::factory()->create(['email' => 'taken@example.com']);
+test('register rejects an email that already has a password-owning account', function () {
+    Customer::factory()->withPassword()->create(['email' => 'taken@example.com']);
 
     $response = withoutMiddleware(tenantMiddleware())
         ->post(route('account.register', [], false), [

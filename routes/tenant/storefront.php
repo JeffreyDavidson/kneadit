@@ -7,9 +7,12 @@ use App\Http\Controllers\Storefront\Account\CustomerDashboardController;
 use App\Http\Controllers\Storefront\Account\LoginCustomerController;
 use App\Http\Controllers\Storefront\Account\LogoutCustomerController;
 use App\Http\Controllers\Storefront\Account\RegisterCustomerController;
+use App\Http\Controllers\Storefront\Account\ResendCustomerVerificationController;
 use App\Http\Controllers\Storefront\Account\ResetPasswordController;
 use App\Http\Controllers\Storefront\Account\SendPasswordResetLinkController;
+use App\Http\Controllers\Storefront\Account\ShowEmailVerifyNoticeController;
 use App\Http\Controllers\Storefront\Account\ShowResetPasswordController;
+use App\Http\Controllers\Storefront\Account\VerifyCustomerEmailController;
 use App\Http\Controllers\Storefront\BlogController as StorefrontBlogController;
 use App\Http\Controllers\Storefront\BlogFeedController as StorefrontBlogFeedController;
 use App\Http\Controllers\Storefront\CheckGiftCardBalanceController;
@@ -84,4 +87,13 @@ Route::middleware('guest:customer')->group(function () {
 Route::middleware('auth:customer')->group(function () {
     Route::get('account', CustomerDashboardController::class)->name('account.dashboard');
     Route::post('account/logout', LogoutCustomerController::class)->name('account.logout');
+
+    // Email verification
+    Route::get('account/email/verify', ShowEmailVerifyNoticeController::class)->name('account.email.verify.notice');
+    Route::get('account/email/verify/{id}/{hash}', VerifyCustomerEmailController::class)
+        ->middleware('signed')
+        ->name('account.email.verify');
+    Route::post('account/email/verification-notification', ResendCustomerVerificationController::class)
+        ->middleware('throttle:6,1')
+        ->name('account.email.verify.send');
 });
