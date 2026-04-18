@@ -4,8 +4,10 @@ namespace App\Filament\Resources\Products\Tables;
 
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Inventory\Product;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -80,6 +82,12 @@ class ProductsTable
                     ]),
             ])
             ->recordActions([
+                Action::make('printLabel')
+                    ->label('Print label')
+                    ->icon(Heroicon::OutlinedPrinter)
+                    ->color('gray')
+                    ->url(fn (Product $record) => route('admin.products.label', $record))
+                    ->openUrlInNewTab(),
                 SlideOverEditAction::make(),
             ])
             ->toolbarActions([
