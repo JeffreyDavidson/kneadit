@@ -3,6 +3,7 @@
 namespace App\Actions\Stripe;
 
 use App\Models\Platform\Tenant;
+use App\Services\Settings\SettingsManager;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Support\Facades\Log;
 
@@ -10,6 +11,7 @@ class HandleConnectAccountUpdated
 {
     public function __construct(
         private TenancyManager $tenancyManager,
+        private SettingsManager $settings,
     ) {}
 
     public function __invoke(mixed $account): void
@@ -41,7 +43,7 @@ class HandleConnectAccountUpdated
 
         try {
             $this->tenancyManager->withinTenant($tenant, function () use ($chargesEnabled, $tenantId) {
-                settings(['stripe_connect_charges_enabled' => $chargesEnabled ? '1' : '0']);
+                $this->settings->set('stripe_connect_charges_enabled', $chargesEnabled ? '1' : '0');
 
                 if ($chargesEnabled) {
                     Log::info('Stripe Connect fully enabled for tenant', ['tenant_id' => $tenantId]);

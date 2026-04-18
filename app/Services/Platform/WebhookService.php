@@ -2,24 +2,29 @@
 
 namespace App\Services\Platform;
 
+use App\Services\Settings\SettingsManager;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class WebhookService
 {
+    public function __construct(
+        private SettingsManager $settings,
+    ) {}
+
     /**
      * Dispatch a webhook event to the baker's configured URL.
      */
     /** @param array<string, mixed> $payload */
     public function dispatch(string $event, array $payload): void
     {
-        $url = settings('webhook_url');
+        $url = $this->settings->get('webhook_url');
 
         if (! $url) {
             return;
         }
 
-        $secret = settings('webhook_secret', '');
+        $secret = $this->settings->get('webhook_secret', '');
 
         $body = [
             'event' => $event,

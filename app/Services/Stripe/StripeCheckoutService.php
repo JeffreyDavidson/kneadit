@@ -6,6 +6,7 @@ use App\Actions\Stripe\HandleCheckoutComplete;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
+use App\Services\Settings\SettingsManager;
 use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
@@ -21,22 +22,23 @@ class StripeCheckoutService
 
     public static function isEnabled(): bool
     {
-        $methods = settings('payment_methods');
+        $manager = app(SettingsManager::class);
+        $methods = $manager->get('payment_methods');
         $methods = $methods ? json_decode($methods, true) : [];
 
         if (! in_array('stripe', $methods)) {
             return false;
         }
 
-        $connectId = settings('stripe_connect_id');
-        $chargesEnabled = settings('stripe_connect_charges_enabled', '0');
+        $connectId = $manager->get('stripe_connect_id');
+        $chargesEnabled = $manager->get('stripe_connect_charges_enabled', '0');
 
         return $connectId && $chargesEnabled === '1';
     }
 
     public static function getConnectId(): ?string
     {
-        return settings('stripe_connect_id');
+        return app(SettingsManager::class)->get('stripe_connect_id');
     }
 
     public function redirectToCheckout(Order $order): ?string
