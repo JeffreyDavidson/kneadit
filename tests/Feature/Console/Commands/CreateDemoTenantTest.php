@@ -57,10 +57,11 @@ test('demo tenant command source seeds expected settings', function () {
     $source = file_get_contents(app_path('Console/Commands/Tenants/CreateDemoTenantCommand.php'));
 
     expect($source)
-        ->toContain("settings(['store_name' => 'Sweet Dreams Bakery'])")
-        ->toContain("settings(['store_email' => 'demo@getkneadit.app'])")
-        ->toContain("settings(['store_phone'")
-        ->toContain("settings(['default_daily_capacity'");
+        ->toContain("'store_name' => 'Sweet Dreams Bakery'")
+        ->toContain("'store_email' => 'demo@getkneadit.app'")
+        ->toContain("'store_phone'")
+        ->toContain("'default_daily_capacity'")
+        ->toContain('SettingsManager::class');
 });
 
 test('demo tenant command creates pro plan tenant', function () {
