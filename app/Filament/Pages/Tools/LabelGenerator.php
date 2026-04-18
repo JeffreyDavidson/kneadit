@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Tools;
 
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Inventory\Product;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -42,7 +43,7 @@ class LabelGenerator extends Page
 
     public function mount(): void
     {
-        $shelfLifeDays = (int) settings('default_shelf_life_days', '3');
+        $shelfLifeDays = (int) app(SettingsManager::class)->get('default_shelf_life_days', '3');
         $this->bestByDate = now()->addDays($shelfLifeDays)->format('Y-m-d');
     }
 
