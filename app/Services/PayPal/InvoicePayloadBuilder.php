@@ -3,6 +3,7 @@
 namespace App\Services\PayPal;
 
 use App\Models\Orders\Order;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\Date;
 
@@ -10,6 +11,7 @@ class InvoicePayloadBuilder
 {
     public function __construct(
         private TenantSettings $settings,
+        private SettingsManager $manager,
     ) {}
 
     /** @return array<string, mixed> */
@@ -25,7 +27,7 @@ class InvoicePayloadBuilder
                 'invoice_date' => Date::now()->toISOString(),
                 'currency_code' => $currency,
                 'note' => "Thank you for your order with {$this->settings->storeName}!",
-                'terms' => settings('paypal_invoice_terms', 'Payment due within 30 days.'),
+                'terms' => $this->manager->get('paypal_invoice_terms', 'Payment due within 30 days.'),
                 'memo' => "{$this->settings->storeName} - Fresh Baked Goods",
             ],
             'invoicer' => $this->buildInvoicer(),
@@ -48,9 +50,9 @@ class InvoicePayloadBuilder
             'name' => ['given_name' => $this->settings->storeName, 'surname' => ''],
             'address' => [
                 'address_line_1' => $this->settings->storeAddress ?? '',
-                'admin_area_2' => settings('store_city', ''),
-                'admin_area_1' => settings('store_state', ''),
-                'postal_code' => settings('store_zip', ''),
+                'admin_area_2' => $this->manager->get('store_city', ''),
+                'admin_area_1' => $this->manager->get('store_state', ''),
+                'postal_code' => $this->manager->get('store_zip', ''),
                 'country_code' => 'US',
             ],
             'email_address' => config('mail.from.address', 'noreply@kneadit.com'),

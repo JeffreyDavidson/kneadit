@@ -2,6 +2,7 @@
 
 namespace App\Actions\Stripe;
 
+use App\Services\Settings\SettingsManager;
 use Illuminate\Support\Facades\Log;
 use Stripe\StripeClient;
 
@@ -9,8 +10,9 @@ class InitiateStripeConnect
 {
     private StripeClient $stripe;
 
-    public function __construct()
-    {
+    public function __construct(
+        private SettingsManager $settings,
+    ) {
         $this->stripe = new StripeClient(config('cashier.secret'));
     }
 
@@ -30,7 +32,7 @@ class InitiateStripeConnect
 
     private function resolveConnectAccount(): string
     {
-        $connectId = settings('stripe_connect_id');
+        $connectId = $this->settings->get('stripe_connect_id');
 
         if ($connectId) {
             return $connectId;
@@ -48,7 +50,7 @@ class InitiateStripeConnect
             ],
         ]);
 
-        settings(['stripe_connect_id' => $account->id]);
+        $this->settings->set('stripe_connect_id', $account->id);
 
         Log::info('Stripe Connect account created', [
             'tenant' => $tenant->id,

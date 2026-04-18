@@ -24,7 +24,7 @@ it('logs structured context on authentication exception', function () {
         },
     ]);
 
-    $manager = new TokenManager;
+    $manager = resolve(TokenManager::class);
     $result = $manager->getAccessToken();
 
     expect($result)->toBeNull();
@@ -51,7 +51,7 @@ it('logs structured context on invoice status check exception', function () {
         },
     ]);
 
-    $tokenManager = new TokenManager;
+    $tokenManager = resolve(TokenManager::class);
     $verifier = new PaymentVerifier($tokenManager);
     $result = $verifier->getInvoiceStatus('INV-456');
 
