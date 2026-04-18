@@ -3,6 +3,8 @@
 namespace App\Filament\Pages\Settings;
 
 use App\Filament\Concerns\RequiresManagerRole;
+use App\Services\Settings\SettingsManager;
+use App\Services\Settings\TenantSettings;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -55,9 +57,10 @@ class HomepageBuilder extends Page
 
     protected function loadHeroContent(): void
     {
-        $this->hero_tagline = settings('hero_tagline');
-        $this->hero_primary_cta_text = (string) settings('hero_primary_cta_text', 'Order Now');
-        $this->hero_secondary_cta_text = (string) settings('hero_secondary_cta_text', 'Browse Menu');
+        $settings = app(TenantSettings::class);
+        $this->hero_tagline = $settings->heroTagline;
+        $this->hero_primary_cta_text = $settings->heroPrimaryCtaText;
+        $this->hero_secondary_cta_text = $settings->heroSecondaryCtaText;
     }
 
     /** @return array<string, mixed> */
@@ -78,7 +81,7 @@ class HomepageBuilder extends Page
 
     protected function loadSections(): void
     {
-        $saved = json_decode(settings('homepage_sections', '{}'), true);
+        $saved = app(TenantSettings::class)->homepageSections;
         $defaults = $this->getDefaults();
 
         // Merge saved with defaults to ensure all sections exist
@@ -130,7 +133,7 @@ class HomepageBuilder extends Page
     public function save(): void
     {
         try {
-            settings([
+            app(SettingsManager::class)->setMany([
                 'homepage_sections' => json_encode($this->sections),
                 'hero_tagline' => $this->hero_tagline,
                 'hero_primary_cta_text' => $this->hero_primary_cta_text,
@@ -157,7 +160,7 @@ class HomepageBuilder extends Page
         $this->hero_primary_cta_text = 'Order Now';
         $this->hero_secondary_cta_text = 'Browse Menu';
 
-        settings([
+        app(SettingsManager::class)->setMany([
             'homepage_sections' => json_encode($this->sections),
             'hero_tagline' => $this->hero_tagline,
             'hero_primary_cta_text' => $this->hero_primary_cta_text,

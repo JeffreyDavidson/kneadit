@@ -4,6 +4,8 @@ namespace App\Filament\Pages\Engagement;
 
 use App\Enums\Platform\AnnouncementType;
 use App\Filament\Concerns\RequiresManagerRole;
+use App\Services\Settings\SettingsManager;
+use App\Services\Settings\TenantSettings;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -43,9 +45,10 @@ class AnnouncementBanner extends Page
 
     public function mount(): void
     {
-        $this->announcement_enabled = settings('announcement_enabled', '0') === '1';
-        $this->announcement_text = settings('announcement_text', '');
-        $this->announcement_type = settings('announcement_type', 'info');
+        $engagement = app(TenantSettings::class)->engagement;
+        $this->announcement_enabled = $engagement->announcementEnabled;
+        $this->announcement_text = $engagement->announcementText;
+        $this->announcement_type = $engagement->announcementType;
     }
 
     public function content(Schema $schema): Schema
@@ -91,9 +94,11 @@ class AnnouncementBanner extends Page
 
     public function save(): void
     {
-        settings(['announcement_enabled' => $this->announcement_enabled ? '1' : '0']);
-        settings(['announcement_text' => $this->announcement_text ?? '']);
-        settings(['announcement_type' => $this->announcement_type ?? 'info']);
+        app(SettingsManager::class)->setMany([
+            'announcement_enabled' => $this->announcement_enabled ? '1' : '0',
+            'announcement_text' => $this->announcement_text ?? '',
+            'announcement_type' => $this->announcement_type ?? 'info',
+        ]);
 
         Notification::make()
             ->title('Announcement banner settings saved!')
