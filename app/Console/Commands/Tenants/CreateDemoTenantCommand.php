@@ -5,6 +5,7 @@ namespace App\Console\Commands\Tenants;
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
+use App\Services\Settings\SettingsManager;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -88,11 +89,13 @@ class CreateDemoTenantCommand extends Command
             ]);
 
             // Seed settings
-            settings(['store_name' => 'Sweet Dreams Bakery']);
-            settings(['store_email' => 'demo@getkneadit.app']);
-            settings(['store_phone' => '(863) 555-0123']);
-            settings(['store_address' => '123 Main Street, Davenport, FL 33837']);
-            settings(['default_daily_capacity' => '15']);
+            app(SettingsManager::class)->setMany([
+                'store_name' => 'Sweet Dreams Bakery',
+                'store_email' => 'demo@getkneadit.app',
+                'store_phone' => '(863) 555-0123',
+                'store_address' => '123 Main Street, Davenport, FL 33837',
+                'default_daily_capacity' => '15',
+            ]);
 
             // Run seeders
             Artisan::call('db:seed', ['--force' => true]);

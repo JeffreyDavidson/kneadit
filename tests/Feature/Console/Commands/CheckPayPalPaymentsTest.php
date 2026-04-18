@@ -116,7 +116,8 @@ test('command source resolves PaymentVerifier per tenant', function () {
 
     expect($source)
         ->toContain('resolve(PaymentVerifier::class)')
-        ->toContain("settings('paypal_client_id')");
+        ->toContain("'paypal_client_id'")
+        ->toContain('SettingsManager::class');
 });
 
 test('command source skips orders without paypal invoice id', function () {
