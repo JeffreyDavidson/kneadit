@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\ApplyDiscountRequest;
-use App\Http\Responses\ApiResponse;
+use App\Http\Resources\CouponValidationResource;
 use App\Services\Coupon\CouponService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
 class CouponValidationController extends Controller
 {
-    public function __invoke(ApplyDiscountRequest $request, CouponService $couponService): JsonResponse
+    public function __invoke(ApplyDiscountRequest $request, CouponService $couponService): CouponValidationResource
     {
         $validated = $request->validated();
 
@@ -25,11 +24,12 @@ class CouponValidationController extends Controller
 
         $coupon = $result->coupon;
 
-        return ApiResponse::success([
+        return new CouponValidationResource([
+            'code' => $validated['code'],
             'valid' => true,
             'discount_amount' => $result->discount,
-            'type' => $coupon?->type,
-            'value' => $coupon?->value,
-        ], 'Coupon is valid.');
+            'type' => $coupon?->type?->value,
+            'value' => $coupon?->value !== null ? (float) $coupon->value : null,
+        ]);
     }
 }

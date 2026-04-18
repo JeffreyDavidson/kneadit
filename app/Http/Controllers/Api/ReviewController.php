@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\IndexReviewsRequest;
 use App\Http\Requests\Api\StoreApiReviewRequest;
 use App\Http\Resources\ReviewResource;
-use App\Http\Responses\ApiResponse;
 use App\Models\Engagement\Review;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -29,8 +28,6 @@ class ReviewController extends Controller
     {
         $review = $submitReview($request->validated());
 
-        return ApiResponse::created([
-            'id' => $review->id,
-        ], 'Review submitted and pending approval.');
+        return ReviewResource::make($review)->response()->setStatusCode(201);
     }
 }

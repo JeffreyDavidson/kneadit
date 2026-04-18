@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
-use App\Http\Responses\ApiResponse;
 use App\Models\Inventory\Category;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class MenuController extends Controller
 {
-    public function __invoke(): JsonResponse
+    public function __invoke(): AnonymousResourceCollection
     {
         $categories = Category::query()->active()
             ->orderBy('sort_order')
@@ -22,6 +21,6 @@ class MenuController extends Controller
             ])
             ->get();
 
-        return ApiResponse::success(CategoryResource::collection($categories), 'Menu retrieved successfully.');
+        return CategoryResource::collection($categories);
     }
 }

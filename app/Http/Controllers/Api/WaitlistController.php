@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Customers\JoinWaitlist;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreApiWaitlistRequest;
-use App\Http\Responses\ApiResponse;
+use App\Http\Resources\WaitlistEntryResource;
 use Illuminate\Http\JsonResponse;
 
 class WaitlistController extends Controller
@@ -14,8 +14,6 @@ class WaitlistController extends Controller
     {
         $entry = $joinWaitlist($request->validated());
 
-        return ApiResponse::created([
-            'id' => $entry->id,
-        ], 'Added to waitlist successfully.');
+        return WaitlistEntryResource::make($entry)->response()->setStatusCode(201);
     }
 }

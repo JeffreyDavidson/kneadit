@@ -32,7 +32,7 @@ test('favorites index validates email is required', function () {
         ->assertJsonPath('errors.0.source.pointer', '/data/attributes/email');
 });
 
-test('favorites toggle adds product to favorites', function () {
+test('favorites toggle adds product to favorites and returns JSON:API envelope', function () {
     $product = Product::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -42,7 +42,11 @@ test('favorites toggle adds product to favorites', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('data.favorited', true);
+        ->assertHeader('Content-Type', 'application/vnd.api+json')
+        ->assertJsonPath('data.type', 'favorite-toggles')
+        ->assertJsonPath('data.attributes.favorited', true)
+        ->assertJsonPath('data.attributes.customer_email', 'alice@test.com')
+        ->assertJsonPath('data.attributes.product_id', $product->id);
 
     test()->assertDatabaseHas('customer_favorites', [
         'customer_email' => 'alice@test.com',

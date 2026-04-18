@@ -6,7 +6,7 @@ use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(fn () => setUpTenantTest());
 
-test('API validates a valid coupon', function () {
+test('API validates a valid coupon and returns JSON:API envelope', function () {
     Coupon::factory()->percentage()->create([
         'code' => 'API10OFF',
         'value' => 10,
@@ -20,10 +20,13 @@ test('API validates a valid coupon', function () {
         ]);
 
     $response->assertOk()
-        ->assertJsonPath('data.valid', true);
+        ->assertHeader('Content-Type', 'application/vnd.api+json')
+        ->assertJsonPath('data.type', 'coupon-validations')
+        ->assertJsonPath('data.id', 'API10OFF')
+        ->assertJsonPath('data.attributes.valid', true);
 });
 
-test('API returns error status for invalid coupon', function () {
+test('API returns a JSON:API validation error for an unknown coupon', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->postJson('/api/coupon/validate', [
             'code' => 'NONEXISTENT',
@@ -31,10 +34,10 @@ test('API returns error status for invalid coupon', function () {
         ]);
 
     $response->assertUnprocessable()
-        ->assertJsonPath('data', null);
+        ->assertJsonPath('errors.0.source.pointer', '/data/attributes/code');
 });
 
-test('API returns error status for expired coupon', function () {
+test('API returns a JSON:API validation error for an expired coupon', function () {
     Coupon::factory()->expired()->create([
         'code' => 'EXPIRED10',
         'value' => 10,
@@ -47,5 +50,5 @@ test('API returns error status for expired coupon', function () {
         ]);
 
     $response->assertUnprocessable()
-        ->assertJsonPath('data', null);
+        ->assertJsonPath('errors.0.source.pointer', '/data/attributes/code');
 });

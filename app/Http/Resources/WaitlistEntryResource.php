@@ -2,16 +2,16 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Inventory\Category;
+use App\Models\Customers\WaitlistEntry;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-/** @mixin Category */
-class CategoryResource extends JsonApiResource
+/** @mixin WaitlistEntry */
+class WaitlistEntryResource extends JsonApiResource
 {
     /** @var array<string, class-string> */
     protected array $relationships = [
-        'products' => ProductResource::class,
+        'product' => ProductResource::class,
     ];
 
     public function toId(Request $request): string
@@ -21,17 +21,17 @@ class CategoryResource extends JsonApiResource
 
     public function toType(Request $request): string
     {
-        return 'categories';
+        return 'waitlist-entries';
     }
 
     /** @return array<string, mixed> */
     public function toAttributes(Request $request): array
     {
         return [
-            'name' => $this->resource->name,
-            'slug' => $this->resource->slug,
-            'description' => $this->resource->description,
-            'sort_order' => $this->resource->sort_order,
+            'customer_name' => $this->resource->customer_name,
+            'customer_email' => $this->resource->customer_email,
+            'requested_date' => $this->resource->requested_date?->toDateString(),
+            'status' => $this->resource->status->value,
         ];
     }
 }
