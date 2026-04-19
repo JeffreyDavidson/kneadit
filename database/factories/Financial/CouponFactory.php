@@ -32,11 +32,30 @@ class CouponFactory extends Factory
     }
 
     /**
+     * Coupon is active.
+     */
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => true]);
+    }
+
+    /**
      * Coupon is inactive.
      */
     public function inactive(): static
     {
         return $this->state(fn (array $attributes) => ['is_active' => false]);
+    }
+
+    /**
+     * Coupon has reached its usage limit.
+     */
+    public function maxedOut(int $uses = 1): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'max_uses' => $uses,
+            'used_count' => $uses,
+        ]);
     }
 
     /**

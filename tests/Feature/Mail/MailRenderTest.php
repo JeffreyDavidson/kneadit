@@ -41,7 +41,7 @@ test('order-based mail classes render without errors', function (string $mailCla
 ]);
 
 test('OrderStatusMail renders for all statuses', function (OrderStatus $status) {
-    $order = Order::factory()->create(['delivery_date' => now()->addDays(3), 'delivery_time' => now()]);
+    $order = Order::factory()->withDeliveryDate(now()->addDays(3))->create(['delivery_time' => now()]);
     $order->load('customer', 'orderItems.product');
 
     $html = (new OrderStatusMail($order, $status))->render();

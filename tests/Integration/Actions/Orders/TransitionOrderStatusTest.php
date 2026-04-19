@@ -30,7 +30,7 @@ beforeEach(function () {
 });
 
 test('transitions order from pending to confirmed', function () {
-    $order = Order::factory()->create(['status' => OrderStatus::Pending]);
+    $order = Order::factory()->pending()->create();
 
     $result = resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
 
@@ -38,7 +38,7 @@ test('transitions order from pending to confirmed', function () {
 });
 
 test('throws exception for invalid transition', function () {
-    $order = Order::factory()->create(['status' => OrderStatus::Pending]);
+    $order = Order::factory()->pending()->create();
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Ready);
 })->throws(InvalidOrderTransitionException::class, 'Cannot change status from pending to ready');
@@ -61,8 +61,8 @@ test('sends status email on transition', function () {
 });
 
 test('allowedTransitions returns valid next statuses', function () {
-    $pending = Order::factory()->create(['status' => OrderStatus::Pending]);
-    $confirmed = Order::factory()->create(['status' => OrderStatus::Confirmed]);
+    $pending = Order::factory()->pending()->create();
+    $confirmed = Order::factory()->confirmed()->create();
     $delivered = Order::factory()->delivered()->create();
 
     expect(TransitionOrderStatus::allowedTransitions($pending))
@@ -76,7 +76,7 @@ test('allowedTransitions returns valid next statuses', function () {
 
 test('dispatches OrderStatusChanged after every valid transition', function () {
     Event::fake();
-    $order = Order::factory()->create(['status' => OrderStatus::Pending]);
+    $order = Order::factory()->pending()->create();
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
 
@@ -90,7 +90,7 @@ test('dispatches OrderStatusChanged after every valid transition', function () {
 
 test('dispatches OrderDelivered on Ready to Delivered transition', function () {
     Event::fake();
-    $order = Order::factory()->create(['status' => OrderStatus::Ready]);
+    $order = Order::factory()->ready()->create();
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Delivered);
 
@@ -100,7 +100,7 @@ test('dispatches OrderDelivered on Ready to Delivered transition', function () {
 
 test('dispatches OrderCancelled when cancelling', function () {
     Event::fake();
-    $order = Order::factory()->create(['status' => OrderStatus::Confirmed]);
+    $order = Order::factory()->confirmed()->create();
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
@@ -109,7 +109,7 @@ test('dispatches OrderCancelled when cancelling', function () {
 
 test('does not dispatch OrderDelivered or OrderCancelled on other transitions', function () {
     Event::fake();
-    $order = Order::factory()->create(['status' => OrderStatus::Pending]);
+    $order = Order::factory()->pending()->create();
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
 
@@ -124,7 +124,7 @@ test('critical effect failure rolls back the status transition', function () {
 
     app()->instance(InventoryManager::class, $inventoryManager);
 
-    $order = Order::factory()->create(['status' => OrderStatus::Confirmed]);
+    $order = Order::factory()->confirmed()->create();
 
     try {
         resolve(TransitionOrderStatus::class)($order, OrderStatus::Baking);
@@ -142,8 +142,8 @@ test('cancellation decrements coupon used_count and creates reversal transaction
     $order = Order::factory()
         ->for($customer)
         ->recycle(test()->user)
+        ->confirmed()
         ->create([
-            'status' => OrderStatus::Confirmed,
             'coupon_id' => $coupon->id,
             'discount_amount' => 5.00,
         ]);

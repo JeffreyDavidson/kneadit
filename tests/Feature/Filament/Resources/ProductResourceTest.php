@@ -84,7 +84,7 @@ test('create product validates required fields', function (array $data, array $e
 ]);
 
 test('can filter products by active status', function () {
-    $active = Product::factory()->create(['is_active' => true]);
+    $active = Product::factory()->active()->create();
     $inactive = Product::factory()->inactive()->create();
 
     Livewire::test(ListProducts::class)

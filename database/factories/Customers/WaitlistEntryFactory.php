@@ -31,6 +31,14 @@ class WaitlistEntryFactory extends Factory
     }
 
     /**
+     * Customer is still waiting.
+     */
+    public function waiting(): static
+    {
+        return $this->state(fn (array $attributes) => ['status' => WaitlistStatus::Waiting]);
+    }
+
+    /**
      * Customer has been notified.
      */
     public function notified(): static

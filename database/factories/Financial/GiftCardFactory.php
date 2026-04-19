@@ -43,11 +43,30 @@ class GiftCardFactory extends Factory
     }
 
     /**
+     * Gift card is active.
+     */
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => true]);
+    }
+
+    /**
      * Gift card is inactive.
      */
     public function inactive(): static
     {
         return $this->state(fn (array $attributes) => ['is_active' => false]);
+    }
+
+    /**
+     * Gift card has a specific balance (sets both initial and current).
+     */
+    public function withBalance(float $amount): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'initial_balance' => $amount,
+            'current_balance' => $amount,
+        ]);
     }
 
     /**

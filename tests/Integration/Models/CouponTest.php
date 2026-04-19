@@ -30,7 +30,7 @@ test('coupon has orders relationship', function () {
 });
 
 test('active scope returns only active coupons', function () {
-    Coupon::factory()->create(['is_active' => true]);
+    Coupon::factory()->active()->create();
     Coupon::factory()->inactive()->create();
 
     expect(Coupon::query()->active()->count())->toBe(1);

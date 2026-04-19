@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('it deactivates an active gift card', function () {
-    $giftCard = GiftCard::factory()->create(['is_active' => true]);
+    $giftCard = GiftCard::factory()->active()->create();
 
     resolve(ToggleGiftCardActive::class)($giftCard);
 
