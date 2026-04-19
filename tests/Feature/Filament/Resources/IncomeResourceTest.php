@@ -53,7 +53,7 @@ test('can edit an income via table action', function () {
     Livewire::test(ListIncomes::class)
         ->callAction(TestAction::make('edit')->table($income), data: [
             'description' => 'Updated income',
-            'amount' => $income->amount,
+            'amount' => $income->amount->dollars(),
             'source' => $income->source->value,
         ])
         ->assertHasNoFormErrors();
