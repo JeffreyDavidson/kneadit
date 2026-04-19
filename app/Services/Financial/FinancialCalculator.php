@@ -58,13 +58,13 @@ class FinancialCalculator
             ->whereNotNull('date')
             ->get(['date', 'amount'])
             ->groupBy(fn (Income $i) => (int) $i->date?->month)
-            ->map(fn (Collection $group) => (float) $group->sum('amount'));
+            ->map(fn (Collection $group) => $group->sum(fn (Income $i) => $i->amount->dollars()));
 
         $expensesByMonth = Expense::query()->forYear($year)
             ->whereNotNull('date')
             ->get(['date', 'amount'])
             ->groupBy(fn (Expense $e) => (int) $e->date?->month)
-            ->map(fn (Collection $group) => (float) $group->sum('amount'));
+            ->map(fn (Collection $group) => $group->sum(fn (Expense $e) => $e->amount->dollars()));
 
         $breakdown = collect();
 

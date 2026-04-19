@@ -6,6 +6,7 @@ use App\Enums\Financial\ExpenseCategory;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\AmountRangeFilter;
 use App\Filament\Filters\DateRangeFilter;
+use App\Filament\Tables\Columns\MoneyColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\ImageColumn;
@@ -30,8 +31,7 @@ class ExpensesTable
                 TextColumn::make('category')
                     ->badge(),
 
-                TextColumn::make('amount')
-                    ->money('USD')
+                MoneyColumn::make('amount')
                     ->sortable(),
 
                 TextColumn::make('business_percentage')
@@ -39,9 +39,8 @@ class ExpensesTable
                     ->formatStateUsing(fn (int $state) => $state . '%')
                     ->sortable(),
 
-                TextColumn::make('deductible_amount')
+                MoneyColumn::make('deductible_amount')
                     ->label('Deductible')
-                    ->money('USD')
                     ->sortable(),
 
                 ImageColumn::make('receipt_image')

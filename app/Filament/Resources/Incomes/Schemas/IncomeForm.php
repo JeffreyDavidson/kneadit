@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Incomes\Schemas;
 
 use App\Enums\Financial\IncomeSource;
+use App\Filament\Forms\Components\MoneyInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -26,11 +27,8 @@ class IncomeForm
 
                         Grid::make(2)
                             ->components([
-                                TextInput::make('amount')
-                                    ->required()
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01),
+                                MoneyInput::make('amount')
+                                    ->required(),
 
                                 Select::make('source')
                                     ->options(IncomeSource::class)
