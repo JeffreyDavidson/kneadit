@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Support\AllowedFileTypes;
 use App\Models\Inventory\Category;
 use Filament\Forms\Components\FileUpload;
@@ -38,11 +39,8 @@ class ProductForm
                             ->maxLength(255)
                             ->unique(),
 
-                        TextInput::make('price')
-                            ->required()
-                            ->numeric()
-                            ->prefix('$')
-                            ->step(0.01),
+                        MoneyInput::make('price')
+                            ->required(),
 
                         Select::make('category_id')
                             ->label('Category')

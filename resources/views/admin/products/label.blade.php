@@ -206,7 +206,7 @@
             @if ($product->price)
                 <div>
                     <strong>Price</strong>
-                    ${{ number_format((float) $product->price, 2) }}
+                    {{ $product->price->formatted() }}
                 </div>
             @endif
         </div>

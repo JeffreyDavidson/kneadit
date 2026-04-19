@@ -13,7 +13,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Number;
 
 class ProductResource extends Resource
 {
@@ -60,7 +59,7 @@ class ProductResource extends Resource
     {
         return [
             'Category' => $record->category->name ?? 'N/A',
-            'Price' => (string) Number::currency($record->price),
+            'Price' => $record->price?->formatted() ?? '—',
         ];
     }
 

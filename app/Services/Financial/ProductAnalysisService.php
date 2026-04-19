@@ -30,7 +30,7 @@ class ProductAnalysisService
         $product->loadMissing('recipes');
 
         $cost = $this->costResolver->resolve($product);
-        $price = (float) ($product->price ?? 0);
+        $price = $product->price?->dollars() ?? 0.0;
         $ingredients = $this->formatIngredients($product->recipes->first());
 
         $margin = $cost > 0 ? ProfitMargin::calculate($price, $cost) : null;
@@ -118,7 +118,7 @@ class ProductAnalysisService
             ->get()
             ->map(function (Product $product) {
                 $cost = $this->costResolver->resolve($product);
-                $price = (float) $product->price;
+                $price = $product->price?->dollars() ?? 0.0;
                 $margin = $cost > 0 ? ProfitMargin::calculate($price, $cost) : null;
                 $marginAmount = $margin !== null ? $price - $cost : null;
 

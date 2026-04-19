@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Products\Tables;
 
 use App\Filament\Actions\SlideOverEditAction;
+use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Inventory\Product;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -38,8 +39,7 @@ class ProductsTable
                     ->searchable()
                     ->toggleable(),
 
-                TextColumn::make('price')
-                    ->money('USD')
+                MoneyColumn::make('price')
                     ->sortable()
                     ->toggleable(),
 

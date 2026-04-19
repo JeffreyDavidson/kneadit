@@ -32,7 +32,7 @@ final class ProductStep extends OnboardingStep
             return [
                 'name' => $product->name,
                 'description' => $product->description ?? '',
-                'price' => (string) $product->price,
+                'price' => $product->price !== null ? number_format($product->price->dollars(), 2, '.', '') : '',
                 'category_id' => (string) $product->category_id,
             ];
         }
