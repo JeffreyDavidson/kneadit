@@ -13,8 +13,8 @@
         "pennant-development",
         "pest-testing",
         "tailwindcss-development",
-        "laravel-multi-tenancy",
-        "laravel-tdd",
-        "laravel-value-objects"
+        "kneadit-filament-5",
+        "kneadit-mailables",
+        "kneadit-tenant-settings"
     ]
 }
