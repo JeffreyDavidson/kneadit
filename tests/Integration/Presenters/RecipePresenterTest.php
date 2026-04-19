@@ -25,7 +25,7 @@ test('profitMargin returns null when the recipe has no cost', function () {
 });
 
 test('profitMargin returns null when the recipe has no product', function () {
-    $recipe = Recipe::factory()->create(['product_id' => null, 'cost' => 4.00]);
+    $recipe = Recipe::factory()->withoutProduct()->withCost(4.00)->create();
 
     expect(RecipePresenter::for($recipe)->profitMargin())->toBeNull();
 });

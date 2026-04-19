@@ -98,8 +98,8 @@ test('can sort incomes by amount', function () {
 });
 
 test('can filter incomes by source', function () {
-    $market = Income::factory()->create(['source' => IncomeSource::FarmersMarket]);
-    $cash = Income::factory()->create(['source' => IncomeSource::CashSale]);
+    $market = Income::factory()->forSource(IncomeSource::FarmersMarket)->create();
+    $cash = Income::factory()->forSource(IncomeSource::CashSale)->create();
 
     Livewire::test(ListIncomes::class)
         ->filterTable('source', IncomeSource::FarmersMarket->value)

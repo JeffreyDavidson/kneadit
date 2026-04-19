@@ -35,7 +35,7 @@ test('mount loads all recipes', function () {
 
 test('updated selected recipe id loads recipe and refreshes analysis', function () {
     $product = Product::factory()->create(['price' => 15.00]);
-    $recipe = Recipe::factory()->create(['product_id' => $product->id, 'cost' => 4.00]);
+    $recipe = Recipe::factory()->for($product)->withCost(4.00)->create();
 
     test()->page->selectedRecipeId = $recipe->id;
     test()->page->updatedSelectedRecipeId();
@@ -62,7 +62,7 @@ test('refresh analysis returns null when no recipe product', function () {
 
 test('refresh analysis sets analysis for valid recipe', function () {
     $product = Product::factory()->create(['price' => 12.00]);
-    $recipe = Recipe::factory()->create(['product_id' => $product->id, 'cost' => 3.00]);
+    $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
     test()->page->selectedRecipe = $recipe->load('product');
     test()->page->refreshAnalysis();
@@ -72,7 +72,7 @@ test('refresh analysis sets analysis for valid recipe', function () {
 
 test('updated target margin percentage refreshes analysis', function () {
     $product = Product::factory()->create(['price' => 10.00]);
-    $recipe = Recipe::factory()->create(['product_id' => $product->id, 'cost' => 3.00]);
+    $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
     test()->page->selectedRecipe = $recipe->load('product');
     test()->page->targetMarginPercentage = 50.0;

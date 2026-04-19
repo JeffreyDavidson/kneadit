@@ -24,4 +24,12 @@ class FeatureUsageLogFactory extends Factory
             'date' => now()->toDateString(),
         ];
     }
+
+    /**
+     * Log entry for a specific feature.
+     */
+    public function forFeature(string $feature): static
+    {
+        return $this->state(fn (array $attributes) => ['feature' => $feature]);
+    }
 }
