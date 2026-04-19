@@ -21,9 +21,9 @@ class ProductCostResolver
             return (float) $product->cost;
         }
 
-        $recipe = $product->recipes->where('cost', '>', 0)->first();
-        if ($recipe) {
-            return (float) $recipe->cost;
+        $recipe = $product->recipes->first(fn (Recipe $r) => $r->cost?->isPositive() ?? false);
+        if ($recipe && $recipe->cost) {
+            return $recipe->cost->dollars();
         }
 
         $recipe = $product->recipes->first();

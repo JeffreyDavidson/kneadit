@@ -106,5 +106,5 @@ test('cost per unit is stored correctly', function () {
         'cost_per_unit' => 12.75,
     ]);
 
-    expect((float) $ingredient->cost_per_unit)->toBe(12.75);
+    expect($ingredient->cost_per_unit->dollars())->toBe(12.75);
 });

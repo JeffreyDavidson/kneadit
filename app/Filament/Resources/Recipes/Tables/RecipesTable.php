@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Recipes\Tables;
 
 use App\Filament\Actions\SlideOverEditAction;
+use App\Filament\Tables\Columns\MoneyColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
@@ -32,8 +33,7 @@ class RecipesTable
                     ->formatStateUsing(fn (?int $state) => $state ? $state . ' min' : '-')
                     ->sortable(),
 
-                TextColumn::make('cost')
-                    ->money('USD')
+                MoneyColumn::make('cost')
                     ->sortable(),
 
                 TextColumn::make('ingredients')

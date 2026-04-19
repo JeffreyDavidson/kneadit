@@ -86,7 +86,7 @@ class PricingEngine extends Page
         // Pull cost from recipe if available
         $recipe = $product->recipes->first();
         if ($recipe) {
-            $this->ingredientCost = (float) ($recipe->cost ?? $product->cost ?? 0);
+            $this->ingredientCost = $recipe->cost?->dollars() ?? (float) ($product->cost ?? 0);
             $this->prepTimeMinutes = (int) ($recipe->prep_time_minutes ?? 0);
         } else {
             $this->ingredientCost = (float) ($product->cost ?? 0);
