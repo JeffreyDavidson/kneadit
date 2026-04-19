@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\CateringInquiries\Schemas;
 
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Filament\Forms\Components\MoneyInput;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -49,9 +50,7 @@ class CateringInquiryForm
                         ->numeric()
                         ->required()
                         ->minValue(1),
-                    TextInput::make('budget')
-                        ->numeric()
-                        ->prefix('$')
+                    MoneyInput::make('budget')
                         ->placeholder('Optional'),
                     Textarea::make('details')
                         ->required()
@@ -74,9 +73,7 @@ class CateringInquiryForm
                         ->options(CateringInquiryStatus::class)
                         ->default(CateringInquiryStatus::Inquiry)
                         ->required(),
-                    TextInput::make('quoted_amount')
-                        ->numeric()
-                        ->prefix('$')
+                    MoneyInput::make('quoted_amount')
                         ->placeholder('Enter quote amount'),
                     Textarea::make('notes')
                         ->columnSpanFull()

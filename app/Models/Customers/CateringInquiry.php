@@ -2,6 +2,7 @@
 
 namespace App\Models\Customers;
 
+use App\Casts\MoneyCast;
 use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Customers\CateringInquiryStatus;
@@ -22,6 +23,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry query()
  *
+ * @property \App\ValueObjects\Money|null $budget
+ * @property \App\ValueObjects\Money|null $quoted_amount
+ *
  * @mixin \Eloquent
  */
 #[Fillable('customer_name', 'customer_email', 'customer_phone', 'event_type', 'event_date', 'guest_count', 'budget', 'details', 'dietary_requirements', 'venue_address', 'status', 'quoted_amount', 'notes')]
@@ -37,8 +41,8 @@ class CateringInquiry extends Model
             'status' => CateringInquiryStatus::class,
             'event_date' => 'date',
             'guest_count' => 'integer',
-            'budget' => 'decimal:2',
-            'quoted_amount' => 'decimal:2',
+            'budget' => MoneyCast::class,
+            'quoted_amount' => MoneyCast::class,
             'customer_phone' => PhoneNumberCast::class,
             'details' => StripTagsCast::class,
             'dietary_requirements' => StripTagsCast::class,
