@@ -26,6 +26,22 @@ class CustomerFactory extends Factory
     }
 
     /**
+     * Customer has a verified email.
+     */
+    public function verified(): static
+    {
+        return $this->state(fn (array $attributes) => ['email_verified_at' => now()]);
+    }
+
+    /**
+     * Customer has not verified their email.
+     */
+    public function unverified(): static
+    {
+        return $this->state(fn (array $attributes) => ['email_verified_at' => null]);
+    }
+
+    /**
      * Customer has a birthday set.
      */
     public function withBirthday(): static

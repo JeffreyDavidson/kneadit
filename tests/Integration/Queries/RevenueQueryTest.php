@@ -12,8 +12,8 @@ beforeEach(fn () => setUpTenantTest());
 
 test('total returns revenue for date range', function () {
     Order::factory()->paid()->create(['delivery_date' => now(), 'total' => 50, 'status' => OrderStatus::Confirmed]);
-    Order::factory()->paid()->create(['delivery_date' => now(), 'total' => 30, 'status' => OrderStatus::Confirmed]);
-    Order::factory()->paid()->create(['delivery_date' => now()->subMonth(), 'total' => 100, 'status' => OrderStatus::Confirmed]);
+    Order::factory()->paid()->withDeliveryDate(now())->confirmed()->create(['total' => 30]);
+    Order::factory()->paid()->withDeliveryDate(now()->subMonth())->confirmed()->create(['total' => 100]);
 
     $range = [now()->startOfWeek(), now()->endOfWeek()];
 
@@ -21,9 +21,9 @@ test('total returns revenue for date range', function () {
 });
 
 test('orderCount returns number of active orders in date range', function () {
-    Order::factory()->create(['delivery_date' => now(), 'status' => OrderStatus::Confirmed]);
-    Order::factory()->create(['delivery_date' => now(), 'status' => OrderStatus::Pending]);
-    Order::factory()->create(['delivery_date' => now(), 'status' => OrderStatus::Delivered]);
+    Order::factory()->withDeliveryDate(now())->confirmed()->create();
+    Order::factory()->withDeliveryDate(now())->pending()->create();
+    Order::factory()->withDeliveryDate(now())->create(['status' => OrderStatus::Delivered]);
 
     $range = [now()->startOfWeek(), now()->endOfWeek()];
 
@@ -31,8 +31,8 @@ test('orderCount returns number of active orders in date range', function () {
 });
 
 test('orderCount excludes cancelled orders', function () {
-    Order::factory()->create(['delivery_date' => now(), 'status' => OrderStatus::Confirmed]);
-    Order::factory()->cancelled()->create(['delivery_date' => now()]);
+    Order::factory()->withDeliveryDate(now())->confirmed()->create();
+    Order::factory()->cancelled()->withDeliveryDate(now())->create();
 
     $range = [now()->startOfWeek(), now()->endOfWeek()];
 
@@ -40,8 +40,8 @@ test('orderCount excludes cancelled orders', function () {
 });
 
 test('orderCount excludes orders outside date range', function () {
-    Order::factory()->create(['delivery_date' => now(), 'status' => OrderStatus::Confirmed]);
-    Order::factory()->create(['delivery_date' => now()->subMonth(), 'status' => OrderStatus::Confirmed]);
+    Order::factory()->withDeliveryDate(now())->confirmed()->create();
+    Order::factory()->withDeliveryDate(now()->subMonth())->confirmed()->create();
 
     $range = [now()->startOfWeek(), now()->endOfWeek()];
 
@@ -49,8 +49,8 @@ test('orderCount excludes orders outside date range', function () {
 });
 
 test('orderCount accepts DateRange value object', function () {
-    Order::factory()->create(['delivery_date' => now(), 'status' => OrderStatus::Confirmed]);
-    Order::factory()->create(['delivery_date' => now(), 'status' => OrderStatus::Pending]);
+    Order::factory()->withDeliveryDate(now())->confirmed()->create();
+    Order::factory()->withDeliveryDate(now())->pending()->create();
 
     $range = new DateRange(now()->subDay(), now()->addDay());
 

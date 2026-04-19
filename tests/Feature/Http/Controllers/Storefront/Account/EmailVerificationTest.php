@@ -34,7 +34,7 @@ test('verification email is sent after registration', function () {
 
 test('a signed verification URL marks the email verified and redirects to the dashboard', function () {
     Event::fake();
-    $customer = Customer::factory()->withPassword()->create(['email_verified_at' => null]);
+    $customer = Customer::factory()->withPassword()->unverified()->create();
 
     $url = URL::temporarySignedRoute(
         'account.email.verify',
@@ -52,7 +52,7 @@ test('a signed verification URL marks the email verified and redirects to the da
 });
 
 test('an unsigned verification URL is rejected', function () {
-    $customer = Customer::factory()->withPassword()->create(['email_verified_at' => null]);
+    $customer = Customer::factory()->withPassword()->unverified()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')
@@ -63,7 +63,7 @@ test('an unsigned verification URL is rejected', function () {
 });
 
 test('a verification URL with a mismatched id is rejected', function () {
-    $customer = Customer::factory()->withPassword()->create(['email_verified_at' => null]);
+    $customer = Customer::factory()->withPassword()->unverified()->create();
 
     $url = URL::temporarySignedRoute(
         'account.email.verify',
@@ -80,7 +80,7 @@ test('a verification URL with a mismatched id is rejected', function () {
 
 test('the resend route sends another verification email', function () {
     Notification::fake();
-    $customer = Customer::factory()->withPassword()->create(['email_verified_at' => null]);
+    $customer = Customer::factory()->withPassword()->unverified()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->actingAs($customer, 'customer')

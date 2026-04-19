@@ -30,7 +30,7 @@ test('sitemap returns response with xml content type', function () {
 
 test('sitemap queries only published posts', function () {
     $published = BlogPost::factory()->published()->create();
-    BlogPost::factory()->create(['is_published' => false]);
+    BlogPost::factory()->draft()->create();
 
     // Test the query logic directly since the Blade template has a
     // compilation issue with <?xml when short_open_tag is enabled
@@ -56,7 +56,7 @@ test('sitemap includes all published posts ordered by published_at desc', functi
 });
 
 test('sitemap returns empty post list when no published posts exist', function () {
-    BlogPost::factory()->count(2)->create(['is_published' => false]);
+    BlogPost::factory()->draft()->count(2)->create();
 
     $posts = BlogPost::query()->published()->orderByDesc('published_at')->get();
 

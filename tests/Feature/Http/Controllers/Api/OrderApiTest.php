@@ -9,7 +9,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('can create order via API and receive JSON:API envelope', function () {
     Mail::fake();
-    $product = Product::factory()->create(['is_active' => true]);
+    $product = Product::factory()->active()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->postJson('/api/orders', [

@@ -23,7 +23,7 @@ beforeEach(function () {
 
 test('published scope returns only published posts with past published_at', function () {
     BlogPost::factory()->published()->create();
-    BlogPost::factory()->create(['is_published' => false]);
+    BlogPost::factory()->draft()->create();
     BlogPost::factory()->create([
         'is_published' => true,
         'published_at' => now()->addDay(),
@@ -46,8 +46,8 @@ test('published scope excludes posts with null published_at', function () {
 });
 
 test('inCategory filters posts by category', function () {
-    BlogPost::factory()->create(['category' => BlogPostCategory::Tips]);
-    BlogPost::factory()->create(['category' => BlogPostCategory::News]);
+    BlogPost::factory()->inCategory(BlogPostCategory::Tips)->create();
+    BlogPost::factory()->inCategory(BlogPostCategory::News)->create();
 
     $results = BlogPost::query()->inCategory(BlogPostCategory::Tips)->get();
 
@@ -55,9 +55,9 @@ test('inCategory filters posts by category', function () {
 });
 
 test('relatedTo returns posts in the same category excluding the given post', function () {
-    $post = BlogPost::factory()->create(['category' => BlogPostCategory::Guides]);
-    $related = BlogPost::factory()->create(['category' => BlogPostCategory::Guides]);
-    BlogPost::factory()->create(['category' => BlogPostCategory::News]);
+    $post = BlogPost::factory()->inCategory(BlogPostCategory::Guides)->create();
+    $related = BlogPost::factory()->inCategory(BlogPostCategory::Guides)->create();
+    BlogPost::factory()->inCategory(BlogPostCategory::News)->create();
 
     $results = BlogPost::query()->relatedTo($post)->get();
 
@@ -66,8 +66,8 @@ test('relatedTo returns posts in the same category excluding the given post', fu
 });
 
 test('relatedTo respects the limit parameter', function () {
-    $post = BlogPost::factory()->create(['category' => BlogPostCategory::Tips]);
-    BlogPost::factory()->count(5)->create(['category' => BlogPostCategory::Tips]);
+    $post = BlogPost::factory()->inCategory(BlogPostCategory::Tips)->create();
+    BlogPost::factory()->inCategory(BlogPostCategory::Tips)->count(5)->create();
 
     $results = BlogPost::query()->relatedTo($post, 2)->get();
 
@@ -81,7 +81,7 @@ test('forListing returns published posts ordered by published_at descending', fu
     $newer = BlogPost::factory()->published()->create([
         'published_at' => now()->subDay(),
     ]);
-    BlogPost::factory()->create(['is_published' => false]);
+    BlogPost::factory()->draft()->create();
 
     $results = BlogPost::query()->forListing()->get();
 
@@ -91,8 +91,8 @@ test('forListing returns published posts ordered by published_at descending', fu
 });
 
 test('forListing filters by category when provided', function () {
-    BlogPost::factory()->published()->create(['category' => BlogPostCategory::Tips]);
-    BlogPost::factory()->published()->create(['category' => BlogPostCategory::News]);
+    BlogPost::factory()->published()->inCategory(BlogPostCategory::Tips)->create();
+    BlogPost::factory()->published()->inCategory(BlogPostCategory::News)->create();
 
     $results = BlogPost::query()->forListing('tips')->get();
 
@@ -100,8 +100,8 @@ test('forListing filters by category when provided', function () {
 });
 
 test('forListing ignores category filter when set to all', function () {
-    BlogPost::factory()->published()->create(['category' => BlogPostCategory::Tips]);
-    BlogPost::factory()->published()->create(['category' => BlogPostCategory::News]);
+    BlogPost::factory()->published()->inCategory(BlogPostCategory::Tips)->create();
+    BlogPost::factory()->published()->inCategory(BlogPostCategory::News)->create();
 
     $results = BlogPost::query()->forListing('all')->get();
 
@@ -109,8 +109,8 @@ test('forListing ignores category filter when set to all', function () {
 });
 
 test('forListing ignores invalid category string', function () {
-    BlogPost::factory()->published()->create(['category' => BlogPostCategory::Tips]);
-    BlogPost::factory()->published()->create(['category' => BlogPostCategory::News]);
+    BlogPost::factory()->published()->inCategory(BlogPostCategory::Tips)->create();
+    BlogPost::factory()->published()->inCategory(BlogPostCategory::News)->create();
 
     $results = BlogPost::query()->forListing('nonexistent')->get();
 

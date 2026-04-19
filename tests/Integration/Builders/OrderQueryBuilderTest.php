@@ -32,7 +32,7 @@ test('unpaid scope returns only unpaid orders', function () {
 });
 
 test('pending scope returns only pending orders', function () {
-    Order::factory()->create(['status' => OrderStatus::Pending]);
+    Order::factory()->pending()->create();
     Order::factory()->confirmed()->create();
 
     $results = Order::query()->pending()->get();
@@ -43,7 +43,7 @@ test('pending scope returns only pending orders', function () {
 
 test('ready scope returns only ready orders', function () {
     Order::factory()->ready()->create();
-    Order::factory()->create(['status' => OrderStatus::Pending]);
+    Order::factory()->pending()->create();
 
     $results = Order::query()->ready()->get();
 
@@ -52,7 +52,7 @@ test('ready scope returns only ready orders', function () {
 });
 
 test('active scope excludes cancelled orders', function () {
-    Order::factory()->create(['status' => OrderStatus::Pending]);
+    Order::factory()->pending()->create();
     Order::factory()->confirmed()->create();
     Order::factory()->cancelled()->create();
 

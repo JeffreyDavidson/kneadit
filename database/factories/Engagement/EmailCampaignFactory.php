@@ -29,6 +29,13 @@ class EmailCampaignFactory extends Factory
         ];
     }
 
+    public function draft(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => EmailCampaignStatus::Draft,
+        ]);
+    }
+
     public function scheduled(): static
     {
         return $this->state(fn (array $attributes) => [

@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('active scope returns only active coupons', function () {
-    $active = Coupon::factory()->create(['is_active' => true]);
+    $active = Coupon::factory()->active()->create();
     Coupon::factory()->inactive()->create();
 
     $results = Coupon::query()->active()->get();
@@ -32,7 +32,7 @@ test('isValid method agrees with valid scope', function () {
     $valid = Coupon::factory()->create();
     $expired = Coupon::factory()->expired()->create();
     $inactive = Coupon::factory()->inactive()->create();
-    $maxedOut = Coupon::factory()->create(['max_uses' => 1, 'used_count' => 1]);
+    $maxedOut = Coupon::factory()->maxedOut()->create();
 
     $scopeIds = Coupon::query()->valid()->pluck('id')->sort()->values();
     $methodIds = Coupon::all()
