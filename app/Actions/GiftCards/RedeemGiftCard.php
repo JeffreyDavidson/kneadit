@@ -18,11 +18,11 @@ class RedeemGiftCard
                 return GiftCardRedemptionResult::failed('This gift card is not valid.');
             }
 
-            if ($amount > (float) $card->current_balance) {
-                $amount = (float) $card->current_balance;
+            if ($amount > $card->current_balance->dollars()) {
+                $amount = $card->current_balance->dollars();
             }
 
-            $card->decrement('current_balance', $amount);
+            GiftCard::query()->whereKey($card->id)->decrement('current_balance', $amount);
 
             $card->transactions()->create([
                 'amount' => -$amount,
@@ -32,7 +32,7 @@ class RedeemGiftCard
                 'created_at' => now(),
             ]);
 
-            return GiftCardRedemptionResult::redeemed($amount, (float) $card->refresh()->current_balance);
+            return GiftCardRedemptionResult::redeemed($amount, $card->refresh()->current_balance->dollars());
         });
     }
 }

@@ -40,7 +40,7 @@ test('can edit a gift card via table action', function () {
         ->callAction(TestAction::make('edit')->table($giftCard), data: [
             'purchaser_name' => 'Updated Name',
             'purchaser_email' => $giftCard->purchaser_email,
-            'initial_balance' => $giftCard->initial_balance,
+            'initial_balance' => $giftCard->initial_balance->dollars(),
         ])
         ->assertHasNoFormErrors();
 
@@ -72,7 +72,7 @@ test('edit gift card validates required fields', function (array $data, array $e
         ->callAction(TestAction::make('edit')->table($giftCard), data: [
             'purchaser_name' => $giftCard->purchaser_name,
             'purchaser_email' => $giftCard->purchaser_email,
-            'initial_balance' => $giftCard->initial_balance,
+            'initial_balance' => $giftCard->initial_balance->dollars(),
             ...$data,
         ])
         ->assertHasFormErrors($errors);
@@ -95,8 +95,9 @@ test('can create a gift card via header action', function () {
     expect($giftCard)
         ->purchaser_name->toBe('Jane Doe')
         ->purchaser_email->toBe('jane@example.com')
-        ->initial_balance->toBe('50.00')
         ->code->not->toBeNull();
+
+    expect($giftCard->initial_balance->dollars())->toBe(50.0);
 });
 
 test('can filter gift cards by depleted status', function () {

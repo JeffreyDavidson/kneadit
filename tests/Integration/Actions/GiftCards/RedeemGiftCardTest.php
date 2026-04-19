@@ -18,7 +18,7 @@ test('redeems gift card and decrements balance', function () {
 
     expect($result->success)->toBeTrue()
         ->and($result->amountApplied)->toEqual(30.0)
-        ->and($card->refresh()->current_balance)->toEqual(70.0);
+        ->and($card->refresh()->current_balance->dollars())->toEqual(70.0);
 });
 
 test('redemption caps at available balance', function () {
@@ -31,5 +31,5 @@ test('redemption caps at available balance', function () {
 
     expect($result->success)->toBeTrue()
         ->and($result->amountApplied)->toEqual(20.0)
-        ->and($card->refresh()->current_balance)->toEqual(0.0);
+        ->and($card->refresh()->current_balance->dollars())->toEqual(0.0);
 });

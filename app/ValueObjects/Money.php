@@ -3,12 +3,32 @@
 namespace App\ValueObjects;
 
 use Illuminate\Support\Number;
+use JsonSerializable;
+use Livewire\Wireable;
+use Stringable;
 
-final readonly class Money
+final readonly class Money implements JsonSerializable, Stringable, Wireable
 {
     private function __construct(
         private int $amountInCents,
     ) {}
+
+    public function jsonSerialize(): float
+    {
+        return $this->dollars();
+    }
+
+    /** @return array{cents: int} */
+    public function toLivewire(): array
+    {
+        return ['cents' => $this->amountInCents];
+    }
+
+    /** @param array{cents: int} $value */
+    public static function fromLivewire(mixed $value): self
+    {
+        return new self((int) $value['cents']);
+    }
 
     public static function fromCents(int $cents): self
     {

@@ -3,6 +3,7 @@
 namespace App\Models\Financial;
 
 use App\Builders\Financial\GiftCardQueryBuilder;
+use App\Casts\MoneyCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Financial\GiftCardStatus;
 use App\Observers\LogsActivityObserver;
@@ -28,6 +29,8 @@ use Illuminate\Support\Carbon;
  * @method static GiftCardQueryBuilder|GiftCard usable()
  *
  * @property Carbon|null $expires_at
+ * @property \App\ValueObjects\Money $initial_balance
+ * @property \App\ValueObjects\Money $current_balance
  *
  * @mixin \Eloquent
  */
@@ -42,8 +45,8 @@ class GiftCard extends Model
     protected function casts(): array
     {
         return [
-            'initial_balance' => 'decimal:2',
-            'current_balance' => 'decimal:2',
+            'initial_balance' => MoneyCast::class,
+            'current_balance' => MoneyCast::class,
             'is_active' => 'boolean',
             'expires_at' => 'date',
             'message' => StripTagsCast::class,
@@ -77,7 +80,7 @@ class GiftCard extends Model
                 if ($this->expires_at && $this->expires_at->isPast()) {
                     return GiftCardStatus::Expired;
                 }
-                if ((float) $this->current_balance <= 0) {
+                if (! $this->current_balance->isPositive()) {
                     return GiftCardStatus::Depleted;
                 }
 

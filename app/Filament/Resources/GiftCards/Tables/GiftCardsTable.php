@@ -4,6 +4,7 @@ namespace App\Filament\Resources\GiftCards\Tables;
 
 use App\Enums\Financial\GiftCardStatus;
 use App\Filament\Actions\SlideOverEditAction;
+use App\Filament\Tables\Columns\MoneyColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
@@ -23,12 +24,10 @@ class GiftCardsTable
                     ->sortable()
                     ->fontFamily('mono'),
 
-                TextColumn::make('initial_balance')
-                    ->money('USD')
+                MoneyColumn::make('initial_balance')
                     ->sortable(),
 
-                TextColumn::make('current_balance')
-                    ->money('USD')
+                MoneyColumn::make('current_balance')
                     ->sortable(),
 
                 TextColumn::make('purchaser_name')

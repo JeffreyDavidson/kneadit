@@ -63,7 +63,7 @@ test('restores gift card balance and creates refund transaction', function () {
 
     app(ReverseOrderDiscounts::class)($order, 'Order cancelled');
 
-    expect($giftCard->refresh()->current_balance)->toBe('50.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(50.00);
     expect(GiftCardTransaction::query()
         ->where('order_id', $order->id)
         ->where('type', GiftCardTransactionType::Refund)
@@ -100,7 +100,7 @@ test('reverses both coupon and gift card on same order', function () {
     app(ReverseOrderDiscounts::class)($order, 'Order cancelled');
 
     expect($coupon->refresh()->used_count)->toBe(0);
-    expect($giftCard->refresh()->current_balance)->toBe('50.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(50.00);
 });
 
 test('does nothing for order without discounts', function () {
@@ -161,7 +161,7 @@ test('gift card reversal is idempotent when called twice', function () {
     app(ReverseOrderDiscounts::class)($order, 'Order cancelled');
     app(ReverseOrderDiscounts::class)($order, 'Order cancelled');
 
-    expect($giftCard->refresh()->current_balance)->toBe('50.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(50.00);
     expect(GiftCardTransaction::query()
         ->where('order_id', $order->id)
         ->where('type', GiftCardTransactionType::Refund)
