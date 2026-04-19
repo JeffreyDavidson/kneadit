@@ -31,3 +31,15 @@ test('money directive formats large amount with comma separator', function () {
 
     expect($result)->toBe('$1,234.50');
 });
+
+test('money directive handles Money value object instances', function () {
+    $result = Blade::render('@money($amount)', ['amount' => App\ValueObjects\Money::fromDollars(42.50)]);
+
+    expect($result)->toBe('$42.50');
+});
+
+test('money directive handles Money zero instance', function () {
+    $result = Blade::render('@money($amount)', ['amount' => App\ValueObjects\Money::zero()]);
+
+    expect($result)->toBe('$0.00');
+});

@@ -57,3 +57,36 @@ test('money fromDollars accepts string input', function () {
     expect($money->cents())->toBe(1999)
         ->and($money->dollars())->toBe(19.99);
 });
+
+test('money zero returns zero-value Money instance', function () {
+    $zero = Money::zero();
+
+    expect($zero->cents())->toBe(0)
+        ->and($zero->isZero())->toBeTrue();
+});
+
+test('money equals compares cents exactly', function () {
+    $a = Money::fromDollars(10.00);
+    $b = Money::fromDollars(10.00);
+    $c = Money::fromCents(1001);
+
+    expect($a->equals($b))->toBeTrue()
+        ->and($a->equals($c))->toBeFalse();
+});
+
+test('money min returns the smaller of two values', function () {
+    $small = Money::fromDollars(5.00);
+    $big = Money::fromDollars(10.00);
+
+    expect($small->min($big))->toBe($small)
+        ->and($big->min($small))->toBe($small)
+        ->and($small->min($small))->toBe($small);
+});
+
+test('money max returns the larger of two values', function () {
+    $small = Money::fromDollars(5.00);
+    $big = Money::fromDollars(10.00);
+
+    expect($small->max($big))->toBe($big)
+        ->and($big->max($small))->toBe($big);
+});
