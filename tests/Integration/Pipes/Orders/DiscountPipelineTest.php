@@ -59,7 +59,7 @@ test('order with coupon stores discount_amount and creates coupon transaction', 
 });
 
 test('order with gift card stores gift_card_id and gift_card_amount', function () {
-    $giftCard = GiftCard::factory()->create(['initial_balance' => 50.00, 'current_balance' => 50.00]);
+    $giftCard = GiftCard::factory()->withBalance(50.00)->create();
 
     $order = createOrderWith(['gift_card_id' => $giftCard->id]);
 
@@ -79,7 +79,7 @@ test('order with gift card stores gift_card_id and gift_card_amount', function (
 
 test('order with both coupon and gift card applies coupon first then gift card', function () {
     $coupon = Coupon::factory()->fixed()->create(['value' => 10.00]);
-    $giftCard = GiftCard::factory()->create(['initial_balance' => 50.00, 'current_balance' => 50.00]);
+    $giftCard = GiftCard::factory()->withBalance(50.00)->create();
 
     $order = createOrderWith([
         'coupon_id' => $coupon->id,
@@ -105,7 +105,7 @@ test('order with both coupon and gift card applies coupon first then gift card',
 });
 
 test('gift card with insufficient balance applies partial amount', function () {
-    $giftCard = GiftCard::factory()->create(['initial_balance' => 15.00, 'current_balance' => 15.00]);
+    $giftCard = GiftCard::factory()->withBalance(15.00)->create();
 
     $order = createOrderWith(['gift_card_id' => $giftCard->id]);
 

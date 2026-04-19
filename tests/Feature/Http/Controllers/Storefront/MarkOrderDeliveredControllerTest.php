@@ -11,7 +11,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('it marks an order as delivered', function () {
     $user = User::factory()->create();
-    $order = Order::factory()->create(['status' => OrderStatus::Ready]);
+    $order = Order::factory()->ready()->create();
 
     actingAs($user);
 

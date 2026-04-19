@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('active scope returns only active products', function () {
-    $active = Product::factory()->create(['is_active' => true]);
+    $active = Product::factory()->active()->create();
     Product::factory()->inactive()->create();
 
     $results = Product::query()->active()->get();

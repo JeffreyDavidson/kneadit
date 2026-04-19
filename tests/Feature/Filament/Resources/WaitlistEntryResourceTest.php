@@ -39,8 +39,8 @@ test('can search waitlist entries by customer name', function () {
 });
 
 test('can filter waitlist entries by status', function () {
-    $waiting = WaitlistEntry::factory()->create(['status' => App\Enums\Customers\WaitlistStatus::Waiting]);
-    $notified = WaitlistEntry::factory()->create(['status' => App\Enums\Customers\WaitlistStatus::Notified]);
+    $waiting = WaitlistEntry::factory()->waiting()->create();
+    $notified = WaitlistEntry::factory()->notified()->create();
 
     Livewire::test(ListWaitlistEntries::class)
         ->filterTable('status', App\Enums\Customers\WaitlistStatus::Waiting->value)
@@ -103,15 +103,15 @@ test('can sort waitlist entries by customer name', function () {
 });
 
 test('navigation badge shows waiting entry count', function () {
-    WaitlistEntry::factory()->count(2)->create(['status' => App\Enums\Customers\WaitlistStatus::Waiting]);
-    WaitlistEntry::factory()->create(['status' => App\Enums\Customers\WaitlistStatus::Notified]);
+    WaitlistEntry::factory()->waiting()->count(2)->create();
+    WaitlistEntry::factory()->notified()->create();
 
     expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getNavigationBadge())
         ->toBe('2');
 });
 
 test('navigation badge returns null when no waiting entries', function () {
-    WaitlistEntry::factory()->create(['status' => App\Enums\Customers\WaitlistStatus::Notified]);
+    WaitlistEntry::factory()->notified()->create();
 
     expect(App\Filament\Resources\WaitlistEntries\WaitlistEntryResource::getNavigationBadge())
         ->toBeNull();

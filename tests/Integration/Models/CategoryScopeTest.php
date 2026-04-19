@@ -19,7 +19,7 @@ test('active scope returns only active categories', function () {
 });
 
 test('withFeaturedProducts scope eager loads only active featured products', function () {
-    $category = Category::factory()->create(['is_active' => true]);
+    $category = Category::factory()->active()->create();
     Product::factory()->create(['category_id' => $category->id, 'is_active' => true, 'is_featured' => true, 'name' => 'Featured']);
     Product::factory()->create(['category_id' => $category->id, 'is_active' => true, 'is_featured' => false, 'name' => 'Regular']);
     Product::factory()->create(['category_id' => $category->id, 'is_active' => false, 'is_featured' => true, 'name' => 'Inactive']);

@@ -76,8 +76,8 @@ test('can search email campaigns by subject', function () {
 });
 
 test('can filter email campaigns by status', function () {
-    $draft = EmailCampaign::factory()->create(['status' => EmailCampaignStatus::Draft]);
-    $sent = EmailCampaign::factory()->create(['status' => EmailCampaignStatus::Sent]);
+    $draft = EmailCampaign::factory()->draft()->create();
+    $sent = EmailCampaign::factory()->sent()->create();
 
     Livewire::test(ListEmailCampaigns::class)
         ->filterTable('status', EmailCampaignStatus::Draft->value)

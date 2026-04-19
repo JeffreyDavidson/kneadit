@@ -11,6 +11,7 @@ use App\Models\Orders\OrderMessage;
 use App\Models\Staff\User;
 use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 
 /**
  * @extends Factory<Order>
@@ -35,6 +36,14 @@ class OrderFactory extends Factory
             'total' => $subtotal,
             'delivery_date' => fake()->optional()->dateTimeBetween('+1 day', '+30 days'),
         ];
+    }
+
+    /**
+     * Order is pending.
+     */
+    public function pending(): static
+    {
+        return $this->state(fn (array $attributes) => ['status' => OrderStatus::Pending]);
     }
 
     /**
@@ -94,6 +103,14 @@ class OrderFactory extends Factory
     public function paid(): static
     {
         return $this->state(fn (array $attributes) => ['payment_status' => PaymentStatus::Paid]);
+    }
+
+    /**
+     * Order has a specific delivery date.
+     */
+    public function withDeliveryDate(Carbon $date): static
+    {
+        return $this->state(fn (array $attributes) => ['delivery_date' => $date]);
     }
 
     /**

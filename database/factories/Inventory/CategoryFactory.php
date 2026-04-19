@@ -32,6 +32,16 @@ class CategoryFactory extends Factory
     }
 
     /**
+     * Indicate that the category is active.
+     */
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => true,
+        ]);
+    }
+
+    /**
      * Indicate that the category is inactive.
      */
     public function inactive(): static
