@@ -188,7 +188,7 @@
                             <div>
                                 <p class="text-gray-600">Price difference:</p>
                                 @php
-                                    $priceDiff = $suggestedPrice - $selectedRecipe->product->price;
+                                    $priceDiff = $suggestedPrice - ($selectedRecipe->product->price?->dollars() ?? 0);
                                 @endphp
                                 <p class="text-lg font-bold {{ $priceDiff > 0 ? 'text-red-600' : 'text-green-600' }}">
                                     {{ $priceDiff > 0 ? '+' : '' }}${{ number_format($priceDiff, 2) }}

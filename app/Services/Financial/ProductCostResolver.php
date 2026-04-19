@@ -17,8 +17,8 @@ class ProductCostResolver
     {
         $product->loadMissing('recipes');
 
-        if ($product->cost && $product->cost > 0) {
-            return (float) $product->cost;
+        if ($product->cost?->isPositive()) {
+            return $product->cost->dollars();
         }
 
         $recipe = $product->recipes->first(fn (Recipe $r) => $r->cost?->isPositive() ?? false);

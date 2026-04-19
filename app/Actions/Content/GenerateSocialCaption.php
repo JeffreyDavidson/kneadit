@@ -4,7 +4,6 @@ namespace App\Actions\Content;
 
 use App\Models\Inventory\Product;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
 class GenerateSocialCaption
@@ -24,7 +23,7 @@ class GenerateSocialCaption
 
         return (string) Str::replace(
             ['{product}', '{price}', '{store_hashtag}'],
-            [$product->name, (string) Number::currency($product->price), $storeHashtag],
+            [$product->name, $product->price?->formatted() ?? '', $storeHashtag],
             (string) $template,
         );
     }

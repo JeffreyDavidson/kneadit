@@ -72,7 +72,7 @@ class DescriptionGenerator extends Page
             if ($product) {
                 $productName = $product->name;
                 $category = $product->category?->name;
-                $price = $product->price ? (float) $product->price : null;
+                $price = $product->price?->dollars();
             }
         }
 
