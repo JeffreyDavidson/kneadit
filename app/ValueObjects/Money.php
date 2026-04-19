@@ -20,6 +20,11 @@ final readonly class Money
         return new self((int) round((float) $dollars * 100));
     }
 
+    public static function zero(): self
+    {
+        return new self(0);
+    }
+
     public function cents(): int
     {
         return $this->amountInCents;
@@ -63,6 +68,21 @@ final readonly class Money
     public function greaterThan(self $other): bool
     {
         return $this->amountInCents > $other->amountInCents;
+    }
+
+    public function equals(self $other): bool
+    {
+        return $this->amountInCents === $other->amountInCents;
+    }
+
+    public function min(self $other): self
+    {
+        return $this->amountInCents <= $other->amountInCents ? $this : $other;
+    }
+
+    public function max(self $other): self
+    {
+        return $this->amountInCents >= $other->amountInCents ? $this : $other;
     }
 
     public function __toString(): string
