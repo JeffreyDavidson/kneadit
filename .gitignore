@@ -32,5 +32,6 @@ Thumbs.db
 database/tenant*
 test_central.sqlite*
 .env.backup-*
-.ai/
+.ai/*
+!.ai/skills/
 tests/Browser/Screenshots
