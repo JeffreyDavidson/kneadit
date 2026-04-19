@@ -13,7 +13,7 @@ test('expense deductible amount is calculated on save', function () {
         'business_percentage' => 75,
     ]);
 
-    expect((float) $expense->deductible_amount)->toBe(75.00);
+    expect($expense->deductible_amount->dollars())->toBe(75.00);
 });
 
 test('expense deductible amount recalculates on update', function () {
@@ -24,5 +24,5 @@ test('expense deductible amount recalculates on update', function () {
 
     $expense->update(['business_percentage' => 100]);
 
-    expect((float) $expense->fresh()->deductible_amount)->toBe(200.00);
+    expect($expense->fresh()->deductible_amount->dollars())->toBe(200.00);
 });
