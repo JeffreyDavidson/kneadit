@@ -5,6 +5,7 @@ namespace App\Actions\Orders;
 use App\Enums\Financial\CouponTransactionType;
 use App\Enums\Financial\GiftCardTransactionType;
 use App\Models\Financial\CouponTransaction;
+use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
 use App\Models\Orders\Order;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -63,6 +64,8 @@ class ReverseOrderDiscounts
             return;
         }
 
-        $order->giftCard?->increment('current_balance', $order->gift_card_amount);
+        if ($order->giftCard) {
+            GiftCard::query()->whereKey($order->giftCard->id)->increment('current_balance', $order->gift_card_amount);
+        }
     }
 }

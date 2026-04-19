@@ -14,7 +14,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Number;
 use Laravel\Pennant\Feature;
 
 class GiftCardResource extends Resource
@@ -75,7 +74,7 @@ class GiftCardResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Balance' => (string) Number::currency($record->current_balance),
+            'Balance' => $record->current_balance->formatted(),
             'Recipient' => $record->recipient_name ?? 'N/A',
             'Active' => $record->is_active ? 'Yes' : 'No',
         ];

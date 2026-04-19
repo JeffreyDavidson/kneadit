@@ -11,7 +11,7 @@ class AddGiftCardCredit
     public function __invoke(GiftCard $card, float $amount, string $notes = 'Credit added', ?int $orderId = null): GiftCard
     {
         return DB::transaction(function () use ($card, $amount, $notes, $orderId) {
-            $card->increment('current_balance', $amount);
+            GiftCard::query()->whereKey($card->id)->increment('current_balance', $amount);
 
             $card->transactions()->create([
                 'amount' => $amount,

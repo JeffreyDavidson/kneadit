@@ -175,7 +175,7 @@ test('cancellation restores gift card balance and creates refund transaction', f
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($giftCard->fresh()->current_balance)->toBe('50.00');
+    expect($giftCard->fresh()->current_balance->dollars())->toBe(50.00);
 
     $refund = GiftCardTransaction::query()
         ->where('order_id', $order->id)
@@ -183,6 +183,6 @@ test('cancellation restores gift card balance and creates refund transaction', f
         ->first();
 
     expect($refund)->not->toBeNull()
-        ->and($refund->amount)->toBe('20.00')
+        ->and($refund->amount->dollars())->toBe(20.00)
         ->and($refund->gift_card_id)->toBe($giftCard->id);
 });

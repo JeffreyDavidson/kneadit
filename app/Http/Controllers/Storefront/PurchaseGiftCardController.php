@@ -19,7 +19,7 @@ class PurchaseGiftCardController extends Controller
 
         return ApiResponse::success([
             'code' => $card->code,
-            'balance' => $card->current_balance,
+            'balance' => $card->current_balance->dollars(),
         ], $message);
     }
 }

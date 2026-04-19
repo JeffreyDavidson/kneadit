@@ -19,7 +19,7 @@ class CheckGiftCardBalanceController extends Controller
         }
 
         return ApiResponse::success([
-            'current_balance' => $card->current_balance,
+            'current_balance' => $card->current_balance->dollars(),
             'expires_at' => $card->expires_at?->format('M j, Y'),
             'is_usable' => $card->is_usable,
         ], 'Gift card balance retrieved successfully.');

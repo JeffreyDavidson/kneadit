@@ -2,6 +2,7 @@
 
 namespace App\Models\Financial;
 
+use App\Casts\MoneyCast;
 use App\Enums\Financial\GiftCardTransactionType;
 use App\Models\Orders\Order;
 use Database\Factories\Financial\GiftCardTransactionFactory;
@@ -21,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GiftCardTransaction query()
  *
  * @property Carbon|null $created_at
+ * @property \App\ValueObjects\Money $amount
  *
  * @mixin \Eloquent
  */
@@ -34,7 +36,7 @@ class GiftCardTransaction extends Model
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
+            'amount' => MoneyCast::class,
             'created_at' => 'datetime',
             'type' => GiftCardTransactionType::class,
         ];

@@ -69,7 +69,7 @@ test('order with gift card stores gift_card_id and gift_card_amount', function (
         ->gift_card_amount->toBe('40.00') // min($50 balance, $40 total)
         ->total->toBe('0.00');
 
-    expect($giftCard->refresh()->current_balance)->toBe('10.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(10.00);
 
     expect(GiftCardTransaction::query()
         ->where('order_id', $order->id)
@@ -94,7 +94,7 @@ test('order with both coupon and gift card applies coupon first then gift card',
         ->gift_card_amount->toBe('30.00')
         ->total->toBe('0.00');
 
-    expect($giftCard->refresh()->current_balance)->toBe('20.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(20.00);
     expect($coupon->refresh()->used_count)->toBe(1);
 
     expect(CouponTransaction::query()->where('order_id', $order->id)->count())->toBe(1);
@@ -114,7 +114,7 @@ test('gift card with insufficient balance applies partial amount', function () {
         ->gift_card_amount->toBe('15.00')
         ->total->toBe('25.00');
 
-    expect($giftCard->refresh()->current_balance)->toBe('0.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(0.00);
 });
 
 test('order without discounts has zero discount and gift card amounts', function () {
@@ -140,7 +140,7 @@ test('expired gift card is not applied', function () {
         ->gift_card_amount->toBe('0.00')
         ->total->toBe('40.00');
 
-    expect($giftCard->refresh()->current_balance)->toBe('50.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(50.00);
 });
 
 test('depleted gift card is not applied', function () {
