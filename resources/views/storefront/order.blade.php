@@ -85,7 +85,7 @@
                                         <span class="font-bold min-w-[1.5rem] text-center text-sm text-warm-100"
                                               x-text="getQuantity({{ $product->id }})"></span>
                                         <button type="button"
-                                                @click="incrementItem({{ $product->id }}, {{ $product->price }})"
+                                                @click="incrementItem({{ $product->id }}, {{ $product->price?->dollars() ?? 0 }})"
                                                 class="order-qty-btn">+</button>
                                     </div>
                                 </div>

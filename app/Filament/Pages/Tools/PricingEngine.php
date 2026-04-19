@@ -86,10 +86,10 @@ class PricingEngine extends Page
         // Pull cost from recipe if available
         $recipe = $product->recipes->first();
         if ($recipe) {
-            $this->ingredientCost = $recipe->cost?->dollars() ?? (float) ($product->cost ?? 0);
+            $this->ingredientCost = $recipe->cost?->dollars() ?? $product->cost?->dollars() ?? 0.0;
             $this->prepTimeMinutes = (int) ($recipe->prep_time_minutes ?? 0);
         } else {
-            $this->ingredientCost = (float) ($product->cost ?? 0);
+            $this->ingredientCost = $product->cost?->dollars() ?? 0.0;
             $this->prepTimeMinutes = 0;
         }
     }
@@ -99,7 +99,7 @@ class PricingEngine extends Page
         $currentPrice = null;
         if ($this->selectedProductId) {
             $product = Product::query()->find($this->selectedProductId);
-            $currentPrice = $product?->price ? (float) $product->price : null;
+            $currentPrice = $product?->price?->dollars();
         }
 
         $this->result = resolve(PricingRecommendationService::class)->recommend(
