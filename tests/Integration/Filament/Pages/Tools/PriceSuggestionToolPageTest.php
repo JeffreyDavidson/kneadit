@@ -39,7 +39,7 @@ test('mount generates margin comparisons', function () {
 
 test('updated selected recipe id loads recipe', function () {
     $product = Product::factory()->create(['price' => 10.00]);
-    $recipe = Recipe::factory()->create(['product_id' => $product->id, 'cost' => 3.00]);
+    $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
     test()->page->selectedRecipeId = $recipe->id;
     test()->page->updatedSelectedRecipeId();
@@ -64,7 +64,7 @@ test('generate margin comparisons empty when no recipe selected', function () {
 
 test('generate margin comparisons with recipe', function () {
     $product = Product::factory()->create(['price' => 10.00]);
-    $recipe = Recipe::factory()->create(['product_id' => $product->id, 'cost' => 3.00]);
+    $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
     test()->page->selectedRecipe = $recipe;
     test()->page->generateMarginComparisons();
@@ -79,7 +79,7 @@ test('get suggested price returns zero when no recipe', function () {
 
 test('get suggested price returns value for recipe with cost', function () {
     $product = Product::factory()->create(['price' => 10.00]);
-    $recipe = Recipe::factory()->create(['product_id' => $product->id, 'cost' => 3.00]);
+    $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
     test()->page->selectedRecipe = $recipe;
 
@@ -100,7 +100,7 @@ test('get price difference returns null when no recipe product', function () {
 
 test('get price difference returns data for valid recipe', function () {
     $product = Product::factory()->create(['price' => 10.00]);
-    $recipe = Recipe::factory()->create(['product_id' => $product->id, 'cost' => 3.00]);
+    $recipe = Recipe::factory()->for($product)->withCost(3.00)->create();
 
     test()->page->selectedRecipe = $recipe->load('product');
 

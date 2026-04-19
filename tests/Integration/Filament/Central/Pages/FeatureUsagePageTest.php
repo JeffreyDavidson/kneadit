@@ -13,15 +13,15 @@ test('has data returns false when no logs exist', function () {
 });
 
 test('has data returns true when logs exist', function () {
-    FeatureUsageLog::factory()->create(['feature' => 'orders', 'usage_count' => 5]);
+    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 5]);
 
     expect(test()->page->getHasData())->toBeTrue();
 });
 
 test('get most used feature returns feature with highest total', function () {
-    FeatureUsageLog::factory()->create(['feature' => 'orders', 'usage_count' => 10, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->create(['feature' => 'products', 'usage_count' => 50, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->create(['feature' => 'reviews', 'usage_count' => 3, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('products')->create(['usage_count' => 50, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('reviews')->create(['usage_count' => 3, 'date' => now()->toDateString()]);
 
     expect(test()->page->getMostUsedFeature())->toBe('products');
 });
@@ -31,8 +31,8 @@ test('get most used feature returns null when no logs', function () {
 });
 
 test('get least used feature returns feature with lowest total', function () {
-    FeatureUsageLog::factory()->create(['feature' => 'orders', 'usage_count' => 10, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->create(['feature' => 'reviews', 'usage_count' => 2, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('reviews')->create(['usage_count' => 2, 'date' => now()->toDateString()]);
 
     expect(test()->page->getLeastUsedFeature())->toBe('reviews');
 });
@@ -42,10 +42,10 @@ test('get least used feature returns null when no logs', function () {
 });
 
 test('get total interactions this month', function () {
-    FeatureUsageLog::factory()->create(['feature' => 'orders', 'usage_count' => 10, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->create(['feature' => 'products', 'usage_count' => 20, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('products')->create(['usage_count' => 20, 'date' => now()->toDateString()]);
     // Previous month should not count
-    FeatureUsageLog::factory()->create(['feature' => 'reviews', 'usage_count' => 99, 'date' => now()->subMonth()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('reviews')->create(['usage_count' => 99, 'date' => now()->subMonth()->toDateString()]);
 
     expect(test()->page->getTotalInteractionsThisMonth())->toBe(30);
 });
@@ -55,8 +55,8 @@ test('get total interactions this month returns zero when empty', function () {
 });
 
 test('get feature usage bars returns sorted collection', function () {
-    FeatureUsageLog::factory()->create(['feature' => 'orders', 'usage_count' => 10, 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->create(['feature' => 'products', 'usage_count' => 50, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('products')->create(['usage_count' => 50, 'date' => now()->toDateString()]);
 
     $bars = test()->page->getFeatureUsageBars();
 
@@ -72,7 +72,7 @@ test('get feature usage bars returns empty collection when no data', function ()
 });
 
 test('get heatmap data returns expected structure', function () {
-    FeatureUsageLog::factory()->create(['feature' => 'orders', 'usage_count' => 5, 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 5, 'date' => now()->toDateString()]);
 
     $data = test()->page->getHeatmapData();
 
@@ -104,9 +104,9 @@ test('get feature tenant breakdown returns empty when no feature selected', func
 });
 
 test('get feature tenant breakdown returns data for selected feature', function () {
-    FeatureUsageLog::factory()->create(['feature' => 'orders', 'usage_count' => 10, 'tenant_id' => 'bakery-1', 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->create(['feature' => 'orders', 'usage_count' => 5, 'tenant_id' => 'bakery-2', 'date' => now()->toDateString()]);
-    FeatureUsageLog::factory()->create(['feature' => 'products', 'usage_count' => 99, 'tenant_id' => 'bakery-1', 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 10, 'tenant_id' => 'bakery-1', 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('orders')->create(['usage_count' => 5, 'tenant_id' => 'bakery-2', 'date' => now()->toDateString()]);
+    FeatureUsageLog::factory()->forFeature('products')->create(['usage_count' => 99, 'tenant_id' => 'bakery-1', 'date' => now()->toDateString()]);
 
     test()->page->selectedFeature = 'orders';
     $breakdown = test()->page->getFeatureTenantBreakdown();
