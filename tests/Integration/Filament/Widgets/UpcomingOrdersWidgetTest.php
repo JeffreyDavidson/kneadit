@@ -38,8 +38,8 @@ test('get upcoming orders excludes orders beyond 3 days', function () {
 });
 
 test('get upcoming orders groups by date', function () {
-    Order::factory()->create(['delivery_date' => now()]);
-    Order::factory()->create(['delivery_date' => now()->addDay()]);
+    Order::factory()->withDeliveryDate(now())->create();
+    Order::factory()->withDeliveryDate(now()->addDay())->create();
 
     $orders = test()->widget->getUpcomingOrders();
 
@@ -47,7 +47,7 @@ test('get upcoming orders groups by date', function () {
 });
 
 test('get upcoming orders labels today correctly', function () {
-    Order::factory()->create(['delivery_date' => now()]);
+    Order::factory()->withDeliveryDate(now())->create();
 
     $orders = test()->widget->getUpcomingOrders();
     $todayKey = now()->format('Y-m-d');
@@ -58,7 +58,7 @@ test('get upcoming orders labels today correctly', function () {
 });
 
 test('get upcoming orders labels tomorrow correctly', function () {
-    Order::factory()->create(['delivery_date' => now()->addDay()]);
+    Order::factory()->withDeliveryDate(now()->addDay())->create();
 
     $orders = test()->widget->getUpcomingOrders();
     $tomorrowKey = now()->addDay()->format('Y-m-d');

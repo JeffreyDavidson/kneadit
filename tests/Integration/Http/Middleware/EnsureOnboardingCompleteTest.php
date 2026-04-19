@@ -164,6 +164,7 @@ test('passes through when onboarding is complete', function () {
         repeatReminderDays: 30,
         giftCardPresetAmounts: [10, 25, 50, 100],
         giftCardDefaultAmount: 25,
+        defaultDailyCapacity: 20,
     );
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);
 
@@ -264,6 +265,7 @@ test('redirects to onboarding when onboardingCompletedAt is null using TenantSet
         repeatReminderDays: 30,
         giftCardPresetAmounts: [10, 25, 50, 100],
         giftCardDefaultAmount: 25,
+        defaultDailyCapacity: 20,
     );
     app()->instance(App\Services\Settings\TenantSettings::class, $settings);
 

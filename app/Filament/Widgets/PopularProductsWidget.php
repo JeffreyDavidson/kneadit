@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\Orders\OrderStatus;
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Orders\OrderItem;
 use App\ValueObjects\DateRange;
 use Filament\Support\Icons\Heroicon;
@@ -10,10 +11,13 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PopularProductsWidget extends BaseWidget
 {
+    use CachesWidgetData;
+
     protected static ?int $sort = 4;
 
     protected static ?string $heading = 'Popular Products This Week';
@@ -27,25 +31,8 @@ class PopularProductsWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $range = DateRange::thisWeek();
-
         return $table
-            ->query(
-                OrderItem::query()
-                    ->join('orders', 'orders.id', '=', 'order_items.order_id')
-                    ->join('products', 'products.id', '=', 'order_items.product_id')
-                    ->where('orders.status', '!=', OrderStatus::Cancelled)
-                    ->whereBetween('orders.delivery_date', $range->toArray())
-                    ->select(
-                        'order_items.product_id',
-                        'products.name as product_name',
-                        DB::raw('SUM(order_items.quantity) as total_qty'),
-                        DB::raw('SUM(order_items.quantity * order_items.unit_price) as total_revenue'),
-                    )
-                    ->groupBy('order_items.product_id', 'products.name')
-                    ->orderByDesc('total_qty')
-                    ->limit(5),
-            )
+            ->records(fn (): Collection => $this->fetchTopProducts())
             ->columns([
                 TextColumn::make('product_name')
                     ->label('Product'),
@@ -58,5 +45,34 @@ class PopularProductsWidget extends BaseWidget
             ])
             ->emptyStateHeading('No orders this week yet')
             ->emptyStateIcon(Heroicon::OutlinedCake);
+    }
+
+    /** @return Collection<int, OrderItem> */
+    private function fetchTopProducts(): Collection
+    {
+        return $this->cached('main', [900, 1800], function (): Collection {
+            $range = DateRange::thisWeek();
+
+            return OrderItem::query()
+                ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                ->join('products', 'products.id', '=', 'order_items.product_id')
+                ->where('orders.status', '!=', OrderStatus::Cancelled)
+                ->whereBetween('orders.delivery_date', $range->toArray())
+                ->select(
+                    'order_items.product_id',
+                    'products.name as product_name',
+                    DB::raw('SUM(order_items.quantity) as total_qty'),
+                    DB::raw('SUM(order_items.quantity * order_items.unit_price) as total_revenue'),
+                )
+                ->groupBy('order_items.product_id', 'products.name')
+                ->orderByDesc('total_qty')
+                ->limit(5)
+                ->get();
+        });
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'popular_products';
     }
 }

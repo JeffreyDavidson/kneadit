@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Customers\WaitlistStatus;
 use App\Models\Customers\WaitlistEntry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -9,8 +8,8 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('waiting scope returns only entries with waiting status', function () {
-    $waiting = WaitlistEntry::factory()->create(['status' => WaitlistStatus::Waiting]);
-    WaitlistEntry::factory()->create(['status' => WaitlistStatus::Notified]);
+    $waiting = WaitlistEntry::factory()->waiting()->create();
+    WaitlistEntry::factory()->notified()->create();
 
     $results = WaitlistEntry::query()->waiting()->get();
 

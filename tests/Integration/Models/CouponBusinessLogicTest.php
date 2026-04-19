@@ -21,7 +21,7 @@ test('isValid returns false for expired coupon', function () {
 });
 
 test('isValid returns false when max uses reached', function () {
-    $coupon = Coupon::factory()->create(['max_uses' => 5, 'used_count' => 5]);
+    $coupon = Coupon::factory()->maxedOut(5)->create();
 
     expect(resolve(CouponService::class)->isValid($coupon))->toBeFalse();
 });

@@ -27,4 +27,20 @@ class RecipeFactory extends Factory
             'cost' => fake()->randomFloat(2, 2, 30),
         ];
     }
+
+    /**
+     * Recipe has a specific cost.
+     */
+    public function withCost(float $cost): static
+    {
+        return $this->state(fn (array $attributes) => ['cost' => $cost]);
+    }
+
+    /**
+     * Recipe is not linked to a product.
+     */
+    public function withoutProduct(): static
+    {
+        return $this->state(fn (array $attributes) => ['product_id' => null]);
+    }
 }

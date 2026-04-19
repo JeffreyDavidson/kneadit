@@ -10,7 +10,8 @@ test('it uses settings to resolve existing connect account', function () {
     $source = file_get_contents(app_path('Actions/Stripe/InitiateStripeConnect.php'));
 
     expect($source)
-        ->toContain("settings('stripe_connect_id')")
+        ->toContain("'stripe_connect_id'")
+        ->toContain('SettingsManager')
         ->toContain('accountLinks->create')
         ->toContain("'type' => 'account_onboarding'");
 });
@@ -22,7 +23,7 @@ test('it creates a new connect account when none exists', function () {
         ->toContain('accounts->create')
         ->toContain("'type' => 'standard'")
         ->toContain("'country' => 'US'")
-        ->toContain("settings(['stripe_connect_id' => \$account->id])");
+        ->toContain("->set('stripe_connect_id', \$account->id)");
 });
 
 test('it returns the account link url', function () {

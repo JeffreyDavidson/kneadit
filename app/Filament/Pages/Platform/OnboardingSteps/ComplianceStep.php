@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
 use App\Filament\Pages\Platform\Onboarding;
+use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
@@ -22,12 +23,14 @@ final class ComplianceStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
+        $manager = app(SettingsManager::class);
+
         return [
-            'cottage_food_state' => settings('cottage_food_state', ''),
-            'revenue_cap' => settings('revenue_cap', ''),
-            'license_number' => settings('license_number', ''),
-            'allergy_disclaimer' => settings('allergy_disclaimer', ''),
-            'acknowledged' => settings('compliance_acknowledged', '0') === '1',
+            'cottage_food_state' => $manager->get('cottage_food_state', ''),
+            'revenue_cap' => $manager->get('revenue_cap', ''),
+            'license_number' => $manager->get('license_number', ''),
+            'allergy_disclaimer' => $manager->get('allergy_disclaimer', ''),
+            'acknowledged' => $manager->get('compliance_acknowledged', '0') === '1',
         ];
     }
 
@@ -73,11 +76,13 @@ final class ComplianceStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        settings(['cottage_food_state' => $data['cottage_food_state']]);
-        settings(['revenue_cap' => $data['revenue_cap']]);
-        settings(['license_number' => $data['license_number']]);
-        settings(['allergy_disclaimer' => $data['allergy_disclaimer']]);
-        settings(['compliance_acknowledged' => $data['acknowledged'] ? '1' : '0']);
+        app(SettingsManager::class)->setMany([
+            'cottage_food_state' => $data['cottage_food_state'],
+            'revenue_cap' => $data['revenue_cap'],
+            'license_number' => $data['license_number'],
+            'allergy_disclaimer' => $data['allergy_disclaimer'],
+            'compliance_acknowledged' => $data['acknowledged'] ? '1' : '0',
+        ]);
     }
 
     /** @return array<string, string> */

@@ -26,6 +26,14 @@ class BusinessScheduleFactory extends Factory
     }
 
     /**
+     * Business is open on this day.
+     */
+    public function open(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_open' => true]);
+    }
+
+    /**
      * Business is closed on this day.
      */
     public function closed(): static

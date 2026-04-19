@@ -30,8 +30,8 @@ test('can render capacity limit table columns', function (string $column) {
 })->with(['max_orders']);
 
 test('can filter capacity limits by blocked status', function () {
-    $blocked = CapacityLimit::factory()->create(['is_blocked' => true]);
-    $open = CapacityLimit::factory()->create(['is_blocked' => false]);
+    $blocked = CapacityLimit::factory()->blocked()->create();
+    $open = CapacityLimit::factory()->open()->create();
 
     Livewire::test(ListCapacityLimits::class)
         ->filterTable('is_blocked', true)

@@ -9,7 +9,6 @@ use App\Models\Engagement\PageView;
 use App\Models\Engagement\Review;
 use App\Models\Orders\OrderItem;
 use App\Observers\LogsActivityObserver;
-use App\Presenters\ProductPresenter;
 use App\Support\ProfitMargin;
 use Database\Factories\Inventory\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -23,14 +22,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * @property-read Category|null $category
  * @property-read Collection<int, CustomerPhoto> $customerPhotos
  * @property-read int|null $customer_photos_count
  * @property-read float|null $margin
- * @property-read string|null $seasonal_badge
  * @property-read Collection<int, ProductImage> $images
  * @property-read int|null $images_count
  * @property-read Collection<int, OrderItem> $orderItems
@@ -95,26 +92,6 @@ class Product extends Model
     public function primaryImage(): HasOne
     {
         return $this->hasOne(ProductImage::class)->where('is_primary', true);
-    }
-
-    /** @return Attribute<string|null, never> */
-    protected function primaryImageUrl(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                $this->loadMissing('primaryImage');
-
-                if ($primary = $this->primaryImage) {
-                    return Storage::disk('public')->url($primary->path);
-                }
-
-                if ($this->image) {
-                    return Storage::disk('public')->url($this->image);
-                }
-
-                return null;
-            },
-        );
     }
 
     /**
@@ -187,30 +164,6 @@ class Product extends Model
     public function waitlistEntries(): HasMany
     {
         return $this->hasMany(ProductWaitlist::class);
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isInSeason(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                $this->loadMissing('seasonalItems');
-
-                if ($this->seasonalItems->isEmpty()) {
-                    return true;
-                }
-
-                return $this->seasonalItems->contains(fn (SeasonalItem $item) => $item->is_currently_available);
-            },
-        );
-    }
-
-    /** @return Attribute<string|null, never> */
-    protected function seasonalBadge(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => (new ProductPresenter($this))->seasonalBadge(),
-        );
     }
 
     /** @return Attribute<float|null, never> */

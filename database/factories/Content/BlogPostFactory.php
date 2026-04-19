@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Content;
 
+use App\Enums\Content\BlogPostCategory;
 use App\Models\Content\BlogPost;
 use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -32,6 +33,17 @@ class BlogPostFactory extends Factory
     }
 
     /**
+     * Post is a draft (not published).
+     */
+    public function draft(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_published' => false,
+            'published_at' => null,
+        ]);
+    }
+
+    /**
      * Post is published.
      */
     public function published(): static
@@ -40,5 +52,13 @@ class BlogPostFactory extends Factory
             'is_published' => true,
             'published_at' => now(),
         ]);
+    }
+
+    /**
+     * Post is in a specific category.
+     */
+    public function inCategory(BlogPostCategory $category): static
+    {
+        return $this->state(fn (array $attributes) => ['category' => $category]);
     }
 }

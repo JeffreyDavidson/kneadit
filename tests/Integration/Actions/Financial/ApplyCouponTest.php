@@ -6,7 +6,7 @@ use App\Models\Financial\Coupon;
 beforeEach(fn () => setUpTenantTest());
 
 test('increments coupon used count', function () {
-    $coupon = Coupon::factory()->create(['used_count' => 0]);
+    $coupon = Coupon::factory()->create();
 
     app(ApplyCoupon::class)($coupon);
 

@@ -9,15 +9,15 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('active scope returns only active products', function () {
-    Product::factory()->create(['is_active' => true]);
+    Product::factory()->active()->create();
     Product::factory()->inactive()->create();
 
     expect(Product::query()->active()->count())->toBe(1);
 });
 
 test('featured scope returns only featured products', function () {
-    Product::factory()->create(['is_active' => true, 'is_featured' => true]);
-    Product::factory()->create(['is_active' => true, 'is_featured' => false]);
+    Product::factory()->active()->featured()->create();
+    Product::factory()->active()->create();
 
     expect(Product::query()->featured()->count())->toBe(1);
 });

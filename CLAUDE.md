@@ -17,26 +17,16 @@
 - SSH to cold-moon and verify: `ssh forge@137.184.194.56 "cd /home/forge/getkneadit.app/current && php artisan tinker --execute='echo 1;'"`
 - `main` triggers production deploy — treat it with respect
 
-### 4. Filament 5 specifics
-- Form signature: `form(Schema $schema): Schema` — NOT `Form $form`
-- **NO** `Filament\Tables\Actions` namespace — use `Filament\Actions\*` for everything
-- **NO** `Filament\Forms\Get` / `Filament\Forms\Set` — use `Filament\Schemas\Components\Utilities\Get` and `Set`
-- **NO** `HasSlideOverForm` trait — it doesn't exist in Filament 5
-- Slide-overs: use `EditAction::make()->slideOver()` on tables + index-only page routes
-- BlogPosts are the ONLY resource with dedicated create/edit page routes (full pages, not slide-overs)
-- Sections in slide-over forms need `->columnSpanFull()` to fill width
-
-### 5. Don't mass-edit without understanding
+### 4. Don't mass-edit without understanding
 - Before changing 40+ files, verify the approach works on ONE file first
 - Check vendor source code, not assumptions or memory from older Filament versions
 - If unsure, ask Jeffrey rather than guessing
 
 ## Project Structure
-- Resources: `app/Filament/Resources/{Name}/` with separate `Schemas/`, `Tables/`, `Pages/` dirs
-- Some resources (LoyaltyRewards, CustomerPhotos, GalleryPhotos) have inline table config in the Resource file
-- Custom CSS: `public/css/filament-custom.css` (cache-busted via `?v=filemtime()`)
 - Server: cold-moon (`forge@137.184.194.56`), site at `/home/forge/getkneadit.app/current`
 - Server IP is configured in `config('services.forge.server_ip')` — don't hardcode it in PHP or Blade files
+
+> Filament resource/page structure and custom CSS conventions live in the `kneadit-filament-5` skill.
 
 ## Code Patterns
 
@@ -44,29 +34,10 @@
 - Controllers must be either **invokable** (`__invoke`) or **resourceful** (only standard resource methods)
 - Resource methods must follow standard order: `index`, `create`, `store`, `show`, `edit`, `update`, `destroy` (enforced by arch test)
 - Prefer splitting multi-method controllers into invokable controllers when each method serves a distinct purpose
-- **No direct `settings()` calls** — inject `TenantSettings` DTO via method injection
-- **No `Storage::url()` for hero images** — use `TenantSettings` computed methods (`heroImageUrl()`, etc.)
 - **No inline auth checks** (`abort_unless($user->role === ...)`) — use Gates or middleware
-- Pass `'settings' => $settings` to views; templates access via `$settings->propertyName`
-- `settingsPageContent()` calls remain in controllers (page-specific, not on TenantSettings)
 
-### TenantSettings DTO
-- `App\Services\Settings\TenantSettings` — readonly DTO loaded once per request (singleton)
-- Contains all shared tenant settings as typed properties (store info, branding, order config, etc.)
-- Computed methods: `heroImageUrl()`, `cateringHeroImageUrl()`, `loyaltyHeroImageUrl()`, `giftCardsHeroImageUrl()`, `storeLogoUrl()`, `defaultTagline()`, `leadTimeDays()`
-- Inject via method injection in controllers: `public function show(TenantSettings $settings)`
-- In closures/components where DI isn't available: `app(TenantSettings::class)`
-
-### Settings Managers
-- `AbstractSettingsManager` (`app/Services/Settings/AbstractSettingsManager.php`) provides shared get/set/loadAll/flushCache logic
-- `SettingsManager` (tenant-scoped) and `PlatformSettingsManager` extend it, implementing `cacheKey()` and `modelClass()`
-- New settings scopes should extend `AbstractSettingsManager`
-
-### Filament Pages
-- **Access control:** Use the `RequiresManagerRole` trait (`app/Filament/Concerns/RequiresManagerRole.php`) for pages requiring manager access. Pages that also need a feature flag override `canAccess()` using `static::hasManagerAccess() && Feature::active('...')`.
-- **Large pages:** When a Filament page exceeds ~200 lines of form/schema config, extract independent sections into static schema classes under a `Schemas/` subdirectory (e.g., `Schemas/PageContent/MenuTabSchema.php` with `public static function make(): Tab`). See `ManagePageContent` for the pattern.
-- **Business logic:** Extract DNS checking, API calls, image generation, and similar logic to service classes. Filament pages should be thin coordinators that call services and send notifications. See `CustomDomainService`, `AppIconGeneratorService`, `CaptionGeneratorService` for examples.
-- **Status transition actions:** Use a factory method for near-identical Filament table actions that vary only in name/label/icon/color/target. See `OrdersTable::statusTransitionAction()`.
+> Tenant settings injection rules (no `settings()`, no `Storage::url()` for hero images, etc.) live in the `kneadit-tenant-settings` skill.
+> Filament page conventions (access control, schema extraction, business logic placement) live in the `kneadit-filament-5` skill.
 
 ### Authorization
 - Platform-level abilities use Gates defined in `AppServiceProvider::boot()` (e.g., `platform-admin`)
@@ -81,16 +52,7 @@
 
 ### View Layer
 - **`@money()` Blade directive** — registered in `AppServiceProvider::boot()`, outputs `$X.XX`. Use for all monetary formatting in Blade; do NOT use for loyalty points or rating numbers.
-- **ViewModels (`app/ViewModels/`)** — encapsulate all data for a page. Controller builds the ViewModel and passes it as `$vm` to the view. See `ReviewsPageViewModel` as the established example.
-- **Presenters (`app/Presenters/`)** — wrap a single model to provide display-formatting methods. See `OrderTrackingPresenter` as the established example.
-- **Reusable Blade components (`components/storefront/`)** — shared markup with `@props` and named slots. See `product-card` as the established pattern.
-
-### Models
-- Models should ONLY contain: relationships, casts, scopes, and `Attribute`-style accessors
-- No business logic, static helpers, or complex calculations — extract to Services or Actions
-- Use Laravel 12 `Attribute::make(get: fn () => ...)` syntax, NOT legacy `get*Attribute()` methods
-- Use `#[ObservedBy]` attribute for observers, NOT `booted()` hooks
-- Use `#[UseEloquentBuilder]` attribute for custom query builders
+- Project-specific examples: `ReviewsPageViewModel` (ViewModel), `OrderTrackingPresenter` (Presenter), `components/storefront/product-card` (reusable Blade component).
 
 ### Scopes & Enums
 - Use `#[Scope]` attribute scopes or custom query builders for reusable query constraints — never repeat `where()` conditions inline
@@ -98,17 +60,6 @@
 - Cast enum columns in the model's `casts()` method
 - Use the `casts()` method (not `$casts` property) for consistency
 - Never use hardcoded strings when an enum exists — use the enum value/case directly
-
-### Mailables
-- Order status emails use a single `OrderStatusMail($order, OrderStatus $status)` — subject and view are resolved from the status via a `match` expression. Do NOT create individual mailable classes per status.
-- To add a new order status email: add a case to `OrderStatusMail::resolveSubject()` and create the Blade view at `emails.orders.order-{status}`.
-
-### Birthday Coupons
-- `BirthdayService::findOrCreateBirthdayCoupon()` generates deterministic codes (`BDAY-{customer_id}-{year}`) using `firstOrCreate` — safe to retry without creating duplicates.
-- The birthday program toggle (`birthdayProgramEnabled`) and coupon toggle (`birthdayCouponEnabled`) are separate — the program can send a birthday email without a coupon.
-
-### Code Reviews
-- Reviews must check both macro (architecture, extraction patterns) AND micro (dead code, missing enum casts, string-vs-enum mismatches, unreachable default arms, redundant `tryFrom()` on already-cast values)
 
 ### Extraction Guidelines
 - **Don't extract standard validation rules** into custom Rule classes. `['required', 'string', 'max:255']` in FormRequests is idiomatic Laravel — only create Rule classes for actual custom logic.
@@ -143,7 +94,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - php - 8.4
 - filament/filament (FILAMENT) - v5
 - laravel/cashier (CASHIER) - v16
-- laravel/framework (LARAVEL) - v12
+- laravel/framework (LARAVEL) - v13
 - laravel/pennant (PENNANT) - v1
 - laravel/prompts (PROMPTS) - v0
 - livewire/livewire (LIVEWIRE) - v4
@@ -168,9 +119,9 @@ This project has domain-specific skills available. You MUST activate the relevan
 - `pennant-development` — Use when working with Laravel Pennant the official Laravel feature flag package. Trigger whenever the query mentions Pennant by name or involves feature flags or feature toggles in a Laravel project. Tasks include defining feature flags checking whether features are active creating class based features in `app/Features` using Blade `@feature` directives scoping flags to users or teams building custom Pennant storage drivers protecting routes with feature flags testing feature flags with Pest or PHPUnit and implementing A B testing or gradual rollouts with feature flags. Do not trigger for generic Laravel configuration authorization policies authentication or non Pennant feature management systems.
 - `pest-testing` — Use this skill for Pest PHP testing in Laravel projects only. Trigger whenever any test is being written, edited, fixed, or refactored — including fixing tests that broke after a code change, adding assertions, converting PHPUnit to Pest, adding datasets, and TDD workflows. Always activate when the user asks how to write something in Pest, mentions test files or directories (tests/Feature, tests/Unit, tests/Browser), or needs browser testing, smoke testing multiple pages for JS errors, or architecture tests. Covers: test()/it()/expect() syntax, datasets, mocking, browser testing (visit/click/fill), smoke testing, arch(), Livewire component tests, RefreshDatabase, and all Pest 4 features. Do not use for factories, seeders, migrations, controllers, models, or non-test PHP code.
 - `tailwindcss-development` — Always invoke when the user's message includes 'tailwind' in any form. Also invoke for: building responsive grid layouts (multi-column card grids, product grids), flex/grid page structures (dashboards with sidebars, fixed topbars, mobile-toggle navs), styling UI components (cards, tables, navbars, pricing sections, forms, inputs, badges), adding dark mode variants, fixing spacing or typography, and Tailwind v3/v4 work. The core use case: writing or fixing Tailwind utility classes in HTML templates (Blade, JSX, Vue). Skip for backend PHP logic, database queries, API routes, JavaScript with no HTML/CSS component, CSS file audits, build tool configuration, and vanilla CSS.
-- `laravel-multi-tenancy` — Multi-tenant application architecture patterns. Use when working with multi-tenant systems, tenant isolation, or when user mentions multi-tenancy, tenants, tenant scoping, tenant isolation, multi-tenant.
-- `laravel-tdd` — Test-Driven Development specifically for Laravel applications using Pest PHP. Use when implementing any Laravel feature or bugfix - write the test first, watch it fail, write minimal code to pass.
-- `laravel-value-objects` — Immutable value objects for domain values. Use when working with domain values, immutable objects, or when user mentions value objects, immutable values, domain values, money objects, coordinate objects.
+- `kneadit-filament-5` — Filament 5 conventions and gotchas specific to the KneadIt project. Activate whenever working in app/Filament/, editing/creating Filament Resources, Pages, Schemas, Tables, Actions, or when the user mentions Filament, slide-overs, EditAction, form schemas, or Filament resource pages. Covers Filament 5 namespace changes (Forms vs Schemas, Tables\Actions removed), forbidden traits and methods, slide-over patterns, schema extraction for large pages, access control via RequiresManagerRole, and the project-specific status transition action factory.
+- `kneadit-mailables` — KneadIt-specific mailable patterns including the unified OrderStatusMail, birthday coupon generation, and email-related domain rules. Activate when editing or creating mailables, working under app/Mail/, working with order status emails, birthday emails, or when the user mentions OrderStatusMail, BirthdayService, birthday coupons, BDAY codes, status emails, or order email templates. Covers why one mailable handles all order statuses (resolved via match), how to add a new status email, deterministic birthday coupon code generation, and the separation between birthday program and birthday coupon toggles.
+- `kneadit-tenant-settings` — TenantSettings DTO and SettingsManager patterns for the KneadIt multi-tenant project. Activate whenever editing controllers, working with tenant settings, hero images, store branding, or when the user mentions TenantSettings, SettingsManager, settings(), Storage::url for hero images, tenant-scoped configuration, or AbstractSettingsManager. Covers the read-only DTO pattern, computed image URL methods, dependency injection rules for controllers vs closures, and how to extend the settings manager hierarchy for new scopes.
 
 ## Conventions
 
@@ -296,31 +247,6 @@ This project has domain-specific skills available. You MUST activate the relevan
 ## Deployment
 
 - Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
-
-=== laravel/v12 rules ===
-
-# Laravel 12
-
-- CRITICAL: ALWAYS use `search-docs` tool for version-specific Laravel documentation and updated code examples.
-- Since Laravel 11, Laravel has a new streamlined file structure which this project uses.
-
-## Laravel 12 Structure
-
-- In Laravel 12, middleware are no longer registered in `app/Http/Kernel.php`.
-- Middleware are configured declaratively in `bootstrap/app.php` using `Application::configure()->withMiddleware()`.
-- `bootstrap/app.php` is the file to register middleware, exceptions, and routing files.
-- `bootstrap/providers.php` contains application specific service providers.
-- The `app/Console/Kernel.php` file no longer exists; use `bootstrap/app.php` or `routes/console.php` for console configuration.
-- Console commands in `app/Console/Commands/` are automatically available and do not require manual registration.
-
-## Database
-
-- When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
-- Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
-
-### Models
-
-- Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
 
 === pint/core rules ===
 

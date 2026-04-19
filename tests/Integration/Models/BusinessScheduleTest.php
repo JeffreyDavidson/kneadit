@@ -14,7 +14,7 @@ test('day of week is cast to integer', function () {
 });
 
 test('is open is cast to boolean', function () {
-    $schedule = BusinessSchedule::factory()->create(['is_open' => true]);
+    $schedule = BusinessSchedule::factory()->open()->create();
 
     expect($schedule->fresh()->is_open)->toBeBool();
 });

@@ -25,8 +25,8 @@ test('products endpoint returns active products as JSON:API', function () {
 });
 
 test('products endpoint filters by featured', function () {
-    Product::factory()->count(2)->create(['is_active' => true, 'is_featured' => true]);
-    Product::factory()->create(['is_active' => true, 'is_featured' => false]);
+    Product::factory()->active()->featured()->count(2)->create();
+    Product::factory()->active()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->getJson('/api/products?featured=true');

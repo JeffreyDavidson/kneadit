@@ -3,86 +3,47 @@
 namespace App\Console\Commands\Platform;
 
 use App\Events\Platform\HealthCheckFailed;
+use App\Services\Platform\HealthChecks\Contracts\HealthCheck;
+use App\Services\Platform\HealthChecks\DatabaseConnectionCheck;
+use App\Services\Platform\HealthChecks\DiskSpaceCheck;
+use App\Services\Platform\HealthChecks\HomepageRespondsCheck;
+use App\Services\Platform\HealthChecks\StorageLogsCheck;
+use App\Services\Platform\HealthChecks\TenantDbDirectoryCheck;
+use App\Services\Platform\HealthChecks\UsersTableCheck;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 #[Signature('health:check')]
 #[Description('Run platform health checks and alert on failures')]
 class HealthCheckCommand extends Command
 {
+    /** @var array<int, class-string<HealthCheck>> */
+    private const array CHECKS = [
+        DatabaseConnectionCheck::class,
+        UsersTableCheck::class,
+        TenantDbDirectoryCheck::class,
+        DiskSpaceCheck::class,
+        StorageLogsCheck::class,
+        HomepageRespondsCheck::class,
+    ];
+
     public function handle(): int
     {
         $issues = [];
 
-        // 1. Database connectivity
-        try {
-            DB::connection()->getPdo();
-            $this->info('✓ Database connection OK');
-        } catch (\Exception $e) {
-            $issues[] = "Database connection failed: {$e->getMessage()}";
-            $this->error('✗ Database connection FAILED');
-        }
+        foreach (self::CHECKS as $class) {
+            $result = resolve($class)->run();
 
-        // 2. Central DB has tables
-        try {
-            $userCount = DB::table('users')->count();
-            $this->info("✓ Users table OK ({$userCount} users)");
-        } catch (\Exception $e) {
-            $issues[] = "Users table query failed: {$e->getMessage()}";
-            $this->error('✗ Users table FAILED');
-        }
-
-        // 3. Tenant DB directory writable
-        $tenantDbDir = config('tenancy.tenant_db_path', database_path());
-        if (is_dir($tenantDbDir) && is_writable($tenantDbDir)) {
-            $tenantDbs = count(glob("{$tenantDbDir}/*.sqlite") ?: []);
-            $this->info("✓ Tenant DB directory writable ({$tenantDbs} databases)");
-        } else {
-            $issues[] = "Tenant DB directory not writable: {$tenantDbDir}";
-            $this->error('✗ Tenant DB directory NOT writable');
-        }
-
-        // 4. Disk space
-        $freeBytes = disk_free_space(base_path());
-        $freeGb = round($freeBytes / 1073741824, 1);
-        if ($freeGb < 1) {
-            $issues[] = "Low disk space: {$freeGb} GB free";
-            $this->error("✗ Low disk space: {$freeGb} GB");
-        } else {
-            $this->info("✓ Disk space OK ({$freeGb} GB free)");
-        }
-
-        // 5. Storage directory writable
-        $logsPath = storage_path('logs');
-        if (is_dir($logsPath) && is_writable($logsPath)) {
-            $this->info('✓ Storage/logs writable');
-        } elseif (! is_dir($logsPath)) {
-            $issues[] = 'Storage/logs directory does not exist';
-            $this->error('✗ Storage/logs directory MISSING');
-        } else {
-            $issues[] = 'Storage/logs directory not writable';
-            $this->error('✗ Storage/logs NOT writable');
-        }
-
-        // 6. Homepage responds
-        try {
-            $response = Http::timeout(10)->connectTimeout(3)->retry(2, 100)->get(config('app.url'));
-            if ($response->successful()) {
-                $this->info('✓ Homepage responds (' . $response->status() . ')');
+            if ($result->passed) {
+                $this->info('✓ ' . $result->message);
             } else {
-                $issues[] = "Homepage returned status {$response->status()}";
-                $this->error("✗ Homepage returned {$response->status()}");
+                $this->error('✗ ' . $result->message);
+                $issues[] = $result->message;
             }
-        } catch (\Exception $e) {
-            $issues[] = "Homepage unreachable: {$e->getMessage()}";
-            $this->error('✗ Homepage unreachable');
         }
 
-        // Alert if issues found
         if (! empty($issues)) {
             $this->alertOnIssues($issues);
 

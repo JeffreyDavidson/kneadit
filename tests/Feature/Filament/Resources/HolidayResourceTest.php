@@ -86,7 +86,7 @@ test('can search holidays by name', function () {
 });
 
 test('can filter holidays by active status', function () {
-    $active = Holiday::factory()->create(['is_active' => true]);
+    $active = Holiday::factory()->active()->create();
     $inactive = Holiday::factory()->inactive()->create();
 
     Livewire::test(ListHolidays::class)

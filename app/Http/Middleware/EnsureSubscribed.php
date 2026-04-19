@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Models\Staff\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -12,8 +13,10 @@ class EnsureSubscribed
 {
     public function handle(Request $request, Closure $next, ?string $plan = null): Response
     {
-        if (! $request->user()?->subscribed('default')) {
-            if ($request->user()?->onTrial()) {
+        $user = $request->user();
+
+        if (! $user instanceof User || ! $user->subscribed('default')) {
+            if ($user instanceof User && $user->onTrial()) {
                 return $next($request);
             }
 
@@ -22,7 +25,7 @@ class EnsureSubscribed
 
         $tier = $plan ? SubscriptionTier::tryFrom($plan) : null;
 
-        abort_if($tier && ! Gate::forUser($request->user())->allows('has-plan', $tier), 403, 'Your current plan does not include this feature. Please upgrade.');
+        abort_if($tier && ! Gate::forUser($user)->allows('has-plan', $tier), 403, 'Your current plan does not include this feature. Please upgrade.');
 
         return $next($request);
     }

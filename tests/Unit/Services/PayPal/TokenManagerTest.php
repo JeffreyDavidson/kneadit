@@ -21,7 +21,7 @@ it('fetches and caches an access token', function () {
         ]),
     ]);
 
-    $manager = new TokenManager;
+    $manager = resolve(TokenManager::class);
     $token = $manager->getAccessToken();
 
     expect($token)->toBe('test-token-123');
@@ -40,7 +40,7 @@ test('uses production URL when sandbox is false', function () {
         'services.paypal.client_secret' => 'test-secret',
     ]);
 
-    $manager = new TokenManager;
+    $manager = resolve(TokenManager::class);
 
     expect($manager->getBaseUrl())->toBe('https://api-m.paypal.com');
 });
@@ -56,7 +56,7 @@ test('returns null when API response fails', function () {
         'api-m.sandbox.paypal.com/v1/oauth2/token' => Http::response(['error' => 'unauthorized'], 401),
     ]);
 
-    $manager = new TokenManager;
+    $manager = resolve(TokenManager::class);
 
     expect($manager->getAccessToken())->toBeNull();
 });
@@ -72,7 +72,7 @@ test('returns null when API throws exception', function () {
         'api-m.sandbox.paypal.com/v1/oauth2/token' => Http::response(fn () => throw new Exception('Connection refused')),
     ]);
 
-    $manager = new TokenManager;
+    $manager = resolve(TokenManager::class);
 
     expect($manager->getAccessToken())->toBeNull();
 });

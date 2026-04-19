@@ -9,8 +9,8 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('forYear filters expenses by year', function () {
-    Expense::factory()->create(['date' => '2026-03-15']);
-    Expense::factory()->create(['date' => '2025-06-01']);
+    Expense::factory()->forDate('2026-03-15')->create();
+    Expense::factory()->forDate('2025-06-01')->create();
 
     $results = Expense::query()->forYear(2026)->get();
 
@@ -18,8 +18,8 @@ test('forYear filters expenses by year', function () {
 });
 
 test('forMonth filters expenses by year and month', function () {
-    Expense::factory()->create(['date' => '2026-03-15']);
-    Expense::factory()->create(['date' => '2026-04-01']);
+    Expense::factory()->forDate('2026-03-15')->create();
+    Expense::factory()->forDate('2026-04-01')->create();
 
     $results = Expense::query()->forMonth(2026, 3)->get();
 
@@ -27,10 +27,10 @@ test('forMonth filters expenses by year and month', function () {
 });
 
 test('cogs returns only ingredients and packaging expenses', function () {
-    Expense::factory()->create(['category' => ExpenseCategory::Ingredients]);
-    Expense::factory()->create(['category' => ExpenseCategory::Packaging]);
-    Expense::factory()->create(['category' => ExpenseCategory::Marketing]);
-    Expense::factory()->create(['category' => ExpenseCategory::Equipment]);
+    Expense::factory()->forCategory(ExpenseCategory::Ingredients)->create();
+    Expense::factory()->forCategory(ExpenseCategory::Packaging)->create();
+    Expense::factory()->forCategory(ExpenseCategory::Marketing)->create();
+    Expense::factory()->forCategory(ExpenseCategory::Equipment)->create();
 
     $results = Expense::query()->cogs()->get();
 
@@ -42,9 +42,9 @@ test('cogs returns only ingredients and packaging expenses', function () {
 });
 
 test('byCategory groups expenses and sums amounts by category', function () {
-    Expense::factory()->create(['category' => ExpenseCategory::Ingredients, 'amount' => 50.00]);
-    Expense::factory()->create(['category' => ExpenseCategory::Ingredients, 'amount' => 30.00]);
-    Expense::factory()->create(['category' => ExpenseCategory::Marketing, 'amount' => 100.00]);
+    Expense::factory()->forCategory(ExpenseCategory::Ingredients)->create(['amount' => 50.00]);
+    Expense::factory()->forCategory(ExpenseCategory::Ingredients)->create(['amount' => 30.00]);
+    Expense::factory()->forCategory(ExpenseCategory::Marketing)->create(['amount' => 100.00]);
 
     $results = Expense::query()->byCategory()->get();
 

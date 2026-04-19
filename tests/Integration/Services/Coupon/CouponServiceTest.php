@@ -46,7 +46,7 @@ test('isValid returns false for expired coupon', function () {
 });
 
 test('isValid returns false when max uses reached', function () {
-    $coupon = Coupon::factory()->create(['max_uses' => 5, 'used_count' => 5]);
+    $coupon = Coupon::factory()->maxedOut(5)->create();
 
     expect((new CouponService)->isValid($coupon))->toBeFalse();
 });
@@ -61,7 +61,7 @@ test('isValid returns false for future start date coupon', function () {
 });
 
 test('apply increments used count', function () {
-    $coupon = Coupon::factory()->create(['used_count' => 0]);
+    $coupon = Coupon::factory()->create();
 
     app(App\Actions\Financial\ApplyCoupon::class)($coupon);
 

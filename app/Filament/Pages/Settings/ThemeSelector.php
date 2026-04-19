@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Storefront\StorefrontTheme;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
+use App\Services\Settings\SettingsManager;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -48,7 +49,7 @@ class ThemeSelector extends Page
             return;
         }
 
-        settings(['storefront_theme' => $theme]);
+        app(SettingsManager::class)->set('storefront_theme', $theme);
 
         $this->dispatch('$refresh');
 

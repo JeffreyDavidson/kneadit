@@ -14,7 +14,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('order status is cast to enum', function () {
-    $order = Order::factory()->create(['status' => OrderStatus::Pending]);
+    $order = Order::factory()->pending()->create();
 
     expect($order->fresh()->status)->toBeInstanceOf(OrderStatus::class)
         ->and($order->fresh()->status)->toBe(OrderStatus::Pending);

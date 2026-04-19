@@ -36,12 +36,32 @@ class ProductFactory extends Factory
     }
 
     /**
+     * Indicate that the product is active.
+     */
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => true,
+        ]);
+    }
+
+    /**
      * Indicate that the product is inactive.
      */
     public function inactive(): static
     {
         return $this->state(fn (array $attributes) => [
             'is_active' => false,
+        ]);
+    }
+
+    /**
+     * Product has a specific price.
+     */
+    public function withPrice(float $price): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'price' => $price,
         ]);
     }
 

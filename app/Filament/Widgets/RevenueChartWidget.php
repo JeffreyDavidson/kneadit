@@ -2,17 +2,19 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Queries\Financial\RevenueQuery;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Number;
 
 class RevenueChartWidget extends ChartWidget
 {
+    use CachesWidgetData;
+
     protected static ?int $sort = 3;
 
     protected ?string $heading = 'Revenue — Last 30 Days';
@@ -28,13 +30,16 @@ class RevenueChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $cached = Cache::flexible('revenue_chart_' . (tenant()?->getTenantKey() ?? 'none'), [300, 600], function (): array {
-            return $this->computeData();
-        });
+        $cached = $this->cached('main', [300, 600], fn (): array => $this->computeData());
 
         $this->heading = $cached['heading'];
 
         return $cached['chart'];
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'revenue_chart';
     }
 
     /** @return array{heading: string, chart: array<string, mixed>} */

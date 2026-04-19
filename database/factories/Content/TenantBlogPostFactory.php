@@ -29,6 +29,14 @@ class TenantBlogPostFactory extends Factory
         ];
     }
 
+    public function draft(): static
+    {
+        return $this->state([
+            'is_published' => false,
+            'published_at' => null,
+        ]);
+    }
+
     public function published(): static
     {
         return $this->state([

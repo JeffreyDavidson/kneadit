@@ -3,14 +3,16 @@
 namespace App\Services\Scheduling;
 
 use App\Enums\Orders\OrderStatus;
-use App\Models\Operations\BlockedDate;
+use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
+use App\Queries\Scheduling\DateOpenStatusQuery;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Support\Facades\Date;
 
 class AvailabilityService
 {
     public function __construct(
-        protected ScheduleService $scheduleService,
+        private TenantSettings $settings,
     ) {}
 
     /**
@@ -38,19 +40,14 @@ class AvailabilityService
      */
     private function checkDate(string $dateStr, int $dayOfWeek): array
     {
-        $blocked = BlockedDate::query()->where('date', $dateStr)->where('is_all_day', true)->first();
+        $status = DateOpenStatusQuery::forDate($dateStr);
 
-        if ($blocked) {
-            return ['date' => $dateStr, 'available' => false, 'reason' => $blocked->reason ?? 'Blocked', 'remaining_capacity' => 0];
+        if (! $status->open) {
+            return ['date' => $dateStr, 'available' => false, 'reason' => $status->reason ?? 'Closed', 'remaining_capacity' => 0];
         }
 
-        $schedule = $this->scheduleService->forDay($dayOfWeek);
-
-        if (! ($schedule->is_open ?? false)) {
-            return ['date' => $dateStr, 'available' => false, 'reason' => 'Closed', 'remaining_capacity' => 0];
-        }
-
-        $maxOrders = $schedule->max_orders ?? (int) settings('default_daily_capacity', 20);
+        $schedule = BusinessSchedule::query()->forDay($dayOfWeek)->first();
+        $maxOrders = $schedule->max_orders ?? $this->settings->orders->defaultDailyCapacity;
         $currentOrders = Order::query()->whereDate('delivery_date', $dateStr)
             ->whereNotIn('status', [OrderStatus::Cancelled])
             ->count();

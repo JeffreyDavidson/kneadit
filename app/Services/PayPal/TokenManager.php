@@ -2,6 +2,7 @@
 
 namespace App\Services\PayPal;
 
+use App\Services\Settings\SettingsManager;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -15,10 +16,10 @@ class TokenManager
 
     private ?string $accessToken = null;
 
-    public function __construct()
+    public function __construct(SettingsManager $settings)
     {
-        $this->clientId = settings('paypal_client_id') ?: config('services.paypal.client_id');
-        $this->clientSecret = settings('paypal_client_secret') ?: config('services.paypal.client_secret');
+        $this->clientId = $settings->get('paypal_client_id') ?: config('services.paypal.client_id');
+        $this->clientSecret = $settings->get('paypal_client_secret') ?: config('services.paypal.client_secret');
         $this->baseUrl = config('services.paypal.sandbox', true)
             ? 'https://api-m.sandbox.paypal.com'
             : 'https://api-m.paypal.com';

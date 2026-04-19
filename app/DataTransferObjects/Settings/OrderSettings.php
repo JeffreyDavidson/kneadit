@@ -14,6 +14,7 @@ final readonly class OrderSettings
         public string $minimumPickupOrderAmount,
         public string $minimumDeliveryOrderAmount,
         public array $deliveryFeeTiers,
+        public int $defaultDailyCapacity,
     ) {}
 
     public function leadTimeDays(): int

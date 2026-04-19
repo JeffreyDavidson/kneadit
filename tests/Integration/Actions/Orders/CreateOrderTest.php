@@ -47,7 +47,7 @@ test('returns null when capacity is full', function () {
     $deliveryDate = now()->addDays(5)->toDateString();
 
     settings(['default_daily_capacity' => '1']);
-    Order::factory()->create(['delivery_date' => $deliveryDate, 'status' => OrderStatus::Confirmed]);
+    Order::factory()->confirmed()->create(['delivery_date' => $deliveryDate]);
 
     $order = resolve(CreateOrder::class)(
         CreateOrderData::fromArray([
