@@ -2,6 +2,7 @@
 
 namespace App\Models\Inventory;
 
+use App\Casts\MoneyCast;
 use App\Enums\Inventory\Allergen;
 use App\Enums\Inventory\StockStatus;
 use App\Observers\LogsActivityObserver;
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Ingredient query()
  *
  * @property-read Pivot|null $pivot
+ * @property \App\ValueObjects\Money|null $cost_per_unit
  *
  * @mixin \Eloquent
  */
@@ -46,7 +48,7 @@ class Ingredient extends Model
         return [
             'current_stock' => 'decimal:2',
             'low_stock_threshold' => 'decimal:2',
-            'cost_per_unit' => 'decimal:2',
+            'cost_per_unit' => MoneyCast::class,
             'allergens' => AsEnumCollection::of(Allergen::class),
         ];
     }
