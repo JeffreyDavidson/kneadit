@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Coupons\Schemas;
 
 use App\Enums\Financial\CouponType;
+use App\Filament\Forms\Components\MoneyInput;
+use App\ValueObjects\Money;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -39,17 +41,16 @@ class CouponForm
 
                                 TextInput::make('value')
                                     ->required()
-                                    ->numeric()
+                                    ->rule('numeric')
                                     ->minValue(0)
                                     ->step(0.01)
+                                    ->inputMode('decimal')
+                                    ->formatStateUsing(fn (mixed $state): mixed => $state instanceof Money ? $state->dollars() : $state)
                                     ->prefix(fn (Get $get) => $get('type') === CouponType::Fixed->value ? '$' : '')
                                     ->suffix(fn (Get $get) => $get('type') === CouponType::Percentage->value ? '%' : ''),
 
-                                TextInput::make('min_order_amount')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->step(0.01)
-                                    ->prefix('$'),
+                                MoneyInput::make('min_order_amount')
+                                    ->minValue(0),
                             ]),
                     ]),
 

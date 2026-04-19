@@ -5,7 +5,9 @@ namespace App\Filament\Resources\Coupons\Tables;
 use App\Builders\Financial\CouponQueryBuilder;
 use App\Enums\Financial\CouponType;
 use App\Filament\Actions\SlideOverEditAction;
+use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Financial\Coupon;
+use App\ValueObjects\Money;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
@@ -14,7 +16,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Number;
 
 class CouponsTable
 {
@@ -30,17 +31,15 @@ class CouponsTable
                     ->badge(),
 
                 TextColumn::make('value')
-                    ->money('USD')
-                    ->formatStateUsing(function (mixed $state, Coupon $record) {
-                        if ($record->type === CouponType::Percentage) {
-                            return $state . '%';
-                        }
+                    ->formatStateUsing(function (mixed $state, Coupon $record): string {
+                        $dollars = $state instanceof Money ? $state->dollars() : (float) $state;
 
-                        return Number::currency($state);
+                        return $record->type === CouponType::Percentage
+                            ? $dollars . '%'
+                            : Money::fromDollars($dollars)->formatted();
                     }),
 
-                TextColumn::make('min_order_amount')
-                    ->money('USD')
+                MoneyColumn::make('min_order_amount')
                     ->placeholder('No minimum'),
 
                 TextColumn::make('usage')

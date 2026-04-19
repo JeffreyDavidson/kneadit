@@ -6,7 +6,6 @@ use App\DataTransferObjects\Orders\CouponValidationResult;
 use App\Enums\Financial\CouponType;
 use App\Models\Financial\Coupon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
 class CouponService
@@ -45,8 +44,8 @@ class CouponService
                 return CouponValidationResult::invalid('This coupon is no longer valid.');
             }
 
-            if ($coupon->min_order_amount && $subtotal < (float) $coupon->min_order_amount) {
-                return CouponValidationResult::invalid('Minimum order of ' . Number::currency($coupon->min_order_amount) . ' required for this coupon.');
+            if ($coupon->min_order_amount && $subtotal < $coupon->min_order_amount->dollars()) {
+                return CouponValidationResult::invalid('Minimum order of ' . $coupon->min_order_amount->formatted() . ' required for this coupon.');
             }
 
             $discount = $this->calculateDiscount($coupon, $subtotal);
@@ -60,14 +59,14 @@ class CouponService
      */
     public function calculateDiscount(Coupon $coupon, float $subtotal): float
     {
-        if ($coupon->min_order_amount && $subtotal < (float) $coupon->min_order_amount) {
+        if ($coupon->min_order_amount && $subtotal < $coupon->min_order_amount->dollars()) {
             return 0;
         }
 
         if ($coupon->type === CouponType::Percentage) {
-            return round($subtotal * ((float) $coupon->value / 100), 2);
+            return round($subtotal * ($coupon->value->dollars() / 100), 2);
         }
 
-        return round(min((float) $coupon->value, $subtotal), 2);
+        return round(min($coupon->value->dollars(), $subtotal), 2);
     }
 }
