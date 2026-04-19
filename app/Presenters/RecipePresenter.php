@@ -28,7 +28,7 @@ final class RecipePresenter
 
         return ProfitMargin::calculate(
             (float) $this->recipe->product->price,
-            (float) $this->recipe->cost,
+            $this->recipe->cost->dollars(),
             1,
         );
     }

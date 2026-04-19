@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Ingredients\Tables;
 use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\Inventory\StockAdjustmentType;
 use App\Filament\Actions\SlideOverEditAction;
+use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Inventory\Ingredient;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -39,8 +40,7 @@ class IngredientsTable
                     ->badge()
                     ->getStateUsing(fn (Ingredient $record) => $record->stock_status),
 
-                TextColumn::make('cost_per_unit')
-                    ->money('USD')
+                MoneyColumn::make('cost_per_unit')
                     ->sortable()
                     ->toggleable(),
 
