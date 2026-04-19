@@ -48,14 +48,29 @@ class FinancialCalculator
     /** @return Collection<int, MonthlyFinancials> */
     private function monthlyBreakdown(int $year): Collection
     {
+        $orderRevenueByMonth = Order::query()->paidInYear($year)
+            ->whereNotNull('delivery_date')
+            ->get(['delivery_date', 'total'])
+            ->groupBy(fn (Order $o) => (int) $o->delivery_date?->month)
+            ->map(fn (Collection $group) => (float) $group->sum('total'));
+
+        $incomeByMonth = Income::query()->forYear($year)
+            ->whereNotNull('date')
+            ->get(['date', 'amount'])
+            ->groupBy(fn (Income $i) => (int) $i->date?->month)
+            ->map(fn (Collection $group) => (float) $group->sum('amount'));
+
+        $expensesByMonth = Expense::query()->forYear($year)
+            ->whereNotNull('date')
+            ->get(['date', 'amount'])
+            ->groupBy(fn (Expense $e) => (int) $e->date?->month)
+            ->map(fn (Collection $group) => (float) $group->sum('amount'));
+
         $breakdown = collect();
 
         for ($month = 1; $month <= 12; $month++) {
-            $monthRevenue = (float) Order::query()->paidInMonth($year, $month)->sum('total');
-            $monthIncome = (float) Income::query()->forMonth($year, $month)->sum('amount');
-            $monthExpenses = (float) Expense::query()->forMonth($year, $month)->sum('amount');
-
-            $totalMonthRevenue = $monthRevenue + $monthIncome;
+            $totalMonthRevenue = ($orderRevenueByMonth[$month] ?? 0.0) + ($incomeByMonth[$month] ?? 0.0);
+            $monthExpenses = $expensesByMonth[$month] ?? 0.0;
 
             $breakdown->push(new MonthlyFinancials(
                 month: $month,
