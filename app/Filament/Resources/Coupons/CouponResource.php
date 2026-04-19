@@ -14,7 +14,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Number;
 use Laravel\Pennant\Feature;
 
 class CouponResource extends Resource
@@ -74,7 +73,7 @@ class CouponResource extends Resource
     {
         return [
             'Type' => $record->type->getLabel(),
-            'Value' => $record->type === CouponType::Percentage ? $record->value . '%' : (string) Number::currency($record->value),
+            'Value' => $record->type === CouponType::Percentage ? $record->value->dollars() . '%' : $record->value->formatted(),
             'Active' => $record->is_active ? 'Yes' : 'No',
         ];
     }

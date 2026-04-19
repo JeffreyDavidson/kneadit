@@ -3,6 +3,7 @@
 namespace App\Models\Financial;
 
 use App\Builders\Financial\CouponQueryBuilder;
+use App\Casts\MoneyCast;
 use App\Enums\Financial\CouponType;
 use App\Models\Orders\Order;
 use App\Observers\Engagement\CouponObserver;
@@ -30,6 +31,8 @@ use Illuminate\Support\Carbon;
  *
  * @property Carbon|null $starts_at
  * @property Carbon|null $expires_at
+ * @property \App\ValueObjects\Money $value
+ * @property \App\ValueObjects\Money|null $min_order_amount
  *
  * @mixin \Eloquent
  */
@@ -44,8 +47,8 @@ class Coupon extends Model
     protected function casts(): array
     {
         return [
-            'value' => 'decimal:2',
-            'min_order_amount' => 'decimal:2',
+            'value' => MoneyCast::class,
+            'min_order_amount' => MoneyCast::class,
             'max_uses' => 'integer',
             'used_count' => 'integer',
             'type' => CouponType::class,
