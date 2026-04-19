@@ -16,10 +16,11 @@ test('creates birthday coupon for customer', function () {
         ->toBeInstanceOf(Coupon::class)
         ->code->toBe("BDAY-{$customer->id}-" . now()->year)
         ->type->toBe(CouponType::Percentage)
-        ->value->toBe('15.00')
         ->max_uses->toBe(1)
         ->used_count->toBe(0)
         ->is_active->toBeTrue();
+
+    expect($coupon->value->dollars())->toBe(15.0);
 });
 
 test('returns null when discount percent is zero', function () {
