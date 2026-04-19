@@ -22,4 +22,20 @@ class CapacityLimitFactory extends Factory
             'max_orders' => fake()->numberBetween(5, 30),
         ];
     }
+
+    /**
+     * Day is blocked (no orders accepted).
+     */
+    public function blocked(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_blocked' => true]);
+    }
+
+    /**
+     * Day is open for orders.
+     */
+    public function open(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_blocked' => false]);
+    }
 }
