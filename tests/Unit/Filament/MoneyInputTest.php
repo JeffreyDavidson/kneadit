@@ -8,5 +8,5 @@ test('money input is configured with currency prefix and 0.01 step', function ()
     expect($input->getName())->toBe('amount')
         ->and($input->getPrefixLabel())->toBe('$')
         ->and((float) $input->getStep())->toBe(0.01)
-        ->and($input->isNumeric())->toBeTrue();
+        ->and($input->getInputMode())->toBe('decimal');
 });

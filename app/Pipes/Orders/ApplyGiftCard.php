@@ -16,7 +16,7 @@ class ApplyGiftCard
         $giftCard = GiftCard::query()->lockForUpdate()->find($payload->data->giftCardId);
 
         if ($giftCard && $giftCard->is_usable) {
-            $amount = min((float) $giftCard->current_balance, $payload->total);
+            $amount = min($giftCard->current_balance->dollars(), $payload->total);
 
             if ($amount > 0) {
                 $payload->giftCardId = $giftCard->id;

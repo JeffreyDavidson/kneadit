@@ -50,7 +50,7 @@ test('check balance returns correct card', function () {
 
     $found = test()->service->checkBalance($card->code);
 
-    expect($found)->not->toBeNull()->and((float) $found->current_balance)->toBe(100.0);
+    expect($found)->not->toBeNull()->and($found->current_balance->dollars())->toBe(100.0);
 });
 
 test('redeem deducts from balance', function () {
