@@ -43,17 +43,18 @@ test('order with coupon stores discount_amount and creates coupon transaction', 
 
     expect($order)
         ->not->toBeNull()
-        ->coupon_id->toBe($coupon->id)
-        ->discount_amount->toBe('5.00')
-        ->total->toBe('35.00'); // 2 * $20 - $5
+        ->coupon_id->toBe($coupon->id);
+    expect($order->discount_amount->dollars())->toBe(5.00);
+    expect($order->total->dollars())->toBe(35.00); // 2 * $20 - $5
 
     expect(CouponTransaction::query()->where('order_id', $order->id)->count())->toBe(1);
 
     $transaction = CouponTransaction::query()->where('order_id', $order->id)->first();
     expect($transaction)
         ->coupon_id->toBe($coupon->id)
-        ->amount->toBe('5.00')
         ->type->toBe(CouponTransactionType::Usage);
+
+    expect($transaction->amount->dollars())->toBe(5.00);
 
     expect($coupon->refresh()->used_count)->toBe(1);
 });
@@ -65,11 +66,11 @@ test('order with gift card stores gift_card_id and gift_card_amount', function (
 
     expect($order)
         ->not->toBeNull()
-        ->gift_card_id->toBe($giftCard->id)
-        ->gift_card_amount->toBe('40.00') // min($50 balance, $40 total)
-        ->total->toBe('0.00');
+        ->gift_card_id->toBe($giftCard->id);
+    expect($order->gift_card_amount->dollars())->toBe(40.00); // min($50 balance, $40 total)
+    expect($order->total->dollars())->toBe(0.00);
 
-    expect($giftCard->refresh()->current_balance)->toBe('10.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(10.00);
 
     expect(GiftCardTransaction::query()
         ->where('order_id', $order->id)
@@ -89,12 +90,11 @@ test('order with both coupon and gift card applies coupon first then gift card',
     // Subtotal: 2 * $20 = $40
     // After coupon: $40 - $10 = $30
     // After gift card: $30 - $30 = $0 (gift card covers remaining)
-    expect($order)
-        ->discount_amount->toBe('10.00')
-        ->gift_card_amount->toBe('30.00')
-        ->total->toBe('0.00');
+    expect($order->discount_amount->dollars())->toBe(10.00);
+    expect($order->gift_card_amount->dollars())->toBe(30.00);
+    expect($order->total->dollars())->toBe(0.00);
 
-    expect($giftCard->refresh()->current_balance)->toBe('20.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(20.00);
     expect($coupon->refresh()->used_count)->toBe(1);
 
     expect(CouponTransaction::query()->where('order_id', $order->id)->count())->toBe(1);
@@ -110,22 +110,21 @@ test('gift card with insufficient balance applies partial amount', function () {
     $order = createOrderWith(['gift_card_id' => $giftCard->id]);
 
     // Subtotal: $40, gift card: $15, remaining: $25
-    expect($order)
-        ->gift_card_amount->toBe('15.00')
-        ->total->toBe('25.00');
+    expect($order->gift_card_amount->dollars())->toBe(15.00);
+    expect($order->total->dollars())->toBe(25.00);
 
-    expect($giftCard->refresh()->current_balance)->toBe('0.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(0.00);
 });
 
 test('order without discounts has zero discount and gift card amounts', function () {
     $order = createOrderWith();
 
     expect($order)
-        ->discount_amount->toBe('0.00')
-        ->gift_card_amount->toBe('0.00')
         ->coupon_id->toBeNull()
-        ->gift_card_id->toBeNull()
-        ->total->toBe('40.00');
+        ->gift_card_id->toBeNull();
+    expect($order->discount_amount->dollars())->toBe(0.00);
+    expect($order->gift_card_amount->dollars())->toBe(0.00);
+    expect($order->total->dollars())->toBe(40.00);
 
     expect(CouponTransaction::query()->count())->toBe(0);
 });
@@ -136,11 +135,11 @@ test('expired gift card is not applied', function () {
     $order = createOrderWith(['gift_card_id' => $giftCard->id]);
 
     expect($order)
-        ->gift_card_id->toBeNull()
-        ->gift_card_amount->toBe('0.00')
-        ->total->toBe('40.00');
+        ->gift_card_id->toBeNull();
+    expect($order->gift_card_amount->dollars())->toBe(0.00);
+    expect($order->total->dollars())->toBe(40.00);
 
-    expect($giftCard->refresh()->current_balance)->toBe('50.00');
+    expect($giftCard->refresh()->current_balance->dollars())->toBe(50.00);
 });
 
 test('depleted gift card is not applied', function () {
@@ -149,9 +148,9 @@ test('depleted gift card is not applied', function () {
     $order = createOrderWith(['gift_card_id' => $giftCard->id]);
 
     expect($order)
-        ->gift_card_id->toBeNull()
-        ->gift_card_amount->toBe('0.00')
-        ->total->toBe('40.00');
+        ->gift_card_id->toBeNull();
+    expect($order->gift_card_amount->dollars())->toBe(0.00);
+    expect($order->total->dollars())->toBe(40.00);
 });
 
 test('percentage coupon creates transaction with calculated amount', function () {
@@ -160,10 +159,9 @@ test('percentage coupon creates transaction with calculated amount', function ()
     $order = createOrderWith(['coupon_id' => $coupon->id]);
 
     // 25% of $40 = $10
-    expect($order)
-        ->discount_amount->toBe('10.00')
-        ->total->toBe('30.00');
+    expect($order->discount_amount->dollars())->toBe(10.00);
+    expect($order->total->dollars())->toBe(30.00);
 
     $transaction = CouponTransaction::query()->where('order_id', $order->id)->first();
-    expect($transaction->amount)->toBe('10.00');
+    expect($transaction->amount->dollars())->toBe(10.00);
 });

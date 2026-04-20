@@ -2,6 +2,7 @@
 
 namespace App\Models\Financial;
 
+use App\Casts\MoneyCast;
 use App\Enums\Financial\CouponTransactionType;
 use App\Models\Orders\Order;
 use Database\Factories\Financial\CouponTransactionFactory;
@@ -16,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property-read Coupon|null $coupon
  * @property-read Order|null $order
  * @property Carbon|null $created_at
+ * @property \App\ValueObjects\Money $amount
  *
  * @mixin \Eloquent
  */
@@ -29,7 +31,7 @@ class CouponTransaction extends Model
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
+            'amount' => MoneyCast::class,
             'created_at' => 'datetime',
             'type' => CouponTransactionType::class,
         ];

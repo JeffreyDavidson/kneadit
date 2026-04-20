@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Expenses\Schemas;
 
 use App\Enums\Financial\ExpenseCategory;
+use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Support\AllowedFileTypes;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -28,11 +29,8 @@ class ExpenseForm
 
                         Grid::make(2)
                             ->components([
-                                TextInput::make('amount')
-                                    ->required()
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01),
+                                MoneyInput::make('amount')
+                                    ->required(),
 
                                 Select::make('category')
                                     ->options(ExpenseCategory::class)
@@ -64,11 +62,8 @@ class ExpenseForm
                                     ->maxValue(100)
                                     ->suffix('%'),
 
-                                TextInput::make('deductible_amount')
+                                MoneyInput::make('deductible_amount')
                                     ->label('Deductible Amount')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01)
                                     ->disabled()
                                     ->dehydrated(false),
                             ]),

@@ -35,7 +35,7 @@ class InventoryReport
                 'is_out' => $i->current_stock <= 0,
                 'daily_usage' => round($dailyUsage, 2),
                 'days_until_stockout' => $daysUntilStockout,
-                'cost_per_unit' => (float) $i->cost_per_unit,
+                'cost_per_unit' => $i->cost_per_unit?->dollars() ?? 0.0,
             ];
         })->all();
 

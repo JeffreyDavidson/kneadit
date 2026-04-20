@@ -56,7 +56,7 @@ test('can edit a coupon via table action', function () {
         ->callAction(TestAction::make('edit')->table($coupon), data: [
             'code' => 'UPDATED01',
             'type' => $coupon->type->value,
-            'value' => $coupon->value,
+            'value' => $coupon->value->dollars(),
             'is_active' => true,
         ])
         ->assertHasNoFormErrors();

@@ -19,13 +19,14 @@ class CalculateOrderTotals
                 continue;
             }
 
-            $lineTotal = $product->price * $item['quantity'];
+            $unitPrice = $product->price?->dollars() ?? 0.0;
+            $lineTotal = $unitPrice * $item['quantity'];
             $payload->subtotal += $lineTotal;
 
             $payload->orderItems[] = [
                 'product_id' => $product->id,
                 'quantity' => $item['quantity'],
-                'unit_price' => $product->price,
+                'unit_price' => $unitPrice,
                 'total_price' => $lineTotal,
             ];
         }

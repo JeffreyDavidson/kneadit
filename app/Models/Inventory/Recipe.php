@@ -2,6 +2,7 @@
 
 namespace App\Models\Inventory;
 
+use App\Casts\MoneyCast;
 use Database\Factories\Inventory\RecipeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recipe newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recipe query()
  *
+ * @property \App\ValueObjects\Money|null $cost
+ *
  * @mixin \Eloquent
  */
 #[Fillable('product_id', 'name', 'ingredients', 'instructions', 'prep_time_minutes', 'cost')]
@@ -34,7 +37,7 @@ class Recipe extends Model
         return [
             'ingredients' => 'json',
             'prep_time_minutes' => 'integer',
-            'cost' => 'decimal:2',
+            'cost' => MoneyCast::class,
         ];
     }
 

@@ -27,10 +27,10 @@ class TaxCsvExporter
                         $order->order_number,
                         $order->customer->name ?? 'N/A',
                         $items,
-                        $order->subtotal,
-                        $order->delivery_fee,
-                        $order->discount_amount,
-                        $order->total,
+                        number_format($order->subtotal->dollars(), 2, '.', ''),
+                        number_format($order->delivery_fee->dollars(), 2, '.', ''),
+                        number_format($order->discount_amount->dollars(), 2, '.', ''),
+                        number_format($order->total->dollars(), 2, '.', ''),
                         $order->payment_status->value,
                         $order->payment_method->value,
                     ]);
@@ -65,9 +65,9 @@ class TaxCsvExporter
                         $expense->date?->format('Y-m-d'),
                         $categoryMap[$expense->category->value],
                         $expense->description,
-                        $expense->amount,
+                        $expense->amount->dollars(),
                         $expense->business_percentage,
-                        $expense->deductible_amount,
+                        $expense->deductible_amount->dollars(),
                         $expense->notes ?? '',
                     ]);
                 }
@@ -88,7 +88,7 @@ class TaxCsvExporter
                         $income->date?->format('Y-m-d'),
                         $income->source_label,
                         $income->description,
-                        $income->amount,
+                        $income->amount->dollars(),
                         'Gross Receipts (Schedule C Line 1)',
                     ]);
                 }

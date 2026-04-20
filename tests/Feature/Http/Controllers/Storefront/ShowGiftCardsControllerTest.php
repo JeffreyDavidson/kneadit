@@ -40,7 +40,7 @@ test('gift card can be created with correct balance', function () {
     ]);
 
     $this->assertModelExists($card);
-    expect($card->current_balance)->toBe('50.00')->and($card->initial_balance)->toBe('50.00');
+    expect($card->current_balance->dollars())->toBe(50.00)->and($card->initial_balance->dollars())->toBe(50.00);
 });
 
 test('gift card is usable when active with balance', function () {
@@ -86,5 +86,5 @@ test('gift card has transactions relationship', function () {
             'notes' => 'Initial purchase',
         ]);
 
-    expect($card->transactions)->toHaveCount(1)->and($card->transactions->first()->amount)->toBe('50.00');
+    expect($card->transactions)->toHaveCount(1)->and($card->transactions->first()->amount->dollars())->toBe(50.00);
 });

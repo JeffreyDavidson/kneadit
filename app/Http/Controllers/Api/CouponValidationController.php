@@ -29,7 +29,7 @@ class CouponValidationController extends Controller
             'valid' => true,
             'discount_amount' => $result->discount,
             'type' => $coupon?->type?->value,
-            'value' => $coupon?->value !== null ? (float) $coupon->value : null,
+            'value' => $coupon?->value?->dollars(),
         ]);
     }
 }

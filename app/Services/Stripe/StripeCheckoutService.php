@@ -43,7 +43,7 @@ class StripeCheckoutService
 
     public function redirectToCheckout(Order $order): ?string
     {
-        if ($order->total <= 0 || ! self::isEnabled()) {
+        if (! $order->total->isPositive() || ! self::isEnabled()) {
             return null;
         }
 
@@ -154,18 +154,18 @@ class StripeCheckoutService
                         'name' => $product ? $product->name : 'Item',
                         'description' => $item->special_instructions ?: null,
                     ],
-                    'unit_amount' => (int) round($item->unit_price * 100),
+                    'unit_amount' => $item->unit_price->cents(),
                 ],
                 'quantity' => $item->quantity,
             ];
         }
 
-        if ($order->delivery_fee > 0) {
+        if ($order->delivery_fee->isPositive()) {
             $lineItems[] = [
                 'price_data' => [
                     'currency' => config('cashier.currency', 'usd'),
                     'product_data' => ['name' => 'Delivery Fee'],
-                    'unit_amount' => (int) round($order->delivery_fee * 100),
+                    'unit_amount' => $order->delivery_fee->cents(),
                 ],
                 'quantity' => 1,
             ];
@@ -177,12 +177,12 @@ class StripeCheckoutService
     /** @return array<int, array<string, string>> */
     private function buildDiscounts(Order $order, string $connectId): array
     {
-        if ($order->discount_amount <= 0) {
+        if (! $order->discount_amount->isPositive()) {
             return [];
         }
 
         $coupon = $this->stripe->coupons->create([
-            'amount_off' => (int) round($order->discount_amount * 100),
+            'amount_off' => $order->discount_amount->cents(),
             'currency' => config('cashier.currency', 'usd'),
             'duration' => 'once',
             'name' => 'Order Discount',

@@ -91,8 +91,8 @@ class PriceSuggestionTool extends Page
         $recipe = $this->selectedRecipe;
 
         $this->marginComparisons = collect($margins)->map(function (int $margin) use ($pricing, $recipe) {
-            $suggestedPrice = $pricing->suggestPrice((float) $recipe->cost, $margin);
-            $currentPrice = $recipe->product->price ?? 0;
+            $suggestedPrice = $pricing->suggestPrice($recipe->cost?->dollars() ?? 0.0, $margin);
+            $currentPrice = $recipe->product?->price?->dollars() ?? 0.0;
             $difference = $suggestedPrice - $currentPrice;
 
             return [
@@ -112,7 +112,7 @@ class PriceSuggestionTool extends Page
         }
 
         return $this->pricingService()->suggestPrice(
-            $this->selectedRecipe->cost,
+            $this->selectedRecipe->cost->dollars(),
             $this->targetMarginPercentage,
         );
     }
@@ -162,7 +162,7 @@ class PriceSuggestionTool extends Page
         }
 
         $suggestedPrice = $this->getSuggestedPrice();
-        $currentPrice = $this->selectedRecipe->product->price;
+        $currentPrice = $this->selectedRecipe->product->price?->dollars() ?? 0.0;
         $difference = $suggestedPrice - $currentPrice;
 
         return [

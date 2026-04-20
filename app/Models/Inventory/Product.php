@@ -3,6 +3,7 @@
 namespace App\Models\Inventory;
 
 use App\Builders\Inventory\ProductQueryBuilder;
+use App\Casts\MoneyCast;
 use App\Models\Content\SocialPost;
 use App\Models\Customers\CustomerPhoto;
 use App\Models\Engagement\PageView;
@@ -49,6 +50,8 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $waitlist_entries_count
  * @property Carbon|null $available_from
  * @property Carbon|null $available_until
+ * @property \App\ValueObjects\Money|null $price
+ * @property \App\ValueObjects\Money|null $cost
  *
  * @mixin \Eloquent
  */
@@ -63,8 +66,8 @@ class Product extends Model
     protected function casts(): array
     {
         return [
-            'price' => 'decimal:2',
-            'cost' => 'decimal:2',
+            'price' => MoneyCast::class,
+            'cost' => MoneyCast::class,
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
         ];
@@ -171,7 +174,7 @@ class Product extends Model
     {
         return Attribute::make(
             get: fn () => $this->cost && $this->price
-                ? ProfitMargin::calculate((float) $this->price, (float) $this->cost)
+                ? ProfitMargin::calculate($this->price->dollars(), $this->cost->dollars())
                 : null,
         );
     }

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Ingredients\Schemas;
 
 use App\Enums\Inventory\Allergen;
+use App\Filament\Forms\Components\MoneyInput;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -62,10 +63,7 @@ class IngredientForm
 
                         Grid::make(2)
                             ->components([
-                                TextInput::make('cost_per_unit')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01),
+                                MoneyInput::make('cost_per_unit'),
 
                                 TextInput::make('supplier')
                                     ->maxLength(255),

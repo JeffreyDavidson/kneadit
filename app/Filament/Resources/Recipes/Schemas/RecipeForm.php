@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Recipes\Schemas;
 
+use App\Filament\Forms\Components\MoneyInput;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use Filament\Forms\Components\Repeater;
@@ -41,10 +42,7 @@ class RecipeForm
                                     ->required()
                                     ->minValue(1),
 
-                                TextInput::make('cost')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01)
+                                MoneyInput::make('cost')
                                     ->helperText('Estimated cost of ingredients'),
                             ]),
                     ]),

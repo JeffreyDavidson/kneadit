@@ -54,7 +54,7 @@ test('can edit an expense via table action', function () {
     Livewire::test(ListExpenses::class)
         ->callAction(TestAction::make('edit')->table($expense), data: [
             'description' => 'Updated expense',
-            'amount' => $expense->amount,
+            'amount' => $expense->amount->dollars(),
             'category' => $expense->category->value,
             'date' => $expense->date->format('Y-m-d'),
             'business_percentage' => 100,

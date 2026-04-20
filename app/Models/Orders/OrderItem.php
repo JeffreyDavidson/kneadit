@@ -2,7 +2,9 @@
 
 namespace App\Models\Orders;
 
+use App\Casts\MoneyCast;
 use App\Models\Inventory\Product;
+use App\ValueObjects\Money;
 use Database\Factories\Orders\OrderItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -11,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read float $total_price
+ * @property-read Money $total_price
  * @property-read Order|null $order
  * @property-read Product|null $product
  *
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property-read int|null $units_sold
  * @property-read float|null $revenue
+ * @property Money $unit_price
  *
  * @mixin \Eloquent
  */
@@ -34,7 +37,7 @@ class OrderItem extends Model
     {
         return [
             'quantity' => 'integer',
-            'unit_price' => 'decimal:2',
+            'unit_price' => MoneyCast::class,
         ];
     }
 
@@ -54,11 +57,11 @@ class OrderItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    /** @return Attribute<mixed, never> */
+    /** @return Attribute<Money, never> */
     protected function totalPrice(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->quantity * $this->unit_price,
+            get: fn () => $this->unit_price->multiply($this->quantity),
         );
     }
 

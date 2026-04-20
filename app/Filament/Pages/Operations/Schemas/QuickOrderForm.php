@@ -103,14 +103,14 @@ class QuickOrderForm
                                         ->orderBy('name')
                                         ->get()
                                         ->mapWithKeys(fn (Product $product): array => [
-                                            $product->id => $product->name . ' - ' . Number::currency($product->price),
+                                            $product->id => $product->name . ' - ' . ($product->price?->formatted() ?? ''),
                                         ]))
                                     ->live()
                                     ->afterStateUpdated(function (Set $set, ?string $state) {
                                         if ($state) {
                                             $product = Product::query()->find($state);
                                             if ($product) {
-                                                $set('unit_price', $product->price);
+                                                $set('unit_price', $product->price?->dollars());
                                             }
                                         }
                                     }),

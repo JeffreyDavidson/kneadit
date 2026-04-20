@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GiftCards\Schemas;
 
+use App\Filament\Forms\Components\MoneyInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -58,12 +59,9 @@ class GiftCardForm
                     ->components([
                         Grid::make(2)
                             ->components([
-                                TextInput::make('initial_balance')
+                                MoneyInput::make('initial_balance')
                                     ->required()
-                                    ->numeric()
                                     ->minValue(1)
-                                    ->step(0.01)
-                                    ->prefix('$')
                                     ->label('Amount'),
 
                                 DatePicker::make('expires_at')

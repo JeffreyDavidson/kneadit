@@ -27,8 +27,8 @@ class ProductCsvExporter
                 $product->name,
                 $product->category->name ?? '',
                 $product->description ?? '',
-                $product->price,
-                $product->cost ?? '',
+                $product->price?->dollars() ?? '',
+                $product->cost?->dollars() ?? '',
                 $product->is_active ? '1' : '0',
                 $product->is_featured ? '1' : '0',
             ]);

@@ -64,9 +64,9 @@ test('order total is cast to decimal', function () {
         'total' => 28.00,
     ]);
 
-    expect($order->refresh()->total)->toBe('28.00')
-        ->and($order->delivery_fee)->toBe('5.00')
-        ->and($order->discount_amount)->toBe('2.50');
+    expect($order->refresh()->total->dollars())->toBe(28.00)
+        ->and($order->delivery_fee->dollars())->toBe(5.00)
+        ->and($order->discount_amount->dollars())->toBe(2.50);
 });
 
 test('order status transitions', function (OrderStatus $status) {
@@ -109,7 +109,7 @@ test('order item total price attribute', function () {
         'unit_price' => 5.00,
     ]);
 
-    expect($item->total_price)->toBe(15.00);
+    expect($item->total_price->dollars())->toBe(15.00);
 });
 
 test('order has loyalty points relationship', function () {

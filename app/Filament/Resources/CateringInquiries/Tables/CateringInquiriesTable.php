@@ -6,6 +6,7 @@ use App\Actions\Customers\TransitionCateringInquiryStatus;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\DateRangeFilter;
+use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Customers\CateringInquiry;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
@@ -33,8 +34,7 @@ class CateringInquiriesTable
                     ->sortable(),
                 TextColumn::make('status')
                     ->badge(),
-                TextColumn::make('quoted_amount')
-                    ->money('usd')
+                MoneyColumn::make('quoted_amount')
                     ->placeholder('—')
                     ->sortable(),
                 TextColumn::make('created_at')
@@ -61,7 +61,7 @@ class CateringInquiriesTable
                     ->authorize('update')
                     ->requiresConfirmation()
                     ->modalHeading('Send Quote to Customer')
-                    ->modalDescription(fn (CateringInquiry $record) => "Send a quote of \${$record->quoted_amount} to {$record->customer_email}?")
+                    ->modalDescription(fn (CateringInquiry $record) => "Send a quote of {$record->quoted_amount?->formatted()} to {$record->customer_email}?")
                     ->visible(fn (CateringInquiry $record) => $record->quoted_amount && in_array($record->status, [CateringInquiryStatus::Inquiry, CateringInquiryStatus::Quoted]))
                     ->action(fn (CateringInquiry $record) => resolve(TransitionCateringInquiryStatus::class)($record, CateringInquiryStatus::Quoted)),
                 Action::make('confirm')

@@ -73,7 +73,7 @@ class AppServiceProvider extends ServiceProvider
             fn (Request $request): string => $request->is('account*') ? route('account.login.show') : route('login'),
         );
 
-        Blade::directive('money', fn (string $expression) => "<?php echo '\$' . number_format({$expression}, 2); ?>");
+        Blade::directive('money', fn (string $expression) => "<?php \$__money = {$expression}; echo \$__money instanceof \\App\\ValueObjects\\Money ? \$__money->formatted() : '\$' . number_format((float) \$__money, 2); ?>");
 
         Blade::directive('time', fn (string $expression) => "<?php echo \\Carbon\\Carbon::createFromFormat('H:i', {$expression})->format('g:i A'); ?>");
 

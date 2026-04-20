@@ -111,7 +111,7 @@ test('can edit a product via table action', function () {
         ->callAction(TestAction::make('edit')->table($product), data: [
             'name' => 'Updated Bread',
             'slug' => $product->slug,
-            'price' => $product->price,
+            'price' => $product->price?->dollars(),
             'category_id' => $product->category_id,
         ])
         ->assertHasNoFormErrors();

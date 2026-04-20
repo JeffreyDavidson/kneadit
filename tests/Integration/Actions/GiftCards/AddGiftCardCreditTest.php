@@ -13,5 +13,5 @@ test('adds credit to gift card balance', function () {
 
     $result = resolve(AddGiftCardCredit::class)($card, 10.00, 'Bonus credit');
 
-    expect($result->current_balance)->toEqual(35.0)->and($card->transactions)->toHaveCount(1);
+    expect($result->current_balance->dollars())->toEqual(35.0)->and($card->transactions)->toHaveCount(1);
 });
