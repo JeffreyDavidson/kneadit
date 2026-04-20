@@ -15,8 +15,9 @@ class StripeCheckoutService
 {
     protected StripeClient $stripe;
 
-    public function __construct()
-    {
+    public function __construct(
+        private StripeSessionPayloadBuilder $payloadBuilder,
+    ) {
         $this->stripe = new StripeClient(config('cashier.secret'));
     }
 
@@ -67,9 +68,14 @@ class StripeCheckoutService
         }
 
         try {
-            $lineItems = $this->buildLineItems($order);
             $discounts = $this->buildDiscounts($order, $connectId);
-            $sessionParams = $this->buildSessionParams($order, $lineItems, $discounts, $successUrl, $cancelUrl);
+            $sessionParams = $this->payloadBuilder->build(
+                $order,
+                (string) tenant()->getTenantKey(),
+                $successUrl,
+                $cancelUrl,
+                $discounts,
+            );
 
             $session = $this->stripe->checkout->sessions->create(
                 $sessionParams,
@@ -140,40 +146,6 @@ class StripeCheckoutService
         }
     }
 
-    /** @return array<int, array<string, mixed>> */
-    private function buildLineItems(Order $order): array
-    {
-        $lineItems = [];
-
-        foreach ($order->orderItems as $item) {
-            $product = $item->product;
-            $lineItems[] = [
-                'price_data' => [
-                    'currency' => config('cashier.currency', 'usd'),
-                    'product_data' => [
-                        'name' => $product ? $product->name : 'Item',
-                        'description' => $item->special_instructions ?: null,
-                    ],
-                    'unit_amount' => $item->unit_price->cents(),
-                ],
-                'quantity' => $item->quantity,
-            ];
-        }
-
-        if ($order->delivery_fee->isPositive()) {
-            $lineItems[] = [
-                'price_data' => [
-                    'currency' => config('cashier.currency', 'usd'),
-                    'product_data' => ['name' => 'Delivery Fee'],
-                    'unit_amount' => $order->delivery_fee->cents(),
-                ],
-                'quantity' => 1,
-            ];
-        }
-
-        return $lineItems;
-    }
-
     /** @return array<int, array<string, string>> */
     private function buildDiscounts(Order $order, string $connectId): array
     {
@@ -189,39 +161,5 @@ class StripeCheckoutService
         ], ['stripe_account' => $connectId]);
 
         return [['coupon' => $coupon->id]];
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $lineItems
-     * @param array<int, array<string, string>> $discounts
-     * @return array<string, mixed>
-     */
-    private function buildSessionParams(Order $order, array $lineItems, array $discounts, string $successUrl, string $cancelUrl): array
-    {
-        $params = [
-            'mode' => 'payment',
-            'line_items' => $lineItems,
-            'success_url' => $successUrl,
-            'cancel_url' => $cancelUrl,
-            'customer_email' => $order->customer?->email,
-            'metadata' => [
-                'order_id' => $order->id,
-                'order_number' => $order->order_number,
-                'tenant_id' => tenant()->getTenantKey(),
-            ],
-            'payment_intent_data' => [
-                'metadata' => [
-                    'order_id' => $order->id,
-                    'order_number' => $order->order_number,
-                    'tenant_id' => tenant()->getTenantKey(),
-                ],
-            ],
-        ];
-
-        if (! empty($discounts)) {
-            $params['discounts'] = $discounts;
-        }
-
-        return $params;
     }
 }
