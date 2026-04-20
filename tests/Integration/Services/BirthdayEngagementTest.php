@@ -104,7 +104,7 @@ test('dispatchForRecipient creates coupon and dispatches event when coupon enabl
         return $event->coupon !== null;
     });
     $this->assertDatabaseHas('coupons', [
-        'value' => 15,
+        'percentage' => 15,
     ]);
 });
 

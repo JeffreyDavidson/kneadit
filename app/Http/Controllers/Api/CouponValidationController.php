@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\Financial\CouponType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\ApplyDiscountRequest;
 use App\Http\Resources\CouponValidationResource;
@@ -24,12 +25,16 @@ class CouponValidationController extends Controller
 
         $coupon = $result->coupon;
 
+        $value = $coupon?->type === CouponType::Percentage
+            ? $coupon->percentage?->value()
+            : $coupon?->fixed_amount?->dollars();
+
         return new CouponValidationResource([
             'code' => $validated['code'],
             'valid' => true,
             'discount_amount' => $result->discount,
             'type' => $coupon?->type?->value,
-            'value' => $coupon?->value?->dollars(),
+            'value' => $value,
         ]);
     }
 }

@@ -15,7 +15,7 @@ class CouponSeeder extends Seeder
             [
                 'code' => 'WELCOME10',
                 'type' => CouponType::Percentage,
-                'value' => 10.00,
+                'percentage' => 10.00,
                 'min_order_amount' => 25.00,
                 'max_uses' => 100,
                 'used_count' => 23,
@@ -26,7 +26,7 @@ class CouponSeeder extends Seeder
             [
                 'code' => 'FIRST5',
                 'type' => CouponType::Fixed,
-                'value' => 5.00,
+                'fixed_amount' => 5.00,
                 'min_order_amount' => 15.00,
                 'max_uses' => 50,
                 'used_count' => 17,
@@ -37,7 +37,7 @@ class CouponSeeder extends Seeder
             [
                 'code' => 'HOLIDAY20',
                 'type' => CouponType::Percentage,
-                'value' => 20.00,
+                'percentage' => 20.00,
                 'min_order_amount' => 40.00,
                 'max_uses' => 200,
                 'used_count' => 156,
@@ -48,7 +48,7 @@ class CouponSeeder extends Seeder
             [
                 'code' => 'BAKER15',
                 'type' => CouponType::Percentage,
-                'value' => 15.00,
+                'percentage' => 15.00,
                 'min_order_amount' => 30.00,
                 'max_uses' => null, // Unlimited uses
                 'used_count' => 42,
@@ -59,7 +59,7 @@ class CouponSeeder extends Seeder
             [
                 'code' => 'FREESHIP',
                 'type' => CouponType::Fixed,
-                'value' => 3.00, // Fixed amount for delivery fee
+                'fixed_amount' => 3.00, // Fixed amount for delivery fee
                 'min_order_amount' => 20.00,
                 'max_uses' => 75,
                 'used_count' => 8,

@@ -21,7 +21,8 @@ class CouponFactory extends Factory
         return [
             'code' => strtoupper(fake()->unique()->bothify('??##??')),
             'type' => CouponType::Percentage,
-            'value' => fake()->randomFloat(2, 5, 50),
+            'percentage' => fake()->randomFloat(2, 5, 50),
+            'fixed_amount' => null,
             'min_order_amount' => null,
             'max_uses' => null,
             'used_count' => 0,
@@ -71,7 +72,11 @@ class CouponFactory extends Factory
      */
     public function percentage(): static
     {
-        return $this->state(fn (array $attributes) => ['type' => CouponType::Percentage]);
+        return $this->state(fn (array $attributes) => [
+            'type' => CouponType::Percentage,
+            'percentage' => $attributes['percentage'] ?? fake()->randomFloat(2, 5, 50),
+            'fixed_amount' => null,
+        ]);
     }
 
     /**
@@ -79,6 +84,10 @@ class CouponFactory extends Factory
      */
     public function fixed(): static
     {
-        return $this->state(fn (array $attributes) => ['type' => CouponType::Fixed]);
+        return $this->state(fn (array $attributes) => [
+            'type' => CouponType::Fixed,
+            'fixed_amount' => $attributes['fixed_amount'] ?? fake()->randomFloat(2, 5, 25),
+            'percentage' => null,
+        ]);
     }
 }

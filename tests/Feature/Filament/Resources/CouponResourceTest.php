@@ -23,14 +23,14 @@ test('can create a coupon via slide-over', function () {
         ->callAction(CreateAction::class, data: [
             'code' => 'SPRING20',
             'type' => CouponType::Percentage->value,
-            'value' => 20,
+            'percentage' => 20,
             'is_active' => true,
         ])
         ->assertHasNoFormErrors();
 
     test()->assertDatabaseHas(Coupon::class, [
         'code' => 'SPRING20',
-        'value' => 20,
+        'percentage' => 20,
     ]);
 });
 
@@ -39,24 +39,23 @@ test('create coupon validates required fields', function (array $data, array $er
         ->callAction(CreateAction::class, data: [
             'code' => 'TEST01',
             'type' => CouponType::Percentage->value,
-            'value' => 10,
+            'percentage' => 10,
             ...$data,
         ])
         ->assertHasFormErrors($errors);
 })->with([
     'code is required' => [['code' => null], ['code' => 'required']],
     'type is required' => [['type' => null], ['type' => 'required']],
-    'value is required' => [['value' => null], ['value' => 'required']],
 ]);
 
 test('can edit a coupon via table action', function () {
-    $coupon = Coupon::factory()->create();
+    $coupon = Coupon::factory()->percentage()->create();
 
     Livewire::test(ListCoupons::class)
         ->callAction(TestAction::make('edit')->table($coupon), data: [
             'code' => 'UPDATED01',
             'type' => $coupon->type->value,
-            'value' => $coupon->value->dollars(),
+            'percentage' => $coupon->percentage->value(),
             'is_active' => true,
         ])
         ->assertHasNoFormErrors();
@@ -79,7 +78,7 @@ test('can render coupon table columns', function (string $column) {
 
     Livewire::test(ListCoupons::class)
         ->assertCanRenderTableColumn($column);
-})->with(['code', 'type', 'value', 'is_active']);
+})->with(['code', 'type', 'discount_value', 'is_active']);
 
 test('can filter coupons by type', function () {
     $percentage = Coupon::factory()->percentage()->create();
@@ -115,7 +114,7 @@ test('resource returns global search result title', function () {
 });
 
 test('resource returns global search result details', function () {
-    $coupon = Coupon::factory()->percentage()->create(['value' => 20]);
+    $coupon = Coupon::factory()->percentage()->create(['percentage' => 20]);
 
     $details = App\Filament\Resources\Coupons\CouponResource::getGlobalSearchResultDetails($coupon);
 

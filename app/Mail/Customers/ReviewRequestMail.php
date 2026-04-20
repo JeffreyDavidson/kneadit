@@ -5,9 +5,9 @@ namespace App\Mail\Customers;
 use App\Enums\Marketing\EmailTemplateType;
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
+use App\Mail\Concerns\ResolvesTemplate;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
-use App\Services\Email\EmailTemplateRenderer;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailables\Content;
@@ -16,6 +16,7 @@ use Illuminate\Mail\Mailables\Envelope;
 class ReviewRequestMail extends BaseMailable
 {
     use BakerBranded;
+    use ResolvesTemplate;
 
     public Order $order;
 
@@ -36,10 +37,7 @@ class ReviewRequestMail extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $resolved = app(EmailTemplateRenderer::class)->resolve(
-            EmailTemplateType::ReviewRequest,
-            $this->placeholders(),
-        );
+        $resolved = $this->resolveTemplate(EmailTemplateType::ReviewRequest, $this->placeholders());
 
         return new Envelope(
             from: $this->bakerFrom(),
@@ -50,10 +48,7 @@ class ReviewRequestMail extends BaseMailable
 
     public function content(): Content
     {
-        $resolved = app(EmailTemplateRenderer::class)->resolve(
-            EmailTemplateType::ReviewRequest,
-            $this->placeholders(),
-        );
+        $resolved = $this->resolveTemplate(EmailTemplateType::ReviewRequest, $this->placeholders());
 
         if ($resolved && $resolved['body']) {
             return new Content(

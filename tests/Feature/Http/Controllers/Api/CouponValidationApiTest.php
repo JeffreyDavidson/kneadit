@@ -9,7 +9,7 @@ beforeEach(fn () => setUpTenantTest());
 test('API validates a valid coupon and returns JSON:API envelope', function () {
     Coupon::factory()->percentage()->create([
         'code' => 'API10OFF',
-        'value' => 10,
+        'percentage' => 10,
         'is_active' => true,
     ]);
 
@@ -40,7 +40,7 @@ test('API returns a JSON:API validation error for an unknown coupon', function (
 test('API returns a JSON:API validation error for an expired coupon', function () {
     Coupon::factory()->expired()->create([
         'code' => 'EXPIRED10',
-        'value' => 10,
+        'percentage' => 10,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())

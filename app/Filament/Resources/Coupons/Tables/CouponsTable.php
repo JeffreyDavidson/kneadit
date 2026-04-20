@@ -7,7 +7,6 @@ use App\Enums\Financial\CouponType;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Financial\Coupon;
-use App\ValueObjects\Money;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
@@ -30,14 +29,9 @@ class CouponsTable
                 TextColumn::make('type')
                     ->badge(),
 
-                TextColumn::make('value')
-                    ->formatStateUsing(function (mixed $state, Coupon $record): string {
-                        $dollars = $state instanceof Money ? $state->dollars() : (float) $state;
-
-                        return $record->type === CouponType::Percentage
-                            ? $dollars . '%'
-                            : Money::fromDollars($dollars)->formatted();
-                    }),
+                TextColumn::make('discount_value')
+                    ->label('Value')
+                    ->getStateUsing(fn (Coupon $record): string => (string) ($record->type === CouponType::Percentage ? $record->percentage : $record->fixed_amount)),
 
                 MoneyColumn::make('min_order_amount')
                     ->placeholder('No minimum'),

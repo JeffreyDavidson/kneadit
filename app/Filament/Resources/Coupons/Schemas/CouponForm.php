@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Coupons\Schemas;
 
 use App\Enums\Financial\CouponType;
 use App\Filament\Forms\Components\MoneyInput;
-use App\ValueObjects\Money;
+use App\Filament\Forms\Components\PercentageInput;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -39,15 +39,15 @@ class CouponForm
                                     ->options(CouponType::class)
                                     ->live(),
 
-                                TextInput::make('value')
-                                    ->required()
-                                    ->rule('numeric')
-                                    ->minValue(0)
-                                    ->step(0.01)
-                                    ->inputMode('decimal')
-                                    ->formatStateUsing(fn (mixed $state): mixed => $state instanceof Money ? $state->dollars() : $state)
-                                    ->prefix(fn (Get $get) => $get('type') === CouponType::Fixed->value ? '$' : '')
-                                    ->suffix(fn (Get $get) => $get('type') === CouponType::Percentage->value ? '%' : ''),
+                                MoneyInput::make('fixed_amount')
+                                    ->label('Discount Amount')
+                                    ->helperText('Use for fixed-amount discounts')
+                                    ->required(fn (Get $get) => $get('type') === CouponType::Fixed->value),
+
+                                PercentageInput::make('percentage')
+                                    ->label('Discount Percentage')
+                                    ->helperText('Use for percentage discounts')
+                                    ->required(fn (Get $get) => $get('type') === CouponType::Percentage->value),
 
                                 MoneyInput::make('min_order_amount')
                                     ->minValue(0),
