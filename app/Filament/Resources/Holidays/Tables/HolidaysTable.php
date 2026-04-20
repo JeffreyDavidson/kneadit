@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Holidays\Tables;
 
-use App\Enums\Orders\OrderStatus;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Operations\Holiday;
 use App\Models\Orders\Order;
@@ -27,7 +26,7 @@ class HolidaysTable
                     ->addSelect([
                         'order_count' => Order::query()->selectRaw('count(*)')
                             ->whereColumn('delivery_date', 'holidays.date')
-                            ->where('status', '!=', OrderStatus::Cancelled),
+                            ->active(),
                     ]),
             )
             ->heading('Holidays')

@@ -21,6 +21,7 @@ class ExpenseFactory extends Factory
         return [
             'description' => fake()->sentence(),
             'amount' => fake()->randomFloat(2, 10, 500),
+            'business_percentage' => 100,
             'category' => fake()->randomElement(ExpenseCategory::cases()),
             'date' => fake()->dateTimeBetween('-3 months', 'now'),
             'notes' => fake()->optional()->sentence(),

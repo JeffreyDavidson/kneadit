@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Expenses\Schemas;
 
 use App\Enums\Financial\ExpenseCategory;
 use App\Filament\Forms\Components\MoneyInput;
+use App\Filament\Forms\Components\PercentageInput;
 use App\Filament\Support\AllowedFileTypes;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -53,14 +54,10 @@ class ExpenseForm
 
                         Grid::make(2)
                             ->components([
-                                TextInput::make('business_percentage')
+                                PercentageInput::make('business_percentage')
                                     ->label('Business Percentage')
                                     ->required()
-                                    ->numeric()
-                                    ->default(100)
-                                    ->minValue(0)
-                                    ->maxValue(100)
-                                    ->suffix('%'),
+                                    ->default(100),
 
                                 MoneyInput::make('deductible_amount')
                                     ->label('Deductible Amount')

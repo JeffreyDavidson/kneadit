@@ -2,6 +2,7 @@
 
 namespace App\Models\Platform;
 
+use App\Builders\Platform\SupportTicketQueryBuilder;
 use App\Enums\Platform\SupportTicketPriority;
 use App\Enums\Platform\SupportTicketStatus;
 use App\Observers\Platform\SupportTicketObserver;
@@ -9,6 +10,7 @@ use Database\Factories\Platform\SupportTicketFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -50,6 +52,7 @@ use Illuminate\Support\Carbon;
 #[Connection('central')]
 #[Fillable('tenant_id', 'subject', 'body', 'status', 'priority', 'admin_notes', 'resolved_at')]
 #[ObservedBy(SupportTicketObserver::class)]
+#[UseEloquentBuilder(SupportTicketQueryBuilder::class)]
 class SupportTicket extends Model
 {
     /** @use HasFactory<SupportTicketFactory> */

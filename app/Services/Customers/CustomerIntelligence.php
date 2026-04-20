@@ -3,11 +3,8 @@
 namespace App\Services\Customers;
 
 use App\DataTransferObjects\Customers\CustomerMetrics;
-use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
-use App\Models\Orders\Order;
 use App\Services\Loyalty\CustomerLoyalty;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 
 class CustomerIntelligence
@@ -49,26 +46,5 @@ class CustomerIntelligence
             totalPoints: $balance->total,
             lifetimePointsEarned: $balance->earned,
         );
-    }
-
-    /**
-     * @param Builder<Customer> $query
-     * @return Builder<Customer>
-     */
-    public function enrichQuery(Builder $query): Builder
-    {
-        return $query
-            ->withCount(['orders' => function (Builder $q) {
-                $q->whereNotIn('status', [OrderStatus::Cancelled]);
-            }])
-            ->withSum(['orders' => function (Builder $q) {
-                $q->whereNotIn('status', [OrderStatus::Cancelled]);
-            }], 'total')
-            ->addSelect([
-                'last_order_date' => Order::query()->select('created_at')
-                    ->whereColumn('customer_id', 'customers.id')
-                    ->latest()
-                    ->limit(1),
-            ]);
     }
 }
