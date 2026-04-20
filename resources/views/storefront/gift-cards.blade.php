@@ -61,7 +61,7 @@
                             <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(-30%, 30%);"></div>
                             <div class="relative z-10">
                                 <p class="font-script text-2xl text-warm-500">Gift Card</p>
-                                <p class="font-display text-lg mt-1 text-warm-400">{{ $settings->storeName }}</p>
+                                <p class="font-display text-lg mt-1 text-warm-400">{{ $settings->store->name }}</p>
                             </div>
                             <div class="relative z-10 text-right">
                                 <p class="font-display text-5xl font-bold text-white" x-text="'$' + parseFloat(form.initial_balance || 0).toFixed(2)"></p>

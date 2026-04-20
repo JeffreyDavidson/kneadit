@@ -12,7 +12,7 @@
         </h1>
         <p class="text-lg max-w-2xl text-warm-400">
             Choose your items, tell us when you need them, and we'll have everything freshly prepared.
-            Orders need {{ $settings->leadTimeHours }} hours notice — ready {{ now()->addDays($settings->leadTimeDays())->format('l, F j') }} or later.
+            Orders need {{ $settings->orders->leadTimeHours }} hours notice — ready {{ now()->addDays($settings->leadTimeDays())->format('l, F j') }} or later.
         </p>
     </div>
 </section>
@@ -231,7 +231,7 @@
                                 <span class="text-warm-200">Pickup <span class="text-sm text-warm-500">(Free)</span></span>
                             </label>
 
-                            @if ($settings->deliveryEnabled)
+                            @if ($settings->orders->deliveryEnabled)
                             <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all bg-white/[0.03] border border-warm-600/15"
                                    :class="form.delivery_type === 'delivery' ? 'border-warm-500 bg-warm-500/[0.08]' : ''">
                                 <input type="radio" x-model="form.delivery_type" value="delivery" @change="calculateDeliveryFee()" class="order-radio mr-3">
@@ -240,7 +240,7 @@
                             @endif
                         </div>
 
-                        @if ($settings->deliveryEnabled)
+                        @if ($settings->orders->deliveryEnabled)
                         <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-3">
                             <div>
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Delivery Address *</label>
@@ -250,14 +250,14 @@
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Distance</label>
                                 <select x-model="form.delivery_tier" @change="calculateDeliveryFee()" class="order-input">
                                     <option value="">Select distance</option>
-                                    @foreach ($settings->deliveryFeeTiers as $index => $tier)
+                                    @foreach ($settings->orders->deliveryFeeTiers as $index => $tier)
                                     <option value="{{ $index }}">{{ $tier['description'] }} (@money($tier['fee']))</option>
                                     @endforeach
                                 </select>
                             </div>
-                            @if ($settings->freeDeliveryMinimum)
+                            @if ($settings->orders->freeDeliveryMinimum)
                             <p class="text-sm text-warm-500">
-                                🚚 Free delivery on orders over @money((float)$settings->freeDeliveryMinimum)!
+                                🚚 Free delivery on orders over @money((float)$settings->orders->freeDeliveryMinimum)!
                             </p>
                             @endif
                         </div>
@@ -299,10 +299,10 @@
                     </div>
                     @endif
 
-                    @if ($settings->allergyDisclaimer)
+                    @if ($settings->branding->allergyDisclaimer)
                     <div class="pt-4 mt-4 border-t border-warm-700/20">
                         <p class="text-xs leading-relaxed text-warm-600">
-                            <strong class="text-warm-500">⚠ Allergy Notice:</strong> {{ $settings->allergyDisclaimer }}
+                            <strong class="text-warm-500">⚠ Allergy Notice:</strong> {{ $settings->branding->allergyDisclaimer }}
                         </p>
                     </div>
                     @endif

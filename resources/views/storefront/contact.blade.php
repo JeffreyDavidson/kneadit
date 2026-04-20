@@ -3,7 +3,7 @@
 
 
 {{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->storeName . ' contact'" image-class="contact-hero-img">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' contact'" image-class="contact-hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
         <x-storefront.eyebrow class="contact-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Get in Touch' }}</x-storefront.eyebrow>
         <h1 class="contact-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
@@ -19,35 +19,35 @@
 </x-storefront.hero-section>
 
 {{-- Contact Info Cards --}}
-@if ($settings->storeAddress || $settings->storePhone || $settings->storeEmail)
+@if ($settings->store->address || $settings->store->phone || $settings->store->email)
 <section class="bg-warm-800">
     <div class="max-w-5xl mx-auto px-4 py-10">
         <div class="grid sm:grid-cols-3 gap-4">
-            @if ($settings->storeAddress)
+            @if ($settings->store->address)
             <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
                     <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </div>
                 <p class="text-xs uppercase tracking-[0.2em] mb-2 text-warm-500">Address</p>
-                <p class="text-sm text-warm-300">{{ $settings->storeAddress }}</p>
+                <p class="text-sm text-warm-300">{{ $settings->store->address }}</p>
             </div>
             @endif
-            @if ($settings->storePhone)
+            @if ($settings->store->phone)
             <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
                     <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                 </div>
                 <p class="text-xs uppercase tracking-[0.2em] mb-2 text-warm-500">Phone</p>
-                <p class="text-sm"><a href="tel:{{ $settings->storePhone }}" class="text-warm-300">{{ $settings->storePhone }}</a></p>
+                <p class="text-sm"><a href="tel:{{ $settings->store->phone }}" class="text-warm-300">{{ $settings->store->phone }}</a></p>
             </div>
             @endif
-            @if ($settings->storeEmail)
+            @if ($settings->store->email)
             <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
                     <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 </div>
                 <p class="text-xs uppercase tracking-[0.2em] mb-2 text-warm-500">Email</p>
-                <p class="text-sm"><a href="mailto:{{ $settings->storeEmail }}" class="text-warm-300">{{ $settings->storeEmail }}</a></p>
+                <p class="text-sm"><a href="mailto:{{ $settings->store->email }}" class="text-warm-300">{{ $settings->store->email }}</a></p>
             </div>
             @endif
         </div>
@@ -107,11 +107,11 @@
 
             {{-- Sidebar --}}
             <div class="md:col-span-2 space-y-8">
-                @if (!empty($settings->operatingHours))
+                @if (!empty($settings->homepage->operatingHours))
                 <div class="p-8 rounded-2xl bg-white border border-warm-200">
                     <x-storefront.eyebrow align="left" line-opacity="0.5" class="mb-6">{{ $content['hours_eyebrow'] ?? 'Hours' }}</x-storefront.eyebrow>
                     <div class="space-y-3">
-                        @foreach ($settings->operatingHours as $day => $hours)
+                        @foreach ($settings->homepage->operatingHours as $day => $hours)
                         <div class="flex justify-between text-sm">
                             <span class="font-medium text-warm-800">{{ ucfirst($day) }}</span>
                             <span class="text-warm-600">
@@ -125,27 +125,27 @@
                         @endforeach
                     </div>
                     <div class="mt-5 p-3 rounded-xl text-sm" style="background: var(--warm-100); color: var(--warm-600);">
-                        📋 Orders need {{ $settings->leadTimeHours }}h advance notice.
+                        📋 Orders need {{ $settings->orders->leadTimeHours }}h advance notice.
                     </div>
                 </div>
                 @endif
 
                 {{-- Map Placeholder --}}
-                @if ($settings->storeAddress)
+                @if ($settings->store->address)
                 <div class="rounded-2xl overflow-hidden" style="aspect-ratio: 16/10; background: var(--warm-200);">
                     <div class="w-full h-full flex items-center justify-center">
                         <div class="text-center px-6">
                             <svg class="w-8 h-8 mx-auto mb-2 text-warm-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                            <p class="text-sm font-medium text-warm-500">{{ $settings->storeAddress }}</p>
+                            <p class="text-sm font-medium text-warm-500">{{ $settings->store->address }}</p>
                         </div>
                     </div>
                 </div>
                 @endif
 
-                @if ($settings->allergyDisclaimer)
+                @if ($settings->branding->allergyDisclaimer)
                 <div class="p-6 rounded-2xl" style="background: var(--warm-200); border-left: 3px solid var(--warm-500);">
                     <p class="text-xs uppercase tracking-[0.2em] font-semibold mb-2 text-warm-500">Allergy Info</p>
-                    <p class="text-sm leading-relaxed text-warm-600">{{ $settings->allergyDisclaimer }}</p>
+                    <p class="text-sm leading-relaxed text-warm-600">{{ $settings->branding->allergyDisclaimer }}</p>
                 </div>
                 @endif
             </div>
@@ -154,7 +154,7 @@
 </section>
 
 {{-- FAQ --}}
-@if (!empty($settings->faqItems))
+@if (!empty($settings->homepage->faqItems))
 <x-storefront.dark-section :show-radial="false">
     <div class="max-w-5xl mx-auto px-4">
         <div class="text-center mb-12">
@@ -162,7 +162,7 @@
             <h2 class="font-display text-3xl md:text-5xl font-bold text-warm-100">{{ $content['faq_heading'] ?? 'Common Questions' }}</h2>
         </div>
         <div class="grid md:grid-cols-2 gap-x-12 gap-y-4">
-            @foreach ($settings->faqItems as $faq)
+            @foreach ($settings->homepage->faqItems as $faq)
             <div class="rounded-2xl bg-warm-800 border border-warm-700/15 overflow-hidden" x-data="{ open: false }">
                 <button @click="open = !open" class="flex items-center justify-between w-full p-6 text-left" :aria-expanded="open">
                     <h3 class="font-display text-lg font-semibold text-warm-200 pr-4">{{ $faq['question'] }}</h3>

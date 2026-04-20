@@ -171,9 +171,9 @@
 
     <div class="label">
         <div class="brand-row">
-            <div class="brand-name">{{ $settings->storeName ?: 'Your Bakery' }}</div>
-            @if ($settings->storeAddress)
-                <div class="brand-address">{{ $settings->storeAddress }}</div>
+            <div class="brand-name">{{ $settings->store->name ?: 'Your Bakery' }}</div>
+            @if ($settings->store->address)
+                <div class="brand-address">{{ $settings->store->address }}</div>
             @endif
         </div>
 

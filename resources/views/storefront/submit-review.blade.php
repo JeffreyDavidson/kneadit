@@ -34,7 +34,7 @@
             {{ $content['hero_title'] ?? 'How Was Your Order?' }}
         </h1>
         <p class="text-lg review-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">
-            From {{ $settings->storeName }} · Order #{{ $order->order_number }}
+            From {{ $settings->store->name }} · Order #{{ $order->order_number }}
         </p>
     </div>
 </x-storefront.hero-section>

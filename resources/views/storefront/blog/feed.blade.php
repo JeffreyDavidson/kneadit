@@ -1,9 +1,9 @@
 <?php echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>{{ $settings->storeName }} Blog</title>
+        <title>{{ $settings->store->name }} Blog</title>
         <link>{{ url('/blog') }}</link>
-        <description>Latest updates from {{ $settings->storeName }}</description>
+        <description>Latest updates from {{ $settings->store->name }}</description>
         <atom:link href="{{ route('storefront.blog.feed') }}" rel="self" type="application/rss+xml"/>
         <language>en-us</language>
         @foreach ($posts as $post)
@@ -15,8 +15,8 @@
             @if ($post->excerpt)
             <description>{{ htmlspecialchars($post->excerpt, ENT_XML1) }}</description>
             @endif
-            @if ($settings->storeName)
-            <author>{{ htmlspecialchars($settings->storeName, ENT_XML1) }}</author>
+            @if ($settings->store->name)
+            <author>{{ htmlspecialchars($settings->store->name, ENT_XML1) }}</author>
             @endif
         </item>
         @endforeach

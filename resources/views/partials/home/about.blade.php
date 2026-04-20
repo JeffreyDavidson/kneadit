@@ -1,7 +1,7 @@
 @php
-    $aboutUs = $settings->aboutUsText;
-    $storeName = $settings->storeName;
-    $storePhoto = $settings->storePhoto;
+    $aboutUs = $settings->branding->aboutUsText;
+    $storeName = $settings->store->name;
+    $storePhoto = $settings->store->photo;
 @endphp
 @if ($aboutUs)
 <section class="relative py-24 px-4 overflow-hidden bg-warm-50">

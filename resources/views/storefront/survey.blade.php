@@ -17,7 +17,7 @@
         <h1 class="font-display text-4xl font-bold mb-4 survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
         <p class="text-lg mb-10 survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
         <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 survey-fade-up" style="background: var(--warm-500); color: var(--warm-900); animation-delay: 0.9s;">
-            Back to {{ $settings->storeName }}
+            Back to {{ $settings->store->name }}
         </a>
     </div>
 </x-storefront.hero-section>
