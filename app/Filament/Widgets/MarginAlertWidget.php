@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Inventory\Product;
 use App\Presenters\RecipePresenter;
 use Filament\Support\Icons\Heroicon;
@@ -12,6 +13,8 @@ use Illuminate\Support\Number;
 
 class MarginAlertWidget extends BaseWidget
 {
+    use CachesWidgetData;
+
     protected static ?int $sort = 2;
 
     protected static ?string $heading = 'Margin Alerts (below 30%)';
@@ -25,7 +28,7 @@ class MarginAlertWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $lowMarginIds = once(fn () => Product::with('recipe.inventoryIngredients')
+        $lowMarginIds = $this->cached('low_margin_ids', [300, 600], fn (): array => Product::with('recipe.inventoryIngredients')
             ->whereHas('recipe')
             ->get()
             ->filter(fn (Product $product) => $product->recipe
@@ -57,5 +60,10 @@ class MarginAlertWidget extends BaseWidget
             ->emptyStateHeading('No low-margin products')
             ->emptyStateIcon(Heroicon::OutlinedCheckCircle)
             ->paginated(false);
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'margin_alert_widget';
     }
 }
