@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Engagement\RewardType;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\LoyaltyReward;
@@ -38,12 +37,10 @@ test('customer total points calculation', function () {
 });
 
 test('loyalty reward can be created', function () {
-    $reward = LoyaltyReward::factory()->create([
+    $reward = LoyaltyReward::factory()->freeProduct()->create([
         'name' => 'Free Cookie',
         'description' => 'Get a free cookie!',
         'points_required' => 100,
-        'reward_type' => RewardType::FreeProduct,
-        'reward_value' => 0,
     ]);
 
     test()->assertDatabaseHas('loyalty_rewards', ['name' => 'Free Cookie']);
@@ -51,22 +48,20 @@ test('loyalty reward can be created', function () {
 });
 
 test('loyalty reward type label percentage', function () {
-    $reward = LoyaltyReward::factory()->create([
+    $reward = LoyaltyReward::factory()->percentageDiscount()->create([
         'name' => '10% Off',
         'points_required' => 50,
-        'reward_type' => RewardType::PercentageDiscount,
-        'reward_value' => 10,
+        'discount_percentage' => 10,
     ]);
 
     expect($reward->reward_type_label)->toContain('% Off');
 });
 
 test('loyalty reward type label fixed', function () {
-    $reward = LoyaltyReward::factory()->create([
+    $reward = LoyaltyReward::factory()->fixedDiscount()->create([
         'name' => '$5 Off',
         'points_required' => 75,
-        'reward_type' => RewardType::FixedDiscount,
-        'reward_value' => 5.00,
+        'discount_amount' => 5.00,
     ]);
 
     expect($reward->reward_type_label)->toBe('$5.00 Off');
