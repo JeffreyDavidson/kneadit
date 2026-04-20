@@ -2,8 +2,8 @@
 
 namespace App\Services\Tenants;
 
+use App\DataTransferObjects\Settings\BrandingSettings;
 use App\Models\Platform\Tenant;
-use App\Services\Settings\TenantSettings;
 use App\ValueObjects\TenantHealthScore;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -109,7 +109,7 @@ class TenantHealthService
             ! empty($tenant->store_name),
             ! empty($tenant->store_logo),
             (bool) $tenant->storefront_enabled,
-            ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== TenantSettings::DEFAULT_BRAND_COLOR,
+            ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== BrandingSettings::DEFAULT_BRAND_COLOR,
             $metrics['has_products'],
             $metrics['has_categories'],
             $metrics['has_orders'],

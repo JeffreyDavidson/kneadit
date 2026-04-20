@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\Settings\OnboardingSettings;
 use App\Enums\Customers\CateringEventType;
 use App\Models\Platform\Setting;
 use App\Services\Settings\SettingsManager;
@@ -10,67 +11,12 @@ use function Pest\Laravel\withoutMiddleware;
 beforeEach(function () {
     setUpTenantTest();
 
-    app()->instance(TenantSettings::class, new TenantSettings(
-        storeName: 'Test',
-        storeEmail: null,
-        storePhone: null,
-        storeAddress: null,
-        storeWebsite: null,
-        storeLogo: null,
-        storeTagline: null,
-        brandColorPrimary: '#d4920c',
-        onboardingCompletedAt: now()->toDateTimeString(),
-        storefrontTheme: 'classic',
-        businessTagline: null,
-        aboutUsText: null,
-        heroImage: null,
-        heroStyle: 'split',
-        heroTagline: null,
-        heroPrimaryCtaText: 'Order Now',
-        heroSecondaryCtaText: 'Browse Menu',
-        allergyDisclaimer: null,
-        cateringHeroImage: null,
-        loyaltyHeroImage: null,
-        giftCardsHeroImage: null,
-        leadTimeHours: 24,
-        deliveryEnabled: false,
-        freeDeliveryMinimum: '50',
-        minimumPickupOrderAmount: '0',
-        minimumDeliveryOrderAmount: '0',
-        deliveryFeeTiers: [],
-        paymentMethodsAccepted: [],
-        operatingHours: [],
-        faqItems: [],
-        loyaltyProgramName: 'Rewards',
-        loyaltyPointsPerDollar: '10',
-        loyaltyEnabled: false,
-        cateringMinimumGuests: '10',
-        cateringLeadTimeDays: '14',
-        cateringEventTypes: CateringEventType::defaultLabels(),
-        socialMediaLinks: [],
-        homepageSections: [],
-        cateringEnabled: true,
-        storePhoto: null,
-        announcementEnabled: false,
-        announcementText: '',
-        announcementType: 'info',
-        showPolicies: false,
-        cancellationPolicy: '',
-        depositPolicy: '',
-        refundPolicy: '',
-        pickupPolicy: '',
-        additionalTerms: '',
-        birthdayProgramEnabled: false,
-        birthdayCouponEnabled: false,
-        birthdayDiscountPercentage: 15,
-        birthdayCouponValidDays: 7,
-        reviewRequestsEnabled: false,
-        reviewRequestDelayHours: 24,
-        repeatRemindersEnabled: false,
-        repeatReminderDays: 30,
-        giftCardPresetAmounts: [10, 25, 50, 100],
-        giftCardDefaultAmount: 25,
-        defaultDailyCapacity: 20,
+    app()->instance(TenantSettings::class, makeTenantSettings(
+        store: makeStoreInfo(['name' => 'Test']),
+        orders: makeOrderSettings(['deliveryEnabled' => false]),
+        loyalty: makeLoyaltySettings(['enabled' => false]),
+        catering: makeCateringSettings(['enabled' => true, 'eventTypes' => CateringEventType::defaultLabels()]),
+        onboarding: new OnboardingSettings(completedAt: now()->toDateTimeString()),
     ));
 });
 

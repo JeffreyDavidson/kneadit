@@ -19,6 +19,16 @@ final readonly class HomepageSettings
         public array $sections,
     ) {}
 
+    public static function resolve(): self
+    {
+        return new self(
+            socialMediaLinks: (array) json_decode((string) settings('social_media_links', '{}'), true),
+            operatingHours: (array) json_decode((string) settings('operating_hours', '{}'), true),
+            faqItems: (array) json_decode((string) settings('faq_items', '[]'), true),
+            sections: (array) json_decode((string) settings('homepage_sections', '{}'), true),
+        );
+    }
+
     /** @return Collection<string, array<string, mixed>> */
     public function visibleSections(): Collection
     {

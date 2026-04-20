@@ -3,73 +3,13 @@
 use App\Enums\Engagement\LoyaltyPointType;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyReward;
-use App\Services\Settings\TenantSettings;
 use App\ValueObjects\LoyaltyBalance;
 use App\ViewModels\Storefront\LoyaltyPageViewModel;
 
-function makeLoyaltyTenantSettings(): TenantSettings
+function makeLoyaltyTenantSettings(): App\Services\Settings\TenantSettings
 {
-    return new TenantSettings(
-        storeName: 'Test Bakery',
-        storeEmail: null,
-        storePhone: null,
-        storeAddress: null,
-        storeWebsite: null,
-        storeLogo: null,
-        storeTagline: null,
-        brandColorPrimary: '#d4920c',
-        onboardingCompletedAt: null,
-        storefrontTheme: 'classic',
-        businessTagline: null,
-        aboutUsText: null,
-        heroImage: null,
-        heroStyle: 'split',
-        heroTagline: null,
-        heroPrimaryCtaText: 'Order Now',
-        heroSecondaryCtaText: 'Browse Menu',
-        allergyDisclaimer: null,
-        cateringHeroImage: null,
-        loyaltyHeroImage: null,
-        giftCardsHeroImage: null,
-        leadTimeHours: 24,
-        deliveryEnabled: true,
-        freeDeliveryMinimum: '50',
-        minimumPickupOrderAmount: '0',
-        minimumDeliveryOrderAmount: '0',
-        deliveryFeeTiers: [],
-        paymentMethodsAccepted: [],
-        operatingHours: [],
-        faqItems: [],
-        loyaltyProgramName: 'Rewards',
-        loyaltyPointsPerDollar: '10',
-        loyaltyEnabled: true,
-        cateringMinimumGuests: '10',
-        cateringLeadTimeDays: '14',
-        cateringEventTypes: ['Wedding', 'Corporate Event'],
-        socialMediaLinks: [],
-        homepageSections: [],
-        cateringEnabled: false,
-        storePhoto: null,
-        announcementEnabled: false,
-        announcementText: '',
-        announcementType: 'info',
-        showPolicies: false,
-        cancellationPolicy: '',
-        depositPolicy: '',
-        refundPolicy: '',
-        pickupPolicy: '',
-        additionalTerms: '',
-        birthdayProgramEnabled: false,
-        birthdayCouponEnabled: true,
-        birthdayDiscountPercentage: 15,
-        birthdayCouponValidDays: 7,
-        reviewRequestsEnabled: false,
-        reviewRequestDelayHours: 24,
-        repeatRemindersEnabled: false,
-        repeatReminderDays: 30,
-        giftCardPresetAmounts: [10, 25, 50, 100],
-        giftCardDefaultAmount: 25,
-        defaultDailyCapacity: 20,
+    return makeTenantSettings(
+        engagement: makeEngagementSettings(['birthdayCouponEnabled' => true]),
     );
 }
 
