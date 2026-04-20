@@ -78,14 +78,14 @@ class OrderStatusMail extends BaseMailable
             'order_number' => $this->order->order_number,
             'order_total' => '$' . number_format($this->order->total->dollars() / 100, 2),
             'delivery_date' => $this->order->delivery_date?->format('M j, Y') ?? '',
-            'store_name' => $settings->storeName,
+            'store_name' => $settings->store->name,
         ];
     }
 
     private function resolveDefaultSubject(): string
     {
         $number = $this->order->order_number;
-        $storeName = app(TenantSettings::class)->storeName;
+        $storeName = app(TenantSettings::class)->store->name;
 
         return match ($this->status) {
             OrderStatus::Confirmed => "Order #{$number} Confirmed — {$storeName}",

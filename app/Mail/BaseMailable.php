@@ -22,15 +22,16 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
     public function buildViewData(): array
     {
         $settings = app(TenantSettings::class);
+        $store = $settings->store;
 
         return array_merge(parent::buildViewData(), [
-            'storeName' => $settings->storeName,
+            'storeName' => $store->name,
             'primaryColor' => $settings->branding->brandColorPrimary,
             'secondaryColor' => tenant()->brand_color_secondary ?? '#1c1410',
-            'storeEmail' => $settings->storeEmail ?? '',
-            'storePhone' => $settings->storePhone ?? '',
-            'storeAddress' => $settings->storeAddress ?? '',
-            'logoUrl' => $settings->storeLogoUrl(),
+            'storeEmail' => $store->email ?? '',
+            'storePhone' => $store->phone ?? '',
+            'storeAddress' => $store->address ?? '',
+            'logoUrl' => $store->logoUrl(),
         ]);
     }
 }

@@ -30,7 +30,7 @@ class ReviewRequestMail extends BaseMailable
     public function __construct(Order $order)
     {
         $this->order = $order;
-        $this->storeName = app(TenantSettings::class)->storeName;
+        $this->storeName = app(TenantSettings::class)->store->name;
         $this->reviewUrl = url("/review/{$order->id}");
         $this->orderItems = $order->orderItems()->with('product')->get();
     }
