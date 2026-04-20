@@ -15,6 +15,7 @@
         "tailwindcss-development",
         "kneadit-filament-5",
         "kneadit-mailables",
-        "kneadit-tenant-settings"
+        "kneadit-tenant-settings",
+        "kneadit-versioning"
     ]
 }
