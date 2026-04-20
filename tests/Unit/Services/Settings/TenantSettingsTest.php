@@ -131,28 +131,34 @@ test('cateringEventTypes falls back to defaults when the stored json is empty', 
     expect($settings->catering->eventTypes)->toBe(App\Enums\Customers\CateringEventType::defaultLabels());
 })->uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('giftCardPresetAmounts defaults to standard amounts', function () {
+test('giftCards.presetAmounts defaults to standard amounts', function () {
     $settings = makeTenantSettings();
 
-    expect($settings->giftCardPresetAmounts)->toBe([10, 25, 50, 100]);
+    expect($settings->giftCards->presetAmounts)->toBe([10, 25, 50, 100]);
 });
 
-test('giftCardPresetAmounts can be customized', function () {
-    $settings = makeTenantSettings(giftCardPresetAmounts: [5, 15, 30, 75]);
+test('giftCards.presetAmounts can be customized', function () {
+    $settings = makeTenantSettings(giftCards: new App\DataTransferObjects\Settings\GiftCardSettings(
+        presetAmounts: [5, 15, 30, 75],
+        defaultAmount: 25,
+    ));
 
-    expect($settings->giftCardPresetAmounts)->toBe([5, 15, 30, 75]);
+    expect($settings->giftCards->presetAmounts)->toBe([5, 15, 30, 75]);
 });
 
-test('giftCardDefaultAmount defaults to 25', function () {
+test('giftCards.defaultAmount defaults to 25', function () {
     $settings = makeTenantSettings();
 
-    expect($settings->giftCardDefaultAmount)->toBe(25);
+    expect($settings->giftCards->defaultAmount)->toBe(25);
 });
 
-test('giftCardDefaultAmount can be customized', function () {
-    $settings = makeTenantSettings(giftCardDefaultAmount: 50);
+test('giftCards.defaultAmount can be customized', function () {
+    $settings = makeTenantSettings(giftCards: new App\DataTransferObjects\Settings\GiftCardSettings(
+        presetAmounts: [10, 25, 50, 100],
+        defaultAmount: 50,
+    ));
 
-    expect($settings->giftCardDefaultAmount)->toBe(50);
+    expect($settings->giftCards->defaultAmount)->toBe(50);
 });
 
 test('hero CTA and tagline properties are accessible via branding sub-DTO', function () {

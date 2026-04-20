@@ -5,6 +5,7 @@ namespace App\Services\Settings;
 use App\DataTransferObjects\Settings\BrandingSettings;
 use App\DataTransferObjects\Settings\CateringSettings;
 use App\DataTransferObjects\Settings\EngagementSettings;
+use App\DataTransferObjects\Settings\GiftCardSettings;
 use App\DataTransferObjects\Settings\HomepageSettings;
 use App\DataTransferObjects\Settings\LoyaltySettings;
 use App\DataTransferObjects\Settings\OnboardingSettings;
@@ -34,9 +35,7 @@ final class TenantSettings
         public readonly HomepageSettings $homepage,
         public readonly OnboardingSettings $onboarding,
         public readonly WebhookSettings $webhooks,
-        /** @var array<int, int> */
-        public readonly array $giftCardPresetAmounts,
-        public readonly int $giftCardDefaultAmount,
+        public readonly GiftCardSettings $giftCards,
     ) {}
 
     public static function resolve(): self
@@ -53,8 +52,7 @@ final class TenantSettings
             homepage: HomepageSettings::resolve(),
             onboarding: OnboardingSettings::resolve(),
             webhooks: WebhookSettings::resolve(),
-            giftCardPresetAmounts: array_map('intval', array_filter(explode(',', (string) settings('gift_card_preset_amounts', '10,25,50,100')))),
-            giftCardDefaultAmount: (int) settings('gift_card_default_amount', '25'),
+            giftCards: GiftCardSettings::resolve(),
         );
     }
 
