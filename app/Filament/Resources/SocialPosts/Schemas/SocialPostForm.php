@@ -25,91 +25,104 @@ class SocialPostForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
+        return $schema->components([
+            self::detailsSection(),
+            self::schedulingSection(),
+        ]);
+    }
+
+    private static function detailsSection(): Section
+    {
+        return Section::make('Post Details')
+            ->columnSpanFull()
             ->components([
-                Section::make('Post Details')
-                    ->columnSpanFull()
-                    ->components([
-                        Grid::make(2)
-                            ->components([
-                                Select::make('platform')
-                                    ->options(SocialPlatform::options())
-                                    ->required()
-                                    ->live()
-                                    ->default('instagram'),
+                Grid::make(2)->components([
+                    Select::make('platform')
+                        ->options(SocialPlatform::options())
+                        ->required()
+                        ->live()
+                        ->default('instagram'),
 
-                                Select::make('product_id')
-                                    ->label('Product')
-                                    ->options(Product::query()->active()->pluck('name', 'id'))
-                                    ->searchable()
-                                    ->nullable()
-                                    ->live(),
-                            ]),
+                    Select::make('product_id')
+                        ->label('Product')
+                        ->options(Product::query()->active()->pluck('name', 'id'))
+                        ->searchable()
+                        ->nullable()
+                        ->live(),
+                ]),
 
-                        Textarea::make('caption')
-                            ->required()
-                            ->rows(4)
-                            ->maxLength(fn (Get $get): int => (SocialPlatform::tryFrom($get('platform') ?? 'instagram')?->maxChars() ?? 2200))
-                            ->helperText(fn (Get $get): string => 'Max ' . Number::format((SocialPlatform::tryFrom($get('platform') ?? 'instagram')?->maxChars() ?? 2200)) . ' characters for ' . ((SocialPlatform::tryFrom($get('platform') ?? 'instagram')?->getLabel() ?? 'Instagram')))
-                            ->hintAction(
-                                Action::make('generateCaption')
-                                    ->label('Generate Caption')
-                                    ->icon(Heroicon::OutlinedSparkles)
-                                    ->action(function (Get $get, Set $set) {
-                                        $productId = $get('product_id');
+                Textarea::make('caption')
+                    ->required()
+                    ->rows(4)
+                    ->maxLength(fn (Get $get): int => self::platformFor($get)->maxChars())
+                    ->helperText(fn (Get $get): string => 'Max ' . Number::format(self::platformFor($get)->maxChars()) . ' characters for ' . self::platformFor($get)->getLabel())
+                    ->hintAction(self::generateCaptionAction()),
 
-                                        if (! $productId) {
-                                            Notification::make()
-                                                ->title('Select a product first')
-                                                ->body('Choose a product to generate a caption from.')
-                                                ->warning()
-                                                ->send();
-
-                                            return;
-                                        }
-
-                                        /** @var Product|null $product */
-                                        $product = Product::query()->find($productId);
-                                        if (! $product) {
-                                            return;
-                                        }
-
-                                        $set('caption', resolve(GenerateSocialCaption::class)($product));
-
-                                        Notification::make()
-                                            ->title('Caption generated!')
-                                            ->success()
-                                            ->send();
-                                    }),
-                            ),
-
-                        FileUpload::make('image_path')
-                            ->label('Image')
-                            ->image()
-                            ->acceptedFileTypes(AllowedFileTypes::IMAGES)
-                            ->maxSize(5120)
-                            ->directory('social-posts')
-                            ->nullable(),
-                    ]),
-
-                Section::make('Scheduling')
-                    ->columnSpanFull()
-                    ->components([
-                        Grid::make(2)
-                            ->components([
-                                DateTimePicker::make('scheduled_for')
-                                    ->nullable(),
-
-                                Select::make('status')
-                                    ->options(SocialPostStatus::class)
-                                    ->required()
-                                    ->default(SocialPostStatus::Draft),
-                            ]),
-
-                        Textarea::make('notes')
-                            ->rows(2)
-                            ->nullable(),
-                    ]),
+                FileUpload::make('image_path')
+                    ->label('Image')
+                    ->image()
+                    ->acceptedFileTypes(AllowedFileTypes::IMAGES)
+                    ->maxSize(5120)
+                    ->directory('social-posts')
+                    ->nullable(),
             ]);
+    }
+
+    private static function schedulingSection(): Section
+    {
+        return Section::make('Scheduling')
+            ->columnSpanFull()
+            ->components([
+                Grid::make(2)->components([
+                    DateTimePicker::make('scheduled_for')->nullable(),
+
+                    Select::make('status')
+                        ->options(SocialPostStatus::class)
+                        ->required()
+                        ->default(SocialPostStatus::Draft),
+                ]),
+
+                Textarea::make('notes')
+                    ->rows(2)
+                    ->nullable(),
+            ]);
+    }
+
+    private static function generateCaptionAction(): Action
+    {
+        return Action::make('generateCaption')
+            ->label('Generate Caption')
+            ->icon(Heroicon::OutlinedSparkles)
+            ->action(function (Get $get, Set $set) {
+                $productId = $get('product_id');
+
+                if (! $productId) {
+                    Notification::make()
+                        ->title('Select a product first')
+                        ->body('Choose a product to generate a caption from.')
+                        ->warning()
+                        ->send();
+
+                    return;
+                }
+
+                /** @var Product|null $product */
+                $product = Product::query()->find($productId);
+                if (! $product) {
+                    return;
+                }
+
+                $set('caption', resolve(GenerateSocialCaption::class)($product));
+
+                Notification::make()
+                    ->title('Caption generated!')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    private static function platformFor(Get $get): SocialPlatform
+    {
+        return SocialPlatform::tryFrom($get('platform') ?? 'instagram') ?? SocialPlatform::Instagram;
     }
 }
