@@ -4,7 +4,6 @@ namespace App\Presenters;
 
 use App\Enums\Engagement\RewardType;
 use App\Models\Engagement\LoyaltyReward;
-use Illuminate\Support\Number;
 
 final class LoyaltyRewardPresenter
 {
@@ -15,8 +14,8 @@ final class LoyaltyRewardPresenter
     public function rewardTypeLabel(): string
     {
         return match ($this->reward->reward_type) {
-            RewardType::PercentageDiscount => "{$this->reward->reward_value}% Off",
-            RewardType::FixedDiscount => Number::currency((float) $this->reward->reward_value) . ' Off',
+            RewardType::PercentageDiscount => ($this->reward->discount_percentage?->formatted(2) ?? '0.00%') . ' Off',
+            RewardType::FixedDiscount => ($this->reward->discount_amount?->formatted() ?? '$0.00') . ' Off',
             RewardType::FreeProduct => 'Free ' . ($this->reward->product->name ?? 'Product'),
         };
     }

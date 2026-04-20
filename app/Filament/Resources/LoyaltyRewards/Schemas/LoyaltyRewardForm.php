@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\LoyaltyRewards\Schemas;
 
 use App\Enums\Engagement\RewardType;
+use App\Filament\Forms\Components\MoneyInput;
+use App\Filament\Forms\Components\PercentageInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -28,15 +30,17 @@ class LoyaltyRewardForm
                 ->required()
                 ->options(RewardType::class)
                 ->live(),
-            TextInput::make('reward_value')
-                ->required()
-                ->numeric()
-                ->minValue(0)
-                ->label(fn (Get $get) => match ($get('reward_type')) {
-                    RewardType::PercentageDiscount->value => 'Discount Percentage (%)',
-                    RewardType::FixedDiscount->value => 'Discount Amount ($)',
-                    default => 'Reward Value',
-                }),
+
+            PercentageInput::make('discount_percentage')
+                ->label('Discount Percentage')
+                ->helperText('Use for percentage discounts')
+                ->required(fn (Get $get) => $get('reward_type') === RewardType::PercentageDiscount->value),
+
+            MoneyInput::make('discount_amount')
+                ->label('Discount Amount')
+                ->helperText('Use for fixed-amount discounts')
+                ->required(fn (Get $get) => $get('reward_type') === RewardType::FixedDiscount->value),
+
             Select::make('product_id')
                 ->label('Product')
                 ->relationship('product', 'name')

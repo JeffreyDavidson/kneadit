@@ -11,7 +11,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Number;
 
 class LoyaltyRewardsTable
 {
@@ -27,15 +26,11 @@ class LoyaltyRewardsTable
                     ->label('Points Required'),
                 TextColumn::make('reward_type')
                     ->badge(),
-                TextColumn::make('reward_value')
-                    ->formatStateUsing(function (mixed $state, LoyaltyReward $record) {
-                        $type = $record->reward_type;
-
-                        return match ($type) {
-                            RewardType::PercentageDiscount => $state . '%',
-                            RewardType::FixedDiscount => Number::currency((float) $state),
-                            RewardType::FreeProduct => $record->product->name ?? '-',
-                        };
+                TextColumn::make('discount_value')
+                    ->getStateUsing(fn (LoyaltyReward $record): string => match ($record->reward_type) {
+                        RewardType::PercentageDiscount => (string) $record->discount_percentage,
+                        RewardType::FixedDiscount => (string) $record->discount_amount,
+                        RewardType::FreeProduct => $record->product->name ?? '-',
                     })
                     ->label('Value'),
                 IconColumn::make('is_active')

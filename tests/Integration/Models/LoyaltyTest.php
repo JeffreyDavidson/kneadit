@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Engagement\RewardType;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\LoyaltyReward;
@@ -20,12 +19,10 @@ test('rewards page loads', function () {
 });
 
 test('rewards page shows active rewards', function () {
-    LoyaltyReward::factory()->create([
+    LoyaltyReward::factory()->freeProduct()->create([
         'name' => 'Free Cookie',
         'description' => 'Get a free cookie!',
         'points_required' => 100,
-        'reward_type' => RewardType::FreeProduct,
-        'reward_value' => 0,
     ]);
 
     $response = withoutMiddleware(tenantMiddleware())
@@ -94,20 +91,18 @@ test('lifetime points earned only counts earned type', function () {
 });
 
 test('reward type labels are correct', function () {
-    $reward = LoyaltyReward::factory()->create([
+    $reward = LoyaltyReward::factory()->percentageDiscount()->create([
         'name' => '10% Off',
         'points_required' => 200,
-        'reward_type' => RewardType::PercentageDiscount,
-        'reward_value' => 10,
+        'discount_percentage' => 10,
     ]);
 
     expect($reward->reward_type_label)->toBe('10.00% Off');
 
-    $fixedReward = LoyaltyReward::factory()->create([
+    $fixedReward = LoyaltyReward::factory()->fixedDiscount()->create([
         'name' => '$5 Off',
         'points_required' => 100,
-        'reward_type' => RewardType::FixedDiscount,
-        'reward_value' => 5.00,
+        'discount_amount' => 5.00,
     ]);
 
     expect($fixedReward->reward_type_label)->toBe('$5.00 Off');
