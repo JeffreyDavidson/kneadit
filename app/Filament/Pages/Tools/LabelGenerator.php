@@ -86,7 +86,7 @@ class LabelGenerator extends Page
 
     public function getStoreName(): string
     {
-        return app(TenantSettings::class)->storeName;
+        return app(TenantSettings::class)->store->name;
     }
 
     public function getAllergyDisclaimer(): string

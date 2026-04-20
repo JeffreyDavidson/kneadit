@@ -64,11 +64,11 @@ class PrintableMenu extends Page
         $branding = $settings->branding;
 
         return [
-            'name' => $settings->storeName,
+            'name' => $settings->store->name,
             'tagline' => $branding->businessTagline ?? '',
-            'phone' => $settings->storePhone ?? '',
-            'email' => $settings->storeEmail ?? '',
-            'address' => $settings->storeAddress ?? '',
+            'phone' => $settings->store->phone ?? '',
+            'email' => $settings->store->email ?? '',
+            'address' => $settings->store->address ?? '',
             'disclaimer' => $branding->allergyDisclaimer ?? '',
         ];
     }
