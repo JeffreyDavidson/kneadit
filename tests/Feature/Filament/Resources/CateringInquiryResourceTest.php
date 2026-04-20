@@ -104,7 +104,7 @@ test('can search catering inquiries by customer name', function () {
 });
 
 test('can filter catering inquiries by status', function () {
-    $inquiry = CateringInquiry::factory()->create(['status' => CateringInquiryStatus::Inquiry]);
+    $inquiry = CateringInquiry::factory()->inquiry()->create();
     $confirmed = CateringInquiry::factory()->confirmed()->create();
 
     Livewire::test(ListCateringInquiries::class)

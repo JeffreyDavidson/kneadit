@@ -14,8 +14,8 @@ beforeEach(function () {
 });
 
 test('can filter central email campaigns by status', function () {
-    $draft = EmailCampaign::factory()->create(['status' => 'draft']);
-    $sent = EmailCampaign::factory()->create(['status' => 'sent']);
+    $draft = EmailCampaign::factory()->draft()->create();
+    $sent = EmailCampaign::factory()->sent()->create();
 
     Livewire::test(ListEmailCampaigns::class)
         ->filterTable('status', 'draft')

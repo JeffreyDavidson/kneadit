@@ -93,14 +93,14 @@ test('can filter social posts by platform', function () {
 
 test('navigation badge shows scheduled post count', function () {
     SocialPost::factory()->scheduled()->count(3)->create();
-    SocialPost::factory()->create(['status' => App\Enums\Marketing\SocialPostStatus::Draft]);
+    SocialPost::factory()->draft()->create();
 
     expect(App\Filament\Resources\SocialPosts\SocialPostResource::getNavigationBadge())
         ->toBe('3');
 });
 
 test('navigation badge returns null when no scheduled posts', function () {
-    SocialPost::factory()->create(['status' => App\Enums\Marketing\SocialPostStatus::Draft]);
+    SocialPost::factory()->draft()->create();
 
     expect(App\Filament\Resources\SocialPosts\SocialPostResource::getNavigationBadge())
         ->toBeNull();
