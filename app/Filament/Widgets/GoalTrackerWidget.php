@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Orders\Order;
 use App\Services\Settings\SettingsManager;
 use App\ValueObjects\DateRange;
@@ -9,6 +10,8 @@ use Filament\Widgets\Widget;
 
 class GoalTrackerWidget extends Widget
 {
+    use CachesWidgetData;
+
     protected string $view = 'filament.widgets.goal-tracker';
 
     protected int|string|array $columnSpan = 'full';
@@ -47,40 +50,49 @@ class GoalTrackerWidget extends Widget
     /** @return array<string, mixed> */
     public function getMonthlyDataProperty(): array
     {
-        $goal = (float) app(SettingsManager::class)->get('monthly_revenue_goal', 5000);
-        $range = DateRange::thisMonth();
+        return $this->cached('monthly_' . now()->format('Y-m'), [900, 1800], function (): array {
+            $goal = (float) app(SettingsManager::class)->get('monthly_revenue_goal', 5000);
+            $range = DateRange::thisMonth();
 
-        $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
-            ->active()
-            ->sum('total');
+            $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
+                ->active()
+                ->sum('total');
 
-        $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
+            $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 
-        return [
-            'label' => now()->format('F Y'),
-            'goal' => $goal,
-            'revenue' => $revenue,
-            'percentage' => $percentage,
-        ];
+            return [
+                'label' => now()->format('F Y'),
+                'goal' => $goal,
+                'revenue' => $revenue,
+                'percentage' => $percentage,
+            ];
+        });
     }
 
     /** @return array<string, mixed> */
     public function getYearlyDataProperty(): array
     {
-        $goal = (float) app(SettingsManager::class)->get('yearly_revenue_goal', 50000);
-        $range = DateRange::thisYear();
+        return $this->cached('yearly_' . now()->format('Y'), [1800, 3600], function (): array {
+            $goal = (float) app(SettingsManager::class)->get('yearly_revenue_goal', 50000);
+            $range = DateRange::thisYear();
 
-        $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
-            ->active()
-            ->sum('total');
+            $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
+                ->active()
+                ->sum('total');
 
-        $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
+            $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 
-        return [
-            'label' => now()->format('Y'),
-            'goal' => $goal,
-            'revenue' => $revenue,
-            'percentage' => $percentage,
-        ];
+            return [
+                'label' => now()->format('Y'),
+                'goal' => $goal,
+                'revenue' => $revenue,
+                'percentage' => $percentage,
+            ];
+        });
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'goal_tracker';
     }
 }
