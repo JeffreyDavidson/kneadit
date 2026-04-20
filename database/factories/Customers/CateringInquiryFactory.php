@@ -31,6 +31,13 @@ class CateringInquiryFactory extends Factory
         ];
     }
 
+    public function inquiry(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => CateringInquiryStatus::Inquiry,
+        ]);
+    }
+
     public function quoted(): static
     {
         return $this->state(fn (array $attributes) => [
