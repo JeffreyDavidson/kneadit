@@ -2,8 +2,8 @@
 
 namespace App\Filament\Central\Widgets;
 
+use App\DataTransferObjects\Settings\BrandingSettings;
 use App\Models\Platform\Tenant;
-use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +50,7 @@ class OnboardingProgress extends Widget
         if ($tenant->storefront_enabled) {
             $count++;
         }
-        if (! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== TenantSettings::DEFAULT_BRAND_COLOR) {
+        if (! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== BrandingSettings::DEFAULT_BRAND_COLOR) {
             $count++;
         }
 

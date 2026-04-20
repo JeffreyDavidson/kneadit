@@ -23,7 +23,7 @@ test('show returns the contact view with tenant settings', function () {
 
     $response->assertOk()
         ->assertViewIs('storefront.contact')
-        ->assertViewHas('settings', fn (TenantSettings $s) => $s->storeName === 'Our Bakery');
+        ->assertViewHas('settings', fn (TenantSettings $s) => $s->store->name === 'Our Bakery');
 });
 
 test('contact page loads', function () {

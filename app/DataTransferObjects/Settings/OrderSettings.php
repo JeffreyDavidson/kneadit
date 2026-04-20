@@ -17,6 +17,19 @@ final readonly class OrderSettings
         public int $defaultDailyCapacity,
     ) {}
 
+    public static function resolve(): self
+    {
+        return new self(
+            leadTimeHours: (int) settings('order_lead_time_hours', '24'),
+            deliveryEnabled: settings('delivery_enabled', '1') === '1',
+            freeDeliveryMinimum: (string) settings('free_delivery_minimum', '50'),
+            minimumPickupOrderAmount: (string) settings('minimum_pickup_order_amount', '0'),
+            minimumDeliveryOrderAmount: (string) settings('minimum_delivery_order_amount', '0'),
+            deliveryFeeTiers: (array) json_decode((string) settings('delivery_fee_tiers', '[]'), true),
+            defaultDailyCapacity: (int) settings('default_daily_capacity', '20'),
+        );
+    }
+
     public function leadTimeDays(): int
     {
         return (int) ceil($this->leadTimeHours / 24);

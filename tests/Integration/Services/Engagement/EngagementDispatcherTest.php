@@ -4,74 +4,12 @@ use App\Contracts\Engagement\CustomerEngagement;
 use App\Contracts\Engagement\EngagementRecipient;
 use App\Models\Customers\Customer;
 use App\Services\Engagement\EngagementDispatcher;
-use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Console\Command;
 
-function makeFakeTenantSettings(array $overrides = []): TenantSettings
+function makeFakeTenantSettings(): App\Services\Settings\TenantSettings
 {
-    return new TenantSettings(...array_merge([
-        'storeName' => 'Test Bakery',
-        'storeEmail' => null,
-        'storePhone' => null,
-        'storeAddress' => null,
-        'storeWebsite' => null,
-        'storeLogo' => null,
-        'storeTagline' => null,
-        'brandColorPrimary' => '#d4920c',
-        'onboardingCompletedAt' => null,
-        'storefrontTheme' => 'classic',
-        'businessTagline' => null,
-        'aboutUsText' => null,
-        'heroImage' => null,
-        'heroStyle' => 'split',
-        'heroTagline' => null,
-        'heroPrimaryCtaText' => 'Order Now',
-        'heroSecondaryCtaText' => 'Browse Menu',
-        'allergyDisclaimer' => null,
-        'cateringHeroImage' => null,
-        'loyaltyHeroImage' => null,
-        'giftCardsHeroImage' => null,
-        'leadTimeHours' => 24,
-        'deliveryEnabled' => true,
-        'freeDeliveryMinimum' => '50',
-        'minimumPickupOrderAmount' => '0',
-        'minimumDeliveryOrderAmount' => '0',
-        'deliveryFeeTiers' => [],
-        'paymentMethodsAccepted' => [],
-        'operatingHours' => [],
-        'faqItems' => [],
-        'loyaltyProgramName' => 'Rewards',
-        'loyaltyPointsPerDollar' => '10',
-        'loyaltyEnabled' => true,
-        'cateringMinimumGuests' => '10',
-        'cateringLeadTimeDays' => '14',
-        'cateringEventTypes' => ['Wedding', 'Corporate Event'],
-        'socialMediaLinks' => [],
-        'homepageSections' => [],
-        'cateringEnabled' => false,
-        'storePhoto' => null,
-        'announcementEnabled' => false,
-        'announcementText' => '',
-        'announcementType' => 'info',
-        'showPolicies' => false,
-        'cancellationPolicy' => '',
-        'depositPolicy' => '',
-        'refundPolicy' => '',
-        'pickupPolicy' => '',
-        'additionalTerms' => '',
-        'birthdayProgramEnabled' => false,
-        'birthdayCouponEnabled' => false,
-        'birthdayDiscountPercentage' => 15,
-        'birthdayCouponValidDays' => 7,
-        'reviewRequestsEnabled' => false,
-        'reviewRequestDelayHours' => 24,
-        'repeatRemindersEnabled' => false,
-        'repeatReminderDays' => 30,
-        'giftCardPresetAmounts' => [10, 25, 50, 100],
-        'giftCardDefaultAmount' => 25,
-        'defaultDailyCapacity' => 20,
-    ], $overrides));
+    return makeTenantSettings();
 }
 
 test('dispatches engagement to recipients across tenants', function () {
