@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Services\Inventory;
+namespace App\Actions\Orders;
 
 use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\Inventory\StockAdjustmentType;
 use App\Models\Orders\Order;
 use Illuminate\Support\Facades\DB;
 
-class IngredientDeductor
+class DeductIngredientsForOrder
 {
     public function __construct(
         private AdjustIngredientStock $adjustStock,
     ) {}
 
-    public function deductForOrder(Order $order): void
+    public function __invoke(Order $order): void
     {
         $order->loadMissing('orderItems.product.recipes.inventoryIngredients');
 
