@@ -2,29 +2,32 @@
 
 namespace App\Services\Platform;
 
-use App\Services\Settings\SettingsManager;
+use App\DataTransferObjects\Settings\WebhookSettings;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class WebhookService
 {
     public function __construct(
-        private SettingsManager $settings,
+        private WebhookSettings $webhooks,
     ) {}
 
     /**
      * Dispatch a webhook event to the baker's configured URL.
+     *
+     * @param array<string, mixed> $payload
      */
-    /** @param array<string, mixed> $payload */
     public function dispatch(string $event, array $payload): void
     {
-        $url = $this->settings->get('webhook_url');
-
-        if (! $url) {
+        if (! $this->webhooks->isConfigured()) {
             return;
         }
 
-        $secret = $this->settings->get('webhook_secret', '');
+        $url = $this->webhooks->url;
+
+        if ($url === null) {
+            return;
+        }
 
         $body = [
             'event' => $event,
@@ -33,7 +36,7 @@ class WebhookService
         ];
 
         $json = json_encode($body) ?: '';
-        $signature = hash_hmac('sha256', $json, $secret);
+        $signature = hash_hmac('sha256', $json, $this->webhooks->secret);
 
         try {
             $response = Http::connectTimeout(3)
