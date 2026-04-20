@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
+use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Models\Inventory\Category;
 use App\Models\Inventory\Product;
@@ -64,11 +65,9 @@ final class ProductStep extends OnboardingStep
                             ->placeholder('Describe your product...')
                             ->rows(3),
                         Grid::make(2)->schema([
-                            TextInput::make('product.price')
+                            MoneyInput::make('product.price')
                                 ->label('Price')
                                 ->required()
-                                ->numeric()
-                                ->prefix('$')
                                 ->placeholder('12.00'),
                             Select::make('product.category_id')
                                 ->label('Category')

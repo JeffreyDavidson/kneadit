@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Settings\Schemas;
 
 use App\Enums\Orders\PaymentMethod;
+use App\Filament\Forms\Components\MoneyInput;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
@@ -79,19 +80,13 @@ class ManageSettingsForm
 
                         Grid::make(2)
                             ->schema([
-                                TextInput::make('minimum_pickup_order_amount')
+                                MoneyInput::make('minimum_pickup_order_amount')
                                     ->label('Minimum Pickup Order')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->minValue(0)
                                     ->default('0')
                                     ->helperText('Minimum order subtotal for pickup (0 = no minimum)'),
 
-                                TextInput::make('minimum_delivery_order_amount')
+                                MoneyInput::make('minimum_delivery_order_amount')
                                     ->label('Minimum Delivery Order')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->minValue(0)
                                     ->default('0')
                                     ->helperText('Minimum order subtotal for delivery (0 = no minimum)'),
                             ]),
@@ -193,10 +188,8 @@ class ManageSettingsForm
                             ->rows(3)
                             ->columnSpanFull(),
 
-                        TextInput::make('revenue_cap')
+                        MoneyInput::make('revenue_cap')
                             ->label('Annual Revenue Cap')
-                            ->numeric()
-                            ->prefix('$')
                             ->default('250000')
                             ->helperText('Annual revenue limit for compliance')
                             ->columnSpanFull(),
@@ -247,11 +240,9 @@ class ManageSettingsForm
                                     ->placeholder('10,25,50,100')
                                     ->helperText('Comma-separated dollar amounts shown as quick-select buttons'),
 
-                                TextInput::make('gift_card_default_amount')
+                                MoneyInput::make('gift_card_default_amount')
                                     ->label('Default Selected Amount')
-                                    ->numeric()
                                     ->default(25)
-                                    ->prefix('$')
                                     ->helperText('The amount pre-selected when the page loads'),
                             ]),
                     ]),

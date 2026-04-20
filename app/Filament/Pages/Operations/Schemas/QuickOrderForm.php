@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Operations\Schemas;
 
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\PaymentMethod;
+use App\Filament\Forms\Components\MoneyInput;
 use App\Models\Customers\Customer;
 use App\Models\Inventory\Product;
 use Filament\Actions\Action;
@@ -123,11 +124,9 @@ class QuickOrderForm
                                     ->default(1)
                                     ->live(),
 
-                                TextInput::make('unit_price')
+                                MoneyInput::make('unit_price')
                                     ->label('Price')
                                     ->required()
-                                    ->numeric()
-                                    ->prefix('$')
                                     ->live(),
 
                                 TextInput::make('line_total')

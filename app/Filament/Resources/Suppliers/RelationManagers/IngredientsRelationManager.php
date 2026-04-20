@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Suppliers\RelationManagers;
 
+use App\Filament\Forms\Components\MoneyInput;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DetachAction;
@@ -25,10 +26,7 @@ class IngredientsRelationManager extends RelationManager
                     ->required()
                     ->disabled(),
 
-                TextInput::make('unit_price')
-                    ->numeric()
-                    ->prefix('$')
-                    ->step(0.01),
+                MoneyInput::make('unit_price'),
 
                 TextInput::make('minimum_order')
                     ->numeric()
@@ -83,10 +81,7 @@ class IngredientsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->form(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
-                        TextInput::make('unit_price')
-                            ->numeric()
-                            ->prefix('$')
-                            ->step(0.01),
+                        MoneyInput::make('unit_price'),
                         TextInput::make('minimum_order')
                             ->numeric()
                             ->step(0.01),
