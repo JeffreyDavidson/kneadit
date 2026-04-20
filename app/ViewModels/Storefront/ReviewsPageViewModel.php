@@ -55,15 +55,4 @@ class ReviewsPageViewModel
     {
         return $this->reviews->first();
     }
-
-    public static function build(TenantSettings $settings): self
-    {
-        return new self(
-            reviews: Review::query()->forDisplay()->paginate(12),
-            stats: Review::query()->statistics(),
-            starCounts: Review::query()->ratingBreakdown(),
-            settings: $settings,
-            content: settingsPageContent('reviews'),
-        );
-    }
 }
