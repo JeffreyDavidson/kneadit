@@ -31,7 +31,7 @@ test('can create a loyalty reward via slide-over', function () {
             'name' => 'Free Cookie',
             'points_required' => 100,
             'reward_type' => RewardType::PercentageDiscount->value,
-            'reward_value' => 15,
+            'discount_percentage' => 15,
         ])
         ->assertHasNoFormErrors();
 
@@ -42,14 +42,14 @@ test('can create a loyalty reward via slide-over', function () {
 });
 
 test('can edit a loyalty reward via table action', function () {
-    $reward = LoyaltyReward::factory()->create();
+    $reward = LoyaltyReward::factory()->percentageDiscount()->create();
 
     Livewire::test(ListLoyaltyRewards::class)
         ->callAction(TestAction::make('edit')->table($reward), data: [
             'name' => 'Updated Reward',
             'points_required' => $reward->points_required,
             'reward_type' => $reward->reward_type->value,
-            'reward_value' => $reward->reward_value,
+            'discount_percentage' => $reward->discount_percentage->value(),
         ])
         ->assertHasNoFormErrors();
 
@@ -62,7 +62,7 @@ test('create loyalty reward validates required fields', function (array $data, a
             'name' => 'Test',
             'points_required' => 100,
             'reward_type' => RewardType::PercentageDiscount->value,
-            'reward_value' => 10,
+            'discount_percentage' => 10,
             ...$data,
         ])
         ->assertHasFormErrors($errors);
@@ -70,7 +70,6 @@ test('create loyalty reward validates required fields', function (array $data, a
     'name is required' => [['name' => null], ['name' => 'required']],
     'points required is required' => [['points_required' => null], ['points_required' => 'required']],
     'reward type is required' => [['reward_type' => null], ['reward_type' => 'required']],
-    'reward value is required' => [['reward_value' => null], ['reward_value' => 'required']],
 ]);
 
 test('can render loyalty reward table columns', function (string $column) {
@@ -78,7 +77,7 @@ test('can render loyalty reward table columns', function (string $column) {
 
     Livewire::test(ListLoyaltyRewards::class)
         ->assertCanRenderTableColumn($column);
-})->with(['name', 'points_required', 'reward_type', 'reward_value']);
+})->with(['name', 'points_required', 'reward_type', 'discount_value']);
 
 test('can search loyalty rewards by name', function () {
     $target = LoyaltyReward::factory()->create(['name' => 'Free Cookie']);
