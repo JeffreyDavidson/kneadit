@@ -316,7 +316,7 @@ final class TenantSettings
 
     public function leadTimeDays(): int
     {
-        return (int) ceil($this->leadTimeHours / 24);
+        return $this->orders->leadTimeDays();
     }
 
     /** @return array<int, string> */
