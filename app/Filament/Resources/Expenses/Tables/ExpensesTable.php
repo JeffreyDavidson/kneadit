@@ -36,7 +36,7 @@ class ExpensesTable
 
                 TextColumn::make('business_percentage')
                     ->label('Business %')
-                    ->formatStateUsing(fn (int $state) => $state . '%')
+                    ->formatStateUsing(fn (\App\ValueObjects\Percentage $state) => $state->formatted())
                     ->sortable(),
 
                 MoneyColumn::make('deductible_amount')
