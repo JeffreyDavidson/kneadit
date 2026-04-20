@@ -86,11 +86,11 @@ class LabelGenerator extends Page
 
     public function getStoreName(): string
     {
-        return app(TenantSettings::class)->storeName;
+        return app(TenantSettings::class)->store->name;
     }
 
     public function getAllergyDisclaimer(): string
     {
-        return app(TenantSettings::class)->allergyDisclaimer ?? 'May contain allergens.';
+        return app(TenantSettings::class)->branding->allergyDisclaimer ?? 'May contain allergens.';
     }
 }

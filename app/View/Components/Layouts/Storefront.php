@@ -19,10 +19,10 @@ class Storefront extends Component
 
         return view('components.layouts.storefront', [
             'settings' => $settings,
-            'ogStoreName' => $settings->storeName,
+            'ogStoreName' => $settings->store->name,
             'ogDescription' => $settings->defaultTagline(),
-            'ogLogo' => $settings->storeLogoUrl(),
-            'storefrontTheme' => $settings->storefrontTheme,
+            'ogLogo' => $settings->store->logoUrl(),
+            'storefrontTheme' => $settings->branding->storefrontTheme,
         ]);
     }
 }

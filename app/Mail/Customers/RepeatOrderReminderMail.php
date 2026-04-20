@@ -56,7 +56,7 @@ class RepeatOrderReminderMail extends BaseMailable
         return [
             'customer_name' => $this->customer->name,
             'days_since_last_order' => (string) $this->daysSinceLastOrder,
-            'store_name' => app(TenantSettings::class)->storeName,
+            'store_name' => app(TenantSettings::class)->store->name,
         ];
     }
 }

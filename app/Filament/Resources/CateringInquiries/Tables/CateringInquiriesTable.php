@@ -47,10 +47,11 @@ class CateringInquiriesTable
                 SelectFilter::make('status')
                     ->options(CateringInquiryStatus::class),
                 SelectFilter::make('event_type')
-                    ->options(fn () => array_combine(
-                        app(TenantSettings::class)->cateringEventTypes,
-                        app(TenantSettings::class)->cateringEventTypes,
-                    )),
+                    ->options(function () {
+                        $types = app(TenantSettings::class)->catering->eventTypes;
+
+                        return array_combine($types, $types);
+                    }),
                 DateRangeFilter::make('event_date'),
             ])
             ->recordActions([

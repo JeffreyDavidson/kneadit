@@ -13,7 +13,7 @@ class AppIconController extends Controller
     {
         $size = in_array($size, ['192', '512']) ? (int) $size : 192;
 
-        $data = $generator->generate($size, $settings->brandColorPrimary, $settings->storeName);
+        $data = $generator->generate($size, $settings->branding->brandColorPrimary, $settings->store->name);
 
         return response($data)
             ->header('Content-Type', 'image/png')

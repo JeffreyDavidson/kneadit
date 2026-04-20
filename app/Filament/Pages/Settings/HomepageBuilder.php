@@ -57,10 +57,10 @@ class HomepageBuilder extends Page
 
     protected function loadHeroContent(): void
     {
-        $settings = app(TenantSettings::class);
-        $this->hero_tagline = $settings->heroTagline;
-        $this->hero_primary_cta_text = $settings->heroPrimaryCtaText;
-        $this->hero_secondary_cta_text = $settings->heroSecondaryCtaText;
+        $branding = app(TenantSettings::class)->branding;
+        $this->hero_tagline = $branding->heroTagline;
+        $this->hero_primary_cta_text = $branding->heroPrimaryCtaText;
+        $this->hero_secondary_cta_text = $branding->heroSecondaryCtaText;
     }
 
     /** @return array<string, mixed> */
@@ -81,7 +81,7 @@ class HomepageBuilder extends Page
 
     protected function loadSections(): void
     {
-        $saved = app(TenantSettings::class)->homepageSections;
+        $saved = app(TenantSettings::class)->homepage->sections;
         $defaults = $this->getDefaults();
 
         // Merge saved with defaults to ensure all sections exist

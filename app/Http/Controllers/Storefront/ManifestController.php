@@ -13,16 +13,16 @@ class ManifestController extends Controller
      */
     public function __invoke(TenantSettings $settings): JsonResponse
     {
-        $primaryColor = $settings->brandColorPrimary;
+        $branding = $settings->branding;
 
         return response()->json([
-            'name' => $settings->storeName,
-            'short_name' => $settings->storeName,
-            'description' => $settings->businessTagline ?? 'Fresh baked goods made with love',
+            'name' => $settings->store->name,
+            'short_name' => $settings->store->name,
+            'description' => $branding->businessTagline ?? 'Fresh baked goods made with love',
             'start_url' => '/',
             'display' => 'standalone',
             'background_color' => '#fef9ef',
-            'theme_color' => $primaryColor,
+            'theme_color' => $branding->brandColorPrimary,
             'icons' => [
                 [
                     'src' => '/icons/icon-192.png',

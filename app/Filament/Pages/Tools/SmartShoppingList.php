@@ -86,7 +86,7 @@ class SmartShoppingList extends Page
             return;
         }
 
-        $storeName = app(TenantSettings::class)->storeName;
+        $storeName = app(TenantSettings::class)->store->name;
 
         PurchaseOrderRequested::dispatch(
             supplierEmail: $group['supplier']['email'],

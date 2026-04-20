@@ -14,15 +14,10 @@ use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Customers\CateringEventType;
-use Illuminate\Support\Facades\Storage;
 
 final class TenantSettings
 {
     public const string DEFAULT_BRAND_COLOR = '#d4920c';
-
-    private const string DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
-
-    private const string CATERING_HERO_IMAGE = 'https://images.unsplash.com/photo-1555244162-803834f70033?w=1920&q=80';
 
     /**
      * @param array<int, array<string, mixed>> $deliveryFeeTiers
@@ -142,6 +137,9 @@ final class TenantSettings
             aboutUsText: $this->aboutUsText,
             heroImage: $this->heroImage,
             heroStyle: $this->heroStyle,
+            heroTagline: $this->heroTagline,
+            heroPrimaryCtaText: $this->heroPrimaryCtaText,
+            heroSecondaryCtaText: $this->heroSecondaryCtaText,
             allergyDisclaimer: $this->allergyDisclaimer,
             cateringHeroImage: $this->cateringHeroImage,
             loyaltyHeroImage: $this->loyaltyHeroImage,
@@ -286,37 +284,27 @@ final class TenantSettings
 
     public function heroImageUrl(): string
     {
-        return $this->heroImage
-            ? Storage::url($this->heroImage)
-            : self::DEFAULT_HERO_IMAGE;
+        return $this->branding->heroImageUrl();
     }
 
     public function cateringHeroImageUrl(): string
     {
-        return $this->cateringHeroImage
-            ? Storage::url($this->cateringHeroImage)
-            : self::CATERING_HERO_IMAGE;
+        return $this->branding->cateringHeroImageUrl();
     }
 
     public function loyaltyHeroImageUrl(): string
     {
-        return $this->loyaltyHeroImage
-            ? Storage::url($this->loyaltyHeroImage)
-            : self::DEFAULT_HERO_IMAGE;
+        return $this->branding->loyaltyHeroImageUrl();
     }
 
     public function giftCardsHeroImageUrl(): string
     {
-        return $this->giftCardsHeroImage
-            ? Storage::url($this->giftCardsHeroImage)
-            : self::DEFAULT_HERO_IMAGE;
+        return $this->branding->giftCardsHeroImageUrl();
     }
 
     public function storeLogoUrl(): ?string
     {
-        return $this->storeLogo
-            ? asset("storage/{$this->storeLogo}")
-            : null;
+        return $this->store->logoUrl();
     }
 
     public function defaultTagline(): string
@@ -326,7 +314,7 @@ final class TenantSettings
 
     public function leadTimeDays(): int
     {
-        return (int) ceil($this->leadTimeHours / 24);
+        return $this->orders->leadTimeDays();
     }
 
     /** @return array<int, string> */
@@ -350,8 +338,6 @@ final class TenantSettings
     /** @return \Illuminate\Support\Collection<string, array<string, mixed>> */
     public function visibleHomepageSections(): \Illuminate\Support\Collection
     {
-        return collect($this->homepageSections)
-            ->filter(fn (array $s) => $s['visible'] ?? true)
-            ->sortBy('order');
+        return $this->homepage->visibleSections();
     }
 }

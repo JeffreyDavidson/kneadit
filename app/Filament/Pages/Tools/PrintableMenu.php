@@ -61,14 +61,15 @@ class PrintableMenu extends Page
     public function getStoreInfo(): array
     {
         $settings = app(TenantSettings::class);
+        $branding = $settings->branding;
 
         return [
-            'name' => $settings->storeName,
-            'tagline' => $settings->businessTagline ?? '',
-            'phone' => $settings->storePhone ?? '',
-            'email' => $settings->storeEmail ?? '',
-            'address' => $settings->storeAddress ?? '',
-            'disclaimer' => $settings->allergyDisclaimer ?? '',
+            'name' => $settings->store->name,
+            'tagline' => $branding->businessTagline ?? '',
+            'phone' => $settings->store->phone ?? '',
+            'email' => $settings->store->email ?? '',
+            'address' => $settings->store->address ?? '',
+            'disclaimer' => $branding->allergyDisclaimer ?? '',
         ];
     }
 
