@@ -1,11 +1,11 @@
 <?php
 
+use App\Actions\Orders\DeductIngredientsForOrder;
 use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Recipe;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
-use App\Services\Inventory\IngredientDeductor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
@@ -32,7 +32,7 @@ test('deducts ingredient stock based on recipe quantities and order item quantit
         'unit_price' => 10.00,
     ]);
 
-    resolve(IngredientDeductor::class)->deductForOrder($order);
+    resolve(DeductIngredientsForOrder::class)($order);
 
     expect($flour->fresh()->current_stock)->toBe('98.50');
 });
