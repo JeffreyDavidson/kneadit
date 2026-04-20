@@ -16,7 +16,7 @@ beforeEach(function () {
 test('coupon has transactions relationship', function () {
     $coupon = Coupon::factory()->create();
 
-    CouponTransaction::factory()->create(['coupon_id' => $coupon->id]);
+    CouponTransaction::factory()->recycle($coupon)->create();
 
     expect($coupon->transactions)->toHaveCount(1);
 });
