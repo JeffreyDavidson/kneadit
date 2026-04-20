@@ -20,7 +20,7 @@ test('creates birthday coupon for customer', function () {
         ->used_count->toBe(0)
         ->is_active->toBeTrue();
 
-    expect($coupon->value->dollars())->toBe(15.0);
+    expect($coupon->percentage->value())->toBe(15.0);
 });
 
 test('returns null when discount percent is zero', function () {

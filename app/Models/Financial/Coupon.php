@@ -4,6 +4,7 @@ namespace App\Models\Financial;
 
 use App\Builders\Financial\CouponQueryBuilder;
 use App\Casts\MoneyCast;
+use App\Casts\PercentageCast;
 use App\Enums\Financial\CouponType;
 use App\Models\Orders\Order;
 use App\Observers\Engagement\CouponObserver;
@@ -31,12 +32,13 @@ use Illuminate\Support\Carbon;
  *
  * @property Carbon|null $starts_at
  * @property Carbon|null $expires_at
- * @property \App\ValueObjects\Money $value
+ * @property \App\ValueObjects\Money|null $fixed_amount
+ * @property \App\ValueObjects\Percentage|null $percentage
  * @property \App\ValueObjects\Money|null $min_order_amount
  *
  * @mixin \Eloquent
  */
-#[Fillable('code', 'type', 'value', 'min_order_amount', 'max_uses', 'used_count', 'starts_at', 'expires_at', 'is_active')]
+#[Fillable('code', 'type', 'fixed_amount', 'percentage', 'min_order_amount', 'max_uses', 'used_count', 'starts_at', 'expires_at', 'is_active')]
 #[ObservedBy([CouponObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(CouponQueryBuilder::class)]
 class Coupon extends Model
@@ -47,7 +49,8 @@ class Coupon extends Model
     protected function casts(): array
     {
         return [
-            'value' => MoneyCast::class,
+            'fixed_amount' => MoneyCast::class,
+            'percentage' => PercentageCast::class,
             'min_order_amount' => MoneyCast::class,
             'max_uses' => 'integer',
             'used_count' => 'integer',
