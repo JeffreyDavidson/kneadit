@@ -67,7 +67,7 @@ test('getConnectId returns null when not set', function () {
 test('redirectToCheckout returns null when total is zero', function () {
     $order = Order::factory()->create(['total' => 0]);
 
-    $service = new StripeCheckoutService;
+    $service = app(StripeCheckoutService::class);
     expect($service->redirectToCheckout($order))->toBeNull();
 });
 
@@ -76,7 +76,7 @@ test('redirectToCheckout returns null when stripe not enabled', function () {
 
     $order = Order::factory()->create(['total' => 50.00]);
 
-    $service = new StripeCheckoutService;
+    $service = app(StripeCheckoutService::class);
     expect($service->redirectToCheckout($order))->toBeNull();
 });
 
@@ -85,7 +85,7 @@ test('createCheckoutSession returns null when no connect id', function () {
 
     $order = Order::factory()->create();
 
-    $service = new StripeCheckoutService;
+    $service = app(StripeCheckoutService::class);
     $result = $service->createCheckoutSession($order, 'https://success.com', 'https://cancel.com');
 
     expect($result)->toBeNull();
@@ -94,7 +94,7 @@ test('createCheckoutSession returns null when no connect id', function () {
 test('handleCheckoutComplete returns null when no connect id', function () {
     settings(['stripe_connect_id' => null]);
 
-    $service = new StripeCheckoutService;
+    $service = app(StripeCheckoutService::class);
     $result = $service->handleCheckoutComplete('cs_test_123');
 
     expect($result)->toBeNull();
