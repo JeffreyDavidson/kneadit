@@ -86,7 +86,7 @@ class OrderStatusMail extends BaseMailable
         return [
             'customer_name' => $this->order->customer->name ?? 'there',
             'order_number' => $this->order->order_number,
-            'order_total' => '$' . number_format($this->order->total / 100, 2),
+            'order_total' => '$' . number_format($this->order->total->dollars() / 100, 2),
             'delivery_date' => $this->order->delivery_date?->format('M j, Y') ?? '',
             'store_name' => $settings->storeName,
         ];

@@ -58,19 +58,19 @@
                         <span class="text-warm-500">Subtotal</span>
                         <span class="text-warm-300">@money($order->subtotal)</span>
                     </div>
-                    @if ($order->delivery_fee > 0)
+                    @if ($order->delivery_fee->isPositive())
                     <div class="flex justify-between">
                         <span class="text-warm-500">Delivery Fee</span>
                         <span class="text-warm-300">@money($order->delivery_fee)</span>
                     </div>
                     @endif
-                    @if ($order->discount_amount > 0)
+                    @if ($order->discount_amount->isPositive())
                     <div class="flex justify-between text-green-400">
                         <span>Discount @if ($order->coupon)({{ $order->coupon->code }})@endif</span>
                         <span>-@money($order->discount_amount)</span>
                     </div>
                     @endif
-                    @if ($order->gift_card_amount > 0)
+                    @if ($order->gift_card_amount->isPositive())
                     <div class="flex justify-between text-green-400">
                         <span>Gift Card</span>
                         <span>-@money($order->gift_card_amount)</span>

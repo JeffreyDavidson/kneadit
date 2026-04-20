@@ -174,7 +174,7 @@ class PrepScheduleService
             $totalOrders += $orders->count();
             foreach ($orders as $order) {
                 $totalItems += $order->orderItems->sum('quantity');
-                $totalRevenue += $order->total;
+                $totalRevenue += $order->total->dollars();
             }
         }
 

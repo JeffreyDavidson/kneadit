@@ -23,7 +23,7 @@ class ReverseOrderDiscounts
 
     private function reverseCoupon(Order $order, string $reason): void
     {
-        if (! $order->coupon_id || $order->discount_amount <= 0) {
+        if (! $order->coupon_id || ! $order->discount_amount->isPositive()) {
             return;
         }
 
@@ -31,7 +31,7 @@ class ReverseOrderDiscounts
             CouponTransaction::query()->create([
                 'coupon_id' => $order->coupon_id,
                 'order_id' => $order->id,
-                'amount' => -$order->discount_amount,
+                'amount' => -$order->discount_amount->dollars(),
                 'type' => CouponTransactionType::Reversal,
                 'notes' => $reason,
                 'created_at' => now(),
@@ -47,7 +47,7 @@ class ReverseOrderDiscounts
 
     private function reverseGiftCard(Order $order, string $reason): void
     {
-        if (! $order->gift_card_id || $order->gift_card_amount <= 0) {
+        if (! $order->gift_card_id || ! $order->gift_card_amount->isPositive()) {
             return;
         }
 
@@ -55,7 +55,7 @@ class ReverseOrderDiscounts
             GiftCardTransaction::query()->create([
                 'gift_card_id' => $order->gift_card_id,
                 'order_id' => $order->id,
-                'amount' => $order->gift_card_amount,
+                'amount' => $order->gift_card_amount->dollars(),
                 'type' => GiftCardTransactionType::Refund,
                 'notes' => $reason,
                 'created_at' => now(),
@@ -65,7 +65,7 @@ class ReverseOrderDiscounts
         }
 
         if ($order->giftCard) {
-            GiftCard::query()->whereKey($order->giftCard->id)->increment('current_balance', $order->gift_card_amount);
+            GiftCard::query()->whereKey($order->giftCard->id)->increment('current_balance', $order->gift_card_amount->dollars());
         }
     }
 }

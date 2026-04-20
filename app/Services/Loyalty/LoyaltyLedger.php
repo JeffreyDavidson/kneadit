@@ -54,6 +54,6 @@ class LoyaltyLedger
 
     private function calculatePoints(Order $order): int
     {
-        return (int) floor((float) $order->total * $this->settings->loyalty->pointsPerDollar);
+        return (int) floor($order->total->dollars() * $this->settings->loyalty->pointsPerDollar);
     }
 }
