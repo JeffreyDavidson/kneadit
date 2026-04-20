@@ -12,56 +12,59 @@ use Illuminate\Support\Collection;
 
 class LoyaltyPageViewModel
 {
-    public static function forCustomer(TenantSettings $settings, Customer $customer, CustomerLoyalty $customerLoyalty): self
+    /**
+     * @param Collection<int, LoyaltyReward> $rewards
+     */
+    public static function forCustomer(TenantSettings $settings, Customer $customer, CustomerLoyalty $customerLoyalty, Collection $rewards): self
     {
         $snapshot = $customerLoyalty->snapshot($customer);
-
-        return self::build($settings, $customer, $snapshot['balance'], $snapshot['history']);
-    }
-
-    public static function notFound(TenantSettings $settings): self
-    {
-        return self::build(
-            $settings,
-            customer: null,
-            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
-            history: collect(),
-            customerNotFound: true,
-        );
-    }
-
-    public static function empty(TenantSettings $settings): self
-    {
-        return self::build(
-            $settings,
-            customer: null,
-            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
-            history: collect(),
-        );
-    }
-
-    /**
-     * @param Collection<int, \App\Models\Engagement\LoyaltyPoint> $history
-     */
-    private static function build(
-        TenantSettings $settings,
-        ?Customer $customer,
-        LoyaltyBalance $balance,
-        Collection $history,
-        bool $customerNotFound = false,
-    ): self {
-        $content = settingsPageContent('loyalty');
 
         return new self(
             settings: $settings,
             customer: $customer,
-            balance: $balance,
-            history: $history,
-            rewards: LoyaltyReward::query()->active()->orderBy('points_required')->get(),
-            content: $content,
-            howSteps: $content['how_it_works_steps'] ?? config('kneadit.default_loyalty_steps'),
-            customerNotFound: $customerNotFound,
+            balance: $snapshot['balance'],
+            history: $snapshot['history'],
+            rewards: $rewards,
         );
+    }
+
+    /**
+     * @param Collection<int, LoyaltyReward> $rewards
+     */
+    public static function notFound(TenantSettings $settings, Collection $rewards): self
+    {
+        return new self(
+            settings: $settings,
+            customer: null,
+            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
+            history: collect(),
+            rewards: $rewards,
+            customerNotFound: true,
+        );
+    }
+
+    /**
+     * @param Collection<int, LoyaltyReward> $rewards
+     */
+    public static function empty(TenantSettings $settings, Collection $rewards): self
+    {
+        return new self(
+            settings: $settings,
+            customer: null,
+            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
+            history: collect(),
+            rewards: $rewards,
+        );
+    }
+
+    /**
+     * @return array{array<string, string>, array<int, array<string, string>>}
+     */
+    private static function loadContent(): array
+    {
+        $content = settingsPageContent('loyalty');
+
+        return [$content, $content['how_it_works_steps'] ?? config('kneadit.default_loyalty_steps')];
     }
 
     public readonly int $totalPoints;
@@ -76,11 +79,15 @@ class LoyaltyPageViewModel
 
     public readonly bool $hasCustomer;
 
+    /** @var array<string, string> */
+    public readonly array $content;
+
+    /** @var array<int, array<string, string>> */
+    public readonly array $howSteps;
+
     /**
      * @param Collection<int, LoyaltyReward> $rewards
      * @param Collection<int, \App\Models\Engagement\LoyaltyPoint> $history
-     * @param array<string, string> $content
-     * @param array<int, array<string, string>> $howSteps
      */
     public function __construct(
         public readonly TenantSettings $settings,
@@ -88,10 +95,10 @@ class LoyaltyPageViewModel
         LoyaltyBalance $balance,
         public readonly Collection $history,
         public readonly Collection $rewards,
-        public readonly array $content,
-        public readonly array $howSteps,
         public readonly bool $customerNotFound = false,
     ) {
+        [$this->content, $this->howSteps] = self::loadContent();
+
         $this->totalPoints = $balance->total;
         $this->lifetimeEarned = $balance->earned;
         $this->formattedTotalPoints = number_format($this->totalPoints);
