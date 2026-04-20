@@ -10,4 +10,11 @@ final readonly class PaymentSettings
     public function __construct(
         public array $methodsAccepted,
     ) {}
+
+    public static function resolve(): self
+    {
+        return new self(
+            methodsAccepted: (array) json_decode((string) settings('payment_methods_accepted', '[]'), true),
+        );
+    }
 }

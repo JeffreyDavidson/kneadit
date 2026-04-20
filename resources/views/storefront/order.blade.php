@@ -291,10 +291,10 @@
                         <textarea x-model="form.notes" placeholder="Allergies, decorations, anything..." class="order-input" rows="3"></textarea>
                     </div>
 
-                    @if (!empty($settings->paymentMethodsAccepted))
+                    @if (!empty($settings->payment->methodsAccepted))
                     <div class="pt-4 mt-4 border-t border-warm-700/20">
                         <p class="text-xs text-warm-600">
-                            <span class="font-medium text-warm-500">Payment:</span> {{ implode(', ', array_map('ucfirst', $settings->paymentMethodsAccepted)) }}
+                            <span class="font-medium text-warm-500">Payment:</span> {{ implode(', ', array_map('ucfirst', $settings->payment->methodsAccepted)) }}
                         </p>
                     </div>
                     @endif

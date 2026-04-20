@@ -9,18 +9,10 @@ use App\Services\Settings\TenantSettings;
 
 function makeSettingsForMinimumPipeTest(string $pickupMin, string $deliveryMin): TenantSettings
 {
-    $ref = new ReflectionClass(TenantSettings::class);
-    $settings = $ref->newInstanceWithoutConstructor();
-    $ref->getProperty('minimumPickupOrderAmount')->setValue($settings, $pickupMin);
-    $ref->getProperty('minimumDeliveryOrderAmount')->setValue($settings, $deliveryMin);
-    // Required by the $orders virtual sub-DTO getter.
-    $ref->getProperty('leadTimeHours')->setValue($settings, 24);
-    $ref->getProperty('deliveryEnabled')->setValue($settings, true);
-    $ref->getProperty('freeDeliveryMinimum')->setValue($settings, '0');
-    $ref->getProperty('deliveryFeeTiers')->setValue($settings, []);
-    $ref->getProperty('defaultDailyCapacity')->setValue($settings, 20);
-
-    return $settings;
+    return makeTenantSettings(orders: makeOrderSettings([
+        'minimumPickupOrderAmount' => $pickupMin,
+        'minimumDeliveryOrderAmount' => $deliveryMin,
+    ]));
 }
 
 function runMinimumPipe(float $subtotal, string $deliveryType, string $pickupMin, string $deliveryMin): OrderPipelineData

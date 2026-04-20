@@ -2,8 +2,8 @@
 
 namespace App\Filament\Central\Pages;
 
+use App\DataTransferObjects\Settings\BrandingSettings;
 use App\Models\Platform\Tenant;
-use App\Services\Settings\TenantSettings;
 use App\Services\Tenants\TenancyManager;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -59,7 +59,7 @@ class OnboardingTracker extends Page
             'store_name' => ! empty($tenant->store_name),
             'store_logo' => ! empty($tenant->store_logo),
             'storefront_enabled' => (bool) $tenant->storefront_enabled,
-            'brand_customized' => ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== TenantSettings::DEFAULT_BRAND_COLOR,
+            'brand_customized' => ! empty($tenant->brand_color_primary) && $tenant->brand_color_primary !== BrandingSettings::DEFAULT_BRAND_COLOR,
             'has_products' => false,
             'has_categories' => false,
             'has_orders' => false,

@@ -11,7 +11,7 @@
     <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
         <x-storefront.eyebrow line-opacity="0.4" class="loyalty-fade-1 mb-6">{{ $vm->content['hero_eyebrow'] ?? 'Rewards Program' }}</x-storefront.eyebrow>
         <h1 class="loyalty-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
-            {{ $vm->settings->storeName }} {{ $vm->settings->loyaltyProgramName }}
+            {{ $vm->settings->store->name }} {{ $vm->settings->loyalty->programName }}
         </h1>
         <p class="loyalty-fade-3 font-script text-2xl md:text-3xl text-warm-400">
             {{ $vm->content['hero_subtitle'] ?? 'Earn points with every order, unlock delicious rewards' }}
@@ -19,7 +19,7 @@
     </div>
 </x-storefront.hero-section>
 
-@if (!$vm->settings->loyaltyEnabled)
+@if (!$vm->settings->loyalty->enabled)
 <section class="py-20 px-4 bg-warm-50">
     <div class="max-w-lg mx-auto text-center rounded-2xl p-12 bg-white border border-warm-200">
         <p class="font-display text-xl text-warm-700">{{ $vm->content['paused_message'] ?? 'Our loyalty program is currently paused. Check back soon!' }}</p>

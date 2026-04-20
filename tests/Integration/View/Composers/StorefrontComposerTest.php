@@ -12,5 +12,5 @@ test('storefront layout receives tenant settings', function () {
 
     $settings = app(TenantSettings::class);
 
-    expect($settings->storeName)->toBe('Sweet Dreams Bakery');
+    expect($settings->store->name)->toBe('Sweet Dreams Bakery');
 });
