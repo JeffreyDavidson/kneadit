@@ -9,13 +9,13 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('resolveRouteBinding throws for inactive survey', function () {
-    $survey = Survey::factory()->create(['is_active' => false]);
+    $survey = Survey::factory()->inactive()->create();
 
     (new Survey)->resolveRouteBinding($survey->id);
 })->throws(ModelNotFoundException::class);
 
 test('resolveRouteBinding returns active survey', function () {
-    $survey = Survey::factory()->create(['is_active' => true]);
+    $survey = Survey::factory()->active()->create();
 
     $resolved = (new Survey)->resolveRouteBinding($survey->id);
 

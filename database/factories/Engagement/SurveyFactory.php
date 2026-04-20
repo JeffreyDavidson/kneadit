@@ -30,6 +30,14 @@ class SurveyFactory extends Factory
     }
 
     /**
+     * Survey is active.
+     */
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => true]);
+    }
+
+    /**
      * Survey is inactive.
      */
     public function inactive(): static

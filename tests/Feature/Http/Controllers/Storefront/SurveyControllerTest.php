@@ -10,7 +10,7 @@ beforeEach(function () {
 });
 
 test('survey controller passes settings and content to view', function () {
-    $survey = Survey::factory()->create(['is_active' => true]);
+    $survey = Survey::factory()->active()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.survey', $survey, false));
