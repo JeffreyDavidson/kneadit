@@ -21,79 +21,87 @@ class ProductForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
+        return $schema->components([
+            self::detailsSection(),
+            self::imagesSection(),
+            self::settingsSection(),
+        ]);
+    }
+
+    private static function detailsSection(): Section
+    {
+        return Section::make('Product Details')
+            ->columnSpanFull()
+            ->columns(2)
             ->components([
-                Section::make('Product Details')
-                    ->columnSpanFull()
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (?string $state, Set $set) => $set('slug', Str::slug($state ?? ''))),
+
+                TextInput::make('slug')
+                    ->required()
+                    ->maxLength(255)
+                    ->unique(),
+
+                MoneyInput::make('price')->required(),
+
+                Select::make('category_id')
+                    ->label('Category')
+                    ->options(Category::query()->pluck('name', 'id'))
+                    ->required(),
+
+                Textarea::make('description')
+                    ->rows(3)
+                    ->columnSpanFull(),
+            ]);
+    }
+
+    private static function imagesSection(): Section
+    {
+        return Section::make('Images')
+            ->columnSpanFull()
+            ->description('First image becomes the primary/default image. Drag to reorder.')
+            ->components([
+                Repeater::make('productImages')
+                    ->relationship('images')
+                    ->hiddenLabel()
+                    ->reorderable(true)
+                    ->reorderableWithDragAndDrop(true)
+                    ->reorderableWithButtons(true)
+                    ->orderColumn('sort_order')
+                    ->defaultItems(0)
+                    ->addActionLabel('Add Image')
+                    ->columns(1)
+                    ->itemLabel(fn (array $state): string => ! empty($state['path']) ? 'Product Image' : 'New Image')
                     ->components([
-                        TextInput::make('name')
-                            ->required()
-                            ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (?string $state, Set $set) {
-                                $set('slug', Str::slug($state ?? ''));
-                            }),
-
-                        TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(),
-
-                        MoneyInput::make('price')
+                        FileUpload::make('path')
+                            ->label('Image')
+                            ->image()
+                            ->acceptedFileTypes(AllowedFileTypes::IMAGES)
+                            ->maxSize(5120)
+                            ->directory('products')
+                            ->visibility('public')
                             ->required(),
-
-                        Select::make('category_id')
-                            ->label('Category')
-                            ->options(Category::query()->pluck('name', 'id'))
-                            ->required(),
-
-                        Textarea::make('description')
-                            ->rows(3)
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(2),
-
-                Section::make('Images')
-                    ->columnSpanFull()
-                    ->description('First image becomes the primary/default image. Drag to reorder.')
-                    ->components([
-                        Repeater::make('productImages')
-                            ->relationship('images')
-                            ->hiddenLabel()
-                            ->reorderable(true)
-                            ->reorderableWithDragAndDrop(true)
-                            ->reorderableWithButtons(true)
-                            ->orderColumn('sort_order')
-                            ->defaultItems(0)
-                            ->addActionLabel('Add Image')
-                            ->columns(1)
-                            ->itemLabel(fn (array $state): string => ! empty($state['path']) ? 'Product Image' : 'New Image')
-                            ->components([
-                                FileUpload::make('path')
-                                    ->label('Image')
-                                    ->image()
-                                    ->acceptedFileTypes(AllowedFileTypes::IMAGES)
-                                    ->maxSize(5120)
-                                    ->directory('products')
-                                    ->visibility('public')
-                                    ->required(),
-                            ]),
                     ]),
+            ]);
+    }
 
-                Section::make('Settings')
-                    ->columnSpanFull()
-                    ->components([
-                        Grid::make(2)
-                            ->components([
-                                Toggle::make('is_active')
-                                    ->label('Active')
-                                    ->default(true),
+    private static function settingsSection(): Section
+    {
+        return Section::make('Settings')
+            ->columnSpanFull()
+            ->components([
+                Grid::make(2)->components([
+                    Toggle::make('is_active')
+                        ->label('Active')
+                        ->default(true),
 
-                                Toggle::make('is_featured')
-                                    ->label('Featured')
-                                    ->default(false),
-                            ]),
-                    ]),
+                    Toggle::make('is_featured')
+                        ->label('Featured')
+                        ->default(false),
+                ]),
             ]);
     }
 }

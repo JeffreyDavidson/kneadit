@@ -2,16 +2,19 @@
 
 namespace App\Actions\Platform;
 
-use App\Events\Platform\TrialExpired;
-use App\Events\Platform\TrialReminding;
-use App\Models\Platform\Tenant;
-use App\Models\Staff\User;
+use App\Services\Platform\TrialExpirationNotifier;
+use App\Services\Platform\TrialExpirationReader;
 use Illuminate\Support\Facades\Log;
 
 class ProcessTrialExpirations
 {
     /** @var array<int, int> */
     private const array REMINDER_DAYS = [7, 3, 1];
+
+    public function __construct(
+        private TrialExpirationReader $reader,
+        private TrialExpirationNotifier $notifier,
+    ) {}
 
     /** @return array{reminders: int, pausings: int, failures: int} */
     public function __invoke(): array
@@ -37,40 +40,25 @@ class ProcessTrialExpirations
     /** @return array{0: int, 1: int} [sent, failures] */
     private function sendReminders(int $daysLeft): array
     {
-        $targetDate = now()->addDays($daysLeft)->startOfDay()->toDateString();
         $cacheKey = "trial_reminder_{$daysLeft}d";
-
         $sent = 0;
         $failures = 0;
 
-        $tenants = Tenant::query()
-            ->whereDate('trial_ends_at', $targetDate)
-            ->where('is_active', true)
-            ->cursor();
-
-        /** @var Tenant $tenant */
-        foreach ($tenants as $tenant) {
+        foreach ($this->reader->tenantsRemindable($daysLeft) as $tenant) {
             $sentKey = "sent_{$cacheKey}_{$tenant->id}";
             if (cache()->has($sentKey)) {
                 continue;
             }
 
-            $user = User::query()->where('email', $tenant->email)->first();
+            $user = $this->reader->userFor($tenant);
             if (! $user || $user->subscribed('default')) {
                 continue;
             }
 
-            try {
-                $storeName = $tenant->store_name ?: $tenant->name;
-                TrialReminding::dispatch($user, $storeName, $daysLeft);
+            if ($this->notifier->sendReminder($user, $tenant, $daysLeft)) {
                 cache()->put($sentKey, true, now()->addDays(30));
                 $sent++;
-            } catch (\Exception $e) {
-                Log::error('Trial reminder dispatch failed', [
-                    'email' => $user->email,
-                    'tenant' => $tenant->id,
-                    'error' => $e->getMessage(),
-                ]);
+            } else {
                 $failures++;
             }
         }
@@ -82,15 +70,8 @@ class ProcessTrialExpirations
     {
         $pausings = 0;
 
-        $expiredTenants = Tenant::query()
-            ->where('trial_ends_at', '<', now())
-            ->where('is_active', true)
-            ->where('storefront_enabled', true)
-            ->cursor();
-
-        /** @var Tenant $tenant */
-        foreach ($expiredTenants as $tenant) {
-            $user = User::query()->where('email', $tenant->email)->first();
+        foreach ($this->reader->tenantsExpired() as $tenant) {
+            $user = $this->reader->userFor($tenant);
 
             if ($user && $user->subscribed('default')) {
                 continue;
@@ -100,14 +81,7 @@ class ProcessTrialExpirations
             $pausings++;
 
             if ($user) {
-                try {
-                    TrialExpired::dispatch($user, $tenant->id);
-                } catch (\Exception $e) {
-                    Log::error('Trial expiration email dispatch failed', [
-                        'tenant' => $tenant->id,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
+                $this->notifier->notifyExpired($user, $tenant);
             }
 
             Log::info('Trial expired — storefront paused', ['tenant' => $tenant->id]);

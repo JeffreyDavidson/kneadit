@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\WaitlistEntries\Schemas;
 
 use App\Enums\Customers\WaitlistStatus;
+use App\Filament\Forms\Components\ContactFields;
 use App\Models\Inventory\Product;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -21,20 +21,12 @@ class WaitlistEntryForm
                 Section::make('Customer Information')
                     ->columnSpanFull()
                     ->components([
-                        TextInput::make('customer_name')
-                            ->required()
-                            ->maxLength(255),
+                        ContactFields::name(),
 
                         Grid::make(2)
                             ->components([
-                                TextInput::make('customer_email')
-                                    ->email()
-                                    ->required()
-                                    ->maxLength(255),
-
-                                TextInput::make('customer_phone')
-                                    ->tel()
-                                    ->maxLength(255),
+                                ContactFields::email(),
+                                ContactFields::phone(),
                             ]),
                     ]),
 

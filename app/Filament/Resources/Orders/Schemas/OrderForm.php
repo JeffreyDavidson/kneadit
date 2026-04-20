@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Orders\Schemas;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
+use App\Filament\Forms\Components\MoneyInput;
 use App\Models\Customers\Customer;
 use App\Models\Staff\User;
 use Filament\Forms\Components\DatePicker;
@@ -20,99 +21,80 @@ class OrderForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
+        return $schema->components([
+            self::detailsSection(),
+            self::pricingSection(),
+            self::deliverySection(),
+        ]);
+    }
+
+    private static function detailsSection(): Section
+    {
+        return Section::make('Order Details')
+            ->columnSpanFull()
             ->components([
-                Section::make('Order Details')
-                    ->columnSpanFull()
-                    ->components([
-                        Grid::make(2)
-                            ->components([
-                                TextInput::make('order_number')
-                                    ->required()
-                                    ->unique()
-                                    ->maxLength(255),
+                Grid::make(2)->components([
+                    TextInput::make('order_number')
+                        ->required()
+                        ->unique()
+                        ->maxLength(255),
 
-                                Select::make('customer_id')
-                                    ->label('Customer')
-                                    ->options(Customer::query()->pluck('name', 'id'))
-                                    ->required()
-                                    ->searchable(),
-                            ]),
+                    Select::make('customer_id')
+                        ->label('Customer')
+                        ->options(Customer::query()->pluck('name', 'id'))
+                        ->required()
+                        ->searchable(),
+                ]),
 
-                        Grid::make(2)
-                            ->components([
-                                Select::make('status')
-                                    ->options(OrderStatus::class)
-                                    ->required(),
+                Grid::make(2)->components([
+                    Select::make('status')
+                        ->options(OrderStatus::class)
+                        ->required(),
 
-                                Select::make('payment_status')
-                                    ->options(PaymentStatus::class)
-                                    ->required(),
-                            ]),
+                    Select::make('payment_status')
+                        ->options(PaymentStatus::class)
+                        ->required(),
+                ]),
 
-                        Select::make('payment_method')
-                            ->options(PaymentMethod::class)
-                            ->required(),
+                Select::make('payment_method')
+                    ->options(PaymentMethod::class)
+                    ->required(),
 
-                        Select::make('user_id')
-                            ->label('Baker')
-                            ->options(User::query()->pluck('name', 'id'))
-                            ->required(),
-                    ]),
+                Select::make('user_id')
+                    ->label('Baker')
+                    ->options(User::query()->pluck('name', 'id'))
+                    ->required(),
+            ]);
+    }
 
-                Section::make('Pricing')
-                    ->columnSpanFull()
-                    ->components([
-                        Grid::make(5)
-                            ->components([
-                                TextInput::make('subtotal')
-                                    ->required()
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01),
+    private static function pricingSection(): Section
+    {
+        return Section::make('Pricing')
+            ->columnSpanFull()
+            ->components([
+                Grid::make(5)->components([
+                    MoneyInput::make('subtotal')->required(),
+                    MoneyInput::make('delivery_fee')->default(0),
+                    MoneyInput::make('discount_amount')->default(0),
+                    MoneyInput::make('gift_card_amount')->default(0),
+                    MoneyInput::make('total')->required(),
+                ]),
+            ]);
+    }
 
-                                TextInput::make('delivery_fee')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01)
-                                    ->default(0),
+    private static function deliverySection(): Section
+    {
+        return Section::make('Delivery & Timing')
+            ->columnSpanFull()
+            ->components([
+                Textarea::make('delivery_address')->rows(2),
 
-                                TextInput::make('discount_amount')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01)
-                                    ->default(0),
+                Grid::make(2)->components([
+                    DatePicker::make('delivery_date'),
+                    TimePicker::make('delivery_time'),
+                ]),
 
-                                TextInput::make('gift_card_amount')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01)
-                                    ->default(0),
-
-                                TextInput::make('total')
-                                    ->required()
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->step(0.01),
-                            ]),
-                    ]),
-
-                Section::make('Delivery & Timing')
-                    ->columnSpanFull()
-                    ->components([
-                        Textarea::make('delivery_address')
-                            ->rows(2),
-
-                        Grid::make(2)
-                            ->components([
-                                DatePicker::make('delivery_date'),
-
-                                TimePicker::make('delivery_time'),
-                            ]),
-
-                        Textarea::make('notes')
-                            ->rows(3),
-                    ]),
+                Textarea::make('notes')->rows(3),
             ]);
     }
 }
