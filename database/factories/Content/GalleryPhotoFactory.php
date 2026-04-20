@@ -27,6 +27,14 @@ class GalleryPhotoFactory extends Factory
     }
 
     /**
+     * Photo is visible.
+     */
+    public function visible(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_visible' => true]);
+    }
+
+    /**
      * Photo is hidden.
      */
     public function hidden(): static

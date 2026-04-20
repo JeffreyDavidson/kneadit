@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('it approves a review', function () {
-    $review = Review::factory()->create(['is_approved' => false]);
+    $review = Review::factory()->pending()->create();
 
     resolve(ApproveReview::class)($review);
 

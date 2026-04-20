@@ -8,8 +8,8 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('unread scope returns only unread messages', function () {
-    $unread = ContactMessage::factory()->create(['is_read' => false]);
-    ContactMessage::factory()->create(['is_read' => true]);
+    $unread = ContactMessage::factory()->unread()->create();
+    ContactMessage::factory()->read()->create();
 
     $results = ContactMessage::query()->unread()->get();
 
@@ -18,8 +18,8 @@ test('unread scope returns only unread messages', function () {
 });
 
 test('read scope returns only read messages', function () {
-    ContactMessage::factory()->create(['is_read' => false]);
-    $read = ContactMessage::factory()->create(['is_read' => true]);
+    ContactMessage::factory()->unread()->create();
+    $read = ContactMessage::factory()->read()->create();
 
     $results = ContactMessage::query()->read()->get();
 
