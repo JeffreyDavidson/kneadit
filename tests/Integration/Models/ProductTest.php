@@ -56,7 +56,7 @@ test('product margin is null without cost', function () {
 test('product has customer photos relationship', function () {
     $product = Product::factory()->create(['name' => 'Photo Product']);
 
-    CustomerPhoto::factory()->create(['product_id' => $product->id]);
+    CustomerPhoto::factory()->for($product)->create();
 
     expect($product->customerPhotos)->toHaveCount(1);
 });
@@ -72,7 +72,7 @@ test('product has page views relationship', function () {
 test('product has social posts relationship', function () {
     $product = Product::factory()->create(['name' => 'Social Product']);
 
-    SocialPost::factory()->create(['product_id' => $product->id]);
+    SocialPost::factory()->for($product)->create();
 
     expect($product->socialPosts)->toHaveCount(1);
 });
