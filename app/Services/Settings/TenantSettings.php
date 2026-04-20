@@ -340,8 +340,6 @@ final class TenantSettings
     /** @return \Illuminate\Support\Collection<string, array<string, mixed>> */
     public function visibleHomepageSections(): \Illuminate\Support\Collection
     {
-        return collect($this->homepageSections)
-            ->filter(fn (array $s) => $s['visible'] ?? true)
-            ->sortBy('order');
+        return $this->homepage->visibleSections();
     }
 }

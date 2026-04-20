@@ -42,7 +42,7 @@ class EnsureOnboardingComplete
         try {
             $settings = app(TenantSettings::class);
 
-            if ($settings->onboardingCompletedAt === null) {
+            if ($settings->onboarding->completedAt === null) {
                 return redirect()->to(url('/admin/onboarding'));
             }
         } catch (\Throwable $e) {

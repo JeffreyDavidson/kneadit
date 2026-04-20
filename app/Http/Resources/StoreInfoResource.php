@@ -33,8 +33,8 @@ class StoreInfoResource extends JsonApiResource
             'colors' => [
                 'primary' => $this->resource->branding->brandColorPrimary,
             ],
-            'hours' => $this->resource->operatingHours,
-            'social_links' => $this->resource->socialMediaLinks,
+            'hours' => $this->resource->homepage->operatingHours,
+            'social_links' => $this->resource->homepage->socialMediaLinks,
         ];
     }
 }
