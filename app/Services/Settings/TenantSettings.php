@@ -52,7 +52,7 @@ final class TenantSettings
             policies: PolicySettings::resolve(),
             homepage: HomepageSettings::resolve(),
             onboarding: OnboardingSettings::resolve(),
-            webhooks: new WebhookSettings,
+            webhooks: WebhookSettings::resolve(),
             giftCardPresetAmounts: array_map('intval', array_filter(explode(',', (string) settings('gift_card_preset_amounts', '10,25,50,100')))),
             giftCardDefaultAmount: (int) settings('gift_card_default_amount', '25'),
         );
