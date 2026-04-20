@@ -2,6 +2,7 @@
 
 use App\Models\Orders\Order;
 use App\Services\Stripe\StripeCheckoutService;
+use App\Services\Stripe\StripeSettingsReader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -14,7 +15,7 @@ beforeEach(function () {
 test('isEnabled returns false when stripe not in payment methods', function () {
     settings(['payment_methods' => json_encode(['paypal'])]);
 
-    expect(StripeCheckoutService::isEnabled())->toBeFalse();
+    expect(app(StripeSettingsReader::class)->isEnabled())->toBeFalse();
 });
 
 test('isEnabled returns false when no connect id', function () {
@@ -23,7 +24,7 @@ test('isEnabled returns false when no connect id', function () {
         'stripe_connect_id' => null,
     ]);
 
-    expect(StripeCheckoutService::isEnabled())->toBeFalse();
+    expect(app(StripeSettingsReader::class)->isEnabled())->toBeFalse();
 });
 
 test('isEnabled returns false when charges not enabled', function () {
@@ -33,7 +34,7 @@ test('isEnabled returns false when charges not enabled', function () {
         'stripe_connect_charges_enabled' => '0',
     ]);
 
-    expect(StripeCheckoutService::isEnabled())->toBeFalse();
+    expect(app(StripeSettingsReader::class)->isEnabled())->toBeFalse();
 });
 
 test('isEnabled returns true when stripe fully configured', function () {
@@ -43,25 +44,25 @@ test('isEnabled returns true when stripe fully configured', function () {
         'stripe_connect_charges_enabled' => '1',
     ]);
 
-    expect(StripeCheckoutService::isEnabled())->toBeTrue();
+    expect(app(StripeSettingsReader::class)->isEnabled())->toBeTrue();
 });
 
 test('isEnabled returns false when payment methods is null', function () {
     settings(['payment_methods' => null]);
 
-    expect(StripeCheckoutService::isEnabled())->toBeFalse();
+    expect(app(StripeSettingsReader::class)->isEnabled())->toBeFalse();
 });
 
-test('getConnectId returns stored connect id', function () {
+test('connectId returns stored connect id', function () {
     settings(['stripe_connect_id' => 'acct_123abc']);
 
-    expect(StripeCheckoutService::getConnectId())->toBe('acct_123abc');
+    expect(app(StripeSettingsReader::class)->connectId())->toBe('acct_123abc');
 });
 
-test('getConnectId returns null when not set', function () {
+test('connectId returns null when not set', function () {
     settings(['stripe_connect_id' => null]);
 
-    expect(StripeCheckoutService::getConnectId())->toBeNull();
+    expect(app(StripeSettingsReader::class)->connectId())->toBeNull();
 });
 
 test('redirectToCheckout returns null when total is zero', function () {
