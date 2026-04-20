@@ -77,7 +77,7 @@ test('can create a survey with questions repeater', function () {
 });
 
 test('can filter surveys by active status', function () {
-    $active = Survey::factory()->create(['is_active' => true]);
+    $active = Survey::factory()->active()->create();
     $inactive = Survey::factory()->inactive()->create();
 
     Livewire::test(ListSurveys::class)
