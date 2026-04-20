@@ -120,19 +120,19 @@
                     <td><strong>Subtotal:</strong></td>
                     <td class="text-right">@money($order->subtotal)</td>
                 </tr>
-                @if ($order->delivery_fee > 0)
+                @if ($order->delivery_fee->isPositive())
                     <tr>
                         <td><strong>Delivery Fee:</strong></td>
                         <td class="text-right">@money($order->delivery_fee)</td>
                     </tr>
                 @endif
-                @if ($order->discount_amount > 0)
+                @if ($order->discount_amount->isPositive())
                     <tr style="color: #059669;">
                         <td><strong>Discount:</strong></td>
                         <td class="text-right">-@money($order->discount_amount)</td>
                     </tr>
                 @endif
-                @if ($order->gift_card_amount > 0)
+                @if ($order->gift_card_amount->isPositive())
                     <tr style="color: #059669;">
                         <td><strong>Gift Card:</strong></td>
                         <td class="text-right">-@money($order->gift_card_amount)</td>

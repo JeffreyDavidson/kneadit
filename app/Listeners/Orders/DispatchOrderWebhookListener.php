@@ -30,7 +30,7 @@ class DispatchOrderWebhookListener extends QueuedListener implements ShouldBeUni
             'status' => $event->to->value,
             'previous_status' => $event->from->value,
             'payment_status' => $event->order->payment_status->value,
-            'total' => $event->order->total,
+            'total' => $event->order->total->dollars(),
         ]);
     }
 

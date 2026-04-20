@@ -93,20 +93,20 @@ class InvoicePayloadBuilder
                 'quantity' => (string) $item->quantity,
                 'unit_amount' => [
                     'currency_code' => $currency,
-                    'value' => number_format($item->unit_price, 2, '.', ''),
+                    'value' => number_format($item->unit_price->dollars(), 2, '.', ''),
                 ],
                 'unit_of_measure' => 'QUANTITY',
             ];
         }
 
-        if ($order->delivery_fee > 0) {
+        if ($order->delivery_fee->isPositive()) {
             $items[] = [
                 'name' => 'Delivery Fee',
                 'description' => 'Delivery service',
                 'quantity' => '1',
                 'unit_amount' => [
                     'currency_code' => $currency,
-                    'value' => number_format($order->delivery_fee, 2, '.', ''),
+                    'value' => number_format($order->delivery_fee->dollars(), 2, '.', ''),
                 ],
                 'unit_of_measure' => 'QUANTITY',
             ];
@@ -123,12 +123,12 @@ class InvoicePayloadBuilder
             'breakdown' => [
                 'item_total' => [
                     'currency_code' => $currency,
-                    'value' => number_format($order->subtotal + $order->delivery_fee, 2, '.', ''),
+                    'value' => number_format($order->subtotal->add($order->delivery_fee)->dollars(), 2, '.', ''),
                 ],
             ],
         ];
 
-        if ($order->discount_amount > 0) {
+        if ($order->discount_amount->isPositive()) {
             $amount['breakdown']['discount'] = [
                 'invoice_discount' => ['percent' => '0'],
             ];

@@ -29,7 +29,7 @@
     @endforeach
 
     <div style="margin-top: 12px; padding-top: 10px; border-top: 2px solid {{ $primaryColor }}; text-align: right;">
-        @if ($order->delivery_fee > 0)
+        @if ($order->delivery_fee->isPositive())
             <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Subtotal: @money($order->subtotal)</div>
             <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Delivery Fee: @money($order->delivery_fee)</div>
         @endif

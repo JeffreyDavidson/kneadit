@@ -8,7 +8,6 @@ use App\Models\Customers\CustomerNote;
 use App\Models\Orders\Order;
 use App\Services\Customers\CustomerIntelligence;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Number;
 
 final class CustomerPresenter
 {
@@ -101,7 +100,7 @@ final class CustomerPresenter
             'order_number' => $order->order_number,
             'status' => $order->status->getLabel(),
             'payment_status' => $order->payment_status->getLabel(),
-            'total' => Number::currency($order->total),
+            'total' => $order->total->formatted(),
             'date' => $order->created_at?->format('M j, Y'),
             'delivery_date' => $order->delivery_date?->format('M j, Y'),
         ])->all();
