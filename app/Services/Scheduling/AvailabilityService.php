@@ -2,7 +2,6 @@
 
 namespace App\Services\Scheduling;
 
-use App\Enums\Orders\OrderStatus;
 use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
 use App\Queries\Scheduling\DateOpenStatusQuery;
@@ -49,7 +48,7 @@ class AvailabilityService
         $schedule = BusinessSchedule::query()->forDay($dayOfWeek)->first();
         $maxOrders = $schedule->max_orders ?? $this->settings->orders->defaultDailyCapacity;
         $currentOrders = Order::query()->whereDate('delivery_date', $dateStr)
-            ->whereNotIn('status', [OrderStatus::Cancelled])
+            ->active()
             ->count();
         $remaining = max(0, $maxOrders - $currentOrders);
 

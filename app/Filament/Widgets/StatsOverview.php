@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Customers\WaitlistEntry;
 use App\Models\Engagement\PageView;
@@ -35,7 +34,7 @@ class StatsOverview extends BaseWidget
                     ->icon(Heroicon::OutlinedShoppingBag)
                     ->color('primary'),
 
-                Stat::make('Pending Orders', Order::query()->where('status', OrderStatus::Pending)->count())
+                Stat::make('Pending Orders', Order::query()->pending()->count())
                     ->icon(Heroicon::OutlinedClock)
                     ->color('warning'),
 

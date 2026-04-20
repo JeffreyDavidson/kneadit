@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Orders\OrderStatus;
 use App\Models\Orders\Order;
 use App\Services\Settings\SettingsManager;
 use App\ValueObjects\DateRange;
@@ -52,7 +51,7 @@ class GoalTrackerWidget extends Widget
         $range = DateRange::thisMonth();
 
         $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
-            ->whereNotIn('status', [OrderStatus::Cancelled])
+            ->active()
             ->sum('total');
 
         $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
@@ -72,7 +71,7 @@ class GoalTrackerWidget extends Widget
         $range = DateRange::thisYear();
 
         $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
-            ->whereNotIn('status', [OrderStatus::Cancelled])
+            ->active()
             ->sum('total');
 
         $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;

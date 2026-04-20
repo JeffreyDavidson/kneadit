@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Orders\OrderStatus;
 use App\Models\Orders\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +42,7 @@ class WelcomeBannerWidget extends Widget
     public function getRevenueToday(): string
     {
         return (string) Number::currency(
-            (float) Order::query()->where('status', '!=', OrderStatus::Cancelled)
+            (float) Order::query()->active()
                 ->whereDate('delivery_date', Date::today())
                 ->sum('total'),
         );
@@ -51,6 +50,6 @@ class WelcomeBannerWidget extends Widget
 
     public function getPendingOrders(): int
     {
-        return Order::query()->where('status', OrderStatus::Pending)->count();
+        return Order::query()->pending()->count();
     }
 }

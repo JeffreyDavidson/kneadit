@@ -2,7 +2,6 @@
 
 namespace App\Services\Orders;
 
-use App\Enums\Orders\OrderStatus;
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
@@ -30,7 +29,7 @@ class OrderIngredientAggregator
         return Order::query()
             ->with(['orderItems.product.recipes'])
             ->whereBetween('delivery_date', [$startDate, $endDate])
-            ->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking])
+            ->confirmedOrBaking()
             ->get()
             ->flatMap(fn (Order $order) => $order->orderItems);
     }

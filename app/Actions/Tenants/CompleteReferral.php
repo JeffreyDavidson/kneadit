@@ -14,7 +14,7 @@ class CompleteReferral
         }
 
         $referral = Referral::query()->where('referral_code', $referralCode)
-            ->where('status', ReferralStatus::Pending)
+            ->pending()
             ->whereNull('referred_tenant_id')
             ->first();
 

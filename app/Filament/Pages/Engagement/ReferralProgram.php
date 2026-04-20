@@ -3,7 +3,6 @@
 namespace App\Filament\Pages\Engagement;
 
 use App\Actions\Tenants\GenerateReferralCode;
-use App\Enums\Customers\ReferralStatus;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Models\Customers\Referral;
 use BackedEnum;
@@ -56,14 +55,14 @@ class ReferralProgram extends Page
     public function getCompletedReferrals(): int
     {
         return Referral::query()->where('referrer_tenant_id', tenant()->id)
-            ->whereIn('status', [ReferralStatus::Completed, ReferralStatus::Rewarded])
+            ->successful()
             ->count();
     }
 
     public function getMonthsEarned(): int
     {
         return (int) Referral::query()->where('referrer_tenant_id', tenant()->id)
-            ->where('status', ReferralStatus::Rewarded)
+            ->rewarded()
             ->sum('reward_months');
     }
 

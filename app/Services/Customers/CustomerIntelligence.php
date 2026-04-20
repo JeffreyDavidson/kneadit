@@ -2,8 +2,8 @@
 
 namespace App\Services\Customers;
 
+use App\Builders\Orders\OrderQueryBuilder;
 use App\DataTransferObjects\Customers\CustomerMetrics;
-use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
 use App\Models\Orders\Order;
 use App\Services\Loyalty\CustomerLoyalty;
@@ -58,11 +58,11 @@ class CustomerIntelligence
     public function enrichQuery(Builder $query): Builder
     {
         return $query
-            ->withCount(['orders' => function (Builder $q) {
-                $q->whereNotIn('status', [OrderStatus::Cancelled]);
+            ->withCount(['orders' => function (OrderQueryBuilder $q) {
+                $q->active();
             }])
-            ->withSum(['orders' => function (Builder $q) {
-                $q->whereNotIn('status', [OrderStatus::Cancelled]);
+            ->withSum(['orders' => function (OrderQueryBuilder $q) {
+                $q->active();
             }], 'total')
             ->addSelect([
                 'last_order_date' => Order::query()->select('created_at')
