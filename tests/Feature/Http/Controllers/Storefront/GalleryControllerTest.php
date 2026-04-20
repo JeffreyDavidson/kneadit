@@ -8,12 +8,14 @@ use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(fn () => setUpTenantTest());
 
-test('gallery controller passes settings and content to view', function () {
+test('gallery controller passes settings, photos, products, and content to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.gallery', [], false));
 
     $response->assertOk()
         ->assertViewHas('settings')
+        ->assertViewHas('photos')
+        ->assertViewHas('products')
         ->assertViewHas('content');
 });
 
