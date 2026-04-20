@@ -43,9 +43,9 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $loyalty_points_count
  * @property-read Collection<int, Order> $orders
  * @property-read int|null $orders_count
- * @property-read string|null $last_order_date Populated by CustomerIntelligence::enrichQuery()
+ * @property-read string|null $last_order_date Populated by Customer::query()->withOrderMetrics()
  * @property-read string|null $last_order_at Populated by LoyaltyAnalytics::getLapsedCustomers()
- * @property-read float|null $orders_sum_total Populated by CustomerIntelligence::enrichQuery()
+ * @property-read float|null $orders_sum_total Populated by Customer::query()->withOrderMetrics()
  * @property-read float|null $total_spend
  * @property-read int|null $order_count Populated by withCount('orders as order_count')
  * @property-read int|null $balance Populated by TopLoyaltyCustomersQuery::get()

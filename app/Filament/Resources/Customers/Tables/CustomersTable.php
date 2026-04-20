@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Customers\Tables;
 
+use App\Builders\Customers\CustomerQueryBuilder;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Customers\Customer;
 use App\Services\Customers\BirthdayCalculator;
-use App\Services\Customers\CustomerIntelligence;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
@@ -22,7 +22,7 @@ class CustomersTable
         $atRiskDays = (int) (string) config('analytics.at_risk_threshold_days', 30);
 
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => resolve(CustomerIntelligence::class)->enrichQuery($query))
+            ->modifyQueryUsing(fn (CustomerQueryBuilder $query) => $query->withOrderMetrics())
             ->columns([
                 TextColumn::make('name')
                     ->sortable()
