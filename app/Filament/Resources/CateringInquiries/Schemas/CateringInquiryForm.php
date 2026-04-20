@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\CateringInquiries\Schemas;
 
 use App\Enums\Customers\CateringInquiryStatus;
+use App\Filament\Forms\Components\ContactFields;
 use App\Filament\Forms\Components\MoneyInput;
 use App\Services\Settings\TenantSettings;
 use Filament\Forms\Components\DatePicker;
@@ -20,18 +21,7 @@ class CateringInquiryForm
             Section::make('Customer Information')
                 ->columnSpanFull()
                 ->columns(3)
-                ->schema([
-                    TextInput::make('customer_name')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('customer_email')
-                        ->email()
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('customer_phone')
-                        ->tel()
-                        ->maxLength(255),
-                ]),
+                ->schema(ContactFields::nameEmailPhone()),
 
             Section::make('Event Details')
                 ->columnSpanFull()
