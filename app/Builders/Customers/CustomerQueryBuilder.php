@@ -2,8 +2,10 @@
 
 namespace App\Builders\Customers;
 
+use App\Builders\Orders\OrderQueryBuilder;
 use App\Enums\Orders\OrderStatus;
 use App\Models\Customers\Customer;
+use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Builder;
 
 /** @extends Builder<Customer> */
@@ -19,9 +21,24 @@ class CustomerQueryBuilder extends Builder
         return $this;
     }
 
+    /**
+     * Eager-load aggregate order metrics (count, total sum, last order date)
+     * onto each customer. Cancelled orders are excluded from count and sum.
+     */
     public function withOrderMetrics(): static
     {
-        $this->withCount('orders')->withSum('orders', 'total');
+        $this->withCount(['orders' => function (OrderQueryBuilder $q) {
+            $q->active();
+        }])
+            ->withSum(['orders' => function (OrderQueryBuilder $q) {
+                $q->active();
+            }], 'total')
+            ->addSelect([
+                'last_order_date' => Order::query()->select('created_at')
+                    ->whereColumn('customer_id', 'customers.id')
+                    ->latest()
+                    ->limit(1),
+            ]);
 
         return $this;
     }
