@@ -2,6 +2,7 @@
 
 namespace App\Services\Inventory;
 
+use App\Actions\Orders\DeductIngredientsForOrder;
 use App\Exceptions\Orders\CapacityExceededException;
 use App\Models\Orders\Order;
 use Carbon\Carbon;
@@ -11,7 +12,7 @@ class InventoryManager
 {
     public function __construct(
         private CapacityCalculator $capacityCalculator,
-        private IngredientDeductor $ingredientDeductor,
+        private DeductIngredientsForOrder $deductIngredients,
     ) {}
 
     /**
@@ -39,6 +40,6 @@ class InventoryManager
      */
     public function deductForOrder(Order $order): void
     {
-        $this->ingredientDeductor->deductForOrder($order);
+        ($this->deductIngredients)($order);
     }
 }
