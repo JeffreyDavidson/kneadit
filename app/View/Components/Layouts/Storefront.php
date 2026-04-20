@@ -22,7 +22,7 @@ class Storefront extends Component
             'ogStoreName' => $settings->storeName,
             'ogDescription' => $settings->defaultTagline(),
             'ogLogo' => $settings->storeLogoUrl(),
-            'storefrontTheme' => $settings->storefrontTheme,
+            'storefrontTheme' => $settings->branding->storefrontTheme,
         ]);
     }
 }

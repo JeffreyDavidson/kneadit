@@ -25,7 +25,7 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
 
         return array_merge(parent::buildViewData(), [
             'storeName' => $settings->storeName,
-            'primaryColor' => $settings->brandColorPrimary,
+            'primaryColor' => $settings->branding->brandColorPrimary,
             'secondaryColor' => tenant()->brand_color_secondary ?? '#1c1410',
             'storeEmail' => $settings->storeEmail ?? '',
             'storePhone' => $settings->storePhone ?? '',

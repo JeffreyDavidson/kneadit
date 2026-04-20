@@ -31,7 +31,7 @@ class StoreInfoResource extends JsonApiResource
             'address' => $this->resource->storeAddress ?? '',
             'logo_url' => $this->resource->storeLogoUrl() ?? '',
             'colors' => [
-                'primary' => $this->resource->brandColorPrimary,
+                'primary' => $this->resource->branding->brandColorPrimary,
             ],
             'hours' => $this->resource->operatingHours,
             'social_links' => $this->resource->socialMediaLinks,
