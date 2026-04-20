@@ -22,7 +22,7 @@ class SendOrderMessageEmailListener extends SendEmailListener
         }
 
         if ($message->sender_type === SenderType::Customer) {
-            return app(TenantSettings::class)->storeEmail ?: null;
+            return app(TenantSettings::class)->store->email ?: null;
         }
 
         return $order->customer?->email;

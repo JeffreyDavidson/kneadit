@@ -26,9 +26,9 @@ class InvoicePayloadBuilder
                 'reference' => "Order #{$order->order_number}",
                 'invoice_date' => Date::now()->toISOString(),
                 'currency_code' => $currency,
-                'note' => "Thank you for your order with {$this->settings->storeName}!",
+                'note' => "Thank you for your order with {$this->settings->store->name}!",
                 'terms' => $this->manager->get('paypal_invoice_terms', 'Payment due within 30 days.'),
-                'memo' => "{$this->settings->storeName} - Fresh Baked Goods",
+                'memo' => "{$this->settings->store->name} - Fresh Baked Goods",
             ],
             'invoicer' => $this->buildInvoicer(),
             'primary_recipients' => [$this->buildRecipient($order)],
@@ -47,16 +47,16 @@ class InvoicePayloadBuilder
     private function buildInvoicer(): array
     {
         return [
-            'name' => ['given_name' => $this->settings->storeName, 'surname' => ''],
+            'name' => ['given_name' => $this->settings->store->name, 'surname' => ''],
             'address' => [
-                'address_line_1' => $this->settings->storeAddress ?? '',
+                'address_line_1' => $this->settings->store->address ?? '',
                 'admin_area_2' => $this->manager->get('store_city', ''),
                 'admin_area_1' => $this->manager->get('store_state', ''),
                 'postal_code' => $this->manager->get('store_zip', ''),
                 'country_code' => 'US',
             ],
             'email_address' => config('mail.from.address', 'noreply@kneadit.com'),
-            'phones' => [['country_code' => '1', 'national_number' => $this->settings->storePhone ?? '', 'phone_type' => 'MOBILE']],
+            'phones' => [['country_code' => '1', 'national_number' => $this->settings->store->phone ?? '', 'phone_type' => 'MOBILE']],
         ];
     }
 

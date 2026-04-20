@@ -38,7 +38,7 @@ class Hero extends Component
         $settings = app(TenantSettings::class);
         $branding = $settings->branding;
 
-        $this->storeName = $settings->storeName;
+        $this->storeName = $settings->store->name;
         $this->tagline = $branding->businessTagline;
         $this->aboutUs = $branding->aboutUsText;
         $this->heroStyle = $branding->heroStyle;
