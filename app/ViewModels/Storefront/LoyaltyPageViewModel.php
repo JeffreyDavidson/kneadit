@@ -5,12 +5,65 @@ namespace App\ViewModels\Storefront;
 use App\Enums\Engagement\LoyaltyPointType;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyReward;
+use App\Services\Loyalty\CustomerLoyalty;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\LoyaltyBalance;
 use Illuminate\Support\Collection;
 
 class LoyaltyPageViewModel
 {
+    public static function forCustomer(TenantSettings $settings, Customer $customer, CustomerLoyalty $customerLoyalty): self
+    {
+        $snapshot = $customerLoyalty->snapshot($customer);
+
+        return self::build($settings, $customer, $snapshot['balance'], $snapshot['history']);
+    }
+
+    public static function notFound(TenantSettings $settings): self
+    {
+        return self::build(
+            $settings,
+            customer: null,
+            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
+            history: collect(),
+            customerNotFound: true,
+        );
+    }
+
+    public static function empty(TenantSettings $settings): self
+    {
+        return self::build(
+            $settings,
+            customer: null,
+            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
+            history: collect(),
+        );
+    }
+
+    /**
+     * @param Collection<int, \App\Models\Engagement\LoyaltyPoint> $history
+     */
+    private static function build(
+        TenantSettings $settings,
+        ?Customer $customer,
+        LoyaltyBalance $balance,
+        Collection $history,
+        bool $customerNotFound = false,
+    ): self {
+        $content = settingsPageContent('loyalty');
+
+        return new self(
+            settings: $settings,
+            customer: $customer,
+            balance: $balance,
+            history: $history,
+            rewards: LoyaltyReward::query()->active()->orderBy('points_required')->get(),
+            content: $content,
+            howSteps: $content['how_it_works_steps'] ?? config('kneadit.default_loyalty_steps'),
+            customerNotFound: $customerNotFound,
+        );
+    }
+
     public readonly int $totalPoints;
 
     public readonly int $lifetimeEarned;
