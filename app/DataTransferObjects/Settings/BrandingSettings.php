@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Storage;
 
 final readonly class BrandingSettings
 {
+    public const string DEFAULT_BRAND_COLOR = '#d4920c';
+
     private const string DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80';
 
     private const string CATERING_HERO_IMAGE = 'https://images.unsplash.com/photo-1555244162-803834f70033?w=1920&q=80';
@@ -25,6 +27,25 @@ final readonly class BrandingSettings
         public ?string $loyaltyHeroImage,
         public ?string $giftCardsHeroImage,
     ) {}
+
+    public static function resolve(): self
+    {
+        return new self(
+            brandColorPrimary: (string) (tenant()->brand_color_primary ?? self::DEFAULT_BRAND_COLOR),
+            storefrontTheme: (string) settings('storefront_theme', 'classic'),
+            businessTagline: settings('business_tagline'),
+            aboutUsText: settings('about_us_text'),
+            heroImage: settings('hero_image'),
+            heroStyle: (string) settings('hero_style', 'split'),
+            heroTagline: settings('hero_tagline'),
+            heroPrimaryCtaText: (string) settings('hero_primary_cta_text', 'Order Now'),
+            heroSecondaryCtaText: (string) settings('hero_secondary_cta_text', 'Browse Menu'),
+            allergyDisclaimer: settings('allergy_disclaimer'),
+            cateringHeroImage: settings('catering_hero_image'),
+            loyaltyHeroImage: settings('loyalty_hero_image'),
+            giftCardsHeroImage: settings('gift_cards_hero_image'),
+        );
+    }
 
     public function heroImageUrl(): string
     {

@@ -298,3 +298,160 @@ function createTenant(array $attributes = []): object
 
     return DB::table('tenants')->where('id', $data['id'])->first();
 }
+
+/*
+|--------------------------------------------------------------------------
+| TenantSettings Builders
+|--------------------------------------------------------------------------
+| Construct TenantSettings (and its sub-DTOs) with sensible defaults so
+| tests only override the fields they care about.
+*/
+
+/** @param array<string, mixed> $overrides */
+function makeStoreInfo(array $overrides = []): App\DataTransferObjects\Settings\StoreInfo
+{
+    return new App\DataTransferObjects\Settings\StoreInfo(...array_merge([
+        'name' => 'Test Bakery',
+        'email' => null,
+        'phone' => null,
+        'address' => null,
+        'website' => null,
+        'photo' => null,
+        'logo' => null,
+        'tagline' => null,
+    ], $overrides));
+}
+
+/** @param array<string, mixed> $overrides */
+function makeBrandingSettings(array $overrides = []): App\DataTransferObjects\Settings\BrandingSettings
+{
+    return new App\DataTransferObjects\Settings\BrandingSettings(...array_merge([
+        'brandColorPrimary' => '#d4920c',
+        'storefrontTheme' => 'classic',
+        'businessTagline' => null,
+        'aboutUsText' => null,
+        'heroImage' => null,
+        'heroStyle' => 'split',
+        'heroTagline' => null,
+        'heroPrimaryCtaText' => 'Order Now',
+        'heroSecondaryCtaText' => 'Browse Menu',
+        'allergyDisclaimer' => null,
+        'cateringHeroImage' => null,
+        'loyaltyHeroImage' => null,
+        'giftCardsHeroImage' => null,
+    ], $overrides));
+}
+
+/** @param array<string, mixed> $overrides */
+function makeOrderSettings(array $overrides = []): App\DataTransferObjects\Settings\OrderSettings
+{
+    return new App\DataTransferObjects\Settings\OrderSettings(...array_merge([
+        'leadTimeHours' => 24,
+        'deliveryEnabled' => true,
+        'freeDeliveryMinimum' => '50',
+        'minimumPickupOrderAmount' => '0',
+        'minimumDeliveryOrderAmount' => '0',
+        'deliveryFeeTiers' => [],
+        'defaultDailyCapacity' => 20,
+    ], $overrides));
+}
+
+/** @param array<string, mixed> $overrides */
+function makeEngagementSettings(array $overrides = []): App\DataTransferObjects\Settings\EngagementSettings
+{
+    return new App\DataTransferObjects\Settings\EngagementSettings(...array_merge([
+        'birthdayProgramEnabled' => false,
+        'birthdayCouponEnabled' => false,
+        'birthdayDiscountPercentage' => 15,
+        'birthdayCouponValidDays' => 7,
+        'reviewRequestsEnabled' => false,
+        'reviewRequestDelayHours' => 24,
+        'repeatRemindersEnabled' => false,
+        'repeatReminderDays' => 30,
+        'announcementEnabled' => false,
+        'announcementText' => '',
+        'announcementType' => 'info',
+    ], $overrides));
+}
+
+/** @param array<string, mixed> $overrides */
+function makePolicySettings(array $overrides = []): App\DataTransferObjects\Settings\PolicySettings
+{
+    return new App\DataTransferObjects\Settings\PolicySettings(...array_merge([
+        'showOnStorefront' => false,
+        'cancellation' => '',
+        'deposit' => '',
+        'refund' => '',
+        'pickup' => '',
+        'additionalTerms' => '',
+    ], $overrides));
+}
+
+/** @param array<string, mixed> $overrides */
+function makeHomepageSettings(array $overrides = []): App\DataTransferObjects\Settings\HomepageSettings
+{
+    return new App\DataTransferObjects\Settings\HomepageSettings(...array_merge([
+        'socialMediaLinks' => [],
+        'operatingHours' => [],
+        'faqItems' => [],
+        'sections' => [],
+    ], $overrides));
+}
+
+/** @param array<string, mixed> $overrides */
+function makeCateringSettings(array $overrides = []): App\DataTransferObjects\Settings\CateringSettings
+{
+    return new App\DataTransferObjects\Settings\CateringSettings(...array_merge([
+        'enabled' => false,
+        'minimumGuests' => '10',
+        'leadTimeDays' => '14',
+        'eventTypes' => ['Wedding', 'Corporate Event'],
+    ], $overrides));
+}
+
+/** @param array<string, mixed> $overrides */
+function makeLoyaltySettings(array $overrides = []): App\DataTransferObjects\Settings\LoyaltySettings
+{
+    return new App\DataTransferObjects\Settings\LoyaltySettings(...array_merge([
+        'enabled' => true,
+        'pointsPerDollar' => 10,
+        'programName' => 'Rewards',
+    ], $overrides));
+}
+
+/**
+ * Build a TenantSettings with sensible defaults. Pass overrides for any
+ * sub-DTO you need to customize; the rest will use the default builders.
+ *
+ * @param array<int, int> $giftCardPresetAmounts
+ */
+function makeTenantSettings(
+    ?App\DataTransferObjects\Settings\StoreInfo $store = null,
+    ?App\DataTransferObjects\Settings\BrandingSettings $branding = null,
+    ?App\DataTransferObjects\Settings\OrderSettings $orders = null,
+    ?App\DataTransferObjects\Settings\PaymentSettings $payment = null,
+    ?App\DataTransferObjects\Settings\CateringSettings $catering = null,
+    ?App\DataTransferObjects\Settings\LoyaltySettings $loyalty = null,
+    ?App\DataTransferObjects\Settings\EngagementSettings $engagement = null,
+    ?App\DataTransferObjects\Settings\PolicySettings $policies = null,
+    ?App\DataTransferObjects\Settings\HomepageSettings $homepage = null,
+    ?App\DataTransferObjects\Settings\OnboardingSettings $onboarding = null,
+    array $giftCardPresetAmounts = [10, 25, 50, 100],
+    int $giftCardDefaultAmount = 25,
+): App\Services\Settings\TenantSettings {
+    return new App\Services\Settings\TenantSettings(
+        store: $store ?? makeStoreInfo(),
+        branding: $branding ?? makeBrandingSettings(),
+        orders: $orders ?? makeOrderSettings(),
+        payment: $payment ?? new App\DataTransferObjects\Settings\PaymentSettings(methodsAccepted: []),
+        catering: $catering ?? makeCateringSettings(),
+        loyalty: $loyalty ?? makeLoyaltySettings(),
+        engagement: $engagement ?? makeEngagementSettings(),
+        policies: $policies ?? makePolicySettings(),
+        homepage: $homepage ?? makeHomepageSettings(),
+        onboarding: $onboarding ?? new App\DataTransferObjects\Settings\OnboardingSettings(completedAt: null),
+        webhooks: new App\DataTransferObjects\Settings\WebhookSettings,
+        giftCardPresetAmounts: $giftCardPresetAmounts,
+        giftCardDefaultAmount: $giftCardDefaultAmount,
+    );
+}

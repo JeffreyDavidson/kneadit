@@ -32,7 +32,7 @@
 @endforeach
 
 {{-- Fallback: if no homepage_sections configured, show all sections with defaults --}}
-@if (empty($settings->homepageSections))
+@if (empty($settings->homepage->sections))
     <x-home.hero />
     @include('partials.home.about')
     <x-home.featured-products :config="['count' => 6, 'title' => 'Our Favorites', 'subtitle' => 'Freshly made']" />
