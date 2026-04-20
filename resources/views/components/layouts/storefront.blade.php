@@ -31,10 +31,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="/icons/icon-192.png">
-    @if ($settings->storeLogo)
-    <link rel="icon" href="{{ asset('storage/' . $settings->storeLogo) }}" type="image/png">
+    @if ($settings->store->logo)
+    <link rel="icon" href="{{ asset('storage/' . $settings->store->logo) }}" type="image/png">
     @else
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ urlencode(tenant()->brand_color_primary ?? '#d4920c') }}'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-family='serif' font-weight='bold'>{{ substr($settings->storeName, 0, 1) }}</text></svg>" type="image/svg+xml">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='{{ urlencode(tenant()->brand_color_primary ?? '#d4920c') }}'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-family='serif' font-weight='bold'>{{ substr($settings->store->name, 0, 1) }}</text></svg>" type="image/svg+xml">
     @endif
 
         {{ $styles ?? "" }}\n
@@ -43,10 +43,10 @@
 <body data-theme="{{ $storefrontTheme }}" {{ $bodyAttrs ?? "" }}>
 
     @php
-        $storeName = $settings->storeName;
-        $cateringEnabled = $settings->cateringEnabled;
-        $loyaltyEnabled = $settings->loyaltyEnabled;
-        $loyaltyName = $settings->loyaltyProgramName;
+        $storeName = $settings->store->name;
+        $cateringEnabled = $settings->catering->enabled;
+        $loyaltyEnabled = $settings->loyalty->enabled;
+        $loyaltyName = $settings->loyalty->programName;
         $exploreActive = request()->routeIs('storefront.blog*', 'storefront.gallery', 'storefront.reviews', 'storefront.about', 'storefront.catering');
         $accountActive = request()->routeIs('order.track', 'storefront.giftCards', 'storefront.rewards');
     @endphp
@@ -177,9 +177,9 @@
 
     <main class="min-h-screen pt-24">
         @php
-            $announcementEnabled = $settings->announcementEnabled ? '1' : '0';
-            $announcementText = $settings->announcementText;
-            $announcementType = $settings->announcementType;
+            $announcementEnabled = $settings->engagement->announcementEnabled ? '1' : '0';
+            $announcementText = $settings->engagement->announcementText;
+            $announcementType = $settings->engagement->announcementType;
             $announcementDismissKey = $announcementText
                 ? 'announcement_dismissed_' . hash('xxh128', $announcementText)
                 : null;
@@ -214,13 +214,13 @@
 
     <!-- Policies -->
     @php
-        $showPolicies = $settings->showPolicies;
+        $showPolicies = $settings->policies->showOnStorefront;
         $policies = $showPolicies ? array_filter([
-            'Cancellation Policy' => $settings->cancellationPolicy,
-            'Deposit Policy' => $settings->depositPolicy,
-            'Refund Policy' => $settings->refundPolicy,
-            'Pickup Policy' => $settings->pickupPolicy,
-            'Additional Terms' => $settings->additionalTerms,
+            'Cancellation Policy' => $settings->policies->cancellation,
+            'Deposit Policy' => $settings->policies->deposit,
+            'Refund Policy' => $settings->policies->refund,
+            'Pickup Policy' => $settings->policies->pickup,
+            'Additional Terms' => $settings->policies->additionalTerms,
         ]) : [];
     @endphp
 
@@ -245,17 +245,17 @@
         <div class="max-w-6xl mx-auto px-4 text-center">
             <div class="h-1 mb-12" style="background: linear-gradient(to right, transparent, var(--warm-500), transparent);"></div>
 
-            <h3 class="font-display text-2xl mb-2">{{ $settings->storeName }}</h3>
+            <h3 class="font-display text-2xl mb-2">{{ $settings->store->name }}</h3>
             <p class="font-script text-xl mb-6 text-warm-400">{{ $settings->defaultTagline() }}</p>
 
             @php
-                $footerAddress = $settings->storeAddress;
-                $footerPhone = $settings->storePhone;
-                $footerEmail = $settings->storeEmail;
+                $footerAddress = $settings->store->address;
+                $footerPhone = $settings->store->phone;
+                $footerEmail = $settings->store->email;
             @endphp
 
             @php
-                $footerSocial = $settings->socialMediaLinks;
+                $footerSocial = $settings->homepage->socialMediaLinks;
             @endphp
 
             <x-storefront.social-links
@@ -280,7 +280,7 @@
             @endif
 
             <div class="text-sm leading-relaxed space-y-3 text-warm-400">
-                <p>&copy; {{ date('Y') }} {{ $settings->storeName }}. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} {{ $settings->store->name }}. All rights reserved.</p>
                 <p class="text-xs opacity-60">Powered by KneadIt</p>
             </div>
         </div>

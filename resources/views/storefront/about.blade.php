@@ -3,14 +3,14 @@
 <link rel="stylesheet" href="{{ asset('css/about.css') }}">
 
 {{-- Photo-Forward Hero with Dark Overlay --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->storeName" image-class="about-hero-img" min-height="70vh" gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name" image-class="about-hero-img" min-height="70vh" gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[70vh]">
         <x-storefront.eyebrow class="about-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'The story behind' }}</x-storefront.eyebrow>
         <h1 class="about-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
-            {{ $settings->storeName }}
+            {{ $settings->store->name }}
         </h1>
-        @if ($settings->businessTagline)
-        <p class="about-fade-2 font-script text-2xl md:text-3xl text-warm-400">{{ $settings->businessTagline }}</p>
+        @if ($settings->branding->businessTagline)
+        <p class="about-fade-2 font-script text-2xl md:text-3xl text-warm-400">{{ $settings->branding->businessTagline }}</p>
         @endif
     </div>
 </x-storefront.hero-section>
@@ -52,19 +52,19 @@
             <div class="md:col-span-3">
                 <x-storefront.eyebrow align="left" line-opacity="0.5" class="mb-8">{{ $content['story_eyebrow'] ?? 'Our Story' }}</x-storefront.eyebrow>
 
-                @if ($settings->businessTagline)
+                @if ($settings->branding->businessTagline)
                 {{-- Pull-Quote style tagline --}}
                 <div class="mb-12">
                     <div class="font-display font-bold leading-none mb-4" style="font-size: 5rem; color: var(--warm-500); opacity: 0.15; line-height: 0.6;">&ldquo;</div>
                     <blockquote class="font-display text-2xl md:text-3xl lg:text-4xl font-medium leading-snug text-warm-800 tracking-tight">
-                        {{ $settings->businessTagline }}
+                        {{ $settings->branding->businessTagline }}
                     </blockquote>
                 </div>
                 @endif
 
                 <div class="space-y-5 text-lg leading-relaxed text-warm-600">
-                    @if ($settings->aboutUsText)
-                        @foreach (explode("\n", $settings->aboutUsText) as $paragraph)
+                    @if ($settings->branding->aboutUsText)
+                        @foreach (explode("\n", $settings->branding->aboutUsText) as $paragraph)
                             @if (trim($paragraph))
                             <p>{{ trim($paragraph) }}</p>
                             @endif
@@ -79,7 +79,7 @@
             {{-- Photo placeholder --}}
             <div class="md:col-span-2">
                 <div class="rounded-2xl overflow-hidden aspect-[4/5]">
-                    <img src="{{ $settings->heroImageUrl() }}" alt="{{ $settings->storeName }}" class="w-full h-full object-cover">
+                    <img src="{{ $settings->heroImageUrl() }}" alt="{{ $settings->store->name }}" class="w-full h-full object-cover">
                 </div>
             </div>
         </div>
@@ -112,13 +112,13 @@
     </div>
 </x-storefront.dark-section>
 
-@if ($settings->allergyDisclaimer)
+@if ($settings->branding->allergyDisclaimer)
 <section class="bg-warm-100">
     <div class="max-w-4xl mx-auto px-4 py-12">
         <div class="flex items-start gap-4 p-6 rounded-2xl" style="background: var(--warm-200); border-left: 3px solid var(--warm-500);">
             <span class="text-lg flex-shrink-0">⚠️</span>
             <p class="text-sm leading-relaxed text-warm-700">
-                <strong>Allergy Notice:</strong> {{ $settings->allergyDisclaimer }}
+                <strong>Allergy Notice:</strong> {{ $settings->branding->allergyDisclaimer }}
             </p>
         </div>
     </div>
@@ -126,22 +126,22 @@
 @endif
 
 {{-- Location + Social --}}
-@if ($settings->storeAddress || !empty(array_filter($settings->socialMediaLinks ?? [])))
+@if ($settings->store->address || !empty(array_filter($settings->homepage->socialMediaLinks ?? [])))
 <section class="bg-warm-100">
     <div class="max-w-6xl mx-auto px-4 py-16 md:py-24">
         <div class="grid md:grid-cols-2 gap-16 items-start">
-            @if ($settings->storeAddress)
+            @if ($settings->store->address)
             <div>
                 <x-storefront.eyebrow align="left" line-opacity="0.5" class="mb-6">{{ $content['location_eyebrow'] ?? 'Find Us' }}</x-storefront.eyebrow>
-                <p class="font-display text-2xl md:text-3xl leading-relaxed text-warm-800">{{ $settings->storeAddress }}</p>
+                <p class="font-display text-2xl md:text-3xl leading-relaxed text-warm-800">{{ $settings->store->address }}</p>
             </div>
             @endif
 
-            @if (!empty(array_filter($settings->socialMediaLinks ?? [])))
+            @if (!empty(array_filter($settings->homepage->socialMediaLinks ?? [])))
             <div>
                 <x-storefront.eyebrow align="left" line-opacity="0.5" class="mb-6">{{ $content['social_eyebrow'] ?? 'Follow Along' }}</x-storefront.eyebrow>
                 <x-storefront.social-links
-                    :links="$settings->socialMediaLinks"
+                    :links="$settings->homepage->socialMediaLinks"
                     link-class="bg-warm-200 text-warm-600 hover:bg-warm-600 hover:text-white"
                 />
             </div>

@@ -37,7 +37,7 @@ function orderForm() {
         unavailableDates: [],
 
         init() {
-            const leadTimeHours = {{ $settings->leadTimeHours }};
+            const leadTimeHours = {{ $settings->orders->leadTimeHours }};
             const today = new Date();
             today.setTime(today.getTime() + (leadTimeHours * 60 * 60 * 1000));
             this.minDate = today.toISOString().split('T')[0];
@@ -80,8 +80,8 @@ function orderForm() {
         },
 
         get currentMinimumOrder() {
-            const pickupMin = {{ (float) ($settings->minimumPickupOrderAmount ?: 0) }};
-            const deliveryMin = {{ (float) ($settings->minimumDeliveryOrderAmount ?: 0) }};
+            const pickupMin = {{ (float) ($settings->orders->minimumPickupOrderAmount ?: 0) }};
+            const deliveryMin = {{ (float) ($settings->orders->minimumDeliveryOrderAmount ?: 0) }};
             return this.form.delivery_type === 'delivery' ? deliveryMin : pickupMin;
         },
 
@@ -156,8 +156,8 @@ function orderForm() {
             if (this.form.delivery_type === 'pickup') {
                 this.deliveryFee = 0;
             } else {
-                const tiers = @json($settings->deliveryFeeTiers);
-                const freeMin = {{ (float)($settings->freeDeliveryMinimum ?: 0) }};
+                const tiers = @json($settings->orders->deliveryFeeTiers);
+                const freeMin = {{ (float)($settings->orders->freeDeliveryMinimum ?: 0) }};
                 const tierIndex = parseInt(this.form.delivery_tier);
                 if (!isNaN(tierIndex) && tiers[tierIndex]) {
                     this.deliveryFee = (freeMin > 0 && this.subtotal >= freeMin) ? 0 : parseFloat(tiers[tierIndex].fee);
