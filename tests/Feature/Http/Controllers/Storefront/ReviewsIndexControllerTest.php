@@ -2,6 +2,7 @@
 
 use App\Models\Engagement\Review;
 use App\Models\Inventory\Product;
+use App\ViewModels\Storefront\ReviewsPageViewModel;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -25,15 +26,14 @@ test('reviews page loads', function () {
     $response->assertOk();
 });
 
-test('reviews controller passes settings, content, and stats to view', function () {
+test('reviews controller passes a fully-assembled VM to view', function () {
     $response = withoutMiddleware(tenantMiddleware())
         ->get(route('storefront.reviews', [], false));
 
     $response->assertOk()
-        ->assertViewHas('settings')
-        ->assertViewHas('content')
-        ->assertViewHas('vm')
-        ->assertViewHas('featured');
+        ->assertViewHas('vm', fn (ReviewsPageViewModel $vm) => $vm->settings !== null
+            && is_array($vm->content)
+            && $vm->totalReviews >= 0);
 });
 
 test('reviews page shows approved reviews', function () {
