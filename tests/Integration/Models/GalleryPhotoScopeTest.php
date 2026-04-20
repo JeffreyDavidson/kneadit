@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('visible scope returns only visible photos', function () {
-    $visible = GalleryPhoto::factory()->create(['is_visible' => true]);
+    $visible = GalleryPhoto::factory()->visible()->create();
     GalleryPhoto::factory()->hidden()->create();
 
     $results = GalleryPhoto::query()->visible()->get();

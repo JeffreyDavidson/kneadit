@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('it approves a customer photo', function () {
-    $photo = CustomerPhoto::factory()->create(['is_approved' => false]);
+    $photo = CustomerPhoto::factory()->unapproved()->create();
 
     resolve(ApproveCustomerPhoto::class)($photo);
 
