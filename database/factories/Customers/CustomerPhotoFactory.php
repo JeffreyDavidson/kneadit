@@ -37,6 +37,14 @@ class CustomerPhotoFactory extends Factory
     }
 
     /**
+     * Photo has not yet been approved.
+     */
+    public function unapproved(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_approved' => false]);
+    }
+
+    /**
      * Photo is featured.
      */
     public function featured(): static

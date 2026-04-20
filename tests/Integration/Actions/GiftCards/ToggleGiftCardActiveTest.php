@@ -17,7 +17,7 @@ test('it deactivates an active gift card', function () {
 });
 
 test('it activates an inactive gift card', function () {
-    $giftCard = GiftCard::factory()->create(['is_active' => false]);
+    $giftCard = GiftCard::factory()->inactive()->create();
 
     resolve(ToggleGiftCardActive::class)($giftCard);
 

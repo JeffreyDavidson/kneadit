@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('it features a review', function () {
-    $review = Review::factory()->create(['is_featured' => false]);
+    $review = Review::factory()->create();
 
     resolve(FeatureReview::class)($review);
 
