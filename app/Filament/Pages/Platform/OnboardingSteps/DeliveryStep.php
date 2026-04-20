@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
+use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
@@ -57,10 +58,8 @@ final class DeliveryStep extends OnboardingStep
                                 ->numeric()
                                 ->placeholder('15')
                                 ->visible(fn (Get $get) => $get('delivery.delivery_enabled')),
-                            TextInput::make('delivery.delivery_fee')
+                            MoneyInput::make('delivery.delivery_fee')
                                 ->label('Flat Delivery Fee')
-                                ->numeric()
-                                ->prefix('$')
                                 ->placeholder('5.00')
                                 ->visible(fn (Get $get) => $get('delivery.delivery_enabled')),
                         ]),
@@ -69,17 +68,13 @@ final class DeliveryStep extends OnboardingStep
                                 ->label('Free delivery over a certain amount?')
                                 ->live()
                                 ->visible(fn (Get $get) => $get('delivery.delivery_enabled')),
-                            TextInput::make('delivery.free_delivery_threshold')
+                            MoneyInput::make('delivery.free_delivery_threshold')
                                 ->label('Free Delivery Threshold')
-                                ->numeric()
-                                ->prefix('$')
                                 ->placeholder('50.00')
                                 ->visible(fn (Get $get) => $get('delivery.delivery_enabled') && $get('delivery.free_delivery_over')),
                         ]),
-                        TextInput::make('delivery.delivery_minimum_order')
+                        MoneyInput::make('delivery.delivery_minimum_order')
                             ->label('Minimum Order for Delivery')
-                            ->numeric()
-                            ->prefix('$')
                             ->placeholder('20.00')
                             ->visible(fn (Get $get) => $get('delivery.delivery_enabled')),
 

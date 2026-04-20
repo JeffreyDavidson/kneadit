@@ -6,7 +6,6 @@ use App\Actions\Stripe\HandleCheckoutComplete;
 use App\Enums\Orders\PaymentMethod;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Orders\Order;
-use App\Services\Settings\SettingsManager;
 use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
@@ -17,34 +16,14 @@ class StripeCheckoutService
 
     public function __construct(
         private StripeSessionPayloadBuilder $payloadBuilder,
+        private StripeSettingsReader $settings,
     ) {
         $this->stripe = new StripeClient(config('cashier.secret'));
     }
 
-    public static function isEnabled(): bool
-    {
-        $manager = app(SettingsManager::class);
-        $methods = $manager->get('payment_methods');
-        $methods = $methods ? json_decode($methods, true) : [];
-
-        if (! in_array('stripe', $methods)) {
-            return false;
-        }
-
-        $connectId = $manager->get('stripe_connect_id');
-        $chargesEnabled = $manager->get('stripe_connect_charges_enabled', '0');
-
-        return $connectId && $chargesEnabled === '1';
-    }
-
-    public static function getConnectId(): ?string
-    {
-        return app(SettingsManager::class)->get('stripe_connect_id');
-    }
-
     public function redirectToCheckout(Order $order): ?string
     {
-        if (! $order->total->isPositive() || ! self::isEnabled()) {
+        if (! $order->total->isPositive() || ! $this->settings->isEnabled()) {
             return null;
         }
 
@@ -59,7 +38,7 @@ class StripeCheckoutService
 
     public function createCheckoutSession(Order $order, string $successUrl, string $cancelUrl): ?Session
     {
-        $connectId = self::getConnectId();
+        $connectId = $this->settings->connectId();
 
         if (! $connectId) {
             Log::warning('No Stripe Connect ID for checkout', ['order' => $order->id]);
@@ -107,7 +86,7 @@ class StripeCheckoutService
 
     public function handleCheckoutComplete(string $sessionId): ?Order
     {
-        $connectId = self::getConnectId();
+        $connectId = $this->settings->connectId();
 
         if (! $connectId) {
             return null;
