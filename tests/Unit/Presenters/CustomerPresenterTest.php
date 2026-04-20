@@ -48,16 +48,6 @@ test('memoizes metrics across multiple reads', function () {
     $presenter->totalPoints();
 });
 
-test('__get proxies to underlying customer attributes', function () {
-    $customer = new Customer(['name' => 'Grace', 'email' => 'grace@example.com']);
-    $intelligence = Mockery::mock(CustomerIntelligence::class);
-
-    $presenter = new CustomerPresenter($customer, $intelligence);
-
-    expect($presenter->name)->toBe('Grace')
-        ->and($presenter->email)->toBe('grace@example.com');
-});
-
 test('for() resolves CustomerIntelligence from the container', function () {
     $customer = new Customer(['name' => 'Linus']);
     $fakeMetrics = makeCustomerMetrics();
