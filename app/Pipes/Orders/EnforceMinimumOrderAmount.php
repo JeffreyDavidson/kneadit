@@ -16,10 +16,11 @@ class EnforceMinimumOrderAmount
     public function handle(OrderPipelineData $payload, Closure $next): mixed
     {
         $isDelivery = $payload->data->deliveryType === DeliveryType::Delivery->value;
+        $orders = $this->settings->orders;
 
         $minimum = (float) ($isDelivery
-            ? $this->settings->minimumDeliveryOrderAmount
-            : $this->settings->minimumPickupOrderAmount);
+            ? $orders->minimumDeliveryOrderAmount
+            : $orders->minimumPickupOrderAmount);
 
         if ($minimum > 0 && $payload->subtotal < $minimum) {
             throw new MinimumOrderAmountNotMetException(

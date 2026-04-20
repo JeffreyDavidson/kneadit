@@ -26,8 +26,9 @@ class MenuController extends Controller
             ->get();
 
         $content = settingsPageContent('menu');
+        $leadTimeHours = (string) $settings->orders->leadTimeHours;
         $heroEyebrow = str_replace('{{store_name}}', $settings->storeName, $content['hero_eyebrow'] ?? $settings->storeName);
-        $ctaDesc = str_replace('{{lead_time}}', (string) $settings->leadTimeHours, $content['cta_description'] ?? 'All orders need ' . $settings->leadTimeHours . ' hours notice. Place yours now.');
+        $ctaDesc = str_replace('{{lead_time}}', $leadTimeHours, $content['cta_description'] ?? 'All orders need ' . $leadTimeHours . ' hours notice. Place yours now.');
 
         return view('storefront.menu', [
             'settings' => $settings,
