@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('transitions social post from draft to scheduled', function () {
-    $post = SocialPost::factory()->create(['status' => SocialPostStatus::Draft]);
+    $post = SocialPost::factory()->draft()->create();
 
     resolve(TransitionSocialPostStatus::class)($post, SocialPostStatus::Scheduled);
 

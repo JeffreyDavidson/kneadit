@@ -27,6 +27,13 @@ class SocialPostFactory extends Factory
         ];
     }
 
+    public function draft(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => SocialPostStatus::Draft,
+        ]);
+    }
+
     public function scheduled(): static
     {
         return $this->state(fn (array $attributes) => [
