@@ -10,7 +10,7 @@
 /** @var string|null $logoUrl */
 /** @var array<string, mixed> $stats */
 /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Orders\OrderItem> $topProducts */
-/** @var \Illuminate\Support\Collection<int, \App\Presenters\CustomerPresenter> $atRiskCustomers */
+/** @var \Illuminate\Support\Collection<int, array{name: string, days_since_last_order: ?int}> $atRiskCustomers */
 /** @var int $upcomingCount */
 /** @var string $adminUrl */
 @endphp
@@ -77,9 +77,9 @@
             <table style="width: 100%; border-collapse: collapse;">
                 @foreach ($atRiskCustomers as $customer)
                     <tr style="border-bottom: 1px solid #f0e6d6;">
-                        <td style="padding: 8px 5px; font-size: 14px;">{{ $customer->name }}</td>
+                        <td style="padding: 8px 5px; font-size: 14px;">{{ $customer['name'] }}</td>
                         <td style="padding: 8px 5px; text-align: right; font-size: 13px; color: #6b5c4d;">
-                            {{ $customer->daysSinceLastOrder() }}d ago
+                            {{ $customer['days_since_last_order'] }}d ago
                         </td>
                     </tr>
                 @endforeach

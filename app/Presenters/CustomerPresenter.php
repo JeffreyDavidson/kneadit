@@ -67,11 +67,6 @@ final class CustomerPresenter
         return $this->metrics()->isAtRisk;
     }
 
-    public function __get(string $key): mixed
-    {
-        return $this->customer->{$key};
-    }
-
     private function metrics(): CustomerMetrics
     {
         return $this->memo ??= $this->intelligence->metrics($this->customer);
