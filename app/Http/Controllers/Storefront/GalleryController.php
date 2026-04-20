@@ -29,21 +29,15 @@ class GalleryController extends Controller
 
     public function show(TenantSettings $settings): View
     {
-        $photos = CustomerPhoto::query()->approved()
-            ->with('product')
-            ->orderByDesc('is_featured')
-            ->latest()
-            ->paginate(18);
-
-        $products = Product::query()->active()->orderBy('name')->get(['id', 'name']);
-
-        $content = settingsPageContent('gallery');
-
         return view('storefront.gallery', [
             'settings' => $settings,
-            'photos' => $photos,
-            'products' => $products,
-            'content' => $content,
+            'photos' => CustomerPhoto::query()->approved()
+                ->with('product')
+                ->orderByDesc('is_featured')
+                ->latest()
+                ->paginate(18),
+            'products' => Product::query()->active()->orderBy('name')->get(['id', 'name']),
+            'content' => settingsPageContent('gallery'),
         ]);
     }
 }

@@ -3,6 +3,7 @@
 use App\Models\Engagement\LoyaltyReward;
 use App\Models\Inventory\Product;
 use App\Models\Staff\User;
+use App\Presenters\LoyaltyRewardPresenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -19,7 +20,7 @@ test('reward type label for percentage discount', function () {
         'discount_percentage' => 10.00,
     ]);
 
-    expect($reward->reward_type_label)->toBe('10.00% Off');
+    expect(LoyaltyRewardPresenter::for($reward)->rewardTypeLabel())->toBe('10.00% Off');
 });
 
 test('reward type label for fixed discount', function () {
@@ -29,7 +30,7 @@ test('reward type label for fixed discount', function () {
         'discount_amount' => 5.00,
     ]);
 
-    expect($reward->reward_type_label)->toBe('$5.00 Off');
+    expect(LoyaltyRewardPresenter::for($reward)->rewardTypeLabel())->toBe('$5.00 Off');
 });
 
 test('reward type label for free product', function () {
@@ -40,7 +41,7 @@ test('reward type label for free product', function () {
         'points_required' => 200,
     ]);
 
-    expect($reward->reward_type_label)->toBe('Free Sourdough');
+    expect(LoyaltyRewardPresenter::for($reward)->rewardTypeLabel())->toBe('Free Sourdough');
 });
 
 test('reward belongs to product', function () {

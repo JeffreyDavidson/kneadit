@@ -3,6 +3,7 @@
 namespace App\ViewModels\Storefront;
 
 use App\Models\Engagement\Review;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ReviewsPageViewModel
@@ -22,9 +23,15 @@ class ReviewsPageViewModel
      * @param LengthAwarePaginator<int, Review> $reviews
      * @param object{avg_rating: float, total_count: int} $stats
      * @param array<int, int> $starCounts keyed by star rating (5→1)
+     * @param array<string, mixed> $content
      */
-    public function __construct(public readonly LengthAwarePaginator $reviews, object $stats, array $starCounts)
-    {
+    public function __construct(
+        public readonly LengthAwarePaginator $reviews,
+        object $stats,
+        array $starCounts,
+        public readonly ?TenantSettings $settings = null,
+        public readonly array $content = [],
+    ) {
         $this->avgRating = (float) $stats->avg_rating;
         $this->formattedAvgRating = number_format($this->avgRating, 1);
         $this->totalReviews = (int) $stats->total_count;
@@ -42,5 +49,10 @@ class ReviewsPageViewModel
             ];
         }
         $this->ratingBreakdown = $breakdown;
+    }
+
+    public function featured(): ?Review
+    {
+        return $this->reviews->first();
     }
 }

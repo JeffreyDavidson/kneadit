@@ -5,12 +5,68 @@ namespace App\ViewModels\Storefront;
 use App\Enums\Engagement\LoyaltyPointType;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyReward;
+use App\Services\Loyalty\CustomerLoyalty;
 use App\Services\Settings\TenantSettings;
 use App\ValueObjects\LoyaltyBalance;
 use Illuminate\Support\Collection;
 
 class LoyaltyPageViewModel
 {
+    /**
+     * @param Collection<int, LoyaltyReward> $rewards
+     */
+    public static function forCustomer(TenantSettings $settings, Customer $customer, CustomerLoyalty $customerLoyalty, Collection $rewards): self
+    {
+        $snapshot = $customerLoyalty->snapshot($customer);
+
+        return new self(
+            settings: $settings,
+            customer: $customer,
+            balance: $snapshot['balance'],
+            history: $snapshot['history'],
+            rewards: $rewards,
+        );
+    }
+
+    /**
+     * @param Collection<int, LoyaltyReward> $rewards
+     */
+    public static function notFound(TenantSettings $settings, Collection $rewards): self
+    {
+        return new self(
+            settings: $settings,
+            customer: null,
+            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
+            history: collect(),
+            rewards: $rewards,
+            customerNotFound: true,
+        );
+    }
+
+    /**
+     * @param Collection<int, LoyaltyReward> $rewards
+     */
+    public static function empty(TenantSettings $settings, Collection $rewards): self
+    {
+        return new self(
+            settings: $settings,
+            customer: null,
+            balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
+            history: collect(),
+            rewards: $rewards,
+        );
+    }
+
+    /**
+     * @return array{array<string, string>, array<int, array<string, string>>}
+     */
+    private static function loadContent(): array
+    {
+        $content = settingsPageContent('loyalty');
+
+        return [$content, $content['how_it_works_steps'] ?? config('kneadit.default_loyalty_steps')];
+    }
+
     public readonly int $totalPoints;
 
     public readonly int $lifetimeEarned;
@@ -23,11 +79,15 @@ class LoyaltyPageViewModel
 
     public readonly bool $hasCustomer;
 
+    /** @var array<string, string> */
+    public readonly array $content;
+
+    /** @var array<int, array<string, string>> */
+    public readonly array $howSteps;
+
     /**
      * @param Collection<int, LoyaltyReward> $rewards
      * @param Collection<int, \App\Models\Engagement\LoyaltyPoint> $history
-     * @param array<string, string> $content
-     * @param array<int, array<string, string>> $howSteps
      */
     public function __construct(
         public readonly TenantSettings $settings,
@@ -35,10 +95,10 @@ class LoyaltyPageViewModel
         LoyaltyBalance $balance,
         public readonly Collection $history,
         public readonly Collection $rewards,
-        public readonly array $content,
-        public readonly array $howSteps,
         public readonly bool $customerNotFound = false,
     ) {
+        [$this->content, $this->howSteps] = self::loadContent();
+
         $this->totalPoints = $balance->total;
         $this->lifetimeEarned = $balance->earned;
         $this->formattedTotalPoints = number_format($this->totalPoints);

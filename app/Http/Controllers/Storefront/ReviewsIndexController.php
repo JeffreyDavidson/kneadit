@@ -17,11 +17,13 @@ class ReviewsIndexController extends Controller
         $starCounts = Review::query()->ratingBreakdown();
 
         return view('storefront.reviews', [
-            'settings' => $settings,
-            'reviews' => $reviews,
-            'content' => settingsPageContent('reviews'),
-            'featured' => $reviews->first(),
-            'vm' => new ReviewsPageViewModel($reviews, $stats, $starCounts),
+            'vm' => new ReviewsPageViewModel(
+                reviews: $reviews,
+                stats: $stats,
+                starCounts: $starCounts,
+                settings: $settings,
+                content: settingsPageContent('reviews'),
+            ),
         ]);
     }
 }

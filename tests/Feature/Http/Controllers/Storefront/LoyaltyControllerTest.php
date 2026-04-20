@@ -3,6 +3,7 @@
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\LoyaltyReward;
+use App\Presenters\LoyaltyRewardPresenter;
 use App\Services\Customers\CustomerIntelligence;
 
 beforeEach(function () {
@@ -54,7 +55,7 @@ test('loyalty reward type label percentage', function () {
         'discount_percentage' => 10,
     ]);
 
-    expect($reward->reward_type_label)->toContain('% Off');
+    expect(LoyaltyRewardPresenter::for($reward)->rewardTypeLabel())->toContain('% Off');
 });
 
 test('loyalty reward type label fixed', function () {
@@ -64,7 +65,7 @@ test('loyalty reward type label fixed', function () {
         'discount_amount' => 5.00,
     ]);
 
-    expect($reward->reward_type_label)->toBe('$5.00 Off');
+    expect(LoyaltyRewardPresenter::for($reward)->rewardTypeLabel())->toBe('$5.00 Off');
 });
 
 test('customer lifetime points earned', function () {
