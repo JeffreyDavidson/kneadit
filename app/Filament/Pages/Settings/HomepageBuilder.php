@@ -81,7 +81,7 @@ class HomepageBuilder extends Page
 
     protected function loadSections(): void
     {
-        $saved = app(TenantSettings::class)->homepageSections;
+        $saved = app(TenantSettings::class)->homepage->sections;
         $defaults = $this->getDefaults();
 
         // Merge saved with defaults to ensure all sections exist
