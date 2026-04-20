@@ -69,7 +69,7 @@ test('add seasonal item resets form fields', function () {
 
 test('delete seasonal item removes record', function () {
     $product = Product::factory()->create();
-    $item = SeasonalItem::factory()->create(['product_id' => $product->id]);
+    $item = SeasonalItem::factory()->for($product)->create();
 
     test()->page->deleteSeasonalItem($item->id);
 

@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => setUpTenantTest());
 
 test('active scope returns only active rewards', function () {
-    $active = LoyaltyReward::factory()->create(['is_active' => true]);
+    $active = LoyaltyReward::factory()->active()->create();
     LoyaltyReward::factory()->inactive()->create();
 
     $results = LoyaltyReward::query()->active()->get();

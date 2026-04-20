@@ -12,7 +12,7 @@ test('staff invitation model exists', function () {
 });
 
 test('invitation can be created', function () {
-    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $owner = User::factory()->owner()->create();
     StaffInvitation::factory()->create([
         'email' => 'staff@example.com',
         'role' => UserRole::Staff,
@@ -30,7 +30,7 @@ test('invitation is expired when past expiry', function () {
         'role' => UserRole::Staff,
         'token' => Str::random(32),
         'expires_at' => now()->subDay(),
-        'invited_by' => User::factory()->create(['role' => UserRole::Owner])->id,
+        'invited_by' => User::factory()->owner()->create()->id,
     ]);
 
     expect($invitation->is_expired)->toBeTrue();
@@ -42,7 +42,7 @@ test('invitation is pending when not accepted and not expired', function () {
         'role' => UserRole::Staff,
         'token' => Str::random(32),
         'expires_at' => now()->addDays(7),
-        'invited_by' => User::factory()->create(['role' => UserRole::Owner])->id,
+        'invited_by' => User::factory()->owner()->create()->id,
     ]);
 
     expect($invitation->is_pending)->toBeTrue();
@@ -55,14 +55,14 @@ test('invitation is not pending when accepted', function () {
         'token' => Str::random(32),
         'expires_at' => now()->addDays(7),
         'accepted_at' => now(),
-        'invited_by' => User::factory()->create(['role' => UserRole::Owner])->id,
+        'invited_by' => User::factory()->owner()->create()->id,
     ]);
 
     expect($invitation->is_pending)->toBeFalse();
 });
 
 test('invitation belongs to inviter', function () {
-    $owner = User::factory()->create(['role' => UserRole::Owner]);
+    $owner = User::factory()->owner()->create();
     $invitation = StaffInvitation::factory()->create([
         'email' => 'staff@example.com',
         'role' => UserRole::Staff,

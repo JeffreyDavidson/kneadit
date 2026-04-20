@@ -126,7 +126,7 @@ test('order has loyalty points relationship', function () {
 test('order has reviews relationship', function () {
     $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
 
-    Review::factory()->create(['order_id' => $order->id]);
+    Review::factory()->for($order)->create();
 
     expect($order->reviews)->toHaveCount(1);
 });
@@ -134,7 +134,7 @@ test('order has reviews relationship', function () {
 test('order has survey responses relationship', function () {
     $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
 
-    SurveyResponse::factory()->create(['order_id' => $order->id]);
+    SurveyResponse::factory()->for($order)->create();
 
     expect($order->surveyResponses)->toHaveCount(1);
 });

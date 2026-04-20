@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
@@ -16,7 +15,7 @@ test('platform-admin gate allows platform admins', function () {
 });
 
 test('platform-admin gate denies non-admin users', function () {
-    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $user = User::factory()->owner()->create();
 
     expect(Gate::forUser($user)->allows('platform-admin'))->toBeFalse();
 });
