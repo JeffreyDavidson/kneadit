@@ -2,11 +2,14 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Customers\CateringInquiry;
 use Filament\Widgets\Widget;
 
 class CateringPipelineWidget extends Widget
 {
+    use CachesWidgetData;
+
     protected static ?int $sort = 18;
 
     protected int|string|array $columnSpan = 1;
@@ -15,21 +18,26 @@ class CateringPipelineWidget extends Widget
 
     public function getOpenInquiriesCount(): int
     {
-        return CateringInquiry::query()->openFunnel()->count();
+        return $this->cached('open', [1800, 3600], fn (): int => CateringInquiry::query()->openFunnel()->count());
     }
 
     public function getPendingQuotesCount(): int
     {
-        return CateringInquiry::query()->quoted()->count();
+        return $this->cached('pending', [1800, 3600], fn (): int => CateringInquiry::query()->quoted()->count());
     }
 
     public function getTotalPipelineValue(): float
     {
-        return (float) CateringInquiry::query()->inPipeline()->sum('quoted_amount');
+        return $this->cached('value', [1800, 3600], fn (): float => (float) CateringInquiry::query()->inPipeline()->sum('quoted_amount'));
     }
 
     public function getLatestInquiry(): ?CateringInquiry
     {
-        return CateringInquiry::query()->latest()->first();
+        return $this->cached('latest', [900, 1800], fn () => CateringInquiry::query()->latest()->first());
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'catering_pipeline';
     }
 }
