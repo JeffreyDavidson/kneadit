@@ -6,8 +6,8 @@ use App\Enums\Marketing\EmailTemplateType;
 use App\Enums\Orders\OrderStatus;
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
+use App\Mail\Concerns\ResolvesTemplate;
 use App\Models\Orders\Order;
-use App\Services\Email\EmailTemplateRenderer;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -15,6 +15,7 @@ use Illuminate\Mail\Mailables\Envelope;
 class OrderStatusMail extends BaseMailable
 {
     use BakerBranded;
+    use ResolvesTemplate;
 
     public function __construct(
         public Order $order,
@@ -23,35 +24,24 @@ class OrderStatusMail extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $type = $this->templateType();
-
-        if ($type) {
-            $resolved = app(EmailTemplateRenderer::class)->resolve($type, $this->placeholders());
-            $subject = $resolved['subject'] ?? $this->resolveDefaultSubject();
-        } else {
-            $subject = $this->resolveDefaultSubject();
-        }
+        $resolved = $this->resolveTemplate($this->templateType(), $this->placeholders());
 
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
-            subject: $subject,
+            subject: $resolved['subject'] ?? $this->resolveDefaultSubject(),
         );
     }
 
     public function content(): Content
     {
-        $type = $this->templateType();
+        $resolved = $this->resolveTemplate($this->templateType(), $this->placeholders());
 
-        if ($type) {
-            $resolved = app(EmailTemplateRenderer::class)->resolve($type, $this->placeholders());
-
-            if ($resolved && $resolved['body']) {
-                return new Content(
-                    view: 'emails.custom-template',
-                    with: ['customBody' => $resolved['body']],
-                );
-            }
+        if ($resolved && $resolved['body']) {
+            return new Content(
+                view: 'emails.custom-template',
+                with: ['customBody' => $resolved['body']],
+            );
         }
 
         return new Content(

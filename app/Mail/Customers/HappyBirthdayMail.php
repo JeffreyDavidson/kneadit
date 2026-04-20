@@ -5,9 +5,9 @@ namespace App\Mail\Customers;
 use App\Enums\Marketing\EmailTemplateType;
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
+use App\Mail\Concerns\ResolvesTemplate;
 use App\Models\Customers\Customer;
 use App\Models\Financial\Coupon;
-use App\Services\Email\EmailTemplateRenderer;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -15,6 +15,7 @@ use Illuminate\Mail\Mailables\Envelope;
 class HappyBirthdayMail extends BaseMailable
 {
     use BakerBranded;
+    use ResolvesTemplate;
 
     public string $storeName;
 
@@ -27,10 +28,7 @@ class HappyBirthdayMail extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $resolved = app(EmailTemplateRenderer::class)->resolve(
-            EmailTemplateType::HappyBirthday,
-            $this->placeholders(),
-        );
+        $resolved = $this->resolveTemplate(EmailTemplateType::HappyBirthday, $this->placeholders());
 
         return new Envelope(
             from: $this->bakerFrom(),
@@ -41,10 +39,7 @@ class HappyBirthdayMail extends BaseMailable
 
     public function content(): Content
     {
-        $resolved = app(EmailTemplateRenderer::class)->resolve(
-            EmailTemplateType::HappyBirthday,
-            $this->placeholders(),
-        );
+        $resolved = $this->resolveTemplate(EmailTemplateType::HappyBirthday, $this->placeholders());
 
         if ($resolved && $resolved['body']) {
             return new Content(
