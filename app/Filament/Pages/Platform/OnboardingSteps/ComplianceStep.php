@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Platform\OnboardingSteps;
 
+use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Pages\Platform\Onboarding;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
@@ -49,10 +50,8 @@ final class ComplianceStep extends OnboardingStep
                                 ->required()
                                 ->searchable()
                                 ->options(self::usStates()),
-                            TextInput::make('compliance.revenue_cap')
+                            MoneyInput::make('compliance.revenue_cap')
                                 ->label('Annual Revenue Cap')
-                                ->numeric()
-                                ->prefix('$')
                                 ->required()
                                 ->helperText('Maximum annual revenue allowed under your state\'s cottage food law.'),
                         ]),

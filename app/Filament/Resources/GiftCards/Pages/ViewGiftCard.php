@@ -4,6 +4,7 @@ namespace App\Filament\Resources\GiftCards\Pages;
 
 use App\Actions\GiftCards\AddGiftCardCredit;
 use App\Actions\GiftCards\ToggleGiftCardActive;
+use App\Filament\Forms\Components\MoneyInput;
 use App\Filament\Resources\GiftCards\GiftCardResource;
 use App\Models\Financial\GiftCard;
 use Filament\Actions\Action;
@@ -37,12 +38,9 @@ class ViewGiftCard extends ViewRecord
                 ->color('success')
                 ->authorize('update')
                 ->schema([
-                    TextInput::make('amount')
+                    MoneyInput::make('amount')
                         ->required()
-                        ->numeric()
-                        ->minValue(0.01)
-                        ->step(0.01)
-                        ->prefix('$'),
+                        ->minValue(0.01),
                     TextInput::make('notes')
                         ->placeholder('Reason for credit'),
                 ])
