@@ -24,8 +24,8 @@ test('get title returns team management', function () {
 });
 
 test('get team members returns users sorted by role', function () {
-    User::factory()->create(['role' => UserRole::Manager]);
-    User::factory()->create(['role' => UserRole::Staff]);
+    User::factory()->manager()->create();
+    User::factory()->staff()->create();
 
     $members = test()->page->getTeamMembers();
 
@@ -72,7 +72,7 @@ test('send invitation validates email format', function () {
 });
 
 test('change role with invalid role does nothing', function () {
-    $user = User::factory()->create(['role' => UserRole::Staff]);
+    $user = User::factory()->staff()->create();
 
     test()->page->changeRole($user->id, 'invalid_role');
 
