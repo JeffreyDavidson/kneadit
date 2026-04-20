@@ -133,7 +133,7 @@
                         <span class="font-display font-bold text-warm-800">{{ $vm->formattedRewardPoints($reward) }}</span>
                         <span class="text-sm text-warm-500">pts</span>
                     </div>
-                    <p class="text-xs mt-2 text-warm-500">{{ $reward->reward_type_label }}</p>
+                    <p class="text-xs mt-2 text-warm-500">{{ \App\Presenters\LoyaltyRewardPresenter::for($reward)->rewardTypeLabel() }}</p>
                 </div>
                 @endforeach
             </div>
