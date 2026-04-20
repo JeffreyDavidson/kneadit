@@ -43,14 +43,6 @@ class Survey extends Model
         return $this->hasMany(SurveyResponse::class);
     }
 
-    public function resolveRouteBinding(mixed $value, mixed $field = null): ?self
-    {
-        return $this->newQuery()
-            ->where('is_active', true)
-            ->where($field ?? $this->getRouteKeyName(), $value)
-            ->firstOrFail();
-    }
-
     protected static function newFactory(): SurveyFactory
     {
         return SurveyFactory::new();

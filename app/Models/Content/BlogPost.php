@@ -62,19 +62,6 @@ class BlogPost extends Model
         );
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
-    public function resolveRouteBinding(mixed $value, mixed $field = null): ?self
-    {
-        return static::query()
-            ->where($field ?? $this->getRouteKeyName(), $value)
-            ->published()
-            ->first();
-    }
-
     protected static function newFactory(): BlogPostFactory
     {
         return BlogPostFactory::new();
