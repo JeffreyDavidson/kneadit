@@ -2,10 +2,9 @@
 
 namespace App\Queries\Financial;
 
-use App\Enums\Orders\OrderStatus;
+use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\ValueObjects\DateRange;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 class ProductSalesQuery
@@ -20,13 +19,10 @@ class ProductSalesQuery
     {
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
 
+        $orderIds = Order::query()->active()->whereBetween('delivery_date', $dates)->select('id');
+
         return OrderItem::query()
-            ->whereIn('order_id', function (Builder $q) use ($dates) {
-                $q->select('id')
-                    ->from('orders')
-                    ->whereNotIn('status', [OrderStatus::Cancelled->value])
-                    ->whereBetween('delivery_date', $dates);
-            })
+            ->whereIn('order_id', $orderIds)
             ->selectRaw('product_id, SUM(quantity) as units_sold, SUM(quantity * unit_price) as revenue')
             ->groupBy('product_id')
             ->with('product:id,name')
@@ -50,13 +46,10 @@ class ProductSalesQuery
     {
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
 
+        $orderIds = Order::query()->active()->whereBetween('delivery_date', $dates)->select('id');
+
         return OrderItem::query()
-            ->whereIn('order_id', function (Builder $q) use ($dates) {
-                $q->select('id')
-                    ->from('orders')
-                    ->whereNotIn('status', [OrderStatus::Cancelled->value])
-                    ->whereBetween('delivery_date', $dates);
-            })
+            ->whereIn('order_id', $orderIds)
             ->selectRaw('product_id, SUM(quantity) as units_sold, SUM(quantity * unit_price) as revenue')
             ->groupBy('product_id')
             ->with('product:id,name')

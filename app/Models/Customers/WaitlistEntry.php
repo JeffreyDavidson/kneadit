@@ -2,20 +2,18 @@
 
 namespace App\Models\Customers;
 
+use App\Builders\Customers\WaitlistEntryQueryBuilder;
 use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Customers\WaitlistStatus;
 use App\Models\Inventory\Product;
 use Database\Factories\Customers\WaitlistEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 
 /**
  * @property WaitlistStatus $status
@@ -31,6 +29,7 @@ use Illuminate\Support\Facades\Date;
  * @mixin \Eloquent
  */
 #[Fillable('customer_name', 'customer_email', 'customer_phone', 'requested_date', 'product_id', 'notes', 'status')]
+#[UseEloquentBuilder(WaitlistEntryQueryBuilder::class)]
 class WaitlistEntry extends Model
 {
     /** @use HasFactory<WaitlistEntryFactory> */
@@ -60,20 +59,6 @@ class WaitlistEntry extends Model
         return Attribute::make(
             get: fn () => $this->status->getLabel(),
         );
-    }
-
-    /** @param Builder<WaitlistEntry> $query */
-    #[Scope]
-    protected function waiting(Builder $query): void
-    {
-        $query->where('status', WaitlistStatus::Waiting);
-    }
-
-    /** @param Builder<WaitlistEntry> $query */
-    #[Scope]
-    protected function forDate(Builder $query, Carbon|string $date): void
-    {
-        $query->whereDate('requested_date', Date::parse($date));
     }
 
     protected static function newFactory(): WaitlistEntryFactory
