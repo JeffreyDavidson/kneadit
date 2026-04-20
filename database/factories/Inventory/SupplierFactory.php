@@ -30,6 +30,14 @@ class SupplierFactory extends Factory
     }
 
     /**
+     * Supplier is active.
+     */
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => ['is_active' => true]);
+    }
+
+    /**
      * Supplier is inactive.
      */
     public function inactive(): static

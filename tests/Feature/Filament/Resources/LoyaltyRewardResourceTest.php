@@ -100,7 +100,7 @@ test('can filter loyalty rewards by reward type', function () {
 });
 
 test('can filter loyalty rewards by active status', function () {
-    $active = LoyaltyReward::factory()->create(['is_active' => true]);
+    $active = LoyaltyReward::factory()->active()->create();
     $inactive = LoyaltyReward::factory()->inactive()->create();
 
     Livewire::test(ListLoyaltyRewards::class)
