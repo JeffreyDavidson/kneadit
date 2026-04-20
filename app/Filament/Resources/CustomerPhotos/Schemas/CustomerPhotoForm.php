@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\CustomerPhotos\Schemas;
 
+use App\Filament\Forms\Components\ContactFields;
 use App\Filament\Support\AllowedFileTypes;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -21,15 +21,7 @@ class CustomerPhotoForm
                 Section::make('Customer Information')
                     ->columnSpanFull()
                     ->components([
-                        Grid::make(2)->components([
-                            TextInput::make('customer_name')
-                                ->required()
-                                ->maxLength(255),
-                            TextInput::make('customer_email')
-                                ->email()
-                                ->required()
-                                ->maxLength(255),
-                        ]),
+                        Grid::make(2)->components(ContactFields::nameAndEmail()),
                     ]),
 
                 Section::make('Photo')
