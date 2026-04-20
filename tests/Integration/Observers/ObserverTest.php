@@ -13,7 +13,7 @@ it('uppercases coupon code on creation via observer', function () {
     $coupon = Coupon::factory()->create([
         'code' => 'summer25',
         'type' => CouponType::Percentage,
-        'value' => 25,
+        'percentage' => 25,
         'is_active' => true,
     ]);
 

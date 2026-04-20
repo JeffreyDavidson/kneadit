@@ -20,7 +20,7 @@ class CreateBirthdayCoupon
 
         return Coupon::query()->firstOrCreate(['code' => $couponCode], [
             'type' => CouponType::Percentage,
-            'value' => $discountPercent,
+            'percentage' => $discountPercent,
             'max_uses' => 1,
             'used_count' => 0,
             'starts_at' => $today,

@@ -64,9 +64,9 @@ class CouponService
         }
 
         if ($coupon->type === CouponType::Percentage) {
-            return round($subtotal * ($coupon->value->dollars() / 100), 2);
+            return round($coupon->percentage?->of($subtotal) ?? 0, 2);
         }
 
-        return round(min($coupon->value->dollars(), $subtotal), 2);
+        return round(min($coupon->fixed_amount?->dollars() ?? 0, $subtotal), 2);
     }
 }

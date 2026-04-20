@@ -60,8 +60,8 @@ class HappyBirthdayMail extends BaseMailable
     {
         return [
             'customer_name' => $this->customer->name,
-            'coupon_code' => $this->coupon->code ?? '',
-            'coupon_amount' => $this->coupon ? '$' . number_format($this->coupon->value->dollars() / 100, 2) : '',
+            'coupon_code' => $this->coupon ? $this->coupon->code : '',
+            'coupon_amount' => $this->coupon ? (string) ($this->coupon->percentage ?? $this->coupon->fixed_amount ?? '') : '',
             'store_name' => $this->storeName,
         ];
     }

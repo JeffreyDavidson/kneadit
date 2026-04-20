@@ -9,7 +9,7 @@ beforeEach(fn () => setUpTenantTest());
 test('apply valid coupon returns discount', function () {
     $coupon = Coupon::factory()->percentage()->create([
         'code' => 'SAVE10',
-        'value' => 10,
+        'percentage' => 10,
         'is_active' => true,
     ]);
 
