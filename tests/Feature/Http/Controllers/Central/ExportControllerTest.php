@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
 use App\Models\Staff\User;
 use Illuminate\Support\Facades\DB;
 
@@ -10,7 +9,7 @@ use function Pest\Laravel\get;
 
 function createAdmin(): User
 {
-    return User::factory()->create(['role' => UserRole::PlatformAdmin]);
+    return User::factory()->platformAdmin()->create();
 }
 
 function insertTenant(string $id = 'test-bakery'): string
@@ -119,7 +118,7 @@ test('non-existent tenant returns 404', function () {
 
 test('non-admin user is forbidden from exporting', function () {
     $id = insertTenant();
-    $user = User::factory()->create(['role' => UserRole::Owner]);
+    $user = User::factory()->owner()->create();
 
     $response = actingAs($user)
         ->get(route('central.export', [$id, 'products']));
