@@ -3,6 +3,7 @@
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Engagement\LoyaltyReward;
+use App\Presenters\LoyaltyRewardPresenter;
 use App\Services\Customers\CustomerIntelligence;
 
 use function Pest\Laravel\withoutMiddleware;
@@ -97,7 +98,7 @@ test('reward type labels are correct', function () {
         'discount_percentage' => 10,
     ]);
 
-    expect($reward->reward_type_label)->toBe('10.00% Off');
+    expect(LoyaltyRewardPresenter::for($reward)->rewardTypeLabel())->toBe('10.00% Off');
 
     $fixedReward = LoyaltyReward::factory()->fixedDiscount()->create([
         'name' => '$5 Off',
@@ -105,5 +106,5 @@ test('reward type labels are correct', function () {
         'discount_amount' => 5.00,
     ]);
 
-    expect($fixedReward->reward_type_label)->toBe('$5.00 Off');
+    expect(LoyaltyRewardPresenter::for($fixedReward)->rewardTypeLabel())->toBe('$5.00 Off');
 });

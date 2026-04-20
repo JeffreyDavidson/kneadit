@@ -11,6 +11,11 @@ final class LoyaltyRewardPresenter
         public readonly LoyaltyReward $reward,
     ) {}
 
+    public static function for(LoyaltyReward $reward): self
+    {
+        return new self($reward);
+    }
+
     public function rewardTypeLabel(): string
     {
         return match ($this->reward->reward_type) {
