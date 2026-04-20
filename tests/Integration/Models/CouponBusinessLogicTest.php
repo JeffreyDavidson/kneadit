@@ -27,14 +27,14 @@ test('isValid returns false when max uses reached', function () {
 });
 
 test('percentage discount calculates correctly', function () {
-    $coupon = Coupon::factory()->percentage()->create(['value' => 20]);
+    $coupon = Coupon::factory()->percentage()->create(['percentage' => 20]);
 
     expect(resolve(CouponService::class)->calculateDiscount($coupon, 100.00))->toBe(20.00)
         ->and(resolve(CouponService::class)->calculateDiscount($coupon, 50.00))->toBe(10.00);
 });
 
 test('fixed discount does not exceed subtotal', function () {
-    $coupon = Coupon::factory()->fixed()->create(['value' => 25]);
+    $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 25]);
 
     expect(resolve(CouponService::class)->calculateDiscount($coupon, 100.00))->toBe(25.00)
         ->and(resolve(CouponService::class)->calculateDiscount($coupon, 15.00))->toBe(15.00);
@@ -51,7 +51,7 @@ test('isValid returns false for future start date coupon', function () {
 
 test('discount returns zero when below minimum order amount', function () {
     $coupon = Coupon::factory()->percentage()->create([
-        'value' => 20,
+        'percentage' => 20,
         'min_order_amount' => 50,
     ]);
 

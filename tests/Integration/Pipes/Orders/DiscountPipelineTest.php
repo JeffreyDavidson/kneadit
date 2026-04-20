@@ -37,7 +37,7 @@ function createOrderWith(array $overrides = []): ?App\Models\Orders\Order
 }
 
 test('order with coupon stores discount_amount and creates coupon transaction', function () {
-    $coupon = Coupon::factory()->fixed()->create(['value' => 5.00]);
+    $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 5.00]);
 
     $order = createOrderWith(['coupon_id' => $coupon->id]);
 
@@ -79,7 +79,7 @@ test('order with gift card stores gift_card_id and gift_card_amount', function (
 });
 
 test('order with both coupon and gift card applies coupon first then gift card', function () {
-    $coupon = Coupon::factory()->fixed()->create(['value' => 10.00]);
+    $coupon = Coupon::factory()->fixed()->create(['fixed_amount' => 10.00]);
     $giftCard = GiftCard::factory()->withBalance(50.00)->create();
 
     $order = createOrderWith([
@@ -154,7 +154,7 @@ test('depleted gift card is not applied', function () {
 });
 
 test('percentage coupon creates transaction with calculated amount', function () {
-    $coupon = Coupon::factory()->percentage()->create(['value' => 25.00]); // 25%
+    $coupon = Coupon::factory()->percentage()->create(['percentage' => 25.00]); // 25%
 
     $order = createOrderWith(['coupon_id' => $coupon->id]);
 

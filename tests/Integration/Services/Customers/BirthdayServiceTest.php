@@ -18,5 +18,5 @@ it('creates a birthday coupon for a customer', function () {
 
     $coupon = app(CreateBirthdayCoupon::class)($customer, discountPercent: 15, validDays: 7);
 
-    expect($coupon)->toBeInstanceOf(Coupon::class)->and($coupon->code)->toBe("BDAY-{$customer->id}-2026")->and((int) $coupon->value->dollars())->toBe(15)->and($coupon->expires_at->toDateString())->toBe('2026-04-01');
+    expect($coupon)->toBeInstanceOf(Coupon::class)->and($coupon->code)->toBe("BDAY-{$customer->id}-2026")->and((int) $coupon->percentage->value())->toBe(15)->and($coupon->expires_at->toDateString())->toBe('2026-04-01');
 });
