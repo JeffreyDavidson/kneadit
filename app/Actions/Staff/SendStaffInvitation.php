@@ -42,7 +42,7 @@ class SendStaffInvitation
             'invited_by' => $invitedBy,
         ]);
 
-        $storeName = $this->settings->storeName;
+        $storeName = $this->settings->store->name;
         $acceptUrl = route('invitation.show', $invitation->token);
 
         StaffInvitationSent::dispatch($invitation, $storeName, $acceptUrl);

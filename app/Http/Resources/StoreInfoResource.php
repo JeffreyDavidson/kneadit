@@ -24,12 +24,12 @@ class StoreInfoResource extends JsonApiResource
     public function toAttributes(Request $request): array
     {
         return [
-            'store_name' => $this->resource->storeName,
-            'tagline' => $this->resource->storeTagline ?? '',
-            'phone' => $this->resource->storePhone ?? '',
-            'email' => $this->resource->storeEmail ?? '',
-            'address' => $this->resource->storeAddress ?? '',
-            'logo_url' => $this->resource->storeLogoUrl() ?? '',
+            'store_name' => $this->resource->store->name,
+            'tagline' => $this->resource->store->tagline ?? '',
+            'phone' => $this->resource->store->phone ?? '',
+            'email' => $this->resource->store->email ?? '',
+            'address' => $this->resource->store->address ?? '',
+            'logo_url' => $this->resource->store->logoUrl() ?? '',
             'colors' => [
                 'primary' => $this->resource->branding->brandColorPrimary,
             ],

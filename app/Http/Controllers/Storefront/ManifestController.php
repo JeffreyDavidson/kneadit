@@ -16,8 +16,8 @@ class ManifestController extends Controller
         $branding = $settings->branding;
 
         return response()->json([
-            'name' => $settings->storeName,
-            'short_name' => $settings->storeName,
+            'name' => $settings->store->name,
+            'short_name' => $settings->store->name,
             'description' => $branding->businessTagline ?? 'Fresh baked goods made with love',
             'start_url' => '/',
             'display' => 'standalone',

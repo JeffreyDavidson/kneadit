@@ -175,7 +175,7 @@ class ViewOrder extends ViewRecord
                         ->rows(3),
                 ])
                 ->action(function (array $data): void {
-                    $bakerName = auth()->user()->name ?? app(TenantSettings::class)->storeName;
+                    $bakerName = auth()->user()->name ?? app(TenantSettings::class)->store->name;
 
                     resolve(SendOrderMessage::class)(
                         order: $this->record,

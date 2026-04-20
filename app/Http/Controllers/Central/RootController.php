@@ -43,7 +43,7 @@ class RootController extends Controller
                 $settings = app(TenantSettings::class);
 
                 return response()->view('platform.storefront-disabled', [
-                    'storeName' => $settings->storeName,
+                    'storeName' => $settings->store->name,
                     'tenant' => $tenant,
                 ]);
             }
