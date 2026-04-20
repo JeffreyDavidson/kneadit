@@ -28,10 +28,11 @@ class CateringInquiryForm
                 ->columns(2)
                 ->schema([
                     Select::make('event_type')
-                        ->options(fn () => array_combine(
-                            app(TenantSettings::class)->cateringEventTypes,
-                            app(TenantSettings::class)->cateringEventTypes,
-                        ))
+                        ->options(function () {
+                            $types = app(TenantSettings::class)->catering->eventTypes;
+
+                            return array_combine($types, $types);
+                        })
                         ->required(),
                     DatePicker::make('event_date')
                         ->required()
