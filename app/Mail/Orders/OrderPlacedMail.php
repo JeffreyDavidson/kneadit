@@ -5,8 +5,8 @@ namespace App\Mail\Orders;
 use App\Enums\Marketing\EmailTemplateType;
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
+use App\Mail\Concerns\ResolvesTemplate;
 use App\Models\Orders\Order;
-use App\Services\Email\EmailTemplateRenderer;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,6 +14,7 @@ use Illuminate\Mail\Mailables\Envelope;
 class OrderPlacedMail extends BaseMailable
 {
     use BakerBranded;
+    use ResolvesTemplate;
 
     public function __construct(
         public Order $order,
@@ -21,10 +22,7 @@ class OrderPlacedMail extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $resolved = app(EmailTemplateRenderer::class)->resolve(
-            EmailTemplateType::OrderPlaced,
-            $this->placeholders(),
-        );
+        $resolved = $this->resolveTemplate(EmailTemplateType::OrderPlaced, $this->placeholders());
 
         return new Envelope(
             from: $this->bakerFrom(),
@@ -35,10 +33,7 @@ class OrderPlacedMail extends BaseMailable
 
     public function content(): Content
     {
-        $resolved = app(EmailTemplateRenderer::class)->resolve(
-            EmailTemplateType::OrderPlaced,
-            $this->placeholders(),
-        );
+        $resolved = $this->resolveTemplate(EmailTemplateType::OrderPlaced, $this->placeholders());
 
         if ($resolved && $resolved['body']) {
             return new Content(

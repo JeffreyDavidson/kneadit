@@ -5,8 +5,8 @@ namespace App\Mail\Customers;
 use App\Enums\Marketing\EmailTemplateType;
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
+use App\Mail\Concerns\ResolvesTemplate;
 use App\Models\Inventory\Product;
-use App\Services\Email\EmailTemplateRenderer;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,6 +14,7 @@ use Illuminate\Mail\Mailables\Envelope;
 class ProductAvailableMail extends BaseMailable
 {
     use BakerBranded;
+    use ResolvesTemplate;
 
     public function __construct(
         public Product $product,
@@ -22,11 +23,7 @@ class ProductAvailableMail extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $resolved = app(EmailTemplateRenderer::class)->resolve(
-            EmailTemplateType::ProductAvailable,
-            $this->placeholders(),
-        );
-
+        $resolved = $this->resolveTemplate(EmailTemplateType::ProductAvailable, $this->placeholders());
         $storeName = app(TenantSettings::class)->storeName;
 
         return new Envelope(
@@ -38,10 +35,7 @@ class ProductAvailableMail extends BaseMailable
 
     public function content(): Content
     {
-        $resolved = app(EmailTemplateRenderer::class)->resolve(
-            EmailTemplateType::ProductAvailable,
-            $this->placeholders(),
-        );
+        $resolved = $this->resolveTemplate(EmailTemplateType::ProductAvailable, $this->placeholders());
 
         if ($resolved && $resolved['body']) {
             return new Content(
