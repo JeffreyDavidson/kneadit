@@ -4,6 +4,7 @@ namespace App\Models\Financial;
 
 use App\Builders\Financial\ExpenseQueryBuilder;
 use App\Casts\MoneyCast;
+use App\Casts\PercentageCast;
 use App\Enums\Financial\ExpenseCategory;
 use App\Observers\Financial\ExpenseObserver;
 use Database\Factories\Financial\ExpenseFactory;
@@ -19,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property-read string $category_label
  * @property \App\ValueObjects\Money $amount
  * @property \App\ValueObjects\Money $deductible_amount
+ * @property \App\ValueObjects\Percentage $business_percentage
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Expense newQuery()
@@ -43,7 +45,7 @@ class Expense extends Model
         return [
             'date' => 'date',
             'amount' => MoneyCast::class,
-            'business_percentage' => 'integer',
+            'business_percentage' => PercentageCast::class,
             'deductible_amount' => MoneyCast::class,
             'category' => ExpenseCategory::class,
         ];

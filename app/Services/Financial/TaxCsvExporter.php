@@ -66,7 +66,7 @@ class TaxCsvExporter
                         $categoryMap[$expense->category->value],
                         $expense->description,
                         $expense->amount->dollars(),
-                        $expense->business_percentage,
+                        $expense->business_percentage->value(),
                         $expense->deductible_amount->dollars(),
                         $expense->notes ?? '',
                     ]);
