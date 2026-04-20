@@ -30,12 +30,12 @@ class CustomerInsightsWidget extends Widget
     public function getRepeatCustomerRate(): float
     {
         return $this->cached('repeat', [3600, 7200], function (): float {
-            $totalWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled))->count();
+            $totalWithOrders = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereNotIn('status', [OrderStatus::Cancelled]))->count();
             if ($totalWithOrders === 0) {
                 return 0;
             }
 
-            $repeat = Customer::query()->whereHas('orders', fn (Builder $q) => $q->where('status', '!=', OrderStatus::Cancelled), '>=', 2)->count();
+            $repeat = Customer::query()->whereHas('orders', fn (Builder $q) => $q->whereNotIn('status', [OrderStatus::Cancelled]), '>=', 2)->count();
 
             return round(($repeat / $totalWithOrders) * 100, 1);
         });

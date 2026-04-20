@@ -2,7 +2,6 @@
 
 namespace App\Services\Inventory;
 
-use App\Enums\Orders\OrderStatus;
 use App\Models\Inventory\Ingredient;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,7 +32,7 @@ class ShoppingListService
         }
 
         $orders = Order::query()->whereBetween('pickup_date', [$startDate, $endDate])
-            ->whereNotIn('status', [OrderStatus::Cancelled, OrderStatus::Delivered])
+            ->outstanding()
             ->with('orderItems.product.recipe.inventoryIngredients')
             ->get();
 

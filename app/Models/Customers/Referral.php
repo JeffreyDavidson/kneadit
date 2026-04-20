@@ -2,11 +2,13 @@
 
 namespace App\Models\Customers;
 
+use App\Builders\Customers\ReferralQueryBuilder;
 use App\Enums\Customers\ReferralStatus;
 use App\Models\Platform\Tenant;
 use Database\Factories\Customers\ReferralFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,6 +44,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('referrer_tenant_id', 'referred_tenant_id', 'referral_code', 'referred_email', 'status', 'reward_months')]
+#[UseEloquentBuilder(ReferralQueryBuilder::class)]
 class Referral extends Model
 {
     /** @use HasFactory<ReferralFactory> */

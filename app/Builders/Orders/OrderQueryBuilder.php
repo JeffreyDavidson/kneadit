@@ -39,9 +39,51 @@ class OrderQueryBuilder extends Builder
         return $this;
     }
 
+    public function confirmed(): static
+    {
+        $this->where('status', OrderStatus::Confirmed);
+
+        return $this;
+    }
+
+    public function delivered(): static
+    {
+        $this->where('status', OrderStatus::Delivered);
+
+        return $this;
+    }
+
     public function active(): static
     {
         $this->whereNotIn('status', [OrderStatus::Cancelled]);
+
+        return $this;
+    }
+
+    /** Pending, Confirmed, or Baking — orders still being prepared. */
+    public function bakingPipeline(): static
+    {
+        $this->whereIn('status', [
+            OrderStatus::Pending,
+            OrderStatus::Confirmed,
+            OrderStatus::Baking,
+        ]);
+
+        return $this;
+    }
+
+    /** Confirmed or Baking — orders that have ingredients allocated. */
+    public function confirmedOrBaking(): static
+    {
+        $this->whereIn('status', [OrderStatus::Confirmed, OrderStatus::Baking]);
+
+        return $this;
+    }
+
+    /** Not yet delivered or cancelled — outstanding work. */
+    public function outstanding(): static
+    {
+        $this->whereNotIn('status', [OrderStatus::Cancelled, OrderStatus::Delivered]);
 
         return $this;
     }

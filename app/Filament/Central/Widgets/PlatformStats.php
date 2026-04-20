@@ -2,7 +2,6 @@
 
 namespace App\Filament\Central\Widgets;
 
-use App\Enums\Platform\SupportTicketStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Platform\SupportTicket;
 use App\Models\Platform\Tenant;
@@ -32,7 +31,7 @@ class PlatformStats extends StatsOverviewWidget
                 ->where('trial_ends_at', '>', now())
                 ->count();
 
-            $openTickets = SupportTicket::query()->where('status', SupportTicketStatus::Open)->count();
+            $openTickets = SupportTicket::query()->open()->count();
 
             /** @var Collection<int, Tenant> $allTenants */
             $allTenants = Tenant::query()->select('plan', 'is_active', 'created_at', 'trial_ends_at')->get();

@@ -4,7 +4,6 @@ namespace App\Services\Engagement\Engagements;
 
 use App\Contracts\Engagement\CustomerEngagement;
 use App\Contracts\Engagement\EngagementRecipient;
-use App\Enums\Orders\OrderStatus;
 use App\Events\Customers\ReviewRequested;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
@@ -24,7 +23,7 @@ class ReviewRequestEngagement implements CustomerEngagement
         $delayHours = $settings->engagement->reviewRequestDelayHours;
 
         return Order::query()
-            ->where('status', OrderStatus::Delivered)
+            ->delivered()
             ->whereNull('review_request_sent_at')
             ->where('updated_at', '<=', now()->subHours($delayHours))
             ->whereHas('customer', fn (Builder $q) => $q->whereNotNull('email'))
