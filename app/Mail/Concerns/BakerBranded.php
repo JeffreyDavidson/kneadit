@@ -13,11 +13,11 @@ trait BakerBranded
      */
     protected function bakerFrom(): Address
     {
-        $storeName = app(TenantSettings::class)->storeName;
+        $store = app(TenantSettings::class)->store;
 
         return new Address(
             address: config('mail.from.address', 'hello@getkneadit.app'),
-            name: "{$storeName} via KneadIt",
+            name: "{$store->name} via KneadIt",
         );
     }
 
@@ -26,12 +26,12 @@ trait BakerBranded
      */
     protected function bakerReplyTo(): ?Address
     {
-        $settings = app(TenantSettings::class);
+        $store = app(TenantSettings::class)->store;
 
-        if (! $settings->storeEmail) {
+        if (! $store->email) {
             return null;
         }
 
-        return new Address($settings->storeEmail, $settings->storeName);
+        return new Address($store->email, $store->name);
     }
 }

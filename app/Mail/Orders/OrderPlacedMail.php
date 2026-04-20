@@ -57,14 +57,14 @@ class OrderPlacedMail extends BaseMailable
             'customer_name' => $this->order->customer->name ?? 'there',
             'order_number' => $this->order->order_number,
             'order_total' => '$' . number_format($this->order->total->dollars() / 100, 2),
-            'store_name' => app(TenantSettings::class)->storeName,
+            'store_name' => app(TenantSettings::class)->store->name,
         ];
     }
 
     private function defaultSubject(): string
     {
         $number = $this->order->order_number;
-        $storeName = app(TenantSettings::class)->storeName;
+        $storeName = app(TenantSettings::class)->store->name;
 
         return "Order #{$number} Received — {$storeName}";
     }
