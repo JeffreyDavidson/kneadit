@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{{ asset('css/menu.css') }}">
 
 {{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->storeName . ' menu'" image-class="menu-hero-img">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' menu'" image-class="menu-hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
         <x-storefront.eyebrow class="menu-fade-1 mb-6">{{ $heroEyebrow }}</x-storefront.eyebrow>
         <h1 class="menu-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">

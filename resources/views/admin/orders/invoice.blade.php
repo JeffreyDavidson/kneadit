@@ -18,11 +18,11 @@
         <!-- Header -->
         <div class="invoice-header">
             <div class="store-info">
-                <h1>{{ $settings->storeName }}</h1>
-                <p>{{ $settings->storeAddress ?? 'Address not configured' }}</p>
-                <p>{{ $settings->storePhone ?? 'Phone not configured' }}</p>
-                <p>{{ $settings->storeEmail ?? 'Email not configured' }}</p>
-                <p>{{ $settings->storeWebsite ?? url('/') }}</p>
+                <h1>{{ $settings->store->name }}</h1>
+                <p>{{ $settings->store->address ?? 'Address not configured' }}</p>
+                <p>{{ $settings->store->phone ?? 'Phone not configured' }}</p>
+                <p>{{ $settings->store->email ?? 'Email not configured' }}</p>
+                <p>{{ $settings->store->website ?? url('/') }}</p>
             </div>
             <div class="invoice-title">
                 <h2>INVOICE</h2>
@@ -157,7 +157,7 @@
             <p><strong>Thank you for your business!</strong></p>
             <p>This invoice was generated on {{ now()->format('F j, Y \a\t g:i A') }}</p>
             <p style="margin-top: 1rem; font-size: 0.75rem; color: #9CA3AF;">
-                For questions about this invoice, please contact {{ $settings->storeEmail ?? 'Email not configured' }} or {{ $settings->storePhone ?? 'Phone not configured' }}
+                For questions about this invoice, please contact {{ $settings->store->email ?? 'Email not configured' }} or {{ $settings->store->phone ?? 'Phone not configured' }}
             </p>
         </div>
     </div>

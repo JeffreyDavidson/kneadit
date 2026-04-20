@@ -111,7 +111,7 @@
         <div class="text-center mb-10">
             <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">{{ $content['form_eyebrow'] ?? 'Ready to get started?' }}</p>
             <h2 class="font-display text-3xl md:text-4xl font-bold mb-3 text-warm-900">{{ $content['form_heading'] ?? 'Request a Quote' }}</h2>
-            <p class="text-warm-600">Minimum {{ $settings->cateringMinimumGuests }} guests · Please allow at least {{ $settings->cateringLeadTimeDays }} days lead time</p>
+            <p class="text-warm-600">Minimum {{ $settings->catering->minimumGuests }} guests · Please allow at least {{ $settings->catering->leadTimeDays }} days lead time</p>
         </div>
 
         @session('success')
@@ -148,18 +148,18 @@
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Event Type *</label>
                     <select name="event_type" required class="input-field">
                         <option value="">Select event type...</option>
-                        @foreach ($settings->cateringEventTypes as $eventType)
+                        @foreach ($settings->catering->eventTypes as $eventType)
                             <option value="{{ $eventType }}" @selected(old('event_type') === $eventType)>{{ $eventType }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Event Date *</label>
-                    <input type="date" name="event_date" value="{{ old('event_date') }}" required min="{{ now()->addDays((int) $settings->cateringLeadTimeDays)->format('Y-m-d') }}" class="input-field">
+                    <input type="date" name="event_date" value="{{ old('event_date') }}" required min="{{ now()->addDays((int) $settings->catering->leadTimeDays)->format('Y-m-d') }}" class="input-field">
                 </div>
                 <div>
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Number of Guests *</label>
-                    <input type="number" name="guest_count" value="{{ old('guest_count') }}" required min="{{ $settings->cateringMinimumGuests }}" class="input-field" placeholder="Minimum {{ $settings->cateringMinimumGuests }}">
+                    <input type="number" name="guest_count" value="{{ old('guest_count') }}" required min="{{ $settings->catering->minimumGuests }}" class="input-field" placeholder="Minimum {{ $settings->catering->minimumGuests }}">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Budget Range</label>

@@ -1,6 +1,6 @@
 @php
-    $socialLinks = $settings->socialMediaLinks;
-    $storeName = $settings->storeName;
+    $socialLinks = $settings->homepage->socialMediaLinks;
+    $storeName = $settings->store->name;
 @endphp
 @if (!empty(array_filter($socialLinks ?? [])))
 <section class="py-16 px-4 bg-warm-200">

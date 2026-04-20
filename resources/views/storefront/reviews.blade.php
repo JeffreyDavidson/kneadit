@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="{{ asset('css/reviews.css') }}">
 
 {{-- Photo-Forward Hero with Dark Overlay --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->storeName . ' Reviews'" image-class="review-hero-img" min-height="60vh" gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' Reviews'" image-class="review-hero-img" min-height="60vh" gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[60vh]">
         <x-storefront.eyebrow class="review-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'What People Say' }}</x-storefront.eyebrow>
         <h1 class="review-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
