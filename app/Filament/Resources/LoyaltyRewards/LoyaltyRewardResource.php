@@ -8,6 +8,7 @@ use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
 use App\Filament\Resources\LoyaltyRewards\Schemas\LoyaltyRewardForm;
 use App\Filament\Resources\LoyaltyRewards\Tables\LoyaltyRewardsTable;
 use App\Models\Engagement\LoyaltyReward;
+use App\Presenters\LoyaltyRewardPresenter;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -68,7 +69,7 @@ class LoyaltyRewardResource extends Resource
     {
         return [
             'Points' => (string) $record->points_required,
-            'Type' => $record->reward_type_label,
+            'Type' => LoyaltyRewardPresenter::for($record)->rewardTypeLabel(),
         ];
     }
 

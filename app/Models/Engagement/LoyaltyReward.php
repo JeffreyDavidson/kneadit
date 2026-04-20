@@ -7,18 +7,15 @@ use App\Casts\MoneyCast;
 use App\Casts\PercentageCast;
 use App\Enums\Engagement\RewardType;
 use App\Models\Inventory\Product;
-use App\Presenters\LoyaltyRewardPresenter;
 use Database\Factories\Engagement\LoyaltyRewardFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property RewardType $reward_type
- * @property-read string $reward_type_label
  * @property-read Product|null $product
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LoyaltyReward newModelQuery()
@@ -54,14 +51,6 @@ class LoyaltyReward extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    /** @return Attribute<string, never> */
-    protected function rewardTypeLabel(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => (new LoyaltyRewardPresenter($this))->rewardTypeLabel(),
-        );
     }
 
     protected static function newFactory(): LoyaltyRewardFactory
