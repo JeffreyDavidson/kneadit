@@ -3,6 +3,7 @@
 namespace App\Models\Orders;
 
 use App\Builders\Orders\OrderQueryBuilder;
+use App\Casts\MoneyCast;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
@@ -62,6 +63,11 @@ use Illuminate\Support\Carbon;
  * @property-read string|null $date
  * @property Carbon|null $delivery_date
  * @property Carbon|null $delivery_time
+ * @property \App\ValueObjects\Money $subtotal
+ * @property \App\ValueObjects\Money $delivery_fee
+ * @property \App\ValueObjects\Money $discount_amount
+ * @property \App\ValueObjects\Money $gift_card_amount
+ * @property \App\ValueObjects\Money $total
  *
  * @mixin \Eloquent
  */
@@ -91,11 +97,11 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'subtotal' => 'decimal:2',
-            'delivery_fee' => 'decimal:2',
-            'discount_amount' => 'decimal:2',
-            'gift_card_amount' => 'decimal:2',
-            'total' => 'decimal:2',
+            'subtotal' => MoneyCast::class,
+            'delivery_fee' => MoneyCast::class,
+            'discount_amount' => MoneyCast::class,
+            'gift_card_amount' => MoneyCast::class,
+            'total' => MoneyCast::class,
             'delivery_date' => 'date',
             'delivery_time' => 'datetime:H:i',
             'review_request_sent_at' => 'datetime',

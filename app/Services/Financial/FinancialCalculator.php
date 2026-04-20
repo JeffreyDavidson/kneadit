@@ -52,7 +52,7 @@ class FinancialCalculator
             ->whereNotNull('delivery_date')
             ->get(['delivery_date', 'total'])
             ->groupBy(fn (Order $o) => (int) $o->delivery_date?->month)
-            ->map(fn (Collection $group) => (float) $group->sum('total'));
+            ->map(fn (Collection $group) => $group->sum(fn (Order $o) => $o->total->dollars()));
 
         $incomeByMonth = Income::query()->forYear($year)
             ->whereNotNull('date')

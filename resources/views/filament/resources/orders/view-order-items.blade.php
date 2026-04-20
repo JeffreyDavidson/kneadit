@@ -67,7 +67,7 @@
                     @money($getRecord()->subtotal)
                 </td>
             </tr>
-            @if ($getRecord()->delivery_fee > 0)
+            @if ($getRecord()->delivery_fee->isPositive())
                 <tr>
                     <td colspan="3" class="px-4 py-3 text-right text-sm font-medium text-gray-900">
                         Delivery Fee:
@@ -77,7 +77,7 @@
                     </td>
                 </tr>
             @endif
-            @if ($getRecord()->discount_amount > 0)
+            @if ($getRecord()->discount_amount->isPositive())
                 <tr>
                     <td colspan="3" class="px-4 py-3 text-right text-sm font-medium text-green-600">
                         Discount:
