@@ -304,9 +304,7 @@ final class TenantSettings
 
     public function storeLogoUrl(): ?string
     {
-        return $this->storeLogo
-            ? asset("storage/{$this->storeLogo}")
-            : null;
+        return $this->store->logoUrl();
     }
 
     public function defaultTagline(): string

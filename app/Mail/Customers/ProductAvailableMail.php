@@ -24,7 +24,7 @@ class ProductAvailableMail extends BaseMailable
     public function envelope(): Envelope
     {
         $resolved = $this->resolveTemplate(EmailTemplateType::ProductAvailable, $this->placeholders());
-        $storeName = app(TenantSettings::class)->storeName;
+        $storeName = app(TenantSettings::class)->store->name;
 
         return new Envelope(
             from: $this->bakerFrom(),
@@ -61,7 +61,7 @@ class ProductAvailableMail extends BaseMailable
         return [
             'customer_name' => $this->customerName ?: 'there',
             'product_name' => $this->product->name,
-            'store_name' => app(TenantSettings::class)->storeName,
+            'store_name' => app(TenantSettings::class)->store->name,
         ];
     }
 }

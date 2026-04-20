@@ -19,7 +19,7 @@ class NewOrderMessageMail extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $storeName = app(TenantSettings::class)->storeName;
+        $storeName = app(TenantSettings::class)->store->name;
         $orderNumber = $this->orderMessage->order?->order_number;
 
         return new Envelope(
