@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('invitations.show.title', ['store' => $settings->storeName, 'app' => config('app.name')]) }}</title>
+    <title>{{ __('invitations.show.title', ['store' => $settings->store->name, 'app' => config('app.name')]) }}</title>
     @vite(["resources/css/storefront.css"])
 </head>
 <body class="min-h-screen bg-amber-50 flex items-center justify-center p-4">
@@ -13,7 +13,7 @@
             <p class="text-amber-100 mt-2">{{ __('invitations.show.invited') }}</p>
         </div>
         <div class="p-8">
-            <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ __('invitations.show.join', ['store' => $settings->storeName]) }}</h2>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ __('invitations.show.join', ['store' => $settings->store->name]) }}</h2>
             <p class="text-gray-600 mb-6">
                 {!! __('invitations.show.invited_as', ['role' => e($invitation->role->getLabel())]) !!}
             </p>
