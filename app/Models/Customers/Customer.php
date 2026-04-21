@@ -68,7 +68,7 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
     /** @use HasFactory<CustomerFactory> */
     use AuthenticatableTrait, CanResetPasswordTrait, HasFactory, MustVerifyEmailTrait, Notifiable;
 
-    public function sendPasswordResetNotification($token): void
+    public function sendPasswordResetNotification(mixed $token): void
     {
         $this->notify(new \App\Notifications\Customers\CustomerPasswordResetNotification($token));
     }

@@ -2,6 +2,7 @@
 
 namespace App\Actions\Content;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class GenerateUniqueSlug
@@ -18,7 +19,7 @@ class GenerateUniqueSlug
         while (
             $modelClass::query()
                 ->where('slug', $slug)
-                ->when($excludeId, fn ($query) => $query->where('id', '!=', $excludeId))
+                ->when($excludeId, fn (Builder $query) => $query->where('id', '!=', $excludeId))
                 ->exists()
         ) {
             $slug = "{$original}-{$i}";
