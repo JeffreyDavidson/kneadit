@@ -10,7 +10,6 @@ use App\Models\Orders\Order;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -46,14 +45,6 @@ class QuickOrder extends Page
         return QuickOrderForm::configure($schema)
             ->statePath('data')
             ->model(Order::class);
-    }
-
-    public function content(Schema $schema): Schema
-    {
-        return $schema->components([
-            Form::make(QuickOrderForm::getComponents())
-                ->livewireSubmitHandler('submit'),
-        ]);
     }
 
     public function createOrder(): void
