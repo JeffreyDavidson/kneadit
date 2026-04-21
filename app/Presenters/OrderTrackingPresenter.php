@@ -24,6 +24,11 @@ final class OrderTrackingPresenter
         $this->currentStepIndex = $index === false ? -1 : $index;
     }
 
+    public static function for(Order $order): self
+    {
+        return new self($order, OrderStatus::trackableStatuses());
+    }
+
     public function isStepCompleted(int $stepIndex): bool
     {
         return $stepIndex <= $this->currentStepIndex;
