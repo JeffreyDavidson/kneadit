@@ -6,9 +6,6 @@ $storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://sweet-surrender.knea
 // pre-authenticated browser context via authenticatedVisit() and asserts
 // the page's h1 heading is visible with no JavaScript errors.
 //
-// quick-order is excluded — it has pre-existing JS errors ("Uncaught
-// [object Object]") that need a separate investigation.
-//
 // Prerequisites (same as ResourceIndexPagesTest):
 //   1. BrowserTestFixtureSeeder has been run against the target tenant.
 //   2. python3 tests/Browser/Helpers/prepare-admin-session.py
@@ -17,6 +14,7 @@ $storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://sweet-surrender.knea
  * @return list<array{0: string, 1: string}>
  */
 dataset('admin_custom_pages', [
+    'quick-order' => ['quick-order', 'Quick Order'],
     'manage-settings' => ['manage-settings', 'Manage Settings'],
     'referral-program' => ['referral-program', 'Referral Program'],
     'manage-page-content' => ['manage-page-content', 'Page Content'],
