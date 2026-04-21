@@ -54,7 +54,7 @@
             @endforeach
         </div>
 
-        <form action="{{ route('storefront.storeReview', $order) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+        <form data-test="review-submission-form" action="{{ route('storefront.storeReview', $order) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
             @csrf
 
             {{-- Star Rating --}}
@@ -63,6 +63,7 @@
                 <div class="flex gap-3 justify-center mb-2">
                     @for ($i = 1; $i <= 5; $i++)
                         <button type="button"
+                            data-test="review-submission-form-rating-{{ $i }}"
                             x-on:click="rating = {{ $i }}"
                             x-on:mouseenter="hover = {{ $i }}"
                             x-on:mouseleave="hover = 0"
@@ -87,7 +88,7 @@
             {{-- Comment --}}
             <div>
                 <label for="comment" class="block text-xs uppercase tracking-wider font-medium mb-2 text-warm-600">{{ $content['comment_label'] ?? 'Tell Us About Your Experience' }}</label>
-                <textarea name="comment" id="comment" rows="5"
+                <textarea data-test="review-submission-form-comment" name="comment" id="comment" rows="5"
                     class="w-full p-4 rounded-xl text-base"
                     style="background: var(--warm-50); border: 1.5px solid var(--warm-200); color: var(--warm-800); outline: none; transition: border-color 0.2s;"
                     onfocus="this.style.borderColor='var(--warm-500)'"
@@ -116,7 +117,7 @@
             </div>
 
             {{-- Submit --}}
-            <button type="submit" class="w-full py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
+            <button type="submit" data-test="review-submission-form-submit" class="w-full py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
                 {{ $content['submit_button'] ?? 'Submit Review' }}
             </button>
         </form>
