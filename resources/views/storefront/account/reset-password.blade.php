@@ -23,7 +23,7 @@
                     <input type="password" id="password" name="password" required autofocus
                         autocomplete="new-password"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    <p class="mt-1 text-xs text-warm-500">At least 8 characters, with letters and numbers.</p>
+                    <x-storefront.form.help>At least 8 characters, with letters and numbers.</x-storefront.form.help>
                 </x-storefront.form.field>
 
                 <x-storefront.form.field name="password_confirmation" label="Confirm new password">
