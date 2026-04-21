@@ -1,22 +1,19 @@
 @use(App\Enums\Engagement\SurveyQuestionType)
 <x-layouts.storefront>
-<x-slot:styles>
-<link rel="stylesheet" href="{{ asset('css/survey.css') }}">
-</x-slot:styles>
 
 @if (session('survey_submitted'))
 {{-- Success State --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Survey submitted" image-class="survey-hero-img" min-height="60vh">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Survey submitted" image-class="hero-img" min-height="60vh">
 
     <div class="relative z-10 max-w-lg mx-auto text-center px-4 py-28">
-        <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center survey-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
+        <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center hero-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
             <svg class="w-10 h-10 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
-        <h1 class="font-display text-4xl font-bold mb-4 survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
-        <p class="text-lg mb-10 survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
-        <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 survey-fade-up" style="background: var(--warm-500); color: var(--warm-900); animation-delay: 0.9s;">
+        <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
+        <p class="text-lg mb-10 hero-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
+        <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hero-fade-up" style="background: var(--warm-500); color: var(--warm-900); animation-delay: 0.9s;">
             Back to {{ $settings->store->name }}
         </a>
     </div>
@@ -24,13 +21,13 @@
 @else
 
 {{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Share your feedback" image-class="survey-hero-img" min-height="40vh">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Share your feedback" image-class="hero-img" min-height="40vh">
 
     <div class="relative z-10 max-w-3xl mx-auto text-center px-4 py-20 md:py-24">
-        <x-storefront.eyebrow class="survey-fade-up mb-6" style="animation-delay: 0.3s;">{{ $content['hero_eyebrow'] ?? 'Your Opinion Matters' }}</x-storefront.eyebrow>
-        <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight survey-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $survey->title }}</h1>
+        <x-storefront.eyebrow class="hero-fade-up mb-6" style="animation-delay: 0.3s;">{{ $content['hero_eyebrow'] ?? 'Your Opinion Matters' }}</x-storefront.eyebrow>
+        <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight hero-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $survey->title }}</h1>
         @if ($survey->description)
-        <p class="font-script text-2xl md:text-3xl survey-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $survey->description }}</p>
+        <p class="font-script text-2xl md:text-3xl hero-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $survey->description }}</p>
         @endif
     </div>
 </x-storefront.hero-section>
