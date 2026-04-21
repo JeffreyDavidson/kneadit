@@ -39,7 +39,7 @@ class SaveTenantSettings
             'order_journey_steps' => json_encode(array_values($data['order_journey_steps'] ?? [])),
             'catering_event_types' => json_encode(array_values(array_filter(
                 $data['catering_event_types'] ?? [],
-                fn ($value) => is_string($value) && trim($value) !== '',
+                fn (mixed $value) => is_string($value) && trim($value) !== '',
             ))),
         ];
 

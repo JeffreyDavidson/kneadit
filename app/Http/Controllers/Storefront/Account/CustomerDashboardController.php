@@ -7,6 +7,7 @@ use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerFavorite;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CustomerDashboardController extends Controller
 {
@@ -16,7 +17,7 @@ class CustomerDashboardController extends Controller
         $customer = auth('customer')->user();
 
         $customer->loadMissing([
-            'orders' => fn ($q) => $q->latest()->limit(10),
+            'orders' => fn (HasMany $q) => $q->latest()->limit(10),
             'orders.orderItems.product',
         ]);
 
