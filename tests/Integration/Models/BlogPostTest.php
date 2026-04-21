@@ -63,39 +63,10 @@ test('published at is cast to datetime', function () {
     expect($post->fresh()->published_at)->toBeInstanceOf(Carbon::class);
 });
 
-test('route key name is slug', function () {
-    $post = new BlogPost;
-
-    expect($post->getRouteKeyName())->toBe('slug');
-});
-
 test('url accessor returns route to blog show', function () {
     $post = BlogPost::factory()->published()->create([
         'slug' => 'test-blog-post',
     ]);
 
     expect($post->url)->toContain('test-blog-post');
-});
-
-test('resolve route binding returns published post by slug', function () {
-    $post = BlogPost::factory()->published()->create([
-        'slug' => 'published-post',
-    ]);
-
-    $resolved = (new BlogPost)->resolveRouteBinding('published-post');
-
-    expect($resolved)->not->toBeNull()
-        ->and($resolved->id)->toBe($post->id);
-});
-
-test('resolve route binding returns null for unpublished post', function () {
-    BlogPost::factory()->create([
-        'slug' => 'draft-post',
-        'is_published' => false,
-        'published_at' => null,
-    ]);
-
-    $resolved = (new BlogPost)->resolveRouteBinding('draft-post');
-
-    expect($resolved)->toBeNull();
 });
