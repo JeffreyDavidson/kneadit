@@ -98,3 +98,23 @@
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
 }
+
+/* -----------------------------------------------
+   Hero Animations (shared across success-hero pages:
+   submit-review, survey, order-confirmation)
+   ----------------------------------------------- */
+@keyframes heroKenBurns {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.06); }
+}
+@keyframes heroFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.hero-img {
+    animation: heroKenBurns 25s ease-out forwards;
+}
+.hero-fade-up {
+    opacity: 0;
+    animation: heroFadeUp 0.8s ease-out forwards;
+}

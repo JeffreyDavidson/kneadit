@@ -5,25 +5,25 @@
 </x-slot:styles>
 
 {{-- Photo-Forward Hero with Success --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Order confirmed" image-class="confirmation-hero-img" min-height="40vh">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Order confirmed" image-class="hero-img" min-height="40vh">
 
     <div class="relative z-10 text-center px-4 py-24 md:py-32" style="padding-top: 6rem;">
         {{-- Animated success checkmark --}}
-        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 confirmation-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 hero-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
             <svg class="w-12 h-12 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
 
-        <x-storefront.eyebrow class="confirmation-fade-up mb-4" style="animation-delay: 0.5s;">{{ $content['hero_eyebrow'] ?? 'Order Placed' }}</x-storefront.eyebrow>
+        <x-storefront.eyebrow class="hero-fade-up mb-4" style="animation-delay: 0.5s;">{{ $content['hero_eyebrow'] ?? 'Order Placed' }}</x-storefront.eyebrow>
 
-        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 confirmation-fade-up" style="color: var(--warm-100); animation-delay: 0.7s;">
+        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 hero-fade-up" style="color: var(--warm-100); animation-delay: 0.7s;">
             {{ $content['hero_title'] ?? 'Thank You!' }}
         </h1>
-        <p class="text-lg mb-3 max-w-lg mx-auto confirmation-fade-up" style="color: var(--warm-400); animation-delay: 0.9s;">
+        <p class="text-lg mb-3 max-w-lg mx-auto hero-fade-up" style="color: var(--warm-400); animation-delay: 0.9s;">
             {{ $content['hero_description'] ?? 'Your order has been received and we\'ll start preparing your items right away.' }}
         </p>
-        <div class="inline-block px-6 py-3 rounded-full confirmation-fade-up" style="background: rgba(212,146,12,0.1); border: 1px solid rgba(212,146,12,0.25); animation-delay: 1.1s;">
+        <div class="inline-block px-6 py-3 rounded-full hero-fade-up" style="background: rgba(212,146,12,0.1); border: 1px solid rgba(212,146,12,0.25); animation-delay: 1.1s;">
             <span class="text-sm font-medium text-warm-400">Order Number:</span>
             <span class="font-mono font-bold ml-2 text-warm-300">{{ $order->order_number }}</span>
         </div>
