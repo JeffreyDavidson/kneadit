@@ -15,8 +15,7 @@
             <form method="POST" action="{{ route('account.password.email') }}" class="space-y-5" data-test="forgot-password-form">
                 @csrf
 
-                <x-storefront.form.field name="email">
-                    <x-slot:label>Email</x-slot:label>
+                <x-storefront.form.field name="email" label="Email">
                     <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
                         autocomplete="email"
                         data-test="forgot-password-form-email"

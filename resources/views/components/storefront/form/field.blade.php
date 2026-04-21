@@ -1,7 +1,7 @@
-@props(['name'])
+@props(['name', 'label'])
 
 <div>
-    <label for="{{ $name }}" class="block text-sm font-medium text-warm-800">{{ $label }}</label>
+    <x-storefront.form.label :for="$name">{!! $label !!}</x-storefront.form.label>
     {{ $slot }}
     <x-storefront.form.error :name="$name" />
 </div>
