@@ -175,7 +175,10 @@
         </div>
     </nav>
 
-    <main class="min-h-screen pt-24">
+    @php
+        $pageTestId = 'page-' . str_replace(['storefront.', '.'], ['', '-'], request()->route()?->getName() ?? 'unknown');
+    @endphp
+    <main class="min-h-screen pt-24" data-test="{{ $pageTestId }}">
         @php
             $announcementEnabled = $settings->engagement->announcementEnabled ? '1' : '0';
             $announcementText = $settings->engagement->announcementText;
