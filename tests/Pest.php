@@ -9,6 +9,21 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
 
+/*
+ * Tenant::factory()->create() dispatches stancl/tenancy's TenantCreated
+ * event, which runs CreateDatabase + MigrateDatabase jobs that write real
+ * SQLite files at database/tenant{id}. SignupPipelineTest depends on those
+ * files being real, so the event can't just be faked globally — instead
+ * the afterEach hook below sweeps them up so they don't accumulate.
+ */
+$cleanupTenantFiles = function (): void {
+    foreach (glob(database_path('tenant*')) ?: [] as $file) {
+        if (is_file($file) && is_writable($file)) {
+            unlink($file);
+        }
+    }
+};
+
 pest()->extend(TestCase::class)
     /*
      * Lock RefreshDatabase to rollback the sqlite connection, regardless of
@@ -30,25 +45,8 @@ pest()->extend(TestCase::class)
     ->beforeEach(function () {
         $this->connectionsToTransact = ['sqlite'];
     })
+    ->afterEach($cleanupTenantFiles)
     ->in('Feature', 'Integration', 'Unit', 'Browser');
-
-/*
-|--------------------------------------------------------------------------
-| Tenant Database Cleanup
-|--------------------------------------------------------------------------
-| Tenant::factory()->create() triggers Stancl's CreateDatabase job which
-| writes real SQLite files to the database/ directory. These accumulate
-| across test runs and cause TenantDatabaseAlreadyExistsException when
-| a new test generates the same slug.
-*/
-
-beforeAll(function () {
-    foreach (glob(database_path('tenant*')) ?: [] as $file) {
-        if (is_file($file) && is_writable($file)) {
-            unlink($file);
-        }
-    }
-});
 
 /*
 |--------------------------------------------------------------------------
