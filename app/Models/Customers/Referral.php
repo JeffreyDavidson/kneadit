@@ -9,6 +9,7 @@ use Database\Factories\Customers\ReferralFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -45,6 +46,7 @@ use Illuminate\Support\Carbon;
 #[Connection('central')]
 #[Fillable('referrer_tenant_id', 'referred_tenant_id', 'referral_code', 'referred_email', 'status', 'reward_months')]
 #[UseEloquentBuilder(ReferralQueryBuilder::class)]
+#[UseFactory(ReferralFactory::class)]
 class Referral extends Model
 {
     /** @use HasFactory<ReferralFactory> */
@@ -72,10 +74,5 @@ class Referral extends Model
     public function referred(): BelongsTo
     {
         return $this->belongsTo(Tenant::class, 'referred_tenant_id');
-    }
-
-    protected static function newFactory(): ReferralFactory
-    {
-        return ReferralFactory::new();
     }
 }

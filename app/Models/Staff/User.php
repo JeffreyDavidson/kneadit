@@ -11,6 +11,7 @@ use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -70,6 +71,7 @@ use Laravel\Cashier\Subscription;
  */
 #[Fillable('name', 'email', 'password', 'role')]
 #[Hidden('password', 'remember_token')]
+#[UseFactory(UserFactory::class)]
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
@@ -142,10 +144,5 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function tenants(): HasMany
     {
         return $this->hasMany(Tenant::class);
-    }
-
-    protected static function newFactory(): UserFactory
-    {
-        return UserFactory::new();
     }
 }

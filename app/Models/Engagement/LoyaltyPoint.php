@@ -11,6 +11,7 @@ use Database\Factories\Engagement\LoyaltyPointFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +39,7 @@ use Illuminate\Support\Carbon;
 #[Fillable('customer_id', 'points', 'type', 'description', 'order_id')]
 #[ObservedBy(LoyaltyPointObserver::class)]
 #[UseEloquentBuilder(LoyaltyPointQueryBuilder::class)]
+#[UseFactory(LoyaltyPointFactory::class)]
 class LoyaltyPoint extends Model
 {
     /** @use HasFactory<LoyaltyPointFactory> */
@@ -65,10 +67,5 @@ class LoyaltyPoint extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
-    }
-
-    protected static function newFactory(): LoyaltyPointFactory
-    {
-        return LoyaltyPointFactory::new();
     }
 }

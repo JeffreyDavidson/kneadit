@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,6 +47,7 @@ use Illuminate\Support\Carbon;
 #[WithoutTimestamps]
 #[Connection('central')]
 #[Fillable('admin_id', 'action', 'target_type', 'target_id', 'description', 'metadata', 'ip_address', 'created_at')]
+#[UseFactory(AdminAuditLogFactory::class)]
 class AdminAuditLog extends Model
 {
     /** @use HasFactory<AdminAuditLogFactory> */
@@ -91,10 +93,5 @@ class AdminAuditLog extends Model
     protected function recent(Builder $query): void
     {
         $query->where('created_at', '>=', now()->subDays(config('analytics.recent_days', 30)));
-    }
-
-    protected static function newFactory(): AdminAuditLogFactory
-    {
-        return AdminAuditLogFactory::new();
     }
 }

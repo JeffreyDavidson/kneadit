@@ -4,6 +4,7 @@ namespace App\Models\Operations;
 
 use Database\Factories\Operations\BlockedDateFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -18,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('date', 'reason', 'is_all_day', 'open_time', 'close_time')]
+#[UseFactory(BlockedDateFactory::class)]
 class BlockedDate extends Model
 {
     /** @use HasFactory<BlockedDateFactory> */
@@ -29,10 +31,5 @@ class BlockedDate extends Model
             'date' => 'date',
             'is_all_day' => 'boolean',
         ];
-    }
-
-    protected static function newFactory(): BlockedDateFactory
-    {
-        return BlockedDateFactory::new();
     }
 }

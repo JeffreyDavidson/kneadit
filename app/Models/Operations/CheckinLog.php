@@ -5,6 +5,7 @@ namespace App\Models\Operations;
 use Database\Factories\Operations\CheckinLogFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('checkin_id', 'tenant_id', 'sent_at')]
+#[UseFactory(CheckinLogFactory::class)]
 class CheckinLog extends Model
 {
     /** @use HasFactory<CheckinLogFactory> */
@@ -51,10 +53,5 @@ class CheckinLog extends Model
     public function checkin(): BelongsTo
     {
         return $this->belongsTo(ScheduledCheckin::class, 'checkin_id');
-    }
-
-    protected static function newFactory(): CheckinLogFactory
-    {
-        return CheckinLogFactory::new();
     }
 }

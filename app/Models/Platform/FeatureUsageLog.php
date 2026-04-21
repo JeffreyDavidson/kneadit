@@ -6,6 +6,7 @@ use Database\Factories\Platform\FeatureUsageLogFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,7 @@ use Illuminate\Support\Carbon;
 #[WithoutTimestamps]
 #[Connection('central')]
 #[Fillable('tenant_id', 'feature', 'usage_count', 'last_used_at', 'date', 'created_at')]
+#[UseFactory(FeatureUsageLogFactory::class)]
 class FeatureUsageLog extends Model
 {
     /** @use HasFactory<FeatureUsageLogFactory> */
@@ -45,10 +47,5 @@ class FeatureUsageLog extends Model
             'date' => 'date',
             'created_at' => 'datetime',
         ];
-    }
-
-    protected static function newFactory(): FeatureUsageLogFactory
-    {
-        return FeatureUsageLogFactory::new();
     }
 }

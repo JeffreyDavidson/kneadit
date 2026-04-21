@@ -13,6 +13,7 @@ use Database\Factories\Financial\CouponFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +42,7 @@ use Illuminate\Support\Carbon;
 #[Fillable('code', 'type', 'fixed_amount', 'percentage', 'min_order_amount', 'max_uses', 'used_count', 'starts_at', 'expires_at', 'is_active')]
 #[ObservedBy([CouponObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(CouponQueryBuilder::class)]
+#[UseFactory(CouponFactory::class)]
 class Coupon extends Model
 {
     /** @use HasFactory<CouponFactory> */
@@ -75,10 +77,5 @@ class Coupon extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(CouponTransaction::class);
-    }
-
-    protected static function newFactory(): CouponFactory
-    {
-        return CouponFactory::new();
     }
 }

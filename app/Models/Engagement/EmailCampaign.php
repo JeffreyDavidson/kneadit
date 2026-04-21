@@ -7,6 +7,7 @@ use App\Enums\Marketing\EmailCampaignStatus;
 use Database\Factories\Engagement\EmailCampaignFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,6 +48,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('name', 'subject', 'body', 'target_segment', 'status', 'scheduled_at', 'sent_at', 'recipient_count')]
+#[UseFactory(EmailCampaignFactory::class)]
 class EmailCampaign extends Model
 {
     /** @use HasFactory<EmailCampaignFactory> */
@@ -69,10 +71,5 @@ class EmailCampaign extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(EmailCampaignLog::class, 'campaign_id');
-    }
-
-    protected static function newFactory(): EmailCampaignFactory
-    {
-        return EmailCampaignFactory::new();
     }
 }

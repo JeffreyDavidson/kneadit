@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -61,6 +62,7 @@ use Illuminate\Support\Carbon;
 #[Hidden('password', 'remember_token')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(CustomerQueryBuilder::class)]
+#[UseFactory(CustomerFactory::class)]
 class Customer extends Model implements Authenticatable, CanResetPassword, MustVerifyEmail
 {
     /** @use HasFactory<CustomerFactory> */
@@ -161,10 +163,5 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
         return Attribute::make(
             get: fn () => $this->address_object->formatted(),
         );
-    }
-
-    protected static function newFactory(): CustomerFactory
-    {
-        return CustomerFactory::new();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models\Engagement;
 use App\Models\Orders\Order;
 use Database\Factories\Engagement\SurveyResponseFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 #[WithoutTimestamps]
 #[Fillable('survey_id', 'customer_name', 'customer_email', 'answers', 'order_id', 'created_at')]
+#[UseFactory(SurveyResponseFactory::class)]
 class SurveyResponse extends Model
 {
     /** @use HasFactory<SurveyResponseFactory> */
@@ -49,10 +51,5 @@ class SurveyResponse extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
-    }
-
-    protected static function newFactory(): SurveyResponseFactory
-    {
-        return SurveyResponseFactory::new();
     }
 }
