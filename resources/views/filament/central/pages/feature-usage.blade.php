@@ -2,8 +2,8 @@
     @if (! $this->getHasData())
         {{-- Empty State --}}
         <x-central.card padding="p-12" class="text-center">
-            <div style="margin-bottom: 1rem;">
-                <svg style="width: 48px; height: 48px; display: inline-block;" viewBox="0 0 24 24" fill="none" stroke="#d4920c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <div class="mb-4">
+                <x-heroicon-o-chart-bar class="w-12 h-12 inline-block text-honey" />
             </div>
             <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">No Usage Data Yet</div>
             <p style="color: #8b6844; max-width: 480px; margin: 0 auto 1rem;">

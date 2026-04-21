@@ -78,15 +78,11 @@
                     @foreach ($tenant['checks'] as $key => $passed)
                         <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;">
                             @if ($passed)
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px; color: #10b981; flex-shrink: 0;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                </svg>
-                                <span style="color: #faf0d6;">{{ $checkLabels[$key] }}</span>
+                                <x-heroicon-o-check class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                                <span class="text-parchment">{{ $checkLabels[$key] }}</span>
                             @else
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px; color: #ef4444; flex-shrink: 0;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
-                                <span style="color: #8b6844;">{{ $checkLabels[$key] }}</span>
+                                <x-heroicon-o-x-mark class="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
+                                <span class="text-cinnamon">{{ $checkLabels[$key] }}</span>
                             @endif
                         </div>
                     @endforeach

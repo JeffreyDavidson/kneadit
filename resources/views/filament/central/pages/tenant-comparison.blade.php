@@ -118,7 +118,7 @@
         @else
             <x-central.card padding="p-12" class="text-center">
                 <div class="mb-4">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#d4920c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 inline-block"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <x-heroicon-o-chart-bar class="w-12 h-12 inline-block text-honey" />
                 </div>
                 <div class="text-parchment text-base">Select 2–3 tenants above to compare their metrics side by side.</div>
             </x-central.card>
@@ -143,7 +143,7 @@
         @if (count($top3) >= 3)
             <x-central.card class="mb-6">
                 <div style="color: white; font-weight: 700; font-size: 1rem; text-align: center; margin-bottom: 1.5rem;">
-                    <svg style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 0.25rem;" viewBox="0 0 24 24" fill="#d4920c" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <x-heroicon-s-star class="w-5 h-5 inline-block align-middle mr-1 text-honey" />
                     Top 3 Bakeries
                 </div>
                 <div style="display: flex; align-items: flex-end; justify-content: center; gap: 1rem; padding-top: 1rem;">

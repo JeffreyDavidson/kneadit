@@ -82,7 +82,7 @@
         @if ($alerts->isEmpty())
             <x-central.card padding="py-16 px-8" class="text-center">
                 <div class="mb-4">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <x-heroicon-o-check-circle class="w-12 h-12 inline-block text-emerald-500" />
                 </div>
                 <div class="text-[1.25rem] font-bold text-emerald-500">All bakeries are healthy!</div>
                 <div class="text-cinnamon mt-2">No churn alerts at this time.</div>
@@ -140,7 +140,7 @@
         @if ($tenants->isEmpty())
             <x-central.card padding="p-12" class="text-center">
                 <div class="mb-4">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <x-heroicon-o-check-circle class="w-12 h-12 inline-block text-emerald-500" />
                 </div>
                 <div class="text-emerald-500 font-bold text-base mb-2">All Tenants Within Limits</div>
                 <p class="text-cinnamon max-w-[480px] mx-auto">
