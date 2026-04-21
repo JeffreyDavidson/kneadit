@@ -5,6 +5,7 @@ namespace App\Models\Platform;
 use Database\Factories\Platform\PlatformSettingFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -24,13 +25,9 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('key', 'value')]
+#[UseFactory(PlatformSettingFactory::class)]
 class PlatformSetting extends Model
 {
     /** @use HasFactory<PlatformSettingFactory> */
     use HasFactory;
-
-    protected static function newFactory(): PlatformSettingFactory
-    {
-        return PlatformSettingFactory::new();
-    }
 }

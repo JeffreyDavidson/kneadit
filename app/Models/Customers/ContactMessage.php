@@ -7,6 +7,7 @@ use App\Casts\StripTagsCast;
 use Database\Factories\Customers\ContactMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 #[Fillable('name', 'email', 'subject', 'message', 'is_read')]
 #[UseEloquentBuilder(ContactMessageQueryBuilder::class)]
+#[UseFactory(ContactMessageFactory::class)]
 class ContactMessage extends Model
 {
     /** @use HasFactory<ContactMessageFactory> */
@@ -32,10 +34,5 @@ class ContactMessage extends Model
             'subject' => StripTagsCast::class,
             'message' => StripTagsCast::class,
         ];
-    }
-
-    protected static function newFactory(): ContactMessageFactory
-    {
-        return ContactMessageFactory::new();
     }
 }

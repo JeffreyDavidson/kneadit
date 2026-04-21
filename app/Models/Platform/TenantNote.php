@@ -5,6 +5,7 @@ namespace App\Models\Platform;
 use Database\Factories\Platform\TenantNoteFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('tenant_id', 'body', 'author')]
+#[UseFactory(TenantNoteFactory::class)]
 class TenantNote extends Model
 {
     /** @use HasFactory<TenantNoteFactory> */
@@ -44,10 +46,5 @@ class TenantNote extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
-    }
-
-    protected static function newFactory(): TenantNoteFactory
-    {
-        return TenantNoteFactory::new();
     }
 }

@@ -7,6 +7,7 @@ use App\Enums\Financial\CouponTransactionType;
 use App\Models\Orders\Order;
 use Database\Factories\Financial\CouponTransactionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ use Illuminate\Support\Carbon;
  */
 #[WithoutTimestamps]
 #[Fillable('coupon_id', 'amount', 'type', 'order_id', 'notes', 'created_at')]
+#[UseFactory(CouponTransactionFactory::class)]
 class CouponTransaction extends Model
 {
     /** @use HasFactory<CouponTransactionFactory> */
@@ -51,10 +53,5 @@ class CouponTransaction extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
-    }
-
-    protected static function newFactory(): CouponTransactionFactory
-    {
-        return CouponTransactionFactory::new();
     }
 }

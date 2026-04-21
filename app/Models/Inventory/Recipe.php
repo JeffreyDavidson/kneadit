@@ -5,6 +5,7 @@ namespace App\Models\Inventory;
 use App\Casts\MoneyCast;
 use Database\Factories\Inventory\RecipeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @mixin \Eloquent
  */
 #[Fillable('product_id', 'name', 'ingredients', 'instructions', 'prep_time_minutes', 'cost')]
+#[UseFactory(RecipeFactory::class)]
 class Recipe extends Model
 {
     /** @use HasFactory<RecipeFactory> */
@@ -56,10 +58,5 @@ class Recipe extends Model
     {
         return $this->belongsToMany(Ingredient::class, 'recipe_ingredients')
             ->withPivot('quantity', 'unit');
-    }
-
-    protected static function newFactory(): RecipeFactory
-    {
-        return RecipeFactory::new();
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Inventory\Product;
 use Database\Factories\Customers\WaitlistEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 #[Fillable('customer_name', 'customer_email', 'customer_phone', 'requested_date', 'product_id', 'notes', 'status')]
 #[UseEloquentBuilder(WaitlistEntryQueryBuilder::class)]
+#[UseFactory(WaitlistEntryFactory::class)]
 class WaitlistEntry extends Model
 {
     /** @use HasFactory<WaitlistEntryFactory> */
@@ -59,10 +61,5 @@ class WaitlistEntry extends Model
         return Attribute::make(
             get: fn () => $this->status->getLabel(),
         );
-    }
-
-    protected static function newFactory(): WaitlistEntryFactory
-    {
-        return WaitlistEntryFactory::new();
     }
 }

@@ -6,6 +6,7 @@ use App\Enums\Platform\SupportReplyAuthorType;
 use Database\Factories\Platform\SupportReplyFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,6 +37,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('ticket_id', 'author_type', 'author_name', 'body')]
+#[UseFactory(SupportReplyFactory::class)]
 class SupportReply extends Model
 {
     /** @use HasFactory<SupportReplyFactory> */
@@ -57,10 +59,5 @@ class SupportReply extends Model
     public function ticket(): BelongsTo
     {
         return $this->belongsTo(SupportTicket::class, 'ticket_id');
-    }
-
-    protected static function newFactory(): SupportReplyFactory
-    {
-        return SupportReplyFactory::new();
     }
 }

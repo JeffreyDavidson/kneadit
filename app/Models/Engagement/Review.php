@@ -11,6 +11,7 @@ use Database\Factories\Engagement\ReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable('customer_name', 'customer_email', 'product_id', 'order_id', 'rating', 'comment', 'photo_path', 'is_approved', 'is_featured')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(ReviewQueryBuilder::class)]
+#[UseFactory(ReviewFactory::class)]
 class Review extends Model
 {
     /** @use HasFactory<ReviewFactory> */
@@ -60,10 +62,5 @@ class Review extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
-    }
-
-    protected static function newFactory(): ReviewFactory
-    {
-        return ReviewFactory::new();
     }
 }

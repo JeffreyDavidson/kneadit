@@ -8,6 +8,7 @@ use App\Observers\Platform\ActivityLogObserver;
 use Database\Factories\Operations\ActivityLogFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[WithoutTimestamps]
 #[Fillable('user_id', 'user_name', 'action', 'model_type', 'model_id', 'description', 'properties', 'ip_address', 'created_at')]
 #[ObservedBy(ActivityLogObserver::class)]
+#[UseFactory(ActivityLogFactory::class)]
 class ActivityLog extends Model
 {
     /** @use HasFactory<ActivityLogFactory> */
@@ -45,10 +47,5 @@ class ActivityLog extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    protected static function newFactory(): ActivityLogFactory
-    {
-        return ActivityLogFactory::new();
     }
 }

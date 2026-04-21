@@ -5,6 +5,7 @@ namespace App\Models\Engagement;
 use App\Models\Inventory\Product;
 use Database\Factories\Engagement\PageViewFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 #[WithoutTimestamps]
 #[Fillable('page', 'product_id', 'session_id', 'ip_address', 'user_agent', 'created_at')]
+#[UseFactory(PageViewFactory::class)]
 class PageView extends Model
 {
     /** @use HasFactory<PageViewFactory> */
@@ -41,10 +43,5 @@ class PageView extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    protected static function newFactory(): PageViewFactory
-    {
-        return PageViewFactory::new();
     }
 }

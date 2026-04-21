@@ -5,6 +5,7 @@ namespace App\Models\Marketing;
 use App\Enums\Marketing\EmailTemplateType;
 use Database\Factories\Marketing\EmailTemplateFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $updated_at
  */
 #[Fillable('email_type', 'subject', 'body')]
+#[UseFactory(EmailTemplateFactory::class)]
 class EmailTemplate extends Model
 {
     /** @use HasFactory<EmailTemplateFactory> */
@@ -27,10 +29,5 @@ class EmailTemplate extends Model
         return [
             'email_type' => EmailTemplateType::class,
         ];
-    }
-
-    protected static function newFactory(): EmailTemplateFactory
-    {
-        return EmailTemplateFactory::new();
     }
 }

@@ -6,6 +6,7 @@ use Database\Factories\Content\TenantBlogPostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 #[Table('blog_posts')]
 #[Fillable('title', 'slug', 'excerpt', 'body', 'featured_image', 'tags', 'author_name', 'is_published', 'published_at')]
+#[UseFactory(TenantBlogPostFactory::class)]
 class TenantBlogPost extends Model
 {
     /** @use HasFactory<TenantBlogPostFactory> */
@@ -54,10 +56,5 @@ class TenantBlogPost extends Model
         $query->where('is_published', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
-    }
-
-    protected static function newFactory(): TenantBlogPostFactory
-    {
-        return TenantBlogPostFactory::new();
     }
 }

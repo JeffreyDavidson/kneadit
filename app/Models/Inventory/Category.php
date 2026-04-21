@@ -7,6 +7,7 @@ use Database\Factories\Inventory\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 #[Fillable('name', 'slug', 'description', 'is_active', 'sort_order')]
 #[ObservedBy(LogsActivityObserver::class)]
+#[UseFactory(CategoryFactory::class)]
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
@@ -69,10 +71,5 @@ class Category extends Model
         $query->with(['products' => function (HasMany $q): void {
             $q->where('is_active', true)->where('is_featured', true);
         }]);
-    }
-
-    protected static function newFactory(): CategoryFactory
-    {
-        return CategoryFactory::new();
     }
 }
