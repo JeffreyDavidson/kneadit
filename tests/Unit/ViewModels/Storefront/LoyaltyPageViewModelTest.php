@@ -21,8 +21,6 @@ function makeLoyaltyVm(array $overrides = []): LoyaltyPageViewModel
         'balance' => new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
         'history' => collect(),
         'rewards' => collect(),
-        'content' => [],
-        'howSteps' => [],
         'customerNotFound' => false,
     ];
 

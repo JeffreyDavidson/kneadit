@@ -22,7 +22,9 @@ class LoyaltyController extends Controller
             ? LoyaltyPageViewModel::forCustomer($settings, $customer, $customerLoyalty, $rewards)
             : LoyaltyPageViewModel::notFound($settings, $rewards);
 
-        return view('storefront.loyalty', ['vm' => $vm]);
+        return view('storefront.loyalty', [
+            'vm' => $vm,
+        ]);
     }
 
     public function show(TenantSettings $settings): View
