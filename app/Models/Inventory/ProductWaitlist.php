@@ -5,6 +5,7 @@ namespace App\Models\Inventory;
 use Database\Factories\Inventory\ProductWaitlistFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Table('product_waitlists')]
 #[WithoutTimestamps]
 #[Fillable('product_id', 'customer_email', 'customer_name', 'notified_at', 'created_at')]
+#[UseFactory(ProductWaitlistFactory::class)]
 class ProductWaitlist extends Model
 {
     /** @use HasFactory<ProductWaitlistFactory> */
@@ -41,10 +43,5 @@ class ProductWaitlist extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    protected static function newFactory(): ProductWaitlistFactory
-    {
-        return ProductWaitlistFactory::new();
     }
 }

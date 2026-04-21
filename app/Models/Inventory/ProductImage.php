@@ -6,6 +6,7 @@ use App\Observers\Content\ProductImageObserver;
 use Database\Factories\Inventory\ProductImageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 #[Fillable('product_id', 'path', 'sort_order', 'is_primary')]
 #[ObservedBy(ProductImageObserver::class)]
+#[UseFactory(ProductImageFactory::class)]
 class ProductImage extends Model
 {
     /** @use HasFactory<ProductImageFactory> */
@@ -40,10 +42,5 @@ class ProductImage extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    protected static function newFactory(): ProductImageFactory
-    {
-        return ProductImageFactory::new();
     }
 }

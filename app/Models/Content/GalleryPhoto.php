@@ -6,6 +6,7 @@ use App\Enums\Content\GalleryCategory;
 use Database\Factories\Content\GalleryPhotoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  */
 #[Fillable('title', 'image_path', 'category', 'sort_order', 'is_visible')]
+#[UseFactory(GalleryPhotoFactory::class)]
 class GalleryPhoto extends Model
 {
     /** @use HasFactory<GalleryPhotoFactory> */
@@ -48,10 +50,5 @@ class GalleryPhoto extends Model
     protected function ordered(Builder $query): void
     {
         $query->orderBy('sort_order');
-    }
-
-    protected static function newFactory(): GalleryPhotoFactory
-    {
-        return GalleryPhotoFactory::new();
     }
 }

@@ -7,6 +7,7 @@ use Database\Factories\Platform\PlatformAnnouncementFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -45,6 +46,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('title', 'body', 'type', 'target_plans', 'is_active', 'starts_at', 'ends_at', 'is_dismissable')]
+#[UseFactory(PlatformAnnouncementFactory::class)]
 class PlatformAnnouncement extends Model
 {
     /** @use HasFactory<PlatformAnnouncementFactory> */
@@ -70,10 +72,5 @@ class PlatformAnnouncement extends Model
             ->where('is_active', true)
             ->where(fn (Builder $q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
             ->where(fn (Builder $q) => $q->whereNull('ends_at')->orWhere('ends_at', '>=', now()));
-    }
-
-    protected static function newFactory(): PlatformAnnouncementFactory
-    {
-        return PlatformAnnouncementFactory::new();
     }
 }

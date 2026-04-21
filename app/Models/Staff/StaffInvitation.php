@@ -6,6 +6,7 @@ use App\Enums\Staff\UserRole;
 use Database\Factories\Staff\StaffInvitationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +27,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('email', 'role', 'token', 'accepted_at', 'expires_at', 'invited_by')]
+#[UseFactory(StaffInvitationFactory::class)]
 class StaffInvitation extends Model
 {
     /** @use HasFactory<StaffInvitationFactory> */
@@ -69,10 +71,5 @@ class StaffInvitation extends Model
         return Attribute::make(
             get: fn () => is_null($this->accepted_at) && ! $this->is_expired,
         );
-    }
-
-    protected static function newFactory(): StaffInvitationFactory
-    {
-        return StaffInvitationFactory::new();
     }
 }

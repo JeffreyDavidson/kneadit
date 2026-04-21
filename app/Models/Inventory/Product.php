@@ -15,6 +15,7 @@ use Database\Factories\Inventory\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,6 +59,7 @@ use Illuminate\Support\Carbon;
 #[Fillable('name', 'slug', 'description', 'price', 'category_id', 'is_active', 'is_featured', 'image', 'cost')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(ProductQueryBuilder::class)]
+#[UseFactory(ProductFactory::class)]
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
@@ -177,10 +179,5 @@ class Product extends Model
                 ? ProfitMargin::calculate($this->price->dollars(), $this->cost->dollars())
                 : null,
         );
-    }
-
-    protected static function newFactory(): ProductFactory
-    {
-        return ProductFactory::new();
     }
 }

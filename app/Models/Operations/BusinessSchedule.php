@@ -7,6 +7,7 @@ use App\Enums\Staff\DayOfWeek;
 use Database\Factories\Operations\BusinessScheduleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 #[Fillable('day_of_week', 'is_open', 'open_time', 'close_time', 'order_cutoff_time', 'max_orders')]
 #[UseEloquentBuilder(BusinessScheduleQueryBuilder::class)]
+#[UseFactory(BusinessScheduleFactory::class)]
 class BusinessSchedule extends Model
 {
     /** @use HasFactory<BusinessScheduleFactory> */
@@ -42,10 +44,5 @@ class BusinessSchedule extends Model
         return Attribute::make(
             get: fn () => DayOfWeek::fromPhpDayIndex($this->day_of_week)?->getLabel() ?? 'Unknown',
         );
-    }
-
-    protected static function newFactory(): BusinessScheduleFactory
-    {
-        return BusinessScheduleFactory::new();
     }
 }

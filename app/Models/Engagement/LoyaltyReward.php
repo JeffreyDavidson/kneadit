@@ -10,6 +10,7 @@ use App\Models\Inventory\Product;
 use Database\Factories\Engagement\LoyaltyRewardFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 #[Fillable('name', 'description', 'points_required', 'reward_type', 'discount_amount', 'discount_percentage', 'product_id', 'is_active')]
 #[UseEloquentBuilder(LoyaltyRewardQueryBuilder::class)]
+#[UseFactory(LoyaltyRewardFactory::class)]
 class LoyaltyReward extends Model
 {
     /** @use HasFactory<LoyaltyRewardFactory> */
@@ -51,10 +53,5 @@ class LoyaltyReward extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    protected static function newFactory(): LoyaltyRewardFactory
-    {
-        return LoyaltyRewardFactory::new();
     }
 }

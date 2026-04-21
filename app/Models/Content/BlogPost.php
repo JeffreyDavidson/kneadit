@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,6 +41,7 @@ use Illuminate\Support\Carbon;
 #[Fillable('title', 'slug', 'excerpt', 'body', 'featured_image', 'category', 'meta_title', 'meta_description', 'is_published', 'published_at')]
 #[ObservedBy(BlogPostObserver::class)]
 #[UseEloquentBuilder(BlogPostQueryBuilder::class)]
+#[UseFactory(BlogPostFactory::class)]
 class BlogPost extends Model
 {
     /** @use HasFactory<BlogPostFactory> */
@@ -60,10 +62,5 @@ class BlogPost extends Model
         return Attribute::make(
             get: fn () => route('blog.show', $this->slug),
         );
-    }
-
-    protected static function newFactory(): BlogPostFactory
-    {
-        return BlogPostFactory::new();
     }
 }
