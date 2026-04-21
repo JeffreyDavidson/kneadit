@@ -229,14 +229,14 @@
                         <div class="space-y-3">
                             <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all bg-white/[0.03] border border-warm-600/15"
                                    :class="form.delivery_type === 'pickup' ? 'border-warm-500 bg-warm-500/[0.08]' : ''">
-                                <input type="radio" data-test="order-form-delivery-type-pickup" x-model="form.delivery_type" value="pickup" @change="calculateDeliveryFee()" class="order-radio mr-3">
+                                <input type="radio" data-test="order-form-delivery-type-pickup" x-model="form.delivery_type" value="pickup" @change="calculateTotals()" class="order-radio mr-3">
                                 <span class="text-warm-200">Pickup <span class="text-sm text-warm-500">(Free)</span></span>
                             </label>
 
                             @if ($settings->orders->deliveryEnabled)
                             <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all bg-white/[0.03] border border-warm-600/15"
                                    :class="form.delivery_type === 'delivery' ? 'border-warm-500 bg-warm-500/[0.08]' : ''">
-                                <input type="radio" data-test="order-form-delivery-type-delivery" x-model="form.delivery_type" value="delivery" @change="calculateDeliveryFee()" class="order-radio mr-3">
+                                <input type="radio" data-test="order-form-delivery-type-delivery" x-model="form.delivery_type" value="delivery" @change="calculateTotals()" class="order-radio mr-3">
                                 <span class="text-warm-200">Delivery</span>
                             </label>
                             @endif
@@ -250,7 +250,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Distance</label>
-                                <select data-test="order-form-delivery-tier" x-model="form.delivery_tier" @change="calculateDeliveryFee()" class="order-input">
+                                <select data-test="order-form-delivery-tier" x-model="form.delivery_tier" @change="calculateTotals()" class="order-input">
                                     <option value="">Select distance</option>
                                     @foreach ($settings->orders->deliveryFeeTiers as $index => $tier)
                                     <option value="{{ $index }}">{{ $tier['description'] }} (@money($tier['fee']))</option>

@@ -165,7 +165,6 @@ function orderForm() {
                     this.deliveryFee = 0;
                 }
             }
-            this.calculateTotals();
         },
 
         calculateDiscount() {
