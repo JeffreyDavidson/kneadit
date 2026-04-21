@@ -44,18 +44,12 @@
         @if ($record->status !== 'closed')
         <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
             @if ($record->status === 'open')
-                <button wire:click="updateStatus('in_progress')" style="background: #92400e; color: #fde68a; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
-                    Mark In Progress
-                </button>
+                <x-central.button variant="warning" wire:click="updateStatus('in_progress')">Mark In Progress</x-central.button>
             @endif
             @if (in_array($record->status, ['open', 'in_progress']))
-                <button wire:click="updateStatus('resolved')" style="background: #065f46; color: #6ee7b7; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
-                    Mark Resolved
-                </button>
+                <x-central.button variant="success" wire:click="updateStatus('resolved')">Mark Resolved</x-central.button>
             @endif
-            <button wire:click="updateStatus('closed')" style="background: #374151; color: #d1d5db; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
-                Close Ticket
-            </button>
+            <x-central.button variant="neutral" wire:click="updateStatus('closed')">Close Ticket</x-central.button>
         </div>
         @endif
 

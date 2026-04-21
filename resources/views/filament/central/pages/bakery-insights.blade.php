@@ -1,16 +1,17 @@
 <x-filament-panels::page>
     {{-- Tab Switcher --}}
-    <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+    <div class="flex gap-2 mb-6">
         @foreach ([
             'health' => 'Health Scores',
             'churn' => 'Churn Alerts',
             'upgrade' => 'Upgrade Triggers',
         ] as $key => $label)
-            <button
-                wire:click="$set('activeTab', '{{ $key }}')"
-                style="padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; border: 1px solid rgba(212,146,12,0.25); cursor: pointer;
-                    {{ $activeTab === $key ? 'background: #d4920c; color: #1c1410;' : 'background: transparent; color: #d4920c;' }}"
-            >
+            <button wire:click="$set('activeTab', '{{ $key }}')"
+                @class([
+                    'px-5 py-2 rounded-lg text-[0.8rem] font-bold border border-honey/25 cursor-pointer',
+                    'bg-honey text-warm-black' => $activeTab === $key,
+                    'bg-transparent text-honey' => $activeTab !== $key,
+                ])>
                 {{ $label }}
             </button>
         @endforeach
@@ -30,27 +31,25 @@
             <x-central.stat-card label="Critical (<40)" value-class="text-[1.75rem] text-red-500">{{ $stats['critical'] }}</x-central.stat-card>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem;">
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-4">
             @foreach ($tenants as $tenant)
                 @php
                     $score = $tenant['health_score'];
                     $color = $score > 70 ? '#10b981' : ($score >= 40 ? '#f59e0b' : '#ef4444');
                 @endphp
                 <x-central.card style="border-left: 4px solid {{ $color }};" class="transition-transform">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                    <div class="flex justify-between items-start mb-4">
                         <div>
-                            <div style="font-weight: 700; color: white; font-size: 1rem;">{{ $tenant['name'] }}</div>
-                            <div style="color: #8b6844; font-size: 0.8rem;">{{ $tenant['owner'] }}</div>
+                            <div class="font-bold text-white text-base">{{ $tenant['name'] }}</div>
+                            <div class="text-cinnamon text-[0.8rem]">{{ $tenant['owner'] }}</div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 1.75rem; font-weight: 700; color: {{ $color }}; line-height: 1;">{{ $score }}</div>
-                            <div style="font-size: 0.7rem; color: #8b6844;">/100</div>
+                        <div class="text-right">
+                            <div class="text-[1.75rem] font-bold leading-none" style="color: {{ $color }};">{{ $score }}</div>
+                            <div class="text-[0.7rem] text-cinnamon">/100</div>
                         </div>
                     </div>
 
-                    <span style="display: inline-block; background: rgba(212,146,12,0.1); color: #d4920c; border: 1px solid rgba(212,146,12,0.25); border-radius: 9999px; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; margin-bottom: 1rem;">
-                        {{ $tenant['plan'] }}
-                    </span>
+                    <x-central.badge color="honey-soft" class="mb-4 border border-honey/25">{{ $tenant['plan'] }}</x-central.badge>
 
                     @php
                         $factors = [
@@ -61,17 +60,16 @@
                         ];
                     @endphp
                     @foreach ($factors as $factor)
-                        <div style="margin-bottom: 0.5rem;">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #8b6844; margin-bottom: 0.2rem;">
+                        <div class="mb-2">
+                            <div class="flex justify-between text-xs text-cinnamon mb-0.5">
                                 <span>{{ $factor['label'] }}</span>
                                 <span>{{ $factor['value'] }}/{{ $factor['max'] }}</span>
                             </div>
-                            <div style="background: #2a1f18; border-radius: 4px; height: 8px; overflow: hidden;">
-                                <div style="height: 100%; border-radius: 4px; background: {{ $color }}; width: {{ $factor['max'] > 0 ? round(($factor['value'] / $factor['max']) * 100) : 0 }}%;"></div>
+                            <div class="bg-espresso rounded h-2 overflow-hidden">
+                                <div class="h-full rounded" style="background: {{ $color }}; width: {{ $factor['max'] > 0 ? round(($factor['value'] / $factor['max']) * 100) : 0 }}%;"></div>
                             </div>
                         </div>
                     @endforeach
-                </div>
                 </x-central.card>
             @endforeach
         </div>
@@ -104,29 +102,29 @@
                         $tb = $typeBadgeColors[$alert['type']] ?? ['bg' => $badgeBg, 'color' => $badgeColor];
                     @endphp
                     <x-central.card style="border-left: 4px solid {{ $badgeColor }};">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
-                            <div style="flex: 1; min-width: 200px;">
-                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                                    <span style="font-weight: 700; color: white; font-size: 1rem;">{{ $alert['name'] }}</span>
-                                    <span style="display: inline-block; background: {{ $tb['bg'] }}; color: {{ $tb['color'] }}; border-radius: 9999px; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 600;">
+                        <div class="flex justify-between items-start flex-wrap gap-3">
+                            <div class="flex-1 min-w-[200px]">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="font-bold text-white text-base">{{ $alert['name'] }}</span>
+                                    <span class="inline-block rounded-full px-2.5 py-1 text-[0.7rem] font-semibold" style="background: {{ $tb['bg'] }}; color: {{ $tb['color'] }};">
                                         {{ $alert['type_label'] }}
                                     </span>
                                 </div>
-                                <div style="color: #faf0d6; font-size: 0.85rem;">{{ $alert['description'] }}</div>
-                                <div style="color: #8b6844; font-size: 0.75rem; margin-top: 0.35rem;">Signed up {{ $alert['days_since_signup'] }} days ago</div>
+                                <div class="text-parchment text-[0.85rem]">{{ $alert['description'] }}</div>
+                                <div class="text-cinnamon text-xs mt-1.5">Signed up {{ $alert['days_since_signup'] }} days ago</div>
                             </div>
-                            <div style="display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0;">
+                            <div class="flex gap-2 items-center flex-shrink-0">
                                 @if (in_array($alert['tenant_id'], $this->extendedTrials))
-                                    <span style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600;">Extended</span>
+                                    <x-central.badge color="success" :uppercase="false">Extended</x-central.badge>
                                 @else
-                                    <button wire:click="extendTrial('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled" style="background: #1c1410; color: #d4920c; border: 1px solid rgba(212,146,12,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Extend Trial</button>
+                                    <x-central.button variant="secondary" wire:click="extendTrial('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled">Extend Trial</x-central.button>
                                 @endif
                                 @if (in_array($alert['tenant_id'], $this->sentNudges))
-                                    <span style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600;">Nudge Sent</span>
+                                    <x-central.badge color="success" :uppercase="false">Nudge Sent</x-central.badge>
                                 @else
-                                    <button wire:click="sendNudge('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled" style="background: #1c1410; color: #e8b04a; border: 1px solid rgba(232,176,74,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Send Nudge</button>
+                                    <x-central.button variant="secondary" wire:click="sendNudge('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled">Send Nudge</x-central.button>
                                 @endif
-                                <a href="{{ $this->getViewTenantUrl($alert['tenant_id']) }}" class="bg-honey text-warm-black border-0 rounded-lg px-3 py-2 text-xs font-bold cursor-pointer no-underline inline-block">View Tenant</a>
+                                <x-central.button :href="$this->getViewTenantUrl($alert['tenant_id'])">View Tenant</x-central.button>
                             </div>
                         </div>
                     </x-central.card>
@@ -193,15 +191,12 @@
                             </div>
                         </div>
 
-                        <div style="border-top: 1px solid rgba(212,146,12,0.08); padding-top: 1rem;">
+                        <div class="border-t border-honey/8 pt-4">
                             @php $nextPlan = $this->getNextPlan($t['plan_key']); @endphp
                             @if ($nextPlan)
-                                <button
-                                    wire:click="suggestUpgrade('{{ $t['tenant']->id }}')"
-                                    style="width: 100%; background: #d4920c; color: #1c1410; border: none; border-radius: 8px; padding: 0.6rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;"
-                                >
+                                <x-central.button wire:click="suggestUpgrade('{{ $t['tenant']->id }}')" class="w-full">
                                     Suggest Upgrade to {{ $nextPlan }}
-                                </button>
+                                </x-central.button>
                             @endif
                         </div>
                     </x-central.card>
