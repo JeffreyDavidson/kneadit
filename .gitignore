@@ -35,3 +35,4 @@ test_central.sqlite*
 .ai/*
 !.ai/skills/
 tests/Browser/Screenshots
+tests/Browser/.admin-session.json
