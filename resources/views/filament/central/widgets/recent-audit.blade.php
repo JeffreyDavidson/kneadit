@@ -1,8 +1,8 @@
 <x-filament-widgets::widget>
-    <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <div style="color: #ffffff; font-weight: 700; font-size: 1rem;">Recent Audit Log</div>
-            <a href="{{ \App\Filament\Central\Pages\Activity::getUrl() }}" style="color: #d4920c; font-size: 0.75rem; text-decoration: none;">View all →</a>
+    <x-central.card>
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-white font-bold text-base">Recent Audit Log</div>
+            <a href="{{ \App\Filament\Central\Pages\Activity::getUrl() }}" class="text-honey text-xs no-underline">View all →</a>
         </div>
         @forelse ($this->recentLogs as $log)
             <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 8px; margin-bottom: 0.375rem;{{ $loop->even ? ' background: rgba(212,146,12,0.04);' : '' }}">
@@ -21,5 +21,5 @@
                 <div style="color: #8b6844; font-size: 0.8rem;">No audit entries yet.</div>
             </div>
         @endforelse
-    </div>
+    </x-central.card>
 </x-filament-widgets::widget>

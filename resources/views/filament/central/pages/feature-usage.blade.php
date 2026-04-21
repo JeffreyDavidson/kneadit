@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     @if (! $this->getHasData())
         {{-- Empty State --}}
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 3rem; text-align: center;">
+        <x-central.card padding="p-12" class="text-center">
             <div style="margin-bottom: 1rem;">
                 <svg style="width: 48px; height: 48px; display: inline-block;" viewBox="0 0 24 24" fill="none" stroke="#d4920c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             </div>
@@ -11,34 +11,24 @@
                 you'll see detailed analytics about which features your bakeries use most.
             </p>
             <div style="background: #2a1f18; border-radius: 8px; padding: 1rem; display: inline-block; text-align: left;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.5rem;">Features that will be tracked</div>
+                <x-central.eyebrow class="mb-2">Features that will be tracked</x-central.eyebrow>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
                     @foreach (['quick_order', 'recipe_calculator', 'shopping_list', 'instagram_captions', 'delivery_planner', 'baking_sheet', 'order_calendar', 'review_analytics', 'storefront'] as $feature)
-                        <span style="display: inline-block; background: rgba(212,146,12,0.1); color: #faf0d6; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600;">{{ str_replace('_', ' ', ucfirst($feature)) }}</span>
+                        <x-central.badge color="honey-soft-light" :uppercase="false">{{ str_replace('_', ' ', ucfirst($feature)) }}</x-central.badge>
                     @endforeach
                 </div>
             </div>
-        </div>
+        </x-central.card>
     @else
         {{-- Summary Cards --}}
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Most Used Feature</div>
-                <div style="color: white; font-size: 1.25rem; font-weight: 700;">{{ $this->formatFeatureName($this->getMostUsedFeature() ?? '—') }}</div>
-            </div>
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Least Used Feature</div>
-                <div style="color: white; font-size: 1.25rem; font-weight: 700;">{{ $this->formatFeatureName($this->getLeastUsedFeature() ?? '—') }}</div>
-            </div>
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Total Interactions This Month</div>
-                <div style="color: white; font-size: 1.75rem; font-weight: 700;">{{ number_format($this->getTotalInteractionsThisMonth()) }}</div>
-            </div>
+        <div class="grid grid-cols-3 gap-4 mb-6">
+            <x-central.stat-card label="Most Used Feature" value-class="text-[1.25rem] text-white">{{ $this->formatFeatureName($this->getMostUsedFeature() ?? '—') }}</x-central.stat-card>
+            <x-central.stat-card label="Least Used Feature" value-class="text-[1.25rem] text-white">{{ $this->formatFeatureName($this->getLeastUsedFeature() ?? '—') }}</x-central.stat-card>
+            <x-central.stat-card label="Total Interactions This Month" value-class="text-[1.75rem] text-white">{{ number_format($this->getTotalInteractionsThisMonth()) }}</x-central.stat-card>
         </div>
 
         {{-- Bar Chart --}}
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Usage by Feature</div>
+        <x-central.card title="Usage by Feature" class="mb-6">
             <div style="display: flex; flex-direction: column; gap: 0.6rem;">
                 @foreach ($this->getFeatureUsageBars() as $bar)
                     <div wire:click="selectFeature('{{ $bar['feature'] }}')" style="cursor: pointer; display: flex; align-items: center; gap: 0.75rem;">
@@ -54,14 +44,11 @@
                     </div>
                 @endforeach
             </div>
-        </div>
+        </x-central.card>
 
         {{-- Per-feature tenant breakdown --}}
         @if ($this->selectedFeature)
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">
-                    {{ $this->formatFeatureName($this->selectedFeature) }} — Top Tenants
-                </div>
+            <x-central.card :title="$this->formatFeatureName($this->selectedFeature).' — Top Tenants'" class="mb-6">
                 @php $breakdown = $this->getFeatureTenantBreakdown(); @endphp
                 @if ($breakdown->isEmpty())
                     <p style="color: #8b6844;">No tenant data available.</p>
@@ -75,26 +62,25 @@
                         @endforeach
                     </div>
                 @endif
-            </div>
+            </x-central.card>
         @endif
 
         {{-- Heatmap --}}
         @php $heatmap = $this->getHeatmapData(); @endphp
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; overflow-x: auto;">
-            <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">7-Day Usage Heatmap</div>
-            <table style="width: 100%; border-collapse: collapse;">
+        <x-central.card title="7-Day Usage Heatmap" class="overflow-x-auto">
+            <x-central.table>
                 <thead>
-                    <tr>
-                        <th style="text-align: left; padding: 0.5rem 0.75rem; color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Feature</th>
+                    <x-central.tr :border="false">
+                        <x-central.eyebrow as="th" class="text-left py-2 px-3">Feature</x-central.eyebrow>
                         @foreach ($heatmap['days'] as $day)
-                            <th style="text-align: center; padding: 0.5rem 0.4rem; color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">{{ $day }}</th>
+                            <x-central.eyebrow as="th" class="text-center py-2 px-1.5">{{ $day }}</x-central.eyebrow>
                         @endforeach
-                    </tr>
+                    </x-central.tr>
                 </thead>
                 <tbody>
                     @foreach ($heatmap['rows'] as $row)
-                        <tr>
-                            <td style="padding: 0.4rem 0.75rem; color: #faf0d6; font-size: 0.8rem; white-space: nowrap;">{{ $this->formatFeatureName($row['feature']) }}</td>
+                        <x-central.tr :border="false">
+                            <x-central.td padding="py-1.5 px-3" class="text-[0.8rem] whitespace-nowrap">{{ $this->formatFeatureName($row['feature']) }}</x-central.td>
                             @foreach ($row['cells'] as $cell)
                                 @php
                                     $i = $cell['intensity'];
@@ -110,16 +96,16 @@
                                         $bg = '#e8b04a';
                                     }
                                 @endphp
-                                <td style="text-align: center; padding: 0.4rem;" title="{{ $cell['count'] }} uses on {{ $cell['date'] }}">
-                                    <div style="background: {{ $bg }}; border-radius: 4px; width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; color: {{ $i >= 0.5 ? '#1c1410' : '#8b6844' }}; font-size: 0.7rem; font-weight: 600;">
+                                <x-central.td align="center" padding="p-1.5" title="{{ $cell['count'] }} uses on {{ $cell['date'] }}">
+                                    <div style="background: {{ $bg }}; color: {{ $i >= 0.5 ? '#1c1410' : '#8b6844' }};" class="rounded w-9 h-9 inline-flex items-center justify-center text-[0.7rem] font-semibold">
                                         {{ $cell['count'] ?: '' }}
                                     </div>
-                                </td>
+                                </x-central.td>
                             @endforeach
-                        </tr>
+                        </x-central.tr>
                     @endforeach
                 </tbody>
-            </table>
-        </div>
+            </x-central.table>
+        </x-central.card>
     @endif
 </x-filament-panels::page>

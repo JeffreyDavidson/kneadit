@@ -20,19 +20,10 @@
     </div>
 
     {{-- Summary Stats --}}
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-            <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Total Tenants</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #ffffff;">{{ $stats['total'] }}</div>
-        </div>
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-            <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Fully Onboarded</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #10b981;">{{ $stats['fully_onboarded'] }}</div>
-        </div>
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-            <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Needs Attention</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #ef4444;">{{ $stats['needs_attention'] }}</div>
-        </div>
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <x-central.stat-card label="Total Tenants" value-class="text-[1.75rem] text-white">{{ $stats['total'] }}</x-central.stat-card>
+        <x-central.stat-card label="Fully Onboarded" value-class="text-[1.75rem] text-emerald-500">{{ $stats['fully_onboarded'] }}</x-central.stat-card>
+        <x-central.stat-card label="Needs Attention" value-class="text-[1.75rem] text-red-500">{{ $stats['needs_attention'] }}</x-central.stat-card>
     </div>
 
     {{-- Tenant Cards --}}
@@ -48,12 +39,12 @@
                     $statusColor = '#10b981';
                 }
             @endphp
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
+            <x-central.card>
                 {{-- Header --}}
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div class="flex justify-between items-start mb-3">
                     <div>
                         <div style="font-size: 1rem; font-weight: 700; color: #ffffff;">{{ $tenant['name'] }}</div>
-                        <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">{{ $tenant['subdomain'] }}.kneadit.app</div>
+                        <x-central.eyebrow>{{ $tenant['subdomain'] }}.kneadit.app</x-central.eyebrow>
                     </div>
                     <span style="display: inline-block; padding: 0.125rem 0.625rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
                         @if ($tenant['plan'] === 'pro') background: #d4920c; color: #0c0a09;
@@ -74,7 +65,7 @@
                 {{-- Progress Bar --}}
                 <div style="margin-bottom: 1rem;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                        <span style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Progress</span>
+                        <x-central.eyebrow as="span">Progress</x-central.eyebrow>
                         <span style="font-size: 0.75rem; font-weight: 700; color: {{ $statusColor }};">{{ $tenant['completed'] }}/{{ $tenant['total'] }}</span>
                     </div>
                     <div style="background: rgba(212,146,12,0.08); border-radius: 9999px; height: 6px; overflow: hidden;">
@@ -100,7 +91,7 @@
                         </div>
                     @endforeach
                 </div>
-            </div>
+            </x-central.card>
         @endforeach
     </div>
 </x-filament-panels::page>

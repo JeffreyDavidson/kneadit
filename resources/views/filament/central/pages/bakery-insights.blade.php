@@ -23,23 +23,11 @@
             $tenants = $this->getTenantHealthData();
         @endphp
 
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Average Health</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: white;">{{ $stats['average'] }}</div>
-            </div>
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Healthy (&gt;70)</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: #10b981;">{{ $stats['healthy'] }}</div>
-            </div>
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">At Risk (40–70)</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: #f59e0b;">{{ $stats['at_risk'] }}</div>
-            </div>
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.25rem;">Critical (&lt;40)</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: #ef4444;">{{ $stats['critical'] }}</div>
-            </div>
+        <div class="grid grid-cols-4 gap-4 mb-6">
+            <x-central.stat-card label="Average Health" value-class="text-[1.75rem] text-white">{{ $stats['average'] }}</x-central.stat-card>
+            <x-central.stat-card label="Healthy (>70)" value-class="text-[1.75rem] text-emerald-500">{{ $stats['healthy'] }}</x-central.stat-card>
+            <x-central.stat-card label="At Risk (40–70)" value-class="text-[1.75rem] text-amber-500">{{ $stats['at_risk'] }}</x-central.stat-card>
+            <x-central.stat-card label="Critical (<40)" value-class="text-[1.75rem] text-red-500">{{ $stats['critical'] }}</x-central.stat-card>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem;">
@@ -48,7 +36,7 @@
                     $score = $tenant['health_score'];
                     $color = $score > 70 ? '#10b981' : ($score >= 40 ? '#f59e0b' : '#ef4444');
                 @endphp
-                <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; border-left: 4px solid {{ $color }}; transition: transform 0.2s, box-shadow 0.2s;">
+                <x-central.card style="border-left: 4px solid {{ $color }};" class="transition-transform">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div>
                             <div style="font-weight: 700; color: white; font-size: 1rem;">{{ $tenant['name'] }}</div>
@@ -84,6 +72,7 @@
                         </div>
                     @endforeach
                 </div>
+                </x-central.card>
             @endforeach
         </div>
     @endif
@@ -93,13 +82,13 @@
         @php $alerts = $this->getAlerts(); @endphp
 
         @if ($alerts->isEmpty())
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 4rem 2rem; text-align: center;">
-                <div style="margin-bottom: 1rem;">
-                    <svg style="width: 48px; height: 48px; display: inline-block;" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <x-central.card padding="py-16 px-8" class="text-center">
+                <div class="mb-4">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 </div>
-                <div style="font-size: 1.25rem; font-weight: 700; color: #10b981;">All bakeries are healthy!</div>
-                <div style="color: #8b6844; margin-top: 0.5rem;">No churn alerts at this time.</div>
-            </div>
+                <div class="text-[1.25rem] font-bold text-emerald-500">All bakeries are healthy!</div>
+                <div class="text-cinnamon mt-2">No churn alerts at this time.</div>
+            </x-central.card>
         @else
             <div style="display: grid; gap: 1rem;">
                 @foreach ($alerts as $alert)
@@ -114,7 +103,7 @@
                         ];
                         $tb = $typeBadgeColors[$alert['type']] ?? ['bg' => $badgeBg, 'color' => $badgeColor];
                     @endphp
-                    <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; border-left: 4px solid {{ $badgeColor }};">
+                    <x-central.card style="border-left: 4px solid {{ $badgeColor }};">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
                             <div style="flex: 1; min-width: 200px;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
@@ -137,10 +126,10 @@
                                 @else
                                     <button wire:click="sendNudge('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled" style="background: #1c1410; color: #e8b04a; border: 1px solid rgba(232,176,74,0.25); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Send Nudge</button>
                                 @endif
-                                <a href="{{ $this->getViewTenantUrl($alert['tenant_id']) }}" style="background: #d4920c; color: #1c1410; border: none; border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block;">View Tenant</a>
+                                <a href="{{ $this->getViewTenantUrl($alert['tenant_id']) }}" class="bg-honey text-warm-black border-0 rounded-lg px-3 py-2 text-xs font-bold cursor-pointer no-underline inline-block">View Tenant</a>
                             </div>
                         </div>
-                    </div>
+                    </x-central.card>
                 @endforeach
             </div>
         @endif
@@ -151,15 +140,15 @@
         @php $tenants = $this->getTenantUsageData(); @endphp
 
         @if ($tenants->isEmpty())
-            <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 3rem; text-align: center;">
-                <div style="margin-bottom: 1rem;">
-                    <svg style="width: 48px; height: 48px; display: inline-block;" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <x-central.card padding="p-12" class="text-center">
+                <div class="mb-4">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 </div>
-                <div style="color: #10b981; font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">All Tenants Within Limits</div>
-                <p style="color: #8b6844; max-width: 480px; margin: 0 auto;">
+                <div class="text-emerald-500 font-bold text-base mb-2">All Tenants Within Limits</div>
+                <p class="text-cinnamon max-w-[480px] mx-auto">
                     No bakeries are currently approaching their plan limits. When tenants reach 80% or more of their product or order limits, they'll appear here as upgrade candidates.
                 </p>
-            </div>
+            </x-central.card>
         @else
             <div style="margin-bottom: 1rem;">
                 <p style="color: #8b6844; font-size: 0.875rem;">
@@ -169,22 +158,22 @@
 
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1rem;">
                 @foreach ($tenants as $t)
-                    <div style="background: #1c1410; border: 1px solid {{ $t['at_limit'] ? '#ef4444' : 'rgba(245,158,11,0.3)' }}; border-radius: 12px; padding: 1.5rem; transition: transform 0.2s, box-shadow 0.2s;">
+                    <x-central.card :class="$t['at_limit'] ? 'border-red-500' : 'border-amber-500/30'" class="transition-transform">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                             <div>
                                 <div style="color: white; font-size: 1rem; font-weight: 700; margin-bottom: 0.15rem;">{{ $t['name'] }}</div>
                                 <span style="color: #8b6844; font-size: 0.75rem;">{{ $t['plan'] }} Plan</span>
                             </div>
                             @if ($t['at_limit'])
-                                <span style="display: inline-block; background: rgba(239,68,68,0.15); color: #ef4444; border-radius: 9999px; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 600;">At Limit</span>
+                                <x-central.badge color="danger" :uppercase="false">At Limit</x-central.badge>
                             @else
-                                <span style="display: inline-block; background: rgba(245,158,11,0.15); color: #f59e0b; border-radius: 9999px; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: 600;">Approaching</span>
+                                <x-central.badge color="warning" :uppercase="false">Approaching</x-central.badge>
                             @endif
                         </div>
 
                         <div style="margin-bottom: 0.75rem;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                                <span style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Products</span>
+                                <x-central.eyebrow as="span">Products</x-central.eyebrow>
                                 <span style="color: #faf0d6; font-size: 0.75rem; font-weight: 600;">{{ $t['product_count'] }} / {{ $t['product_limit'] }}</span>
                             </div>
                             <div style="background: #2a1f18; border-radius: 4px; height: 8px; overflow: hidden;">
@@ -195,7 +184,7 @@
 
                         <div style="margin-bottom: 1rem;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                                <span style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Orders This Month</span>
+                                <x-central.eyebrow as="span">Orders This Month</x-central.eyebrow>
                                 <span style="color: #faf0d6; font-size: 0.75rem; font-weight: 600;">{{ $t['order_count'] }} / {{ $t['order_limit'] }}</span>
                             </div>
                             <div style="background: #2a1f18; border-radius: 4px; height: 8px; overflow: hidden;">
@@ -215,7 +204,7 @@
                                 </button>
                             @endif
                         </div>
-                    </div>
+                    </x-central.card>
                 @endforeach
             </div>
         @endif
