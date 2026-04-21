@@ -6,10 +6,6 @@ $centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
 // platform pages. Each test loads a pre-authenticated browser context via
 // authenticatedCentralVisit() and asserts the h1 heading + no JS errors.
 //
-// /admin/blog-posts excluded: pre-existing misconfiguration — the central
-// resource queries a blog_posts table that doesn't exist on the central DB
-// (blog posts are tenant-scoped).
-//
 // Prerequisites:
 //   1. php artisan db:seed --class="Database\\Seeders\\BrowserTestCentralFixtureSeeder"
 //   2. python3 tests/Browser/Helpers/prepare-admin-session.py
@@ -20,6 +16,7 @@ $centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
 dataset('central_admin_pages', [
     // Resources
     'tenants' => ['tenants', 'Tenants'],
+    'blog-posts' => ['blog-posts', 'Blog Posts'],
     'support-tickets' => ['support-tickets', 'Support Tickets'],
     'email-campaigns' => ['email-campaigns', 'Email Campaigns'],
     'messages' => ['messages', 'Messages'],
