@@ -10,39 +10,34 @@
                 @csrf
 
                 <x-storefront.form.field name="name" label="Name">
-                    <input type="text" id="name" name="name" value="{{ old('name') }}" required autofocus
+                    <x-storefront.form.input type="text" id="name" name="name" value="{{ old('name') }}" required autofocus
                         autocomplete="name"
-                        data-test="register-form-name"
-                        class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
+                        data-test="register-form-name" />
                 </x-storefront.form.field>
 
                 <x-storefront.form.field name="email" label="Email">
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" required
+                    <x-storefront.form.input type="email" id="email" name="email" value="{{ old('email') }}" required
                         autocomplete="email"
-                        data-test="register-form-email"
-                        class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
+                        data-test="register-form-email" />
                 </x-storefront.form.field>
 
                 <x-storefront.form.field name="phone" label='Phone <span class="text-warm-500 font-normal">(optional)</span>'>
-                    <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
+                    <x-storefront.form.input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
                         autocomplete="tel"
-                        data-test="register-form-phone"
-                        class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
+                        data-test="register-form-phone" />
                 </x-storefront.form.field>
 
                 <x-storefront.form.field name="password" label="Password">
-                    <input type="password" id="password" name="password" required
+                    <x-storefront.form.input type="password" id="password" name="password" required
                         autocomplete="new-password"
-                        data-test="register-form-password"
-                        class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
+                        data-test="register-form-password" />
                     <x-storefront.form.help>At least 8 characters, with letters and numbers.</x-storefront.form.help>
                 </x-storefront.form.field>
 
                 <x-storefront.form.field name="password_confirmation" label="Confirm password">
-                    <input type="password" id="password_confirmation" name="password_confirmation" required
+                    <x-storefront.form.input type="password" id="password_confirmation" name="password_confirmation" required
                         autocomplete="new-password"
-                        data-test="register-form-password-confirmation"
-                        class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
+                        data-test="register-form-password-confirmation" />
                 </x-storefront.form.field>
 
                 <x-storefront.buttons.primary type="submit" data-test="register-form-submit">
