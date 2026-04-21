@@ -35,11 +35,13 @@
         <div class="max-w-xl mx-auto mb-16">
             <div class="rounded-2xl p-8" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);">
                 <h2 class="font-display text-2xl font-bold mb-4 text-center text-warm-900">{{ $vm->content['check_heading'] ?? 'Check Your Points' }}</h2>
-                <form action="{{ route('rewards.check') }}" method="POST" class="flex flex-col sm:flex-row gap-3">
+                <form action="{{ route('rewards.check') }}" method="POST" class="flex flex-col sm:flex-row gap-3" data-test="loyalty-lookup-form">
                     @csrf
                     <input type="email" name="email" placeholder="Enter your email address"
-                           value="{{ old('email', $vm->customer->email ?? '') }}" required class="input-field flex-1">
-                    <button type="submit" class="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 whitespace-nowrap bg-warm-500 text-warm-900">
+                           value="{{ old('email', $vm->customer->email ?? '') }}" required class="input-field flex-1"
+                           data-test="loyalty-lookup-form-email">
+                    <button type="submit" class="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 whitespace-nowrap bg-warm-500 text-warm-900"
+                            data-test="loyalty-lookup-form-submit">
                         Check Balance
                     </button>
                 </form>

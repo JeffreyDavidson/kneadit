@@ -44,6 +44,7 @@
         "pestphp/pest-plugin-type-coverage": "^4.0",
         "phpunit/phpunit": "^12.0",
         "rector/rector": "^2.3",
+        "spatie/pest-plugin-snapshots": "^2.2",
         "tightenco/tlint": "^9.5"
     },
     "autoload": {

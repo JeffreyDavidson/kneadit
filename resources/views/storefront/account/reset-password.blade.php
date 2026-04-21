@@ -13,38 +13,28 @@
                 @csrf
                 <input type="hidden" name="token" value="{{ $token }}">
 
-                <label class="block">
-                    <span class="text-sm font-medium text-warm-800">Email</span>
-                    <input type="email" name="email" value="{{ old('email', $email) }}" required
+                <x-storefront.form.field name="email" label="Email">
+                    <input type="email" id="email" name="email" value="{{ old('email', $email) }}" required
                         autocomplete="email"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </label>
+                </x-storefront.form.field>
 
-                <label class="block">
-                    <span class="text-sm font-medium text-warm-800">New password</span>
-                    <input type="password" name="password" required autofocus
+                <x-storefront.form.field name="password" label="New password">
+                    <input type="password" id="password" name="password" required autofocus
                         autocomplete="new-password"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    <p class="mt-1 text-xs text-warm-500">At least 8 characters, with letters and numbers.</p>
-                    @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </label>
+                    <x-storefront.form.help>At least 8 characters, with letters and numbers.</x-storefront.form.help>
+                </x-storefront.form.field>
 
-                <label class="block">
-                    <span class="text-sm font-medium text-warm-800">Confirm new password</span>
-                    <input type="password" name="password_confirmation" required
+                <x-storefront.form.field name="password_confirmation" label="Confirm new password">
+                    <input type="password" id="password_confirmation" name="password_confirmation" required
                         autocomplete="new-password"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                </label>
+                </x-storefront.form.field>
 
-                <button type="submit"
-                    class="w-full rounded-full bg-warm-800 text-white font-semibold py-3 hover:bg-warm-900 transition">
+                <x-storefront.buttons.primary type="submit">
                     Reset password
-                </button>
+                </x-storefront.buttons.primary>
             </form>
         </div>
     </section>

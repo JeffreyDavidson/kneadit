@@ -99,19 +99,21 @@
                     {{-- Check Balance --}}
                     <div class="rounded-2xl p-8 bg-white border border-warm-200">
                         <h3 class="font-display text-xl font-semibold mb-4 text-warm-900">{{ $content['balance_heading'] ?? 'Check Gift Card Balance' }}</h3>
-                        <form @submit.prevent="checkBalance()" class="flex flex-col sm:flex-row gap-3">
+                        <form @submit.prevent="checkBalance()" class="flex flex-col sm:flex-row gap-3" data-test="gift-card-balance-form">
                             <input type="text" x-model="balanceCode" required
                                    placeholder="XXXX-XXXX-XXXX-XXXX"
-                                   class="input-field font-mono uppercase tracking-wider flex-1">
+                                   class="input-field font-mono uppercase tracking-wider flex-1"
+                                   data-test="gift-card-balance-form-code">
                             <button type="submit"
                                     :disabled="!balanceCode || isCheckingBalance"
                                     class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 whitespace-nowrap"
                                     :class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
-                                    style="border: 2px solid var(--warm-300); color: var(--warm-700);">
+                                    style="border: 2px solid var(--warm-300); color: var(--warm-700);"
+                                    data-test="gift-card-balance-form-submit">
                                 <span x-text="isCheckingBalance ? 'Checking...' : {{ Js::from($content['check_balance_button'] ?? 'Check Balance') }}"></span>
                             </button>
                         </form>
-                        <div x-show="balanceError" class="text-red-600 text-sm mt-2" x-text="balanceError"></div>
+                        <div x-show="balanceError" class="text-red-600 text-sm mt-2" x-text="balanceError" data-test="gift-card-balance-error"></div>
                         <div x-show="balanceResult" x-cloak class="mt-6 rounded-xl p-6 text-center bg-warm-50">
                             <p class="text-sm uppercase tracking-wider mb-1 text-warm-500">Current Balance</p>
                             <p class="font-display text-4xl font-bold text-warm-900" x-text="'$' + parseFloat(balanceResult?.current_balance || 0).toFixed(2)"></p>
@@ -131,14 +133,14 @@
                         <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-1 text-warm-500">{{ $content['details_eyebrow'] ?? 'Details' }}</p>
                         <h2 class="font-display text-2xl font-bold mb-6 text-warm-900">{{ $content['details_heading'] ?? 'Send Your Gift' }}</h2>
 
-                        <form @submit.prevent="purchase()" class="space-y-5">
+                        <form @submit.prevent="purchase()" class="space-y-5" data-test="gift-card-purchase-form">
                             <div>
                                 <label class="block text-sm font-semibold mb-1 text-warm-700">Your Name *</label>
-                                <input type="text" x-model="form.purchaser_name" required class="input-field">
+                                <input type="text" x-model="form.purchaser_name" required class="input-field" data-test="gift-card-purchase-form-purchaser-name">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold mb-1 text-warm-700">Your Email *</label>
-                                <input type="email" x-model="form.purchaser_email" required class="input-field">
+                                <input type="email" x-model="form.purchaser_email" required class="input-field" data-test="gift-card-purchase-form-purchaser-email">
                             </div>
 
                             <div class="pt-4" style="border-top: 1px solid var(--warm-200);">
@@ -146,24 +148,25 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold mb-1 text-warm-700">Recipient Name</label>
-                                <input type="text" x-model="form.recipient_name" class="input-field" placeholder="Optional">
+                                <input type="text" x-model="form.recipient_name" class="input-field" placeholder="Optional" data-test="gift-card-purchase-form-recipient-name">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold mb-1 text-warm-700">Recipient Email</label>
-                                <input type="email" x-model="form.recipient_email" class="input-field" placeholder="Optional">
+                                <input type="email" x-model="form.recipient_email" class="input-field" placeholder="Optional" data-test="gift-card-purchase-form-recipient-email">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold mb-1 text-warm-700">Gift Message</label>
-                                <textarea x-model="form.message" class="input-field" rows="3" placeholder="Add a personal touch..."></textarea>
+                                <textarea x-model="form.message" class="input-field" rows="3" placeholder="Add a personal touch..." data-test="gift-card-purchase-form-message"></textarea>
                             </div>
 
-                            <div x-show="purchaseError" class="text-red-600 text-sm" x-text="purchaseError"></div>
+                            <div x-show="purchaseError" class="text-red-600 text-sm" x-text="purchaseError" data-test="gift-card-purchase-error"></div>
 
                             <button type="submit"
                                     :disabled="!form.purchaser_name || !form.purchaser_email || !form.initial_balance || isPurchasing"
                                     class="w-full py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
                                     :class="isPurchasing ? 'opacity-50 cursor-not-allowed' : ''"
-                                    class="bg-warm-500 text-warm-900">
+                                    class="bg-warm-500 text-warm-900"
+                                    data-test="gift-card-purchase-form-submit">
                                 <span x-text="isPurchasing ? 'Processing...' : 'Purchase — $' + parseFloat(form.initial_balance || 0).toFixed(2)"></span>
                             </button>
                         </form>

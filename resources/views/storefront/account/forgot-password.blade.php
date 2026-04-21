@@ -12,23 +12,19 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('account.password.email') }}" class="space-y-5">
+            <form method="POST" action="{{ route('account.password.email') }}" class="space-y-5" data-test="forgot-password-form">
                 @csrf
 
-                <label class="block">
-                    <span class="text-sm font-medium text-warm-800">Email</span>
-                    <input type="email" name="email" value="{{ old('email') }}" required autofocus
+                <x-storefront.form.field name="email" label="Email">
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
                         autocomplete="email"
+                        data-test="forgot-password-form-email"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </label>
+                </x-storefront.form.field>
 
-                <button type="submit"
-                    class="w-full rounded-full bg-warm-800 text-white font-semibold py-3 hover:bg-warm-900 transition">
+                <x-storefront.buttons.primary type="submit" data-test="forgot-password-form-submit">
                     Send reset link
-                </button>
+                </x-storefront.buttons.primary>
             </form>
 
             <p class="mt-6 text-center text-sm text-warm-600">

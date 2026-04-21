@@ -17,7 +17,9 @@ class StorefrontStatsQuery
      */
     public static function get(): array
     {
-        return Cache::flexible('storefront_stats', [3600, 7200], fn () => [
+        $tenantKey = tenant()?->getTenantKey() ?? 'none';
+
+        return Cache::flexible("storefront_stats_{$tenantKey}", [3600, 7200], fn () => [
             'customer_count' => Customer::query()->count(),
             'avg_rating' => (float) Review::query()->approved()->avg('rating'),
             'order_count' => Order::query()->count(),

@@ -1,0 +1,9 @@
+newCustomers: 3
+repeatRate: 50.0
+repeatCustomers: 1
+totalCustomersWithOrders: 2
+topCustomers:
+    - { name: 'Alice Adams', email: alice@example.com, total_spend: 125.5, order_count: 2 }
+    - { name: 'Bob Baker', email: bob@example.com, total_spend: 30.0, order_count: 1 }
+acquisitionByMonth:
+    2026-03: 3

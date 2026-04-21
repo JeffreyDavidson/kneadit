@@ -25,7 +25,7 @@
          x-data="orderForm()"
          x-init="init()">
 
-        <form @submit.prevent="submitOrder" class="grid lg:grid-cols-3 gap-8">
+        <form data-test="order-form" @submit.prevent="submitOrder" class="grid lg:grid-cols-3 gap-8">
             {{-- Product Selection --}}
             <div class="lg:col-span-2 space-y-10">
                 <div class="flex items-center gap-4">
@@ -129,6 +129,7 @@
                         <label class="block text-xs font-medium uppercase tracking-wider mb-2 text-warm-500">Coupon Code</label>
                         <div class="flex gap-2">
                             <input type="text"
+                                   data-test="order-form-coupon-code"
                                    x-model="couponCode"
                                    placeholder="Enter coupon"
                                    class="order-input flex-1">
@@ -151,6 +152,7 @@
                         <label class="block text-xs font-medium uppercase tracking-wider mb-2 text-warm-500">Gift Card</label>
                         <div class="flex gap-2">
                             <input type="text"
+                                   data-test="order-form-gift-card-code"
                                    x-model="giftCardCode"
                                    placeholder="XXXX-XXXX-XXXX-XXXX"
                                    class="order-input flex-1 font-mono uppercase tracking-wider text-sm">
@@ -201,19 +203,19 @@
                         <div class="space-y-3">
                             <div>
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Name *</label>
-                                <input type="text" x-model="form.customer_name" required class="order-input">
+                                <input type="text" data-test="order-form-customer-name" x-model="form.customer_name" required class="order-input">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Email *</label>
-                                <input type="email" x-model="form.customer_email" @input="saveEmail()" required class="order-input">
+                                <input type="email" data-test="order-form-customer-email" x-model="form.customer_email" @input="saveEmail()" required class="order-input">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Phone</label>
-                                <input type="tel" x-model="form.customer_phone" class="order-input">
+                                <input type="tel" data-test="order-form-customer-phone" x-model="form.customer_phone" class="order-input">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Birthday <span class="text-warm-600">(for special treats 🎂)</span></label>
-                                <input type="date" x-model="form.customer_birthday" class="order-input" max="{{ date('Y-m-d') }}">
+                                <input type="date" data-test="order-form-customer-birthday" x-model="form.customer_birthday" class="order-input" max="{{ date('Y-m-d') }}">
                             </div>
                         </div>
                     </div>
@@ -227,14 +229,14 @@
                         <div class="space-y-3">
                             <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all bg-white/[0.03] border border-warm-600/15"
                                    :class="form.delivery_type === 'pickup' ? 'border-warm-500 bg-warm-500/[0.08]' : ''">
-                                <input type="radio" x-model="form.delivery_type" value="pickup" @change="calculateDeliveryFee()" class="order-radio mr-3">
+                                <input type="radio" data-test="order-form-delivery-type-pickup" x-model="form.delivery_type" value="pickup" @change="calculateTotals()" class="order-radio mr-3">
                                 <span class="text-warm-200">Pickup <span class="text-sm text-warm-500">(Free)</span></span>
                             </label>
 
                             @if ($settings->orders->deliveryEnabled)
                             <label class="flex items-center cursor-pointer px-4 py-3 rounded-xl transition-all bg-white/[0.03] border border-warm-600/15"
                                    :class="form.delivery_type === 'delivery' ? 'border-warm-500 bg-warm-500/[0.08]' : ''">
-                                <input type="radio" x-model="form.delivery_type" value="delivery" @change="calculateDeliveryFee()" class="order-radio mr-3">
+                                <input type="radio" data-test="order-form-delivery-type-delivery" x-model="form.delivery_type" value="delivery" @change="calculateTotals()" class="order-radio mr-3">
                                 <span class="text-warm-200">Delivery</span>
                             </label>
                             @endif
@@ -244,11 +246,11 @@
                         <div x-show="form.delivery_type === 'delivery'" class="mt-4 space-y-3">
                             <div>
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Delivery Address *</label>
-                                <textarea x-model="form.delivery_address" placeholder="Full address" class="order-input" rows="3"></textarea>
+                                <textarea data-test="order-form-delivery-address" x-model="form.delivery_address" placeholder="Full address" class="order-input" rows="3"></textarea>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Distance</label>
-                                <select x-model="form.delivery_tier" @change="calculateDeliveryFee()" class="order-input">
+                                <select data-test="order-form-delivery-tier" x-model="form.delivery_tier" @change="calculateTotals()" class="order-input">
                                     <option value="">Select distance</option>
                                     @foreach ($settings->orders->deliveryFeeTiers as $index => $tier)
                                     <option value="{{ $index }}">{{ $tier['description'] }} (@money($tier['fee']))</option>
@@ -274,13 +276,13 @@
                                 <label class="block text-xs font-medium mb-1 text-warm-400">
                                     <span x-text="form.delivery_type === 'delivery' ? 'Delivery Date' : 'Pickup Date'"></span> *
                                 </label>
-                                <input type="date" x-model="form.delivery_date" :min="minDate" @change="checkCapacity()" required class="order-input">
+                                <input type="date" data-test="order-form-delivery-date" x-model="form.delivery_date" :min="minDate" @change="checkCapacity()" required class="order-input">
                                 <div x-show="capacityWarning" class="text-amber-400 text-sm mt-1" x-text="capacityWarning"></div>
                                 <div x-show="capacityError" class="text-red-400 text-sm mt-1" x-text="capacityError"></div>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium mb-1 text-warm-400">Preferred Time</label>
-                                <input type="text" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="order-input">
+                                <input type="text" data-test="order-form-delivery-time" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="order-input">
                             </div>
                         </div>
                     </div>
@@ -288,7 +290,7 @@
                     {{-- Notes --}}
                     <div class="pt-6 mt-6 border-t border-warm-700/20">
                         <label class="block text-xs font-medium uppercase tracking-wider mb-2 text-warm-500">Special Instructions</label>
-                        <textarea x-model="form.notes" placeholder="Allergies, decorations, anything..." class="order-input" rows="3"></textarea>
+                        <textarea data-test="order-form-notes" x-model="form.notes" placeholder="Allergies, decorations, anything..." class="order-input" rows="3"></textarea>
                     </div>
 
                     @if (!empty($settings->payment->methodsAccepted))
@@ -315,6 +317,7 @@
 
                     {{-- Submit --}}
                     <button type="submit"
+                            data-test="order-form-submit"
                             :disabled="!canSubmit || isSubmitting"
                             class="w-full mt-6 py-4 rounded-full text-lg font-semibold transition-all duration-300"
                             :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-lg'"
