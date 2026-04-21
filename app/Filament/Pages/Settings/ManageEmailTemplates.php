@@ -51,7 +51,7 @@ class ManageEmailTemplates extends Page
     {
         $customized = EmailTemplate::query()
             ->pluck('email_type')
-            ->map(fn ($type) => $type->value)
+            ->map(fn (EmailTemplateType $type) => $type->value)
             ->toArray();
 
         return collect(EmailTemplateType::cases())

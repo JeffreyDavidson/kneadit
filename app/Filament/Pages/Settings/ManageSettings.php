@@ -135,7 +135,7 @@ class ManageSettings extends Page
         $eventTypes = settings('catering_event_types');
         $decoded = $eventTypes ? json_decode($eventTypes, true) : null;
         $this->catering_event_types = is_array($decoded) && $decoded !== []
-            ? array_values(array_filter($decoded, fn ($v) => is_string($v) && trim($v) !== ''))
+            ? array_values(array_filter($decoded, fn (mixed $v) => is_string($v) && trim($v) !== ''))
             : $defaults['catering_event_types'];
 
         $this->gift_card_preset_amounts = settings('gift_card_preset_amounts', $defaults['gift_card_preset_amounts']);

@@ -4,6 +4,7 @@ namespace App\Queries\Platform;
 
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Platform\Tenant;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +19,7 @@ class TenantAnalyticsQuery
             ->where('created_at', '>=', $startDate)
             ->get(['created_at'])
             ->groupBy(fn (Tenant $tenant) => $tenant->created_at?->format('Y-m') ?? '')
-            ->map(fn ($group) => $group->count());
+            ->map(fn (Collection $group) => $group->count());
 
         $months = collect();
         for ($i = 11; $i >= 0; $i--) {
