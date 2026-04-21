@@ -68,12 +68,12 @@ class OrderSeeder extends Seeder
                 'payment_status' => $paymentStatus,
                 'payment_method' => Arr::random($paymentMethods),
                 'delivery_address' => $isDelivery ? Arr::random($deliveryAddresses) : null,
-                'requested_date' => $requestedDate->toDateString(),
-                'requested_time' => $this->randomBusinessTime(),
+                'delivery_date' => $requestedDate->toDateString(),
+                'delivery_time' => $this->randomBusinessTime(),
                 'notes' => $this->randomOrderNotes(),
                 'subtotal' => 0, // Will be calculated after adding items
                 'delivery_fee' => $isDelivery ? random_int(3, 8) : 0,
-                'discount' => 0,
+                'discount_amount' => 0,
                 'total' => 0, // Will be calculated after adding items
             ]);
 
@@ -94,11 +94,11 @@ class OrderSeeder extends Seeder
                     'special_instructions' => $this->randomSpecialInstructions(),
                 ]);
 
-                $subtotal += $quantity * $unitPrice;
+                $subtotal += $quantity * $unitPrice->dollars();
             }
 
             // Update order totals
-            $total = $subtotal + $order->delivery_fee - $order->discount;
+            $total = $subtotal + $order->delivery_fee->dollars() - $order->discount_amount->dollars();
             $order->update([
                 'subtotal' => $subtotal,
                 'total' => $total,
