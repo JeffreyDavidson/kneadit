@@ -21,9 +21,7 @@
                         autocomplete="email"
                         data-test="forgot-password-form-email"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <x-storefront.form.error name="email" />
                 </label>
 
                 <x-storefront.buttons.primary type="submit" data-test="forgot-password-form-submit">
