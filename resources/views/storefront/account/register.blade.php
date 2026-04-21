@@ -15,9 +15,7 @@
                         autocomplete="name"
                         data-test="register-form-name"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <x-storefront.form.error name="name" />
                 </label>
 
                 <label class="block">
@@ -26,9 +24,7 @@
                         autocomplete="email"
                         data-test="register-form-email"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <x-storefront.form.error name="email" />
                 </label>
 
                 <label class="block">
@@ -37,9 +33,7 @@
                         autocomplete="tel"
                         data-test="register-form-phone"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    @error('phone')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <x-storefront.form.error name="phone" />
                 </label>
 
                 <label class="block">
@@ -49,9 +43,7 @@
                         data-test="register-form-password"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
                     <p class="mt-1 text-xs text-warm-500">At least 8 characters, with letters and numbers.</p>
-                    @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <x-storefront.form.error name="password" />
                 </label>
 
                 <label class="block">
