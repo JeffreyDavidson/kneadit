@@ -47,13 +47,15 @@ class Hero extends Component
         $this->primaryCtaText = $branding->heroPrimaryCtaText;
         $this->secondaryCtaText = $branding->heroSecondaryCtaText;
 
-        $this->customerCount = Cache::flexible('hero_customer_count', [3600, 7200], fn () => Customer::query()->count());
-        $this->avgRating = Cache::flexible('hero_avg_rating', [3600, 7200], function () {
+        $tenantKey = tenant()?->getTenantKey() ?? 'none';
+
+        $this->customerCount = Cache::flexible("hero_customer_count_{$tenantKey}", [3600, 7200], fn () => Customer::query()->count());
+        $this->avgRating = Cache::flexible("hero_avg_rating_{$tenantKey}", [3600, 7200], function () {
             $avg = Review::query()->approved()->avg('rating');
 
             return $avg !== null ? (float) $avg : null;
         });
-        $this->topReview = Cache::flexible('hero_top_review', [3600, 7200], fn () => Review::query()
+        $this->topReview = Cache::flexible("hero_top_review_{$tenantKey}", [3600, 7200], fn () => Review::query()
             ->approved()
             ->where('rating', '>=', 4)
             ->latest()
