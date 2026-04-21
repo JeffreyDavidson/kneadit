@@ -97,10 +97,12 @@
                             @error('message')<p id="message-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>@enderror
                         </div>
 
-                        <button type="submit" class="inline-flex items-center gap-2 px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none" :disabled="submitting" data-test="contact-form-submit">
-                            <span class="spinner" x-show="submitting" x-cloak></span>
-                            <span x-text="submitting ? 'Sending...' : {{ Js::from($content['send_button'] ?? 'Send Message') }}"></span>
-                        </button>
+                        <x-storefront.buttons.async-submit
+                            type="submit"
+                            :idle-text="$content['send_button'] ?? 'Send Message'"
+                            loading-text="Sending..."
+                            class="px-10 font-semibold hover:scale-105 disabled:transform-none"
+                            data-test="contact-form-submit" />
                     </form>
                 </div>
             </div>
