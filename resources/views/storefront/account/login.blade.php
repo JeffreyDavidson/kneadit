@@ -16,17 +16,15 @@
                 @csrf
 
                 <x-storefront.form.field name="email" label="Email">
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
+                    <x-storefront.form.input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
                         autocomplete="email"
-                        data-test="login-form-email"
-                        class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
+                        data-test="login-form-email" />
                 </x-storefront.form.field>
 
                 <x-storefront.form.field name="password" label="Password">
-                    <input type="password" id="password" name="password" required
+                    <x-storefront.form.input type="password" id="password" name="password" required
                         autocomplete="current-password"
-                        data-test="login-form-password"
-                        class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
+                        data-test="login-form-password" />
                 </x-storefront.form.field>
 
                 <div class="flex items-center justify-between">
