@@ -7,6 +7,7 @@ use App\Models\Inventory\Product;
 use App\ValueObjects\Money;
 use Database\Factories\Orders\OrderItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  */
 #[Fillable('order_id', 'product_id', 'quantity', 'unit_price', 'special_instructions')]
+#[UseFactory(OrderItemFactory::class)]
 class OrderItem extends Model
 {
     /** @use HasFactory<OrderItemFactory> */
@@ -63,10 +65,5 @@ class OrderItem extends Model
         return Attribute::make(
             get: fn () => $this->unit_price->multiply($this->quantity),
         );
-    }
-
-    protected static function newFactory(): OrderItemFactory
-    {
-        return OrderItemFactory::new();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models\Engagement;
 
 use Database\Factories\Engagement\SurveyFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @mixin \Eloquent
  */
 #[Fillable('title', 'description', 'questions', 'is_active', 'responses_count')]
+#[UseFactory(SurveyFactory::class)]
 class Survey extends Model
 {
     /** @use HasFactory<SurveyFactory> */
@@ -41,18 +43,5 @@ class Survey extends Model
     public function responses(): HasMany
     {
         return $this->hasMany(SurveyResponse::class);
-    }
-
-    public function resolveRouteBinding(mixed $value, mixed $field = null): ?self
-    {
-        return $this->newQuery()
-            ->where('is_active', true)
-            ->where($field ?? $this->getRouteKeyName(), $value)
-            ->firstOrFail();
-    }
-
-    protected static function newFactory(): SurveyFactory
-    {
-        return SurveyFactory::new();
     }
 }

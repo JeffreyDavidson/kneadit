@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Orders\Order;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,8 @@ use Illuminate\Support\Number;
 
 class WelcomeBannerWidget extends Widget
 {
+    use CachesWidgetData;
+
     protected static ?int $sort = 0;
 
     protected int|string|array $columnSpan = 'full';
@@ -36,20 +39,25 @@ class WelcomeBannerWidget extends Widget
 
     public function getOrdersToday(): int
     {
-        return Order::query()->whereDate('delivery_date', Date::today())->count();
+        return $this->cached('orders_today_' . Date::today()->toDateString(), [300, 600], fn (): int => Order::query()->whereDate('delivery_date', Date::today())->count());
     }
 
     public function getRevenueToday(): string
     {
-        return (string) Number::currency(
+        return $this->cached('revenue_today_' . Date::today()->toDateString(), [300, 600], fn (): string => (string) Number::currency(
             (float) Order::query()->active()
                 ->whereDate('delivery_date', Date::today())
                 ->sum('total'),
-        );
+        ));
     }
 
     public function getPendingOrders(): int
     {
-        return Order::query()->pending()->count();
+        return $this->cached('pending_orders', [300, 600], fn (): int => Order::query()->pending()->count());
+    }
+
+    protected function cachePrefix(): string
+    {
+        return 'welcome_banner';
     }
 }

@@ -11,6 +11,7 @@ use Database\Factories\Financial\GiftCardFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,6 +38,7 @@ use Illuminate\Support\Carbon;
 #[Fillable('code', 'initial_balance', 'current_balance', 'purchaser_name', 'purchaser_email', 'recipient_name', 'recipient_email', 'message', 'is_active', 'expires_at')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(GiftCardQueryBuilder::class)]
+#[UseFactory(GiftCardFactory::class)]
 class GiftCard extends Model
 {
     /** @use HasFactory<GiftCardFactory> */
@@ -87,10 +89,5 @@ class GiftCard extends Model
                 return GiftCardStatus::Active;
             },
         );
-    }
-
-    protected static function newFactory(): GiftCardFactory
-    {
-        return GiftCardFactory::new();
     }
 }

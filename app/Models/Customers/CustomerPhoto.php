@@ -7,6 +7,7 @@ use App\Models\Inventory\Product;
 use Database\Factories\Customers\CustomerPhotoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  */
 #[Fillable('customer_name', 'customer_email', 'caption', 'photo_path', 'product_id', 'is_approved', 'is_featured')]
+#[UseFactory(CustomerPhotoFactory::class)]
 class CustomerPhoto extends Model
 {
     /** @use HasFactory<CustomerPhotoFactory> */
@@ -66,10 +68,5 @@ class CustomerPhoto extends Model
     protected function withCaptionLike(Builder $query, string $term): void
     {
         $query->whereLike('caption', "%{$term}%");
-    }
-
-    protected static function newFactory(): CustomerPhotoFactory
-    {
-        return CustomerPhotoFactory::new();
     }
 }

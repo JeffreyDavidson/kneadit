@@ -14,4 +14,11 @@ class LoyaltyRewardQueryBuilder extends Builder
 
         return $this;
     }
+
+    public function forStorefront(): static
+    {
+        $this->active()->orderBy('points_required');
+
+        return $this;
+    }
 }

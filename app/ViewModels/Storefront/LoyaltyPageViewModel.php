@@ -18,6 +18,7 @@ class LoyaltyPageViewModel
     public static function forCustomer(TenantSettings $settings, Customer $customer, CustomerLoyalty $customerLoyalty, Collection $rewards): self
     {
         $snapshot = $customerLoyalty->snapshot($customer);
+        [$content, $howSteps] = self::loadContent();
 
         return new self(
             settings: $settings,
@@ -25,6 +26,8 @@ class LoyaltyPageViewModel
             balance: $snapshot['balance'],
             history: $snapshot['history'],
             rewards: $rewards,
+            content: $content,
+            howSteps: $howSteps,
         );
     }
 
@@ -33,12 +36,16 @@ class LoyaltyPageViewModel
      */
     public static function notFound(TenantSettings $settings, Collection $rewards): self
     {
+        [$content, $howSteps] = self::loadContent();
+
         return new self(
             settings: $settings,
             customer: null,
             balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
             history: collect(),
             rewards: $rewards,
+            content: $content,
+            howSteps: $howSteps,
             customerNotFound: true,
         );
     }
@@ -48,12 +55,16 @@ class LoyaltyPageViewModel
      */
     public static function empty(TenantSettings $settings, Collection $rewards): self
     {
+        [$content, $howSteps] = self::loadContent();
+
         return new self(
             settings: $settings,
             customer: null,
             balance: new LoyaltyBalance(earned: 0, redeemed: 0, adjusted: 0),
             history: collect(),
             rewards: $rewards,
+            content: $content,
+            howSteps: $howSteps,
         );
     }
 
@@ -79,15 +90,11 @@ class LoyaltyPageViewModel
 
     public readonly bool $hasCustomer;
 
-    /** @var array<string, string> */
-    public readonly array $content;
-
-    /** @var array<int, array<string, string>> */
-    public readonly array $howSteps;
-
     /**
      * @param Collection<int, LoyaltyReward> $rewards
      * @param Collection<int, \App\Models\Engagement\LoyaltyPoint> $history
+     * @param array<string, string> $content
+     * @param array<int, array<string, string>> $howSteps
      */
     public function __construct(
         public readonly TenantSettings $settings,
@@ -95,10 +102,10 @@ class LoyaltyPageViewModel
         LoyaltyBalance $balance,
         public readonly Collection $history,
         public readonly Collection $rewards,
+        public readonly array $content = [],
+        public readonly array $howSteps = [],
         public readonly bool $customerNotFound = false,
     ) {
-        [$this->content, $this->howSteps] = self::loadContent();
-
         $this->totalPoints = $balance->total;
         $this->lifetimeEarned = $balance->earned;
         $this->formattedTotalPoints = number_format($this->totalPoints);

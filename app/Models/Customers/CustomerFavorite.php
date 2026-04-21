@@ -6,6 +6,7 @@ use App\Models\Inventory\Product;
 use Database\Factories\Customers\CustomerFavoriteFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  */
 #[Fillable('customer_email', 'product_id')]
+#[UseFactory(CustomerFavoriteFactory::class)]
 class CustomerFavorite extends Model
 {
     /** @use HasFactory<CustomerFavoriteFactory> */
@@ -48,10 +50,5 @@ class CustomerFavorite extends Model
     protected function forProduct(Builder $query, int $productId): void
     {
         $query->where('product_id', $productId);
-    }
-
-    protected static function newFactory(): CustomerFavoriteFactory
-    {
-        return CustomerFavoriteFactory::new();
     }
 }

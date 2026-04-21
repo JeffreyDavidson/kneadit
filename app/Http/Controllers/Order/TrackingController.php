@@ -23,7 +23,7 @@ class TrackingController extends Controller
             'email' => $request->email,
             'content' => settingsPageContent('order_tracking'),
             'trackableStatuses' => $trackableStatuses,
-            'trackedOrders' => $orders->map(fn (Order $o) => new OrderTrackingPresenter($o, $trackableStatuses)),
+            'trackedOrders' => $orders->map(fn (Order $o) => OrderTrackingPresenter::for($o)),
         ]);
     }
 

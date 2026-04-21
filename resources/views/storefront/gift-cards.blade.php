@@ -73,7 +73,7 @@
                     <div>
                         <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4 text-warm-500">{{ $content['amount_label'] ?? 'Select Amount' }}</p>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-                            <template x-for="preset in {{ json_encode($settings->giftCardPresetAmounts) }}" :key="preset">
+                            <template x-for="preset in {{ json_encode($settings->giftCards->presetAmounts) }}" :key="preset">
                                 <button type="button"
                                     @click="form.initial_balance = preset; customAmount = ''"
                                     :style="form.initial_balance == preset && !customAmount
@@ -182,7 +182,7 @@ function giftCardPage() {
             recipient_name: '',
             recipient_email: '',
             message: '',
-            initial_balance: {{ $settings->giftCardDefaultAmount }},
+            initial_balance: {{ $settings->giftCards->defaultAmount }},
         },
         customAmount: '',
         isPurchasing: false,

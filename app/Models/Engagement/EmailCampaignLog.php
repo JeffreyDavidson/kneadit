@@ -6,6 +6,7 @@ use App\Enums\Marketing\EmailDeliveryStatus;
 use Database\Factories\Engagement\EmailCampaignLogFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,6 +41,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('campaign_id', 'tenant_id', 'email', 'status', 'sent_at', 'opened_at')]
+#[UseFactory(EmailCampaignLogFactory::class)]
 class EmailCampaignLog extends Model
 {
     /** @use HasFactory<EmailCampaignLogFactory> */
@@ -60,10 +62,5 @@ class EmailCampaignLog extends Model
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(EmailCampaign::class, 'campaign_id');
-    }
-
-    protected static function newFactory(): EmailCampaignLogFactory
-    {
-        return EmailCampaignLogFactory::new();
     }
 }

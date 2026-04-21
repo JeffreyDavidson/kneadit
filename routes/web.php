@@ -18,7 +18,10 @@ use App\Http\Controllers\Central\ImpersonateController;
 use App\Http\Controllers\Central\ReferralController;
 use App\Http\Controllers\Central\RootController;
 use App\Http\Controllers\Central\SitemapController;
+use App\Routing\Resolvers\PublishedBlogPostResolver;
 use Illuminate\Support\Facades\Route;
+
+Route::bind('post', resolve(PublishedBlogPostResolver::class));
 
 require __DIR__ . '/billing.php';
 require __DIR__ . '/admin.php';

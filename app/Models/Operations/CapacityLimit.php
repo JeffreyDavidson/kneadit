@@ -4,6 +4,7 @@ namespace App\Models\Operations;
 
 use Database\Factories\Operations\CapacityLimitFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -26,6 +27,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('date', 'specific_date', 'day_of_week', 'max_orders', 'is_blocked', 'notes')]
+#[UseFactory(CapacityLimitFactory::class)]
 class CapacityLimit extends Model
 {
     /** @use HasFactory<CapacityLimitFactory> */
@@ -39,10 +41,5 @@ class CapacityLimit extends Model
             'specific_date' => 'date',
             'is_blocked' => 'boolean',
         ];
-    }
-
-    protected static function newFactory(): CapacityLimitFactory
-    {
-        return CapacityLimitFactory::new();
     }
 }

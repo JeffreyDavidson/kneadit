@@ -422,8 +422,6 @@ function makeLoyaltySettings(array $overrides = []): App\DataTransferObjects\Set
 /**
  * Build a TenantSettings with sensible defaults. Pass overrides for any
  * sub-DTO you need to customize; the rest will use the default builders.
- *
- * @param array<int, int> $giftCardPresetAmounts
  */
 function makeTenantSettings(
     ?App\DataTransferObjects\Settings\StoreInfo $store = null,
@@ -436,8 +434,7 @@ function makeTenantSettings(
     ?App\DataTransferObjects\Settings\PolicySettings $policies = null,
     ?App\DataTransferObjects\Settings\HomepageSettings $homepage = null,
     ?App\DataTransferObjects\Settings\OnboardingSettings $onboarding = null,
-    array $giftCardPresetAmounts = [10, 25, 50, 100],
-    int $giftCardDefaultAmount = 25,
+    ?App\DataTransferObjects\Settings\GiftCardSettings $giftCards = null,
 ): App\Services\Settings\TenantSettings {
     return new App\Services\Settings\TenantSettings(
         store: $store ?? makeStoreInfo(),
@@ -451,7 +448,9 @@ function makeTenantSettings(
         homepage: $homepage ?? makeHomepageSettings(),
         onboarding: $onboarding ?? new App\DataTransferObjects\Settings\OnboardingSettings(completedAt: null),
         webhooks: new App\DataTransferObjects\Settings\WebhookSettings,
-        giftCardPresetAmounts: $giftCardPresetAmounts,
-        giftCardDefaultAmount: $giftCardDefaultAmount,
+        giftCards: $giftCards ?? new App\DataTransferObjects\Settings\GiftCardSettings(
+            presetAmounts: [10, 25, 50, 100],
+            defaultAmount: 25,
+        ),
     );
 }

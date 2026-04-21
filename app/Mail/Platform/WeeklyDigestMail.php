@@ -4,7 +4,6 @@ namespace App\Mail\Platform;
 
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
-use App\Models\Customers\Customer;
 use App\Models\Orders\OrderItem;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -18,7 +17,7 @@ class WeeklyDigestMail extends BaseMailable
     /**
      * @param array<string, mixed> $stats
      * @param Collection<int, OrderItem> $topProducts
-     * @param Collection<int, Customer> $atRiskCustomers
+     * @param Collection<int, array{name: string, days_since_last_order: ?int}> $atRiskCustomers
      */
     public function __construct(
         public array $stats,

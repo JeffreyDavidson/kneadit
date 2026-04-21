@@ -14,7 +14,7 @@ class WeeklyDigestRequested implements ShouldDispatchAfterCommit
     /**
      * @param array<string, mixed> $stats
      * @param Collection<int, mixed> $topProducts
-     * @param Collection<int, mixed> $atRiskCustomers
+     * @param Collection<int, array{name: string, days_since_last_order: ?int}> $atRiskCustomers
      */
     public function __construct(
         public readonly User $user,

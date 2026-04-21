@@ -7,6 +7,7 @@ use App\Enums\Financial\GiftCardTransactionType;
 use App\Models\Orders\Order;
 use Database\Factories\Financial\GiftCardTransactionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,7 @@ use Illuminate\Support\Carbon;
  */
 #[WithoutTimestamps]
 #[Fillable('gift_card_id', 'amount', 'type', 'order_id', 'notes', 'created_at')]
+#[UseFactory(GiftCardTransactionFactory::class)]
 class GiftCardTransaction extends Model
 {
     /** @use HasFactory<GiftCardTransactionFactory> */
@@ -56,10 +58,5 @@ class GiftCardTransaction extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
-    }
-
-    protected static function newFactory(): GiftCardTransactionFactory
-    {
-        return GiftCardTransactionFactory::new();
     }
 }

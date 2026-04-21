@@ -6,6 +6,7 @@ use App\Observers\LogsActivityObserver;
 use Database\Factories\Platform\SettingFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,13 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 #[Fillable('key', 'value')]
 #[ObservedBy(LogsActivityObserver::class)]
+#[UseFactory(SettingFactory::class)]
 class Setting extends Model
 {
     /** @use HasFactory<SettingFactory> */
     use HasFactory;
-
-    protected static function newFactory(): SettingFactory
-    {
-        return SettingFactory::new();
-    }
 }

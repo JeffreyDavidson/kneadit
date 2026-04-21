@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -53,6 +54,7 @@ use Illuminate\Support\Carbon;
 #[Fillable('tenant_id', 'subject', 'body', 'status', 'priority', 'admin_notes', 'resolved_at')]
 #[ObservedBy(SupportTicketObserver::class)]
 #[UseEloquentBuilder(SupportTicketQueryBuilder::class)]
+#[UseFactory(SupportTicketFactory::class)]
 class SupportTicket extends Model
 {
     /** @use HasFactory<SupportTicketFactory> */
@@ -81,10 +83,5 @@ class SupportTicket extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
-    }
-
-    protected static function newFactory(): SupportTicketFactory
-    {
-        return SupportTicketFactory::new();
     }
 }

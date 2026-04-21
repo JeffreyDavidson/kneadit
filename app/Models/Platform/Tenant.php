@@ -5,6 +5,7 @@ namespace App\Models\Platform;
 use App\Enums\Platform\SubscriptionTier;
 use App\Models\Customers\Referral;
 use Database\Factories\Platform\TenantFactory;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,6 +52,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  *
  * @mixin \Eloquent
  */
+#[UseFactory(TenantFactory::class)]
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains;
@@ -121,10 +123,5 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function referral(): HasOne
     {
         return $this->hasOne(Referral::class, 'referred_tenant_id');
-    }
-
-    protected static function newFactory(): TenantFactory
-    {
-        return TenantFactory::new();
     }
 }

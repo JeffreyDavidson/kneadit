@@ -5,6 +5,7 @@ namespace App\Models\Platform;
 use Database\Factories\Platform\PlatformActivityFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,7 @@ use Illuminate\Support\Carbon;
 #[WithoutTimestamps]
 #[Connection('central')]
 #[Fillable('event', 'tenant_id', 'description', 'metadata', 'created_at')]
+#[UseFactory(PlatformActivityFactory::class)]
 class PlatformActivity extends Model
 {
     /** @use HasFactory<PlatformActivityFactory> */
@@ -48,10 +50,5 @@ class PlatformActivity extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class, 'tenant_id');
-    }
-
-    protected static function newFactory(): PlatformActivityFactory
-    {
-        return PlatformActivityFactory::new();
     }
 }

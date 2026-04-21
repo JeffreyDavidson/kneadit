@@ -23,6 +23,7 @@ use Database\Factories\Orders\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -74,6 +75,7 @@ use Illuminate\Support\Carbon;
 #[Fillable('order_number', 'customer_id', 'status', 'payment_status', 'payment_method', 'subtotal', 'delivery_fee', 'discount_amount', 'total', 'paypal_invoice_id', 'delivery_address', 'delivery_type', 'delivery_date', 'delivery_time', 'notes', 'user_id', 'coupon_id', 'gift_card_id', 'gift_card_amount', 'review_request_sent_at', 'stripe_checkout_session_id', 'stripe_payment_intent_id')]
 #[ObservedBy([OrderObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(OrderQueryBuilder::class)]
+#[UseFactory(OrderFactory::class)]
 class Order extends Model
 {
     /** @use HasFactory<OrderFactory> */
@@ -88,11 +90,6 @@ class Order extends Model
         'discount_amount' => 0,
         'gift_card_amount' => 0,
     ];
-
-    public function getRouteKeyName(): string
-    {
-        return 'order_number';
-    }
 
     protected function casts(): array
     {
@@ -198,10 +195,5 @@ class Order extends Model
     public function giftCardTransactions(): HasMany
     {
         return $this->hasMany(GiftCardTransaction::class);
-    }
-
-    protected static function newFactory(): OrderFactory
-    {
-        return OrderFactory::new();
     }
 }

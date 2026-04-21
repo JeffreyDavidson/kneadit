@@ -53,7 +53,7 @@ Route::middleware([
     // Driver view (no auth, shared via link)
     Route::prefix('driver')->name('driver.')->group(function () {
         Route::get('/', DriverDashboardController::class)->name('index');
-        Route::post('{order}/delivered', MarkOrderDeliveredController::class)->name('delivered')->middleware('auth');
+        Route::post('{order:order_number}/delivered', MarkOrderDeliveredController::class)->name('delivered')->middleware('auth');
     });
 
     // Staff invitation routes (outside auth & storefront middleware)

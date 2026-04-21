@@ -8,6 +8,7 @@ use App\Enums\Financial\IncomeSource;
 use Database\Factories\Financial\IncomeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,7 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable('description', 'amount', 'source', 'date', 'notes')]
 #[UseEloquentBuilder(IncomeQueryBuilder::class)]
+#[UseFactory(IncomeFactory::class)]
 class Income extends Model
 {
     /** @use HasFactory<IncomeFactory> */
@@ -48,10 +50,5 @@ class Income extends Model
         return Attribute::make(
             get: fn () => $this->source->getLabel(),
         );
-    }
-
-    protected static function newFactory(): IncomeFactory
-    {
-        return IncomeFactory::new();
     }
 }

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth'])->prefix('admin')->name('admin.')->group(function () {
     // Invoice routes
-    Route::get('orders/{order}/invoice', InvoiceController::class)->name('orders.invoice');
+    Route::get('orders/{order:order_number}/invoice', InvoiceController::class)->name('orders.invoice');
 
     // Printable compliance label for a product
     Route::get('products/{product}/label', PrintProductLabelController::class)->name('products.label');

@@ -29,7 +29,12 @@ use App\Http\Controllers\Storefront\ShowReviewFormController;
 use App\Http\Controllers\Storefront\StoreReviewController;
 use App\Http\Controllers\Storefront\SubmitCateringInquiryController;
 use App\Http\Controllers\Storefront\SurveyController;
+use App\Routing\Resolvers\ActiveSurveyResolver;
+use App\Routing\Resolvers\PublishedTenantBlogPostResolver;
 use Illuminate\Support\Facades\Route;
+
+Route::bind('post', resolve(PublishedTenantBlogPostResolver::class));
+Route::bind('survey', resolve(ActiveSurveyResolver::class));
 
 Route::get('menu', MenuController::class)->name('storefront.menu');
 Route::get('about', AboutController::class)->name('storefront.about');
@@ -59,8 +64,8 @@ Route::get('blog/feed.xml', StorefrontBlogFeedController::class)->name('storefro
 Route::get('blog/{post}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
 
 // Review submission (from email link)
-Route::get('review/{order}', ShowReviewFormController::class)->name('storefront.submitReview');
-Route::post('review/{order}', StoreReviewController::class)->name('storefront.storeReview')->middleware('throttle:10,1');
+Route::get('review/{order:order_number}', ShowReviewFormController::class)->name('storefront.submitReview');
+Route::post('review/{order:order_number}', StoreReviewController::class)->name('storefront.storeReview')->middleware('throttle:10,1');
 
 // Surveys
 Route::get('survey/{survey}', [SurveyController::class, 'show'])->name('storefront.survey');

@@ -11,6 +11,7 @@ use Database\Factories\Financial\ExpenseFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +36,7 @@ use Illuminate\Support\Carbon;
 #[Fillable('description', 'amount', 'category', 'date', 'receipt_image', 'notes', 'business_percentage', 'deductible_amount')]
 #[UseEloquentBuilder(ExpenseQueryBuilder::class)]
 #[ObservedBy(ExpenseObserver::class)]
+#[UseFactory(ExpenseFactory::class)]
 class Expense extends Model
 {
     /** @use HasFactory<ExpenseFactory> */
@@ -57,10 +59,5 @@ class Expense extends Model
         return Attribute::make(
             get: fn () => $this->category->getLabel(),
         );
-    }
-
-    protected static function newFactory(): ExpenseFactory
-    {
-        return ExpenseFactory::new();
     }
 }

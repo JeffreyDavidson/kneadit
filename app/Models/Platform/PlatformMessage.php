@@ -7,6 +7,7 @@ use Database\Factories\Platform\PlatformMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -53,6 +54,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('tenant_id', 'parent_id', 'sender_type', 'subject', 'body', 'is_read')]
+#[UseFactory(PlatformMessageFactory::class)]
 class PlatformMessage extends Model
 {
     /** @use HasFactory<PlatformMessageFactory> */
@@ -117,10 +119,5 @@ class PlatformMessage extends Model
     protected function topLevel(Builder $query): void
     {
         $query->whereNull('parent_id');
-    }
-
-    protected static function newFactory(): PlatformMessageFactory
-    {
-        return PlatformMessageFactory::new();
     }
 }

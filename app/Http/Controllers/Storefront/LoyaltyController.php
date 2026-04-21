@@ -16,18 +16,20 @@ class LoyaltyController extends Controller
     public function store(RedeemLoyaltyRewardRequest $request, TenantSettings $settings, CustomerLoyalty $customerLoyalty): View
     {
         $customer = Customer::query()->where('email', $request->email)->first();
-        $rewards = LoyaltyReward::query()->active()->orderBy('points_required')->get();
+        $rewards = LoyaltyReward::query()->forStorefront()->get();
 
         $vm = $customer
             ? LoyaltyPageViewModel::forCustomer($settings, $customer, $customerLoyalty, $rewards)
             : LoyaltyPageViewModel::notFound($settings, $rewards);
 
-        return view('storefront.loyalty', ['vm' => $vm]);
+        return view('storefront.loyalty', [
+            'vm' => $vm,
+        ]);
     }
 
     public function show(TenantSettings $settings): View
     {
-        $rewards = LoyaltyReward::query()->active()->orderBy('points_required')->get();
+        $rewards = LoyaltyReward::query()->forStorefront()->get();
 
         return view('storefront.loyalty', [
             'vm' => LoyaltyPageViewModel::empty($settings, $rewards),

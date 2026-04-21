@@ -5,6 +5,7 @@ namespace App\Models\Inventory;
 use Database\Factories\Inventory\SeasonalItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\Date;
  * @mixin \Eloquent
  */
 #[Fillable('product_id', 'available_from', 'available_until', 'notes')]
+#[UseFactory(SeasonalItemFactory::class)]
 class SeasonalItem extends Model
 {
     /** @use HasFactory<SeasonalItemFactory> */
@@ -80,10 +82,5 @@ class SeasonalItem extends Model
         return Attribute::make(
             get: fn () => $this->available_from <= Date::today() && $this->available_until >= Date::today(),
         );
-    }
-
-    protected static function newFactory(): SeasonalItemFactory
-    {
-        return SeasonalItemFactory::new();
     }
 }

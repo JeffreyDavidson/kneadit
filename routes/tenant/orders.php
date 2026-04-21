@@ -18,18 +18,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('order', ShowOrderFormController::class)->name('order.create');
 Route::post('order', SubmitOrderController::class)->name('order.store')->middleware('throttle:10,1');
-Route::get('order/confirmation/{order}', ShowOrderConfirmationController::class)->name('order.confirmation');
-Route::get('order/stripe/success/{order}', StripeSuccessController::class)->name('order.stripe.success');
-Route::get('order/stripe/cancel/{order}', StripeCancelController::class)->name('order.stripe.cancel');
+Route::get('order/confirmation/{order:order_number}', ShowOrderConfirmationController::class)->name('order.confirmation');
+Route::get('order/stripe/success/{order:order_number}', StripeSuccessController::class)->name('order.stripe.success');
+Route::get('order/stripe/cancel/{order:order_number}', StripeCancelController::class)->name('order.stripe.cancel');
 Route::get('track', [TrackingController::class, 'show'])->name('order.track');
 Route::post('track', [TrackingController::class, 'store'])->name('order.track.lookup')->middleware('throttle:10,1');
 
 // Order messages
-Route::get('order/{order}/messages', [MessageController::class, 'show'])->name('order.messages');
-Route::post('order/{order}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:10,1');
+Route::get('order/{order:order_number}/messages', [MessageController::class, 'show'])->name('order.messages');
+Route::post('order/{order:order_number}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:10,1');
 
 // Reorder data (AJAX)
-Route::get('order/reorder/{order}', ReorderController::class)->name('order.reorder');
+Route::get('order/reorder/{order:order_number}', ReorderController::class)->name('order.reorder');
 
 // Capacity check (AJAX)
 Route::get('capacity/check/{date}', CapacityController::class)->name('capacity.check');
