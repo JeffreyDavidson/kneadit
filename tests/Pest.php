@@ -90,6 +90,25 @@ function authenticatedVisit(string $url)
     return visit($url, ['storageState' => $state]);
 }
 
+function fixtureId(string $key): int
+{
+    $path = base_path('tests/Browser/.admin-fixture-ids.json');
+
+    if (! file_exists($path)) {
+        throw new RuntimeException(
+            "Fixture IDs not found at {$path}. Generate them with: python3 tests/Browser/Helpers/prepare-admin-session.py",
+        );
+    }
+
+    $ids = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+
+    if (! isset($ids[$key])) {
+        throw new RuntimeException("Fixture ID '{$key}' not found. Regenerate IDs with the prepare-admin-session script.");
+    }
+
+    return (int) $ids[$key];
+}
+
 /*
 |--------------------------------------------------------------------------
 | Central Test Helpers

@@ -36,3 +36,4 @@ test_central.sqlite*
 !.ai/skills/
 tests/Browser/Screenshots
 tests/Browser/.admin-session.json
+tests/Browser/.admin-fixture-ids.json
