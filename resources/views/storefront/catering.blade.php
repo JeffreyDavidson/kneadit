@@ -128,25 +128,25 @@
         </x-storefront.alert>
         @endif
 
-        <form method="POST" action="{{ route('catering.submit') }}" class="rounded-2xl p-8 md:p-10" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);" x-data="{ submitting: false }" @submit="submitting = true">
+        <form method="POST" action="{{ route('catering.submit') }}" class="rounded-2xl p-8 md:p-10" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);" x-data="{ submitting: false }" @submit="submitting = true" data-test="catering-form">
             @csrf
 
             <div class="grid md:grid-cols-2 gap-6">
                 <div>
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Your Name *</label>
-                    <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="input-field">
+                    <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="input-field" data-test="catering-form-customer-name">
                 </div>
                 <div>
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Email *</label>
-                    <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="input-field">
+                    <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="input-field" data-test="catering-form-customer-email">
                 </div>
                 <div>
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Phone</label>
-                    <input type="tel" name="customer_phone" value="{{ old('customer_phone') }}" class="input-field">
+                    <input type="tel" name="customer_phone" value="{{ old('customer_phone') }}" class="input-field" data-test="catering-form-customer-phone">
                 </div>
                 <div>
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Event Type *</label>
-                    <select name="event_type" required class="input-field">
+                    <select name="event_type" required class="input-field" data-test="catering-form-event-type">
                         <option value="">Select event type...</option>
                         @foreach ($settings->catering->eventTypes as $eventType)
                             <option value="{{ $eventType }}" @selected(old('event_type') === $eventType)>{{ $eventType }}</option>
@@ -155,32 +155,32 @@
                 </div>
                 <div>
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Event Date *</label>
-                    <input type="date" name="event_date" value="{{ old('event_date') }}" required min="{{ now()->addDays((int) $settings->catering->leadTimeDays)->format('Y-m-d') }}" class="input-field">
+                    <input type="date" name="event_date" value="{{ old('event_date') }}" required min="{{ now()->addDays((int) $settings->catering->leadTimeDays)->format('Y-m-d') }}" class="input-field" data-test="catering-form-event-date">
                 </div>
                 <div>
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Number of Guests *</label>
-                    <input type="number" name="guest_count" value="{{ old('guest_count') }}" required min="{{ $settings->catering->minimumGuests }}" class="input-field" placeholder="Minimum {{ $settings->catering->minimumGuests }}">
+                    <input type="number" name="guest_count" value="{{ old('guest_count') }}" required min="{{ $settings->catering->minimumGuests }}" class="input-field" placeholder="Minimum {{ $settings->catering->minimumGuests }}" data-test="catering-form-guest-count">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Budget Range</label>
-                    <input type="text" name="budget" value="{{ old('budget') }}" class="input-field" placeholder="e.g. $500 - $1000 (optional)">
+                    <input type="text" name="budget" value="{{ old('budget') }}" class="input-field" placeholder="e.g. $500 - $1000 (optional)" data-test="catering-form-budget">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Tell Us What You'd Like *</label>
-                    <textarea name="details" required rows="4" class="input-field" placeholder="Describe what baked goods you'd like, any themes, special requests...">{{ old('details') }}</textarea>
+                    <textarea name="details" required rows="4" class="input-field" placeholder="Describe what baked goods you'd like, any themes, special requests..." data-test="catering-form-details">{{ old('details') }}</textarea>
                 </div>
                 <div class="md:col-span-2">
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Dietary Requirements</label>
-                    <textarea name="dietary_requirements" rows="2" class="input-field" placeholder="Allergies, gluten-free, vegan, etc.">{{ old('dietary_requirements') }}</textarea>
+                    <textarea name="dietary_requirements" rows="2" class="input-field" placeholder="Allergies, gluten-free, vegan, etc." data-test="catering-form-dietary-requirements">{{ old('dietary_requirements') }}</textarea>
                 </div>
                 <div class="md:col-span-2">
                     <label class="block mb-2 font-semibold text-sm text-warm-700">Venue Address</label>
-                    <textarea name="venue_address" rows="2" class="input-field" placeholder="Where should we deliver?">{{ old('venue_address') }}</textarea>
+                    <textarea name="venue_address" rows="2" class="input-field" placeholder="Where should we deliver?" data-test="catering-form-venue-address">{{ old('venue_address') }}</textarea>
                 </div>
             </div>
 
             <div class="mt-8 text-center">
-                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2" :disabled="submitting">
+                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2" :disabled="submitting" data-test="catering-form-submit">
                     <span class="spinner" x-show="submitting" x-cloak></span>
                     <span x-text="submitting ? 'Submitting...' : {{ Js::from($content['submit_button'] ?? 'Submit Inquiry') }}"></span>
                 </button>
