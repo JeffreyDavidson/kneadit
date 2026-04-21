@@ -102,7 +102,7 @@
         <div class="max-w-4xl w-full" @click.stop>
             <img :src="lightboxSrc" :alt="lightboxCaption || 'Customer photo'" class="w-full max-h-[75vh] object-contain rounded-xl">
             <div class="mt-4 text-center" x-show="lightboxCaption || lightboxAuthor">
-                <p x-show="lightboxCaption" class="italic text-lg text-warm-300" x-text="'\"' + lightboxCaption + '\"'"></p>
+                <p x-show="lightboxCaption" class="italic text-lg text-warm-300" x-text="'&quot;' + lightboxCaption + '&quot;'"></p>
                 <p x-show="lightboxAuthor" class="text-sm mt-2 font-semibold text-warm-500" x-text="'— ' + lightboxAuthor"></p>
             </div>
         </div>
