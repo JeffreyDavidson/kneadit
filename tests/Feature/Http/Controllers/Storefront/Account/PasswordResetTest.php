@@ -67,6 +67,24 @@ test('reset-password rejects an invalid token', function () {
     $response->assertSessionHasErrors(['email']);
 });
 
+test('reset-password GET renders the form with the token and email from the URL', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('account.password.reset', ['token' => 'abc123', 'email' => 'jane@example.com'], false));
+
+    $response->assertOk()
+        ->assertViewIs('storefront.account.reset-password')
+        ->assertViewHas('token', 'abc123')
+        ->assertViewHas('email', 'jane@example.com');
+});
+
+test('reset-password GET defaults email to empty string when not provided', function () {
+    $response = withoutMiddleware(tenantMiddleware())
+        ->get(route('account.password.reset', ['token' => 'abc123'], false));
+
+    $response->assertOk()
+        ->assertViewHas('email', '');
+});
+
 test('notification links to the tenant account reset route', function () {
     $customer = Customer::factory()->withPassword()->create(['email' => 'jane@example.com']);
     $notification = new CustomerPasswordResetNotification('test-token');
