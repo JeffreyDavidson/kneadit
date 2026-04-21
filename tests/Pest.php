@@ -77,11 +77,21 @@ function tenantMiddleware(): array
  */
 function authenticatedVisit(string $url)
 {
-    $sessionPath = base_path('tests/Browser/.admin-session.json');
+    return authenticatedVisitFor($url, 'tests/Browser/.admin-session.json');
+}
+
+function authenticatedCentralVisit(string $url)
+{
+    return authenticatedVisitFor($url, 'tests/Browser/.central-admin-session.json');
+}
+
+function authenticatedVisitFor(string $url, string $relativeSessionPath)
+{
+    $sessionPath = base_path($relativeSessionPath);
 
     if (! file_exists($sessionPath)) {
         throw new RuntimeException(
-            "Admin session not found at {$sessionPath}. Generate it with: python3 tests/Browser/Helpers/prepare-admin-session.py",
+            "Session not found at {$sessionPath}. Generate it with: python3 tests/Browser/Helpers/prepare-admin-session.py",
         );
     }
 
