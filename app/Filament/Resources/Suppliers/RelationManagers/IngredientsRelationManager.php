@@ -79,7 +79,7 @@ class IngredientsRelationManager extends RelationManager
             ->headerActions([
                 AttachAction::make()
                     ->preloadRecordSelect()
-                    ->form(fn (AttachAction $action): array => [
+                    ->schema(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
                         MoneyInput::make('unit_price'),
                         TextInput::make('minimum_order')
