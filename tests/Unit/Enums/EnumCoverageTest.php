@@ -4,13 +4,16 @@ use App\Enums\Content\BlogPostCategory;
 use App\Enums\Content\CaptionStyle;
 use App\Enums\Content\PageType;
 use App\Enums\Customers\ReferralStatus;
+use App\Enums\Engagement\SurveyQuestionType;
 use App\Enums\Financial\CouponTransactionType;
 use App\Enums\Financial\GiftCardTransactionType;
 use App\Enums\Financial\MarginHealth;
 use App\Enums\Financial\PricingPosition;
 use App\Enums\Inventory\StockAdjustmentType;
 use App\Enums\Inventory\StockStatus;
+use App\Enums\Operations\ActivityAction;
 use App\Enums\Orders\SenderType;
+use App\Enums\Platform\DnsVerificationStatus;
 use App\Enums\Storefront\StorefrontTheme;
 
 // ---------------------------------------------------------------------------
@@ -19,7 +22,9 @@ use App\Enums\Storefront\StorefrontTheme;
 
 dataset('simple_label_enums', function () {
     $enums = [
+        ActivityAction::class,
         CaptionStyle::class,
+        DnsVerificationStatus::class,
         PageType::class,
         ReferralStatus::class,
         CouponTransactionType::class,
@@ -28,6 +33,7 @@ dataset('simple_label_enums', function () {
         StockStatus::class,
         SenderType::class,
         StorefrontTheme::class,
+        SurveyQuestionType::class,
     ];
 
     foreach ($enums as $enum) {
@@ -127,3 +133,19 @@ test('BlogPostCategory::options includes case', function (BlogPostCategory $case
 test('BlogPostCategory::getColor returns a non-empty string for every case', function (BlogPostCategory $case) {
     expect($case->getColor())->toBeString()->not->toBeEmpty();
 })->with(BlogPostCategory::cases());
+
+// ---------------------------------------------------------------------------
+// ActivityAction — every case must have a getColor()
+// ---------------------------------------------------------------------------
+
+test('ActivityAction::getColor returns a non-empty string for every case', function (ActivityAction $case) {
+    expect($case->getColor())->toBeString()->not->toBeEmpty();
+})->with(ActivityAction::cases());
+
+// ---------------------------------------------------------------------------
+// DnsVerificationStatus — every case must have a getColor()
+// ---------------------------------------------------------------------------
+
+test('DnsVerificationStatus::getColor returns a non-empty string for every case', function (DnsVerificationStatus $case) {
+    expect($case->getColor())->toBeString()->not->toBeEmpty();
+})->with(DnsVerificationStatus::cases());
