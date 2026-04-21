@@ -182,10 +182,12 @@
                     </select>
                 </div>
 
-                <button type="submit" class="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2" :disabled="submitting" data-test="gallery-upload-form-submit">
-                    <span class="spinner" x-show="submitting" x-cloak></span>
-                    <span x-text="submitting ? 'Uploading...' : 'Submit Photo'"></span>
-                </button>
+                <x-storefront.buttons.async-submit
+                    type="submit"
+                    idle-text="Submit Photo"
+                    loading-text="Uploading..."
+                    class="w-full font-semibold hover:scale-[1.02] justify-center"
+                    data-test="gallery-upload-form-submit" />
             </form>
         </div>
     </div>
