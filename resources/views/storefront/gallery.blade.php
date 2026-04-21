@@ -133,16 +133,16 @@
         @endif
 
         <div class="p-8 md:p-10 rounded-2xl bg-warm-800 border border-warm-700/20">
-            <form action="{{ route('gallery.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{ submitting: false }" @submit="submitting = true">
+            <form action="{{ route('gallery.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{ submitting: false }" @submit="submitting = true" data-test="gallery-upload-form">
                 @csrf
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium mb-2 text-warm-300">Your Name *</label>
-                        <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="storefront-input-dark">
+                        <input type="text" name="customer_name" value="{{ old('customer_name') }}" required class="storefront-input-dark" data-test="gallery-upload-form-customer-name">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2 text-warm-300">Your Email *</label>
-                        <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="storefront-input-dark">
+                        <input type="email" name="customer_email" value="{{ old('customer_email') }}" required class="storefront-input-dark" data-test="gallery-upload-form-customer-email">
                     </div>
                 </div>
 
@@ -152,7 +152,7 @@
                            style="border: 2px dashed rgba(212,146,12,0.25); background: rgba(212,146,12,0.03);"
                            onmouseover="this.style.borderColor='rgba(212,146,12,0.5)';this.style.background='rgba(212,146,12,0.06)'"
                            onmouseout="this.style.borderColor='rgba(212,146,12,0.25)';this.style.background='rgba(212,146,12,0.03)'">
-                        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required class="hidden" @change="fileName = $event.target.files[0]?.name || ''">
+                        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required class="hidden" @change="fileName = $event.target.files[0]?.name || ''" data-test="gallery-upload-form-photo">
                         <div x-show="!fileName">
                             <svg class="w-10 h-10 mx-auto mb-3" style="color: var(--warm-500); opacity: 0.6;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
@@ -169,12 +169,12 @@
 
                 <div>
                     <label class="block text-sm font-medium mb-2 text-warm-300">Caption</label>
-                    <textarea name="caption" rows="3" class="storefront-input-dark">{{ old('caption') }}</textarea>
+                    <textarea name="caption" rows="3" class="storefront-input-dark" data-test="gallery-upload-form-caption">{{ old('caption') }}</textarea>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-2 text-warm-300">Which product? (optional)</label>
-                    <select name="product_id" class="storefront-input-dark">
+                    <select name="product_id" class="storefront-input-dark" data-test="gallery-upload-form-product-id">
                         <option value="">— Select a product —</option>
                         @foreach ($products as $product)
                         <option value="{{ $product->id }}" @selected(old('product_id') == $product->id)>{{ $product->name }}</option>
@@ -182,7 +182,7 @@
                     </select>
                 </div>
 
-                <button type="submit" class="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2" :disabled="submitting">
+                <button type="submit" class="w-full py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-warm-500 text-warm-900 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2" :disabled="submitting" data-test="gallery-upload-form-submit">
                     <span class="spinner" x-show="submitting" x-cloak></span>
                     <span x-text="submitting ? 'Uploading...' : 'Submit Photo'"></span>
                 </button>
