@@ -1,0 +1,33 @@
+<?php
+
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://sweet-surrender.kneadit.test');
+
+// Smoke tests for the main admin resource index pages. Each test loads a
+// pre-authenticated browser context via authenticatedVisit() so it skips the
+// full login dance. Per-test cost ~3s (was ~14s before).
+//
+// Prerequisites:
+//   1. BrowserTestFixtureSeeder has been run against the target tenant.
+//   2. The admin session file exists:
+//      python3 tests/Browser/Helpers/prepare-admin-session.py
+
+/**
+ * @return list<array{0: string, 1: string}>
+ */
+dataset('resource_index_pages', [
+    'products' => ['products', 'Products'],
+    'orders' => ['orders', 'Orders'],
+    'customers' => ['customers', 'Customers'],
+    'categories' => ['categories', 'Categories'],
+    'blog-posts' => ['blog-posts', 'Blog Posts'],
+    'waitlist-entries' => ['waitlist-entries', 'Waitlist Entries'],
+    'catering-inquiries' => ['catering-inquiries', 'Catering Inquiries'],
+    'contact-messages' => ['contact-messages', 'Contact Messages'],
+    'surveys' => ['surveys', 'Surveys'],
+]);
+
+test('admin resource index page renders cleanly', function (string $slug, string $heading) use ($storefrontUrl) {
+    authenticatedVisit("{$storefrontUrl}/admin/{$slug}")
+        ->assertSee($heading)
+        ->assertNoJavaScriptErrors();
+})->with('resource_index_pages');

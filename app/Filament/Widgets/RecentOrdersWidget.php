@@ -25,7 +25,7 @@ class RecentOrdersWidget extends BaseWidget
             ->columns([
                 TextColumn::make('order_number')
                     ->label('Order')
-                    ->url(fn (Order $record) => route('filament.admin.resources.orders.edit', $record))
+                    ->url(fn (Order $record) => route('filament.admin.resources.orders.view', $record))
                     ->color('primary'),
                 TextColumn::make('customer.name')
                     ->label('Customer')

@@ -22,9 +22,9 @@ class OrderFunnelWidget extends Widget
     {
         return $this->cached('main', [60, 120], function (): array {
             $counts = Order::query()
-                ->selectRaw('status, COUNT(*) as total')
+                ->selectRaw('status, COUNT(*) as order_count')
                 ->groupBy('status')
-                ->pluck('total', 'status');
+                ->pluck('order_count', 'status');
 
             return array_map(
                 fn (OrderStatus $status): array => $status->toFunnelStage((int) ($counts[$status->value] ?? 0)),

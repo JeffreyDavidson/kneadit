@@ -62,6 +62,55 @@ function tenantMiddleware(): array
 
 /*
 |--------------------------------------------------------------------------
+| Browser Test Helpers
+|--------------------------------------------------------------------------
+| authenticatedVisit() pipes a pre-captured Playwright storage state into
+| visit() so admin browser tests skip the full login dance. Cuts per-test
+| cost from ~14s (fill + click + two long waits + navigate) to ~3s.
+|
+| Regenerate the state with:
+|   python3 tests/Browser/Helpers/prepare-admin-session.py
+*/
+
+/**
+ * @return Pest\Browser\Api\PendingAwaitablePage
+ */
+function authenticatedVisit(string $url)
+{
+    $sessionPath = base_path('tests/Browser/.admin-session.json');
+
+    if (! file_exists($sessionPath)) {
+        throw new RuntimeException(
+            "Admin session not found at {$sessionPath}. Generate it with: python3 tests/Browser/Helpers/prepare-admin-session.py",
+        );
+    }
+
+    $state = json_decode((string) file_get_contents($sessionPath), true, flags: JSON_THROW_ON_ERROR);
+
+    return visit($url, ['storageState' => $state]);
+}
+
+function fixtureId(string $key): int
+{
+    $path = base_path('tests/Browser/.admin-fixture-ids.json');
+
+    if (! file_exists($path)) {
+        throw new RuntimeException(
+            "Fixture IDs not found at {$path}. Generate them with: python3 tests/Browser/Helpers/prepare-admin-session.py",
+        );
+    }
+
+    $ids = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+
+    if (! isset($ids[$key])) {
+        throw new RuntimeException("Fixture ID '{$key}' not found. Regenerate IDs with the prepare-admin-session script.");
+    }
+
+    return (int) $ids[$key];
+}
+
+/*
+|--------------------------------------------------------------------------
 | Central Test Helpers
 |--------------------------------------------------------------------------
 */
