@@ -1,0 +1,36 @@
+<?php
+
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://sweet-surrender.kneadit.test');
+
+// Smoke tests for admin custom (non-resource) pages. Each test loads a
+// pre-authenticated browser context via authenticatedVisit() and asserts
+// the page's h1 heading is visible with no JavaScript errors.
+//
+// quick-order is excluded — it has pre-existing JS errors ("Uncaught
+// [object Object]") that need a separate investigation.
+//
+// Prerequisites (same as ResourceIndexPagesTest):
+//   1. BrowserTestFixtureSeeder has been run against the target tenant.
+//   2. python3 tests/Browser/Helpers/prepare-admin-session.py
+
+/**
+ * @return list<array{0: string, 1: string}>
+ */
+dataset('admin_custom_pages', [
+    'manage-settings' => ['manage-settings', 'Manage Settings'],
+    'referral-program' => ['referral-program', 'Referral Program'],
+    'manage-page-content' => ['manage-page-content', 'Page Content'],
+    'custom-domain' => ['custom-domain', 'Custom Domain'],
+    'announcement-banner' => ['announcement-banner', 'Announcement Banner'],
+    'homepage-builder' => ['homepage-builder', 'Homepage Builder'],
+    'staff-management' => ['staff-management', 'Team Management'],
+    'activity-log-page' => ['activity-log-page', 'Activity Log Page'],
+    'baking-sheet' => ['baking-sheet', 'Baking Sheet'],
+    'label-generator' => ['label-generator', 'Label Generator'],
+]);
+
+test('admin custom page renders cleanly', function (string $slug, string $heading) use ($storefrontUrl) {
+    authenticatedVisit("{$storefrontUrl}/admin/{$slug}")
+        ->assertSee($heading)
+        ->assertNoJavaScriptErrors();
+})->with('admin_custom_pages');
