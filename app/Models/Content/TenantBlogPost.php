@@ -47,19 +47,6 @@ class TenantBlogPost extends Model
         ];
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
-    public function resolveRouteBinding(mixed $value, mixed $field = null): ?self
-    {
-        return $this->newQuery()
-            ->published()
-            ->where($field ?? $this->getRouteKeyName(), $value)
-            ->firstOrFail();
-    }
-
     /** @param Builder<TenantBlogPost> $query */
     #[Scope]
     protected function published(Builder $query): void

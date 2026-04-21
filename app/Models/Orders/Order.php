@@ -89,11 +89,6 @@ class Order extends Model
         'gift_card_amount' => 0,
     ];
 
-    public function getRouteKeyName(): string
-    {
-        return 'order_number';
-    }
-
     protected function casts(): array
     {
         return [
