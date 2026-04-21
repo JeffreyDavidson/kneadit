@@ -15,23 +15,19 @@
             <form method="POST" action="{{ route('account.login') }}" class="space-y-5" data-test="login-form">
                 @csrf
 
-                <label class="block">
-                    <span class="text-sm font-medium text-warm-800">Email</span>
-                    <input type="email" name="email" value="{{ old('email') }}" required autofocus
+                <x-storefront.form.field name="email" label="Email">
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
                         autocomplete="email"
                         data-test="login-form-email"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    <x-storefront.form.error name="email" />
-                </label>
+                </x-storefront.form.field>
 
-                <label class="block">
-                    <span class="text-sm font-medium text-warm-800">Password</span>
-                    <input type="password" name="password" required
+                <x-storefront.form.field name="password" label="Password">
+                    <input type="password" id="password" name="password" required
                         autocomplete="current-password"
                         data-test="login-form-password"
                         class="mt-1 w-full rounded-lg border border-warm-300 px-3 py-2 text-warm-900 outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-500/20">
-                    <x-storefront.form.error name="password" />
-                </label>
+                </x-storefront.form.field>
 
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-2 text-sm text-warm-700">
