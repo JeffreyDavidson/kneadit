@@ -55,11 +55,15 @@ class Hero extends Component
 
             return $avg !== null ? (float) $avg : null;
         });
-        $this->topReview = Cache::flexible("hero_top_review_{$tenantKey}", [3600, 7200], fn () => Review::query()
+        // Not cached — Eloquent models with complex casts/relations don't roundtrip
+        // cleanly through serialize/unserialize. On cache hit PHP produces
+        // __PHP_Incomplete_Class, which then fails the ?Review type check on this
+        // property. Same class of bug as StatsOverview (#213). The query is cheap.
+        $this->topReview = Review::query()
             ->approved()
             ->where('rating', '>=', 4)
             ->latest()
-            ->first());
+            ->first();
     }
 
     public function render(): View
