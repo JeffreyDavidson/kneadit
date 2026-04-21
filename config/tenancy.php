@@ -42,7 +42,7 @@ return [
      */
     'bootstrappers' => [
         DatabaseTenancyBootstrapper::class,
-        CacheTenancyBootstrapper::class,
+        // CacheTenancyBootstrapper::class, // Disabled — wraps every cache call in tags(), which the database/file/array drivers don't support. Tenant scoping is handled via per-call manual key prefixing with tenant()->getTenantKey() instead.
         // Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class, // Disabled — causes "Undefined array key local" on central admin tenant queries
         QueueTenancyBootstrapper::class,
         // Stancl\Tenancy\Bootstrappers\RedisTenancyBootstrapper::class, // Note: phpredis is needed
