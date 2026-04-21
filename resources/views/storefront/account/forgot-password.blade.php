@@ -26,11 +26,9 @@
                     @enderror
                 </label>
 
-                <button type="submit"
-                    data-test="forgot-password-form-submit"
-                    class="w-full rounded-full bg-warm-800 text-white font-semibold py-3 hover:bg-warm-900 transition">
+                <x-storefront.buttons.primary type="submit" data-test="forgot-password-form-submit">
                     Send reset link
-                </button>
+                </x-storefront.buttons.primary>
             </form>
 
             <p class="mt-6 text-center text-sm text-warm-600">
