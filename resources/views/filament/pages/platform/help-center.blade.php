@@ -61,7 +61,7 @@
                 <h2 class="text-white text-3xl font-extrabold m-0 mb-1.5 tracking-tight">How can we help?</h2>
                 <p class="text-white/55 m-0 mb-7 text-[0.9rem]">Search our knowledge base or browse topics below</p>
                 <div class="relative max-w-[520px] mx-auto">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 absolute left-4 top-[15px] text-brand-500 pointer-events-none"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
+                    <x-heroicon-o-magnifying-glass class="w-5 h-5 absolute left-4 top-[15px] text-brand-500 pointer-events-none" />
                     <input x-model="search" @input="openTopic = null" type="text" placeholder="Search for articles..."
                         class="w-full pl-12 pr-5 py-[15px] rounded-xl border-0 bg-white text-[0.95rem] text-brand-900 outline-none shadow-xl" />
                 </div>
@@ -103,7 +103,7 @@
                                 <p class="m-0 text-sm font-semibold text-brand-900">{{ $pa['title'] }}</p>
                                 <p class="mt-0.5 m-0 text-xs text-brand-500">{{ $pa['topic'] }}</p>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-brand-400 ml-auto flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                            <x-heroicon-o-chevron-right class="w-4 h-4 text-brand-400 ml-auto flex-shrink-0" />
                         </div>
                     @endforeach
                 </div>
@@ -123,7 +123,7 @@
                         <ul class="list-none p-0 m-0">
                             @foreach (array_slice($topic['articles'], 0, 2) as $article)
                                 <li class="text-[0.8rem] text-brand-700 py-1 flex items-center gap-1.5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3 h-3 text-brand-400 flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                                    <x-heroicon-o-chevron-right class="w-3 h-3 text-brand-400 flex-shrink-0" stroke-width="2" />
                                     {{ $article['title'] }}
                                 </li>
                             @endforeach
@@ -141,7 +141,7 @@
             <div class="flex items-center gap-3.5 mb-7 pb-5 border-b border-brand-200/30">
                 <button @click="openTopic = null"
                     class="inline-flex items-center justify-center w-[34px] h-[34px] rounded-lg bg-transparent border border-brand-200/40 cursor-pointer transition-colors hover:bg-brand-200/10 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-brand-600"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
+                    <x-heroicon-o-arrow-left class="w-4 h-4 text-brand-600" stroke-width="2" />
                 </button>
                 @foreach ($topics as $i => $topic)
                     @php $color = $topicColors[$topic['title']] ?? '#8B5E3C'; @endphp
@@ -177,7 +177,7 @@
             </div>
             <a href="mailto:support@getkneadit.app"
                 class="inline-flex items-center gap-2 bg-brand-900 hover:bg-brand-700 text-white font-semibold no-underline px-6 py-2.5 rounded-xl text-sm transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-[18px] h-[18px]"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+                <x-heroicon-o-envelope class="w-[18px] h-[18px]" />
                 Contact Support
             </a>
         </div>
