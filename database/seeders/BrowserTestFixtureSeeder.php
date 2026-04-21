@@ -9,6 +9,7 @@ use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
+use App\Services\Settings\SettingsManager;
 use Illuminate\Database\Seeder;
 use RuntimeException;
 
@@ -36,8 +37,14 @@ class BrowserTestFixtureSeeder extends Seeder
         }
 
         $this->seedAdminUser();
+        $this->skipOnboarding();
         $this->seedReviewableOrder();
         $this->seedActiveSurvey();
+    }
+
+    private function skipOnboarding(): void
+    {
+        app(SettingsManager::class)->set('onboarding_completed_at', now()->toISOString());
     }
 
     private function seedAdminUser(): void
