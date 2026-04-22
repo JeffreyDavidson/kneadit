@@ -126,3 +126,25 @@ test('tracking requires email', function () {
 
     $response->assertSessionHasErrors('email');
 });
+
+test('per-order links reference order_number, not the integer id (route binds by order_number)', function () {
+    $user = User::factory()->owner()->create();
+    $customer = Customer::factory()->create(['email' => 'jane@example.com']);
+
+    $order = Order::factory()
+        ->for($customer)
+        ->recycle($user)
+        ->confirmed()
+        ->create(['order_number' => 'KN260308BIND']);
+
+    $response = withoutMiddleware(tenantMiddleware())
+        ->post(route('order.track.lookup', absolute: false), [
+            'email' => 'jane@example.com',
+        ]);
+
+    $response->assertOk()
+        ->assertSee("?reorder={$order->order_number}", false)
+        ->assertSee("loadMessages('{$order->order_number}')", false)
+        ->assertDontSee("?reorder={$order->id}\"", false)
+        ->assertDontSee("loadMessages({$order->id})", false);
+});
