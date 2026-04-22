@@ -188,18 +188,18 @@
                                     <span class="block w-6 h-px bg-warm-500 opacity-50"></span>
                                     <span class="text-xs uppercase tracking-[0.2em] font-semibold text-warm-500">{{ $content['messages_label'] ?? 'Messages' }}</span>
                                 </div>
-                                <div id="messages-{{ $tracked->order->id }}" class="space-y-3 mb-4 max-h-64 overflow-y-auto rounded-xl p-4 bg-warm-700/5">
+                                <div id="messages-{{ $tracked->order->order_number }}" class="space-y-3 mb-4 max-h-64 overflow-y-auto rounded-xl p-4 bg-warm-700/5">
                                     <p class="text-sm italic text-warm-600">Loading messages...</p>
                                 </div>
-                                <form onsubmit="sendOrderMessage(event, {{ $tracked->order->id }})" class="flex gap-2">
-                                    <input type="text" id="msg-input-{{ $tracked->order->id }}" placeholder="Type a message..." class="track-msg-input flex-1" required>
+                                <form onsubmit="sendOrderMessage(event, '{{ $tracked->order->order_number }}')" class="flex gap-2">
+                                    <input type="text" id="msg-input-{{ $tracked->order->order_number }}" placeholder="Type a message..." class="track-msg-input flex-1" required>
                                     <x-storefront.button type="submit" size="sm">Send</x-storefront.button>
                                 </form>
                             </div>
 
                             {{-- Reorder --}}
                             <div class="pt-6 flex justify-center border-t border-warm-700/15">
-                                <a href="{{ route('order.create') }}?reorder={{ $tracked->order->id }}"
+                                <a href="{{ route('order.create') }}?reorder={{ $tracked->order->order_number }}"
                                    class="inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 bg-warm-500/10 text-warm-400 border border-warm-500/25 hover:bg-warm-500 hover:text-warm-900 hover:border-warm-500">
                                     <x-heroicon-o-arrow-path class="w-4 h-4" stroke-width="2" />
                                     {{ $content['reorder_button'] ?? 'Order Again' }}
@@ -311,7 +311,7 @@ function sendOrderMessage(e, orderId) {
 }
 
 @foreach ($orders as $order)
-loadMessages({{ $order->id }});
+loadMessages('{{ $order->order_number }}');
 @endforeach
 </script>
 @endif

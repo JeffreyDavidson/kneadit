@@ -14,23 +14,14 @@ use App\DataTransferObjects\Settings\PolicySettings;
 use App\DataTransferObjects\Settings\StoreInfo;
 use App\DataTransferObjects\Settings\WebhookSettings;
 use App\Enums\Platform\SubscriptionTier;
-use App\Enums\Staff\UserRole;
-use App\Models\Staff\User;
-use App\Services\Audit\ActorContext;
 use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
 use Filament\Support\Facades\FilamentView;
-use Illuminate\Auth\Events\Authenticated;
-use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pennant\Feature;
@@ -40,8 +31,22 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * @var array<class-string, string>
      */
+    private const TENANT_SETTING_DTOS = [
+        StoreInfo::class => 'store',
+        BrandingSettings::class => 'branding',
+        OrderSettings::class => 'orders',
+        PaymentSettings::class => 'payment',
+        LoyaltySettings::class => 'loyalty',
+        CateringSettings::class => 'catering',
+        EngagementSettings::class => 'engagement',
+        PolicySettings::class => 'policies',
+        WebhookSettings::class => 'webhooks',
+        HomepageSettings::class => 'homepage',
+        OnboardingSettings::class => 'onboarding',
+    ];
+
     public function register(): void
     {
         $this->app->singleton(SettingsManager::class);
@@ -49,79 +54,23 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(TenantSettingsRegistry::class);
         $this->app->singleton(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
 
-        // Each sub-DTO is directly injectable for focused services
-        $this->app->bind(StoreInfo::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->store());
-        $this->app->bind(BrandingSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->branding());
-        $this->app->bind(OrderSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->orders());
-        $this->app->bind(PaymentSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->payment());
-        $this->app->bind(LoyaltySettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->loyalty());
-        $this->app->bind(CateringSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->catering());
-        $this->app->bind(EngagementSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->engagement());
-        $this->app->bind(PolicySettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->policies());
-        $this->app->bind(WebhookSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->webhooks());
-        $this->app->bind(HomepageSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->homepage());
-        $this->app->bind(OnboardingSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->onboarding());
+        foreach (self::TENANT_SETTING_DTOS as $dto => $method) {
+            $this->app->bind($dto, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->{$method}());
+        }
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Model::preventLazyLoading(! app()->isProduction());
 
-        Event::listen(Authenticated::class, function (Authenticated $event): void {
-            if ($event->user instanceof User) {
-                ActorContext::set($event->user);
-            }
-        });
-
-        // Send unauthenticated storefront customers to their own login page instead of
-        // the platform /login (which is for bakery staff).
-        Authenticate::redirectUsing(
-            fn (Request $request): string => $request->is('account*') ? route('account.login.show') : route('login'),
-        );
-
-        Blade::directive('money', fn (string $expression) => "<?php \$__money = {$expression}; echo \$__money instanceof \\App\\ValueObjects\\Money ? \$__money->formatted() : '\$' . number_format((float) \$__money, 2); ?>");
-
-        Blade::directive('number', fn (string $expression) => "<?php \$__numberArgs = [{$expression}]; echo \\Illuminate\\Support\\Number::format((float) \$__numberArgs[0], (int) (\$__numberArgs[1] ?? 0)); ?>");
-
-        Blade::directive('time', fn (string $expression) => "<?php echo \\Carbon\\Carbon::createFromFormat('H:i', {$expression})->format('g:i A'); ?>");
-
         RateLimiter::for('webhooks', fn () => Limit::perMinute(30));
-
-        Gate::define('platform-admin', fn (User $user): bool => $user->role === UserRole::PlatformAdmin);
-
-        Gate::define('has-plan', fn (User $user, SubscriptionTier $tier): bool => SubscriptionTier::resolve($user)?->meetsRequirement($tier) ?? false);
 
         Feature::define('growth-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Growth) ?? false);
         Feature::define('pro-features', fn (): bool => tenant()?->plan?->meetsRequirement(SubscriptionTier::Pro) ?? false);
+
         FilamentView::registerRenderHook(
             'panels::body.end',
-            fn () => Blade::render(<<<'HTML'
-                <script>
-                    document.addEventListener("livewire:navigating", () => {
-                        const sidebar = document.querySelector(".fi-sidebar-nav");
-                        if (sidebar) window.__sidebarScroll = sidebar.scrollTop;
-                    });
-                    document.addEventListener("livewire:navigated", () => {
-                        const sidebar = document.querySelector(".fi-sidebar-nav");
-                        if (sidebar && window.__sidebarScroll) sidebar.scrollTop = window.__sidebarScroll;
-                    });
-                    // Disable 1Password/autofill on all Filament form fields
-                    function disable1Password() {
-                        document.querySelectorAll('.fi-fo-field-wrp input, .fi-fo-field-wrp textarea, .fi-fo-field-wrp select').forEach(el => {
-                            el.setAttribute('autocomplete', 'off');
-                            el.setAttribute('data-1p-ignore', '');
-                            el.setAttribute('data-lpignore', 'true');
-                            el.setAttribute('data-form-type', 'other');
-                        });
-                    }
-                    document.addEventListener('livewire:navigated', disable1Password);
-                    document.addEventListener('livewire:morph', disable1Password);
-                    setTimeout(disable1Password, 500);
-                </script>
-            HTML),
+            fn (): string => view('filament.render-hooks.sidebar-and-autofill')->render(),
         );
 
         // Add tenancy middleware to Livewire's update endpoint
