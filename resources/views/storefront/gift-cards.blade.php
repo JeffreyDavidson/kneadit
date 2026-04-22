@@ -40,9 +40,9 @@
                     <x-heroicon-o-document-duplicate class="w-4 h-4" stroke-width="2" />
                     <span x-text="copied ? 'Copied!' : 'Copy Code'"></span>
                 </button>
-                <button @click="purchasedCard = null" class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-500 text-warm-900">
+                <x-storefront.button size="md" @click="purchasedCard = null">
                     Purchase Another
-                </button>
+                </x-storefront.button>
             </div>
         </div>
     </div>

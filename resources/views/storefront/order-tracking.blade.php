@@ -32,9 +32,9 @@
             <div class="flex gap-3">
                 <input type="email" name="email" id="email" class="track-input flex-1"
                        placeholder="you@example.com" value="{{ old('email', $email ?? '') }}" required>
-                <button type="submit" class="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl flex-shrink-0 bg-warm-500 text-warm-900 font-display">
+                <x-storefront.button type="submit" size="md" fontDisplay class="flex-shrink-0">
                     {{ $content['lookup_button'] ?? 'Look Up' }}
-                </button>
+                </x-storefront.button>
             </div>
             @error('email')
                 <p class="text-red-500 text-sm mt-3 text-center">{{ $message }}</p>
@@ -192,7 +192,7 @@
                                 </div>
                                 <form onsubmit="sendOrderMessage(event, {{ $tracked->order->id }})" class="flex gap-2">
                                     <input type="text" id="msg-input-{{ $tracked->order->id }}" placeholder="Type a message..." class="track-msg-input flex-1" required>
-                                    <button type="submit" class="px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 hover:scale-105 bg-warm-500 text-warm-900">Send</button>
+                                    <x-storefront.button type="submit" size="sm">Send</x-storefront.button>
                                 </form>
                             </div>
 

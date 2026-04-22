@@ -12,9 +12,9 @@
             </div>
             <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up text-warm-100 [animation-delay:0.5s]">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
             <p class="text-lg mb-8 hero-fade-up text-warm-400 [animation-delay:0.7s]">{{ $content['success_description'] ?? 'Your review has been submitted and will appear once approved. We appreciate your feedback!' }}</p>
-            <a href="{{ route('storefront.menu') }}" class="inline-block px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 hero-fade-up bg-warm-500 text-warm-900 [animation-delay:0.9s]">
+            <x-storefront.button :href="route('storefront.menu')" size="md" class="hero-fade-up [animation-delay:0.9s]">
                 Back to Menu
-            </a>
+            </x-storefront.button>
         </div>
     </div>
 </x-storefront.hero-section>
@@ -104,9 +104,9 @@
             </div>
 
             {{-- Submit --}}
-            <button type="submit" data-test="review-submission-form-submit" class="w-full py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-warm-500 text-warm-900 font-display">
+            <x-storefront.button type="submit" size="lg" fullWidth fontDisplay data-test="review-submission-form-submit">
                 {{ $content['submit_button'] ?? 'Submit Review' }}
-            </button>
+            </x-storefront.button>
         </form>
     </div>
 </section>
