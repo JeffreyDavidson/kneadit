@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Platform\ChangelogService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(fn () => setUpCentralTest());
@@ -93,6 +94,31 @@ test('parses empty body into empty items array', function () {
     $entries = resolve(ChangelogService::class)->entries();
 
     expect($entries->first()['items'])->toBe([]);
+});
+
+test('cached payload survives unserialize with allowed_classes=false (the prod cache config)', function () {
+    Http::fake([
+        'api.github.com/repos/*' => Http::response([
+            [
+                'tag_name' => 'v1.0.0',
+                'name' => 'Release',
+                'published_at' => '2026-01-01T00:00:00Z',
+                'draft' => false,
+                'body' => '- something',
+            ],
+        ]),
+    ]);
+
+    Cache::forget('changelog_entries');
+    resolve(ChangelogService::class)->entries();
+
+    // The cache stores either the raw payload or Cache::flexible's wrapper. Whichever
+    // it is, it must serialize to a class-free shape that unserialize can rehydrate
+    // when allowed_classes is false (config('cache.serializable_classes') === false).
+    $cached = Cache::get('changelog_entries');
+    $rehydrated = unserialize(serialize($cached), ['allowed_classes' => false]);
+
+    expect($rehydrated)->not->toBeInstanceOf(__PHP_Incomplete_Class::class);
 });
 
 test('parses body with asterisk bullet points', function () {
