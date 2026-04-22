@@ -5,7 +5,6 @@ namespace App\Mail\Platform;
 use App\Mail\BaseMailable;
 use App\Mail\Concerns\BakerBranded;
 use App\Models\Orders\OrderItem;
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Collection;
@@ -42,11 +41,5 @@ class WeeklyDigestMail extends BaseMailable
         return new Content(
             html: 'emails.platform.weekly-digest',
         );
-    }
-
-    /** @return array<int, Attachment> */
-    public function attachments(): array
-    {
-        return [];
     }
 }
