@@ -2,13 +2,13 @@
 
 namespace App\Models\Platform;
 
+use App\Builders\Platform\PlatformMessageQueryBuilder;
 use App\Enums\Platform\PlatformSenderType;
 use Database\Factories\Platform\PlatformMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,13 +32,9 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $replies_count
  * @property-read Tenant $tenant
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage fromAdmin()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage fromTenant()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage topLevel()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage unread()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereId($value)
@@ -54,6 +50,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('tenant_id', 'parent_id', 'sender_type', 'subject', 'body', 'is_read')]
+#[UseEloquentBuilder(PlatformMessageQueryBuilder::class)]
 #[UseFactory(PlatformMessageFactory::class)]
 class PlatformMessage extends Model
 {
@@ -91,33 +88,5 @@ class PlatformMessage extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
-    }
-
-    /** @param Builder<PlatformMessage> $query */
-    #[Scope]
-    protected function unread(Builder $query): void
-    {
-        $query->where('is_read', false);
-    }
-
-    /** @param Builder<PlatformMessage> $query */
-    #[Scope]
-    protected function fromAdmin(Builder $query): void
-    {
-        $query->where('sender_type', PlatformSenderType::Admin);
-    }
-
-    /** @param Builder<PlatformMessage> $query */
-    #[Scope]
-    protected function fromTenant(Builder $query): void
-    {
-        $query->where('sender_type', PlatformSenderType::Tenant);
-    }
-
-    /** @param Builder<PlatformMessage> $query */
-    #[Scope]
-    protected function topLevel(Builder $query): void
-    {
-        $query->whereNull('parent_id');
     }
 }

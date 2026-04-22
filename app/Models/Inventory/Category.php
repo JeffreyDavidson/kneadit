@@ -2,13 +2,13 @@
 
 namespace App\Models\Inventory;
 
+use App\Builders\Inventory\CategoryQueryBuilder;
 use App\Observers\LogsActivityObserver;
 use Database\Factories\Inventory\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 #[Fillable('name', 'slug', 'description', 'is_active', 'sort_order')]
 #[ObservedBy(LogsActivityObserver::class)]
+#[UseEloquentBuilder(CategoryQueryBuilder::class)]
 #[UseFactory(CategoryFactory::class)]
 class Category extends Model
 {
@@ -46,30 +47,5 @@ class Category extends Model
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
-    }
-
-    /** @param Builder<Category> $query */
-    #[Scope]
-    protected function active(Builder $query): void
-    {
-        $query->where('is_active', true);
-    }
-
-    /** @param Builder<Category> $query */
-    #[Scope]
-    protected function withActiveProducts(Builder $query): void
-    {
-        $query->with(['products' => function (HasMany $q): void {
-            $q->where('is_active', true)->orderBy('name');
-        }]);
-    }
-
-    /** @param Builder<Category> $query */
-    #[Scope]
-    protected function withFeaturedProducts(Builder $query): void
-    {
-        $query->with(['products' => function (HasMany $q): void {
-            $q->where('is_active', true)->where('is_featured', true);
-        }]);
     }
 }

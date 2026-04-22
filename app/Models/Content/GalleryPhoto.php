@@ -2,12 +2,12 @@
 
 namespace App\Models\Content;
 
+use App\Builders\Content\GalleryPhotoQueryBuilder;
 use App\Enums\Content\GalleryCategory;
 use Database\Factories\Content\GalleryPhotoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,13 +16,12 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto ordered()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|GalleryPhoto visible()
  *
  * @mixin \Eloquent
  */
 #[Fillable('title', 'image_path', 'category', 'sort_order', 'is_visible')]
+#[UseEloquentBuilder(GalleryPhotoQueryBuilder::class)]
 #[UseFactory(GalleryPhotoFactory::class)]
 class GalleryPhoto extends Model
 {
@@ -36,19 +35,5 @@ class GalleryPhoto extends Model
             'sort_order' => 'integer',
             'category' => GalleryCategory::class,
         ];
-    }
-
-    /** @param Builder<GalleryPhoto> $query */
-    #[Scope]
-    protected function visible(Builder $query): void
-    {
-        $query->where('is_visible', true);
-    }
-
-    /** @param Builder<GalleryPhoto> $query */
-    #[Scope]
-    protected function ordered(Builder $query): void
-    {
-        $query->orderBy('sort_order');
     }
 }
