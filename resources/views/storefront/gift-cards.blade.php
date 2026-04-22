@@ -36,13 +36,13 @@
             <p class="mb-6 text-warm-600">{{ $content['success_description'] ?? 'Share the code below with the lucky recipient.' }}</p>
 
             <div class="flex justify-center gap-4">
-                <button @click="copyCode()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 border-2 border-warm-300 text-warm-700">
+                <x-storefront.button variant="outline-light" size="md" class="gap-2" @click="copyCode()">
                     <x-heroicon-o-document-duplicate class="w-4 h-4" stroke-width="2" />
                     <span x-text="copied ? 'Copied!' : 'Copy Code'"></span>
-                </button>
-                <button @click="purchasedCard = null" class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-500 text-warm-900">
+                </x-storefront.button>
+                <x-storefront.button size="md" @click="purchasedCard = null">
                     Purchase Another
-                </button>
+                </x-storefront.button>
             </div>
         </div>
     </div>
@@ -104,13 +104,13 @@
                                    placeholder="XXXX-XXXX-XXXX-XXXX"
                                    class="input-field font-mono uppercase tracking-wider flex-1"
                                    data-test="gift-card-balance-form-code">
-                            <button type="submit"
+                            <x-storefront.button type="submit" variant="outline-light" size="md"
                                     :disabled="!balanceCode || isCheckingBalance"
-                                    class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 whitespace-nowrap border-2 border-warm-300 text-warm-700"
+                                    class="whitespace-nowrap"
                                     :class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
                                     data-test="gift-card-balance-form-submit">
                                 <span x-text="isCheckingBalance ? 'Checking...' : {{ Js::from($content['check_balance_button'] ?? 'Check Balance') }}"></span>
-                            </button>
+                            </x-storefront.button>
                         </form>
                         <div x-show="balanceError" class="text-red-600 text-sm mt-2" x-text="balanceError" data-test="gift-card-balance-error"></div>
                         <div x-show="balanceResult" x-cloak class="mt-6 rounded-xl p-6 text-center bg-warm-50">

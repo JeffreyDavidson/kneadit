@@ -5,8 +5,8 @@
             <x-heroicon-o-building-storefront class="w-3.5 h-3.5" stroke-width="2.5" />
             Bakeries
         </x-central.button>
-        <x-central.button variant="secondary" :href="\App\Filament\Central\Resources\SupportTicketResource::getUrl('index')">Support Inbox</x-central.button>
-        <x-central.button variant="secondary" :href="url('/admin/analytics')">Analytics</x-central.button>
-        <x-central.button variant="secondary" :href="url('/admin/maintenance-mode')">Maintenance</x-central.button>
+        <x-central.button variant="secondary" size="sm" :href="\App\Filament\Central\Resources\SupportTicketResource::getUrl('index')">Support Inbox</x-central.button>
+        <x-central.button variant="secondary" size="sm" :href="url('/admin/analytics')">Analytics</x-central.button>
+        <x-central.button variant="secondary" size="sm" :href="url('/admin/maintenance-mode')">Maintenance</x-central.button>
     </div>
 </x-central.card>

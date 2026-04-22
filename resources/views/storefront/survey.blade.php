@@ -11,9 +11,9 @@
         </x-storefront.icon-circle>
         <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up text-warm-100 [animation-delay:0.5s]">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
         <p class="text-lg mb-10 hero-fade-up text-warm-400 [animation-delay:0.7s]">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
-        <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hero-fade-up bg-warm-500 text-warm-900 [animation-delay:0.9s]">
+        <x-storefront.button :href="route('home')" size="lg" class="hero-fade-up [animation-delay:0.9s]">
             Back to {{ $settings->store->name }}
-        </a>
+        </x-storefront.button>
     </div>
 </x-storefront.hero-section>
 @else
@@ -108,9 +108,9 @@
 
             {{-- Submit --}}
             <div class="text-center pt-4">
-                <button type="submit" class="px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
+                <x-storefront.button type="submit" size="xl">
                     {{ $content['submit_button'] ?? 'Submit Feedback' }}
-                </button>
+                </x-storefront.button>
                 <p class="text-sm mt-4 text-warm-500">{{ $content['submit_footer'] ?? 'Your feedback helps us bake better for you' }}</p>
             </div>
         </form>

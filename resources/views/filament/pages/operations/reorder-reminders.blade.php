@@ -31,9 +31,9 @@
         {{-- Stats --}}
         <x-admin.stat-grid :cols="4" data-stat-grid>
             <x-admin.stat-card label="Need Outreach" :value="$customers->count()" />
-            <x-admin.stat-card label="Critical (120+ days)" :value="$criticalCount" color="var(--status-danger)" />
-            <x-admin.stat-card label="Warning (90+ days)" :value="$warningCount" color="var(--status-warning)" />
-            <x-admin.stat-card label="Revenue at Risk" :value="'$' . number_format($totalRevAtRisk, 0)" color="var(--brand-600)" />
+            <x-admin.stat-card label="Critical (120+ days)" :value="$criticalCount" tone="danger" />
+            <x-admin.stat-card label="Warning (90+ days)" :value="$warningCount" tone="warning" />
+            <x-admin.stat-card label="Revenue at Risk" :value="'$' . number_format($totalRevAtRisk, 0)" tone="brand-600" />
         </x-admin.stat-grid>
 
         {{-- Customer table --}}

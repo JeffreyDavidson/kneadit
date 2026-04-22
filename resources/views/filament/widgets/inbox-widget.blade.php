@@ -15,9 +15,9 @@
                     <p class="text-xs text-butter">Check your inbox for important updates</p>
                 </div>
             </div>
-            <a href="{{ $this->getMessagesUrl() }}" class="rounded-lg px-3 py-1.5 text-xs font-medium bg-honey text-warm-black">
+            <x-central.button :href="$this->getMessagesUrl()" size="xs">
                 View Messages
-            </a>
+            </x-central.button>
         </div>
     </div>
 @endif

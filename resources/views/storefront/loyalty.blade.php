@@ -40,10 +40,9 @@
                     <input type="email" name="email" placeholder="Enter your email address"
                            value="{{ old('email', $vm->customer->email ?? '') }}" required class="input-field flex-1"
                            data-test="loyalty-lookup-form-email">
-                    <button type="submit" class="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 whitespace-nowrap bg-warm-500 text-warm-900"
-                            data-test="loyalty-lookup-form-submit">
+                    <x-storefront.button type="submit" size="md" class="whitespace-nowrap" data-test="loyalty-lookup-form-submit">
                         Check Balance
-                    </button>
+                    </x-storefront.button>
                 </form>
             </div>
         </div>

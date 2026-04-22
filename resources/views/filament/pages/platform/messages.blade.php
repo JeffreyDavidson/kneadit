@@ -66,9 +66,9 @@
                         <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
                     @enderror
                     <div class="mt-2 flex justify-end">
-                        <button type="submit" class="rounded-lg px-4 py-2 text-sm font-medium bg-honey text-warm-black">
+                        <x-central.button type="submit" size="sm">
                             Send Reply
-                        </button>
+                        </x-central.button>
                     </div>
                 </form>
             </div>
