@@ -68,4 +68,22 @@ Alpine.data('reviewCardFadeIn', (index = 0) => ({
     },
 }));
 
+// Gallery page: lightbox state + open/close. Each gallery item calls
+// show(src, caption, author) inline; outer modal binds visibility to `open`.
+Alpine.data('galleryLightbox', () => ({
+    open: false,
+    src: '',
+    caption: '',
+    author: '',
+    show(src, caption, author) {
+        this.src = src;
+        this.caption = caption;
+        this.author = author;
+        this.open = true;
+    },
+    close() {
+        this.open = false;
+    },
+}));
+
 Alpine.start();

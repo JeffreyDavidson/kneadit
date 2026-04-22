@@ -19,16 +19,14 @@
 </x-storefront.hero-section>
 
 {{-- Masonry Gallery with Lightbox --}}
-<section class="bg-warm-100" x-data="{ lightbox: false, lightboxSrc: '', lightboxCaption: '', lightboxAuthor: '' }">
+<section class="bg-warm-100" x-data="galleryLightbox">
     <div class="max-w-7xl mx-auto px-4 py-16 md:py-24">
         @if ($photos->count() > 0)
         <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 mb-12">
             @foreach ($photos as $photo)
             <div class="break-inside-avoid mb-6">
-                <div class="gallery-item"
-                     x-data="{ src: @js(asset('storage/customer-photos/' . basename($photo->photo_path))), caption: @js($photo->caption ?? ''), author: @js($photo->customer_name) }"
-                     @click="lightboxSrc = src; lightboxCaption = caption; lightboxAuthor = author; lightbox = true"
-                     class="bg-warm-200">
+                <div class="gallery-item bg-warm-200"
+                     @click="show(@js(asset('storage/customer-photos/' . basename($photo->photo_path))), @js($photo->caption ?? ''), @js($photo->customer_name))">
                     @if ($photo->is_featured)
                     <x-storefront.pill tone="solid" size="sm" class="absolute top-3 left-3 z-10 !font-bold uppercase tracking-wider gap-1">
                         <x-heroicon-s-star class="w-3.5 h-3.5" />
@@ -95,16 +93,16 @@
     </div>
 
     {{-- Lightbox Modal --}}
-    <div x-show="lightbox" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-warm-900/90 backdrop-blur"
-         @click.self="lightbox = false" @keydown.escape.window="lightbox = false"
+         @click.self="close()" @keydown.escape.window="close()"
          role="dialog" aria-label="Photo lightbox">
-        <button @click="lightbox = false" class="absolute top-6 right-6 w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110 bg-white/10 text-warm-300" aria-label="Close lightbox">&times;</button>
+        <button @click="close()" class="absolute top-6 right-6 w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110 bg-white/10 text-warm-300" aria-label="Close lightbox">&times;</button>
         <div class="max-w-4xl w-full" @click.stop>
-            <img :src="lightboxSrc" :alt="lightboxCaption || 'Customer photo'" class="w-full max-h-[75vh] object-contain rounded-xl">
-            <div class="mt-4 text-center" x-show="lightboxCaption || lightboxAuthor">
-                <p x-show="lightboxCaption" class="italic text-lg text-warm-300" x-text="'&quot;' + lightboxCaption + '&quot;'"></p>
-                <p x-show="lightboxAuthor" class="text-sm mt-2 font-semibold text-warm-500" x-text="'— ' + lightboxAuthor"></p>
+            <img x-bind:src="src" x-bind:alt="caption || 'Customer photo'" class="w-full max-h-[75vh] object-contain rounded-xl">
+            <div class="mt-4 text-center" x-show="caption || author">
+                <p x-show="caption" class="italic text-lg text-warm-300" x-text="'&quot;' + caption + '&quot;'"></p>
+                <p x-show="author" class="text-sm mt-2 font-semibold text-warm-500" x-text="'— ' + author"></p>
             </div>
         </div>
     </div>
