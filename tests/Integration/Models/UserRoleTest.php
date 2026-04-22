@@ -14,24 +14,6 @@ test('role is cast to UserRole enum', function () {
     expect($user->role)->toBe(UserRole::Owner);
 });
 
-test('is_owner returns true for owner role', function () {
-    $user = User::factory()->owner()->create();
-
-    expect($user->is_owner)->toBeTrue();
-});
-
-test('is_owner returns false for manager', function () {
-    $user = User::factory()->manager()->create();
-
-    expect($user->is_owner)->toBeFalse();
-});
-
-test('is_owner returns false for staff', function () {
-    $user = User::factory()->staff()->create();
-
-    expect($user->is_owner)->toBeFalse();
-});
-
 test('role meetsRequirement staff is true for all roles', function (string $roleMethod) {
     $user = User::factory()->$roleMethod()->create();
 

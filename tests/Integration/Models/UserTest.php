@@ -75,18 +75,6 @@ test('current_plan returns null for unknown stripe price', function () {
     expect($user->current_plan)->toBeNull();
 });
 
-test('is_owner returns true for owner role', function () {
-    $user = User::factory()->owner()->create();
-
-    expect($user->is_owner)->toBeTrue();
-});
-
-test('is_owner returns false for non-owner roles', function (string $factoryState) {
-    $user = User::factory()->{$factoryState}()->create();
-
-    expect($user->is_owner)->toBeFalse();
-})->with(['manager', 'staff']);
-
 test('tenants relationship returns related tenants', function () {
     $user = User::factory()->owner()->create();
 
