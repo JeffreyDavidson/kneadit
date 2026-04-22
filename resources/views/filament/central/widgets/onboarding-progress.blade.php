@@ -5,15 +5,15 @@
 <x-filament-widgets::widget>
     <x-central.card class="text-center">
         <x-central.eyebrow class="mb-2">Onboarding Progress</x-central.eyebrow>
-        <div style="font-size: 1.75rem; font-weight: 700; color: #ffffff;">
-            {{ $stats['onboarded'] }} <span style="font-size: 1rem; color: #8b6844;">of</span> {{ $stats['total'] }}
+        <div class="text-[1.75rem] font-bold text-white">
+            {{ $stats['onboarded'] }} <span class="text-base text-cinnamon">of</span> {{ $stats['total'] }}
         </div>
-        <div style="font-size: 0.8rem; color: #faf0d6; margin-top: 0.25rem;">
+        <div class="text-[0.8rem] text-parchment mt-1">
             bakers fully onboarded
         </div>
-        <div style="margin-top: 0.75rem; background: rgba(212,146,12,0.08); border-radius: 9999px; height: 6px; overflow: hidden;">
-            <div style="height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #d4920c, #e8b04a); width: {{ $stats['percentage'] }}%;"></div>
+        <div class="mt-3 bg-honey/8 rounded-full h-1.5 overflow-hidden">
+            <div class="h-full rounded-full bg-gradient-to-r from-honey to-golden" style="width: {{ $stats['percentage'] }}%;"></div>
         </div>
-        <div style="font-size: 0.65rem; color: #d4920c; margin-top: 0.375rem; font-weight: 600;">{{ $stats['percentage'] }}%</div>
+        <div class="text-[0.65rem] text-honey mt-1.5 font-semibold">{{ $stats['percentage'] }}%</div>
     </x-central.card>
 </x-filament-widgets::widget>

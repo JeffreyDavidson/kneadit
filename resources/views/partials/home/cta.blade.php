@@ -18,14 +18,14 @@
         ? Storage::url($heroImage)
         : 'https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=1920&q=80';
 @endphp
-<section class="relative py-0 overflow-hidden" style="min-height: 500px;">
+<section class="relative py-0 overflow-hidden min-h-[500px]">
     {{-- Background image --}}
     <div class="absolute inset-0">
-        <img src="{{ $ctaImageUrl }}" alt="" class="w-full h-full object-cover" style="filter: brightness(0.3);">
+        <img src="{{ $ctaImageUrl }}" alt="" class="w-full h-full object-cover brightness-[0.3]">
     </div>
 
     {{-- Gradient overlay --}}
-    <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(28,20,16,0.95) 0%, rgba(28,20,16,0.7) 50%, rgba(28,20,16,0.95) 100%);"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-warm-900/95 via-warm-900/70 to-warm-900/95"></div>
 
     {{-- Grain --}}
     <x-storefront.grain-texture opacity="0.04" />
@@ -34,9 +34,9 @@
     <div class="relative z-10 max-w-3xl mx-auto text-center px-4 py-28">
         {{-- Decorative element --}}
         <div class="flex items-center justify-center gap-4 mb-8">
-            <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
-            <span class="block w-2 h-2 rounded-full" style="background: var(--warm-500); opacity: 0.5;"></span>
-            <span class="block w-16 h-px" style="background: var(--warm-500); opacity: 0.4;"></span>
+            <span class="block w-16 h-px bg-warm-500 opacity-40"></span>
+            <span class="block w-2 h-2 rounded-full bg-warm-500 opacity-50"></span>
+            <span class="block w-16 h-px bg-warm-500 opacity-40"></span>
         </div>
 
         <p class="font-script text-2xl md:text-3xl mb-4 text-warm-400">Life's too short for store-bought</p>
@@ -53,7 +53,7 @@
             <a href="{{ $href }}" class="inline-block px-12 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
                 {{ $buttonText }}
             </a>
-            <a href="{{ route('storefront.menu') }}" class="inline-flex items-center justify-center gap-2 px-8 py-5 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105" style="border: 2px solid rgba(232,176,74,0.3); color: var(--warm-400);">
+            <a href="{{ route('storefront.menu') }}" class="inline-flex items-center justify-center gap-2 px-8 py-5 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 border-2 border-warm-400/30 text-warm-400">
                 See What's Baking
             </a>
         </div>
@@ -61,9 +61,9 @@
         {{-- Trust line --}}
         <div class="flex items-center justify-center gap-6 mt-12 text-sm text-warm-500">
             <span class="font-script text-base">Made fresh daily</span>
-            <span style="opacity: 0.3;">·</span>
+            <span class="opacity-30">·</span>
             <span class="font-script text-base">Locally sourced</span>
-            <span style="opacity: 0.3;">·</span>
+            <span class="opacity-30">·</span>
             <span class="font-script text-base">Baked with love</span>
         </div>
     </div>
