@@ -13,7 +13,7 @@
             </div>
             <a href="{{ route('storefront.blog') }}" class="hidden md:inline-flex items-center gap-2 mt-4 md:mt-0 font-semibold transition-all duration-200 hover:gap-3 text-warm-600">
                 View All Posts
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                <x-heroicon-o-arrow-right class="w-4 h-4" stroke-width="2" />
             </a>
         </div>
 
@@ -26,7 +26,7 @@
                         <img src="{{ Storage::disk('public')->url($lead->featured_image) }}" alt="{{ $lead->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                     @else
                         <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--warm-800), var(--warm-700));">
-                            <svg class="w-16 h-16" style="color: var(--warm-500); opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                            <x-heroicon-o-document-text class="w-16 h-16 text-warm-500/30" />
                         </div>
                     @endif
                 </div>
@@ -63,7 +63,7 @@
         <div class="text-center mt-10 md:hidden">
             <a href="{{ route('storefront.blog') }}" class="inline-flex items-center gap-2 font-semibold text-warm-600">
                 View All Posts
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                <x-heroicon-o-arrow-right class="w-4 h-4" stroke-width="2" />
             </a>
         </div>
     </div>

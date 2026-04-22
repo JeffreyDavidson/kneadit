@@ -8,9 +8,7 @@
     <div class="relative z-10 flex items-center justify-center min-h-[70vh] px-4">
         <div class="text-center max-w-md">
             <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 hero-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
-                <svg class="w-12 h-12 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                </svg>
+                <x-heroicon-o-check class="w-12 h-12 text-warm-500" stroke-width="2.5" />
             </div>
             <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
             <p class="text-lg mb-8 hero-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your review has been submitted and will appear once approved. We appreciate your feedback!' }}</p>
@@ -67,9 +65,7 @@
                             class="transition-all duration-200 focus:outline-none"
                             :class="(hover || rating) >= {{ $i }} ? 'scale-110' : 'scale-100 opacity-30'"
                         >
-                            <svg class="w-10 h-10" :style="(hover || rating) >= {{ $i }} ? 'color: var(--warm-500)' : 'color: var(--warm-300)'" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
+                            <x-heroicon-s-star class="w-10 h-10" ::style="(hover || rating) >= {{ $i }} ? 'color: var(--warm-500)' : 'color: var(--warm-300)'" />
                         </button>
                     @endfor
                     <input type="hidden" name="rating" x-bind:value="rating">
@@ -102,9 +98,7 @@
                 <div class="rounded-xl p-6 text-center cursor-pointer transition-all"
                      style="background: var(--warm-50); border: 2px dashed var(--warm-300);"
                      onclick="document.getElementById('photo').click()">
-                    <svg class="w-8 h-8 mx-auto mb-2 text-warm-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
+                    <x-heroicon-o-photo class="w-8 h-8 mx-auto mb-2 text-warm-400" />
                     <p class="text-sm text-warm-500">Click to upload a photo</p>
                 </div>
                 <input type="file" name="photo" id="photo" accept="image/*" class="hidden">

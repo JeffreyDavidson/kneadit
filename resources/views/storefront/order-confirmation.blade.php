@@ -10,9 +10,7 @@
     <div class="relative z-10 text-center px-4 py-24 md:py-32" style="padding-top: 6rem;">
         {{-- Animated success checkmark --}}
         <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 hero-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
-            <svg class="w-12 h-12 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-            </svg>
+            <x-heroicon-o-check class="w-12 h-12 text-warm-500" stroke-width="2.5" />
         </div>
 
         <x-storefront.eyebrow class="hero-fade-up mb-4" style="animation-delay: 0.5s;">{{ $content['hero_eyebrow'] ?? 'Order Placed' }}</x-storefront.eyebrow>
@@ -180,10 +178,10 @@
                     </a>
                     <a href="{{ url('/') }}" class="inline-flex items-center gap-2 px-6 py-3 font-semibold transition-all text-warm-400">
                         Back to {{ $settings->store->name }}
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        <x-heroicon-o-arrow-right class="w-4 h-4" stroke-width="2" />
                     </a>
                     <button onclick="window.print()" class="inline-flex items-center gap-2 px-6 py-3 font-semibold transition-all text-warm-500">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        <x-heroicon-o-printer class="w-4 h-4" stroke-width="2" />
                         Print
                     </button>
                 </div>

@@ -118,9 +118,7 @@
                     <div class="bg-blue-50 rounded-lg p-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                </svg>
+                                <x-heroicon-o-currency-dollar class="w-8 h-8 text-blue-600" stroke-width="2" />
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-blue-600">Total Recipe Cost</p>
@@ -133,9 +131,7 @@
                         <div class="bg-green-50 rounded-lg p-4">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
-                                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                                    </svg>
+                                    <x-heroicon-o-arrow-trending-up class="w-8 h-8 text-green-600" stroke-width="2" />
                                 </div>
                                 <div class="ml-3">
                                     <p class="text-sm font-medium text-green-600">Current Margin</p>
@@ -150,9 +146,7 @@
                     <div class="bg-purple-50 rounded-lg p-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                                </svg>
+                                <x-heroicon-o-calculator class="w-8 h-8 text-purple-600" stroke-width="2" />
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-purple-600">Target Margin</p>
@@ -164,9 +158,7 @@
                     <div class="bg-orange-50 rounded-lg p-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                </svg>
+                                <x-heroicon-o-currency-dollar class="w-8 h-8 text-orange-600" stroke-width="2" />
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-orange-600">Suggested Price</p>

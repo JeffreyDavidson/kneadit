@@ -26,7 +26,7 @@
             @if ($settings->store->address)
             <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
-                    <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <x-heroicon-o-map-pin class="w-5 h-5 text-warm-500" />
                 </div>
                 <p class="text-xs uppercase tracking-[0.2em] mb-2 text-warm-500">Address</p>
                 <p class="text-sm text-warm-300">{{ $settings->store->address }}</p>
@@ -35,7 +35,7 @@
             @if ($settings->store->phone)
             <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
-                    <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    <x-heroicon-o-phone class="w-5 h-5 text-warm-500" />
                 </div>
                 <p class="text-xs uppercase tracking-[0.2em] mb-2 text-warm-500">Phone</p>
                 <p class="text-sm"><a href="tel:{{ $settings->store->phone }}" class="text-warm-300">{{ $settings->store->phone }}</a></p>
@@ -44,7 +44,7 @@
             @if ($settings->store->email)
             <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
-                    <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <x-heroicon-o-envelope class="w-5 h-5 text-warm-500" />
                 </div>
                 <p class="text-xs uppercase tracking-[0.2em] mb-2 text-warm-500">Email</p>
                 <p class="text-sm"><a href="mailto:{{ $settings->store->email }}" class="text-warm-300">{{ $settings->store->email }}</a></p>
@@ -137,7 +137,7 @@
                 <div class="rounded-2xl overflow-hidden" style="aspect-ratio: 16/10; background: var(--warm-200);">
                     <div class="w-full h-full flex items-center justify-center">
                         <div class="text-center px-6">
-                            <svg class="w-8 h-8 mx-auto mb-2 text-warm-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <x-heroicon-o-map-pin class="w-8 h-8 mx-auto mb-2 text-warm-400" />
                             <p class="text-sm font-medium text-warm-500">{{ $settings->store->address }}</p>
                         </div>
                     </div>
@@ -168,7 +168,7 @@
             <div class="rounded-2xl bg-warm-800 border border-warm-700/15 overflow-hidden" x-data="{ open: false }">
                 <button @click="open = !open" class="flex items-center justify-between w-full p-6 text-left" :aria-expanded="open">
                     <h3 class="font-display text-lg font-semibold text-warm-200 pr-4">{{ $faq['question'] }}</h3>
-                    <svg class="w-5 h-5 flex-shrink-0 text-warm-500 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <x-heroicon-o-chevron-down class="w-5 h-5 flex-shrink-0 text-warm-500 transition-transform duration-200" ::class="open ? 'rotate-180' : ''" stroke-width="2" />
                 </button>
                 <div x-show="open" x-collapse>
                     <p class="leading-relaxed text-sm text-warm-400 px-6 pb-6">{{ $faq['answer'] }}</p>
