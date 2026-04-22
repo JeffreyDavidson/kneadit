@@ -19,12 +19,4 @@ return new class extends Migration {
             $table->unique('date');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('capacity_limits');
-    }
 };

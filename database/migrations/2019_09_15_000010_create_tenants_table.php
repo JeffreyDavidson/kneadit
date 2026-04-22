@@ -34,12 +34,4 @@ return new class extends Migration {
             $table->json('data')->nullable();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('tenants');
-    }
 };

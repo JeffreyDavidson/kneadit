@@ -20,9 +20,4 @@ return new class extends Migration {
             $table->unique('day_of_week');
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('business_schedules');
-    }
 };

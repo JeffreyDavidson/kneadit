@@ -20,12 +20,4 @@ return new class extends Migration {
             $table->index('customer_id');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('customer_profiles');
-    }
 };

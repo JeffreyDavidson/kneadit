@@ -32,10 +32,4 @@ return new class extends Migration {
             $table->timestamp('created_at')->useCurrent();
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('gift_card_transactions');
-        Schema::dropIfExists('gift_cards');
-    }
 };

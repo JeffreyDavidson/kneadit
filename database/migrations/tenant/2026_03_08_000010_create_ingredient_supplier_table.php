@@ -20,9 +20,4 @@ return new class extends Migration {
             $table->unique(['ingredient_id', 'supplier_id']);
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('ingredient_supplier');
-    }
 };
