@@ -55,7 +55,7 @@
                 @if ($settings->branding->businessTagline)
                 {{-- Pull-Quote style tagline --}}
                 <div class="mb-12">
-                    <div class="font-display font-bold mb-4 text-[5rem] leading-[0.6] text-warm-500 opacity-15">&ldquo;</div>
+                    <x-storefront.pull-quote-mark size="md" tone="warm" class="mb-4" />
                     <blockquote class="font-display text-2xl md:text-3xl lg:text-4xl font-medium leading-snug text-warm-800 tracking-tight">
                         {{ $settings->branding->businessTagline }}
                     </blockquote>

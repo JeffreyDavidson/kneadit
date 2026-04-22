@@ -125,7 +125,7 @@
                     'border-warm-200' => ! $vm->canRedeem($reward),
                 ])>
                     @if ($vm->canRedeem($reward))
-                    <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold bg-warm-500 text-warm-900">Redeemable!</div>
+                    <x-storefront.pill tone="solid" size="xs" class="absolute top-3 right-3 !font-bold">Redeemable!</x-storefront.pill>
                     @endif
                     <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-warm-100">
                         <x-heroicon-o-chat-bubble-oval-left class="w-7 h-7 text-warm-500" />
@@ -165,9 +165,9 @@
             @foreach ($vm->howSteps as $i => $step)
 
             <div>
-                <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center bg-warm-500/10 border border-warm-500/20">
+                <x-storefront.icon-circle size="lg" variant="subtle" class="mx-auto mb-5">
                     <svg class="w-8 h-8 text-warm-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $howSvgs[$i] ?? $howSvgs[0] }}"/></svg>
-                </div>
+                </x-storefront.icon-circle>
                 <h3 class="font-display text-xl font-bold mb-2 text-warm-200">{{ $step['title'] }}</h3>
                 <p class="text-warm-500">{{ $step['description'] }}</p>
             </div>

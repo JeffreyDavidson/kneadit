@@ -67,9 +67,9 @@
                 <x-storefront.product-card :product="$product" card-class="menu-card bg-warm-800" description-class="mb-3">
                     <x-slot:badge>
                         @if ($badge)
-                        <div class="absolute top-4 left-4 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-warm-500 text-warm-900">
+                        <x-storefront.pill tone="solid" size="sm" class="absolute top-4 left-4 !font-bold uppercase tracking-wider">
                             {{ $badge }}
-                        </div>
+                        </x-storefront.pill>
                         @endif
                     </x-slot:badge>
                     <x-slot:overlay>

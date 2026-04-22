@@ -30,10 +30,10 @@
                      @click="lightboxSrc = src; lightboxCaption = caption; lightboxAuthor = author; lightbox = true"
                      class="bg-warm-200">
                     @if ($photo->is_featured)
-                    <div class="absolute top-3 left-3 z-10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-warm-500 text-warm-900 inline-flex items-center gap-1">
+                    <x-storefront.pill tone="solid" size="sm" class="absolute top-3 left-3 z-10 !font-bold uppercase tracking-wider gap-1">
                         <x-heroicon-s-star class="w-3.5 h-3.5" />
                         Featured
-                    </div>
+                    </x-storefront.pill>
                     @endif
                     <img
                         src="{{ asset('storage/customer-photos/' . basename($photo->photo_path)) }}"
@@ -65,9 +65,9 @@
         @else
         <div class="max-w-2xl mx-auto text-center py-16">
             {{-- Decorative icon --}}
-            <div class="w-20 h-20 rounded-full mx-auto mb-8 flex items-center justify-center bg-warm-200">
+            <x-storefront.icon-circle size="lg" variant="plain" class="mx-auto mb-8">
                 <x-heroicon-o-camera class="w-10 h-10 text-warm-500" />
-            </div>
+            </x-storefront.icon-circle>
 
             <h2 class="font-display text-3xl font-bold mb-4 text-warm-900">{{ $content['empty_heading'] ?? 'Your Photos Will Shine Here' }}</h2>
             <p class="text-lg leading-relaxed mb-6 text-warm-600">
