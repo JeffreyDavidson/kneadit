@@ -10,14 +10,14 @@ use App\Services\Financial\FinancialCalculator;
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->user = User::factory()->owner()->create();
-    $this->customer = Customer::factory()->create();
+    test()->user = User::factory()->owner()->create();
+    test()->customer = Customer::factory()->create();
 });
 
 it('calculates yearly totals from orders and expenses', function () {
     Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->delivered()
         ->create([
             'subtotal' => 100,

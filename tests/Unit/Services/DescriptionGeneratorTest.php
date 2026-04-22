@@ -3,35 +3,35 @@
 use App\Services\Content\DescriptionGeneratorService;
 
 beforeEach(function () {
-    $this->service = new DescriptionGeneratorService;
+    test()->service = new DescriptionGeneratorService;
 });
 
 test('service exists', function () {
-    expect($this->service)->toBeInstanceOf(DescriptionGeneratorService::class);
+    expect(test()->service)->toBeInstanceOf(DescriptionGeneratorService::class);
 });
 
 test('generate returns array of 3 descriptions', function () {
-    $result = $this->service->generate('Sourdough Bread', 'professional', 'medium', 'bread');
+    $result = test()->service->generate('Sourdough Bread', 'professional', 'medium', 'bread');
 
     expect($result)->toBeArray()->toHaveCount(3);
 });
 
 test('each description contains product name', function () {
-    $result = $this->service->generate('Sourdough Bread', 'professional', 'medium', 'bread');
+    $result = test()->service->generate('Sourdough Bread', 'professional', 'medium', 'bread');
 
     expect($result)->each->toContain('Sourdough Bread');
 });
 
 test('different tones produce different text', function () {
-    $professional = $this->service->generate('Croissant', 'professional', 'medium', 'pastry');
-    $playful = $this->service->generate('Croissant', 'playful', 'medium', 'pastry');
+    $professional = test()->service->generate('Croissant', 'professional', 'medium', 'pastry');
+    $playful = test()->service->generate('Croissant', 'playful', 'medium', 'pastry');
 
     expect($professional)->not->toBe($playful);
 });
 
 test('short length produces shorter text', function () {
-    $short = $this->service->generate('Sourdough', 'professional', 'short', 'bread');
-    $long = $this->service->generate('Sourdough', 'professional', 'long', 'bread');
+    $short = test()->service->generate('Sourdough', 'professional', 'short', 'bread');
+    $long = test()->service->generate('Sourdough', 'professional', 'long', 'bread');
 
     $shortWords = str_word_count(implode(' ', $short));
     $longWords = str_word_count(implode(' ', $long));
@@ -40,19 +40,19 @@ test('short length produces shorter text', function () {
 });
 
 test('custom count returns requested number', function () {
-    $result = $this->service->generate('Muffin', 'casual', 'medium', 'pastry', null, 2);
+    $result = test()->service->generate('Muffin', 'casual', 'medium', 'pastry', null, 2);
 
     expect($result)->toHaveCount(2);
 });
 
 test('unknown tone falls back to professional', function () {
-    $result = $this->service->generate('Bread', 'nonexistent_tone', 'medium');
+    $result = test()->service->generate('Bread', 'nonexistent_tone', 'medium');
 
     expect($result)->toBeArray()->toHaveCount(3);
 });
 
 test('null category uses default', function () {
-    $result = $this->service->generate('Mystery Item', 'casual', 'medium');
+    $result = test()->service->generate('Mystery Item', 'casual', 'medium');
 
     expect($result)->each->toContain('Mystery Item');
 });
