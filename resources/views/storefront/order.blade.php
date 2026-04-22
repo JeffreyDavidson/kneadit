@@ -1,8 +1,8 @@
 <x-layouts.storefront>
 {{-- Dark Hero Banner --}}
-<section class="relative overflow-hidden" style="background: var(--warm-900); padding-top: 2rem;">
+<section class="relative overflow-hidden bg-warm-900 pt-8">
     <x-storefront.grain-texture />
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 70% 0%, color-mix(in srgb, var(--warm-500) 8%, transparent), transparent 60%);" aria-hidden="true"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_0%,color-mix(in_srgb,var(--warm-500)_8%,transparent),transparent_60%)]" aria-hidden="true"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 py-16 md:py-24">
 
@@ -109,7 +109,7 @@
                     {{-- Cart Items --}}
                     <div class="space-y-2 mb-4" x-show="cartItems.length > 0">
                         <template x-for="item in cartItems" :key="item.id">
-                            <div class="flex justify-between items-center text-sm py-2 px-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+                            <div class="flex justify-between items-center text-sm py-2 px-3 rounded-lg bg-white/[0.03]">
                                 <span class="text-warm-400">
                                     <span class="font-semibold text-warm-300" x-text="item.quantity"></span> × <span x-text="item.name"></span>
                                 </span>
@@ -319,9 +319,8 @@
                     <button type="submit"
                             data-test="order-form-submit"
                             :disabled="!canSubmit || isSubmitting"
-                            class="w-full mt-6 py-4 rounded-full text-lg font-semibold transition-all duration-300"
-                            :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-lg'"
-                            style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
+                            class="w-full mt-6 py-4 rounded-full text-lg font-semibold transition-all duration-300 bg-warm-500 text-warm-900 font-display"
+                            :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-lg'">
                         <span x-text="isSubmitting ? 'Placing Order...' : {{ Js::from($content['place_order_button'] ?? 'Place Order →') }}"></span>
                     </button>
 

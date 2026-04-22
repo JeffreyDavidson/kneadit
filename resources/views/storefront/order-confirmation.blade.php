@@ -7,21 +7,21 @@
 {{-- Photo-Forward Hero with Success --}}
 <x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Order confirmed" image-class="hero-img" min-height="40vh">
 
-    <div class="relative z-10 text-center px-4 py-24 md:py-32" style="padding-top: 6rem;">
+    <div class="relative z-10 text-center px-4 py-24 md:py-32 md:pt-24">
         {{-- Animated success checkmark --}}
-        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 hero-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 hero-fade-up bg-warm-500/15 border-2 border-warm-500 [animation-delay:0.3s]">
             <x-heroicon-o-check class="w-12 h-12 text-warm-500" stroke-width="2.5" />
         </div>
 
-        <x-storefront.eyebrow class="hero-fade-up mb-4" style="animation-delay: 0.5s;">{{ $content['hero_eyebrow'] ?? 'Order Placed' }}</x-storefront.eyebrow>
+        <x-storefront.eyebrow class="hero-fade-up mb-4 [animation-delay:0.5s]">{{ $content['hero_eyebrow'] ?? 'Order Placed' }}</x-storefront.eyebrow>
 
-        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 hero-fade-up" style="color: var(--warm-100); animation-delay: 0.7s;">
+        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 hero-fade-up text-warm-100 [animation-delay:0.7s]">
             {{ $content['hero_title'] ?? 'Thank You!' }}
         </h1>
-        <p class="text-lg mb-3 max-w-lg mx-auto hero-fade-up" style="color: var(--warm-400); animation-delay: 0.9s;">
+        <p class="text-lg mb-3 max-w-lg mx-auto hero-fade-up text-warm-400 [animation-delay:0.9s]">
             {{ $content['hero_description'] ?? 'Your order has been received and we\'ll start preparing your items right away.' }}
         </p>
-        <div class="inline-block px-6 py-3 rounded-full hero-fade-up" style="background: rgba(212,146,12,0.1); border: 1px solid rgba(212,146,12,0.25); animation-delay: 1.1s;">
+        <div class="inline-block px-6 py-3 rounded-full hero-fade-up bg-warm-500/10 border border-warm-500/25 [animation-delay:1.1s]">
             <span class="text-sm font-medium text-warm-400">Order Number:</span>
             <span class="font-mono font-bold ml-2 text-warm-300">{{ $order->order_number }}</span>
         </div>
@@ -41,7 +41,7 @@
 
                 <div class="space-y-3 mb-6">
                     @foreach ($order->orderItems as $item)
-                    <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid rgba(139,104,68,0.12);">
+                    <div class="flex justify-between items-center py-2 border-b border-warm-700/15">
                         <div>
                             <span class="font-medium text-warm-200">{{ $item->product->name ?? 'Product' }}</span>
                             <span class="text-sm ml-2 text-warm-500">× {{ $item->quantity }}</span>
@@ -124,7 +124,7 @@
 
                     <div>
                         <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Status</span>
-                        <span class="inline-block px-4 py-1.5 rounded-full text-sm font-semibold" style="background: rgba(212,146,12,0.15); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.3);">
+                        <span class="inline-block px-4 py-1.5 rounded-full text-sm font-semibold bg-warm-500/15 text-warm-400 border border-warm-500/30">
                             {{ $order->status->getLabel() }}
                         </span>
                     </div>
@@ -142,7 +142,7 @@
             <div class="grid md:grid-cols-3 gap-8">
                 @foreach ($journeySteps as $stepIndex => $step)
                 <div class="text-center">
-                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background: rgba(212,146,12,0.15); border: 1.5px solid rgba(212,146,12,0.3);">
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-warm-500/15 border-[1.5px] border-warm-500/30">
                         <span class="font-display text-xl font-bold text-warm-400">{{ $stepIndex + 1 }}</span>
                     </div>
                     <h3 class="font-display text-lg font-semibold mb-2 text-warm-200">

@@ -78,7 +78,12 @@
             {{-- Faux gallery preview --}}
             <div class="grid grid-cols-3 gap-3 opacity-20">
                 @for ($i = 0; $i < 6; $i++)
-                <div class="rounded-xl overflow-hidden bg-gradient-to-br from-warm-200 to-warm-300" style="aspect-ratio: {{ [1, '4/5', 1, '5/4', 1, '4/5'][$i] }};"></div>
+                <div @class([
+                    'rounded-xl overflow-hidden bg-gradient-to-br from-warm-200 to-warm-300',
+                    'aspect-square' => $i % 2 === 0,
+                    'aspect-[4/5]' => $i === 1 || $i === 5,
+                    'aspect-[5/4]' => $i === 3,
+                ])></div>
                 @endfor
             </div>
 
@@ -106,7 +111,7 @@
 </section>
 
 {{-- Upload CTA + Form --}}
-<x-storefront.dark-section id="share-photo" padding="py-24" style="scroll-margin-top: 80px;">
+<x-storefront.dark-section id="share-photo" padding="py-24" class="scroll-mt-20">
     <div class="max-w-2xl mx-auto px-4">
         <div class="text-center mb-12">
             <x-storefront.eyebrow line-opacity="0.5" class="mb-6">{{ $content['upload_eyebrow'] ?? 'Share Yours' }}</x-storefront.eyebrow>

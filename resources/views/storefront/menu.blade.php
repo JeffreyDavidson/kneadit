@@ -79,7 +79,7 @@
                                 {{ $content['add_to_order_button'] ?? 'Add to Order' }}
                             </a>
                             @else
-                            <span class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold" style="background: rgba(255,255,255,0.15); color: var(--warm-300); backdrop-filter: blur(4px);">
+                            <span class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold bg-white/15 text-warm-300 backdrop-blur-sm">
                                 Currently Unavailable
                             </span>
                             @endif
@@ -89,8 +89,7 @@
                         @if (!$product->is_active)
                         <div x-data="{ showWaitlist: false, submitted: false }">
                             <button x-show="!showWaitlist && !submitted" @click="showWaitlist = true"
-                                class="text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer transition-all duration-200"
-                                class="text-warm-400 bg-warm-700/20">
+                                class="text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer transition-all duration-200 text-warm-400 bg-warm-700/20">
                                 🔔 Notify Me When Available
                             </button>
                             <span x-show="submitted" class="text-xs font-medium text-warm-400">✓ We'll notify you!</span>
@@ -115,7 +114,7 @@
 
 {{-- CTA Section --}}
 <section class="relative py-24 overflow-hidden bg-warm-800">
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--warm-500) 6%, transparent), transparent 60%);" aria-hidden="true"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,color-mix(in_srgb,var(--warm-500)_6%,transparent),transparent_60%)]" aria-hidden="true"></div>
     <div class="relative z-10 text-center max-w-2xl mx-auto px-4">
         <p class="font-script text-2xl mb-4 text-warm-500">{{ $content['cta_script'] ?? 'Ready to order?' }}</p>
         <h2 class="font-display text-3xl md:text-5xl font-bold mb-6 text-warm-100">

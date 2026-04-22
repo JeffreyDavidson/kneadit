@@ -4,7 +4,7 @@
     <div class="max-w-3xl mx-auto px-4 py-16">
         {{-- Back link --}}
         <a href="{{ route('storefront.blog') }}" class="inline-flex items-center gap-2 text-sm font-medium mb-8 transition-colors text-warm-500">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            <x-heroicon-o-arrow-left class="w-4 h-4" stroke-width="2" />
             Back to Blog
         </a>
 
@@ -12,7 +12,7 @@
         @if ($post->tags)
             <div class="flex flex-wrap gap-2 mb-4">
                 @foreach ($post->tags as $tag)
-                    <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(212,146,12,0.15); color: var(--warm-500);">{{ $tag }}</span>
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-warm-500/15 text-warm-500">{{ $tag }}</span>
                 @endforeach
             </div>
         @endif
