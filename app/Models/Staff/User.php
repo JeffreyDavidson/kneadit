@@ -40,8 +40,6 @@ use Laravel\Cashier\Subscription;
  * @property string|null $pm_last_four
  * @property string|null $trial_ends_at
  * @property-read bool $is_owner
- * @property-read bool $is_manager
- * @property-read bool $is_staff
  * @property-read SubscriptionTier|null $current_plan
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
@@ -107,22 +105,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     {
         return Attribute::make(
             get: fn (): bool => $this->role === UserRole::Owner,
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isManager(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): bool => $this->role === UserRole::Manager,
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isStaff(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): bool => $this->role === UserRole::Staff,
         );
     }
 
