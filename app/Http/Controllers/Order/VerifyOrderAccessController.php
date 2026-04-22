@@ -12,14 +12,6 @@ use Illuminate\Http\RedirectResponse;
 
 class VerifyOrderAccessController extends Controller
 {
-    public function show(Order $order, TenantSettings $settings): View
-    {
-        return view('storefront.order-verify', [
-            'order' => $order,
-            'settings' => $settings,
-        ]);
-    }
-
     public function store(Order $order, VerifyOrderAccessRequest $request): RedirectResponse
     {
         $submitted = strtolower(trim($request->string('email')->value()));
@@ -34,7 +26,17 @@ class VerifyOrderAccessController extends Controller
         OrderAccessGuard::grant($order);
 
         return redirect()->intended(
-            route('order.confirmation', ['order' => $order->order_number]),
+            route('order.confirmation', [
+                'order' => $order->order_number,
+            ]),
         );
+    }
+
+    public function show(Order $order, TenantSettings $settings): View
+    {
+        return view('storefront.order-verify', [
+            'order' => $order,
+            'settings' => $settings,
+        ]);
     }
 }

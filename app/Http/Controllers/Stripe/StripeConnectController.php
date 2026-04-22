@@ -12,8 +12,12 @@ class StripeConnectController extends Controller
     public function __invoke(InitiateStripeConnect $initiateConnect): RedirectResponse
     {
         $url = $initiateConnect(
-            refreshUrl: Onboarding::getUrl(['stripe_connect' => 'refresh']),
-            returnUrl: Onboarding::getUrl(['stripe_connect' => 'complete']),
+            refreshUrl: Onboarding::getUrl([
+                'stripe_connect' => 'refresh',
+            ]),
+            returnUrl: Onboarding::getUrl([
+                'stripe_connect' => 'complete',
+            ]),
         );
 
         return redirect($url);
