@@ -11,19 +11,7 @@ test('order number is generated automatically when not set', function () {
     $order = Order::factory()->make(['order_number' => null]);
     $order->save();
 
-    expect($order->order_number)->toStartWith('ORD-')
-        ->and(strlen($order->order_number))->toBeGreaterThanOrEqual(10);
-});
-
-test('order number increments from highest existing number', function () {
-    // Create an order with a known high number
-    Order::factory()->create(['order_number' => 'ORD-999990']);
-
-    // Create a new order without specifying order_number
-    $order = Order::factory()->make(['order_number' => null]);
-    $order->save();
-
-    expect($order->order_number)->toBe('ORD-999991');
+    expect($order->order_number)->toMatch('/^ORD-[A-Z0-9]{10}$/');
 });
 
 test('order number is not overwritten when already set', function () {
