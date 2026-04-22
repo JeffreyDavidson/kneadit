@@ -3,16 +3,16 @@
 
 
 {{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' gallery'" image-class="gallery-hero-img">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' gallery'" image-class="hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
-        <x-storefront.eyebrow class="gallery-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'From Our Customers' }}</x-storefront.eyebrow>
-        <h1 class="gallery-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
+        <x-storefront.eyebrow class="hero-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'From Our Customers' }}</x-storefront.eyebrow>
+        <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
             {{ $content['hero_title'] ?? 'Customer Gallery' }}
         </h1>
-        <p class="gallery-fade-2 font-script text-2xl md:text-3xl text-warm-400">
+        <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-400">
             Moments worth sharing
         </p>
-        <p class="gallery-fade-3 text-lg md:text-xl max-w-xl mx-auto mt-4 text-warm-400">
+        <p class="hero-fade-3 text-lg md:text-xl max-w-xl mx-auto mt-4 text-warm-400">
             {{ $content['hero_subtitle'] ?? 'See what our customers are creating and enjoying!' }}
         </p>
     </div>

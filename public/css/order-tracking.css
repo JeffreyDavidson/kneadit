@@ -1,15 +1,3 @@
-    @keyframes trackFadeUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes trackKenBurns {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.06); }
-    }
-    .track-fade-1 { animation: trackFadeUp 0.8s ease-out 0.3s both; }
-    .track-fade-2 { animation: trackFadeUp 0.8s ease-out 0.5s both; }
-    .track-fade-3 { animation: trackFadeUp 0.8s ease-out 0.7s both; }
-    .track-hero-img { animation: trackKenBurns 20s ease-in-out infinite alternate; }
     .track-input {
         width: 100%;
         padding: 1rem 1.25rem;

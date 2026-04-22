@@ -2,16 +2,16 @@
 <link rel="stylesheet" href="{{ asset('css/menu.css') }}">
 
 {{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' menu'" image-class="menu-hero-img">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' menu'" image-class="hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
-        <x-storefront.eyebrow class="menu-fade-1 mb-6">{{ $heroEyebrow }}</x-storefront.eyebrow>
-        <h1 class="menu-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
+        <x-storefront.eyebrow class="hero-fade-1 mb-6">{{ $heroEyebrow }}</x-storefront.eyebrow>
+        <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
             {{ $content['hero_title'] ?? 'Our Menu' }}
         </h1>
-        <p class="menu-fade-2 font-script text-2xl md:text-3xl text-warm-400">
+        <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-400">
             Crafted with care, baked with love
         </p>
-        <p class="menu-fade-3 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mt-4 text-warm-400">
+        <p class="hero-fade-3 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mt-4 text-warm-400">
             {{ $content['hero_subtitle'] ?? 'Everything we make, crafted with care. Browse at your pace — when something catches your eye, we\'ll have it freshly prepared just for you.' }}
         </p>
     </div>
