@@ -1,3 +1,4 @@
+@use(App\Presenters\OrderItemPresenter)
 @extends('emails.layout')
 
 @php
@@ -48,7 +49,7 @@
                 {{ $item->product?->name ?? 'Item' }} × {{ $item->quantity }}
             </td>
             <td style="padding: 8px 0; color: {{ $secondaryColor }}; font-weight: 600; text-align: right; font-size: 14px;">
-                @money($item->total_price)
+                @money(OrderItemPresenter::for($item)->totalPrice())
             </td>
         </tr>
         @endforeach
