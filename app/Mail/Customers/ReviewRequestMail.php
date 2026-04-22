@@ -31,7 +31,7 @@ class ReviewRequestMail extends BaseMailable
     {
         $this->order = $order;
         $this->storeName = app(TenantSettings::class)->store->name;
-        $this->reviewUrl = url("/review/{$order->id}");
+        $this->reviewUrl = route('storefront.submitReview', ['order' => $order->order_number]);
         $this->orderItems = $order->orderItems()->with('product')->get();
     }
 
