@@ -11,6 +11,8 @@
     $variantClass = match ($variant) {
         'cta' => 'bg-warm-500 text-warm-900',
         'dark' => 'bg-warm-900 text-warm-100',
+        'outline-light' => 'border-2 border-warm-300 text-warm-700',
+        'outline-dark' => 'border-2 border-warm-400/40 text-warm-300',
         default => 'bg-warm-500 text-warm-900',
     };
 

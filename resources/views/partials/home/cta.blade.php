@@ -50,12 +50,12 @@
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{{ $href }}" class="inline-block px-12 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
+            <x-storefront.button :href="$href" size="xl">
                 {{ $buttonText }}
-            </a>
-            <a href="{{ route('storefront.menu') }}" class="inline-flex items-center justify-center gap-2 px-8 py-5 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 border-2 border-warm-400/30 text-warm-400">
+            </x-storefront.button>
+            <x-storefront.button :href="route('storefront.menu')" variant="outline-dark" size="lg">
                 See What's Baking
-            </a>
+            </x-storefront.button>
         </div>
 
         {{-- Trust line --}}

@@ -57,12 +57,12 @@
             {{ $heroTagline ?: ($tagline ?: 'Where every bite tells a story') }}
         </p>
         <div class="hero-fade-3 flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{{ route('order.create') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
+            <x-storefront.button :href="route('order.create')" size="lg">
                 {{ $primaryCtaText }}
-            </a>
-            <a href="{{ route('storefront.menu') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 border-2 border-warm-400/40 text-warm-300">
+            </x-storefront.button>
+            <x-storefront.button :href="route('storefront.menu')" variant="outline-dark" size="lg">
                 {{ $secondaryCtaText }}
-            </a>
+            </x-storefront.button>
         </div>
     </div>
 </section>
@@ -95,9 +95,9 @@
             </p>
 
             <div class="hero-fade-3 flex flex-wrap gap-4">
-                <a href="{{ route('order.create') }}" class="inline-block px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900">
+                <x-storefront.button :href="route('order.create')" size="md">
                     {{ $primaryCtaText }}
-                </a>
+                </x-storefront.button>
                 <a href="{{ route('storefront.menu') }}" class="inline-flex items-center gap-2 px-6 py-4 font-semibold transition-all duration-200 text-warm-400">
                     {{ $secondaryCtaText }}
                     <x-heroicon-o-arrow-right class="w-4 h-4" stroke-width="2" />
