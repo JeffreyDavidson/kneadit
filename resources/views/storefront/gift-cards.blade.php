@@ -103,9 +103,9 @@
                                    class="input-field font-mono uppercase tracking-wider flex-1"
                                    data-test="gift-card-balance-form-code">
                             <x-storefront.button type="submit" variant="outline-light" size="md"
-                                    :disabled="!balanceCode || isCheckingBalance"
+                                    x-bind:disabled="!balanceCode || isCheckingBalance"
                                     class="whitespace-nowrap"
-                                    :class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
+                                    x-bind:class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
                                     data-test="gift-card-balance-form-submit">
                                 <span x-text="isCheckingBalance ? 'Checking...' : {{ Js::from($content['check_balance_button'] ?? 'Check Balance') }}"></span>
                             </x-storefront.button>
