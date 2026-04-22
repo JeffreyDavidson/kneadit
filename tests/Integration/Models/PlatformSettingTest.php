@@ -28,7 +28,7 @@ test('value can be null', function () {
 });
 
 test('key and value are fillable', function () {
-    $setting = PlatformSetting::create([
+    $setting = PlatformSetting::factory()->create([
         'key' => 'max_tenants',
         'value' => '100',
     ]);

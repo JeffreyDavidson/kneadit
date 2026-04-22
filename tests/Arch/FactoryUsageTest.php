@@ -3,56 +3,69 @@
 declare(strict_types=1);
 
 /**
- * Ensure test files use factories instead of Model::query()->create() for models that have factories.
+ * Ensure test files use factories instead of direct Model::create() or
+ * Model::query()->create() for models that have factories.
  */
-test('test files should not use query()->create() for models with factories', function () {
-    $violations = [];
-    $testsDir = dirname(__DIR__);
-
-    $modelPatterns = [
-        'ActivityLog::query()->create(',
-        'BlockedDate::query()->create(',
-        'BlogPost::query()->create(',
-        'BusinessSchedule::query()->create(',
-        'Category::query()->create(',
-        'Coupon::query()->create(',
-        'Customer::query()->create(',
-        'CustomerFavorite::query()->create(',
-        'CustomerPhoto::query()->create(',
-        'EmailCampaign::query()->create(',
-        'Expense::query()->create(',
-        'GiftCard::query()->create(',
-        'Holiday::query()->create(',
-        'Income::query()->create(',
-        'Ingredient::query()->create(',
-        'LoyaltyPoint::query()->create(',
-        'LoyaltyReward::query()->create(',
-        'OrderItem::query()->create(',
-        'OrderMessage::query()->create(',
-        'PlatformActivity::query()->create(',
-        'PlatformAnnouncement::query()->create(',
-        'PlatformMessage::query()->create(',
-        'Product::query()->create(',
-        'ProductImage::query()->create(',
-        'Referral::query()->create(',
-        'Review::query()->create(',
-        'Setting::query()->create(',
-        'SocialPost::query()->create(',
-        'StaffInvitation::query()->create(',
-        'Supplier::query()->create(',
-        'SupportReply::query()->create(',
-        'SupportTicket::query()->create(',
-        'Survey::query()->create(',
-        'SurveyResponse::query()->create(',
-        'Tenant::query()->create(',
-        'TenantNote::query()->create(',
-        'User::query()->create(',
-        'Order::query()->create(',
+test('test files should not use direct Model::create() for models with factories', function () {
+    $models = [
+        'ActivityLog',
+        'BlockedDate',
+        'BlogPost',
+        'BusinessSchedule',
+        'Category',
+        'Coupon',
+        'Customer',
+        'CustomerFavorite',
+        'CustomerNote',
+        'CustomerPhoto',
+        'EmailCampaign',
+        'EmailTemplate',
+        'Expense',
+        'GiftCard',
+        'Holiday',
+        'ImpersonationToken',
+        'Income',
+        'Ingredient',
+        'LoyaltyPoint',
+        'LoyaltyReward',
+        'Order',
+        'OrderItem',
+        'OrderMessage',
+        'PlatformActivity',
+        'PlatformAnnouncement',
+        'PlatformMessage',
+        'PlatformSetting',
+        'Product',
+        'ProductImage',
+        'Referral',
+        'Review',
+        'Setting',
+        'SocialPost',
+        'StaffInvitation',
+        'Supplier',
+        'SupportReply',
+        'SupportTicket',
+        'Survey',
+        'SurveyResponse',
+        'Tenant',
+        'TenantNote',
+        'User',
     ];
 
+    $patterns = [];
+    foreach ($models as $model) {
+        // Direct static call (e.g. User::create([...]))
+        $patterns[] = "/(?<![A-Za-z0-9_\\\\]){$model}::create\(/";
+        // query() chain (e.g. User::query()->create([...]))
+        $patterns[] = "/(?<![A-Za-z0-9_\\\\]){$model}::query\(\)->create\(/";
+    }
+
+    $testsDir = dirname(__DIR__);
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($testsDir, FilesystemIterator::SKIP_DOTS),
     );
+
+    $violations = [];
 
     foreach ($iterator as $file) {
         if ($file->getExtension() !== 'php') {
@@ -66,14 +79,14 @@ test('test files should not use query()->create() for models with factories', fu
         $content = file_get_contents($file->getPathname());
         $relative = str_replace(realpath($testsDir) . DIRECTORY_SEPARATOR, '', $file->getPathname());
 
-        foreach ($modelPatterns as $pattern) {
-            if (str_contains($content, $pattern)) {
-                $violations[] = "{$relative}: use factory instead of {$pattern})";
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $content, $matches)) {
+                $violations[] = "{$relative}: use factory instead of {$matches[0]})";
             }
         }
     }
 
     expect($violations)->toBeEmpty(
-        "Use Model::factory() instead of Model::query()->create():\n" . implode("\n", $violations),
+        "Use Model::factory() instead of Model::create() / Model::query()->create():\n" . implode("\n", $violations),
     );
 });
