@@ -82,10 +82,6 @@ class LoyaltyPageViewModel
 
     public readonly int $lifetimeEarned;
 
-    public readonly string $formattedTotalPoints;
-
-    public readonly string $formattedLifetimeEarned;
-
     public readonly ?LoyaltyReward $nextReward;
 
     public readonly bool $hasCustomer;
@@ -108,8 +104,6 @@ class LoyaltyPageViewModel
     ) {
         $this->totalPoints = $balance->total;
         $this->lifetimeEarned = $balance->earned;
-        $this->formattedTotalPoints = number_format($this->totalPoints);
-        $this->formattedLifetimeEarned = number_format($this->lifetimeEarned);
         $this->hasCustomer = $customer !== null;
 
         $this->nextReward = $rewards
@@ -126,32 +120,18 @@ class LoyaltyPageViewModel
         return min(100, ($this->totalPoints / $this->nextReward->points_required) * 100);
     }
 
-    public function formattedPointsToNextReward(): string
+    public function pointsToNextReward(): int
     {
         if (! $this->nextReward) {
-            return '0';
+            return 0;
         }
 
-        return number_format($this->nextReward->points_required - $this->totalPoints);
-    }
-
-    public function formattedNextRewardRequired(): string
-    {
-        if (! $this->nextReward) {
-            return '0';
-        }
-
-        return number_format($this->nextReward->points_required);
+        return $this->nextReward->points_required - $this->totalPoints;
     }
 
     public function canRedeem(LoyaltyReward $reward): bool
     {
         return $this->hasCustomer && $this->totalPoints >= $reward->points_required;
-    }
-
-    public function formattedRewardPoints(LoyaltyReward $reward): string
-    {
-        return number_format($reward->points_required);
     }
 
     public function historyEntrySign(LoyaltyPointType $type): string
@@ -169,10 +149,5 @@ class LoyaltyPageViewModel
             LoyaltyPointType::Redeemed => 'text-red-600',
             LoyaltyPointType::Adjusted => 'text-yellow-600',
         };
-    }
-
-    public function formattedEntryPoints(int $points): string
-    {
-        return number_format($points);
     }
 }

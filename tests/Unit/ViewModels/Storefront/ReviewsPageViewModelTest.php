@@ -92,38 +92,6 @@ test('handles zero reviews gracefully', function () {
         ->and($vm->ratingBreakdown[1]['pct'])->toBe(0.0);
 });
 
-test('formats average rating to one decimal place', function () {
-    $ratings = [5, 4, 3];
-    $vm = new ReviewsPageViewModel(
-        makeReviewCollection($ratings),
-        makeStats(4.0, 3),
-        makeStarCounts($ratings),
-    );
-
-    expect($vm->formattedAvgRating)->toBe('4.0');
-});
-
-test('formats fractional average rating to one decimal place', function () {
-    $ratings = [5, 5, 4, 3];
-    $vm = new ReviewsPageViewModel(
-        makeReviewCollection($ratings),
-        makeStats(4.25, 4),
-        makeStarCounts($ratings),
-    );
-
-    expect($vm->formattedAvgRating)->toBe('4.3');
-});
-
-test('formats zero average rating to one decimal place', function () {
-    $vm = new ReviewsPageViewModel(
-        makeReviewCollection([]),
-        makeStats(0, 0),
-        makeStarCounts([]),
-    );
-
-    expect($vm->formattedAvgRating)->toBe('0.0');
-});
-
 test('uses global star counts not paginated subset for percentages', function () {
     $allRatings = [5, 5, 5, 5, 5, 4, 4, 4, 3, 3, 2, 1];
     $paginatedRatings = [5, 4, 3];

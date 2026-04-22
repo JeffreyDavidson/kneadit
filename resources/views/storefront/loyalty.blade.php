@@ -55,11 +55,11 @@
                 <div class="rounded-2xl p-8 text-center relative overflow-hidden bg-warm-900">
                     <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-[0.06] bg-warm-500 translate-x-[30%] -translate-y-[30%]"></div>
                     <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">Available Points</p>
-                    <p class="font-display text-5xl font-bold text-warm-500">{{ $vm->formattedTotalPoints }}</p>
+                    <p class="font-display text-5xl font-bold text-warm-500">@number($vm->totalPoints)</p>
                 </div>
                 <div class="rounded-2xl p-8 text-center bg-white border border-warm-200">
                     <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">Lifetime Earned</p>
-                    <p class="font-display text-5xl font-bold text-warm-900">{{ $vm->formattedLifetimeEarned }}</p>
+                    <p class="font-display text-5xl font-bold text-warm-900">@number($vm->lifetimeEarned)</p>
                 </div>
             </div>
 
@@ -68,12 +68,12 @@
             <div class="max-w-2xl mx-auto mb-10 rounded-2xl p-6 bg-white border border-warm-200">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-semibold text-warm-700">Next Reward: {{ $vm->nextReward->name }}</span>
-                    <span class="text-sm font-bold text-warm-500">{{ $vm->formattedTotalPoints }} / {{ $vm->formattedNextRewardRequired() }} pts</span>
+                    <span class="text-sm font-bold text-warm-500">@number($vm->totalPoints) / @number($vm->nextReward->points_required) pts</span>
                 </div>
                 <div class="w-full rounded-full h-3 overflow-hidden bg-warm-200">
                     <div class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-warm-500 to-warm-400" style="width: {{ $vm->nextRewardProgressPercent() }}%;"></div>
                 </div>
-                <p class="text-xs mt-2 text-right text-warm-500">{{ $vm->formattedPointsToNextReward() }} points to go!</p>
+                <p class="text-xs mt-2 text-right text-warm-500">@number($vm->pointsToNextReward()) points to go!</p>
             </div>
             @endif
 
@@ -91,7 +91,7 @@
                             <p class="text-sm text-warm-500">{{ $entry->created_at->format('M j, Y') }}</p>
                         </div>
                         <span class="font-display text-lg font-bold {{ $vm->historyEntryColorClass($entry->type) }}">
-                            {{ $vm->historyEntrySign($entry->type) }}{{ $vm->formattedEntryPoints($entry->points) }}
+                            {{ $vm->historyEntrySign($entry->type) }}@number($entry->points)
                         </span>
                     </div>
                     @endforeach
@@ -132,7 +132,7 @@
                     <p class="text-sm mb-3 text-warm-600">{{ $reward->description }}</p>
                     @endif
                     <div class="inline-block px-4 py-2 rounded-full bg-warm-100">
-                        <span class="font-display font-bold text-warm-800">{{ $vm->formattedRewardPoints($reward) }}</span>
+                        <span class="font-display font-bold text-warm-800">@number($reward->points_required)</span>
                         <span class="text-sm text-warm-500">pts</span>
                     </div>
                     <p class="text-xs mt-2 text-warm-500">{{ \App\Presenters\LoyaltyRewardPresenter::for($reward)->rewardTypeLabel() }}</p>
