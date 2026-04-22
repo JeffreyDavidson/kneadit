@@ -35,26 +35,16 @@
         @endforeach
 
         {{-- Reply form --}}
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem;">
-            <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Reply</div>
+        <x-central.card title="Reply" class="mt-6">
             <form wire:submit="sendReply">
-                <textarea
-                    wire:model="replyBody"
-                    rows="4"
-                    placeholder="Type your reply..."
-                    style="width: 100%; background: #2a1f18; border: 1px solid rgba(212,146,12,0.12); border-radius: 8px; padding: 0.75rem; color: #faf0d6; font-size: 0.9rem; resize: vertical; box-sizing: border-box; font-family: inherit; outline: none;"
-                    onfocus="this.style.borderColor='#d4920c'"
-                    onblur="this.style.borderColor='rgba(212,146,12,0.12)'"
-                ></textarea>
+                <x-central.textarea wire:model="replyBody" rows="4" placeholder="Type your reply..." />
                 @error('replyBody')
-                    <p style="color: #ef4444; font-size: 0.8rem; margin: 0.25rem 0 0 0;">{{ $message }}</p>
+                    <p class="text-red-500 text-[0.8rem] mt-1">{{ $message }}</p>
                 @enderror
-                <div style="margin-top: 0.75rem; text-align: right;">
-                    <button type="submit" style="background: #d4920c; color: #1c1410; border: none; padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.9rem;">
-                        Send Reply
-                    </button>
+                <div class="mt-3 text-right">
+                    <x-central.button type="submit">Send Reply</x-central.button>
                 </div>
             </form>
-        </div>
+        </x-central.card>
     </div>
 </x-filament-panels::page>

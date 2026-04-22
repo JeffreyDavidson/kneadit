@@ -22,13 +22,11 @@
                     <p class="text-2xl font-bold mb-2">{{ $avg }} / 5 <span class="text-sm text-gray-500">({{ $ratings->count() }} ratings)</span></p>
                     <div class="space-y-1">
                         @foreach ($distribution->reverse() as $star => $count)
-                            <div class="flex items-center gap-2 text-sm">
-                                <span class="w-8 text-right">{{ $star }}★</span>
-                                <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
-                                    <div class="bg-amber-500 h-full rounded-full" style="width: {{ ($count / $maxCount) * 100 }}%"></div>
-                                </div>
-                                <span class="w-8 text-gray-500">{{ $count }}</span>
-                            </div>
+                            <x-admin.distribution-bar
+                                :label="$star.'★'"
+                                :percentage="($count / $maxCount) * 100"
+                                :count="$count"
+                            />
                         @endforeach
                     </div>
 
@@ -40,13 +38,17 @@
                     @endphp
                     <div class="space-y-2">
                         @foreach ($breakdown as $option => $count)
-                            <div class="flex items-center gap-2 text-sm">
-                                <span class="w-40 truncate">{{ $option }}</span>
-                                <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
-                                    <div class="bg-blue-500 h-full rounded-full" style="width: {{ ($count / $total) * 100 }}%"></div>
-                                </div>
-                                <span class="w-16 text-gray-500 text-right">{{ round(($count / $total) * 100) }}% ({{ $count }})</span>
-                            </div>
+                            <x-admin.distribution-bar
+                                :label="$option"
+                                :percentage="($count / $total) * 100"
+                                :count="$count"
+                                color="bg-blue-500"
+                                label-width="w-40"
+                                label-align="truncate"
+                                count-width="w-16"
+                                count-align="text-right"
+                                :count-suffix="round(($count / $total) * 100).'% ('.$count.')'"
+                            />
                         @endforeach
                     </div>
 

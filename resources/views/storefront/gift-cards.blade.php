@@ -37,7 +37,7 @@
 
             <div class="flex justify-center gap-4">
                 <button @click="copyCode()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105" style="border: 2px solid var(--warm-300); color: var(--warm-700);">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <x-heroicon-o-document-duplicate class="w-4 h-4" stroke-width="2" />
                     <span x-text="copied ? 'Copied!' : 'Copy Code'"></span>
                 </button>
                 <button @click="purchasedCard = null" class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-500 text-warm-900">

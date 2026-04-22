@@ -1,41 +1,26 @@
 <x-filament-panels::page>
     {{-- Summary Stats --}}
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-            <div style="color: #d4920c; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Total Signups</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #ffffff;">{{ $this->getTotalSignups() }}</div>
-        </div>
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-            <div style="color: #d4920c; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">This Month</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #ffffff;">{{ $this->getThisMonthSignups() }}</div>
-        </div>
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-            <div style="color: #d4920c; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Avg Days on Trial</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #ffffff;">{{ $this->getAvgDaysOnTrial() }}</div>
-        </div>
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-            <div style="color: #d4920c; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Most Popular Plan</div>
-            <div style="font-size: 1.25rem; font-weight: 700; color: #ffffff; text-transform: capitalize;">{{ $this->getMostPopularPlan() }}</div>
-        </div>
+    <div class="grid grid-cols-4 gap-4 mb-6">
+        <x-central.stat-card label="Total Signups" value-class="text-[1.75rem] text-white">{{ $this->getTotalSignups() }}</x-central.stat-card>
+        <x-central.stat-card label="This Month" value-class="text-[1.75rem] text-white">{{ $this->getThisMonthSignups() }}</x-central.stat-card>
+        <x-central.stat-card label="Avg Days on Trial" value-class="text-[1.75rem] text-white">{{ $this->getAvgDaysOnTrial() }}</x-central.stat-card>
+        <x-central.stat-card label="Most Popular Plan" value-class="text-[1.25rem] text-white capitalize">{{ $this->getMostPopularPlan() }}</x-central.stat-card>
     </div>
 
     {{-- Charts --}}
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;">
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-            <div style="color: #ffffff; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Signups Over Last 12 Months</div>
+    <div class="grid grid-cols-2 gap-6 mb-6">
+        <x-central.card title="Signups Over Last 12 Months">
             <canvas id="signupsChart" height="250"></canvas>
-        </div>
-        <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; overflow: hidden;">
-            <div style="color: #ffffff; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Plan Distribution</div>
-            <div style="position: relative; max-height: 280px;">
+        </x-central.card>
+        <x-central.card title="Plan Distribution" class="overflow-hidden">
+            <div class="relative max-h-[280px]">
                 <canvas id="planChart"></canvas>
             </div>
-        </div>
+        </x-central.card>
     </div>
-    <div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem;">
-        <div style="color: #ffffff; font-weight: 700; font-size: 1rem; margin-bottom: 1rem;">Monthly Growth Rate (%)</div>
+    <x-central.card title="Monthly Growth Rate (%)">
         <canvas id="growthChart" height="150"></canvas>
-    </div>
+    </x-central.card>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>

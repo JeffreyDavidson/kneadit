@@ -49,9 +49,7 @@
     <x-storefront.dark-section padding="py-24">
         <div class="text-center max-w-md mx-auto px-4">
             <div class="w-20 h-20 rounded-full mx-auto mb-8 flex items-center justify-center" style="background: rgba(212,146,12,0.1); border: 1px solid rgba(212,146,12,0.2);">
-                <svg class="w-8 h-8 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
+                <x-heroicon-o-magnifying-glass class="w-8 h-8 text-warm-500" />
             </div>
             <p class="font-display text-3xl md:text-4xl font-bold mb-4 text-warm-100">{{ $content['empty_heading'] ?? 'No orders found' }}</p>
             <p class="text-lg mb-2 text-warm-400">
@@ -112,7 +110,7 @@
                                                 <div class="track-stepper-dot w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold"
                                                      style="background: {{ $tracked->isStepCompleted($i) ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }}; color: {{ $tracked->isStepCompleted($i) ? 'var(--warm-900)' : 'var(--warm-600)' }}; {{ $tracked->isCurrentStep($i) ? 'box-shadow: 0 0 0 4px rgba(212,146,12,0.2);' : '' }}">
                                                     @if ($tracked->isStepCompleted($i) && !$tracked->isCurrentStep($i))
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                                        <x-heroicon-o-check class="w-4 h-4" stroke-width="3" />
                                                     @else
                                                         {{ $i + 1 }}
                                                     @endif
@@ -132,7 +130,7 @@
                                             <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
                                                  style="background: {{ $tracked->isStepCompleted($i) ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }}; color: {{ $tracked->isStepCompleted($i) ? 'var(--warm-900)' : 'var(--warm-600)' }};">
                                                 @if ($tracked->isStepCompleted($i) && !$tracked->isCurrentStep($i))
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                                    <x-heroicon-o-check class="w-3.5 h-3.5" stroke-width="3" />
                                                 @else
                                                     {{ $i + 1 }}
                                                 @endif
@@ -190,9 +188,7 @@
                                    style="background: rgba(212,146,12,0.1); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.25);"
                                    onmouseover="this.style.background='var(--warm-500)';this.style.color='var(--warm-900)'"
                                    onmouseout="this.style.background='rgba(212,146,12,0.1)';this.style.color='var(--warm-400)'">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                    </svg>
+                                    <x-heroicon-o-arrow-path class="w-4 h-4" stroke-width="2" />
                                     {{ $content['reorder_button'] ?? 'Order Again' }}
                                 </a>
                             </div>

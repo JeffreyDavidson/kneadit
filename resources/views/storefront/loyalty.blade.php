@@ -125,7 +125,7 @@
                     <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold bg-warm-500 text-warm-900">Redeemable!</div>
                     @endif
                     <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-warm-100">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="text-warm-500"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                        <x-heroicon-o-chat-bubble-oval-left class="w-7 h-7 text-warm-500" />
                     </div>
                     <h3 class="font-display text-lg font-bold mb-1 text-warm-900">{{ $reward->name }}</h3>
                     @if ($reward->description)

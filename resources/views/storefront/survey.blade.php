@@ -7,9 +7,7 @@
 
     <div class="relative z-10 max-w-lg mx-auto text-center px-4 py-28">
         <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center hero-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
-            <svg class="w-10 h-10 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-            </svg>
+            <x-heroicon-o-check class="w-10 h-10 text-warm-500" stroke-width="2.5" />
         </div>
         <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
         <p class="text-lg mb-10 hero-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>

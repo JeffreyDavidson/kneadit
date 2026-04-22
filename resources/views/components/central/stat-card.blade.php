@@ -1,6 +1,6 @@
-@props(['label'])
+@props(['label', 'valueClass' => 'text-[1.5rem] text-parchment'])
 
-<div style="background: #1c1410; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid #2a1f18;">
-    <div style="color: #d4920c; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">{{ $label }}</div>
-    <div style="color: #faf0d6; font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem;">{{ $slot }}</div>
-</div>
+<x-central.card padding="p-5">
+    <x-central.eyebrow>{{ $label }}</x-central.eyebrow>
+    <div {{ $attributes->class(['font-bold mt-1', $valueClass]) }}>{{ $slot }}</div>
+</x-central.card>

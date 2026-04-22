@@ -16,9 +16,7 @@
             <div class="bg-red-50 rounded-lg shadow p-6 border border-red-200">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                        </svg>
+                        <x-heroicon-o-exclamation-triangle class="w-8 h-8 text-red-600" stroke-width="2" />
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-red-600">Needs Attention</p>
@@ -34,9 +32,7 @@
             <div class="bg-blue-50 rounded-lg shadow p-6 border border-blue-200">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
+                        <x-heroicon-o-calendar class="w-8 h-8 text-blue-600" stroke-width="2" />
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-blue-600">Upcoming</p>
@@ -52,9 +48,7 @@
             <div class="bg-green-50 rounded-lg shadow p-6 border border-green-200">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 0v1m0 0V9a2 2 0 11-2 0V8ZM6 10v8a2 2 0 002 2h8a2 2 0 002-2v-8a2 2 0 00-2-2H8a2 2 0 00-2 2Z"></path>
-                        </svg>
+                        <x-heroicon-o-gift class="w-8 h-8 text-green-600" stroke-width="2" />
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-600">Total Holidays</p>
@@ -72,9 +66,7 @@
             <div class="bg-red-100 border-l-4 border-red-500 p-4 rounded-lg">
                 <div class="flex">
                     <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"></path>
-                        </svg>
+                        <x-heroicon-s-x-circle class="h-5 w-5 text-red-400" />
                     </div>
                     <div class="ml-3">
                         <h3 class="text-sm font-medium text-red-800">Action Required!</h3>
@@ -101,9 +93,7 @@
             @foreach ($this->getHolidaysByMonth() as $monthKey => $monthHolidays)
                 <div class="mb-8 last:mb-0">
                     <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
+                        <x-heroicon-o-calendar class="w-5 h-5 mr-2 text-primary-600" stroke-width="2" />
                         {{ \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->format('F Y') }}
                     </h4>
 
@@ -164,9 +154,7 @@
         <!-- Tips Section -->
         <div class="bg-blue-50 rounded-lg shadow p-6 border border-blue-200">
             <h3 class="text-lg font-semibold text-blue-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+                <x-heroicon-o-information-circle class="w-5 h-5 mr-2" stroke-width="2" />
                 Holiday Planning Tips
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">

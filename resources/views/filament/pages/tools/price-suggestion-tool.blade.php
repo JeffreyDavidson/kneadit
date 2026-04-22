@@ -53,9 +53,7 @@
                     <div class="bg-blue-50 rounded-lg p-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                </svg>
+                                <x-heroicon-o-currency-dollar class="w-8 h-8 text-blue-600" stroke-width="2" />
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-blue-600">Recipe Cost</p>
@@ -67,9 +65,7 @@
                     <div class="bg-purple-50 rounded-lg p-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                                </svg>
+                                <x-heroicon-o-arrow-trending-up class="w-8 h-8 text-purple-600" stroke-width="2" />
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-purple-600">Suggested Price</p>
@@ -83,9 +79,7 @@
                         <div class="bg-green-50 rounded-lg p-4">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
-                                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                    </svg>
+                                    <x-heroicon-o-tag class="w-8 h-8 text-green-600" stroke-width="2" />
                                 </div>
                                 <div class="ml-3">
                                     <p class="text-sm font-medium text-green-600">Current Price</p>
@@ -100,9 +94,7 @@
                             <div class="bg-{{ $currentMarginData['color'] }}-50 rounded-lg p-4">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0">
-                                        <svg class="w-8 h-8 text-{{ $currentMarginData['color'] }}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                        </svg>
+                                        <x-heroicon-o-chart-bar class="w-8 h-8 text-{{ $currentMarginData['color'] }}-600" stroke-width="2" />
                                     </div>
                                     <div class="ml-3">
                                         <p class="text-sm font-medium text-{{ $currentMarginData['color'] }}-600">Current Margin</p>
@@ -116,9 +108,7 @@
                         <div class="bg-gray-50 rounded-lg p-4">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
-                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                    </svg>
+                                    <x-heroicon-o-exclamation-triangle class="w-8 h-8 text-gray-400" stroke-width="2" />
                                 </div>
                                 <div class="ml-3">
                                     <p class="text-sm font-medium text-gray-600">No Product Linked</p>
@@ -231,9 +221,7 @@
         @if ($recipes->isEmpty())
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="text-center">
-                    <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                    </svg>
+                    <x-heroicon-o-currency-dollar class="w-12 h-12 mx-auto text-gray-400 mb-4" stroke-width="2" />
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No recipes with cost data</h3>
                     <p class="text-gray-500 mb-4">To use the price suggestion tool, you need recipes with calculated costs.</p>
                     <div class="text-sm text-gray-600">

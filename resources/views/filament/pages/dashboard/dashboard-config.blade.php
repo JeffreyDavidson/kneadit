@@ -110,9 +110,7 @@
                 @foreach ($widgets as $index => $widget)
                     <div class="widget-card {{ $widget['visible'] ? '' : 'disabled' }}" data-index="{{ $index }}">
                         <div class="widget-drag">
-                            <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M7 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                            </svg>
+                            <x-heroicon-s-bars-3 class="w-3.5 h-3.5" />
                         </div>
                         <div class="widget-icon">{{ $widget['icon'] }}</div>
                         <div class="widget-info">
@@ -340,7 +338,7 @@
 
     <div class="config-footer">
         <a href="{{ route('filament.admin.pages.dashboard') }}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 16px; height: 16px;"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>
+            <x-heroicon-s-chevron-left class="w-4 h-4" />
             Back to Dashboard
         </a>
         <x-filament::button wire:click="save">
