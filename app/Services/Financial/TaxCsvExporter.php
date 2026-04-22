@@ -86,7 +86,7 @@ class TaxCsvExporter
                 foreach ($incomes as $income) {
                     fputcsv($handle, [
                         $income->date?->format('Y-m-d'),
-                        $income->source_label,
+                        $income->source->getLabel(),
                         $income->description,
                         $income->amount->dollars(),
                         'Gross Receipts (Schedule C Line 1)',
