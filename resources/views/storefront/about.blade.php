@@ -3,14 +3,14 @@
 <link rel="stylesheet" href="{{ asset('css/about.css') }}">
 
 {{-- Photo-Forward Hero with Dark Overlay --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name" image-class="about-hero-img" min-height="70vh" gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name" image-class="hero-img" min-height="70vh" gradient="linear-gradient(to bottom, rgba(28,20,16,0.4) 0%, rgba(28,20,16,0.6) 50%, rgba(28,20,16,0.95) 100%)">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[70vh]">
-        <x-storefront.eyebrow class="about-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'The story behind' }}</x-storefront.eyebrow>
-        <h1 class="about-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
+        <x-storefront.eyebrow class="hero-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'The story behind' }}</x-storefront.eyebrow>
+        <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
             {{ $settings->store->name }}
         </h1>
         @if ($settings->branding->businessTagline)
-        <p class="about-fade-2 font-script text-2xl md:text-3xl text-warm-400">{{ $settings->branding->businessTagline }}</p>
+        <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-400">{{ $settings->branding->businessTagline }}</p>
         @endif
     </div>
 </x-storefront.hero-section>
