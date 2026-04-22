@@ -57,27 +57,39 @@ enum OrderStatus: string implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function hexColor(): string
+    public function funnelTextClass(): string
     {
         return match ($this) {
-            self::Pending => '#F59E0B',
-            self::Confirmed => '#3B82F6',
-            self::Baking => '#8B5E3C',
-            self::Ready => '#10B981',
-            self::Delivered => '#6B7280',
-            self::Cancelled => '#EF4444',
+            self::Pending => 'text-amber-500',
+            self::Confirmed => 'text-blue-500',
+            self::Baking => 'text-brand-600',
+            self::Ready => 'text-emerald-500',
+            self::Delivered => 'text-gray-500',
+            self::Cancelled => 'text-red-500',
         };
     }
 
-    public function hexBackground(): string
+    public function funnelBgClass(): string
     {
         return match ($this) {
-            self::Pending => '#FEF3C7',
-            self::Confirmed => '#DBEAFE',
-            self::Baking => '#F5E6D3',
-            self::Ready => '#D1FAE5',
-            self::Delivered => '#F3F4F6',
-            self::Cancelled => '#FEE2E2',
+            self::Pending => 'bg-amber-100',
+            self::Confirmed => 'bg-blue-100',
+            self::Baking => 'bg-brand-100',
+            self::Ready => 'bg-emerald-100',
+            self::Delivered => 'bg-gray-100',
+            self::Cancelled => 'bg-red-100',
+        };
+    }
+
+    public function funnelBorderClass(): string
+    {
+        return match ($this) {
+            self::Pending => 'border-amber-500',
+            self::Confirmed => 'border-blue-500',
+            self::Baking => 'border-brand-600',
+            self::Ready => 'border-emerald-500',
+            self::Delivered => 'border-gray-500',
+            self::Cancelled => 'border-red-500',
         };
     }
 
@@ -87,8 +99,9 @@ enum OrderStatus: string implements HasColor, HasIcon, HasLabel
         return [
             'key' => $this->value,
             'label' => $this->getLabel(),
-            'color' => $this->hexColor(),
-            'bg' => $this->hexBackground(),
+            'textClass' => $this->funnelTextClass(),
+            'bgClass' => $this->funnelBgClass(),
+            'borderClass' => $this->funnelBorderClass(),
             'count' => $count,
         ];
     }
