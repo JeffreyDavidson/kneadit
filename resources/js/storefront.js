@@ -86,4 +86,53 @@ Alpine.data('galleryLightbox', () => ({
     },
 }));
 
+// Menu page: per-product waitlist signup. Toggles the inline form open,
+// POSTs the email to the waitlist endpoint, then collapses to a
+// confirmation message.
+Alpine.data('waitlistSignup', ({ url, productId, csrfToken }) => ({
+    showForm: false,
+    submitted: false,
+    email: '',
+    open() {
+        this.showForm = true;
+    },
+    async submit() {
+        await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                Accept: 'application/json',
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                customer_email: this.email,
+            }),
+        });
+        this.submitted = true;
+        this.showForm = false;
+    },
+}));
+
+// Submit-review + survey: 5-star rating picker. `withHover` enables hover
+// preview that scales/recolors stars as the cursor moves across them.
+Alpine.data('ratingPicker', (initial = 0, withHover = false) => ({
+    rating: initial,
+    hover: 0,
+    withHover,
+    set(value) {
+        this.rating = value;
+    },
+    enter(value) {
+        if (this.withHover) this.hover = value;
+    },
+    leave() {
+        if (this.withHover) this.hover = 0;
+    },
+    isFilled(star) {
+        const target = this.withHover ? (this.hover || this.rating) : this.rating;
+        return target >= star;
+    },
+}));
+
 Alpine.start();

@@ -75,11 +75,11 @@
 
  <div class="pl-12">
  @if ($question['type'] === SurveyQuestionType::Rating->value)
- <div x-data="{ rating: 0 }" class="flex gap-2 items-center">
+ <div x-data="ratingPicker(0)" class="flex gap-2 items-center">
  @for ($star = 1; $star <= 5; $star++)
  <button type="button"
- @click="rating = {{ $star }}"
- :class="rating >= {{ $star }} ? 'text-warm-500' : 'text-warm-400 opacity-30'"
+ @click="set({{ $star }})"
+ x-bind:class="isFilled({{ $star }}) ? 'text-warm-500' : 'text-warm-400 opacity-30'"
  class="text-4xl transition-all duration-200 hover:scale-125 cursor-pointer">
  ★
  </button>
