@@ -71,7 +71,7 @@
                             class="nav-link font-display inline-flex items-center gap-1 {{ $exploreActive ? 'active' : '' }}"
                             :aria-expanded="explore">
                         Explore
-                        <svg class="w-3.5 h-3.5 transition-transform" :class="explore ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                        <x-heroicon-o-chevron-down class="w-3.5 h-3.5 transition-transform" ::class="explore ? 'rotate-180' : ''" stroke-width="2.5" />
                     </button>
                     <div x-show="explore" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                          class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl"
@@ -92,7 +92,7 @@
                             class="nav-link font-display inline-flex items-center gap-1 {{ $accountActive ? 'active' : '' }}"
                             :aria-expanded="account">
                         My Account
-                        <svg class="w-3.5 h-3.5 transition-transform" :class="account ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                        <x-heroicon-o-chevron-down class="w-3.5 h-3.5 transition-transform" ::class="account ? 'rotate-180' : ''" stroke-width="2.5" />
                     </button>
                     <div x-show="account" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                          class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl"
@@ -124,8 +124,8 @@
                         {{ $storeName }}
                     </a>
                     <button @click="open = !open" class="nav-link font-display ml-4" style="padding: 8px 12px;" aria-label="Toggle navigation" :aria-expanded="open">
-                        <svg x-show="!open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                        <svg x-show="open" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <x-heroicon-o-bars-3 x-show="!open" class="w-5 h-5" stroke-width="2" />
+                        <x-heroicon-o-x-mark x-show="open" x-cloak class="w-5 h-5" stroke-width="2" />
                     </button>
                 </div>
                 <div x-show="open" x-collapse class="mt-4 space-y-1">
@@ -135,7 +135,7 @@
                     <!-- Mobile Explore Group -->
                     <button @click="explore = !explore" class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $exploreActive ? 'active' : '' }}" :aria-expanded="explore">
                         Explore
-                        <svg class="w-3.5 h-3.5 transition-transform" :class="explore ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                        <x-heroicon-o-chevron-down class="w-3.5 h-3.5 transition-transform" ::class="explore ? 'rotate-180' : ''" stroke-width="2.5" />
                     </button>
                     <div x-show="explore" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('storefront.blog') }}" class="block nav-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}">Blog</a>
@@ -150,7 +150,7 @@
                     <!-- Mobile Account Group -->
                     <button @click="account = !account" class="w-full text-left nav-link font-display inline-flex items-center justify-between {{ $accountActive ? 'active' : '' }}" :aria-expanded="account">
                         My Account
-                        <svg class="w-3.5 h-3.5 transition-transform" :class="account ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                        <x-heroicon-o-chevron-down class="w-3.5 h-3.5 transition-transform" ::class="account ? 'rotate-180' : ''" stroke-width="2.5" />
                     </button>
                     <div x-show="account" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('order.track') }}" class="block nav-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
