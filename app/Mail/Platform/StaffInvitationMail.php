@@ -31,7 +31,7 @@ class StaffInvitationMail extends BaseMailable
                 'storeName' => $this->storeName,
                 'acceptUrl' => $this->acceptUrl,
                 'role' => $this->invitation->role->getLabel(),
-                'expiresAt' => $this->invitation->expires_at?->format('F j, Y'),
+                'expiresAt' => $this->invitation->expires_at->format('F j, Y'),
             ],
         );
     }

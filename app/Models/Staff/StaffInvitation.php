@@ -8,7 +8,6 @@ use Database\Factories\Staff\StaffInvitationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,7 +21,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StaffInvitation query()
  *
- * @property Carbon|null $expires_at
+ * @property Carbon $expires_at
  *
  * @mixin \Eloquent
  */
@@ -49,13 +48,5 @@ class StaffInvitation extends Model
     public function inviter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'invited_by');
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isExpired(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => ! $this->expires_at || $this->expires_at->isPast(),
-        );
     }
 }

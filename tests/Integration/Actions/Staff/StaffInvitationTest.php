@@ -24,18 +24,6 @@ test('invitation can be created', function () {
     $this->assertDatabaseHas('staff_invitations', ['email' => 'staff@example.com']);
 });
 
-test('invitation is expired when past expiry', function () {
-    $invitation = StaffInvitation::factory()->create([
-        'email' => 'staff@example.com',
-        'role' => UserRole::Staff,
-        'token' => Str::random(32),
-        'expires_at' => now()->subDay(),
-        'invited_by' => User::factory()->owner()->create()->id,
-    ]);
-
-    expect($invitation->is_expired)->toBeTrue();
-});
-
 test('invitation belongs to inviter', function () {
     $owner = User::factory()->owner()->create();
     $invitation = StaffInvitation::factory()->create([
