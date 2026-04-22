@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\Inventory\StockStatus;
 use App\Models\Inventory\Ingredient;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -44,7 +45,7 @@ class LowStockWidget extends BaseWidget
                     ->label('In Stock')
                     ->formatStateUsing(fn (Ingredient $record) => $record->current_stock . ' ' . $record->unit)
                     ->badge()
-                    ->color(fn (Ingredient $record) => $record->is_out_of_stock ? 'danger' : 'warning'),
+                    ->color(fn (Ingredient $record) => StockStatus::resolve($record)->getColor()),
 
                 TextColumn::make('low_stock_threshold')
                     ->label('Threshold')

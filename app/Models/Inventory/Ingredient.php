@@ -4,14 +4,12 @@ namespace App\Models\Inventory;
 
 use App\Casts\MoneyCast;
 use App\Enums\Inventory\Allergen;
-use App\Enums\Inventory\StockStatus;
 use App\Observers\LogsActivityObserver;
 use Database\Factories\Inventory\IngredientFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -80,38 +78,5 @@ class Ingredient extends Model
     public function stockAdjustments(): HasMany
     {
         return $this->hasMany(StockAdjustment::class);
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isLowStock(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->current_stock > 0 && $this->current_stock <= $this->low_stock_threshold,
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isOutOfStock(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->current_stock <= 0,
-        );
-    }
-
-    /** @return Attribute<StockStatus, never> */
-    protected function stockStatus(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                if ($this->is_out_of_stock) {
-                    return StockStatus::Out;
-                }
-                if ($this->is_low_stock) {
-                    return StockStatus::Low;
-                }
-
-                return StockStatus::Good;
-            },
-        );
     }
 }

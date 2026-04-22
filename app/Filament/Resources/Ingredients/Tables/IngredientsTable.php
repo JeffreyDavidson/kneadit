@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Ingredients\Tables;
 
 use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\Inventory\StockAdjustmentType;
+use App\Enums\Inventory\StockStatus;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Inventory\Ingredient;
@@ -38,7 +39,7 @@ class IngredientsTable
                 TextColumn::make('stock_status')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn (Ingredient $record) => $record->stock_status),
+                    ->getStateUsing(fn (Ingredient $record) => StockStatus::resolve($record)),
 
                 MoneyColumn::make('cost_per_unit')
                     ->sortable()

@@ -70,7 +70,7 @@ test('low stock threshold detection', function () {
         'cost_per_unit' => 3.00,
     ]);
 
-    expect($ingredient->is_low_stock)->toBeTrue()->and($ingredient->is_out_of_stock)->toBeFalse()->and($ingredient->stock_status)->toBe(StockStatus::Low);
+    expect(StockStatus::resolve($ingredient))->toBe(StockStatus::Low);
 });
 
 test('out of stock detection', function () {
@@ -82,7 +82,7 @@ test('out of stock detection', function () {
         'cost_per_unit' => 0.10,
     ]);
 
-    expect($ingredient->is_out_of_stock)->toBeTrue()->and($ingredient->stock_status)->toBe(StockStatus::Out);
+    expect(StockStatus::resolve($ingredient))->toBe(StockStatus::Out);
 });
 
 test('good stock status', function () {
@@ -94,7 +94,7 @@ test('good stock status', function () {
         'cost_per_unit' => 1.00,
     ]);
 
-    expect($ingredient->is_low_stock)->toBeFalse()->and($ingredient->is_out_of_stock)->toBeFalse()->and($ingredient->stock_status)->toBe(StockStatus::Good);
+    expect(StockStatus::resolve($ingredient))->toBe(StockStatus::Good);
 });
 
 test('cost per unit is stored correctly', function () {
