@@ -39,7 +39,6 @@ use Illuminate\Support\Carbon;
  * @property-read CustomerProfile|null $customerProfile
  * @property-read Collection<int, CustomerReminder> $customerReminders
  * @property-read int|null $customer_reminders_count
- * @property-read string $full_address
  * @property-read Collection<int, LoyaltyPoint> $loyaltyPoints
  * @property-read int|null $loyalty_points_count
  * @property-read Collection<int, Order> $orders
@@ -154,14 +153,6 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
                 state: $this->state,
                 zip: $this->zip,
             ),
-        );
-    }
-
-    /** @return Attribute<string, never> */
-    protected function fullAddress(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->address_object->formatted(),
         );
     }
 }

@@ -67,6 +67,11 @@ final class CustomerPresenter
         return $this->metrics()->isAtRisk;
     }
 
+    public function address(): string
+    {
+        return $this->customer->address_object->formatted();
+    }
+
     private function metrics(): CustomerMetrics
     {
         return $this->memo ??= $this->intelligence->metrics($this->customer);
@@ -80,7 +85,7 @@ final class CustomerPresenter
             'name' => $this->customer->name,
             'email' => $this->customer->email,
             'phone' => $this->customer->phone,
-            'address' => $this->customer->full_address,
+            'address' => $this->address(),
             'orders' => $this->formattedOrders(),
             'notes' => $this->formattedNotes(),
             'stats' => $this->stats(),
