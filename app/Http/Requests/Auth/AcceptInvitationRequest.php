@@ -3,9 +3,9 @@
 namespace App\Http\Requests\Auth;
 
 use App\Models\Staff\StaffInvitation;
-use App\Models\Staff\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password;
 
 class AcceptInvitationRequest extends FormRequest
 {
@@ -32,7 +32,7 @@ class AcceptInvitationRequest extends FormRequest
     {
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'password' => ['sometimes', 'required', 'string', 'confirmed', User::passwordRule()],
+            'password' => ['sometimes', 'required', 'string', 'confirmed', Password::min(8)->letters()->numbers()],
         ];
     }
 }
