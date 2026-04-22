@@ -36,14 +36,6 @@ test('requested date is cast to date', function () {
     expect($entry->fresh()->requested_date)->toBeInstanceOf(Carbon::class);
 });
 
-test('status label accessor returns human readable label', function () {
-    $entry = WaitlistEntry::factory()->create([
-        'status' => WaitlistStatus::Waiting,
-    ]);
-
-    expect($entry->status_label)->toBe('Waiting');
-});
-
 test('for date scope filters by requested date', function () {
     $entry = WaitlistEntry::factory()->create([
         'requested_date' => '2026-06-15',

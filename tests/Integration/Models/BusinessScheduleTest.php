@@ -24,23 +24,3 @@ test('max orders is cast to integer', function () {
 
     expect($schedule->fresh()->max_orders)->toBeInt();
 });
-
-test('day name accessor returns correct day for each day of week', function (int $dayOfWeek, string $expectedName) {
-    $schedule = BusinessSchedule::factory()->create(['day_of_week' => $dayOfWeek]);
-
-    expect($schedule->day_name)->toBe($expectedName);
-})->with([
-    [0, 'Sunday'],
-    [1, 'Monday'],
-    [2, 'Tuesday'],
-    [3, 'Wednesday'],
-    [4, 'Thursday'],
-    [5, 'Friday'],
-    [6, 'Saturday'],
-]);
-
-test('day name accessor returns unknown for invalid day', function () {
-    $schedule = BusinessSchedule::factory()->create(['day_of_week' => 9]);
-
-    expect($schedule->day_name)->toBe('Unknown');
-});

@@ -3,18 +3,14 @@
 namespace App\Models\Operations;
 
 use App\Builders\Operations\BusinessScheduleQueryBuilder;
-use App\Enums\Staff\DayOfWeek;
 use Database\Factories\Operations\BusinessScheduleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property-read string $day_name
- *
  * @method static BusinessScheduleQueryBuilder newModelQuery()
  * @method static BusinessScheduleQueryBuilder newQuery()
  * @method static BusinessScheduleQueryBuilder query()
@@ -36,13 +32,5 @@ class BusinessSchedule extends Model
             'is_open' => 'boolean',
             'max_orders' => 'integer',
         ];
-    }
-
-    /** @return Attribute<string, never> */
-    protected function dayName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => DayOfWeek::fromPhpDayIndex($this->day_of_week)?->getLabel() ?? 'Unknown',
-        );
     }
 }

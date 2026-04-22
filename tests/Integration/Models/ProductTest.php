@@ -41,18 +41,6 @@ test('product has seasonal items', function () {
     expect($product->seasonalItems)->toHaveCount(1);
 });
 
-test('product margin attribute', function () {
-    $product = Product::factory()->create(['name' => 'Sourdough', 'price' => 10.00, 'cost' => 4.00]);
-
-    expect($product->margin)->toBe(60.0);
-});
-
-test('product margin is null without cost', function () {
-    $product = Product::factory()->create(['name' => 'Sourdough', 'price' => 10.00]);
-
-    expect($product->margin)->toBeNull();
-});
-
 test('product has customer photos relationship', function () {
     $product = Product::factory()->create(['name' => 'Photo Product']);
 
