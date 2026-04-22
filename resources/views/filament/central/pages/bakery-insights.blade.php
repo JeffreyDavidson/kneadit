@@ -119,12 +119,12 @@
                                 @if (in_array($alert['tenant_id'], $this->extendedTrials))
                                     <x-central.badge color="success" :uppercase="false">Extended</x-central.badge>
                                 @else
-                                    <x-central.button variant="secondary" wire:click="extendTrial('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled">Extend Trial</x-central.button>
+                                    <x-central.button variant="secondary" size="sm" wire:click="extendTrial('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled">Extend Trial</x-central.button>
                                 @endif
                                 @if (in_array($alert['tenant_id'], $this->sentNudges))
                                     <x-central.badge color="success" :uppercase="false">Nudge Sent</x-central.badge>
                                 @else
-                                    <x-central.button variant="secondary" wire:click="sendNudge('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled">Send Nudge</x-central.button>
+                                    <x-central.button variant="secondary" size="sm" wire:click="sendNudge('{{ $alert['tenant_id'] }}')" wire:loading.attr="disabled">Send Nudge</x-central.button>
                                 @endif
                                 <x-central.button :href="$this->getViewTenantUrl($alert['tenant_id'])">View Tenant</x-central.button>
                             </div>

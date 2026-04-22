@@ -46,12 +46,12 @@
         @if ($record->status !== 'closed')
         <div class="flex gap-2 mb-6 flex-wrap">
             @if ($record->status === 'open')
-                <x-central.button variant="warning" wire:click="updateStatus('in_progress')">Mark In Progress</x-central.button>
+                <x-central.button variant="warning" size="sm" wire:click="updateStatus('in_progress')">Mark In Progress</x-central.button>
             @endif
             @if (in_array($record->status, ['open', 'in_progress']))
-                <x-central.button variant="success" wire:click="updateStatus('resolved')">Mark Resolved</x-central.button>
+                <x-central.button variant="success" size="sm" wire:click="updateStatus('resolved')">Mark Resolved</x-central.button>
             @endif
-            <x-central.button variant="neutral" wire:click="updateStatus('closed')">Close Ticket</x-central.button>
+            <x-central.button variant="neutral" size="sm" wire:click="updateStatus('closed')">Close Ticket</x-central.button>
         </div>
         @endif
 
