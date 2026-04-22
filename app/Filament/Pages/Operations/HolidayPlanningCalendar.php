@@ -6,6 +6,7 @@ use App\Enums\Platform\SubscriptionTier;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Concerns\ShowsUpgradeBadge;
 use App\Models\Operations\Holiday;
+use App\Presenters\HolidayPresenter;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -57,11 +58,11 @@ class HolidayPlanningCalendar extends Page
         $this->holidays = Holiday::query()->orderBy('date')->get();
 
         $this->upcomingHolidays = $this->holidays
-            ->filter(fn (Holiday $holiday) => $holiday->is_upcoming)
+            ->filter(fn (Holiday $holiday) => HolidayPresenter::for($holiday)->isUpcoming())
             ->take(10);
 
         $this->inPrepPeriod = $this->holidays
-            ->filter(fn (Holiday $holiday) => $holiday->is_in_prep_period);
+            ->filter(fn (Holiday $holiday) => HolidayPresenter::for($holiday)->isInPrepPeriod());
     }
 
     /** @return Collection<int, mixed> */
@@ -80,54 +81,5 @@ class HolidayPlanningCalendar extends Page
                 return $holiday->date->format('Y-m');
             })
             ->sortKeys();
-    }
-
-    public function getDaysAway(Holiday $holiday): string
-    {
-        $daysAway = $holiday->days_away;
-
-        if ($daysAway < 0) {
-            return 'Passed ' . abs($daysAway) . ' days ago';
-        } elseif ($daysAway === 0) {
-            return 'Today!';
-        } elseif ($daysAway === 1) {
-            return 'Tomorrow';
-        } else {
-            return $daysAway . ' days away';
-        }
-    }
-
-    public function getStatusColor(Holiday $holiday): string
-    {
-        $daysAway = $holiday->days_away;
-
-        if ($daysAway < 0) {
-            return 'gray'; // Passed
-        } elseif ($holiday->is_in_prep_period) {
-            return 'yellow'; // In prep period
-        } elseif ($daysAway <= $holiday->lead_days) {
-            return 'red'; // Urgent - should have started prep
-        } elseif ($daysAway <= $holiday->lead_days * 2) {
-            return 'orange'; // Coming up soon
-        } else {
-            return 'green'; // Plenty of time
-        }
-    }
-
-    public function getStatusText(Holiday $holiday): string
-    {
-        $daysAway = $holiday->days_away;
-
-        if ($daysAway < 0) {
-            return 'Passed';
-        } elseif ($holiday->is_in_prep_period) {
-            return 'Prep Time!';
-        } elseif ($daysAway <= $holiday->lead_days) {
-            return 'Urgent';
-        } elseif ($daysAway <= $holiday->lead_days * 2) {
-            return 'Coming Up';
-        } else {
-            return 'Planning';
-        }
     }
 }

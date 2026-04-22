@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Holidays\Tables;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Operations\Holiday;
 use App\Models\Orders\Order;
+use App\Presenters\HolidayPresenter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -14,7 +15,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Date;
 
 class HolidaysTable
 {
@@ -63,27 +63,8 @@ class HolidaysTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(function (Holiday $record) {
-                        if ($record->date->isPast()) {
-                            return 'Past';
-                        }
-                        if ($record->is_deadline_passed) {
-                            return 'Deadline passed';
-                        }
-                        $days = $record->days_until_deadline;
-                        if ($days <= 3) {
-                            return 'Urgent';
-                        }
-
-                        return 'Open';
-                    })
-                    ->color(fn (string $state) => match ($state) {
-                        'Past' => 'gray',
-                        'Deadline passed' => 'danger',
-                        'Urgent' => 'warning',
-                        'Open' => 'success',
-                        default => 'gray',
-                    }),
+                    ->getStateUsing(fn (Holiday $record) => HolidayPresenter::for($record)->orderingStatus())
+                    ->color(fn (Holiday $record) => HolidayPresenter::for($record)->orderingStatusColor()),
 
                 TextColumn::make('days_until')
                     ->label('Days Until')
@@ -91,9 +72,8 @@ class HolidaysTable
                         if ($record->date->isPast()) {
                             return 'Passed';
                         }
-                        $days = (int) Date::today()->diffInDays($record->date, false);
 
-                        return "{$days}d";
+                        return HolidayPresenter::for($record)->daysAway() . 'd';
                     }),
 
                 IconColumn::make('is_active')
