@@ -20,13 +20,13 @@
     <div x-show="purchasedCard" x-cloak class="py-20 px-4 bg-warm-50">
         <div class="max-w-lg mx-auto text-center">
             {{-- Gift card mockup --}}
-            <div class="rounded-2xl p-8 mb-8 shadow-2xl relative overflow-hidden" style="background: linear-gradient(135deg, var(--warm-900) 0%, var(--warm-800) 100%);">
-                <div class="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10" style="background: var(--warm-500); transform: translate(30%, -30%);"></div>
-                <div class="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-10" style="background: var(--warm-500); transform: translate(-30%, 30%);"></div>
+            <div class="rounded-2xl p-8 mb-8 shadow-2xl relative overflow-hidden bg-gradient-to-br from-warm-900 to-warm-800">
+                <div class="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10 bg-warm-500 translate-x-[30%] -translate-y-[30%]"></div>
+                <div class="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-10 bg-warm-500 -translate-x-[30%] translate-y-[30%]"></div>
                 <div class="relative z-10">
                     <p class="font-script text-xl mb-1 text-warm-500">Gift Card</p>
                     <p class="font-display text-4xl font-bold mb-4 text-white" x-text="'$' + parseFloat(purchasedCard?.balance || 0).toFixed(2)"></p>
-                    <div class="py-3 px-6 rounded-xl inline-block mb-2" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(232,176,74,0.2);">
+                    <div class="py-3 px-6 rounded-xl inline-block mb-2 bg-white/5 border border-warm-400/20">
                         <span class="font-mono text-lg tracking-[0.2em] font-bold text-warm-400" x-text="purchasedCard?.code"></span>
                     </div>
                 </div>
@@ -36,7 +36,7 @@
             <p class="mb-6 text-warm-600">{{ $content['success_description'] ?? 'Share the code below with the lucky recipient.' }}</p>
 
             <div class="flex justify-center gap-4">
-                <button @click="copyCode()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105" style="border: 2px solid var(--warm-300); color: var(--warm-700);">
+                <button @click="copyCode()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 border-2 border-warm-300 text-warm-700">
                     <x-heroicon-o-document-duplicate class="w-4 h-4" stroke-width="2" />
                     <span x-text="copied ? 'Copied!' : 'Copy Code'"></span>
                 </button>
@@ -56,9 +56,9 @@
                     {{-- Card Preview --}}
                     <div>
                         <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-4 text-warm-500">{{ $content['preview_label'] ?? 'Preview' }}</p>
-                        <div class="rounded-2xl p-10 shadow-xl relative overflow-hidden aspect-[16/9] flex flex-col justify-between" style="background: linear-gradient(135deg, var(--warm-900) 0%, var(--warm-800) 100%);">
-                            <div class="absolute top-0 right-0 w-60 h-60 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(30%, -30%);"></div>
-                            <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(-30%, 30%);"></div>
+                        <div class="rounded-2xl p-10 shadow-xl relative overflow-hidden aspect-[16/9] flex flex-col justify-between bg-gradient-to-br from-warm-900 to-warm-800">
+                            <div class="absolute top-0 right-0 w-60 h-60 rounded-full opacity-[0.06] bg-warm-500 translate-x-[30%] -translate-y-[30%]"></div>
+                            <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-[0.06] bg-warm-500 -translate-x-[30%] translate-y-[30%]"></div>
                             <div class="relative z-10">
                                 <p class="font-script text-2xl text-warm-500">Gift Card</p>
                                 <p class="font-display text-lg mt-1 text-warm-400">{{ $settings->store->name }}</p>
@@ -76,9 +76,9 @@
                             <template x-for="preset in {{ json_encode($settings->giftCards->presetAmounts) }}" :key="preset">
                                 <button type="button"
                                     @click="form.initial_balance = preset; customAmount = ''"
-                                    :style="form.initial_balance == preset && !customAmount
-                                        ? 'background: var(--warm-500); color: var(--warm-900); border-color: var(--warm-500);'
-                                        : 'background: white; color: var(--warm-800); border-color: var(--warm-200);'"
+                                    :class="form.initial_balance == preset && !customAmount
+                                        ? 'bg-warm-500 text-warm-900 border-warm-500'
+                                        : 'bg-white text-warm-800 border-warm-200'"
                                     class="rounded-2xl py-5 text-center font-display text-2xl font-bold border-2 transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer">
                                     <span x-text="'$' + preset"></span>
                                 </button>
@@ -91,7 +91,7 @@
                                 <input type="number" x-model="customAmount"
                                        @input="form.initial_balance = customAmount"
                                        min="1" step="0.01" placeholder="0.00"
-                                       class="w-full pl-8 pr-4 py-3 rounded-xl border-2 font-semibold focus:outline-none transition-colors" style="border-color: var(--warm-200); color: var(--warm-800); background: white;">
+                                       class="w-full pl-8 pr-4 py-3 rounded-xl border-2 font-semibold focus:outline-none transition-colors border-warm-200 text-warm-800 bg-white">
                             </div>
                         </div>
                     </div>
@@ -106,9 +106,8 @@
                                    data-test="gift-card-balance-form-code">
                             <button type="submit"
                                     :disabled="!balanceCode || isCheckingBalance"
-                                    class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 whitespace-nowrap"
+                                    class="px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 whitespace-nowrap border-2 border-warm-300 text-warm-700"
                                     :class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
-                                    style="border: 2px solid var(--warm-300); color: var(--warm-700);"
                                     data-test="gift-card-balance-form-submit">
                                 <span x-text="isCheckingBalance ? 'Checking...' : {{ Js::from($content['check_balance_button'] ?? 'Check Balance') }}"></span>
                             </button>
@@ -129,7 +128,7 @@
 
                 {{-- Right: Purchase Form (2 cols) --}}
                 <div class="lg:col-span-2">
-                    <div class="rounded-2xl p-8 sticky top-8" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08);">
+                    <div class="rounded-2xl p-8 sticky top-8 bg-white border border-warm-200 shadow-2xl">
                         <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-1 text-warm-500">{{ $content['details_eyebrow'] ?? 'Details' }}</p>
                         <h2 class="font-display text-2xl font-bold mb-6 text-warm-900">{{ $content['details_heading'] ?? 'Send Your Gift' }}</h2>
 
@@ -143,7 +142,7 @@
                                 <input type="email" x-model="form.purchaser_email" required class="input-field" data-test="gift-card-purchase-form-purchaser-email">
                             </div>
 
-                            <div class="pt-4" style="border-top: 1px solid var(--warm-200);">
+                            <div class="pt-4 border-t border-warm-200">
                                 <p class="font-script text-lg mb-3 text-warm-500">{{ $content['recipient_label'] ?? 'Recipient Info' }}</p>
                             </div>
                             <div>
