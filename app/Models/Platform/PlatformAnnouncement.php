@@ -2,13 +2,13 @@
 
 namespace App\Models\Platform;
 
+use App\Builders\Platform\PlatformAnnouncementQueryBuilder;
 use App\Enums\Platform\AnnouncementType;
 use Database\Factories\Platform\PlatformAnnouncementFactory;
 use Illuminate\Database\Eloquent\Attributes\Connection;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -26,7 +26,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement query()
@@ -46,6 +45,7 @@ use Illuminate\Support\Carbon;
  */
 #[Connection('central')]
 #[Fillable('title', 'body', 'type', 'target_plans', 'is_active', 'starts_at', 'ends_at', 'is_dismissable')]
+#[UseEloquentBuilder(PlatformAnnouncementQueryBuilder::class)]
 #[UseFactory(PlatformAnnouncementFactory::class)]
 class PlatformAnnouncement extends Model
 {
@@ -62,15 +62,5 @@ class PlatformAnnouncement extends Model
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
         ];
-    }
-
-    /** @param Builder<PlatformAnnouncement> $query */
-    #[Scope]
-    protected function active(Builder $query): void
-    {
-        $query
-            ->where('is_active', true)
-            ->where(fn (Builder $q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
-            ->where(fn (Builder $q) => $q->whereNull('ends_at')->orWhere('ends_at', '>=', now()));
     }
 }

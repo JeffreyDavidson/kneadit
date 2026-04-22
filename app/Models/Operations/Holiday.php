@@ -2,11 +2,11 @@
 
 namespace App\Models\Operations;
 
+use App\Builders\Operations\HolidayQueryBuilder;
 use Database\Factories\Operations\HolidayFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,15 +32,14 @@ use Illuminate\Support\Facades\Date;
  * @property-read int $days_until_deadline
  * @property-read bool $is_deadline_passed
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday upcoming()
  *
  * @mixin \Eloquent
  */
 #[Fillable('name', 'date', 'lead_days', 'order_deadline', 'prep_start', 'max_orders', 'notes', 'is_active')]
+#[UseEloquentBuilder(HolidayQueryBuilder::class)]
 #[UseFactory(HolidayFactory::class)]
 class Holiday extends Model
 {
@@ -89,20 +88,6 @@ class Holiday extends Model
         return Attribute::make(
             get: fn () => now()->isAfter($this->start_prep_by) && $this->date->isFuture(),
         );
-    }
-
-    /** @param Builder<Holiday> $query */
-    #[Scope]
-    protected function upcoming(Builder $query): void
-    {
-        $query->where('date', '>=', Date::today())->orderBy('date');
-    }
-
-    /** @param Builder<Holiday> $query */
-    #[Scope]
-    protected function active(Builder $query): void
-    {
-        $query->where('is_active', true);
     }
 
     /** @return Attribute<int, never> */

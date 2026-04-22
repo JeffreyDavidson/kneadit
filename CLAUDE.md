@@ -55,7 +55,9 @@
 - Project-specific examples: `ReviewsPageViewModel` (ViewModel), `OrderTrackingPresenter` (Presenter), `components/storefront/product-card` (reusable Blade component).
 
 ### Scopes & Enums
-- Use `#[Scope]` attribute scopes or custom query builders for reusable query constraints — never repeat `where()` conditions inline
+- Reusable query constraints live in custom query builder classes under `app/Builders/<Domain>/<Model>QueryBuilder.php` — never as `#[Scope]` attribute methods on the model. Wire the builder up via `#[UseEloquentBuilder(<Model>QueryBuilder::class)]` on the model class.
+- Each builder extends `Illuminate\Database\Eloquent\Builder<Model>` (concrete-typed to its host model). Methods return `static` and call `$this->...` so they chain cleanly.
+- Never repeat `where()` conditions inline across the codebase — extract to a builder method.
 - Use PHP backed enums for any column with a fixed set of values (statuses, types, roles)
 - Cast enum columns in the model's `casts()` method
 - Use the `casts()` method (not `$casts` property) for consistency

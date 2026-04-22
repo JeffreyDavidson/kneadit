@@ -2,11 +2,11 @@
 
 namespace App\Models\Inventory;
 
+use App\Builders\Inventory\SeasonalItemQueryBuilder;
 use Database\Factories\Inventory\SeasonalItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,12 +17,9 @@ use Illuminate\Support\Facades\Date;
 /**
  * @property-read Product|null $product
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem current()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem expired()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem upcoming()
  *
  * @property Carbon|null $available_from
  * @property Carbon|null $available_until
@@ -30,6 +27,7 @@ use Illuminate\Support\Facades\Date;
  * @mixin \Eloquent
  */
 #[Fillable('product_id', 'available_from', 'available_until', 'notes')]
+#[UseEloquentBuilder(SeasonalItemQueryBuilder::class)]
 #[UseFactory(SeasonalItemFactory::class)]
 class SeasonalItem extends Model
 {
@@ -50,30 +48,6 @@ class SeasonalItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    /** @param Builder<SeasonalItem> $query */
-    #[Scope]
-    protected function current(Builder $query): void
-    {
-        $today = Date::today();
-
-        $query->where('available_from', '<=', $today)
-            ->where('available_until', '>=', $today);
-    }
-
-    /** @param Builder<SeasonalItem> $query */
-    #[Scope]
-    protected function upcoming(Builder $query): void
-    {
-        $query->where('available_from', '>', Date::today());
-    }
-
-    /** @param Builder<SeasonalItem> $query */
-    #[Scope]
-    protected function expired(Builder $query): void
-    {
-        $query->where('available_until', '<', Date::today());
     }
 
     /** @return Attribute<bool, never> */

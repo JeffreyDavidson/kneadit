@@ -2,12 +2,12 @@
 
 namespace App\Models\Content;
 
+use App\Builders\Content\TenantBlogPostQueryBuilder;
 use Database\Factories\Content\TenantBlogPostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,13 +27,13 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost published()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantBlogPost query()
  *
  * @mixin \Eloquent
  */
 #[Table('blog_posts')]
 #[Fillable('title', 'slug', 'excerpt', 'body', 'featured_image', 'tags', 'author_name', 'is_published', 'published_at')]
+#[UseEloquentBuilder(TenantBlogPostQueryBuilder::class)]
 #[UseFactory(TenantBlogPostFactory::class)]
 class TenantBlogPost extends Model
 {
@@ -47,14 +47,5 @@ class TenantBlogPost extends Model
             'published_at' => 'datetime',
             'tags' => 'array',
         ];
-    }
-
-    /** @param Builder<TenantBlogPost> $query */
-    #[Scope]
-    protected function published(Builder $query): void
-    {
-        $query->where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now());
     }
 }
