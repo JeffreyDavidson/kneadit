@@ -3,6 +3,7 @@
 namespace App\Notifications\Customers;
 
 use App\Models\Customers\Customer;
+use App\Services\Settings\TenantSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -29,9 +30,11 @@ class CustomerVerifyEmailNotification extends Notification
             ],
         );
 
+        $storeName = app(TenantSettings::class)->store->name;
+
         return (new MailMessage)
-            ->subject('Verify your email address')
-            ->line('Please click the button below to verify your email address.')
+            ->subject("Verify your email — {$storeName}")
+            ->line("Please click the button below to verify your email address for {$storeName}.")
             ->action('Verify email', $url)
             ->line('If you did not create an account, no further action is required.');
     }
