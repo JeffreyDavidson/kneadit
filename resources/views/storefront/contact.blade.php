@@ -24,7 +24,7 @@
     <div class="max-w-5xl mx-auto px-4 py-10">
         <div class="grid sm:grid-cols-3 gap-4">
             @if ($settings->store->address)
-            <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
+            <div class="info-card p-6 rounded-2xl text-center bg-warm-700/10 border border-warm-700/15">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
                     <x-heroicon-o-map-pin class="w-5 h-5 text-warm-500" />
                 </div>
@@ -33,7 +33,7 @@
             </div>
             @endif
             @if ($settings->store->phone)
-            <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
+            <div class="info-card p-6 rounded-2xl text-center bg-warm-700/10 border border-warm-700/15">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
                     <x-heroicon-o-phone class="w-5 h-5 text-warm-500" />
                 </div>
@@ -42,7 +42,7 @@
             </div>
             @endif
             @if ($settings->store->email)
-            <div class="info-card p-6 rounded-2xl text-center" style="background: rgba(139,104,68,0.1); border: 1px solid rgba(139,104,68,0.15);">
+            <div class="info-card p-6 rounded-2xl text-center bg-warm-700/10 border border-warm-700/15">
                 <div class="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center bg-warm-500/15">
                     <x-heroicon-o-envelope class="w-5 h-5 text-warm-500" />
                 </div>
@@ -69,7 +69,7 @@
                 </x-storefront.alert>
                 @endsession
 
-                <div class="p-8 md:p-10 rounded-2xl" style="background: white; box-shadow: 0 8px 40px rgba(28,20,16,0.08); border: 1px solid var(--warm-200);">
+                <div class="p-8 md:p-10 rounded-2xl bg-white shadow-2xl border border-warm-200">
                     <form action="{{ route('contact.store') }}" method="POST" class="space-y-6" x-data="{ submitting: false }" @submit="submitting = true" data-test="contact-form">
                         @csrf
                         <div class="grid sm:grid-cols-2 gap-6">
@@ -126,7 +126,7 @@
                         </div>
                         @endforeach
                     </div>
-                    <div class="mt-5 p-3 rounded-xl text-sm" style="background: var(--warm-100); color: var(--warm-600);">
+                    <div class="mt-5 p-3 rounded-xl text-sm bg-warm-100 text-warm-600">
                         📋 Orders need {{ $settings->orders->leadTimeHours }}h advance notice.
                     </div>
                 </div>
@@ -134,7 +134,7 @@
 
                 {{-- Map Placeholder --}}
                 @if ($settings->store->address)
-                <div class="rounded-2xl overflow-hidden" style="aspect-ratio: 16/10; background: var(--warm-200);">
+                <div class="rounded-2xl overflow-hidden aspect-[16/10] bg-warm-200">
                     <div class="w-full h-full flex items-center justify-center">
                         <div class="text-center px-6">
                             <x-heroicon-o-map-pin class="w-8 h-8 mx-auto mb-2 text-warm-400" />
@@ -145,7 +145,7 @@
                 @endif
 
                 @if ($settings->branding->allergyDisclaimer)
-                <div class="p-6 rounded-2xl" style="background: var(--warm-200); border-left: 3px solid var(--warm-500);">
+                <div class="p-6 rounded-2xl bg-warm-200 border-l-[3px] border-warm-500">
                     <p class="text-xs uppercase tracking-[0.2em] font-semibold mb-2 text-warm-500">Allergy Info</p>
                     <p class="text-sm leading-relaxed text-warm-600">{{ $settings->branding->allergyDisclaimer }}</p>
                 </div>

@@ -42,7 +42,7 @@
                         loading="lazy"
                     >
                     {{-- Hover Caption Overlay --}}
-                    <div class="gallery-caption absolute inset-0 flex flex-col justify-end p-5" style="background: linear-gradient(to top, rgba(28,20,16,0.85) 0%, transparent 60%);">
+                    <div class="gallery-caption absolute inset-0 flex flex-col justify-end p-5 bg-gradient-to-t from-warm-900/85 via-warm-900/40 to-transparent">
                         @if ($photo->caption)
                         <p class="italic text-sm mb-2 text-warm-200">"{{ $photo->caption }}"</p>
                         @endif
@@ -78,11 +78,11 @@
             {{-- Faux gallery preview --}}
             <div class="grid grid-cols-3 gap-3 opacity-20">
                 @for ($i = 0; $i < 6; $i++)
-                <div class="rounded-xl overflow-hidden" style="aspect-ratio: {{ [1, '4/5', 1, '5/4', 1, '4/5'][$i] }}; background: linear-gradient(135deg, var(--warm-200), var(--warm-300));"></div>
+                <div class="rounded-xl overflow-hidden bg-gradient-to-br from-warm-200 to-warm-300" style="aspect-ratio: {{ [1, '4/5', 1, '5/4', 1, '4/5'][$i] }};"></div>
                 @endfor
             </div>
 
-            <a href="#share-photo" class="inline-block mt-10 px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105" style="background: var(--warm-900); color: var(--warm-100);">
+            <a href="#share-photo" class="inline-block mt-10 px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-900 text-warm-100">
                 Share Your Photo ↓
             </a>
         </div>
@@ -91,11 +91,10 @@
 
     {{-- Lightbox Modal --}}
     <div x-show="lightbox" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4"
-         style="background: rgba(28,20,16,0.92); backdrop-filter: blur(8px);"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-warm-900/90 backdrop-blur"
          @click.self="lightbox = false" @keydown.escape.window="lightbox = false"
          role="dialog" aria-label="Photo lightbox">
-        <button @click="lightbox = false" class="absolute top-6 right-6 w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110" style="background: rgba(255,255,255,0.1); color: var(--warm-300);" aria-label="Close lightbox">&times;</button>
+        <button @click="lightbox = false" class="absolute top-6 right-6 w-11 h-11 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110 bg-white/10 text-warm-300" aria-label="Close lightbox">&times;</button>
         <div class="max-w-4xl w-full" @click.stop>
             <img :src="lightboxSrc" :alt="lightboxCaption || 'Customer photo'" class="w-full max-h-[75vh] object-contain rounded-xl">
             <div class="mt-4 text-center" x-show="lightboxCaption || lightboxAuthor">
@@ -145,10 +144,7 @@
 
                 <div x-data="{ fileName: '' }">
                     <label class="block text-sm font-medium mb-2 text-warm-300">Photo * <span class="font-normal text-warm-500">(JPG, PNG, or WebP — max 5MB)</span></label>
-                    <label class="block cursor-pointer rounded-xl p-8 text-center transition-all duration-300 hover:border-opacity-60"
-                           style="border: 2px dashed rgba(212,146,12,0.25); background: rgba(212,146,12,0.03);"
-                           onmouseover="this.style.borderColor='rgba(212,146,12,0.5)';this.style.background='rgba(212,146,12,0.06)'"
-                           onmouseout="this.style.borderColor='rgba(212,146,12,0.25)';this.style.background='rgba(212,146,12,0.03)'">
+                    <label class="block cursor-pointer rounded-xl p-8 text-center transition-all duration-300 border-2 border-dashed border-warm-500/25 bg-warm-500/5 hover:border-warm-500/50 hover:bg-warm-500/10">
                         <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required class="hidden" @change="fileName = $event.target.files[0]?.name || ''" data-test="gallery-upload-form-photo">
                         <div x-show="!fileName">
                             <x-heroicon-o-arrow-up-tray class="w-10 h-10 mx-auto mb-3 text-warm-500/60" />
