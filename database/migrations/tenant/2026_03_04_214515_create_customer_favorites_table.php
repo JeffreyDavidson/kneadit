@@ -19,12 +19,4 @@ return new class extends Migration {
             $table->unique(['customer_email', 'product_id']);
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('customer_favorites');
-    }
 };

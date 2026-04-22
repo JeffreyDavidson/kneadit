@@ -14,11 +14,4 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true)->after('notes');
         });
     }
-
-    public function down(): void
-    {
-        Schema::table('holidays', function (Blueprint $table) {
-            $table->dropColumn(['order_deadline', 'prep_start', 'max_orders', 'is_active']);
-        });
-    }
 };

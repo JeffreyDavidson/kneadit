@@ -20,9 +20,4 @@ return new class extends Migration {
             $table->timestamps();
         });
     }
-
-    public function down(): void
-    {
-        Schema::connection('central')->dropIfExists('email_campaign_logs');
-    }
 };

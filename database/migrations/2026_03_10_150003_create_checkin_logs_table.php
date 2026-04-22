@@ -17,9 +17,4 @@ return new class extends Migration {
             $table->timestamps();
         });
     }
-
-    public function down(): void
-    {
-        Schema::connection('central')->dropIfExists('checkin_logs');
-    }
 };

@@ -18,9 +18,4 @@ return new class extends Migration {
             $table->index(['product_id', 'sort_order']);
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('product_images');
-    }
 };

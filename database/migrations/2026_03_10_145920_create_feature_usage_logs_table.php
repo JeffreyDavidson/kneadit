@@ -24,9 +24,4 @@ return new class extends Migration {
             $table->index('date');
         });
     }
-
-    public function down(): void
-    {
-        Schema::connection('central')->dropIfExists('feature_usage_logs');
-    }
 };

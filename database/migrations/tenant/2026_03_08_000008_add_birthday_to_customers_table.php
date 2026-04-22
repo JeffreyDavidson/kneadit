@@ -11,11 +11,4 @@ return new class extends Migration {
             $table->date('birthday')->nullable()->after('notes');
         });
     }
-
-    public function down(): void
-    {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->dropColumn('birthday');
-        });
-    }
 };

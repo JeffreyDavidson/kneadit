@@ -21,9 +21,4 @@ return new class extends Migration {
             $table->foreign('referred_tenant_id')->references('id')->on('tenants')->onDelete('set null');
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('referrals');
-    }
 };
