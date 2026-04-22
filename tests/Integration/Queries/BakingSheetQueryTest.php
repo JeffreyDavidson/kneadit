@@ -3,6 +3,7 @@
 use App\Models\Customers\Customer;
 use App\Models\Inventory\Product;
 use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
 use App\Queries\Orders\BakingSheetQuery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,8 +34,7 @@ test('returns aggregated baking items for a given date', function () {
         ->confirmed()
         ->create(['delivery_date' => $date]);
 
-    $order->orderItems()->create([
-        'product_id' => $product->id,
+    OrderItem::factory()->recycle($order, $product)->create([
         'quantity' => 3,
         'unit_price' => 10.00,
     ]);

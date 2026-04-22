@@ -4,6 +4,7 @@ use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
 use App\Models\Inventory\Supplier;
 use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use App\Services\Inventory\ShoppingListService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -46,8 +47,7 @@ test('includes upcoming order needs when enabled with date range', function () {
     $order = Order::factory()->confirmed()->create([
         'delivery_date' => now()->addDays(2)->format('Y-m-d'),
     ]);
-    $order->orderItems()->create([
-        'product_id' => $product->id,
+    OrderItem::factory()->recycle($order, $product)->create([
         'quantity' => 3,
         'unit_price' => 10.00,
     ]);

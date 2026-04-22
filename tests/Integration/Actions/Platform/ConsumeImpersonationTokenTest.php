@@ -10,11 +10,10 @@ beforeEach(fn () => setUpCentralTest());
 test('consumes valid token and returns owner user', function () {
     $rawToken = 'test-token-abc123';
 
-    ImpersonationToken::query()->create([
+    ImpersonationToken::factory()->create([
         'token' => hash('sha256', $rawToken),
         'tenant_id' => 'test',
         'expires_at' => now()->addMinutes(5),
-        'created_at' => now(),
     ]);
 
     User::factory()->owner()->create();
@@ -28,11 +27,10 @@ test('consumes valid token and returns owner user', function () {
 });
 
 test('aborts on expired token', function () {
-    ImpersonationToken::query()->create([
+    ImpersonationToken::factory()->create([
         'token' => hash('sha256', 'expired-token'),
         'tenant_id' => 'test',
         'expires_at' => now()->subMinutes(5),
-        'created_at' => now(),
     ]);
 
     resolve(ConsumeImpersonationToken::class)('expired-token');
