@@ -6,6 +6,7 @@ use App\Actions\Orders\CreateOrder;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreOrderRequest;
+use App\Services\Orders\OrderAccessGuard;
 use App\Services\Stripe\StripeCheckoutService;
 use Illuminate\Http\RedirectResponse;
 
@@ -32,6 +33,10 @@ class SubmitOrderController extends Controller
                 'delivery_date' => $content['flash_full'] ?? 'Sorry, this date is fully booked. Please choose another date.',
             ]);
         }
+
+        // Grant the customer's current session access to view this order
+        // without re-verifying their email (they just placed it).
+        OrderAccessGuard::grant($order);
 
         $checkoutUrl = $stripeService->redirectToCheckout($order);
         if ($checkoutUrl) {

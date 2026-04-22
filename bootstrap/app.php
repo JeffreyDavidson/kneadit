@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureOrderAccess;
 use App\Http\Middleware\EnsureSubscribed;
 use App\Http\Middleware\InitializeTenancyIfNeeded;
 use App\Http\Middleware\SecurityHeaders;
@@ -39,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'subscribed' => EnsureSubscribed::class,
+            'order.access' => EnsureOrderAccess::class,
         ]);
 
         $middleware->redirectTo(guests: '/login', users: '/billing/plans');
