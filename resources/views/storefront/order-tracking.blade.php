@@ -11,13 +11,13 @@
 <link rel="stylesheet" href="{{ asset('css/order-tracking.css') }}">
 
 {{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Track Your Order" image-class="track-hero-img">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Track Your Order" image-class="hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
-        <x-storefront.eyebrow class="track-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Order Status' }}</x-storefront.eyebrow>
-        <h1 class="track-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
+        <x-storefront.eyebrow class="hero-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Order Status' }}</x-storefront.eyebrow>
+        <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6 text-warm-100">
             {{ $content['hero_title'] ?? 'Track Your Order' }}
         </h1>
-        <p class="track-fade-2 text-lg max-w-lg mx-auto text-warm-400">
+        <p class="hero-fade-2 text-lg max-w-lg mx-auto text-warm-400">
             {{ $content['hero_subtitle'] ?? 'Enter your email to see how your order is coming along.' }}
         </p>
     </div>
@@ -26,7 +26,7 @@
 {{-- Email Lookup Form --}}
 <section class="relative py-16 md:py-20 bg-warm-100">
     <div class="max-w-xl mx-auto px-4">
-        <form method="POST" action="{{ route('order.track.lookup') }}" class="track-fade-3">
+        <form method="POST" action="{{ route('order.track.lookup') }}" class="hero-fade-3">
             @csrf
             <label for="email" class="block text-xs font-medium uppercase tracking-[0.2em] mb-3 text-center text-warm-500">{{ $content['email_label'] ?? 'Email Address' }}</label>
             <div class="flex gap-3">
