@@ -11,6 +11,7 @@ test('store review controller creates review and renders the success view', func
     $order = Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([$order]))
         ->post(route('storefront.storeReview', $order->order_number, false), [
             'rating' => 5,
             'comment' => 'Best sourdough in town!',
@@ -29,6 +30,7 @@ test('store review controller validates rating is required', function () {
     $order = Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([$order]))
         ->post(route('storefront.storeReview', $order->order_number, false), [
             'comment' => 'Missing rating',
         ]);
@@ -41,6 +43,7 @@ test('store review controller validates rating is between 1 and 5', function () 
     $order = Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([$order]))
         ->post(route('storefront.storeReview', $order->order_number, false), [
             'rating' => 10,
         ]);
