@@ -1,16 +1,24 @@
 <x-filament-panels::page>
-    <div style="max-width: 800px; margin: 0 auto;">
+    <div class="max-w-[800px] mx-auto">
         {{-- Original message --}}
         @php $isAdmin = $record->sender_type === 'admin'; @endphp
-        <div style="display: flex; justify-content: {{ $isAdmin ? 'flex-end' : 'flex-start' }}; margin-bottom: 1.5rem;">
-            <div style="max-width: 75%; background: {{ $isAdmin ? '#2a1f18' : '#1c1410' }}; border: 1px solid {{ $isAdmin ? 'rgba(212,146,12,0.3)' : 'rgba(212,146,12,0.12)' }}; border-radius: 12px; padding: 1.5rem; {{ $isAdmin ? 'border-right: 3px solid #d4920c;' : '' }}">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                    <span style="background: {{ $isAdmin ? '#d4920c' : '#2a1f18' }}; color: {{ $isAdmin ? '#1c1410' : '#e8b04a' }}; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">
+        <div class="flex {{ $isAdmin ? 'justify-end' : 'justify-start' }} mb-6">
+            <div @class([
+                'max-w-[75%] border rounded-xl p-6',
+                'bg-espresso border-honey/30 border-r-[3px] border-r-honey' => $isAdmin,
+                'bg-warm-black border-honey/12' => ! $isAdmin,
+            ])>
+                <div class="flex items-center justify-between mb-3">
+                    <span @class([
+                        'px-2.5 py-1 rounded-full text-[0.65rem] font-semibold uppercase tracking-[0.1em]',
+                        'bg-honey text-warm-black' => $isAdmin,
+                        'bg-espresso text-golden' => ! $isAdmin,
+                    ])>
                         {{ $isAdmin ? 'Admin' : $record->tenant->name }}
                     </span>
-                    <span style="color: #8b6844; font-size: 0.75rem;">{{ $record->created_at->diffForHumans() }}</span>
+                    <span class="text-cinnamon text-xs">{{ $record->created_at->diffForHumans() }}</span>
                 </div>
-                <div style="color: #faf0d6; line-height: 1.6;">
+                <div class="text-parchment leading-relaxed">
                     {!! nl2br(e($record->body)) !!}
                 </div>
             </div>
@@ -19,15 +27,23 @@
         {{-- Thread replies --}}
         @foreach ($this->getThread() as $reply)
             @php $isReplyAdmin = $reply->sender_type === 'admin'; @endphp
-            <div style="display: flex; justify-content: {{ $isReplyAdmin ? 'flex-end' : 'flex-start' }}; margin-bottom: 1rem;">
-                <div style="max-width: 75%; background: {{ $isReplyAdmin ? '#2a1f18' : '#1c1410' }}; border: 1px solid {{ $isReplyAdmin ? 'rgba(212,146,12,0.3)' : 'rgba(212,146,12,0.12)' }}; border-radius: 12px; padding: 1.25rem; {{ $isReplyAdmin ? 'border-right: 3px solid #d4920c;' : '' }}">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="background: {{ $isReplyAdmin ? '#d4920c' : '#2a1f18' }}; color: {{ $isReplyAdmin ? '#1c1410' : '#e8b04a' }}; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">
+            <div class="flex {{ $isReplyAdmin ? 'justify-end' : 'justify-start' }} mb-4">
+                <div @class([
+                    'max-w-[75%] border rounded-xl p-5',
+                    'bg-espresso border-honey/30 border-r-[3px] border-r-honey' => $isReplyAdmin,
+                    'bg-warm-black border-honey/12' => ! $isReplyAdmin,
+                ])>
+                    <div class="flex items-center justify-between mb-2">
+                        <span @class([
+                            'px-2.5 py-1 rounded-full text-[0.65rem] font-semibold uppercase tracking-[0.1em]',
+                            'bg-honey text-warm-black' => $isReplyAdmin,
+                            'bg-espresso text-golden' => ! $isReplyAdmin,
+                        ])>
                             {{ $isReplyAdmin ? 'Admin' : $record->tenant->name }}
                         </span>
-                        <span style="color: #8b6844; font-size: 0.75rem;">{{ $reply->created_at->diffForHumans() }}</span>
+                        <span class="text-cinnamon text-xs">{{ $reply->created_at->diffForHumans() }}</span>
                     </div>
-                    <div style="color: #faf0d6; line-height: 1.6;">
+                    <div class="text-parchment leading-relaxed">
                         {!! nl2br(e($reply->body)) !!}
                     </div>
                 </div>
