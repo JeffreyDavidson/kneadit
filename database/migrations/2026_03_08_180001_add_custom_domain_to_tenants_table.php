@@ -11,11 +11,4 @@ return new class extends Migration {
             $table->string('custom_domain')->nullable()->after('is_active');
         });
     }
-
-    public function down(): void
-    {
-        Schema::table('tenants', function (Blueprint $table) {
-            $table->dropColumn('custom_domain');
-        });
-    }
 };

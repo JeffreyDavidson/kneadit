@@ -19,9 +19,4 @@ return new class extends Migration {
             $table->unique('date');
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('blocked_dates');
-    }
 };

@@ -24,9 +24,4 @@ return new class extends Migration {
             $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('activity_logs');
-    }
 };

@@ -22,12 +22,4 @@ return new class extends Migration {
             $table->index('next_reminder_date');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('customer_reminders');
-    }
 };
