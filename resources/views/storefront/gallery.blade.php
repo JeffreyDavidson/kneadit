@@ -65,9 +65,9 @@
         @else
         <div class="max-w-2xl mx-auto text-center py-16">
             {{-- Decorative icon --}}
-            <div class="w-20 h-20 rounded-full mx-auto mb-8 flex items-center justify-center bg-warm-200">
+            <x-storefront.icon-circle size="lg" variant="plain" class="mx-auto mb-8">
                 <x-heroicon-o-camera class="w-10 h-10 text-warm-500" />
-            </div>
+            </x-storefront.icon-circle>
 
             <h2 class="font-display text-3xl font-bold mb-4 text-warm-900">{{ $content['empty_heading'] ?? 'Your Photos Will Shine Here' }}</h2>
             <p class="text-lg leading-relaxed mb-6 text-warm-600">
