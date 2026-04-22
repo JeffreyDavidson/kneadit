@@ -3,7 +3,6 @@
 namespace App\Models\Staff;
 
 use App\Builders\Staff\UserQueryBuilder;
-use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
 use Database\Factories\Staff\UserFactory;
@@ -14,7 +13,6 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -40,7 +38,6 @@ use Laravel\Cashier\Subscription;
  * @property string|null $pm_type
  * @property string|null $pm_last_four
  * @property string|null $trial_ends_at
- * @property-read SubscriptionTier|null $current_plan
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Subscription> $subscriptions
@@ -94,18 +91,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         }
 
         return true;
-    }
-
-    /** @return Attribute<SubscriptionTier|null, never> */
-    protected function currentPlan(): Attribute
-    {
-        return Attribute::make(
-            get: function (): ?SubscriptionTier {
-                $priceId = $this->subscription('default')?->stripe_price;
-
-                return $priceId ? SubscriptionTier::fromPriceId($priceId) : null;
-            },
-        );
     }
 
     /**
