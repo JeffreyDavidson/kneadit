@@ -1,13 +1,15 @@
 @props(['type' => 'info', 'label' => ''])
+
 @php
-    $colors = [
-        'danger' => ['bg' => '#fde8e8', 'text' => '#c53030'],
-        'warning' => ['bg' => '#fef3cd', 'text' => '#b45309'],
-        'success' => ['bg' => '#d4edda', 'text' => '#276749'],
-        'info' => ['bg' => '#e8f0fe', 'text' => '#2b6cb0'],
-    ];
-    $c = $colors[$type] ?? $colors['info'];
+    $variantClass = match ($type) {
+        'danger' => 'bg-red-100 text-red-700',
+        'warning' => 'bg-amber-100 text-amber-700',
+        'success' => 'bg-emerald-100 text-emerald-700',
+        'info' => 'bg-blue-100 text-blue-700',
+        default => 'bg-blue-100 text-blue-700',
+    };
 @endphp
-<span style="display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; background: {{ $c['bg'] }}; color: {{ $c['text'] }};">
+
+<span class="inline-block px-2 py-0.5 rounded-md text-[0.7rem] font-semibold {{ $variantClass }}">
     {{ $label }}
 </span>

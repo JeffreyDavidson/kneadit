@@ -1,6 +1,7 @@
 @props([])
-<div style="overflow-x: auto;" {{ $attributes }}>
-    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+
+<div class="overflow-x-auto" {{ $attributes }}>
+    <table class="w-full border-collapse text-[0.85rem]">
         {{ $slot }}
     </table>
 </div>
