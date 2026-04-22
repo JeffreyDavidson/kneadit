@@ -3,7 +3,7 @@
         {{-- Current Plan Banner --}}
         <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-brand-300 rounded-2xl px-8 py-6 mb-8 text-white flex items-center gap-4 shadow-lg">
             <div class="bg-white/20 rounded-xl p-3 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75-1.5.75a3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0L3 16.5m15-3.379a48.474 48.474 0 0 0-6-.371c-2.032 0-4.034.126-6 .371m12 0c.39.049.777.102 1.163.16 1.07.16 1.837 1.094 1.837 2.175v5.169c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 0 1 3 20.625v-5.17c0-1.08.768-2.014 1.837-2.174A47.78 47.78 0 0 1 6 13.12M12.265 3.11a.375.375 0 1 1-.53.53.375.375 0 0 1 .53-.53Zm0 0L12 3.375m.265-.265A.375.375 0 0 0 12 3v0m3.265.11a.375.375 0 1 1-.53.53.375.375 0 0 1 .53-.53Zm0 0L15 3.375m.265-.265A.375.375 0 0 0 15 3v0m-6 .265a.375.375 0 1 1-.53-.53.375.375 0 0 1 .53.53Zm0 0L9 3.375m-.265.265A.375.375 0 0 0 9 3v0" /></svg>
+                <x-heroicon-o-cake class="w-7 h-7" />
             </div>
             <div>
                 <p class="m-0 text-[0.85rem] opacity-85">Your current plan</p>
@@ -54,10 +54,10 @@
                                     'border-b border-brand-200/40' => ! $loop->last,
                                 ])>
                                     @if (str_contains($feature, 'Everything in'))
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-honey flex-shrink-0 mt-0.5"><path fill-rule="evenodd" d="M11.47 2.47a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06l-6.22-6.22V21a.75.75 0 0 1-1.5 0V4.81l-6.22 6.22a.75.75 0 1 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd" /></svg>
+                                        <x-heroicon-s-arrow-up class="w-4 h-4 text-honey flex-shrink-0 mt-0.5" />
                                         <span class="text-sm text-brand-600 font-semibold">{{ $feature }}</span>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"><path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd" /></svg>
+                                        <x-heroicon-s-check class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
                                         <span class="text-sm text-walnut">{{ $feature }}</span>
                                     @endif
                                 </li>
