@@ -53,19 +53,19 @@
  @csrf
 
  {{-- Star Rating --}}
- <div class="text-center" x-data="{ rating: {{ $prefilledRating ?? 0 }}, hover: 0 }">
+ <div class="text-center" x-data="ratingPicker({{ $prefilledRating ?? 0 }}, true)">
  <label class="block text-xs uppercase tracking-wider font-medium mb-4 text-warm-600">{{ $content['rating_label'] ?? 'Your Rating' }}</label>
  <div class="flex gap-3 justify-center mb-2">
  @for ($i = 1; $i <= 5; $i++)
  <button type="button"
  data-test="review-submission-form-rating-{{ $i }}"
- x-on:click="rating = {{ $i }}"
- x-on:mouseenter="hover = {{ $i }}"
- x-on:mouseleave="hover = 0"
+ x-on:click="set({{ $i }})"
+ x-on:mouseenter="enter({{ $i }})"
+ x-on:mouseleave="leave()"
  class="transition-all duration-200 focus:outline-none"
- :class="(hover || rating) >= {{ $i }} ? 'scale-110' : 'scale-100 opacity-30'"
+ x-bind:class="isFilled({{ $i }}) ? 'scale-110' : 'scale-100 opacity-30'"
  >
- <x-heroicon-s-star class="w-10 h-10" ::class="(hover || rating) >= {{ $i }} ? 'text-warm-500' : 'text-warm-300'" />
+ <x-heroicon-s-star class="w-10 h-10" ::class="isFilled({{ $i }}) ? 'text-warm-500' : 'text-warm-300'" />
  </button>
  @endfor
  <input type="hidden" name="rating" x-bind:value="rating">
