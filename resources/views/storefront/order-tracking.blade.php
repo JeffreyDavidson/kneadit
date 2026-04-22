@@ -1,3 +1,4 @@
+@use(App\Presenters\OrderItemPresenter)
 @php
 /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Orders\Order>|null $orders */
 /** @var \Illuminate\Support\Collection<int, \App\Presenters\OrderTrackingPresenter>|null $trackedOrders */
@@ -175,7 +176,7 @@
                                                 {{ $item->product->name ?? 'Product' }}
                                                 <span class="font-medium text-warm-500">× {{ $item->quantity }}</span>
                                             </span>
-                                            <span class="text-sm font-semibold text-warm-300">@money($item->total_price)</span>
+                                            <span class="text-sm font-semibold text-warm-300">@money(OrderItemPresenter::for($item)->totalPrice())</span>
                                         </div>
                                     @endforeach
                                 </div>
