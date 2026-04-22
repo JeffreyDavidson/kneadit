@@ -1,6 +1,7 @@
+@use(App\Services\Settings\TenantSettings)
 <x-filament-panels::page>
     @php
-        $currentTheme = app(\App\Services\Settings\TenantSettings::class)->branding->storefrontTheme;
+        $currentTheme = app(TenantSettings::class)->branding->storefrontTheme;
         $themes = [
             'classic' => [
                 'name' => 'Classic',

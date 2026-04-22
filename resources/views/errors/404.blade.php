@@ -1,6 +1,7 @@
+@use(App\Services\Settings\TenantSettings)
 @php
     $isTenant = !in_array(request()->getHost(), config('tenancy.central_domains', []));
-    $storeName = $isTenant ? rescue(fn () => app(\App\Services\Settings\TenantSettings::class)->storeName, config('app.name'), false) : config('app.name');
+    $storeName = $isTenant ? rescue(fn () => app(TenantSettings::class)->storeName, config('app.name'), false) : config('app.name');
     $homeUrl = '/';
 @endphp
 <!DOCTYPE html>

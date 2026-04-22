@@ -1,3 +1,4 @@
+@use(App\Services\Settings\TenantSettings)
 <x-filament-panels::page>
     @php
         $customers = $this->getCustomers();
@@ -69,8 +70,8 @@
                         <td class="text-right font-bold text-brand-900">@money($customer->total_spent)</td>
                         <td class="text-right">
                             @php
-                                $subject = rawurlencode('We miss you at ' . app(\App\Services\Settings\TenantSettings::class)->storeName . '!');
-                                $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n" . app(\App\Services\Settings\TenantSettings::class)->storeName . " 🍪");
+                                $subject = rawurlencode('We miss you at ' . app(TenantSettings::class)->storeName . '!');
+                                $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n" . app(TenantSettings::class)->storeName . " 🍪");
                             @endphp
                             <x-admin.btn variant="primary" :href="'mailto:' . $customer->customer_email . '?subject=' . $subject . '&body=' . $body" icon="✉️" size="sm">
                                 Send Reminder
