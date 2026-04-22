@@ -35,16 +35,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereIsRead($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereParentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereReadAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereSenderType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformMessage whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

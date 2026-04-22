@@ -37,16 +37,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket whereAdminNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket wherePriority($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket whereResolvedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportTicket whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

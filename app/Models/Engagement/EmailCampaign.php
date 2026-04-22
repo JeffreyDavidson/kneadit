@@ -32,17 +32,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereRecipientCount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereScheduledAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereSentAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereTargetSegment($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaign whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

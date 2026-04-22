@@ -31,15 +31,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral whereReferralCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral whereReferredEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral whereReferredTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral whereReferrerTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral whereRewardMonths($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Referral whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
