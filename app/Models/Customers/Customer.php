@@ -7,7 +7,6 @@ use App\Casts\PhoneNumberCast;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Observers\LogsActivityObserver;
-use App\ValueObjects\Address;
 use Database\Factories\Customers\CustomerFactory;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
@@ -20,7 +19,6 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -141,18 +139,5 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
     public function customerProfile(): HasOne
     {
         return $this->hasOne(CustomerProfile::class);
-    }
-
-    /** @return Attribute<Address, never> */
-    protected function addressObject(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => new Address(
-                street: $this->address,
-                city: $this->city,
-                state: $this->state,
-                zip: $this->zip,
-            ),
-        );
     }
 }

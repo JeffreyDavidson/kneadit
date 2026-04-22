@@ -44,18 +44,3 @@ test('customer has customer profile relationship', function () {
 
     expect($customer->customerProfile)->toBeInstanceOf(CustomerProfile::class);
 });
-
-test('address object aggregates the four address columns into an Address value object', function () {
-    $customer = Customer::factory()->create([
-        'address' => '123 Main St',
-        'city' => 'Springfield',
-        'state' => 'IL',
-        'zip' => '62704',
-    ]);
-
-    expect($customer->address_object)
-        ->street->toBe('123 Main St')
-        ->city->toBe('Springfield')
-        ->state->toBe('IL')
-        ->zip->toBe('62704');
-});
