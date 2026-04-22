@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\TrackOrderRequest;
 use App\Models\Orders\Order;
 use App\Presenters\OrderTrackingPresenter;
+use App\Services\Orders\OrderAccessGuard;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
@@ -16,6 +17,10 @@ class TrackingController extends Controller
     {
         $orders = Order::query()->forCustomerEmail($request->email)->get();
         $trackableStatuses = OrderStatus::trackableStatuses();
+
+        // Successful email lookup proves ownership of every returned order
+        // for the duration of this session.
+        $orders->each(fn (Order $order) => OrderAccessGuard::grant($order));
 
         return view('storefront.order-tracking', [
             'settings' => $settings,

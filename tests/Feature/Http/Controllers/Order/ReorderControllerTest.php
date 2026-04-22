@@ -14,6 +14,7 @@ test('reorder returns items from previous order', function () {
     OrderItem::factory()->recycle($order, $product)->create(['quantity' => 2]);
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([$order]))
         ->getJson(route('order.reorder', ['order' => $order], false));
 
     $response->assertOk()

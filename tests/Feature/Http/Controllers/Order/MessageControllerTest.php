@@ -32,6 +32,7 @@ test('messages endpoint returns order messages', function () {
         ]);
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([test()->order]))
         ->getJson(route('order.messages', test()->order->order_number, false));
 
     $response->assertOk();
@@ -42,6 +43,7 @@ test('customer can send message on their order', function () {
     Mail::fake();
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([test()->order]))
         ->postJson(route('order.messages.send', test()->order->order_number, false), [
             'message' => 'Can I add extra frosting?',
             'sender_name' => 'Test Customer',
@@ -60,6 +62,7 @@ test('message is saved with correct sender type', function () {
     Mail::fake();
 
     withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([test()->order]))
         ->postJson(route('order.messages.send', test()->order->order_number, false), [
             'message' => 'Hello!',
             'sender_name' => 'Customer',
@@ -72,6 +75,7 @@ test('message is saved with correct sender type', function () {
 
 test('messages require content', function () {
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([test()->order]))
         ->postJson(route('order.messages.send', test()->order->order_number, false), [
             'sender_name' => 'Test',
             'sender_email' => 'test@example.com',
@@ -86,6 +90,7 @@ test('notification email is sent to baker', function () {
     settings(['store_email' => 'baker@bakery.com']);
 
     withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([test()->order]))
         ->postJson(route('order.messages.send', test()->order->order_number, false), [
             'message' => 'Question about my order',
             'sender_name' => 'Customer',

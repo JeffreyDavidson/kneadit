@@ -92,6 +92,20 @@ function tenantMiddleware(): array
     ];
 }
 
+/**
+ * Session payload that grants the EnsureOrderAccess middleware permission
+ * to view the given orders. Compose with ->withSession(...).
+ *
+ * @param array<int, App\Models\Orders\Order> $orders
+ * @return array<string, array<int, string>>
+ */
+function verifiedOrdersSession(array $orders): array
+{
+    return [
+        'verified_order_numbers' => array_map(fn ($order) => $order->order_number, $orders),
+    ];
+}
+
 /*
 |--------------------------------------------------------------------------
 | Browser Test Helpers

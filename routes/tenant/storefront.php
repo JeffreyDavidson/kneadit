@@ -63,9 +63,12 @@ Route::get('blog', [StorefrontBlogController::class, 'index'])->name('storefront
 Route::get('blog/feed.xml', StorefrontBlogFeedController::class)->name('storefront.blog.feed');
 Route::get('blog/{post}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
 
-// Review submission (from email link)
-Route::get('review/{order:order_number}', ShowReviewFormController::class)->name('storefront.submitReview');
-Route::post('review/{order:order_number}', StoreReviewController::class)->name('storefront.storeReview')->middleware('throttle:10,1');
+// Review submission (from email link). Gated on session-verified order
+// ownership — same IDOR shape as order-by-number routes in orders.php.
+Route::middleware('order.access')->group(function () {
+    Route::get('review/{order:order_number}', ShowReviewFormController::class)->name('storefront.submitReview');
+    Route::post('review/{order:order_number}', StoreReviewController::class)->name('storefront.storeReview')->middleware('throttle:10,1');
+});
 
 // Surveys
 Route::get('survey/{survey}', [SurveyController::class, 'show'])->name('storefront.survey');
