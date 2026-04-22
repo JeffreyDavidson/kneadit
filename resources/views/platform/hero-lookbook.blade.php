@@ -53,12 +53,8 @@
             Where every bite tells a story
         </p>
         <div class="fade-up-3 flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
-                Order Now
-            </a>
-            <a href="#" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105" style="border: 2px solid rgba(232,176,74,0.4); color: var(--warm-300);">
-                Browse Menu
-            </a>
+            <x-storefront.button href="#" size="lg">Order Now</x-storefront.button>
+            <x-storefront.button href="#" variant="outline-dark" size="lg">Browse Menu</x-storefront.button>
         </div>
     </div>
 
@@ -90,9 +86,7 @@
                 Artisan baked goods crafted with locally sourced ingredients and a whole lot of love. Made fresh daily in our kitchen.
             </p>
             <div class="fade-up-3 flex flex-wrap gap-4">
-                <a href="#" class="inline-block px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-500 text-warm-900">
-                    Place Your Order
-                </a>
+                <x-storefront.button href="#" size="md">Place Your Order</x-storefront.button>
                 <a href="#" class="inline-flex items-center gap-2 px-6 py-4 font-semibold transition-all duration-200 text-warm-400">
                     Our Story
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
@@ -152,9 +146,9 @@
                     Sweet Dreams<br>Bakery
                 </h1>
             </div>
-            <a href="#" class="fade-up-2 hidden md:inline-block px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105" style="background: var(--warm-900); color: var(--warm-100);">
+            <x-storefront.button href="#" variant="dark" size="md" class="fade-up-2 hidden md:inline-flex">
                 View Full Menu →
-            </a>
+            </x-storefront.button>
         </div>
 
         <!-- Product grid: 1 large + 2 stacked -->
@@ -165,7 +159,7 @@
                      alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" style="min-height: 500px;">
                 <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(28,20,16,0.8) 0%, transparent 50%);"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12">
-                    <span class="inline-block px-4 py-1.5 rounded-full text-xs font-bold mb-4 bg-warm-500 text-warm-900">BESTSELLER</span>
+                    <x-storefront.pill tone="solid" size="sm" class="mb-4 !font-bold uppercase tracking-wider">BESTSELLER</x-storefront.pill>
                     <h3 class="font-display text-3xl md:text-4xl font-bold mb-2 text-white">Signature Cinnamon Rolls</h3>
                     <p class="text-lg text-warm-300">From $4.50</p>
                 </div>
@@ -359,9 +353,9 @@
 
         <!-- CTA -->
         <div class="text-center mt-16 fade-up-4">
-            <a href="#" class="inline-block px-12 py-5 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105" style="border: 2px solid var(--warm-500); color: var(--warm-400);">
+            <x-storefront.button href="#" variant="outline-dark" size="xl">
                 Explore Our Menu
-            </a>
+            </x-storefront.button>
         </div>
     </div>
 </section>
@@ -391,9 +385,7 @@
                     Sweet Dreams Bakery
                 </h1>
                 <div class="fade-up-2 flex gap-4">
-                    <a href="#" class="inline-block px-10 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-500 text-warm-900">
-                        Order Now
-                    </a>
+                    <x-storefront.button href="#" size="lg">Order Now</x-storefront.button>
                     <a href="#" class="inline-flex items-center gap-2 px-6 py-4 font-semibold transition-colors text-warm-400">
                         Our Menu
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
@@ -450,12 +442,8 @@
             </p>
 
             <div class="fade-up-3 flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#" class="inline-block px-12 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
-                    Place Your Order
-                </a>
-                <a href="#" class="inline-block px-12 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105" style="border: 2px solid rgba(232,176,74,0.3); color: var(--warm-400);">
-                    Browse Our Menu
-                </a>
+                <x-storefront.button href="#" size="xl">Place Your Order</x-storefront.button>
+                <x-storefront.button href="#" variant="outline-dark" size="xl">Browse Our Menu</x-storefront.button>
             </div>
         </div>
 
