@@ -36,6 +36,7 @@ dataset('central_admin_pages', [
 
 test('central admin page renders cleanly', function (string $slug, string $heading) use ($centralUrl) {
     authenticatedCentralVisit("{$centralUrl}/admin/{$slug}")
+        ->waitForEvent('networkidle')
         ->assertSee($heading)
         ->assertNoJavaScriptErrors();
 })->with('central_admin_pages');
