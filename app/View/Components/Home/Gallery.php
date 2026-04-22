@@ -5,7 +5,6 @@ namespace App\View\Components\Home;
 use App\Models\Customers\CustomerPhoto;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\View\Component;
 
 class Gallery extends Component
@@ -37,18 +36,17 @@ class Gallery extends Component
      */
     private function loadFeaturedPhotos(int $count): Collection
     {
-        $cacheKey = 'home_gallery_photos_' . (tenant()?->getTenantKey() ?? 'none') . "_{$count}";
-
-        try {
-            return Cache::flexible($cacheKey, [300, 1800], fn () => CustomerPhoto::query()
-                ->approved()
-                ->featured()
-                ->with('product')
-                ->latest()
-                ->take($count)
-                ->get());
-        } catch (\Exception) {
-            return collect();
-        }
+        // Not cached — Eloquent collections don't roundtrip through Redis cleanly
+        // because config('cache.serializable_classes') is false (security default).
+        // unserialize() returns __PHP_Incomplete_Class and the strict return type
+        // here errors out into a 500. Same pattern as Hero::topReview. The query
+        // is two indexed lookups; not worth the operational fragility.
+        return CustomerPhoto::query()
+            ->approved()
+            ->featured()
+            ->with('product')
+            ->latest()
+            ->take($count)
+            ->get();
     }
 }
