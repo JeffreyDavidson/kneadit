@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureSubscribed;
 use App\Http\Middleware\InitializeTenancyIfNeeded;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SetActorContext;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Add security headers to all web responses
         $middleware->web(append: [
             SecurityHeaders::class,
+            SetActorContext::class,
         ]);
 
         // Initialize tenancy on ALL web requests (including Livewire updates)
