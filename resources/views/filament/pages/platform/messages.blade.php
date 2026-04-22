@@ -4,7 +4,7 @@
 
         <div class="mb-4">
             <button wire:click="backToList" class="text-sm flex items-center gap-1 text-[#e8b04a]">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
+                <x-heroicon-o-arrow-left class="w-4 h-4" />
                 Back to messages
             </button>
         </div>
@@ -99,7 +99,7 @@
                 </div>
             @empty
                 <div class="text-center py-8 text-[#f5d88e]">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-auto mb-2 w-12 h-12 text-[#d4920c]"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+                    <x-heroicon-o-envelope class="mx-auto mb-2 w-12 h-12 text-[#d4920c]" />
                     <p>No messages yet</p>
                 </div>
             @endforelse
