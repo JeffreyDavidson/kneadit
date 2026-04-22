@@ -6,6 +6,8 @@ use App\Builders\Customers\CustomerQueryBuilder;
 use App\Casts\PhoneNumberCast;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
+use App\Notifications\Customers\CustomerPasswordResetNotification;
+use App\Notifications\Customers\CustomerVerifyEmailNotification;
 use App\Observers\LogsActivityObserver;
 use Database\Factories\Customers\CustomerFactory;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
@@ -67,12 +69,12 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
 
     public function sendPasswordResetNotification(mixed $token): void
     {
-        $this->notify(new \App\Notifications\Customers\CustomerPasswordResetNotification($token));
+        $this->notify(new CustomerPasswordResetNotification($token));
     }
 
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new \App\Notifications\Customers\CustomerVerifyEmailNotification);
+        $this->notify(new CustomerVerifyEmailNotification);
     }
 
     protected function casts(): array
