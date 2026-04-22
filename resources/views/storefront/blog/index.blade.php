@@ -24,7 +24,7 @@
                             @if ($post->tags)
                                 <div class="flex flex-wrap gap-2 mb-3">
                                     @foreach ($post->tags as $tag)
-                                        <span class="text-xs font-semibold px-2 py-1 rounded-full" style="background: rgba(212,146,12,0.15); color: var(--warm-500);">{{ $tag }}</span>
+                                        <span class="text-xs font-semibold px-2 py-1 rounded-full bg-warm-500/15 text-warm-500">{{ $tag }}</span>
                                     @endforeach
                                 </div>
                             @endif

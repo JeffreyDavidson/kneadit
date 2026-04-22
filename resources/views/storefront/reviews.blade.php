@@ -50,7 +50,7 @@
 {{-- Featured Review: Massive Pull-Quote --}}
 <section class="relative py-24 md:py-32 overflow-hidden bg-warm-100">
     <div class="max-w-4xl mx-auto px-4 text-center">
-        <div class="font-display font-bold leading-none mb-6" style="font-size: 8rem; color: var(--warm-500); opacity: 0.12; line-height: 0.5;">&ldquo;</div>
+        <div class="font-display font-bold mb-6 text-[8rem] leading-[0.5] text-warm-500 opacity-[0.12]">&ldquo;</div>
         @if ($vm->featured()->comment)
         <blockquote class="font-display text-2xl md:text-4xl lg:text-5xl font-medium leading-snug mb-10 text-warm-800 tracking-tight">
             {{ $vm->featured()->comment }}
@@ -77,14 +77,14 @@
              x-intersect.once="shown = true; if (!reduced) { $el.querySelectorAll('.rating-bar-fill').forEach(b => b.style.width = b.dataset.pct + '%'); }">
             @foreach ($vm->ratingBreakdown as $star => $data)
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-1 flex-shrink-0" style="width: 80px;">
+                <div class="flex items-center gap-1 flex-shrink-0 w-20">
                     <span class="font-display font-semibold text-warm-300">{{ $star }}</span>
                     <x-heroicon-s-star class="w-4 h-4 text-warm-500" />
                 </div>
                 <div class="flex-1 rating-bar-track bg-warm-800">
-                    <div class="rating-bar-fill" data-pct="{{ $data['pct'] }}" style="width: {{ $data['pct'] }}%; background: var(--warm-500);"></div>
+                    <div class="rating-bar-fill bg-warm-500" data-pct="{{ $data['pct'] }}" style="width: {{ $data['pct'] }}%;"></div>
                 </div>
-                <span class="text-sm font-medium flex-shrink-0 text-warm-400" style="width: 40px; text-align: right;">{{ $data['count'] }}</span>
+                <span class="text-sm font-medium flex-shrink-0 text-right text-warm-400 w-10">{{ $data['count'] }}</span>
             </div>
             @endforeach
         </div>
@@ -137,7 +137,7 @@
 {{-- Empty state --}}
 <section class="relative py-24 bg-warm-100">
     <div class="text-center max-w-md mx-auto px-4">
-        <div class="font-display font-bold leading-none mb-4" style="font-size: 5rem; color: var(--warm-300); opacity: 0.3; line-height: 0.6;">&ldquo;</div>
+        <div class="font-display font-bold mb-4 text-[5rem] leading-[0.6] text-warm-300 opacity-30">&ldquo;</div>
         <p class="font-display text-3xl md:text-4xl font-bold mb-4 text-warm-800">{{ $vm->content['empty_heading'] ?? 'No reviews yet' }}</p>
         <p class="text-lg leading-relaxed text-warm-600">{{ $vm->content['empty_description'] ?? 'Be the first to share your experience.' }}</p>
     </div>

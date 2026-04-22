@@ -55,7 +55,7 @@
                 @if ($settings->branding->businessTagline)
                 {{-- Pull-Quote style tagline --}}
                 <div class="mb-12">
-                    <div class="font-display font-bold leading-none mb-4" style="font-size: 5rem; color: var(--warm-500); opacity: 0.15; line-height: 0.6;">&ldquo;</div>
+                    <div class="font-display font-bold mb-4 text-[5rem] leading-[0.6] text-warm-500 opacity-15">&ldquo;</div>
                     <blockquote class="font-display text-2xl md:text-3xl lg:text-4xl font-medium leading-snug text-warm-800 tracking-tight">
                         {{ $settings->branding->businessTagline }}
                     </blockquote>
@@ -115,7 +115,7 @@
 @if ($settings->branding->allergyDisclaimer)
 <section class="bg-warm-100">
     <div class="max-w-4xl mx-auto px-4 py-12">
-        <div class="flex items-start gap-4 p-6 rounded-2xl" style="background: var(--warm-200); border-left: 3px solid var(--warm-500);">
+        <div class="flex items-start gap-4 p-6 rounded-2xl bg-warm-200 border-l-[3px] border-warm-500">
             <span class="text-lg flex-shrink-0">⚠️</span>
             <p class="text-sm leading-relaxed text-warm-700">
                 <strong>Allergy Notice:</strong> {{ $settings->branding->allergyDisclaimer }}
