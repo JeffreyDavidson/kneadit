@@ -28,15 +28,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog whereAction($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog whereAdminId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog whereIpAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog whereMetadata($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog whereTargetId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminAuditLog whereTargetType($value)
  *
  * @mixin \Eloquent
  */
