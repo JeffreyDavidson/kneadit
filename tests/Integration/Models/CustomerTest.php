@@ -44,15 +44,3 @@ test('customer has customer profile relationship', function () {
 
     expect($customer->customerProfile)->toBeInstanceOf(CustomerProfile::class);
 });
-
-test('full address returns formatted address', function () {
-    $customer = Customer::factory()->create([
-        'address' => '123 Main St',
-        'city' => 'Springfield',
-        'state' => 'IL',
-        'zip' => '62704',
-    ]);
-
-    expect($customer->full_address)->toContain('123 Main St')
-        ->and($customer->full_address)->toContain('Springfield');
-});

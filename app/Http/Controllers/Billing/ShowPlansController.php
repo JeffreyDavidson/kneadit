@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Billing;
 
+use App\Enums\Platform\SubscriptionTier;
 use App\Http\Controllers\Controller;
 use App\Models\Staff\User;
 use Illuminate\Container\Attributes\CurrentUser;
@@ -16,7 +17,7 @@ class ShowPlansController extends Controller
     {
         return view('billing.plans', [
             'plans' => config('kneadit.plans'),
-            'currentPlan' => $user?->current_plan?->value,
+            'currentPlan' => $user ? SubscriptionTier::resolve($user)?->value : null,
             'bakeryName' => session('bakery_name'),
         ]);
     }

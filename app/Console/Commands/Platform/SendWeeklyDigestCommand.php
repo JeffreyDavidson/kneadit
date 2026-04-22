@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Platform;
 
-use App\Enums\Staff\UserRole;
 use App\Events\Platform\WeeklyDigestRequested;
 use App\Models\Platform\Tenant;
 use App\Models\Staff\User;
@@ -32,7 +31,7 @@ class SendWeeklyDigestCommand extends Command
                         return;
                     }
 
-                    $users = User::query()->where('role', UserRole::Owner)->get();
+                    $users = User::query()->owners()->get();
 
                     if ($users->isEmpty()) {
                         $users = User::query()->limit(1)->get();

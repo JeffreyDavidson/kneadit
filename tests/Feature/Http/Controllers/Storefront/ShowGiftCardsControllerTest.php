@@ -67,13 +67,16 @@ test('gift card is not usable when expired', function () {
     expect($card->is_usable)->toBeFalse();
 });
 
-test('gift card status attribute', function () {
+test('GiftCardStatus::resolve derives state from is_active, expires_at, and current_balance', function () {
     $active = makeGiftCard();
     $inactive = makeGiftCard(['is_active' => false]);
     $depleted = makeGiftCard(['current_balance' => 0.00]);
     $expired = makeGiftCard(['expires_at' => now()->subDay()]);
 
-    expect($active->status)->toBe(GiftCardStatus::Active)->and($inactive->status)->toBe(GiftCardStatus::Inactive)->and($depleted->status)->toBe(GiftCardStatus::Depleted)->and($expired->status)->toBe(GiftCardStatus::Expired);
+    expect(GiftCardStatus::resolve($active))->toBe(GiftCardStatus::Active)
+        ->and(GiftCardStatus::resolve($inactive))->toBe(GiftCardStatus::Inactive)
+        ->and(GiftCardStatus::resolve($depleted))->toBe(GiftCardStatus::Depleted)
+        ->and(GiftCardStatus::resolve($expired))->toBe(GiftCardStatus::Expired);
 });
 
 test('gift card has transactions relationship', function () {

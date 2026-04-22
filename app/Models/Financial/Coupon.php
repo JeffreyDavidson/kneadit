@@ -7,18 +7,19 @@ use App\Casts\MoneyCast;
 use App\Casts\PercentageCast;
 use App\Enums\Financial\CouponType;
 use App\Models\Orders\Order;
-use App\Observers\Engagement\CouponObserver;
 use App\Observers\LogsActivityObserver;
 use Database\Factories\Financial\CouponFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 /**
  * @property CouponType $type
@@ -40,7 +41,7 @@ use Illuminate\Support\Carbon;
  * @mixin \Eloquent
  */
 #[Fillable('code', 'type', 'fixed_amount', 'percentage', 'min_order_amount', 'max_uses', 'used_count', 'starts_at', 'expires_at', 'is_active')]
-#[ObservedBy([CouponObserver::class, LogsActivityObserver::class])]
+#[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(CouponQueryBuilder::class)]
 #[UseFactory(CouponFactory::class)]
 class Coupon extends Model
@@ -61,6 +62,14 @@ class Coupon extends Model
             'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
+    }
+
+    /** @return Attribute<string, string> */
+    protected function code(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => Str::upper($value),
+        );
     }
 
     /**

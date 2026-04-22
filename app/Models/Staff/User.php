@@ -2,7 +2,7 @@
 
 namespace App\Models\Staff;
 
-use App\Enums\Platform\SubscriptionTier;
+use App\Builders\Staff\UserQueryBuilder;
 use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
 use Database\Factories\Staff\UserFactory;
@@ -11,8 +11,8 @@ use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,7 +21,6 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Illuminate\Validation\Rules\Password;
 use Laravel\Cashier\Billable;
 use Laravel\Cashier\Subscription;
 
@@ -39,10 +38,6 @@ use Laravel\Cashier\Subscription;
  * @property string|null $pm_type
  * @property string|null $pm_last_four
  * @property string|null $trial_ends_at
- * @property-read bool $is_owner
- * @property-read bool $is_manager
- * @property-read bool $is_staff
- * @property-read SubscriptionTier|null $current_plan
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Subscription> $subscriptions
@@ -71,6 +66,7 @@ use Laravel\Cashier\Subscription;
  */
 #[Fillable('name', 'email', 'password', 'role')]
 #[Hidden('password', 'remember_token')]
+#[UseEloquentBuilder(UserQueryBuilder::class)]
 #[UseFactory(UserFactory::class)]
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
@@ -78,11 +74,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     use Billable, HasFactory, Notifiable;
 
     public const string CENTRAL_PANEL_ID = 'central';
-
-    public static function passwordRule(): Password
-    {
-        return Password::min(8)->letters()->numbers();
-    }
 
     protected function casts(): array
     {
@@ -100,42 +91,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         }
 
         return true;
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isOwner(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): bool => $this->role === UserRole::Owner,
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isManager(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): bool => $this->role === UserRole::Manager,
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isStaff(): Attribute
-    {
-        return Attribute::make(
-            get: fn (): bool => $this->role === UserRole::Staff,
-        );
-    }
-
-    /** @return Attribute<SubscriptionTier|null, never> */
-    protected function currentPlan(): Attribute
-    {
-        return Attribute::make(
-            get: function (): ?SubscriptionTier {
-                $priceId = $this->subscription('default')?->stripe_price;
-
-                return $priceId ? SubscriptionTier::fromPriceId($priceId) : null;
-            },
-        );
     }
 
     /**

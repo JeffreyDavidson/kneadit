@@ -2,40 +2,20 @@
 
 use App\Models\Operations\Holiday;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 
 uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('is_upcoming returns true for future holidays', function () {
-    $holiday = Holiday::factory()->create(['date' => now()->addDays(10)]);
+test('date is cast to Carbon', function () {
+    $holiday = Holiday::factory()->create(['date' => '2026-12-25']);
 
-    expect($holiday->is_upcoming)->toBeTrue();
+    expect($holiday->fresh()->date)->toBeInstanceOf(Carbon::class);
 });
 
-test('is_upcoming returns false for past holidays', function () {
-    $holiday = Holiday::factory()->create(['date' => now()->subDay()]);
+test('lead_days is cast to integer', function () {
+    $holiday = Holiday::factory()->create(['lead_days' => 14]);
 
-    expect($holiday->is_upcoming)->toBeFalse();
-});
-
-test('start_prep_by does not mutate the date attribute', function () {
-    $holiday = Holiday::factory()->create([
-        'date' => now()->addDays(14),
-        'lead_days' => 3,
-    ]);
-
-    $originalDate = $holiday->date->toDateString();
-
-    $prepDate = $holiday->start_prep_by;
-
-    expect($prepDate->toDateString())->not->toBe($originalDate)
-        ->and($holiday->date->toDateString())->toBe($originalDate);
-});
-
-test('days_away calculates correct number of days', function () {
-    $holiday = Holiday::factory()->create(['date' => now()->addDays(5)->startOfDay()]);
-
-    expect($holiday->days_away)->toBeGreaterThanOrEqual(4)
-        ->and($holiday->days_away)->toBeLessThanOrEqual(5);
+    expect($holiday->fresh()->lead_days)->toBeInt()->toBe(14);
 });

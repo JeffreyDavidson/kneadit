@@ -7,6 +7,7 @@ use App\Models\Customers\Customer;
 use App\Models\Customers\CustomerNote;
 use App\Models\Orders\Order;
 use App\Services\Customers\CustomerIntelligence;
+use App\ValueObjects\Address;
 use Illuminate\Support\Carbon;
 
 final class CustomerPresenter
@@ -67,6 +68,16 @@ final class CustomerPresenter
         return $this->metrics()->isAtRisk;
     }
 
+    public function address(): Address
+    {
+        return new Address(
+            street: $this->customer->address,
+            city: $this->customer->city,
+            state: $this->customer->state,
+            zip: $this->customer->zip,
+        );
+    }
+
     private function metrics(): CustomerMetrics
     {
         return $this->memo ??= $this->intelligence->metrics($this->customer);
@@ -80,7 +91,7 @@ final class CustomerPresenter
             'name' => $this->customer->name,
             'email' => $this->customer->email,
             'phone' => $this->customer->phone,
-            'address' => $this->customer->full_address,
+            'address' => $this->address()->formatted(),
             'orders' => $this->formattedOrders(),
             'notes' => $this->formattedNotes(),
             'stats' => $this->stats(),

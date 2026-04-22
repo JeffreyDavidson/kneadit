@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
- * @property-read GiftCardStatus $status
  * @property-read Collection<int, GiftCardTransaction> $transactions
  * @property-read int|null $transactions_count
  *
@@ -67,27 +66,7 @@ class GiftCard extends Model
     protected function isUsable(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->status === GiftCardStatus::Active,
-        );
-    }
-
-    /** @return Attribute<GiftCardStatus, never> */
-    protected function status(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                if (! $this->is_active) {
-                    return GiftCardStatus::Inactive;
-                }
-                if ($this->expires_at && $this->expires_at->isPast()) {
-                    return GiftCardStatus::Expired;
-                }
-                if (! $this->current_balance->isPositive()) {
-                    return GiftCardStatus::Depleted;
-                }
-
-                return GiftCardStatus::Active;
-            },
+            get: fn () => GiftCardStatus::resolve($this) === GiftCardStatus::Active,
         );
     }
 }

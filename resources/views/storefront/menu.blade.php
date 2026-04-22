@@ -87,14 +87,18 @@
                     </x-slot:overlay>
                     <x-slot:footer>
                         @if (!$product->is_active)
-                        <div x-data="{ showWaitlist: false, submitted: false }">
-                            <button x-show="!showWaitlist && !submitted" @click="showWaitlist = true"
+                        <div x-data="waitlistSignup({
+                            url: @js(route('productWaitlist.join')),
+                            productId: {{ $product->id }},
+                            csrfToken: @js(csrf_token()),
+                        })">
+                            <button x-show="!showForm && !submitted" @click="open()"
                                 class="text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer transition-all duration-200 text-warm-400 bg-warm-700/20">
                                 🔔 Notify Me When Available
                             </button>
                             <span x-show="submitted" class="text-xs font-medium text-warm-400">✓ We'll notify you!</span>
-                            <form x-show="showWaitlist" @submit.prevent="fetch('{{ route('productWaitlist.join') }}', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'},body:JSON.stringify({product_id:{{ $product->id }},customer_email:$refs.email{{ $product->id }}.value})}).then(()=>{submitted=true;showWaitlist=false})" class="flex gap-1 mt-2">
-                                <input x-ref="email{{ $product->id }}" type="email" required placeholder="Email" class="text-sm rounded-lg border border-warm-600/30 px-2 py-1 w-full bg-warm-800 text-warm-200">
+                            <form x-show="showForm" @submit.prevent="submit()" class="flex gap-1 mt-2">
+                                <input x-model="email" type="email" required placeholder="Email" class="text-sm rounded-lg border border-warm-600/30 px-2 py-1 w-full bg-warm-800 text-warm-200">
                                 <button type="submit" class="text-sm px-3 py-1 rounded-lg font-semibold flex-shrink-0 bg-warm-500 text-warm-900">Go</button>
                             </form>
                         </div>

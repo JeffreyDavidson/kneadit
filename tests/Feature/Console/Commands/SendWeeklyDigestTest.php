@@ -75,6 +75,6 @@ test('digest:weekly command source checks for owner users first', function () {
     $source = file_get_contents(app_path('Console/Commands/Platform/SendWeeklyDigestCommand.php'));
 
     expect($source)
-        ->toContain('UserRole::Owner')
+        ->toContain('owners()')
         ->toContain('limit(1)');
 });

@@ -59,3 +59,20 @@ test('for() resolves CustomerIntelligence from the container', function () {
 
     expect($presenter->orderCount())->toBe(3);
 });
+
+test('address() builds an Address value object from the customer columns', function () {
+    $customer = new Customer([
+        'address' => '123 Main St',
+        'city' => 'Springfield',
+        'state' => 'IL',
+        'zip' => '62704',
+    ]);
+
+    $presenter = new CustomerPresenter($customer, Mockery::mock(CustomerIntelligence::class));
+
+    expect($presenter->address())
+        ->street->toBe('123 Main St')
+        ->city->toBe('Springfield')
+        ->state->toBe('IL')
+        ->zip->toBe('62704');
+});

@@ -1,4 +1,5 @@
 @use(App\Enums\Orders\DeliveryType)
+@use(App\Presenters\OrderItemPresenter)
 <x-layouts.storefront>
 <x-slot:styles>
 <link rel="stylesheet" href="{{ asset('css/order-confirmation.css') }}">
@@ -46,7 +47,7 @@
  <span class="font-medium text-warm-200">{{ $item->product->name ?? 'Product' }}</span>
  <span class="text-sm ml-2 text-warm-500">× {{ $item->quantity }}</span>
  </div>
- <span class="font-semibold text-warm-300">@money($item->total_price)</span>
+ <span class="font-semibold text-warm-300">@money(OrderItemPresenter::for($item)->totalPrice())</span>
  </div>
  @endforeach
  </div>

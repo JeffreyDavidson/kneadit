@@ -27,10 +27,10 @@ test('can access non-central panel for any role', function (string $factoryState
     expect($user->canAccessPanel($panel))->toBeTrue();
 })->with(['owner', 'manager', 'staff']);
 
-test('current_plan returns null when no subscription exists', function () {
+test('SubscriptionTier::resolve returns null when no subscription exists', function () {
     $user = User::factory()->owner()->create();
 
-    expect($user->current_plan)->toBeNull();
+    expect(SubscriptionTier::resolve($user))->toBeNull();
 });
 
 test('has-plan gate returns false when no subscription exists', function () {
@@ -39,7 +39,7 @@ test('has-plan gate returns false when no subscription exists', function () {
     expect(Gate::forUser($user)->allows('has-plan', SubscriptionTier::Starter))->toBeFalse();
 });
 
-test('current_plan returns plan key matching stripe price', function () {
+test('SubscriptionTier::resolve returns tier matching stripe price', function () {
     config(['kneadit.stripe_prices.starter' => 'price_starter_test']);
 
     $user = User::factory()->owner()->create();
@@ -54,10 +54,10 @@ test('current_plan returns plan key matching stripe price', function () {
         'updated_at' => now(),
     ]);
 
-    expect($user->current_plan)->toBe(SubscriptionTier::Starter);
+    expect(SubscriptionTier::resolve($user))->toBe(SubscriptionTier::Starter);
 });
 
-test('current_plan returns null for unknown stripe price', function () {
+test('SubscriptionTier::resolve returns null for unknown stripe price', function () {
     config(['kneadit.stripe_prices' => ['starter' => 'price_known']]);
 
     $user = User::factory()->owner()->create();
@@ -72,29 +72,7 @@ test('current_plan returns null for unknown stripe price', function () {
         'updated_at' => now(),
     ]);
 
-    expect($user->current_plan)->toBeNull();
-});
-
-test('is_owner returns true for owner role', function () {
-    $user = User::factory()->owner()->create();
-
-    expect($user->is_owner)->toBeTrue()
-        ->and($user->is_manager)->toBeFalse()
-        ->and($user->is_staff)->toBeFalse();
-});
-
-test('is_manager returns true for manager role', function () {
-    $user = User::factory()->manager()->create();
-
-    expect($user->is_manager)->toBeTrue()
-        ->and($user->is_owner)->toBeFalse();
-});
-
-test('is_staff returns true for staff role', function () {
-    $user = User::factory()->staff()->create();
-
-    expect($user->is_staff)->toBeTrue()
-        ->and($user->is_owner)->toBeFalse();
+    expect(SubscriptionTier::resolve($user))->toBeNull();
 });
 
 test('tenants relationship returns related tenants', function () {

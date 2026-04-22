@@ -116,6 +116,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Email Verification
+    |--------------------------------------------------------------------------
+    |
+    | The number of minutes a signed email-verification URL stays valid.
+    | Read by CustomerVerifyEmailNotification when building the verify
+    | link's expiration. Mirrors the structure of passwords.*.expire.
+    |
+    */
+
+    'verification' => [
+        'expire' => env('AUTH_VERIFICATION_EXPIRE', 60),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Password Confirmation Timeout
     |--------------------------------------------------------------------------
     |

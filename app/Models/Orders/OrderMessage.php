@@ -43,14 +43,4 @@ class OrderMessage extends Model
     {
         return $this->belongsTo(Order::class);
     }
-
-    public function isBaker(): bool
-    {
-        return $this->sender_type->isBaker();
-    }
-
-    public function isCustomer(): bool
-    {
-        return $this->sender_type->isCustomer();
-    }
 }

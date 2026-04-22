@@ -100,9 +100,10 @@
                     <div class="space-y-3">
                         @foreach ($monthHolidays as $holiday)
                             @php
-                                $statusColor = $this->getStatusColor($holiday);
-                                $statusText = $this->getStatusText($holiday);
-                                $daysAway = $this->getDaysAway($holiday);
+                                $presenter = \App\Presenters\HolidayPresenter::for($holiday);
+                                $statusColor = $presenter->prepStatusColor();
+                                $statusText = $presenter->prepStatus();
+                                $daysAway = $presenter->daysAwayLabel();
                             @endphp
 
                             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -131,7 +132,7 @@
                                             </div>
                                             <div>
                                                 <span class="font-medium">Start prep by:</span>
-                                                {{ $holiday->start_prep_by->format('F j, Y') }}
+                                                {{ $presenter->startPrepBy()->format('F j, Y') }}
                                             </div>
                                         </div>
 

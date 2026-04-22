@@ -27,7 +27,6 @@ class CalculateOrderTotals
                 'product_id' => $product->id,
                 'quantity' => $item['quantity'],
                 'unit_price' => $unitPrice,
-                'total_price' => $lineTotal,
             ];
         }
 

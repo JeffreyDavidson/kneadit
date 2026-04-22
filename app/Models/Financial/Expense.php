@@ -12,13 +12,11 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * @property-read string $category_label
  * @property \App\ValueObjects\Money $amount
  * @property \App\ValueObjects\Money $deductible_amount
  * @property \App\ValueObjects\Percentage $business_percentage
@@ -51,13 +49,5 @@ class Expense extends Model
             'deductible_amount' => MoneyCast::class,
             'category' => ExpenseCategory::class,
         ];
-    }
-
-    /** @return Attribute<mixed, never> */
-    protected function categoryLabel(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->category->getLabel(),
-        );
     }
 }

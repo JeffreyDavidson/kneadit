@@ -11,25 +11,25 @@ beforeEach(fn () => setUpTenantTest());
 test('active gift card has Active status', function () {
     $card = GiftCard::factory()->create();
 
-    expect($card->status)->toBe(GiftCardStatus::Active);
+    expect(GiftCardStatus::resolve($card))->toBe(GiftCardStatus::Active);
 });
 
 test('depleted gift card has Depleted status', function () {
     $card = GiftCard::factory()->depleted()->create();
 
-    expect($card->status)->toBe(GiftCardStatus::Depleted);
+    expect(GiftCardStatus::resolve($card))->toBe(GiftCardStatus::Depleted);
 });
 
 test('expired gift card has Expired status', function () {
     $card = GiftCard::factory()->expired()->create();
 
-    expect($card->status)->toBe(GiftCardStatus::Expired);
+    expect(GiftCardStatus::resolve($card))->toBe(GiftCardStatus::Expired);
 });
 
 test('inactive gift card has Inactive status', function () {
     $card = GiftCard::factory()->inactive()->create();
 
-    expect($card->status)->toBe(GiftCardStatus::Inactive);
+    expect(GiftCardStatus::resolve($card))->toBe(GiftCardStatus::Inactive);
 });
 
 test('isUsable returns true for active card with balance', function () {

@@ -16,7 +16,7 @@ class ResolveInvitation
             ->where('token', $request->route('token'))
             ->firstOrFail();
 
-        if ($invitation->is_expired) {
+        if ($invitation->expires_at->isPast()) {
             return response()->view('invitations.expired');
         }
 

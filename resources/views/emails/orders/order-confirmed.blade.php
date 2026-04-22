@@ -1,3 +1,4 @@
+@use(App\Presenters\OrderItemPresenter)
 @extends('emails.layout')
 
 @php
@@ -24,7 +25,7 @@
     @foreach ($orderItems as $item)
         <div style="padding: 8px 0; border-bottom: 1px solid #e8e3d8; display: flex; justify-content: space-between;">
             <span style="color: {{ $secondaryColor }};">{{ $item->product->name }} × {{ $item->quantity }}</span>
-            <span style="font-weight: 600; color: {{ $secondaryColor }};">@money($item->total_price)</span>
+            <span style="font-weight: 600; color: {{ $secondaryColor }};">@money(OrderItemPresenter::for($item)->totalPrice())</span>
         </div>
     @endforeach
 

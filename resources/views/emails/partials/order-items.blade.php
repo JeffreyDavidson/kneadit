@@ -1,3 +1,4 @@
+@use(App\Presenters\OrderItemPresenter)
 <div class="order-items">
     @if (!empty($heading))
     <h4 style="margin-bottom: 10px; color: #8b4513;">{{ $heading }}</h4>
@@ -13,7 +14,7 @@
                     @endif
                 </div>
             </div>
-            <div class="item-price">@money($item->total_price)</div>
+            <div class="item-price">@money(OrderItemPresenter::for($item)->totalPrice())</div>
         </div>
     @endforeach
 </div>

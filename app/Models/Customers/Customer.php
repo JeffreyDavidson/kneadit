@@ -6,8 +6,9 @@ use App\Builders\Customers\CustomerQueryBuilder;
 use App\Casts\PhoneNumberCast;
 use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
+use App\Notifications\Customers\CustomerPasswordResetNotification;
+use App\Notifications\Customers\CustomerVerifyEmailNotification;
 use App\Observers\LogsActivityObserver;
-use App\ValueObjects\Address;
 use Database\Factories\Customers\CustomerFactory;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
@@ -20,7 +21,6 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,7 +39,6 @@ use Illuminate\Support\Carbon;
  * @property-read CustomerProfile|null $customerProfile
  * @property-read Collection<int, CustomerReminder> $customerReminders
  * @property-read int|null $customer_reminders_count
- * @property-read string $full_address
  * @property-read Collection<int, LoyaltyPoint> $loyaltyPoints
  * @property-read int|null $loyalty_points_count
  * @property-read Collection<int, Order> $orders
@@ -70,12 +69,12 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
 
     public function sendPasswordResetNotification(mixed $token): void
     {
-        $this->notify(new \App\Notifications\Customers\CustomerPasswordResetNotification($token));
+        $this->notify(new CustomerPasswordResetNotification($token));
     }
 
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new \App\Notifications\Customers\CustomerVerifyEmailNotification);
+        $this->notify(new CustomerVerifyEmailNotification);
     }
 
     protected function casts(): array
@@ -142,26 +141,5 @@ class Customer extends Model implements Authenticatable, CanResetPassword, MustV
     public function customerProfile(): HasOne
     {
         return $this->hasOne(CustomerProfile::class);
-    }
-
-    /** @return Attribute<Address, never> */
-    protected function addressObject(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => new Address(
-                street: $this->address,
-                city: $this->city,
-                state: $this->state,
-                zip: $this->zip,
-            ),
-        );
-    }
-
-    /** @return Attribute<string, never> */
-    protected function fullAddress(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->address_object->formatted(),
-        );
     }
 }

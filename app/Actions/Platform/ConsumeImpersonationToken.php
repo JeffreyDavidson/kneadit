@@ -2,7 +2,6 @@
 
 namespace App\Actions\Platform;
 
-use App\Enums\Staff\UserRole;
 use App\Models\Platform\ImpersonationToken;
 use App\Models\Staff\User;
 
@@ -19,7 +18,7 @@ class ConsumeImpersonationToken
 
         $record->delete();
 
-        $user = User::query()->where('role', UserRole::Owner)->first()
+        $user = User::query()->owners()->first()
             ?? User::query()->first();
 
         abort_unless((bool) $user, 404, 'No users found for this tenant.');
