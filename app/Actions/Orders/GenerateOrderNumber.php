@@ -3,19 +3,21 @@
 namespace App\Actions\Orders;
 
 use App\Models\Orders\Order;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class GenerateOrderNumber
 {
+    /**
+     * Random ORD-{10 chars} format. 62^10 ≈ 8.4×10^17 combinations —
+     * effectively unguessable, eliminating order_number enumeration as
+     * a path to other customers' orders. Loops on the rare collision.
+     */
     public function __invoke(): string
     {
-        return Cache::lock('order_number_lock', 5)->block(5, function () {
-            $maxNumber = Order::query()
-                ->whereLike('order_number', 'ORD-%')
-                ->selectRaw('MAX(CAST(SUBSTR(order_number, 5) AS INTEGER)) as max_num')
-                ->value('max_num') ?? 0;
+        do {
+            $candidate = 'ORD-' . strtoupper(Str::random(10));
+        } while (Order::query()->where('order_number', $candidate)->exists());
 
-            return 'ORD-' . str_pad((string) ($maxNumber + 1), 6, '0', STR_PAD_LEFT);
-        });
+        return $candidate;
     }
 }
