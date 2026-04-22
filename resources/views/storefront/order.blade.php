@@ -318,9 +318,9 @@
                     {{-- Submit --}}
                     <x-storefront.button type="submit" size="lg" fullWidth fontDisplay
                             data-test="order-form-submit"
-                            :disabled="!canSubmit || isSubmitting"
+                            x-bind:disabled="!canSubmit || isSubmitting"
                             class="mt-6"
-                            :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : ''">
+                            x-bind:class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : ''">
                         <span x-text="isSubmitting ? 'Placing Order...' : {{ Js::from($content['place_order_button'] ?? 'Place Order →') }}"></span>
                     </x-storefront.button>
 
