@@ -2,6 +2,7 @@
 
 namespace App\Models\Staff;
 
+use App\Builders\Staff\UserQueryBuilder;
 use App\Enums\Platform\SubscriptionTier;
 use App\Enums\Staff\UserRole;
 use App\Models\Platform\Tenant;
@@ -11,6 +12,7 @@ use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -68,6 +70,7 @@ use Laravel\Cashier\Subscription;
  */
 #[Fillable('name', 'email', 'password', 'role')]
 #[Hidden('password', 'remember_token')]
+#[UseEloquentBuilder(UserQueryBuilder::class)]
 #[UseFactory(UserFactory::class)]
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
