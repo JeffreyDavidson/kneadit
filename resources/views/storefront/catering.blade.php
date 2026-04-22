@@ -128,7 +128,7 @@
         </x-storefront.alert>
         @endif
 
-        <form method="POST" action="{{ route('catering.submit') }}" class="rounded-2xl p-8 md:p-10" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);" x-data="{ submitting: false }" @submit="submitting = true" data-test="catering-form">
+        <form method="POST" action="{{ route('catering.submit') }}" class="rounded-2xl p-8 md:p-10 bg-white border border-warm-200 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.06)]" x-data="{ submitting: false }" @submit="submitting = true" data-test="catering-form">
             @csrf
 
             <div class="grid md:grid-cols-2 gap-6">

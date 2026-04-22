@@ -165,8 +165,8 @@
             @foreach ($vm->howSteps as $i => $step)
 
             <div>
-                <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style="background: rgba(232,176,74,0.1); border: 1px solid rgba(232,176,74,0.2);">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="text-warm-500"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $howSvgs[$i] ?? $howSvgs[0] }}"/></svg>
+                <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center bg-warm-500/10 border border-warm-500/20">
+                    <svg class="w-8 h-8 text-warm-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $howSvgs[$i] ?? $howSvgs[0] }}"/></svg>
                 </div>
                 <h3 class="font-display text-xl font-bold mb-2 text-warm-200">{{ $step['title'] }}</h3>
                 <p class="text-warm-500">{{ $step['description'] }}</p>

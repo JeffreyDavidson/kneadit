@@ -41,7 +41,7 @@
                 <span class="text-sm text-warm-500">Takes about {{ max(1, ceil(count($survey->questions) * 0.5)) }} min</span>
             </div>
             <div class="w-full rounded-full h-2 bg-warm-200">
-                <div class="h-full rounded-full bg-gradient-to-r from-warm-500 to-warm-400" style="width: 0%;" id="surveyProgress"></div>
+                <div class="h-full rounded-full bg-gradient-to-r from-warm-500 to-warm-400 w-0" id="surveyProgress"></div>
             </div>
         </div>
 
