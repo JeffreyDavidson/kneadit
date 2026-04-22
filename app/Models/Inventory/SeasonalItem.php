@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\Date;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SeasonalItem query()
  *
- * @property Carbon|null $available_from
- * @property Carbon|null $available_until
+ * @property Carbon $available_from
+ * @property Carbon $available_until
  *
  * @mixin \Eloquent
  */
