@@ -50,7 +50,7 @@
 {{-- Featured Review: Massive Pull-Quote --}}
 <section class="relative py-24 md:py-32 overflow-hidden bg-warm-100">
     <div class="max-w-4xl mx-auto px-4 text-center">
-        <div class="font-display font-bold mb-6 text-[8rem] leading-[0.5] text-warm-500 opacity-[0.12]">&ldquo;</div>
+        <x-storefront.pull-quote-mark size="lg" tone="warm-faint" class="mb-6" />
         @if ($vm->featured()->comment)
         <blockquote class="font-display text-2xl md:text-4xl lg:text-5xl font-medium leading-snug mb-10 text-warm-800 tracking-tight">
             {{ $vm->featured()->comment }}
@@ -137,7 +137,7 @@
 {{-- Empty state --}}
 <section class="relative py-24 bg-warm-100">
     <div class="text-center max-w-md mx-auto px-4">
-        <div class="font-display font-bold mb-4 text-[5rem] leading-[0.6] text-warm-300 opacity-30">&ldquo;</div>
+        <x-storefront.pull-quote-mark size="md" tone="warm-muted" class="mb-4" />
         <p class="font-display text-3xl md:text-4xl font-bold mb-4 text-warm-800">{{ $vm->content['empty_heading'] ?? 'No reviews yet' }}</p>
         <p class="text-lg leading-relaxed text-warm-600">{{ $vm->content['empty_description'] ?? 'Be the first to share your experience.' }}</p>
     </div>
