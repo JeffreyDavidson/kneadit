@@ -124,9 +124,9 @@
 
                     <div>
                         <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Status</span>
-                        <span class="inline-block px-4 py-1.5 rounded-full text-sm font-semibold bg-warm-500/15 text-warm-400 border border-warm-500/30">
+                        <x-storefront.pill tone="outlined" size="md">
                             {{ $order->status->getLabel() }}
-                        </span>
+                        </x-storefront.pill>
                     </div>
                 </div>
             </div>
