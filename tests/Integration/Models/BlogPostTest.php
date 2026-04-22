@@ -62,11 +62,3 @@ test('published at is cast to datetime', function () {
 
     expect($post->fresh()->published_at)->toBeInstanceOf(Carbon::class);
 });
-
-test('url accessor returns route to blog show', function () {
-    $post = BlogPost::factory()->published()->create([
-        'slug' => 'test-blog-post',
-    ]);
-
-    expect($post->url)->toContain('test-blog-post');
-});

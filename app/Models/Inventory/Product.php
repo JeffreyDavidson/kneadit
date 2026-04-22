@@ -10,13 +10,11 @@ use App\Models\Engagement\PageView;
 use App\Models\Engagement\Review;
 use App\Models\Orders\OrderItem;
 use App\Observers\LogsActivityObserver;
-use App\Support\ProfitMargin;
 use Database\Factories\Inventory\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,7 +27,6 @@ use Illuminate\Support\Carbon;
  * @property-read Category|null $category
  * @property-read Collection<int, CustomerPhoto> $customerPhotos
  * @property-read int|null $customer_photos_count
- * @property-read float|null $margin
  * @property-read Collection<int, ProductImage> $images
  * @property-read int|null $images_count
  * @property-read Collection<int, OrderItem> $orderItems
@@ -169,15 +166,5 @@ class Product extends Model
     public function waitlistEntries(): HasMany
     {
         return $this->hasMany(ProductWaitlist::class);
-    }
-
-    /** @return Attribute<float|null, never> */
-    protected function margin(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->cost && $this->price
-                ? ProfitMargin::calculate($this->price->dollars(), $this->cost->dollars())
-                : null,
-        );
     }
 }

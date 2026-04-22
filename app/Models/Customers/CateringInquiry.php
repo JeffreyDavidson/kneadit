@@ -13,14 +13,12 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property CateringInquiryStatus $status
  * @property string $event_type
- * @property-read string $status_label
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CateringInquiry newQuery()
@@ -53,13 +51,5 @@ class CateringInquiry extends Model
             'dietary_requirements' => StripTagsCast::class,
             'venue_address' => StripTagsCast::class,
         ];
-    }
-
-    /** @return Attribute<mixed, never> */
-    protected function statusLabel(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->status->getLabel(),
-        );
     }
 }

@@ -8,10 +8,10 @@ uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('status label accessor returns enum label', function () {
+test('status is cast to CateringInquiryStatus enum', function () {
     $inquiry = CateringInquiry::factory()->create([
         'status' => CateringInquiryStatus::Inquiry,
     ]);
 
-    expect($inquiry->status_label)->toBe('New Inquiry');
+    expect($inquiry->fresh()->status)->toBe(CateringInquiryStatus::Inquiry);
 });
