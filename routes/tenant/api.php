@@ -16,24 +16,26 @@ use App\Http\Controllers\Api\StoreInfoController;
 use App\Http\Controllers\Api\WaitlistController as ApiWaitlistController;
 use Illuminate\Support\Facades\Route;
 
-// Read endpoints — generous limit
-Route::middleware('throttle:60,1')->group(function () {
-    Route::get('store', StoreInfoController::class);
-    Route::get('categories', ApiCategoryController::class);
-    Route::get('products', ApiProductController::class);
-    Route::get('menu', ApiMenuController::class);
-    Route::get('capacity/{date}', ApiCapacityController::class);
-    Route::get('reviews', [ApiReviewController::class, 'index']);
-    Route::get('gallery', ApiGalleryController::class);
-    Route::get('favorites', [ApiFavoriteController::class, 'index'])->name('api.favorites.index');
-});
+Route::name('api.')->group(function () {
+    // Read endpoints — generous limit
+    Route::middleware('throttle:60,1')->group(function () {
+        Route::get('store', StoreInfoController::class)->name('store');
+        Route::get('categories', ApiCategoryController::class)->name('categories.index');
+        Route::get('products', ApiProductController::class)->name('products.index');
+        Route::get('menu', ApiMenuController::class)->name('menu');
+        Route::get('capacity/{date}', ApiCapacityController::class)->name('capacity.show');
+        Route::get('reviews', [ApiReviewController::class, 'index'])->name('reviews.index');
+        Route::get('gallery', ApiGalleryController::class)->name('gallery.index');
+        Route::get('favorites', [ApiFavoriteController::class, 'index'])->name('favorites.index');
+    });
 
-// Write endpoints — tighter limit
-Route::middleware('throttle:10,1')->group(function () {
-    Route::post('orders', ApiOrderController::class);
-    Route::post('coupon/validate', CouponValidationController::class);
-    Route::post('reviews', [ApiReviewController::class, 'store']);
-    Route::post('contact', ApiContactController::class);
-    Route::post('favorites/toggle', [ApiFavoriteController::class, 'store'])->name('api.favorites.toggle');
-    Route::post('waitlist', ApiWaitlistController::class);
+    // Write endpoints — tighter limit
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('orders', ApiOrderController::class)->name('orders.store');
+        Route::post('coupon/validate', CouponValidationController::class)->name('coupon.validate');
+        Route::post('reviews', [ApiReviewController::class, 'store'])->name('reviews.store');
+        Route::post('contact', ApiContactController::class)->name('contact.store');
+        Route::post('favorites/toggle', [ApiFavoriteController::class, 'store'])->name('favorites.toggle');
+        Route::post('waitlist', ApiWaitlistController::class)->name('waitlist.store');
+    });
 });
