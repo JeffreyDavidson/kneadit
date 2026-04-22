@@ -1,4 +1,4 @@
-
+@use(App\Presenters\OrderItemPresenter)
 <x-layouts.storefront>
 
 @if (isset($success) && $success)
@@ -44,7 +44,7 @@
  @foreach ($order->orderItems as $item)
  <div class="flex justify-between text-sm py-1">
  <span class="text-warm-700">{{ $item->quantity }}× {{ $item->product->name ?? 'Item' }}</span>
- <span class="text-warm-500">@money($item->total_price)</span>
+ <span class="text-warm-500">@money(OrderItemPresenter::for($item)->totalPrice())</span>
  </div>
  @endforeach
  </div>

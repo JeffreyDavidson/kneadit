@@ -97,21 +97,6 @@ test('order belongs to user', function () {
     expect($order->user)->toBeInstanceOf(User::class);
 });
 
-test('order item total price attribute', function () {
-    $product = Product::factory()->create();
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
-        'subtotal' => 15.00,
-        'total' => 15.00,
-    ]);
-
-    $item = OrderItem::factory()->recycle($order, $product)->create([
-        'quantity' => 3,
-        'unit_price' => 5.00,
-    ]);
-
-    expect($item->total_price->dollars())->toBe(15.00);
-});
-
 test('order has loyalty points relationship', function () {
     $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
 

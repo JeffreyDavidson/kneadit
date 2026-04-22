@@ -1,3 +1,4 @@
+@use(App\Presenters\OrderItemPresenter)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -106,7 +107,7 @@
                             </td>
                             <td class="text-right">{{ $item->quantity }}</td>
                             <td class="text-right">@money($item->unit_price)</td>
-                            <td class="text-right font-semibold">@money($item->total_price)</td>
+                            <td class="text-right font-semibold">@money(OrderItemPresenter::for($item)->totalPrice())</td>
                         </tr>
                     @endforeach
                 </tbody>
