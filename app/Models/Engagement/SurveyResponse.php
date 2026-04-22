@@ -3,8 +3,10 @@
 namespace App\Models\Engagement;
 
 use App\Models\Orders\Order;
+use App\Observers\Engagement\SurveyResponseObserver;
 use Database\Factories\Engagement\SurveyResponseFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 #[WithoutTimestamps]
 #[Fillable('survey_id', 'customer_name', 'customer_email', 'answers', 'order_id', 'created_at')]
+#[ObservedBy(SurveyResponseObserver::class)]
 #[UseFactory(SurveyResponseFactory::class)]
 class SurveyResponse extends Model
 {

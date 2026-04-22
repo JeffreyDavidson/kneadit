@@ -54,5 +54,5 @@ test('checkout success controller looks up user by stripe_id', function () {
 test('checkout success always redirects to onboarding', function () {
     $source = file_get_contents(app_path('Http/Controllers/Billing/CheckoutSuccessController.php'));
 
-    expect($source)->toContain("return redirect('/onboarding')");
+    expect($source)->toContain("return redirect()->route('onboarding.show')");
 });

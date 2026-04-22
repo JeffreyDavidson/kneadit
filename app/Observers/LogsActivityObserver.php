@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Enums\Operations\ActivityAction;
 use App\Models\Operations\ActivityLog;
+use App\Services\Audit\ActorContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
@@ -35,8 +36,8 @@ class LogsActivityObserver
 
         try {
             ActivityLog::query()->create([
-                'user_id' => auth()->id(),
-                'user_name' => auth()->user()->name ?? 'System',
+                'user_id' => ActorContext::id(),
+                'user_name' => ActorContext::name(),
                 'action' => $action,
                 'model_type' => $model::class,
                 'model_id' => $model->getKey(),

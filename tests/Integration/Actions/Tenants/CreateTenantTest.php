@@ -7,7 +7,7 @@ use App\Models\Staff\User;
 beforeEach(function () {
     setUpCentralTest();
 
-    $this->user = User::factory()->owner()->create([
+    test()->user = User::factory()->owner()->create([
         'name' => 'Test Baker',
         'email' => 'baker@test.com',
         'password' => bcrypt('password'),
@@ -23,7 +23,7 @@ it('creates a tenant with domain and seeds the tenant database', function () {
     $action = resolve(CreateTenant::class);
 
     $tenant = $action(
-        user: $this->user,
+        user: test()->user,
         storeName: 'Test Bakery',
         subdomain: 'testbakery',
         useKneadItStorefront: true,

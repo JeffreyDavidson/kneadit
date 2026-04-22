@@ -10,8 +10,6 @@ class ReviewsPageViewModel
 {
     public readonly float $avgRating;
 
-    public readonly string $formattedAvgRating;
-
     public readonly int $totalReviews;
 
     public readonly int $fiveStarPct;
@@ -33,7 +31,6 @@ class ReviewsPageViewModel
         public readonly array $content = [],
     ) {
         $this->avgRating = (float) $stats->avg_rating;
-        $this->formattedAvgRating = number_format($this->avgRating, 1);
         $this->totalReviews = (int) $stats->total_count;
 
         $this->fiveStarPct = $this->totalReviews > 0

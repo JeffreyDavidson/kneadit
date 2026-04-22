@@ -21,20 +21,20 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     setUpTenantTest();
-    $this->user = User::factory()->owner()->create();
-    $this->customer = Customer::factory()->create();
+    test()->user = User::factory()->owner()->create();
+    test()->customer = Customer::factory()->create();
 });
 
 test('order has customer relationship', function () {
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
 
     expect($order->customer)->toBeInstanceOf(Customer::class)
-        ->and($order->customer->id)->toBe($this->customer->id);
+        ->and($order->customer->id)->toBe(test()->customer->id);
 });
 
 test('order has items relationship', function () {
     $product = Product::factory()->create();
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
 
     OrderItem::factory()->recycle($order, $product)->create(['quantity' => 2, 'unit_price' => 5.00]);
 
@@ -43,7 +43,7 @@ test('order has items relationship', function () {
 });
 
 test('order has messages relationship', function () {
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
 
     OrderMessage::factory()->fromBaker()->recycle($order)->create();
 
@@ -51,13 +51,13 @@ test('order has messages relationship', function () {
 });
 
 test('order number is auto generated', function () {
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
 
     expect($order->order_number)->toStartWith('ORD-');
 });
 
 test('order total is cast to decimal', function () {
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create([
         'subtotal' => 25.50,
         'delivery_fee' => 5.00,
         'discount_amount' => 2.50,
@@ -71,7 +71,7 @@ test('order total is cast to decimal', function () {
 
 test('order status transitions', function (OrderStatus $status) {
     Mail::fake();
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
 
     $order->update(['status' => $status]);
 
@@ -85,23 +85,23 @@ test('order status transitions', function (OrderStatus $status) {
 
 test('order can be cancelled', function () {
     Mail::fake();
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
     $order->update(['status' => OrderStatus::Cancelled]);
 
     expect($order->fresh()->status)->toBe(OrderStatus::Cancelled);
 });
 
 test('order belongs to user', function () {
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
 
     expect($order->user)->toBeInstanceOf(User::class);
 });
 
 test('order has loyalty points relationship', function () {
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
 
     LoyaltyPoint::factory()->create([
-        'customer_id' => $this->customer->id,
+        'customer_id' => test()->customer->id,
         'order_id' => $order->id,
     ]);
 
@@ -109,7 +109,7 @@ test('order has loyalty points relationship', function () {
 });
 
 test('order has reviews relationship', function () {
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
 
     Review::factory()->for($order)->create();
 
@@ -117,7 +117,7 @@ test('order has reviews relationship', function () {
 });
 
 test('order has survey responses relationship', function () {
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create();
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
 
     SurveyResponse::factory()->for($order)->create();
 
@@ -126,7 +126,7 @@ test('order has survey responses relationship', function () {
 
 test('order has coupon transactions relationship', function () {
     $coupon = Coupon::factory()->create();
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create([
         'coupon_id' => $coupon->id,
     ]);
 
@@ -140,7 +140,7 @@ test('order has coupon transactions relationship', function () {
 
 test('order has gift card transactions relationship', function () {
     $giftCard = GiftCard::factory()->create();
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create([
         'gift_card_id' => $giftCard->id,
     ]);
 
@@ -154,7 +154,7 @@ test('order has gift card transactions relationship', function () {
 
 test('order belongs to coupon', function () {
     $coupon = Coupon::factory()->create();
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create([
         'coupon_id' => $coupon->id,
     ]);
 
@@ -164,7 +164,7 @@ test('order belongs to coupon', function () {
 
 test('order belongs to gift card', function () {
     $giftCard = GiftCard::factory()->create();
-    $order = Order::factory()->for($this->customer)->recycle($this->user)->create([
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create([
         'gift_card_id' => $giftCard->id,
     ]);
 

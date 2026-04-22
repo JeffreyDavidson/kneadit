@@ -25,11 +25,10 @@ test('customer and created by are fillable', function () {
     $user = User::factory()->create();
     $customer = Customer::factory()->create();
 
-    $note = CustomerNote::create([
-        'customer_id' => $customer->id,
-        'created_by' => $user->id,
-        'note' => 'Test note content',
-    ]);
+    $note = CustomerNote::factory()
+        ->recycle($customer)
+        ->recycle($user)
+        ->create(['note' => 'Test note content']);
 
     expect($note->note)->toBe('Test note content')
         ->and($note->customer_id)->toBe($customer->id)

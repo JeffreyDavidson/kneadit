@@ -4,6 +4,7 @@ use App\Enums\Operations\ActivityAction;
 use App\Models\Customers\Customer;
 use App\Models\Operations\ActivityLog;
 use App\Models\Staff\User;
+use App\Services\Audit\ActorContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 
@@ -91,6 +92,23 @@ test('falls back to System when no user is authenticated (regression: null-safe)
         ->and($log->user_id)->toBeNull();
 
     Log::shouldNotHaveReceived('warning');
+});
+
+test('reads actor from context when set explicitly (simulates queue propagation)', function () {
+    $user = User::factory()->create(['name' => 'Background Worker']);
+    ActorContext::set($user);
+
+    $customer = Customer::factory()->create();
+
+    $log = ActivityLog::query()
+        ->where('model_type', Customer::class)
+        ->where('model_id', $customer->id)
+        ->first();
+
+    expect($log->user_name)->toBe('Background Worker')
+        ->and($log->user_id)->toBe($user->id);
+
+    ActorContext::clear();
 });
 
 test('does not recurse when writing ActivityLog rows', function () {

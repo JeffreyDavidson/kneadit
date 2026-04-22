@@ -27,7 +27,7 @@ test('getTemplateData marks uncustomized templates as default', function () {
 });
 
 test('getTemplateData marks customized templates correctly', function () {
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::OrderPlaced,
         'subject' => 'Custom',
         'body' => 'Custom body',
@@ -40,7 +40,7 @@ test('getTemplateData marks customized templates correctly', function () {
 });
 
 test('resetTemplate deletes custom template', function () {
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::OrderPlaced,
         'subject' => 'Custom',
         'body' => 'Custom body',

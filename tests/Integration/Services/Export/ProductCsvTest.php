@@ -6,10 +6,12 @@ use App\Models\Inventory\Product;
 use App\Services\Export\ProductCsvExporter;
 use Illuminate\Http\UploadedFile;
 
+use function Pest\Laravel\assertDatabaseHas;
+
 beforeEach(function () {
     setUpTenantTest();
 
-    $this->service = new ProductCsvExporter;
+    test()->service = new ProductCsvExporter;
 });
 
 function createCsvFile(string $content): UploadedFile
@@ -21,7 +23,7 @@ function createCsvFile(string $content): UploadedFile
 }
 
 test('export generates valid csv with headers', function () {
-    $csv = $this->service->export();
+    $csv = test()->service->export();
     $lines = explode("\n", trim($csv));
     $headers = str_getcsv($lines[0]);
 
@@ -33,7 +35,7 @@ test('export includes all active products', function () {
     Product::factory()->for($category)->create(['name' => 'Sourdough', 'slug' => 'sourdough', 'price' => 8]);
     Product::factory()->for($category)->create(['name' => 'Rye', 'slug' => 'rye', 'price' => 7]);
 
-    $csv = $this->service->export();
+    $csv = test()->service->export();
     expect($csv)->toContain('Sourdough')->toContain('Rye');
 });
 
@@ -44,7 +46,7 @@ test('import creates new products', function () {
     $result = resolve(ImportProducts::class)($file);
 
     expect($result['created'])->toBe(1);
-    $this->assertDatabaseHas('products', ['name' => 'Chocolate Cake', 'price' => 25.00]);
+    assertDatabaseHas('products', ['name' => 'Chocolate Cake', 'price' => 25.00]);
 });
 
 test('import updates existing products by name', function () {
@@ -71,7 +73,7 @@ test('import handles invalid prices', function () {
 });
 
 test('template has correct headers', function () {
-    $template = $this->service->getTemplateContent();
+    $template = test()->service->getTemplateContent();
     $headers = str_getcsv(trim($template));
 
     expect($headers)->toBe(['name', 'category', 'description', 'price', 'cost', 'is_active', 'is_featured']);
