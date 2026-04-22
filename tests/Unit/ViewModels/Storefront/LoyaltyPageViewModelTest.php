@@ -50,22 +50,6 @@ test('totalPoints and lifetimeEarned come from balance', function () {
         ->and($vm->lifetimeEarned)->toBe(2000);
 });
 
-test('formattedTotalPoints uses number_format', function () {
-    $vm = makeLoyaltyVm([
-        'balance' => new LoyaltyBalance(earned: 1500, redeemed: 0, adjusted: 0),
-    ]);
-
-    expect($vm->formattedTotalPoints)->toBe('1,500');
-});
-
-test('formattedLifetimeEarned uses number_format', function () {
-    $vm = makeLoyaltyVm([
-        'balance' => new LoyaltyBalance(earned: 12345, redeemed: 0, adjusted: 0),
-    ]);
-
-    expect($vm->formattedLifetimeEarned)->toBe('12,345');
-});
-
 test('nextReward is first reward above current points', function () {
     $rewards = collect([
         makeFakeReward(100, 'Small'),
@@ -128,22 +112,22 @@ test('nextRewardProgressPercent returns 0 when no next reward', function () {
     expect($vm->nextRewardProgressPercent())->toBe(0.0);
 });
 
-test('formattedPointsToNextReward computes difference', function () {
+test('pointsToNextReward computes the integer difference', function () {
     $vm = makeLoyaltyVm([
         'balance' => new LoyaltyBalance(earned: 750, redeemed: 0, adjusted: 0),
         'rewards' => collect([makeFakeReward(1000)]),
     ]);
 
-    expect($vm->formattedPointsToNextReward())->toBe('250');
+    expect($vm->pointsToNextReward())->toBe(250);
 });
 
-test('formattedNextRewardRequired formats points', function () {
+test('pointsToNextReward returns 0 when there is no next reward', function () {
     $vm = makeLoyaltyVm([
-        'balance' => new LoyaltyBalance(earned: 500, redeemed: 0, adjusted: 0),
-        'rewards' => collect([makeFakeReward(2500)]),
+        'balance' => new LoyaltyBalance(earned: 1000, redeemed: 0, adjusted: 0),
+        'rewards' => collect([makeFakeReward(500)]),
     ]);
 
-    expect($vm->formattedNextRewardRequired())->toBe('2,500');
+    expect($vm->pointsToNextReward())->toBe(0);
 });
 
 test('canRedeem returns true when customer has enough points', function () {
@@ -191,19 +175,6 @@ test('historyEntryColorClass returns correct Tailwind classes per enum case', fu
     expect($vm->historyEntryColorClass(LoyaltyPointType::Earned))->toBe('text-green-600')
         ->and($vm->historyEntryColorClass(LoyaltyPointType::Redeemed))->toBe('text-red-600')
         ->and($vm->historyEntryColorClass(LoyaltyPointType::Adjusted))->toBe('text-yellow-600');
-});
-
-test('formattedEntryPoints formats with number_format', function () {
-    $vm = makeLoyaltyVm();
-
-    expect($vm->formattedEntryPoints(1500))->toBe('1,500')
-        ->and($vm->formattedEntryPoints(50))->toBe('50');
-});
-
-test('formattedRewardPoints formats with number_format', function () {
-    $vm = makeLoyaltyVm();
-
-    expect($vm->formattedRewardPoints(makeFakeReward(2500)))->toBe('2,500');
 });
 
 test('hasCustomer is true when customer is present', function () {

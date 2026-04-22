@@ -84,6 +84,8 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::directive('money', fn (string $expression) => "<?php \$__money = {$expression}; echo \$__money instanceof \\App\\ValueObjects\\Money ? \$__money->formatted() : '\$' . number_format((float) \$__money, 2); ?>");
 
+        Blade::directive('number', fn (string $expression) => "<?php \$__numberArgs = [{$expression}]; echo \\Illuminate\\Support\\Number::format((float) \$__numberArgs[0], (int) (\$__numberArgs[1] ?? 0)); ?>");
+
         Blade::directive('time', fn (string $expression) => "<?php echo \\Carbon\\Carbon::createFromFormat('H:i', {$expression})->format('g:i A'); ?>");
 
         RateLimiter::for('webhooks', fn () => Limit::perMinute(30));

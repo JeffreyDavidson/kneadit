@@ -27,7 +27,7 @@
              ])"
              x-intersect.once="$nextTick(() => runStats())">
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span x-ref="avg" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->formattedAvgRating }}</span>
+                <span x-ref="avg" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">@number($vm->avgRating, 1)</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Average Rating</span>
             </div>
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
