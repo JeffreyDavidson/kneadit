@@ -87,7 +87,7 @@
                 <x-central.eyebrow as="label" class="block mb-1">Search</x-central.eyebrow>
                 <x-central.input wire:model.live.debounce.300ms="filterSearch" placeholder="Search descriptions..." />
             </div>
-            <x-central.button variant="secondary" wire:click="resetFilters" class="whitespace-nowrap">Reset</x-central.button>
+            <x-central.button variant="secondary" size="sm" wire:click="resetFilters" class="whitespace-nowrap">Reset</x-central.button>
         </x-central.card>
 
         {{-- Timeline --}}
@@ -134,10 +134,10 @@
                 </span>
                 <div class="flex gap-2">
                     @if ($this->logs->currentPage() > 1)
-                        <x-central.button variant="secondary" wire:click="previousPage">← Previous</x-central.button>
+                        <x-central.button variant="secondary" size="sm" wire:click="previousPage">← Previous</x-central.button>
                     @endif
                     @if ($this->logs->hasMorePages())
-                        <x-central.button variant="secondary" wire:click="nextPage">Next →</x-central.button>
+                        <x-central.button variant="secondary" size="sm" wire:click="nextPage">Next →</x-central.button>
                     @endif
                 </div>
             </div>
