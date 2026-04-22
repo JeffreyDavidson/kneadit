@@ -2,6 +2,7 @@
 
 namespace App\Enums\Platform;
 
+use App\Models\Staff\User;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
@@ -65,5 +66,12 @@ enum SubscriptionTier: string implements HasColor, HasLabel
         $plan = array_search($priceId, config('kneadit.stripe_prices', []), true);
 
         return $plan ? self::tryFrom($plan) : null;
+    }
+
+    public static function resolve(User $user): ?self
+    {
+        $priceId = $user->subscription('default')?->stripe_price;
+
+        return $priceId ? self::fromPriceId($priceId) : null;
     }
 }
