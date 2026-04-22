@@ -9,14 +9,11 @@ use Database\Factories\Financial\IncomeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * @property-read string $source_label
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Income query()
@@ -42,13 +39,5 @@ class Income extends Model
             'amount' => MoneyCast::class,
             'source' => IncomeSource::class,
         ];
-    }
-
-    /** @return Attribute<mixed, never> */
-    protected function sourceLabel(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->source->getLabel(),
-        );
     }
 }

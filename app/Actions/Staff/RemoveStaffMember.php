@@ -13,7 +13,7 @@ class RemoveStaffMember
 
         throw_if($user->id === $currentUserId, \RuntimeException::class, "You can't remove yourself.");
 
-        throw_if($user->is_owner && User::query()->where('role', UserRole::Owner)->count() <= 1, \RuntimeException::class, "Can't remove the last owner.");
+        throw_if($user->role === UserRole::Owner && User::query()->where('role', UserRole::Owner)->count() <= 1, \RuntimeException::class, "Can't remove the last owner.");
 
         $user->delete();
     }
