@@ -14,16 +14,16 @@ beforeEach(function () {
     setUpTenantTest();
 
     Mail::fake();
-    $this->user = User::factory()->owner()->create();
-    $this->customer = Customer::factory()->create();
+    test()->user = User::factory()->owner()->create();
+    test()->customer = Customer::factory()->create();
     settings(['loyalty_enabled' => '1']);
     settings(['loyalty_points_per_dollar' => '10']);
 });
 
 test('credits points for a delivered order', function () {
     $order = Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->delivered()
         ->create(['total' => 25.50, 'subtotal' => 25.50]);
 
@@ -33,7 +33,7 @@ test('credits points for a delivered order', function () {
         ->not->toBeNull()
         ->points->toBe(255)
         ->type->toBe(LoyaltyPointType::Earned)
-        ->customer_id->toBe($this->customer->id)
+        ->customer_id->toBe(test()->customer->id)
         ->order_id->toBe($order->id);
 });
 
@@ -41,8 +41,8 @@ test('returns null when loyalty is disabled', function () {
     settings(['loyalty_enabled' => '0']);
 
     $order = Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->delivered()
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
@@ -54,8 +54,8 @@ test('returns null when loyalty is disabled', function () {
 
 test('returns null when order has no customer', function () {
     $order = Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->delivered()
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
@@ -69,8 +69,8 @@ test('returns null when order has no customer', function () {
 
 test('is idempotent for the same order', function () {
     $order = Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->delivered()
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
@@ -85,8 +85,8 @@ test('is idempotent for the same order', function () {
 
 test('returns null when calculated points are zero', function () {
     $order = Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->delivered()
         ->create(['total' => 0.00, 'subtotal' => 0.00]);
 
@@ -97,21 +97,21 @@ test('returns null when calculated points are zero', function () {
 });
 
 test('redeems points for a customer', function () {
-    $point = resolve(RedeemLoyaltyPoints::class)($this->customer, 50, 'Free cookie reward');
+    $point = resolve(RedeemLoyaltyPoints::class)(test()->customer, 50, 'Free cookie reward');
 
     expect($point)
         ->points->toBe(50)
         ->type->toBe(LoyaltyPointType::Redeemed)
-        ->customer_id->toBe($this->customer->id)
+        ->customer_id->toBe(test()->customer->id)
         ->description->toBe('Free cookie reward');
 });
 
 test('adjusts points for a customer', function () {
-    $point = resolve(AdjustLoyaltyPoints::class)($this->customer, 25, 'Admin correction');
+    $point = resolve(AdjustLoyaltyPoints::class)(test()->customer, 25, 'Admin correction');
 
     expect($point)
         ->points->toBe(25)
         ->type->toBe(LoyaltyPointType::Adjusted)
-        ->customer_id->toBe($this->customer->id)
+        ->customer_id->toBe(test()->customer->id)
         ->description->toBe('Admin correction');
 });

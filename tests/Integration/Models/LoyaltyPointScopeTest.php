@@ -12,12 +12,12 @@ beforeEach(function () {
     setUpTenantTest();
     Mail::fake();
 
-    $this->customer = Customer::factory()->create();
-    $this->order = Order::factory()->recycle($this->customer)->create();
+    test()->customer = Customer::factory()->create();
+    test()->order = Order::factory()->recycle(test()->customer)->create();
 
-    LoyaltyPoint::factory()->earned(100)->for($this->customer)->create(['order_id' => $this->order->id]);
-    LoyaltyPoint::factory()->redeemed(50)->for($this->customer)->create();
-    LoyaltyPoint::factory()->adjusted(25)->for($this->customer)->create();
+    LoyaltyPoint::factory()->earned(100)->for(test()->customer)->create(['order_id' => test()->order->id]);
+    LoyaltyPoint::factory()->redeemed(50)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->adjusted(25)->for(test()->customer)->create();
 });
 
 test('earned scope filters to earned type', function () {
@@ -29,5 +29,5 @@ test('redeemed scope filters to redeemed type', function () {
 });
 
 test('forOrder scope filters to specific order', function () {
-    expect(LoyaltyPoint::forOrder($this->order)->count())->toBe(1);
+    expect(LoyaltyPoint::forOrder(test()->order)->count())->toBe(1);
 });

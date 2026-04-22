@@ -10,20 +10,22 @@ use App\Services\Customers\CustomerIntelligence;
 use App\Services\Loyalty\LoyaltyLedger;
 use Illuminate\Support\Facades\Mail;
 
+use function Pest\Laravel\assertDatabaseHas;
+
 beforeEach(function () {
     setUpTenantTest();
 
     Mail::fake();
-    $this->user = User::factory()->owner()->create();
+    test()->user = User::factory()->owner()->create();
     settings(['loyalty_enabled' => '1']);
     settings(['loyalty_points_per_dollar' => '10']);
-    $this->customer = Customer::factory()->create();
+    test()->customer = Customer::factory()->create();
 });
 
 test('points awarded when order delivered', function () {
     $order = Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
@@ -31,8 +33,8 @@ test('points awarded when order delivered', function () {
     resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Ready);
     resolve(TransitionOrderStatus::class)($order->fresh(), OrderStatus::Delivered);
 
-    $this->assertDatabaseHas('loyalty_points', [
-        'customer_id' => $this->customer->id,
+    assertDatabaseHas('loyalty_points', [
+        'customer_id' => test()->customer->id,
         'order_id' => $order->id,
         'type' => 'earned',
     ]);
@@ -40,8 +42,8 @@ test('points awarded when order delivered', function () {
 
 test('points calculated correctly', function () {
     $order = Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->create(['total' => 25.50, 'subtotal' => 25.50]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
@@ -58,8 +60,8 @@ test('points not awarded when loyalty disabled', function () {
     settings(['loyalty_enabled' => '0']);
 
     $order = Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
@@ -72,8 +74,8 @@ test('points not awarded when loyalty disabled', function () {
 
 test('points not double awarded', function () {
     $order = Order::factory()
-        ->for($this->customer)
-        ->recycle($this->user)
+        ->for(test()->customer)
+        ->recycle(test()->user)
         ->create(['total' => 25.00, 'subtotal' => 25.00]);
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
@@ -88,17 +90,17 @@ test('points not double awarded', function () {
 });
 
 test('total points calculated correctly', function () {
-    LoyaltyPoint::factory()->earned(100)->for($this->customer)->create();
-    LoyaltyPoint::factory()->earned(50)->for($this->customer)->create();
-    LoyaltyPoint::factory()->redeemed(30)->for($this->customer)->create();
+    LoyaltyPoint::factory()->earned(100)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->earned(50)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->redeemed(30)->for(test()->customer)->create();
 
-    expect(resolve(CustomerIntelligence::class)->metrics($this->customer)->totalPoints)->toBe(120); // 100 + 50 - 30
+    expect(resolve(CustomerIntelligence::class)->metrics(test()->customer)->totalPoints)->toBe(120); // 100 + 50 - 30
 });
 
 test('lifetime points only counts earned', function () {
-    LoyaltyPoint::factory()->earned(100)->for($this->customer)->create();
-    LoyaltyPoint::factory()->earned(50)->for($this->customer)->create();
-    LoyaltyPoint::factory()->redeemed(30)->for($this->customer)->create();
+    LoyaltyPoint::factory()->earned(100)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->earned(50)->for(test()->customer)->create();
+    LoyaltyPoint::factory()->redeemed(30)->for(test()->customer)->create();
 
-    expect(resolve(CustomerIntelligence::class)->metrics($this->customer)->lifetimePointsEarned)->toBe(150);
+    expect(resolve(CustomerIntelligence::class)->metrics(test()->customer)->lifetimePointsEarned)->toBe(150);
 });
