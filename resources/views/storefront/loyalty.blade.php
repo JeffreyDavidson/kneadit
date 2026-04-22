@@ -4,16 +4,14 @@
 
 <x-layouts.storefront>
 
-<link rel="stylesheet" href="{{ asset('css/loyalty.css') }}">
-
 {{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$vm->settings->loyaltyHeroImageUrl()" image-alt="Fresh baked goods" image-class="loyalty-hero-img">
+<x-storefront.hero-section :image="$vm->settings->loyaltyHeroImageUrl()" image-alt="Fresh baked goods" image-class="hero-img">
     <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
-        <x-storefront.eyebrow line-opacity="0.4" class="loyalty-fade-1 mb-6">{{ $vm->content['hero_eyebrow'] ?? 'Rewards Program' }}</x-storefront.eyebrow>
-        <h1 class="loyalty-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
+        <x-storefront.eyebrow line-opacity="0.4" class="hero-fade-1 mb-6">{{ $vm->content['hero_eyebrow'] ?? 'Rewards Program' }}</x-storefront.eyebrow>
+        <h1 class="hero-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
             {{ $vm->settings->store->name }} {{ $vm->settings->loyalty->programName }}
         </h1>
-        <p class="loyalty-fade-3 font-script text-2xl md:text-3xl text-warm-400">
+        <p class="hero-fade-3 font-script text-2xl md:text-3xl text-warm-400">
             {{ $vm->content['hero_subtitle'] ?? 'Earn points with every order, unlock delicious rewards' }}
         </p>
     </div>

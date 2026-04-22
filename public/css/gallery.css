@@ -43,17 +43,3 @@
     .gallery-input::placeholder {
         color: var(--warm-600);
     }
-    @keyframes galleryFadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    .gallery-fade-1 { animation: galleryFadeUp 0.7s ease-out 0.3s both; }
-    .gallery-fade-2 { animation: galleryFadeUp 0.7s ease-out 0.5s both; }
-    .gallery-fade-3 { animation: galleryFadeUp 0.7s ease-out 0.7s both; }
-    @keyframes galleryKenBurns {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.06); }
-    }
-    .gallery-hero-img {
-        animation: galleryKenBurns 25s ease-in-out infinite alternate;
-    }

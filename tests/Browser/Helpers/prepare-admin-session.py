@@ -20,7 +20,7 @@ Outputs (all gitignored):
     tests/Browser/.central-admin-session.json — central admin state
 
 Prerequisites:
-    php artisan tenants:seed --tenants=<tenant> --class="Database\\Seeders\\BrowserTestFixtureSeeder"
+    php artisan tenants:provision-test-tenant
     php artisan db:seed --class="Database\\Seeders\\BrowserTestCentralFixtureSeeder"
 """
 import json
@@ -28,7 +28,7 @@ import re
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
-STOREFRONT_URL = 'http://sweet-flour-studio.kneadit.test'
+STOREFRONT_URL = 'http://browser-test.kneadit.test'
 TENANT_ADMIN_EMAIL = 'browser-test-admin@kneadit.test'
 TENANT_ADMIN_PASSWORD = 'browser-test-password'
 REVIEW_ORDER_NUMBER = 'BROWSER-TEST-REVIEW'

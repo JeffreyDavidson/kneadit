@@ -1,16 +1,14 @@
 <x-layouts.storefront>
 
-<link rel="stylesheet" href="{{ asset('css/gift-cards.css') }}">
-
 <div x-data="giftCardPage()">
     {{-- Photo-Forward Hero --}}
-    <x-storefront.hero-section :image="$settings->giftCardsHeroImageUrl()" image-alt="Fresh baked goods" image-class="gift-hero-img">
+    <x-storefront.hero-section :image="$settings->giftCardsHeroImageUrl()" image-alt="Fresh baked goods" image-class="hero-img">
         <div class="relative z-10 flex flex-col justify-end min-h-[55vh] max-w-4xl mx-auto text-center px-4 pb-20">
-            <x-storefront.eyebrow line-opacity="0.4" class="gift-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'A Sweet Gesture' }}</x-storefront.eyebrow>
-            <h1 class="gift-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
+            <x-storefront.eyebrow line-opacity="0.4" class="hero-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'A Sweet Gesture' }}</x-storefront.eyebrow>
+            <h1 class="hero-fade-2 font-display text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
                 {!! nl2br(e($content['hero_title'] ?? "Give the Gift of\nFresh Baked Goods")) !!}
             </h1>
-            <p class="gift-fade-3 font-script text-2xl md:text-3xl text-warm-400">
+            <p class="hero-fade-3 font-script text-2xl md:text-3xl text-warm-400">
                 {{ $content['hero_subtitle'] ?? 'A treat they\'ll remember long after the last crumb' }}
             </p>
         </div>
@@ -105,9 +103,9 @@
                                    class="input-field font-mono uppercase tracking-wider flex-1"
                                    data-test="gift-card-balance-form-code">
                             <x-storefront.button type="submit" variant="outline-light" size="md"
-                                    :disabled="!balanceCode || isCheckingBalance"
+                                    x-bind:disabled="!balanceCode || isCheckingBalance"
                                     class="whitespace-nowrap"
-                                    :class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
+                                    x-bind:class="isCheckingBalance ? 'opacity-50 cursor-not-allowed' : ''"
                                     data-test="gift-card-balance-form-submit">
                                 <span x-text="isCheckingBalance ? 'Checking...' : {{ Js::from($content['check_balance_button'] ?? 'Check Balance') }}"></span>
                             </x-storefront.button>

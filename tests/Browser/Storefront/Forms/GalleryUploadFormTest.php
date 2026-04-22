@@ -1,6 +1,6 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://sweet-surrender.kneadit.test');
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
 
 test('gallery upload form blocks empty submit via HTML5 required', function () use ($storefrontUrl) {
     visit("{$storefrontUrl}/gallery")

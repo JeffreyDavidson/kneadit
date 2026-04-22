@@ -3,16 +3,16 @@
 
 
 {{-- Photo-Forward Hero --}}
-<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' contact'" image-class="contact-hero-img">
+<x-storefront.hero-section :image="$settings->heroImageUrl()" :image-alt="$settings->store->name . ' contact'" image-class="hero-img">
     <div class="relative z-10 flex flex-col items-center justify-end text-center px-4 pb-20 min-h-[55vh]">
-        <x-storefront.eyebrow class="contact-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Get in Touch' }}</x-storefront.eyebrow>
-        <h1 class="contact-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
+        <x-storefront.eyebrow class="hero-fade-1 mb-6">{{ $content['hero_eyebrow'] ?? 'Get in Touch' }}</x-storefront.eyebrow>
+        <h1 class="hero-fade-1 font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-4 text-warm-100">
             {!! nl2br(e($content['hero_title'] ?? "We'd Love to\nHear From You")) !!}
         </h1>
-        <p class="contact-fade-2 font-script text-2xl md:text-3xl text-warm-400">
+        <p class="hero-fade-2 font-script text-2xl md:text-3xl text-warm-400">
             Let's start a conversation
         </p>
-        <p class="contact-fade-3 text-lg md:text-xl max-w-xl mx-auto mt-4 text-warm-400">
+        <p class="hero-fade-3 text-lg md:text-xl max-w-xl mx-auto mt-4 text-warm-400">
             {{ $content['hero_subtitle'] ?? 'Questions, special requests, or just want to say hello — we\'re all ears.' }}
         </p>
     </div>
