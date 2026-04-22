@@ -33,7 +33,7 @@
 
         {{-- Points Lookup --}}
         <div class="max-w-xl mx-auto mb-16">
-            <div class="rounded-2xl p-8" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);">
+            <div class="rounded-2xl p-8 bg-white border border-warm-200 shadow-2xl">
                 <h2 class="font-display text-2xl font-bold mb-4 text-center text-warm-900">{{ $vm->content['check_heading'] ?? 'Check Your Points' }}</h2>
                 <form action="{{ route('rewards.check') }}" method="POST" class="flex flex-col sm:flex-row gap-3" data-test="loyalty-lookup-form">
                     @csrf
@@ -56,7 +56,7 @@
             {{-- Points Display --}}
             <div class="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-10">
                 <div class="rounded-2xl p-8 text-center relative overflow-hidden bg-warm-900">
-                    <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(30%, -30%);"></div>
+                    <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-[0.06] bg-warm-500 translate-x-[30%] -translate-y-[30%]"></div>
                     <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">Available Points</p>
                     <p class="font-display text-5xl font-bold text-warm-500">{{ $vm->formattedTotalPoints }}</p>
                 </div>
@@ -74,7 +74,7 @@
                     <span class="text-sm font-bold text-warm-500">{{ $vm->formattedTotalPoints }} / {{ $vm->formattedNextRewardRequired() }} pts</span>
                 </div>
                 <div class="w-full rounded-full h-3 overflow-hidden bg-warm-200">
-                    <div class="h-full rounded-full transition-all duration-700" style="background: linear-gradient(90deg, var(--warm-500), var(--warm-400)); width: {{ $vm->nextRewardProgressPercent() }}%;"></div>
+                    <div class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-warm-500 to-warm-400" style="width: {{ $vm->nextRewardProgressPercent() }}%;"></div>
                 </div>
                 <p class="text-xs mt-2 text-right text-warm-500">{{ $vm->formattedPointsToNextReward() }} points to go!</p>
             </div>
@@ -83,12 +83,12 @@
             {{-- Transaction History --}}
             @if ($vm->history->count())
             <div class="max-w-2xl mx-auto rounded-2xl overflow-hidden bg-white border border-warm-200">
-                <div class="px-6 py-4" style="border-bottom: 1px solid var(--warm-200);">
+                <div class="px-6 py-4 border-b border-warm-200">
                     <h3 class="font-display text-lg font-bold text-warm-900">Points History</h3>
                 </div>
-                <div class="divide-y" style="border-color: var(--warm-100);">
+                <div class="divide-y divide-warm-100">
                     @foreach ($vm->history as $entry)
-                    <div class="flex justify-between items-center px-6 py-4 hover:bg-opacity-50 transition-colors" style="hover: var(--warm-50);">
+                    <div class="flex justify-between items-center px-6 py-4 hover:bg-warm-50 transition-colors">
                         <div>
                             <p class="font-semibold text-warm-900">{{ $entry->description }}</p>
                             <p class="text-sm text-warm-500">{{ $entry->created_at->format('M j, Y') }}</p>
@@ -119,13 +119,16 @@
             </div>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
                 @foreach ($vm->rewards as $reward)
-                <div class="rounded-2xl p-6 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden"
-                     style="background: white; border: 2px solid {{ $vm->canRedeem($reward) ? 'var(--warm-500)' : 'var(--warm-200)' }};">
+                <div @class([
+                    'rounded-2xl p-6 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden bg-white border-2',
+                    'border-warm-500' => $vm->canRedeem($reward),
+                    'border-warm-200' => ! $vm->canRedeem($reward),
+                ])>
                     @if ($vm->canRedeem($reward))
                     <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold bg-warm-500 text-warm-900">Redeemable!</div>
                     @endif
                     <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-warm-100">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="text-warm-500"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                        <x-heroicon-o-chat-bubble-oval-left class="w-7 h-7 text-warm-500" />
                     </div>
                     <h3 class="font-display text-lg font-bold mb-1 text-warm-900">{{ $reward->name }}</h3>
                     @if ($reward->description)
@@ -162,8 +165,8 @@
             @foreach ($vm->howSteps as $i => $step)
 
             <div>
-                <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style="background: rgba(232,176,74,0.1); border: 1px solid rgba(232,176,74,0.2);">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="text-warm-500"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $howSvgs[$i] ?? $howSvgs[0] }}"/></svg>
+                <div class="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center bg-warm-500/10 border border-warm-500/20">
+                    <svg class="w-8 h-8 text-warm-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $howSvgs[$i] ?? $howSvgs[0] }}"/></svg>
                 </div>
                 <h3 class="font-display text-xl font-bold mb-2 text-warm-200">{{ $step['title'] }}</h3>
                 <p class="text-warm-500">{{ $step['description'] }}</p>

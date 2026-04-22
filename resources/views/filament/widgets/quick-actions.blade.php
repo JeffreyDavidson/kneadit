@@ -1,15 +1,13 @@
 <x-filament-widgets::widget>
     <x-filament::section heading="Quick Actions" icon="heroicon-o-bolt">
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+        <div class="grid grid-cols-2 gap-2.5">
             @foreach ($this->getQuickActions() as $action)
                 <a href="{{ $action['url'] }}"
-                   style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 10px; border-radius: 12px; text-decoration: none; background: {{ $action['bg'] }}; transition: transform 0.15s, box-shadow 0.15s; text-align: center;"
-                   onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'"
-                   onmouseout="this.style.transform='';this.style.boxShadow=''">
-                    <div style="color: {{ $action['color'] }}; margin-bottom: 6px;">
-                        <x-dynamic-component :component="'heroicon-' . $action['icon']->value" style="width: 24px; height: 24px;" />
+                   class="flex flex-col items-center justify-center px-2.5 py-4 rounded-xl no-underline text-center transition-transform transition-shadow duration-150 hover:-translate-y-0.5 hover:shadow-md {{ $action['bgClass'] }}">
+                    <div class="mb-1.5 {{ $action['textClass'] }}">
+                        <x-dynamic-component :component="'heroicon-' . $action['icon']->value" class="w-6 h-6" />
                     </div>
-                    <span style="font-size: 0.8rem; font-weight: 600; color: {{ $action['color'] }};">{{ $action['label'] }}</span>
+                    <span class="text-xs font-semibold {{ $action['textClass'] }}">{{ $action['label'] }}</span>
                 </a>
             @endforeach
         </div>

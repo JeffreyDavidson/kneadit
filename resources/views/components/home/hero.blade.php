@@ -32,7 +32,7 @@
 {{-- ═══════════════════════════════════════════════════════ --}}
 {{-- STYLE: Full Photo Background                          --}}
 {{-- ═══════════════════════════════════════════════════════ --}}
-<section class="relative flex items-center justify-center overflow-hidden" style="min-height: 100vh;">
+<section class="relative flex items-center justify-center overflow-hidden min-h-screen">
     {{-- Background image with Ken Burns --}}
     <div class="absolute inset-0">
         <img src="{{ $heroImageUrl }}" alt="{{ $storeName }}"
@@ -40,17 +40,17 @@
     </div>
 
     {{-- Dark gradient overlay --}}
-    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(28,20,16,0.3) 0%, rgba(28,20,16,0.5) 50%, rgba(28,20,16,0.9) 100%);"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-warm-900/30 via-warm-900/50 to-warm-900/90"></div>
 
     {{-- Grain texture --}}
     <x-storefront.grain-texture />
 
     {{-- Content --}}
-    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto" style="padding-top: 15vh;">
+    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto pt-[15vh]">
         <p class="hero-fade-1 uppercase tracking-[0.3em] text-sm font-medium mb-6 text-warm-400">
             {{ $tagline ? 'Welcome to' : 'Handcrafted with love' }}
         </p>
-        <h1 class="hero-fade-1 font-display font-bold mb-8 leading-none" style="color: white; font-size: clamp(3rem, 10vw, 8rem); letter-spacing: -0.02em;">
+        <h1 class="hero-fade-1 font-display font-bold mb-8 leading-none text-white tracking-tight text-[clamp(3rem,10vw,8rem)]">
             {{ $storeName }}
         </h1>
         <p class="hero-fade-2 font-script text-2xl md:text-3xl mb-10 text-warm-300">
@@ -60,7 +60,7 @@
             <a href="{{ route('order.create') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-warm-500 text-warm-900">
                 {{ $primaryCtaText }}
             </a>
-            <a href="{{ route('storefront.menu') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105" style="border: 2px solid rgba(232,176,74,0.4); color: var(--warm-300);">
+            <a href="{{ route('storefront.menu') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 border-2 border-warm-400/40 text-warm-300">
                 {{ $secondaryCtaText }}
             </a>
         </div>
@@ -71,22 +71,22 @@
 {{-- ═══════════════════════════════════════════════════════ --}}
 {{-- STYLE: Split Layout (Default)                         --}}
 {{-- ═══════════════════════════════════════════════════════ --}}
-<section class="relative overflow-hidden" style="min-height: 100vh; background: var(--warm-900);">
+<section class="relative overflow-hidden min-h-screen bg-warm-900">
     {{-- Grain texture --}}
     <x-storefront.grain-texture />
 
-    <div class="grid md:grid-cols-2" style="min-height: 100vh;">
+    <div class="grid md:grid-cols-2 min-h-screen">
         {{-- Left: Content --}}
         <div class="flex flex-col justify-center px-8 md:px-16 lg:px-24 py-24 relative z-10">
             {{-- Decorative vertical line on right edge --}}
-            <div class="absolute top-0 right-0 w-px h-full hidden md:block" style="background: linear-gradient(to bottom, transparent, var(--warm-500), transparent); opacity: 0.15;"></div>
+            <div class="absolute top-0 right-0 w-px h-full hidden md:block opacity-15 bg-gradient-to-b from-transparent via-warm-500 to-transparent"></div>
 
             <div class="hero-fade-1 flex items-center gap-3 mb-8">
                 <span class="block w-12 h-px bg-warm-500"></span>
                 <span class="uppercase tracking-[0.25em] text-xs font-semibold text-warm-500">Est. {{ date('Y') }}</span>
             </div>
 
-            <h1 class="hero-fade-1 font-display font-bold mb-6 leading-none" style="color: var(--warm-100); font-size: clamp(3rem, 6vw, 5.5rem);">
+            <h1 class="hero-fade-1 font-display font-bold mb-6 leading-none text-warm-100 text-[clamp(3rem,6vw,5.5rem)]">
                 {{ $storeName }}
             </h1>
 
@@ -100,7 +100,7 @@
                 </a>
                 <a href="{{ route('storefront.menu') }}" class="inline-flex items-center gap-2 px-6 py-4 font-semibold transition-all duration-200 text-warm-400">
                     {{ $secondaryCtaText }}
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    <x-heroicon-o-arrow-right class="w-4 h-4" stroke-width="2" />
                 </a>
             </div>
 
@@ -111,7 +111,7 @@
                     <span class="block font-display text-2xl font-bold text-warm-400">{{ $customerCount < 10 ? $customerCount : number_format($customerCount) . '+' }}</span>
                     <span class="text-xs uppercase tracking-wider text-warm-600">Happy Customers</span>
                 </div>
-                <div style="width: 1px; height: 40px; background: rgba(139,104,68,0.2);"></div>
+                <div class="w-px h-10 bg-warm-700/20"></div>
                 @endif
 
                 @if ($avgRating)
@@ -119,7 +119,7 @@
                     <span class="block font-display text-2xl font-bold text-warm-400">{{ number_format($avgRating, 1) }}</span>
                     <span class="text-xs uppercase tracking-wider text-warm-600">★ Rating</span>
                 </div>
-                <div style="width: 1px; height: 40px; background: rgba(139,104,68,0.2);"></div>
+                <div class="w-px h-10 bg-warm-700/20"></div>
                 @endif
 
                 <div class="text-center">
@@ -135,19 +135,21 @@
                  class="w-full h-full object-cover hero-image-zoom">
 
             {{-- Left edge gradient blend --}}
-            <div class="absolute inset-0" style="background: linear-gradient(to right, var(--warm-900) 0%, transparent 25%);"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-warm-900 from-0% to-transparent to-25%"></div>
 
             {{-- Bottom gradient --}}
-            <div class="absolute inset-0" style="background: linear-gradient(to top, var(--warm-900) 0%, transparent 30%);"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-warm-900 from-0% to-transparent to-30%"></div>
 
             {{-- Floating review card --}}
             @if ($topReview)
-            <div class="absolute bottom-12 left-12 right-12 p-6 rounded-2xl backdrop-blur-md hero-fade-5 hero-review-float" style="background: rgba(28,20,16,0.75); border: 1px solid rgba(212,146,12,0.2);">
+            <div class="absolute bottom-12 left-12 right-12 p-6 rounded-2xl backdrop-blur-md hero-fade-5 hero-review-float bg-warm-900/75 border border-warm-500/20">
                 <div class="flex gap-1 mb-2">
                     @for ($i = 1; $i <= 5; $i++)
-                        <svg class="w-4 h-4" style="color: {{ $i <= $topReview->rating ? 'var(--warm-500)' : 'rgba(139,104,68,0.3)' }};" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
+                        <x-heroicon-s-star @class([
+                            'w-4 h-4',
+                            'text-warm-500' => $i <= $topReview->rating,
+                            'text-warm-700/30' => $i > $topReview->rating,
+                        ]) />
                     @endfor
                 </div>
                 <p class="italic text-sm leading-relaxed text-warm-200">"{{ Str::limit($topReview->comment ?? '', 120) }}"</p>
@@ -158,17 +160,19 @@
     </div>
 
     {{-- Mobile hero image (shown below content on small screens) --}}
-    <div class="md:hidden relative overflow-hidden" style="height: 300px; margin-top: -1px;">
+    <div class="md:hidden relative overflow-hidden h-[300px] -mt-px">
         <img src="{{ $heroImageUrl }}" alt="{{ $storeName }}" class="w-full h-full object-cover">
-        <div class="absolute inset-0" style="background: linear-gradient(to bottom, var(--warm-900) 0%, transparent 30%, transparent 70%, var(--warm-900) 100%);"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-warm-900 via-transparent to-warm-900"></div>
 
         @if ($topReview)
-        <div class="absolute bottom-4 left-4 right-4 p-4 rounded-xl backdrop-blur-md" style="background: rgba(28,20,16,0.75); border: 1px solid rgba(212,146,12,0.2);">
+        <div class="absolute bottom-4 left-4 right-4 p-4 rounded-xl backdrop-blur-md bg-warm-900/75 border border-warm-500/20">
             <div class="flex gap-0.5 mb-1">
                 @for ($i = 1; $i <= 5; $i++)
-                    <svg class="w-3 h-3" style="color: {{ $i <= $topReview->rating ? 'var(--warm-500)' : 'rgba(139,104,68,0.3)' }};" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                    </svg>
+                    <x-heroicon-s-star @class([
+                        'w-3 h-3',
+                        'text-warm-500' => $i <= $topReview->rating,
+                        'text-warm-700/30' => $i > $topReview->rating,
+                    ]) />
                 @endfor
             </div>
             <p class="italic text-xs text-warm-200">"{{ Str::limit($topReview->comment ?? '', 80) }}"</p>

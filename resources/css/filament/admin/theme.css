@@ -2,3 +2,35 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+
+/*
+ * Brand tokens map to runtime CSS vars set per-tenant in
+ * AdminPanelProvider's render hook. Tailwind utilities (e.g. bg-brand-700)
+ * expand to background-color: var(--color-brand-700) which resolves to
+ * the tenant-overridden value at runtime.
+ */
+@theme {
+    --color-brand-50: var(--brand-50);
+    --color-brand-100: var(--brand-100);
+    --color-brand-150: var(--brand-150);
+    --color-brand-200: var(--brand-200);
+    --color-brand-300: var(--brand-300);
+    --color-brand-400: var(--brand-400);
+    --color-brand-500: var(--brand-500);
+    --color-brand-600: var(--brand-600);
+    --color-brand-700: var(--brand-700);
+    --color-brand-800: var(--brand-800);
+    --color-brand-900: var(--brand-900);
+
+    /*
+     * Static central-platform palette (used by the platform messages /
+     * inbox UI shown inside the per-tenant admin panel).
+     */
+    --color-warm-black: #1c1410;
+    --color-espresso: #2a1f18;
+    --color-cinnamon: #8b6844;
+    --color-honey: #d4920c;
+    --color-golden: #e8b04a;
+    --color-butter: #f5d88e;
+    --color-parchment: #faf0d6;
+}

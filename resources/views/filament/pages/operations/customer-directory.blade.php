@@ -40,9 +40,7 @@
                     <label for="search" class="sr-only">Search customers</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
+                            <x-heroicon-o-magnifying-glass class="h-5 w-5 text-gray-400" stroke-width="2" />
                         </div>
                         <input
                             wire:model.live="search"
@@ -110,9 +108,7 @@
                         </div>
                     @empty
                         <div class="px-6 py-12 text-center">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
+                            <x-heroicon-o-user-group class="mx-auto h-12 w-12 text-gray-400" stroke-width="2" />
                             <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No customers found</h3>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                 @if ($search)
@@ -136,8 +132,7 @@
             x-transition:leave="transform transition ease-in-out duration-500"
             x-transition:leave-start="translate-x-0"
             x-transition:leave-end="translate-x-full"
-            class="fixed inset-0 overflow-hidden z-50"
-            style="display: none;"
+            class="fixed inset-0 overflow-hidden z-50 hidden"
         >
             <div class="absolute inset-0 overflow-hidden">
                 <div

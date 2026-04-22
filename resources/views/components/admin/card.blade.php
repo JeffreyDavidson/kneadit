@@ -1,16 +1,17 @@
 @props(['title' => null, 'subtitle' => null])
-<div style="background: white; border: 1px solid rgba(212,165,116,0.15); border-radius: 12px; overflow: hidden;" {{ $attributes }}>
+
+<div {{ $attributes->class(['bg-white border border-brand-200/60 rounded-xl overflow-hidden']) }}>
     @if ($title)
-        <div style="background: linear-gradient(135deg, #3d2314, #6b4c3b); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div data-admin-gradient-header class="flex justify-between items-center px-5 py-3.5 bg-gradient-to-br from-brand-900 to-brand-700">
             <div>
-                <h3 style="color: white; font-size: 0.95rem; font-weight: 600; margin: 0;">{{ $title }}</h3>
+                <h3 data-header-title class="text-white text-[0.95rem] font-semibold m-0">{{ $title }}</h3>
                 @if ($subtitle)
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.75rem; margin: 4px 0 0;">{{ $subtitle }}</p>
+                    <p class="text-white/70 text-xs mt-1 mb-0">{{ $subtitle }}</p>
                 @endif
             </div>
         </div>
     @endif
-    <div style="padding: 16px 20px;">
+    <div class="px-5 py-4">
         {{ $slot }}
     </div>
 </div>

@@ -9,15 +9,11 @@
                 <div class="flex space-x-2">
                     <button wire:click="previousMonth"
                             class="p-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                        </svg>
+                        <x-heroicon-o-chevron-left class="w-5 h-5" stroke-width="2" />
                     </button>
                     <button wire:click="nextMonth"
                             class="p-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
+                        <x-heroicon-o-chevron-right class="w-5 h-5" stroke-width="2" />
                     </button>
                 </div>
             </div>
@@ -123,9 +119,7 @@
         @elseif ($selectedDate)
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="text-center py-8 text-gray-500">
-                    <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                    </svg>
+                    <x-heroicon-o-clipboard class="w-12 h-12 mx-auto mb-4" stroke-width="2" />
                     <p class="text-lg">No orders for {{ \Carbon\Carbon::parse($selectedDate)->format('F j, Y') }}</p>
                 </div>
             </div>

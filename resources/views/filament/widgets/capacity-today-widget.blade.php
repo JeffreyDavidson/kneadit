@@ -7,29 +7,27 @@
         @endphp
 
         @foreach ([['label' => 'Today', 'data' => $today], ['label' => 'Tomorrow', 'data' => $tomorrow]] as $day)
-            <div style="margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.8rem;">
-                    <span style="font-weight: 600; color: #3d2314;">{{ $day['label'] }}</span>
-                    <span style="color: #6b4c3b;">{{ $day['data']['current'] }} / {{ $day['data']['max'] }} orders ({{ $day['data']['percentage'] }}%)</span>
+            @php
+                $pct = $day['data']['percentage'];
+                $barBg = $pct >= 90 ? '#dc2626' : ($pct >= 70 ? '#e8b04a' : '#d4a574');
+            @endphp
+            <div class="mb-4">
+                <div class="flex justify-between mb-1.5 text-[0.8rem]">
+                    <span class="font-semibold text-brand-900">{{ $day['label'] }}</span>
+                    <span class="text-brand-700">{{ $day['data']['current'] }} / {{ $day['data']['max'] }} orders ({{ $pct }}%)</span>
                 </div>
-                <div style="background: #fdf8f2; border-radius: 999px; height: 12px; overflow: hidden;">
-                    <div style="
-                        height: 100%;
-                        border-radius: 999px;
-                        width: {{ $day['data']['percentage'] }}%;
-                        background: {{ $day['data']['percentage'] >= 90 ? '#dc2626' : ($day['data']['percentage'] >= 70 ? '#e8b04a' : '#d4a574') }};
-                        transition: width 0.3s ease;
-                    "></div>
+                <div class="bg-brand-50 rounded-full h-3 overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-300" style="width: {{ $pct }}%; background: {{ $barBg }};"></div>
                 </div>
             </div>
         @endforeach
 
         @if (count($blocked) > 0)
-            <div style="padding: 10px 12px; background: #dc262610; border: 1px solid #dc262630; border-radius: 8px; margin-top: 4px;">
-                <div style="font-size: 0.75rem; font-weight: 600; color: #dc2626; margin-bottom: 6px;">Blocked Days This Week</div>
+            <div class="px-3 py-2.5 bg-red-600/10 border border-red-600/30 rounded-lg mt-1">
+                <div class="text-xs font-semibold text-red-600 mb-1.5">Blocked Days This Week</div>
                 @foreach ($blocked as $b)
-                    <div style="font-size: 0.8rem; color: #6b4c3b;">
-                        <span style="font-weight: 600;">{{ $b['date'] }}</span> — {{ $b['reason'] }}
+                    <div class="text-[0.8rem] text-brand-700">
+                        <span class="font-semibold">{{ $b['date'] }}</span> — {{ $b['reason'] }}
                     </div>
                 @endforeach
             </div>

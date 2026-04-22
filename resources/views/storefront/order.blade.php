@@ -1,8 +1,8 @@
 <x-layouts.storefront>
 {{-- Dark Hero Banner --}}
-<section class="relative overflow-hidden" style="background: var(--warm-900); padding-top: 2rem;">
+<section class="relative overflow-hidden bg-warm-900 pt-8">
     <x-storefront.grain-texture />
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 70% 0%, color-mix(in srgb, var(--warm-500) 8%, transparent), transparent 60%);" aria-hidden="true"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_0%,color-mix(in_srgb,var(--warm-500)_8%,transparent),transparent_60%)]" aria-hidden="true"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 py-16 md:py-24">
 
@@ -50,8 +50,8 @@
                                     class="absolute top-3 right-3 z-10 w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-sm transition-all bg-warm-900/60"
                                     :class="isFavorite({{ $product->id }}) ? '' : 'hover:scale-110'"
                                     :aria-label="isFavorite({{ $product->id }}) ? 'Remove ' + @js($product->name) + ' from favorites' : 'Add ' + @js($product->name) + ' to favorites'">
-                                <svg x-show="isFavorite({{ $product->id }})" class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg>
-                                <svg x-show="!isFavorite({{ $product->id }})" class="w-5 h-5 text-warm-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 8.25c0-3.928-2.464-5.25-5.438-5.25A5.5 5.5 0 0012 5.052 5.5 5.5 0 007.688 3C4.714 3 2.25 4.322 2.25 8.25c0 3.925 2.438 7.111 4.739 9.256a25.175 25.175 0 004.244 3.17c.11.067.22.128.383.219l.022.012.007.004.003.001a.752.752 0 00.704 0l.003-.001.007-.004.022-.012a15.247 15.247 0 00.383-.219 25.175 25.175 0 004.244-3.17C19.314 15.36 21.752 12.175 21.752 8.25z"/></svg>
+                                <x-heroicon-s-heart x-show="isFavorite({{ $product->id }})" class="w-5 h-5 text-red-500" />
+                                <x-heroicon-o-heart x-show="!isFavorite({{ $product->id }})" class="w-5 h-5 text-warm-300" />
                             </button>
 
                             {{-- Product Image --}}
@@ -109,7 +109,7 @@
                     {{-- Cart Items --}}
                     <div class="space-y-2 mb-4" x-show="cartItems.length > 0">
                         <template x-for="item in cartItems" :key="item.id">
-                            <div class="flex justify-between items-center text-sm py-2 px-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+                            <div class="flex justify-between items-center text-sm py-2 px-3 rounded-lg bg-white/[0.03]">
                                 <span class="text-warm-400">
                                     <span class="font-semibold text-warm-300" x-text="item.quantity"></span> × <span x-text="item.name"></span>
                                 </span>
@@ -319,9 +319,8 @@
                     <button type="submit"
                             data-test="order-form-submit"
                             :disabled="!canSubmit || isSubmitting"
-                            class="w-full mt-6 py-4 rounded-full text-lg font-semibold transition-all duration-300"
-                            :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-lg'"
-                            style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
+                            class="w-full mt-6 py-4 rounded-full text-lg font-semibold transition-all duration-300 bg-warm-500 text-warm-900 font-display"
+                            :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-lg'">
                         <span x-text="isSubmitting ? 'Placing Order...' : {{ Js::from($content['place_order_button'] ?? 'Place Order →') }}"></span>
                     </button>
 

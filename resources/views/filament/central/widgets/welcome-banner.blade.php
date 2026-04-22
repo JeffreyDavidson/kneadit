@@ -1,31 +1,24 @@
-<div style="background: #1c1410; border: 1px solid rgba(212,146,12,0.12); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
-    <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; border-radius: 50%; background: rgba(212,146,12,0.06);"></div>
-    <div style="position: absolute; bottom: -25px; right: 60px; width: 90px; height: 90px; border-radius: 50%; background: rgba(232,176,74,0.04);"></div>
+<x-central.card class="relative overflow-hidden">
+    <div class="absolute -top-5 -right-5 w-[120px] h-[120px] rounded-full bg-honey/5"></div>
+    <div class="absolute -bottom-6 right-[60px] w-[90px] h-[90px] rounded-full bg-golden/5"></div>
 
-    <div style="position: relative; z-index: 1;">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#d4920c" style="width: 24px; height: 24px;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
-            </svg>
-            <div style="color: #ffffff; font-size: 1rem; font-weight: 700;">KneadIt Platform</div>
+    <div class="relative z-10">
+        <div class="flex items-center gap-2 mb-4">
+            <x-heroicon-o-building-storefront class="w-6 h-6 text-honey" />
+            <div class="text-white text-base font-bold">KneadIt Platform</div>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
-            <div>
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Version</div>
-                <div style="color: #ffffff; font-weight: 700; font-size: 0.85rem; margin-top: 0.125rem;">1.0.0</div>
-            </div>
-            <div>
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Environment</div>
-                <div style="color: #ffffff; font-weight: 700; font-size: 0.85rem; margin-top: 0.125rem;">{{ app()->environment() }}</div>
-            </div>
-            <div>
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">PHP</div>
-                <div style="color: #ffffff; font-weight: 700; font-size: 0.85rem; margin-top: 0.125rem;">{{ PHP_VERSION }}</div>
-            </div>
-            <div>
-                <div style="color: #d4920c; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Laravel</div>
-                <div style="color: #ffffff; font-weight: 700; font-size: 0.85rem; margin-top: 0.125rem;">{{ app()->version() }}</div>
-            </div>
+        <div class="grid grid-cols-4 gap-4">
+            @foreach ([
+                'Version' => '1.0.0',
+                'Environment' => app()->environment(),
+                'PHP' => PHP_VERSION,
+                'Laravel' => app()->version(),
+            ] as $label => $value)
+                <div>
+                    <x-central.eyebrow>{{ $label }}</x-central.eyebrow>
+                    <div class="text-white font-bold text-[0.85rem] mt-0.5">{{ $value }}</div>
+                </div>
+            @endforeach
         </div>
     </div>
-</div>
+</x-central.card>

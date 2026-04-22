@@ -9,13 +9,14 @@
 
     {{-- Page banner --}}
     <x-admin.page-banner title="Customer Reorder Reminders">
-        <div style="display: flex; align-items: center; gap: 0.625rem;">
-            <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Inactive for</span>
-            <select wire:model.live="threshold" style="appearance: none; -webkit-appearance: none; padding: 0.4rem 2rem 0.4rem 0.875rem; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.15) url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222.5%22><polyline points=%226 9 12 15 18 9%22/></svg>') no-repeat right 0.625rem center; background-size: 0.75rem; color: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; min-width: 7rem;">
-                <option value="30" style="color: var(--brand-900); background: white;">30+ days</option>
-                <option value="60" style="color: var(--brand-900); background: white;">60+ days</option>
-                <option value="90" style="color: var(--brand-900); background: white;">90+ days</option>
-                <option value="120" style="color: var(--brand-900); background: white;">120+ days</option>
+        <div class="flex items-center gap-2.5">
+            <span class="text-[0.8rem] text-white/60">Inactive for</span>
+            <select wire:model.live="threshold"
+                    class="appearance-none rounded-full border border-white/25 bg-white/15 pl-3.5 pr-8 py-1.5 text-[0.8rem] font-semibold text-white cursor-pointer min-w-[7rem]"
+                    style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222.5%22><polyline points=%226 9 12 15 18 9%22/></svg>'); background-repeat: no-repeat; background-position: right 0.625rem center; background-size: 0.75rem;">
+                @foreach ([30, 60, 90, 120] as $days)
+                    <option value="{{ $days }}" class="text-brand-900 bg-white">{{ $days }}+ days</option>
+                @endforeach
             </select>
         </div>
     </x-admin.page-banner>
@@ -42,9 +43,9 @@
                     <th>Customer</th>
                     <th>Last Order</th>
                     <th>Days Inactive</th>
-                    <th style="text-align: center;">Orders</th>
-                    <th style="text-align: right;">Total Spent</th>
-                    <th style="text-align: right;">Action</th>
+                    <th class="text-center">Orders</th>
+                    <th class="text-right">Total Spent</th>
+                    <th class="text-right">Action</th>
                 </x-slot:head>
                 @foreach ($customers as $customer)
                     @php
@@ -52,21 +53,21 @@
                     @endphp
                     <tr>
                         <td>
-                            <div style="display: flex; align-items: center; gap: 0.625rem;">
+                            <div class="flex items-center gap-2.5">
                                 <x-admin.avatar :name="$customer->customer_name" size="sm" />
                                 <div>
-                                    <div style="font-weight: 600; color: var(--brand-900); font-size: 0.875rem;">{{ $customer->customer_name }}</div>
-                                    <div style="font-size: 0.75rem; color: var(--brand-500);">{{ $customer->customer_email }}</div>
+                                    <div class="font-semibold text-brand-900 text-sm">{{ $customer->customer_name }}</div>
+                                    <div class="text-xs text-brand-500">{{ $customer->customer_email }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td style="color: var(--brand-900); font-size: 0.85rem;">{{ \Carbon\Carbon::parse($customer->last_order_date)->format('M j, Y') }}</td>
+                        <td class="text-brand-900 text-[0.85rem]">{{ \Carbon\Carbon::parse($customer->last_order_date)->format('M j, Y') }}</td>
                         <td>
                             <x-admin.badge :type="$urgency" :label="$customer->days_since . ' days'" />
                         </td>
-                        <td style="text-align: center; font-weight: 600; color: var(--brand-900);">{{ $customer->total_orders }}</td>
-                        <td style="text-align: right; font-weight: 700; color: var(--brand-900);">@money($customer->total_spent)</td>
-                        <td style="text-align: right;">
+                        <td class="text-center font-semibold text-brand-900">{{ $customer->total_orders }}</td>
+                        <td class="text-right font-bold text-brand-900">@money($customer->total_spent)</td>
+                        <td class="text-right">
                             @php
                                 $subject = rawurlencode('We miss you at ' . app(\App\Services\Settings\TenantSettings::class)->storeName . '!');
                                 $body = rawurlencode("Hi {$customer->customer_name},\n\nIt's been a while since your last visit and we miss you! We've been baking up some amazing new treats and would love to see you again.\n\nVisit us to place your next order.\n\nWarmly,\n" . app(\App\Services\Settings\TenantSettings::class)->storeName . " 🍪");

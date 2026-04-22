@@ -9,25 +9,44 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Tests\TestCase;
 
-pest()->extend(TestCase::class)->in('Feature', 'Integration', 'Unit', 'Browser');
-
 /*
-|--------------------------------------------------------------------------
-| Tenant Database Cleanup
-|--------------------------------------------------------------------------
-| Tenant::factory()->create() triggers Stancl's CreateDatabase job which
-| writes real SQLite files to the database/ directory. These accumulate
-| across test runs and cause TenantDatabaseAlreadyExistsException when
-| a new test generates the same slug.
-*/
-
-beforeAll(function () {
+ * Tenant::factory()->create() dispatches stancl/tenancy's TenantCreated
+ * event, which runs CreateDatabase + MigrateDatabase jobs that write real
+ * SQLite files at database/tenant{id}. SignupPipelineTest depends on those
+ * files being real, so the event can't just be faked globally — instead
+ * the afterEach hook below sweeps them up so they don't accumulate.
+ */
+$cleanupTenantFiles = function (): void {
     foreach (glob(database_path('tenant*')) ?: [] as $file) {
         if (is_file($file) && is_writable($file)) {
             unlink($file);
         }
     }
-});
+};
+
+pest()->extend(TestCase::class)
+    /*
+     * Lock RefreshDatabase to rollback the sqlite connection, regardless of
+     * what config('database.default') is at teardown time.
+     *
+     * setUpTenantTest() points central's config at sqlite and shares the PDO.
+     * Tests that trigger stancl/tenancy bootstrap (e.g. Tenant::factory()
+     * ->create()) swap config('database.default') to 'tenant' mid-test, which
+     * makes RefreshDatabase::connectionsToTransact() — which reads the default
+     * dynamically — return ['tenant'] at teardown. sqlite's transaction is
+     * never rolled back, and the next test's BEGIN throws "cannot start a
+     * transaction within a transaction".
+     *
+     * Setting $this->connectionsToTransact = ['sqlite'] explicitly makes
+     * property_exists() return true, so connectionsToTransact() returns our
+     * value instead of the (default-dependent) fallback. sqlite always rolls
+     * back cleanly.
+     */
+    ->beforeEach(function () {
+        $this->connectionsToTransact = ['sqlite'];
+    })
+    ->afterEach($cleanupTenantFiles)
+    ->in('Feature', 'Integration', 'Unit', 'Browser');
 
 /*
 |--------------------------------------------------------------------------
