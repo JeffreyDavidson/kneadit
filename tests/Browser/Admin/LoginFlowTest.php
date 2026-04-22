@@ -16,7 +16,7 @@ test('tenant admin login with seeded credentials lands on the bakery dashboard',
         ->fill('input[type="email"]', BrowserTestFixtureSeeder::ADMIN_EMAIL)
         ->fill('input[type="password"]', BrowserTestFixtureSeeder::ADMIN_PASSWORD)
         ->click('button[type="submit"]')
-        ->wait(3)
+        ->waitForEvent('networkidle')
         ->assertSee('Bakery Dashboard')
         ->assertNoJavaScriptErrors();
 });
