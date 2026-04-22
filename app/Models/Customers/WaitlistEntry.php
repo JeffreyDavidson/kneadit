@@ -11,14 +11,12 @@ use Database\Factories\Customers\WaitlistEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property WaitlistStatus $status
- * @property-read string $status_label
  * @property-read Product|null $product
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WaitlistEntry forDate(\Carbon\Carbon|string $date)
@@ -53,13 +51,5 @@ class WaitlistEntry extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    /** @return Attribute<string, never> */
-    protected function statusLabel(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->status->getLabel(),
-        );
     }
 }

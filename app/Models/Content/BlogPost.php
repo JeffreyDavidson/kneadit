@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -28,7 +27,6 @@ use Illuminate\Support\Carbon;
  * @property string|null $meta_description
  * @property bool $is_published
  * @property Carbon|null $published_at
- * @property-read string $url
  *
  * @method static BlogPostQueryBuilder|BlogPost newModelQuery()
  * @method static BlogPostQueryBuilder|BlogPost newQuery()
@@ -54,13 +52,5 @@ class BlogPost extends Model
             'published_at' => 'datetime',
             'category' => BlogPostCategory::class,
         ];
-    }
-
-    /** @return Attribute<mixed, never> */
-    protected function url(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => route('blog.show', $this->slug),
-        );
     }
 }

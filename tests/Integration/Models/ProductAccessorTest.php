@@ -7,14 +7,14 @@ uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('margin accessor calculates profit percentage', function () {
-    $product = Product::factory()->create(['price' => 10.00, 'cost' => 4.00]);
+test('price is cast to Money value object', function () {
+    $product = Product::factory()->create(['price' => 10.00]);
 
-    expect($product->margin)->toBe(60.0);
+    expect($product->fresh()->price->dollars())->toBe(10.00);
 });
 
-test('margin accessor returns null when no cost', function () {
+test('cost can be null', function () {
     $product = Product::factory()->create(['price' => 10.00, 'cost' => null]);
 
-    expect($product->margin)->toBeNull();
+    expect($product->fresh()->cost)->toBeNull();
 });
