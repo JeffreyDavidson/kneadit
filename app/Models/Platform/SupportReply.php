@@ -25,13 +25,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply whereAuthorName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply whereAuthorType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply whereTicketId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportReply whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

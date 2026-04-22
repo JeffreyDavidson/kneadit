@@ -29,17 +29,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereEndsAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereIsDismissable($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereStartsAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereTargetPlans($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PlatformAnnouncement whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

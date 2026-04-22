@@ -23,12 +23,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote whereAuthor($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|TenantNote whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Customers\Tables;
 
 use App\Builders\Customers\CustomerQueryBuilder;
+use App\Enums\Customers\CustomerStatus;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Customers\Customer;
 use App\Services\Customers\BirthdayCalculator;
@@ -88,22 +89,14 @@ class CustomersTable
                     ->money('USD')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('is_at_risk')
+                TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(function (Customer $record) use ($atRiskDays) {
-                        if ($record->orders_count > 0 && $record->last_order_date) {
-                            return Date::parse($record->last_order_date)->diffInDays(now()) > $atRiskDays
-                                ? 'At Risk'
-                                : 'Active';
-                        }
-
-                        return 'Active';
-                    })
-                    ->color(fn (string $state): string => match ($state) {
-                        'At Risk' => 'danger',
-                        default => 'success',
-                    })
+                    ->getStateUsing(fn (Customer $record) => CustomerStatus::resolve(
+                        (int) $record->orders_count,
+                        $record->last_order_date ? Date::parse($record->last_order_date) : null,
+                        $atRiskDays,
+                    ))
                     ->toggleable(),
 
                 TextColumn::make('created_at')
