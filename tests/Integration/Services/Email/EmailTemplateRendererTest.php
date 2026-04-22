@@ -19,7 +19,7 @@ test('resolve returns null when no custom template exists', function () {
 });
 
 test('resolve returns custom subject and body when template exists', function () {
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::OrderPlaced,
         'subject' => 'Custom subject for {customer_name}',
         'body' => '<p>Hello {customer_name}, your order #{order_number} is in!</p>',
@@ -69,7 +69,7 @@ test('renderDefaultSubject replaces placeholders in the enum default subject', f
 });
 
 test('resolve only returns template for the matching type', function () {
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::HappyBirthday,
         'subject' => 'Birthday custom',
         'body' => 'Birthday body',

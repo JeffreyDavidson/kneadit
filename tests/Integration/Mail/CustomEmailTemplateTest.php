@@ -27,7 +27,7 @@ beforeEach(function () {
 test('OrderPlacedMail uses custom subject when template exists', function () {
     $order = Order::factory()->create();
 
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::OrderPlaced,
         'subject' => 'Thanks {customer_name}! Order #{order_number} received',
         'body' => '<p>Custom body</p>',
@@ -49,7 +49,7 @@ test('OrderPlacedMail uses default subject when no template exists', function ()
 test('OrderPlacedMail uses custom view when template exists', function () {
     $order = Order::factory()->create();
 
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::OrderPlaced,
         'subject' => 'Custom subject',
         'body' => '<p>Custom body</p>',
@@ -73,7 +73,7 @@ test('OrderPlacedMail uses default view when no template exists', function () {
 test('OrderPlacedMail uses custom subject but default view when body is empty', function () {
     $order = Order::factory()->create();
 
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::OrderPlaced,
         'subject' => 'Subject only for #{order_number}',
         'body' => '',
@@ -88,7 +88,7 @@ test('OrderPlacedMail uses custom subject but default view when body is empty', 
 test('OrderStatusMail uses custom template for specific status', function () {
     $order = Order::factory()->create();
 
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::OrderConfirmed,
         'subject' => 'Confirmed! Order #{order_number}',
         'body' => '<p>Your order is confirmed</p>',
@@ -112,7 +112,7 @@ test('OrderStatusMail falls back to default for status without custom template',
 test('ReviewRequestMail uses custom template when exists', function () {
     $order = Order::factory()->create();
 
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::ReviewRequest,
         'subject' => 'Tell us about your order from {store_name}',
         'body' => '<p>We would love your feedback</p>',
@@ -127,7 +127,7 @@ test('ReviewRequestMail uses custom template when exists', function () {
 test('HappyBirthdayMail uses custom template when exists', function () {
     $customer = Customer::factory()->create(['name' => 'Jane Doe']);
 
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::HappyBirthday,
         'subject' => 'Happy Birthday {customer_name} from {store_name}!',
         'body' => '<p>Enjoy your special day</p>',
@@ -141,7 +141,7 @@ test('HappyBirthdayMail uses custom template when exists', function () {
 test('RepeatOrderReminderMail uses custom template when exists', function () {
     $customer = Customer::factory()->create(['name' => 'Bob']);
 
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::RepeatOrderReminder,
         'subject' => 'Hey {customer_name}, it has been {days_since_last_order} days!',
         'body' => '<p>Come back!</p>',
@@ -155,7 +155,7 @@ test('RepeatOrderReminderMail uses custom template when exists', function () {
 test('ProductAvailableMail uses custom template when exists', function () {
     $product = Product::factory()->create(['name' => 'Sourdough Loaf']);
 
-    EmailTemplate::create([
+    EmailTemplate::factory()->create([
         'email_type' => EmailTemplateType::ProductAvailable,
         'subject' => '{product_name} is back!',
         'body' => '<p>Get it while it lasts</p>',
