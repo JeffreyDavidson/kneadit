@@ -64,13 +64,9 @@
     {{-- Orders List --}}
     <x-storefront.dark-section padding="py-20 md:py-24" radial-position="30% 50%">
         <div class="max-w-4xl mx-auto px-4">
-            <div class="flex items-center gap-6 mb-12">
-                <div class="flex-1 h-px bg-warm-700/25"></div>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold whitespace-nowrap text-warm-500">
-                    {{ $orders->count() }} {{ Str::plural('order', $orders->count()) }} for {{ $email }}
-                </span>
-                <div class="flex-1 h-px bg-warm-700/25"></div>
-            </div>
+            <x-storefront.section-divider tone="dark" class="mb-12">
+                {{ $orders->count() }} {{ Str::plural('order', $orders->count()) }} for {{ $email }}
+            </x-storefront.section-divider>
 
             <div class="space-y-8">
                 @foreach ($trackedOrders as $tracked)
