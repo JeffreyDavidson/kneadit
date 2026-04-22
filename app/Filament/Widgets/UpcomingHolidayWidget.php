@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Operations\Holiday;
 use App\Models\Orders\Order;
+use App\Presenters\HolidayPresenter;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -32,8 +33,9 @@ class UpcomingHolidayWidget extends BaseWidget
             }
 
             $orders = Order::query()->whereDate('delivery_date', $holiday->date)->count();
-            $daysUntil = $holiday->days_until_deadline;
-            $deadlineLabel = $holiday->is_deadline_passed
+            $presenter = HolidayPresenter::for($holiday);
+            $daysUntil = $presenter->daysUntilDeadline();
+            $deadlineLabel = $presenter->isDeadlinePassed()
                 ? 'Deadline passed'
                 : "Deadline in {$daysUntil}d";
 
@@ -46,7 +48,7 @@ class UpcomingHolidayWidget extends BaseWidget
             return [
                 Stat::make("Next Holiday: {$holiday->name}", $holiday->date->format('M j'))
                     ->icon(Heroicon::OutlinedCalendarDays)
-                    ->color($daysUntil <= 3 && ! $holiday->is_deadline_passed ? 'warning' : 'primary')
+                    ->color($daysUntil <= 3 && ! $presenter->isDeadlinePassed() ? 'warning' : 'primary')
                     ->description($description),
             ];
         });

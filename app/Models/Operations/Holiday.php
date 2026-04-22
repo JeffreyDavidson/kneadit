@@ -7,11 +7,9 @@ use Database\Factories\Operations\HolidayFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 
 /**
  * @property int $id
@@ -25,12 +23,6 @@ use Illuminate\Support\Facades\Date;
  * @property Carbon|null $prep_start
  * @property int|null $max_orders
  * @property bool $is_active
- * @property-read int $days_away
- * @property-read bool $is_in_prep_period
- * @property-read bool $is_upcoming
- * @property-read Carbon $start_prep_by
- * @property-read int $days_until_deadline
- * @property-read bool $is_deadline_passed
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Holiday newQuery()
@@ -56,57 +48,5 @@ class Holiday extends Model
             'max_orders' => 'integer',
             'is_active' => 'boolean',
         ];
-    }
-
-    /** @return Attribute<int, never> */
-    protected function daysAway(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => (int) now()->diffInDays($this->date, false),
-        );
-    }
-
-    /** @return Attribute<Carbon, never> */
-    protected function startPrepBy(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->date->copy()->subDays($this->lead_days ?? 7),
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isUpcoming(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->date->isFuture(),
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isInPrepPeriod(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => now()->isAfter($this->start_prep_by) && $this->date->isFuture(),
-        );
-    }
-
-    /** @return Attribute<int, never> */
-    protected function daysUntilDeadline(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->order_deadline
-                ? (int) Date::today()->diffInDays($this->order_deadline, false)
-                : $this->days_away,
-        );
-    }
-
-    /** @return Attribute<bool, never> */
-    protected function isDeadlinePassed(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->order_deadline
-                ? $this->order_deadline->isPast()
-                : $this->date->isPast(),
-        );
     }
 }
