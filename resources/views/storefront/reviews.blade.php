@@ -94,11 +94,9 @@
 {{-- All Reviews Grid --}}
 <section id="reviews" class="relative py-24 md:py-28 bg-warm-100">
     <div class="max-w-6xl mx-auto px-4">
-        <div class="flex items-center gap-6 mb-16">
-            <div class="flex-1 h-px bg-warm-300"></div>
-            <span class="uppercase tracking-[0.25em] text-xs font-semibold text-warm-500">{{ $vm->content['all_reviews_label'] ?? 'All Reviews' }}</span>
-            <div class="flex-1 h-px bg-warm-300"></div>
-        </div>
+        <x-storefront.section-divider tone="light" class="mb-16">
+            {{ $vm->content['all_reviews_label'] ?? 'All Reviews' }}
+        </x-storefront.section-divider>
 
         <div class="grid md:grid-cols-2 gap-8 mb-16">
             @foreach ($vm->reviews->skip(1) as $review)
