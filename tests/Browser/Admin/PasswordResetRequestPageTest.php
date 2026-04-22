@@ -1,6 +1,6 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://sweet-surrender.kneadit.test');
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
 
 // Filament's password-reset-request page is rendered by the framework, so we
 // don't own the markup and can't add data-test attributes. Selectors here key

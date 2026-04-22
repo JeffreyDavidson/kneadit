@@ -15,12 +15,25 @@ use Tests\TestCase;
  * SQLite files at database/tenant{id}. SignupPipelineTest depends on those
  * files being real, so the event can't just be faked globally — instead
  * the afterEach hook below sweeps them up so they don't accumulate.
+ *
+ * Browser-test fixture tenants (provisioned by tenants:provision-test-tenant)
+ * are persistent and must survive between test runs — those are skipped.
  */
-$cleanupTenantFiles = function (): void {
+$persistentTenantDbs = [
+    'tenantbrowser-test',
+];
+
+$cleanupTenantFiles = function () use ($persistentTenantDbs): void {
     foreach (glob(database_path('tenant*')) ?: [] as $file) {
-        if (is_file($file) && is_writable($file)) {
-            unlink($file);
+        if (! is_file($file) || ! is_writable($file)) {
+            continue;
         }
+
+        if (in_array(basename($file), $persistentTenantDbs, true)) {
+            continue;
+        }
+
+        unlink($file);
     }
 };
 

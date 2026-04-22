@@ -1,6 +1,6 @@
 <?php
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://sweet-surrender.kneadit.test');
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
 
 // Full purchase flow isn't tested here — the form's submit handler redirects to
 // Stripe Checkout, which can't be driven from a Pest browser test without

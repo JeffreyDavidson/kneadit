@@ -2,7 +2,7 @@
 
 use Database\Seeders\BrowserTestFixtureSeeder;
 
-$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://sweet-surrender.kneadit.test');
+$storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
 $orderNumber = BrowserTestFixtureSeeder::REVIEW_ORDER_NUMBER;
 
 // Full happy-path review submission isn't tested here — each submission creates
