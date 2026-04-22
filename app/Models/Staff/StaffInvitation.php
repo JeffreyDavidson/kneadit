@@ -58,12 +58,4 @@ class StaffInvitation extends Model
             get: fn () => ! $this->expires_at || $this->expires_at->isPast(),
         );
     }
-
-    /** @return Attribute<bool, never> */
-    protected function isPending(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => is_null($this->accepted_at) && ! $this->is_expired,
-        );
-    }
 }

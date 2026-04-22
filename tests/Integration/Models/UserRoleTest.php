@@ -32,18 +32,6 @@ test('is_owner returns false for staff', function () {
     expect($user->is_owner)->toBeFalse();
 });
 
-test('is_manager returns true for manager', function () {
-    $user = User::factory()->manager()->create();
-
-    expect($user->is_manager)->toBeTrue();
-});
-
-test('is_staff returns true for staff', function () {
-    $user = User::factory()->staff()->create();
-
-    expect($user->is_staff)->toBeTrue();
-});
-
 test('role meetsRequirement staff is true for all roles', function (string $roleMethod) {
     $user = User::factory()->$roleMethod()->create();
 
