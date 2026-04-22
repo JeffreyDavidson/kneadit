@@ -78,9 +78,9 @@
                     @if ($star->description)
                     <p class="text-base leading-relaxed mb-8 text-warm-400">{{ Str::limit($star->description, 200) }}</p>
                     @endif
-                    <a href="{{ route('order.create') }}" class="inline-block self-start px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-500 text-warm-900">
+                    <x-storefront.button :href="route('order.create')" size="md" class="self-start">
                         Order Now
-                    </a>
+                    </x-storefront.button>
                 </div>
             </div>
         </div>
@@ -93,9 +93,9 @@
             <x-storefront.product-card :product="$product" card-class="product-showcase-card bg-warm-800">
                 <x-slot:overlay>
                     <div class="product-overlay absolute inset-0 flex items-center justify-center bg-warm-900/50">
-                        <span class="product-cta inline-block px-6 py-3 rounded-full text-sm font-semibold bg-warm-500 text-warm-900">
+                        <x-storefront.pill tone="solid" size="sm" class="product-cta">
                             Add to Order
-                        </span>
+                        </x-storefront.pill>
                     </div>
                 </x-slot:overlay>
             </x-storefront.product-card>
