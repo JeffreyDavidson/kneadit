@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BlockedDates\Schemas;
 
+use App\Enums\Operations\BlockedDateReason;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,13 +27,7 @@ class BlockedDateForm
                                 ->native(false),
 
                             Select::make('reason')
-                                ->options([
-                                    'Vacation' => 'Vacation',
-                                    'Holiday' => 'Holiday',
-                                    'Maintenance' => 'Maintenance',
-                                    'Personal' => 'Personal',
-                                    'Other' => 'Other',
-                                ])
+                                ->options(BlockedDateReason::class)
                                 ->placeholder('Select reason...'),
                         ]),
 
