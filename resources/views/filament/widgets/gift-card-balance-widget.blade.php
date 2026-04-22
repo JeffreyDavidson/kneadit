@@ -6,31 +6,25 @@
             $recent = $this->getRecentlyRedeemed();
         @endphp
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div style="background: #fdf8f2; border-radius: 8px; padding: 12px; text-align: center;">
-                <div style="font-size: 1.5rem; font-weight: 700; color: #3d2314;">@money($balance)</div>
-                <div style="font-size: 0.75rem; color: #6b4c3b;">Outstanding Balance</div>
-            </div>
-            <div style="background: #fdf8f2; border-radius: 8px; padding: 12px; text-align: center;">
-                <div style="font-size: 1.5rem; font-weight: 700; color: #3d2314;">{{ $activeCards }}</div>
-                <div style="font-size: 0.75rem; color: #6b4c3b;">Active Cards</div>
-            </div>
+        <div class="grid grid-cols-2 gap-4">
+            <x-admin.stat-cell label="Outstanding Balance">@money($balance)</x-admin.stat-cell>
+            <x-admin.stat-cell label="Active Cards">{{ $activeCards }}</x-admin.stat-cell>
         </div>
 
-        <div style="margin-top: 16px;">
-            <div style="font-size: 0.75rem; color: #6b4c3b; margin-bottom: 8px; font-weight: 600;">Recent Redemptions</div>
+        <div class="mt-4">
+            <div class="text-xs text-brand-700 mb-2 font-semibold">Recent Redemptions</div>
             @if (count($recent) > 0)
                 @foreach ($recent as $txn)
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #fdf8f2; border-radius: 6px; margin-bottom: 6px; font-size: 0.8rem;">
+                    <div class="flex justify-between items-center px-3 py-2 bg-brand-50 rounded-md mb-1.5 text-[0.8rem]">
                         <div>
-                            <span style="font-weight: 600; color: #3d2314;">{{ $txn['code'] }}</span>
-                            <span style="color: #8b6844; margin-left: 6px;">{{ $txn['date'] }}</span>
+                            <span class="font-semibold text-brand-900">{{ $txn['code'] }}</span>
+                            <span class="text-brand-600 ml-1.5">{{ $txn['date'] }}</span>
                         </div>
-                        <div style="font-weight: 600; color: #6b4c3b;">@money(abs($txn['amount']))</div>
+                        <div class="font-semibold text-brand-700">@money(abs($txn['amount']))</div>
                     </div>
                 @endforeach
             @else
-                <div style="color: #8b6844; font-style: italic; font-size: 0.8rem; padding: 8px 12px; background: #fdf8f2; border-radius: 6px;">No recent redemptions</div>
+                <div class="text-brand-600 italic text-[0.8rem] px-3 py-2 bg-brand-50 rounded-md">No recent redemptions</div>
             @endif
         </div>
     </x-filament::section>
