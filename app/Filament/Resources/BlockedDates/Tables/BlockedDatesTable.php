@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BlockedDates\Tables;
 
+use App\Enums\Operations\BlockedDateReason;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Operations\BlockedDate;
 use Filament\Actions\BulkActionGroup;
@@ -24,12 +25,7 @@ class BlockedDatesTable
                 TextColumn::make('reason')
                     ->searchable()
                     ->badge()
-                    ->color(fn (?string $state): string => match ($state) {
-                        'Vacation' => 'info',
-                        'Holiday' => 'warning',
-                        'Maintenance' => 'danger',
-                        default => 'gray',
-                    })
+                    ->color(fn (?string $state): string => BlockedDateReason::tryFrom($state ?? '')?->getColor() ?? 'gray')
                     ->placeholder('No reason'),
 
                 IconColumn::make('is_all_day')
