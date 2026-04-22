@@ -49,43 +49,4 @@ return new class extends Migration {
             });
         }
     }
-
-    public function down(): void
-    {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropIndex(['status']);
-            $table->dropIndex(['payment_status']);
-            $table->dropIndex(['delivery_date']);
-            $table->dropIndex(['customer_id']);
-            $table->dropIndex(['created_at']);
-        });
-
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropIndex(['is_active']);
-            $table->dropIndex(['category_id']);
-        });
-
-        Schema::table('reviews', function (Blueprint $table) {
-            $table->dropIndex(['is_approved']);
-            $table->dropIndex(['rating']);
-        });
-
-        Schema::table('customers', function (Blueprint $table) {
-            $table->dropIndex(['email']);
-            $table->dropIndex(['created_at']);
-        });
-
-        if (Schema::hasTable('expenses')) {
-            Schema::table('expenses', function (Blueprint $table) {
-                $table->dropIndex(['date']);
-                $table->dropIndex(['category']);
-            });
-        }
-
-        if (Schema::hasTable('incomes')) {
-            Schema::table('incomes', function (Blueprint $table) {
-                $table->dropIndex(['date']);
-            });
-        }
-    }
 };

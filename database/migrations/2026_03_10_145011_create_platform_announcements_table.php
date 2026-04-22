@@ -22,9 +22,4 @@ return new class extends Migration {
             $table->timestamps();
         });
     }
-
-    public function down(): void
-    {
-        Schema::connection('central')->dropIfExists('platform_announcements');
-    }
 };

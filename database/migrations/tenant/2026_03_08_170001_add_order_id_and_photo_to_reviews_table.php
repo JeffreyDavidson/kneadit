@@ -12,12 +12,4 @@ return new class extends Migration {
             $table->string('photo_path')->nullable()->after('comment');
         });
     }
-
-    public function down(): void
-    {
-        Schema::table('reviews', function (Blueprint $table) {
-            $table->dropForeign(['order_id']);
-            $table->dropColumn(['order_id', 'photo_path']);
-        });
-    }
 };

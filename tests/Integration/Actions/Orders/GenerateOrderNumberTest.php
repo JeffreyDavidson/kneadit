@@ -8,16 +8,26 @@ uses(RefreshDatabase::class);
 
 beforeEach(fn () => setUpTenantTest());
 
-test('it generates the first order number', function () {
+test('it generates an ORD-prefixed order number with a 10-character random suffix', function () {
     $number = (new GenerateOrderNumber)();
 
-    expect($number)->toBe('ORD-000001');
+    expect($number)
+        ->toStartWith('ORD-')
+        ->and(strlen($number))->toBe(14)
+        ->and($number)->toMatch('/^ORD-[A-Z0-9]{10}$/');
 });
 
-test('it increments from the highest existing order number', function () {
-    Order::factory()->create(['order_number' => 'ORD-000042']);
+test('successive calls produce unique order numbers', function () {
+    $numbers = collect(range(1, 5))->map(fn () => (new GenerateOrderNumber)());
 
-    $number = (new GenerateOrderNumber)();
+    expect($numbers->unique()->count())->toBe(5);
+});
 
-    expect($number)->toBe('ORD-000043');
+test('skips a candidate that already exists in the database', function () {
+    $taken = (new GenerateOrderNumber)();
+    Order::factory()->create(['order_number' => $taken]);
+
+    $next = (new GenerateOrderNumber)();
+
+    expect($next)->not->toBe($taken);
 });

@@ -10,6 +10,7 @@ test('order confirmation controller passes settings and content to view', functi
     $order = Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([$order]))
         ->get(route('order.confirmation', ['order' => $order->order_number], false));
 
     $response->assertOk()
@@ -22,6 +23,7 @@ test('journey steps fall back to config defaults when no setting is stored', fun
     $order = Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([$order]))
         ->get(route('order.confirmation', ['order' => $order->order_number], false));
 
     $response->assertOk();
@@ -39,6 +41,7 @@ test('journey steps use the configured order_journey_steps setting when present'
     settings(['order_journey_steps' => json_encode($custom)]);
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([$order]))
         ->get(route('order.confirmation', ['order' => $order->order_number], false));
 
     $response->assertOk();

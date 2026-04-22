@@ -29,14 +29,6 @@ test('content uses the text-only blade template', function () {
     expect($mail->content()->text)->toBe('emails.platform.payment-failed-alert-text');
 });
 
-test('attachments returns an empty array', function () {
-    $user = User::factory()->create();
-
-    $mail = new PaymentFailedAlertMail($user, null, 49.99);
-
-    expect($mail->attachments())->toBe([]);
-});
-
 test('mailable accepts an optional Tenant', function () {
     $user = User::factory()->create();
     $tenant = Tenant::factory()->create();

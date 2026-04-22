@@ -11,6 +11,7 @@ use App\Http\Controllers\Order\ReorderController;
 use App\Http\Controllers\Order\StripeCancelController;
 use App\Http\Controllers\Order\StripeSuccessController;
 use App\Http\Controllers\Order\TrackingController;
+use App\Http\Controllers\Order\VerifyOrderAccessController;
 use App\Http\Controllers\Storefront\ShowOrderConfirmationController;
 use App\Http\Controllers\Storefront\ShowOrderFormController;
 use App\Http\Controllers\Storefront\SubmitOrderController;
@@ -18,18 +19,26 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('order', ShowOrderFormController::class)->name('order.create');
 Route::post('order', SubmitOrderController::class)->name('order.store')->middleware('throttle:10,1');
-Route::get('order/confirmation/{order:order_number}', ShowOrderConfirmationController::class)->name('order.confirmation');
+
+// Email-verification gate for order-by-number access (must be reachable
+// without the gate, since the whole point is to grant access).
+Route::get('order/{order:order_number}/verify', [VerifyOrderAccessController::class, 'show'])->name('order.verify.show');
+Route::post('order/{order:order_number}/verify', [VerifyOrderAccessController::class, 'store'])->name('order.verify.store')->middleware('throttle:5,1');
+
+// Stripe redirect callbacks — handlers grant session access on success/cancel.
 Route::get('order/stripe/success/{order:order_number}', StripeSuccessController::class)->name('order.stripe.success');
 Route::get('order/stripe/cancel/{order:order_number}', StripeCancelController::class)->name('order.stripe.cancel');
+
 Route::get('track', [TrackingController::class, 'show'])->name('order.track');
 Route::post('track', [TrackingController::class, 'store'])->name('order.track.lookup')->middleware('throttle:10,1');
 
-// Order messages
-Route::get('order/{order:order_number}/messages', [MessageController::class, 'show'])->name('order.messages');
-Route::post('order/{order:order_number}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:10,1');
-
-// Reorder data (AJAX)
-Route::get('order/reorder/{order:order_number}', ReorderController::class)->name('order.reorder');
+// Order-by-number views require session-verified ownership.
+Route::middleware('order.access')->group(function () {
+    Route::get('order/confirmation/{order:order_number}', ShowOrderConfirmationController::class)->name('order.confirmation');
+    Route::get('order/{order:order_number}/messages', [MessageController::class, 'show'])->name('order.messages');
+    Route::post('order/{order:order_number}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:10,1');
+    Route::get('order/reorder/{order:order_number}', ReorderController::class)->name('order.reorder');
+});
 
 // Capacity check (AJAX)
 Route::get('capacity/check/{date}', CapacityController::class)->name('capacity.check');

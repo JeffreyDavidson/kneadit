@@ -10,6 +10,7 @@ test('submit review controller passes settings to view', function () {
     $order = Order::factory()->create();
 
     $response = withoutMiddleware(tenantMiddleware())
+        ->withSession(verifiedOrdersSession([$order]))
         ->get(route('storefront.submitReview', $order->order_number, false));
 
     $response->assertOk()

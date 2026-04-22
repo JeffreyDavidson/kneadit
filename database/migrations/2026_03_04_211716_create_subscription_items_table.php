@@ -22,12 +22,4 @@ return new class extends Migration {
             $table->index(['subscription_id', 'stripe_price']);
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('subscription_items');
-    }
 };

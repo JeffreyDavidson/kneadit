@@ -24,9 +24,4 @@ return new class extends Migration {
             $table->index(['status', 'created_at']);
         });
     }
-
-    public function down(): void
-    {
-        Schema::connection('central')->dropIfExists('support_tickets');
-    }
 };
