@@ -1,15 +1,16 @@
 <x-filament-panels::page>
     {{-- Tab Switcher --}}
-    <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+    <div class="flex gap-2 mb-6">
         @foreach ([
             'platform' => 'Platform Events',
             'audit' => 'Admin Actions',
         ] as $key => $label)
-            <button
-                wire:click="$set('activeTab', '{{ $key }}')"
-                style="padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; border: 1px solid rgba(212,146,12,0.25); cursor: pointer;
-                    {{ $activeTab === $key ? 'background: #d4920c; color: #1c1410;' : 'background: transparent; color: #d4920c;' }}"
-            >
+            <button wire:click="$set('activeTab', '{{ $key }}')"
+                @class([
+                    'px-5 py-2 rounded-lg text-[0.8rem] font-bold border border-honey/25 cursor-pointer',
+                    'bg-honey text-warm-black' => $activeTab === $key,
+                    'bg-transparent text-honey' => $activeTab !== $key,
+                ])>
                 {{ $label }}
             </button>
         @endforeach
@@ -26,16 +27,17 @@
                 <div class="text-cinnamon text-sm">Platform events will appear here as they happen — tenant signups, plan changes, and more.</div>
             </div>
         @else
-            <div style="position: relative; padding-left: 2.5rem;">
-                <div style="position: absolute; left: 0.9rem; top: 0; bottom: 0; width: 2px; background: rgba(212,146,12,0.2);"></div>
+            <div class="relative pl-10">
+                <div class="absolute left-3.5 top-0 bottom-0 w-0.5 bg-honey/20"></div>
                 @foreach ($activities as $activity)
                     @php
-                        $eventColor = \App\Filament\Central\Pages\Activity::getEventColor($activity->event);
                         $eventIcon = \App\Filament\Central\Pages\Activity::getEventIcon($activity->event);
+                        $iconClass = \App\Filament\Central\Pages\Activity::getEventIconColorClass($activity->event);
+                        $borderClass = \App\Filament\Central\Pages\Activity::getEventBorderColorClass($activity->event);
                     @endphp
-                    <div style="position: relative; margin-bottom: 1.5rem;">
-                        <div class="absolute left-[-2.5rem] top-0.5 w-7 h-7 rounded-full flex items-center justify-center bg-warm-black z-10" style="border: 2px solid {{ $eventColor }};">
-                            <x-dynamic-component :component="$eventIcon ?: 'heroicon-o-clock'" class="w-3.5 h-3.5" style="color: {{ $eventColor }};" />
+                    <div class="relative mb-6">
+                        <div class="absolute left-[-2.5rem] top-0.5 w-7 h-7 rounded-full flex items-center justify-center bg-warm-black z-10 border-2 {{ $borderClass }}">
+                            <x-dynamic-component :component="$eventIcon ?: 'heroicon-o-clock'" class="w-3.5 h-3.5 {{ $iconClass }}" />
                         </div>
                         <x-central.card padding="py-4 px-5">
                             <x-central.badge color="butter" size="sm" class="mb-1.5 bg-honey/15">{{ str_replace('_', ' ', $activity->event) }}</x-central.badge>
@@ -64,7 +66,7 @@
 
         {{-- Filters --}}
         <x-central.card class="mb-6 flex gap-3 flex-wrap items-end">
-            <div style="flex: 1; min-width: 180px;">
+            <div class="flex-1 min-w-[180px]">
                 <x-central.eyebrow as="label" class="block mb-1">Action</x-central.eyebrow>
                 <x-central.select wire:model.live="filterAction">
                     <option value="">All Actions</option>
@@ -73,15 +75,15 @@
                     @endforeach
                 </x-central.select>
             </div>
-            <div style="flex: 1; min-width: 140px;">
+            <div class="flex-1 min-w-[140px]">
                 <x-central.eyebrow as="label" class="block mb-1">From</x-central.eyebrow>
                 <x-central.input type="date" wire:model.live="filterDateFrom" />
             </div>
-            <div style="flex: 1; min-width: 140px;">
+            <div class="flex-1 min-w-[140px]">
                 <x-central.eyebrow as="label" class="block mb-1">To</x-central.eyebrow>
                 <x-central.input type="date" wire:model.live="filterDateTo" />
             </div>
-            <div style="flex: 2; min-width: 200px;">
+            <div class="flex-[2] min-w-[200px]">
                 <x-central.eyebrow as="label" class="block mb-1">Search</x-central.eyebrow>
                 <x-central.input wire:model.live.debounce.300ms="filterSearch" placeholder="Search descriptions..." />
             </div>
@@ -89,35 +91,36 @@
         </x-central.card>
 
         {{-- Timeline --}}
-        <div style="position: relative; padding-left: 2rem;">
-            <div style="position: absolute; left: 0.5rem; top: 0; bottom: 0; width: 2px; background: #d4920c;"></div>
+        <div class="relative pl-8">
+            <div class="absolute left-2 top-0 bottom-0 w-0.5 bg-honey"></div>
 
             @forelse ($this->logs as $log)
-                <div style="position: relative; margin-bottom: 1rem;">
-                    <div style="position: absolute; left: -1.75rem; top: 1rem; width: 10px; height: 10px; border-radius: 50%; background: {{ \App\Filament\Central\Pages\Activity::getActionColor($log->action) }}; border: 2px solid #1c1410;"></div>
+                @php $actionBgClass = \App\Filament\Central\Pages\Activity::getActionColorClass($log->action); @endphp
+                <div class="relative mb-4">
+                    <div class="absolute -left-7 top-4 w-2.5 h-2.5 rounded-full border-2 border-warm-black {{ $actionBgClass }}"></div>
 
                     <x-central.card padding="py-4 px-5">
                         <div class="flex justify-between items-center flex-wrap gap-2 mb-2">
                             <div class="flex items-center gap-2">
-                                <span style="background: {{ \App\Filament\Central\Pages\Activity::getActionColor($log->action) }};" class="inline-block px-2.5 py-1 rounded-full text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-white">
+                                <span class="inline-block px-2.5 py-1 rounded-full text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-white {{ $actionBgClass }}">
                                     {{ str_replace('_', ' ', $log->action) }}
                                 </span>
                                 @if ($log->target_type)
-                                    <span style="color: #d4920c; font-size: 0.75rem;">
+                                    <span class="text-honey text-xs">
                                         {{ $log->target_type }}{{ $log->target_id ? ' #' . $log->target_id : '' }}
                                     </span>
                                 @endif
                             </div>
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <span style="color: #8b6844; font-size: 0.75rem; font-family: monospace;">{{ $log->ip_address ?? '—' }}</span>
-                                <span style="color: #8b6844; font-size: 0.75rem; white-space: nowrap;">{{ $log->created_at->format('M d, H:i') }}</span>
+                            <div class="flex items-center gap-4">
+                                <span class="text-cinnamon text-xs font-mono">{{ $log->ip_address ?? '—' }}</span>
+                                <span class="text-cinnamon text-xs whitespace-nowrap">{{ $log->created_at->format('M d, H:i') }}</span>
                             </div>
                         </div>
                         <div class="text-parchment text-sm">{{ $log->description }}</div>
                     </x-central.card>
                 </div>
             @empty
-                <div style="text-align: center; padding: 2rem; color: #8b6844; font-style: italic;">
+                <div class="text-center p-8 text-cinnamon italic">
                     No audit log entries found.
                 </div>
             @endforelse
@@ -125,11 +128,11 @@
 
         {{-- Pagination --}}
         @if ($this->logs->hasPages())
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
-                <span style="color: #8b6844; font-size: 0.8rem;">
+            <div class="flex justify-between items-center mt-6">
+                <span class="text-cinnamon text-[0.8rem]">
                     Page {{ $this->logs->currentPage() }} of {{ $this->logs->lastPage() }} ({{ $this->logs->total() }} entries)
                 </span>
-                <div style="display: flex; gap: 0.5rem;">
+                <div class="flex gap-2">
                     @if ($this->logs->currentPage() > 1)
                         <x-central.button variant="secondary" wire:click="previousPage">← Previous</x-central.button>
                     @endif

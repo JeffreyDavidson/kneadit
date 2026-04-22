@@ -7,12 +7,12 @@
 
     <div class="relative z-10 flex items-center justify-center min-h-[70vh] px-4">
         <div class="text-center max-w-md">
-            <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 hero-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
+            <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 hero-fade-up bg-warm-500/15 border-2 border-warm-500 [animation-delay:0.3s]">
                 <x-heroicon-o-check class="w-12 h-12 text-warm-500" stroke-width="2.5" />
             </div>
-            <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
-            <p class="text-lg mb-8 hero-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your review has been submitted and will appear once approved. We appreciate your feedback!' }}</p>
-            <a href="{{ route('storefront.menu') }}" class="inline-block px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 hero-fade-up" style="background: var(--warm-500); color: var(--warm-900); animation-delay: 0.9s;">
+            <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up text-warm-100 [animation-delay:0.5s]">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
+            <p class="text-lg mb-8 hero-fade-up text-warm-400 [animation-delay:0.7s]">{{ $content['success_description'] ?? 'Your review has been submitted and will appear once approved. We appreciate your feedback!' }}</p>
+            <a href="{{ route('storefront.menu') }}" class="inline-block px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 hero-fade-up bg-warm-500 text-warm-900 [animation-delay:0.9s]">
                 Back to Menu
             </a>
         </div>
@@ -24,11 +24,11 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Share your experience" image-class="hero-img" min-height="40vh">
 
     <div class="relative z-10 text-center px-4 py-16 md:py-24">
-        <x-storefront.eyebrow class="hero-fade-up mb-6" style="animation-delay: 0.3s;">{{ $content['hero_eyebrow'] ?? 'We\'d Love to Hear From You' }}</x-storefront.eyebrow>
-        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 hero-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">
+        <x-storefront.eyebrow class="hero-fade-up mb-6 [animation-delay:0.3s]">{{ $content['hero_eyebrow'] ?? 'We\'d Love to Hear From You' }}</x-storefront.eyebrow>
+        <h1 class="font-display text-4xl md:text-6xl font-bold mb-4 hero-fade-up text-warm-100 [animation-delay:0.5s]">
             {{ $content['hero_title'] ?? 'How Was Your Order?' }}
         </h1>
-        <p class="text-lg hero-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">
+        <p class="text-lg hero-fade-up text-warm-400 [animation-delay:0.7s]">
             From {{ $settings->store->name }} · Order #{{ $order->order_number }}
         </p>
     </div>
@@ -65,7 +65,7 @@
                             class="transition-all duration-200 focus:outline-none"
                             :class="(hover || rating) >= {{ $i }} ? 'scale-110' : 'scale-100 opacity-30'"
                         >
-                            <x-heroicon-s-star class="w-10 h-10" ::style="(hover || rating) >= {{ $i }} ? 'color: var(--warm-500)' : 'color: var(--warm-300)'" />
+                            <x-heroicon-s-star class="w-10 h-10" ::class="(hover || rating) >= {{ $i }} ? 'text-warm-500' : 'text-warm-300'" />
                         </button>
                     @endfor
                     <input type="hidden" name="rating" x-bind:value="rating">
@@ -82,10 +82,7 @@
             <div>
                 <label for="comment" class="block text-xs uppercase tracking-wider font-medium mb-2 text-warm-600">{{ $content['comment_label'] ?? 'Tell Us About Your Experience' }}</label>
                 <textarea data-test="review-submission-form-comment" name="comment" id="comment" rows="5"
-                    class="w-full p-4 rounded-xl text-base"
-                    style="background: var(--warm-50); border: 1.5px solid var(--warm-200); color: var(--warm-800); outline: none; transition: border-color 0.2s;"
-                    onfocus="this.style.borderColor='var(--warm-500)'"
-                    onblur="this.style.borderColor='var(--warm-200)'"
+                    class="w-full p-4 rounded-xl text-base bg-warm-50 border-[1.5px] border-warm-200 text-warm-800 outline-none transition-colors focus:border-warm-500"
                     placeholder="{{ $content['comment_placeholder'] ?? 'What did you love? What could we improve?' }}">{{ old('comment') }}</textarea>
                 @error('comment')
                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -95,8 +92,7 @@
             {{-- Photo Upload --}}
             <div>
                 <label for="photo" class="block text-xs uppercase tracking-wider font-medium mb-2 text-warm-600">{{ $content['photo_label'] ?? 'Add a Photo' }} <span class="text-warm-400">(optional)</span></label>
-                <div class="rounded-xl p-6 text-center cursor-pointer transition-all"
-                     style="background: var(--warm-50); border: 2px dashed var(--warm-300);"
+                <div class="rounded-xl p-6 text-center cursor-pointer transition-all bg-warm-50 border-2 border-dashed border-warm-300"
                      onclick="document.getElementById('photo').click()">
                     <x-heroicon-o-photo class="w-8 h-8 mx-auto mb-2 text-warm-400" />
                     <p class="text-sm text-warm-500">Click to upload a photo</p>
@@ -108,7 +104,7 @@
             </div>
 
             {{-- Submit --}}
-            <button type="submit" data-test="review-submission-form-submit" class="w-full py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
+            <button type="submit" data-test="review-submission-form-submit" class="w-full py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-warm-500 text-warm-900 font-display">
                 {{ $content['submit_button'] ?? 'Submit Review' }}
             </button>
         </form>

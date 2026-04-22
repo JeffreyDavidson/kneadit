@@ -71,6 +71,18 @@ class Activity extends Page
             ?? '#d4920c';
     }
 
+    public static function getEventIconColorClass(string $event): string
+    {
+        return PlatformEventType::tryFrom($event)?->getIconColorClass()
+            ?? 'text-honey';
+    }
+
+    public static function getEventBorderColorClass(string $event): string
+    {
+        return PlatformEventType::tryFrom($event)?->getBorderColorClass()
+            ?? 'border-honey';
+    }
+
     // ── Admin Actions (Audit Trail) Methods ──
 
     /** @return LengthAwarePaginator<int, AdminAuditLog> */
@@ -166,6 +178,18 @@ class Activity extends Page
             'impersonated' => '#f59e0b',
             'exported_data', 'toggled_maintenance' => '#6b7280',
             default => '#6b7280',
+        };
+    }
+
+    public static function getActionColorClass(string $action): string
+    {
+        return match ($action) {
+            'created_tenant', 'updated_tenant', 'deleted_tenant', 'activated', 'deactivated' => 'bg-blue-500',
+            'changed_plan', 'extended_trial' => 'bg-green-500',
+            'sent_announcement', 'sent_campaign', 'sent_message' => 'bg-purple-500',
+            'impersonated' => 'bg-amber-500',
+            'exported_data', 'toggled_maintenance' => 'bg-gray-500',
+            default => 'bg-gray-500',
         };
     }
 

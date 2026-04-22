@@ -15,8 +15,8 @@
 
 <x-filament-panels::page>
     {{-- Subtitle --}}
-    <div style="margin-bottom: 1.5rem;">
-        <p style="color: #8b6844; font-size: 0.875rem; margin: 0;">Monitor which bakers have completed their setup</p>
+    <div class="mb-6">
+        <p class="text-cinnamon text-sm m-0">Monitor which bakers have completed their setup</p>
     </div>
 
     {{-- Summary Stats --}}
@@ -27,56 +27,53 @@
     </div>
 
     {{-- Tenant Cards --}}
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1rem;">
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-4">
         @foreach ($tenants as $tenant)
             @php
                 $pct = round(($tenant['completed'] / $tenant['total']) * 100);
-                if ($tenant['completed'] <= 2) {
-                    $statusColor = '#ef4444';
-                } elseif ($tenant['completed'] <= 5) {
-                    $statusColor = '#f59e0b';
-                } else {
-                    $statusColor = '#10b981';
-                }
+                $statusTextClass = $tenant['completed'] <= 2 ? 'text-red-500' : ($tenant['completed'] <= 5 ? 'text-amber-500' : 'text-emerald-500');
+                $statusBgClass = $tenant['completed'] <= 2 ? 'bg-red-500' : ($tenant['completed'] <= 5 ? 'bg-amber-500' : 'bg-emerald-500');
+                $planClass = match ($tenant['plan']) {
+                    'pro' => 'bg-honey text-warm-black',
+                    'enterprise' => 'bg-golden text-warm-black',
+                    default => 'bg-honey/15 text-butter',
+                };
             @endphp
             <x-central.card>
                 {{-- Header --}}
                 <div class="flex justify-between items-start mb-3">
                     <div>
-                        <div style="font-size: 1rem; font-weight: 700; color: #ffffff;">{{ $tenant['name'] }}</div>
+                        <div class="text-base font-bold text-white">{{ $tenant['name'] }}</div>
                         <x-central.eyebrow>{{ $tenant['subdomain'] }}.kneadit.app</x-central.eyebrow>
                     </div>
-                    <span style="display: inline-block; padding: 0.125rem 0.625rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
-                        @if ($tenant['plan'] === 'pro') background: #d4920c; color: #0c0a09;
-                        @elseif ($tenant['plan'] === 'enterprise') background: #e8b04a; color: #0c0a09;
-                        @else background: rgba(212,146,12,0.15); color: #f5d88e; @endif">
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-[0.1em] {{ $planClass }}">
                         {{ $tenant['plan'] }}
                     </span>
                 </div>
 
                 {{-- Owner --}}
-                <div style="font-size: 0.8rem; color: #faf0d6; margin-bottom: 0.75rem;">
-                    {{ $tenant['owner'] }} · <span style="color: #8b6844;">{{ $tenant['days_since_signup'] }} days ago</span>
+                <div class="text-[0.8rem] text-parchment mb-3">
+                    {{ $tenant['owner'] }} · <span class="text-cinnamon">{{ $tenant['days_since_signup'] }} days ago</span>
                 </div>
 
                 {{-- Divider --}}
-                <div style="border-top: 1px solid rgba(212,146,12,0.08); margin-bottom: 0.75rem;"></div>
+                <div class="border-t border-honey/8 mb-3"></div>
 
                 {{-- Progress Bar --}}
-                <div style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <div class="mb-4">
+                    <div class="flex justify-between mb-1">
                         <x-central.eyebrow as="span">Progress</x-central.eyebrow>
-                        <span style="font-size: 0.75rem; font-weight: 700; color: {{ $statusColor }};">{{ $tenant['completed'] }}/{{ $tenant['total'] }}</span>
+                        <span class="text-xs font-bold {{ $statusTextClass }}">{{ $tenant['completed'] }}/{{ $tenant['total'] }}</span>
                     </div>
-                    <div style="background: rgba(212,146,12,0.08); border-radius: 9999px; height: 6px; overflow: hidden;">
-                        <div style="height: 100%; border-radius: 9999px; background: {{ $statusColor }}; width: {{ $pct }}%;"></div>
+                    <div class="bg-honey/8 rounded-full h-1.5 overflow-hidden">
+                        <div class="h-full rounded-full {{ $statusBgClass }}" style="width: {{ $pct }}%;"></div>
                     </div>
                 </div>
 
                 {{-- Checklist --}}
-                <div style="display: flex; flex-direction: column; gap: 0.375rem;">
+                <div class="flex flex-col gap-1.5">
                     @foreach ($tenant['checks'] as $key => $passed)
-                        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;">
+                        <div class="flex items-center gap-2 text-[0.8rem]">
                             @if ($passed)
                                 <x-heroicon-o-check class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
                                 <span class="text-parchment">{{ $checkLabels[$key] }}</span>

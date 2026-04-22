@@ -13,7 +13,7 @@ test('storefront layout has pwa install prompt', function () {
 test('pwa prompt hidden by default', function () {
     $layout = file_get_contents(resource_path('views/components/layouts/storefront.blade.php'));
 
-    expect($layout)->toContain('id="pwaInstall" style="display:none');
+    expect($layout)->toMatch('/id="pwaInstall"\s+class="hidden /');
 });
 
 test('pwa prompt has dismiss functionality', function () {

@@ -1,15 +1,16 @@
 <x-filament-panels::page>
     {{-- Tab Switcher --}}
-    <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+    <div class="flex gap-2 mb-6">
         @foreach ([
             'compare' => 'Compare',
             'leaderboard' => 'Leaderboard',
         ] as $key => $label)
-            <button
-                wire:click="$set('activeTab', '{{ $key }}')"
-                style="padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; border: 1px solid rgba(212,146,12,0.25); cursor: pointer;
-                    {{ $activeTab === $key ? 'background: #d4920c; color: #1c1410;' : 'background: transparent; color: #d4920c;' }}"
-            >
+            <button wire:click="$set('activeTab', '{{ $key }}')"
+                @class([
+                    'px-5 py-2 rounded-lg text-[0.8rem] font-bold border border-honey/25 cursor-pointer',
+                    'bg-honey text-warm-black' => $activeTab === $key,
+                    'bg-transparent text-honey' => $activeTab !== $key,
+                ])>
                 {{ $label }}
             </button>
         @endforeach
@@ -37,7 +38,7 @@
             <x-central.card title="Select Tenants to Compare" class="mb-6">
                 <div class="flex gap-4 flex-wrap items-end">
                 @for ($i = 1; $i <= 3; $i++)
-                    <div style="flex: 1; min-width: 200px;">
+                    <div class="flex-1 min-w-[200px]">
                         <x-central.eyebrow as="label" class="block mb-1">Tenant {{ $i }}</x-central.eyebrow>
                         <x-central.select x-model="tenant{{ $i }}">
                             <option value="">— Select —</option>
@@ -53,7 +54,14 @@
         </div>
 
         @if (count($comparisonData) > 0)
-            <div style="display: grid; grid-template-columns: repeat({{ count($comparisonData) }}, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+            @php
+                $gridCols = match (count($comparisonData)) {
+                    1 => 'grid-cols-1',
+                    2 => 'grid-cols-2',
+                    default => 'grid-cols-3',
+                };
+            @endphp
+            <div class="grid gap-4 mb-6 {{ $gridCols }}">
                 @foreach ($comparisonData as $tenant)
                     @php
                         $planColor = match ($tenant['plan']) {
@@ -68,7 +76,7 @@
                             <x-central.badge :color="$planColor">{{ $tenant['plan'] }}</x-central.badge>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; flex: 1;">
+                        <div class="flex flex-col gap-2 flex-1">
                             @php
                                 $rows = [
                                     ['label' => 'Total Orders', 'value' => $tenant['total_orders']],
@@ -96,20 +104,20 @@
                 @php
                     $chartMetrics = ['total_orders', 'total_products', 'health_score'];
                     $chartLabels = ['Total Orders', 'Total Products', 'Health Score'];
-                    $barColors = ['#d4920c', '#e8b04a', '#f5d88e'];
+                    $barClasses = ['bg-honey', 'bg-golden', 'bg-butter'];
                 @endphp
                 @foreach ($chartMetrics as $idx => $metric)
                     @php $maxVal = max(array_column($comparisonData, $metric)) ?: 1; @endphp
-                    <div style="margin-bottom: 1.5rem;">
+                    <div class="mb-6">
                         <x-central.eyebrow class="mb-2">{{ $chartLabels[$idx] }}</x-central.eyebrow>
                         @foreach ($comparisonData as $tIdx => $tenant)
                             @php $pct = round(($tenant[$metric] / $maxVal) * 100); @endphp
-                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
-                                <span style="color: #faf0d6; font-size: 0.75rem; width: 120px; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $tenant['name'] }}</span>
-                                <div style="flex: 1; background: #2a1f18; border-radius: 4px; height: 8px; overflow: hidden;">
-                                    <div style="height: 100%; width: {{ $pct }}%; background: {{ $barColors[$tIdx % 3] }}; border-radius: 4px; transition: width 0.3s;"></div>
+                            <div class="flex items-center gap-3 mb-1.5">
+                                <span class="text-parchment text-xs w-[120px] text-right truncate">{{ $tenant['name'] }}</span>
+                                <div class="flex-1 bg-espresso rounded h-2 overflow-hidden">
+                                    <div class="h-full rounded transition-all duration-300 {{ $barClasses[$tIdx % 3] }}" style="width: {{ $pct }}%;"></div>
                                 </div>
-                                <span style="color: #faf0d6; font-size: 0.8rem; font-weight: 700; width: 50px;">{{ $tenant[$metric] }}</span>
+                                <span class="text-parchment text-[0.8rem] font-bold w-[50px]">{{ $tenant[$metric] }}</span>
                             </div>
                         @endforeach
                     </div>
@@ -142,32 +150,27 @@
 
         @if (count($top3) >= 3)
             <x-central.card class="mb-6">
-                <div style="color: white; font-weight: 700; font-size: 1rem; text-align: center; margin-bottom: 1.5rem;">
+                <div class="text-white font-bold text-base text-center mb-6">
                     <x-heroicon-s-star class="w-5 h-5 inline-block align-middle mr-1 text-honey" />
                     Top 3 Bakeries
                 </div>
-                <div style="display: flex; align-items: flex-end; justify-content: center; gap: 1rem; padding-top: 1rem;">
-                    <div style="text-align: center; width: 160px;">
-                        <div style="color: #faf0d6; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">{{ $top3[1]['name'] }}</div>
-                        <div style="color: #8b6844; font-size: 0.75rem; margin-bottom: 0.5rem;">{{ $top3[1]['total_orders'] }} orders</div>
-                        <div style="background: linear-gradient(180deg, #94a3b8, #64748b); height: {{ $podiumHeights[1] }}px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-size: 1.75rem; font-weight: 700;">#2</span>
+                @php
+                    $podium = [
+                        ['rank' => 2, 'tenant' => $top3[1], 'width' => 'w-40', 'gradient' => 'from-slate-400 to-slate-500', 'nameColor' => 'text-parchment', 'ordersColor' => 'text-cinnamon', 'fontSize' => 'text-[0.875rem]'],
+                        ['rank' => 1, 'tenant' => $top3[0], 'width' => 'w-[180px]', 'gradient' => 'from-golden to-honey', 'nameColor' => 'text-white', 'ordersColor' => 'text-honey', 'fontSize' => 'text-base'],
+                        ['rank' => 3, 'tenant' => $top3[2], 'width' => 'w-40', 'gradient' => 'from-amber-700 to-amber-800', 'nameColor' => 'text-parchment', 'ordersColor' => 'text-cinnamon', 'fontSize' => 'text-[0.875rem]'],
+                    ];
+                @endphp
+                <div class="flex items-end justify-center gap-4 pt-4">
+                    @foreach ($podium as $idx => $entry)
+                        <div class="text-center {{ $entry['width'] }}">
+                            <div class="font-bold mb-2 {{ $entry['nameColor'] }} {{ $entry['fontSize'] }}">{{ $entry['tenant']['name'] }}</div>
+                            <div class="text-xs mb-2 {{ $entry['ordersColor'] }}">{{ $entry['tenant']['total_orders'] }} orders</div>
+                            <div class="rounded-t-lg flex items-center justify-center bg-gradient-to-b {{ $entry['gradient'] }}" style="height: {{ $podiumHeights[match($entry['rank']) { 1 => 0, 2 => 1, 3 => 2 }] }}px;">
+                                <span class="text-white text-[1.75rem] font-bold">#{{ $entry['rank'] }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div style="text-align: center; width: 180px;">
-                        <div style="color: white; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem;">{{ $top3[0]['name'] }}</div>
-                        <div style="color: #d4920c; font-size: 0.75rem; margin-bottom: 0.5rem;">{{ $top3[0]['total_orders'] }} orders</div>
-                        <div style="background: linear-gradient(180deg, #e8b04a, #d4920c); height: {{ $podiumHeights[0] }}px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-size: 1.75rem; font-weight: 700;">#1</span>
-                        </div>
-                    </div>
-                    <div style="text-align: center; width: 160px;">
-                        <div style="color: #faf0d6; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">{{ $top3[2]['name'] }}</div>
-                        <div style="color: #8b6844; font-size: 0.75rem; margin-bottom: 0.5rem;">{{ $top3[2]['total_orders'] }} orders</div>
-                        <div style="background: linear-gradient(180deg, #b45309, #92400e); height: {{ $podiumHeights[2] }}px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-size: 1.75rem; font-weight: 700;">#3</span>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </x-central.card>
         @endif

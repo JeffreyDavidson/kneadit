@@ -37,6 +37,28 @@ enum PlatformEventType: string implements HasColor, HasIcon, HasLabel
         };
     }
 
+    public function getIconColorClass(): string
+    {
+        return match ($this) {
+            self::TenantCreated => 'text-honey',
+            self::TenantDeactivated => 'text-red-500',
+            self::PlanChanged => 'text-golden',
+            self::StorefrontToggled => 'text-cinnamon',
+            self::TrialExpired => 'text-butter',
+        };
+    }
+
+    public function getBorderColorClass(): string
+    {
+        return match ($this) {
+            self::TenantCreated => 'border-honey',
+            self::TenantDeactivated => 'border-red-500',
+            self::PlanChanged => 'border-golden',
+            self::StorefrontToggled => 'border-cinnamon',
+            self::TrialExpired => 'border-butter',
+        };
+    }
+
     public function getIcon(): Heroicon
     {
         return match ($this) {
