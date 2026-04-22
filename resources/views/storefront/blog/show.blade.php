@@ -12,7 +12,7 @@
         @if ($post->tags)
             <div class="flex flex-wrap gap-2 mb-4">
                 @foreach ($post->tags as $tag)
-                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-warm-500/15 text-warm-500">{{ $tag }}</span>
+                    <x-storefront.pill tone="subtle" size="sm">{{ $tag }}</x-storefront.pill>
                 @endforeach
             </div>
         @endif
