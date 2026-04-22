@@ -33,7 +33,7 @@
 
         {{-- Points Lookup --}}
         <div class="max-w-xl mx-auto mb-16">
-            <div class="rounded-2xl p-8" style="background: white; border: 1px solid var(--warm-200); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06);">
+            <div class="rounded-2xl p-8 bg-white border border-warm-200 shadow-2xl">
                 <h2 class="font-display text-2xl font-bold mb-4 text-center text-warm-900">{{ $vm->content['check_heading'] ?? 'Check Your Points' }}</h2>
                 <form action="{{ route('rewards.check') }}" method="POST" class="flex flex-col sm:flex-row gap-3" data-test="loyalty-lookup-form">
                     @csrf
@@ -56,7 +56,7 @@
             {{-- Points Display --}}
             <div class="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-10">
                 <div class="rounded-2xl p-8 text-center relative overflow-hidden bg-warm-900">
-                    <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-[0.06]" style="background: var(--warm-500); transform: translate(30%, -30%);"></div>
+                    <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-[0.06] bg-warm-500 translate-x-[30%] -translate-y-[30%]"></div>
                     <p class="uppercase tracking-[0.25em] text-xs font-semibold mb-2 text-warm-500">Available Points</p>
                     <p class="font-display text-5xl font-bold text-warm-500">{{ $vm->formattedTotalPoints }}</p>
                 </div>
@@ -74,7 +74,7 @@
                     <span class="text-sm font-bold text-warm-500">{{ $vm->formattedTotalPoints }} / {{ $vm->formattedNextRewardRequired() }} pts</span>
                 </div>
                 <div class="w-full rounded-full h-3 overflow-hidden bg-warm-200">
-                    <div class="h-full rounded-full transition-all duration-700" style="background: linear-gradient(90deg, var(--warm-500), var(--warm-400)); width: {{ $vm->nextRewardProgressPercent() }}%;"></div>
+                    <div class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-warm-500 to-warm-400" style="width: {{ $vm->nextRewardProgressPercent() }}%;"></div>
                 </div>
                 <p class="text-xs mt-2 text-right text-warm-500">{{ $vm->formattedPointsToNextReward() }} points to go!</p>
             </div>
@@ -83,12 +83,12 @@
             {{-- Transaction History --}}
             @if ($vm->history->count())
             <div class="max-w-2xl mx-auto rounded-2xl overflow-hidden bg-white border border-warm-200">
-                <div class="px-6 py-4" style="border-bottom: 1px solid var(--warm-200);">
+                <div class="px-6 py-4 border-b border-warm-200">
                     <h3 class="font-display text-lg font-bold text-warm-900">Points History</h3>
                 </div>
-                <div class="divide-y" style="border-color: var(--warm-100);">
+                <div class="divide-y divide-warm-100">
                     @foreach ($vm->history as $entry)
-                    <div class="flex justify-between items-center px-6 py-4 hover:bg-opacity-50 transition-colors" style="hover: var(--warm-50);">
+                    <div class="flex justify-between items-center px-6 py-4 hover:bg-warm-50 transition-colors">
                         <div>
                             <p class="font-semibold text-warm-900">{{ $entry->description }}</p>
                             <p class="text-sm text-warm-500">{{ $entry->created_at->format('M j, Y') }}</p>
@@ -119,8 +119,11 @@
             </div>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
                 @foreach ($vm->rewards as $reward)
-                <div class="rounded-2xl p-6 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden"
-                     style="background: white; border: 2px solid {{ $vm->canRedeem($reward) ? 'var(--warm-500)' : 'var(--warm-200)' }};">
+                <div @class([
+                    'rounded-2xl p-6 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden bg-white border-2',
+                    'border-warm-500' => $vm->canRedeem($reward),
+                    'border-warm-200' => ! $vm->canRedeem($reward),
+                ])>
                     @if ($vm->canRedeem($reward))
                     <div class="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold bg-warm-500 text-warm-900">Redeemable!</div>
                     @endif
