@@ -57,7 +57,7 @@
 
         {{-- Hero Search (Intercom/Stripe style) --}}
         <div class="bg-gradient-to-br from-brand-900 via-brand-700 to-brand-600 rounded-2xl px-12 py-14 mb-10 text-center relative overflow-hidden">
-            <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px); background-size: 60px 60px;"></div>
+            <div class="absolute inset-0 opacity-[0.04] bg-[radial-gradient(circle_at_20%_50%,white_1px,transparent_1px),radial-gradient(circle_at_80%_20%,white_1px,transparent_1px)] bg-[length:60px_60px]"></div>
             <div class="relative z-10">
                 <h2 class="text-white text-3xl font-extrabold m-0 mb-1.5 tracking-tight">How can we help?</h2>
                 <p class="text-white/55 m-0 mb-7 text-[0.9rem]">Search our knowledge base or browse topics below</p>
