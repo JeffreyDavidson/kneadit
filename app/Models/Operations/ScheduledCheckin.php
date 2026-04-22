@@ -27,14 +27,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin whereDaysAfterSignup($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ScheduledCheckin whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

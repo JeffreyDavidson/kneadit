@@ -27,15 +27,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog whereCampaignId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog whereOpenedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog whereSentAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|EmailCampaignLog whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */

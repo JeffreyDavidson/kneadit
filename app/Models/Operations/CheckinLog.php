@@ -23,12 +23,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog whereCheckinId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog whereSentAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog whereTenantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CheckinLog whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
