@@ -9,9 +9,9 @@
 
     <div class="relative z-10 text-center px-4 py-24 md:py-32 md:pt-24">
         {{-- Animated success checkmark --}}
-        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 hero-fade-up bg-warm-500/15 border-2 border-warm-500 [animation-delay:0.3s]">
+        <x-storefront.icon-circle size="xl" variant="bold" inline class="mb-8 hero-fade-up [animation-delay:0.3s]">
             <x-heroicon-o-check class="w-12 h-12 text-warm-500" stroke-width="2.5" />
-        </div>
+        </x-storefront.icon-circle>
 
         <x-storefront.eyebrow class="hero-fade-up mb-4 [animation-delay:0.5s]">{{ $content['hero_eyebrow'] ?? 'Order Placed' }}</x-storefront.eyebrow>
 
@@ -142,9 +142,9 @@
             <div class="grid md:grid-cols-3 gap-8">
                 @foreach ($journeySteps as $stepIndex => $step)
                 <div class="text-center">
-                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-warm-500/15 border-[1.5px] border-warm-500/30">
+                    <x-storefront.icon-circle size="md" variant="tinted" class="mx-auto mb-4">
                         <span class="font-display text-xl font-bold text-warm-400">{{ $stepIndex + 1 }}</span>
-                    </div>
+                    </x-storefront.icon-circle>
                     <h3 class="font-display text-lg font-semibold mb-2 text-warm-200">
                         @if (isset($step['description_delivery']) || isset($step['description_pickup']))
                             {{ $order->delivery_type === DeliveryType::Delivery ? 'Delivery' : 'Pickup' }}

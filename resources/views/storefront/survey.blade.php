@@ -6,9 +6,9 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Survey submitted" image-class="hero-img" min-height="60vh">
 
     <div class="relative z-10 max-w-lg mx-auto text-center px-4 py-28">
-        <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center hero-fade-up bg-warm-500/15 border-2 border-warm-500 [animation-delay:0.3s]">
+        <x-storefront.icon-circle size="lg" variant="bold" class="mx-auto mb-6 hero-fade-up [animation-delay:0.3s]">
             <x-heroicon-o-check class="w-10 h-10 text-warm-500" stroke-width="2.5" />
-        </div>
+        </x-storefront.icon-circle>
         <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up text-warm-100 [animation-delay:0.5s]">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
         <p class="text-lg mb-10 hero-fade-up text-warm-400 [animation-delay:0.7s]">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
         <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hero-fade-up bg-warm-500 text-warm-900 [animation-delay:0.9s]">
