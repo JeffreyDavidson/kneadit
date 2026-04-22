@@ -34,4 +34,37 @@ enum AnnouncementType: string implements HasColor, HasLabel
             self::Maintenance => 'Maintenance',
         };
     }
+
+    public function bgClass(): string
+    {
+        return match ($this) {
+            self::Info => 'bg-blue-500/15',
+            self::Warning => 'bg-honey/15',
+            self::Success => 'bg-emerald-500/15',
+            self::Holiday => 'bg-gradient-to-br from-[#c41e3a] to-[#1a6b2a]',
+            self::Maintenance => 'bg-gray-500/15',
+        };
+    }
+
+    public function textClass(): string
+    {
+        return match ($this) {
+            self::Info => 'text-blue-500',
+            self::Warning => 'text-honey',
+            self::Success => 'text-emerald-500',
+            self::Holiday => 'text-white',
+            self::Maintenance => 'text-gray-500',
+        };
+    }
+
+    public function borderClass(): string
+    {
+        return match ($this) {
+            self::Info => 'border-blue-500/25',
+            self::Warning => 'border-honey/25',
+            self::Success => 'border-emerald-500/25',
+            self::Holiday => 'border-[#ffd700]',
+            self::Maintenance => 'border-gray-500/25',
+        };
+    }
 }
