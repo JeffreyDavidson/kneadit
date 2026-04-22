@@ -13,10 +13,12 @@ use App\Models\Inventory\Category;
 use App\Models\Staff\User;
 use Illuminate\Support\Facades\Date;
 
+use function Pest\Laravel\assertDatabaseHas;
+
 beforeEach(function () {
     setUpTenantTest();
 
-    $this->user = User::factory()->owner()->create([
+    test()->user = User::factory()->owner()->create([
 
     ]);
 });
@@ -82,7 +84,7 @@ test('product step creates product in database', function () {
         'category_id' => (string) $category->id,
     ]);
 
-    $this->assertDatabaseHas('products', [
+    assertDatabaseHas('products', [
         'name' => 'Sourdough Loaf',
         'slug' => 'sourdough-loaf',
         'price' => 12.50,
@@ -106,7 +108,7 @@ test('product step generates slug from name', function () {
         'category_id' => (string) $category->id,
     ]);
 
-    $this->assertDatabaseHas('products', [
+    assertDatabaseHas('products', [
         'slug' => 'double-chocolate-layer-cake',
     ]);
 });
@@ -427,7 +429,7 @@ test('full onboarding flow saves all settings', function () {
         ->and(settings('paypal_client_id'))->toBe('test_client_id')
         ->and(settings('onboarding_completed_at'))->not->toBeNull();
 
-    $this->assertDatabaseHas('products', [
+    assertDatabaseHas('products', [
         'name' => 'Chocolate Chip Cookie',
         'price' => 3.50,
     ]);
