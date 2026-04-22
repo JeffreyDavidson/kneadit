@@ -32,7 +32,7 @@
             <div class="flex gap-3">
                 <input type="email" name="email" id="email" class="track-input flex-1"
                        placeholder="you@example.com" value="{{ old('email', $email ?? '') }}" required>
-                <button type="submit" class="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl flex-shrink-0" style="background: var(--warm-500); color: var(--warm-900); font-family: var(--font-display);">
+                <button type="submit" class="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl flex-shrink-0 bg-warm-500 text-warm-900 font-display">
                     {{ $content['lookup_button'] ?? 'Look Up' }}
                 </button>
             </div>
@@ -48,7 +48,7 @@
     {{-- Empty state --}}
     <x-storefront.dark-section padding="py-24">
         <div class="text-center max-w-md mx-auto px-4">
-            <div class="w-20 h-20 rounded-full mx-auto mb-8 flex items-center justify-center" style="background: rgba(212,146,12,0.1); border: 1px solid rgba(212,146,12,0.2);">
+            <div class="w-20 h-20 rounded-full mx-auto mb-8 flex items-center justify-center bg-warm-500/10 border border-warm-500/20">
                 <x-heroicon-o-magnifying-glass class="w-8 h-8 text-warm-500" />
             </div>
             <p class="font-display text-3xl md:text-4xl font-bold mb-4 text-warm-100">{{ $content['empty_heading'] ?? 'No orders found' }}</p>
@@ -65,18 +65,18 @@
     <x-storefront.dark-section padding="py-20 md:py-24" radial-position="30% 50%">
         <div class="max-w-4xl mx-auto px-4">
             <div class="flex items-center gap-6 mb-12">
-                <div class="flex-1 h-px" style="background: rgba(139,104,68,0.25);"></div>
+                <div class="flex-1 h-px bg-warm-700/25"></div>
                 <span class="uppercase tracking-[0.25em] text-xs font-semibold whitespace-nowrap text-warm-500">
                     {{ $orders->count() }} {{ Str::plural('order', $orders->count()) }} for {{ $email }}
                 </span>
-                <div class="flex-1 h-px" style="background: rgba(139,104,68,0.25);"></div>
+                <div class="flex-1 h-px bg-warm-700/25"></div>
             </div>
 
             <div class="space-y-8">
                 @foreach ($trackedOrders as $tracked)
                     <div class="order-card rounded-2xl overflow-hidden bg-warm-800 border border-warm-700/20">
                         {{-- Order header --}}
-                        <div class="px-6 md:px-8 py-6 flex flex-wrap items-start justify-between gap-4" style="border-bottom: 1px solid rgba(139,104,68,0.15);">
+                        <div class="px-6 md:px-8 py-6 flex flex-wrap items-start justify-between gap-4 border-b border-warm-700/15">
                             <div>
                                 <h3 class="font-display text-xl font-bold text-warm-100">
                                     Order {{ $tracked->order->order_number }}
@@ -88,7 +88,7 @@
                             <div class="text-right">
                                 <p class="font-display text-2xl font-bold text-warm-400">@money($tracked->order->total)</p>
                                 @if ($tracked->isCancelled)
-                                    <span class="inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider" style="background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3);">Cancelled</span>
+                                    <span class="inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">Cancelled</span>
                                 @endif
                             </div>
                         </div>
@@ -100,22 +100,30 @@
                                 {{-- Desktop stepper --}}
                                 <div class="hidden sm:block">
                                     <div class="flex items-center justify-between relative">
-                                        <div class="absolute top-4 left-0 right-0 h-1 rounded-full" style="background: rgba(139,104,68,0.15);"></div>
+                                        <div class="absolute top-4 left-0 right-0 h-1 rounded-full bg-warm-700/15"></div>
                                         @if ($tracked->currentStepIndex > 0)
-                                        <div class="absolute top-4 left-0 h-1 rounded-full transition-all duration-700" style="background: var(--warm-500); width: {{ $tracked->progressPercentage() }}%;"></div>
+                                        <div class="absolute top-4 left-0 h-1 rounded-full transition-all duration-700 bg-warm-500" style="width: {{ $tracked->progressPercentage() }}%;"></div>
                                         @endif
 
                                         @foreach ($trackableStatuses as $i => $step)
                                             <div class="relative z-10 flex flex-col items-center" style="width: {{ 100 / count($trackableStatuses) }}%;">
-                                                <div class="track-stepper-dot w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold"
-                                                     style="background: {{ $tracked->isStepCompleted($i) ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }}; color: {{ $tracked->isStepCompleted($i) ? 'var(--warm-900)' : 'var(--warm-600)' }}; {{ $tracked->isCurrentStep($i) ? 'box-shadow: 0 0 0 4px rgba(212,146,12,0.2);' : '' }}">
+                                                <div @class([
+                                                    'track-stepper-dot w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold',
+                                                    'bg-warm-500 text-warm-900' => $tracked->isStepCompleted($i),
+                                                    'bg-warm-700/15 text-warm-600' => ! $tracked->isStepCompleted($i),
+                                                    'ring-4 ring-warm-500/20' => $tracked->isCurrentStep($i),
+                                                ])>
                                                     @if ($tracked->isStepCompleted($i) && !$tracked->isCurrentStep($i))
                                                         <x-heroicon-o-check class="w-4 h-4" stroke-width="3" />
                                                     @else
                                                         {{ $i + 1 }}
                                                     @endif
                                                 </div>
-                                                <span class="mt-2 text-xs font-medium text-center" style="color: {{ $tracked->isStepCompleted($i) ? 'var(--warm-300)' : 'var(--warm-600)' }};">
+                                                <span @class([
+                                                    'mt-2 text-xs font-medium text-center',
+                                                    'text-warm-300' => $tracked->isStepCompleted($i),
+                                                    'text-warm-600' => ! $tracked->isStepCompleted($i),
+                                                ])>
                                                     {{ $step->getLabel() }}
                                                 </span>
                                             </div>
@@ -127,20 +135,31 @@
                                 <div class="sm:hidden space-y-3">
                                     @foreach ($trackableStatuses as $i => $step)
                                         <div class="flex items-center gap-3">
-                                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
-                                                 style="background: {{ $tracked->isStepCompleted($i) ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }}; color: {{ $tracked->isStepCompleted($i) ? 'var(--warm-900)' : 'var(--warm-600)' }};">
+                                            <div @class([
+                                                'w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0',
+                                                'bg-warm-500 text-warm-900' => $tracked->isStepCompleted($i),
+                                                'bg-warm-700/15 text-warm-600' => ! $tracked->isStepCompleted($i),
+                                            ])>
                                                 @if ($tracked->isStepCompleted($i) && !$tracked->isCurrentStep($i))
                                                     <x-heroicon-o-check class="w-3.5 h-3.5" stroke-width="3" />
                                                 @else
                                                     {{ $i + 1 }}
                                                 @endif
                                             </div>
-                                            <span class="text-sm font-medium" style="color: {{ $tracked->isStepCompleted($i) ? 'var(--warm-200)' : 'var(--warm-600)' }};">
+                                            <span @class([
+                                                'text-sm font-medium',
+                                                'text-warm-200' => $tracked->isStepCompleted($i),
+                                                'text-warm-600' => ! $tracked->isStepCompleted($i),
+                                            ])>
                                                 {{ $step->getLabel() }}
                                             </span>
                                         </div>
                                         @if ($i < count($trackableStatuses) - 1)
-                                            <div class="ml-3 w-0.5 h-3" style="background: {{ $tracked->isStepCompleted($i) && !$tracked->isCurrentStep($i) ? 'var(--warm-500)' : 'rgba(139,104,68,0.15)' }};"></div>
+                                            <div @class([
+                                                'ml-3 w-0.5 h-3',
+                                                'bg-warm-500' => $tracked->isStepCompleted($i) && ! $tracked->isCurrentStep($i),
+                                                'bg-warm-700/15' => ! ($tracked->isStepCompleted($i) && ! $tracked->isCurrentStep($i)),
+                                            ])></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -150,12 +169,12 @@
                             {{-- Items Ordered --}}
                             <div class="pt-6 border-t border-warm-700/15">
                                 <div class="flex items-center gap-3 mb-4">
-                                    <span class="block w-6 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
+                                    <span class="block w-6 h-px bg-warm-500 opacity-50"></span>
                                     <span class="text-xs uppercase tracking-[0.2em] font-semibold text-warm-500">{{ $content['items_label'] ?? 'Items Ordered' }}</span>
                                 </div>
                                 <div class="space-y-3">
                                     @foreach ($tracked->order->orderItems as $item)
-                                        <div class="flex justify-between items-center py-2 px-4 rounded-xl" style="background: rgba(139,104,68,0.06);">
+                                        <div class="flex justify-between items-center py-2 px-4 rounded-xl bg-warm-700/5">
                                             <span class="text-sm text-warm-200">
                                                 {{ $item->product->name ?? 'Product' }}
                                                 <span class="font-medium text-warm-500">× {{ $item->quantity }}</span>
@@ -169,10 +188,10 @@
                             {{-- Messages --}}
                             <div class="pt-6 border-t border-warm-700/15">
                                 <div class="flex items-center gap-3 mb-4">
-                                    <span class="block w-6 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
+                                    <span class="block w-6 h-px bg-warm-500 opacity-50"></span>
                                     <span class="text-xs uppercase tracking-[0.2em] font-semibold text-warm-500">{{ $content['messages_label'] ?? 'Messages' }}</span>
                                 </div>
-                                <div id="messages-{{ $tracked->order->id }}" class="space-y-3 mb-4 max-h-64 overflow-y-auto rounded-xl p-4" style="background: rgba(139,104,68,0.06);">
+                                <div id="messages-{{ $tracked->order->id }}" class="space-y-3 mb-4 max-h-64 overflow-y-auto rounded-xl p-4 bg-warm-700/5">
                                     <p class="text-sm italic text-warm-600">Loading messages...</p>
                                 </div>
                                 <form onsubmit="sendOrderMessage(event, {{ $tracked->order->id }})" class="flex gap-2">
@@ -184,10 +203,7 @@
                             {{-- Reorder --}}
                             <div class="pt-6 flex justify-center border-t border-warm-700/15">
                                 <a href="{{ route('order.create') }}?reorder={{ $tracked->order->id }}"
-                                   class="inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:scale-105"
-                                   style="background: rgba(212,146,12,0.1); color: var(--warm-400); border: 1px solid rgba(212,146,12,0.25);"
-                                   onmouseover="this.style.background='var(--warm-500)';this.style.color='var(--warm-900)'"
-                                   onmouseout="this.style.background='rgba(212,146,12,0.1)';this.style.color='var(--warm-400)'">
+                                   class="inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 bg-warm-500/10 text-warm-400 border border-warm-500/25 hover:bg-warm-500 hover:text-warm-900 hover:border-warm-500">
                                     <x-heroicon-o-arrow-path class="w-4 h-4" stroke-width="2" />
                                     {{ $content['reorder_button'] ?? 'Order Again' }}
                                 </a>

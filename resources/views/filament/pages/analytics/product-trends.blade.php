@@ -1,33 +1,40 @@
 <x-filament-panels::page>
-    <style>
-        .trend-up { color: var(--status-success); font-weight: 700; }
-        .trend-down { color: var(--status-danger); font-weight: 700; }
-        .trend-flat { color: var(--brand-600); font-weight: 600; }
-    </style>
+    @php
+        $trendClass = fn (string $trend) => match ($trend) {
+            'up' => 'text-emerald-600 font-bold',
+            'down' => 'text-red-600 font-bold',
+            default => 'text-brand-600 font-semibold',
+        };
+        $trendArrow = fn (string $trend) => match ($trend) {
+            'up' => '↑',
+            'down' => '↓',
+            default => '→',
+        };
+    @endphp
 
-    <div style="max-width: 1200px; margin: 0 auto;">
+    <div class="max-w-[1200px] mx-auto">
         <x-admin.nav-controls :label="$this->monthLabel" prevClick="previousMonth" nextClick="nextMonth" prevLabel="← Previous" nextLabel="Next →" />
 
         @forelse ($this->trendsData as $group)
             <x-admin.card :title="$group['category']">
                 <x-admin.data-table data-admin-table>
                     <x-slot:head>
-                        <th style="text-align:left;">Product</th>
-                        <th style="text-align:right;">{{ $this->prevMonthLabel }}</th>
-                        <th style="text-align:right;">{{ $this->monthLabel }}</th>
-                        <th style="text-align:right;">Change</th>
-                        <th style="text-align:right;">Trend</th>
+                        <th class="text-left">Product</th>
+                        <th class="text-right">{{ $this->prevMonthLabel }}</th>
+                        <th class="text-right">{{ $this->monthLabel }}</th>
+                        <th class="text-right">Change</th>
+                        <th class="text-right">Trend</th>
                     </x-slot:head>
                     @foreach ($group['products'] as $product)
                         <tr>
                             <td>{{ $product['name'] }}</td>
-                            <td style="text-align:right;">{{ $product['previous'] }}</td>
-                            <td style="text-align:right;">{{ $product['current'] }}</td>
-                            <td style="text-align:right;">
-                                <span class="trend-{{ $product['trend'] }}">{{ $product['change'] > 0 ? '+' : '' }}{{ $product['change'] }}%</span>
+                            <td class="text-right">{{ $product['previous'] }}</td>
+                            <td class="text-right">{{ $product['current'] }}</td>
+                            <td class="text-right">
+                                <span class="{{ $trendClass($product['trend']) }}">{{ $product['change'] > 0 ? '+' : '' }}{{ $product['change'] }}%</span>
                             </td>
-                            <td style="text-align:right;">
-                                <span class="trend-{{ $product['trend'] }}" style="font-size:1rem;">{{ $product['trend'] === 'up' ? '↑' : ($product['trend'] === 'down' ? '↓' : '→') }}</span>
+                            <td class="text-right">
+                                <span class="text-base {{ $trendClass($product['trend']) }}">{{ $trendArrow($product['trend']) }}</span>
                             </td>
                         </tr>
                     @endforeach

@@ -27,7 +27,7 @@
         <div class="grid grid-cols-4 gap-4 mb-6">
             <x-central.stat-card label="Average Health" value-class="text-[1.75rem] text-white">{{ $stats['average'] }}</x-central.stat-card>
             <x-central.stat-card label="Healthy (>70)" value-class="text-[1.75rem] text-emerald-500">{{ $stats['healthy'] }}</x-central.stat-card>
-            <x-central.stat-card label="At Risk (40–70)" value-class="text-[1.75rem] text-amber-500">{{ $stats['at_risk'] }}</x-central.stat-card>
+            <x-central.stat-card label="At Risk (40-70)" value-class="text-[1.75rem] text-amber-500">{{ $stats['at_risk'] }}</x-central.stat-card>
             <x-central.stat-card label="Critical (<40)" value-class="text-[1.75rem] text-red-500">{{ $stats['critical'] }}</x-central.stat-card>
         </div>
 
@@ -35,16 +35,18 @@
             @foreach ($tenants as $tenant)
                 @php
                     $score = $tenant['health_score'];
-                    $color = $score > 70 ? '#10b981' : ($score >= 40 ? '#f59e0b' : '#ef4444');
+                    $textClass = $score > 70 ? 'text-emerald-500' : ($score >= 40 ? 'text-amber-500' : 'text-red-500');
+                    $borderClass = $score > 70 ? 'border-l-emerald-500' : ($score >= 40 ? 'border-l-amber-500' : 'border-l-red-500');
+                    $bgClass = $score > 70 ? 'bg-emerald-500' : ($score >= 40 ? 'bg-amber-500' : 'bg-red-500');
                 @endphp
-                <x-central.card style="border-left: 4px solid {{ $color }};" class="transition-transform">
+                <x-central.card class="transition-transform border-l-4 {{ $borderClass }}">
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <div class="font-bold text-white text-base">{{ $tenant['name'] }}</div>
                             <div class="text-cinnamon text-[0.8rem]">{{ $tenant['owner'] }}</div>
                         </div>
                         <div class="text-right">
-                            <div class="text-[1.75rem] font-bold leading-none" style="color: {{ $color }};">{{ $score }}</div>
+                            <div class="text-[1.75rem] font-bold leading-none {{ $textClass }}">{{ $score }}</div>
                             <div class="text-[0.7rem] text-cinnamon">/100</div>
                         </div>
                     </div>
@@ -66,7 +68,7 @@
                                 <span>{{ $factor['value'] }}/{{ $factor['max'] }}</span>
                             </div>
                             <div class="bg-espresso rounded h-2 overflow-hidden">
-                                <div class="h-full rounded" style="background: {{ $color }}; width: {{ $factor['max'] > 0 ? round(($factor['value'] / $factor['max']) * 100) : 0 }}%;"></div>
+                                <div class="h-full rounded {{ $bgClass }}" style="width: {{ $factor['max'] > 0 ? round(($factor['value'] / $factor['max']) * 100) : 0 }}%;"></div>
                             </div>
                         </div>
                     @endforeach
@@ -88,25 +90,25 @@
                 <div class="text-cinnamon mt-2">No churn alerts at this time.</div>
             </x-central.card>
         @else
-            <div style="display: grid; gap: 1rem;">
+            <div class="grid gap-4">
                 @foreach ($alerts as $alert)
                     @php
-                        $badgeColor = $alert['severity'] === 'critical' ? '#ef4444' : '#f59e0b';
-                        $badgeBg = $alert['severity'] === 'critical' ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)';
-                        $typeBadgeColors = [
-                            'trial_expiring' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#ef4444'],
-                            'no_login' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#f59e0b'],
-                            'no_orders' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#f59e0b'],
-                            'low_health' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#ef4444'],
+                        $borderClass = $alert['severity'] === 'critical' ? 'border-l-red-500' : 'border-l-amber-500';
+                        $typeBadgeClasses = [
+                            'trial_expiring' => 'bg-red-500/15 text-red-500',
+                            'no_login' => 'bg-amber-500/15 text-amber-500',
+                            'no_orders' => 'bg-amber-500/15 text-amber-500',
+                            'low_health' => 'bg-red-500/15 text-red-500',
                         ];
-                        $tb = $typeBadgeColors[$alert['type']] ?? ['bg' => $badgeBg, 'color' => $badgeColor];
+                        $defaultTypeClass = $alert['severity'] === 'critical' ? 'bg-red-500/15 text-red-500' : 'bg-amber-500/15 text-amber-500';
+                        $typeClass = $typeBadgeClasses[$alert['type']] ?? $defaultTypeClass;
                     @endphp
-                    <x-central.card style="border-left: 4px solid {{ $badgeColor }};">
+                    <x-central.card class="border-l-4 {{ $borderClass }}">
                         <div class="flex justify-between items-start flex-wrap gap-3">
                             <div class="flex-1 min-w-[200px]">
                                 <div class="flex items-center gap-3 mb-2">
                                     <span class="font-bold text-white text-base">{{ $alert['name'] }}</span>
-                                    <span class="inline-block rounded-full px-2.5 py-1 text-[0.7rem] font-semibold" style="background: {{ $tb['bg'] }}; color: {{ $tb['color'] }};">
+                                    <span class="inline-block rounded-full px-2.5 py-1 text-[0.7rem] font-semibold {{ $typeClass }}">
                                         {{ $alert['type_label'] }}
                                     </span>
                                 </div>
@@ -148,19 +150,19 @@
                 </p>
             </x-central.card>
         @else
-            <div style="margin-bottom: 1rem;">
-                <p style="color: #8b6844; font-size: 0.875rem;">
-                    <span style="color: #d4920c; font-weight: 700;">{{ $tenants->count() }}</span> tenant{{ $tenants->count() !== 1 ? 's' : '' }} approaching or at plan limits
+            <div class="mb-4">
+                <p class="text-cinnamon text-sm">
+                    <span class="text-honey font-bold">{{ $tenants->count() }}</span> tenant{{ $tenants->count() !== 1 ? 's' : '' }} approaching or at plan limits
                 </p>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1rem;">
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(380px,1fr))] gap-4">
                 @foreach ($tenants as $t)
                     <x-central.card :class="$t['at_limit'] ? 'border-red-500' : 'border-amber-500/30'" class="transition-transform">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <div class="flex items-center justify-between mb-4">
                             <div>
-                                <div style="color: white; font-size: 1rem; font-weight: 700; margin-bottom: 0.15rem;">{{ $t['name'] }}</div>
-                                <span style="color: #8b6844; font-size: 0.75rem;">{{ $t['plan'] }} Plan</span>
+                                <div class="text-white text-base font-bold mb-0.5">{{ $t['name'] }}</div>
+                                <span class="text-cinnamon text-xs">{{ $t['plan'] }} Plan</span>
                             </div>
                             @if ($t['at_limit'])
                                 <x-central.badge color="danger" :uppercase="false">At Limit</x-central.badge>
@@ -169,25 +171,27 @@
                             @endif
                         </div>
 
-                        <div style="margin-bottom: 0.75rem;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                        @php
+                            $pBarClass = $t['product_percent'] >= 100 ? 'bg-red-500' : ($t['product_percent'] >= 80 ? 'bg-amber-500' : 'bg-emerald-500');
+                            $oBarClass = $t['order_percent'] >= 100 ? 'bg-red-500' : ($t['order_percent'] >= 80 ? 'bg-amber-500' : 'bg-emerald-500');
+                        @endphp
+                        <div class="mb-3">
+                            <div class="flex justify-between mb-1">
                                 <x-central.eyebrow as="span">Products</x-central.eyebrow>
-                                <span style="color: #faf0d6; font-size: 0.75rem; font-weight: 600;">{{ $t['product_count'] }} / {{ $t['product_limit'] }}</span>
+                                <span class="text-parchment text-xs font-semibold">{{ $t['product_count'] }} / {{ $t['product_limit'] }}</span>
                             </div>
-                            <div style="background: #2a1f18; border-radius: 4px; height: 8px; overflow: hidden;">
-                                @php $pColor = $t['product_percent'] >= 100 ? '#ef4444' : ($t['product_percent'] >= 80 ? '#f59e0b' : '#10b981'); @endphp
-                                <div style="width: {{ min($t['product_percent'], 100) }}%; background: {{ $pColor }}; height: 100%; border-radius: 4px; transition: width 0.3s;"></div>
+                            <div class="bg-espresso rounded h-2 overflow-hidden">
+                                <div class="h-full rounded transition-all duration-300 {{ $pBarClass }}" style="width: {{ min($t['product_percent'], 100) }}%;"></div>
                             </div>
                         </div>
 
-                        <div style="margin-bottom: 1rem;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                        <div class="mb-4">
+                            <div class="flex justify-between mb-1">
                                 <x-central.eyebrow as="span">Orders This Month</x-central.eyebrow>
-                                <span style="color: #faf0d6; font-size: 0.75rem; font-weight: 600;">{{ $t['order_count'] }} / {{ $t['order_limit'] }}</span>
+                                <span class="text-parchment text-xs font-semibold">{{ $t['order_count'] }} / {{ $t['order_limit'] }}</span>
                             </div>
-                            <div style="background: #2a1f18; border-radius: 4px; height: 8px; overflow: hidden;">
-                                @php $oColor = $t['order_percent'] >= 100 ? '#ef4444' : ($t['order_percent'] >= 80 ? '#f59e0b' : '#10b981'); @endphp
-                                <div style="width: {{ min($t['order_percent'], 100) }}%; background: {{ $oColor }}; height: 100%; border-radius: 4px; transition: width 0.3s;"></div>
+                            <div class="bg-espresso rounded h-2 overflow-hidden">
+                                <div class="h-full rounded transition-all duration-300 {{ $oBarClass }}" style="width: {{ min($t['order_percent'], 100) }}%;"></div>
                             </div>
                         </div>
 

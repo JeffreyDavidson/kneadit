@@ -21,4 +21,16 @@
     --color-brand-700: var(--brand-700);
     --color-brand-800: var(--brand-800);
     --color-brand-900: var(--brand-900);
+
+    /*
+     * Static central-platform palette (used by the platform messages /
+     * inbox UI shown inside the per-tenant admin panel).
+     */
+    --color-warm-black: #1c1410;
+    --color-espresso: #2a1f18;
+    --color-cinnamon: #8b6844;
+    --color-honey: #d4920c;
+    --color-golden: #e8b04a;
+    --color-butter: #f5d88e;
+    --color-parchment: #faf0d6;
 }

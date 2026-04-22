@@ -11,16 +11,17 @@
             'Billing' => '<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />',
             'FAQ' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />',
         ];
-        $topicColors = [
-            'Getting Started' => '#d4920c',
-            'Managing Orders' => '#8B5E3C',
-            'Storefront' => '#2d8a5e',
-            'Finances' => '#6366f1',
-            'Marketing' => '#e85d75',
-            'Tools' => '#0891b2',
-            'Billing' => '#7c3aed',
-            'FAQ' => '#d97706',
+        $topicClasses = [
+            'Getting Started' => ['dot' => 'bg-honey', 'text' => 'text-honey', 'tile' => 'bg-honey/15'],
+            'Managing Orders' => ['dot' => 'bg-brand-600', 'text' => 'text-brand-600', 'tile' => 'bg-brand-600/15'],
+            'Storefront' => ['dot' => 'bg-emerald-700', 'text' => 'text-emerald-700', 'tile' => 'bg-emerald-700/15'],
+            'Finances' => ['dot' => 'bg-indigo-500', 'text' => 'text-indigo-500', 'tile' => 'bg-indigo-500/15'],
+            'Marketing' => ['dot' => 'bg-pink-500', 'text' => 'text-pink-500', 'tile' => 'bg-pink-500/15'],
+            'Tools' => ['dot' => 'bg-cyan-600', 'text' => 'text-cyan-600', 'tile' => 'bg-cyan-600/15'],
+            'Billing' => ['dot' => 'bg-violet-600', 'text' => 'text-violet-600', 'tile' => 'bg-violet-600/15'],
+            'FAQ' => ['dot' => 'bg-amber-600', 'text' => 'text-amber-600', 'tile' => 'bg-amber-600/15'],
         ];
+        $defaultTopicClass = ['dot' => 'bg-brand-600', 'text' => 'text-brand-600', 'tile' => 'bg-brand-600/15'];
         $popularArticles = [
             ['topic' => 'Getting Started', 'title' => 'Setting Up Your Store'],
             ['topic' => 'Managing Orders', 'title' => 'Using Quick Order'],
@@ -96,9 +97,9 @@
                 <h3 class="text-xs font-bold uppercase tracking-wider text-brand-500 m-0 mb-3.5">Popular Articles</h3>
                 <div class="kb-popular-grid">
                     @foreach ($popularArticles as $pa)
-                        @php $color = $topicColors[$pa['topic']] ?? '#8B5E3C'; @endphp
+                        @php $cls = $topicClasses[$pa['topic']] ?? $defaultTopicClass; @endphp
                         <div class="kb-article-card" onclick="document.querySelectorAll('[x-data]')[0].__x.$data.search = '{{ addslashes($pa['title']) }}'">
-                            <div class="w-2 h-2 rounded-full flex-shrink-0" style="background: {{ $color }};"></div>
+                            <div class="w-2 h-2 rounded-full flex-shrink-0 {{ $cls['dot'] }}"></div>
                             <div>
                                 <p class="m-0 text-sm font-semibold text-brand-900">{{ $pa['title'] }}</p>
                                 <p class="mt-0.5 m-0 text-xs text-brand-500">{{ $pa['topic'] }}</p>
@@ -113,10 +114,10 @@
             <h3 class="text-xs font-bold uppercase tracking-wider text-brand-500 m-0 mb-3.5">Browse by Topic</h3>
             <div class="kb-grid">
                 @foreach ($topics as $i => $topic)
-                    @php $color = $topicColors[$topic['title']] ?? '#8B5E3C'; @endphp
+                    @php $cls = $topicClasses[$topic['title']] ?? $defaultTopicClass; @endphp
                     <div class="kb-card" @click="openTopic = {{ $i }}">
-                        <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background: {{ $color }}15;">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" style="color: {{ $color }};">{!! $topicIcons[$topic['title']] ?? '' !!}</svg>
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4 {{ $cls['tile'] }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 {{ $cls['text'] }}">{!! $topicIcons[$topic['title']] ?? '' !!}</svg>
                         </div>
                         <h3 class="m-0 mb-1 text-base font-bold text-brand-900">{{ $topic['title'] }}</h3>
                         <p class="m-0 mb-3 text-[0.8rem] text-brand-500">{{ count($topic['articles']) }} articles</p>
@@ -144,10 +145,10 @@
                     <x-heroicon-o-arrow-left class="w-4 h-4 text-brand-600" stroke-width="2" />
                 </button>
                 @foreach ($topics as $i => $topic)
-                    @php $color = $topicColors[$topic['title']] ?? '#8B5E3C'; @endphp
+                    @php $cls = $topicClasses[$topic['title']] ?? $defaultTopicClass; @endphp
                     <div x-show="openTopic === {{ $i }}" class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: {{ $color }}15;">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" style="color: {{ $color }};">{!! $topicIcons[$topic['title']] ?? '' !!}</svg>
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center {{ $cls['tile'] }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 {{ $cls['text'] }}">{!! $topicIcons[$topic['title']] ?? '' !!}</svg>
                         </div>
                         <div>
                             <h3 class="m-0 text-[1.15rem] font-bold text-brand-900">{{ $topic['title'] }}</h3>

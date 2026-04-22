@@ -52,15 +52,15 @@
     @endphp
 
     <!-- Navigation -->
-    <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50" style="width: max-content; max-width: 95vw;">
-        <div style="background: var(--warm-800); border: 1px solid rgba(139, 104, 68, 0.2);" class="backdrop-blur-sm rounded-full px-6 py-3">
+    <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-max max-w-[95vw]">
+        <div class="backdrop-blur-sm rounded-full px-6 py-3 bg-warm-800 border border-warm-700/20">
 
             <!-- Desktop Nav -->
             <div class="nav-desktop items-center space-x-1" x-data="{ explore: false, account: false }" @click.outside="explore = false; account = false">
-                <a href="{{ url('/') }}" class="nav-link font-script" style="color: var(--warm-400); font-size: 1.15rem; padding: 8px 16px;">
+                <a href="{{ url('/') }}" class="nav-link font-script text-warm-400 text-[1.15rem] px-4 py-2">
                     {{ $storeName }}
                 </a>
-                <span style="color: var(--warm-600); opacity: 0.3;">|</span>
+                <span class="text-warm-600 opacity-30">|</span>
 
                 <a href="{{ route('storefront.menu') }}" class="nav-link font-display {{ request()->routeIs('storefront.menu') ? 'active' : '' }}">Menu</a>
                 <a href="{{ route('order.create') }}" class="nav-link font-display {{ request()->routeIs('order.create') ? 'active' : '' }}">Order</a>
@@ -74,8 +74,7 @@
                         <x-heroicon-o-chevron-down class="w-3.5 h-3.5 transition-transform" ::class="explore ? 'rotate-180' : ''" stroke-width="2.5" />
                     </button>
                     <div x-show="explore" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                         class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl"
-                         style="background: var(--warm-800); border: 1px solid rgba(139, 104, 68, 0.25);">
+                         class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl bg-warm-800 border border-warm-700/25">
                         <a href="{{ route('storefront.blog') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.blog*') ? 'active' : '' }}">Blog</a>
                         <a href="{{ route('storefront.gallery') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.gallery') ? 'active' : '' }}">Gallery</a>
                         <a href="{{ route('storefront.reviews') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.reviews') ? 'active' : '' }}">Reviews</a>
@@ -95,8 +94,7 @@
                         <x-heroicon-o-chevron-down class="w-3.5 h-3.5 transition-transform" ::class="account ? 'rotate-180' : ''" stroke-width="2.5" />
                     </button>
                     <div x-show="account" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                         class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl"
-                         style="background: var(--warm-800); border: 1px solid rgba(139, 104, 68, 0.25);">
+                         class="absolute top-full left-1/2 -translate-x-1/2 mt-3 py-2 min-w-[180px] rounded-xl shadow-xl bg-warm-800 border border-warm-700/25">
                         <a href="{{ route('order.track') }}" class="nav-dropdown-link font-display {{ request()->routeIs('order.track') ? 'active' : '' }}">Track Order</a>
                         <a href="{{ route('storefront.giftCards') }}" class="nav-dropdown-link font-display {{ request()->routeIs('storefront.giftCards') ? 'active' : '' }}">Gift Cards</a>
                         @if ($loyaltyEnabled)
@@ -120,10 +118,10 @@
             <!-- Mobile Nav -->
             <div class="nav-mobile" x-data="{ open: false, explore: false, account: false }">
                 <div class="flex items-center justify-between">
-                    <a href="{{ url('/') }}" class="font-script text-lg" style="color: var(--warm-400); text-decoration: none;">
+                    <a href="{{ url('/') }}" class="font-script text-lg text-warm-400 no-underline">
                         {{ $storeName }}
                     </a>
-                    <button @click="open = !open" class="nav-link font-display ml-4" style="padding: 8px 12px;" aria-label="Toggle navigation" :aria-expanded="open">
+                    <button @click="open = !open" class="nav-link font-display ml-4 px-3 py-2" aria-label="Toggle navigation" :aria-expanded="open">
                         <x-heroicon-o-bars-3 x-show="!open" class="w-5 h-5" stroke-width="2" />
                         <x-heroicon-o-x-mark x-show="open" x-cloak class="w-5 h-5" stroke-width="2" />
                     </button>
@@ -189,22 +187,18 @@
         @endphp
 
         @if ($announcementEnabled === '1' && $announcementDismissKey)
+        @php
+            $announcementClass = match ($announcementType) {
+                'warning' => 'bg-yellow-100 text-yellow-800 border-b-2 border-yellow-500',
+                'success' => 'bg-green-100 text-green-800 border-b-2 border-green-600',
+                'holiday' => 'bg-gradient-to-br from-red-700 to-green-800 text-white border-b-2 border-yellow-400',
+                default => 'bg-warm-200 text-warm-900 border-b-2 border-warm-500',
+            };
+        @endphp
         <div x-data="{ show: !localStorage.getItem('{{ $announcementDismissKey }}') }"
              x-show="show"
              x-transition
-             class="relative px-4 py-3 text-center text-sm font-medium"
-             :style="show ? '' : 'display:none'"
-             style="
-                @if ($announcementType === 'warning')
-                    background: #fef3cd; color: #856404; border-bottom: 2px solid #ffc107;
-                @elseif ($announcementType === 'success')
-                    background: #d4edda; color: #155724; border-bottom: 2px solid #28a745;
-                @elseif ($announcementType === 'holiday')
-                    background: linear-gradient(135deg, #c41e3a, #1a6b2a); color: #fff; border-bottom: 2px solid #ffd700;
-                @else
-                    background: var(--warm-200); color: var(--warm-900); border-bottom: 2px solid var(--warm-500);
-                @endif
-             ">
+             class="relative px-4 py-3 text-center text-sm font-medium {{ $announcementClass }}">
             <span>{{ $announcementText }}</span>
             <button @click="show = false; localStorage.setItem('{{ $announcementDismissKey }}', '1')"
                     class="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 text-lg leading-none"
@@ -228,7 +222,7 @@
     @endphp
 
     @if (!empty($policies))
-    <section style="background: var(--warm-50); border-top: 1px solid var(--warm-200);" class="py-12">
+    <section class="py-12 bg-warm-50 border-t border-warm-200">
         <div class="max-w-4xl mx-auto px-4">
             <h3 class="font-display text-2xl text-center mb-8 text-warm-700">Policies & Terms</h3>
             <div class="grid gap-6 md:grid-cols-2">
@@ -244,9 +238,9 @@
     @endif
 
     <!-- Footer -->
-    <footer style="background: var(--warm-900); color: var(--warm-200);" class="py-16">
+    <footer class="py-16 bg-warm-900 text-warm-200">
         <div class="max-w-6xl mx-auto px-4 text-center">
-            <div class="h-1 mb-12" style="background: linear-gradient(to right, transparent, var(--warm-500), transparent);"></div>
+            <div class="h-1 mb-12 bg-gradient-to-r from-transparent via-warm-500 to-transparent"></div>
 
             <h3 class="font-display text-2xl mb-2">{{ $settings->store->name }}</h3>
             <p class="font-script text-xl mb-6 text-warm-400">{{ $settings->defaultTagline() }}</p>
@@ -290,17 +284,17 @@
     </footer>
 
     {{-- PWA Install Prompt --}}
-    <div id="pwaInstall" style="display:none;position:fixed;bottom:5rem;right:1.5rem;background:var(--warm-900);color:var(--warm-200);padding:1rem 1.25rem;border-radius:16px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.4);font-size:.85rem;max-width:280px;border:1px solid rgba(212,146,12,.15)">
-        <div style="display:flex;align-items:start;gap:.75rem">
-            <div style="flex:1">
-                <strong style="color:var(--warm-500);font-size:.9rem">Add to Home Screen</strong>
-                <p style="margin:.25rem 0 .75rem;color:var(--warm-600);line-height:1.4;font-size:.8rem">Quick access to your favorite bakery — no app store needed.</p>
-                <div style="display:flex;gap:.5rem">
-                    <button id="pwaInstallBtn" style="padding:.4rem 1rem;border-radius:50px;background:var(--warm-500);color:#fff;border:none;font-weight:700;font-size:.75rem;cursor:pointer">Install</button>
-                    <button onclick="dismissPwa()" style="padding:.4rem .75rem;border-radius:50px;background:transparent;color:var(--warm-600);border:1px solid var(--warm-700);font-size:.75rem;cursor:pointer">Not now</button>
+    <div id="pwaInstall" class="hidden fixed bottom-20 right-6 bg-warm-900 text-warm-200 px-5 py-4 rounded-2xl z-[9998] shadow-2xl text-[0.85rem] max-w-[280px] border border-warm-500/15">
+        <div class="flex items-start gap-3">
+            <div class="flex-1">
+                <strong class="text-warm-500 text-[0.9rem]">Add to Home Screen</strong>
+                <p class="mt-1 mb-3 text-warm-600 leading-snug text-[0.8rem]">Quick access to your favorite bakery — no app store needed.</p>
+                <div class="flex gap-2">
+                    <button id="pwaInstallBtn" class="px-4 py-1.5 rounded-full bg-warm-500 text-white border-0 font-bold text-xs cursor-pointer">Install</button>
+                    <button onclick="dismissPwa()" class="px-3 py-1.5 rounded-full bg-transparent text-warm-600 border border-warm-700 text-xs cursor-pointer">Not now</button>
                 </div>
             </div>
-            <button onclick="dismissPwa()" style="background:none;border:none;color:var(--warm-600);cursor:pointer;font-size:1.1rem;padding:0;line-height:1" aria-label="Dismiss install prompt">&times;</button>
+            <button onclick="dismissPwa()" class="bg-transparent border-0 text-warm-600 cursor-pointer text-[1.1rem] p-0 leading-none" aria-label="Dismiss install prompt">&times;</button>
         </div>
     </div>
     <script>
@@ -311,12 +305,12 @@
     </script>
 
     {{-- Cookie Consent Banner --}}
-    <div id="cookieConsent" role="region" aria-label="Cookie consent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--warm-900);color:var(--warm-200);padding:1rem 1.5rem;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,.3);font-size:.85rem;line-height:1.5">
-        <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-            <p style="margin:0;flex:1;min-width:200px">We use cookies to improve your experience. By continuing to browse, you agree to our use of cookies.
-                <a href="/privacy" style="color:var(--warm-500);text-decoration:underline">Privacy Policy</a>
+    <div id="cookieConsent" role="region" aria-label="Cookie consent" class="hidden fixed bottom-0 left-0 right-0 bg-warm-900 text-warm-200 px-6 py-4 z-[9999] shadow-2xl text-[0.85rem] leading-relaxed">
+        <div class="max-w-[1200px] mx-auto flex items-center justify-between gap-4 flex-wrap">
+            <p class="m-0 flex-1 min-w-[200px]">We use cookies to improve your experience. By continuing to browse, you agree to our use of cookies.
+                <a href="/privacy" class="text-warm-500 underline">Privacy Policy</a>
             </p>
-            <button onclick="acceptCookies()" style="padding:.5rem 1.5rem;border-radius:50px;background:var(--warm-500);color:#fff;border:none;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap;transition:background .2s">Accept</button>
+            <button onclick="acceptCookies()" class="px-6 py-2 rounded-full bg-warm-500 text-white border-0 font-bold text-xs cursor-pointer whitespace-nowrap transition-colors">Accept</button>
         </div>
     </div>
     <script>
