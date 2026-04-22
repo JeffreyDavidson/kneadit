@@ -6,9 +6,7 @@
             <div class="bg-blue-50 rounded-lg p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
+                        <x-heroicon-o-tag class="w-8 h-8 text-blue-600" stroke-width="2" />
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-blue-600">Total Products</p>
@@ -20,9 +18,7 @@
             <div class="bg-green-50 rounded-lg p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        <x-heroicon-o-check-circle class="w-8 h-8 text-green-600" stroke-width="2" />
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-green-600">With Cost Data</p>
@@ -34,9 +30,7 @@
             <div class="bg-purple-50 rounded-lg p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                        </svg>
+                        <x-heroicon-o-arrow-trending-up class="w-8 h-8 text-purple-600" stroke-width="2" />
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-purple-600">Avg Margin</p>
@@ -48,9 +42,7 @@
             <div class="bg-orange-50 rounded-lg p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        <x-heroicon-o-information-circle class="w-8 h-8 text-orange-600" stroke-width="2" />
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-orange-600">Missing Cost Data</p>
@@ -235,9 +227,7 @@
                     </div>
                 @else
                     <div class="text-center py-8">
-                        <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                        </svg>
+                        <x-heroicon-o-arrow-trending-up class="w-12 h-12 mx-auto text-gray-400 mb-4" stroke-width="2" />
                         <p class="text-gray-500">No profitable products with cost data</p>
                     </div>
                 @endif
@@ -265,9 +255,7 @@
                     </div>
                 @else
                     <div class="text-center py-8">
-                        <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        <x-heroicon-o-check-circle class="w-12 h-12 mx-auto text-gray-400 mb-4" stroke-width="2" />
                         <p class="text-gray-500">No products with margin data</p>
                     </div>
                 @endif
@@ -282,9 +270,7 @@
                 <div class="bg-orange-50 rounded-lg p-4 mb-4">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                            </svg>
+                            <x-heroicon-o-exclamation-triangle class="w-5 h-5 text-orange-400" stroke-width="2" />
                         </div>
                         <div class="ml-3">
                             <h4 class="text-sm font-medium text-orange-800">Add cost data to improve profit analysis</h4>
