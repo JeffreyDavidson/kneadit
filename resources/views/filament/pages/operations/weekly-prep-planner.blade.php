@@ -31,9 +31,7 @@
                 <div class="bg-blue-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                            </svg>
+                            <x-heroicon-o-shopping-bag class="w-8 h-8 text-blue-600" stroke-width="2" />
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-blue-600">Total Orders</p>
@@ -45,9 +43,7 @@
                 <div class="bg-green-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                            </svg>
+                            <x-heroicon-o-tag class="w-8 h-8 text-green-600" stroke-width="2" />
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-green-600">Total Items</p>
@@ -59,9 +55,7 @@
                 <div class="bg-purple-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                            <x-heroicon-o-clock class="w-8 h-8 text-purple-600" stroke-width="2" />
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-purple-600">Prep Time</p>
@@ -73,9 +67,7 @@
                 <div class="bg-orange-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
+                            <x-heroicon-o-currency-dollar class="w-8 h-8 text-orange-600" stroke-width="2" />
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-orange-600">Revenue</p>
@@ -207,9 +199,7 @@
                             </div>
                         @else
                             <div class="p-6 text-center text-gray-500">
-                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-1.172a1 1 0 01-.707-.293l-2.414-2.414a1 1 0 00-.707-.293H8m12 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4h.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h1.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H16"></path>
-                                </svg>
+                                <x-heroicon-o-inbox class="w-8 h-8 mx-auto mb-2" stroke-width="2" />
                                 <p>No orders scheduled</p>
                             </div>
                         @endif
@@ -219,9 +209,7 @@
         @else
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="text-center">
-                    <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4m-4 6l4-4m0 0l4 4m-4-4v11"></path>
-                    </svg>
+                    <x-heroicon-o-arrow-up-tray class="w-12 h-12 mx-auto text-gray-400 mb-4" stroke-width="2" />
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No orders for this week</h3>
                     <p class="text-gray-500">No orders found for the week of {{ \Carbon\Carbon::parse($selectedWeekStart)->format('F j, Y') }}.</p>
                 </div>
