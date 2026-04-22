@@ -75,9 +75,9 @@
                     <x-slot:overlay>
                         <div class="menu-card-overlay absolute inset-0 flex items-center justify-center bg-warm-900/50">
                             @if ($product->is_active)
-                            <a href="{{ route('order.create') }}" class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold bg-warm-500 text-warm-900">
+                            <x-storefront.button :href="route('order.create')" size="sm" class="menu-card-cta">
                                 {{ $content['add_to_order_button'] ?? 'Add to Order' }}
-                            </a>
+                            </x-storefront.button>
                             @else
                             <span class="menu-card-cta inline-block px-6 py-3 rounded-full text-sm font-semibold bg-white/15 text-warm-300 backdrop-blur-sm">
                                 Currently Unavailable
@@ -124,9 +124,9 @@
 
             {{ $ctaDesc }}
         </p>
-        <a href="{{ route('order.create') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg bg-warm-500 text-warm-900">
+        <x-storefront.button :href="route('order.create')" size="lg">
             {{ $content['cta_button'] ?? 'Place an Order' }}
-        </a>
+        </x-storefront.button>
     </div>
 </section>
 </x-layouts.storefront>

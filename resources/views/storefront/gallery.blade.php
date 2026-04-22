@@ -87,9 +87,9 @@
                 @endfor
             </div>
 
-            <a href="#share-photo" class="inline-block mt-10 px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-900 text-warm-100">
+            <x-storefront.button href="#share-photo" variant="dark" size="lg" class="mt-10">
                 Share Your Photo ↓
-            </a>
+            </x-storefront.button>
         </div>
         @endif
     </div>

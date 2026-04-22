@@ -316,13 +316,13 @@
                     </div>
 
                     {{-- Submit --}}
-                    <button type="submit"
+                    <x-storefront.button type="submit" size="lg" fullWidth fontDisplay
                             data-test="order-form-submit"
                             :disabled="!canSubmit || isSubmitting"
-                            class="w-full mt-6 py-4 rounded-full text-lg font-semibold transition-all duration-300 bg-warm-500 text-warm-900 font-display"
-                            :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-lg'">
+                            class="mt-6"
+                            :class="!canSubmit || isSubmitting ? 'opacity-30 cursor-not-allowed' : ''">
                         <span x-text="isSubmitting ? 'Placing Order...' : {{ Js::from($content['place_order_button'] ?? 'Place Order →') }}"></span>
-                    </button>
+                    </x-storefront.button>
 
                     <div x-show="submitError" class="text-red-400 text-sm mt-3 text-center" x-text="submitError"></div>
                 </div>

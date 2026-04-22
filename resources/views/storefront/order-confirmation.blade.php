@@ -173,9 +173,9 @@
                     <a href="{{ route('contact.show') }}" class="underline text-warm-400">contact us</a>.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a href="{{ route('order.track') }}" class="inline-block px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 bg-warm-500 text-warm-900">
+                    <x-storefront.button :href="route('order.track')" size="md">
                         Track Your Order
-                    </a>
+                    </x-storefront.button>
                     <a href="{{ url('/') }}" class="inline-flex items-center gap-2 px-6 py-3 font-semibold transition-all text-warm-400">
                         Back to {{ $settings->store->name }}
                         <x-heroicon-o-arrow-right class="w-4 h-4" stroke-width="2" />
