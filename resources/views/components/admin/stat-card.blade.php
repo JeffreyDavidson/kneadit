@@ -1,5 +1,17 @@
-@props(['label', 'value', 'color' => '#d4a574'])
-<div style="background: #fdf8f2; border: 1px solid rgba(212,165,116,0.2); border-radius: 12px; padding: 16px; text-align: center;">
-    <div style="font-size: 1.5rem; font-weight: 700; color: {{ $color }};">{{ $value }}</div>
-    <div style="font-size: 0.75rem; color: #8b6844; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px;">{{ $label }}</div>
+@props(['label', 'value', 'tone' => 'brand'])
+
+@php
+    $valueClass = match ($tone) {
+        'brand' => 'text-brand-300',
+        'brand-600' => 'text-brand-600',
+        'danger' => 'text-red-500',
+        'warning' => 'text-amber-500',
+        'success' => 'text-emerald-500',
+        default => 'text-brand-300',
+    };
+@endphp
+
+<div class="rounded-xl p-4 text-center bg-brand-50 border border-brand-300/20">
+    <div class="text-[1.5rem] font-bold {{ $valueClass }}">{{ $value }}</div>
+    <div class="text-[0.75rem] mt-1 uppercase tracking-wide text-cinnamon">{{ $label }}</div>
 </div>
