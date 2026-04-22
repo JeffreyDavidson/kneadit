@@ -6,12 +6,12 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Survey submitted" image-class="hero-img" min-height="60vh">
 
     <div class="relative z-10 max-w-lg mx-auto text-center px-4 py-28">
-        <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center hero-fade-up" style="background: rgba(212,146,12,0.15); border: 2px solid var(--warm-500); animation-delay: 0.3s;">
+        <div class="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center hero-fade-up bg-warm-500/15 border-2 border-warm-500 [animation-delay:0.3s]">
             <x-heroicon-o-check class="w-10 h-10 text-warm-500" stroke-width="2.5" />
         </div>
-        <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
-        <p class="text-lg mb-10 hero-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
-        <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hero-fade-up" style="background: var(--warm-500); color: var(--warm-900); animation-delay: 0.9s;">
+        <h1 class="font-display text-4xl font-bold mb-4 hero-fade-up text-warm-100 [animation-delay:0.5s]">{{ $content['success_title'] ?? 'Thank You!' }}</h1>
+        <p class="text-lg mb-10 hero-fade-up text-warm-400 [animation-delay:0.7s]">{{ $content['success_description'] ?? 'Your feedback has been submitted. We appreciate you taking the time to share your thoughts!' }}</p>
+        <a href="{{ route('home') }}" class="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 hero-fade-up bg-warm-500 text-warm-900 [animation-delay:0.9s]">
             Back to {{ $settings->store->name }}
         </a>
     </div>
@@ -22,10 +22,10 @@
 <x-storefront.hero-section :image="$settings->heroImageUrl()" image-alt="Share your feedback" image-class="hero-img" min-height="40vh">
 
     <div class="relative z-10 max-w-3xl mx-auto text-center px-4 py-20 md:py-24">
-        <x-storefront.eyebrow class="hero-fade-up mb-6" style="animation-delay: 0.3s;">{{ $content['hero_eyebrow'] ?? 'Your Opinion Matters' }}</x-storefront.eyebrow>
-        <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight hero-fade-up" style="color: var(--warm-100); animation-delay: 0.5s;">{{ $survey->title }}</h1>
+        <x-storefront.eyebrow class="hero-fade-up mb-6 [animation-delay:0.3s]">{{ $content['hero_eyebrow'] ?? 'Your Opinion Matters' }}</x-storefront.eyebrow>
+        <h1 class="font-display text-3xl md:text-5xl font-bold mb-4 leading-tight hero-fade-up text-warm-100 [animation-delay:0.5s]">{{ $survey->title }}</h1>
         @if ($survey->description)
-        <p class="font-script text-2xl md:text-3xl hero-fade-up" style="color: var(--warm-400); animation-delay: 0.7s;">{{ $survey->description }}</p>
+        <p class="font-script text-2xl md:text-3xl hero-fade-up text-warm-400 [animation-delay:0.7s]">{{ $survey->description }}</p>
         @endif
     </div>
 </x-storefront.hero-section>
@@ -41,7 +41,7 @@
                 <span class="text-sm text-warm-500">Takes about {{ max(1, ceil(count($survey->questions) * 0.5)) }} min</span>
             </div>
             <div class="w-full rounded-full h-2 bg-warm-200">
-                <div class="h-full rounded-full" style="background: linear-gradient(90deg, var(--warm-500), var(--warm-400)); width: 0%;" id="surveyProgress"></div>
+                <div class="h-full rounded-full bg-gradient-to-r from-warm-500 to-warm-400" style="width: 0%;" id="surveyProgress"></div>
             </div>
         </div>
 
@@ -79,8 +79,7 @@
                         @for ($star = 1; $star <= 5; $star++)
                         <button type="button"
                             @click="rating = {{ $star }}"
-                            :class="rating >= {{ $star }} ? '' : 'opacity-30'"
-                            :style="rating >= {{ $star }} ? 'color: var(--warm-500)' : 'color: var(--warm-400)'"
+                            :class="rating >= {{ $star }} ? 'text-warm-500' : 'text-warm-400 opacity-30'"
                             class="text-4xl transition-all duration-200 hover:scale-125 cursor-pointer">
                             ★
                         </button>
@@ -95,9 +94,9 @@
                     @elseif ($question['type'] === SurveyQuestionType::MultipleChoice->value)
                     <div class="space-y-2">
                         @foreach ($question['options'] ?? [] as $option)
-                        <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl transition-all duration-200 hover:shadow-sm" style="border: 1px solid var(--warm-200);" onmouseover="this.style.borderColor='var(--warm-400)'" onmouseout="this.style.borderColor='var(--warm-200)'">
+                        <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl transition-all duration-200 hover:shadow-sm border border-warm-200 hover:border-warm-400">
                             <input type="radio" name="answers[{{ $index }}]" value="{{ $option }}"
-                                class="w-4 h-4" style="accent-color: var(--warm-500);">
+                                class="w-4 h-4 accent-warm-500">
                             <span class="font-medium text-warm-800">{{ $option }}</span>
                         </label>
                         @endforeach
