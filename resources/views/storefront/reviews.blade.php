@@ -20,8 +20,12 @@
 <section class="bg-warm-800">
     <div class="max-w-5xl mx-auto px-4 py-12">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-             x-data="{ reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches, countUp(el, target, suffix = '') { if (this.reduced) { el.textContent = (Number.isInteger(target) ? target : target.toFixed(1)) + suffix; return; } let current = 0; const step = target / 30; const interval = setInterval(() => { current = Math.min(current + step, target); el.textContent = (Number.isInteger(target) ? Math.round(current) : current.toFixed(1)) + suffix; if (current >= target) clearInterval(interval); }, 30); } }"
-             x-intersect.once="$nextTick(() => { countUp($refs.avg, {{ $vm->avgRating }}); countUp($refs.total, {{ $vm->totalReviews }}); countUp($refs.pct, {{ $vm->fiveStarPct }}, '%'); })">
+             x-data="countUpStats([
+                { ref: 'avg', value: {{ $vm->avgRating }} },
+                { ref: 'total', value: {{ $vm->totalReviews }} },
+                { ref: 'pct', value: {{ $vm->fiveStarPct }}, suffix: '%' },
+             ])"
+             x-intersect.once="$nextTick(() => runStats())">
             <div class="text-center transition-all duration-300 hover:-translate-y-1">
                 <span x-ref="avg" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->formattedAvgRating }}</span>
                 <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Average Rating</span>
@@ -72,9 +76,8 @@
         </div>
 
         <div class="space-y-4"
-             x-data="{ shown: false, reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches }"
-             x-init="if (!reduced) { $el.querySelectorAll('.rating-bar-fill').forEach(b => b.style.width = '0%'); }"
-             x-intersect.once="shown = true; if (!reduced) { $el.querySelectorAll('.rating-bar-fill').forEach(b => b.style.width = b.dataset.pct + '%'); }">
+             x-data="ratingBars"
+             x-intersect.once="animate()">
             @foreach ($vm->ratingBreakdown as $star => $data)
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-1 flex-shrink-0 w-20">
@@ -101,9 +104,8 @@
         <div class="grid md:grid-cols-2 gap-8 mb-16">
             @foreach ($vm->reviews->skip(1) as $review)
             <div class="review-card p-8 rounded-2xl bg-white border border-warm-200 shadow-sm"
-                 x-data="{ reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches }"
-                 x-init="if (!reduced) { $el.style.opacity = '0'; $el.style.transform = 'translateY(1rem)'; $el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'; }"
-                 x-intersect.once="if (!reduced) { $el.style.transitionDelay = '{{ $loop->index * 75 }}ms'; $el.style.opacity = '1'; $el.style.transform = 'translateY(0)'; }">
+                 x-data="reviewCardFadeIn({{ $loop->index }})"
+                 x-intersect.once="show()">
                 <div class="flex items-start gap-4 mb-5">
                     <x-storefront.avatar-initial :name="$review->customer_name" size="lg" class="flex-shrink-0" />
                     <div class="flex-1 min-w-0">
