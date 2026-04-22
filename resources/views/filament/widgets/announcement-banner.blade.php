@@ -1,42 +1,22 @@
 <div>
     @foreach ($this->getAnnouncements() as $announcement)
+        @php
+            $variant = match ($announcement['type']) {
+                'info' => ['bg' => 'bg-blue-500/15', 'border' => 'border-blue-500/25', 'text' => 'text-blue-500'],
+                'warning' => ['bg' => 'bg-honey/15', 'border' => 'border-honey/25', 'text' => 'text-honey'],
+                'success' => ['bg' => 'bg-emerald-500/15', 'border' => 'border-emerald-500/25', 'text' => 'text-emerald-500'],
+                'maintenance' => ['bg' => 'bg-gray-500/15', 'border' => 'border-gray-500/25', 'text' => 'text-gray-500'],
+                default => ['bg' => 'bg-blue-500/15', 'border' => 'border-blue-500/25', 'text' => 'text-blue-500'],
+            };
+        @endphp
         <div
             x-data="{ dismissed: localStorage.getItem('announcement-dismissed-{{ $announcement['id'] }}') === 'true' }"
             x-show="!dismissed"
             x-cloak
-            style="
-                padding: 12px 16px;
-                margin-bottom: 12px;
-                border-radius: 8px;
-                display: flex;
-                align-items: flex-start;
-                justify-content: space-between;
-                gap: 12px;
-                border: 1px solid {{ match($announcement['type']) {
-                    'info' => '#3b82f6',
-                    'warning' => '#d4920c',
-                    'success' => '#10b981',
-                    'maintenance' => '#6b7280',
-                    default => '#3b82f6',
-                } }}40;
-                background: {{ match($announcement['type']) {
-                    'info' => '#3b82f6',
-                    'warning' => '#d4920c',
-                    'success' => '#10b981',
-                    'maintenance' => '#6b7280',
-                    default => '#3b82f6',
-                } }}15;
-                color: #1c1410;
-            "
+            class="px-4 py-3 mb-3 rounded-lg flex items-start justify-between gap-3 border text-warm-black {{ $variant['bg'] }} {{ $variant['border'] }}"
         >
-            <div style="flex: 1;">
-                <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; color: {{ match($announcement['type']) {
-                    'info' => '#3b82f6',
-                    'warning' => '#d4920c',
-                    'success' => '#10b981',
-                    'maintenance' => '#6b7280',
-                    default => '#3b82f6',
-                } }};">
+            <div class="flex-1">
+                <div class="font-semibold text-[0.9rem] mb-1 {{ $variant['text'] }}">
                     @if ($announcement['type'] === 'warning') ⚠️
                     @elseif ($announcement['type'] === 'info') ℹ️
                     @elseif ($announcement['type'] === 'success') ✅
@@ -44,22 +24,14 @@
                     @endif
                     {{ $announcement['title'] }}
                 </div>
-                <div style="font-size: 0.85rem; line-height: 1.5;">
+                <div class="text-[0.85rem] leading-normal">
                     {!! clean($announcement['body']) !!}
                 </div>
             </div>
             @if ($announcement['is_dismissable'])
                 <button
                     x-on:click="dismissed = true; localStorage.setItem('announcement-dismissed-{{ $announcement['id'] }}', 'true')"
-                    style="
-                        background: none;
-                        border: none;
-                        cursor: pointer;
-                        font-size: 1.2rem;
-                        color: #6b7280;
-                        padding: 0 4px;
-                        line-height: 1;
-                    "
+                    class="bg-transparent border-0 cursor-pointer text-[1.2rem] text-gray-500 px-1 leading-none"
                     title="Dismiss"
                 >&times;</button>
             @endif

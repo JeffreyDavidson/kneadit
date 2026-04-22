@@ -132,8 +132,7 @@
             x-transition:leave="transform transition ease-in-out duration-500"
             x-transition:leave-start="translate-x-0"
             x-transition:leave-end="translate-x-full"
-            class="fixed inset-0 overflow-hidden z-50"
-            style="display: none;"
+            class="fixed inset-0 overflow-hidden z-50 hidden"
         >
             <div class="absolute inset-0 overflow-hidden">
                 <div
