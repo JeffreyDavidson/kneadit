@@ -3,6 +3,7 @@
 namespace App\Services\Customers;
 
 use App\DataTransferObjects\Customers\CustomerMetrics;
+use App\Enums\Customers\CustomerStatus;
 use App\Models\Customers\Customer;
 use App\Services\Loyalty\CustomerLoyalty;
 use Illuminate\Support\Facades\Date;
@@ -28,10 +29,7 @@ class CustomerIntelligence
             ? (int) $lastOrderDate->diffInDays(now())
             : null;
 
-        $atRiskDays = (int) (string) config('analytics.at_risk_threshold_days', 30);
-        $isAtRisk = $orderCount > 0
-            && $daysSinceLastOrder !== null
-            && $daysSinceLastOrder > $atRiskDays;
+        $isAtRisk = CustomerStatus::resolve($orderCount, $lastOrderDate) === CustomerStatus::AtRisk;
 
         // 1 query: loyalty point aggregates
         $balance = $this->customerLoyalty->balance($customer);
