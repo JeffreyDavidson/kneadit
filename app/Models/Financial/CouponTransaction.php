@@ -2,7 +2,7 @@
 
 namespace App\Models\Financial;
 
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Enums\Financial\CouponTransactionType;
 use App\Models\Orders\Order;
 use Database\Factories\Financial\CouponTransactionFactory;
@@ -33,7 +33,7 @@ class CouponTransaction extends Model
     protected function casts(): array
     {
         return [
-            'amount' => MoneyCast::class,
+            'amount' => MoneyCentsCast::class,
             'created_at' => 'datetime',
             'type' => CouponTransactionType::class,
         ];
