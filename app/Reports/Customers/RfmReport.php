@@ -5,34 +5,21 @@ namespace App\Reports\Customers;
 use App\Enums\Customers\RfmSegment;
 use App\Enums\Orders\PaymentStatus;
 use App\Models\Customers\Customer;
+use App\Services\Customers\RfmClassifier;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Classifies customers into RFM segments (Recency, Frequency, Monetary).
  *
- * Thresholds are fixed v1 constants — tunable later via tenant settings
- * if bakers ask. The segmentation rules are:
- *   - Champions:   recency < 30d,  frequency >= 4, monetary >= 500
- *   - Loyal:       recency < 60d,  frequency >= 3, monetary >= 200
- *   - AtRisk:      60 <= recency < 180, frequency >= 3, monetary >= 200
- *   - New:         recency < 30d,  frequency <= 2
- *   - Hibernating: everything else (low engagement or 180+ days inactive)
+ * Thresholds + classification rules live on RfmClassifier so this report
+ * and the customer-campaign recipient resolver share a single source of
+ * truth. See app/Services/Customers/RfmClassifier.php.
  */
 class RfmReport
 {
-    private const RECENT_DAYS = 30;
-
-    private const ENGAGED_DAYS = 60;
-
-    private const AT_RISK_DAYS = 180;
-
-    private const FREQUENT_ORDERS = 4;
-
-    private const LOYAL_ORDERS = 3;
-
-    private const BIG_SPEND_DOLLARS = 500;
-
-    private const LOYAL_SPEND_DOLLARS = 200;
+    public function __construct(
+        private RfmClassifier $classifier,
+    ) {}
 
     /**
      * Produce an RFM segmentation snapshot as of `now()`.
@@ -82,7 +69,7 @@ class RfmReport
             // (see 2026_04_22_201500_convert_orders_money_columns_to_cents).
             $monetary = (float) ((int) ($customer->getAttribute('monetary_cents') ?? 0) / 100);
 
-            $segment = $this->classify($recencyDays, $frequency, $monetary);
+            $segment = $this->classifier->classify($recencyDays, $frequency, $monetary);
             $counts[$segment->value]++;
 
             if (count($samples[$segment->value]) < 5) {
@@ -113,26 +100,5 @@ class RfmReport
             'total' => $rows->count(),
             'segments' => $segments,
         ];
-    }
-
-    private function classify(int $recencyDays, int $frequency, float $monetary): RfmSegment
-    {
-        if ($recencyDays < self::RECENT_DAYS && $frequency >= self::FREQUENT_ORDERS && $monetary >= self::BIG_SPEND_DOLLARS) {
-            return RfmSegment::Champions;
-        }
-
-        if ($recencyDays < self::ENGAGED_DAYS && $frequency >= self::LOYAL_ORDERS && $monetary >= self::LOYAL_SPEND_DOLLARS) {
-            return RfmSegment::Loyal;
-        }
-
-        if ($recencyDays >= self::ENGAGED_DAYS && $recencyDays < self::AT_RISK_DAYS && $frequency >= self::LOYAL_ORDERS && $monetary >= self::LOYAL_SPEND_DOLLARS) {
-            return RfmSegment::AtRisk;
-        }
-
-        if ($recencyDays < self::RECENT_DAYS && $frequency <= 2) {
-            return RfmSegment::New;
-        }
-
-        return RfmSegment::Hibernating;
     }
 }
