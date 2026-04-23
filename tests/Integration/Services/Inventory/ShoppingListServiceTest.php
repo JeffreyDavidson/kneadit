@@ -62,6 +62,46 @@ test('includes upcoming order needs when enabled with date range', function () {
     expect($result)->toBeArray()->not->toBeEmpty();
 });
 
+test('upcoming order ingredient needs increase the suggested quantity', function () {
+    // Regression: ShoppingListService.calculateUpcomingNeeds previously queried
+    // a non-existent `pickup_date` column on orders (the column is `delivery_date`).
+    // The original "includes upcoming order needs" test asserted only that the
+    // result wasn't empty — the low-stock ingredient alone made that true even
+    // when the upcoming-orders branch silently failed. This test asserts that
+    // the upcoming-needs aggregation actually contributes to the suggested
+    // quantity, which would fail if the date column ever drifts again.
+    $ingredient = Ingredient::factory()->lowStock()->create([
+        'name' => 'Flour',
+        'current_stock' => 0,
+        'low_stock_threshold' => 5,
+    ]);
+    $product = Product::factory()->create();
+    $product->recipe()->create([
+        'name' => 'Loaf',
+        'ingredients' => json_encode([['name' => 'Flour', 'quantity' => 4]]),
+        'instructions' => 'Mix.',
+    ])->inventoryIngredients()->attach($ingredient->id, ['quantity' => 4.0, 'unit' => 'kg']);
+
+    $order = Order::factory()->confirmed()->create([
+        'delivery_date' => now()->addDays(3)->format('Y-m-d'),
+    ]);
+    OrderItem::factory()->recycle($order, $product)->create(['quantity' => 5, 'unit_price' => 10.00]);
+
+    // Without upcoming: just the low-stock baseline (threshold * 2 - current).
+    $without = (new ShoppingListService)->generate(includeUpcoming: false);
+    // With upcoming for the order's date range: should add 5 * 4 = 20kg.
+    $with = (new ShoppingListService)->generate(
+        includeUpcoming: true,
+        startDate: now()->format('Y-m-d'),
+        endDate: now()->addWeek()->format('Y-m-d'),
+    );
+
+    $needWithout = collect($without)->flatMap(fn (array $g) => $g['items'])->firstWhere('ingredient_id', $ingredient->id)['needed'] ?? 0;
+    $needWith = collect($with)->flatMap(fn (array $g) => $g['items'])->firstWhere('ingredient_id', $ingredient->id)['needed'] ?? 0;
+
+    expect($needWith)->toBe($needWithout + 20.0);
+});
+
 test('skips upcoming needs when not enabled', function () {
     Ingredient::factory()->lowStock()->create(['name' => 'Flour']);
 
