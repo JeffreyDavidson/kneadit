@@ -21,7 +21,38 @@
                     </a>
                 </div>
             @else
-                <div class="card overflow-hidden">
+                {{-- Mobile: stacked cards. Desktop: table. --}}
+                <div class="md:hidden space-y-3">
+                    @foreach ($orders as $order)
+                        <div class="card p-4">
+                            <div class="flex items-start justify-between gap-3 mb-2">
+                                <div class="min-w-0">
+                                    <a href="{{ route('order.confirmation', $order) }}" class="font-semibold text-warm-900 hover:underline">
+                                        #{{ $order->order_number }}
+                                    </a>
+                                    <p class="text-xs text-warm-600 mt-0.5">
+                                        {{ $order->created_at?->format('M j, Y') }}
+                                        &middot; {{ $order->orderItems->count() }} item{{ $order->orderItems->count() === 1 ? '' : 's' }}
+                                    </p>
+                                </div>
+                                <p class="font-semibold text-warm-900 whitespace-nowrap">@money($order->total)</p>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-warm-700">{{ $order->status->getLabel() }}</span>
+                                <div class="flex gap-3">
+                                    <a href="{{ route('order.create') }}?reorder={{ $order->order_number }}" class="font-semibold text-warm-700 hover:underline">
+                                        Reorder
+                                    </a>
+                                    <a href="{{ route('order.track') }}?number={{ $order->order_number }}" class="font-semibold text-warm-700 hover:underline">
+                                        Track
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="hidden md:block card overflow-hidden">
                     <table class="w-full text-left">
                         <thead class="bg-warm-100 text-xs uppercase tracking-wider text-warm-700">
                             <tr>
