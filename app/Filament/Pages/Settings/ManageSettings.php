@@ -54,6 +54,20 @@ class ManageSettings extends Page
 
     public bool $birthday_program_enabled = false;
 
+    public bool $email_order_placed_enabled = true;
+
+    public bool $email_order_confirmed_enabled = true;
+
+    public bool $email_order_baking_enabled = true;
+
+    public bool $email_order_ready_enabled = true;
+
+    public bool $email_order_delivered_enabled = true;
+
+    public bool $email_order_cancelled_enabled = true;
+
+    public bool $email_order_message_enabled = true;
+
     public ?string $allergy_disclaimer = '';
 
     public ?string $revenue_cap = '250000';
@@ -113,6 +127,13 @@ class ManageSettings extends Page
         $this->minimum_delivery_order_amount = settings('minimum_delivery_order_amount', $defaults['minimum_delivery_order_amount']);
         $this->repeat_reminders_enabled = settings('repeat_reminders_enabled', $defaults['repeat_reminders_enabled']);
         $this->birthday_program_enabled = settings('birthday_program_enabled', $defaults['birthday_program_enabled']);
+        $this->email_order_placed_enabled = (bool) settings('email_order_placed_enabled', $defaults['email_order_placed_enabled']);
+        $this->email_order_confirmed_enabled = (bool) settings('email_order_confirmed_enabled', $defaults['email_order_confirmed_enabled']);
+        $this->email_order_baking_enabled = (bool) settings('email_order_baking_enabled', $defaults['email_order_baking_enabled']);
+        $this->email_order_ready_enabled = (bool) settings('email_order_ready_enabled', $defaults['email_order_ready_enabled']);
+        $this->email_order_delivered_enabled = (bool) settings('email_order_delivered_enabled', $defaults['email_order_delivered_enabled']);
+        $this->email_order_cancelled_enabled = (bool) settings('email_order_cancelled_enabled', $defaults['email_order_cancelled_enabled']);
+        $this->email_order_message_enabled = (bool) settings('email_order_message_enabled', $defaults['email_order_message_enabled']);
         $this->allergy_disclaimer = settings('allergy_disclaimer', $defaults['allergy_disclaimer']);
         $this->revenue_cap = settings('revenue_cap', $defaults['revenue_cap']);
 
@@ -186,6 +207,13 @@ class ManageSettings extends Page
         $this->minimum_delivery_order_amount = $defaults['minimum_delivery_order_amount'];
         $this->repeat_reminders_enabled = $defaults['repeat_reminders_enabled'];
         $this->birthday_program_enabled = $defaults['birthday_program_enabled'];
+        $this->email_order_placed_enabled = $defaults['email_order_placed_enabled'];
+        $this->email_order_confirmed_enabled = $defaults['email_order_confirmed_enabled'];
+        $this->email_order_baking_enabled = $defaults['email_order_baking_enabled'];
+        $this->email_order_ready_enabled = $defaults['email_order_ready_enabled'];
+        $this->email_order_delivered_enabled = $defaults['email_order_delivered_enabled'];
+        $this->email_order_cancelled_enabled = $defaults['email_order_cancelled_enabled'];
+        $this->email_order_message_enabled = $defaults['email_order_message_enabled'];
         $this->allergy_disclaimer = $defaults['allergy_disclaimer'];
         $this->revenue_cap = $defaults['revenue_cap'];
         $this->cancellation_policy = $defaults['cancellation_policy'];
@@ -220,6 +248,13 @@ class ManageSettings extends Page
             'minimum_delivery_order_amount' => $this->minimum_delivery_order_amount,
             'repeat_reminders_enabled' => $this->repeat_reminders_enabled,
             'birthday_program_enabled' => $this->birthday_program_enabled,
+            'email_order_placed_enabled' => $this->email_order_placed_enabled,
+            'email_order_confirmed_enabled' => $this->email_order_confirmed_enabled,
+            'email_order_baking_enabled' => $this->email_order_baking_enabled,
+            'email_order_ready_enabled' => $this->email_order_ready_enabled,
+            'email_order_delivered_enabled' => $this->email_order_delivered_enabled,
+            'email_order_cancelled_enabled' => $this->email_order_cancelled_enabled,
+            'email_order_message_enabled' => $this->email_order_message_enabled,
             'allergy_disclaimer' => $this->allergy_disclaimer,
             'revenue_cap' => $this->revenue_cap,
             'payment_methods' => $this->payment_methods,

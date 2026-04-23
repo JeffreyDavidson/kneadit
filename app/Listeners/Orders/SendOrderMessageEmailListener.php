@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Orders;
 
+use App\DataTransferObjects\Settings\EngagementSettings;
 use App\Enums\Orders\SenderType;
 use App\Events\Orders\OrderMessageSent;
 use App\Listeners\SendEmailListener;
@@ -21,8 +22,14 @@ class SendOrderMessageEmailListener extends SendEmailListener
             return null;
         }
 
+        // Customer→bakery direction always emails the bakery so they can
+        // respond. The toggle gates the bakery→customer notification side.
         if ($message->sender_type === SenderType::Customer) {
             return app(TenantSettings::class)->store->email ?: null;
+        }
+
+        if (! app(EngagementSettings::class)->emailOrderMessageEnabled) {
+            return null;
         }
 
         return $order->customer?->email;

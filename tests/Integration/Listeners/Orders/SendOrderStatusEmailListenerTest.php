@@ -59,3 +59,25 @@ test('does not send when customer has no email', function () {
 
     Mail::assertNothingQueued();
 });
+
+test('does not send when the per-status email toggle is disabled', function () {
+    settings(['email_order_baking_enabled' => false]);
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+
+    (new SendOrderStatusEmailListener)->handle(
+        new OrderStatusChanged($order, OrderStatus::Confirmed, OrderStatus::Baking),
+    );
+
+    Mail::assertNothingQueued();
+});
+
+test('still sends other statuses when only one toggle is disabled', function () {
+    settings(['email_order_baking_enabled' => false]);
+    $order = Order::factory()->for(test()->customer)->recycle(test()->user)->create();
+
+    (new SendOrderStatusEmailListener)->handle(
+        new OrderStatusChanged($order, OrderStatus::Baking, OrderStatus::Ready),
+    );
+
+    Mail::assertQueued(OrderStatusMail::class);
+});

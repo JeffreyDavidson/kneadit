@@ -42,6 +42,18 @@ test('it loads order items before sending', function () {
     Mail::assertQueued(OrderPlacedMail::class);
 });
 
+test('it does not send when the order_placed email toggle is disabled', function () {
+    Mail::fake();
+    settings(['email_order_placed_enabled' => false]);
+
+    $customer = Customer::factory()->create(['email' => 'customer@example.com']);
+    $order = Order::factory()->for($customer)->create();
+
+    (new SendOrderPlacedEmailListener)->handle(new OrderCreated($order));
+
+    Mail::assertNothingQueued();
+});
+
 test('failed method logs a warning with order number and error message', function () {
     Log::shouldReceive('warning')
         ->once()
