@@ -68,6 +68,8 @@ class ManageSettings extends Page
 
     public bool $email_order_message_enabled = true;
 
+    public bool $email_product_available_enabled = true;
+
     public ?string $allergy_disclaimer = '';
 
     public ?string $revenue_cap = '250000';
@@ -134,6 +136,7 @@ class ManageSettings extends Page
         $this->email_order_delivered_enabled = (bool) settings('email_order_delivered_enabled', $defaults['email_order_delivered_enabled']);
         $this->email_order_cancelled_enabled = (bool) settings('email_order_cancelled_enabled', $defaults['email_order_cancelled_enabled']);
         $this->email_order_message_enabled = (bool) settings('email_order_message_enabled', $defaults['email_order_message_enabled']);
+        $this->email_product_available_enabled = (bool) settings('email_product_available_enabled', $defaults['email_product_available_enabled']);
         $this->allergy_disclaimer = settings('allergy_disclaimer', $defaults['allergy_disclaimer']);
         $this->revenue_cap = settings('revenue_cap', $defaults['revenue_cap']);
 
@@ -214,6 +217,7 @@ class ManageSettings extends Page
         $this->email_order_delivered_enabled = $defaults['email_order_delivered_enabled'];
         $this->email_order_cancelled_enabled = $defaults['email_order_cancelled_enabled'];
         $this->email_order_message_enabled = $defaults['email_order_message_enabled'];
+        $this->email_product_available_enabled = $defaults['email_product_available_enabled'];
         $this->allergy_disclaimer = $defaults['allergy_disclaimer'];
         $this->revenue_cap = $defaults['revenue_cap'];
         $this->cancellation_policy = $defaults['cancellation_policy'];
@@ -255,6 +259,7 @@ class ManageSettings extends Page
             'email_order_delivered_enabled' => $this->email_order_delivered_enabled,
             'email_order_cancelled_enabled' => $this->email_order_cancelled_enabled,
             'email_order_message_enabled' => $this->email_order_message_enabled,
+            'email_product_available_enabled' => $this->email_product_available_enabled,
             'allergy_disclaimer' => $this->allergy_disclaimer,
             'revenue_cap' => $this->revenue_cap,
             'payment_methods' => $this->payment_methods,
