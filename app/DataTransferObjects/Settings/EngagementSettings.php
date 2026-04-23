@@ -28,6 +28,9 @@ final readonly class EngagementSettings
         public bool $emailProductAvailableEnabled,
         public bool $customerReferralProgramEnabled = false,
         public int $customerReferralDiscountDollars = 10,
+        public bool $abandonedCartRecoveryEnabled = false,
+        public int $abandonedCartRecoveryHours = 24,
+        public int $abandonedCartRecoveryCouponDollars = 5,
     ) {}
 
     public static function resolve(): self
@@ -55,6 +58,9 @@ final readonly class EngagementSettings
             emailProductAvailableEnabled: settings('email_product_available_enabled', '1') === '1',
             customerReferralProgramEnabled: settings('customer_referral_program_enabled', '0') === '1',
             customerReferralDiscountDollars: (int) settings('customer_referral_discount_dollars', '10'),
+            abandonedCartRecoveryEnabled: settings('abandoned_cart_recovery_enabled', '0') === '1',
+            abandonedCartRecoveryHours: (int) settings('abandoned_cart_recovery_hours', '24'),
+            abandonedCartRecoveryCouponDollars: (int) settings('abandoned_cart_recovery_coupon_dollars', '5'),
         );
     }
 

@@ -24,4 +24,5 @@ Schedule::withoutOverlapping()
         Schedule::command('health:check')->everyThirtyMinutes();
         Schedule::command('trial:check')->dailyAt('10:00');
         Schedule::command('inventory:send-low-stock-alert')->dailyAt('07:00');
+        Schedule::command('carts:send-abandonment-emails')->hourly();
     });
