@@ -171,6 +171,14 @@ class ManageSettingsForm
                             ->helperText('Customers select from these options on the catering inquiry form (e.g. Wedding, Corporate Event, Birthday Party).')
                             ->reorderable()
                             ->columnSpanFull(),
+
+                        TextInput::make('catering_deposit_percent')
+                            ->label('Deposit Percent')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->default(25)
+                            ->helperText('Used to compute the suggested deposit shown in quote emails and the "Mark Deposit Received" admin action. 0 disables deposit messaging.'),
                     ]),
 
                 // Notification Settings Section

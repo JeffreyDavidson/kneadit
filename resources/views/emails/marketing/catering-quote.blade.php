@@ -47,12 +47,25 @@
         <span style="color: #888; font-size: 13px;">Your Quote</span><br>
         <span style="font-size: 28px; font-weight: 700; color: {{ $secondaryColor }};">@money($inquiry->quoted_amount)</span>
     </div>
+
+    @php
+        $depositPercent = (int) (app(\App\Services\Settings\TenantSettings::class)->catering->depositPercent ?? 0);
+        $depositAmount = $depositPercent > 0 && $inquiry->quoted_amount
+            ? round($inquiry->quoted_amount->dollars() * $depositPercent / 100, 2)
+            : 0;
+    @endphp
+    @if ($depositAmount > 0)
+        <div style="margin-top: 16px; padding: 12px; background-color: #fff; border: 1px dashed {{ $primaryColor }}; border-radius: 6px; text-align: center;">
+            <span style="color: #888; font-size: 13px;">Deposit to confirm ({{ $depositPercent }}%)</span><br>
+            <span style="font-size: 22px; font-weight: 700; color: {{ $secondaryColor }};">${{ number_format($depositAmount, 2) }}</span>
+        </div>
+    @endif
 </div>
 
 <p style="margin: 0 0 15px;">This quote includes everything we discussed for your event. If you'd like to proceed or have any questions, simply reply to this email or give us a call.</p>
 
 <div style="text-align: center; margin: 25px 0;">
-    <p style="font-size: 14px; color: #888; margin: 0;">To confirm your order, please reply to this email or contact us directly.</p>
+    <p style="font-size: 14px; color: #888; margin: 0;">To confirm your booking, please reply to this email or contact us directly to arrange the deposit.</p>
 </div>
 
 <p style="margin: 0 0 5px;">We look forward to making your event special! 🎂</p>
