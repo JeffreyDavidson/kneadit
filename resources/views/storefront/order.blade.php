@@ -352,6 +352,31 @@
                         </div>
                     </div>
 
+                    {{-- Pickup contact (when someone else is picking up) --}}
+                    <div x-show="form.delivery_type === 'pickup'" class="pt-6 mt-6 border-t border-warm-700/20">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" x-model="hasPickupContact" class="w-4 h-4" />
+                            <span class="text-sm font-medium text-warm-300">Someone else is picking up this order</span>
+                        </label>
+                        <div x-show="hasPickupContact" class="mt-3 space-y-3">
+                            <div>
+                                <label for="pickup-contact-name" class="block text-xs font-medium mb-1 text-warm-400">Name *</label>
+                                <input id="pickup-contact-name" type="text" x-model="form.pickup_contact_name" :required="hasPickupContact" placeholder="Their name" class="order-input">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label for="pickup-contact-phone" class="block text-xs font-medium mb-1 text-warm-400">Phone</label>
+                                    <input id="pickup-contact-phone" type="tel" x-model="form.pickup_contact_phone" placeholder="555-0123" class="order-input">
+                                </div>
+                                <div>
+                                    <label for="pickup-contact-email" class="block text-xs font-medium mb-1 text-warm-400">Email</label>
+                                    <input id="pickup-contact-email" type="email" x-model="form.pickup_contact_email" placeholder="them@example.com" class="order-input">
+                                </div>
+                            </div>
+                            <p class="text-xs text-warm-500">If you provide their email, we'll send them the pickup-ready notification too.</p>
+                        </div>
+                    </div>
+
                     {{-- Notes --}}
                     <div class="pt-6 mt-6 border-t border-warm-700/20">
                         <label class="block text-xs font-medium uppercase tracking-wider mb-2 text-warm-500">Special Instructions</label>

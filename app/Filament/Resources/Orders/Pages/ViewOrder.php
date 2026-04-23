@@ -114,6 +114,22 @@ class ViewOrder extends ViewRecord
                             ->columnSpanFull(),
                     ]),
 
+                Section::make('Pickup Contact')
+                    ->visible(fn ($record) => filled($record->pickup_contact_name))
+                    ->schema([
+                        Grid::make(3)
+                            ->schema([
+                                TextEntry::make('pickup_contact_name')
+                                    ->label('Name'),
+                                TextEntry::make('pickup_contact_phone')
+                                    ->label('Phone')
+                                    ->placeholder('—'),
+                                TextEntry::make('pickup_contact_email')
+                                    ->label('Email')
+                                    ->placeholder('—'),
+                            ]),
+                    ]),
+
                 Section::make('Messages')
                     ->icon(Heroicon::OutlinedChatBubbleLeftRight)
                     ->schema([
