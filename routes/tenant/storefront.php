@@ -96,6 +96,11 @@ Route::post('survey/{survey}', [SurveyController::class, 'store'])->name('survey
 // Product waitlist
 Route::post('waitlist/product', ProductWaitlistController::class)->name('productWaitlist.join')->middleware('throttle:10,1');
 
+// Campaign open tracking pixel — public, returns a 1x1 GIF.
+Route::get('track/email-open/{token}.gif', App\Http\Controllers\Marketing\TrackCampaignOpenController::class)
+    ->name('campaign.track.open')
+    ->where('token', '[A-Z0-9]{26}');
+
 // Customer accounts
 Route::middleware('guest:customer')->group(function () {
     Route::view('account/register', 'storefront.account.register')->name('account.register.show');

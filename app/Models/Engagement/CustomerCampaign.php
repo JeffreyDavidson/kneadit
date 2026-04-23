@@ -6,8 +6,10 @@ use App\Enums\Marketing\CustomerCampaignStatus;
 use Database\Factories\Engagement\CustomerCampaignFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -20,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $scheduled_at
  * @property Carbon|null $sent_at
  * @property int $recipient_count
+ * @property-read Collection<int, CustomerCampaignLog> $logs
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerCampaign newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomerCampaign newQuery()
@@ -58,5 +61,11 @@ class CustomerCampaign extends Model
             'sent_at' => 'datetime',
             'recipient_count' => 'integer',
         ];
+    }
+
+    /** @return HasMany<CustomerCampaignLog, $this> */
+    public function logs(): HasMany
+    {
+        return $this->hasMany(CustomerCampaignLog::class);
     }
 }

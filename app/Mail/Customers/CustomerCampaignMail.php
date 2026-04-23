@@ -14,6 +14,7 @@ class CustomerCampaignMail extends BaseMailable
 
     public function __construct(
         public CustomerCampaign $campaign,
+        public ?string $trackingToken = null,
     ) {}
 
     public function envelope(): Envelope
@@ -31,6 +32,9 @@ class CustomerCampaignMail extends BaseMailable
             view: 'emails.customers.customer-campaign',
             with: [
                 'campaign' => $this->campaign,
+                'trackingPixelUrl' => $this->trackingToken
+                    ? route('campaign.track.open', ['token' => $this->trackingToken])
+                    : null,
             ],
         );
     }
