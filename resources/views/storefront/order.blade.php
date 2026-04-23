@@ -1,4 +1,9 @@
 <x-layouts.storefront>
+@if ($settings->orders->sitewideSaleEnabled && $settings->orders->sitewideSalePercent > 0)
+<div class="bg-warm-500 text-warm-900 text-center py-3 px-4 font-semibold text-sm md:text-base">
+    🎉 {{ $settings->orders->sitewideSaleLabel }} — {{ $settings->orders->sitewideSalePercent }}% off everything, applied at checkout.
+</div>
+@endif
 {{-- Dark Hero Banner --}}
 <section class="relative overflow-hidden bg-warm-900 pt-8">
     <x-storefront.grain-texture />
@@ -213,8 +218,12 @@
                             <span class="text-warm-500">Delivery</span>
                             <span class="text-warm-300" x-text="'$' + deliveryFee.toFixed(2)"></span>
                         </div>
+                        <div x-show="saleDiscount > 0" class="flex justify-between text-green-400">
+                            <span x-text="sitewideSaleLabel + ' (' + sitewideSalePercent + '% off)'"></span>
+                            <span x-text="'-$' + saleDiscount.toFixed(2)"></span>
+                        </div>
                         <div x-show="appliedCoupon" class="flex justify-between text-green-400">
-                            <span>Discount</span>
+                            <span>Coupon</span>
                             <span x-text="'-$' + discountAmount.toFixed(2)"></span>
                         </div>
                         <div x-show="appliedGiftCard" class="flex justify-between text-green-400">
