@@ -22,6 +22,10 @@ class ShowOrderConfirmationController extends Controller
             ? (json_decode($storedSteps, true) ?: config('kneadit.default_journey_steps'))
             : config('kneadit.default_journey_steps');
 
+        $referralCode = $settings->engagement->customerReferralProgramEnabled
+            ? $order->customer?->referral_code
+            : null;
+
         return view('storefront.order-confirmation', [
             'settings' => $settings,
             'order' => $order,
@@ -29,6 +33,8 @@ class ShowOrderConfirmationController extends Controller
             'journeySteps' => $journeySteps,
             'canModify' => $guard->canModify($order),
             'modifyMinutesRemaining' => $guard->minutesRemaining($order),
+            'referralCode' => $referralCode,
+            'referralShareUrl' => $referralCode ? route('customer.referral', ['code' => $referralCode]) : null,
         ]);
     }
 }

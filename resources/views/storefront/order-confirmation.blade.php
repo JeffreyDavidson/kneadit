@@ -134,6 +134,25 @@
  @endif
  </div>
 
+ @if ($referralCode)
+ <div class="md:col-span-2 rounded-2xl p-6 md:p-8 bg-warm-800 border border-warm-700/20">
+ <div class="flex items-center gap-3 mb-4">
+ <span class="block w-8 h-px bg-warm-500"></span>
+ <h2 class="font-display text-xl font-semibold text-warm-100">Refer a friend, both save</h2>
+ </div>
+ <p class="text-sm text-warm-400 mb-4">Share this link. When they place their first order, they save ${{ $settings->engagement->customerReferralDiscountDollars }} — and we'll send you a coupon for the same amount.</p>
+ <div class="flex flex-col sm:flex-row gap-3">
+ <input id="referral-share-url" type="text" readonly value="{{ $referralShareUrl }}"
+ class="flex-1 px-3 py-2 rounded-lg bg-white/[0.03] border border-warm-600/15 text-warm-300 text-sm font-mono" />
+ <button type="button"
+ onclick="navigator.clipboard.writeText(document.getElementById('referral-share-url').value); this.textContent='Copied!';"
+ class="px-4 py-2 rounded-lg text-sm font-semibold bg-warm-400 text-warm-900 hover:bg-warm-300 transition-all">
+ Copy link
+ </button>
+ </div>
+ </div>
+ @endif
+
  {{-- Customer & Delivery Info --}}
  <div class="rounded-2xl p-6 md:p-8 bg-warm-800 border border-warm-700/20">
  <div class="flex items-center gap-3 mb-6">

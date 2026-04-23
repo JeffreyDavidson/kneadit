@@ -14,6 +14,7 @@ use App\Http\Controllers\Order\StripeCancelController;
 use App\Http\Controllers\Order\StripeSuccessController;
 use App\Http\Controllers\Order\TrackingController;
 use App\Http\Controllers\Order\VerifyOrderAccessController;
+use App\Http\Controllers\Storefront\ApplyReferralCodeController;
 use App\Http\Controllers\Storefront\ShowOrderConfirmationController;
 use App\Http\Controllers\Storefront\ShowOrderFormController;
 use App\Http\Controllers\Storefront\SubmitOrderController;
@@ -21,6 +22,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('order', ShowOrderFormController::class)->name('order.create');
 Route::post('order', SubmitOrderController::class)->name('order.store')->middleware('throttle:10,1');
+
+// Customer referral capture — stores the code in session and redirects to /order.
+Route::get('referral/{code}', ApplyReferralCodeController::class)
+    ->name('customer.referral')
+    ->where('code', '[A-Z0-9]{8}')
+    ->middleware('throttle:30,1');
 
 // Email-verification gate for order-by-number access (must be reachable
 // without the gate, since the whole point is to grant access).
