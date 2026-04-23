@@ -31,6 +31,7 @@ final readonly class EngagementSettings
         public bool $abandonedCartRecoveryEnabled = false,
         public int $abandonedCartRecoveryHours = 24,
         public int $abandonedCartRecoveryCouponDollars = 5,
+        public int $lowReviewAlertThreshold = 2,
     ) {}
 
     public static function resolve(): self
@@ -61,6 +62,7 @@ final readonly class EngagementSettings
             abandonedCartRecoveryEnabled: settings('abandoned_cart_recovery_enabled', '0') === '1',
             abandonedCartRecoveryHours: (int) settings('abandoned_cart_recovery_hours', '24'),
             abandonedCartRecoveryCouponDollars: (int) settings('abandoned_cart_recovery_coupon_dollars', '5'),
+            lowReviewAlertThreshold: (int) settings('low_review_alert_threshold', '2'),
         );
     }
 
