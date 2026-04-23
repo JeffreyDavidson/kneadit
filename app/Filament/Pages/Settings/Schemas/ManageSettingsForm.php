@@ -177,6 +177,10 @@ class ManageSettingsForm
                                 Toggle::make('email_order_message_enabled')
                                     ->label('Order Message Replies')
                                     ->helperText('Sent to the customer when you reply to their order message. Does not affect the notification you receive when a customer messages you.'),
+
+                                Toggle::make('email_product_available_enabled')
+                                    ->label('Back-in-Stock')
+                                    ->helperText('Sent to waitlisted customers when you use "Notify Waitlist" on a product.'),
                             ]),
                     ]),
 

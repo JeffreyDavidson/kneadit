@@ -257,6 +257,7 @@ test('EngagementSettings stores all properties', function () {
         emailOrderDeliveredEnabled: true,
         emailOrderCancelledEnabled: true,
         emailOrderMessageEnabled: true,
+        emailProductAvailableEnabled: true,
     );
 
     expect($dto)
