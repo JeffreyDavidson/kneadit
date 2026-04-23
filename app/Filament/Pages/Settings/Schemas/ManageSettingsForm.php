@@ -101,6 +101,27 @@ class ManageSettingsForm
                             ->label('Enable Pickup Time Slots')
                             ->helperText('Replace the free-form pickup time field with discrete time slots based on your business hours.'),
 
+                        Toggle::make('sitewide_sale_enabled')
+                            ->label('Enable Sitewide Sale')
+                            ->helperText('Apply a percentage discount to every order. Stacks with coupons.'),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('sitewide_sale_percent')
+                                    ->label('Sale Percent (0–100)')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->maxValue(100)
+                                    ->default(0)
+                                    ->helperText('How much off the subtotal of every order.'),
+
+                                TextInput::make('sitewide_sale_label')
+                                    ->label('Sale Label')
+                                    ->maxLength(60)
+                                    ->default('Sale')
+                                    ->helperText('Shown in the storefront banner and order receipt.'),
+                            ]),
+
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('pickup_slot_interval_minutes')
@@ -150,6 +171,14 @@ class ManageSettingsForm
                             ->helperText('Customers select from these options on the catering inquiry form (e.g. Wedding, Corporate Event, Birthday Party).')
                             ->reorderable()
                             ->columnSpanFull(),
+
+                        TextInput::make('catering_deposit_percent')
+                            ->label('Deposit Percent')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->default(25)
+                            ->helperText('Used to compute the suggested deposit shown in quote emails and the "Mark Deposit Received" admin action. 0 disables deposit messaging.'),
                     ]),
 
                 // Notification Settings Section

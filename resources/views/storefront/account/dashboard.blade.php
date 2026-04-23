@@ -46,7 +46,9 @@
                         @foreach ($orders as $order)
                             <li class="py-3 flex items-center justify-between gap-4">
                                 <div>
-                                    <p class="font-semibold text-warm-900">Order #{{ $order->order_number }}</p>
+                                    <a href="{{ route('order.confirmation', $order) }}" class="font-semibold text-warm-900 hover:underline">
+                                        Order #{{ $order->order_number }}
+                                    </a>
                                     <p class="text-sm text-warm-600">
                                         {{ $order->created_at?->format('M j, Y') }}
                                         &middot; {{ $order->status->getLabel() }}
@@ -54,14 +56,23 @@
                                 </div>
                                 <div class="text-right">
                                     <p class="font-semibold text-warm-900">@money($order->total)</p>
-                                    <a href="{{ route('order.track') }}?number={{ $order->order_number }}"
-                                       class="text-xs font-semibold text-warm-700 hover:underline">
-                                        Track
-                                    </a>
+                                    <div class="flex gap-3 justify-end mt-1">
+                                        <a href="{{ route('order.create') }}?reorder={{ $order->order_number }}"
+                                           class="text-xs font-semibold text-warm-700 hover:underline">
+                                            Reorder
+                                        </a>
+                                        <a href="{{ route('order.track') }}?number={{ $order->order_number }}"
+                                           class="text-xs font-semibold text-warm-700 hover:underline">
+                                            Track
+                                        </a>
+                                    </div>
                                 </div>
                             </li>
                         @endforeach
                     </ul>
+                    <a href="{{ route('account.orders') }}" class="inline-block mt-4 text-sm font-semibold text-warm-800 hover:underline">
+                        View all orders &rarr;
+                    </a>
                 @else
                     <p class="text-warm-600">You haven't placed any orders yet.</p>
                     <a href="{{ route('order.create') }}" class="inline-block mt-3 text-sm font-semibold text-warm-800 hover:underline">

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CateringInquiries\Tables;
 
+use App\Actions\Customers\RecordCateringDeposit;
 use App\Actions\Customers\TransitionCateringInquiryStatus;
 use App\Enums\Customers\CateringInquiryStatus;
 use App\Filament\Actions\SlideOverEditAction;
@@ -10,6 +11,7 @@ use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Customers\CateringInquiry;
 use App\Services\Settings\TenantSettings;
 use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -73,6 +75,32 @@ class CateringInquiriesTable
                     ->requiresConfirmation()
                     ->visible(fn (CateringInquiry $record) => $record->status === CateringInquiryStatus::Quoted)
                     ->action(fn (CateringInquiry $record) => resolve(TransitionCateringInquiryStatus::class)($record, CateringInquiryStatus::Confirmed)),
+                Action::make('record_deposit')
+                    ->label('Mark Deposit Received')
+                    ->icon(Heroicon::OutlinedBanknotes)
+                    ->color('success')
+                    ->authorize('update')
+                    ->visible(fn (CateringInquiry $record) => $record->deposit_paid_at === null && in_array($record->status, [CateringInquiryStatus::Quoted, CateringInquiryStatus::Confirmed]))
+                    ->schema(fn (CateringInquiry $record) => [
+                        TextInput::make('amount')
+                            ->label('Deposit Amount ($)')
+                            ->numeric()
+                            ->required()
+                            ->default(fn () => resolve(RecordCateringDeposit::class)->suggestedAmount(
+                                $record,
+                                app(TenantSettings::class)->catering->depositPercent,
+                            )),
+                        TextInput::make('reference')
+                            ->label('Reference (check #, last-4, etc.)')
+                            ->maxLength(255),
+                    ])
+                    ->action(function (CateringInquiry $record, array $data): void {
+                        resolve(RecordCateringDeposit::class)(
+                            $record,
+                            (float) $data['amount'],
+                            $data['reference'] ?? null,
+                        );
+                    }),
                 SlideOverEditAction::make(),
             ])
             ->emptyStateHeading('No catering inquiries yet')

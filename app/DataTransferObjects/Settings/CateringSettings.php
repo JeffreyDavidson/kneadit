@@ -12,6 +12,7 @@ final readonly class CateringSettings
         public string $minimumGuests,
         public string $leadTimeDays,
         public array $eventTypes,
+        public int $depositPercent = 25,
     ) {}
 
     public static function resolve(): self
@@ -21,6 +22,7 @@ final readonly class CateringSettings
             minimumGuests: (string) settings('catering_minimum_guests', '10'),
             leadTimeDays: (string) settings('catering_lead_time_days', '14'),
             eventTypes: self::resolveEventTypes(),
+            depositPercent: (int) settings('catering_deposit_percent', '25'),
         );
     }
 
