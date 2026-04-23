@@ -31,6 +31,17 @@ class CustomerCampaignsTable
                     ->label('Recipients')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('opens')
+                    ->label('Opens')
+                    ->getStateUsing(function (CustomerCampaign $record): string {
+                        $opened = $record->logs()->whereNotNull('opened_at')->count();
+                        if ($record->recipient_count === 0) {
+                            return '—';
+                        }
+                        $rate = round($opened / $record->recipient_count * 100);
+
+                        return "{$opened} ({$rate}%)";
+                    }),
                 TextColumn::make('scheduled_at')
                     ->label('Scheduled')
                     ->dateTime()
