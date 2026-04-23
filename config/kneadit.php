@@ -110,9 +110,9 @@ return [
     ],
 
     'default_catering_occasions' => [
-        ['title' => 'Weddings', 'description' => 'Custom wedding cakes, dessert tables, pastry towers, and sweet treats to make your big day even sweeter.'],
-        ['title' => 'Corporate Events', 'description' => 'Professional catering for meetings, launches, office parties, and team celebrations.'],
-        ['title' => 'Parties & Celebrations', 'description' => 'Birthday parties, holiday gatherings, baby showers — we bring the sweetness to any celebration.'],
+        ['title' => 'Weddings', 'description' => 'Custom wedding cakes, dessert tables, pastry towers, and sweet treats to make your big day even sweeter.', 'icon' => 'heart'],
+        ['title' => 'Corporate Events', 'description' => 'Professional catering for meetings, launches, office parties, and team celebrations.', 'icon' => 'building-office'],
+        ['title' => 'Parties & Celebrations', 'description' => 'Birthday parties, holiday gatherings, baby showers — we bring the sweetness to any celebration.', 'icon' => 'star'],
     ],
 
     'default_catering_process_steps' => [
@@ -123,9 +123,9 @@ return [
     ],
 
     'default_loyalty_steps' => [
-        ['title' => 'Place an Order', 'description' => 'Order your favorite baked goods as usual.'],
-        ['title' => 'Earn Points', 'description' => 'Earn points for every $1 spent when delivered.'],
-        ['title' => 'Redeem Rewards', 'description' => 'Use your points for discounts and free treats!'],
+        ['title' => 'Place an Order', 'description' => 'Order your favorite baked goods as usual.', 'icon' => 'shopping-cart'],
+        ['title' => 'Earn Points', 'description' => 'Earn points for every $1 spent when delivered.', 'icon' => 'star'],
+        ['title' => 'Redeem Rewards', 'description' => 'Use your points for discounts and free treats!', 'icon' => 'gift'],
     ],
 
     'default_rating_descriptions' => ['', 'Could be better', 'It was okay', 'Pretty good!', 'Really great!', 'Absolutely amazing!'],

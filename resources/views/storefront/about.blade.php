@@ -20,27 +20,15 @@
     <div class="max-w-5xl mx-auto px-4 py-12">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             @if ($orderCount > 0)
-            <div class="stat-card text-center">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ number_format($orderCount) }}+</span>
-                <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Orders Fulfilled</span>
-            </div>
+                <x-storefront.stat-display :value="number_format($orderCount).'+'" label="Orders Fulfilled" />
             @endif
             @if ($avgRating)
-            <div class="stat-card text-center">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ number_format($avgRating, 1) }}★</span>
-                <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Average Rating</span>
-            </div>
+                <x-storefront.stat-display :value="number_format($avgRating, 1).'★'" label="Average Rating" />
             @endif
             @if ($customerCount > 0)
-            <div class="stat-card text-center">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ number_format($customerCount) }}+</span>
-                <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Happy Customers</span>
-            </div>
+                <x-storefront.stat-display :value="number_format($customerCount).'+'" label="Happy Customers" />
             @endif
-            <div class="stat-card text-center">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">Fresh</span>
-                <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Baked Daily</span>
-            </div>
+            <x-storefront.stat-display value="Fresh" label="Baked Daily" />
         </div>
     </div>
 </section>

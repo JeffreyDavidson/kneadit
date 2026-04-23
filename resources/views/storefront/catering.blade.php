@@ -26,18 +26,11 @@
             <h2 class="font-display text-3xl md:text-4xl font-bold text-warm-900">{{ $content['occasions_heading'] ?? 'Perfect for Every Occasion' }}</h2>
         </div>
 
-        @php
-            $occasionSvgs = [
-                'M12 21C12 21 4 14.36 4 8.5C4 5.42 6.42 3 9.5 3C11.24 3 12.91 3.81 14 5.09C15.09 3.81 16.76 3 18.5 3C21.58 3 24 5.42 24 8.5C24 14.36 16 21 16 21',
-                'M3 21V5a2 2 0 012-2h14a2 2 0 012 2v16l-4-3H5a2 2 0 01-2-2z',
-                'M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z',
-            ];
-        @endphp
         <div class="grid md:grid-cols-3 gap-8">
-            @foreach ($occasions as $i => $occasion)
+            @foreach ($occasions as $occasion)
             <div class="rounded-2xl p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white border border-warm-200">
                 <div class="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center bg-warm-100">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="text-warm-500"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $occasionSvgs[$i] ?? $occasionSvgs[0] }}"/></svg>
+                    <x-dynamic-component :component="'heroicon-o-' . ($occasion['icon'] ?? 'star')" class="w-7 h-7 text-warm-500" />
                 </div>
                 <h3 class="font-display text-xl font-bold mb-3 text-warm-900">{{ $occasion['title'] }}</h3>
                 <p class="text-warm-600">{{ $occasion['description'] }}</p>
