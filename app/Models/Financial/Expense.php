@@ -3,7 +3,7 @@
 namespace App\Models\Financial;
 
 use App\Builders\Financial\ExpenseQueryBuilder;
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Casts\PercentageCast;
 use App\Enums\Financial\ExpenseCategory;
 use App\Observers\Financial\ExpenseObserver;
@@ -44,9 +44,9 @@ class Expense extends Model
     {
         return [
             'date' => 'date',
-            'amount' => MoneyCast::class,
+            'amount' => MoneyCentsCast::class,
             'business_percentage' => PercentageCast::class,
-            'deductible_amount' => MoneyCast::class,
+            'deductible_amount' => MoneyCentsCast::class,
             'category' => ExpenseCategory::class,
         ];
     }

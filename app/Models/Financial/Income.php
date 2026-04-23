@@ -3,7 +3,7 @@
 namespace App\Models\Financial;
 
 use App\Builders\Financial\IncomeQueryBuilder;
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Enums\Financial\IncomeSource;
 use Database\Factories\Financial\IncomeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -36,7 +36,7 @@ class Income extends Model
     {
         return [
             'date' => 'date',
-            'amount' => MoneyCast::class,
+            'amount' => MoneyCentsCast::class,
             'source' => IncomeSource::class,
         ];
     }

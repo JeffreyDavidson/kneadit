@@ -98,17 +98,17 @@ class TaxCsvExporter
     /** @param resource $handle */
     public function writeSummaryCsv(mixed $handle, string $from, string $to): void
     {
-        // orders.total is bigint cents (migration 2026_04_22_201500); incomes.amount
-        // is still decimal dollars (separate table, not yet migrated).
+        // orders.total, incomes.amount, expenses.amount, expenses.deductible_amount
+        // all bigint cents (migrations 2026_04_22_201500 + 2026_04_22_230000).
         $totalOrderRevenue = (int) Order::query()->whereBetween('created_at', [$from, $to . ' 23:59:59'])
             ->where('payment_status', PaymentStatus::Paid)
             ->sum('total') / 100;
 
-        $totalIncomeRevenue = Income::query()->whereBetween('date', [$from, $to])->sum('amount');
-        $totalRevenue = $totalOrderRevenue + (float) $totalIncomeRevenue;
+        $totalIncomeRevenue = (int) Income::query()->whereBetween('date', [$from, $to])->sum('amount') / 100;
+        $totalRevenue = $totalOrderRevenue + $totalIncomeRevenue;
 
-        $totalExpenses = (float) Expense::query()->whereBetween('date', [$from, $to])->sum('amount');
-        $totalDeductible = (float) Expense::query()->whereBetween('date', [$from, $to])->sum('deductible_amount');
+        $totalExpenses = (int) Expense::query()->whereBetween('date', [$from, $to])->sum('amount') / 100;
+        $totalDeductible = (int) Expense::query()->whereBetween('date', [$from, $to])->sum('deductible_amount') / 100;
         $netProfit = $totalRevenue - $totalDeductible;
 
         fputcsv($handle, ['=== TAX SUMMARY ===']);

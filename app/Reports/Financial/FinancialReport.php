@@ -16,7 +16,8 @@ class FinancialReport
     {
         $summary = $this->calculator->calculate($year);
 
-        $deductible = (float) Expense::query()->whereYear('date', $year)->sum('deductible_amount');
+        // expenses.deductible_amount is bigint cents (migration 2026_04_22_230000).
+        $deductible = (int) Expense::query()->whereYear('date', $year)->sum('deductible_amount') / 100;
 
         $monthly = $summary->monthlyBreakdown->map(fn (mixed $m) => [
             'month' => substr($m->monthName, 0, 3),
