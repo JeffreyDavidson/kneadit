@@ -39,6 +39,11 @@ final class OrderTrackingPresenter
         return $stepIndex === $this->currentStepIndex;
     }
 
+    public function placedAt(): string
+    {
+        return $this->order->created_at?->format('M j, Y \a\t g:i A') ?? '';
+    }
+
     public function progressPercentage(): float
     {
         $totalSteps = count($this->trackableStatuses) - 1;

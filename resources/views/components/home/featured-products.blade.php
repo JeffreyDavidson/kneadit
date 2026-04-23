@@ -43,10 +43,7 @@
         {{-- Header --}}
         <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-16">
             <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="block w-8 h-px bg-warm-500"></span>
-                    <span class="uppercase tracking-[0.25em] text-xs font-semibold text-warm-500">From Our Ovens</span>
-                </div>
+                <x-storefront.eyebrow align="left" class="mb-4">From Our Ovens</x-storefront.eyebrow>
                 <h2 class="font-display text-4xl md:text-6xl font-bold leading-tight text-warm-100">{{ $title }}</h2>
                 <p class="mt-3 text-lg text-warm-500">{{ $subtitle }}</p>
             </div>

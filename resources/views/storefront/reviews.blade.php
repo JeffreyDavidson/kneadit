@@ -26,24 +26,29 @@
                 { ref: 'pct', value: {{ $vm->fiveStarPct }}, suffix: '%' },
              ])"
              x-intersect.once="$nextTick(() => runStats())">
-            <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span x-ref="avg" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">@number($vm->avgRating, 1)</span>
-                <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Average Rating</span>
-            </div>
-            <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span x-ref="total" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->totalReviews }}</span>
-                <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Total Reviews</span>
-            </div>
-            <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span x-ref="pct" class="block font-display text-3xl md:text-4xl font-bold text-warm-400">{{ $vm->fiveStarPct }}%</span>
-                <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">5-Star Reviews</span>
-            </div>
-            <div class="text-center transition-all duration-300 hover:-translate-y-1">
-                <span class="block font-display text-3xl md:text-4xl font-bold text-warm-400">
-                    <x-storefront.star-rating :rating="round($vm->avgRating)" size="lg" empty-color="--warm-300" />
-                </span>
-                <span class="text-xs uppercase tracking-[0.2em] mt-1 block text-warm-600">Overall</span>
-            </div>
+            <x-storefront.stat-display
+                wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
+                x-ref="avg"
+                label="Average Rating"
+            >@number($vm->avgRating, 1)</x-storefront.stat-display>
+            <x-storefront.stat-display
+                wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
+                x-ref="total"
+                :value="$vm->totalReviews"
+                label="Total Reviews"
+            />
+            <x-storefront.stat-display
+                wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
+                x-ref="pct"
+                :value="$vm->fiveStarPct.'%'"
+                label="5-Star Reviews"
+            />
+            <x-storefront.stat-display
+                wrapper-class="text-center transition-all duration-300 hover:-translate-y-1"
+                label="Overall"
+            >
+                <x-storefront.star-rating :rating="round($vm->avgRating)" size="lg" empty-color="--warm-300" />
+            </x-storefront.stat-display>
         </div>
     </div>
 </section>

@@ -1,13 +1,8 @@
 @if ($reviews->count() > 0)
 <section class="relative py-28 px-4 overflow-hidden bg-warm-100">
     <div class="max-w-6xl mx-auto">
-        {{-- Section eyebrow --}}
         <div class="text-center mb-6">
-            <div class="flex items-center justify-center gap-3 mb-4">
-                <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold text-warm-500">What People Say</span>
-                <span class="block w-8 h-px" style="background: var(--warm-500); opacity: 0.5;"></span>
-            </div>
+            <x-storefront.eyebrow line-opacity="0.5" class="mb-4">What People Say</x-storefront.eyebrow>
         </div>
 
         @if ($featuredReview)
