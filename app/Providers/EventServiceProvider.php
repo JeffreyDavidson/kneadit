@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Events\Customers\ContactMessageReceived;
 use App\Events\Customers\CustomerBirthday;
 use App\Events\Customers\CustomerReferralCompleted;
 use App\Events\Customers\LowReviewReceived;
 use App\Events\Customers\RepeatOrderReminderDue;
 use App\Events\Customers\ReviewRequested;
 use App\Events\Marketing\CampaignEmailQueued;
+use App\Events\Marketing\CateringInquiryReceived;
 use App\Events\Marketing\CateringQuoteRequested;
 use App\Events\Marketing\PurchaseOrderRequested;
 use App\Events\Orders\OrderCreated;
@@ -22,11 +24,13 @@ use App\Events\Platform\TenantOnboarded;
 use App\Events\Platform\TrialExpired;
 use App\Events\Platform\TrialReminding;
 use App\Events\Platform\WeeklyDigestRequested;
+use App\Listeners\Customers\NotifyBakerOfContactMessageListener;
 use App\Listeners\Customers\SendCustomerReferralRewardEmailListener;
 use App\Listeners\Customers\SendHappyBirthdayEmailListener;
 use App\Listeners\Customers\SendLowReviewAlertListener;
 use App\Listeners\Customers\SendRepeatOrderReminderEmailListener;
 use App\Listeners\Customers\SendReviewRequestEmailListener;
+use App\Listeners\Marketing\NotifyBakerOfCateringInquiryListener;
 use App\Listeners\Marketing\SendCampaignEmailListener;
 use App\Listeners\Marketing\SendCateringQuoteEmailListener;
 use App\Listeners\Marketing\SendPurchaseOrderEmailListener;
@@ -58,6 +62,9 @@ class EventServiceProvider extends ServiceProvider
 {
     /** @var array<class-string, list<class-string>> */
     protected array $listen = [
+        ContactMessageReceived::class => [
+            NotifyBakerOfContactMessageListener::class,
+        ],
         CustomerBirthday::class => [
             SendHappyBirthdayEmailListener::class,
         ],
@@ -75,6 +82,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         CampaignEmailQueued::class => [
             SendCampaignEmailListener::class,
+        ],
+        CateringInquiryReceived::class => [
+            NotifyBakerOfCateringInquiryListener::class,
         ],
         CateringQuoteRequested::class => [
             SendCateringQuoteEmailListener::class,

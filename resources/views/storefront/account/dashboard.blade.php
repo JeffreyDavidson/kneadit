@@ -2,6 +2,10 @@
     /** @var \App\Models\Customers\Customer $customer */
     /** @var \Illuminate\Support\Collection $orders */
     /** @var \Illuminate\Support\Collection $favorites */
+    /** @var \App\ValueObjects\LoyaltyBalance|null $loyaltyBalance */
+    /** @var \App\Enums\Engagement\LoyaltyTier|null $loyaltyTier */
+    /** @var string|null $referralCode */
+    /** @var string|null $referralShareUrl */
 @endphp
 <x-layouts.storefront>
     <section class="max-w-4xl mx-auto px-4 py-12">
@@ -30,13 +34,49 @@
                 <p class="font-script text-xl text-warm-500 mb-1">Welcome back,</p>
                 <h1 class="font-display text-4xl md:text-5xl text-warm-900">{{ $customer->name }}</h1>
             </div>
-            <form method="POST" action="{{ route('account.logout') }}">
-                @csrf
-                <button type="submit" class="text-sm font-semibold text-warm-700 hover:text-warm-900 underline">
-                    Sign out
-                </button>
-            </form>
+            <div class="flex items-center gap-5">
+                <a href="{{ route('account.profile.show') }}" class="text-sm font-semibold text-warm-700 hover:text-warm-900 underline">
+                    Edit profile
+                </a>
+                <form method="POST" action="{{ route('account.logout') }}">
+                    @csrf
+                    <button type="submit" class="text-sm font-semibold text-warm-700 hover:text-warm-900 underline">
+                        Sign out
+                    </button>
+                </form>
+            </div>
         </div>
+
+        @if ($loyaltyBalance || $referralCode)
+            <div class="grid gap-6 md:grid-cols-3 mb-6">
+                @if ($loyaltyBalance)
+                    <div class="card p-6">
+                        <p class="text-xs uppercase tracking-[0.2em] font-semibold text-warm-500 mb-2">Reward points</p>
+                        <p class="font-display text-3xl font-bold text-warm-900">@number($loyaltyBalance->total)</p>
+                        <a href="{{ route('storefront.rewards') }}" class="text-xs font-semibold text-warm-700 hover:underline mt-2 inline-block">
+                            See rewards &rarr;
+                        </a>
+                    </div>
+                @endif
+                @if ($loyaltyTier)
+                    <div class="card p-6">
+                        <p class="text-xs uppercase tracking-[0.2em] font-semibold text-warm-500 mb-2">Your tier</p>
+                        <p class="font-display text-2xl font-bold text-warm-900">{{ $loyaltyTier->getLabel() }}</p>
+                    </div>
+                @endif
+                @if ($referralCode)
+                    <div class="card p-6">
+                        <p class="text-xs uppercase tracking-[0.2em] font-semibold text-warm-500 mb-2">Referral code</p>
+                        <p class="font-display text-xl font-bold text-warm-900 mb-2">{{ $referralCode }}</p>
+                        <button type="button"
+                            onclick="navigator.clipboard.writeText({{ json_encode($referralShareUrl) }}); this.textContent='Copied!';"
+                            class="text-xs font-semibold text-warm-700 hover:underline">
+                            Copy share link
+                        </button>
+                    </div>
+                @endif
+            </div>
+        @endif
 
         <div class="grid gap-6 md:grid-cols-2">
             <div class="card p-6">
