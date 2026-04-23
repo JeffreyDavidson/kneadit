@@ -114,8 +114,10 @@ function verifiedOrdersSession(array $orders): array
 | visit() so admin browser tests skip the full login dance. Cuts per-test
 | cost from ~14s (fill + click + two long waits + navigate) to ~3s.
 |
-| Regenerate the state with:
-|   python3 tests/Browser/Helpers/prepare-admin-session.py
+| The session file expires every two hours (Laravel session lifetime).
+| When the helper detects a stale or missing session it transparently
+| re-runs prepare-admin-session.py — first test pays the ~30s login cost,
+| every subsequent test uses the warm session.
 */
 
 /**
@@ -133,15 +135,9 @@ function authenticatedCentralVisit(string $url)
 
 function authenticatedVisitFor(string $url, string $relativeSessionPath)
 {
-    $sessionPath = base_path($relativeSessionPath);
+    ensureFreshAdminSessions(base_path($relativeSessionPath));
 
-    if (! file_exists($sessionPath)) {
-        throw new RuntimeException(
-            "Session not found at {$sessionPath}. Generate it with: python3 tests/Browser/Helpers/prepare-admin-session.py",
-        );
-    }
-
-    $state = json_decode((string) file_get_contents($sessionPath), true, flags: JSON_THROW_ON_ERROR);
+    $state = json_decode((string) file_get_contents(base_path($relativeSessionPath)), true, flags: JSON_THROW_ON_ERROR);
 
     return visit($url, ['storageState' => $state]);
 }
@@ -150,19 +146,69 @@ function fixtureId(string $key): int
 {
     $path = base_path('tests/Browser/.admin-fixture-ids.json');
 
-    if (! file_exists($path)) {
-        throw new RuntimeException(
-            "Fixture IDs not found at {$path}. Generate them with: python3 tests/Browser/Helpers/prepare-admin-session.py",
-        );
-    }
+    ensureFreshAdminSessions($path);
 
     $ids = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
 
     if (! isset($ids[$key])) {
-        throw new RuntimeException("Fixture ID '{$key}' not found. Regenerate IDs with the prepare-admin-session script.");
+        throw new RuntimeException("Fixture ID '{$key}' not found in {$path}. The prepare-admin-session script may need updating.");
     }
 
     return (int) $ids[$key];
+}
+
+/**
+ * Ensure the admin browser session and fixture-id files are present and
+ * not yet expired. Re-runs the Playwright login helper transparently when
+ * either condition fails.
+ */
+function ensureFreshAdminSessions(string $referencedPath): void
+{
+    if (file_exists($referencedPath) && ! adminSessionIsStale()) {
+        return;
+    }
+
+    $script = base_path('tests/Browser/Helpers/prepare-admin-session.py');
+
+    if (! file_exists($script)) {
+        throw new RuntimeException("Login helper missing: {$script}");
+    }
+
+    $output = [];
+    $exitCode = 0;
+    exec('python3 ' . escapeshellarg($script) . ' 2>&1', $output, $exitCode);
+
+    if ($exitCode !== 0) {
+        throw new RuntimeException(
+            "Failed to refresh admin browser session (exit {$exitCode}):\n" . implode("\n", $output),
+        );
+    }
+}
+
+function adminSessionIsStale(): bool
+{
+    foreach (['tests/Browser/.admin-session.json', 'tests/Browser/.central-admin-session.json'] as $rel) {
+        $path = base_path($rel);
+
+        if (! file_exists($path)) {
+            return true;
+        }
+
+        $state = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+        $now = time();
+
+        foreach ($state['cookies'] ?? [] as $cookie) {
+            $expires = (int) ($cookie['expires'] ?? 0);
+
+            // Treat any cookie within 60s of expiry as already stale to
+            // avoid a session expiring mid-test.
+            if ($expires > 0 && $expires <= $now + 60) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 /*
