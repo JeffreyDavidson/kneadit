@@ -165,7 +165,7 @@
     </div>
 
     <!-- Print Styles -->
-    <style>
+    <style @cspnonce>
         @media print {
             @page {
                 margin: 1in;
@@ -198,7 +198,7 @@
         }
     </style>
 
-    <script>
+    <script @cspnonce>
         document.addEventListener('livewire:load', function () {
             Livewire.on('print-route', function () {
                 window.print();

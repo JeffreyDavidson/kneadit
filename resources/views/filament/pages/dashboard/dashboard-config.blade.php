@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <style>
+    <style @cspnonce>
         .config-layout { display: grid; grid-template-columns: 340px 1fr; gap: 28px; min-height: 600px; }
         @media (max-width: 1024px) { .config-layout { grid-template-columns: 1fr; } }
 
@@ -347,7 +347,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
-    <script>
+    <script @cspnonce>
         document.addEventListener('DOMContentLoaded', function() {
             const el = document.getElementById('widget-sortable');
             if (!el) return;

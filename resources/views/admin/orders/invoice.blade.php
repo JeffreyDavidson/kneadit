@@ -163,7 +163,7 @@
         </div>
     </div>
 
-    <script>
+    <script @cspnonce>
         // Auto-focus print dialog when page loads (optional)
         // window.addEventListener('load', function() {
         //     setTimeout(() => {

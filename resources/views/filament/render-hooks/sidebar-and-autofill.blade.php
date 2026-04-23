@@ -1,4 +1,4 @@
-<script>
+<script @cspnonce>
     document.addEventListener("livewire:navigating", () => {
         const sidebar = document.querySelector(".fi-sidebar-nav");
         if (sidebar) window.__sidebarScroll = sidebar.scrollTop;

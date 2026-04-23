@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Middleware\SecurityHeaders;
+use App\Support\Csp\CspNonce;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 test('security headers middleware adds required headers', function () {
-    $middleware = new SecurityHeaders;
+    $middleware = new SecurityHeaders(new CspNonce);
     $request = Request::create('/test');
 
     $response = $middleware->handle($request, fn () => new Response('OK'));
@@ -16,7 +17,7 @@ test('security headers middleware adds required headers', function () {
 });
 
 test('security headers middleware emits CSP in Report-Only mode (no enforcement yet)', function () {
-    $middleware = new SecurityHeaders;
+    $middleware = new SecurityHeaders(new CspNonce);
     $request = Request::create('/test');
 
     $response = $middleware->handle($request, fn () => new Response('OK'));
@@ -28,4 +29,18 @@ test('security headers middleware emits CSP in Report-Only mode (no enforcement 
         ->toContain('report-uri ')
         ->and($response->headers->get('Content-Security-Policy'))
         ->toBeNull(); // Enforcement not enabled yet
+});
+
+test('CSP header includes a nonce token in script-src and style-src', function () {
+    $nonce = new CspNonce;
+    $middleware = new SecurityHeaders($nonce);
+
+    $response = $middleware->handle(Request::create('/test'), fn () => new Response('OK'));
+
+    $header = $response->headers->get('Content-Security-Policy-Report-Only');
+    $token = $nonce->sourceList();
+
+    expect($header)
+        ->toContain("script-src 'self' {$token}")
+        ->toContain("style-src 'self' {$token}");
 });

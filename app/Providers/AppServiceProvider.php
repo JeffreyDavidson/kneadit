@@ -18,6 +18,7 @@ use App\Services\Settings\PlatformSettingsManager;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use App\Services\Settings\TenantSettingsRegistry;
+use App\Support\Csp\CspNonce;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
@@ -53,6 +54,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PlatformSettingsManager::class);
         $this->app->singleton(TenantSettingsRegistry::class);
         $this->app->singleton(TenantSettings::class, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->all());
+
+        // Per-request scoped: SecurityHeaders middleware writes the nonce into
+        // the CSP header, the @cspnonce Blade directive emits it on inline
+        // <script>/<style> tags. Same value flows through the request.
+        $this->app->scoped(CspNonce::class);
 
         foreach (self::TENANT_SETTING_DTOS as $dto => $method) {
             $this->app->bind($dto, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->{$method}());
