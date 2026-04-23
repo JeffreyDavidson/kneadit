@@ -53,6 +53,8 @@ test('byCategory groups expenses and sums amounts by category', function () {
     $ingredients = $results->firstWhere('category', ExpenseCategory::Ingredients);
     $marketing = $results->firstWhere('category', ExpenseCategory::Marketing);
 
-    expect((float) $ingredients->total_amount)->toBe(80.00)
-        ->and((float) $marketing->total_amount)->toBe(100.00);
+    // total_amount = SUM(expenses.amount); column is bigint cents (migration
+    // 2026_04_22_230000), so the aggregate returns cents.
+    expect((int) $ingredients->total_amount)->toBe(8000)
+        ->and((int) $marketing->total_amount)->toBe(10000);
 });
