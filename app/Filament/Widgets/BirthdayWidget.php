@@ -6,6 +6,7 @@ use App\Filament\Widgets\Concerns\CachesWidgetData;
 use App\Models\Customers\Customer;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
+use stdClass;
 
 class BirthdayWidget extends Widget
 {
@@ -15,15 +16,18 @@ class BirthdayWidget extends Widget
 
     protected string $view = 'filament.widgets.birthday-widget';
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, stdClass> */
     public function getUpcomingBirthdays(): Collection
     {
-        return $this->cached('upcoming', [3600, 7200], function (): Collection {
+        // Cache plain arrays of denormalized fields, not Customer models / stdClass
+        // objects. Cache stores hydrate as __PHP_Incomplete_Class because
+        // config(cache.serializable_classes) is false. Same shape as #302.
+        $entries = $this->cached('upcoming', [3600, 7200], function (): array {
             $today = now();
 
             return Customer::query()->whereNotNull('birthday')
                 ->get()
-                ->map(function (Customer $customer) use ($today) {
+                ->map(function (Customer $customer) use ($today): ?array {
                     $next = $customer->birthday?->copy()->year($today->year);
                     if (! $next) {
                         return null;
@@ -33,17 +37,21 @@ class BirthdayWidget extends Widget
                     }
                     $daysUntil = (int) today()->diffInDays($next, false);
 
-                    return (object) [
-                        'customer' => $customer,
+                    return [
+                        'customer_name' => $customer->name,
                         'birthday_date' => $customer->birthday->format('M j'),
                         'days_until' => $daysUntil,
                         'is_today' => $daysUntil === 0,
                     ];
                 })
-                ->filter(fn (mixed $item): bool => is_object($item) && $item->days_until >= 0 && $item->days_until <= 30)
+                ->filter(fn (?array $item): bool => $item !== null && $item['days_until'] >= 0 && $item['days_until'] <= 30)
                 ->sortBy('days_until')
-                ->take(5);
+                ->take(5)
+                ->values()
+                ->all();
         });
+
+        return collect(array_map(fn (array $entry): stdClass => (object) $entry, $entries));
     }
 
     protected function cachePrefix(): string

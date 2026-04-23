@@ -11,7 +11,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PopularProductsWidget extends BaseWidget
@@ -32,7 +31,7 @@ class PopularProductsWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->records(fn (): Collection => $this->fetchTopProducts())
+            ->records(fn (): array => $this->fetchTopProducts())
             ->columns([
                 TextColumn::make('product_name')
                     ->label('Product'),
@@ -47,10 +46,13 @@ class PopularProductsWidget extends BaseWidget
             ->emptyStateIcon(Heroicon::OutlinedCake);
     }
 
-    /** @return Collection<int, OrderItem> */
-    private function fetchTopProducts(): Collection
+    /** @return array<int, array<string, mixed>> */
+    private function fetchTopProducts(): array
     {
-        return $this->cached('main', [900, 1800], function (): Collection {
+        // Cache plain arrays, not Eloquent collections. Cache stores hydrate as
+        // __PHP_Incomplete_Class because config(cache.serializable_classes) is false.
+        // Same shape as #302.
+        return $this->cached('main', [900, 1800], function (): array {
             $range = DateRange::thisWeek();
 
             return OrderItem::query()
@@ -67,7 +69,8 @@ class PopularProductsWidget extends BaseWidget
                 ->groupBy('order_items.product_id', 'products.name')
                 ->orderByDesc('total_qty')
                 ->limit(5)
-                ->get();
+                ->get()
+                ->toArray();
         });
     }
 

@@ -16,7 +16,7 @@
                             <span class="{{ $entry->is_today ? 'text-2xl' : 'text-lg' }}">🎂</span>
                             <div>
                                 <p class="font-medium text-sm text-brand-900 m-0">
-                                    {{ $entry->customer->name }}
+                                    {{ $entry->customer_name }}
                                 </p>
                                 <p class="text-xs text-brand-500 m-0">
                                     {{ $entry->birthday_date }}
