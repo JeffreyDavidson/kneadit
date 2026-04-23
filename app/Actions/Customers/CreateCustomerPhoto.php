@@ -2,6 +2,7 @@
 
 namespace App\Actions\Customers;
 
+use App\Events\Customers\CustomerPhotoSubmitted;
 use App\Models\Customers\CustomerPhoto;
 use Illuminate\Http\UploadedFile;
 
@@ -16,12 +17,16 @@ class CreateCustomerPhoto
     ): CustomerPhoto {
         $path = $photo->store('customer-photos', 'public');
 
-        return CustomerPhoto::query()->create([
+        $record = CustomerPhoto::query()->create([
             'customer_name' => $customerName,
             'customer_email' => $customerEmail,
             'caption' => $caption,
             'photo_path' => $path,
             'product_id' => $productId,
         ]);
+
+        event(new CustomerPhotoSubmitted($record));
+
+        return $record;
     }
 }
