@@ -8,6 +8,7 @@ use App\Events\Customers\LowReviewReceived;
 use App\Events\Customers\RepeatOrderReminderDue;
 use App\Events\Customers\ReviewRequested;
 use App\Events\Marketing\CampaignEmailQueued;
+use App\Events\Marketing\CateringInquiryReceived;
 use App\Events\Marketing\CateringQuoteRequested;
 use App\Events\Marketing\PurchaseOrderRequested;
 use App\Events\Orders\OrderCreated;
@@ -27,6 +28,7 @@ use App\Listeners\Customers\SendHappyBirthdayEmailListener;
 use App\Listeners\Customers\SendLowReviewAlertListener;
 use App\Listeners\Customers\SendRepeatOrderReminderEmailListener;
 use App\Listeners\Customers\SendReviewRequestEmailListener;
+use App\Listeners\Marketing\NotifyBakerOfCateringInquiryListener;
 use App\Listeners\Marketing\SendCampaignEmailListener;
 use App\Listeners\Marketing\SendCateringQuoteEmailListener;
 use App\Listeners\Marketing\SendPurchaseOrderEmailListener;
@@ -75,6 +77,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         CampaignEmailQueued::class => [
             SendCampaignEmailListener::class,
+        ],
+        CateringInquiryReceived::class => [
+            NotifyBakerOfCateringInquiryListener::class,
         ],
         CateringQuoteRequested::class => [
             SendCateringQuoteEmailListener::class,
