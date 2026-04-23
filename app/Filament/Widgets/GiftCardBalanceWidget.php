@@ -19,7 +19,9 @@ class GiftCardBalanceWidget extends Widget
 
     public function getTotalOutstandingBalance(): float
     {
-        return $this->cached('outstanding_balance', [300, 600], fn (): float => (float) GiftCard::query()->where('is_active', true)->sum('current_balance'));
+        // gift_cards.current_balance is bigint cents (this PR's migration);
+        // divide back to dollars for display.
+        return $this->cached('outstanding_balance', [300, 600], fn (): float => (float) ((int) GiftCard::query()->where('is_active', true)->sum('current_balance') / 100));
     }
 
     public function getActiveCardsCount(): int
