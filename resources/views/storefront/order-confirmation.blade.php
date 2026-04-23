@@ -75,6 +75,12 @@
  <span>-@money($order->gift_card_amount)</span>
  </div>
  @endif
+ @if ($order->tip_amount->isPositive())
+ <div class="flex justify-between">
+ <span class="text-warm-500">Tip</span>
+ <span class="text-warm-300">@money($order->tip_amount)</span>
+ </div>
+ @endif
  <div class="flex justify-between pt-3 border-t border-warm-700/20">
  <span class="font-display text-lg font-bold text-warm-100">Total</span>
  <span class="font-display text-2xl font-bold text-warm-400">@money($order->total)</span>

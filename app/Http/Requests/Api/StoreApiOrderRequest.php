@@ -33,6 +33,7 @@ class StoreApiOrderRequest extends FormRequest
             'delivery_tier' => ['required_if:delivery_type,delivery', 'nullable', 'in:under5,5to10,10to15,over15'],
             'notes' => ['nullable', 'string', 'max:500'],
             'coupon_code' => ['nullable', 'string', 'max:50'],
+            'tip_amount' => ['nullable', 'numeric', 'min:0', 'max:1000'],
         ];
     }
 

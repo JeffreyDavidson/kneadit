@@ -68,11 +68,12 @@ use Illuminate\Support\Carbon;
  * @property \App\ValueObjects\Money $delivery_fee
  * @property \App\ValueObjects\Money $discount_amount
  * @property \App\ValueObjects\Money $gift_card_amount
+ * @property \App\ValueObjects\Money $tip_amount
  * @property \App\ValueObjects\Money $total
  *
  * @mixin \Eloquent
  */
-#[Fillable('order_number', 'customer_id', 'status', 'payment_status', 'payment_method', 'subtotal', 'delivery_fee', 'discount_amount', 'total', 'paypal_invoice_id', 'delivery_address', 'delivery_type', 'delivery_date', 'delivery_time', 'notes', 'user_id', 'coupon_id', 'gift_card_id', 'gift_card_amount', 'review_request_sent_at', 'stripe_checkout_session_id', 'stripe_payment_intent_id')]
+#[Fillable('order_number', 'customer_id', 'status', 'payment_status', 'payment_method', 'subtotal', 'delivery_fee', 'discount_amount', 'tip_amount', 'total', 'paypal_invoice_id', 'delivery_address', 'delivery_type', 'delivery_date', 'delivery_time', 'notes', 'user_id', 'coupon_id', 'gift_card_id', 'gift_card_amount', 'review_request_sent_at', 'stripe_checkout_session_id', 'stripe_payment_intent_id')]
 #[ObservedBy([OrderObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(OrderQueryBuilder::class)]
 #[UseFactory(OrderFactory::class)]
@@ -89,6 +90,7 @@ class Order extends Model
         'delivery_fee' => 0,
         'discount_amount' => 0,
         'gift_card_amount' => 0,
+        'tip_amount' => 0,
     ];
 
     protected function casts(): array
@@ -98,6 +100,7 @@ class Order extends Model
             'delivery_fee' => MoneyCentsCast::class,
             'discount_amount' => MoneyCentsCast::class,
             'gift_card_amount' => MoneyCentsCast::class,
+            'tip_amount' => MoneyCentsCast::class,
             'total' => MoneyCentsCast::class,
             'delivery_date' => 'date',
             'delivery_time' => 'datetime:H:i',
