@@ -73,8 +73,14 @@ class ShoppingListService
                 ->sortBy('pivot.unit_price')
                 ->first();
 
-            /** @var object{unit_price: string, minimum_order: string, lead_time_days: int, sku: string}|null $pivot */
+            /** @var object{unit_price: ?int, minimum_order: ?int, lead_time_days: int, sku: string}|null $pivot */
             $pivot = $bestSupplier?->pivot;
+
+            // ingredient_supplier.unit_price + .minimum_order are bigint cents
+            // (migration 2026_04_22_240000); the pivot has no cast so divide
+            // back to dollars at the boundary.
+            $pivotUnitPrice = $pivot?->unit_price !== null ? (int) $pivot->unit_price / 100 : null;
+            $effectiveUnitPrice = $pivotUnitPrice ?? $ingredient->cost_per_unit?->dollars() ?? 0;
 
             $item = [
                 'ingredient_id' => $ingredient->id,
@@ -82,10 +88,10 @@ class ShoppingListService
                 'unit' => $ingredient->unit,
                 'current_stock' => $ingredient->current_stock,
                 'needed' => round($neededQty, 2),
-                'unit_price' => $pivot->unit_price ?? $ingredient->cost_per_unit?->dollars() ?? 0,
-                'subtotal' => round($neededQty * (float) ($pivot->unit_price ?? $ingredient->cost_per_unit?->dollars() ?? 0), 2),
+                'unit_price' => $effectiveUnitPrice,
+                'subtotal' => round($neededQty * (float) $effectiveUnitPrice, 2),
                 'sku' => $pivot?->sku,
-                'minimum_order' => $pivot?->minimum_order,
+                'minimum_order' => $pivot?->minimum_order !== null ? (int) $pivot->minimum_order / 100 : null,
                 'lead_time_days' => $pivot?->lead_time_days,
             ];
 
