@@ -19,12 +19,12 @@ test('reviewUrl points at the storefront.submitReview route bound by order_numbe
         ->not->toContain("/review/{$order->id}");
 });
 
-test('reviewUrl matches what the actual route() helper produces', function () {
+test('reviewUrl is a temporary signed URL — the link is the proof of ownership', function () {
     $order = Order::factory()->for(Customer::factory())->create();
 
     $mail = new ReviewRequestMail($order);
 
-    expect($mail->reviewUrl)->toBe(
-        route('storefront.submitReview', ['order' => $order->order_number]),
-    );
+    expect($mail->reviewUrl)
+        ->toContain('signature=')
+        ->toContain('expires=');
 });
