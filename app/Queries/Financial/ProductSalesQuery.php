@@ -21,18 +21,20 @@ class ProductSalesQuery
 
         $orderIds = Order::query()->active()->whereBetween('delivery_date', $dates)->select('id');
 
+        // unit_price is bigint cents (migration 2026_04_22_201500), so the
+        // SUM(quantity * unit_price) aggregate returns cents — divide back to dollars.
         return OrderItem::query()
             ->whereIn('order_id', $orderIds)
-            ->selectRaw('product_id, SUM(quantity) as units_sold, SUM(quantity * unit_price) as revenue')
+            ->selectRaw('product_id, SUM(quantity) as units_sold, SUM(quantity * unit_price) as revenue_cents')
             ->groupBy('product_id')
             ->with('product:id,name')
-            ->orderByDesc('revenue')
+            ->orderByDesc('revenue_cents')
             ->limit($limit)
             ->get()
             ->map(fn (OrderItem $item) => [
                 'name' => $item->product->name ?? 'Deleted Product',
-                'units_sold' => (int) $item->units_sold,
-                'revenue' => (float) $item->revenue,
+                'units_sold' => (int) $item->getAttribute('units_sold'),
+                'revenue' => (float) ((int) $item->getAttribute('revenue_cents') / 100),
             ]);
     }
 
@@ -48,9 +50,10 @@ class ProductSalesQuery
 
         $orderIds = Order::query()->active()->whereBetween('delivery_date', $dates)->select('id');
 
+        // unit_price is bigint cents (migration 2026_04_22_201500); divide aggregates.
         return OrderItem::query()
             ->whereIn('order_id', $orderIds)
-            ->selectRaw('product_id, SUM(quantity) as units_sold, SUM(quantity * unit_price) as revenue')
+            ->selectRaw('product_id, SUM(quantity) as units_sold, SUM(quantity * unit_price) as revenue_cents')
             ->groupBy('product_id')
             ->with('product:id,name')
             ->orderByDesc('units_sold')
@@ -58,8 +61,8 @@ class ProductSalesQuery
             ->get()
             ->map(fn (OrderItem $item) => [
                 'name' => $item->product->name ?? 'Deleted Product',
-                'units_sold' => (int) $item->units_sold,
-                'revenue' => (float) $item->revenue,
+                'units_sold' => (int) $item->getAttribute('units_sold'),
+                'revenue' => (float) ((int) $item->getAttribute('revenue_cents') / 100),
             ]);
     }
 }
