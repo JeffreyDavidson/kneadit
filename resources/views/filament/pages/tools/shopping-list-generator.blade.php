@@ -101,7 +101,7 @@
     </div>
 
     <!-- Print Styles -->
-    <style>
+    <style @cspnonce>
         @media print {
             body {
                 -webkit-print-color-adjust: exact;
@@ -147,7 +147,7 @@
     </style>
 
     <!-- Print JavaScript -->
-    <script>
+    <script @cspnonce>
         document.addEventListener('livewire:init', () => {
             Livewire.on('print-shopping-list', () => {
                 window.print();

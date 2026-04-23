@@ -81,7 +81,7 @@
         @endif
     </div>
 
-    <script>
+    <script @cspnonce>
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             const text = element.textContent;

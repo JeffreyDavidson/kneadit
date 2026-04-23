@@ -1,5 +1,5 @@
 @if ($customerPhotos->count() > 0)
-<style>
+<style @cspnonce>
     .gallery-masonry {
         columns: 2;
         column-gap: 12px;

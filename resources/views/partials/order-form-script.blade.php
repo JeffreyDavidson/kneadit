@@ -1,4 +1,4 @@
-<script>
+<script @cspnonce>
 function orderForm() {
     return {
         cartItems: [],

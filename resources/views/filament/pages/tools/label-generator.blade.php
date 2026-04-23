@@ -147,7 +147,7 @@
     </div>
 
     @pushOnce('styles')
-    <style>
+    <style @cspnonce>
         @media print {
             /* Hide everything except labels */
             body * { visibility: hidden !important; }
