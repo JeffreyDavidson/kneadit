@@ -8,6 +8,7 @@ use App\Http\Controllers\Order\AvailabilityController;
 use App\Http\Controllers\Order\CapacityController;
 use App\Http\Controllers\Order\MessageController;
 use App\Http\Controllers\Order\ModifyOrderController;
+use App\Http\Controllers\Order\PickupSlotsController;
 use App\Http\Controllers\Order\ReorderController;
 use App\Http\Controllers\Order\StripeCancelController;
 use App\Http\Controllers\Order\StripeSuccessController;
@@ -47,6 +48,12 @@ Route::get('capacity/check/{date}', CapacityController::class)->name('capacity.c
 
 // Availability for next 30 days (scheduling integration)
 Route::get('availability', AvailabilityController::class)->name('order.availability');
+
+// Pickup time slots for a given date (when pickup_slots_enabled).
+Route::get('pickup-slots/{date}', PickupSlotsController::class)
+    ->name('order.pickupSlots')
+    ->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}')
+    ->middleware('throttle:60,1');
 
 // Coupon validation (AJAX)
 Route::post('coupon/apply', ApplyCouponController::class)->name('coupon.apply')->middleware('throttle:10,1');
