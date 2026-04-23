@@ -31,7 +31,7 @@ class ShoppingListService
             return $needs;
         }
 
-        $orders = Order::query()->whereBetween('pickup_date', [$startDate, $endDate])
+        $orders = Order::query()->whereBetween('delivery_date', [$startDate, $endDate])
             ->outstanding()
             ->with('orderItems.product.recipe.inventoryIngredients')
             ->get();
