@@ -522,6 +522,13 @@ function makeEngagementSettings(array $overrides = []): App\DataTransferObjects\
         'announcementEnabled' => false,
         'announcementText' => '',
         'announcementType' => 'info',
+        'emailOrderPlacedEnabled' => true,
+        'emailOrderConfirmedEnabled' => true,
+        'emailOrderBakingEnabled' => true,
+        'emailOrderReadyEnabled' => true,
+        'emailOrderDeliveredEnabled' => true,
+        'emailOrderCancelledEnabled' => true,
+        'emailOrderMessageEnabled' => true,
     ], $overrides));
 }
 

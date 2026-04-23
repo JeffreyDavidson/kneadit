@@ -73,6 +73,38 @@
 - Custom exceptions should store relevant context as `public readonly` constructor-promoted properties
 - Implement `context(): array` for structured logging
 
+### Money Storage
+- **All money columns are stored as bigint cents, never decimal dollars** (as of v1.11.0 — see migrations under `database/migrations/tenant/*_convert_*_money_columns_to_cents.php`).
+- Use `MoneyCentsCast::class` on model money attributes. The legacy `MoneyCast` was deleted.
+- The `Money` value object is already cents-internal (`fromCents`, `cents()`, `dollars()`). Callers that have a `Money` object don't need to know about the storage shape.
+- **Raw aggregates bypass the cast.** `->sum('total')`, `->withSum(...)`, `SUM(...)` selectRaw, etc. return cents. Divide by 100 at the consumer, OR wrap in `Money::fromCents()`. Every call site that does this has an inline comment referencing the relevant migration — follow that pattern when adding new aggregations.
+- **Direct DB operations (`->increment`, `->decrement`, `assertDatabaseHas` with a money column)** also bypass the cast. Convert dollars→cents at the boundary (`(int) round($amount * 100)` or `Money::fromDollars($x)->cents()`).
+- Columns that look like money but aren't: `coupons.percentage` and `loyalty_rewards.discount_percentage` (fractional 0–100, use `PercentageCast`); ingredient/stock quantities (physical units like lbs, use `decimal:2`).
+
+### Caching
+- **Never cache Eloquent models or collections.** `config/cache.php` sets `'serializable_classes' => false` (Laravel's gadget-chain default). Any `Cache::flexible(..., fn() => SomeModel::query()->...->get())` will 500 on the second hit as `unserialize()` returns `__PHP_Incomplete_Class`.
+- Cache scalars (int, float, string, bool), primitive arrays, or — if you need the Collection shape on read — cache the underlying array and wrap with `collect()` in the resolver boundary.
+- Tests don't catch this bug because `phpunit.xml` pins `CACHE_STORE=array` (in-memory, no serialization). When writing a new cache call, manually reason about the shape.
+- `Hero::topReview` documents this rule inline; copy that comment when adding a no-cache-here decision.
+
+### Atomic Counters
+- **Never do read-modify-write on counter columns.** Patterns like `'count' => $model->count + 1` or `max(0, $model->count - 1)` race under concurrent requests.
+- Use atomic `->increment('col')` / `->decrement('col')`. Laravel's `increment()` takes an optional extras array for one-shot updates of other columns: `->increment('usage_count', 1, ['last_used_at' => $now])`.
+- To clamp a decrement at zero: `->where('count', '>', 0)->decrement('count')`.
+
+### Email Links (tenant-facing)
+- Email links use tamper-proof signed URLs via `URL::temporarySignedRoute(...)`, not session-gated routes. The route bound by `{order:order_number}` gets the `signed` middleware; any session access the receiving controller needs is granted after signature validation via `OrderAccessGuard::grant($order)`.
+- See `ReviewRequestMail` + `ShowReviewFormController` for the reference implementation, and `CustomerVerifyEmailNotification` for the auth email variant.
+
+### Content Security Policy
+- CSP is currently in **Report-Only mode** (see `SecurityHeaders` middleware). Violation reports POST to `/csp-report` and log to the `csp_channel` log channel.
+- Every inline `<script>` and `<style>` must have `@cspnonce` — the directive emits `nonce="..."` using the per-request `CspNonce` (request-scoped singleton) that the middleware writes into the CSP header. When adding a new inline block, add `@cspnonce` as an attribute.
+- External `<script src="...">` tags don't need the nonce (CSP src whitelist covers them) but new external domains need to be added to the policy in `SecurityHeaders::csp()`.
+
+### Route Model Binding (order-by-number)
+- All order-bound routes use `{order:order_number}` explicit per-route binding (the model's `getRouteKeyName` is deliberately **not** overridden; routing concerns live in the routing layer per PR #164).
+- When building URLs for orders in Blade/JS, always use `route('order.x', $order)` or `route('order.x', ['order' => $order->order_number])`. **Never** concatenate `$order->id` into a URL — the routes bind by `order_number` and will 404. Seen as a real bug shape twice; regression tests in `ReviewRequestMailTest` and `TrackingControllerTest` guard against repeats.
+
 ## Git
 - Pre-commit hook: `.githooks/pre-commit` (PHP lint)
 - Hook path configured via `git config core.hooksPath .githooks`

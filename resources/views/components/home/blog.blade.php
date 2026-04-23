@@ -4,10 +4,7 @@
         {{-- Header --}}
         <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-14">
             <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="block w-8 h-px bg-warm-500"></span>
-                    <span class="uppercase tracking-[0.25em] text-xs font-semibold text-warm-500">Blog</span>
-                </div>
+                <x-storefront.eyebrow align="left" class="mb-4">Blog</x-storefront.eyebrow>
                 <h2 class="font-display text-3xl md:text-5xl font-bold text-warm-900">{{ $title }}</h2>
                 <p class="mt-2 text-base text-warm-600">{{ $subtitle }}</p>
             </div>

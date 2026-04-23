@@ -79,7 +79,7 @@
                                     Order {{ $tracked->order->order_number }}
                                 </h3>
                                 <p class="text-sm mt-1 text-warm-500">
-                                    Placed {{ $tracked->order->created_at->format('M j, Y \a\t g:i A') }}
+                                    Placed {{ $tracked->placedAt() }}
                                 </p>
                             </div>
                             <div class="text-right">
