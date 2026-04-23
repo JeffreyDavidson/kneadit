@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
+use App\Services\Orders\OrderModificationGuard;
 use App\Services\Settings\SettingsManager;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 
 class ShowOrderConfirmationController extends Controller
 {
-    public function __invoke(Order $order, TenantSettings $settings, SettingsManager $manager): View
+    public function __invoke(Order $order, TenantSettings $settings, SettingsManager $manager, OrderModificationGuard $guard): View
     {
         $order->load('orderItems.product');
 
@@ -26,6 +27,8 @@ class ShowOrderConfirmationController extends Controller
             'order' => $order,
             'content' => $content,
             'journeySteps' => $journeySteps,
+            'canModify' => $guard->canModify($order),
+            'modifyMinutesRemaining' => $guard->minutesRemaining($order),
         ]);
     }
 }

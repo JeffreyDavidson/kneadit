@@ -20,4 +20,9 @@ final class OrderItemPresenter
     {
         return $this->orderItem->unit_price->multiply($this->orderItem->quantity);
     }
+
+    public function productName(): string
+    {
+        return $this->orderItem->product->name ?? 'Product';
+    }
 }

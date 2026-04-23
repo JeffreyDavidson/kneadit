@@ -15,6 +15,7 @@ final readonly class OrderSettings
         public string $minimumDeliveryOrderAmount,
         public array $deliveryFeeTiers,
         public int $defaultDailyCapacity,
+        public int $modificationWindowMinutes = 0,
     ) {}
 
     public static function resolve(): self
@@ -27,6 +28,7 @@ final readonly class OrderSettings
             minimumDeliveryOrderAmount: (string) settings('minimum_delivery_order_amount', '0'),
             deliveryFeeTiers: (array) json_decode((string) settings('delivery_fee_tiers', '[]'), true),
             defaultDailyCapacity: (int) settings('default_daily_capacity', '20'),
+            modificationWindowMinutes: (int) settings('order_modification_window_minutes', '0'),
         );
     }
 
