@@ -39,6 +39,8 @@ function orderForm() {
         minDate: '',
         availabilityData: [],
         unavailableDates: [],
+        availableSlots: [],
+        pickupSlotsEnabled: {{ $settings->orders->pickupSlotsEnabled ? 'true' : 'false' }},
 
         init() {
             const leadTimeHours = {{ $settings->orders->leadTimeHours }};
@@ -320,6 +322,26 @@ function orderForm() {
                 console.error('Error applying coupon:', error);
             } finally {
                 this.isApplyingCoupon = false;
+            }
+        },
+
+        async onDateChange() {
+            await this.checkCapacity();
+            if (this.pickupSlotsEnabled && this.form.delivery_date) {
+                await this.loadPickupSlots();
+            }
+        },
+
+        async loadPickupSlots() {
+            this.availableSlots = [];
+            this.form.delivery_time = '';
+            try {
+                const response = await fetch(`/pickup-slots/${this.form.delivery_date}`);
+                if (!response.ok) return;
+                const payload = await response.json();
+                this.availableSlots = payload.data?.slots || [];
+            } catch (error) {
+                console.error('Error loading pickup slots:', error);
             }
         },
 

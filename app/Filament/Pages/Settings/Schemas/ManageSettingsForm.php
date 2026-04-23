@@ -96,6 +96,25 @@ class ManageSettingsForm
                             ->numeric()
                             ->default(0)
                             ->helperText('How long after placing an order a customer can edit quantities/tip. 0 disables the feature.'),
+
+                        Toggle::make('pickup_slots_enabled')
+                            ->label('Enable Pickup Time Slots')
+                            ->helperText('Replace the free-form pickup time field with discrete time slots based on your business hours.'),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('pickup_slot_interval_minutes')
+                                    ->label('Slot Interval (minutes)')
+                                    ->numeric()
+                                    ->default(30)
+                                    ->helperText('How wide each pickup window is (e.g. 15, 30, 60).'),
+
+                                TextInput::make('pickup_slot_max_per_window')
+                                    ->label('Max Orders per Slot')
+                                    ->numeric()
+                                    ->default(3)
+                                    ->helperText('Cap on how many orders can share a single pickup slot.'),
+                            ]),
                     ]),
 
                 // Order Journey Section
