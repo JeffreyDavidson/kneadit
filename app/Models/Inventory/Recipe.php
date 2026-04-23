@@ -2,7 +2,7 @@
 
 namespace App\Models\Inventory;
 
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use Database\Factories\Inventory\RecipeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -39,7 +39,7 @@ class Recipe extends Model
         return [
             'ingredients' => 'json',
             'prep_time_minutes' => 'integer',
-            'cost' => MoneyCast::class,
+            'cost' => MoneyCentsCast::class,
         ];
     }
 
