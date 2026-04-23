@@ -146,6 +146,10 @@ class ManageSettingsForm
                                 Toggle::make('birthday_program_enabled')
                                     ->label('Enable Birthday Program')
                                     ->helperText('Send birthday offers to customers'),
+
+                                Toggle::make('low_stock_alerts_enabled')
+                                    ->label('Enable Daily Low-Stock Alerts')
+                                    ->helperText('Email you a daily digest of ingredients at or below their low-stock threshold (sent 7 AM).'),
                             ]),
                     ]),
 

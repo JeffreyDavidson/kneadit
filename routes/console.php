@@ -23,4 +23,5 @@ Schedule::withoutOverlapping()
         Schedule::command('backup:databases --keep=7')->twiceDaily(3, 15);
         Schedule::command('health:check')->everyThirtyMinutes();
         Schedule::command('trial:check')->dailyAt('10:00');
+        Schedule::command('inventory:send-low-stock-alert')->dailyAt('07:00');
     });

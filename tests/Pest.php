@@ -594,6 +594,7 @@ function makeTenantSettings(
     ?App\DataTransferObjects\Settings\HomepageSettings $homepage = null,
     ?App\DataTransferObjects\Settings\OnboardingSettings $onboarding = null,
     ?App\DataTransferObjects\Settings\GiftCardSettings $giftCards = null,
+    ?App\DataTransferObjects\Settings\InventorySettings $inventory = null,
 ): App\Services\Settings\TenantSettings {
     return new App\Services\Settings\TenantSettings(
         store: $store ?? makeStoreInfo(),
@@ -610,6 +611,9 @@ function makeTenantSettings(
         giftCards: $giftCards ?? new App\DataTransferObjects\Settings\GiftCardSettings(
             presetAmounts: [10, 25, 50, 100],
             defaultAmount: 25,
+        ),
+        inventory: $inventory ?? new App\DataTransferObjects\Settings\InventorySettings(
+            lowStockAlertsEnabled: false,
         ),
     );
 }
