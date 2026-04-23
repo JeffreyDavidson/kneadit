@@ -9,8 +9,9 @@ Produces two separate sessions:
 Also captures tenant fixture record IDs (order id, survey id) so
 detail-page tests can reference them without querying the tenant DB.
 
-Run ONCE per dev machine (or after password changes, session expiry,
-or seeder re-run with different IDs):
+Run by tests/Pest.php's authenticatedVisit() / fixtureId() helpers
+automatically when the session/fixture-id files are missing or expired.
+Can also be invoked manually after password changes or seeder re-runs:
 
     python3 tests/Browser/Helpers/prepare-admin-session.py
 
