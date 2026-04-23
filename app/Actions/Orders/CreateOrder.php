@@ -11,6 +11,7 @@ use App\Pipes\Orders\ApplyReferral;
 use App\Pipes\Orders\ApplyTierPerks;
 use App\Pipes\Orders\CalculateOrderTotals;
 use App\Pipes\Orders\EnforceMinimumOrderAmount;
+use App\Pipes\Orders\MarkCartConverted;
 use App\Pipes\Orders\OrderPipelineData;
 use App\Pipes\Orders\PersistOrder;
 use App\Pipes\Orders\PersistOrderItems;
@@ -44,6 +45,7 @@ class CreateOrder
                 RecordGiftCardRedemption::class,
                 PersistOrderItems::class,
                 PersistReferralCompletion::class,
+                MarkCartConverted::class,
             ])
             ->thenReturn());
 
