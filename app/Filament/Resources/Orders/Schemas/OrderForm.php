@@ -72,11 +72,12 @@ class OrderForm
         return Section::make('Pricing')
             ->columnSpanFull()
             ->components([
-                Grid::make(5)->components([
+                Grid::make(6)->components([
                     MoneyInput::make('subtotal')->required(),
                     MoneyInput::make('delivery_fee')->default(0),
                     MoneyInput::make('discount_amount')->default(0),
                     MoneyInput::make('gift_card_amount')->default(0),
+                    MoneyInput::make('tip_amount')->default(0),
                     MoneyInput::make('total')->required(),
                 ]),
             ]);

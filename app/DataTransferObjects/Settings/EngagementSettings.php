@@ -25,6 +25,7 @@ final readonly class EngagementSettings
         public bool $emailOrderDeliveredEnabled,
         public bool $emailOrderCancelledEnabled,
         public bool $emailOrderMessageEnabled,
+        public bool $emailProductAvailableEnabled,
     ) {}
 
     public static function resolve(): self
@@ -49,6 +50,7 @@ final readonly class EngagementSettings
             emailOrderDeliveredEnabled: settings('email_order_delivered_enabled', '1') === '1',
             emailOrderCancelledEnabled: settings('email_order_cancelled_enabled', '1') === '1',
             emailOrderMessageEnabled: settings('email_order_message_enabled', '1') === '1',
+            emailProductAvailableEnabled: settings('email_product_available_enabled', '1') === '1',
         );
     }
 

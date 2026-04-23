@@ -64,6 +64,28 @@ test('returns null when capacity is full', function () {
     expect($order)->toBeNull();
 });
 
+test('persists tip_amount and includes it in total', function () {
+    $product = Product::factory()->create(['price' => 20.00]);
+
+    $order = resolve(CreateOrder::class)(
+        CreateOrderData::fromArray([
+            'customer_name' => 'Jane Doe',
+            'customer_email' => 'jane@example.com',
+            'delivery_date' => now()->addDays(5)->toDateString(),
+            'delivery_type' => DeliveryType::Pickup->value,
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 1],
+            ],
+            'tip_amount' => 4.50,
+        ])
+    );
+
+    expect($order)->not->toBeNull();
+    expect($order->subtotal->dollars())->toBe(20.00);
+    expect($order->tip_amount->dollars())->toBe(4.50);
+    expect($order->total->dollars())->toBe(24.50);
+});
+
 test('sends order placed email to customer on creation', function () {
     $product = Product::factory()->create(['price' => 10.00]);
 

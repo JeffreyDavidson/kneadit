@@ -30,9 +30,14 @@
     @endforeach
 
     <div style="margin-top: 12px; padding-top: 10px; border-top: 2px solid {{ $primaryColor }}; text-align: right;">
-        @if ($order->delivery_fee->isPositive())
+        @if ($order->delivery_fee->isPositive() || $order->tip_amount->isPositive())
             <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Subtotal: @money($order->subtotal)</div>
-            <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Delivery Fee: @money($order->delivery_fee)</div>
+            @if ($order->delivery_fee->isPositive())
+                <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Delivery Fee: @money($order->delivery_fee)</div>
+            @endif
+            @if ($order->tip_amount->isPositive())
+                <div style="margin-bottom: 4px; font-size: 14px; color: #555;">Tip: @money($order->tip_amount)</div>
+            @endif
         @endif
         <div style="font-size: 20px; font-weight: 700; color: {{ $secondaryColor }};">Total: @money($order->total)</div>
     </div>

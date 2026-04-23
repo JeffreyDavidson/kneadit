@@ -22,6 +22,7 @@ final readonly class CreateOrderData
         public ?string $couponCode = null,
         public ?int $couponId = null,
         public ?int $giftCardId = null,
+        public float $tipAmount = 0.0,
     ) {}
 
     /**
@@ -46,6 +47,7 @@ final readonly class CreateOrderData
             couponCode: $data['coupon_code'] ?? null,
             couponId: isset($data['coupon_id']) ? (int) $data['coupon_id'] : null,
             giftCardId: isset($data['gift_card_id']) ? (int) $data['gift_card_id'] : null,
+            tipAmount: isset($data['tip_amount']) ? (float) $data['tip_amount'] : 0.0,
         );
     }
 }
