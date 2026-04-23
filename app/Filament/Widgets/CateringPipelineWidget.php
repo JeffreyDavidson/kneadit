@@ -33,7 +33,11 @@ class CateringPipelineWidget extends Widget
 
     public function getLatestInquiry(): ?CateringInquiry
     {
-        return $this->cached('latest', [900, 1800], fn () => CateringInquiry::query()->latest()->first());
+        // Cache the id, not the model. Cache stores hydrate as __PHP_Incomplete_Class
+        // because config(cache.serializable_classes) is false. Same shape as #302.
+        $id = $this->cached('latest_id', [900, 1800], fn (): ?int => CateringInquiry::query()->latest()->value('id'));
+
+        return $id ? CateringInquiry::query()->whereKey($id)->first() : null;
     }
 
     protected function cachePrefix(): string
