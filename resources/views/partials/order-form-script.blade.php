@@ -42,6 +42,9 @@ function orderForm() {
         availableSlots: [],
         pickupSlotsEnabled: {{ $settings->orders->pickupSlotsEnabled ? 'true' : 'false' }},
         cartSyncTimer: null,
+        sitewideSalePercent: {{ $settings->orders->sitewideSaleEnabled ? $settings->orders->sitewideSalePercent : 0 }},
+        sitewideSaleLabel: @json($settings->orders->sitewideSaleLabel),
+        saleDiscount: 0,
 
         init() {
             const leadTimeHours = {{ $settings->orders->leadTimeHours }};
@@ -179,15 +182,22 @@ function orderForm() {
         calculateTotals() {
             this.subtotal = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             this.calculateDeliveryFee();
+            this.calculateSale();
             this.calculateDiscount();
             this.calculateTip();
-            let afterDiscount = Math.max(0, this.subtotal + this.deliveryFee - this.discountAmount);
+            let afterDiscount = Math.max(0, this.subtotal + this.deliveryFee - this.discountAmount - this.saleDiscount);
             if (this.appliedGiftCard) {
                 this.giftCardAmount = Math.min(this.appliedGiftCard.available_balance, afterDiscount);
             } else {
                 this.giftCardAmount = 0;
             }
             this.total = Math.max(0, afterDiscount - this.giftCardAmount) + this.tipAmount;
+        },
+
+        calculateSale() {
+            this.saleDiscount = (this.sitewideSalePercent > 0 && this.subtotal > 0)
+                ? Math.round(this.subtotal * (this.sitewideSalePercent / 100) * 100) / 100
+                : 0;
         },
 
         calculateTip() {
