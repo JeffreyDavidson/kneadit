@@ -19,13 +19,13 @@ class TrackFeatureUsage
             ->first();
 
         if ($log) {
-            FeatureUsageLog::query()->where('id', $log->id)->update([
-                'usage_count' => $log->usage_count + 1,
-                'last_used_at' => $now,
-            ]);
-            $log->refresh();
+            // Atomic increment — concurrent requests for the same tenant+feature+date
+            // would otherwise race (both read N, both write N+1, lose an event).
+            FeatureUsageLog::query()
+                ->whereKey($log->id)
+                ->increment('usage_count', 1, ['last_used_at' => $now]);
 
-            return $log;
+            return $log->refresh();
         }
 
         return FeatureUsageLog::query()->create([
