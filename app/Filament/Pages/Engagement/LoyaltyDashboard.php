@@ -45,17 +45,38 @@ class LoyaltyDashboard extends Page
 
     public string $programName;
 
+    public bool $tiersEnabled;
+
+    public int $tierSilverThreshold;
+
+    public int $tierGoldThreshold;
+
+    public int $tierPlatinumThreshold;
+
     public function mount(): void
     {
         $settings = app(TenantSettings::class);
         $this->loyaltyEnabled = $settings->loyalty->enabled;
         $this->programName = $settings->loyalty->programName;
+        $this->tiersEnabled = $settings->loyalty->tiersEnabled;
+        $this->tierSilverThreshold = $settings->loyalty->tierSilverThreshold;
+        $this->tierGoldThreshold = $settings->loyalty->tierGoldThreshold;
+        $this->tierPlatinumThreshold = $settings->loyalty->tierPlatinumThreshold;
     }
 
     public function toggleLoyalty(): void
     {
         $this->loyaltyEnabled = ! $this->loyaltyEnabled;
         app(SettingsManager::class)->set('loyalty_enabled', $this->loyaltyEnabled ? '1' : '0');
+    }
+
+    public function saveTiers(): void
+    {
+        $manager = app(SettingsManager::class);
+        $manager->set('loyalty_tiers_enabled', $this->tiersEnabled ? '1' : '0');
+        $manager->set('loyalty_tier_silver_threshold', (string) $this->tierSilverThreshold);
+        $manager->set('loyalty_tier_gold_threshold', (string) $this->tierGoldThreshold);
+        $manager->set('loyalty_tier_platinum_threshold', (string) $this->tierPlatinumThreshold);
     }
 
     public function getTotalPointsIssuedProperty(): int
