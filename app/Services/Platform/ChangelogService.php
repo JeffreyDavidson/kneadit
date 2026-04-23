@@ -18,7 +18,14 @@ class ChangelogService
      */
     public function entries(): Collection
     {
-        return Cache::flexible('changelog_entries', [3600, 7200], fn () => $this->fetchFromGitHub());
+        // Cache as a primitive array, not a Collection. config(cache.serializable_classes)
+        // is false (Laravel's gadget-chain default), so any cached object hydrates as
+        // __PHP_Incomplete_Class on read. Same class of bug as the Gallery cache (#302).
+        return collect(Cache::flexible(
+            'changelog_entries',
+            [3600, 7200],
+            fn () => $this->fetchFromGitHub()->all(),
+        ));
     }
 
     /**

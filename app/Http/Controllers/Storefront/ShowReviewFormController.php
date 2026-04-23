@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
 use App\Models\Orders\Order;
+use App\Services\Orders\OrderAccessGuard;
 use App\Services\Settings\TenantSettings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -12,6 +13,11 @@ class ShowReviewFormController extends Controller
 {
     public function __invoke(Order $order, Request $request, TenantSettings $settings): View
     {
+        // Reaching this point means the signed-URL middleware accepted the request,
+        // so the bearer is the legitimate email recipient. Grant session access so
+        // the form's POST submission clears the order.access gate.
+        OrderAccessGuard::grant($order);
+
         $order->load(['customer', 'orderItems.product']);
         $content = settingsPageContent('submit_review');
 
