@@ -64,9 +64,29 @@
 
 <p style="margin: 0 0 15px;">This quote includes everything we discussed for your event. If you'd like to proceed or have any questions, simply reply to this email or give us a call.</p>
 
-<div style="text-align: center; margin: 25px 0;">
-    <p style="font-size: 14px; color: #888; margin: 0;">To confirm your booking, please reply to this email or contact us directly to arrange the deposit.</p>
-</div>
+@php
+    $stripeReader = app(\App\Services\Stripe\StripeSettingsReader::class);
+    $depositPayUrl = ($depositAmount > 0 && $stripeReader->isEnabled())
+        ? \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'catering.payDeposit',
+            now()->addDays(30),
+            ['inquiry' => $inquiry->id],
+        )
+        : null;
+@endphp
+
+@if ($depositPayUrl)
+    <div style="text-align: center; margin: 25px 0;">
+        <a href="{{ $depositPayUrl }}" style="display: inline-block; padding: 14px 28px; background-color: {{ $primaryColor }}; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">
+            Pay deposit (${{ number_format($depositAmount, 2) }})
+        </a>
+        <p style="margin: 12px 0 0; font-size: 12px; color: #888;">Secure payment via Stripe — link valid for 30 days.</p>
+    </div>
+@else
+    <div style="text-align: center; margin: 25px 0;">
+        <p style="font-size: 14px; color: #888; margin: 0;">To confirm your booking, please reply to this email or contact us directly to arrange the deposit.</p>
+    </div>
+@endif
 
 <p style="margin: 0 0 5px;">We look forward to making your event special! 🎂</p>
 <p style="margin: 0; font-weight: 600;">— {{ $storeName }}</p>

@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Catering\CateringStripeCancelController;
+use App\Http\Controllers\Catering\CateringStripeSuccessController;
+use App\Http\Controllers\Catering\PayCateringDepositController;
 use App\Http\Controllers\Storefront\AboutController;
 use App\Http\Controllers\Storefront\Account\CustomerDashboardController;
 use App\Http\Controllers\Storefront\Account\LoginCustomerController;
@@ -58,6 +61,17 @@ Route::post('gift-cards/balance', CheckGiftCardBalanceController::class)->name('
 // Catering
 Route::get('catering', ShowCateringController::class)->name('storefront.catering');
 Route::post('catering', SubmitCateringInquiryController::class)->name('catering.submit')->middleware('throttle:10,1');
+
+// Catering deposit via Stripe Checkout (signed link from quote email).
+Route::get('catering/{inquiry}/pay-deposit', PayCateringDepositController::class)
+    ->name('catering.payDeposit')
+    ->middleware('signed');
+
+// Stripe redirect callbacks.
+Route::get('catering/stripe/success/{inquiry}', CateringStripeSuccessController::class)
+    ->name('catering.stripe.success');
+Route::get('catering/stripe/cancel/{inquiry}', CateringStripeCancelController::class)
+    ->name('catering.stripe.cancel');
 
 // Blog
 Route::get('blog', [StorefrontBlogController::class, 'index'])->name('storefront.blog');
