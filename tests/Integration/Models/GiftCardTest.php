@@ -33,7 +33,8 @@ test('gift card can be purchased with valid data', function () {
     $response->assertJsonStructure(['data' => ['code', 'balance']]);
     $this->assertDatabaseHas('gift_cards', [
         'purchaser_email' => 'john@example.com',
-        'initial_balance' => 50.00,
+        // initial_balance is bigint cents (migration 2026_04_22_223000).
+        'initial_balance' => 5000,
     ]);
 });
 

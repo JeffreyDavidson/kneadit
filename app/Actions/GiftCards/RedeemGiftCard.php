@@ -22,7 +22,9 @@ class RedeemGiftCard
                 $amount = $card->current_balance->dollars();
             }
 
-            GiftCard::query()->whereKey($card->id)->decrement('current_balance', $amount);
+            // current_balance is bigint cents (migration 2026_04_22_223000);
+            // the public API takes dollars, so convert at the boundary.
+            GiftCard::query()->whereKey($card->id)->decrement('current_balance', (int) round($amount * 100));
 
             $card->transactions()->create([
                 'amount' => -$amount,

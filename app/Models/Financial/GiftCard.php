@@ -3,7 +3,7 @@
 namespace App\Models\Financial;
 
 use App\Builders\Financial\GiftCardQueryBuilder;
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Financial\GiftCardStatus;
 use App\Observers\LogsActivityObserver;
@@ -46,8 +46,8 @@ class GiftCard extends Model
     protected function casts(): array
     {
         return [
-            'initial_balance' => MoneyCast::class,
-            'current_balance' => MoneyCast::class,
+            'initial_balance' => MoneyCentsCast::class,
+            'current_balance' => MoneyCentsCast::class,
             'is_active' => 'boolean',
             'expires_at' => 'date',
             'message' => StripTagsCast::class,
