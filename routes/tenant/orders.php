@@ -15,7 +15,6 @@ use App\Http\Controllers\Order\StripeSuccessController;
 use App\Http\Controllers\Order\TrackingController;
 use App\Http\Controllers\Order\VerifyOrderAccessController;
 use App\Http\Controllers\Storefront\ApplyReferralCodeController;
-use App\Http\Controllers\Storefront\PersistCartController;
 use App\Http\Controllers\Storefront\ShowOrderConfirmationController;
 use App\Http\Controllers\Storefront\ShowOrderFormController;
 use App\Http\Controllers\Storefront\SubmitOrderController;
@@ -61,11 +60,6 @@ Route::get('availability', AvailabilityController::class)->name('order.availabil
 Route::get('pickup-slots/{date}', PickupSlotsController::class)
     ->name('order.pickupSlots')
     ->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}')
-    ->middleware('throttle:60,1');
-
-// Persist the customer's cart (debounced from the Alpine state on the order page).
-Route::post('cart', PersistCartController::class)
-    ->name('cart.persist')
     ->middleware('throttle:60,1');
 
 // Coupon validation (AJAX)

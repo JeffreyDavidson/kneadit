@@ -24,13 +24,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'stripe/*',
         ]);
 
-        // The cart_token is a ULID that's already unguessable; encrypting it
-        // adds no security and breaks cookie reattach when the test client
-        // writes a raw value.
-        $middleware->encryptCookies(except: [
-            'cart_token',
-        ]);
-
         // Add security headers to all web responses
         $middleware->web(append: [
             SecurityHeaders::class,
