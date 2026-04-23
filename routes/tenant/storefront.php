@@ -63,12 +63,15 @@ Route::get('blog', [StorefrontBlogController::class, 'index'])->name('storefront
 Route::get('blog/feed.xml', StorefrontBlogFeedController::class)->name('storefront.blog.feed');
 Route::get('blog/{post}', [StorefrontBlogController::class, 'show'])->name('storefront.blog.show');
 
-// Review submission (from email link). Gated on session-verified order
-// ownership — same IDOR shape as order-by-number routes in orders.php.
-Route::middleware('order.access')->group(function () {
-    Route::get('review/{order:order_number}', ShowReviewFormController::class)->name('storefront.submitReview');
-    Route::post('review/{order:order_number}', StoreReviewController::class)->name('storefront.storeReview')->middleware('throttle:10,1');
-});
+// Review submission (from email link). Email link is a signed URL — that's the
+// proof of order ownership for the GET. The GET handler grants session access
+// so the POST passes through the order.access gate without re-signing.
+Route::get('review/{order:order_number}', ShowReviewFormController::class)
+    ->middleware('signed')
+    ->name('storefront.submitReview');
+Route::post('review/{order:order_number}', StoreReviewController::class)
+    ->middleware(['order.access', 'throttle:10,1'])
+    ->name('storefront.storeReview');
 
 // Surveys
 Route::get('survey/{survey}', [SurveyController::class, 'show'])->name('storefront.survey');
