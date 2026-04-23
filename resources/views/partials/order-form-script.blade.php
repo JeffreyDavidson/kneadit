@@ -41,6 +41,7 @@ function orderForm() {
         unavailableDates: [],
         availableSlots: [],
         pickupSlotsEnabled: {{ $settings->orders->pickupSlotsEnabled ? 'true' : 'false' }},
+        cartSyncTimer: null,
 
         init() {
             const leadTimeHours = {{ $settings->orders->leadTimeHours }};
@@ -127,6 +128,7 @@ function orderForm() {
                 });
             }
             this.calculateTotals();
+            this.scheduleCartSync();
         },
 
         decrementItem(productId) {
@@ -138,6 +140,35 @@ function orderForm() {
                 }
             }
             this.calculateTotals();
+            this.scheduleCartSync();
+        },
+
+        scheduleCartSync() {
+            if (this.cartSyncTimer) {
+                clearTimeout(this.cartSyncTimer);
+            }
+            this.cartSyncTimer = setTimeout(() => this.syncCart(), 1000);
+        },
+
+        async syncCart() {
+            try {
+                await fetch('{{ route('cart.persist') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        items: this.cartItems.map(i => ({ product_id: i.id, quantity: i.quantity })),
+                        customer_email: this.form.customer_email || null,
+                        customer_name: this.form.customer_name || null,
+                    }),
+                });
+            } catch (error) {
+                console.error('Cart sync failed:', error);
+            }
         },
 
         getQuantity(productId) {
@@ -208,6 +239,7 @@ function orderForm() {
         saveEmail() {
             localStorage.setItem('customer_email', this.form.customer_email);
             this.loadFavorites();
+            this.scheduleCartSync();
         },
 
         async loadFavorites() {
