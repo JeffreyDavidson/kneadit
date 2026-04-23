@@ -119,3 +119,71 @@ test('does not add delivery fee for pickup orders', function () {
     expect($result->deliveryFee)->toBe(0.0)
         ->and($result->total)->toBe(20.0);
 });
+
+test('adds tip to total when tipAmount is provided', function () {
+    $product = Product::factory()->create(['price' => 20.00, 'is_active' => true]);
+
+    $data = new CreateOrderData(
+        customerName: 'Jane',
+        customerEmail: 'jane@example.com',
+        deliveryDate: now()->addDay()->format('Y-m-d'),
+        deliveryType: DeliveryType::Pickup->value,
+        items: [['product_id' => $product->id, 'quantity' => 1]],
+        tipAmount: 4.0,
+    );
+
+    $payload = new OrderPipelineData($data);
+    $pipe = new CalculateOrderTotals;
+
+    $result = $pipe->handle($payload, fn ($p) => $p);
+
+    expect($result->tipAmount)->toBe(4.0)
+        ->and($result->total)->toBe(24.0);
+});
+
+test('clamps negative tipAmount to zero', function () {
+    $product = Product::factory()->create(['price' => 20.00, 'is_active' => true]);
+
+    $data = new CreateOrderData(
+        customerName: 'Jane',
+        customerEmail: 'jane@example.com',
+        deliveryDate: now()->addDay()->format('Y-m-d'),
+        deliveryType: DeliveryType::Pickup->value,
+        items: [['product_id' => $product->id, 'quantity' => 1]],
+        tipAmount: -5.0,
+    );
+
+    $payload = new OrderPipelineData($data);
+    $pipe = new CalculateOrderTotals;
+
+    $result = $pipe->handle($payload, fn ($p) => $p);
+
+    expect($result->tipAmount)->toBe(0.0)
+        ->and($result->total)->toBe(20.0);
+});
+
+test('tip stacks with delivery fee in total', function () {
+    config(['kneadit.delivery_fees' => ['under5' => 5.00]]);
+
+    $product = Product::factory()->create(['price' => 20.00, 'is_active' => true]);
+
+    $data = new CreateOrderData(
+        customerName: 'Jane',
+        customerEmail: 'jane@example.com',
+        deliveryDate: now()->addDay()->format('Y-m-d'),
+        deliveryType: DeliveryType::Delivery->value,
+        items: [['product_id' => $product->id, 'quantity' => 1]],
+        deliveryTier: 'under5',
+        tipAmount: 3.0,
+    );
+
+    $payload = new OrderPipelineData($data);
+    $pipe = new CalculateOrderTotals;
+
+    $result = $pipe->handle($payload, fn ($p) => $p);
+
+    expect($result->subtotal)->toBe(20.0)
+        ->and($result->deliveryFee)->toBe(5.0)
+        ->and($result->tipAmount)->toBe(3.0)
+        ->and($result->total)->toBe(28.0);
+});

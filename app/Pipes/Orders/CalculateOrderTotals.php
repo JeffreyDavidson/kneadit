@@ -41,7 +41,9 @@ class CalculateOrderTotals
             $payload->deliveryFee = $fees[$payload->data->deliveryTier] ?? 0;
         }
 
-        $payload->total = $payload->subtotal + $payload->deliveryFee;
+        $payload->tipAmount = max(0.0, $payload->data->tipAmount);
+
+        $payload->total = $payload->subtotal + $payload->deliveryFee + $payload->tipAmount;
 
         return $next($payload);
     }
