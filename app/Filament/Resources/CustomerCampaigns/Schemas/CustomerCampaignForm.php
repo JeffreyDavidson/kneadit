@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\CustomerCampaigns\Schemas;
 
 use App\Enums\Customers\RfmSegment;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -42,6 +43,12 @@ class CustomerCampaignForm
                             ->rows(10)
                             ->columnSpanFull()
                             ->helperText('Plain text — line breaks preserved.'),
+
+                        DateTimePicker::make('scheduled_at')
+                            ->label('Send at (optional)')
+                            ->seconds(false)
+                            ->minDate(now())
+                            ->helperText('Leave blank to send manually with the "Send Now" action. Otherwise the scheduled command will queue the campaign within an hour of this time.'),
                     ]),
             ]);
     }
