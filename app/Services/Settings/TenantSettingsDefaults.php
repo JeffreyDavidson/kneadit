@@ -36,6 +36,7 @@ final class TenantSettingsDefaults
             'email_order_delivered_enabled' => true,
             'email_order_cancelled_enabled' => true,
             'email_order_message_enabled' => true,
+            'email_product_available_enabled' => true,
             'allergy_disclaimer' => 'Please inform us of any allergies or dietary restrictions when placing your order.',
             'revenue_cap' => '250000',
             'payment_methods' => [PaymentMethod::Cash->value],

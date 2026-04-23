@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use App\Actions\Products\NotifyProductWaitlist;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Tables\Columns\MoneyColumn;
 use App\Models\Inventory\Product;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -90,6 +92,22 @@ class ProductsTable
                     ->color('gray')
                     ->url(fn (Product $record) => route('admin.products.label', $record))
                     ->openUrlInNewTab(),
+                Action::make('notifyWaitlist')
+                    ->label(fn (Product $record): string => 'Notify Waitlist (' . ($record->waitlist_entries_count ?? 0) . ')')
+                    ->icon(Heroicon::OutlinedBellAlert)
+                    ->color('warning')
+                    ->visible(fn (Product $record): bool => ($record->waitlist_entries_count ?? 0) > 0)
+                    ->requiresConfirmation()
+                    ->modalHeading(fn (Product $record) => "Notify {$record->waitlist_entries_count} customer(s) that {$record->name} is back?")
+                    ->modalDescription('Each customer will be emailed and marked as notified so they won\'t be re-emailed on the next run.')
+                    ->action(function (Product $record): void {
+                        $count = app(NotifyProductWaitlist::class)($record);
+
+                        Notification::make()
+                            ->title($count > 0 ? "Queued {$count} back-in-stock email(s)" : 'Nothing sent — product_available emails are disabled in Manage Settings')
+                            ->{$count > 0 ? 'success' : 'warning'}()
+                            ->send();
+                    }),
                 SlideOverEditAction::make(),
             ])
             ->toolbarActions([

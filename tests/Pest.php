@@ -529,6 +529,7 @@ function makeEngagementSettings(array $overrides = []): App\DataTransferObjects\
         'emailOrderDeliveredEnabled' => true,
         'emailOrderCancelledEnabled' => true,
         'emailOrderMessageEnabled' => true,
+        'emailProductAvailableEnabled' => true,
     ], $overrides));
 }
 
