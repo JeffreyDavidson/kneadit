@@ -4,9 +4,8 @@ namespace App\Listeners\Platform;
 
 use App\Events\Platform\PaymentFailed;
 use App\Listeners\SendEmailListener;
-use App\Mail\Platform\HealthAlertMail;
+use App\Mail\Platform\PaymentFailedAlertMail;
 use Illuminate\Contracts\Mail\Mailable;
-use Illuminate\Support\Number;
 
 class SendPaymentFailedAlertListener extends SendEmailListener
 {
@@ -18,11 +17,7 @@ class SendPaymentFailedAlertListener extends SendEmailListener
     protected function getMailable(object $event): Mailable
     {
         /** @var PaymentFailed $event */
-        $message = "Payment failed for {$event->user->name} ({$event->user->email})"
-            . ($event->tenant ? " — Tenant: {$event->tenant->store_name} ({$event->tenant->id})" : '')
-            . "\nAmount: " . Number::currency($event->amount);
-
-        return new HealthAlertMail($message);
+        return new PaymentFailedAlertMail($event->user, $event->tenant, $event->amount);
     }
 
     /** @return array<string, mixed> */
