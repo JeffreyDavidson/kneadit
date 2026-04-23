@@ -3,7 +3,7 @@
 namespace App\Models\Inventory;
 
 use App\Builders\Inventory\ProductQueryBuilder;
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Models\Content\SocialPost;
 use App\Models\Customers\CustomerPhoto;
 use App\Models\Engagement\PageView;
@@ -65,8 +65,8 @@ class Product extends Model
     protected function casts(): array
     {
         return [
-            'price' => MoneyCast::class,
-            'cost' => MoneyCast::class,
+            'price' => MoneyCentsCast::class,
+            'cost' => MoneyCentsCast::class,
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
         ];
