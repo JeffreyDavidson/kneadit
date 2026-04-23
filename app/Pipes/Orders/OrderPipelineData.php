@@ -26,6 +26,8 @@ class OrderPipelineData
 
     public ?Customer $customer = null;
 
+    public ?Customer $referrer = null;
+
     public ?Order $order = null;
 
     /** @var array<int, array<string, mixed>> */

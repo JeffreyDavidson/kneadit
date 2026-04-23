@@ -169,7 +169,17 @@ class ManageSettingsForm
                                 Toggle::make('low_stock_alerts_enabled')
                                     ->label('Enable Daily Low-Stock Alerts')
                                     ->helperText('Email you a daily digest of ingredients at or below their low-stock threshold (sent 7 AM).'),
+
+                                Toggle::make('customer_referral_program_enabled')
+                                    ->label('Enable Customer Referral Program')
+                                    ->helperText('Customers get a unique referral link. New customers using a link get $X off; the referrer gets a coupon worth the same amount when their referral places an order.'),
                             ]),
+
+                        TextInput::make('customer_referral_discount_dollars')
+                            ->label('Referral Discount ($)')
+                            ->numeric()
+                            ->default(10)
+                            ->helperText('Both the referee and referrer get this discount amount.'),
                     ]),
 
                 // Order Email Toggles — tenants can disable individual transactional
