@@ -1,10 +1,10 @@
 <script @cspnonce>
 function orderForm() {
     return {
-        cartItems: [],
+        cartItems: @json($hydratedCartItems ?? []),
         form: {
-            customer_name: '',
-            customer_email: localStorage.getItem('customer_email') || '',
+            customer_name: @json($hydratedCartName ?? '') || '',
+            customer_email: @json($hydratedCartEmail ?? '') || localStorage.getItem('customer_email') || '',
             customer_phone: '',
             customer_birthday: '',
             delivery_type: 'pickup',

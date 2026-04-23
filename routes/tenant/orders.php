@@ -16,6 +16,7 @@ use App\Http\Controllers\Order\TrackingController;
 use App\Http\Controllers\Order\VerifyOrderAccessController;
 use App\Http\Controllers\Storefront\ApplyReferralCodeController;
 use App\Http\Controllers\Storefront\PersistCartController;
+use App\Http\Controllers\Storefront\RecoverCartController;
 use App\Http\Controllers\Storefront\ShowOrderConfirmationController;
 use App\Http\Controllers\Storefront\ShowOrderFormController;
 use App\Http\Controllers\Storefront\SubmitOrderController;
@@ -67,6 +68,11 @@ Route::get('pickup-slots/{date}', PickupSlotsController::class)
 Route::post('cart', PersistCartController::class)
     ->name('cart.persist')
     ->middleware('throttle:60,1');
+
+// Recover an abandoned cart via signed email link.
+Route::get('cart/recover/{cart_token}', RecoverCartController::class)
+    ->name('cart.recover')
+    ->middleware('signed');
 
 // Coupon validation (AJAX)
 Route::post('coupon/apply', ApplyCouponController::class)->name('coupon.apply')->middleware('throttle:10,1');

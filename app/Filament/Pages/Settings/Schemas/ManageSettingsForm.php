@@ -173,6 +173,10 @@ class ManageSettingsForm
                                 Toggle::make('customer_referral_program_enabled')
                                     ->label('Enable Customer Referral Program')
                                     ->helperText('Customers get a unique referral link. New customers using a link get $X off; the referrer gets a coupon worth the same amount when their referral places an order.'),
+
+                                Toggle::make('abandoned_cart_recovery_enabled')
+                                    ->label('Enable Abandoned Cart Recovery')
+                                    ->helperText('Email customers who left items in their cart and didn\'t check out. Only applies to customers who entered their email.'),
                             ]),
 
                         TextInput::make('customer_referral_discount_dollars')
@@ -180,6 +184,21 @@ class ManageSettingsForm
                             ->numeric()
                             ->default(10)
                             ->helperText('Both the referee and referrer get this discount amount.'),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('abandoned_cart_recovery_hours')
+                                    ->label('Abandonment Threshold (hours)')
+                                    ->numeric()
+                                    ->default(24)
+                                    ->helperText('How long a cart must sit idle before a recovery email is sent.'),
+
+                                TextInput::make('abandoned_cart_recovery_coupon_dollars')
+                                    ->label('Recovery Coupon ($)')
+                                    ->numeric()
+                                    ->default(5)
+                                    ->helperText('Single-use coupon included in the recovery email. 0 disables the coupon (email still sent).'),
+                            ]),
                     ]),
 
                 // Order Email Toggles — tenants can disable individual transactional
