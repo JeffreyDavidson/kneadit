@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\Customers\ContactMessageReceived;
 use App\Events\Customers\CustomerBirthday;
+use App\Events\Customers\CustomerPhotoSubmitted;
 use App\Events\Customers\CustomerReferralCompleted;
 use App\Events\Customers\LowReviewReceived;
 use App\Events\Customers\RepeatOrderReminderDue;
@@ -25,6 +26,7 @@ use App\Events\Platform\TrialExpired;
 use App\Events\Platform\TrialReminding;
 use App\Events\Platform\WeeklyDigestRequested;
 use App\Listeners\Customers\NotifyBakerOfContactMessageListener;
+use App\Listeners\Customers\NotifyBakerOfCustomerPhotoListener;
 use App\Listeners\Customers\SendCustomerReferralRewardEmailListener;
 use App\Listeners\Customers\SendHappyBirthdayEmailListener;
 use App\Listeners\Customers\SendLowReviewAlertListener;
@@ -67,6 +69,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         CustomerBirthday::class => [
             SendHappyBirthdayEmailListener::class,
+        ],
+        CustomerPhotoSubmitted::class => [
+            NotifyBakerOfCustomerPhotoListener::class,
         ],
         CustomerReferralCompleted::class => [
             SendCustomerReferralRewardEmailListener::class,
