@@ -8,6 +8,7 @@ use App\Models\Orders\Order;
 use App\Pipes\Orders\ApplyCoupon;
 use App\Pipes\Orders\ApplyGiftCard;
 use App\Pipes\Orders\ApplyReferral;
+use App\Pipes\Orders\ApplyTierPerks;
 use App\Pipes\Orders\CalculateOrderTotals;
 use App\Pipes\Orders\EnforceMinimumOrderAmount;
 use App\Pipes\Orders\OrderPipelineData;
@@ -37,6 +38,7 @@ class CreateOrder
                 ApplyGiftCard::class,
                 ApplyReferral::class,
                 ResolveCustomer::class,
+                ApplyTierPerks::class,
                 PersistOrder::class,
                 RecordCouponUsage::class,
                 RecordGiftCardRedemption::class,

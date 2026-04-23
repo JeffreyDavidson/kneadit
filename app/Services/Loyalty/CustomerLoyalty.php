@@ -92,4 +92,41 @@ class CustomerLoyalty
             'pointsToNext' => max(0, $threshold - $earned),
         ];
     }
+
+    /**
+     * Points multiplier the customer's tier qualifies for.
+     * Returns 1.0 when tier perks are disabled or the customer is Bronze.
+     */
+    public function pointsMultiplier(Customer $customer): float
+    {
+        $loyalty = $this->settings->loyalty;
+        if (! $loyalty->tierPerksEnabled) {
+            return 1.0;
+        }
+
+        return match ($this->tier($customer)) {
+            LoyaltyTier::Silver => $loyalty->tierSilverMultiplier,
+            LoyaltyTier::Gold => $loyalty->tierGoldMultiplier,
+            LoyaltyTier::Platinum => $loyalty->tierPlatinumMultiplier,
+            LoyaltyTier::Bronze => 1.0,
+        };
+    }
+
+    /**
+     * Whether the customer's current tier qualifies for free delivery.
+     */
+    public function qualifiesForFreeDelivery(Customer $customer): bool
+    {
+        $loyalty = $this->settings->loyalty;
+        if (! $loyalty->tierPerksEnabled) {
+            return false;
+        }
+
+        return match ($this->tier($customer)) {
+            LoyaltyTier::Silver => $loyalty->tierSilverFreeDelivery,
+            LoyaltyTier::Gold => $loyalty->tierGoldFreeDelivery,
+            LoyaltyTier::Platinum => $loyalty->tierPlatinumFreeDelivery,
+            LoyaltyTier::Bronze => false,
+        };
+    }
 }
