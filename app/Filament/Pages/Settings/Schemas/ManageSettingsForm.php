@@ -90,6 +90,31 @@ class ManageSettingsForm
                                     ->default('0')
                                     ->helperText('Minimum order subtotal for delivery (0 = no minimum)'),
                             ]),
+
+                        TextInput::make('order_modification_window_minutes')
+                            ->label('Order Modification Window (minutes)')
+                            ->numeric()
+                            ->default(0)
+                            ->helperText('How long after placing an order a customer can edit quantities/tip. 0 disables the feature.'),
+
+                        Toggle::make('pickup_slots_enabled')
+                            ->label('Enable Pickup Time Slots')
+                            ->helperText('Replace the free-form pickup time field with discrete time slots based on your business hours.'),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('pickup_slot_interval_minutes')
+                                    ->label('Slot Interval (minutes)')
+                                    ->numeric()
+                                    ->default(30)
+                                    ->helperText('How wide each pickup window is (e.g. 15, 30, 60).'),
+
+                                TextInput::make('pickup_slot_max_per_window')
+                                    ->label('Max Orders per Slot')
+                                    ->numeric()
+                                    ->default(3)
+                                    ->helperText('Cap on how many orders can share a single pickup slot.'),
+                            ]),
                     ]),
 
                 // Order Journey Section
@@ -140,7 +165,21 @@ class ManageSettingsForm
                                 Toggle::make('birthday_program_enabled')
                                     ->label('Enable Birthday Program')
                                     ->helperText('Send birthday offers to customers'),
+
+                                Toggle::make('low_stock_alerts_enabled')
+                                    ->label('Enable Daily Low-Stock Alerts')
+                                    ->helperText('Email you a daily digest of ingredients at or below their low-stock threshold (sent 7 AM).'),
+
+                                Toggle::make('customer_referral_program_enabled')
+                                    ->label('Enable Customer Referral Program')
+                                    ->helperText('Customers get a unique referral link. New customers using a link get $X off; the referrer gets a coupon worth the same amount when their referral places an order.'),
                             ]),
+
+                        TextInput::make('customer_referral_discount_dollars')
+                            ->label('Referral Discount ($)')
+                            ->numeric()
+                            ->default(10)
+                            ->helperText('Both the referee and referrer get this discount amount.'),
                     ]),
 
                 // Order Email Toggles — tenants can disable individual transactional

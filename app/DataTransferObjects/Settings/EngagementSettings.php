@@ -26,6 +26,8 @@ final readonly class EngagementSettings
         public bool $emailOrderCancelledEnabled,
         public bool $emailOrderMessageEnabled,
         public bool $emailProductAvailableEnabled,
+        public bool $customerReferralProgramEnabled = false,
+        public int $customerReferralDiscountDollars = 10,
     ) {}
 
     public static function resolve(): self
@@ -51,6 +53,8 @@ final readonly class EngagementSettings
             emailOrderCancelledEnabled: settings('email_order_cancelled_enabled', '1') === '1',
             emailOrderMessageEnabled: settings('email_order_message_enabled', '1') === '1',
             emailProductAvailableEnabled: settings('email_product_available_enabled', '1') === '1',
+            customerReferralProgramEnabled: settings('customer_referral_program_enabled', '0') === '1',
+            customerReferralDiscountDollars: (int) settings('customer_referral_discount_dollars', '10'),
         );
     }
 

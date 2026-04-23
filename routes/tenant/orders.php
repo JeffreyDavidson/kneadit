@@ -7,11 +7,14 @@ use App\Http\Controllers\Order\ApplyGiftCardController;
 use App\Http\Controllers\Order\AvailabilityController;
 use App\Http\Controllers\Order\CapacityController;
 use App\Http\Controllers\Order\MessageController;
+use App\Http\Controllers\Order\ModifyOrderController;
+use App\Http\Controllers\Order\PickupSlotsController;
 use App\Http\Controllers\Order\ReorderController;
 use App\Http\Controllers\Order\StripeCancelController;
 use App\Http\Controllers\Order\StripeSuccessController;
 use App\Http\Controllers\Order\TrackingController;
 use App\Http\Controllers\Order\VerifyOrderAccessController;
+use App\Http\Controllers\Storefront\ApplyReferralCodeController;
 use App\Http\Controllers\Storefront\ShowOrderConfirmationController;
 use App\Http\Controllers\Storefront\ShowOrderFormController;
 use App\Http\Controllers\Storefront\SubmitOrderController;
@@ -19,6 +22,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('order', ShowOrderFormController::class)->name('order.create');
 Route::post('order', SubmitOrderController::class)->name('order.store')->middleware('throttle:10,1');
+
+// Customer referral capture — stores the code in session and redirects to /order.
+Route::get('referral/{code}', ApplyReferralCodeController::class)
+    ->name('customer.referral')
+    ->where('code', '[A-Z0-9]{8}')
+    ->middleware('throttle:30,1');
 
 // Email-verification gate for order-by-number access (must be reachable
 // without the gate, since the whole point is to grant access).
@@ -38,6 +47,7 @@ Route::middleware('order.access')->group(function () {
     Route::get('order/{order:order_number}/messages', [MessageController::class, 'show'])->name('order.messages');
     Route::post('order/{order:order_number}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:10,1');
     Route::get('order/reorder/{order:order_number}', ReorderController::class)->name('order.reorder');
+    Route::post('order/{order:order_number}/modify', ModifyOrderController::class)->name('order.modify')->middleware('throttle:5,1');
 });
 
 // Capacity check (AJAX)
@@ -45,6 +55,12 @@ Route::get('capacity/check/{date}', CapacityController::class)->name('capacity.c
 
 // Availability for next 30 days (scheduling integration)
 Route::get('availability', AvailabilityController::class)->name('order.availability');
+
+// Pickup time slots for a given date (when pickup_slots_enabled).
+Route::get('pickup-slots/{date}', PickupSlotsController::class)
+    ->name('order.pickupSlots')
+    ->where('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}')
+    ->middleware('throttle:60,1');
 
 // Coupon validation (AJAX)
 Route::post('coupon/apply', ApplyCouponController::class)->name('coupon.apply')->middleware('throttle:10,1');

@@ -313,13 +313,32 @@
                                 <label class="block text-xs font-medium mb-1 text-warm-400">
                                     <span x-text="form.delivery_type === 'delivery' ? 'Delivery Date' : 'Pickup Date'"></span> *
                                 </label>
-                                <input type="date" data-test="order-form-delivery-date" x-model="form.delivery_date" :min="minDate" @change="checkCapacity()" required class="order-input">
+                                <input type="date" data-test="order-form-delivery-date" x-model="form.delivery_date" :min="minDate" @change="onDateChange()" required class="order-input">
                                 <div x-show="capacityWarning" class="text-amber-400 text-sm mt-1" x-text="capacityWarning"></div>
                                 <div x-show="capacityError" class="text-red-400 text-sm mt-1" x-text="capacityError"></div>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium mb-1 text-warm-400">Preferred Time</label>
-                                <input type="text" data-test="order-form-delivery-time" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="order-input">
+                                @if ($settings->orders->pickupSlotsEnabled)
+                                    <label for="order-pickup-slot" class="block text-xs font-medium mb-1 text-warm-400">
+                                        <span x-text="form.delivery_type === 'pickup' ? 'Pickup Time' : 'Preferred Time'"></span>
+                                    </label>
+                                    <template x-if="form.delivery_type === 'pickup'">
+                                        <select id="order-pickup-slot" data-test="order-form-delivery-time" x-model="form.delivery_time" class="order-input">
+                                            <option value="">{{ '— Select a time —' }}</option>
+                                            <template x-for="slot in availableSlots" :key="slot">
+                                                <option :value="slot" x-text="slot"></option>
+                                            </template>
+                                        </select>
+                                    </template>
+                                    <template x-if="form.delivery_type !== 'pickup'">
+                                        <input type="text" data-test="order-form-delivery-time" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="order-input">
+                                    </template>
+                                    <div x-show="form.delivery_type === 'pickup' && availableSlots.length === 0 && form.delivery_date"
+                                         class="text-amber-400 text-sm mt-1">No pickup slots available for this date.</div>
+                                @else
+                                    <label for="order-delivery-time" class="block text-xs font-medium mb-1 text-warm-400">Preferred Time</label>
+                                    <input id="order-delivery-time" type="text" data-test="order-form-delivery-time" x-model="form.delivery_time" placeholder="e.g., 10:00 AM" class="order-input">
+                                @endif
                             </div>
                         </div>
                     </div>

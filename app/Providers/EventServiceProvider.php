@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\Customers\CustomerBirthday;
+use App\Events\Customers\CustomerReferralCompleted;
 use App\Events\Customers\RepeatOrderReminderDue;
 use App\Events\Customers\ReviewRequested;
 use App\Events\Marketing\CampaignEmailQueued;
@@ -10,6 +11,7 @@ use App\Events\Marketing\CateringQuoteRequested;
 use App\Events\Marketing\PurchaseOrderRequested;
 use App\Events\Orders\OrderCreated;
 use App\Events\Orders\OrderMessageSent;
+use App\Events\Orders\OrderModified;
 use App\Events\Orders\OrderStatusChanged;
 use App\Events\Platform\HealthCheckFailed;
 use App\Events\Platform\PaymentFailed;
@@ -19,6 +21,7 @@ use App\Events\Platform\TenantOnboarded;
 use App\Events\Platform\TrialExpired;
 use App\Events\Platform\TrialReminding;
 use App\Events\Platform\WeeklyDigestRequested;
+use App\Listeners\Customers\SendCustomerReferralRewardEmailListener;
 use App\Listeners\Customers\SendHappyBirthdayEmailListener;
 use App\Listeners\Customers\SendRepeatOrderReminderEmailListener;
 use App\Listeners\Customers\SendReviewRequestEmailListener;
@@ -27,6 +30,7 @@ use App\Listeners\Marketing\SendCateringQuoteEmailListener;
 use App\Listeners\Marketing\SendPurchaseOrderEmailListener;
 use App\Listeners\Orders\NotifyBakerOfNewOrderListener;
 use App\Listeners\Orders\SendOrderMessageEmailListener;
+use App\Listeners\Orders\SendOrderModifiedEmailListener;
 use App\Listeners\Orders\SendOrderPlacedEmailListener;
 use App\Listeners\Orders\SendOrderStatusEmailListener;
 use App\Listeners\Platform\NotifyPlatformOfNewTenantListener;
@@ -55,6 +59,9 @@ class EventServiceProvider extends ServiceProvider
         CustomerBirthday::class => [
             SendHappyBirthdayEmailListener::class,
         ],
+        CustomerReferralCompleted::class => [
+            SendCustomerReferralRewardEmailListener::class,
+        ],
         RepeatOrderReminderDue::class => [
             SendRepeatOrderReminderEmailListener::class,
         ],
@@ -76,6 +83,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         OrderMessageSent::class => [
             SendOrderMessageEmailListener::class,
+        ],
+        OrderModified::class => [
+            SendOrderModifiedEmailListener::class,
         ],
         OrderStatusChanged::class => [
             SendOrderStatusEmailListener::class,
