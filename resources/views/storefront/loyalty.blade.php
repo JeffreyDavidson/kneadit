@@ -63,6 +63,39 @@
                 </div>
             </div>
 
+            @if ($vm->tier)
+                <div class="max-w-2xl mx-auto mb-10 rounded-2xl p-6 bg-white border border-warm-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <p class="uppercase tracking-[0.2em] text-xs font-semibold text-warm-500 mb-1">Your Tier</p>
+                            <p class="font-display text-2xl font-bold text-warm-900">{{ $vm->tier->getLabel() }}</p>
+                        </div>
+                        @if ($vm->nextTier)
+                            <div class="text-right">
+                                <p class="text-xs text-warm-500">Next: {{ $vm->nextTier->getLabel() }}</p>
+                                <p class="text-sm font-bold text-warm-700">@number($vm->pointsToNextTier) pts to go</p>
+                            </div>
+                        @else
+                            <p class="text-xs text-warm-500">Top tier — thanks for the love!</p>
+                        @endif
+                    </div>
+                    @if ($vm->tierMultiplier > 1.0 || $vm->tierFreeDelivery)
+                        <div class="pt-3 border-t border-warm-100 flex flex-wrap gap-3">
+                            @if ($vm->tierMultiplier > 1.0)
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-warm-50 text-warm-700 border border-warm-200">
+                                    {{ rtrim(rtrim(number_format($vm->tierMultiplier, 1), '0'), '.') }}× points
+                                </span>
+                            @endif
+                            @if ($vm->tierFreeDelivery)
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-warm-50 text-warm-700 border border-warm-200">
+                                    Free delivery
+                                </span>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             {{-- Progress to next reward --}}
             @if ($vm->nextReward)
             <div class="max-w-2xl mx-auto mb-10 rounded-2xl p-6 bg-white border border-warm-200">

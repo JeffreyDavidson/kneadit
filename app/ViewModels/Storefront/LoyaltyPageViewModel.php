@@ -3,6 +3,7 @@
 namespace App\ViewModels\Storefront;
 
 use App\Enums\Engagement\LoyaltyPointType;
+use App\Enums\Engagement\LoyaltyTier;
 use App\Models\Customers\Customer;
 use App\Models\Engagement\LoyaltyReward;
 use App\Services\Loyalty\CustomerLoyalty;
@@ -20,6 +21,10 @@ class LoyaltyPageViewModel
         $snapshot = $customerLoyalty->snapshot($customer);
         [$content, $howSteps] = self::loadContent();
 
+        $tiersEnabled = $settings->loyalty->tiersEnabled;
+        $progress = $tiersEnabled ? $customerLoyalty->nextTierProgress($customer) : null;
+        $perksEnabled = $settings->loyalty->tierPerksEnabled;
+
         return new self(
             settings: $settings,
             customer: $customer,
@@ -28,6 +33,11 @@ class LoyaltyPageViewModel
             rewards: $rewards,
             content: $content,
             howSteps: $howSteps,
+            tier: $tiersEnabled ? $customerLoyalty->tier($customer) : null,
+            nextTier: $progress['next'] ?? null,
+            pointsToNextTier: $progress['pointsToNext'] ?? 0,
+            tierMultiplier: $perksEnabled ? $customerLoyalty->pointsMultiplier($customer) : 1.0,
+            tierFreeDelivery: $perksEnabled && $customerLoyalty->qualifiesForFreeDelivery($customer),
         );
     }
 
@@ -101,6 +111,11 @@ class LoyaltyPageViewModel
         public readonly array $content = [],
         public readonly array $howSteps = [],
         public readonly bool $customerNotFound = false,
+        public readonly ?LoyaltyTier $tier = null,
+        public readonly ?LoyaltyTier $nextTier = null,
+        public readonly int $pointsToNextTier = 0,
+        public readonly float $tierMultiplier = 1.0,
+        public readonly bool $tierFreeDelivery = false,
     ) {
         $this->totalPoints = $balance->total;
         $this->lifetimeEarned = $balance->earned;

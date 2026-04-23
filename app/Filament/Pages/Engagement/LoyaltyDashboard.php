@@ -45,17 +45,71 @@ class LoyaltyDashboard extends Page
 
     public string $programName;
 
+    public bool $tiersEnabled;
+
+    public int $tierSilverThreshold;
+
+    public int $tierGoldThreshold;
+
+    public int $tierPlatinumThreshold;
+
+    public bool $tierPerksEnabled;
+
+    public float $tierSilverMultiplier;
+
+    public bool $tierSilverFreeDelivery;
+
+    public float $tierGoldMultiplier;
+
+    public bool $tierGoldFreeDelivery;
+
+    public float $tierPlatinumMultiplier;
+
+    public bool $tierPlatinumFreeDelivery;
+
     public function mount(): void
     {
         $settings = app(TenantSettings::class);
         $this->loyaltyEnabled = $settings->loyalty->enabled;
         $this->programName = $settings->loyalty->programName;
+        $this->tiersEnabled = $settings->loyalty->tiersEnabled;
+        $this->tierSilverThreshold = $settings->loyalty->tierSilverThreshold;
+        $this->tierGoldThreshold = $settings->loyalty->tierGoldThreshold;
+        $this->tierPlatinumThreshold = $settings->loyalty->tierPlatinumThreshold;
+        $this->tierPerksEnabled = $settings->loyalty->tierPerksEnabled;
+        $this->tierSilverMultiplier = $settings->loyalty->tierSilverMultiplier;
+        $this->tierSilverFreeDelivery = $settings->loyalty->tierSilverFreeDelivery;
+        $this->tierGoldMultiplier = $settings->loyalty->tierGoldMultiplier;
+        $this->tierGoldFreeDelivery = $settings->loyalty->tierGoldFreeDelivery;
+        $this->tierPlatinumMultiplier = $settings->loyalty->tierPlatinumMultiplier;
+        $this->tierPlatinumFreeDelivery = $settings->loyalty->tierPlatinumFreeDelivery;
     }
 
     public function toggleLoyalty(): void
     {
         $this->loyaltyEnabled = ! $this->loyaltyEnabled;
         app(SettingsManager::class)->set('loyalty_enabled', $this->loyaltyEnabled ? '1' : '0');
+    }
+
+    public function saveTiers(): void
+    {
+        $manager = app(SettingsManager::class);
+        $manager->set('loyalty_tiers_enabled', $this->tiersEnabled ? '1' : '0');
+        $manager->set('loyalty_tier_silver_threshold', (string) $this->tierSilverThreshold);
+        $manager->set('loyalty_tier_gold_threshold', (string) $this->tierGoldThreshold);
+        $manager->set('loyalty_tier_platinum_threshold', (string) $this->tierPlatinumThreshold);
+    }
+
+    public function saveTierPerks(): void
+    {
+        $manager = app(SettingsManager::class);
+        $manager->set('loyalty_tier_perks_enabled', $this->tierPerksEnabled ? '1' : '0');
+        $manager->set('loyalty_tier_silver_multiplier', (string) $this->tierSilverMultiplier);
+        $manager->set('loyalty_tier_silver_free_delivery', $this->tierSilverFreeDelivery ? '1' : '0');
+        $manager->set('loyalty_tier_gold_multiplier', (string) $this->tierGoldMultiplier);
+        $manager->set('loyalty_tier_gold_free_delivery', $this->tierGoldFreeDelivery ? '1' : '0');
+        $manager->set('loyalty_tier_platinum_multiplier', (string) $this->tierPlatinumMultiplier);
+        $manager->set('loyalty_tier_platinum_free_delivery', $this->tierPlatinumFreeDelivery ? '1' : '0');
     }
 
     public function getTotalPointsIssuedProperty(): int
