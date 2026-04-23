@@ -41,6 +41,9 @@ class StoreOrderRequest extends FormRequest
             'coupon_id' => ['nullable', 'integer', 'exists:coupons,id'],
             'gift_card_id' => ['nullable', 'integer', 'exists:gift_cards,id'],
             'tip_amount' => ['nullable', 'numeric', 'min:0', 'max:1000'],
+            'pickup_contact_name' => ['nullable', 'string', 'max:255'],
+            'pickup_contact_phone' => ['nullable', 'string', 'max:20'],
+            'pickup_contact_email' => ['nullable', 'email', 'max:255'],
         ];
     }
 

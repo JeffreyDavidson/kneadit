@@ -187,6 +187,19 @@
  </div>
  @endif
 
+ @if ($order->pickup_contact_name)
+ <div>
+ <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Picking up for you</span>
+ <p class="text-warm-200">{{ $order->pickup_contact_name }}</p>
+ @if ($order->pickup_contact_phone)
+ <p class="text-sm text-warm-400">{{ $order->pickup_contact_phone }}</p>
+ @endif
+ @if ($order->pickup_contact_email)
+ <p class="text-sm text-warm-400">{{ $order->pickup_contact_email }}</p>
+ @endif
+ </div>
+ @endif
+
  @if ($order->notes)
  <div>
  <span class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Special Instructions</span>
