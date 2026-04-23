@@ -4,6 +4,7 @@ namespace App\Actions\Orders;
 
 use App\Enums\Financial\CouponTransactionType;
 use App\Enums\Financial\GiftCardTransactionType;
+use App\Models\Financial\Coupon;
 use App\Models\Financial\CouponTransaction;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
@@ -40,9 +41,17 @@ class ReverseOrderDiscounts
             return;
         }
 
-        $order->coupon?->update([
-            'used_count' => max(0, $order->coupon->used_count - 1),
-        ]);
+        // Atomic decrement clamped at 0 — read-modify-write would race with
+        // concurrent reversals or with the increment in ApplyCoupon. The
+        // unique-constraint guard on the reversal transaction (line 39) keeps
+        // double-reverses idempotent; the where('used_count', '>', 0) here is
+        // belt-and-suspenders against ever going negative.
+        if ($order->coupon) {
+            Coupon::query()
+                ->whereKey($order->coupon->id)
+                ->where('used_count', '>', 0)
+                ->decrement('used_count');
+        }
     }
 
     private function reverseGiftCard(Order $order, string $reason): void
