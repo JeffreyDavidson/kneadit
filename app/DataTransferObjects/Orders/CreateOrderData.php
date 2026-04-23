@@ -23,6 +23,9 @@ final readonly class CreateOrderData
         public ?int $couponId = null,
         public ?int $giftCardId = null,
         public float $tipAmount = 0.0,
+        public ?string $pickupContactName = null,
+        public ?string $pickupContactPhone = null,
+        public ?string $pickupContactEmail = null,
     ) {}
 
     /**
@@ -48,6 +51,9 @@ final readonly class CreateOrderData
             couponId: isset($data['coupon_id']) ? (int) $data['coupon_id'] : null,
             giftCardId: isset($data['gift_card_id']) ? (int) $data['gift_card_id'] : null,
             tipAmount: isset($data['tip_amount']) ? (float) $data['tip_amount'] : 0.0,
+            pickupContactName: $data['pickup_contact_name'] ?? null,
+            pickupContactPhone: $data['pickup_contact_phone'] ?? null,
+            pickupContactEmail: $data['pickup_contact_email'] ?? null,
         );
     }
 }

@@ -70,10 +70,13 @@ use Illuminate\Support\Carbon;
  * @property \App\ValueObjects\Money $gift_card_amount
  * @property \App\ValueObjects\Money $tip_amount
  * @property \App\ValueObjects\Money $total
+ * @property string|null $pickup_contact_name
+ * @property string|null $pickup_contact_phone
+ * @property string|null $pickup_contact_email
  *
  * @mixin \Eloquent
  */
-#[Fillable('order_number', 'customer_id', 'status', 'payment_status', 'payment_method', 'subtotal', 'delivery_fee', 'discount_amount', 'tip_amount', 'total', 'paypal_invoice_id', 'delivery_address', 'delivery_type', 'delivery_date', 'delivery_time', 'notes', 'user_id', 'coupon_id', 'gift_card_id', 'gift_card_amount', 'review_request_sent_at', 'stripe_checkout_session_id', 'stripe_payment_intent_id')]
+#[Fillable('order_number', 'customer_id', 'status', 'payment_status', 'payment_method', 'subtotal', 'delivery_fee', 'discount_amount', 'tip_amount', 'total', 'paypal_invoice_id', 'delivery_address', 'delivery_type', 'delivery_date', 'delivery_time', 'notes', 'user_id', 'coupon_id', 'gift_card_id', 'gift_card_amount', 'review_request_sent_at', 'stripe_checkout_session_id', 'stripe_payment_intent_id', 'pickup_contact_name', 'pickup_contact_phone', 'pickup_contact_email')]
 #[ObservedBy([OrderObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(OrderQueryBuilder::class)]
 #[UseFactory(OrderFactory::class)]
