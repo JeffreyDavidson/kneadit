@@ -90,6 +90,12 @@ class ManageSettingsForm
                                     ->default('0')
                                     ->helperText('Minimum order subtotal for delivery (0 = no minimum)'),
                             ]),
+
+                        TextInput::make('order_modification_window_minutes')
+                            ->label('Order Modification Window (minutes)')
+                            ->numeric()
+                            ->default(0)
+                            ->helperText('How long after placing an order a customer can edit quantities/tip. 0 disables the feature.'),
                     ]),
 
                 // Order Journey Section

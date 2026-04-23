@@ -7,6 +7,7 @@ use App\Http\Controllers\Order\ApplyGiftCardController;
 use App\Http\Controllers\Order\AvailabilityController;
 use App\Http\Controllers\Order\CapacityController;
 use App\Http\Controllers\Order\MessageController;
+use App\Http\Controllers\Order\ModifyOrderController;
 use App\Http\Controllers\Order\ReorderController;
 use App\Http\Controllers\Order\StripeCancelController;
 use App\Http\Controllers\Order\StripeSuccessController;
@@ -38,6 +39,7 @@ Route::middleware('order.access')->group(function () {
     Route::get('order/{order:order_number}/messages', [MessageController::class, 'show'])->name('order.messages');
     Route::post('order/{order:order_number}/messages', [MessageController::class, 'store'])->name('order.messages.send')->middleware('throttle:10,1');
     Route::get('order/reorder/{order:order_number}', ReorderController::class)->name('order.reorder');
+    Route::post('order/{order:order_number}/modify', ModifyOrderController::class)->name('order.modify')->middleware('throttle:5,1');
 });
 
 // Capacity check (AJAX)

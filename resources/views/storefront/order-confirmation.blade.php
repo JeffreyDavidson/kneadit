@@ -86,6 +86,52 @@
  <span class="font-display text-2xl font-bold text-warm-400">@money($order->total)</span>
  </div>
  </div>
+
+ @if ($canModify)
+ <div class="mt-6 pt-6 border-t border-warm-700/20" x-data="{ open: false }">
+ <div class="flex items-center justify-between">
+ <div>
+ <p class="text-sm font-semibold text-warm-300">Need to make changes?</p>
+ <p class="text-xs text-warm-500">{{ $modifyMinutesRemaining }} minute{{ $modifyMinutesRemaining === 1 ? '' : 's' }} left to modify your order.</p>
+ </div>
+ <button type="button" @click="open = !open"
+ class="px-4 py-2 rounded-lg text-sm font-semibold bg-warm-400 text-warm-900 hover:bg-warm-300 transition-all">
+ <span x-text="open ? 'Cancel' : 'Modify Order'"></span>
+ </button>
+ </div>
+
+ <form x-show="open" x-cloak method="POST" action="{{ route('order.modify', $order) }}" class="mt-4 space-y-4">
+ @csrf
+ @error('items')
+ <div class="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm">{{ $message }}</div>
+ @enderror
+ <div class="space-y-2">
+ @foreach ($order->orderItems as $index => $item)
+ <div class="flex items-center justify-between gap-3 py-2 border-b border-warm-700/15">
+ <span class="flex-1 text-sm text-warm-300">{{ $item->product->name ?? 'Product' }}</span>
+ <input type="hidden" name="items[{{ $index }}][order_item_id]" value="{{ $item->id }}">
+ <label for="modify-qty-{{ $item->id }}" class="sr-only">Quantity for {{ $item->product->name ?? 'Product' }}</label>
+ <input id="modify-qty-{{ $item->id }}" type="number" name="items[{{ $index }}][quantity]"
+ min="0" max="20" value="{{ $item->quantity }}"
+ class="w-20 px-3 py-1 rounded-lg bg-white/[0.03] border border-warm-600/15 text-warm-300 text-sm text-center" />
+ </div>
+ @endforeach
+ </div>
+ <div>
+ <label for="modify-tip" class="block text-xs uppercase tracking-wider font-medium mb-1 text-warm-500">Tip ($)</label>
+ <input id="modify-tip" type="number" name="tip_amount" min="0" max="1000" step="0.01"
+ value="{{ number_format($order->tip_amount->dollars(), 2, '.', '') }}"
+ class="w-32 px-3 py-2 rounded-lg bg-white/[0.03] border border-warm-600/15 text-warm-300 text-sm" />
+ </div>
+ <div class="flex justify-end">
+ <button type="submit"
+ class="px-4 py-2 rounded-lg text-sm font-semibold bg-warm-400 text-warm-900 hover:bg-warm-300 transition-all">
+ Save changes
+ </button>
+ </div>
+ </form>
+ </div>
+ @endif
  </div>
 
  {{-- Customer & Delivery Info --}}
