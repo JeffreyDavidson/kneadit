@@ -297,7 +297,7 @@
             <button onclick="dismissPwa()" class="bg-transparent border-0 text-warm-600 cursor-pointer text-[1.1rem] p-0 leading-none" aria-label="Dismiss install prompt">&times;</button>
         </div>
     </div>
-    <script>
+    <script @cspnonce>
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;if(!localStorage.getItem('pwaDismissed')){document.getElementById('pwaInstall').style.display='block'}});
     document.getElementById('pwaInstallBtn').addEventListener('click',function(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;document.getElementById('pwaInstall').style.display='none'})}});
@@ -313,7 +313,7 @@
             <button onclick="acceptCookies()" class="px-6 py-2 rounded-full bg-warm-500 text-white border-0 font-bold text-xs cursor-pointer whitespace-nowrap transition-colors">Accept</button>
         </div>
     </div>
-    <script>
+    <script @cspnonce>
     function acceptCookies(){document.getElementById('cookieConsent').style.display='none';localStorage.setItem('cookieConsent','1')}
     if(!localStorage.getItem('cookieConsent')){document.getElementById('cookieConsent').style.display='block'}
     </script>

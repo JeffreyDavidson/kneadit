@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <style>
+    <style @cspnonce>
         @media print {
             .no-print, .fi-header, .fi-sidebar, .fi-topbar, nav { display: none !important; }
             .print-only { display: block !important; }
@@ -360,7 +360,7 @@
         </div>
     @endif
 
-    <script>
+    <script @cspnonce>
         function exportCsv() {
             const data = @json($reportData);
             const type = @json($activeReport);

@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Label — {{ $product->name }}</title>
-    <style>
+    <style @cspnonce>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {

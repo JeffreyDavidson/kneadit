@@ -14,5 +14,10 @@ class BladeServiceProvider extends ServiceProvider
         Blade::directive('number', fn (string $expression) => "<?php \$__numberArgs = [{$expression}]; echo \\Illuminate\\Support\\Number::format((float) \$__numberArgs[0], (int) (\$__numberArgs[1] ?? 0)); ?>");
 
         Blade::directive('time', fn (string $expression) => "<?php echo \\Carbon\\Carbon::createFromFormat('H:i', {$expression})->format('g:i A'); ?>");
+
+        // Emits `nonce="..."` for inline <script>/<style> tags using the
+        // per-request CSP nonce. Paired with the nonce written into the CSP
+        // header by App\Http\Middleware\SecurityHeaders.
+        Blade::directive('cspnonce', fn () => '<?php echo \'nonce="\' . app(\\App\\Support\\Csp\\CspNonce::class)->value() . \'"\'; ?>');
     }
 }

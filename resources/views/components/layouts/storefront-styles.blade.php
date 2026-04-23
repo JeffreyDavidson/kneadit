@@ -1,4 +1,4 @@
-    <style>
+    <style @cspnonce>
         /* ===== Base / Classic Theme (default) ===== */
         :root {
             --warm-900: #1c1410;

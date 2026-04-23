@@ -1,5 +1,5 @@
 @if ($featuredProducts->isNotEmpty())
-<style>
+<style @cspnonce>
     .product-showcase-card {
         position: relative;
         border-radius: 20px;
