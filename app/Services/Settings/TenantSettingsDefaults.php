@@ -23,6 +23,7 @@ final class TenantSettingsDefaults
             'default_daily_capacity' => null,
             'minimum_order_lead_hours' => 48,
             'order_modification_window_minutes' => 0,
+            'low_stock_alerts_enabled' => false,
             'delivery_fee_tiers' => '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}',
             'minimum_pickup_order_amount' => '0',
             'minimum_delivery_order_amount' => '0',

@@ -7,6 +7,7 @@ use App\DataTransferObjects\Settings\CateringSettings;
 use App\DataTransferObjects\Settings\EngagementSettings;
 use App\DataTransferObjects\Settings\GiftCardSettings;
 use App\DataTransferObjects\Settings\HomepageSettings;
+use App\DataTransferObjects\Settings\InventorySettings;
 use App\DataTransferObjects\Settings\LoyaltySettings;
 use App\DataTransferObjects\Settings\OnboardingSettings;
 use App\DataTransferObjects\Settings\OrderSettings;
@@ -36,6 +37,7 @@ final class TenantSettings
         public readonly OnboardingSettings $onboarding,
         public readonly WebhookSettings $webhooks,
         public readonly GiftCardSettings $giftCards,
+        public readonly InventorySettings $inventory,
     ) {}
 
     public static function resolve(): self
@@ -53,6 +55,7 @@ final class TenantSettings
             onboarding: OnboardingSettings::resolve(),
             webhooks: WebhookSettings::resolve(),
             giftCards: GiftCardSettings::resolve(),
+            inventory: InventorySettings::resolve(),
         );
     }
 
