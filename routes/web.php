@@ -18,6 +18,7 @@ use App\Http\Controllers\Central\ImpersonateController;
 use App\Http\Controllers\Central\ReferralController;
 use App\Http\Controllers\Central\RootController;
 use App\Http\Controllers\Central\SitemapController;
+use App\Http\Controllers\CspReportController;
 use App\Routing\Resolvers\PublishedBlogPostResolver;
 use Illuminate\Support\Facades\Route;
 
@@ -93,6 +94,14 @@ Route::post('contact-us', ContactController::class)
 
 // Public bakery directory
 Route::get('directory', DirectoryController::class)->name('directory');
+
+// CSP violation report receiver. Browsers POST here when the Report-Only
+// CSP fires; payloads are logged for review. CSRF is excluded — browsers
+// don't include the token on policy-violation reports.
+Route::post('csp-report', CspReportController::class)
+    ->middleware(['web', 'throttle:60,1'])
+    ->withoutMiddleware(Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class)
+    ->name('csp.report');
 
 // Tenant Registration (onboarding)
 Route::middleware(['web', 'auth'])->prefix('onboarding')->name('onboarding.')->group(function () {

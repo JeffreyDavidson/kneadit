@@ -2,7 +2,7 @@
 
 namespace App\Models\Orders;
 
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Models\Inventory\Product;
 use App\ValueObjects\Money;
 use Database\Factories\Orders\OrderItemFactory;
@@ -37,7 +37,7 @@ class OrderItem extends Model
     {
         return [
             'quantity' => 'integer',
-            'unit_price' => MoneyCast::class,
+            'unit_price' => MoneyCentsCast::class,
         ];
     }
 

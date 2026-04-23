@@ -16,10 +16,12 @@ class RevenueQuery
     {
         $dates = $range instanceof DateRange ? $range->toArray() : $range;
 
-        return (float) Order::query()
+        // orders.total is now bigint cents (see migration 2026_04_22_201500);
+        // convert the aggregate back to dollars for callers that still expect a float.
+        return (int) Order::query()
             ->active()->paid()
             ->whereBetween('delivery_date', $dates)
-            ->sum('total');
+            ->sum('total') / 100;
     }
 
     /**
@@ -36,10 +38,10 @@ class RevenueQuery
             ->active()->paid()
             ->whereBetween('delivery_date', $dates)
             ->toBase()
-            ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue')
+            ->selectRaw('DATE(delivery_date) as date, SUM(total) as revenue_cents')
             ->groupBy('date')
-            ->pluck('revenue', 'date')
-            ->map(fn (mixed $v): float => (float) $v)
+            ->pluck('revenue_cents', 'date')
+            ->map(fn (mixed $v): float => (int) $v / 100)
             ->all();
     }
 

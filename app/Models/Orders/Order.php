@@ -3,7 +3,7 @@
 namespace App\Models\Orders;
 
 use App\Builders\Orders\OrderQueryBuilder;
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Enums\Orders\DeliveryType;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentMethod;
@@ -94,11 +94,11 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'subtotal' => MoneyCast::class,
-            'delivery_fee' => MoneyCast::class,
-            'discount_amount' => MoneyCast::class,
-            'gift_card_amount' => MoneyCast::class,
-            'total' => MoneyCast::class,
+            'subtotal' => MoneyCentsCast::class,
+            'delivery_fee' => MoneyCentsCast::class,
+            'discount_amount' => MoneyCentsCast::class,
+            'gift_card_amount' => MoneyCentsCast::class,
+            'total' => MoneyCentsCast::class,
             'delivery_date' => 'date',
             'delivery_time' => 'datetime:H:i',
             'review_request_sent_at' => 'datetime',

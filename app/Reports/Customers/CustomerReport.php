@@ -31,7 +31,9 @@ class CustomerReport
             ->map(fn (Customer $c) => [
                 'name' => $c->name,
                 'email' => $c->email,
-                'total_spend' => (float) $c->total_spend,
+                // total_spend is SUM(orders.total) and orders.total is bigint cents
+                // (migration 2026_04_22_201500); divide back to dollars.
+                'total_spend' => (float) ((int) $c->total_spend / 100),
                 'order_count' => (int) $c->order_count,
             ])
             ->all();
