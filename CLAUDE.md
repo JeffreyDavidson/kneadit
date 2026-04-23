@@ -101,6 +101,12 @@
 - Every inline `<script>` and `<style>` must have `@cspnonce` — the directive emits `nonce="..."` using the per-request `CspNonce` (request-scoped singleton) that the middleware writes into the CSP header. When adding a new inline block, add `@cspnonce` as an attribute.
 - External `<script src="...">` tags don't need the nonce (CSP src whitelist covers them) but new external domains need to be added to the policy in `SecurityHeaders::csp()`.
 
+### Dead Code — Wire It Up Before Deleting
+- When you find a class, mailable, listener, view, or route with no callers, **default to wiring it up, not deleting it.** Many "unused" classes are partially-built features waiting on a trigger.
+- Tells of a partially-built feature: complete implementation + tests + view exist, infrastructure (event/column/factory) exists, recent git history added it deliberately, a generic fallback is used elsewhere that this would replace better.
+- Tells of actually-dead code: explicitly superseded with a deprecation comment, view/test deleted but class wasn't, recent commit message says "TODO remove."
+- Real examples we caught: `ProductAvailableMail` (sat unused for several minor versions; PR #326 wired it to a `Notify Waitlist` admin action), `PaymentFailedAlertMail` (would have been deleted; the right fix was switching the listener from generic `HealthAlertMail` to this structured one).
+
 ### Route Model Binding (order-by-number)
 - All order-bound routes use `{order:order_number}` explicit per-route binding (the model's `getRouteKeyName` is deliberately **not** overridden; routing concerns live in the routing layer per PR #164).
 - When building URLs for orders in Blade/JS, always use `route('order.x', $order)` or `route('order.x', ['order' => $order->order_number])`. **Never** concatenate `$order->id` into a URL — the routes bind by `order_number` and will 404. Seen as a real bug shape twice; regression tests in `ReviewRequestMailTest` and `TrackingControllerTest` guard against repeats.
