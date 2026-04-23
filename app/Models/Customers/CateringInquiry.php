@@ -26,10 +26,13 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property \App\ValueObjects\Money|null $budget
  * @property \App\ValueObjects\Money|null $quoted_amount
+ * @property \App\ValueObjects\Money|null $deposit_amount
+ * @property \Illuminate\Support\Carbon|null $deposit_paid_at
+ * @property string|null $deposit_reference
  *
  * @mixin \Eloquent
  */
-#[Fillable('customer_name', 'customer_email', 'customer_phone', 'event_type', 'event_date', 'guest_count', 'budget', 'details', 'dietary_requirements', 'venue_address', 'status', 'quoted_amount', 'notes')]
+#[Fillable('customer_name', 'customer_email', 'customer_phone', 'event_type', 'event_date', 'guest_count', 'budget', 'details', 'dietary_requirements', 'venue_address', 'status', 'quoted_amount', 'deposit_amount', 'deposit_paid_at', 'deposit_reference', 'notes')]
 #[ObservedBy(LogsActivityObserver::class)]
 #[UseEloquentBuilder(CateringInquiryQueryBuilder::class)]
 #[UseFactory(CateringInquiryFactory::class)]
@@ -46,6 +49,8 @@ class CateringInquiry extends Model
             'guest_count' => 'integer',
             'budget' => MoneyCentsCast::class,
             'quoted_amount' => MoneyCentsCast::class,
+            'deposit_amount' => MoneyCentsCast::class,
+            'deposit_paid_at' => 'datetime',
             'customer_phone' => PhoneNumberCast::class,
             'details' => StripTagsCast::class,
             'dietary_requirements' => StripTagsCast::class,
