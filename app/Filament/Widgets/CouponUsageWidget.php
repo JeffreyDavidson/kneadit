@@ -29,9 +29,14 @@ class CouponUsageWidget extends Widget
 
     public function getMostUsedCoupon(): ?Coupon
     {
-        return $this->cached('most_used', [300, 600], fn (): ?Coupon => Coupon::query()->where('used_count', '>', 0)
+        // Cache the id, not the model. Cache stores hydrate as __PHP_Incomplete_Class
+        // because config(cache.serializable_classes) is false. Same shape as #302.
+        $id = $this->cached('most_used_id', [300, 600], fn (): ?int => Coupon::query()
+            ->where('used_count', '>', 0)
             ->orderByDesc('used_count')
-            ->first());
+            ->value('id'));
+
+        return $id ? Coupon::query()->whereKey($id)->first() : null;
     }
 
     public function getExpiringSoonCount(): int

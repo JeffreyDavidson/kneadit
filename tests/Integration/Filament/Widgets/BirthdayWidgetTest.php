@@ -29,7 +29,7 @@ test('get upcoming birthdays includes customer with upcoming birthday', function
     $birthdays = test()->widget->getUpcomingBirthdays();
 
     expect($birthdays)->toHaveCount(1)
-        ->and($birthdays->first()->customer->name)->toBe('Birthday Customer');
+        ->and($birthdays->first()->customer_name)->toBe('Birthday Customer');
 });
 
 test('get upcoming birthdays excludes customers beyond 30 days', function () {
@@ -68,6 +68,6 @@ test('get upcoming birthdays sorted by days until', function () {
     $birthdays = test()->widget->getUpcomingBirthdays();
 
     expect($birthdays)->toHaveCount(2)
-        ->and($birthdays->first()->customer->name)->toBe('Sooner')
-        ->and($birthdays->last()->customer->name)->toBe('Later');
+        ->and($birthdays->first()->customer_name)->toBe('Sooner')
+        ->and($birthdays->last()->customer_name)->toBe('Later');
 });
