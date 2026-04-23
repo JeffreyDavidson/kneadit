@@ -46,7 +46,8 @@ test('import creates new products', function () {
     $result = resolve(ImportProducts::class)($file);
 
     expect($result['created'])->toBe(1);
-    assertDatabaseHas('products', ['name' => 'Chocolate Cake', 'price' => 25.00]);
+    // products.price is bigint cents (migration 2026_04_22_215000).
+    assertDatabaseHas('products', ['name' => 'Chocolate Cake', 'price' => 2500]);
 });
 
 test('import updates existing products by name', function () {

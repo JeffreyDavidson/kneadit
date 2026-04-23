@@ -87,7 +87,8 @@ test('product step creates product in database', function () {
     assertDatabaseHas('products', [
         'name' => 'Sourdough Loaf',
         'slug' => 'sourdough-loaf',
-        'price' => 12.50,
+        // products.price is bigint cents (migration 2026_04_22_215000).
+        'price' => 1250,
         'category_id' => $category->id,
         'is_active' => true,
     ]);
@@ -431,7 +432,8 @@ test('full onboarding flow saves all settings', function () {
 
     assertDatabaseHas('products', [
         'name' => 'Chocolate Chip Cookie',
-        'price' => 3.50,
+        // products.price is bigint cents (migration 2026_04_22_215000).
+        'price' => 350,
     ]);
 
     $hours = json_decode(settings('operating_hours'), true);
