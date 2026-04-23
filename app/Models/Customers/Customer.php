@@ -8,6 +8,7 @@ use App\Models\Engagement\LoyaltyPoint;
 use App\Models\Orders\Order;
 use App\Notifications\Customers\CustomerPasswordResetNotification;
 use App\Notifications\Customers\CustomerVerifyEmailNotification;
+use App\Observers\Customers\CustomerObserver;
 use App\Observers\LogsActivityObserver;
 use Database\Factories\Customers\CustomerFactory;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
@@ -57,9 +58,9 @@ use Illuminate\Support\Carbon;
  *
  * @mixin \Eloquent
  */
-#[Fillable('name', 'email', 'password', 'phone', 'address', 'city', 'state', 'zip', 'notes', 'birthday')]
+#[Fillable('name', 'email', 'password', 'phone', 'address', 'city', 'state', 'zip', 'notes', 'birthday', 'referral_code')]
 #[Hidden('password', 'remember_token')]
-#[ObservedBy(LogsActivityObserver::class)]
+#[ObservedBy([CustomerObserver::class, LogsActivityObserver::class])]
 #[UseEloquentBuilder(CustomerQueryBuilder::class)]
 #[UseFactory(CustomerFactory::class)]
 class Customer extends Model implements Authenticatable, CanResetPassword, MustVerifyEmail

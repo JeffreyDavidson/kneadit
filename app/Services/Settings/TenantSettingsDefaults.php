@@ -27,6 +27,8 @@ final class TenantSettingsDefaults
             'pickup_slots_enabled' => false,
             'pickup_slot_interval_minutes' => 30,
             'pickup_slot_max_per_window' => 3,
+            'customer_referral_program_enabled' => false,
+            'customer_referral_discount_dollars' => 10,
             'delivery_fee_tiers' => '{"0-10": 5.00, "10-25": 3.00, "25+": 0.00}',
             'minimum_pickup_order_amount' => '0',
             'minimum_delivery_order_amount' => '0',
