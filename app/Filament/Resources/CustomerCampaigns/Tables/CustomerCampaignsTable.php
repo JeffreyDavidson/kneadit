@@ -31,6 +31,22 @@ class CustomerCampaignsTable
                     ->label('Recipients')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('opens')
+                    ->label('Opens')
+                    ->getStateUsing(function (CustomerCampaign $record): string {
+                        $opened = $record->logs()->whereNotNull('opened_at')->count();
+                        if ($record->recipient_count === 0) {
+                            return '—';
+                        }
+                        $rate = round($opened / $record->recipient_count * 100);
+
+                        return "{$opened} ({$rate}%)";
+                    }),
+                TextColumn::make('scheduled_at')
+                    ->label('Scheduled')
+                    ->dateTime()
+                    ->sortable()
+                    ->placeholder('—'),
                 TextColumn::make('sent_at')
                     ->dateTime()
                     ->sortable()
@@ -54,7 +70,7 @@ class CustomerCampaignsTable
                     ->requiresConfirmation()
                     ->modalHeading('Send this campaign?')
                     ->modalDescription('This will queue the email to every customer in the selected audience. There\'s no undo.')
-                    ->visible(fn (CustomerCampaign $record): bool => $record->status === CustomerCampaignStatus::Draft)
+                    ->visible(fn (CustomerCampaign $record): bool => in_array($record->status, [CustomerCampaignStatus::Draft, CustomerCampaignStatus::Scheduled], true))
                     ->action(function (CustomerCampaign $record): void {
                         $sent = resolve(SendCustomerCampaign::class)($record);
                         Notification::make()
@@ -63,7 +79,7 @@ class CustomerCampaignsTable
                             ->send();
                     }),
                 SlideOverEditAction::make()
-                    ->visible(fn (CustomerCampaign $record): bool => $record->status === CustomerCampaignStatus::Draft),
+                    ->visible(fn (CustomerCampaign $record): bool => in_array($record->status, [CustomerCampaignStatus::Draft, CustomerCampaignStatus::Scheduled], true)),
             ])
             ->emptyStateHeading('No campaigns yet')
             ->emptyStateDescription('Create a campaign to email a segment of your customers.');
