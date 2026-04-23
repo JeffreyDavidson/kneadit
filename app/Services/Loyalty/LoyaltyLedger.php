@@ -11,6 +11,7 @@ class LoyaltyLedger
 {
     public function __construct(
         private TenantSettings $settings,
+        private CustomerLoyalty $customerLoyalty,
     ) {}
 
     /**
@@ -54,6 +55,12 @@ class LoyaltyLedger
 
     private function calculatePoints(Order $order): int
     {
-        return (int) floor($order->total->dollars() * $this->settings->loyalty->pointsPerDollar);
+        $base = $order->total->dollars() * $this->settings->loyalty->pointsPerDollar;
+
+        $multiplier = $order->customer
+            ? $this->customerLoyalty->pointsMultiplier($order->customer)
+            : 1.0;
+
+        return (int) floor($base * $multiplier);
     }
 }
