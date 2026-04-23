@@ -8,7 +8,7 @@ final readonly class FinancialSummary
 {
     /**
      * @param Collection<int, MonthlyFinancials> $monthlyBreakdown
-     * @param Collection<int, array{category: string, amount: float|null, percentage: float}> $expenseBreakdown
+     * @param Collection<int, array{category: string, amount: float, percentage: float}> $expenseBreakdown
      */
     public function __construct(
         public float $totalRevenue,
