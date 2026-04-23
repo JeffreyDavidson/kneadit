@@ -3,11 +3,7 @@
     <div class="max-w-6xl mx-auto">
         {{-- Header --}}
         <div class="text-center mb-14">
-            <div class="flex items-center justify-center gap-3 mb-4">
-                <span class="block w-8 h-px bg-warm-500 opacity-50"></span>
-                <span class="uppercase tracking-[0.25em] text-xs font-semibold text-warm-500">Explore</span>
-                <span class="block w-8 h-px bg-warm-500 opacity-50"></span>
-            </div>
+            <x-storefront.eyebrow line-opacity="0.5" class="mb-4">Explore</x-storefront.eyebrow>
             <h2 class="font-display text-3xl md:text-5xl font-bold text-warm-900">{{ $title }}</h2>
         </div>
 
