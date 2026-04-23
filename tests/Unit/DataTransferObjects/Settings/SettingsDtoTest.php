@@ -250,6 +250,13 @@ test('EngagementSettings stores all properties', function () {
         announcementEnabled: true,
         announcementText: 'Grand opening!',
         announcementType: 'info',
+        emailOrderPlacedEnabled: true,
+        emailOrderConfirmedEnabled: true,
+        emailOrderBakingEnabled: false,
+        emailOrderReadyEnabled: true,
+        emailOrderDeliveredEnabled: true,
+        emailOrderCancelledEnabled: true,
+        emailOrderMessageEnabled: true,
     );
 
     expect($dto)
@@ -263,7 +270,9 @@ test('EngagementSettings stores all properties', function () {
         ->repeatReminderDays->toBe(30)
         ->announcementEnabled->toBeTrue()
         ->announcementText->toBe('Grand opening!')
-        ->announcementType->toBe('info');
+        ->announcementType->toBe('info')
+        ->emailOrderPlacedEnabled->toBeTrue()
+        ->emailOrderBakingEnabled->toBeFalse();
 });
 
 // ---------------------------------------------------------------------------

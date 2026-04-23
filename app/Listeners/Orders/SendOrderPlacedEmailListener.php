@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Orders;
 
+use App\DataTransferObjects\Settings\EngagementSettings;
 use App\Events\Orders\OrderCreated;
 use App\Listeners\SendEmailListener;
 use App\Mail\Orders\OrderPlacedMail;
@@ -12,6 +13,10 @@ class SendOrderPlacedEmailListener extends SendEmailListener
     protected function getRecipient(object $event): ?string
     {
         /** @var OrderCreated $event */
+        if (! app(EngagementSettings::class)->emailOrderPlacedEnabled) {
+            return null;
+        }
+
         return $event->order->customer?->email;
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Orders;
 
+use App\DataTransferObjects\Settings\EngagementSettings;
 use App\Enums\Orders\OrderStatus;
 use App\Events\Orders\OrderStatusChanged;
 use App\Listeners\SendEmailListener;
@@ -23,6 +24,12 @@ class SendOrderStatusEmailListener extends SendEmailListener
     {
         /** @var OrderStatusChanged $event */
         if (! in_array($event->to, self::EMAILABLE_STATUSES, true)) {
+            return null;
+        }
+
+        // Per-status email toggle. Tenant can disable individual status emails
+        // (e.g., skip the "Baking" email but keep "Ready" + "Delivered").
+        if (! app(EngagementSettings::class)->isOrderStatusEmailEnabled($event->to)) {
             return null;
         }
 

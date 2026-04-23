@@ -27,6 +27,15 @@ final class TenantSettingsDefaults
             'minimum_delivery_order_amount' => '0',
             'repeat_reminders_enabled' => false,
             'birthday_program_enabled' => false,
+            // Per-email toggles. All default true for backwards compatibility —
+            // existing tenants keep getting every email until they opt one out.
+            'email_order_placed_enabled' => true,
+            'email_order_confirmed_enabled' => true,
+            'email_order_baking_enabled' => true,
+            'email_order_ready_enabled' => true,
+            'email_order_delivered_enabled' => true,
+            'email_order_cancelled_enabled' => true,
+            'email_order_message_enabled' => true,
             'allergy_disclaimer' => 'Please inform us of any allergies or dietary restrictions when placing your order.',
             'revenue_cap' => '250000',
             'payment_methods' => [PaymentMethod::Cash->value],

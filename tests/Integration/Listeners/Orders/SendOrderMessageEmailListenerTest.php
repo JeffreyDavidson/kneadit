@@ -59,6 +59,35 @@ test('it does not send email when the order is missing', function () {
     Mail::assertNothingQueued();
 });
 
+test('it does not send to the customer when the order_message email toggle is disabled', function () {
+    Mail::fake();
+    settings(['email_order_message_enabled' => false]);
+
+    $customer = Customer::factory()->create(['email' => 'customer@example.com']);
+    $order = Order::factory()->for($customer)->create();
+    $message = OrderMessage::factory()->fromBaker()->for($order)->create();
+
+    (new SendOrderMessageEmailListener)->handle(new OrderMessageSent($message));
+
+    Mail::assertNothingQueued();
+});
+
+test('toggle does not affect the customer-to-baker direction (baker still gets notified)', function () {
+    Mail::fake();
+    settings([
+        'email_order_message_enabled' => false,
+        'store_email' => 'baker@example.com',
+    ]);
+
+    $customer = Customer::factory()->create(['email' => 'customer@example.com']);
+    $order = Order::factory()->for($customer)->create();
+    $message = OrderMessage::factory()->fromCustomer()->for($order)->create();
+
+    (new SendOrderMessageEmailListener)->handle(new OrderMessageSent($message));
+
+    Mail::assertQueued(NewOrderMessageMail::class, fn (NewOrderMessageMail $mail) => $mail->hasTo('baker@example.com'));
+});
+
 test('it does not send email when customer sends message but no store email is configured', function () {
     Mail::fake();
     settings(['store_email' => '']);
