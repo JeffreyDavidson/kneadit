@@ -2,7 +2,7 @@
 
 namespace App\Models\Inventory;
 
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Enums\Inventory\Allergen;
 use App\Observers\LogsActivityObserver;
 use Database\Factories\Inventory\IngredientFactory;
@@ -48,7 +48,7 @@ class Ingredient extends Model
         return [
             'current_stock' => 'decimal:2',
             'low_stock_threshold' => 'decimal:2',
-            'cost_per_unit' => MoneyCast::class,
+            'cost_per_unit' => MoneyCentsCast::class,
             'allergens' => AsEnumCollection::of(Allergen::class),
         ];
     }
