@@ -12,6 +12,7 @@ use App\Services\Settings\TenantSettings;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Facades\URL;
 
 class ReviewRequestMail extends BaseMailable
 {
@@ -31,7 +32,15 @@ class ReviewRequestMail extends BaseMailable
     {
         $this->order = $order;
         $this->storeName = app(TenantSettings::class)->store->name;
-        $this->reviewUrl = route('storefront.submitReview', ['order' => $order->order_number]);
+        // Signed URL — the email link itself is the proof of order ownership, so the
+        // route bypasses the session-based order.access gate. Signature ensures the
+        // link can't be forged or extended; 60-day window matches a typical review
+        // collection horizon (lapsed-customer reminders go out months later).
+        $this->reviewUrl = URL::temporarySignedRoute(
+            'storefront.submitReview',
+            now()->addDays(60),
+            ['order' => $order->order_number],
+        );
         $this->orderItems = $order->orderItems()->with('product')->get();
     }
 

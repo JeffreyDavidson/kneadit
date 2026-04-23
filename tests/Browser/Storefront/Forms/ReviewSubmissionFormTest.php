@@ -1,6 +1,7 @@
 <?php
 
 use Database\Seeders\BrowserTestFixtureSeeder;
+use Illuminate\Support\Facades\URL;
 
 $storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit.test');
 $orderNumber = BrowserTestFixtureSeeder::REVIEW_ORDER_NUMBER;
@@ -12,8 +13,28 @@ $orderNumber = BrowserTestFixtureSeeder::REVIEW_ORDER_NUMBER;
 // Prerequisite: BrowserTestFixtureSeeder has been run against the target tenant
 // (see database/seeders/BrowserTestFixtureSeeder.php).
 
-test('review submission form is visible on the page', function () use ($storefrontUrl, $orderNumber) {
-    visit("{$storefrontUrl}/review/{$orderNumber}")
+// The review GET route is signed-URL-gated; the email link is the proof of
+// ownership. Tests build a fresh signed URL for each visit, against the
+// browser-test tenant domain over https — Herd 301-redirects http to https,
+// which would invalidate the signature, so URL generation must match the
+// scheme the request will actually arrive on.
+$signedReviewUrl = function () use ($storefrontUrl, $orderNumber): string {
+    URL::forceRootUrl(str_replace('http://', 'https://', $storefrontUrl));
+    URL::forceScheme('https');
+
+    try {
+        return URL::temporarySignedRoute(
+            'storefront.submitReview',
+            now()->addHour(),
+            ['order' => $orderNumber],
+        );
+    } finally {
+        URL::forceRootUrl(null);
+    }
+};
+
+test('review submission form is visible on the page', function () use ($signedReviewUrl) {
+    visit($signedReviewUrl())
         ->assertVisible('[data-test="review-submission-form"]')
         ->assertVisible('[data-test="review-submission-form-rating-1"]')
         ->assertVisible('[data-test="review-submission-form-rating-5"]')
@@ -22,8 +43,8 @@ test('review submission form is visible on the page', function () use ($storefro
         ->assertNoJavaScriptErrors();
 });
 
-test('review submission form rejects submit without a rating', function () use ($storefrontUrl, $orderNumber) {
-    visit("{$storefrontUrl}/review/{$orderNumber}")
+test('review submission form rejects submit without a rating', function () use ($signedReviewUrl, $orderNumber) {
+    visit($signedReviewUrl())
         ->press('Submit Review')
         ->assertPathIs("/review/{$orderNumber}")
         ->assertVisible('[data-test="review-submission-form"]')
