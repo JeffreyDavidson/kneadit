@@ -34,12 +34,17 @@
                 <p class="font-script text-xl text-warm-500 mb-1">Welcome back,</p>
                 <h1 class="font-display text-4xl md:text-5xl text-warm-900">{{ $customer->name }}</h1>
             </div>
-            <form method="POST" action="{{ route('account.logout') }}">
-                @csrf
-                <button type="submit" class="text-sm font-semibold text-warm-700 hover:text-warm-900 underline">
-                    Sign out
-                </button>
-            </form>
+            <div class="flex items-center gap-5">
+                <a href="{{ route('account.profile.show') }}" class="text-sm font-semibold text-warm-700 hover:text-warm-900 underline">
+                    Edit profile
+                </a>
+                <form method="POST" action="{{ route('account.logout') }}">
+                    @csrf
+                    <button type="submit" class="text-sm font-semibold text-warm-700 hover:text-warm-900 underline">
+                        Sign out
+                    </button>
+                </form>
+            </div>
         </div>
 
         @if ($loyaltyBalance || $referralCode)
