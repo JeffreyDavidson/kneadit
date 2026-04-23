@@ -3,7 +3,7 @@
 namespace App\Models\Customers;
 
 use App\Builders\Customers\CateringInquiryQueryBuilder;
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Casts\PhoneNumberCast;
 use App\Casts\StripTagsCast;
 use App\Enums\Customers\CateringInquiryStatus;
@@ -44,8 +44,8 @@ class CateringInquiry extends Model
             'status' => CateringInquiryStatus::class,
             'event_date' => 'date',
             'guest_count' => 'integer',
-            'budget' => MoneyCast::class,
-            'quoted_amount' => MoneyCast::class,
+            'budget' => MoneyCentsCast::class,
+            'quoted_amount' => MoneyCentsCast::class,
             'customer_phone' => PhoneNumberCast::class,
             'details' => StripTagsCast::class,
             'dietary_requirements' => StripTagsCast::class,

@@ -28,7 +28,9 @@ class CateringPipelineWidget extends Widget
 
     public function getTotalPipelineValue(): float
     {
-        return $this->cached('value', [1800, 3600], fn (): float => (float) CateringInquiry::query()->inPipeline()->sum('quoted_amount'));
+        // catering_inquiries.quoted_amount is bigint cents (this PR's migration);
+        // divide back to dollars for display.
+        return $this->cached('value', [1800, 3600], fn (): float => (float) ((int) CateringInquiry::query()->inPipeline()->sum('quoted_amount') / 100));
     }
 
     public function getLatestInquiry(): ?CateringInquiry

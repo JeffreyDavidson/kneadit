@@ -514,7 +514,7 @@ Your bakery.<br>
 <div style="font-size:var(--text-xs);color:var(--walnut);margin-top:.5rem">KneadIt is a business management tool. Users are responsible for compliance with their state's cottage food laws.</div>
 </footer>
 
-<script>
+<script @cspnonce>
 /* === Flour particles === */
 function createFlourParticles(containerId, count) {
   const wrap = document.getElementById(containerId);

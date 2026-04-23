@@ -173,7 +173,7 @@
         </section>
     </div>
 </div>
-<script>
+<script @cspnonce>
 function giftCardPage() {
     return {
         form: {

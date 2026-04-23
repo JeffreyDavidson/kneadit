@@ -226,7 +226,7 @@
 
 @isset($orders)
 @if ($orders->isNotEmpty())
-<script>
+<script @cspnonce>
 const customerEmail = @json($email);
 const customerName = @json($orders->first()->customer->name ?? $email);
 

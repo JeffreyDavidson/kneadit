@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <style>
+    <style @cspnonce>
         .fi-page {
             max-width: 800px;
             margin: 0 auto;

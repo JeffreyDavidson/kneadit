@@ -2,12 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Csp\CspNonce;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecurityHeaders
 {
+    public function __construct(private readonly CspNonce $nonce) {}
+
     /**
      * Add security headers to every response.
      */
@@ -19,10 +22,10 @@ class SecurityHeaders
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-        // Content Security Policy in Report-Only mode. Permissive baseline that
-        // mirrors current usage — once the violation log is quiet, tighten by
-        // dropping 'unsafe-inline' (will require nonce'ing the ~34 inline
-        // <script>/<style> blocks across blades) and switch to enforcement.
+        // Content Security Policy still in Report-Only mode. The per-request
+        // nonce is now in the policy and rendered onto every inline tag via
+        // the @cspnonce Blade directive, so a future PR can drop 'unsafe-inline'
+        // and switch to enforcement once the violation log stays quiet.
         $response->headers->set('Content-Security-Policy-Report-Only', $this->csp());
 
         return $response;
@@ -30,10 +33,12 @@ class SecurityHeaders
 
     private function csp(): string
     {
+        $nonce = $this->nonce->sourceList();
+
         return implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+            "script-src 'self' {$nonce} 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.usefathom.com https://js.stripe.com",
+            "style-src 'self' {$nonce} 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
             "img-src 'self' data: blob: https:",
             "font-src 'self' data: https://fonts.gstatic.com",
             "connect-src 'self' https://cdn.usefathom.com https://api.stripe.com",

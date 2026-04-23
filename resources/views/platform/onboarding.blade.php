@@ -56,7 +56,7 @@
         </form>
     </div>
 
-    <script>
+    <script @cspnonce>
         function selectChoice(choice) {
             document.getElementById('choice-kneadit').classList.toggle('active', choice === 'kneadit');
             document.getElementById('choice-own').classList.toggle('active', choice === 'own');

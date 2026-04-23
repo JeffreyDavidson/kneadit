@@ -292,7 +292,7 @@
         </div>
     </div>
 
-    <script>
+    <script @cspnonce>
         function customerDirectory() {
             return {
                 showCustomerDetails: false,
@@ -326,7 +326,7 @@
     </script>
 
     @script
-    <script>
+    <script @cspnonce>
         // Listen for Livewire events
         $wire.on('refreshCustomerDetails', () => {
             // Trigger Alpine.js method to refresh

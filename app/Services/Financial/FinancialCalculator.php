@@ -32,12 +32,14 @@ class FinancialCalculator
     /** @return array{totalRevenue: float, totalExpenses: float, netProfit: float} */
     private function yearlyTotals(int $year): array
     {
-        // orders.total is bigint cents (migration 2026_04_22_201500).
+        // orders.total, incomes.amount, expenses.amount all bigint cents
+        // (migrations 2026_04_22_201500 + 2026_04_22_230000); divide aggregates
+        // back to dollars at the boundary.
         $orderRevenue = (int) Order::query()->paidInYear($year)->sum('total') / 100;
-        $otherIncome = (float) Income::query()->forYear($year)->sum('amount');
+        $otherIncome = (int) Income::query()->forYear($year)->sum('amount') / 100;
         $totalRevenue = $orderRevenue + $otherIncome;
 
-        $totalExpenses = (float) Expense::query()->forYear($year)->sum('amount');
+        $totalExpenses = (int) Expense::query()->forYear($year)->sum('amount') / 100;
 
         return [
             'totalRevenue' => $totalRevenue,
@@ -85,28 +87,34 @@ class FinancialCalculator
         return $breakdown;
     }
 
-    /** @return Collection<int, array{category: string, amount: float|null, percentage: float}> */
+    /** @return Collection<int, array{category: string, amount: float, percentage: float}> */
     private function expenseBreakdown(int $year, float $totalExpenses): Collection
     {
         if ($totalExpenses == 0) {
             return collect();
         }
 
+        // total_amount comes from SUM(expenses.amount) which is bigint cents.
         return Expense::query()->forYear($year)
             ->byCategory()
             ->get()
-            ->map(fn (Expense $expense) => [
-                'category' => $expense->category->getLabel(),
-                'amount' => $expense->total_amount,
-                'percentage' => round(($expense->total_amount / $totalExpenses) * 100, 1),
-            ])
+            ->map(function (Expense $expense) use ($totalExpenses): array {
+                $amount = (float) ((int) $expense->total_amount / 100);
+
+                return [
+                    'category' => $expense->category->getLabel(),
+                    'amount' => $amount,
+                    'percentage' => round(($amount / $totalExpenses) * 100, 1),
+                ];
+            })
             ->sortByDesc('amount');
     }
 
     /** @return array{cogsAmount: float, cogsPercentage: float} */
     private function cogs(int $year, float $totalExpenses): array
     {
-        $cogsAmount = (float) Expense::query()->forYear($year)->cogs()->sum('amount');
+        // expenses.amount is bigint cents (migration 2026_04_22_230000).
+        $cogsAmount = (int) Expense::query()->forYear($year)->cogs()->sum('amount') / 100;
 
         $cogsPercentage = $totalExpenses > 0
             ? round(($cogsAmount / $totalExpenses) * 100, 1)
