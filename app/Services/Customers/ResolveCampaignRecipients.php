@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Services\Customers;
+
+use App\Enums\Customers\RfmSegment;
+use App\Enums\Orders\PaymentStatus;
+use App\Models\Customers\Customer;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+
+/**
+ * Resolves the recipient list for a customer campaign based on the
+ * configured target segment.
+ *
+ * - 'all' → every customer with at least one paid order (consistent with
+ *   the active-customer definition used by RfmReport).
+ * - one of the RfmSegment values → only customers that fall into that
+ *   segment per RfmClassifier.
+ *
+ * Returns a Collection of Customer models (with email + name); the caller
+ * is responsible for queuing the actual mail.
+ */
+class ResolveCampaignRecipients
+{
+    public function __construct(
+        private RfmClassifier $classifier,
+    ) {}
+
+    /** @return Collection<int, Customer> */
+    public function __invoke(string $targetSegment): Collection
+    {
+        $rows = Customer::query()
+            ->whereHas('orders', fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid))
+            ->withCount(['orders as frequency' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)])
+            ->withSum(['orders as monetary_cents' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)], 'total')
+            ->withMax(['orders as last_order_at' => fn (Builder $q) => $q->where('payment_status', PaymentStatus::Paid)], 'delivery_date')
+            ->whereNotNull('email')
+            ->get();
+
+        if ($targetSegment === 'all') {
+            return $rows->values();
+        }
+
+        $segment = RfmSegment::tryFrom($targetSegment);
+        if ($segment === null) {
+            return collect();
+        }
+
+        $now = now();
+
+        return $rows->filter(function (Customer $customer) use ($segment, $now): bool {
+            $lastOrderAt = $customer->getAttribute('last_order_at');
+            if ($lastOrderAt === null) {
+                return false;
+            }
+
+            $recencyDays = (int) $now->copy()->diffInDays($lastOrderAt, true);
+            $frequency = (int) $customer->getAttribute('frequency');
+            $monetary = (float) ((int) ($customer->getAttribute('monetary_cents') ?? 0) / 100);
+
+            return $this->classifier->classify($recencyDays, $frequency, $monetary) === $segment;
+        })->values();
+    }
+}
