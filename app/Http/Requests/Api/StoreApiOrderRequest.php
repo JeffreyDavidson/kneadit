@@ -34,6 +34,9 @@ class StoreApiOrderRequest extends FormRequest
             'notes' => ['nullable', 'string', 'max:500'],
             'coupon_code' => ['nullable', 'string', 'max:50'],
             'tip_amount' => ['nullable', 'numeric', 'min:0', 'max:1000'],
+            'pickup_contact_name' => ['nullable', 'string', 'max:255'],
+            'pickup_contact_phone' => ['nullable', 'string', 'max:20'],
+            'pickup_contact_email' => ['nullable', 'email', 'max:255'],
         ];
     }
 

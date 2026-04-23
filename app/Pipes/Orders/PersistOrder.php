@@ -28,6 +28,9 @@ class PersistOrder
             'total' => $payload->total,
             'notes' => $payload->data->notes,
             'status' => OrderStatus::Pending,
+            'pickup_contact_name' => $payload->data->pickupContactName,
+            'pickup_contact_phone' => $payload->data->pickupContactPhone,
+            'pickup_contact_email' => $payload->data->pickupContactEmail,
         ]);
 
         return $next($payload);

@@ -12,8 +12,12 @@ function orderForm() {
             delivery_tier: '',
             delivery_date: '',
             delivery_time: '',
-            notes: ''
+            notes: '',
+            pickup_contact_name: '',
+            pickup_contact_phone: '',
+            pickup_contact_email: ''
         },
+        hasPickupContact: false,
         favorites: [],
         subtotal: 0,
         deliveryFee: 0,
