@@ -10,14 +10,13 @@ use App\Http\Controllers\Storefront\Account\CustomerDashboardController;
 use App\Http\Controllers\Storefront\Account\LoginCustomerController;
 use App\Http\Controllers\Storefront\Account\LogoutCustomerController;
 use App\Http\Controllers\Storefront\Account\OrderHistoryController;
+use App\Http\Controllers\Storefront\Account\ProfileController;
 use App\Http\Controllers\Storefront\Account\RegisterCustomerController;
 use App\Http\Controllers\Storefront\Account\ResendCustomerVerificationController;
 use App\Http\Controllers\Storefront\Account\ResetPasswordController;
 use App\Http\Controllers\Storefront\Account\SendPasswordResetLinkController;
 use App\Http\Controllers\Storefront\Account\ShowEmailVerifyNoticeController;
-use App\Http\Controllers\Storefront\Account\ShowProfileFormController;
 use App\Http\Controllers\Storefront\Account\ShowResetPasswordController;
-use App\Http\Controllers\Storefront\Account\UpdateProfileController;
 use App\Http\Controllers\Storefront\Account\VerifyCustomerEmailController;
 use App\Http\Controllers\Storefront\BlogController as StorefrontBlogController;
 use App\Http\Controllers\Storefront\BlogFeedController as StorefrontBlogFeedController;
@@ -115,8 +114,8 @@ Route::middleware('guest:customer')->group(function () {
 Route::middleware('auth:customer')->group(function () {
     Route::get('account', CustomerDashboardController::class)->name('account.dashboard');
     Route::get('account/orders', OrderHistoryController::class)->name('account.orders');
-    Route::get('account/profile', ShowProfileFormController::class)->name('account.profile.show');
-    Route::post('account/profile', UpdateProfileController::class)->name('account.profile.update')->middleware('throttle:10,1');
+    Route::get('account/profile', [ProfileController::class, 'show'])->name('account.profile.show');
+    Route::post('account/profile', [ProfileController::class, 'update'])->name('account.profile.update')->middleware('throttle:10,1');
     Route::post('account/logout', LogoutCustomerController::class)->name('account.logout');
 
     // Email verification
