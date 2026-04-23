@@ -18,6 +18,7 @@
             'products' => ['Product Performance', 'heroicon-o-cube'],
             'financial' => ['Financial Summary', 'heroicon-o-banknotes'],
             'inventory' => ['Inventory Report', 'heroicon-o-archive-box'],
+            'rfm' => ['RFM Segmentation', 'heroicon-o-chart-bar-square'],
         ] as $key => [$label, $icon])
             <button wire:click="generateReport('{{ $key }}')"
                 class="flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all
@@ -349,6 +350,45 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    @endif
+
+    @if ($activeReport === 'rfm' && !empty($reportData))
+        <div class="space-y-6">
+            <div class="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold mb-1">RFM Segmentation</h3>
+                <p class="text-sm text-gray-500">Segmenting {{ $reportData['total'] ?? 0 }} customers with at least one paid order by Recency, Frequency, and Monetary value.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                @foreach ($reportData['segments'] ?? [] as $row)
+                    <div class="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <p class="text-sm uppercase tracking-wider text-gray-500">{{ $row['label'] }}</p>
+                                <p class="text-3xl font-bold">{{ $row['count'] }}</p>
+                            </div>
+                            <x-filament::badge :color="$row['color']">{{ $row['label'] }}</x-filament::badge>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">{{ $row['description'] }}</p>
+                        @if (!empty($row['sampleCustomers']))
+                            <div class="border-t border-gray-100 dark:border-gray-800 pt-3">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Sample customers</p>
+                                <ul class="space-y-1 text-sm">
+                                    @foreach ($row['sampleCustomers'] as $c)
+                                        <li class="flex items-center justify-between gap-2">
+                                            <span class="truncate">{{ $c['name'] }}</span>
+                                            <span class="text-xs text-gray-500 whitespace-nowrap">
+                                                {{ $c['frequency'] }}× · ${{ number_format($c['monetary'], 0) }} · {{ $c['recency_days'] }}d
+                                            </span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
             </div>
         </div>
     @endif
