@@ -3,7 +3,7 @@
 namespace App\Models\Financial;
 
 use App\Builders\Financial\CouponQueryBuilder;
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Casts\PercentageCast;
 use App\Enums\Financial\CouponType;
 use App\Models\Orders\Order;
@@ -52,9 +52,9 @@ class Coupon extends Model
     protected function casts(): array
     {
         return [
-            'fixed_amount' => MoneyCast::class,
+            'fixed_amount' => MoneyCentsCast::class,
             'percentage' => PercentageCast::class,
-            'min_order_amount' => MoneyCast::class,
+            'min_order_amount' => MoneyCentsCast::class,
             'max_uses' => 'integer',
             'used_count' => 'integer',
             'type' => CouponType::class,
