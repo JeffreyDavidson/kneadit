@@ -32,7 +32,8 @@ class FinancialCalculator
     /** @return array{totalRevenue: float, totalExpenses: float, netProfit: float} */
     private function yearlyTotals(int $year): array
     {
-        $orderRevenue = (float) Order::query()->paidInYear($year)->sum('total');
+        // orders.total is bigint cents (migration 2026_04_22_201500).
+        $orderRevenue = (int) Order::query()->paidInYear($year)->sum('total') / 100;
         $otherIncome = (float) Income::query()->forYear($year)->sum('amount');
         $totalRevenue = $orderRevenue + $otherIncome;
 

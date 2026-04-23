@@ -14,13 +14,15 @@ class CustomerDirectoryStatsQuery
     {
         $totalCustomers = Customer::query()->count();
 
-        $avgLifetimeValue = (float) Order::query()->active()
+        // orders.total is bigint cents (migration 2026_04_22_201500); divide back
+        // to dollars at the boundary.
+        $avgLifetimeValue = (int) Order::query()->active()
             ->selectRaw('AVG(customer_total) as avg_ltv')
             ->fromSub(
                 Order::query()->active()->selectRaw('customer_id, SUM(total) as customer_total')->groupBy('customer_id'),
                 'customer_totals',
             )
-            ->value('avg_ltv');
+            ->value('avg_ltv') / 100;
 
         $atRiskDays = (int) (string) config('analytics.at_risk_threshold_days', 30);
         $atRiskCount = AtRiskCustomersQuery::count($atRiskDays);
@@ -35,7 +37,7 @@ class CustomerDirectoryStatsQuery
             'avg_lifetime_value' => (string) Number::currency($avgLifetimeValue),
             'at_risk_count' => $atRiskCount,
             'top_customer_name' => $topCustomer->name ?? 'N/A',
-            'top_customer_value' => (string) Number::currency($topCustomer->orders_sum_total ?? 0),
+            'top_customer_value' => (string) Number::currency(((int) ($topCustomer->orders_sum_total ?? 0)) / 100),
         ];
     }
 }

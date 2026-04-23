@@ -127,7 +127,9 @@ final class CustomerPresenter
     protected function stats(): array
     {
         $orders = $this->customer->orders;
-        $totalSpent = $orders->sum('total');
+        // ->sum('total') would call (float) on Money objects via __toString and parse
+        // "$X" as 0. Sum the dollar values explicitly via the cast.
+        $totalSpent = $orders->sum(fn ($order) => $order->total->dollars());
         $orderCount = $orders->count();
 
         return [

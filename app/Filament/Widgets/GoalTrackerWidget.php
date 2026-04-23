@@ -54,9 +54,10 @@ class GoalTrackerWidget extends Widget
             $goal = (float) app(SettingsManager::class)->get('monthly_revenue_goal', 5000);
             $range = DateRange::thisMonth();
 
-            $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
+            // orders.total is bigint cents (migration 2026_04_22_201500).
+            $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
                 ->active()
-                ->sum('total');
+                ->sum('total') / 100);
 
             $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 
@@ -76,9 +77,10 @@ class GoalTrackerWidget extends Widget
             $goal = (float) app(SettingsManager::class)->get('yearly_revenue_goal', 50000);
             $range = DateRange::thisYear();
 
-            $revenue = (float) Order::query()->whereBetween('created_at', $range->toArray())
+            // orders.total is bigint cents (migration 2026_04_22_201500).
+            $revenue = (float) ((int) Order::query()->whereBetween('created_at', $range->toArray())
                 ->active()
-                ->sum('total');
+                ->sum('total') / 100);
 
             $percentage = $goal > 0 ? min(round($revenue / $goal * 100, 1), 100) : 0;
 
