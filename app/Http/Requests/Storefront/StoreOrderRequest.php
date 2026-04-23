@@ -40,6 +40,7 @@ class StoreOrderRequest extends FormRequest
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:20'],
             'coupon_id' => ['nullable', 'integer', 'exists:coupons,id'],
             'gift_card_id' => ['nullable', 'integer', 'exists:gift_cards,id'],
+            'tip_amount' => ['nullable', 'numeric', 'min:0', 'max:1000'],
         ];
     }
 

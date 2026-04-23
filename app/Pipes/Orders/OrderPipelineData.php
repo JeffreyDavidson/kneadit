@@ -14,6 +14,8 @@ class OrderPipelineData
 
     public float $discountAmount = 0;
 
+    public float $tipAmount = 0;
+
     public float $total = 0;
 
     public ?int $couponId = null;

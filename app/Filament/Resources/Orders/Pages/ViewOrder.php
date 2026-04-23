@@ -80,7 +80,7 @@ class ViewOrder extends ViewRecord
 
                 Section::make('Financial Summary')
                     ->schema([
-                        Grid::make(5)
+                        Grid::make(6)
                             ->schema([
                                 TextEntry::make('subtotal')
                                     ->money('USD'),
@@ -89,6 +89,9 @@ class ViewOrder extends ViewRecord
                                 TextEntry::make('discount_amount')
                                     ->money('USD'),
                                 TextEntry::make('gift_card_amount')
+                                    ->money('USD'),
+                                TextEntry::make('tip_amount')
+                                    ->label('Tip')
                                     ->money('USD'),
                                 TextEntry::make('total')
                                     ->money('USD')

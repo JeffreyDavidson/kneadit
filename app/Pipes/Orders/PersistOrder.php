@@ -24,6 +24,7 @@ class PersistOrder
             'coupon_id' => $payload->couponId,
             'gift_card_id' => $payload->giftCardId,
             'gift_card_amount' => $payload->giftCardAmount,
+            'tip_amount' => $payload->tipAmount,
             'total' => $payload->total,
             'notes' => $payload->data->notes,
             'status' => OrderStatus::Pending,

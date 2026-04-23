@@ -18,6 +18,10 @@ function orderForm() {
         subtotal: 0,
         deliveryFee: 0,
         discountAmount: 0,
+        tipPercent: 0,
+        tipMode: 'preset',
+        customTip: '',
+        tipAmount: 0,
         total: 0,
         couponCode: '',
         appliedCoupon: null,
@@ -143,13 +147,37 @@ function orderForm() {
             this.subtotal = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             this.calculateDeliveryFee();
             this.calculateDiscount();
+            this.calculateTip();
             let afterDiscount = Math.max(0, this.subtotal + this.deliveryFee - this.discountAmount);
             if (this.appliedGiftCard) {
                 this.giftCardAmount = Math.min(this.appliedGiftCard.available_balance, afterDiscount);
             } else {
                 this.giftCardAmount = 0;
             }
-            this.total = Math.max(0, afterDiscount - this.giftCardAmount);
+            this.total = Math.max(0, afterDiscount - this.giftCardAmount) + this.tipAmount;
+        },
+
+        calculateTip() {
+            if (this.tipMode === 'custom') {
+                this.tipAmount = Math.max(0, parseFloat(this.customTip) || 0);
+            } else {
+                this.tipAmount = this.subtotal > 0
+                    ? Math.round(this.subtotal * (this.tipPercent / 100) * 100) / 100
+                    : 0;
+            }
+        },
+
+        selectTipPreset(percent) {
+            this.tipMode = 'preset';
+            this.tipPercent = percent;
+            this.customTip = '';
+            this.calculateTotals();
+        },
+
+        selectCustomTip() {
+            this.tipMode = 'custom';
+            this.tipPercent = 0;
+            this.calculateTotals();
         },
 
         calculateDeliveryFee() {
@@ -344,6 +372,9 @@ function orderForm() {
             }
             if (this.appliedGiftCard) {
                 formData.append('gift_card_id', this.appliedGiftCard.gift_card_id);
+            }
+            if (this.tipAmount > 0) {
+                formData.append('tip_amount', this.tipAmount.toFixed(2));
             }
             formData.append('_token', '{{ csrf_token() }}');
 

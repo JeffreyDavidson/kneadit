@@ -170,6 +170,39 @@
                         </div>
                     </div>
 
+                    {{-- Tip --}}
+                    <div x-show="cartItems.length > 0" class="pt-4 mt-4 border-t border-warm-700/20">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="uppercase tracking-[0.2em] text-xs font-semibold text-warm-500">Add a Tip</span>
+                        </div>
+                        <div class="grid grid-cols-5 gap-2">
+                            <button type="button" @click="selectTipPreset(0)"
+                                :class="tipMode === 'preset' && tipPercent === 0 ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
+                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">None</button>
+                            <button type="button" @click="selectTipPreset(15)"
+                                :class="tipMode === 'preset' && tipPercent === 15 ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
+                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">15%</button>
+                            <button type="button" @click="selectTipPreset(18)"
+                                :class="tipMode === 'preset' && tipPercent === 18 ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
+                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">18%</button>
+                            <button type="button" @click="selectTipPreset(20)"
+                                :class="tipMode === 'preset' && tipPercent === 20 ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
+                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">20%</button>
+                            <button type="button" @click="selectCustomTip()"
+                                :class="tipMode === 'custom' ? 'bg-warm-400 text-warm-900' : 'bg-white/[0.03] text-warm-400'"
+                                class="px-2 py-2 rounded-lg text-xs font-semibold border border-warm-600/15 transition-all">Custom</button>
+                        </div>
+                        <div x-show="tipMode === 'custom'" class="mt-3">
+                            <label for="custom-tip-input" class="sr-only">Custom tip amount in dollars</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-warm-500">$</span>
+                                <input id="custom-tip-input" type="number" min="0" step="0.01" inputmode="decimal"
+                                    x-model="customTip" @input="calculateTotals()"
+                                    class="flex-1 px-3 py-2 rounded-lg bg-white/[0.03] border border-warm-600/15 text-warm-300 text-sm" />
+                            </div>
+                        </div>
+                    </div>
+
                     {{-- Totals --}}
                     <div class="pt-4 space-y-2 text-sm border-t border-warm-700/20">
                         <div class="flex justify-between">
@@ -187,6 +220,10 @@
                         <div x-show="appliedGiftCard" class="flex justify-between text-green-400">
                             <span>Gift Card</span>
                             <span x-text="'-$' + giftCardAmount.toFixed(2)"></span>
+                        </div>
+                        <div x-show="tipAmount > 0" class="flex justify-between">
+                            <span class="text-warm-500">Tip</span>
+                            <span class="text-warm-300" x-text="'$' + tipAmount.toFixed(2)"></span>
                         </div>
                         <div class="flex justify-between pt-3 border-t border-warm-700/20">
                             <span class="font-display text-lg font-bold text-warm-100">Total</span>
