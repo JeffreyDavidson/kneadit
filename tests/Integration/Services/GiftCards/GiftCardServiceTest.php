@@ -84,7 +84,8 @@ test('redeem creates transaction record', function () {
 
     assertDatabaseHas('gift_card_transactions', [
         'gift_card_id' => $card->id,
-        'amount' => -15.00,
+        // gift_card_transactions.amount is bigint cents (migration 2026_04_22_223000).
+        'amount' => -1500,
         'type' => 'redemption',
         'order_id' => $order->id,
     ]);

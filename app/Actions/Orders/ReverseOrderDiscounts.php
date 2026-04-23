@@ -65,7 +65,9 @@ class ReverseOrderDiscounts
         }
 
         if ($order->giftCard) {
-            GiftCard::query()->whereKey($order->giftCard->id)->increment('current_balance', $order->gift_card_amount->dollars());
+            // current_balance is bigint cents (migration 2026_04_22_223000); pass cents
+            // straight from the Money VO instead of converting back through dollars.
+            GiftCard::query()->whereKey($order->giftCard->id)->increment('current_balance', $order->gift_card_amount->cents());
         }
     }
 }
