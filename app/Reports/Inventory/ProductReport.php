@@ -29,7 +29,9 @@ class ProductReport
                     'price' => $price,
                     'cost' => $cost,
                     'units_sold' => (int) ($p->units_sold ?? 0),
-                    'revenue' => (float) ($p->revenue ?? 0),
+                    // unit_price is bigint cents (migration 2026_04_22_201500), so
+                    // SUM(quantity * unit_price) is in cents — divide back to dollars.
+                    'revenue' => (float) ((int) ($p->revenue ?? 0) / 100),
                     'margin' => $margin,
                 ];
             })
