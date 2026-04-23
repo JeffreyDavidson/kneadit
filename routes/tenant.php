@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Auth\ShowInvitationController;
 use App\Http\Controllers\Central\ConsumeImpersonationController;
+use App\Http\Controllers\Marketing\PreviewCustomerCampaignController;
 use App\Http\Controllers\Storefront\AppIconController;
 use App\Http\Controllers\Storefront\DriverDashboardController;
 use App\Http\Controllers\Storefront\ManifestController;
@@ -49,6 +50,11 @@ Route::middleware([
     Route::get('stripe/connect', StripeConnectController::class)
         ->middleware('auth')
         ->name('stripe.connect');
+
+    // Campaign browser preview — renders the mailable as HTML for the baker to review.
+    Route::get('admin/campaigns/{campaign}/preview', PreviewCustomerCampaignController::class)
+        ->middleware(['auth', 'can:manager-staff'])
+        ->name('campaign.preview');
 
     // Driver view (no auth, shared via link)
     Route::prefix('driver')->name('driver.')->group(function () {
