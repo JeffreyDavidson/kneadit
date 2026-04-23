@@ -9,6 +9,7 @@ use App\Mail\Concerns\BakerBranded;
 use App\Mail\Concerns\ResolvesTemplate;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
@@ -29,8 +30,33 @@ class OrderStatusMail extends BaseMailable
         return new Envelope(
             from: $this->bakerFrom(),
             replyTo: array_filter([$this->bakerReplyTo()]),
+            cc: $this->pickupContactCc(),
             subject: $resolved['subject'] ?? $this->resolveDefaultSubject(),
         );
+    }
+
+    /**
+     * CC the pickup contact (when set) on the "Ready" email so the person
+     * actually picking up the order knows it's available. Other statuses
+     * (Confirmed/Baking/Delivered/Cancelled) stay between the customer who
+     * placed the order and the bakery.
+     *
+     * @return array<int, Address>
+     */
+    private function pickupContactCc(): array
+    {
+        if ($this->status !== OrderStatus::Ready) {
+            return [];
+        }
+
+        if (! $this->order->pickup_contact_email) {
+            return [];
+        }
+
+        return [new Address(
+            $this->order->pickup_contact_email,
+            $this->order->pickup_contact_name ?? $this->order->pickup_contact_email,
+        )];
     }
 
     public function content(): Content
