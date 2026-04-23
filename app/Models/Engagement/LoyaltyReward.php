@@ -3,7 +3,7 @@
 namespace App\Models\Engagement;
 
 use App\Builders\Engagement\LoyaltyRewardQueryBuilder;
-use App\Casts\MoneyCast;
+use App\Casts\MoneyCentsCast;
 use App\Casts\PercentageCast;
 use App\Enums\Engagement\RewardType;
 use App\Models\Inventory\Product;
@@ -40,7 +40,7 @@ class LoyaltyReward extends Model
     {
         return [
             'points_required' => 'integer',
-            'discount_amount' => MoneyCast::class,
+            'discount_amount' => MoneyCentsCast::class,
             'discount_percentage' => PercentageCast::class,
             'is_active' => 'boolean',
             'reward_type' => RewardType::class,
