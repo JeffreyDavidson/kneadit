@@ -45,9 +45,10 @@ class WelcomeBannerWidget extends Widget
     public function getRevenueToday(): string
     {
         return $this->cached('revenue_today_' . Date::today()->toDateString(), [300, 600], fn (): string => (string) Number::currency(
-            (float) Order::query()->active()
+            // orders.total is bigint cents (migration 2026_04_22_201500).
+            (int) Order::query()->active()
                 ->whereDate('delivery_date', Date::today())
-                ->sum('total'),
+                ->sum('total') / 100,
         ));
     }
 

@@ -22,7 +22,9 @@ class CustomerIntelligence
             ->first();
 
         $orderCount = (int) ($orderStats->order_count ?? 0);
-        $lifetimeValue = (float) ($orderStats->lifetime_value ?? 0);
+        // orders.total is bigint cents (migration 2026_04_22_201500); convert
+        // back to dollars for callers expecting a float.
+        $lifetimeValue = ((int) ($orderStats->lifetime_value ?? 0)) / 100;
         $lastOrderDate = $orderStats?->last_order_date ? Date::parse($orderStats->last_order_date) : null;
 
         $daysSinceLastOrder = $lastOrderDate

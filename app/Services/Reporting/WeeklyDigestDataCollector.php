@@ -26,7 +26,8 @@ class WeeklyDigestDataCollector
         $weekOrders = Order::query()->whereBetween('created_at', [$weekStart, $weekEnd]);
 
         $totalOrders = (clone $weekOrders)->count();
-        $totalRevenue = (clone $weekOrders)->sum('total');
+        // orders.total is bigint cents (migration 2026_04_22_201500).
+        $totalRevenue = (int) (clone $weekOrders)->sum('total') / 100;
         $newCustomers = Customer::query()->whereBetween('created_at', [$weekStart, $weekEnd])->count();
         $avgOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
 

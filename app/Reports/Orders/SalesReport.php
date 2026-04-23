@@ -29,13 +29,15 @@ class SalesReport
 
         $topProducts = ProductSalesQuery::topByRevenue($range)->all();
 
+        // orders.total is bigint cents (migration 2026_04_22_201500); divide back
+        // to dollars for the row payload.
         $revenueByDay = Order::query()->whereBetween('delivery_date', $range->toArray())
             ->where('payment_status', PaymentStatus::Paid)
-            ->select(DB::raw('DATE(delivery_date) as date'), DB::raw('SUM(total) as revenue'))
+            ->select(DB::raw('DATE(delivery_date) as date'), DB::raw('SUM(total) as revenue_cents'))
             ->groupBy('date')
             ->orderBy('date')
             ->get()
-            ->map(fn (Order $row) => ['date' => $row->date, 'revenue' => (float) $row->revenue])
+            ->map(fn (Order $row) => ['date' => $row->getAttribute('date'), 'revenue' => (int) $row->getAttribute('revenue_cents') / 100])
             ->all();
 
         return ['totalOrders' => $totalOrders, 'totalRevenue' => $totalRevenue, 'avgOrderValue' => $avgOrderValue, 'ordersByStatus' => $ordersByStatus, 'topProducts' => $topProducts, 'revenueByDay' => $revenueByDay];
