@@ -23,6 +23,7 @@ class LoyaltyPageViewModel
 
         $tiersEnabled = $settings->loyalty->tiersEnabled;
         $progress = $tiersEnabled ? $customerLoyalty->nextTierProgress($customer) : null;
+        $perksEnabled = $settings->loyalty->tierPerksEnabled;
 
         return new self(
             settings: $settings,
@@ -35,6 +36,8 @@ class LoyaltyPageViewModel
             tier: $tiersEnabled ? $customerLoyalty->tier($customer) : null,
             nextTier: $progress['next'] ?? null,
             pointsToNextTier: $progress['pointsToNext'] ?? 0,
+            tierMultiplier: $perksEnabled ? $customerLoyalty->pointsMultiplier($customer) : 1.0,
+            tierFreeDelivery: $perksEnabled && $customerLoyalty->qualifiesForFreeDelivery($customer),
         );
     }
 
@@ -111,6 +114,8 @@ class LoyaltyPageViewModel
         public readonly ?LoyaltyTier $tier = null,
         public readonly ?LoyaltyTier $nextTier = null,
         public readonly int $pointsToNextTier = 0,
+        public readonly float $tierMultiplier = 1.0,
+        public readonly bool $tierFreeDelivery = false,
     ) {
         $this->totalPoints = $balance->total;
         $this->lifetimeEarned = $balance->earned;
