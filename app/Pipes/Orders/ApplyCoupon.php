@@ -22,9 +22,10 @@ class ApplyCoupon
         }
 
         if ($this->couponService->isValid($coupon)) {
-            $payload->discountAmount = $this->couponService->calculateDiscount($coupon, $payload->subtotal);
+            $couponDiscount = $this->couponService->calculateDiscount($coupon, $payload->subtotal);
+            $payload->discountAmount += $couponDiscount;
             $payload->couponId = $coupon->id;
-            $payload->total = max(0, $payload->total - $payload->discountAmount);
+            $payload->total = max(0, $payload->total - $couponDiscount);
         }
 
         return $next($payload);

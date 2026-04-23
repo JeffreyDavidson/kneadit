@@ -19,6 +19,9 @@ final readonly class OrderSettings
         public bool $pickupSlotsEnabled = false,
         public int $pickupSlotIntervalMinutes = 30,
         public int $pickupSlotMaxPerWindow = 3,
+        public bool $sitewideSaleEnabled = false,
+        public int $sitewideSalePercent = 0,
+        public string $sitewideSaleLabel = 'Sale',
     ) {}
 
     public static function resolve(): self
@@ -35,6 +38,9 @@ final readonly class OrderSettings
             pickupSlotsEnabled: settings('pickup_slots_enabled', '0') === '1',
             pickupSlotIntervalMinutes: (int) settings('pickup_slot_interval_minutes', '30'),
             pickupSlotMaxPerWindow: (int) settings('pickup_slot_max_per_window', '3'),
+            sitewideSaleEnabled: settings('sitewide_sale_enabled', '0') === '1',
+            sitewideSalePercent: (int) settings('sitewide_sale_percent', '0'),
+            sitewideSaleLabel: (string) settings('sitewide_sale_label', 'Sale'),
         );
     }
 

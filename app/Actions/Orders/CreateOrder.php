@@ -8,6 +8,7 @@ use App\Models\Orders\Order;
 use App\Pipes\Orders\ApplyCoupon;
 use App\Pipes\Orders\ApplyGiftCard;
 use App\Pipes\Orders\ApplyReferral;
+use App\Pipes\Orders\ApplySitewideSale;
 use App\Pipes\Orders\ApplyTierPerks;
 use App\Pipes\Orders\CalculateOrderTotals;
 use App\Pipes\Orders\EnforceMinimumOrderAmount;
@@ -35,6 +36,7 @@ class CreateOrder
                 CalculateOrderTotals::class,
                 EnforceMinimumOrderAmount::class,
                 ValidateCapacity::class,
+                ApplySitewideSale::class,
                 ApplyCoupon::class,
                 ApplyGiftCard::class,
                 ApplyReferral::class,
