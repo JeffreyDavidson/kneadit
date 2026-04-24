@@ -31,7 +31,7 @@ class CheckPayPalPaymentsCommand extends Command
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($tenant) {
                     // Skip tenants without PayPal configured
-                    $clientId = app(SettingsManager::class)->get('paypal_client_id');
+                    $clientId = resolve(SettingsManager::class)->get('paypal_client_id');
                     if (! $clientId) {
                         return;
                     }
@@ -76,7 +76,7 @@ class CheckPayPalPaymentsCommand extends Command
 
             match ($status) {
                 'PAID' => tap($order, function (Order $o) {
-                    app(MarkOrderPaid::class)($o);
+                    resolve(MarkOrderPaid::class)($o);
                     $this->info("  ✓ #{$o->order_number} paid");
                 }),
                 'CANCELLED' => tap($order, function (Order $o) {

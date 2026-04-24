@@ -29,5 +29,5 @@ test('EngagementRecipient context defaults to empty array', function () {
         model: $model,
     );
 
-    expect($recipient->context)->toBe([]);
+    expect($recipient->context)->toBeEmpty();
 });

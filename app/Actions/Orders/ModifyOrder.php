@@ -25,9 +25,7 @@ class ModifyOrder
      */
     public function __invoke(Order $order, array $items, ?float $tipAmount = null): Order
     {
-        if (! $this->guard->canModify($order)) {
-            throw new OrderNotModifiableException($order, 'window expired or order ineligible');
-        }
+        throw_unless($this->guard->canModify($order), OrderNotModifiableException::class, $order, 'window expired or order ineligible');
 
         $previousSubtotal = $order->subtotal;
         $previousTotal = $order->total;
@@ -55,9 +53,7 @@ class ModifyOrder
 
             $order->load('orderItems');
 
-            if ($order->orderItems->isEmpty()) {
-                throw new OrderNotModifiableException($order, 'modification would leave order with no items');
-            }
+            throw_if($order->orderItems->isEmpty(), OrderNotModifiableException::class, $order, 'modification would leave order with no items');
 
             // Verify the post-modification ingredient draw fits inside current
             // stock. Throws InsufficientStockException (rolling back this

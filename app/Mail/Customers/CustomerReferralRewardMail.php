@@ -60,7 +60,7 @@ class CustomerReferralRewardMail extends BaseMailable
     {
         return [
             'customer_name' => $this->referral->referrer->name ?: 'there',
-            'store_name' => app(TenantSettings::class)->store->name,
+            'store_name' => resolve(TenantSettings::class)->store->name,
             'coupon_code' => $this->coupon->code,
             'coupon_amount' => (string) ($this->coupon->percentage ?? $this->coupon->fixed_amount ?? ''),
         ];

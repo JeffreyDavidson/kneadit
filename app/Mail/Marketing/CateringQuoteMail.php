@@ -19,7 +19,7 @@ class CateringQuoteMail extends BaseMailable
 
     public function envelope(): Envelope
     {
-        $storeName = app(TenantSettings::class)->store->name;
+        $storeName = resolve(TenantSettings::class)->store->name;
 
         return new Envelope(
             from: $this->bakerFrom(),

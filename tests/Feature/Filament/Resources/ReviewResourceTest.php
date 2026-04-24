@@ -129,8 +129,7 @@ test('resource returns global search result details', function () {
     $details = App\Filament\Resources\Reviews\ReviewResource::getGlobalSearchResultDetails($review);
 
     expect($details)
-        ->toHaveKey('Rating')
-        ->toHaveKey('Product');
+        ->toHaveKeys(['Rating', 'Product']);
 });
 
 test('global search eloquent query eager loads product', function () {

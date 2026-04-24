@@ -58,8 +58,6 @@ class CheckOrderStockAvailability
             }
         }
 
-        if ($shortages !== []) {
-            throw new InsufficientStockException(shortages: $shortages, order: $order);
-        }
+        throw_if($shortages !== [], InsufficientStockException::class, shortages: $shortages, order: $order);
     }
 }

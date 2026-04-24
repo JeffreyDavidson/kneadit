@@ -100,5 +100,5 @@ test('pageContentAll returns all content for a page', function () {
 test('pageContentAll returns empty array for missing page', function () {
     $manager = resolve(SettingsManager::class);
 
-    expect($manager->pageContentAll('nonexistent'))->toBe([]);
+    expect($manager->pageContentAll('nonexistent'))->toBeEmpty();
 });

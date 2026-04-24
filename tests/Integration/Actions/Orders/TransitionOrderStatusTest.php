@@ -85,12 +85,9 @@ test('dispatches OrderStatusChanged after every valid transition', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Confirmed);
 
-    Event::assertDispatched(
-        OrderStatusChanged::class,
-        fn (OrderStatusChanged $event) => $event->from === OrderStatus::Pending
-            && $event->to === OrderStatus::Confirmed
-            && $event->order->is($order),
-    );
+    Event::assertDispatched(fn (OrderStatusChanged $event) => $event->from === OrderStatus::Pending
+        && $event->to === OrderStatus::Confirmed
+        && $event->order->is($order));
 });
 
 test('dispatches OrderDelivered on Ready to Delivered transition', function () {
@@ -99,7 +96,7 @@ test('dispatches OrderDelivered on Ready to Delivered transition', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Delivered);
 
-    Event::assertDispatched(OrderDelivered::class, fn (OrderDelivered $event) => $event->order->is($order));
+    Event::assertDispatched(fn (OrderDelivered $event) => $event->order->is($order));
     Event::assertDispatched(OrderStatusChanged::class);
 });
 
@@ -109,7 +106,7 @@ test('dispatches OrderCancelled when cancelling', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    Event::assertDispatched(OrderCancelled::class, fn (OrderCancelled $event) => $event->order->is($order));
+    Event::assertDispatched(fn (OrderCancelled $event) => $event->order->is($order));
 });
 
 test('does not dispatch OrderDelivered or OrderCancelled on other transitions', function () {
@@ -193,8 +190,8 @@ test('cancellation from Pending does not restock', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($butter->fresh()->current_stock)->toBe('5.00');
-    expect($butter->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
+    expect($butter->fresh()->current_stock)->toBe('5.00')
+        ->and($butter->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
 });
 
 test('cancellation from Confirmed does not restock', function () {
@@ -208,8 +205,8 @@ test('cancellation from Confirmed does not restock', function () {
 
     resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
 
-    expect($eggs->fresh()->current_stock)->toBe('12.00');
-    expect($eggs->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
+    expect($eggs->fresh()->current_stock)->toBe('12.00')
+        ->and($eggs->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
 });
 
 test('cancellation restores gift card balance and creates refund transaction', function () {

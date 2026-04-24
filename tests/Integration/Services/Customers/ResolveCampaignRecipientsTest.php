@@ -48,8 +48,8 @@ test('a specific segment returns only matching customers', function () {
     $champs = resolve(ResolveCampaignRecipients::class)(RfmSegment::Champions->value);
     $news = resolve(ResolveCampaignRecipients::class)(RfmSegment::New->value);
 
-    expect($champs->pluck('email')->toArray())->toBe(['champ@example.com']);
-    expect($news->pluck('email')->toArray())->toBe(['new@example.com']);
+    expect($champs->pluck('email')->toArray())->toBe(['champ@example.com'])
+        ->and($news->pluck('email')->toArray())->toBe(['new@example.com']);
 });
 
 test('unknown segment string returns an empty collection', function () {

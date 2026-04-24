@@ -15,7 +15,7 @@ class ResendCustomerVerificationController extends Controller
         $customer = $request->user('customer');
 
         if ($customer->hasVerifiedEmail()) {
-            return redirect()->route('account.dashboard');
+            return to_route('account.dashboard');
         }
 
         $customer->sendEmailVerificationNotification();

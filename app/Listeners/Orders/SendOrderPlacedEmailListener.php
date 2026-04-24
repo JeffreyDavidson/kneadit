@@ -13,7 +13,7 @@ class SendOrderPlacedEmailListener extends SendEmailListener
     protected function getRecipient(object $event): ?string
     {
         /** @var OrderCreated $event */
-        if (! app(EngagementSettings::class)->emailOrderPlacedEnabled) {
+        if (! resolve(EngagementSettings::class)->emailOrderPlacedEnabled) {
             return null;
         }
 

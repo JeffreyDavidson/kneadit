@@ -14,7 +14,7 @@ test('clears custom domain from tenant', function () {
     $tenant = Tenant::factory()->create(['custom_domain' => 'old.example.com']);
     $tenant->domains()->create(['domain' => 'old.example.com']);
 
-    app(RemoveCustomDomain::class)($tenant);
+    resolve(RemoveCustomDomain::class)($tenant);
 
     expect($tenant->refresh()->custom_domain)->toBeNull();
 });
@@ -23,7 +23,7 @@ test('deletes domain record', function () {
     $tenant = Tenant::factory()->create(['custom_domain' => 'old.example.com']);
     $tenant->domains()->create(['domain' => 'old.example.com']);
 
-    app(RemoveCustomDomain::class)($tenant);
+    resolve(RemoveCustomDomain::class)($tenant);
 
     expect(Domain::query()->where('domain', 'old.example.com')->exists())->toBeFalse();
 });
@@ -31,7 +31,7 @@ test('deletes domain record', function () {
 test('handles tenant with no custom domain', function () {
     $tenant = Tenant::factory()->create(['custom_domain' => null]);
 
-    app(RemoveCustomDomain::class)($tenant);
+    resolve(RemoveCustomDomain::class)($tenant);
 
     expect($tenant->refresh()->custom_domain)->toBeNull();
 });

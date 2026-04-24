@@ -9,7 +9,7 @@ beforeEach(fn () => setUpTenantTest());
 test('creates adjusted loyalty point record', function () {
     $customer = Customer::factory()->create();
 
-    $point = app(AdjustLoyaltyPoints::class)($customer, 50, 'Manual bonus');
+    $point = resolve(AdjustLoyaltyPoints::class)($customer, 50, 'Manual bonus');
 
     expect($point)
         ->customer_id->toBe($customer->id)
@@ -21,7 +21,7 @@ test('creates adjusted loyalty point record', function () {
 test('supports negative point adjustments', function () {
     $customer = Customer::factory()->create();
 
-    $point = app(AdjustLoyaltyPoints::class)($customer, -25, 'Correction');
+    $point = resolve(AdjustLoyaltyPoints::class)($customer, -25, 'Correction');
 
     expect($point->points)->toBe(-25);
 });

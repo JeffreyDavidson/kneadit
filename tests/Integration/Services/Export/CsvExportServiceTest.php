@@ -24,7 +24,7 @@ it('returns early for invalid type', function () {
     $content = stream_get_contents($handle);
     fclose($handle);
 
-    expect($content)->toBe('');
+    expect($content)->toBeEmpty();
 });
 
 it('writes products CSV with headers and data', function () {

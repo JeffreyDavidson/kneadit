@@ -20,10 +20,7 @@ test('fires ProductWaitlistJoined on first join', function () {
         customerName: 'Alice',
     );
 
-    Event::assertDispatched(
-        ProductWaitlistJoined::class,
-        fn (ProductWaitlistJoined $e): bool => $e->entry->is($entry),
-    );
+    Event::assertDispatched(fn (ProductWaitlistJoined $e): bool => $e->entry->is($entry));
 });
 
 test('does NOT fire on rejoin (same email + product)', function () {

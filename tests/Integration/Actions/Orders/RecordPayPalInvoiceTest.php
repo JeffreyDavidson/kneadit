@@ -18,7 +18,7 @@ test('stores paypal invoice id on order', function () {
         ->recycle(test()->user)
         ->create();
 
-    app(RecordPayPalInvoice::class)($order, 'INV2-XXXX-YYYY-ZZZZ');
+    resolve(RecordPayPalInvoice::class)($order, 'INV2-XXXX-YYYY-ZZZZ');
 
     expect($order->refresh()->paypal_invoice_id)->toBe('INV2-XXXX-YYYY-ZZZZ');
 });

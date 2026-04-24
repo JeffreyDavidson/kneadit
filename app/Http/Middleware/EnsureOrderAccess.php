@@ -24,17 +24,13 @@ class EnsureOrderAccess
     {
         $order = $request->route('order');
 
-        if (! $order instanceof Order) {
-            abort(404);
-        }
+        abort_unless($order instanceof Order, 404);
 
         if (OrderAccessGuard::canAccess($order)) {
             return $next($request);
         }
 
-        if ($request->expectsJson()) {
-            abort(403, 'You must verify your email to access this order.');
-        }
+        abort_if($request->expectsJson(), 403, 'You must verify your email to access this order.');
 
         return redirect()
             ->guest(route('order.verify.show', ['order' => $order->order_number]));

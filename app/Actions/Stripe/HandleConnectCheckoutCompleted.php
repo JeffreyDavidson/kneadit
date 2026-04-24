@@ -49,7 +49,7 @@ class HandleConnectCheckoutCompleted
             $this->tenancyManager->withinTenant($tenant, function () use ($sessionId, $tenant) {
                 $order = Order::query()->where('stripe_checkout_session_id', $sessionId)->first();
                 if ($order) {
-                    app(MarkOrderPaid::class)($order);
+                    resolve(MarkOrderPaid::class)($order);
                     Log::info('Order marked paid via webhook', [
                         'order' => $order->order_number,
                         'tenant' => $tenant->id,

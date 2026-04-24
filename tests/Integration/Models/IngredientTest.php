@@ -3,6 +3,7 @@
 use App\Actions\Inventory\AdjustIngredientStock;
 use App\Enums\Inventory\StockAdjustmentType;
 use App\Enums\Inventory\StockStatus;
+use App\Exceptions\Inventory\StockWouldGoNegativeException;
 use App\Models\Inventory\Ingredient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -47,7 +48,7 @@ test('adjust stock updates current stock', function () {
     expect($ingredient->fresh()->current_stock)->toBe('15.00');
 });
 
-test('stock can go below zero', function () {
+test('AdjustIngredientStock throws when an adjustment would push stock below zero', function () {
     $ingredient = Ingredient::factory()->create([
         'name' => 'Butter',
         'unit' => 'kg',
@@ -56,9 +57,11 @@ test('stock can go below zero', function () {
         'cost_per_unit' => 4.00,
     ]);
 
-    resolve(AdjustIngredientStock::class)($ingredient, -5, StockAdjustmentType::Usage, 'Over-used');
+    expect(fn () => resolve(AdjustIngredientStock::class)($ingredient, -5, StockAdjustmentType::Usage, 'Over-used'))
+        ->toThrow(StockWouldGoNegativeException::class);
 
-    expect((float) $ingredient->fresh()->current_stock)->toBe(-3.0);
+    // Stock unchanged; no adjustment row written.
+    expect($ingredient->fresh()->current_stock)->toBe('2.00');
 });
 
 test('low stock threshold detection', function () {

@@ -31,7 +31,7 @@ class StoreOrderRequest extends FormRequest
             'customer_birthday' => ['nullable', 'date'],
             'delivery_type' => ['required', 'in:pickup,delivery'],
             'delivery_address' => ['required_if:delivery_type,delivery', 'nullable', 'string', 'max:500'],
-            'delivery_date' => ['required', 'date', 'after_or_equal:' . now()->addDays(app(TenantSettings::class)->leadTimeDays())->toDateString()],
+            'delivery_date' => ['required', 'date', 'after_or_equal:' . now()->addDays(resolve(TenantSettings::class)->leadTimeDays())->toDateString()],
             'delivery_time' => ['nullable', 'string', 'max:20'],
             'delivery_tier' => ['required_if:delivery_type,delivery', 'nullable', 'in:under5,5to10,10to15,over15'],
             'notes' => ['nullable', 'string', 'max:500'],

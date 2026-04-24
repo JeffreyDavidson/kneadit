@@ -20,7 +20,7 @@ test('isEnabled returns true when repeat reminders are enabled', function () {
 
     $engagement = new RepeatOrderReminderEngagement;
 
-    expect($engagement->isEnabled(app(TenantSettings::class)))->toBeTrue();
+    expect($engagement->isEnabled(resolve(TenantSettings::class)))->toBeTrue();
 });
 
 test('isEnabled returns false when repeat reminders are disabled', function () {
@@ -28,7 +28,7 @@ test('isEnabled returns false when repeat reminders are disabled', function () {
 
     $engagement = new RepeatOrderReminderEngagement;
 
-    expect($engagement->isEnabled(app(TenantSettings::class)))->toBeFalse();
+    expect($engagement->isEnabled(resolve(TenantSettings::class)))->toBeFalse();
 });
 
 test('findRecipients returns customers whose last paid order exceeds reminder days', function () {
@@ -43,7 +43,7 @@ test('findRecipients returns customers whose last paid order exceeds reminder da
         ]);
 
     $engagement = new RepeatOrderReminderEngagement;
-    $recipients = $engagement->findRecipients(app(TenantSettings::class));
+    $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toHaveCount(1)
         ->and($recipients->first()->email)->toBe('loyal@example.com');
@@ -61,7 +61,7 @@ test('findRecipients excludes customers with recent orders', function () {
         ]);
 
     $engagement = new RepeatOrderReminderEngagement;
-    $recipients = $engagement->findRecipients(app(TenantSettings::class));
+    $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toBeEmpty();
 });
@@ -78,7 +78,7 @@ test('findRecipients excludes customers with no email', function () {
         ]);
 
     $engagement = new RepeatOrderReminderEngagement;
-    $recipients = $engagement->findRecipients(app(TenantSettings::class));
+    $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toBeEmpty();
 });
@@ -101,7 +101,7 @@ test('findRecipients excludes customers with a future reminder scheduled', funct
     ]);
 
     $engagement = new RepeatOrderReminderEngagement;
-    $recipients = $engagement->findRecipients(app(TenantSettings::class));
+    $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toBeEmpty();
 });
@@ -128,7 +128,7 @@ test('dispatchForRecipient creates a reminder record and dispatches event', func
     );
 
     $engagement = new RepeatOrderReminderEngagement;
-    $engagement->dispatchForRecipient($recipient, app(TenantSettings::class));
+    $engagement->dispatchForRecipient($recipient, resolve(TenantSettings::class));
 
     Event::assertDispatched(RepeatOrderReminderDue::class);
     $this->assertDatabaseHas('customer_reminders', [

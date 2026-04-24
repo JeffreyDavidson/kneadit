@@ -31,7 +31,7 @@ class ReviewRequestMail extends BaseMailable
     public function __construct(Order $order)
     {
         $this->order = $order;
-        $this->storeName = app(TenantSettings::class)->store->name;
+        $this->storeName = resolve(TenantSettings::class)->store->name;
         // Signed URL — the email link itself is the proof of order ownership, so the
         // route bypasses the session-based order.access gate. Signature ensures the
         // link can't be forged or extended; 60-day window matches a typical review

@@ -45,5 +45,5 @@ test('webhook route uses custom controller', function () {
 test('payment failed handler dispatches PaymentFailed event', function () {
     $source = file_get_contents(app_path('Http/Controllers/Stripe/StripeWebhookController.php'));
 
-    expect($source)->toContain('Payment failed')->toContain('PaymentFailed::dispatch');
+    expect($source)->toContain('Payment failed')->toContain('new PaymentFailed(');
 });

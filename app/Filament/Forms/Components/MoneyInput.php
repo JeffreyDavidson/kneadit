@@ -24,7 +24,7 @@ class MoneyInput extends TextInput
     {
         return [
             ...parent::getDefaultStateCasts(),
-            app(MoneyStateCast::class),
+            resolve(MoneyStateCast::class),
         ];
     }
 }

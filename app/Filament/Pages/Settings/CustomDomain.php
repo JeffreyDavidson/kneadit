@@ -83,7 +83,7 @@ class CustomDomain extends Page
         $domain = trim((string) $this->custom_domain);
 
         if (empty($domain)) {
-            app(RemoveCustomDomain::class)(tenant());
+            resolve(RemoveCustomDomain::class)(tenant());
             $this->dns_status = null;
             $this->ssl_status = null;
 
@@ -104,7 +104,7 @@ class CustomDomain extends Page
             return;
         }
 
-        app(AddCustomDomain::class)(tenant(), $domain);
+        resolve(AddCustomDomain::class)(tenant(), $domain);
         $this->refreshDnsStatus();
 
         $serverIp = $domainService->serverIp();

@@ -29,7 +29,7 @@ class SendOrderStatusEmailListener extends SendEmailListener
 
         // Per-status email toggle. Tenant can disable individual status emails
         // (e.g., skip the "Baking" email but keep "Ready" + "Delivered").
-        if (! app(EngagementSettings::class)->isOrderStatusEmailEnabled($event->to)) {
+        if (! resolve(EngagementSettings::class)->isOrderStatusEmailEnabled($event->to)) {
             return null;
         }
 

@@ -26,10 +26,7 @@ test('SubmitContactMessage fires ContactMessageReceived', function () {
         'message' => 'Just saying hello',
     ]);
 
-    Event::assertDispatched(
-        ContactMessageReceived::class,
-        fn (ContactMessageReceived $e): bool => $e->message->is($message),
-    );
+    Event::assertDispatched(fn (ContactMessageReceived $e): bool => $e->message->is($message));
 });
 
 test('listener queues notification to the configured store email', function () {

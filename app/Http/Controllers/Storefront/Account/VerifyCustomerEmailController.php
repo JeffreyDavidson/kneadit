@@ -16,13 +16,13 @@ class VerifyCustomerEmailController extends Controller
         $customer = $request->user('customer');
 
         if ($customer->hasVerifiedEmail()) {
-            return redirect()->route('account.dashboard')->with('status', 'Your email is already verified.');
+            return to_route('account.dashboard')->with('status', 'Your email is already verified.');
         }
 
         if ($customer->markEmailAsVerified()) {
             event(new Verified($customer));
         }
 
-        return redirect()->route('account.dashboard')->with('status', 'Your email has been verified.');
+        return to_route('account.dashboard')->with('status', 'Your email has been verified.');
     }
 }

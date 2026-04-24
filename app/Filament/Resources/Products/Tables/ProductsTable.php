@@ -101,7 +101,7 @@ class ProductsTable
                     ->modalHeading(fn (Product $record) => "Notify {$record->waitlist_entries_count} customer(s) that {$record->name} is back?")
                     ->modalDescription('Each customer will be emailed and marked as notified so they won\'t be re-emailed on the next run.')
                     ->action(function (Product $record): void {
-                        $count = app(NotifyProductWaitlist::class)($record);
+                        $count = resolve(NotifyProductWaitlist::class)($record);
 
                         Notification::make()
                             ->title($count > 0 ? "Queued {$count} back-in-stock email(s)" : 'Nothing sent — product_available emails are disabled in Manage Settings')

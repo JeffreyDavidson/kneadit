@@ -43,11 +43,8 @@ test('dispatches event and logs when a tenant matches a checkin', function () {
 
     expect($summary['sent'])->toBe(1);
 
-    Event::assertDispatched(
-        ScheduledCheckinDue::class,
-        fn (ScheduledCheckinDue $event): bool => $event->tenantEmail === 'matching@test.com'
-            && $event->subject === 'How is it going?',
-    );
+    Event::assertDispatched(fn (ScheduledCheckinDue $event): bool => $event->tenantEmail === 'matching@test.com'
+        && $event->subject === 'How is it going?');
 
     $log = DB::table('checkin_logs')
         ->where('checkin_id', 10)

@@ -43,7 +43,7 @@ class LabelGenerator extends Page
 
     public function mount(): void
     {
-        $shelfLifeDays = (int) app(SettingsManager::class)->get('default_shelf_life_days', '3');
+        $shelfLifeDays = (int) resolve(SettingsManager::class)->get('default_shelf_life_days', '3');
         $this->bestByDate = now()->addDays($shelfLifeDays)->format('Y-m-d');
     }
 
@@ -86,11 +86,11 @@ class LabelGenerator extends Page
 
     public function getStoreName(): string
     {
-        return app(TenantSettings::class)->store->name;
+        return resolve(TenantSettings::class)->store->name;
     }
 
     public function getAllergyDisclaimer(): string
     {
-        return app(TenantSettings::class)->branding->allergyDisclaimer ?? 'May contain allergens.';
+        return resolve(TenantSettings::class)->branding->allergyDisclaimer ?? 'May contain allergens.';
     }
 }

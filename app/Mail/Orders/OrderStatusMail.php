@@ -97,7 +97,7 @@ class OrderStatusMail extends BaseMailable
      */
     private function placeholders(): array
     {
-        $settings = app(TenantSettings::class);
+        $settings = resolve(TenantSettings::class);
 
         return [
             'customer_name' => $this->order->customer->name ?? 'there',
@@ -111,7 +111,7 @@ class OrderStatusMail extends BaseMailable
     private function resolveDefaultSubject(): string
     {
         $number = $this->order->order_number;
-        $storeName = app(TenantSettings::class)->store->name;
+        $storeName = resolve(TenantSettings::class)->store->name;
 
         return match ($this->status) {
             OrderStatus::Confirmed => "Order #{$number} Confirmed — {$storeName}",

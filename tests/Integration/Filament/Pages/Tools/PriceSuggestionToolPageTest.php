@@ -69,8 +69,8 @@ test('generate margin comparisons with recipe', function () {
     test()->page->selectedRecipe = $recipe;
     test()->page->generateMarginComparisons();
 
-    expect(test()->page->marginComparisons)->toHaveCount(4);
-    expect(test()->page->marginComparisons->first())->toHaveKeys(['margin', 'price', 'difference', 'difference_percentage', 'is_target']);
+    expect(test()->page->marginComparisons)->toHaveCount(4)
+        ->and(test()->page->marginComparisons->first())->toHaveKeys(['margin', 'price', 'difference', 'difference_percentage', 'is_target']);
 });
 
 test('get suggested price returns zero when no recipe', function () {

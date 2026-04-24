@@ -42,7 +42,7 @@ class StoreApiOrderRequest extends FormRequest
 
     private function minimumDeliveryDate(): string
     {
-        $leadDays = rescue(fn () => app(TenantSettings::class)->leadTimeDays(), 1, false);
+        $leadDays = rescue(fn () => resolve(TenantSettings::class)->leadTimeDays(), 1, false);
 
         return now()->addDays($leadDays)->toDateString();
     }

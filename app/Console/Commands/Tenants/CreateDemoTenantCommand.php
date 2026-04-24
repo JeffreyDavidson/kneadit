@@ -89,7 +89,7 @@ class CreateDemoTenantCommand extends Command
             ]);
 
             // Seed settings
-            app(SettingsManager::class)->setMany([
+            resolve(SettingsManager::class)->setMany([
                 'store_name' => 'Sweet Dreams Bakery',
                 'store_email' => 'demo@getkneadit.app',
                 'store_phone' => '(863) 555-0123',

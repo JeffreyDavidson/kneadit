@@ -49,7 +49,7 @@ class ThemeSelector extends Page
             return;
         }
 
-        app(SettingsManager::class)->set('storefront_theme', $theme);
+        resolve(SettingsManager::class)->set('storefront_theme', $theme);
 
         $this->dispatch('$refresh');
 

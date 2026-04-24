@@ -40,7 +40,7 @@ class EnsureOnboardingComplete
 
         // Check if onboarding is complete
         try {
-            $settings = app(TenantSettings::class);
+            $settings = resolve(TenantSettings::class);
 
             if ($settings->onboarding->completedAt === null) {
                 return redirect()->to(url('/admin/onboarding'));

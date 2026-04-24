@@ -21,10 +21,9 @@ test('it imports new products from csv', function () {
 
     expect($result['created'])->toBe(2)
         ->and($result['updated'])->toBe(0)
-        ->and($result['errors'])->toBeEmpty();
-
-    expect(Product::query()->count())->toBe(2);
-    expect(Category::query()->count())->toBe(2);
+        ->and($result['errors'])->toBeEmpty()
+        ->and(Product::query()->count())->toBe(2)
+        ->and(Category::query()->count())->toBe(2);
 });
 
 test('it updates existing products on reimport', function () {
@@ -43,9 +42,8 @@ test('it updates existing products on reimport', function () {
     $result = resolve(ImportProducts::class)($file);
 
     expect($result['created'])->toBe(0)
-        ->and($result['updated'])->toBe(1);
-
-    expect(Product::query()->where('name', 'Sourdough Loaf')->first()->price->dollars())->toBe(9.00);
+        ->and($result['updated'])->toBe(1)
+        ->and(Product::query()->where('name', 'Sourdough Loaf')->first()->price->dollars())->toBe(9.00);
 });
 
 test('it skips rows with row-level errors from parser', function () {
