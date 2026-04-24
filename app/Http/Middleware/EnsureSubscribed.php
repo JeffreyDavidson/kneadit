@@ -15,6 +15,13 @@ class EnsureSubscribed
     {
         $user = $request->user();
 
+        // Platform-admin-granted comp accounts bypass billing entirely. The
+        // per-plan feature gate below (has-plan) still runs and will pass
+        // because SubscriptionTier::resolve() returns Pro for them.
+        if ($user instanceof User && $user->tenants()->where('free_forever', true)->exists()) {
+            return $next($request);
+        }
+
         if (! $user instanceof User || ! $user->subscribed('default')) {
             if ($user instanceof User && $user->onTrial()) {
                 return $next($request);

@@ -75,6 +75,22 @@ test('SubscriptionTier::resolve returns null for unknown stripe price', function
     expect(SubscriptionTier::resolve($user))->toBeNull();
 });
 
+test('SubscriptionTier::resolve returns Pro for users whose tenant has free_forever', function () {
+    $user = User::factory()->owner()->create();
+    createTenant(['id' => 'free-tenant', 'user_id' => $user->id, 'free_forever' => true]);
+
+    expect(SubscriptionTier::resolve($user))->toBe(SubscriptionTier::Pro);
+});
+
+test('has-plan gate passes every tier for free-forever users', function () {
+    $user = User::factory()->owner()->create();
+    createTenant(['id' => 'free-tenant-gate', 'user_id' => $user->id, 'free_forever' => true]);
+
+    expect(Gate::forUser($user)->allows('has-plan', SubscriptionTier::Pro))->toBeTrue()
+        ->and(Gate::forUser($user)->allows('has-plan', SubscriptionTier::Growth))->toBeTrue()
+        ->and(Gate::forUser($user)->allows('has-plan', SubscriptionTier::Starter))->toBeTrue();
+});
+
 test('tenants relationship returns related tenants', function () {
     $user = User::factory()->owner()->create();
 

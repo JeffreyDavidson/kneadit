@@ -25,4 +25,5 @@ Schedule::withoutOverlapping()
         Schedule::command('trial:check')->dailyAt('10:00');
         Schedule::command('inventory:send-low-stock-alert')->dailyAt('07:00');
         Schedule::command('carts:send-abandonment-emails')->hourly();
+        Schedule::command('platform:audit-free-forever')->dailyAt('06:00');
     });
