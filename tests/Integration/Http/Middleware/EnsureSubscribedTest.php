@@ -2,14 +2,11 @@
 
 use App\Http\Middleware\EnsureSubscribed;
 use App\Models\Staff\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 
-uses(RefreshDatabase::class);
-
-beforeEach(fn () => setUpTenantTest());
+beforeEach(fn () => setUpCentralTest());
 
 test('allows subscribed users through', function () {
     $user = User::factory()->owner()->create();
@@ -58,6 +55,19 @@ test('redirects unsubscribed non-trial users to billing', function () {
     $response = $middleware->handle($request, fn () => new Response('OK'));
 
     expect($response->getStatusCode())->toBe(302);
+});
+
+test('allows free-forever tenants through without a subscription', function () {
+    $user = User::factory()->owner()->create();
+    createTenant(['id' => 'free-forever-mw', 'user_id' => $user->id, 'free_forever' => true]);
+
+    $request = Request::create('/admin');
+    $request->setUserResolver(fn () => $user);
+
+    $middleware = new EnsureSubscribed;
+    $response = $middleware->handle($request, fn () => new Response('OK'));
+
+    expect($response->getContent())->toBe('OK');
 });
 
 test('aborts with 403 for wrong plan when plan parameter specified', function () {

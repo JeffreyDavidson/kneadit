@@ -51,6 +51,13 @@ class TenantsTable
                     ->badge()
                     ->sortable(),
 
+                IconColumn::make('free_forever')
+                    ->label('Free')
+                    ->boolean()
+                    ->tooltip('Platform-admin-granted free-forever access')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+
                 IconColumn::make('is_active')
                     ->label('Active')
                     ->boolean()
@@ -138,6 +145,26 @@ class TenantsTable
                     ->authorize('platform-admin')
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->update(['trial_ends_at' => now()->addDays(config('kneadit.trial_days', 30))]))
+                    ->deselectRecordsAfterCompletion(),
+                BulkAction::make('grant_free_forever')
+                    ->label('Grant Free Forever')
+                    ->icon(Heroicon::OutlinedGift)
+                    ->color('success')
+                    ->authorize('platform-admin')
+                    ->requiresConfirmation()
+                    ->modalHeading('Grant free-forever access')
+                    ->modalDescription('The selected tenants will bypass billing entirely and get full Pro-tier features. No card required, no trial expiry.')
+                    ->action(fn (Collection $records) => $records->each->update(['free_forever' => true]))
+                    ->deselectRecordsAfterCompletion(),
+                BulkAction::make('revoke_free_forever')
+                    ->label('Revoke Free Forever')
+                    ->icon(Heroicon::OutlinedGift)
+                    ->color('danger')
+                    ->authorize('platform-admin')
+                    ->requiresConfirmation()
+                    ->modalHeading('Revoke free-forever access')
+                    ->modalDescription('The selected tenants will start seeing billing prompts again and will need an active Stripe subscription or trial to use the service.')
+                    ->action(fn (Collection $records) => $records->each->update(['free_forever' => false]))
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('change_plan')
                     ->label('Change Plan')
