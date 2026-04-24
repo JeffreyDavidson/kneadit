@@ -8,8 +8,10 @@ use App\Events\Orders\OrderDelivered;
 use App\Events\Orders\OrderStatusChanged;
 use App\Exceptions\Orders\InvalidOrderTransitionException;
 use App\Models\Orders\Order;
+use App\Services\Audit\ActorContext;
 use App\Services\Inventory\InventoryManager;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TransitionOrderStatus
 {
@@ -52,6 +54,15 @@ class TransitionOrderStatus
                 }
             }
         });
+
+        Log::info('Order status transitioned', [
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+            'from' => $from->value,
+            'to' => $to->value,
+            'actor_id' => ActorContext::id(),
+            'actor_name' => ActorContext::name(),
+        ]);
 
         event(new OrderStatusChanged($order, $from, $to));
 
