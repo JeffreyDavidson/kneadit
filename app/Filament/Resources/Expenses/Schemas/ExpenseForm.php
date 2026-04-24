@@ -47,7 +47,8 @@ class ExpenseForm
                             ->image()
                             ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                             ->directory('receipts')
-                            ->maxSize(5120), // 5MB
+                            ->maxSize(5120) // 5MB
+                            ->preventFilePathTampering(),
 
                         Textarea::make('notes')
                             ->rows(3),

@@ -52,7 +52,8 @@ class GalleryPhotoForm
                             ->directory('gallery')
                             ->imageEditor()
                             ->imagePreviewHeight('200')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->preventFilePathTampering(),
                     ]),
             ]);
     }
