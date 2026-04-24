@@ -11,6 +11,7 @@ use App\Services\Customers\BirthdayCalculator;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -127,6 +128,7 @@ class CustomersTable
                     ),
             ])
             ->recordActions([
+                ViewAction::make(),
                 SlideOverEditAction::make(),
             ])
             ->toolbarActions([
