@@ -90,10 +90,6 @@
 .order-radio {
     accent-color: var(--warm-500);
 }
-.order-section-divider {
-    height: 1px;
-    background: rgba(139,104,68,0.2);
-}
 @keyframes cartPulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
