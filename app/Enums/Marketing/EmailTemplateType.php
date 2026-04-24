@@ -12,10 +12,13 @@ enum EmailTemplateType: string implements HasLabel
     case OrderReady = 'order_ready';
     case OrderDelivered = 'order_delivered';
     case OrderCancelled = 'order_cancelled';
+    case OrderModified = 'order_modified';
     case ReviewRequest = 'review_request';
     case HappyBirthday = 'happy_birthday';
     case RepeatOrderReminder = 'repeat_order_reminder';
     case ProductAvailable = 'product_available';
+    case AbandonedCartRecovery = 'abandoned_cart_recovery';
+    case CustomerReferralReward = 'customer_referral_reward';
 
     public function getLabel(): string
     {
@@ -26,10 +29,13 @@ enum EmailTemplateType: string implements HasLabel
             self::OrderReady => 'Order Ready',
             self::OrderDelivered => 'Order Delivered',
             self::OrderCancelled => 'Order Cancelled',
+            self::OrderModified => 'Order Modified',
             self::ReviewRequest => 'Review Request',
             self::HappyBirthday => 'Happy Birthday',
             self::RepeatOrderReminder => 'Repeat Order Reminder',
             self::ProductAvailable => 'Product Available',
+            self::AbandonedCartRecovery => 'Abandoned Cart Recovery',
+            self::CustomerReferralReward => 'Customer Referral Reward',
         };
     }
 
@@ -42,10 +48,13 @@ enum EmailTemplateType: string implements HasLabel
             self::OrderReady => 'Sent when an order is ready for pickup or delivery.',
             self::OrderDelivered => 'Sent when an order has been delivered.',
             self::OrderCancelled => 'Sent when an order is cancelled.',
+            self::OrderModified => 'Sent when you change the items or total on an existing order.',
             self::ReviewRequest => 'Sent after delivery to ask the customer for a review.',
             self::HappyBirthday => 'Sent on the customer\'s birthday with an optional coupon.',
             self::RepeatOrderReminder => 'Sent to re-engage customers who haven\'t ordered recently.',
             self::ProductAvailable => 'Sent when a waitlisted product is back in stock.',
+            self::AbandonedCartRecovery => 'Sent when a customer leaves items in their cart without checking out.',
+            self::CustomerReferralReward => 'Sent to a customer when their referral has earned them a reward.',
         };
     }
 
@@ -63,10 +72,13 @@ enum EmailTemplateType: string implements HasLabel
             self::OrderReady => [...$common, '{order_number}'],
             self::OrderDelivered => [...$common, '{order_number}'],
             self::OrderCancelled => [...$common, '{order_number}', '{order_total}'],
+            self::OrderModified => [...$common, '{order_number}', '{previous_total}', '{new_total}'],
             self::ReviewRequest => [...$common, '{order_number}', '{review_url}'],
             self::HappyBirthday => [...$common, '{coupon_code}', '{coupon_amount}'],
             self::RepeatOrderReminder => [...$common, '{days_since_last_order}'],
             self::ProductAvailable => [...$common, '{product_name}'],
+            self::AbandonedCartRecovery => [...$common, '{recovery_url}', '{coupon_code}'],
+            self::CustomerReferralReward => [...$common, '{coupon_code}', '{coupon_amount}'],
         };
     }
 
@@ -79,10 +91,13 @@ enum EmailTemplateType: string implements HasLabel
             self::OrderReady => 'Order #{order_number} is Ready! — {store_name}',
             self::OrderDelivered => 'Order #{order_number} Delivered — {store_name}',
             self::OrderCancelled => 'Order #{order_number} Cancelled — {store_name}',
+            self::OrderModified => 'Your Order #{order_number} was Updated — {store_name}',
             self::ReviewRequest => 'How was your order from {store_name}? ⭐',
             self::HappyBirthday => '🎂 Happy Birthday, {customer_name}! A Sweet Gift From {store_name}',
             self::RepeatOrderReminder => 'We Miss You! 🥖 Your Favorite Treats Are Waiting',
             self::ProductAvailable => '{product_name} is back at {store_name}!',
+            self::AbandonedCartRecovery => 'You left something in your cart at {store_name}',
+            self::CustomerReferralReward => 'Thanks for the referral — here\'s your reward from {store_name}',
         };
     }
 }
