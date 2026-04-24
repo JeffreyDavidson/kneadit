@@ -24,6 +24,7 @@ use App\Pipes\Orders\ValidateCapacity;
 use App\Pipes\Orders\ValidateStockAvailability;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CreateOrder
 {
@@ -56,6 +57,15 @@ class CreateOrder
         if ($result->cancelled || ! $result->order) {
             return null;
         }
+
+        Log::info('Order placed', [
+            'order_id' => $result->order->id,
+            'order_number' => $result->order->order_number,
+            'customer_id' => $result->order->customer_id,
+            'total_cents' => $result->order->total->cents(),
+            'item_count' => count($data->items),
+            'delivery_type' => $data->deliveryType,
+        ]);
 
         event(new OrderCreated($result->order));
 

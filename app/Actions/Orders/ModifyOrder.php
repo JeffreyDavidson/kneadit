@@ -6,10 +6,12 @@ use App\Events\Orders\OrderModified;
 use App\Exceptions\Orders\OrderNotModifiableException;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
+use App\Services\Audit\ActorContext;
 use App\Services\Orders\CheckOrderStockAvailability;
 use App\Services\Orders\OrderModificationGuard;
 use App\ValueObjects\Money;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ModifyOrder
 {
@@ -79,6 +81,16 @@ class ModifyOrder
                 'tip_amount' => Money::fromDollars($tipDollars),
                 'total' => Money::fromDollars($totalDollars),
             ])->save();
+
+            Log::info('Order modified', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'previous_total_cents' => $previousTotal->cents(),
+                'new_total_cents' => $order->total->cents(),
+                'item_changes' => count($items),
+                'actor_id' => ActorContext::id(),
+                'actor_name' => ActorContext::name(),
+            ]);
 
             event(new OrderModified($order, $previousSubtotal, $previousTotal));
 
