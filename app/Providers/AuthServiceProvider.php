@@ -19,6 +19,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         Gate::define('platform-admin', fn (User $user): bool => $user->role === UserRole::PlatformAdmin);
 
+        Gate::define('manager-staff', fn (User $user): bool => $user->role->meetsRequirement(UserRole::Manager));
+
         Gate::define('has-plan', fn (User $user, SubscriptionTier $tier): bool => SubscriptionTier::resolve($user)?->meetsRequirement($tier) ?? false);
 
         // Send unauthenticated storefront customers to their own login page instead of

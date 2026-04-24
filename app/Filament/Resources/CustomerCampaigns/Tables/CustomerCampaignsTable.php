@@ -62,6 +62,12 @@ class CustomerCampaignsTable
                     ->options(CustomerCampaignStatus::class),
             ])
             ->recordActions([
+                Action::make('preview')
+                    ->label('Preview')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->color('gray')
+                    ->url(fn (CustomerCampaign $record): string => route('campaign.preview', ['campaign' => $record]))
+                    ->openUrlInNewTab(),
                 Action::make('send_now')
                     ->label('Send Now')
                     ->icon(Heroicon::OutlinedPaperAirplane)
