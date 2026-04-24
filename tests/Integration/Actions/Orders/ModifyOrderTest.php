@@ -2,8 +2,11 @@
 
 use App\Actions\Orders\ModifyOrder;
 use App\Events\Orders\OrderModified;
+use App\Exceptions\Orders\InsufficientStockException;
 use App\Exceptions\Orders\OrderNotModifiableException;
+use App\Models\Inventory\Ingredient;
 use App\Models\Inventory\Product;
+use App\Models\Inventory\Recipe;
 use App\Models\Orders\Order;
 use App\Models\Orders\OrderItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -122,4 +125,93 @@ test('rolls back when modification would leave order with no items', function ()
     ]))->toThrow(OrderNotModifiableException::class);
 
     expect($order->fresh()->orderItems()->count())->toBe(1);
+});
+
+test('throws InsufficientStockException when modification exceeds ingredient stock', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+
+    $order = Order::factory()->pending()->unpaid()->create();
+    $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 2, 'unit_price' => 10.00]);
+
+    expect(fn () => resolve(ModifyOrder::class)($order, [
+        ['order_item_id' => $item->id, 'quantity' => 6],
+    ]))->toThrow(
+        InsufficientStockException::class,
+        'insufficient stock for Flour',
+    );
+
+    expect($order->fresh()->orderItems()->first()->quantity)->toBe(2);
+});
+
+test('rolls back item-quantity changes when stock check fails', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $sugar = Ingredient::factory()->create(['name' => 'Sugar', 'current_stock' => 5.00]);
+    $recipe->inventoryIngredients()->attach($sugar->id, ['quantity' => 1.0, 'unit' => 'lb']);
+
+    $order = Order::factory()->pending()->unpaid()->create();
+    $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 3, 'unit_price' => 10.00]);
+
+    try {
+        resolve(ModifyOrder::class)($order, [
+            ['order_item_id' => $item->id, 'quantity' => 10],
+        ]);
+    } catch (InsufficientStockException) {
+        // expected
+    }
+
+    expect($order->fresh()->orderItems()->first()->quantity)->toBe(3);
+});
+
+test('reports every shortage when several ingredients fall short', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $butter = Ingredient::factory()->create(['name' => 'Butter', 'current_stock' => 2.00]);
+    $eggs = Ingredient::factory()->create(['name' => 'Eggs', 'current_stock' => 4.00]);
+    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'lb']);
+    $recipe->inventoryIngredients()->attach($eggs->id, ['quantity' => 2.0, 'unit' => 'each']);
+
+    $order = Order::factory()->pending()->unpaid()->create();
+    $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 1, 'unit_price' => 10.00]);
+
+    expect(fn () => resolve(ModifyOrder::class)($order, [
+        ['order_item_id' => $item->id, 'quantity' => 5],
+    ]))->toThrow(InsufficientStockException::class, 'Butter, Eggs');
+});
+
+test('allows modification when stock is sufficient', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 100.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+
+    $order = Order::factory()->pending()->unpaid()->create();
+    $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 2, 'unit_price' => 10.00]);
+
+    resolve(ModifyOrder::class)($order, [
+        ['order_item_id' => $item->id, 'quantity' => 10],
+    ]);
+
+    expect($order->fresh()->orderItems()->first()->quantity)->toBe(10);
+});
+
+test('allows decreasing quantity even when current order draw exceeds stock', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['name' => 'Flour', 'current_stock' => 4.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+
+    $order = Order::factory()->pending()->unpaid()->create();
+    $item = OrderItem::factory()->for($order)->create(['product_id' => $product->id, 'quantity' => 5, 'unit_price' => 10.00]);
+
+    // Current order would need 10 lb; only 4 lb on hand. Decreasing to 2 needs
+    // 4 lb — fits exactly, so the modification must be allowed.
+    resolve(ModifyOrder::class)($order, [
+        ['order_item_id' => $item->id, 'quantity' => 2],
+    ]);
+
+    expect($order->fresh()->orderItems()->first()->quantity)->toBe(2);
 });
