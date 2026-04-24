@@ -7,6 +7,12 @@ use Illuminate\Support\Str;
 
 /**
  * Generates a unique referral code for a customer if they don't already have one.
+ *
+ * Works in two contexts:
+ * - Pre-insert (called from the `creating` observer hook) — assigns the code
+ *   so the upcoming INSERT picks it up. The customer is not yet persisted.
+ * - Post-insert (called from the backfill command) — assigns and saves so the
+ *   change is persisted.
  */
 class GenerateCustomerReferralCode
 {
@@ -20,7 +26,11 @@ class GenerateCustomerReferralCode
             $code = strtoupper(Str::random(8));
         } while (Customer::query()->where('referral_code', $code)->exists());
 
-        $customer->forceFill(['referral_code' => $code])->save();
+        $customer->referral_code = $code;
+
+        if ($customer->exists) {
+            $customer->save();
+        }
 
         return $code;
     }
