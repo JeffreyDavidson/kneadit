@@ -39,8 +39,5 @@ test('fires CateringInquiryReceived after creation', function () {
         'details' => 'Outdoor reception for 50 — passed appetizers preferred.',
     ]);
 
-    Event::assertDispatched(
-        CateringInquiryReceived::class,
-        fn (CateringInquiryReceived $e): bool => $e->inquiry->is($inquiry),
-    );
+    Event::assertDispatched(fn (CateringInquiryReceived $e): bool => $e->inquiry->is($inquiry));
 });

@@ -29,7 +29,7 @@ class CateringInquiryForm
                 ->schema([
                     Select::make('event_type')
                         ->options(function () {
-                            $types = app(TenantSettings::class)->catering->eventTypes;
+                            $types = resolve(TenantSettings::class)->catering->eventTypes;
 
                             return array_combine($types, $types);
                         })

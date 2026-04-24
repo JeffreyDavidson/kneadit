@@ -54,9 +54,7 @@ test('nextTierProgress reports the next tier and points needed', function () {
     LoyaltyPoint::factory()->earned(700)->for(test()->customer)->create();
 
     $progress = resolve(CustomerLoyalty::class)->nextTierProgress(test()->customer);
-
-    expect($progress['next'])->toBe(LoyaltyTier::Gold);
-    expect($progress['pointsToNext'])->toBe(1300);
+    expect($progress)->toMatchArray(['next' => LoyaltyTier::Gold, 'pointsToNext' => 1300]);
 });
 
 test('nextTierProgress returns null next when at the top tier', function () {
@@ -64,6 +62,6 @@ test('nextTierProgress returns null next when at the top tier', function () {
 
     $progress = resolve(CustomerLoyalty::class)->nextTierProgress(test()->customer);
 
-    expect($progress['next'])->toBeNull();
-    expect($progress['pointsToNext'])->toBe(0);
+    expect($progress['next'])->toBeNull()
+        ->and($progress['pointsToNext'])->toBe(0);
 });

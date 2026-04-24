@@ -51,8 +51,8 @@ test('modify endpoint updates order and queues confirmation email', function () 
     $response->assertRedirect(route('order.confirmation', test()->order));
 
     test()->order->refresh();
-    expect(test()->order->orderItems()->first()->quantity)->toBe(4);
-    expect(test()->order->tip_amount->dollars())->toBe(2.50);
+    expect(test()->order->orderItems()->first()->quantity)->toBe(4)
+        ->and(test()->order->tip_amount->dollars())->toBe(2.50);
 
     Mail::assertQueued(OrderModifiedMail::class);
 });

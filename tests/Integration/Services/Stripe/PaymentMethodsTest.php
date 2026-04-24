@@ -43,7 +43,7 @@ test('payment step defaults to cash when empty', function () {
 });
 
 test('payment methods defaults to cash when none stored', function () {
-    $defaults = PaymentsStep::defaults(app(TenantSettings::class));
+    $defaults = PaymentsStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults['payment_methods'])->toBe(['cash']);
 });

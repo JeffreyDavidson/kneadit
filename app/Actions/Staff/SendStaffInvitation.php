@@ -45,7 +45,7 @@ class SendStaffInvitation
         $storeName = $this->settings->store->name;
         $acceptUrl = route('invitation.show', $invitation->token);
 
-        StaffInvitationSent::dispatch($invitation, $storeName, $acceptUrl);
+        event(new StaffInvitationSent($invitation, $storeName, $acceptUrl));
 
         return $invitation;
     }

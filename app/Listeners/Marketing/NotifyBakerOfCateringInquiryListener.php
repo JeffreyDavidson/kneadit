@@ -12,7 +12,7 @@ class NotifyBakerOfCateringInquiryListener extends SendEmailListener
 {
     protected function getRecipient(object $event): ?string
     {
-        return app(TenantSettings::class)->store->email ?: null;
+        return resolve(TenantSettings::class)->store->email ?: null;
     }
 
     protected function getMailable(object $event): Mailable

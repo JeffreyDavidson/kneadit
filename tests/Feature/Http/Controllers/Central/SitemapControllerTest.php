@@ -22,8 +22,8 @@ test('sitemap returns response with xml content type', function () {
     $controller = new SitemapController;
     $response = $controller();
 
-    expect($response->headers->get('content-type'))->toContain('text/xml');
-    expect($response->getStatusCode())->toBe(200);
+    expect($response->headers->get('content-type'))->toContain('text/xml')
+        ->and($response->getStatusCode())->toBe(200);
 
     @unlink($tmpView);
 });
@@ -60,5 +60,5 @@ test('sitemap returns empty post list when no published posts exist', function (
 
     $posts = BlogPost::query()->published()->orderByDesc('published_at')->get();
 
-    expect($posts)->toHaveCount(0);
+    expect($posts)->toBeEmpty();
 });

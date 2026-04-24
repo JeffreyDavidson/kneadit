@@ -26,7 +26,7 @@ test('complete step key is complete', function () {
 });
 
 test('complete step defaults returns empty array', function () {
-    $settings = app(TenantSettings::class);
+    $settings = resolve(TenantSettings::class);
 
     expect(CompleteStep::defaults($settings))->toBeEmpty();
 });
@@ -45,7 +45,7 @@ test('preview step key is preview', function () {
 });
 
 test('preview step defaults returns empty array', function () {
-    $settings = app(TenantSettings::class);
+    $settings = resolve(TenantSettings::class);
 
     expect(PreviewStep::defaults($settings))->toBeEmpty();
 });
@@ -64,7 +64,7 @@ test('welcome step key is welcome', function () {
 });
 
 test('welcome step defaults returns expected keys', function () {
-    $defaults = WelcomeStep::defaults(app(TenantSettings::class));
+    $defaults = WelcomeStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults)->toHaveKeys(['bakery_name', 'owner_name']);
 });
@@ -76,7 +76,7 @@ test('contact step key is contact', function () {
 });
 
 test('contact step defaults returns expected keys', function () {
-    $defaults = ContactStep::defaults(app(TenantSettings::class));
+    $defaults = ContactStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults)->toHaveKeys(['email', 'phone', 'address']);
 });
@@ -86,7 +86,7 @@ test('contact step defaults returns stored values', function () {
     settings(['store_phone' => '555-999-8888']);
     settings(['store_address' => '456 Oak Ave']);
 
-    $defaults = ContactStep::defaults(app(TenantSettings::class));
+    $defaults = ContactStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults['email'])->toBe('stored@example.com')
         ->and($defaults['phone'])->toBe('555-999-8888')
@@ -100,7 +100,7 @@ test('branding step key is branding', function () {
 });
 
 test('branding step defaults returns expected keys', function () {
-    $defaults = BrandingStep::defaults(app(TenantSettings::class));
+    $defaults = BrandingStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults)->toHaveKeys(['color_primary', 'color_secondary', 'store_logo']);
 });
@@ -112,18 +112,18 @@ test('product step key is product', function () {
 });
 
 test('product step defaults returns expected keys', function () {
-    $defaults = ProductStep::defaults(app(TenantSettings::class));
+    $defaults = ProductStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults)->toHaveKeys(['name', 'description', 'price', 'category_id']);
 });
 
 test('product step defaults returns empty strings when no product', function () {
-    $defaults = ProductStep::defaults(app(TenantSettings::class));
+    $defaults = ProductStep::defaults(resolve(TenantSettings::class));
 
-    expect($defaults['name'])->toBe('')
-        ->and($defaults['description'])->toBe('')
-        ->and($defaults['price'])->toBe('')
-        ->and($defaults['category_id'])->toBe('');
+    expect($defaults['name'])->toBeEmpty()
+        ->and($defaults['description'])->toBeEmpty()
+        ->and($defaults['price'])->toBeEmpty()
+        ->and($defaults['category_id'])->toBeEmpty();
 });
 
 test('product step defaults loads existing product', function () {
@@ -143,7 +143,7 @@ test('product step defaults loads existing product', function () {
 
     settings(['onboarding_product_id' => $product->id]);
 
-    $defaults = ProductStep::defaults(app(TenantSettings::class));
+    $defaults = ProductStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults['name'])->toBe('Test Sourdough')
         ->and($defaults['description'])->toBe('A test loaf')
@@ -158,7 +158,7 @@ test('business hours step key is hours', function () {
 });
 
 test('business hours step defaults returns all day keys', function () {
-    $defaults = BusinessHoursStep::defaults(app(TenantSettings::class));
+    $defaults = BusinessHoursStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults)->toHaveKeys([
         'monday', 'monday_open', 'monday_close',
@@ -172,7 +172,7 @@ test('business hours step defaults returns all day keys', function () {
 });
 
 test('business hours step defaults weekdays open weekends closed', function () {
-    $defaults = BusinessHoursStep::defaults(app(TenantSettings::class));
+    $defaults = BusinessHoursStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults['monday'])->toBeTrue()
         ->and($defaults['tuesday'])->toBeTrue()
@@ -190,7 +190,7 @@ test('business hours step defaults loads existing settings', function () {
     ]);
     settings(['operating_hours' => $hours]);
 
-    $defaults = BusinessHoursStep::defaults(app(TenantSettings::class));
+    $defaults = BusinessHoursStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults['monday'])->toBeTrue()
         ->and($defaults['monday_open'])->toBe('09:00')
@@ -208,7 +208,7 @@ test('compliance step key is compliance', function () {
 });
 
 test('compliance step defaults returns expected keys', function () {
-    $defaults = ComplianceStep::defaults(app(TenantSettings::class));
+    $defaults = ComplianceStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults)->toHaveKeys([
         'cottage_food_state',
@@ -226,7 +226,7 @@ test('compliance step defaults loads existing settings', function () {
     settings(['allergy_disclaimer' => 'Contains nuts.']);
     settings(['compliance_acknowledged' => '1']);
 
-    $defaults = ComplianceStep::defaults(app(TenantSettings::class));
+    $defaults = ComplianceStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults['cottage_food_state'])->toBe('NY')
         ->and($defaults['revenue_cap'])->toBe('75000')
@@ -252,7 +252,7 @@ test('delivery step key is delivery', function () {
 });
 
 test('delivery step defaults returns expected keys', function () {
-    $defaults = DeliveryStep::defaults(app(TenantSettings::class));
+    $defaults = DeliveryStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults)->toHaveKeys([
         'delivery_enabled',
@@ -267,7 +267,7 @@ test('delivery step defaults returns expected keys', function () {
 });
 
 test('delivery step defaults pickup enabled by default', function () {
-    $defaults = DeliveryStep::defaults(app(TenantSettings::class));
+    $defaults = DeliveryStep::defaults(resolve(TenantSettings::class));
 
     expect($defaults['pickup_enabled'])->toBeTrue()
         ->and($defaults['delivery_enabled'])->toBeFalse();
@@ -282,7 +282,7 @@ test('payments step key is payments', function () {
 // --- OnboardingStepRegistry ---
 
 test('registry defaults returns all step keys', function () {
-    $defaults = OnboardingStepRegistry::defaults(app(TenantSettings::class));
+    $defaults = OnboardingStepRegistry::defaults(resolve(TenantSettings::class));
 
     expect($defaults)->toBeArray()
         ->toHaveKeys([

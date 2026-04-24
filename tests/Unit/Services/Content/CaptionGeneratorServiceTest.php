@@ -12,7 +12,7 @@ test('generates requested number of captions', function () {
         ->for(Category::factory()->create(['name' => 'Breads', 'slug' => 'breads']))
         ->create(['name' => 'Sourdough Loaf']);
 
-    $captions = app(CaptionGeneratorService::class)
+    $captions = resolve(CaptionGeneratorService::class)
         ->generate($product, CaptionStyle::Playful, 'warm', 3);
 
     expect($captions)->toHaveCount(3);
@@ -23,7 +23,7 @@ test('each caption has text and variation keys', function () {
         ->for(Category::factory()->create(['name' => 'Cakes', 'slug' => 'cakes']))
         ->create(['name' => 'Chocolate Cake']);
 
-    $captions = app(CaptionGeneratorService::class)
+    $captions = resolve(CaptionGeneratorService::class)
         ->generate($product, CaptionStyle::Professional, 'elegant', 1);
 
     expect($captions[0])
@@ -37,7 +37,7 @@ test('generates captions for all styles', function (CaptionStyle $style) {
         ->for(Category::factory()->create(['name' => 'Cookies', 'slug' => 'cookies']))
         ->create(['name' => 'Oatmeal Cookie']);
 
-    $captions = app(CaptionGeneratorService::class)
+    $captions = resolve(CaptionGeneratorService::class)
         ->generate($product, $style, 'casual', 1);
 
     expect($captions)->toHaveCount(1);

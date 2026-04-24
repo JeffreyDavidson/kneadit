@@ -26,7 +26,7 @@ class CustomerPasswordResetNotification extends Notification
             'email' => $notifiable->getEmailForPasswordReset(),
         ]);
 
-        $storeName = app(TenantSettings::class)->store->name;
+        $storeName = resolve(TenantSettings::class)->store->name;
 
         return (new MailMessage)
             ->subject("Reset your password — {$storeName}")

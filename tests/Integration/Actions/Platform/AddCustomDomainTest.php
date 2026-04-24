@@ -13,7 +13,7 @@ beforeEach(function () {
 test('updates tenant custom domain', function () {
     $tenant = Tenant::factory()->create();
 
-    app(AddCustomDomain::class)($tenant, 'custom.example.com');
+    resolve(AddCustomDomain::class)($tenant, 'custom.example.com');
 
     expect($tenant->refresh()->custom_domain)->toBe('custom.example.com');
 });
@@ -21,7 +21,7 @@ test('updates tenant custom domain', function () {
 test('creates domain record for tenant', function () {
     $tenant = Tenant::factory()->create();
 
-    app(AddCustomDomain::class)($tenant, 'custom.example.com');
+    resolve(AddCustomDomain::class)($tenant, 'custom.example.com');
 
     expect(Domain::query()->where('domain', 'custom.example.com')->exists())->toBeTrue();
 });
@@ -29,8 +29,8 @@ test('creates domain record for tenant', function () {
 test('does not duplicate domain record', function () {
     $tenant = Tenant::factory()->create();
 
-    app(AddCustomDomain::class)($tenant, 'custom.example.com');
-    app(AddCustomDomain::class)($tenant, 'custom.example.com');
+    resolve(AddCustomDomain::class)($tenant, 'custom.example.com');
+    resolve(AddCustomDomain::class)($tenant, 'custom.example.com');
 
     expect(Domain::query()->where('domain', 'custom.example.com')->count())->toBe(1);
 });

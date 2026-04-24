@@ -21,7 +21,7 @@ abstract class BaseMailable extends Mailable implements ShouldQueue
      */
     public function buildViewData(): array
     {
-        $settings = app(TenantSettings::class);
+        $settings = resolve(TenantSettings::class);
         $store = $settings->store;
 
         return array_merge(parent::buildViewData(), [

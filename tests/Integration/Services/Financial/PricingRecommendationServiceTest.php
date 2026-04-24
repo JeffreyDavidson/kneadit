@@ -38,9 +38,9 @@ test('premium positioning increases recommended price', function () {
 test('bulk tiers offer discounts', function () {
     $result = resolve(PricingRecommendationService::class)->recommend(5.00, 30, 20.00, 15, 40);
 
-    expect($result->bulkTiers)->toHaveCount(2);
-    expect($result->bulkTiers[0]['unit_price'])->toBeLessThan($result->recommendedPrice);
-    expect($result->bulkTiers[1]['unit_price'])->toBeLessThan($result->bulkTiers[0]['unit_price']);
+    expect($result->bulkTiers)->toHaveCount(2)
+        ->and($result->bulkTiers[0]['unit_price'])->toBeLessThan($result->recommendedPrice)
+        ->and($result->bulkTiers[1]['unit_price'])->toBeLessThan($result->bulkTiers[0]['unit_price']);
 });
 
 // --- suggestPrice() ---

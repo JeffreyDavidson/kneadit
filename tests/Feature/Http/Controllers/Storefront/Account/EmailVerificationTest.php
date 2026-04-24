@@ -58,7 +58,7 @@ test('an unsigned verification URL is rejected', function () {
         ->actingAs($customer, 'customer')
         ->get(route('account.email.verify', ['id' => $customer->id, 'hash' => sha1($customer->email)], false));
 
-    $response->assertStatus(403);
+    $response->assertForbidden();
     expect($customer->fresh()->hasVerifiedEmail())->toBeFalse();
 });
 
@@ -75,7 +75,7 @@ test('a verification URL with a mismatched id is rejected', function () {
         ->actingAs($customer, 'customer')
         ->get($url);
 
-    $response->assertStatus(403);
+    $response->assertForbidden();
 });
 
 test('the resend route sends another verification email', function () {

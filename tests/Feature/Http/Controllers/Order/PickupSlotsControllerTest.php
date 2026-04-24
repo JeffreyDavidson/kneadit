@@ -2,7 +2,6 @@
 
 use App\Models\Operations\BusinessSchedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
 
 use function Pest\Laravel\withoutMiddleware;
 
@@ -16,7 +15,7 @@ test('endpoint returns available slots for a date when enabled', function () {
         'pickup_slot_interval_minutes' => 30,
         'pickup_slot_max_per_window' => 3,
     ]);
-    $date = Carbon::parse('2026-05-04');
+    $date = Illuminate\Support\Facades\Date::parse('2026-05-04');
 
     BusinessSchedule::factory()->create([
         'day_of_week' => $date->dayOfWeek,
@@ -39,7 +38,7 @@ test('endpoint returns empty slots when feature is disabled', function () {
         ->getJson('/pickup-slots/2026-05-04');
 
     $response->assertOk();
-    expect($response->json('data.slots'))->toBe([]);
+    expect($response->json('data.slots'))->toBeEmpty();
 });
 
 test('endpoint rejects malformed dates', function () {

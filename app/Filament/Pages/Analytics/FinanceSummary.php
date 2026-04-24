@@ -63,7 +63,7 @@ class FinanceSummary extends Page
     public function mount(): void
     {
         $this->selectedYear = now()->year;
-        $this->revenueCap = (float) app(SettingsManager::class)->get('revenue_cap', 250000);
+        $this->revenueCap = (float) resolve(SettingsManager::class)->get('revenue_cap', 250000);
         $this->loadFinancialData();
     }
 

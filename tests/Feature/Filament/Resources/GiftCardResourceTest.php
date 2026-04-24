@@ -95,9 +95,8 @@ test('can create a gift card via header action', function () {
     expect($giftCard)
         ->purchaser_name->toBe('Jane Doe')
         ->purchaser_email->toBe('jane@example.com')
-        ->code->not->toBeNull();
-
-    expect($giftCard->initial_balance->dollars())->toBe(50.0);
+        ->code->not->toBeNull()
+        ->and($giftCard->initial_balance->dollars())->toBe(50.0);
 });
 
 test('can filter gift cards by depleted status', function () {

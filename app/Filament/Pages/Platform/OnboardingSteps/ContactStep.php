@@ -21,7 +21,7 @@ final class ContactStep extends OnboardingStep
     public static function defaults(TenantSettings $settings): array
     {
         $tenant = tenant();
-        $manager = app(SettingsManager::class);
+        $manager = resolve(SettingsManager::class);
 
         return [
             'email' => $manager->get('store_email') ?: ($tenant->email ?? ''),
@@ -61,7 +61,7 @@ final class ContactStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        app(SettingsManager::class)->setMany([
+        resolve(SettingsManager::class)->setMany([
             'store_email' => $data['email'],
             'store_phone' => $data['phone'] ?? '',
             'store_address' => $data['address'] ?? '',

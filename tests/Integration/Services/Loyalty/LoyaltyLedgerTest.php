@@ -48,8 +48,8 @@ test('returns null when loyalty is disabled', function () {
 
     $result = resolve(LoyaltyLedger::class)->creditOrder($order);
 
-    expect($result)->toBeNull();
-    expect(LoyaltyPoint::query()->count())->toBe(0);
+    expect($result)->toBeNull()
+        ->and(LoyaltyPoint::query()->count())->toBe(0);
 });
 
 test('returns null when order has no customer', function () {
@@ -78,9 +78,9 @@ test('is idempotent for the same order', function () {
     $first = $ledger->creditOrder($order);
     $second = $ledger->creditOrder($order);
 
-    expect($first)->not->toBeNull();
-    expect($second)->toBeNull();
-    expect(LoyaltyPoint::earned()->forOrder($order)->count())->toBe(1);
+    expect($first)->not->toBeNull()
+        ->and($second)->toBeNull()
+        ->and(LoyaltyPoint::earned()->forOrder($order)->count())->toBe(1);
 });
 
 test('returns null when calculated points are zero', function () {
@@ -92,8 +92,8 @@ test('returns null when calculated points are zero', function () {
 
     $result = resolve(LoyaltyLedger::class)->creditOrder($order);
 
-    expect($result)->toBeNull();
-    expect(LoyaltyPoint::query()->count())->toBe(0);
+    expect($result)->toBeNull()
+        ->and(LoyaltyPoint::query()->count())->toBe(0);
 });
 
 test('redeems points for a customer', function () {

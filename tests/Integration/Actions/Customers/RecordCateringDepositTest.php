@@ -18,9 +18,9 @@ test('stamps deposit_amount + paid_at + reference', function () {
     resolve(RecordCateringDeposit::class)($inquiry, 250.00, 'CHK-1234');
 
     $inquiry->refresh();
-    expect($inquiry->deposit_amount->dollars())->toBe(250.00);
-    expect($inquiry->deposit_paid_at)->not->toBeNull();
-    expect($inquiry->deposit_reference)->toBe('CHK-1234');
+    expect($inquiry->deposit_amount->dollars())->toBe(250.00)
+        ->and($inquiry->deposit_paid_at)->not->toBeNull()
+        ->and($inquiry->deposit_reference)->toBe('CHK-1234');
 });
 
 test('promotes Quoted → Confirmed when deposit recorded', function () {

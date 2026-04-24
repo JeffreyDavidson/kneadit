@@ -28,7 +28,7 @@ class SendEmailCampaign
             : $this->emailsBySegment($campaign->target_segment);
 
         foreach ($emails as $email) {
-            CampaignEmailQueued::dispatch($email, $campaign->subject, $campaign->body);
+            event(new CampaignEmailQueued($email, $campaign->subject, $campaign->body));
         }
 
         $campaign->update([

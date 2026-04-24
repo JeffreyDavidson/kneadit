@@ -23,7 +23,7 @@ class HappyBirthdayMail extends BaseMailable
         public Customer $customer,
         public ?Coupon $coupon = null,
     ) {
-        $this->storeName = app(TenantSettings::class)->store->name;
+        $this->storeName = resolve(TenantSettings::class)->store->name;
     }
 
     public function envelope(): Envelope

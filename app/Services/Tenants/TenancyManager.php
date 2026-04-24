@@ -49,7 +49,7 @@ class TenancyManager
         foreach (Tenant::query()->cursor() as $tenant) {
             try {
                 $this->withinTenant($tenant, function () use ($tenant, $callback) {
-                    $settings = app(TenantSettings::class);
+                    $settings = resolve(TenantSettings::class);
                     $callback($tenant, $settings);
                 });
             } catch (\Throwable $e) {

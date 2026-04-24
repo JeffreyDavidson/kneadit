@@ -33,7 +33,7 @@ final class BusinessHoursStep extends OnboardingStep
         }
 
         // Override with existing settings if available
-        $existingHours = app(SettingsManager::class)->get('operating_hours');
+        $existingHours = resolve(SettingsManager::class)->get('operating_hours');
         if ($existingHours) {
             $hours = json_decode($existingHours, true);
             if (is_array($hours)) {
@@ -97,6 +97,6 @@ final class BusinessHoursStep extends OnboardingStep
             }
         }
 
-        app(SettingsManager::class)->set('operating_hours', json_encode($hours));
+        resolve(SettingsManager::class)->set('operating_hours', json_encode($hours));
     }
 }

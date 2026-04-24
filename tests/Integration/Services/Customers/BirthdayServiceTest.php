@@ -16,7 +16,7 @@ it('creates a birthday coupon for a customer', function () {
         'birthday' => '1990-03-25',
     ]);
 
-    $coupon = app(CreateBirthdayCoupon::class)($customer, discountPercent: 15, validDays: 7);
+    $coupon = resolve(CreateBirthdayCoupon::class)($customer, discountPercent: 15, validDays: 7);
 
     expect($coupon)->toBeInstanceOf(Coupon::class)->and($coupon->code)->toBe("BDAY-{$customer->id}-2026")->and((int) $coupon->percentage->value())->toBe(15)->and($coupon->expires_at->toDateString())->toBe('2026-04-01');
 });

@@ -53,6 +53,6 @@ class BirthdayEngagement implements CustomerEngagement
             )
             : null;
 
-        CustomerBirthday::dispatch($customer, $coupon);
+        event(new CustomerBirthday($customer, $coupon));
     }
 }

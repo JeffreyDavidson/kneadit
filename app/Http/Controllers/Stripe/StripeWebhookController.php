@@ -37,7 +37,7 @@ class StripeWebhookController extends WebhookController
             $lookup = StripeCustomerLookupQuery::find($stripeCustomerId);
 
             if ($lookup['user']) {
-                app(SyncSubscriptionPlan::class)(
+                resolve(SyncSubscriptionPlan::class)(
                     tenantEmail: $lookup['user']->email,
                     stripePriceId: $stripePriceId,
                     priceMap: array_flip(config('kneadit.stripe_prices', [])),
@@ -74,11 +74,7 @@ class StripeWebhookController extends WebhookController
             'amount' => ($invoice['amount_due'] ?? 0) / 100,
         ]);
 
-        PaymentFailed::dispatch(
-            $lookup['user'],
-            $lookup['tenant'],
-            ($invoice['amount_due'] ?? 0) / 100,
-        );
+        event(new PaymentFailed($lookup['user'], $lookup['tenant'], ($invoice['amount_due'] ?? 0) / 100));
     }
 
     /** @param array<string, mixed> $payload */

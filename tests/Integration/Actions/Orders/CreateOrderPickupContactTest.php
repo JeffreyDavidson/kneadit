@@ -30,10 +30,10 @@ test('persists all three pickup contact fields', function () {
         ])
     );
 
-    expect($order)->not->toBeNull();
-    expect($order->pickup_contact_name)->toBe('Bob (husband)');
-    expect($order->pickup_contact_phone)->toBe('555-9876');
-    expect($order->pickup_contact_email)->toBe('bob@example.com');
+    expect($order)->not->toBeNull()
+        ->and($order->pickup_contact_name)->toBe('Bob (husband)')
+        ->and($order->pickup_contact_phone)->toBe('555-9876')
+        ->and($order->pickup_contact_email)->toBe('bob@example.com');
 });
 
 test('omitting pickup contact leaves columns null', function () {
@@ -49,8 +49,8 @@ test('omitting pickup contact leaves columns null', function () {
         ])
     );
 
-    expect($order)->not->toBeNull();
-    expect($order->pickup_contact_name)->toBeNull();
-    expect($order->pickup_contact_phone)->toBeNull();
-    expect($order->pickup_contact_email)->toBeNull();
+    expect($order)->not->toBeNull()
+        ->and($order->pickup_contact_name)->toBeNull()
+        ->and($order->pickup_contact_phone)->toBeNull()
+        ->and($order->pickup_contact_email)->toBeNull();
 });

@@ -87,7 +87,7 @@ test('health check dispatches event on failure', function () {
         ->expectsOutputToContain('alert dispatched')
         ->assertFailed();
 
-    Event::assertDispatched(HealthCheckFailed::class, function ($event) {
+    Event::assertDispatched(function (HealthCheckFailed $event) {
         return str_contains($event->message, 'Health Check Alert');
     });
 });

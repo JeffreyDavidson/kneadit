@@ -28,7 +28,7 @@ test('returns trial expiring alert when trial ends soon with low setup', functio
         ['id' => 'expiring-bakery', 'health_score' => 30, 'setup_score' => 10],
     ]);
 
-    $alerts = app(ChurnAlertService::class)->getAlerts();
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
     expect($alerts)->toHaveCount(2)
         ->and($alerts->firstWhere('type', 'trial_expiring'))->not->toBeNull()
@@ -47,7 +47,7 @@ test('does not alert for trial with good setup progress', function () {
         ['id' => 'good-bakery', 'health_score' => 60, 'setup_score' => 50],
     ]);
 
-    $alerts = app(ChurnAlertService::class)->getAlerts();
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
     expect($alerts->firstWhere('type', 'trial_expiring'))->toBeNull();
 });
@@ -68,7 +68,7 @@ test('returns no login alert when tenant has not logged in recently', function (
         ['id' => 'inactive-bakery', 'health_score' => 50, 'setup_score' => 20],
     ]);
 
-    $alerts = app(ChurnAlertService::class)->getAlerts();
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
     $noLogin = $alerts->firstWhere('type', 'no_login');
 
     // If the tenant model supports last_login_at from data column
@@ -91,7 +91,7 @@ test('returns no orders alert for established tenant with no recent orders', fun
         recentOrders: 0,
     );
 
-    $alerts = app(ChurnAlertService::class)->getAlerts();
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
     $noOrders = $alerts->firstWhere('type', 'no_orders');
 
     expect($noOrders)->not->toBeNull()
@@ -110,7 +110,7 @@ test('does not alert for no orders on new tenants', function () {
         recentOrders: 0,
     );
 
-    $alerts = app(ChurnAlertService::class)->getAlerts();
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
     expect($alerts->firstWhere('type', 'no_orders'))->toBeNull();
 });
@@ -127,7 +127,7 @@ test('returns low health alert when health score is below 40', function () {
         recentOrders: 0,
     );
 
-    $alerts = app(ChurnAlertService::class)->getAlerts();
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
     $lowHealth = $alerts->firstWhere('type', 'low_health');
 
     expect($lowHealth)->not->toBeNull()
@@ -147,7 +147,7 @@ test('does not alert for healthy tenants', function () {
         recentOrders: 10,
     );
 
-    $alerts = app(ChurnAlertService::class)->getAlerts();
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
     expect($alerts)->toBeEmpty();
 });
@@ -164,7 +164,7 @@ test('critical alerts are sorted before warnings', function () {
         recentOrders: 0,
     );
 
-    $alerts = app(ChurnAlertService::class)->getAlerts();
+    $alerts = resolve(ChurnAlertService::class)->getAlerts();
 
     if ($alerts->count() >= 2) {
         expect($alerts->first()['severity'])->toBe('critical');

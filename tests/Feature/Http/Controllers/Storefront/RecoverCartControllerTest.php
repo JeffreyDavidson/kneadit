@@ -46,5 +46,5 @@ test('unsigned request is rejected', function () {
 
     $response = withoutMiddleware(tenantMiddleware())->get("/cart/recover/{$cart->cart_token}");
 
-    $response->assertStatus(403);
+    $response->assertForbidden();
 });

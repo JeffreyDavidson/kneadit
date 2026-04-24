@@ -92,7 +92,7 @@ class Dashboard extends BaseDashboard
     {
         $registry = $this->getWidgetRegistry();
 
-        $manager = app(SettingsManager::class);
+        $manager = resolve(SettingsManager::class);
 
         // Dashboard customization disabled until config page is finalized
         // When ready, set 'dashboard_config_enabled' to 'true' in Settings

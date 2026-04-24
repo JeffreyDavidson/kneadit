@@ -92,7 +92,7 @@ test('resource returns global search result details', function () {
         'email' => 'detail@test.com',
     ]);
 
-    $tenant = App\Models\Platform\Tenant::find('detail-bakery');
+    $tenant = App\Models\Platform\Tenant::query()->find('detail-bakery');
     $details = TenantResource::getGlobalSearchResultDetails($tenant);
 
     expect($details)

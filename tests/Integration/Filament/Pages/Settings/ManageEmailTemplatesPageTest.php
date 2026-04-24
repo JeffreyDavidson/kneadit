@@ -15,7 +15,7 @@ beforeEach(function () {
 test('getTemplateData returns all email template types', function () {
     $data = test()->page->getTemplateData();
 
-    expect($data)->toHaveCount(count(EmailTemplateType::cases()));
+    expect($data)->toHaveSameSize(EmailTemplateType::cases());
 });
 
 test('getTemplateData marks uncustomized templates as default', function () {

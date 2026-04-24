@@ -15,17 +15,17 @@ beforeEach(fn () => setUpTenantTest());
 test('isEnabled returns true when birthday program is enabled', function () {
     settings(['birthday_program_enabled' => '1']);
 
-    $engagement = app(BirthdayEngagement::class);
+    $engagement = resolve(BirthdayEngagement::class);
 
-    expect($engagement->isEnabled(app(TenantSettings::class)))->toBeTrue();
+    expect($engagement->isEnabled(resolve(TenantSettings::class)))->toBeTrue();
 });
 
 test('isEnabled returns false when birthday program is disabled', function () {
     settings(['birthday_program_enabled' => '0']);
 
-    $engagement = app(BirthdayEngagement::class);
+    $engagement = resolve(BirthdayEngagement::class);
 
-    expect($engagement->isEnabled(app(TenantSettings::class)))->toBeFalse();
+    expect($engagement->isEnabled(resolve(TenantSettings::class)))->toBeFalse();
 });
 
 test('findRecipients returns customers with today birthday and email', function () {
@@ -34,8 +34,8 @@ test('findRecipients returns customers with today birthday and email', function 
         'email' => 'birthday@example.com',
     ]);
 
-    $engagement = app(BirthdayEngagement::class);
-    $recipients = $engagement->findRecipients(app(TenantSettings::class));
+    $engagement = resolve(BirthdayEngagement::class);
+    $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toHaveCount(1)
         ->and($recipients->first()->email)->toBe('birthday@example.com');
@@ -47,8 +47,8 @@ test('findRecipients excludes customers without a birthday', function () {
         'email' => 'no-birthday@example.com',
     ]);
 
-    $engagement = app(BirthdayEngagement::class);
-    $recipients = $engagement->findRecipients(app(TenantSettings::class));
+    $engagement = resolve(BirthdayEngagement::class);
+    $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toBeEmpty();
 });
@@ -59,8 +59,8 @@ test('findRecipients excludes customers without an email', function () {
         'email' => '',
     ]);
 
-    $engagement = app(BirthdayEngagement::class);
-    $recipients = $engagement->findRecipients(app(TenantSettings::class));
+    $engagement = resolve(BirthdayEngagement::class);
+    $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toBeEmpty();
 });
@@ -71,8 +71,8 @@ test('findRecipients excludes customers with a birthday on a different day', fun
         'email' => 'wrong-day@example.com',
     ]);
 
-    $engagement = app(BirthdayEngagement::class);
-    $recipients = $engagement->findRecipients(app(TenantSettings::class));
+    $engagement = resolve(BirthdayEngagement::class);
+    $recipients = $engagement->findRecipients(resolve(TenantSettings::class));
 
     expect($recipients)->toBeEmpty();
 });
@@ -97,10 +97,10 @@ test('dispatchForRecipient creates coupon and dispatches event when coupon enabl
         model: $customer,
     );
 
-    $engagement = app(BirthdayEngagement::class);
-    $engagement->dispatchForRecipient($recipient, app(TenantSettings::class));
+    $engagement = resolve(BirthdayEngagement::class);
+    $engagement->dispatchForRecipient($recipient, resolve(TenantSettings::class));
 
-    Event::assertDispatched(CustomerBirthday::class, function (CustomerBirthday $event) {
+    Event::assertDispatched(function (CustomerBirthday $event) {
         return $event->coupon !== null;
     });
     $this->assertDatabaseHas('coupons', [
@@ -126,10 +126,10 @@ test('dispatchForRecipient dispatches event without coupon when coupon disabled'
         model: $customer,
     );
 
-    $engagement = app(BirthdayEngagement::class);
-    $engagement->dispatchForRecipient($recipient, app(TenantSettings::class));
+    $engagement = resolve(BirthdayEngagement::class);
+    $engagement->dispatchForRecipient($recipient, resolve(TenantSettings::class));
 
-    Event::assertDispatched(CustomerBirthday::class, function (CustomerBirthday $event) {
+    Event::assertDispatched(function (CustomerBirthday $event) {
         return $event->coupon === null;
     });
     $this->assertDatabaseCount('coupons', 0);

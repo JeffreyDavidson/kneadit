@@ -17,7 +17,7 @@ test('catering inquiry requires essential fields', function (string $field) {
 
 test('event_type must match a configured event type', function () {
     settings(['catering_event_types' => json_encode(['Kids Party', 'School Function'])]);
-    app(App\Services\Settings\TenantSettingsRegistry::class)->flush();
+    resolve(App\Services\Settings\TenantSettingsRegistry::class)->flush();
 
     $request = new StoreCateringInquiryRequest;
     $validator = validator(['event_type' => 'Wedding'], $request->rules());
@@ -27,7 +27,7 @@ test('event_type must match a configured event type', function () {
 
 test('event_type accepts a configured event type', function () {
     settings(['catering_event_types' => json_encode(['Kids Party', 'School Function'])]);
-    app(App\Services\Settings\TenantSettingsRegistry::class)->flush();
+    resolve(App\Services\Settings\TenantSettingsRegistry::class)->flush();
 
     $request = new StoreCateringInquiryRequest;
     $validator = validator(['event_type' => 'Kids Party'], $request->rules());

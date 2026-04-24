@@ -59,7 +59,7 @@ class InvoiceService
                 return null;
             }
 
-            app(RecordPayPalInvoice::class)($order, $invoiceId);
+            resolve(RecordPayPalInvoice::class)($order, $invoiceId);
 
             Log::info('PayPal invoice created and sent', [
                 'order_id' => $order->id,

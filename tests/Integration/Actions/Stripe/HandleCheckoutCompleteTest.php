@@ -22,7 +22,7 @@ test('updates order with stripe payment intent id', function () {
         ->recycle(test()->user)
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
-    app(HandleCheckoutComplete::class)($order, 'pi_test_123');
+    resolve(HandleCheckoutComplete::class)($order, 'pi_test_123');
 
     expect($order->refresh()->stripe_payment_intent_id)->toBe('pi_test_123');
 });
@@ -33,7 +33,7 @@ test('marks order as paid', function () {
         ->recycle(test()->user)
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
-    app(HandleCheckoutComplete::class)($order, 'pi_test_456');
+    resolve(HandleCheckoutComplete::class)($order, 'pi_test_456');
 
     expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
 });
@@ -44,7 +44,7 @@ test('returns the updated order', function () {
         ->recycle(test()->user)
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
-    $result = app(HandleCheckoutComplete::class)($order, 'pi_test_789');
+    $result = resolve(HandleCheckoutComplete::class)($order, 'pi_test_789');
 
     expect($result)->toBeInstanceOf(Order::class)
         ->id->toBe($order->id);

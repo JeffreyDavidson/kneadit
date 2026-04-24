@@ -23,7 +23,7 @@ final class BrandingStep extends OnboardingStep
     public static function defaults(TenantSettings $settings): array
     {
         $tenant = tenant();
-        $existingLogo = app(SettingsManager::class)->get('store_logo') ?: $tenant?->store_logo;
+        $existingLogo = resolve(SettingsManager::class)->get('store_logo') ?: $tenant?->store_logo;
 
         return [
             'color_primary' => $tenant->brand_color_primary ?? '#6b4c3b',
@@ -86,6 +86,6 @@ final class BrandingStep extends OnboardingStep
             $tenant->save();
         }
 
-        app(SettingsManager::class)->setMany($settings);
+        resolve(SettingsManager::class)->setMany($settings);
     }
 }

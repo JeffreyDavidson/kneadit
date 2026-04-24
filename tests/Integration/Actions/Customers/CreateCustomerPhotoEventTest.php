@@ -24,8 +24,5 @@ test('CreateCustomerPhoto fires CustomerPhotoSubmitted', function () {
         caption: 'Loved my birthday cake!',
     );
 
-    Event::assertDispatched(
-        CustomerPhotoSubmitted::class,
-        fn (CustomerPhotoSubmitted $e): bool => $e->photo->is($photo),
-    );
+    Event::assertDispatched(fn (CustomerPhotoSubmitted $e): bool => $e->photo->is($photo));
 });

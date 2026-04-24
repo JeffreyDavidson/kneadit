@@ -48,7 +48,7 @@ class ManagePageContent extends Page
 
     public function mount(): void
     {
-        $this->pageContent = json_decode(app(SettingsManager::class)->get('page_content', '{}'), true) ?: [];
+        $this->pageContent = json_decode(resolve(SettingsManager::class)->get('page_content', '{}'), true) ?: [];
     }
 
     public function content(Schema $schema): Schema
@@ -91,7 +91,7 @@ class ManagePageContent extends Page
     public function save(): void
     {
         try {
-            app(SettingsManager::class)->set('page_content', json_encode($this->pageContent));
+            resolve(SettingsManager::class)->set('page_content', json_encode($this->pageContent));
 
             Notification::make()
                 ->title('Page content saved successfully!')

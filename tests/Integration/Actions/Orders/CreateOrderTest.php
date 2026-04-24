@@ -37,9 +37,9 @@ test('creates order with correct totals and items', function () {
 
     expect($order)
         ->not->toBeNull()
-        ->status->toBe(OrderStatus::Pending);
-    expect($order->subtotal->dollars())->toBe(25.00);
-    expect($order->total->dollars())->toBe(25.00);
+        ->status->toBe(OrderStatus::Pending)
+        ->and($order->subtotal->dollars())->toBe(25.00)
+        ->and($order->total->dollars())->toBe(25.00);
 
     $order->load('orderItems', 'customer');
     expect($order->orderItems)->toHaveCount(1)->and($order->customer->email)->toBe('jane@example.com');
@@ -83,10 +83,10 @@ test('persists tip_amount and includes it in total', function () {
         ])
     );
 
-    expect($order)->not->toBeNull();
-    expect($order->subtotal->dollars())->toBe(20.00);
-    expect($order->tip_amount->dollars())->toBe(4.50);
-    expect($order->total->dollars())->toBe(24.50);
+    expect($order)->not->toBeNull()
+        ->and($order->subtotal->dollars())->toBe(20.00)
+        ->and($order->tip_amount->dollars())->toBe(4.50)
+        ->and($order->total->dollars())->toBe(24.50);
 });
 
 test('throws InsufficientStockException when projected ingredient draw exceeds stock', function () {

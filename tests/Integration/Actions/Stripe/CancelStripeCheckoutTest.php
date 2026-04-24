@@ -19,7 +19,7 @@ test('sets order payment status to unpaid', function () {
         ->recycle(test()->user)
         ->create();
 
-    app(CancelStripeCheckout::class)($order);
+    resolve(CancelStripeCheckout::class)($order);
 
     expect($order->refresh()->payment_status)->toBe(PaymentStatus::Unpaid);
 });

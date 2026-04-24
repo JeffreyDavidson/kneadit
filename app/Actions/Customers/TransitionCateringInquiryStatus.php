@@ -13,7 +13,7 @@ class TransitionCateringInquiryStatus
         $inquiry->update(['status' => $status]);
 
         if ($status === CateringInquiryStatus::Quoted) {
-            CateringQuoteRequested::dispatch($inquiry);
+            event(new CateringQuoteRequested($inquiry));
         }
     }
 }

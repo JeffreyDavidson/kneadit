@@ -34,6 +34,6 @@ trait ResolvesTemplate
             return $this->resolvedTemplateCache = null;
         }
 
-        return $this->resolvedTemplateCache = app(EmailTemplateRenderer::class)->resolve($type, $placeholders);
+        return $this->resolvedTemplateCache = resolve(EmailTemplateRenderer::class)->resolve($type, $placeholders);
     }
 }

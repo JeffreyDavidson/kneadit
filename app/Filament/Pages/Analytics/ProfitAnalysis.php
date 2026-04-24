@@ -65,9 +65,9 @@ class ProfitAnalysis extends Page
             'average_margin' => $portfolio->averageMargin ? round($portfolio->averageMargin, 1) : null,
             'products_missing_costs' => $portfolio->productsMissingCosts(),
             'margin_breakdown' => [
-                'high' => $portfolio->marginBreakdown['high'] ?? 0,
-                'medium' => $portfolio->marginBreakdown['medium'] ?? 0,
-                'low' => $portfolio->marginBreakdown['low'] ?? 0,
+                'high' => $portfolio->marginBreakdown['high'],
+                'medium' => $portfolio->marginBreakdown['medium'],
+                'low' => $portfolio->marginBreakdown['low'],
             ],
         ];
     }

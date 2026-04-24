@@ -119,7 +119,5 @@ test('resource returns global search result details', function () {
     $details = App\Filament\Resources\Coupons\CouponResource::getGlobalSearchResultDetails($coupon);
 
     expect($details)
-        ->toHaveKey('Type')
-        ->toHaveKey('Value')
-        ->toHaveKey('Active');
+        ->toHaveKeys(['Type', 'Value', 'Active']);
 });

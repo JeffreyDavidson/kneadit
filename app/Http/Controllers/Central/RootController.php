@@ -40,7 +40,7 @@ class RootController extends Controller
 
             // If storefront is disabled but no external URL, show a minimal page
             if ($tenant && ! $tenant->storefront_enabled) {
-                $settings = app(TenantSettings::class);
+                $settings = resolve(TenantSettings::class);
 
                 return response()->view('platform.storefront-disabled', [
                     'storeName' => $settings->store->name,
@@ -48,7 +48,7 @@ class RootController extends Controller
                 ]);
             }
 
-            return resolve(HomeController::class)(app(TenantSettings::class));
+            return resolve(HomeController::class)(resolve(TenantSettings::class));
         });
     }
 }

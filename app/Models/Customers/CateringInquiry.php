@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \App\ValueObjects\Money|null $budget
  * @property \App\ValueObjects\Money|null $quoted_amount
  * @property \App\ValueObjects\Money|null $deposit_amount
+ * @property \Illuminate\Support\Carbon|null $event_date
  * @property \Illuminate\Support\Carbon|null $deposit_paid_at
  * @property string|null $deposit_reference
  * @property string|null $stripe_checkout_session_id

@@ -26,7 +26,7 @@ final class ProductStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
-        $productId = app(SettingsManager::class)->get('onboarding_product_id');
+        $productId = resolve(SettingsManager::class)->get('onboarding_product_id');
         $product = $productId ? Product::query()->find((int) $productId) : null;
 
         if ($product) {
@@ -100,7 +100,7 @@ final class ProductStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        $manager = app(SettingsManager::class);
+        $manager = resolve(SettingsManager::class);
         $existingId = $manager->get('onboarding_product_id');
 
         $product = Product::query()->updateOrCreate(

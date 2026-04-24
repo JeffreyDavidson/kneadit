@@ -83,7 +83,7 @@ class ProvisionTestTenantCommand extends Command
                 'updated_at' => now(),
             ]);
 
-            app(SettingsManager::class)->setMany([
+            resolve(SettingsManager::class)->setMany([
                 'store_name' => $tenant->store_name,
                 'store_email' => $tenant->email,
             ]);

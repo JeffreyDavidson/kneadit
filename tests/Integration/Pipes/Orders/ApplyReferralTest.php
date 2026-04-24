@@ -42,9 +42,9 @@ test('applies the referral discount when a valid code is in session', function (
     $payload = makeReferralPayload();
     $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
 
-    expect($result->referrer?->is($referrer))->toBeTrue();
-    expect($result->discountAmount)->toBe(10.0);
-    expect($result->total)->toBe(20.0);
+    expect($result->referrer?->is($referrer))->toBeTrue()
+        ->and($result->discountAmount)->toBe(10.0)
+        ->and($result->total)->toBe(20.0);
 });
 
 test('skips when feature is disabled', function () {
@@ -55,8 +55,8 @@ test('skips when feature is disabled', function () {
     $payload = makeReferralPayload();
     $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
 
-    expect($result->referrer)->toBeNull();
-    expect($result->discountAmount)->toBe(0.0);
+    expect($result->referrer)->toBeNull()
+        ->and($result->discountAmount)->toBe(0.0);
 });
 
 test('skips when no code is in session', function () {
@@ -75,8 +75,8 @@ test('rejects self-referral', function () {
     $payload = makeReferralPayload(email: 'self@example.com');
     $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
 
-    expect($result->referrer)->toBeNull();
-    expect($result->discountAmount)->toBe(0.0);
+    expect($result->referrer)->toBeNull()
+        ->and($result->discountAmount)->toBe(0.0);
 });
 
 test('rejects when the referee has already been referred before', function () {
@@ -93,6 +93,6 @@ test('rejects when the referee has already been referred before', function () {
     $payload = makeReferralPayload(email: 'bob@example.com');
     $result = (new ApplyReferral(resolve(App\Services\Settings\TenantSettings::class)))->handle($payload, fn ($p) => $p);
 
-    expect($result->referrer)->toBeNull();
-    expect($result->discountAmount)->toBe(0.0);
+    expect($result->referrer)->toBeNull()
+        ->and($result->discountAmount)->toBe(0.0);
 });

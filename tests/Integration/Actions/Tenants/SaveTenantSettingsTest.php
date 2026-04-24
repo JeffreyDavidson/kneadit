@@ -26,7 +26,7 @@ test('saves store information settings', function () {
         'show_policies_on_storefront' => true,
     ];
 
-    app(SaveTenantSettings::class)($data);
+    resolve(SaveTenantSettings::class)($data);
 
     expect(settings('store_name'))->toBe('Test Bakery')
         ->and(settings('store_email'))->toBe('info@test.com')
@@ -62,7 +62,7 @@ test('saves paypal settings when paypal is a payment method', function () {
         'show_policies_on_storefront' => false,
     ];
 
-    app(SaveTenantSettings::class)($data);
+    resolve(SaveTenantSettings::class)($data);
 
     expect(settings('paypal_client_id'))->toBe('client-123')
         ->and(settings('paypal_client_secret'))->toBe('secret-456')
@@ -95,7 +95,7 @@ test('does not save paypal settings when paypal is not a payment method', functi
         'show_policies_on_storefront' => false,
     ];
 
-    app(SaveTenantSettings::class)($data);
+    resolve(SaveTenantSettings::class)($data);
 
     // Paypal settings were not updated, so old value remains
     expect(settings('paypal_client_id'))->toBe('old-value');
@@ -124,7 +124,7 @@ test('saves catering event types as a json array', function () {
         'catering_event_types' => ['Kids Party', 'School Function', '   ', ''],
     ];
 
-    app(SaveTenantSettings::class)($data);
+    resolve(SaveTenantSettings::class)($data);
 
     expect(json_decode(settings('catering_event_types'), true))
         ->toBe(['Kids Party', 'School Function']);
@@ -159,7 +159,7 @@ test('saves order journey steps as JSON', function () {
         'order_journey_steps' => $steps,
     ];
 
-    app(SaveTenantSettings::class)($data);
+    resolve(SaveTenantSettings::class)($data);
 
     expect(json_decode(settings('order_journey_steps'), true))->toEqual($steps);
 });

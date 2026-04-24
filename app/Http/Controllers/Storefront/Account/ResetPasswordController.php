@@ -28,8 +28,7 @@ class ResetPasswordController extends Controller
             ]);
         }
 
-        return redirect()
-            ->route('account.login.show')
+        return to_route('account.login.show')
             ->with('status', 'Your password has been reset. You can sign in now.');
     }
 }

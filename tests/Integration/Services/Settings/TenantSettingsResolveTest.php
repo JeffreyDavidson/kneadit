@@ -38,8 +38,8 @@ test('hero CTA properties fall back to defaults when unset in settings', functio
 });
 
 test('it is bound as a singleton in the container', function () {
-    $a = app(TenantSettings::class);
-    $b = app(TenantSettings::class);
+    $a = resolve(TenantSettings::class);
+    $b = resolve(TenantSettings::class);
 
     expect($a)->toBeInstanceOf(TenantSettings::class)
         ->and($a)->toBe($b);

@@ -46,9 +46,9 @@ test('updates name + phone + birthday + address', function () {
     $response->assertSessionHas('status');
 
     $customer->refresh();
-    expect($customer->name)->toBe('New Name');
-    expect($customer->city)->toBe('Springfield');
-    expect($customer->birthday?->format('Y-m-d'))->toBe('1990-04-15');
+    expect($customer->name)->toBe('New Name')
+        ->and($customer->city)->toBe('Springfield')
+        ->and($customer->birthday?->format('Y-m-d'))->toBe('1990-04-15');
 });
 
 test('rejects empty name', function () {

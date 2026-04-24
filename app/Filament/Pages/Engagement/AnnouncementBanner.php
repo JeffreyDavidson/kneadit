@@ -45,7 +45,7 @@ class AnnouncementBanner extends Page
 
     public function mount(): void
     {
-        $engagement = app(TenantSettings::class)->engagement;
+        $engagement = resolve(TenantSettings::class)->engagement;
         $this->announcement_enabled = $engagement->announcementEnabled;
         $this->announcement_text = $engagement->announcementText;
         $this->announcement_type = $engagement->announcementType;
@@ -94,7 +94,7 @@ class AnnouncementBanner extends Page
 
     public function save(): void
     {
-        app(SettingsManager::class)->setMany([
+        resolve(SettingsManager::class)->setMany([
             'announcement_enabled' => $this->announcement_enabled ? '1' : '0',
             'announcement_text' => $this->announcement_text ?? '',
             'announcement_type' => $this->announcement_type ?? 'info',
