@@ -2,22 +2,26 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Actions\Orders\RefundStripePayment;
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Orders\OrderStatus;
 use App\Enums\Orders\PaymentStatus;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Filament\Filters\DateRangeFilter;
 use App\Models\Orders\Order;
+use App\Models\Staff\User;
 use App\Services\PayPal\InvoiceService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class OrdersTable
 {
@@ -72,7 +76,7 @@ class OrdersTable
                 self::statusTransitionAction('start_baking', OrderStatus::Baking, Heroicon::OutlinedFire, 'info', 'Start Baking', 'Mark this order as currently being baked?', 'Order marked as baking', 'Start Baking'),
                 self::statusTransitionAction('mark_ready', OrderStatus::Ready, Heroicon::OutlinedClock, 'success', 'Mark Ready', 'Mark this order as ready for pickup/delivery?', 'Order marked as ready', 'Mark Ready'),
                 self::statusTransitionAction('mark_delivered', OrderStatus::Delivered, Heroicon::OutlinedTruck, 'primary', 'Mark Delivered', 'Mark this order as delivered/completed?', 'Order marked as delivered', 'Mark Delivered'),
-                self::statusTransitionAction('cancel', OrderStatus::Cancelled, Heroicon::OutlinedXCircle, 'danger', 'Cancel Order', 'Are you sure you want to cancel this order? This action cannot be undone.', 'Order cancelled', notificationColor: 'warning'),
+                self::cancelOrderAction(),
 
                 Action::make('send_paypal_invoice')
                     ->label('Send PayPal Invoice')
@@ -115,6 +119,51 @@ class OrdersTable
             ->defaultSort('created_at', 'desc')
             ->emptyStateHeading('No orders yet')
             ->emptyStateDescription('Orders will appear here as customers place them.');
+    }
+
+    /**
+     * Cancel action — distinct from the generic statusTransitionAction because
+     * cancellation needs a reason (audit trail) and may trigger a Stripe refund
+     * for paid orders. Reason is collected from the modal, passed to
+     * TransitionOrderStatus's downstream events via the Refund row, and
+     * referenced in the success notification.
+     */
+    private static function cancelOrderAction(): Action
+    {
+        return Action::make('cancel')
+            ->label('Cancel Order')
+            ->icon(Heroicon::OutlinedXCircle)
+            ->color('danger')
+            ->authorize('update')
+            ->requiresConfirmation()
+            ->modalHeading('Cancel Order')
+            ->modalDescription(fn (Order $record): string => $record->payment_status === PaymentStatus::Paid && $record->stripe_payment_intent_id
+                ? 'This will cancel the order, restock any deducted ingredients, and refund the full amount to the customer\'s card via Stripe.'
+                : 'This will cancel the order and reverse any coupon/gift-card use. The customer will not be charged.')
+            ->modalSubmitActionLabel('Cancel Order')
+            ->schema([
+                Textarea::make('reason')
+                    ->label('Cancellation reason')
+                    ->placeholder('e.g. customer requested, ingredient unavailable, store closed')
+                    ->rows(3)
+                    ->maxLength(500),
+            ])
+            ->action(function (Order $record, array $data): void {
+                resolve(TransitionOrderStatus::class)($record, OrderStatus::Cancelled);
+
+                $refund = resolve(RefundStripePayment::class)(
+                    $record->refresh(),
+                    initiatedBy: Auth::user() instanceof User ? Auth::user() : null,
+                    reason: $data['reason'] ?? null,
+                );
+
+                Notification::make()
+                    ->title($refund ? 'Order cancelled and refunded' : 'Order cancelled')
+                    ->body($refund ? "Refunded {$refund->amount->formatted()} to the customer." : null)
+                    ->color($refund ? 'success' : 'warning')
+                    ->send();
+            })
+            ->visible(fn (Order $record): bool => in_array(OrderStatus::Cancelled, TransitionOrderStatus::allowedTransitions($record)));
     }
 
     private static function statusTransitionAction(
