@@ -33,7 +33,7 @@ test('renders coupon card when a coupon is attached', function () {
     $cart = Cart::factory()->withEmail('alice@example.com')->create();
     CartItem::factory()->for($cart)->create(['product_id' => $product->id, 'quantity' => 1]);
 
-    $coupon = Coupon::query()->create([
+    $coupon = Coupon::factory()->create([
         'code' => 'BACK-ABCDE',
         'type' => CouponType::Fixed,
         'fixed_amount' => Money::fromDollars(5.0),

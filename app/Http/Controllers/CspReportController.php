@@ -21,7 +21,9 @@ class CspReportController extends Controller
         $report = $request->json('csp-report') ?? $request->json()->all();
 
         Log::channel(config('logging.csp_channel', 'stack'))
-            ->warning('CSP violation report', $report ?: ['raw' => $request->getContent()]);
+            ->warning('CSP violation report', $report ?: [
+                'raw' => $request->getContent(),
+            ]);
 
         return response()->noContent();
     }

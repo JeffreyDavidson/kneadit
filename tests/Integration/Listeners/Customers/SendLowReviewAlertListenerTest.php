@@ -19,7 +19,7 @@ beforeEach(function () {
 test('queues an alert to the configured store email', function () {
     settings(['store_email' => 'baker@example.com']);
 
-    $review = Review::query()->create([
+    $review = Review::factory()->create([
         'customer_name' => 'Alice',
         'customer_email' => 'alice@example.com',
         'order_id' => Order::factory()->for(Customer::factory()->create())->create()->id,
@@ -39,7 +39,7 @@ test('queues an alert to the configured store email', function () {
 test('skips when no store email is configured', function () {
     settings(['store_email' => '']);
 
-    $review = Review::query()->create([
+    $review = Review::factory()->create([
         'customer_name' => 'Alice',
         'customer_email' => 'alice@example.com',
         'order_id' => Order::factory()->for(Customer::factory()->create())->create()->id,
