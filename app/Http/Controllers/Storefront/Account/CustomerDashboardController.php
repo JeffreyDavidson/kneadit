@@ -35,7 +35,9 @@ class CustomerDashboardController extends Controller
             ? $customer->referral_code
             : null;
         $referralShareUrl = $referralCode
-            ? route('customer.referral', ['code' => $referralCode])
+            ? route('customer.referral', [
+                'code' => $referralCode,
+            ])
             : null;
 
         return view('storefront.account.dashboard', [

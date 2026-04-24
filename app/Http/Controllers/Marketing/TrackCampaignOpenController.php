@@ -19,7 +19,9 @@ class TrackCampaignOpenController extends Controller
         CustomerCampaignLog::query()
             ->where('tracking_token', $token)
             ->whereNull('opened_at')
-            ->update(['opened_at' => now()]);
+            ->update([
+                'opened_at' => now(),
+            ]);
 
         return response($this->transparentGif(), 200, [
             'Content-Type' => 'image/gif',
