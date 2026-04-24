@@ -41,7 +41,18 @@ fi
 
 echo "✅ Pint passed"
 
-# 3. PHPStan (static analysis)
+# 3. TLint (Laravel/Blade idioms)
+vendor/bin/tlint lint > /tmp/tlint-output 2>&1
+if grep -q "^!" /tmp/tlint-output; then
+    echo ""
+    echo "⛔ Commit blocked: TLint found violations."
+    echo "Run 'vendor/bin/tlint lint' to see details."
+    exit 1
+fi
+
+echo "✅ TLint passed"
+
+# 4. PHPStan (static analysis)
 vendor/bin/phpstan analyse --no-progress --memory-limit=512M > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo ""
@@ -52,7 +63,7 @@ fi
 
 echo "✅ PHPStan passed"
 
-# 4. Tests (only run if app/ or tests/ files are staged)
+# 5. Tests (only run if app/ or tests/ files are staged)
 APP_OR_TEST_FILES=$(echo "$STAGED_FILES" | grep -E '^(app/|tests/)')
 if [ -n "$APP_OR_TEST_FILES" ]; then
     php -d memory_limit=512M vendor/bin/pest --compact 2>&1 | tail -3

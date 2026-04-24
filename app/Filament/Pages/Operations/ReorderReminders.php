@@ -23,6 +23,15 @@ class ReorderReminders extends Page
 
     protected string $view = 'filament.pages.operations.reorder-reminders';
 
+    protected static ?string $title = 'Reorder Reminders';
+
+    protected static ?string $navigationLabel = 'Reorder Reminders';
+
+    protected static ?int $navigationSort = 2;
+
+    #[Url]
+    public int $threshold = 60;
+
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('growth-features');
@@ -33,12 +42,6 @@ class ReorderReminders extends Page
         return SubscriptionTier::Growth;
     }
 
-    protected static ?string $title = 'Reorder Reminders';
-
-    protected static ?string $navigationLabel = 'Reorder Reminders';
-
-    protected static ?int $navigationSort = 2;
-
     public static function getNavigationIcon(): string|BackedEnum|null
     {
         return Heroicon::OutlinedBellAlert;
@@ -48,9 +51,6 @@ class ReorderReminders extends Page
     {
         return 'Communication';
     }
-
-    #[Url]
-    public int $threshold = 60;
 
     public function getBreadcrumbs(): array
     {
