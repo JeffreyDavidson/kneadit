@@ -20,7 +20,9 @@ class DashboardConfig extends Page
 
     protected static ?string $slug = 'dashboard-config';
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static \UnitEnum|string|null $navigationGroup = 'Settings';
+
+    protected static ?int $navigationSort = 7;
 
     protected string $view = 'filament.pages.dashboard.dashboard-config';
 
