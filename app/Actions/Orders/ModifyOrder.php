@@ -5,6 +5,7 @@ namespace App\Actions\Orders;
 use App\Events\Orders\OrderModified;
 use App\Exceptions\Orders\OrderNotModifiableException;
 use App\Models\Orders\Order;
+use App\Services\Orders\CheckOrderStockAvailability;
 use App\Services\Orders\OrderModificationGuard;
 use App\ValueObjects\Money;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,7 @@ class ModifyOrder
 {
     public function __construct(
         private OrderModificationGuard $guard,
+        private CheckOrderStockAvailability $checkStock,
     ) {}
 
     /**
@@ -55,6 +57,11 @@ class ModifyOrder
             if ($order->orderItems->isEmpty()) {
                 throw new OrderNotModifiableException($order, 'modification would leave order with no items');
             }
+
+            // Verify the post-modification ingredient draw fits inside current
+            // stock. Throws InsufficientStockException (rolling back this
+            // transaction) before we recompute totals or fire OrderModified.
+            ($this->checkStock)($order);
 
             $subtotalDollars = $order->orderItems->sum(
                 fn ($item) => $item->unit_price->dollars() * $item->quantity,
