@@ -4,6 +4,7 @@ namespace App\Services\GiftCards;
 
 use App\Models\Financial\GiftCard;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class GiftCardService
 {
@@ -28,6 +29,6 @@ class GiftCardService
             }
         }
 
-        throw new \RuntimeException('Unable to generate unique gift card code after ' . $maxAttempts . ' attempts.');
+        throw new RuntimeException('Unable to generate unique gift card code after ' . $maxAttempts . ' attempts.');
     }
 }

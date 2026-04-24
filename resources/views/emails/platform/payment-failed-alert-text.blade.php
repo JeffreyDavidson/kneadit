@@ -5,7 +5,7 @@
 @endphp
 
 Payment failed for {{ $user->name }} ({{ $user->email }})
-@if($tenant)
+@if ($tenant)
 Tenant: {{ $tenant->store_name }} ({{ $tenant->id }})
 @endif
 Amount: {{ \Illuminate\Support\Number::currency($amount) }}

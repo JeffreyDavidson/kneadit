@@ -14,6 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Validation\Rules\Enum;
 use Laravel\Pennant\Feature;
 
 /**
@@ -108,7 +109,7 @@ class InstagramCaptionGenerator extends Page
     {
         $this->validate([
             'data.product_id' => ['required', 'exists:products,id'],
-            'data.style' => ['required', new \Illuminate\Validation\Rules\Enum(CaptionStyle::class)],
+            'data.style' => ['required', new Enum(CaptionStyle::class)],
             'data.tone' => ['required', 'in:warm,excited,casual,elegant'],
         ]);
 

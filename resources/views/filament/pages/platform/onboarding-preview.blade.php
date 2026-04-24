@@ -54,7 +54,7 @@
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: {{ $page->delivery['delivery_enabled'] ? '#6ee7b7' : '#6b4c3b' }};">
                         <span style="font-size: 11px;">{{ $page->delivery['delivery_enabled'] ? '●' : '○' }}</span>
-                        Delivery{{ $page->delivery['delivery_enabled'] && $page->delivery['delivery_fee'] ? ' — ' : '' }}@if($page->delivery['delivery_enabled'] && $page->delivery['delivery_fee'])@money((float)$page->delivery['delivery_fee'])@endif
+                        Delivery{{ $page->delivery['delivery_enabled'] && $page->delivery['delivery_fee'] ? ' — ' : '' }}@if ($page->delivery['delivery_enabled'] && $page->delivery['delivery_fee'])@money((float)$page->delivery['delivery_fee'])@endif
                     </span>
                     <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: {{ $page->delivery['pickup_enabled'] ? '#6ee7b7' : '#6b4c3b' }};">
                         <span style="font-size: 11px;">{{ $page->delivery['pickup_enabled'] ? '●' : '○' }}</span>

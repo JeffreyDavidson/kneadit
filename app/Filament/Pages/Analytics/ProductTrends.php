@@ -20,6 +20,18 @@ class ProductTrends extends Page
 
     protected string $view = 'filament.pages.analytics.product-trends';
 
+    protected static ?string $title = 'Product Trends';
+
+    protected static ?string $navigationLabel = 'Product Trends';
+
+    protected static ?int $navigationSort = 6;
+
+    #[Url]
+    public int $month = 0;
+
+    #[Url]
+    public int $year = 0;
+
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -29,12 +41,6 @@ class ProductTrends extends Page
     {
         return SubscriptionTier::Pro;
     }
-
-    protected static ?string $title = 'Product Trends';
-
-    protected static ?string $navigationLabel = 'Product Trends';
-
-    protected static ?int $navigationSort = 6;
 
     public static function getNavigationIcon(): string|BackedEnum|null
     {
@@ -53,12 +59,6 @@ class ProductTrends extends Page
             static::getUrl() => 'Product Trends',
         ];
     }
-
-    #[Url]
-    public int $month = 0;
-
-    #[Url]
-    public int $year = 0;
 
     public function mount(): void
     {

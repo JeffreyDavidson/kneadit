@@ -129,7 +129,7 @@ final class CustomerPresenter
         $orders = $this->customer->orders;
         // ->sum('total') would call (float) on Money objects via __toString and parse
         // "$X" as 0. Sum the dollar values explicitly via the cast.
-        $totalSpent = $orders->sum(fn ($order) => $order->total->dollars());
+        $totalSpent = $orders->sum(fn (Order $order): float => $order->total->dollars());
         $orderCount = $orders->count();
 
         return [
