@@ -150,9 +150,7 @@ function fixtureId(string $key): int
 
     $ids = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
 
-    if (! isset($ids[$key])) {
-        throw new RuntimeException("Fixture ID '{$key}' not found in {$path}. The prepare-admin-session script may need updating.");
-    }
+    throw_unless(isset($ids[$key]), RuntimeException::class, "Fixture ID '{$key}' not found in {$path}. The prepare-admin-session script may need updating.");
 
     return (int) $ids[$key];
 }
@@ -170,9 +168,7 @@ function ensureFreshAdminSessions(string $referencedPath): void
 
     $script = base_path('tests/Browser/Helpers/prepare-admin-session.py');
 
-    if (! file_exists($script)) {
-        throw new RuntimeException("Login helper missing: {$script}");
-    }
+    throw_unless(file_exists($script), RuntimeException::class, "Login helper missing: {$script}");
 
     $output = [];
     $exitCode = 0;

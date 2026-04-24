@@ -24,7 +24,7 @@ final class ComplianceStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
-        $manager = app(SettingsManager::class);
+        $manager = resolve(SettingsManager::class);
 
         return [
             'cottage_food_state' => $manager->get('cottage_food_state', ''),
@@ -75,7 +75,7 @@ final class ComplianceStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        app(SettingsManager::class)->setMany([
+        resolve(SettingsManager::class)->setMany([
             'cottage_food_state' => $data['cottage_food_state'],
             'revenue_cap' => $data['revenue_cap'],
             'license_number' => $data['license_number'],

@@ -20,7 +20,7 @@ class NotifyProductWaitlist
      */
     public function __invoke(Product $product): int
     {
-        if (! app(EngagementSettings::class)->emailProductAvailableEnabled) {
+        if (! resolve(EngagementSettings::class)->emailProductAvailableEnabled) {
             return 0;
         }
 

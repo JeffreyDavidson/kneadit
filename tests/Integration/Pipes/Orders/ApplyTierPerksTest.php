@@ -39,8 +39,8 @@ test('zeros out delivery fee for a Gold customer', function () {
 
     $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), fn ($p) => $p);
 
-    expect($result->deliveryFee)->toBe(0.0);
-    expect($result->total)->toBe(30.0);
+    expect($result->deliveryFee)->toBe(0.0)
+        ->and($result->total)->toBe(30.0);
 });
 
 test('leaves the fee untouched for a Bronze customer', function () {
@@ -48,8 +48,8 @@ test('leaves the fee untouched for a Bronze customer', function () {
 
     $result = resolve(ApplyTierPerks::class)->handle(makePerksPayload($customer), fn ($p) => $p);
 
-    expect($result->deliveryFee)->toBe(5.0);
-    expect($result->total)->toBe(35.0);
+    expect($result->deliveryFee)->toBe(5.0)
+        ->and($result->total)->toBe(35.0);
 });
 
 test('skips when payload has no customer (defensive)', function () {

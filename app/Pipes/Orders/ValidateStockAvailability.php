@@ -67,9 +67,7 @@ class ValidateStockAvailability
             }
         }
 
-        if ($shortages !== []) {
-            throw new InsufficientStockException(shortages: $shortages);
-        }
+        throw_if($shortages !== [], InsufficientStockException::class, shortages: $shortages);
 
         return $next($payload);
     }

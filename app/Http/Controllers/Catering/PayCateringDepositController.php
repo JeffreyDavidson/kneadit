@@ -27,15 +27,11 @@ class PayCateringDepositController extends Controller
             $settings->catering->depositPercent,
         );
 
-        if ($depositDollars <= 0) {
-            abort(404, 'No deposit configured for this quote.');
-        }
+        abort_if($depositDollars <= 0, 404, 'No deposit configured for this quote.');
 
         $url = $checkout->redirectToCheckout($inquiry, $depositDollars);
 
-        if (! $url) {
-            abort(503, 'Online deposit payment is not currently available.');
-        }
+        abort_unless((bool) $url, 503, 'Online deposit payment is not currently available.');
 
         return redirect($url);
     }

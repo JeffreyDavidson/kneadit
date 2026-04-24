@@ -44,7 +44,8 @@ class BlogPostForm
                 ->acceptedFileTypes(AllowedFileTypes::IMAGES)
                 ->maxSize(5120)
                 ->directory('blog-images')
-                ->disk('public'),
+                ->disk('public')
+                ->preventFilePathTampering(),
 
             TagsInput::make('tags'),
 

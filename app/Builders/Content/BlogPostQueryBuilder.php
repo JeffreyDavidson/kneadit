@@ -40,7 +40,7 @@ class BlogPostQueryBuilder extends Builder
 
     public function forListing(?string $category = null): static
     {
-        $this->published()->orderByDesc('published_at');
+        $this->published()->latest('published_at');
 
         if ($category && $category !== 'all') {
             $enum = BlogPostCategory::tryFrom($category);

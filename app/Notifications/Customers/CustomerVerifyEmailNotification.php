@@ -30,7 +30,7 @@ class CustomerVerifyEmailNotification extends Notification
             ],
         );
 
-        $storeName = app(TenantSettings::class)->store->name;
+        $storeName = resolve(TenantSettings::class)->store->name;
 
         return (new MailMessage)
             ->subject("Verify your email — {$storeName}")

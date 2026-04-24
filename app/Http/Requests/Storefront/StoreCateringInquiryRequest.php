@@ -18,7 +18,7 @@ class StoreCateringInquiryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $catering = app(TenantSettings::class)->catering;
+        $catering = resolve(TenantSettings::class)->catering;
 
         return [
             'customer_name' => ['required', 'string', 'max:255'],

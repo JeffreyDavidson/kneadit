@@ -21,9 +21,8 @@ test('consumes valid token and returns owner user', function () {
     $user = resolve(ConsumeImpersonationToken::class)($rawToken);
 
     expect($user)->toBeInstanceOf(User::class)
-        ->and($user->role)->toBe(UserRole::Owner);
-
-    expect(ImpersonationToken::query()->where('token', hash('sha256', $rawToken))->count())->toBe(0);
+        ->and($user->role)->toBe(UserRole::Owner)
+        ->and(ImpersonationToken::query()->where('token', hash('sha256', $rawToken))->count())->toBe(0);
 });
 
 test('aborts on expired token', function () {

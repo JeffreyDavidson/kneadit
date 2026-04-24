@@ -125,7 +125,7 @@ class QrCodeGenerator extends Page
 
         $this->currentUrl = $this->buildUrl($page);
 
-        $service = app(QrCodeService::class);
+        $service = resolve(QrCodeService::class);
 
         $this->qrCodeSvg = $format === 'png'
             ? base64_encode($service->generatePng($this->currentUrl, $size, $color))
@@ -141,7 +141,7 @@ class QrCodeGenerator extends Page
 
         $url = $this->buildUrl($page);
 
-        $service = app(QrCodeService::class);
+        $service = resolve(QrCodeService::class);
 
         if ($format === 'png') {
             $content = $service->generatePng($url, $size, $color);

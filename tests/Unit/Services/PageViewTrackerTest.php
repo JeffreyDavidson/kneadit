@@ -3,7 +3,7 @@
 use App\Services\Analytics\PageViewTracker;
 
 it('detects page from route name', function () {
-    $tracker = app(PageViewTracker::class);
+    $tracker = resolve(PageViewTracker::class);
 
     expect($tracker->detectPage('storefront.menu', '/'))->toBe('menu')
         ->and($tracker->detectPage('storefront.home', '/'))->toBe('home')

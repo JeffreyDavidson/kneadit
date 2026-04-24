@@ -93,7 +93,7 @@ test('parses empty body into empty items array', function () {
 
     $entries = resolve(ChangelogService::class)->entries();
 
-    expect($entries->first()['items'])->toBe([]);
+    expect($entries->first()['items'])->toBeEmpty();
 });
 
 test('cached payload survives unserialize with allowed_classes=false (the prod cache config)', function () {

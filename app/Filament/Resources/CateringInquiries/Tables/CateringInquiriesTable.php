@@ -50,7 +50,7 @@ class CateringInquiriesTable
                     ->options(CateringInquiryStatus::class),
                 SelectFilter::make('event_type')
                     ->options(function () {
-                        $types = app(TenantSettings::class)->catering->eventTypes;
+                        $types = resolve(TenantSettings::class)->catering->eventTypes;
 
                         return array_combine($types, $types);
                     }),
@@ -88,7 +88,7 @@ class CateringInquiriesTable
                             ->required()
                             ->default(fn () => resolve(RecordCateringDeposit::class)->suggestedAmount(
                                 $record,
-                                app(TenantSettings::class)->catering->depositPercent,
+                                resolve(TenantSettings::class)->catering->depositPercent,
                             )),
                         TextInput::make('reference')
                             ->label('Reference (check #, last-4, etc.)')

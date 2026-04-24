@@ -60,7 +60,7 @@ class PrintableMenu extends Page
     /** @return array<string, mixed> */
     public function getStoreInfo(): array
     {
-        $settings = app(TenantSettings::class);
+        $settings = resolve(TenantSettings::class);
         $branding = $settings->branding;
 
         return [

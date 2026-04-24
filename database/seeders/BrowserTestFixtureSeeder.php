@@ -32,9 +32,7 @@ class BrowserTestFixtureSeeder extends Seeder
 
     public function run(): void
     {
-        if (app()->environment('production')) {
-            throw new RuntimeException('BrowserTestFixtureSeeder must never run in production.');
-        }
+        throw_if(app()->environment('production'), RuntimeException::class, 'BrowserTestFixtureSeeder must never run in production.');
 
         $this->seedAdminUser();
         $this->skipOnboarding();
@@ -44,7 +42,7 @@ class BrowserTestFixtureSeeder extends Seeder
 
     private function skipOnboarding(): void
     {
-        app(SettingsManager::class)->set('onboarding_completed_at', now()->toISOString());
+        resolve(SettingsManager::class)->set('onboarding_completed_at', now()->toISOString());
     }
 
     private function seedAdminUser(): void

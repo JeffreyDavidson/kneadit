@@ -204,7 +204,7 @@ test('onboarding with storefront choice kneadit sets storefront enabled true', f
     submitOnboarding($user, ['subdomain' => $sub, 'storefront_choice' => 'kneadit']);
 
     $tenant = DB::table('tenants')->where('id', $sub)->first();
-    expect((bool) $tenant->storefront_enabled)->toBeTrue();
+    expect($tenant->storefront_enabled)->toBeTruthy();
 });
 
 test('onboarding with storefront choice own sets storefront enabled false', function () {
@@ -217,7 +217,7 @@ test('onboarding with storefront choice own sets storefront enabled false', func
     ]);
 
     $tenant = DB::table('tenants')->where('id', $sub)->first();
-    expect((bool) $tenant->storefront_enabled)->toBeFalse();
+    expect($tenant->storefront_enabled)->toBeFalsy();
 });
 
 test('onboarding redirects to tenant admin url', function () {

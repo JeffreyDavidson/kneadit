@@ -77,15 +77,13 @@ test('build assembles full session params with metadata', function () {
         ->mode->toBe('payment')
         ->success_url->toBe('https://success')
         ->cancel_url->toBe('https://cancel')
-        ->customer_email->toBe('baker@example.com');
-    expect($params['metadata'])
-        ->toHaveKey('order_number', 'ORD-001')
+        ->customer_email->toBe('baker@example.com')
+        ->and($params['metadata'])->toHaveKey('order_number', 'ORD-001')
         ->toHaveKey('order_id', $order->id)
-        ->toHaveKey('tenant_id', 'tenant-abc');
-    expect($params['payment_intent_data']['metadata'])
-        ->toHaveKey('order_number', 'ORD-001')
-        ->toHaveKey('tenant_id', 'tenant-abc');
-    expect($params)->not->toHaveKey('discounts');
+        ->toHaveKey('tenant_id', 'tenant-abc')
+        ->and($params['payment_intent_data']['metadata'])->toHaveKey('order_number', 'ORD-001')
+        ->toHaveKey('tenant_id', 'tenant-abc')
+        ->and($params)->not->toHaveKey('discounts');
 });
 
 test('build includes discounts key when discounts array is provided', function () {

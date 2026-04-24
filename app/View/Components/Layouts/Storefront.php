@@ -15,7 +15,7 @@ class Storefront extends Component
 
     public function render(): View
     {
-        $settings = app(TenantSettings::class);
+        $settings = resolve(TenantSettings::class);
 
         return view('components.layouts.storefront', [
             'settings' => $settings,

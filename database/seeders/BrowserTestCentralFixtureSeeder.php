@@ -23,9 +23,7 @@ class BrowserTestCentralFixtureSeeder extends Seeder
 
     public function run(): void
     {
-        if (app()->environment('production')) {
-            throw new RuntimeException('BrowserTestCentralFixtureSeeder must never run in production.');
-        }
+        throw_if(app()->environment('production'), RuntimeException::class, 'BrowserTestCentralFixtureSeeder must never run in production.');
 
         User::query()->updateOrCreate(
             ['email' => self::ADMIN_EMAIL],

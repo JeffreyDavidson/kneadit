@@ -23,12 +23,9 @@ test('sendReminder dispatches TrialReminding with the tenant store name', functi
     $result = resolve(TrialExpirationNotifier::class)->sendReminder($user, $tenant, 7);
 
     expect($result)->toBeTrue();
-    Event::assertDispatched(
-        TrialReminding::class,
-        fn (TrialReminding $event): bool => $event->user->is($user)
-            && $event->daysLeft === 7
-            && $event->storeName === 'Happy Bread Co',
-    );
+    Event::assertDispatched(fn (TrialReminding $event): bool => $event->user->is($user)
+        && $event->daysLeft === 7
+        && $event->storeName === 'Happy Bread Co');
 });
 
 test('sendReminder falls back to tenant name when store_name is empty', function () {
@@ -44,10 +41,7 @@ test('sendReminder falls back to tenant name when store_name is empty', function
 
     resolve(TrialExpirationNotifier::class)->sendReminder($user, $tenant, 3);
 
-    Event::assertDispatched(
-        TrialReminding::class,
-        fn (TrialReminding $event): bool => $event->storeName === 'Baker McBakerson',
-    );
+    Event::assertDispatched(fn (TrialReminding $event): bool => $event->storeName === 'Baker McBakerson');
 });
 
 test('notifyExpired dispatches TrialExpired with tenant id', function () {
@@ -58,8 +52,5 @@ test('notifyExpired dispatches TrialExpired with tenant id', function () {
 
     resolve(TrialExpirationNotifier::class)->notifyExpired($user, $tenant);
 
-    Event::assertDispatched(
-        TrialExpired::class,
-        fn (TrialExpired $event): bool => $event->user->is($user) && $event->tenantId === 'expired-tenant',
-    );
+    Event::assertDispatched(fn (TrialExpired $event): bool => $event->user->is($user) && $event->tenantId === 'expired-tenant');
 });

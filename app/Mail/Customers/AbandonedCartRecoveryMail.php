@@ -71,7 +71,7 @@ class AbandonedCartRecoveryMail extends BaseMailable
     {
         return [
             'customer_name' => $this->cart->customer_name ?: 'there',
-            'store_name' => app(TenantSettings::class)->store->name,
+            'store_name' => resolve(TenantSettings::class)->store->name,
             'recovery_url' => $this->recoveryUrl(),
             'coupon_code' => $this->coupon ? $this->coupon->code : '',
         ];

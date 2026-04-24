@@ -60,17 +60,17 @@ test('each accessor returns the correct sub-DTO type', function (string $accesso
 ]);
 
 test('sub-DTOs are resolvable from the container', function () {
-    expect(resolve(StoreInfo::class))->toBeInstanceOf(StoreInfo::class);
-    expect(resolve(OrderSettings::class))->toBeInstanceOf(OrderSettings::class);
-    expect(resolve(LoyaltySettings::class))->toBeInstanceOf(LoyaltySettings::class);
+    expect(resolve(StoreInfo::class))->toBeInstanceOf(StoreInfo::class)
+        ->and(resolve(OrderSettings::class))->toBeInstanceOf(OrderSettings::class)
+        ->and(resolve(LoyaltySettings::class))->toBeInstanceOf(LoyaltySettings::class);
 });
 
 test('container-resolved sub-DTOs match TenantSettings properties', function () {
     $settings = resolve(TenantSettings::class);
 
-    expect(resolve(StoreInfo::class)->name)->toBe($settings->store->name);
-    expect(resolve(OrderSettings::class)->leadTimeHours)->toBe($settings->orders->leadTimeHours);
-    expect(resolve(LoyaltySettings::class)->enabled)->toBe($settings->loyalty->enabled);
+    expect(resolve(StoreInfo::class)->name)->toBe($settings->store->name)
+        ->and(resolve(OrderSettings::class)->leadTimeHours)->toBe($settings->orders->leadTimeHours)
+        ->and(resolve(LoyaltySettings::class)->enabled)->toBe($settings->loyalty->enabled);
 });
 
 test('TenantSettings resolves through registry', function () {

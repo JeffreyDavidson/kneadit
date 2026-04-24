@@ -35,7 +35,8 @@ class CustomerPhotoForm
                             ->directory('customer-photos')
                             ->disk('public')
                             ->imagePreviewHeight('200')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->preventFilePathTampering(),
 
                         Textarea::make('caption')
                             ->rows(3)

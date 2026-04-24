@@ -70,7 +70,7 @@ class CateringDepositCheckoutService
                             'unit_amount' => (int) round($depositDollars * 100),
                             'product_data' => [
                                 'name' => "Catering deposit — {$inquiry->event_type}",
-                                'description' => trim('Event date: ' . optional($inquiry->event_date)->format('M j, Y')),
+                                'description' => trim('Event date: ' . $inquiry->event_date?->format('M j, Y')),
                             ],
                         ],
                     ]],

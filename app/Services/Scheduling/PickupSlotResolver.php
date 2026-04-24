@@ -6,7 +6,7 @@ use App\Enums\Orders\DeliveryType;
 use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
 use App\Services\Settings\TenantSettings;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 /**
  * Generates the list of pickup time slots available for a given date.
@@ -30,7 +30,7 @@ class PickupSlotResolver
             return [];
         }
 
-        $date = Carbon::parse($dateString);
+        $date = Date::parse($dateString);
         $schedule = BusinessSchedule::query()->forDay((int) $date->dayOfWeek)->first();
 
         if ($schedule === null || ! $schedule->is_open || ! $schedule->open_time || ! $schedule->close_time) {
@@ -40,8 +40,8 @@ class PickupSlotResolver
         $interval = max(5, $this->settings->orders->pickupSlotIntervalMinutes);
         $maxPerSlot = max(1, $this->settings->orders->pickupSlotMaxPerWindow);
 
-        $open = Carbon::parse($schedule->open_time);
-        $close = Carbon::parse($schedule->close_time);
+        $open = Date::parse($schedule->open_time);
+        $close = Date::parse($schedule->close_time);
 
         $slots = [];
         $cursor = $open->copy();

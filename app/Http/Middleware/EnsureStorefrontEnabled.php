@@ -19,7 +19,7 @@ class EnsureStorefrontEnabled
                 return redirect()->away($tenant->external_website);
             }
 
-            $settings = app(TenantSettings::class);
+            $settings = resolve(TenantSettings::class);
 
             // Otherwise show disabled page
             return response()->view('platform.storefront-disabled', [

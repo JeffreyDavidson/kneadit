@@ -6,7 +6,7 @@ use App\Services\Settings\TenantSettings;
 beforeEach(fn () => setUpTenantTest());
 
 it('exposes the expected JSON:API shape for store info', function () {
-    $settings = app(TenantSettings::class);
+    $settings = resolve(TenantSettings::class);
 
     $resource = new StoreInfoResource($settings);
     $request = request();

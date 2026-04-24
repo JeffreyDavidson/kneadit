@@ -28,10 +28,7 @@ test('dispatches reminders at 7, 3, and 1 day intervals', function () {
     resolve(ProcessTrialExpirations::class)();
 
     foreach ([7, 3, 1] as $days) {
-        Event::assertDispatched(
-            TrialReminding::class,
-            fn (TrialReminding $event): bool => $event->daysLeft === $days && $event->user->email === "baker{$days}@test.com",
-        );
+        Event::assertDispatched(fn (TrialReminding $event): bool => $event->daysLeft === $days && $event->user->email === "baker{$days}@test.com");
     }
 });
 
@@ -107,11 +104,8 @@ test('pauses expired storefronts and dispatches TrialExpired', function () {
 
     $tenant = DB::table('tenants')->where('id', 'expired-bakery')->first();
 
-    expect((bool) $tenant->storefront_enabled)->toBeFalse();
-    Event::assertDispatched(
-        TrialExpired::class,
-        fn (TrialExpired $event): bool => $event->tenantId === 'expired-bakery',
-    );
+    expect($tenant->storefront_enabled)->toBeFalsy();
+    Event::assertDispatched(fn (TrialExpired $event): bool => $event->tenantId === 'expired-bakery');
 });
 
 test('does not re-pause an already-paused storefront', function () {
@@ -149,7 +143,7 @@ test('pauses storefront even when tenant has no user, but skips TrialExpired eve
 
     $tenant = DB::table('tenants')->where('id', 'expired-no-user')->first();
 
-    expect((bool) $tenant->storefront_enabled)->toBeFalse();
+    expect($tenant->storefront_enabled)->toBeFalsy();
     Event::assertNotDispatched(TrialExpired::class);
 });
 

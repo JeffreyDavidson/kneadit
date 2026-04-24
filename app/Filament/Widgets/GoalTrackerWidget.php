@@ -31,7 +31,7 @@ class GoalTrackerWidget extends Widget
         $this->editingType = $type;
         $key = $type === 'monthly' ? 'monthly_revenue_goal' : 'yearly_revenue_goal';
         $default = $type === 'monthly' ? '5000' : '50000';
-        $this->editingGoal = app(SettingsManager::class)->get($key, $default);
+        $this->editingGoal = resolve(SettingsManager::class)->get($key, $default);
         $this->showEditModal = true;
     }
 
@@ -43,7 +43,7 @@ class GoalTrackerWidget extends Widget
     public function saveGoal(): void
     {
         $key = $this->editingType === 'monthly' ? 'monthly_revenue_goal' : 'yearly_revenue_goal';
-        app(SettingsManager::class)->set($key, $this->editingGoal);
+        resolve(SettingsManager::class)->set($key, $this->editingGoal);
         $this->showEditModal = false;
     }
 
@@ -51,7 +51,7 @@ class GoalTrackerWidget extends Widget
     public function getMonthlyDataProperty(): array
     {
         return $this->cached('monthly_' . now()->format('Y-m'), [900, 1800], function (): array {
-            $goal = (float) app(SettingsManager::class)->get('monthly_revenue_goal', 5000);
+            $goal = (float) resolve(SettingsManager::class)->get('monthly_revenue_goal', 5000);
             $range = DateRange::thisMonth();
 
             // orders.total is bigint cents (migration 2026_04_22_201500).
@@ -74,7 +74,7 @@ class GoalTrackerWidget extends Widget
     public function getYearlyDataProperty(): array
     {
         return $this->cached('yearly_' . now()->format('Y'), [1800, 3600], function (): array {
-            $goal = (float) app(SettingsManager::class)->get('yearly_revenue_goal', 50000);
+            $goal = (float) resolve(SettingsManager::class)->get('yearly_revenue_goal', 50000);
             $range = DateRange::thisYear();
 
             // orders.total is bigint cents (migration 2026_04_22_201500).

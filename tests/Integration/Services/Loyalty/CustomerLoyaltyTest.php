@@ -45,9 +45,8 @@ test('snapshot returns balance and history', function () {
 
     expect($snapshot['balance'])
         ->toBeInstanceOf(LoyaltyBalance::class)
-        ->total->toBe(70);
-
-    expect($snapshot['history'])->toHaveCount(2);
+        ->total->toBe(70)
+        ->and($snapshot['history'])->toHaveCount(2);
 });
 
 test('snapshot respects history limit', function () {

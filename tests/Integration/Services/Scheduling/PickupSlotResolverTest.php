@@ -5,7 +5,6 @@ use App\Models\Operations\BusinessSchedule;
 use App\Models\Orders\Order;
 use App\Services\Scheduling\PickupSlotResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
 
 uses(RefreshDatabase::class);
 
@@ -13,7 +12,7 @@ beforeEach(fn () => setUpTenantTest());
 
 test('returns empty when feature is disabled', function () {
     settings(['pickup_slots_enabled' => false]);
-    $date = Carbon::parse('2026-05-04'); // Monday
+    $date = Illuminate\Support\Facades\Date::parse('2026-05-04'); // Monday
 
     BusinessSchedule::factory()->create([
         'day_of_week' => $date->dayOfWeek,
@@ -22,18 +21,18 @@ test('returns empty when feature is disabled', function () {
         'close_time' => '12:00',
     ]);
 
-    expect(resolve(PickupSlotResolver::class)->availableSlots($date->toDateString()))->toBe([]);
+    expect(resolve(PickupSlotResolver::class)->availableSlots($date->toDateString()))->toBeEmpty();
 });
 
 test('returns empty when there is no schedule for the day', function () {
     settings(['pickup_slots_enabled' => true]);
 
-    expect(resolve(PickupSlotResolver::class)->availableSlots('2026-05-04'))->toBe([]);
+    expect(resolve(PickupSlotResolver::class)->availableSlots('2026-05-04'))->toBeEmpty();
 });
 
 test('returns empty when the bakery is closed that day', function () {
     settings(['pickup_slots_enabled' => true]);
-    $date = Carbon::parse('2026-05-04');
+    $date = Illuminate\Support\Facades\Date::parse('2026-05-04');
 
     BusinessSchedule::factory()->create([
         'day_of_week' => $date->dayOfWeek,
@@ -42,7 +41,7 @@ test('returns empty when the bakery is closed that day', function () {
         'close_time' => '12:00',
     ]);
 
-    expect(resolve(PickupSlotResolver::class)->availableSlots($date->toDateString()))->toBe([]);
+    expect(resolve(PickupSlotResolver::class)->availableSlots($date->toDateString()))->toBeEmpty();
 });
 
 test('generates slots stepped by interval between open and close', function () {
@@ -51,7 +50,7 @@ test('generates slots stepped by interval between open and close', function () {
         'pickup_slot_interval_minutes' => 30,
         'pickup_slot_max_per_window' => 3,
     ]);
-    $date = Carbon::parse('2026-05-04');
+    $date = Illuminate\Support\Facades\Date::parse('2026-05-04');
 
     BusinessSchedule::factory()->create([
         'day_of_week' => $date->dayOfWeek,
@@ -71,7 +70,7 @@ test('honors a 15-minute interval', function () {
         'pickup_slot_interval_minutes' => 15,
         'pickup_slot_max_per_window' => 3,
     ]);
-    $date = Carbon::parse('2026-05-04');
+    $date = Illuminate\Support\Facades\Date::parse('2026-05-04');
 
     BusinessSchedule::factory()->create([
         'day_of_week' => $date->dayOfWeek,
@@ -91,7 +90,7 @@ test('filters out slots that are already at the per-window cap', function () {
         'pickup_slot_interval_minutes' => 30,
         'pickup_slot_max_per_window' => 2,
     ]);
-    $date = Carbon::parse('2026-05-04');
+    $date = Illuminate\Support\Facades\Date::parse('2026-05-04');
 
     BusinessSchedule::factory()->create([
         'day_of_week' => $date->dayOfWeek,
@@ -117,7 +116,7 @@ test('ignores delivery-typed orders when counting slot bookings', function () {
         'pickup_slot_interval_minutes' => 30,
         'pickup_slot_max_per_window' => 1,
     ]);
-    $date = Carbon::parse('2026-05-04');
+    $date = Illuminate\Support\Facades\Date::parse('2026-05-04');
 
     BusinessSchedule::factory()->create([
         'day_of_week' => $date->dayOfWeek,

@@ -15,6 +15,6 @@ class CheckoutSuccessController extends Controller
             $reauthenticate($request->input('session_id'));
         }
 
-        return redirect()->route('onboarding.show');
+        return to_route('onboarding.show');
     }
 }

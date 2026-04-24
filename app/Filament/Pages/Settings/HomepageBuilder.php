@@ -57,7 +57,7 @@ class HomepageBuilder extends Page
 
     protected function loadHeroContent(): void
     {
-        $branding = app(TenantSettings::class)->branding;
+        $branding = resolve(TenantSettings::class)->branding;
         $this->hero_tagline = $branding->heroTagline;
         $this->hero_primary_cta_text = $branding->heroPrimaryCtaText;
         $this->hero_secondary_cta_text = $branding->heroSecondaryCtaText;
@@ -81,7 +81,7 @@ class HomepageBuilder extends Page
 
     protected function loadSections(): void
     {
-        $saved = app(TenantSettings::class)->homepage->sections;
+        $saved = resolve(TenantSettings::class)->homepage->sections;
         $defaults = $this->getDefaults();
 
         // Merge saved with defaults to ensure all sections exist
@@ -133,7 +133,7 @@ class HomepageBuilder extends Page
     public function save(): void
     {
         try {
-            app(SettingsManager::class)->setMany([
+            resolve(SettingsManager::class)->setMany([
                 'homepage_sections' => json_encode($this->sections),
                 'hero_tagline' => $this->hero_tagline,
                 'hero_primary_cta_text' => $this->hero_primary_cta_text,
@@ -160,7 +160,7 @@ class HomepageBuilder extends Page
         $this->hero_primary_cta_text = 'Order Now';
         $this->hero_secondary_cta_text = 'Browse Menu';
 
-        app(SettingsManager::class)->setMany([
+        resolve(SettingsManager::class)->setMany([
             'homepage_sections' => json_encode($this->sections),
             'hero_tagline' => $this->hero_tagline,
             'hero_primary_cta_text' => $this->hero_primary_cta_text,

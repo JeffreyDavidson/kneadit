@@ -19,7 +19,7 @@ test('queues an email per unnotified waitlist entry and marks them notified', fu
     ProductWaitlist::query()->create(['product_id' => $product->id, 'customer_email' => 'a@example.com', 'customer_name' => 'Alice']);
     ProductWaitlist::query()->create(['product_id' => $product->id, 'customer_email' => 'b@example.com', 'customer_name' => 'Bob']);
 
-    $count = app(NotifyProductWaitlist::class)($product);
+    $count = resolve(NotifyProductWaitlist::class)($product);
 
     expect($count)->toBe(2);
     Mail::assertQueued(ProductAvailableMail::class, fn (ProductAvailableMail $mail) => $mail->hasTo('a@example.com'));
@@ -32,7 +32,7 @@ test('skips entries already notified', function () {
     ProductWaitlist::query()->create(['product_id' => $product->id, 'customer_email' => 'fresh@example.com']);
     ProductWaitlist::query()->create(['product_id' => $product->id, 'customer_email' => 'already@example.com', 'notified_at' => now()->subDay()]);
 
-    $count = app(NotifyProductWaitlist::class)($product);
+    $count = resolve(NotifyProductWaitlist::class)($product);
 
     expect($count)->toBe(1);
     Mail::assertQueued(ProductAvailableMail::class, fn (ProductAvailableMail $mail) => $mail->hasTo('fresh@example.com'));
@@ -44,7 +44,7 @@ test('does nothing and returns 0 when the email toggle is disabled', function ()
     $product = Product::factory()->create();
     ProductWaitlist::query()->create(['product_id' => $product->id, 'customer_email' => 'a@example.com']);
 
-    $count = app(NotifyProductWaitlist::class)($product);
+    $count = resolve(NotifyProductWaitlist::class)($product);
 
     expect($count)->toBe(0);
     Mail::assertNothingQueued();
@@ -54,6 +54,6 @@ test('does nothing and returns 0 when the email toggle is disabled', function ()
 test('returns 0 when waitlist is empty', function () {
     $product = Product::factory()->create();
 
-    expect(app(NotifyProductWaitlist::class)($product))->toBe(0);
+    expect(resolve(NotifyProductWaitlist::class)($product))->toBe(0);
     Mail::assertNothingQueued();
 });

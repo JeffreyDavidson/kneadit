@@ -13,7 +13,7 @@ beforeEach(function () {
 test('creates a user with given data', function () {
     Event::fake([Registered::class]);
 
-    $user = app(CreateUser::class)([
+    $user = resolve(CreateUser::class)([
         'name' => 'Jane Baker',
         'email' => 'jane@example.com',
         'password' => 'secret123',
@@ -30,7 +30,7 @@ test('creates a user with given data', function () {
 test('dispatches Registered event', function () {
     Event::fake([Registered::class]);
 
-    app(CreateUser::class)([
+    resolve(CreateUser::class)([
         'name' => 'Bob',
         'email' => 'bob@example.com',
         'password' => 'secret123',

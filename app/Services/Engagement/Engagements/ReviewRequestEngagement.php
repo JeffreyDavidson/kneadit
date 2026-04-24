@@ -46,7 +46,7 @@ class ReviewRequestEngagement implements CustomerEngagement
         /** @var Order $order */
         $order = $recipient->model;
 
-        ReviewRequested::dispatch($order);
+        event(new ReviewRequested($order));
 
         $order->update(['review_request_sent_at' => now()]);
     }

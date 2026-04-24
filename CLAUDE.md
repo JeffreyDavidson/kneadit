@@ -85,6 +85,7 @@
 - **Never cache Eloquent models or collections.** `config/cache.php` sets `'serializable_classes' => false` (Laravel's gadget-chain default). Any `Cache::flexible(..., fn() => SomeModel::query()->...->get())` will 500 on the second hit as `unserialize()` returns `__PHP_Incomplete_Class`.
 - Cache scalars (int, float, string, bool), primitive arrays, or — if you need the Collection shape on read — cache the underlying array and wrap with `collect()` in the resolver boundary.
 - Tests don't catch this bug because `phpunit.xml` pins `CACHE_STORE=array` (in-memory, no serialization). When writing a new cache call, manually reason about the shape.
+- **Runtime guard**: `AppServiceProvider::boot()` registers a `Cache::handleUnserializableClassUsing()` callback that always logs the offending key + class, and additionally throws `RuntimeException` in non-production environments. So a violation that ships will surface loudly in dev/staging on the second hit.
 - `Hero::topReview` documents this rule inline; copy that comment when adding a no-cache-here decision.
 
 ### Atomic Counters
@@ -241,6 +242,12 @@ This project has domain-specific skills available. You MUST activate the relevan
 - Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
 - Use array shape type definitions in PHPDoc blocks.
 
+=== deployments rules ===
+
+# Deployment
+
+- Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
+
 === herd rules ===
 
 # Laravel Herd
@@ -284,10 +291,6 @@ This project has domain-specific skills available. You MUST activate the relevan
 ## Vite Error
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
-
-## Deployment
-
-- Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
 
 === pint/core rules ===
 

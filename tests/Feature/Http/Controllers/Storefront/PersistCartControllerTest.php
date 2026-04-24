@@ -23,14 +23,14 @@ test('persists items + email and returns the cart token', function () {
         ]);
 
     $response->assertOk();
-    expect($response->json('data.cart_token'))->toBeString()->not->toBeEmpty();
-    expect($response->json('data.item_count'))->toBe(1);
+    expect($response->json('data.cart_token'))->toBeString()->not->toBeEmpty()
+        ->and($response->json('data.item_count'))->toBe(1);
 
     $cart = Cart::query()->latest('id')->first();
-    expect($cart->customer_email)->toBe('alice@example.com');
-    expect($cart->customer_name)->toBe('Alice');
-    expect($cart->items()->first()->product_id)->toBe($product->id);
-    expect($cart->items()->first()->quantity)->toBe(2);
+    expect($cart->customer_email)->toBe('alice@example.com')
+        ->and($cart->customer_name)->toBe('Alice')
+        ->and($cart->items()->first()->product_id)->toBe($product->id)
+        ->and($cart->items()->first()->quantity)->toBe(2);
 });
 
 test('creates a new cart on first post and returns a token', function () {
@@ -44,8 +44,8 @@ test('creates a new cart on first post and returns a token', function () {
         ]);
 
     $response->assertOk();
-    expect($response->json('data.cart_token'))->toBeString()->not->toBeEmpty();
-    expect(Cart::query()->count())->toBe(1);
+    expect($response->json('data.cart_token'))->toBeString()->not->toBeEmpty()
+        ->and(Cart::query()->count())->toBe(1);
     // Cookie round-trip behavior (reusing the same cart via cookie) is covered
     // by CartManagerTest which sets the cookie directly on the Request object —
     // Laravel's JSON test client is awkward to use for signed-cookie round-trips.
@@ -59,7 +59,7 @@ test('rejects items with invalid product_id', function () {
             ],
         ]);
 
-    $response->assertStatus(422);
+    $response->assertUnprocessable();
     $response->assertJsonValidationErrors(['items.0.product_id']);
 });
 

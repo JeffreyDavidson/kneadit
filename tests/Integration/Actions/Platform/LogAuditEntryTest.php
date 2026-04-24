@@ -26,9 +26,8 @@ test('it creates an audit log entry', function () {
         ->description->toBe('Created a new tenant')
         ->target_type->toBe('tenant')
         ->target_id->toBe('test-bakery')
-        ->admin_id->toBe($user->id);
-
-    expect($entry->metadata)->toBe(['plan' => 'starter']);
+        ->admin_id->toBe($user->id)
+        ->and($entry->metadata)->toBe(['plan' => 'starter']);
 });
 
 test('it creates an entry without optional fields', function () {

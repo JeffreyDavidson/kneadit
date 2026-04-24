@@ -20,6 +20,6 @@ class RegisterCustomerController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('account.email.verify.notice');
+        return to_route('account.email.verify.notice');
     }
 }

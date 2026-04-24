@@ -75,6 +75,6 @@ class RepeatOrderReminderEngagement implements CustomerEngagement
             ],
         );
 
-        RepeatOrderReminderDue::dispatch($customer, $recipient->context['days_since_last_order']);
+        event(new RepeatOrderReminderDue($customer, $recipient->context['days_since_last_order']));
     }
 }

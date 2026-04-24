@@ -11,6 +11,6 @@ test('creates a hashed token in central database and returns URL', function () {
 
     $url = resolve(CreateImpersonationToken::class)($tenant);
 
-    expect($url)->toBeString()->toContain('/impersonate/');
-    expect(ImpersonationToken::query()->where('tenant_id', $tenant->id)->count())->toBe(1);
+    expect($url)->toBeString()->toContain('/impersonate/')
+        ->and(ImpersonationToken::query()->where('tenant_id', $tenant->id)->count())->toBe(1);
 });

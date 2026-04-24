@@ -24,24 +24,24 @@ beforeEach(function () {
 test('Bronze customers get the default 1.0 multiplier and no free delivery', function () {
     $service = resolve(CustomerLoyalty::class);
 
-    expect($service->pointsMultiplier(test()->customer))->toBe(1.0);
-    expect($service->qualifiesForFreeDelivery(test()->customer))->toBeFalse();
+    expect($service->pointsMultiplier(test()->customer))->toBe(1.0)
+        ->and($service->qualifiesForFreeDelivery(test()->customer))->toBeFalse();
 });
 
 test('Gold customers get the configured multiplier and free delivery', function () {
     LoyaltyPoint::factory()->earned(2000)->for(test()->customer)->create();
     $service = resolve(CustomerLoyalty::class);
 
-    expect($service->pointsMultiplier(test()->customer))->toBe(1.5);
-    expect($service->qualifiesForFreeDelivery(test()->customer))->toBeTrue();
+    expect($service->pointsMultiplier(test()->customer))->toBe(1.5)
+        ->and($service->qualifiesForFreeDelivery(test()->customer))->toBeTrue();
 });
 
 test('Platinum customers get the configured multiplier and free delivery', function () {
     LoyaltyPoint::factory()->earned(5000)->for(test()->customer)->create();
     $service = resolve(CustomerLoyalty::class);
 
-    expect($service->pointsMultiplier(test()->customer))->toBe(2.0);
-    expect($service->qualifiesForFreeDelivery(test()->customer))->toBeTrue();
+    expect($service->pointsMultiplier(test()->customer))->toBe(2.0)
+        ->and($service->qualifiesForFreeDelivery(test()->customer))->toBeTrue();
 });
 
 test('returns 1.0 / false when perks are disabled even at top tier', function () {
@@ -49,6 +49,6 @@ test('returns 1.0 / false when perks are disabled even at top tier', function ()
     LoyaltyPoint::factory()->earned(5000)->for(test()->customer)->create();
     $service = resolve(CustomerLoyalty::class);
 
-    expect($service->pointsMultiplier(test()->customer))->toBe(1.0);
-    expect($service->qualifiesForFreeDelivery(test()->customer))->toBeFalse();
+    expect($service->pointsMultiplier(test()->customer))->toBe(1.0)
+        ->and($service->qualifiesForFreeDelivery(test()->customer))->toBeFalse();
 });

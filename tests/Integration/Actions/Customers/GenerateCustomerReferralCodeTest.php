@@ -13,8 +13,8 @@ test('generates and persists a referral code on a customer that has none', funct
 
     $code = resolve(GenerateCustomerReferralCode::class)($customer);
 
-    expect($code)->toMatch('/^[A-Z0-9]{8}$/');
-    expect($customer->fresh()->referral_code)->toBe($code);
+    expect($code)->toMatch('/^[A-Z0-9]{8}$/')
+        ->and($customer->fresh()->referral_code)->toBe($code);
 });
 
 test('returns the existing code without regenerating', function () {

@@ -55,7 +55,7 @@ test('for date scope accepts Carbon instance', function () {
         'requested_date' => '2026-07-04',
     ]);
 
-    $results = WaitlistEntry::query()->forDate(Carbon::parse('2026-07-04'))->get();
+    $results = WaitlistEntry::query()->forDate(Illuminate\Support\Facades\Date::parse('2026-07-04'))->get();
 
     expect($results)->toHaveCount(1)
         ->and($results->first()->id)->toBe($entry->id);

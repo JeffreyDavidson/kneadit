@@ -47,7 +47,7 @@ class DeliveryRoutePlanner extends Page
     public function mount(): void
     {
         $this->selectedDate = now()->format('Y-m-d');
-        $this->storeAddress = app(TenantSettings::class)->store->address ?? 'Store address not configured';
+        $this->storeAddress = resolve(TenantSettings::class)->store->address ?? 'Store address not configured';
         $this->loadOrders();
     }
 

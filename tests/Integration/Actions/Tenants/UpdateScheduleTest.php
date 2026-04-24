@@ -17,13 +17,13 @@ test('creates schedule for all seven days', function () {
         ];
     }
 
-    app(UpdateSchedule::class)($schedule);
+    resolve(UpdateSchedule::class)($schedule);
 
-    expect(BusinessSchedule::count())->toBe(7);
+    expect(BusinessSchedule::query()->count())->toBe(7);
 });
 
 test('open day stores all fields correctly', function () {
-    app(UpdateSchedule::class)([
+    resolve(UpdateSchedule::class)([
         1 => [
             'is_open' => true,
             'open_time' => '09:00',
@@ -33,7 +33,7 @@ test('open day stores all fields correctly', function () {
         ],
     ]);
 
-    $record = BusinessSchedule::where('day_of_week', 1)->first();
+    $record = BusinessSchedule::query()->where('day_of_week', 1)->first();
 
     expect($record)
         ->is_open->toBeTrue()
@@ -44,7 +44,7 @@ test('open day stores all fields correctly', function () {
 });
 
 test('closed day nullifies time fields despite having values in input', function () {
-    app(UpdateSchedule::class)([
+    resolve(UpdateSchedule::class)([
         0 => [
             'is_open' => false,
             'open_time' => '09:00',
@@ -54,7 +54,7 @@ test('closed day nullifies time fields despite having values in input', function
         ],
     ]);
 
-    $record = BusinessSchedule::where('day_of_week', 0)->first();
+    $record = BusinessSchedule::query()->where('day_of_week', 0)->first();
 
     expect($record)
         ->is_open->toBeFalse()
@@ -65,17 +65,17 @@ test('closed day nullifies time fields despite having values in input', function
 });
 
 test('updates existing schedule without creating duplicates', function () {
-    app(UpdateSchedule::class)([
+    resolve(UpdateSchedule::class)([
         1 => ['is_open' => true, 'open_time' => '08:00', 'close_time' => '17:00', 'order_cutoff_time' => null, 'max_orders' => null],
     ]);
 
-    app(UpdateSchedule::class)([
+    resolve(UpdateSchedule::class)([
         1 => ['is_open' => true, 'open_time' => '10:00', 'close_time' => '20:00', 'order_cutoff_time' => '18:00', 'max_orders' => 25],
     ]);
 
-    expect(BusinessSchedule::where('day_of_week', 1)->count())->toBe(1);
+    expect(BusinessSchedule::query()->where('day_of_week', 1)->count())->toBe(1);
 
-    $record = BusinessSchedule::where('day_of_week', 1)->first();
+    $record = BusinessSchedule::query()->where('day_of_week', 1)->first();
 
     expect($record)
         ->open_time->toBe('10:00')
@@ -84,7 +84,7 @@ test('updates existing schedule without creating duplicates', function () {
 });
 
 test('handles null optional fields', function () {
-    app(UpdateSchedule::class)([
+    resolve(UpdateSchedule::class)([
         3 => [
             'is_open' => true,
             'open_time' => '08:00',
@@ -94,7 +94,7 @@ test('handles null optional fields', function () {
         ],
     ]);
 
-    $record = BusinessSchedule::where('day_of_week', 3)->first();
+    $record = BusinessSchedule::query()->where('day_of_week', 3)->first();
 
     expect($record)
         ->is_open->toBeTrue()

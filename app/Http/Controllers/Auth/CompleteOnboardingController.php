@@ -35,7 +35,7 @@ class CompleteOnboardingController extends Controller
             email: $user->email,
         );
 
-        TenantOnboarded::dispatch($user, $tenant, $request->adminUrl());
+        event(new TenantOnboarded($user, $tenant, $request->adminUrl()));
 
         Auth::logout();
         $request->session()->invalidate();

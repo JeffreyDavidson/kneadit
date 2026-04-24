@@ -152,5 +152,5 @@ test('viewing an unread message marks it as read', function () {
         ->assertOk();
 
     $message = DB::table('platform_messages')->where('id', $messageId)->first();
-    expect((bool) $message->is_read)->toBeTrue();
+    expect($message->is_read)->toBeTruthy();
 });

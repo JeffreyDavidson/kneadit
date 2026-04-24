@@ -17,9 +17,9 @@ test('current returns null when no cookie is present', function () {
 test('currentOrCreate creates a new cart with a token when none exists', function () {
     $cart = resolve(CartManager::class)->currentOrCreate();
 
-    expect($cart->cart_token)->toBeString()->not->toBeEmpty();
-    expect($cart->last_activity_at)->not->toBeNull();
-    expect($cart->expires_at?->isAfter(now()))->toBeTrue();
+    expect($cart->cart_token)->toBeString()->not->toBeEmpty()
+        ->and($cart->last_activity_at)->not->toBeNull()
+        ->and($cart->expires_at?->isAfter(now()))->toBeTrue();
 });
 
 test('current returns the cart matching the cookie', function () {
@@ -50,10 +50,10 @@ test('replaceItems wipes existing items and inserts the new set', function () {
     ]);
 
     $items = $cart->items()->get();
-    expect($items)->toHaveCount(1);
-    expect($items->first()->product_id)->toBe($newProduct->id);
-    expect($items->first()->quantity)->toBe(3);
-    expect($items->first()->unit_price->dollars())->toBe(12.50);
+    expect($items)->toHaveCount(1)
+        ->and($items->first()->product_id)->toBe($newProduct->id)
+        ->and($items->first()->quantity)->toBe(3)
+        ->and($items->first()->unit_price->dollars())->toBe(12.50);
 });
 
 test('replaceItems with an empty array clears the cart', function () {
@@ -92,8 +92,8 @@ test('updateContact treats empty strings as null', function () {
 
     resolve(CartManager::class)->updateContact($cart, '   ', '');
 
-    expect($cart->fresh()->customer_email)->toBeNull();
-    expect($cart->fresh()->customer_name)->toBeNull();
+    expect($cart->fresh()->customer_email)->toBeNull()
+        ->and($cart->fresh()->customer_name)->toBeNull();
 });
 
 test('touch refreshes last_activity_at', function () {
