@@ -96,7 +96,7 @@ final class ProductLabelPresenter
     {
         /** @var list<string> $rows */
         $rows = Collection::make($recipe->ingredients ?? [])
-            ->filter(fn (array $row) => ! empty($row['name']))
+            ->reject(fn (array $row): bool => empty($row['name']))
             ->sortByDesc(fn (array $row) => (float) ($row['quantity'] ?? 0))
             ->pluck('name')
             ->filter()

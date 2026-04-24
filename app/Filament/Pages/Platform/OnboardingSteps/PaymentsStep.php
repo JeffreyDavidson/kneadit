@@ -24,7 +24,7 @@ final class PaymentsStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
-        $manager = app(SettingsManager::class);
+        $manager = resolve(SettingsManager::class);
         $methods = $manager->get('payment_methods');
 
         return [
@@ -111,6 +111,6 @@ final class PaymentsStep extends OnboardingStep
             $settings['paypal_sandbox'] = $data['paypal_sandbox'] ? '1' : '0';
         }
 
-        app(SettingsManager::class)->setMany($settings);
+        resolve(SettingsManager::class)->setMany($settings);
     }
 }

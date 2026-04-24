@@ -25,7 +25,7 @@ class PercentageInput extends TextInput
     {
         return [
             ...parent::getDefaultStateCasts(),
-            app(PercentageStateCast::class),
+            resolve(PercentageStateCast::class),
         ];
     }
 }

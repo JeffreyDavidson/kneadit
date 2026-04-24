@@ -31,7 +31,7 @@ test('handleInvoicePaymentFailed dispatches PaymentFailed event', function () {
         ],
     ]);
 
-    Event::assertDispatched(PaymentFailed::class, fn (PaymentFailed $event) => $event->user->email === $user->email
+    Event::assertDispatched(fn (PaymentFailed $event) => $event->user->email === $user->email
         && $event->amount === 29.00);
 });
 
@@ -85,7 +85,7 @@ test('SyncSubscriptionPlan updates tenant plan from stripe price id', function (
 
     $priceMap = array_flip(config('kneadit.stripe_prices'));
 
-    app(App\Actions\Stripe\SyncSubscriptionPlan::class)(
+    resolve(App\Actions\Stripe\SyncSubscriptionPlan::class)(
         tenantEmail: $user->email,
         stripePriceId: 'price_growth_id',
         priceMap: $priceMap,
@@ -100,7 +100,7 @@ test('SyncSubscriptionPlan does nothing for unknown price id', function () {
     $user = User::factory()->owner()->create(['stripe_id' => 'cus_unknown_price']);
     $tenant = Tenant::factory()->create(['email' => $user->email, 'plan' => SubscriptionTier::Starter]);
 
-    app(App\Actions\Stripe\SyncSubscriptionPlan::class)(
+    resolve(App\Actions\Stripe\SyncSubscriptionPlan::class)(
         tenantEmail: $user->email,
         stripePriceId: 'price_nonexistent',
         priceMap: array_flip(config('kneadit.stripe_prices')),

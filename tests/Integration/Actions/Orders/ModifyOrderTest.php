@@ -38,9 +38,9 @@ test('updates quantities and recalculates totals', function () {
     ]);
 
     $order->refresh();
-    expect($order->orderItems()->first()->quantity)->toBe(5);
-    expect($order->subtotal->dollars())->toBe(50.00);
-    expect($order->total->dollars())->toBe(50.00);
+    expect($order->orderItems()->first()->quantity)->toBe(5)
+        ->and($order->subtotal->dollars())->toBe(50.00)
+        ->and($order->total->dollars())->toBe(50.00);
     Event::assertDispatched(OrderModified::class);
 });
 
@@ -56,8 +56,8 @@ test('removes item when quantity is set to zero', function () {
     ]);
 
     $order->refresh();
-    expect($order->orderItems)->toHaveCount(1);
-    expect($order->subtotal->dollars())->toBe(10.00);
+    expect($order->orderItems)->toHaveCount(1)
+        ->and($order->subtotal->dollars())->toBe(10.00);
 });
 
 test('updates tip when provided', function () {
@@ -70,8 +70,8 @@ test('updates tip when provided', function () {
     ], tipAmount: 4.50);
 
     $order->refresh();
-    expect($order->tip_amount->dollars())->toBe(4.50);
-    expect($order->total->dollars())->toBe(24.50);
+    expect($order->tip_amount->dollars())->toBe(4.50)
+        ->and($order->total->dollars())->toBe(24.50);
 });
 
 test('throws when order is not in pending status', function () {
@@ -122,9 +122,8 @@ test('rolls back when modification would leave order with no items', function ()
 
     expect(fn () => resolve(ModifyOrder::class)($order, [
         ['order_item_id' => $only->id, 'quantity' => 0],
-    ]))->toThrow(OrderNotModifiableException::class);
-
-    expect($order->fresh()->orderItems()->count())->toBe(1);
+    ]))->toThrow(OrderNotModifiableException::class)
+        ->and($order->fresh()->orderItems()->count())->toBe(1);
 });
 
 test('throws InsufficientStockException when modification exceeds ingredient stock', function () {
@@ -141,9 +140,8 @@ test('throws InsufficientStockException when modification exceeds ingredient sto
     ]))->toThrow(
         InsufficientStockException::class,
         'insufficient stock for Flour',
-    );
-
-    expect($order->fresh()->orderItems()->first()->quantity)->toBe(2);
+    )
+        ->and($order->fresh()->orderItems()->first()->quantity)->toBe(2);
 });
 
 test('rolls back item-quantity changes when stock check fails', function () {

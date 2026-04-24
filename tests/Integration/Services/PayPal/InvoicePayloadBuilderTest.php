@@ -14,7 +14,7 @@ test('builds payload with correct structure for a basic order', function () {
     $customer = Customer::factory()->withAddress()->create(['name' => 'Jane Doe']);
     $order = Order::factory()->recycle($customer)->withItems(2)->create();
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     expect($payload)
@@ -34,7 +34,7 @@ test('includes delivery fee as line item when delivery fee is positive', functio
         'subtotal' => 20.00,
     ]);
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     $lastItem = end($payload['items']);
@@ -49,7 +49,7 @@ test('excludes delivery fee line item when delivery fee is zero', function () {
         'delivery_fee' => 0,
     ]);
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     expect($payload['items'])->toHaveCount(1);
@@ -61,7 +61,7 @@ test('includes discount breakdown when discount amount is positive', function ()
         'subtotal' => 20.00,
     ]);
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     expect($payload['amount']['breakdown'])->toHaveKey('discount');
@@ -73,7 +73,7 @@ test('excludes discount breakdown when discount amount is zero', function () {
         'subtotal' => 20.00,
     ]);
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     expect($payload['amount']['breakdown'])->not->toHaveKey('discount');
@@ -83,20 +83,20 @@ test('parses single-word customer name correctly', function () {
     $customer = Customer::factory()->create(['name' => 'Madonna']);
     $order = Order::factory()->recycle($customer)->create();
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     $name = $payload['primary_recipients'][0]['billing_info']['name'];
 
     expect($name['given_name'])->toBe('Madonna')
-        ->and($name['surname'])->toBe('');
+        ->and($name['surname'])->toBeEmpty();
 });
 
 test('parses multi-word customer name correctly', function () {
     $customer = Customer::factory()->create(['name' => 'Mary Jane Watson']);
     $order = Order::factory()->recycle($customer)->create();
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     $name = $payload['primary_recipients'][0]['billing_info']['name'];
@@ -109,20 +109,20 @@ test('handles empty customer name gracefully', function () {
     $customer = Customer::factory()->create(['name' => '']);
     $order = Order::factory()->recycle($customer)->create();
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     $name = $payload['primary_recipients'][0]['billing_info']['name'];
 
-    expect($name['given_name'])->toBe('')
-        ->and($name['surname'])->toBe('');
+    expect($name['given_name'])->toBeEmpty()
+        ->and($name['surname'])->toBeEmpty();
 });
 
 test('strips non-digit characters from customer phone number', function () {
     $customer = Customer::factory()->create(['phone' => '(555) 123-4567']);
     $order = Order::factory()->recycle($customer)->create();
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     $phones = $payload['primary_recipients'][0]['billing_info']['phones'];
@@ -135,7 +135,7 @@ test('returns empty phone array when customer has no phone', function () {
     $customer = Customer::factory()->create(['phone' => null]);
     $order = Order::factory()->recycle($customer)->create();
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     $phones = $payload['primary_recipients'][0]['billing_info']['phones'];
@@ -147,7 +147,7 @@ test('formats item unit prices with two decimal places', function () {
     $order = Order::factory()->create(['subtotal' => 10.00]);
     OrderItem::factory()->recycle($order)->create(['unit_price' => 10, 'quantity' => 1]);
 
-    $builder = app(InvoicePayloadBuilder::class);
+    $builder = resolve(InvoicePayloadBuilder::class);
     $payload = $builder->build($order);
 
     expect($payload['items'][0]['unit_amount']['value'])->toBe('10.00');

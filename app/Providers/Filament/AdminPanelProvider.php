@@ -87,7 +87,7 @@ class AdminPanelProvider extends PanelProvider
             ->font('Inter')
             ->favicon(asset('images/logo-icon.png'))
             ->renderHook('panels::head.end', function () {
-                $manager = app(SettingsManager::class);
+                $manager = resolve(SettingsManager::class);
                 $color = fn (string $key, string $default): string => (string) rescue(
                     fn () => $manager->get($key, $default),
                     $default,

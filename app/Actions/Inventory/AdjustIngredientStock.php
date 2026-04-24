@@ -12,9 +12,7 @@ class AdjustIngredientStock
     {
         $resulting = (float) $ingredient->current_stock + $quantity;
 
-        if ($resulting < 0) {
-            throw new StockWouldGoNegativeException($ingredient, $quantity, $resulting);
-        }
+        throw_if($resulting < 0, StockWouldGoNegativeException::class, $ingredient, $quantity, $resulting);
 
         $ingredient->increment('current_stock', $quantity);
 

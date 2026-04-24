@@ -62,7 +62,7 @@ class OrderModifiedMail extends BaseMailable
     {
         return [
             'customer_name' => $this->order->customer?->name ?: 'there',
-            'store_name' => app(TenantSettings::class)->store->name,
+            'store_name' => resolve(TenantSettings::class)->store->name,
             'order_number' => (string) $this->order->order_number,
             'previous_total' => $this->previousTotal->formatted(),
             'new_total' => $this->order->total->formatted(),

@@ -42,7 +42,7 @@ test('published scope excludes posts with null published_at', function () {
 
     $results = BlogPost::query()->published()->get();
 
-    expect($results)->toHaveCount(0);
+    expect($results)->toBeEmpty();
 });
 
 test('inCategory filters posts by category', function () {

@@ -10,7 +10,7 @@ beforeEach(fn () => setUpTenantTest());
 test('storefront layout receives tenant settings', function () {
     settings(['store_name' => 'Sweet Dreams Bakery']);
 
-    $settings = app(TenantSettings::class);
+    $settings = resolve(TenantSettings::class);
 
     expect($settings->store->name)->toBe('Sweet Dreams Bakery');
 });

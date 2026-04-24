@@ -27,8 +27,8 @@ test('skips when sale is disabled', function () {
 
     $result = resolve(ApplySitewideSale::class)->handle(makeSalePayload(), fn ($p) => $p);
 
-    expect($result->discountAmount)->toBe(0.0);
-    expect($result->total)->toBe(100.0);
+    expect($result->discountAmount)->toBe(0.0)
+        ->and($result->total)->toBe(100.0);
 });
 
 test('skips when sale percent is 0', function () {
@@ -44,8 +44,8 @@ test('applies the discount to total when enabled', function () {
 
     $result = resolve(ApplySitewideSale::class)->handle(makeSalePayload(), fn ($p) => $p);
 
-    expect($result->discountAmount)->toBe(15.0);
-    expect($result->total)->toBe(85.0);
+    expect($result->discountAmount)->toBe(15.0)
+        ->and($result->total)->toBe(85.0);
 });
 
 test('clamps percent above 100 (defensive)', function () {
@@ -53,8 +53,8 @@ test('clamps percent above 100 (defensive)', function () {
 
     $result = resolve(ApplySitewideSale::class)->handle(makeSalePayload(), fn ($p) => $p);
 
-    expect($result->discountAmount)->toBe(100.0);
-    expect($result->total)->toBe(0.0);
+    expect($result->discountAmount)->toBe(100.0)
+        ->and($result->total)->toBe(0.0);
 });
 
 test('does nothing when subtotal is 0', function () {

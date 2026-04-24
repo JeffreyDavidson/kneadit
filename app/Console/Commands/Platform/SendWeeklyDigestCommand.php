@@ -25,7 +25,7 @@ class SendWeeklyDigestCommand extends Command
         foreach ($tenants as $tenant) {
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($tenant) {
-                    if (app(SettingsManager::class)->get('weekly_digest_enabled', '1') !== '1') {
+                    if (resolve(SettingsManager::class)->get('weekly_digest_enabled', '1') !== '1') {
                         $this->info("Skipping {$tenant->id} — digest disabled");
 
                         return;
@@ -40,15 +40,7 @@ class SendWeeklyDigestCommand extends Command
                     $data = resolve(WeeklyDigestDataCollector::class)->collect();
 
                     foreach ($users as $user) {
-                        WeeklyDigestRequested::dispatch(
-                            $user,
-                            $data['stats'],
-                            $data['topProducts'],
-                            $data['atRiskCustomers'],
-                            $data['upcomingCount'],
-                            $data['storeName'],
-                            $data['adminUrl'],
-                        );
+                        event(new WeeklyDigestRequested($user, $data['stats'], $data['topProducts'], $data['atRiskCustomers'], $data['upcomingCount'], $data['storeName'], $data['adminUrl']));
                     }
 
                     $this->info("Sent digest for {$tenant->id} to {$users->count()} user(s)");

@@ -52,7 +52,7 @@ class ManageEmailTemplates extends Page
         $customized = EmailTemplate::query()
             ->pluck('email_type')
             ->map(fn (EmailTemplateType $type) => $type->value)
-            ->toArray();
+            ->all();
 
         return collect(EmailTemplateType::cases())
             ->map(fn (EmailTemplateType $type) => [
@@ -63,7 +63,7 @@ class ManageEmailTemplates extends Page
                 'placeholders' => $type->availablePlaceholders(),
             ])
             ->values()
-            ->toArray();
+            ->all();
     }
 
     public function editTemplate(string $typeValue): void

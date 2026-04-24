@@ -116,8 +116,8 @@ test('get sorted sections returns sections sorted by order', function () {
     $sorted = test()->page->getSortedSections();
     $orders = array_column($sorted, 'order');
 
-    expect($orders)->toBe(array_values(array_unique($orders)));
-    expect($orders)->toEqual(collect($orders)->sort()->values()->all());
+    expect($orders)->toBe(array_values(array_unique($orders)))
+        ->toEqual(collect($orders)->sort()->values()->all());
 });
 
 test('get section meta returns label and description', function () {

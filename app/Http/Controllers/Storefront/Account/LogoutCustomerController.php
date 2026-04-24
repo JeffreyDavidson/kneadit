@@ -15,6 +15,6 @@ class LogoutCustomerController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('storefront.menu');
+        return to_route('storefront.menu');
     }
 }

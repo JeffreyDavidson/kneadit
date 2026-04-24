@@ -26,7 +26,7 @@ class SendCustomerReferralRewardEmailListener extends SendEmailListener
         $referral = $event->referral;
         $referral->loadMissing(['referrer', 'referred']);
 
-        $reward = (float) app(TenantSettings::class)->engagement->customerReferralDiscountDollars;
+        $reward = (float) resolve(TenantSettings::class)->engagement->customerReferralDiscountDollars;
         $coupon = $this->mintRewardCoupon($referral->referrer_customer_id, $reward);
 
         $referral->forceFill(['reward_coupon_id' => $coupon->id])->save();

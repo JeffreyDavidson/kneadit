@@ -26,7 +26,7 @@ test('marks order as paid', function () {
         ->recycle(test()->user)
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
-    app(MarkOrderPaid::class)($order);
+    resolve(MarkOrderPaid::class)($order);
 
     expect($order->refresh()->payment_status)->toBe(PaymentStatus::Paid);
 });
@@ -37,7 +37,7 @@ test('auto-confirms pending stripe order', function () {
         ->recycle(test()->user)
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
-    app(MarkOrderPaid::class)($order);
+    resolve(MarkOrderPaid::class)($order);
 
     expect($order->refresh())
         ->payment_status->toBe(PaymentStatus::Paid)
@@ -50,7 +50,7 @@ test('auto-confirms pending paypal order', function () {
         ->recycle(test()->user)
         ->create(['payment_method' => PaymentMethod::PayPal]);
 
-    app(MarkOrderPaid::class)($order);
+    resolve(MarkOrderPaid::class)($order);
 
     expect($order->refresh())
         ->payment_status->toBe(PaymentStatus::Paid)
@@ -63,7 +63,7 @@ test('does not auto-confirm cash order', function () {
         ->recycle(test()->user)
         ->create(['payment_method' => PaymentMethod::Cash]);
 
-    app(MarkOrderPaid::class)($order);
+    resolve(MarkOrderPaid::class)($order);
 
     expect($order->refresh())
         ->payment_status->toBe(PaymentStatus::Paid)
@@ -76,7 +76,7 @@ test('does not auto-confirm other payment method order', function () {
         ->recycle(test()->user)
         ->create(['payment_method' => PaymentMethod::Other]);
 
-    app(MarkOrderPaid::class)($order);
+    resolve(MarkOrderPaid::class)($order);
 
     expect($order->refresh())
         ->payment_status->toBe(PaymentStatus::Paid)
@@ -89,8 +89,8 @@ test('is idempotent when called twice', function () {
         ->recycle(test()->user)
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
-    app(MarkOrderPaid::class)($order);
-    app(MarkOrderPaid::class)($order);
+    resolve(MarkOrderPaid::class)($order);
+    resolve(MarkOrderPaid::class)($order);
 
     expect($order->refresh())
         ->payment_status->toBe(PaymentStatus::Paid)
@@ -104,7 +104,7 @@ test('skips status transition when order is already confirmed', function () {
         ->confirmed()
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
-    app(MarkOrderPaid::class)($order);
+    resolve(MarkOrderPaid::class)($order);
 
     expect($order->refresh())
         ->payment_status->toBe(PaymentStatus::Paid)
@@ -118,7 +118,7 @@ test('skips status transition when order is already beyond confirmed', function 
         ->baking()
         ->create(['payment_method' => PaymentMethod::Stripe]);
 
-    app(MarkOrderPaid::class)($order);
+    resolve(MarkOrderPaid::class)($order);
 
     expect($order->refresh())
         ->payment_status->toBe(PaymentStatus::Paid)

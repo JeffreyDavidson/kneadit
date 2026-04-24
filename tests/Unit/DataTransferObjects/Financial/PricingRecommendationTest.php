@@ -62,7 +62,7 @@ test('PricingRecommendation toLivewire returns all properties as array', functio
         ->currentPrice->toBe(7.50)
         ->profitPerUnit->toBe(3.50)
         ->actualMarginPercent->toBe(53.3)
-        ->bulkTiers->toBe([]);
+        ->bulkTiers->toBeEmpty();
 });
 
 test('PricingRecommendation fromLivewire reconstructs DTO from array', function () {

@@ -86,18 +86,11 @@ class SmartShoppingList extends Page
             return;
         }
 
-        $storeName = app(TenantSettings::class)->store->name;
+        $storeName = resolve(TenantSettings::class)->store->name;
 
-        PurchaseOrderRequested::dispatch(
-            supplierEmail: $group['supplier']['email'],
-            supplierName: $group['supplier']['name'],
-            storeName: $storeName,
-            items: $group['items'],
-            total: $group['total'],
-            requestedDate: now()->addDays(
-                (int) max(3, ...array_column($group['items'], 'lead_time_days')),
-            )->format('Y-m-d'),
-        );
+        event(new PurchaseOrderRequested(supplierEmail: $group['supplier']['email'], supplierName: $group['supplier']['name'], storeName: $storeName, items: $group['items'], total: $group['total'], requestedDate: now()->addDays(
+            (int) max(3, ...array_column($group['items'], 'lead_time_days')),
+        )->format('Y-m-d')));
 
         Notification::make()
             ->title('Purchase order sent!')

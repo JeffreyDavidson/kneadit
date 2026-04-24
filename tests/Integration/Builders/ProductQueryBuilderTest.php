@@ -47,7 +47,7 @@ test('inSeason excludes products with only expired seasonal items', function () 
 
     $results = Product::query()->inSeason()->get();
 
-    expect($results)->toHaveCount(0);
+    expect($results)->toBeEmpty();
 });
 
 test('inSeason excludes products with only upcoming seasonal items', function () {
@@ -56,5 +56,5 @@ test('inSeason excludes products with only upcoming seasonal items', function ()
 
     $results = Product::query()->inSeason()->get();
 
-    expect($results)->toHaveCount(0);
+    expect($results)->toBeEmpty();
 });

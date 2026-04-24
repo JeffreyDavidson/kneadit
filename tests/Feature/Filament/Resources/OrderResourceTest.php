@@ -101,9 +101,7 @@ test('resource returns global search result details', function () {
     $details = App\Filament\Resources\Orders\OrderResource::getGlobalSearchResultDetails($order);
 
     expect($details)
-        ->toHaveKey('Customer')
-        ->toHaveKey('Total')
-        ->toHaveKey('Status');
+        ->toHaveKeys(['Customer', 'Total', 'Status']);
 });
 
 test('global search eloquent query eager loads customer', function () {

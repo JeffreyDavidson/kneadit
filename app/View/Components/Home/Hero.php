@@ -35,7 +35,7 @@ class Hero extends Component
 
     public function __construct()
     {
-        $settings = app(TenantSettings::class);
+        $settings = resolve(TenantSettings::class);
         $branding = $settings->branding;
 
         $this->storeName = $settings->store->name;

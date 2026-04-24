@@ -125,6 +125,5 @@ test('resource returns global search result details', function () {
     $details = App\Filament\Resources\SocialPosts\SocialPostResource::getGlobalSearchResultDetails($post);
 
     expect($details)
-        ->toHaveKey('Platform')
-        ->toHaveKey('Status');
+        ->toHaveKeys(['Platform', 'Status']);
 });

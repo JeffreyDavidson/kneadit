@@ -13,7 +13,7 @@ trait BakerBranded
      */
     protected function bakerFrom(): Address
     {
-        $store = app(TenantSettings::class)->store;
+        $store = resolve(TenantSettings::class)->store;
 
         return new Address(
             address: config('mail.from.address', 'hello@getkneadit.app'),
@@ -26,7 +26,7 @@ trait BakerBranded
      */
     protected function bakerReplyTo(): ?Address
     {
-        $store = app(TenantSettings::class)->store;
+        $store = resolve(TenantSettings::class)->store;
 
         if (! $store->email) {
             return null;

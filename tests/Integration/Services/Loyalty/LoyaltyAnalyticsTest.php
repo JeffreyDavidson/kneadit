@@ -46,8 +46,8 @@ test('top customers returns customers ordered by balance', function () {
 
     $top = resolve(LoyaltyAnalytics::class)->topCustomers(2);
 
-    expect($top)->toHaveCount(2);
-    expect($top->first()->id)->toBe($customer2->id);
+    expect($top)->toHaveCount(2)
+        ->and($top->first()->id)->toBe($customer2->id);
 });
 
 test('leaderboard returns formatted array', function () {
@@ -56,11 +56,8 @@ test('leaderboard returns formatted array', function () {
 
     $leaderboard = resolve(LoyaltyAnalytics::class)->leaderboard();
 
-    expect($leaderboard)->toHaveCount(1);
-    expect($leaderboard[0])
-        ->toHaveKeys(['name', 'points'])
-        ->name->toBe($customer->name)
-        ->points->toBe(100);
+    expect($leaderboard)->toHaveCount(1)
+        ->and($leaderboard[0])->toHaveKeys(['name', 'points'])->name->toBe($customer->name)->points->toBe(100);
 });
 
 test('recent activity returns points with customers', function () {
@@ -69,8 +66,8 @@ test('recent activity returns points with customers', function () {
 
     $activity = resolve(LoyaltyAnalytics::class)->recentActivity();
 
-    expect($activity)->toHaveCount(1);
-    expect($activity->first()->customer)->not->toBeNull();
+    expect($activity)->toHaveCount(1)
+        ->and($activity->first()->customer)->not->toBeNull();
 });
 
 test('outstanding points returns total sum', function () {
@@ -90,9 +87,6 @@ test('recent awards returns formatted array', function () {
 
     $awards = resolve(LoyaltyAnalytics::class)->recentAwards();
 
-    expect($awards)->toHaveCount(1);
-    expect($awards[0])
-        ->toHaveKeys(['customer', 'points', 'description', 'date'])
-        ->customer->toBe($customer->name)
-        ->points->toBe(75);
+    expect($awards)->toHaveCount(1)
+        ->and($awards[0])->toHaveKeys(['customer', 'points', 'description', 'date'])->customer->toBe($customer->name)->points->toBe(75);
 });

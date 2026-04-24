@@ -57,7 +57,7 @@ class CreateTenant
                 $settings['external_website'] = $externalWebsite;
             }
 
-            app(SettingsManager::class)->setMany($settings);
+            resolve(SettingsManager::class)->setMany($settings);
         });
 
         return $tenant;

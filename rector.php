@@ -22,7 +22,7 @@ return RectorConfig::configure()
         __DIR__ . '/bootstrap/cache',
     ])
     ->withSets([
-        LaravelSetList::LARAVEL_120,
+        LaravelSetList::LARAVEL_130,
         LaravelSetList::LARAVEL_TYPE_DECLARATIONS,
         LaravelSetList::LARAVEL_TESTING,
         LaravelSetList::LARAVEL_IF_HELPERS,

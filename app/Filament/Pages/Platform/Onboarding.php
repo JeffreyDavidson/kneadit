@@ -59,13 +59,13 @@ class Onboarding extends Page
 
     public function mount(): void
     {
-        if (app(SettingsManager::class)->get('onboarding_completed_at')) {
+        if (resolve(SettingsManager::class)->get('onboarding_completed_at')) {
             $this->redirect(url('/admin'));
 
             return;
         }
 
-        $defaults = OnboardingStepRegistry::defaults(app(TenantSettings::class));
+        $defaults = OnboardingStepRegistry::defaults(resolve(TenantSettings::class));
 
         foreach ($defaults as $key => $values) {
             if (property_exists($this, $key)) {
@@ -85,7 +85,7 @@ class Onboarding extends Page
 
     public function completeOnboarding(): void
     {
-        app(SettingsManager::class)->set('onboarding_completed_at', now()->toISOString());
+        resolve(SettingsManager::class)->set('onboarding_completed_at', now()->toISOString());
 
         Notification::make()
             ->title('Welcome aboard!')

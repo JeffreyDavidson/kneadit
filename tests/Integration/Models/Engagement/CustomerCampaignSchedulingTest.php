@@ -32,8 +32,8 @@ test('clearing scheduled_at on a Scheduled campaign demotes it to Draft', functi
 test('saving without scheduled_at leaves a draft as Draft', function () {
     $campaign = CustomerCampaign::factory()->create();
 
-    expect($campaign->fresh()->status)->toBe(CustomerCampaignStatus::Draft);
-    expect($campaign->fresh()->scheduled_at)->toBeNull();
+    expect($campaign->fresh()->status)->toBe(CustomerCampaignStatus::Draft)
+        ->and($campaign->fresh()->scheduled_at)->toBeNull();
 });
 
 test('does not change status of an already-Sent campaign even if scheduled_at is set', function () {

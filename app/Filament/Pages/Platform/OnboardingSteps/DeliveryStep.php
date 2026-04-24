@@ -25,7 +25,7 @@ final class DeliveryStep extends OnboardingStep
 
     public static function defaults(TenantSettings $settings): array
     {
-        $manager = app(SettingsManager::class);
+        $manager = resolve(SettingsManager::class);
 
         return [
             'delivery_enabled' => $manager->get('delivery_enabled', '0') === '1',
@@ -103,7 +103,7 @@ final class DeliveryStep extends OnboardingStep
 
     public static function save(array $data): void
     {
-        app(SettingsManager::class)->setMany([
+        resolve(SettingsManager::class)->setMany([
             'delivery_enabled' => $data['delivery_enabled'] ? '1' : '0',
             'delivery_radius' => $data['delivery_radius'],
             'delivery_fee' => $data['delivery_fee'],

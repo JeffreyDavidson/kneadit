@@ -131,9 +131,9 @@ test('groups ingredients by supplier with best price', function () {
     $service = new ShoppingListService;
     $result = $service->generate();
 
-    expect($result)->toHaveKey($supplier->id);
-    expect($result[$supplier->id]['supplier']['name'])->toBe('Best Flour Co');
-    expect($result[$supplier->id]['items'])->not->toBeEmpty();
+    expect($result)->toHaveKey($supplier->id)
+        ->and($result[$supplier->id]['supplier']['name'])->toBe('Best Flour Co')
+        ->and($result[$supplier->id]['items'])->not->toBeEmpty();
 });
 
 test('ingredients without suppliers go into no supplier group', function () {
@@ -142,8 +142,8 @@ test('ingredients without suppliers go into no supplier group', function () {
     $service = new ShoppingListService;
     $result = $service->generate();
 
-    expect($result)->toHaveKey('none');
-    expect($result['none']['supplier']['name'])->toBe('No Supplier Assigned');
+    expect($result)->toHaveKey('none')
+        ->and($result['none']['supplier']['name'])->toBe('No Supplier Assigned');
 });
 
 test('skips ingredient when needed quantity is zero', function () {

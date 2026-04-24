@@ -27,9 +27,8 @@ test('consume impersonation logs in user and redirects to admin', function () {
     $response = $controller('valid-token-123', $action);
 
     expect($response)->toBeInstanceOf(RedirectResponse::class)
-        ->and($response->getTargetUrl())->toContain('/admin');
-
-    expect(auth()->user()->id)->toBe($user->id);
+        ->and($response->getTargetUrl())->toContain('/admin')
+        ->and(auth()->user()->id)->toBe($user->id);
 });
 
 test('consume impersonation aborts for invalid token', function () {

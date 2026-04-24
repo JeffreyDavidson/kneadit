@@ -19,7 +19,7 @@ class TrialExpirationNotifier
     {
         try {
             $storeName = $tenant->store_name ?: $tenant->name;
-            TrialReminding::dispatch($user, $storeName, $daysLeft);
+            event(new TrialReminding($user, $storeName, $daysLeft));
 
             return true;
         } catch (\Exception $e) {
@@ -36,7 +36,7 @@ class TrialExpirationNotifier
     public function notifyExpired(User $user, Tenant $tenant): void
     {
         try {
-            TrialExpired::dispatch($user, $tenant->id);
+            event(new TrialExpired($user, $tenant->id));
         } catch (\Exception $e) {
             Log::error('Trial expiration email dispatch failed', [
                 'tenant' => $tenant->id,

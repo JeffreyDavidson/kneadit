@@ -31,7 +31,7 @@ class CreateOrder
     {
         $payload = new OrderPipelineData($data);
 
-        $result = DB::transaction(fn () => app(Pipeline::class)
+        $result = DB::transaction(fn () => resolve(Pipeline::class)
             ->send($payload)
             ->through([
                 CalculateOrderTotals::class,

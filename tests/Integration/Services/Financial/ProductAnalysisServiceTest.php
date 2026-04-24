@@ -46,8 +46,8 @@ test('analyze falls back to ingredients JSON when no cost fields set', function 
 
     $analysis = resolve(ProductAnalysisService::class)->analyze($product);
 
-    expect($analysis->cost)->toBe(1.75);
-    expect($analysis->ingredients)->toHaveCount(2);
+    expect($analysis->cost)->toBe(1.75)
+        ->and($analysis->ingredients)->toHaveCount(2);
 });
 
 test('analyze calculates suggested price from target margin', function () {
@@ -63,8 +63,8 @@ test('analyze returns Unknown margin health when no cost data', function () {
 
     $analysis = resolve(ProductAnalysisService::class)->analyze($product);
 
-    expect($analysis->marginHealth)->toBe(MarginHealth::Unknown);
-    expect($analysis->currentMarginPercent)->toBeNull();
+    expect($analysis->marginHealth)->toBe(MarginHealth::Unknown)
+        ->and($analysis->currentMarginPercent)->toBeNull();
 });
 
 // --- portfolio() ---
@@ -77,10 +77,8 @@ test('portfolio returns ProductPortfolioSummary', function () {
     expect($portfolio)
         ->toBeInstanceOf(ProductPortfolioSummary::class)
         ->totalProducts->toBe(1)
-        ->productsWithCosts->toBe(1);
-
-    expect($portfolio->products->first())
-        ->toMatchArray([
+        ->productsWithCosts->toBe(1)
+        ->and($portfolio->products->first())->toMatchArray([
             'price' => 10.00,
             'cost' => 4.00,
             'margin_percentage' => 60.0,
@@ -99,8 +97,8 @@ test('portfolio calculates overall stats', function () {
 
     expect($portfolio)
         ->totalProducts->toBe(3)
-        ->productsWithCosts->toBe(2);
-    expect($portfolio->productsMissingCosts())->toBe(1);
+        ->productsWithCosts->toBe(2)
+        ->and($portfolio->productsMissingCosts())->toBe(1);
 });
 
 test('portfolio top profitable returns top 5', function () {

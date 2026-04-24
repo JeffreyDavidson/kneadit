@@ -53,14 +53,14 @@ class TransitionOrderStatus
             }
         });
 
-        OrderStatusChanged::dispatch($order, $from, $to);
+        event(new OrderStatusChanged($order, $from, $to));
 
         if ($to === OrderStatus::Delivered) {
-            OrderDelivered::dispatch($order, $from);
+            event(new OrderDelivered($order, $from));
         }
 
         if ($to === OrderStatus::Cancelled) {
-            OrderCancelled::dispatch($order, $from);
+            event(new OrderCancelled($order, $from));
         }
 
         return $order;

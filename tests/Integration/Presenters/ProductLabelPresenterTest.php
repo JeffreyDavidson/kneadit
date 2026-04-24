@@ -15,8 +15,8 @@ test('returns empty ingredient list and no allergen statement when product has n
     $product = Product::factory()->create();
     $presenter = ProductLabelPresenter::for($product);
 
-    expect($presenter->ingredientNames())->toBe([])
-        ->and($presenter->allergens())->toBe([])
+    expect($presenter->ingredientNames())->toBeEmpty()
+        ->and($presenter->allergens())->toBeEmpty()
         ->and($presenter->allergenStatement())->toBeNull();
 });
 

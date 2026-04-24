@@ -98,7 +98,7 @@ test('viewing an unread message marks it as read', function () {
         ->assertOk();
 
     $message = DB::table('platform_messages')->where('id', $messageId)->first();
-    expect((bool) $message->is_read)->toBeTrue();
+    expect($message->is_read)->toBeTruthy();
 });
 
 test('can add reply to support ticket', function () {
@@ -174,8 +174,5 @@ test('tenant view page returns tenant stats', function () {
     $stats = $component->instance()->getTenantStats();
 
     expect($stats)
-        ->toHaveKey('products')
-        ->toHaveKey('orders')
-        ->toHaveKey('revenue')
-        ->toHaveKey('customers');
+        ->toHaveKeys(['products', 'orders', 'revenue', 'customers']);
 });

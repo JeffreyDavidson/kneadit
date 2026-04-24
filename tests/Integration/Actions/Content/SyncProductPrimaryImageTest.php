@@ -18,7 +18,7 @@ test('it marks the first image by sort order as primary', function () {
 
     ProductImage::query()->where('product_id', $product->id)->update(['is_primary' => false]);
 
-    app(SyncProductPrimaryImage::class)($product->id);
+    resolve(SyncProductPrimaryImage::class)($product->id);
 
     $images = ProductImage::query()
         ->where('product_id', $product->id)
@@ -54,7 +54,7 @@ test('it syncs product image column with primary image path', function () {
 
     ProductImage::query()->where('product_id', $product->id)->update(['is_primary' => false]);
 
-    app(SyncProductPrimaryImage::class)($product->id);
+    resolve(SyncProductPrimaryImage::class)($product->id);
 
     expect($product->fresh()->image)->toBe('images/first.jpg');
 });

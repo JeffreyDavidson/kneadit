@@ -63,7 +63,7 @@ class HealthCheckCommand extends Command
 
         Log::critical('Health check failed', ['issues' => $issues]);
 
-        HealthCheckFailed::dispatch($message);
+        event(new HealthCheckFailed($message));
         $this->info('Health check alert dispatched.');
     }
 }

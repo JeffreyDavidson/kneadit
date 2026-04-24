@@ -16,7 +16,7 @@ test('pay-deposit endpoint rejects unsigned requests', function () {
 
     $response = withoutMiddleware(tenantMiddleware())->get("/catering/{$inquiry->id}/pay-deposit");
 
-    $response->assertStatus(403);
+    $response->assertForbidden();
 });
 
 test('pay-deposit redirects if deposit already paid', function () {
@@ -39,7 +39,7 @@ test('pay-deposit 404s when no deposit is configured', function () {
     $url = URL::temporarySignedRoute('catering.payDeposit', now()->addDay(), ['inquiry' => $inquiry->id]);
     $response = withoutMiddleware(tenantMiddleware())->get($url);
 
-    $response->assertStatus(404);
+    $response->assertNotFound();
 });
 
 test('success page shows "paid" state when deposit_paid_at is set', function () {
