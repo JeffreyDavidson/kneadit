@@ -23,3 +23,12 @@ test('sends verification notification', function () {
 
     Notification::assertSentTo($user, VerifyEmail::class);
 });
+
+test('redirects guests to login (route auth middleware)', function () {
+    Notification::fake();
+
+    test()->post(route('verification.send'))
+        ->assertRedirect(route('login'));
+
+    Notification::assertNothingSent();
+});
