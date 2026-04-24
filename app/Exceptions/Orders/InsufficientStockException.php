@@ -11,13 +11,21 @@ class InsufficientStockException extends RuntimeException implements ShouldntRep
     /**
      * @param array<int, string> $shortages Names of ingredients whose projected
      *                                      demand would exceed current stock.
+     * @param ?Order $order Set when the failure attaches to a persisted order
+     *                      (the modification path); null at placement time
+     *                      where the order doesn't exist yet.
      */
     public function __construct(
-        public readonly Order $order,
         public readonly array $shortages,
+        public readonly ?Order $order = null,
     ) {
         $list = implode(', ', $shortages);
-        parent::__construct("Order {$order->order_number} cannot be modified: insufficient stock for {$list}");
+
+        $prefix = $order !== null
+            ? "Order {$order->order_number} cannot be modified"
+            : 'Order cannot be placed';
+
+        parent::__construct("{$prefix}: insufficient stock for {$list}");
     }
 
     /**
@@ -26,8 +34,8 @@ class InsufficientStockException extends RuntimeException implements ShouldntRep
     public function context(): array
     {
         return [
-            'order_id' => $this->order->id,
-            'order_number' => $this->order->order_number,
+            'order_id' => $this->order?->id,
+            'order_number' => $this->order?->order_number,
             'shortages' => $this->shortages,
         ];
     }

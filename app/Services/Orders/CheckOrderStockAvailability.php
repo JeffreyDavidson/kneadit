@@ -59,7 +59,7 @@ class CheckOrderStockAvailability
         }
 
         if ($shortages !== []) {
-            throw new InsufficientStockException($order, $shortages);
+            throw new InsufficientStockException(shortages: $shortages, order: $order);
         }
     }
 }
