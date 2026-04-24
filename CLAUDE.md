@@ -85,6 +85,7 @@
 - **Never cache Eloquent models or collections.** `config/cache.php` sets `'serializable_classes' => false` (Laravel's gadget-chain default). Any `Cache::flexible(..., fn() => SomeModel::query()->...->get())` will 500 on the second hit as `unserialize()` returns `__PHP_Incomplete_Class`.
 - Cache scalars (int, float, string, bool), primitive arrays, or — if you need the Collection shape on read — cache the underlying array and wrap with `collect()` in the resolver boundary.
 - Tests don't catch this bug because `phpunit.xml` pins `CACHE_STORE=array` (in-memory, no serialization). When writing a new cache call, manually reason about the shape.
+- **Runtime guard**: `AppServiceProvider::boot()` registers a `Cache::handleUnserializableClassUsing()` callback that always logs the offending key + class, and additionally throws `RuntimeException` in non-production environments. So a violation that ships will surface loudly in dev/staging on the second hit.
 - `Hero::topReview` documents this rule inline; copy that comment when adding a no-cache-here decision.
 
 ### Atomic Counters

@@ -21,12 +21,15 @@ use App\Services\Settings\TenantSettingsRegistry;
 use App\Support\Csp\CspNonce;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pennant\Feature;
 use Livewire\Livewire;
+use RuntimeException;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 
 class AppServiceProvider extends ServiceProvider
@@ -68,6 +71,25 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::preventLazyLoading(! app()->isProduction());
+
+        // Surface cache reads that returned __PHP_Incomplete_Class — usually
+        // an Eloquent model/collection that was cached and then blocked by
+        // cache.serializable_classes on read (see CLAUDE.md). Always log;
+        // additionally throw in non-production so developers see the bad
+        // write loudly during the read that exposes it.
+        CacheRepository::handleUnserializableClassUsing(function (string $key, ?string $class): void {
+            $message = sprintf(
+                'Cache returned __PHP_Incomplete_Class for key [%s] (original class: %s). Likely a model/collection cached against the project rule (CLAUDE.md: never cache Eloquent models).',
+                $key,
+                $class ?? 'unknown',
+            );
+
+            Log::error($message);
+
+            if (! app()->isProduction()) {
+                throw new RuntimeException($message);
+            }
+        });
 
         RateLimiter::for('webhooks', fn () => Limit::perMinute(30));
 
