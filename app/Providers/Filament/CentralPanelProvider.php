@@ -41,6 +41,7 @@ class CentralPanelProvider extends PanelProvider
             ->brandLogo(view('filament.central.brand-logo'))
             ->brandLogoHeight('50px')
             ->darkMode(true)
+            ->viteTheme('resources/css/filament/central/theme.css')
             ->navigationGroups([
                 NavigationGroup::make('Platform'),
                 NavigationGroup::make('Settings'),
