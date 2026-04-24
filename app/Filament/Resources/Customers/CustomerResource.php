@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Customers;
 
 use App\Filament\Resources\Customers\Pages\ListCustomers;
+use App\Filament\Resources\Customers\Pages\ViewCustomer;
 use App\Filament\Resources\Customers\Schemas\CustomerForm;
 use App\Filament\Resources\Customers\Tables\CustomersTable;
 use App\Models\Customers\Customer;
@@ -66,6 +67,7 @@ class CustomerResource extends Resource
     {
         return [
             'index' => ListCustomers::route('/'),
+            'view' => ViewCustomer::route('/{record}'),
         ];
     }
 }
