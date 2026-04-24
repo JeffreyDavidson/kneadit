@@ -2,17 +2,24 @@
 
 namespace App\Filament\Resources\Customers\Tables;
 
+use App\Actions\Marketing\SendBulkCustomerMessage;
 use App\Builders\Customers\CustomerQueryBuilder;
 use App\Enums\Customers\CustomerStatus;
 use App\Filament\Actions\SlideOverEditAction;
 use App\Models\Customers\Customer;
 use App\Services\Customers\BirthdayCalculator;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
@@ -124,6 +131,38 @@ class CustomersTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    BulkAction::make('sendMessage')
+                        ->label('Send message')
+                        ->icon(Heroicon::OutlinedEnvelope)
+                        ->color('primary')
+                        ->modalHeading('Send a message to selected customers')
+                        ->modalDescription('Drafts a one-off email to each selected customer who has an email address. No campaign record or open tracking — for ad-hoc operational messages.')
+                        ->modalSubmitActionLabel('Queue messages')
+                        ->schema([
+                            TextInput::make('subject')
+                                ->required()
+                                ->maxLength(255),
+                            Textarea::make('body')
+                                ->required()
+                                ->rows(8)
+                                ->helperText('Plain text. Line breaks are preserved.'),
+                        ])
+                        ->action(function (array $data, EloquentCollection $records): void {
+                            /** @var array<int, Customer> $customers */
+                            $customers = $records->all();
+
+                            $sent = resolve(SendBulkCustomerMessage::class)(
+                                $customers,
+                                messageSubject: $data['subject'],
+                                body: $data['body'],
+                            );
+
+                            Notification::make()
+                                ->title("Message queued to {$sent} recipient(s)")
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                     DeleteBulkAction::make(),
                 ]),
             ])
