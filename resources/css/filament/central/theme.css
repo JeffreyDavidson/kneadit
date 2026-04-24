@@ -1,0 +1,14 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/Central/**/*';
+@source '../../../../resources/views/filament/central/**/*';
+
+@theme {
+    --color-warm-black: #1c1410;
+    --color-espresso: #2a1f18;
+    --color-cinnamon: #8b6844;
+    --color-honey: #d4920c;
+    --color-golden: #e8b04a;
+    --color-butter: #f5d88e;
+    --color-parchment: #faf0d6;
+}
