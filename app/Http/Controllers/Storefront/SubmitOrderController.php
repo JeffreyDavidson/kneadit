@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Actions\Orders\CreateOrder;
+use App\Exceptions\Orders\InsufficientStockException;
 use App\Exceptions\Orders\MinimumOrderAmountNotMetException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\StoreOrderRequest;
@@ -25,6 +26,13 @@ class SubmitOrderController extends Controller
                     'Minimum %s order is $%.2f. Please add more items to continue.',
                     $e->deliveryType,
                     $e->minimum,
+                )]);
+        } catch (InsufficientStockException $e) {
+            return back()
+                ->withInput()
+                ->withErrors(['items' => sprintf(
+                    'Sorry, we don\'t have enough %s in stock right now. Please reduce the quantity or remove an item.',
+                    implode(', ', $e->shortages),
                 )]);
         }
 

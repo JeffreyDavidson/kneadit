@@ -20,12 +20,25 @@ test('writes an activity log entry when an observed model is created', function 
     $log = ActivityLog::query()
         ->where('model_type', Customer::class)
         ->where('model_id', $customer->id)
+        ->where('action', ActivityAction::Created)
         ->first();
 
     expect($log)->not->toBeNull()
         ->and($log->action)->toBe(ActivityAction::Created)
         ->and($log->user_name)->toBe('System')
         ->and($log->description)->toBe("Customer #{$customer->id} was created");
+});
+
+test('does not write a spurious Updated row when a Customer is created (referral code is set pre-insert)', function () {
+    $customer = Customer::factory()->create();
+
+    $logs = ActivityLog::query()
+        ->where('model_type', Customer::class)
+        ->where('model_id', $customer->id)
+        ->get();
+
+    expect($logs)->toHaveCount(1)
+        ->and($logs->first()->action)->toBe(ActivityAction::Created);
 });
 
 test('writes an activity log entry when an observed model is updated, with changes payload', function () {

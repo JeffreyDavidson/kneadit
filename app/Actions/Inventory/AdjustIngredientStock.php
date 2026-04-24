@@ -3,12 +3,19 @@
 namespace App\Actions\Inventory;
 
 use App\Enums\Inventory\StockAdjustmentType;
+use App\Exceptions\Inventory\StockWouldGoNegativeException;
 use App\Models\Inventory\Ingredient;
 
 class AdjustIngredientStock
 {
     public function __invoke(Ingredient $ingredient, float $quantity, StockAdjustmentType $type, ?string $notes = null): void
     {
+        $resulting = (float) $ingredient->current_stock + $quantity;
+
+        if ($resulting < 0) {
+            throw new StockWouldGoNegativeException($ingredient, $quantity, $resulting);
+        }
+
         $ingredient->increment('current_stock', $quantity);
 
         $ingredient->stockAdjustments()->create([
