@@ -10,6 +10,7 @@ enum StockAdjustmentType: string implements HasLabel
     case Usage = 'usage';
     case Adjustment = 'adjustment';
     case Waste = 'waste';
+    case Restock = 'restock';
 
     public function getLabel(): string
     {
@@ -18,6 +19,7 @@ enum StockAdjustmentType: string implements HasLabel
             self::Usage => 'Usage (subtract)',
             self::Waste => 'Waste (subtract)',
             self::Adjustment => 'Adjustment',
+            self::Restock => 'Restock (cancellation)',
         };
     }
 }
