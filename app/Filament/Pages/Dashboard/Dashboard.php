@@ -92,24 +92,17 @@ class Dashboard extends BaseDashboard
     {
         $registry = $this->getWidgetRegistry();
 
-        $manager = resolve(SettingsManager::class);
-
-        // Dashboard customization disabled until config page is finalized
-        // When ready, set 'dashboard_config_enabled' to 'true' in Settings
-        $enabled = $manager->get('dashboard_config_enabled') === 'true';
-
-        if (! $enabled) {
-            return array_values($registry);
-        }
-
-        $saved = $manager->get('dashboard_widgets');
+        $saved = resolve(SettingsManager::class)->get('dashboard_widgets');
         $config = $saved ? json_decode($saved, true) : null;
 
+        // No saved layout yet → render every registered widget in default order.
+        // The DashboardConfig page (Settings → Dashboard Configuration) is where
+        // bakers customize visibility/order/span.
         if (! $config) {
             return array_values($registry);
         }
 
-        // Sort by order
+        // Sort by saved order, drop hidden widgets, drop unknown keys.
         uasort($config, fn (array $a, array $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
 
         $widgets = [];
