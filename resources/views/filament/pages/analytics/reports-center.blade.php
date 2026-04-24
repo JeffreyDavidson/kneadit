@@ -2,7 +2,6 @@
     <style @cspnonce>
         @media print {
             .no-print, .fi-header, .fi-sidebar, .fi-topbar, nav { display: none !important; }
-            .print-only { display: block !important; }
             body { background: white; }
         }
         .bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 200px; }
