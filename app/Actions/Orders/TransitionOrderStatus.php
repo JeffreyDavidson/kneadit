@@ -42,6 +42,14 @@ class TransitionOrderStatus
 
             if ($to === OrderStatus::Cancelled) {
                 ($this->reverseOrderDiscounts)($order, "Order cancelled (was {$from->value})");
+
+                // Restock ingredients only when cancelling from Baking — that's the
+                // only state where deduction has run. Pending and Confirmed haven't
+                // deducted yet, and Ready can only transition to Delivered, never
+                // to Cancelled (state-machine guard above).
+                if ($from === OrderStatus::Baking) {
+                    $this->inventoryManager->restockForOrder($order);
+                }
             }
         });
 

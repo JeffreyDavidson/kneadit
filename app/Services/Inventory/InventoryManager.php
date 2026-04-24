@@ -3,6 +3,7 @@
 namespace App\Services\Inventory;
 
 use App\Actions\Orders\DeductIngredientsForOrder;
+use App\Actions\Orders\RestockIngredientsForOrder;
 use App\Exceptions\Orders\CapacityExceededException;
 use App\Models\Orders\Order;
 use Carbon\Carbon;
@@ -13,6 +14,7 @@ class InventoryManager
     public function __construct(
         private CapacityCalculator $capacityCalculator,
         private DeductIngredientsForOrder $deductIngredients,
+        private RestockIngredientsForOrder $restockIngredients,
     ) {}
 
     /**
@@ -41,5 +43,15 @@ class InventoryManager
     public function deductForOrder(Order $order): void
     {
         ($this->deductIngredients)($order);
+    }
+
+    /**
+     * Restock all ingredients an order previously consumed. Used when an order
+     * is cancelled after the Baking transition has already deducted its stock.
+     * Creates positive-quantity StockAdjustment audit records of type Restock.
+     */
+    public function restockForOrder(Order $order): void
+    {
+        ($this->restockIngredients)($order);
     }
 }
