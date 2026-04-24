@@ -1,17 +1,25 @@
 <?php
 
+use App\Enums\Financial\CouponType;
 use App\Enums\Marketing\EmailTemplateType;
 use App\Enums\Orders\OrderStatus;
+use App\Mail\Customers\AbandonedCartRecoveryMail;
+use App\Mail\Customers\CustomerReferralRewardMail;
 use App\Mail\Customers\HappyBirthdayMail;
 use App\Mail\Customers\ProductAvailableMail;
 use App\Mail\Customers\RepeatOrderReminderMail;
 use App\Mail\Customers\ReviewRequestMail;
+use App\Mail\Orders\OrderModifiedMail;
 use App\Mail\Orders\OrderPlacedMail;
 use App\Mail\Orders\OrderStatusMail;
 use App\Models\Customers\Customer;
+use App\Models\Customers\CustomerReferral;
+use App\Models\Financial\Coupon;
 use App\Models\Inventory\Product;
 use App\Models\Marketing\EmailTemplate;
+use App\Models\Orders\Cart;
 use App\Models\Orders\Order;
+use App\ValueObjects\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -164,4 +172,69 @@ test('ProductAvailableMail uses custom template when exists', function () {
     $mail = new ProductAvailableMail($product, 'Alice');
 
     expect($mail->envelope()->subject)->toBe('Sourdough Loaf is back!');
+});
+
+test('AbandonedCartRecoveryMail uses custom template when exists', function () {
+    $cart = Cart::factory()->create(['customer_name' => 'Maya']);
+
+    EmailTemplate::factory()->create([
+        'email_type' => EmailTemplateType::AbandonedCartRecovery,
+        'subject' => 'Hey {customer_name}, come back to {store_name}',
+        'body' => '<p>Your cart is waiting</p>',
+    ]);
+
+    $mail = new AbandonedCartRecoveryMail($cart);
+
+    expect($mail->envelope()->subject)->toBe('Hey Maya, come back to Test Bakery')
+        ->and($mail->content()->view)->toBe('emails.custom-template');
+});
+
+test('AbandonedCartRecoveryMail falls back to default when no template exists', function () {
+    $cart = Cart::factory()->create();
+
+    $mail = new AbandonedCartRecoveryMail($cart);
+
+    expect($mail->envelope()->subject)->toBe('You left something in your cart')
+        ->and($mail->content()->view)->toBe('emails.customers.abandoned-cart-recovery');
+});
+
+test('CustomerReferralRewardMail uses custom template when exists', function () {
+    $referrer = Customer::factory()->create(['name' => 'Sam']);
+    $referral = CustomerReferral::factory()->create(['referrer_customer_id' => $referrer->id]);
+    $coupon = Coupon::factory()->create(['code' => 'THANKS10', 'type' => CouponType::Fixed, 'fixed_amount' => 1000]);
+
+    EmailTemplate::factory()->create([
+        'email_type' => EmailTemplateType::CustomerReferralReward,
+        'subject' => '{customer_name}, your reward {coupon_code} is ready',
+        'body' => '<p>Use {coupon_code}</p>',
+    ]);
+
+    $mail = new CustomerReferralRewardMail($referral, $coupon);
+
+    expect($mail->envelope()->subject)->toBe('Sam, your reward THANKS10 is ready')
+        ->and($mail->content()->view)->toBe('emails.custom-template');
+});
+
+test('OrderModifiedMail uses custom template when exists', function () {
+    $order = Order::factory()->create();
+
+    EmailTemplate::factory()->create([
+        'email_type' => EmailTemplateType::OrderModified,
+        'subject' => 'Heads up — order #{order_number} changed',
+        'body' => '<p>Was {previous_total}, now {new_total}</p>',
+    ]);
+
+    $mail = new OrderModifiedMail($order, Money::fromCents(1000), Money::fromCents(2000));
+
+    expect($mail->envelope()->subject)->toBe("Heads up — order #{$order->order_number} changed")
+        ->and($mail->content()->view)->toBe('emails.custom-template');
+});
+
+test('OrderModifiedMail falls back to default when no template exists', function () {
+    $order = Order::factory()->create();
+
+    $mail = new OrderModifiedMail($order, Money::fromCents(1000), Money::fromCents(2000));
+
+    expect($mail->envelope()->subject)->toBe("Your order #{$order->order_number} was updated")
+        ->and($mail->content()->view)->toBe('emails.orders.order-modified');
 });
