@@ -70,6 +70,14 @@ enum SubscriptionTier: string implements HasColor, HasLabel
 
     public static function resolve(User $user): ?self
     {
+        // Platform-admin-granted comp accounts get the highest tier without
+        // a Stripe subscription. The free_forever flag lives on the tenant
+        // because plan-level access is per-tenant — an owner with multiple
+        // tenants is free-forever only on the ones explicitly flagged.
+        if ($user->tenants()->where('free_forever', true)->exists()) {
+            return self::Pro;
+        }
+
         $priceId = $user->subscription('default')?->stripe_price;
 
         return $priceId ? self::fromPriceId($priceId) : null;

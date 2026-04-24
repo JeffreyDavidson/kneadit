@@ -22,6 +22,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property string $name
  * @property string $email
  * @property SubscriptionTier $plan
+ * @property bool $free_forever
  * @property Carbon|null $trial_ends_at
  * @property string|null $store_name
  * @property string|null $store_logo
@@ -71,6 +72,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'name',
             'email',
             'plan',
+            'free_forever',
             'trial_ends_at',
             'store_name',
             'store_logo',
@@ -88,6 +90,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return [
             'plan' => SubscriptionTier::class,
+            'free_forever' => 'boolean',
             'trial_ends_at' => 'datetime',
             'storefront_enabled' => 'boolean',
             'is_active' => 'boolean',
