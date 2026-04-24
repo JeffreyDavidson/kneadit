@@ -5,6 +5,7 @@ namespace App\Actions\Orders;
 use App\Events\Orders\OrderModified;
 use App\Exceptions\Orders\OrderNotModifiableException;
 use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use App\Services\Orders\CheckOrderStockAvailability;
 use App\Services\Orders\OrderModificationGuard;
 use App\ValueObjects\Money;
@@ -64,7 +65,7 @@ class ModifyOrder
             ($this->checkStock)($order);
 
             $subtotalDollars = $order->orderItems->sum(
-                fn ($item) => $item->unit_price->dollars() * $item->quantity,
+                fn (OrderItem $item): float => $item->unit_price->dollars() * $item->quantity,
             );
 
             $deliveryFeeDollars = $order->delivery_fee->dollars();

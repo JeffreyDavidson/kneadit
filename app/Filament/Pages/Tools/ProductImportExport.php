@@ -21,8 +21,6 @@ class ProductImportExport extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
-    protected string $view = 'filament.pages.tools.product-import-export';
-
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -32,6 +30,8 @@ class ProductImportExport extends Page
     {
         return SubscriptionTier::Pro;
     }
+
+    protected string $view = 'filament.pages.tools.product-import-export';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpTray;
 
