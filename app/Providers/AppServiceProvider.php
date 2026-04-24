@@ -63,6 +63,10 @@ class AppServiceProvider extends ServiceProvider
         // <script>/<style> tags. Same value flows through the request.
         $this->app->scoped(CspNonce::class);
 
+        // Centralized Stripe client so Stripe-using actions can be tested with
+        // a mocked binding rather than instantiating the client themselves.
+        $this->app->bind(\Stripe\StripeClient::class, fn () => new \Stripe\StripeClient(config('cashier.secret')));
+
         foreach (self::TENANT_SETTING_DTOS as $dto => $method) {
             $this->app->bind($dto, fn (Application $app) => $app->make(TenantSettingsRegistry::class)->{$method}());
         }
