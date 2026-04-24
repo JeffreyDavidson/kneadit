@@ -3,6 +3,7 @@
 namespace App\Filament\Central\Resources\TenantResource\Tables;
 
 use App\Enums\Platform\SubscriptionTier;
+use App\Models\Platform\FreeForeverGrant;
 use App\Models\Platform\Tenant;
 use Filament\Actions;
 use Filament\Actions\BulkAction;
@@ -17,6 +18,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 
 class TenantsTable
@@ -154,7 +156,17 @@ class TenantsTable
                     ->requiresConfirmation()
                     ->modalHeading('Grant free-forever access')
                     ->modalDescription('The selected tenants will bypass billing entirely and get full Pro-tier features. No card required, no trial expiry.')
-                    ->action(fn (Collection $records) => $records->each->update(['free_forever' => true]))
+                    ->action(function (Collection $records): void {
+                        $actorId = Auth::id();
+                        $records->each(function (Tenant $tenant) use ($actorId): void {
+                            $tenant->update(['free_forever' => true]);
+                            FreeForeverGrant::query()->create([
+                                'tenant_id' => $tenant->id,
+                                'granted_by_user_id' => $actorId,
+                                'granted_at' => now(),
+                            ]);
+                        });
+                    })
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('revoke_free_forever')
                     ->label('Revoke Free Forever')
@@ -164,7 +176,15 @@ class TenantsTable
                     ->requiresConfirmation()
                     ->modalHeading('Revoke free-forever access')
                     ->modalDescription('The selected tenants will start seeing billing prompts again and will need an active Stripe subscription or trial to use the service.')
-                    ->action(fn (Collection $records) => $records->each->update(['free_forever' => false]))
+                    ->action(function (Collection $records): void {
+                        $records->each(function (Tenant $tenant): void {
+                            $tenant->update(['free_forever' => false]);
+                            FreeForeverGrant::query()
+                                ->where('tenant_id', $tenant->id)
+                                ->whereNull('revoked_at')
+                                ->update(['revoked_at' => now()]);
+                        });
+                    })
                     ->deselectRecordsAfterCompletion(),
                 BulkAction::make('change_plan')
                     ->label('Change Plan')
