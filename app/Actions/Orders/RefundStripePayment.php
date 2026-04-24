@@ -3,12 +3,12 @@
 namespace App\Actions\Orders;
 
 use App\Enums\Orders\PaymentStatus;
+use App\Exceptions\Stripe\StripeRefundFailedException;
 use App\Models\Financial\Refund;
 use App\Models\Orders\Order;
 use App\Models\Staff\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 
@@ -54,12 +54,12 @@ class RefundStripePayment
                     ],
                 ]);
             } catch (ApiErrorException $e) {
-                Log::error('Stripe refund failed', [
-                    'order_id' => $order->id,
-                    'payment_intent' => $order->stripe_payment_intent_id,
-                    'error' => $e->getMessage(),
-                ]);
-                throw new RuntimeException('Stripe refund failed: ' . $e->getMessage(), 0, $e);
+                throw new StripeRefundFailedException(
+                    order: $order,
+                    paymentIntentId: $order->stripe_payment_intent_id,
+                    stripeErrorCode: $e->getStripeCode(),
+                    previous: $e,
+                );
             }
 
             $refund = Refund::query()->create([
@@ -71,6 +71,14 @@ class RefundStripePayment
             ]);
 
             $order->forceFill(['payment_status' => PaymentStatus::Refunded])->save();
+
+            Log::info('Stripe refund issued', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'amount_cents' => $order->total->cents(),
+                'stripe_refund_id' => $stripeRefund->id,
+                'initiated_by_user_id' => $initiatedBy?->id,
+            ]);
 
             return $refund;
         });
