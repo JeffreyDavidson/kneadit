@@ -3,6 +3,7 @@
 use App\Actions\Orders\TransitionOrderStatus;
 use App\Enums\Financial\CouponTransactionType;
 use App\Enums\Financial\GiftCardTransactionType;
+use App\Enums\Inventory\StockAdjustmentType;
 use App\Enums\Orders\OrderStatus;
 use App\Events\Orders\OrderCancelled;
 use App\Events\Orders\OrderDelivered;
@@ -14,7 +15,11 @@ use App\Models\Financial\Coupon;
 use App\Models\Financial\CouponTransaction;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
+use App\Models\Inventory\Ingredient;
+use App\Models\Inventory\Product;
+use App\Models\Inventory\Recipe;
 use App\Models\Orders\Order;
+use App\Models\Orders\OrderItem;
 use App\Models\Staff\User;
 use App\Services\Inventory\InventoryManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -156,6 +161,55 @@ test('cancellation decrements coupon used_count and creates reversal transaction
     expect($transaction)->not->toBeNull()
         ->and($transaction->type)->toBe(CouponTransactionType::Reversal)
         ->and($transaction->coupon_id)->toBe($coupon->id);
+});
+
+test('cancellation from Baking restocks ingredients with positive Restock adjustments', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $flour = Ingredient::factory()->create(['current_stock' => 10.00]);
+    $recipe->inventoryIngredients()->attach($flour->id, ['quantity' => 2.0, 'unit' => 'lb']);
+
+    $order = Order::factory()->baking()->create();
+    OrderItem::factory()->for($order)->for($product)->create(['quantity' => 3]);
+
+    resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
+
+    expect($flour->fresh()->current_stock)->toBe('16.00');
+
+    $restock = $flour->stockAdjustments()->where('type', StockAdjustmentType::Restock)->first();
+    expect($restock)->not->toBeNull()
+        ->and((float) $restock->quantity)->toBe(6.0)
+        ->and($restock->notes)->toBe("Order #{$order->order_number} cancelled");
+});
+
+test('cancellation from Pending does not restock', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $butter = Ingredient::factory()->create(['current_stock' => 5.00]);
+    $recipe->inventoryIngredients()->attach($butter->id, ['quantity' => 1.0, 'unit' => 'lb']);
+
+    $order = Order::factory()->pending()->create();
+    OrderItem::factory()->for($order)->for($product)->create(['quantity' => 2]);
+
+    resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
+
+    expect($butter->fresh()->current_stock)->toBe('5.00');
+    expect($butter->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
+});
+
+test('cancellation from Confirmed does not restock', function () {
+    $product = Product::factory()->create();
+    $recipe = Recipe::factory()->for($product)->create();
+    $eggs = Ingredient::factory()->create(['current_stock' => 12.00]);
+    $recipe->inventoryIngredients()->attach($eggs->id, ['quantity' => 3.0, 'unit' => 'each']);
+
+    $order = Order::factory()->confirmed()->create();
+    OrderItem::factory()->for($order)->for($product)->create(['quantity' => 2]);
+
+    resolve(TransitionOrderStatus::class)($order, OrderStatus::Cancelled);
+
+    expect($eggs->fresh()->current_stock)->toBe('12.00');
+    expect($eggs->stockAdjustments()->where('type', StockAdjustmentType::Restock)->count())->toBe(0);
 });
 
 test('cancellation restores gift card balance and creates refund transaction', function () {
