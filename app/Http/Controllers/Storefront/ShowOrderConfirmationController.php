@@ -34,7 +34,9 @@ class ShowOrderConfirmationController extends Controller
             'canModify' => $guard->canModify($order),
             'modifyMinutesRemaining' => $guard->minutesRemaining($order),
             'referralCode' => $referralCode,
-            'referralShareUrl' => $referralCode ? route('customer.referral', ['code' => $referralCode]) : null,
+            'referralShareUrl' => $referralCode ? route('customer.referral', [
+                'code' => $referralCode,
+            ]) : null,
         ]);
     }
 }
