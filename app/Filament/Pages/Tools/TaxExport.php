@@ -24,8 +24,6 @@ class TaxExport extends Page
     use RequiresManagerRole;
     use ShowsUpgradeBadge;
 
-    protected string $view = 'filament.pages.tools.tax-export';
-
     public static function canAccess(): bool
     {
         return static::hasManagerAccess() && Feature::active('pro-features');
@@ -35,6 +33,8 @@ class TaxExport extends Page
     {
         return SubscriptionTier::Pro;
     }
+
+    protected string $view = 'filament.pages.tools.tax-export';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentArrowDown;
 

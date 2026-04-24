@@ -105,23 +105,7 @@
             transform: translateY(-1px);
         }
 
-        .btn-secondary {
-            background: var(--warm-200);
-            color: var(--warm-900);
-            padding: 12px 24px;
-            border-radius: var(--radius-btn);
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: 1px solid var(--warm-300);
-            cursor: pointer;
-        }
-
-        .btn-secondary:hover {
-            background: var(--warm-300);
-        }
-
-        .btn-primary:disabled,
-        .btn-secondary:disabled {
+        .btn-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
@@ -245,53 +229,13 @@
             color: var(--warm-600);
         }
 
-        .text-secondary {
-            color: var(--warm-700);
-        }
-
         .bg-primary {
             background: var(--warm-600);
-        }
-
-        .bg-secondary {
-            background: var(--warm-200);
         }
 
         .border-primary {
             border-color: var(--warm-500);
         }
-
-        /* Section divider — reusable organic curve */
-        .section-divider {
-            position: relative;
-            height: 40px;
-            overflow: hidden;
-        }
-        .section-divider::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 1px;
-            background: var(--warm-500);
-            opacity: 0.4;
-        }
-        .section-divider::after {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--warm-500);
-            opacity: 0.5;
-        }
-        .section-divider-dark::before { background: var(--warm-400); opacity: 0.3; }
-        .section-divider-dark::after { background: var(--warm-400); opacity: 0.4; }
 
         /* Better base typography scale */
         h1 { line-height: 1.05; }
@@ -320,8 +264,7 @@
         }
 
         /* ===== Accessibility: Focus indicators ===== */
-        .btn-primary:focus-visible,
-        .btn-secondary:focus-visible {
+        .btn-primary:focus-visible {
             outline: 2px solid var(--warm-500);
             outline-offset: 2px;
         }

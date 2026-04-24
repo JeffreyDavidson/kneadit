@@ -7,8 +7,11 @@ use App\Models\Platform\Tenant;
 use App\Services\Export\CsvExportService;
 use App\Services\Tenants\TenancyManager;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
+use ZipArchive;
 
 class ExportController extends Controller
 {
@@ -39,7 +42,7 @@ class ExportController extends Controller
         return response()->streamDownload(function () use ($tenant, $type, $csvExport, $tenancyManager) {
             $tenancyManager->withinTenant($tenant, function () use ($type, $csvExport) {
                 $handle = fopen('php://output', 'w');
-                throw_if($handle === false, \RuntimeException::class, 'Failed to open file handle');
+                throw_if($handle === false, RuntimeException::class, 'Failed to open file handle');
 
                 $csvExport->writeTo($handle, $type);
                 fclose($handle);
@@ -55,8 +58,8 @@ class ExportController extends Controller
 
         return response()->streamDownload(function () use ($tenant, $csvExport, $tenancyManager) {
             $tmpFile = tempnam(sys_get_temp_dir(), 'export_');
-            $zip = new \ZipArchive;
-            $zip->open($tmpFile, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            $zip = new ZipArchive;
+            $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
             try {
                 $tenancyManager->withinTenant($tenant, function () use ($csvExport, $zip) {
@@ -64,7 +67,7 @@ class ExportController extends Controller
                         $zip->addFromString("{$type}.csv", $csvExport->toString($type));
                     }
                 });
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $zip->close();
                 @unlink($tmpFile);
                 throw $e;

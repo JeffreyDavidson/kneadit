@@ -1,4 +1,4 @@
-name: FilaCheck
+name: TLint
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [main, develop]
 
 jobs:
-  filacheck:
-    name: Filament Lint
+  tlint:
+    name: Laravel/Blade Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -26,5 +26,5 @@ jobs:
           COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
         run: composer install --no-interaction --prefer-dist
 
-      - name: Run FilaCheck
-        run: vendor/bin/filacheck
+      - name: Run TLint
+        run: vendor/bin/tlint lint

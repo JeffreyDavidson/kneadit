@@ -115,7 +115,7 @@ class ViewOrder extends ViewRecord
                     ]),
 
                 Section::make('Pickup Contact')
-                    ->visible(fn ($record) => filled($record->pickup_contact_name))
+                    ->visible(fn (Order $record): bool => filled($record->pickup_contact_name))
                     ->schema([
                         Grid::make(3)
                             ->schema([

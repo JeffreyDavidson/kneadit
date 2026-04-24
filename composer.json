@@ -88,9 +88,15 @@
         "filacheck:fix": "vendor/bin/filacheck --fix",
         "rector": "vendor/bin/rector process --dry-run",
         "rector:fix": "vendor/bin/rector process",
+        "tlint": "vendor/bin/tlint lint",
+        "tlint:fix": "vendor/bin/tlint format",
+        "types": "vendor/bin/pest --type-coverage --min=100",
         "check": [
             "@lint",
+            "@tlint",
             "@analyse",
+            "@filacheck",
+            "@types",
             "@test"
         ],
         "post-autoload-dump": [

@@ -3,11 +3,14 @@
         "vendor",
         "storage",
         "node_modules",
-        "bootstrap/cache"
+        "bootstrap/cache",
+        "resources/views/platform/sitemap.blade.php",
+        "resources/views/central/blog/central-feed.blade.php"
     ],
     "disabled": [
         "NoJsonDirective",
         "NoDocBlocksForMigrationUpDown",
-        "UseAnonymousMigrations"
+        "UseAnonymousMigrations",
+        "QualifiedNamesOnlyForClassName"
     ]
 }
