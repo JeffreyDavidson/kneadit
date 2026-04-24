@@ -83,7 +83,8 @@ class ProductForm
                             ->maxSize(5120)
                             ->directory('products')
                             ->visibility('public')
-                            ->required(),
+                            ->required()
+                            ->preventFilePathTampering(),
                     ]),
             ]);
     }
