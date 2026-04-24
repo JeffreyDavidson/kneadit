@@ -108,6 +108,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return $this->hasMany(TenantNote::class);
     }
 
+    /** @return HasMany<FreeForeverGrant, $this> */
+    public function freeForeverGrants(): HasMany
+    {
+        return $this->hasMany(FreeForeverGrant::class);
+    }
+
     /**
      * Referrals made by this tenant.
      *
