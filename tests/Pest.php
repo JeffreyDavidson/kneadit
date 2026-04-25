@@ -414,6 +414,22 @@ function createCentralTables(): void
             $table->integer('reward_months')->default(1);
             $table->timestamps();
         },
+        'platform_promo_codes' => function ($table) {
+            $table->id();
+            $table->string('code');
+            $table->string('coupon_id');
+            $table->string('promotion_code_id');
+            $table->unsignedTinyInteger('percent_off')->nullable();
+            $table->unsignedInteger('amount_off_cents')->nullable();
+            $table->string('duration');
+            $table->unsignedTinyInteger('duration_in_months')->nullable();
+            $table->unsignedInteger('max_redemptions')->default(1);
+            $table->timestamp('expires_at')->nullable();
+            $table->string('tenant_id')->nullable();
+            $table->string('name')->nullable();
+            $table->unsignedBigInteger('created_by_user_id')->nullable();
+            $table->timestamps();
+        },
     ];
 
     foreach ($tables as $name => $callback) {
