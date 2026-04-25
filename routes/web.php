@@ -55,6 +55,11 @@ Route::get('admin/maintenance-mode/preview', App\Http\Controllers\Central\Mainte
     ->name('central.maintenance-mode.preview')
     ->middleware(['web', 'auth']);
 
+// Backup download — streams a zipped backup folder to the admin.
+Route::get('admin/backups/{name}/download', App\Http\Controllers\Central\BackupDownloadController::class)
+    ->name('central.backups.download')
+    ->middleware(['web', 'auth']);
+
 /*
 |--------------------------------------------------------------------------
 | Central Routes
