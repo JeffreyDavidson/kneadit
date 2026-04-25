@@ -112,7 +112,8 @@ test('get feature tenant breakdown returns data for selected feature', function 
     $breakdown = test()->page->getFeatureTenantBreakdown();
 
     expect($breakdown)->toHaveCount(2)
-        ->and($breakdown->first()->tenant_id)->toBe('bakery-1');
+        ->and($breakdown->first()['tenant_id'])->toBe('bakery-1')
+        ->and($breakdown->first())->toHaveKeys(['tenant_id', 'name', 'total']);
 });
 
 test('format feature name replaces underscores and capitalizes', function () {

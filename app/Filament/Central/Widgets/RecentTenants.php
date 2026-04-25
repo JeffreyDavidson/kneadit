@@ -2,6 +2,7 @@
 
 namespace App\Filament\Central\Widgets;
 
+use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\Tenant;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -10,7 +11,7 @@ use Filament\Widgets\TableWidget;
 
 class RecentTenants extends TableWidget
 {
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 4;
 
     protected int|string|array $columnSpan = 'full';
 
@@ -20,10 +21,12 @@ class RecentTenants extends TableWidget
     {
         return $table
             ->query(Tenant::query()->latest()->limit(5))
+            ->recordUrl(fn (Tenant $record) => TenantResource::getUrl('view', ['record' => $record->id]))
             ->columns([
                 TextColumn::make('store_name')
                     ->label('Bakery')
                     ->placeholder('Not set')
+                    ->weight('bold')
                     ->searchable(),
 
                 TextColumn::make('name')
