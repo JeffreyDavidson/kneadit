@@ -13,7 +13,13 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;
 
-#[Signature('kneadit:seed-demo {--fresh : Drop existing demo tenants first}')]
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\warning;
+
+#[Signature('kneadit:seed-demo
+    {--fresh : Drop existing demo tenants first}
+    {--force : Skip the destructive confirmation prompt}')]
 #[Description('Seed local with 5 polished demo bakeries + curated Central activity')]
 class SeedDemoCommand extends Command
 {
@@ -66,6 +72,15 @@ class SeedDemoCommand extends Command
     public function handle(): int
     {
         if ($this->option('fresh')) {
+            if (! $this->option('force')) {
+                warning('This will delete the 5 demo bakeries and their tenant DBs.');
+                if (! confirm(label: 'Continue?', default: false)) {
+                    note('Cancelled.');
+
+                    return self::SUCCESS;
+                }
+            }
+
             foreach (self::BAKERIES as $bakery) {
                 $existing = Tenant::query()->find($bakery['id']);
                 if ($existing) {
