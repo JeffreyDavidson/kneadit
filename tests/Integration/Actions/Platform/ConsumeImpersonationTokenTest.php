@@ -18,12 +18,29 @@ test('consumes valid token and returns owner user', function () {
 
     User::factory()->owner()->create();
 
-    $user = resolve(ConsumeImpersonationToken::class)($rawToken);
+    $user = resolve(ConsumeImpersonationToken::class)($rawToken, '10.0.0.1');
+
+    $record = ImpersonationToken::query()->where('token', hash('sha256', $rawToken))->first();
 
     expect($user)->toBeInstanceOf(User::class)
         ->and($user->role)->toBe(UserRole::Owner)
-        ->and(ImpersonationToken::query()->where('token', hash('sha256', $rawToken))->count())->toBe(0);
+        ->and($record)->not->toBeNull()
+        ->and($record->consumed_at)->not->toBeNull()
+        ->and($record->consumer_ip)->toBe('10.0.0.1');
 });
+
+test('aborts when token already consumed', function () {
+    $rawToken = 'already-used-token';
+
+    ImpersonationToken::factory()->create([
+        'token' => hash('sha256', $rawToken),
+        'tenant_id' => 'test',
+        'expires_at' => now()->addMinutes(5),
+        'consumed_at' => now()->subMinute(),
+    ]);
+
+    resolve(ConsumeImpersonationToken::class)($rawToken);
+})->throws(Symfony\Component\HttpKernel\Exception\HttpException::class);
 
 test('aborts on expired token', function () {
     ImpersonationToken::factory()->create([
