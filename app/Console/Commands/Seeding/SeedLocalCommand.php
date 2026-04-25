@@ -77,6 +77,17 @@ class SeedLocalCommand extends Command
             foreach (Tenant::all() as $tenant) {
                 $tenant->delete();
             }
+
+            // Central-side activity tables don't cascade from tenants (their
+            // tenant_id columns are plain strings, not foreign keys), so wipe
+            // them too — otherwise repeated --fresh runs accumulate orphan
+            // rows pointing at tenant_ids that no longer exist.
+            $this->info('Wiping Central activity (audit log, tickets, platform events)…');
+            SupportReply::query()->delete();
+            SupportTicket::query()->delete();
+            AdminAuditLog::query()->delete();
+            PlatformActivity::query()->delete();
+            FreeForeverGrant::query()->delete();
         }
 
         $estimatedMinutes = max(1, (int) ceil($count * 0.5));
