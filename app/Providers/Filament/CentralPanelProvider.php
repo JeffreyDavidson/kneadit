@@ -37,13 +37,15 @@ class CentralPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'warning' => Color::Orange,
             ])
-            ->brandName('KneadIt Platform')
+            ->brandName('KneadIt')
             ->brandLogo(view('filament.central.brand-logo'))
-            ->brandLogoHeight('50px')
+            ->brandLogoHeight('36px')
             ->darkMode(true)
             ->viteTheme('resources/css/filament/central/theme.css')
             ->navigationGroups([
                 NavigationGroup::make('Platform'),
+                NavigationGroup::make('Communication'),
+                NavigationGroup::make('Insights'),
                 NavigationGroup::make('Settings'),
             ])
             ->font('Inter')

@@ -57,11 +57,16 @@
 }
 .fi-sidebar-header {
     border-bottom: 1px solid var(--border-subtle) !important;
-    padding: 1.25rem 1rem !important;
+    padding: 1.25rem 1.25rem !important;
+}
+/* Hide any brand text rendered alongside the brand logo (we use the logo image only) */
+.fi-sidebar-header .fi-logo > span,
+.fi-sidebar-header .fi-logo > div:not([class*="brand-logo"]):not(:has(img)) {
+    display: none !important;
 }
 /* Fix sidebar nav alignment + preserve scroll on navigation */
 .fi-sidebar-nav {
-    padding: 0.75rem 0.75rem !important;
+    padding: 1rem 1rem !important;
     overflow-y: auto !important;
     max-height: calc(100vh - 80px) !important;
     scrollbar-width: thin !important;
@@ -74,18 +79,38 @@
     background: rgba(212,146,12,0.2);
     border-radius: 4px;
 }
+/* Kill Filament's default gap-y-7 (28px) between groups so we can control spacing explicitly */
+.fi-sidebar-nav-groups {
+    gap: 0 !important;
+}
 .fi-sidebar-group {
     padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+}
+.fi-sidebar-group + .fi-sidebar-group {
+    margin-top: 1rem !important;
+}
+/* Tighten the group header button (label + collapse chevron) so it doesn't introduce huge gaps */
+.fi-sidebar-group-btn {
+    padding: 0.35rem 0 !important;
+    min-height: auto !important;
+    align-items: center !important;
+}
+/* Hide the collapse-group chevron (we don't use collapsing groups in this panel) */
+.fi-sidebar-group-collapse-btn {
+    display: none !important;
 }
 .fi-sidebar-group-items {
     padding: 0 !important;
     gap: 2px !important;
+    margin: 0 !important;
 }
 .fi-sidebar-item {
     margin: 0 !important;
 }
 .fi-sidebar-item a {
-    padding: 0.5rem 0.75rem !important;
+    padding: 0.55rem 1rem !important;
     border-radius: 8px !important;
 }
 .fi-sidebar-item-label {
@@ -110,12 +135,13 @@
     background: var(--hover-bg) !important;
 }
 .fi-sidebar-group-label {
-    color: var(--platform-500) !important;
-    font-size: 0.65rem !important;
+    color: var(--platform-300) !important;
+    font-size: 0.7rem !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.1em !important;
+    letter-spacing: 0.12em !important;
     font-weight: 700 !important;
-    padding: 0.75rem 0.75rem 0.35rem !important;
+    padding: 0.5rem 1rem 0.5rem !important;
+    opacity: 0.85;
 }
 
 /* ===== TOP BAR ===== */
@@ -215,8 +241,14 @@
     border-radius: 12px !important;
     overflow: visible !important;
 }
-.fi-ta-header-cell {
+.fi-ta-table thead {
     background: rgba(212, 146, 12, 0.06) !important;
+}
+.fi-ta-table thead .fi-ta-cell,
+.fi-ta-table thead .fi-ta-header-cell {
+    background: transparent !important;
+}
+.fi-ta-header-cell {
     color: var(--platform-300) !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
