@@ -14,7 +14,7 @@ class Analytics extends Page
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $title = 'Analytics';
 
@@ -62,5 +62,17 @@ class Analytics extends Page
     public function getMostPopularPlan(): string
     {
         return TenantAnalyticsQuery::mostPopularPlan();
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public function getKpis(): array
+    {
+        return TenantAnalyticsQuery::kpis();
+    }
+
+    /** @return array<string, int> */
+    public function getTenantStatus(): array
+    {
+        return TenantAnalyticsQuery::tenantStatus();
     }
 }
