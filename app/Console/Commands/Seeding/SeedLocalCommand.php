@@ -94,6 +94,10 @@ class SeedLocalCommand extends Command
         note("Provisioning {$count} tenants — estimated ~{$estimatedMinutes} minutes.");
         $this->newLine();
 
+        // Resolve the platform admin once so seeded grants/audit rows have a
+        // realistic creator instead of leaving granted_by_user_id null.
+        $admin = User::query()->orderBy('id')->first();
+
         $created = [];
         $bar = $this->output->createProgressBar($count);
         $bar->start();
@@ -130,7 +134,7 @@ class SeedLocalCommand extends Command
             /** @var Tenant|null $tenant */
             $tenant = Tenant::query()->find($spec['id']);
             if ($tenant !== null) {
-                $this->randomizeTenantAttributes($tenant, $faker);
+                $this->randomizeTenantAttributes($tenant, $faker, $admin?->id);
                 $created[] = $tenant->id;
             }
 
@@ -168,7 +172,7 @@ class SeedLocalCommand extends Command
         ];
     }
 
-    private function randomizeTenantAttributes(Tenant $tenant, \Faker\Generator $faker): void
+    private function randomizeTenantAttributes(Tenant $tenant, \Faker\Generator $faker, ?int $grantedByUserId = null): void
     {
         $createdAt = $faker->dateTimeBetween('-6 months', 'now');
 
@@ -200,6 +204,7 @@ class SeedLocalCommand extends Command
         if ($freeForever) {
             FreeForeverGrant::query()->create([
                 'tenant_id' => $tenant->id,
+                'granted_by_user_id' => $grantedByUserId,
                 'granted_at' => $createdAt,
             ]);
         }
