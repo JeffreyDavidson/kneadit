@@ -39,8 +39,6 @@ class SupportTicketsTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                Actions\EditAction::make()
-                    ->slideOver(),
             ]);
     }
 }

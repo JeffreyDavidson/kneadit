@@ -5,6 +5,7 @@ namespace App\Filament\Central\Resources\SupportTicketResource\Pages;
 use App\Enums\Platform\SupportTicketStatus;
 use App\Filament\Central\Resources\SupportTicketResource;
 use App\Models\Platform\SupportTicket;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Livewire\Attributes\Rule;
 
@@ -20,6 +21,14 @@ class ViewTicket extends ViewRecord
     #[Rule(['required', 'min:3'])]
     public string $replyBody = '';
 
+    public string $adminNotesDraft = '';
+
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+        $this->adminNotesDraft = $this->record->admin_notes ?? '';
+    }
+
     public function addReply(): void
     {
         $this->validate(['replyBody' => ['required', 'min:3']]);
@@ -32,6 +41,11 @@ class ViewTicket extends ViewRecord
 
         $this->replyBody = '';
         $this->record->load('replies');
+
+        Notification::make()
+            ->title('Reply sent')
+            ->success()
+            ->send();
     }
 
     public function updateStatus(string $status): void
@@ -44,5 +58,21 @@ class ViewTicket extends ViewRecord
 
         $this->record->update($data);
         $this->record->refresh();
+
+        Notification::make()
+            ->title('Status updated')
+            ->success()
+            ->send();
+    }
+
+    public function saveAdminNotes(): void
+    {
+        $this->record->update(['admin_notes' => $this->adminNotesDraft]);
+        $this->record->refresh();
+
+        Notification::make()
+            ->title('Internal notes saved')
+            ->success()
+            ->send();
     }
 }
