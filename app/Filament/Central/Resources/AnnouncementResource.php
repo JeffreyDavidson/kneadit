@@ -25,7 +25,7 @@ class AnnouncementResource extends Resource
 
     protected static ?string $navigationLabel = 'Announcements';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Schema $form): Schema
     {

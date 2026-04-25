@@ -6,9 +6,9 @@ use Filament\Widgets\Widget;
 
 class PlatformInfo extends Widget
 {
-    protected static ?int $sort = -2;
+    protected static ?int $sort = 999;
 
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = 'full';
 
     protected string $view = 'filament.central.widgets.welcome-banner';
 }

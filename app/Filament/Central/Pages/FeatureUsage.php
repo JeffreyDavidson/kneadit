@@ -44,6 +44,16 @@ class FeatureUsage extends Page
         return FeatureUsageQuery::totalInteractionsThisMonth();
     }
 
+    public function getTotalInteractionsAllTime(): int
+    {
+        return FeatureUsageQuery::totalInteractionsAllTime();
+    }
+
+    public function getFeatureTotalCount(?string $feature): int
+    {
+        return FeatureUsageQuery::featureTotalCount($feature);
+    }
+
     /** @return Collection<int, mixed> */
     public function getFeatureUsageBars(): Collection
     {

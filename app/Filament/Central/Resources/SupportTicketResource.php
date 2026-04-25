@@ -2,12 +2,10 @@
 
 namespace App\Filament\Central\Resources;
 
-use App\Filament\Central\Resources\SupportTicketResource\Schemas\SupportTicketForm;
 use App\Filament\Central\Resources\SupportTicketResource\Tables\SupportTicketsTable;
 use App\Models\Platform\SupportTicket;
 use BackedEnum;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
@@ -27,7 +25,7 @@ class SupportTicketResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Support Inbox';
 
@@ -43,9 +41,18 @@ class SupportTicketResource extends Resource
         return 'danger';
     }
 
-    public static function form(Schema $form): Schema
+    /**
+     * Tickets originate from bakers; platform admins only view/reply/resolve
+     * via ViewTicket. No create or edit surface.
+     */
+    public static function canCreate(): bool
     {
-        return SupportTicketForm::configure($form);
+        return false;
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return false;
     }
 
     public static function table(Table $table): Table
