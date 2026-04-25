@@ -17,9 +17,15 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
+
 #[Signature('kneadit:seed-local
-    {--count=100 : Number of tenants to provision}
-    {--fresh : Drop existing tenants first (DESTRUCTIVE)}')]
+    {--count= : Number of tenants to provision (prompted if omitted)}
+    {--fresh : Drop existing tenants first (DESTRUCTIVE)}
+    {--force : Skip the destructive confirmation prompt}')]
 #[Description('Seed local dev with N varied tenants + Central activity (slow — minutes)')]
 class SeedLocalCommand extends Command
 {
@@ -40,20 +46,41 @@ class SeedLocalCommand extends Command
 
     public function handle(): int
     {
-        $count = (int) $this->option('count');
         $faker = Faker::create();
 
+        $count = $this->option('count') !== null
+            ? (int) $this->option('count')
+            : (int) text(
+                label: 'How many tenants?',
+                placeholder: '100',
+                default: '100',
+                validate: fn (string $value) => match (true) {
+                    ! ctype_digit($value) => 'Must be a whole number.',
+                    (int) $value < 1 => 'Must be at least 1.',
+                    (int) $value > 500 => 'Capped at 500 — go in batches if you really need more.',
+                    default => null,
+                },
+                hint: 'Each tenant takes 10-30 seconds to provision (full migrate + seed pipeline).',
+            );
+
         if ($this->option('fresh')) {
-            if (! $this->confirm('This will DELETE every existing tenant. Continue?')) {
-                return self::SUCCESS;
+            if (! $this->option('force')) {
+                warning('This will DELETE every existing tenant.');
+                if (! confirm(label: 'Continue?', default: false)) {
+                    note('Cancelled.');
+
+                    return self::SUCCESS;
+                }
             }
+
             $this->info('Wiping existing tenants…');
             foreach (Tenant::all() as $tenant) {
                 $tenant->delete();
             }
         }
 
-        $this->info("Provisioning {$count} tenants — this can take a while.");
+        $estimatedMinutes = max(1, (int) ceil($count * 0.5));
+        note("Provisioning {$count} tenants — estimated ~{$estimatedMinutes} minutes.");
         $this->newLine();
 
         $created = [];
