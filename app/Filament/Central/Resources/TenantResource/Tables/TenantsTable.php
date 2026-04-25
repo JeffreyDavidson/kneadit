@@ -106,7 +106,12 @@ class TenantsTable
                     Actions\Action::make('visit')
                         ->label('Visit Storefront')
                         ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                        ->url(fn (Tenant $record) => 'https://' . $record->id . '.getkneadit.app')
+                        ->url(fn (Tenant $record) => sprintf(
+                            '%s://%s.%s',
+                            parse_url(config('app.url'), PHP_URL_SCHEME) ?: 'https',
+                            $record->id,
+                            parse_url(config('app.url'), PHP_URL_HOST) ?: 'getkneadit.app',
+                        ))
                         ->openUrlInNewTab(),
                 ]),
             ])
