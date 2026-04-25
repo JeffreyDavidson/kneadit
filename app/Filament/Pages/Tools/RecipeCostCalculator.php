@@ -28,8 +28,6 @@ class RecipeCostCalculator extends Page
         return SubscriptionTier::Growth;
     }
 
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
 
     protected static ?string $navigationLabel = 'Recipe Cost Calculator';

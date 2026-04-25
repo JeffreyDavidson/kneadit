@@ -27,8 +27,6 @@ class HolidayPlanningCalendar extends Page
         return SubscriptionTier::Pro;
     }
 
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedGift;
 
     protected static ?string $navigationLabel = 'Holidays';

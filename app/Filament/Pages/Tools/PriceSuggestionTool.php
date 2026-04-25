@@ -36,8 +36,6 @@ class PriceSuggestionTool extends Page
 
     protected static ?int $navigationSort = 8;
 
-    protected static bool $shouldRegisterNavigation = false;
-
     protected string $view = 'filament.pages.tools.price-suggestion-tool';
 
     public ?int $selectedRecipeId = null;
