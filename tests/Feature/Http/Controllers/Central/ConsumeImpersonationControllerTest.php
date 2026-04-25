@@ -5,6 +5,17 @@ use App\Http\Controllers\Central\ConsumeImpersonationController;
 use App\Models\Staff\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Session\ArraySessionHandler;
+use Illuminate\Session\Store;
+
+function impersonationRequest(string $path): Request
+{
+    $request = Request::create($path, 'GET');
+    $request->server->set('REMOTE_ADDR', '10.0.0.1');
+    $request->setLaravelSession(new Store('test', new ArraySessionHandler(60)));
+
+    return $request;
+}
 
 beforeEach(function () {
     setUpCentralTest();
@@ -17,8 +28,7 @@ beforeEach(function () {
 
 test('consume impersonation logs in user and redirects to admin', function () {
     $user = User::factory()->owner()->create();
-    $request = Request::create('/impersonate/valid-token-123', 'GET');
-    $request->server->set('REMOTE_ADDR', '10.0.0.1');
+    $request = impersonationRequest('/impersonate/valid-token-123');
 
     $action = Mockery::mock(ConsumeImpersonationToken::class);
     $action->shouldReceive('__invoke')
@@ -34,8 +44,27 @@ test('consume impersonation logs in user and redirects to admin', function () {
         ->and(auth()->user()->id)->toBe($user->id);
 });
 
+test('consume impersonation flushes prior session data', function () {
+    $user = User::factory()->owner()->create();
+    $request = impersonationRequest('/impersonate/valid-token-123');
+
+    // Simulate a prior platform-admin session with a stale password hash —
+    // without flushing this, AuthenticateSession on the next request would
+    // compare it to the impersonated user's hash and bounce them to login.
+    $request->session()->put('password_hash_web', 'platform-admin-old-hash');
+    $request->session()->put('login_web_xyz', 999);
+
+    $action = Mockery::mock(ConsumeImpersonationToken::class);
+    $action->shouldReceive('__invoke')->once()->andReturn($user);
+
+    (new ConsumeImpersonationController)('valid-token-123', $request, $action);
+
+    expect($request->session()->get('password_hash_web'))->not->toBe('platform-admin-old-hash')
+        ->and($request->session()->get('login_web_xyz'))->toBeNull();
+});
+
 test('consume impersonation aborts for invalid token', function () {
-    $request = Request::create('/impersonate/bad-token', 'GET');
+    $request = impersonationRequest('/impersonate/bad-token');
 
     $action = Mockery::mock(ConsumeImpersonationToken::class);
     $action->shouldReceive('__invoke')
