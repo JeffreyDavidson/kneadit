@@ -76,6 +76,13 @@ class PlatformOperations extends Page
                 'icon' => 'heroicon-o-gift',
                 'color' => 'gold',
             ],
+            [
+                'key' => 'paypal:check-payments',
+                'label' => 'PayPal Payment Sync',
+                'description' => 'Reconcile PayPal invoice statuses across all tenants. Updates unpaid/cancelled/refunded orders.',
+                'icon' => 'heroicon-o-credit-card',
+                'color' => 'sky',
+            ],
         ];
     }
 
