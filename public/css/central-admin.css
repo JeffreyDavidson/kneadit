@@ -1,28 +1,10 @@
 /* ===================================================================
    KneadIt – Central Platform Admin Theme
    ===================================================================
-   Dark base + KneadIt brand gold/amber accents
+   Palette variables (--platform-*, --accent, --border-*, --hover-bg,
+   --active-bg, --scrollbar-thumb, --focus-ring, --thead-bg) are
+   injected by CentralPanelProvider based on config('kneadit.central_theme').
    =================================================================== */
-
-:root {
-    --platform-950: #0c0a09;
-    --platform-900: #1c1410;
-    --platform-800: #2a1f18;
-    --platform-700: #3d2c1e;
-    --platform-600: #5c4333;
-    --platform-500: #d4920c;
-    --platform-400: #e8b04a;
-    --platform-300: #f5d88e;
-    --platform-200: #faf0d6;
-    --platform-100: #fdf8ed;
-    --platform-50: #fefcf5;
-    --accent: #d4920c;
-    --accent-light: #e8b04a;
-    --border-subtle: rgba(212, 146, 12, 0.12);
-    --border-medium: rgba(212, 146, 12, 0.2);
-    --hover-bg: rgba(212, 146, 12, 0.06);
-    --active-bg: rgba(212, 146, 12, 0.12);
-}
 
 /* ===== FONTS ===== */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
@@ -70,13 +52,13 @@
     overflow-y: auto !important;
     max-height: calc(100vh - 80px) !important;
     scrollbar-width: thin !important;
-    scrollbar-color: rgba(212,146,12,0.2) transparent !important;
+    scrollbar-color: var(--scrollbar-thumb) transparent !important;
 }
 .fi-sidebar-nav::-webkit-scrollbar {
     width: 4px;
 }
 .fi-sidebar-nav::-webkit-scrollbar-thumb {
-    background: rgba(212,146,12,0.2);
+    background: var(--scrollbar-thumb);
     border-radius: 4px;
 }
 /* Kill Filament's default gap-y-7 (28px) between groups so we can control spacing explicitly */
@@ -242,7 +224,7 @@
     overflow: visible !important;
 }
 .fi-ta-table thead {
-    background: rgba(212, 146, 12, 0.06) !important;
+    background: var(--thead-bg) !important;
 }
 .fi-ta-table thead .fi-ta-cell,
 .fi-ta-table thead .fi-ta-header-cell {
@@ -276,10 +258,49 @@
 .fi-ta-empty-state-description {
     color: var(--platform-400) !important;
 }
-.fi-ta-search-field input {
+/* Filament wraps inputs in `.fi-input-wrp` which carries the visible border
+   and background; the inner <input> must be transparent + borderless or you
+   get a two-tone seam between the prefix-icon area and the text area. Focus
+   styling lives ONLY on the wrapper to avoid stacked rings. */
+.fi-ta-search-field .fi-input-wrp,
+.fi-input-wrp {
     background: var(--platform-800) !important;
-    border-color: var(--border-medium) !important;
+    border: 1px solid var(--border-medium) !important;
+    transition: border-color 0.15s, box-shadow 0.15s !important;
+}
+.fi-ta-search-field .fi-input-wrp:focus-within,
+.fi-input-wrp:focus-within {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
+    outline: none !important;
+}
+/* Use background-color (not the shorthand) so Filament's chevron
+   background-image on native <select> elements isn't wiped out.
+   Selectors cover input, select, textarea, and any class variant. */
+.fi-ta-search-field input,
+.fi-input-wrp input,
+.fi-input-wrp select,
+.fi-input-wrp textarea,
+.fi-input-wrp .fi-input,
+.fi-input-wrp .fi-select-input {
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
     color: white !important;
+    --tw-ring-shadow: none !important;
+    --tw-ring-color: transparent !important;
+}
+.fi-ta-search-field input:focus,
+.fi-input-wrp input:focus,
+.fi-input-wrp select:focus,
+.fi-input-wrp textarea:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+.fi-input-wrp-icon,
+.fi-input-wrp-prefix,
+.fi-input-wrp-suffix {
+    color: var(--platform-400) !important;
 }
 .fi-ta-pagination {
     background: var(--platform-900) !important;
@@ -297,7 +318,7 @@
 }
 .fi-input:focus {
     border-color: var(--accent) !important;
-    box-shadow: 0 0 0 3px rgba(212, 146, 12, 0.15) !important;
+    box-shadow: 0 0 0 3px var(--focus-ring) !important;
 }
 .fi-select-input {
     background: var(--platform-800) !important;
@@ -313,14 +334,29 @@
     border-color: var(--accent) !important;
 }
 
-/* ===== BUTTONS ===== */
+/* ===== BUTTONS =====
+   Filament v5 renders primary buttons as `.fi-btn.fi-color-primary`. Force a
+   darker --primary-700 background + white text so contrast stays AA across
+   every theme (medium accent + medium-dark text yields ~3:1, fails WCAG).
+   The legacy .fi-btn-primary selector is kept for any custom Blade buttons. */
+.fi-btn.fi-color-primary,
 .fi-btn-primary {
-    background: var(--accent) !important;
-    color: var(--platform-950) !important;
+    background-color: var(--primary-700) !important;
+    color: white !important;
     font-weight: 600 !important;
 }
+.fi-btn.fi-color-primary:hover,
 .fi-btn-primary:hover {
-    background: var(--accent-light) !important;
+    background-color: var(--primary-800) !important;
+    color: white !important;
+}
+/* Force any leading/trailing icons inside primary buttons to match the
+   white label text — Filament's `--icon-color` overrides currentColor. */
+.fi-btn.fi-color-primary .fi-btn-icon,
+.fi-btn.fi-color-primary svg,
+.fi-btn-primary .fi-btn-icon,
+.fi-btn-primary svg {
+    color: white !important;
 }
 
 /* ===== BADGES ===== */

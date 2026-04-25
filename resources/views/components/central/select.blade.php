@@ -1,14 +1,21 @@
 @props([])
 
-@php
-    $arrowSvg = "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d4920c' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>\")";
-@endphp
-
-<select
-    {{ $attributes->class([
-        'w-full bg-espresso border border-honey/12 rounded-lg pl-3 pr-8 py-2 text-parchment text-sm outline-none appearance-none bg-no-repeat focus:border-honey transition-colors',
-    ]) }}
-    style="background-image: {{ $arrowSvg }}; background-position: right 0.75rem center;"
+{{-- Wrapper inherits the user's sizing classes (e.g. w-full max-w-[400px])
+     so the chevron can be absolutely positioned against the actual select
+     box. Theme accent color tracks the active palette via `text-honey`,
+     which is rebound to var(--accent) per theme. --}}
+<div
+    {{ $attributes->only('class') }}
+    style="position: relative; display: block;"
 >
-    {{ $slot }}
-</select>
+    <select
+        {{ $attributes->except('class')->merge(['class' => 'w-full bg-espresso border border-honey/12 rounded-lg pl-3 pr-8 py-2 text-parchment text-sm outline-none appearance-none focus:border-honey transition-colors']) }}
+    >
+        {{ $slot }}
+    </select>
+    <x-heroicon-o-chevron-down
+        class="text-honey"
+        stroke-width="2.5"
+        style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); width: 0.75rem; height: 0.75rem; pointer-events: none;"
+    />
+</div>

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Central\CentralThemes;
 use App\Filament\Central\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -40,7 +41,10 @@ class CentralPanelProvider extends PanelProvider
             ->brandName('KneadIt')
             ->brandLogo(view('filament.central.brand-logo'))
             ->brandLogoHeight('36px')
-            ->darkMode(true)
+            // Force dark mode and hide the user-menu toggle — central-admin.css
+            // hard-codes dark surfaces everywhere, so the light/system options
+            // were inert. Theme variants are picked under Settings → Appearance.
+            ->darkMode(true, isForced: true)
             ->viteTheme('resources/css/filament/central/theme.css')
             ->navigationGroups([
                 NavigationGroup::make('Platform'),
@@ -50,7 +54,10 @@ class CentralPanelProvider extends PanelProvider
             ])
             ->font('Inter')
             ->renderHook('panels::head.end', fn () => new HtmlString(
-                '<link rel="stylesheet" href="' . asset('css/central-admin.css') . '?v=' . filemtime(public_path('css/central-admin.css')) . '">',
+                // Inject the theme palette BEFORE the stylesheet so the CSS variables
+                // are defined when central-admin.css references them.
+                '<style>' . CentralThemes::rootCss() . '</style>'
+                . '<link rel="stylesheet" href="' . asset('css/central-admin.css') . '?v=' . filemtime(public_path('css/central-admin.css')) . '">',
             ))
             ->renderHook('panels::body.end', fn () => new HtmlString('
                 <script>
