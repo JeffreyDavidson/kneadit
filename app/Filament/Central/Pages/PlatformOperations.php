@@ -83,6 +83,13 @@ class PlatformOperations extends Page
                 'icon' => 'heroicon-o-credit-card',
                 'color' => 'sky',
             ],
+            [
+                'key' => 'campaigns:send-scheduled',
+                'label' => 'Send Scheduled Campaigns',
+                'description' => 'Process customer campaigns whose scheduled_at has arrived across all tenants.',
+                'icon' => 'heroicon-o-paper-airplane',
+                'color' => 'honey',
+            ],
         ];
     }
 
