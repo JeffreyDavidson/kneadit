@@ -245,14 +245,27 @@
         function tryInitCharts() {
             const el = document.getElementById('signupsChart');
             if (!el) return;
-            loadChartJs().then(initAnalyticsCharts).catch((err) => console.error(err));
+            loadChartJs().then(() => {
+                initAnalyticsCharts();
+                // After SPA navigation Filament's grid hasn't finished reflowing
+                // when Chart.js samples the canvas parent, so the chart keeps a
+                // stale width and overflows the viewport. Watch each chart's
+                // parent and resize whenever the actual width changes.
+                if (typeof ResizeObserver !== 'undefined') {
+                    Chart.helpers.each(Chart.instances, (instance) => {
+                        const parent = instance.canvas.parentElement;
+                        if (!parent) return;
+                        new ResizeObserver(() => instance.resize()).observe(parent);
+                    });
+                }
+            }).catch((err) => console.error(err));
         }
 
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            tryInitCharts();
+            requestAnimationFrame(tryInitCharts);
         } else {
             document.addEventListener('DOMContentLoaded', tryInitCharts);
         }
-        document.addEventListener('livewire:navigated', () => setTimeout(tryInitCharts, 50));
+        document.addEventListener('livewire:navigated', () => requestAnimationFrame(tryInitCharts));
     </script>
 </x-filament-panels::page>
