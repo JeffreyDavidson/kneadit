@@ -76,6 +76,20 @@ class PlatformOperations extends Page
                 'icon' => 'heroicon-o-gift',
                 'color' => 'gold',
             ],
+            [
+                'key' => 'paypal:check-payments',
+                'label' => 'PayPal Payment Sync',
+                'description' => 'Reconcile PayPal invoice statuses across all tenants. Updates unpaid/cancelled/refunded orders.',
+                'icon' => 'heroicon-o-credit-card',
+                'color' => 'sky',
+            ],
+            [
+                'key' => 'campaigns:send-scheduled',
+                'label' => 'Send Scheduled Campaigns',
+                'description' => 'Process customer campaigns whose scheduled_at has arrived across all tenants.',
+                'icon' => 'heroicon-o-paper-airplane',
+                'color' => 'honey',
+            ],
         ];
     }
 
