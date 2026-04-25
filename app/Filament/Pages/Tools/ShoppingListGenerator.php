@@ -35,8 +35,6 @@ class ShoppingListGenerator extends Page
 
     protected static ?int $navigationSort = 3;
 
-    protected static bool $shouldRegisterNavigation = false;
-
     protected string $view = 'filament.pages.tools.shopping-list-generator';
 
     public string $startDate = '';
