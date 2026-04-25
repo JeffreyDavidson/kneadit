@@ -38,7 +38,12 @@ class ViewTenant extends ViewRecord
                 ->label('Visit Storefront')
                 ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                 ->color('info')
-                ->url(fn () => 'https://' . $this->record->id . '.getkneadit.app')
+                ->url(fn () => sprintf(
+                    '%s://%s.%s',
+                    parse_url(config('app.url'), PHP_URL_SCHEME) ?: 'https',
+                    $this->record->id,
+                    parse_url(config('app.url'), PHP_URL_HOST) ?: 'getkneadit.app',
+                ))
                 ->openUrlInNewTab(),
             Actions\EditAction::make(),
         ];

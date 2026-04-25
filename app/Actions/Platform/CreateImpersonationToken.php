@@ -20,10 +20,13 @@ class CreateImpersonationToken
             'created_at' => now(),
         ]);
 
-        $domain = $tenant->domains()->first()->domain ?? $tenant->id;
+        // Use the tenant id as the subdomain (not the domains relation, since
+        // tenants store both the FQDN AND the bare subdomain — concatenating
+        // either with $appHost can produce a doubled host like
+        // "{id}.kneadit.test.kneadit.test").
         $appHost = parse_url(config('app.url'), PHP_URL_HOST);
         $scheme = parse_url(config('app.url'), PHP_URL_SCHEME) ?? 'https';
 
-        return "{$scheme}://{$domain}.{$appHost}/impersonate/{$token}";
+        return "{$scheme}://{$tenant->id}.{$appHost}/impersonate/{$token}";
     }
 }
