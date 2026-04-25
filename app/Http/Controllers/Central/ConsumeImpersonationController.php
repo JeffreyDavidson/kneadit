@@ -13,16 +13,18 @@ class ConsumeImpersonationController extends Controller
 {
     public function __invoke(string $token, Request $request, ConsumeImpersonationToken $consumeToken): RedirectResponse
     {
-        Auth::login($consumeToken($token, $request->ip()));
+        $user = $consumeToken($token, $request->ip());
 
-        // Redirect to the tenant Admin panel ON THE CURRENT HOST. We can't use
-        // Filament::getPanel('admin')->getUrl() — that helper falls back to
-        // config('app.url') (central domain) when there's no panel context,
-        // which sends the baker off-domain to a panel they can't access.
-        // Use a path-only redirect so the browser keeps the tenant subdomain,
-        // then prefix the configured panel path explicitly.
-        $path = '/' . ltrim(Filament::getPanel('admin')->getPath(), '/');
+        // Flush any prior session data (e.g. the platform admin's password_hash_web
+        // carried in via the shared SESSION_DOMAIN cookie). Without this,
+        // AuthenticateSession on the next request compares the impersonated
+        // tenant user's password hash to the platform admin's stale hash,
+        // logs the user out, and bounces them to /admin/login.
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        return redirect()->to($path);
+        Auth::login($user);
+
+        return redirect()->to('/' . ltrim(Filament::getPanel('admin')->getPath(), '/'));
     }
 }
