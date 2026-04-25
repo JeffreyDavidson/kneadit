@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class OnboardingProgress extends Widget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = 'full';
 

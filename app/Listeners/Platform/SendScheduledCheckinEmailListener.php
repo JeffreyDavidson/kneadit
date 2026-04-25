@@ -18,7 +18,12 @@ class SendScheduledCheckinEmailListener extends SendEmailListener
     protected function getMailable(object $event): Mailable
     {
         /** @var ScheduledCheckinDue $event */
-        return new ScheduledCheckinMail($event->body, $event->subject);
+        return new ScheduledCheckinMail(
+            body: $event->body,
+            emailSubject: $event->subject,
+            bakerName: $event->bakerName,
+            tenantId: $event->tenantId,
+        );
     }
 
     /** @return array<string, mixed> */

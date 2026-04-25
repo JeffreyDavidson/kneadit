@@ -20,13 +20,23 @@ class Activity extends Page
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $title = 'Activity';
 
     protected string $view = 'filament.central.pages.activity';
 
     public string $activeTab = 'platform';
+
+    // ── Platform Events filters ──
+
+    public string $filterEvent = '';
+
+    public string $filterEventSearch = '';
+
+    public string $filterEventDateFrom = '';
+
+    public string $filterEventDateTo = '';
 
     // ── Audit Trail Properties ──
 
@@ -44,6 +54,10 @@ class Activity extends Page
 
     /** @var array<string, mixed> */
     protected array $queryString = [
+        'filterEvent' => ['except' => ''],
+        'filterEventSearch' => ['except' => ''],
+        'filterEventDateFrom' => ['except' => ''],
+        'filterEventDateTo' => ['except' => ''],
         'filterAction' => ['except' => ''],
         'filterSearch' => ['except' => ''],
         'filterDateFrom' => ['except' => ''],
@@ -56,7 +70,66 @@ class Activity extends Page
     /** @return Collection<int, PlatformActivity> */
     public function getActivities(): Collection
     {
-        return PlatformActivity::query()->latest('created_at')->limit(100)->get();
+        $query = PlatformActivity::query()->latest('created_at');
+
+        if ($this->filterEvent) {
+            $query->where('event', $this->filterEvent);
+        }
+
+        if ($this->filterEventSearch) {
+            $query->where(function ($q): void {
+                $q->whereLike('description', '%' . $this->filterEventSearch . '%')
+                    ->orWhereLike('tenant_id', '%' . $this->filterEventSearch . '%');
+            });
+        }
+
+        if ($this->filterEventDateFrom) {
+            $query->where('created_at', '>=', Date::parse($this->filterEventDateFrom)->startOfDay());
+        }
+
+        if ($this->filterEventDateTo) {
+            $query->where('created_at', '<=', Date::parse($this->filterEventDateTo)->endOfDay());
+        }
+
+        return $query->limit(100)->get();
+    }
+
+    public function getEventTodayCountProperty(): int
+    {
+        return PlatformActivity::query()->where('created_at', '>=', today())->count();
+    }
+
+    public function getEventWeekCountProperty(): int
+    {
+        return PlatformActivity::query()->where('created_at', '>=', now()->startOfWeek())->count();
+    }
+
+    public function getMostCommonEventProperty(): string
+    {
+        $row = PlatformActivity::query()->select('event', DB::raw('count(*) as cnt'))
+            ->where('created_at', '>=', now()->startOfWeek())
+            ->groupBy('event')
+            ->orderByDesc('cnt')
+            ->first();
+
+        return $row->event ?? '—';
+    }
+
+    public function resetEventFilters(): void
+    {
+        $this->filterEvent = '';
+        $this->filterEventSearch = '';
+        $this->filterEventDateFrom = '';
+        $this->filterEventDateTo = '';
+    }
+
+    /** @return array<int, string> */
+    public static function getEventTypes(): array
+    {
+        return array_map(
+            fn (PlatformEventType $type) => $type->value,
+            PlatformEventType::cases(),
+        );
     }
 
     public static function getEventIcon(string $event): Heroicon

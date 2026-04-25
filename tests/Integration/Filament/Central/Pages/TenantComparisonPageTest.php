@@ -129,15 +129,16 @@ test('get leaderboard data returns all tenants', function () {
 
 test('get leaderboard summary stats', function () {
     expect(test()->page->getLeaderboardSummaryStats())
-        ->toHaveKeys(['total_orders', 'avg_orders', 'total_bakeries']);
+        ->toHaveKeys(['total_orders', 'total_bakeries', 'active_bakeries', 'avg_orders_active']);
 });
 
 test('get leaderboard summary stats with no tenants', function () {
     $stats = test()->page->getLeaderboardSummaryStats();
 
     expect($stats['total_orders'])->toBe(0)
-        ->and($stats['avg_orders'])->toBe(0)
-        ->and($stats['total_bakeries'])->toBe(0);
+        ->and($stats['total_bakeries'])->toBe(0)
+        ->and($stats['active_bakeries'])->toBe(0)
+        ->and($stats['avg_orders_active'])->toBe(0);
 });
 
 test('calculate health score with login 3 days ago', function () {

@@ -46,7 +46,14 @@ class EmailCampaignsTable
                     ->options(EmailCampaignStatus::class),
             ])
             ->recordActions([
-                Actions\EditAction::make()->slideOver(),
+                Actions\EditAction::make()
+                    ->slideOver()
+                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent
+                        && $record->status !== EmailCampaignStatus::Sending),
+                Actions\ViewAction::make()
+                    ->slideOver()
+                    ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Sent
+                        || $record->status === EmailCampaignStatus::Sending),
                 Actions\Action::make('send_now')
                     ->label('Send Now')
                     ->icon(Heroicon::OutlinedPaperAirplane)
@@ -56,7 +63,8 @@ class EmailCampaignsTable
                     ->modalHeading('Send Campaign Now')
                     ->modalDescription('Are you sure you want to send this campaign immediately?')
                     ->action(fn (EmailCampaign $record) => resolve(SendEmailCampaign::class)($record))
-                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent),
+                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent
+                        && $record->status !== EmailCampaignStatus::Sending),
                 Actions\Action::make('schedule')
                     ->label('Schedule')
                     ->icon(Heroicon::OutlinedClock)
@@ -68,14 +76,7 @@ class EmailCampaignsTable
                             ->required(),
                     ])
                     ->action(fn (EmailCampaign $record, array $data) => resolve(ScheduleEmailCampaign::class)($record, $data['scheduled_at']))
-                    ->visible(fn (EmailCampaign $record) => $record->status !== EmailCampaignStatus::Sent),
-                Actions\Action::make('preview')
-                    ->icon(Heroicon::OutlinedEye)
-                    ->modalHeading(fn (EmailCampaign $record) => 'Preview: ' . $record->subject)
-                    ->modalContent(fn (EmailCampaign $record) => view('filament.central.partials.email-preview', ['campaign' => $record]))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Close'),
-                Actions\ViewAction::make(),
+                    ->visible(fn (EmailCampaign $record) => $record->status === EmailCampaignStatus::Draft),
             ])
             ->toolbarActions([
                 Actions\DeleteBulkAction::make(),

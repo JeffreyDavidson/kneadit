@@ -339,7 +339,10 @@ function createCentralTables(): void
             $table->id();
             $table->string('token', 64)->unique();
             $table->string('tenant_id');
+            $table->unsignedBigInteger('created_by_user_id')->nullable();
             $table->timestamp('expires_at');
+            $table->timestamp('consumed_at')->nullable();
+            $table->string('consumer_ip', 45)->nullable();
             $table->timestamp('created_at')->nullable();
         },
         'blog_posts' => function ($table) {
@@ -412,6 +415,22 @@ function createCentralTables(): void
             $table->string('referred_email')->nullable();
             $table->string('status')->default('pending');
             $table->integer('reward_months')->default(1);
+            $table->timestamps();
+        },
+        'platform_promo_codes' => function ($table) {
+            $table->id();
+            $table->string('code');
+            $table->string('coupon_id');
+            $table->string('promotion_code_id');
+            $table->unsignedTinyInteger('percent_off')->nullable();
+            $table->unsignedInteger('amount_off_cents')->nullable();
+            $table->string('duration');
+            $table->unsignedTinyInteger('duration_in_months')->nullable();
+            $table->unsignedInteger('max_redemptions')->default(1);
+            $table->timestamp('expires_at')->nullable();
+            $table->string('tenant_id')->nullable();
+            $table->string('name')->nullable();
+            $table->unsignedBigInteger('created_by_user_id')->nullable();
             $table->timestamps();
         },
     ];

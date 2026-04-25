@@ -19,11 +19,24 @@ class OnboardingTracker extends Page
 
     protected static string|UnitEnum|null $navigationGroup = 'Platform';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $title = 'Onboarding Tracker';
 
     protected string $view = 'filament.central.pages.onboarding-tracker';
+
+    public string $filterStatus = 'all';
+
+    public string $filterPlan = 'all';
+
+    public string $sort = 'progress_asc';
+
+    /** @var array<string, mixed> */
+    protected array $queryString = [
+        'filterStatus' => ['except' => 'all'],
+        'filterPlan' => ['except' => 'all'],
+        'sort' => ['except' => 'progress_asc'],
+    ];
 
     /** @return Collection<int, mixed> */
     public function getTenantOnboardingData(): Collection
@@ -49,7 +62,34 @@ class OnboardingTracker extends Page
             ];
         });
 
-        return $data->sortBy(fn (array $t) => [$t['completed'], $t['created_at']])->values();
+        if ($this->filterStatus === 'needs_attention') {
+            $data = $data->filter(fn (array $t) => $t['completed'] < 6);
+        } elseif ($this->filterStatus === 'fully_onboarded') {
+            $data = $data->filter(fn (array $t) => $t['completed'] === 7);
+        } elseif ($this->filterStatus === 'stuck') {
+            // Stuck = signed up >= 7 days ago but not fully onboarded
+            $data = $data->filter(fn (array $t) => $t['days_since_signup'] >= 7 && $t['completed'] < 7);
+        }
+
+        if ($this->filterPlan !== 'all') {
+            $data = $data->filter(fn (array $t) => $t['plan'] === $this->filterPlan);
+        }
+
+        $data = match ($this->sort) {
+            'progress_desc' => $data->sortByDesc(fn (array $t) => [$t['completed'], $t['created_at']?->getTimestamp() ?? 0]),
+            'newest' => $data->sortByDesc(fn (array $t) => $t['created_at']?->getTimestamp() ?? 0),
+            'oldest' => $data->sortBy(fn (array $t) => $t['created_at']?->getTimestamp() ?? PHP_INT_MAX),
+            default => $data->sortBy(fn (array $t) => [$t['completed'], -($t['created_at']?->getTimestamp() ?? 0)]),
+        };
+
+        return $data->values();
+    }
+
+    public function resetFilters(): void
+    {
+        $this->filterStatus = 'all';
+        $this->filterPlan = 'all';
+        $this->sort = 'progress_asc';
     }
 
     /** @return array<string, mixed> */

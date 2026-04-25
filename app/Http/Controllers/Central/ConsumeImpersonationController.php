@@ -6,13 +6,14 @@ use App\Actions\Platform\ConsumeImpersonationToken;
 use App\Filament\Pages\Dashboard\Dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ConsumeImpersonationController extends Controller
 {
-    public function __invoke(string $token, ConsumeImpersonationToken $consumeToken): RedirectResponse
+    public function __invoke(string $token, Request $request, ConsumeImpersonationToken $consumeToken): RedirectResponse
     {
-        Auth::login($consumeToken($token));
+        Auth::login($consumeToken($token, $request->ip()));
 
         return redirect(Dashboard::getUrl());
     }

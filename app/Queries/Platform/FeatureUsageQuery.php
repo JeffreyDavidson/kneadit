@@ -3,6 +3,7 @@
 namespace App\Queries\Platform;
 
 use App\Models\Platform\FeatureUsageLog;
+use App\Models\Platform\Tenant;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -37,6 +38,20 @@ class FeatureUsageQuery
         return (int) FeatureUsageLog::query()->whereMonth('date', Date::now()->month)
             ->whereYear('date', Date::now()->year)
             ->sum('usage_count');
+    }
+
+    public static function totalInteractionsAllTime(): int
+    {
+        return (int) FeatureUsageLog::query()->sum('usage_count');
+    }
+
+    public static function featureTotalCount(?string $feature): int
+    {
+        if (! $feature) {
+            return 0;
+        }
+
+        return (int) FeatureUsageLog::query()->where('feature', $feature)->sum('usage_count');
     }
 
     /** @return Collection<int, mixed> */
@@ -101,12 +116,28 @@ class FeatureUsageQuery
     /** @return Collection<int, mixed> */
     public static function featureTenantBreakdown(string $feature): Collection
     {
-        return FeatureUsageLog::query()->select('tenant_id')
+        $rows = FeatureUsageLog::query()->select('tenant_id')
             ->selectRaw('SUM(usage_count) as total')
             ->where('feature', $feature)
             ->groupBy('tenant_id')
             ->orderByDesc('total')
             ->limit(20)
             ->get();
+
+        $tenantNames = Tenant::query()
+            ->whereIn('id', $rows->pluck('tenant_id')->all())
+            ->pluck('store_name', 'id');
+
+        $fallbackNames = Tenant::query()
+            ->whereIn('id', $rows->pluck('tenant_id')->all())
+            ->pluck('name', 'id');
+
+        return $rows->map(function (FeatureUsageLog $row) use ($tenantNames, $fallbackNames) {
+            return [
+                'tenant_id' => $row->tenant_id,
+                'name' => $tenantNames[$row->tenant_id] ?? $fallbackNames[$row->tenant_id] ?? $row->tenant_id,
+                'total' => (int) $row->total,
+            ];
+        });
     }
 }

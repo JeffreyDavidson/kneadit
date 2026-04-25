@@ -3,6 +3,20 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | App version
+    |--------------------------------------------------------------------------
+    |
+    | Read from the VERSION file at the project root. Deploy scripts and the
+    | release process update this file with `git describe --tags --abbrev=0`.
+    |
+    */
+
+    'version' => is_file(base_path('VERSION'))
+        ? trim((string) file_get_contents(base_path('VERSION')))
+        : 'dev',
+
+    /*
+    |--------------------------------------------------------------------------
     | KneadIt SaaS Plans
     |--------------------------------------------------------------------------
     |

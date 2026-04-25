@@ -10,6 +10,6 @@ $centralUrl = env('BROWSER_TEST_CENTRAL_URL', 'http://kneadit.test');
 
 test('central admin dashboard renders without JS errors', function () use ($centralUrl) {
     authenticatedCentralVisit("{$centralUrl}/admin")
-        ->assertSee('KneadIt Platform')
+        ->assertSee('Dashboard')
         ->assertNoJavaScriptErrors();
 });

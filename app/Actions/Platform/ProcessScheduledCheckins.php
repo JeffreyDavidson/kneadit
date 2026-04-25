@@ -51,7 +51,13 @@ class ProcessScheduledCheckins
                 }
 
                 try {
-                    event(new ScheduledCheckinDue($tenant->email, $checkin->body, $checkin->subject));
+                    event(new ScheduledCheckinDue(
+                        tenantEmail: $tenant->email,
+                        body: $checkin->body,
+                        subject: $checkin->subject,
+                        bakerName: $tenant->name,
+                        tenantId: $tenant->id,
+                    ));
 
                     CheckinLog::query()->create([
                         'checkin_id' => $checkin->id,

@@ -11,6 +11,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class TenantForm
 {
@@ -18,8 +19,10 @@ class TenantForm
     {
         return $schema
             ->components([
-                Section::make('Owner Information')
-                    ->description('The person who owns this bakery account')
+                Section::make('Account & Billing')
+                    ->description('Owner identity, plan, and whether this tenant can use the system')
+                    ->icon(Heroicon::OutlinedIdentification)
+                    ->columnSpanFull()
                     ->schema([
                         Grid::make(2)->schema([
                             TextInput::make('id')
@@ -44,9 +47,22 @@ class TenantForm
                                     ->all())
                                 ->required(),
                         ]),
+                        Grid::make(2)->schema([
+                            DateTimePicker::make('trial_ends_at')
+                                ->label('Trial Ends')
+                                ->placeholder('N/A')
+                                ->helperText('Leave blank if this account isn\'t on a trial.'),
+                            Toggle::make('is_active')
+                                ->label('Account Active')
+                                ->helperText('Turning this off blocks access to the admin panel and storefront.')
+                                ->default(true),
+                        ]),
                     ]),
 
-                Section::make('Store Details')
+                Section::make('Store & Storefront')
+                    ->description('Public-facing details for the bakery\'s storefront')
+                    ->icon(Heroicon::OutlinedBuildingStorefront)
+                    ->columnSpanFull()
                     ->schema([
                         Grid::make(2)->schema([
                             TextInput::make('store_name')
@@ -57,6 +73,23 @@ class TenantForm
                                 ->placeholder('sweetbakes.com')
                                 ->helperText('Optional — baker can use their own domain'),
                         ]),
+                        TextInput::make('external_website')
+                            ->label('External Website')
+                            ->url()
+                            ->placeholder('https://sweetbakes.com')
+                            ->helperText('If the baker hosts elsewhere, the storefront acts as a redirect (storefront-skip mode).')
+                            ->columnSpanFull(),
+                        Toggle::make('storefront_enabled')
+                            ->label('Storefront Enabled')
+                            ->helperText('When off, the public storefront shows "coming soon" instead of products.')
+                            ->default(true),
+                    ]),
+
+                Section::make('Branding')
+                    ->description('Colors used across the bakery\'s storefront and customer emails')
+                    ->icon(Heroicon::OutlinedSwatch)
+                    ->columnSpanFull()
+                    ->schema([
                         Grid::make(2)->schema([
                             TextInput::make('brand_color_primary')
                                 ->label('Primary Color')
@@ -66,26 +99,6 @@ class TenantForm
                                 ->label('Secondary Color')
                                 ->type('color')
                                 ->placeholder('#1c1410'),
-                        ]),
-                        TextInput::make('external_website')
-                            ->label('External Website')
-                            ->url()
-                            ->placeholder('https://sweetbakes.com')
-                            ->helperText('If baker has their own site (storefront skip mode)'),
-                    ]),
-
-                Section::make('Status')
-                    ->schema([
-                        Grid::make(3)->schema([
-                            Toggle::make('is_active')
-                                ->label('Active')
-                                ->default(true),
-                            Toggle::make('storefront_enabled')
-                                ->label('Storefront Enabled')
-                                ->default(true),
-                            DateTimePicker::make('trial_ends_at')
-                                ->label('Trial Ends')
-                                ->placeholder('N/A'),
                         ]),
                     ]),
             ]);

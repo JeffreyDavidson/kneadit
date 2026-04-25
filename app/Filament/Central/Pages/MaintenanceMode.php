@@ -3,30 +3,18 @@
 namespace App\Filament\Central\Pages;
 
 use BackedEnum;
-use Filament\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\View;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
 class MaintenanceMode extends Page
 {
-    use InteractsWithFormActions;
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Operations';
+    protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $title = 'Maintenance Mode';
 
@@ -40,7 +28,7 @@ class MaintenanceMode extends Page
 
     public ?string $maintenance_scheduled_end = null;
 
-    /** @var array<string, mixed> */
+    /** @var array<int, string> */
     public array $affected_services = [];
 
     public function mount(): void
@@ -52,85 +40,28 @@ class MaintenanceMode extends Page
         $this->affected_services = json_decode(platformSettings('affected_services', '[]'), true) ?: [];
     }
 
-    public function content(Schema $schema): Schema
+    public function toggleMaintenance(): void
     {
-        return $schema
-            ->schema([
-                View::make('filament.central.pages.partials.maintenance-status')
-                    ->viewData([
-                        'active' => $this->maintenance_mode,
-                    ]),
+        $this->maintenance_mode = ! $this->maintenance_mode;
 
-                Section::make('Maintenance Settings')
-                    ->description('Control platform-wide maintenance mode for all tenants.')
-                    ->schema([
-                        Toggle::make('maintenance_mode')
-                            ->label('Enable Maintenance Mode')
-                            ->helperText('When enabled, affected services will show a maintenance page.')
-                            ->live(),
+        platformSettings(['maintenance_mode' => $this->maintenance_mode ? '1' : '0']);
 
-                        Textarea::make('maintenance_message')
-                            ->label('Maintenance Message')
-                            ->placeholder('We are currently performing scheduled maintenance. We\'ll be back shortly!')
-                            ->rows(3)
-                            ->columnSpanFull(),
-
-                        DateTimePicker::make('maintenance_scheduled_start')
-                            ->label('Scheduled Start')
-                            ->helperText('Optional: when maintenance is expected to begin.'),
-
-                        DateTimePicker::make('maintenance_scheduled_end')
-                            ->label('Scheduled End')
-                            ->helperText('Optional: when maintenance is expected to end.'),
-
-                        CheckboxList::make('affected_services')
-                            ->label('Affected Services')
-                            ->options([
-                                'storefront' => 'Storefront',
-                                'admin' => 'Admin Panel',
-                                'api' => 'API',
-                            ])
-                            ->helperText('Select which services should show the maintenance page.'),
-                    ]),
-
-                Section::make('Preview')
-                    ->description('This is what bakers will see when maintenance mode is active.')
-                    ->visible(fn () => $this->maintenance_mode)
-                    ->schema([
-                        View::make('filament.central.pages.partials.maintenance-preview')
-                            ->viewData([
-                                'message' => $this->maintenance_message,
-                                'scheduled_end' => $this->maintenance_scheduled_end,
-                            ]),
-                    ]),
-
-                Actions::make([
-                    Action::make('save')
-                        ->label('Save Settings')
-                        ->action('save')
-                        ->icon(Heroicon::OutlinedCheck)
-                        ->color('primary'),
-                ]),
-            ]);
+        Notification::make()
+            ->title($this->maintenance_mode ? 'Maintenance mode activated' : 'Platform brought back online')
+            ->success()
+            ->send();
     }
 
     public function save(): void
     {
-        platformSettings(['maintenance_mode' => $this->maintenance_mode ? '1' : '0']);
         platformSettings(['maintenance_message' => $this->maintenance_message ?? '']);
         platformSettings(['maintenance_scheduled_start' => $this->maintenance_scheduled_start]);
         platformSettings(['maintenance_scheduled_end' => $this->maintenance_scheduled_end]);
         platformSettings(['affected_services' => json_encode($this->affected_services)]);
 
         Notification::make()
-            ->title($this->maintenance_mode ? 'Maintenance mode activated' : 'Maintenance mode deactivated')
+            ->title('Maintenance settings saved')
             ->success()
             ->send();
-    }
-
-    /** @return array<int, Action> */
-    public function getFormActions(): array
-    {
-        return [];
     }
 }
