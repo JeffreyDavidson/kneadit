@@ -31,4 +31,12 @@ class ImpersonationTokenFactory extends Factory
     {
         return $this->state(['expires_at' => now()->subHour()]);
     }
+
+    public function consumed(): static
+    {
+        return $this->state([
+            'consumed_at' => now()->subMinute(),
+            'consumer_ip' => '127.0.0.1',
+        ]);
+    }
 }

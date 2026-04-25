@@ -339,7 +339,10 @@ function createCentralTables(): void
             $table->id();
             $table->string('token', 64)->unique();
             $table->string('tenant_id');
+            $table->unsignedBigInteger('created_by_user_id')->nullable();
             $table->timestamp('expires_at');
+            $table->timestamp('consumed_at')->nullable();
+            $table->string('consumer_ip', 45)->nullable();
             $table->timestamp('created_at')->nullable();
         },
         'blog_posts' => function ($table) {
