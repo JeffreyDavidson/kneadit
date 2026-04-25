@@ -2,6 +2,7 @@
 
 @source '../../../../app/Filament/Central/**/*';
 @source '../../../../resources/views/filament/central/**/*';
+@source '../../../../resources/views/components/central/**/*';
 
 @theme {
     --color-warm-black: #1c1410;
