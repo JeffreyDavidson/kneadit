@@ -81,6 +81,8 @@ class SeedDemoCommand extends Command
                 }
             }
 
+            $bakeryIds = array_column(self::BAKERIES, 'id');
+
             foreach (self::BAKERIES as $bakery) {
                 $existing = Tenant::query()->find($bakery['id']);
                 if ($existing) {
@@ -88,6 +90,17 @@ class SeedDemoCommand extends Command
                     $existing->delete();
                 }
             }
+
+            // Central-side activity tables don't cascade — wipe rows that
+            // referenced the demo tenants so re-running --fresh stays idempotent.
+            $tickets = SupportTicket::query()->whereIn('tenant_id', $bakeryIds)->get();
+            SupportReply::query()->whereIn('ticket_id', $tickets->pluck('id'))->delete();
+            SupportTicket::query()->whereIn('tenant_id', $bakeryIds)->delete();
+            AdminAuditLog::query()
+                ->where('target_type', 'tenant')
+                ->whereIn('target_id', $bakeryIds)
+                ->delete();
+            PlatformActivity::query()->whereIn('tenant_id', $bakeryIds)->delete();
         }
 
         $created = [];
