@@ -13,13 +13,18 @@ class ConsumeImpersonationController extends Controller
 {
     public function __invoke(string $token, Request $request, ConsumeImpersonationToken $consumeToken): RedirectResponse
     {
-        Auth::login($consumeToken($token, $request->ip()));
+        $user = $consumeToken($token, $request->ip());
 
-        // Explicitly target the tenant admin panel — calling
-        // Dashboard::getUrl() here would resolve against Filament's "current"
-        // panel which is unset in this controller, so it'd fall back to the
-        // first-registered panel (Central) and send the baker to a URL their
-        // role can't access.
-        return redirect(Filament::getPanel('admin')->getUrl());
+        // Flush any prior session data (e.g. the platform admin's password_hash_web
+        // carried in via the shared SESSION_DOMAIN cookie). Without this,
+        // AuthenticateSession on the next request compares the impersonated
+        // tenant user's password hash to the platform admin's stale hash,
+        // logs the user out, and bounces them to /admin/login.
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        Auth::login($user);
+
+        return redirect()->to('/' . ltrim(Filament::getPanel('admin')->getPath(), '/'));
     }
 }
