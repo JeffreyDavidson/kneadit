@@ -70,8 +70,12 @@ Route::get('admin/backups/{name}/download', App\Http\Controllers\Central\BackupD
 |
 */
 
-// Impersonation (central admin → tenant)
-Route::get('impersonate/{tenant}', ImpersonateController::class)
+// Impersonation (central admin → tenant). Path is "admin/impersonate" rather
+// than just "impersonate" to avoid colliding with the tenant-side
+// "impersonate/{token}" consume route registered in routes/tenant.php — both
+// match GET /impersonate/* otherwise, and the first-registered wins, so the
+// tenant subdomain was 404'ing the consume URL via a failed Tenant binding.
+Route::get('admin/impersonate/{tenant}', ImpersonateController::class)
     ->name('tenant.impersonate')
     ->middleware(['auth', 'signed']);
 
