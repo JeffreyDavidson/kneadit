@@ -49,6 +49,12 @@ Route::middleware('web')->group(function () {
 // Data Export (central admin) — uses signed URL to avoid auth middleware redirect issues
 Route::get('admin/export/{tenant}/{type}', ExportController::class)->name('central.export')->middleware('web');
 
+// Maintenance mode preview — renders the real platform.maintenance view with admin-supplied message/end
+// for embedding in the Central admin page's preview iframe.
+Route::get('admin/maintenance-mode/preview', App\Http\Controllers\Central\MaintenancePreviewController::class)
+    ->name('central.maintenance-mode.preview')
+    ->middleware(['web', 'auth']);
+
 /*
 |--------------------------------------------------------------------------
 | Central Routes
