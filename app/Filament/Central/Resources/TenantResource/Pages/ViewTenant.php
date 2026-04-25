@@ -3,12 +3,17 @@
 namespace App\Filament\Central\Resources\TenantResource\Pages;
 
 use App\Filament\Central\Resources\TenantResource;
+use App\Models\Platform\AdminAuditLog;
 use App\Models\Platform\Tenant;
+use App\Models\Platform\TenantNote;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Livewire\Attributes\Rule;
 
 /**
  * @property-read Tenant $record
@@ -72,5 +77,62 @@ class ViewTenant extends ViewRecord
             'reviews' => 0,
             'last_order' => null,
         ];
+    }
+
+    /**
+     * Admin audit entries targeting this tenant. Used by the Activity tab.
+     *
+     * @return Collection<int, AdminAuditLog>
+     */
+    public function getTenantAuditEntries(int $limit = 25): Collection
+    {
+        return AdminAuditLog::query()
+            ->where('target_type', Tenant::class)
+            ->where('target_id', $this->record->id)
+            ->latest()
+            ->limit($limit)
+            ->get();
+    }
+
+    /** Suppress auto-render of relation managers; we render Notes inside the Notes tab manually. */
+    public function getAllRelationManagers(): array
+    {
+        return [];
+    }
+
+    #[Rule(['required', 'min:3'])]
+    public string $noteBody = '';
+
+    public function addNote(): void
+    {
+        $this->validate(['noteBody' => ['required', 'min:3']]);
+
+        $this->record->notes()->create([
+            'body' => $this->noteBody,
+            'author' => auth()->user()->name ?? 'admin',
+        ]);
+
+        $this->noteBody = '';
+        $this->record->load('notes');
+
+        Notification::make()
+            ->title('Note added')
+            ->success()
+            ->send();
+    }
+
+    public function deleteNote(int $noteId): void
+    {
+        TenantNote::query()
+            ->where('tenant_id', $this->record->id)
+            ->where('id', $noteId)
+            ->delete();
+
+        $this->record->load('notes');
+
+        Notification::make()
+            ->title('Note deleted')
+            ->success()
+            ->send();
     }
 }
