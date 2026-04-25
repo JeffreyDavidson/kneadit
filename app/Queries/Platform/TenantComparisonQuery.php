@@ -102,12 +102,20 @@ class TenantComparisonQuery
     {
         $data = self::leaderboard();
         $totalOrders = array_sum(array_column($data, 'total_orders'));
-        $count = count($data);
+        $totalBakeries = count($data);
+        $activeOrderCounts = array_values(array_filter(
+            array_column($data, 'total_orders'),
+            fn (int $count) => $count > 0,
+        ));
+        $activeBakeries = count($activeOrderCounts);
 
         return [
             'total_orders' => $totalOrders,
-            'avg_orders' => $count > 0 ? round($totalOrders / $count, 1) : 0,
-            'total_bakeries' => $count,
+            'total_bakeries' => $totalBakeries,
+            'active_bakeries' => $activeBakeries,
+            'avg_orders_active' => $activeBakeries > 0
+                ? round($totalOrders / $activeBakeries, 1)
+                : 0,
         ];
     }
 
