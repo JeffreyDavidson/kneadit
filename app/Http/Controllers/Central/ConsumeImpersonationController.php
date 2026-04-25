@@ -15,11 +15,14 @@ class ConsumeImpersonationController extends Controller
     {
         Auth::login($consumeToken($token, $request->ip()));
 
-        // Explicitly target the tenant admin panel — calling
-        // Dashboard::getUrl() here would resolve against Filament's "current"
-        // panel which is unset in this controller, so it'd fall back to the
-        // first-registered panel (Central) and send the baker to a URL their
-        // role can't access.
-        return redirect(Filament::getPanel('admin')->getUrl());
+        // Redirect to the tenant Admin panel ON THE CURRENT HOST. We can't use
+        // Filament::getPanel('admin')->getUrl() — that helper falls back to
+        // config('app.url') (central domain) when there's no panel context,
+        // which sends the baker off-domain to a panel they can't access.
+        // Use a path-only redirect so the browser keeps the tenant subdomain,
+        // then prefix the configured panel path explicitly.
+        $path = '/' . ltrim(Filament::getPanel('admin')->getPath(), '/');
+
+        return redirect()->to($path);
     }
 }
