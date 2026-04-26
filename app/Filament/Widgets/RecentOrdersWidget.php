@@ -41,9 +41,9 @@ class RecentOrdersWidget extends BaseWidget
             ->paginated(false)
             ->headerActions([
                 Action::make('viewAll')
-                    ->label('View All →')
+                    ->label('View all')
                     ->url(route('filament.admin.resources.orders.index'))
-                    ->color('gray'),
+                    ->view('filament.actions.view-all-link'),
             ]);
     }
 }

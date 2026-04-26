@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Orders\Order;
+use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -43,6 +44,12 @@ class TodaysOrdersWidget extends BaseWidget
             ])
             ->emptyStateHeading('No orders today — enjoy the quiet!')
             ->emptyStateDescription('Orders scheduled for today will appear here.')
-            ->emptyStateIcon(Heroicon::OutlinedShoppingBag);
+            ->emptyStateIcon(Heroicon::OutlinedShoppingBag)
+            ->headerActions([
+                Action::make('viewAll')
+                    ->label('View all')
+                    ->url(route('filament.admin.resources.orders.index'))
+                    ->view('filament.actions.view-all-link'),
+            ]);
     }
 }
