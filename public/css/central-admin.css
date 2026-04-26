@@ -395,3 +395,37 @@
 .fi-modal-description {
     color: var(--platform-400) !important;
 }
+
+/* ===== GLOBAL SEARCH ===== */
+.fi-global-search-results-ctn {
+    background: var(--platform-900) !important;
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 0.75rem !important;
+}
+.fi-global-search-result-group-header {
+    color: var(--accent) !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+.fi-global-search-result-link {
+    color: var(--platform-200) !important;
+}
+.fi-global-search-result-link:hover,
+.fi-global-search-result-link:focus {
+    background: var(--hover-bg) !important;
+    color: var(--platform-100) !important;
+}
+.fi-global-search-result-heading {
+    color: inherit !important;
+    font-weight: 500 !important;
+}
+.fi-global-search-result-details,
+.fi-global-search-result-detail-label,
+.fi-global-search-result-detail-value {
+    color: var(--platform-400) !important;
+}
+.fi-global-search-no-results-message {
+    color: var(--platform-400) !important;
+}
