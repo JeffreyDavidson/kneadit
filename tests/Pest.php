@@ -21,6 +21,7 @@ use Tests\TestCase;
  */
 $persistentTenantDbs = [
     'tenantbrowser-test',
+    'tenantdemo',
 ];
 
 $cleanupTenantFiles = function () use ($persistentTenantDbs): void {
