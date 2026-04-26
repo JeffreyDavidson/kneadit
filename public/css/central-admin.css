@@ -429,3 +429,56 @@
 .fi-global-search-no-results-message {
     color: var(--platform-400) !important;
 }
+
+/* ===== USER MENU DROPDOWN ===== */
+.fi-dropdown-panel {
+    background: var(--platform-900) !important;
+    border: 1px solid var(--border-medium) !important;
+    border-radius: 0.75rem !important;
+}
+.fi-dropdown-list-item {
+    color: var(--platform-200) !important;
+}
+.fi-dropdown-list-item:hover,
+.fi-dropdown-list-item:focus {
+    background: var(--hover-bg) !important;
+    color: var(--platform-100) !important;
+}
+.fi-central-user-menu-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.fi-central-user-menu-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+}
+.fi-central-user-menu-header-name {
+    color: var(--platform-100);
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.fi-central-user-menu-header-email {
+    color: var(--platform-400);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.fi-central-user-menu-header-role {
+    color: var(--accent);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.125rem;
+}
