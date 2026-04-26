@@ -17,7 +17,7 @@ class ScheduledCheckinResource extends Resource
 {
     protected static ?string $model = ScheduledCheckin::class;
 
-    protected static ?string $recordTitleAttribute = 'label';
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
