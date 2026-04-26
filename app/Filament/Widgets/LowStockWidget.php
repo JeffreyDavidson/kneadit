@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Enums\Inventory\StockStatus;
 use App\Models\Inventory\Ingredient;
+use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -62,6 +63,12 @@ class LowStockWidget extends BaseWidget
             ->paginated(false)
             ->defaultPaginationPageOption(5)
             ->emptyStateHeading('All stocked up!')
-            ->emptyStateIcon(Heroicon::OutlinedCheckCircle);
+            ->emptyStateIcon(Heroicon::OutlinedCheckCircle)
+            ->headerActions([
+                Action::make('viewAll')
+                    ->label('View all')
+                    ->url(route('filament.admin.resources.ingredients.index'))
+                    ->view('filament.actions.view-all-link'),
+            ]);
     }
 }
