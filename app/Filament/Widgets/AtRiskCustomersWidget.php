@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Customers\Customer;
 use App\Queries\Customers\AtRiskCustomersQuery;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -42,6 +43,12 @@ class AtRiskCustomersWidget extends BaseWidget
                     ->suffix(' days'),
             ])
             ->paginated(false)
-            ->defaultSort('last_order_date', 'asc');
+            ->defaultSort('last_order_date', 'asc')
+            ->headerActions([
+                Action::make('viewAll')
+                    ->label('View all')
+                    ->url(route('filament.admin.resources.customers.index'))
+                    ->view('filament.actions.view-all-link'),
+            ]);
     }
 }

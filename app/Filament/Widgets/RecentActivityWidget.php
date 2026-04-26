@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Operations\ActivityLog;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -35,6 +36,12 @@ class RecentActivityWidget extends BaseWidget
                     ->limit(60),
             ])
             ->paginated(false)
-            ->defaultPaginationPageOption(5);
+            ->defaultPaginationPageOption(5)
+            ->headerActions([
+                Action::make('viewAll')
+                    ->label('View all')
+                    ->url(route('filament.admin.resources.activity-logs.index'))
+                    ->view('filament.actions.view-all-link'),
+            ]);
     }
 }
