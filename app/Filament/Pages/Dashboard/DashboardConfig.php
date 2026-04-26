@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Dashboard;
 
 use App\Filament\Concerns\RequiresManagerRole;
+use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Services\Settings\SettingsManager;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -31,57 +32,6 @@ class DashboardConfig extends Page
 
     public bool $showPreview = false;
 
-    /** @var array<string, mixed> */
-    protected array $widgetMeta = [
-        // Core
-        'welcome_banner' => ['name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋', 'defaultSpan' => 3],
-        'stats_overview' => ['name' => 'Stats Overview', 'description' => 'Key metrics — orders, revenue, customers', 'icon' => '📊', 'defaultSpan' => 3],
-
-        // Revenue & Finance
-        'revenue_chart' => ['name' => 'Revenue Chart', 'description' => 'Monthly revenue trends', 'icon' => '📈', 'defaultSpan' => 2],
-        'weekly_revenue' => ['name' => 'Weekly Revenue', 'description' => 'This week\'s revenue breakdown', 'icon' => '💰', 'defaultSpan' => 2],
-        'margin_alert' => ['name' => 'Margin Alerts', 'description' => 'Products with low profit margins', 'icon' => '💸', 'defaultSpan' => 1],
-
-        // Orders
-        'order_funnel' => ['name' => 'Order Funnel', 'description' => 'Order status breakdown', 'icon' => '🔽', 'defaultSpan' => 1],
-        'recent_orders' => ['name' => 'Recent Orders', 'description' => 'Latest orders with status', 'icon' => '🧾', 'defaultSpan' => 1],
-        'todays_orders' => ['name' => 'Today\'s Orders', 'description' => 'All orders for today', 'icon' => '📋', 'defaultSpan' => 2],
-        'upcoming_orders' => ['name' => 'Upcoming Orders', 'description' => 'Orders due in next 3 days', 'icon' => '📅', 'defaultSpan' => 1],
-
-        // Products & Prep
-        'top_products' => ['name' => 'Top Products', 'description' => 'Best-selling items this month', 'icon' => '⭐', 'defaultSpan' => 1],
-        'baking_sheet' => ['name' => 'Baking Sheet', 'description' => 'Today\'s baking prep list', 'icon' => '🧁', 'defaultSpan' => 2],
-        'low_stock' => ['name' => 'Low Stock Alerts', 'description' => 'Ingredients running low', 'icon' => '📦', 'defaultSpan' => 1],
-
-        // Customers
-        'customer_insights' => ['name' => 'Customer Insights', 'description' => 'Customer trends and segments', 'icon' => '👥', 'defaultSpan' => 1],
-        'at_risk_customers' => ['name' => 'At-Risk Customers', 'description' => 'Inactive customers needing attention', 'icon' => '⚠️', 'defaultSpan' => 2],
-        'birthday' => ['name' => 'Birthday Reminders', 'description' => 'Upcoming customer birthdays', 'icon' => '🎂', 'defaultSpan' => 1],
-
-        // Communication & Activity
-        'inbox' => ['name' => 'Inbox', 'description' => 'Unread customer messages', 'icon' => '📬', 'defaultSpan' => 1],
-        'recent_activity' => ['name' => 'Recent Activity', 'description' => 'Latest actions and events', 'icon' => '🕐', 'defaultSpan' => 2],
-
-        // Planning
-        'goal_tracker' => ['name' => 'Goal Tracker', 'description' => 'Business goal progress', 'icon' => '🎯', 'defaultSpan' => 2],
-        'upcoming_holiday' => ['name' => 'Upcoming Holiday', 'description' => 'Next holiday prep reminder', 'icon' => '🎄', 'defaultSpan' => 1],
-        'storefront_views' => ['name' => 'Storefront Views', 'description' => 'Online store traffic today', 'icon' => '🏪', 'defaultSpan' => 1],
-
-        // Promotions & Loyalty
-        'coupon_usage' => ['name' => 'Coupon Usage', 'description' => 'Active coupons and redemption stats', 'icon' => '🎫', 'defaultSpan' => 1],
-        'gift_card_balance' => ['name' => 'Gift Card Balance', 'description' => 'Outstanding gift card liability', 'icon' => '🎁', 'defaultSpan' => 1],
-        'loyalty_leaders' => ['name' => 'Loyalty Leaders', 'description' => 'Top customers by loyalty points', 'icon' => '🏅', 'defaultSpan' => 1],
-
-        // Operations
-        'capacity_today' => ['name' => 'Capacity Today', 'description' => 'Today and tomorrow order capacity', 'icon' => '⏰', 'defaultSpan' => 1],
-        'catering_pipeline' => ['name' => 'Catering Pipeline', 'description' => 'Open catering inquiries and quotes', 'icon' => '📝', 'defaultSpan' => 1],
-        'seasonal_items' => ['name' => 'Seasonal Items', 'description' => 'Products going in/out of season', 'icon' => '🌸', 'defaultSpan' => 1],
-
-        // Feedback
-        'review_summary' => ['name' => 'Review Summary', 'description' => 'Average rating and recent reviews', 'icon' => '⭐', 'defaultSpan' => 1],
-        'reorder_reminders' => ['name' => 'Reorder Reminders', 'description' => 'Lapsed repeat customers', 'icon' => '🔄', 'defaultSpan' => 1],
-    ];
-
     public function mount(): void
     {
         $this->loadWidgets();
@@ -89,6 +39,7 @@ class DashboardConfig extends Page
 
     protected function loadWidgets(): void
     {
+        $widgetMeta = WidgetMeta::all();
         $saved = resolve(SettingsManager::class)->get('dashboard_widgets');
         $config = $saved ? json_decode($saved, true) : null;
 
@@ -100,21 +51,21 @@ class DashboardConfig extends Page
 
         $this->widgets = [];
         foreach ($config as $key => $settings) {
-            if (! isset($this->widgetMeta[$key])) {
+            if (! isset($widgetMeta[$key])) {
                 continue;
             }
             $this->widgets[] = [
                 'key' => $key,
                 'visible' => $settings['visible'] ?? true,
-                'span' => $settings['span'] ?? $this->widgetMeta[$key]['defaultSpan'] ?? 1,
-                'name' => $this->widgetMeta[$key]['name'],
-                'description' => $this->widgetMeta[$key]['description'],
-                'icon' => $this->widgetMeta[$key]['icon'],
+                'span' => $settings['span'] ?? $widgetMeta[$key]['defaultSpan'] ?? 1,
+                'name' => $widgetMeta[$key]['name'],
+                'description' => $widgetMeta[$key]['description'],
+                'icon' => $widgetMeta[$key]['icon'],
             ];
         }
 
         // Add any missing widgets
-        foreach ($this->widgetMeta as $key => $meta) {
+        foreach ($widgetMeta as $key => $meta) {
             if (! collect($this->widgets)->where('key', $key)->count()) {
                 $this->widgets[] = [
                     'key' => $key,
@@ -190,7 +141,7 @@ class DashboardConfig extends Page
     {
         $defaults = [];
         $i = 1;
-        foreach ($this->widgetMeta as $key => $meta) {
+        foreach (WidgetMeta::all() as $key => $meta) {
             $defaults[$key] = ['visible' => true, 'order' => $i++];
         }
 
