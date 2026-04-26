@@ -21,7 +21,6 @@ class Dashboard extends BaseDashboard
             Widgets\OnboardingProgress::class,
             Widgets\RecentTenants::class,
             Widgets\RecentAuditLog::class,
-            Widgets\PlatformInfo::class,
         ];
     }
 }
