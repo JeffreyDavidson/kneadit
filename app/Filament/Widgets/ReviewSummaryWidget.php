@@ -3,16 +3,16 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Engagement\Review;
 use Filament\Widgets\Widget;
 
 class ReviewSummaryWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 19;
-
-    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.review-summary-widget';
 

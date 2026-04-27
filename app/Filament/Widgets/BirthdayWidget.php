@@ -2,7 +2,9 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
@@ -11,6 +13,7 @@ use stdClass;
 class BirthdayWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 12;
 
@@ -19,10 +22,16 @@ class BirthdayWidget extends Widget
     /** @return Collection<int, stdClass> */
     public function getUpcomingBirthdays(): Collection
     {
+        $limit = match ($this->size()) {
+            WidgetSize::Small => 3,
+            WidgetSize::Medium => 5,
+            WidgetSize::Large => 10,
+        };
+
         // Cache plain arrays of denormalized fields, not Customer models / stdClass
         // objects. Cache stores hydrate as __PHP_Incomplete_Class because
         // config(cache.serializable_classes) is false. Same shape as #302.
-        $entries = $this->cached('upcoming', [3600, 7200], function (): array {
+        $entries = $this->cached("upcoming_{$limit}", [3600, 7200], function () use ($limit): array {
             $today = now();
 
             return Customer::query()->whereNotNull('birthday')
@@ -46,7 +55,7 @@ class BirthdayWidget extends Widget
                 })
                 ->filter(fn (?array $item): bool => $item !== null && $item['days_until'] >= 0 && $item['days_until'] <= 30)
                 ->sortBy('days_until')
-                ->take(5)
+                ->take($limit)
                 ->values()
                 ->all();
         });

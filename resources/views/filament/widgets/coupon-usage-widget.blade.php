@@ -12,20 +12,23 @@
             <x-admin.stat-cell label="Total Redemptions">{{ $redemptions }}</x-admin.stat-cell>
         </div>
 
-        <div class="mt-4 p-3 bg-brand-50 rounded-lg">
-            <div class="text-xs text-brand-700 mb-1">Most Used Coupon</div>
-            @if ($mostUsed)
-                <div class="font-semibold text-brand-900">{{ $mostUsed->code }}</div>
-                <div class="text-xs text-brand-600">{{ $mostUsed->used_count }} uses</div>
-            @else
-                <div class="text-brand-600 italic">No coupons redeemed yet</div>
-            @endif
-        </div>
-
-        @if ($expiring > 0)
-            <div class="mt-3 px-3 py-2.5 bg-[#e8b04a]/20 border border-[#e8b04a]/40 rounded-lg text-[0.8rem] text-brand-700">
-                {{ $expiring }} coupon{{ $expiring > 1 ? 's' : '' }} expiring within 7 days
+        {{-- sm: just the two stats above. md: + most-used coupon + expiring warning. --}}
+        @unless ($this->isSize('sm'))
+            <div class="mt-4 p-3 bg-brand-50 rounded-lg">
+                <div class="text-xs text-brand-700 mb-1">Most Used Coupon</div>
+                @if ($mostUsed)
+                    <div class="font-semibold text-brand-900">{{ $mostUsed->code }}</div>
+                    <div class="text-xs text-brand-600">{{ $mostUsed->used_count }} uses</div>
+                @else
+                    <div class="text-brand-600 italic">No coupons redeemed yet</div>
+                @endif
             </div>
-        @endif
+
+            @if ($expiring > 0)
+                <div class="mt-3 px-3 py-2.5 bg-golden/20 border border-golden/40 rounded-lg text-[0.8rem] text-brand-700">
+                    {{ $expiring }} coupon{{ $expiring > 1 ? 's' : '' }} expiring within 7 days
+                </div>
+            @endif
+        @endunless
     </x-filament::section>
 </x-filament-widgets::widget>
