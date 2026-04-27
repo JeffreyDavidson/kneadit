@@ -24,6 +24,10 @@ class RevenueChartWidget extends ChartWidget
 
     protected ?string $maxHeight = '280px';
 
+    // Override Filament's default chart view so the chart renders inside our
+    // <x-admin.dashboard.preview-card> shell instead of <x-filament::section>.
+    protected string $view = 'filament.widgets.revenue-chart';
+
     protected function getType(): string
     {
         return 'line';
