@@ -4,22 +4,29 @@ namespace App\Enums\Filament;
 
 /**
  * T-shirt sizing for dashboard widgets. Replaces the previous numeric
- * span (1/2/3). Each size maps to a number of grid columns at xl
- * breakpoint (3-column grid).
+ * span (1/2/3). SM/MD/LG span 1/2/3 columns at one row tall;
+ * XL spans 3 columns × 2 rows for hero widgets that benefit from
+ * vertical space (charts with breakdown tables, the welcome banner).
  */
 enum WidgetSize: string
 {
     case Small = 'sm';
     case Medium = 'md';
     case Large = 'lg';
+    case ExtraLarge = 'xl';
 
     public function columns(): int
     {
         return match ($this) {
             self::Small => 1,
             self::Medium => 2,
-            self::Large => 3,
+            self::Large, self::ExtraLarge => 3,
         };
+    }
+
+    public function rows(): int
+    {
+        return $this === self::ExtraLarge ? 2 : 1;
     }
 
     public function label(): string
@@ -28,7 +35,21 @@ enum WidgetSize: string
             self::Small => 'Small',
             self::Medium => 'Medium',
             self::Large => 'Large',
+            self::ExtraLarge => 'Extra Large',
         };
+    }
+
+    /**
+     * The "standard" sizes any widget can support (sm/md/lg). XL is
+     * opt-in for hero widgets that benefit from doubled vertical space
+     * (charts with breakdown tables, the welcome banner). When a
+     * WidgetMeta entry omits allowedSizes, this is the default.
+     *
+     * @return list<self>
+     */
+    public static function standardSizes(): array
+    {
+        return [self::Small, self::Medium, self::Large];
     }
 
     /**

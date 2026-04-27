@@ -63,16 +63,16 @@ test('setSize accepts t-shirt size strings, ignores unknown values, and rejects 
     expect($page->get('widgets')[$recentIndex]['size'])->toBe('sm');
 });
 
-test('WidgetMeta::allowedSizesFor returns curated lists for known widgets and all sizes for unconstrained widgets', function () {
+test('WidgetMeta::allowedSizesFor returns curated lists for known widgets and standard sizes for unconstrained widgets', function () {
     expect(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('welcome_banner'))
-        ->toBe([App\Enums\Filament\WidgetSize::Large])
+        ->toBe([App\Enums\Filament\WidgetSize::Large, App\Enums\Filament\WidgetSize::ExtraLarge])
         ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('storefront_views'))
         ->toBe([App\Enums\Filament\WidgetSize::Small])
         ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('revenue_chart'))
-        ->toBe([App\Enums\Filament\WidgetSize::Medium, App\Enums\Filament\WidgetSize::Large])
-        // recent_orders has no allowedSizes key — defaults to all three sizes.
+        ->toBe([App\Enums\Filament\WidgetSize::Medium, App\Enums\Filament\WidgetSize::Large, App\Enums\Filament\WidgetSize::ExtraLarge])
+        // recent_orders has no allowedSizes key — defaults to standard sizes (sm/md/lg, no XL).
         ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('recent_orders'))
-        ->toBe(App\Enums\Filament\WidgetSize::cases());
+        ->toBe(App\Enums\Filament\WidgetSize::standardSizes());
 });
 
 test('saved sizes that violate allowedSizes are clamped to the widget default on load', function () {
