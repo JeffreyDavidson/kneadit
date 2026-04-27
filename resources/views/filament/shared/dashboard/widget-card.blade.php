@@ -110,12 +110,25 @@
                 @break
             @case('recent_orders')
             @case('upcoming_orders')
-                @for ($i = 0; $i < 3; $i++)
+                @php
+                    $rowCount = match ($widget['size'] ?? 'sm') {
+                        'lg', 'md' => 5,
+                        default => 3,
+                    };
+                    $colors = ['#d4a574', '#e8b04a', '#8b6844', '#6b9e3a', '#d4574a'];
+                    $amounts = [28, 45, 32, 56, 19];
+                @endphp
+                @for ($i = 0; $i < $rowCount; $i++)
                     <div class="pw-row">
-                        <span><span class="pw-dot" style="background: {{ ['#d4a574','#e8b04a','#8b6844'][$i] }};"></span>Order #{{ 100 + $i }}</span>
-                        <span>${{ [28, 45, 32][$i] }}</span>
+                        <span><span class="pw-dot" style="background: {{ $colors[$i] }};"></span>Order #{{ 100 + $i }}</span>
+                        <span>${{ $amounts[$i] }}</span>
                     </div>
                 @endfor
+                @if (($widget['size'] ?? 'sm') === 'lg')
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; font-size: 0.65rem; color: #a08060;">
+                        <span>Total</span><span style="color: var(--accent); font-weight: 600;">${{ array_sum($amounts) }}</span>
+                    </div>
+                @endif
                 @break
             @case('top_products')
                 @foreach (['Chocolate Cake' => 85, 'Banana Bread' => 60, 'Cookies' => 40] as $name => $pct)
@@ -142,16 +155,35 @@
                 </div>
                 @break
             @case('order_funnel')
-                @foreach (['Pending' => '#e8b04a', 'Confirmed' => '#d4a574', 'Delivered' => '#8b6844'] as $status => $color)
+                @php
+                    $funnel = ($widget['size'] ?? 'sm') === 'md'
+                        ? ['Pending' => ['#e8b04a', 3], 'Confirmed' => ['#d4a574', 5], 'In Prep' => ['#6b9e3a', 4], 'Out for Delivery' => ['#3a8bd4', 2], 'Delivered' => ['#8b6844', 12]]
+                        : ['Pending' => ['#e8b04a', 3], 'Confirmed' => ['#d4a574', 5], 'Delivered' => ['#8b6844', 12]];
+                @endphp
+                @if (($widget['size'] ?? 'sm') === 'md')
+                    <div class="pw-stat" style="margin-bottom: 6px;"><span class="pw-stat-label">Total Active</span><span class="pw-stat-value">26</span></div>
+                @endif
+                @foreach ($funnel as $status => [$color, $count])
                     <div class="pw-row">
                         <span><span class="pw-dot" style="background: {{ $color }};"></span>{{ $status }}</span>
-                        <span>{{ ['Pending' => 3, 'Confirmed' => 5, 'Delivered' => 12][$status] }}</span>
+                        <span>{{ $count }}</span>
                     </div>
                 @endforeach
                 @break
             @case('todays_orders')
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-                    @foreach (['9:00 AM' => '$28', '11:30 AM' => '$45', '2:00 PM' => '$32'] as $time => $amt)
+                @php
+                    $slots = ($widget['size'] ?? 'md') === 'lg'
+                        ? ['9:00 AM' => '$28', '10:30 AM' => '$15', '11:30 AM' => '$45', '1:00 PM' => '$22', '2:00 PM' => '$32']
+                        : ['9:00 AM' => '$28', '11:30 AM' => '$45', '2:00 PM' => '$32'];
+                @endphp
+                @if (($widget['size'] ?? 'md') === 'lg')
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="font-size: 0.6rem; color: #a08060; text-transform: uppercase;">Revenue Today</span>
+                        <span style="font-size: 1rem; font-weight: 700; color: var(--accent);">$142</span>
+                    </div>
+                @endif
+                <div style="display: grid; grid-template-columns: repeat({{ count($slots) }}, 1fr); gap: 6px;">
+                    @foreach ($slots as $time => $amt)
                         <div style="background: #fdf8f2; border-radius: 6px; padding: 6px 8px;">
                             <div style="font-size: 0.6rem; color: #a08060;">{{ $time }}</div>
                             <div style="font-size: 0.8rem; font-weight: 700; color: #3d2314;">{{ $amt }}</div>
