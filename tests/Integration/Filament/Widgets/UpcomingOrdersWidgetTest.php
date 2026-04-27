@@ -5,7 +5,10 @@ use App\Models\Orders\Order;
 
 beforeEach(function () {
     setUpTenantTest();
-    test()->widget = new UpcomingOrdersWidget;
+    // Pin the small size — its 3-day window matches the original (pre-size-aware)
+    // behavior these tests were written against. Other sizes (md=5, lg=7) get
+    // exercised by the AdminWidgets smoke test via the actual dashboard flow.
+    test()->widget = tap(new UpcomingOrdersWidget, fn ($w) => $w->dashboardSize = 'sm');
 });
 
 test('get upcoming orders returns empty when no orders', function () {
