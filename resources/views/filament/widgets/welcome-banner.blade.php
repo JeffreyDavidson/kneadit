@@ -17,7 +17,7 @@
             <div class="flex gap-4 flex-wrap flex-1 justify-end">
                 @foreach ([
                     ['label' => 'Orders Today', 'value' => $this->getOrdersToday()],
-                    ['label' => 'Revenue Today', 'value' => '$'.$this->getRevenueToday()],
+                    ['label' => 'Revenue Today', 'value' => $this->getRevenueToday()],
                     ['label' => 'Pending', 'value' => $this->getPendingOrders(), 'highlight' => $this->getPendingOrders() > 0],
                 ] as $stat)
                     <div class="bg-white/20 backdrop-blur rounded-xl px-5 py-3 text-center flex-1 min-w-30 max-w-50">
