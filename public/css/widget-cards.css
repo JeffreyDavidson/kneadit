@@ -1,0 +1,119 @@
+/* ===================================================================
+   KneadIt — Dashboard widget card primitives
+   ===================================================================
+   Shared classes used by both the central WidgetCatalog page and the
+   tenant dashboard widgets via <x-admin.dashboard.*> components.
+
+   Tokens default to brand colors that work on either panel; central
+   theme overrides are applied via --platform-* tokens when available.
+   =================================================================== */
+
+:root {
+    --pw-card-bg: var(--platform-900, var(--brand-900, #3d2314));
+    --pw-card-grad-start: var(--platform-800, var(--brand-800, #2a1f18));
+    --pw-card-grad-end: var(--platform-700, var(--brand-700, #4a3225));
+    --pw-card-border: var(--border-medium, var(--brand-700, #6b4c3b));
+    --pw-card-border-subtle: var(--border-subtle, rgba(212, 165, 116, 0.15));
+    --pw-card-accent: var(--accent, var(--brand-300, #d4a574));
+    --pw-card-accent-light: var(--accent-light, #e8b04a);
+    --pw-card-text: var(--platform-100, var(--brand-50, #fdf8f2));
+    --pw-card-text-soft: var(--platform-200, var(--brand-100, #f5e6d0));
+    --pw-card-text-row: var(--platform-300, var(--brand-200, #e8d0b0));
+    --pw-card-text-muted: var(--platform-400, var(--brand-500, #a08060));
+}
+
+/* ===== Card shell ===== */
+.preview-widget {
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--pw-card-bg);
+    border: 1px solid var(--pw-card-border);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.preview-widget-header {
+    background: linear-gradient(135deg, var(--pw-card-grad-start), var(--pw-card-grad-end));
+    border-bottom: 1px solid var(--pw-card-border-subtle);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.preview-widget-header .pw-icon {
+    font-size: 0.85rem;
+}
+.preview-widget-header span {
+    color: var(--pw-card-accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.preview-widget-body {
+    padding: 14px;
+    min-height: 60px;
+    color: var(--pw-card-text-soft);
+}
+
+/* ===== Stat (label + value pair, baseline-aligned) ===== */
+.pw-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.pw-stat-label {
+    font-size: 0.65rem;
+    color: var(--pw-card-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.pw-stat-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--pw-card-text);
+}
+
+/* ===== List-row (label on left, value on right, with optional leading dot) ===== */
+.pw-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--pw-card-border-subtle);
+    font-size: 0.7rem;
+    color: var(--pw-card-text-row);
+    gap: 8px;
+}
+.pw-row:last-child { border: none; }
+.pw-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+/* ===== Bar-row (label + percent, with progress bar beneath) ===== */
+.pw-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--pw-card-border-subtle);
+    margin-top: 6px;
+}
+.pw-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--pw-card-accent), var(--pw-card-accent-light));
+}
+
+/* ===== Spark-bars (mini bar-row chart used by sparkline-style widgets) ===== */
+.pw-line {
+    height: 40px;
+    display: flex;
+    align-items: end;
+    gap: 2px;
+}
+.pw-line-bar {
+    flex: 1;
+    background: var(--pw-card-border);
+    border-radius: 2px 2px 0 0;
+    min-height: 4px;
+}
