@@ -15,21 +15,29 @@
     @if ($configMode) data-index="{{ $index }}" @endif
 >
     @if ($configMode)
+        @php
+            $allowedSizes = \App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor($widget['key']);
+        @endphp
+
         <div class="config-controls">
             <button type="button" class="config-ctrl config-drag" title="Drag to reorder">
                 <x-heroicon-s-bars-3 class="w-4 h-4" />
             </button>
 
-            <div class="config-size-group">
-                @foreach (\App\Enums\Filament\WidgetSize::cases() as $size)
-                    <button
-                        type="button"
-                        class="config-size-btn {{ ($widget['size'] ?? 'sm') === $size->value ? 'active' : '' }}"
-                        wire:click="setSize({{ $index }}, '{{ $size->value }}')"
-                        title="{{ $size->label() }} ({{ $size->columns() }}/3 width)"
-                    >{{ strtoupper($size->value) }}</button>
-                @endforeach
-            </div>
+            @if (count($allowedSizes) > 1)
+                <div class="config-size-group">
+                    @foreach ($allowedSizes as $size)
+                        <button
+                            type="button"
+                            class="config-size-btn {{ ($widget['size'] ?? 'sm') === $size->value ? 'active' : '' }}"
+                            wire:click="setSize({{ $index }}, '{{ $size->value }}')"
+                            title="{{ $size->label() }} ({{ $size->columns() }}/3 width)"
+                        >{{ strtoupper($size->value) }}</button>
+                    @endforeach
+                </div>
+            @else
+                <span class="config-size-locked" title="This widget is fixed at {{ $allowedSizes[0]->label() }}">{{ strtoupper($allowedSizes[0]->value) }}</span>
+            @endif
 
             <button
                 type="button"
@@ -47,7 +55,6 @@
     @endif
 
     <div class="preview-widget-header">
-        <span class="pw-icon">{{ $widget['icon'] }}</span>
         <span>{{ $widget['name'] }}</span>
     </div>
     <div class="preview-widget-body">
@@ -85,6 +92,9 @@
                     @foreach ([30, 45, 20, 60, 80, 55, 70, 40, 90, 65, 50, 75] as $h)
                         <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
                     @endforeach
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a08060; margin-top: 4px;">
+                    <span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span>
                 </div>
                 @break
             @case('recent_orders')
@@ -222,6 +232,26 @@
             @case('reorder_reminders')
                 <div class="pw-stat"><span class="pw-stat-label">Lapsed</span><span class="pw-stat-value">6</span></div>
                 <div style="font-size: 0.6rem; color: #a08060; margin-top: 4px;">Haven't ordered in 30+ days</div>
+                @break
+            @case('low_stock')
+                @foreach (['Flour' => '2 lbs', 'Butter' => '0 lbs', 'Vanilla' => '1 oz'] as $item => $remaining)
+                    <div class="pw-row"><span>{{ $item }}</span><span style="color: #d4574a;">{{ $remaining }}</span></div>
+                @endforeach
+                @break
+            @case('at_risk_customers')
+                @foreach (['Sarah M.' => '45d ago', 'Mike R.' => '38d ago', 'Lisa K.' => '32d ago'] as $name => $when)
+                    <div class="pw-row"><span>{{ $name }}</span><span>{{ $when }}</span></div>
+                @endforeach
+                @break
+            @case('birthday')
+                @foreach (['Emma T.' => 'Tomorrow', 'James P.' => 'In 3 days', 'Olivia C.' => 'In 5 days'] as $name => $when)
+                    <div class="pw-row"><span>🎂 {{ $name }}</span><span>{{ $when }}</span></div>
+                @endforeach
+                @break
+            @case('recent_activity')
+                @foreach (['2m ago' => 'New order #142', '15m ago' => 'Product updated', '1h ago' => 'Customer signed up'] as $when => $what)
+                    <div class="pw-row"><span>{{ $what }}</span><span>{{ $when }}</span></div>
+                @endforeach
                 @break
             @default
                 <div style="display: flex; flex-direction: column; gap: 4px;">
