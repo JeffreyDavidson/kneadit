@@ -37,12 +37,12 @@ class WidgetMeta
     /** @var array<string, array<string, mixed>> */
     public const array WIDGETS = [
         // Core — full-width heroes, single allowed size each.
-        'welcome_banner' => ['class' => WelcomeBannerWidget::class, 'name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋', 'defaultSize' => WidgetSize::Large, 'allowedSizes' => [WidgetSize::Large]],
-        'stats_overview' => ['class' => StatsOverview::class, 'name' => 'Stats Overview', 'description' => 'Key metrics — orders, revenue, customers', 'icon' => '📊', 'defaultSize' => WidgetSize::Large, 'allowedSizes' => [WidgetSize::Large]],
+        'welcome_banner' => ['class' => WelcomeBannerWidget::class, 'name' => 'Welcome Banner', 'description' => 'Greeting with quick stats and actions', 'icon' => '👋', 'defaultSize' => WidgetSize::Large, 'allowedSizes' => [WidgetSize::Large, WidgetSize::ExtraLarge]],
+        'stats_overview' => ['class' => StatsOverview::class, 'name' => 'Stats Overview', 'description' => 'Key metrics — orders, revenue, customers', 'icon' => '📊', 'defaultSize' => WidgetSize::Large, 'allowedSizes' => [WidgetSize::Large, WidgetSize::ExtraLarge]],
 
-        // Revenue & Finance — charts need horizontal room.
-        'revenue_chart' => ['class' => RevenueChartWidget::class, 'name' => 'Revenue Chart', 'description' => 'Monthly revenue trends', 'icon' => '📈', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large]],
-        'weekly_revenue' => ['class' => WeeklyRevenueChart::class, 'name' => 'Weekly Revenue', 'description' => 'This week\'s revenue breakdown', 'icon' => '💰', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large]],
+        // Revenue & Finance — charts need horizontal room (XL adds vertical breakdown).
+        'revenue_chart' => ['class' => RevenueChartWidget::class, 'name' => 'Revenue Chart', 'description' => 'Monthly revenue trends', 'icon' => '📈', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large, WidgetSize::ExtraLarge]],
+        'weekly_revenue' => ['class' => WeeklyRevenueChart::class, 'name' => 'Weekly Revenue', 'description' => 'This week\'s revenue breakdown', 'icon' => '💰', 'defaultSize' => WidgetSize::Medium, 'allowedSizes' => [WidgetSize::Medium, WidgetSize::Large, WidgetSize::ExtraLarge]],
         'margin_alert' => ['class' => MarginAlertWidget::class, 'name' => 'Margin Alerts', 'description' => 'Products with low profit margins', 'icon' => '💸', 'defaultSize' => WidgetSize::Small, 'allowedSizes' => [WidgetSize::Small, WidgetSize::Medium]],
 
         // Orders — recent_orders + upcoming_orders are flexible tables; today's needs a wider row.
@@ -123,6 +123,6 @@ class WidgetMeta
     {
         $allowed = self::WIDGETS[$key]['allowedSizes'] ?? null;
 
-        return is_array($allowed) && $allowed !== [] ? $allowed : WidgetSize::cases();
+        return is_array($allowed) && $allowed !== [] ? $allowed : WidgetSize::standardSizes();
     }
 }
