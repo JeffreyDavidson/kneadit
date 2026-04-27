@@ -93,6 +93,15 @@
         .config-size-btn:hover { background: white; color: #6b4c3b; }
         .config-size-btn.active { background: #d4a574; color: white; }
 
+        .config-size-locked {
+            flex: 1; height: 26px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(212, 165, 116, 0.15);
+            color: #a08060; font-size: 0.65rem; font-weight: 700;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
         /* Push the widget header down so controls don't sit on top of the title. */
         .config-tile .preview-widget-header { padding-top: 38px; }
 

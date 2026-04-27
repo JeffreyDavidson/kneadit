@@ -44,14 +44,35 @@ test('toggleWidget flips visibility', function () {
     expect($page->get('widgets')[0]['visible'])->toBe(! $beforeVisible);
 });
 
-test('setSize accepts t-shirt size strings and falls back to small for unknown values', function () {
+test('setSize accepts t-shirt size strings, ignores unknown values, and rejects disallowed sizes', function () {
     $page = Livewire::test(DashboardConfig::class);
 
-    $page->call('setSize', 0, 'lg');
-    expect($page->get('widgets')[0]['size'])->toBe('lg');
+    // recent_orders allows all three sizes — sm → md transitions cleanly.
+    $recentIndex = collect($page->get('widgets'))->search(fn ($w) => $w['key'] === 'recent_orders');
+    $page->call('setSize', $recentIndex, 'md');
+    expect($page->get('widgets')[$recentIndex]['size'])->toBe('md');
 
-    $page->call('setSize', 0, 'bogus');
-    expect($page->get('widgets')[0]['size'])->toBe('sm');
+    // welcome_banner is locked to large — sm should be rejected and the size unchanged.
+    $welcomeIndex = collect($page->get('widgets'))->search(fn ($w) => $w['key'] === 'welcome_banner');
+    $sizeBefore = $page->get('widgets')[$welcomeIndex]['size'];
+    $page->call('setSize', $welcomeIndex, 'sm');
+    expect($page->get('widgets')[$welcomeIndex]['size'])->toBe($sizeBefore);
+
+    // Unknown size strings on an unrestricted widget fall back to small.
+    $page->call('setSize', $recentIndex, 'bogus');
+    expect($page->get('widgets')[$recentIndex]['size'])->toBe('sm');
+});
+
+test('WidgetMeta::allowedSizesFor returns curated lists for known widgets and all sizes for unconstrained widgets', function () {
+    expect(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('welcome_banner'))
+        ->toBe([App\Enums\Filament\WidgetSize::Large])
+        ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('storefront_views'))
+        ->toBe([App\Enums\Filament\WidgetSize::Small])
+        ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('revenue_chart'))
+        ->toBe([App\Enums\Filament\WidgetSize::Medium, App\Enums\Filament\WidgetSize::Large])
+        // recent_orders has no allowedSizes key — defaults to all three sizes.
+        ->and(App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor('recent_orders'))
+        ->toBe(App\Enums\Filament\WidgetSize::cases());
 });
 
 test('legacy integer span values are migrated to t-shirt sizes on load', function () {

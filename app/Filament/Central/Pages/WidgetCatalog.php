@@ -3,11 +3,9 @@
 namespace App\Filament\Central\Pages;
 
 use App\Filament\Shared\Dashboard\WidgetMeta;
-use App\Services\Filament\WidgetPreviewRenderer;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\HtmlString;
 use UnitEnum;
 
 class WidgetCatalog extends Page
@@ -27,28 +25,28 @@ class WidgetCatalog extends Page
     protected string $view = 'filament.central.pages.widget-catalog';
 
     /**
-     * Render every tenant widget against the demo tenant DB. Returns an
-     * ordered list of [key, name, description, icon, html] for the view.
+     * Catalog widget list. Each entry carries the key + meta so the
+     * blade can include the shared widget-card partial. No Livewire
+     * mounting here — would leak Livewire's "current component"
+     * context and crash the parent page render.
      *
      * @return array<int, array<string, mixed>>
      */
-    public function getRenderedWidgetsProperty(): array
+    public function getCatalogWidgetsProperty(): array
     {
-        $renderer = resolve(WidgetPreviewRenderer::class);
+        $catalog = [];
 
-        $rendered = [];
         foreach (WidgetMeta::all() as $key => $meta) {
-            $rendered[] = [
+            $catalog[] = [
                 'key' => $key,
                 'name' => $meta['name'],
                 'description' => $meta['description'],
                 'icon' => $meta['icon'],
-                'html' => $meta['class']
-                    ? $renderer->render($meta['class'])
-                    : new HtmlString('<em class="text-gray-500">No class registered for this widget.</em>'),
+                'size' => ($meta['defaultSize'] ?? \App\Enums\Filament\WidgetSize::Small)->value,
+                'visible' => true,
             ];
         }
 
-        return $rendered;
+        return $catalog;
     }
 }
