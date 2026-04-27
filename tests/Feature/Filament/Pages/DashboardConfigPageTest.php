@@ -124,6 +124,23 @@ test('Dashboard::getWidgets honors saved order and visibility', function () {
 
     $widgets = (new Dashboard)->getWidgets();
 
-    expect($widgets)->toBe([RecentOrdersWidget::class])
-        ->and($widgets)->not->toContain(WelcomeBannerWidget::class);
+    // Widgets that use HasDashboardSize get wrapped in WidgetConfiguration so
+    // their dashboardSize property gets piped through Livewire mount.
+    $classes = collect($widgets)->map(
+        fn ($w) => is_string($w) ? $w : $w->widget,
+    )->all();
+
+    expect($classes)->toBe([RecentOrdersWidget::class])
+        ->and($classes)->not->toContain(WelcomeBannerWidget::class);
+});
+
+test('Dashboard::getWidgets pipes the saved size into widgets that use HasDashboardSize', function () {
+    resolve(SettingsManager::class)->set('dashboard_widgets', json_encode([
+        'recent_orders' => ['visible' => true, 'order' => 1, 'size' => 'lg'],
+    ]));
+
+    $widgets = (new Dashboard)->getWidgets();
+
+    expect($widgets[0])->toBeInstanceOf(Filament\Widgets\WidgetConfiguration::class)
+        ->and($widgets[0]->getProperties())->toBe(['dashboardSize' => 'lg']);
 });
