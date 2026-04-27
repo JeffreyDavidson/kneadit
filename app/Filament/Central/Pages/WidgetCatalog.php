@@ -25,10 +25,24 @@ class WidgetCatalog extends Page
     protected string $view = 'filament.central.pages.widget-catalog';
 
     /**
-     * Catalog widget list. Each entry carries the key + meta so the
-     * blade can include the shared widget-card partial. No Livewire
-     * mounting here — would leak Livewire's "current component"
-     * context and crash the parent page render.
+     * When true, the catalog renders each widget once per allowed size
+     * (sm/md/lg) so design variants can be reviewed side-by-side.
+     */
+    public bool $showAllSizes = false;
+
+    public function toggleAllSizes(): void
+    {
+        $this->showAllSizes = ! $this->showAllSizes;
+    }
+
+    /**
+     * Catalog widget list. When showAllSizes is on, each widget's entry
+     * carries an `allowedSizes` array (the sizes the dashboard config
+     * allows for it); the blade renders one mini-tile per size. Otherwise
+     * each entry has a single `size` field with the widget's default.
+     *
+     * No Livewire mounting here — would leak Livewire's "current
+     * component" context and crash the parent page render.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -37,7 +51,7 @@ class WidgetCatalog extends Page
         $catalog = [];
 
         foreach (WidgetMeta::all() as $key => $meta) {
-            $catalog[] = [
+            $entry = [
                 'key' => $key,
                 'name' => $meta['name'],
                 'description' => $meta['description'],
@@ -45,6 +59,15 @@ class WidgetCatalog extends Page
                 'size' => ($meta['defaultSize'] ?? \App\Enums\Filament\WidgetSize::Small)->value,
                 'visible' => true,
             ];
+
+            if ($this->showAllSizes) {
+                $entry['allowedSizes'] = array_map(
+                    fn (\App\Enums\Filament\WidgetSize $s): string => $s->value,
+                    WidgetMeta::allowedSizesFor($key),
+                );
+            }
+
+            $catalog[] = $entry;
         }
 
         return $catalog;
