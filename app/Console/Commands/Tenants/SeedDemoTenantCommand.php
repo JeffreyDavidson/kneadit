@@ -32,7 +32,7 @@ class SeedDemoTenantCommand extends Command
             $this->info("Creating demo tenant '" . self::DEMO_ID . "'…");
         }
 
-        Tenant::factory()
+        $tenant = Tenant::factory()
             ->onboarded()
             ->create([
                 'id' => self::DEMO_ID,
@@ -41,7 +41,12 @@ class SeedDemoTenantCommand extends Command
                 'store_name' => 'Demo Bakery',
             ]);
 
-        $this->info('✅ Demo tenant ready.');
+        // Register the subdomain so requests to demo.<central-domain>
+        // resolve to this tenant via stancl/tenancy's domain identification.
+        $centralDomain = (string) collect(config('tenancy.central_domains'))->first();
+        $tenant->domains()->updateOrCreate(['domain' => self::DEMO_ID . '.' . $centralDomain]);
+
+        $this->info('✅ Demo tenant ready at https://' . self::DEMO_ID . '.' . $centralDomain);
 
         return self::SUCCESS;
     }

@@ -78,11 +78,22 @@
                 </div>
                 @break
             @case('stats_overview')
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-                    @foreach (['Orders: 5', 'Pending: 2', 'Revenue: $142'] as $stat)
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                    @foreach ([
+                        ['label' => "Today's Orders", 'value' => '5', 'delta' => '+12%'],
+                        ['label' => 'Pending', 'value' => '2', 'delta' => 'Manageable'],
+                        ['label' => "Week's Revenue", 'value' => '$142', 'delta' => '+8%'],
+                        ['label' => 'Views Today', 'value' => '47', 'delta' => '+3%'],
+                    ] as $stat)
                         <div style="background: #fdf8f2; border-radius: 6px; padding: 6px 8px;">
-                            <div style="font-size: 0.6rem; color: #a08060;">{{ explode(':', $stat)[0] }}</div>
-                            <div style="font-size: 0.85rem; font-weight: 700; color: #3d2314;">{{ trim(explode(':', $stat)[1]) }}</div>
+                            <div style="font-size: 0.55rem; color: #a08060; text-transform: uppercase; letter-spacing: 0.05em;">{{ $stat['label'] }}</div>
+                            <div style="font-size: 0.95rem; font-weight: 700; color: #3d2314; line-height: 1.1;">{{ $stat['value'] }}</div>
+                            <div style="font-size: 0.55rem; color: #6b9e3a; margin-top: 2px;">{{ $stat['delta'] }}</div>
+                            <div class="pw-line" style="height: 16px; margin-top: 4px;">
+                                @foreach ([20, 35, 25, 50, 40, 60, 55] as $h)
+                                    <div class="pw-line-bar" style="height: {{ $h }}%;"></div>
+                                @endforeach
+                            </div>
                         </div>
                     @endforeach
                 </div>
