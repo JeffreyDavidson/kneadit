@@ -19,6 +19,10 @@ class WeeklyRevenueChart extends ChartWidget
 
     protected ?string $heading = 'Weekly Financial Overview';
 
+    // Override Filament's default chart view so the chart renders inside our
+    // <x-admin.dashboard.preview-card> shell instead of <x-filament::section>.
+    protected string $view = 'filament.widgets.weekly-revenue';
+
     protected function getType(): string
     {
         return 'bar';
