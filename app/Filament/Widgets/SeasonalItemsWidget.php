@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Inventory\SeasonalItem;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
@@ -10,10 +11,9 @@ use Illuminate\Support\Facades\Date;
 class SeasonalItemsWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 22;
-
-    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.seasonal-items-widget';
 
