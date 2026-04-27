@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Financial\GiftCard;
 use App\Models\Financial\GiftCardTransaction;
 use Filament\Widgets\Widget;
@@ -10,10 +11,9 @@ use Filament\Widgets\Widget;
 class GiftCardBalanceWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 16;
-
-    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.gift-card-balance-widget';
 
