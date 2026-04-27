@@ -15,7 +15,7 @@
 
     {{-- Email client header strip (simulated inbox row) --}}
     <div class="bg-white rounded-t-lg border border-b-0 border-honey/15 px-4 py-2.5 flex items-center gap-2.5">
-        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[#1c1410] text-honey text-[0.7rem] font-bold">K</span>
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-warm-black text-honey text-[0.7rem] font-bold">K</span>
         <div class="min-w-0 flex-1">
             <div class="text-[0.8rem] text-gray-900 font-semibold truncate">KneadIt Platform</div>
             <div class="text-[0.7rem] text-gray-500">noreply@getkneadit.app → new bakers</div>
