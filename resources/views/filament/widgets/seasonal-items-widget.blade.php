@@ -1,35 +1,34 @@
-<x-filament-widgets::widget>
-    <x-filament::section heading="Seasonal Items" icon="heroicon-o-sun">
-        @php
-            $inSeason = $this->getCurrentlyInSeasonCount();
-            $comingSoon = $this->getComingSoon();
-            $endingSoon = $this->getEndingSoon();
-        @endphp
+@php
+    $inSeason = $this->getCurrentlyInSeasonCount();
+    $comingSoon = $this->getComingSoon();
+    $endingSoon = $this->getEndingSoon();
+@endphp
 
-        <x-admin.stat-cell label="Currently In Season" class="mb-4">{{ $inSeason }}</x-admin.stat-cell>
+<x-admin.dashboard.preview-card heading="Seasonal Items" icon="🌸">
+    <x-admin.dashboard.stat-row label="Currently In Season" :value="$inSeason" class="mb-3" />
 
-        {{-- sm: in-season count only. md: + coming-soon and ending-soon side-by-side lists. --}}
-        @unless ($this->isSize('sm'))
-            <div class="grid grid-cols-2 gap-3">
-                @foreach ([
-                    ['title' => 'Coming Soon', 'items' => $comingSoon, 'bg' => 'bg-brand-300/20', 'empty' => 'None upcoming'],
-                    ['title' => 'Ending Soon', 'items' => $endingSoon, 'bg' => 'bg-golden/20', 'empty' => 'None ending soon'],
-                ] as $group)
-                    <div>
-                        <div class="text-xs font-semibold text-brand-700 mb-2">{{ $group['title'] }}</div>
-                        @if (count($group['items']) > 0)
-                            @foreach ($group['items'] as $item)
-                                <div class="px-2.5 py-1.5 {{ $group['bg'] }} rounded-md mb-1 text-xs">
-                                    <div class="font-semibold text-brand-900">{{ $item['name'] }}</div>
-                                    <div class="text-brand-600">{{ $item['date'] }}</div>
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="text-brand-600 italic text-xs p-1.5">{{ $group['empty'] }}</div>
-                        @endif
+    @unless ($this->isSize('sm'))
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--pw-card-border-subtle);">
+            @foreach ([
+                ['title' => 'Coming Soon', 'items' => $comingSoon, 'color' => '#6b9e3a', 'empty' => 'None upcoming'],
+                ['title' => 'Ending Soon', 'items' => $endingSoon, 'color' => '#d4574a', 'empty' => 'None ending soon'],
+            ] as $group)
+                <div>
+                    <div style="font-size: 0.55rem; color: var(--pw-card-text-muted); text-transform: uppercase; margin-bottom: 4px;">
+                        <span style="color: {{ $group['color'] }}; margin-right: 4px;">●</span>{{ $group['title'] }}
                     </div>
-                @endforeach
-            </div>
-        @endunless
-    </x-filament::section>
-</x-filament-widgets::widget>
+                    @if (count($group['items']) > 0)
+                        @foreach ($group['items'] as $item)
+                            <div style="font-size: 0.7rem; color: var(--pw-card-text); margin-bottom: 4px;">
+                                <div style="font-weight: 600;">{{ $item['name'] }}</div>
+                                <div style="font-size: 0.6rem; color: var(--pw-card-text-muted);">{{ $item['date'] }}</div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div style="font-size: 0.7rem; color: var(--pw-card-text-muted); font-style: italic;">{{ $group['empty'] }}</div>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    @endunless
+</x-admin.dashboard.preview-card>

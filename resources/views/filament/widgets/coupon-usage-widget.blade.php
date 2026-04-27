@@ -1,34 +1,31 @@
-<x-filament-widgets::widget>
-    <x-filament::section heading="Coupon Usage" icon="heroicon-o-ticket">
-        @php
-            $active = $this->getActiveCouponsCount();
-            $redemptions = $this->getTotalRedemptions();
-            $mostUsed = $this->getMostUsedCoupon();
-            $expiring = $this->getExpiringSoonCount();
-        @endphp
+@php
+    $active = $this->getActiveCouponsCount();
+    $redemptions = $this->getTotalRedemptions();
+    $mostUsed = $this->getMostUsedCoupon();
+    $expiring = $this->getExpiringSoonCount();
+@endphp
 
-        <div class="grid grid-cols-2 gap-4">
-            <x-admin.stat-cell label="Active Coupons">{{ $active }}</x-admin.stat-cell>
-            <x-admin.stat-cell label="Total Redemptions">{{ $redemptions }}</x-admin.stat-cell>
-        </div>
+<x-admin.dashboard.preview-card heading="Coupon Usage" icon="🎫">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+        <x-admin.dashboard.stat-row label="Active" :value="$active" />
+        <x-admin.dashboard.stat-row label="Redemptions" :value="$redemptions" />
+    </div>
 
-        {{-- sm: just the two stats above. md: + most-used coupon + expiring warning. --}}
-        @unless ($this->isSize('sm'))
-            <div class="mt-4 p-3 bg-brand-50 rounded-lg">
-                <div class="text-xs text-brand-700 mb-1">Most Used Coupon</div>
-                @if ($mostUsed)
-                    <div class="font-semibold text-brand-900">{{ $mostUsed->code }}</div>
-                    <div class="text-xs text-brand-600">{{ $mostUsed->used_count }} uses</div>
-                @else
-                    <div class="text-brand-600 italic">No coupons redeemed yet</div>
-                @endif
-            </div>
-
-            @if ($expiring > 0)
-                <div class="mt-3 px-3 py-2.5 bg-golden/20 border border-golden/40 rounded-lg text-[0.8rem] text-brand-700">
-                    {{ $expiring }} coupon{{ $expiring > 1 ? 's' : '' }} expiring within 7 days
+    @unless ($this->isSize('sm'))
+        @if ($mostUsed)
+            <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--pw-card-border-subtle);">
+                <div style="font-size: 0.55rem; color: var(--pw-card-text-muted); text-transform: uppercase; margin-bottom: 4px;">Most Used</div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-family: monospace; font-weight: 600; color: var(--pw-card-accent);">{{ $mostUsed->code }}</span>
+                    <span style="font-size: 0.7rem; color: var(--pw-card-text-muted);">{{ $mostUsed->used_count }} uses</span>
                 </div>
-            @endif
-        @endunless
-    </x-filament::section>
-</x-filament-widgets::widget>
+            </div>
+        @endif
+
+        @if ($expiring > 0)
+            <div style="margin-top: 8px; padding: 6px 10px; background: rgba(232, 176, 74, 0.15); border: 1px solid rgba(232, 176, 74, 0.3); border-radius: 6px; font-size: 0.7rem; color: var(--pw-card-text);">
+                ⚠ {{ $expiring }} coupon{{ $expiring > 1 ? 's' : '' }} expiring within 7 days
+            </div>
+        @endif
+    @endunless
+</x-admin.dashboard.preview-card>
