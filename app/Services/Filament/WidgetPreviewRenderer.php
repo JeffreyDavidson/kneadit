@@ -4,9 +4,11 @@ namespace App\Services\Filament;
 
 use App\Console\Commands\Tenants\SeedDemoTenantCommand;
 use App\Models\Platform\Tenant;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 use Livewire\Livewire;
+use ReflectionClass;
 use Throwable;
 
 /**
@@ -34,6 +36,19 @@ class WidgetPreviewRenderer
             );
         }
 
+        // Snapshot the View factory's component/slot stacks. A widget's blade
+        // can leak partial state (an unbalanced startComponent without
+        // endComponent, e.g.), and the leak only surfaces when the *parent*
+        // template later hits @endforeach / @endcomponent and tries to pop
+        // an empty slot — far from the original culprit. Restoring the
+        // stacks after each render keeps the side effects contained.
+        $factory = app(ViewFactory::class);
+        $snapshot = [
+            'componentStack' => $this->snapshot($factory, 'componentStack'),
+            'slotStack' => $this->snapshot($factory, 'slotStack'),
+            'componentData' => $this->snapshot($factory, 'componentData'),
+        ];
+
         try {
             $html = $demo->run(fn (): string => Livewire::mount($widgetClass));
 
@@ -45,7 +60,36 @@ class WidgetPreviewRenderer
             ]);
 
             return $this->placeholder('Widget render failed: ' . e($e->getMessage()));
+        } finally {
+            foreach ($snapshot as $property => $value) {
+                $this->restore($factory, $property, $value);
+            }
         }
+    }
+
+    private function snapshot(object $factory, string $property): mixed
+    {
+        $ref = new ReflectionClass($factory);
+        if (! $ref->hasProperty($property)) {
+            return null;
+        }
+
+        $prop = $ref->getProperty($property);
+        $prop->setAccessible(true);
+
+        return $prop->getValue($factory);
+    }
+
+    private function restore(object $factory, string $property, mixed $value): void
+    {
+        $ref = new ReflectionClass($factory);
+        if (! $ref->hasProperty($property)) {
+            return;
+        }
+
+        $prop = $ref->getProperty($property);
+        $prop->setAccessible(true);
+        $prop->setValue($factory, $value);
     }
 
     private function placeholder(string $message): HtmlString

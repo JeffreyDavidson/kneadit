@@ -116,7 +116,18 @@ class DashboardConfig extends Page
 
     public function setSize(int $index, string $size): void
     {
+        $widget = $this->widgets[$index] ?? null;
+        if ($widget === null) {
+            return;
+        }
+
         $resolved = WidgetSize::tryFrom($size) ?? WidgetSize::Small;
+        $allowed = WidgetMeta::allowedSizesFor($widget['key']);
+
+        if (! in_array($resolved, $allowed, true)) {
+            return; // Disallowed for this widget — keep existing size.
+        }
+
         $this->widgets[$index]['size'] = $resolved->value;
     }
 
