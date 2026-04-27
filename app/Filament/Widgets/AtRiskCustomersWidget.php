@@ -4,38 +4,44 @@ namespace App\Filament\Widgets;
 
 use App\Enums\Filament\WidgetSize;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
-use App\Models\Customers\Customer;
 use App\Queries\Customers\AtRiskCustomersQuery;
-use Filament\Actions\Action;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Widgets\Widget;
 
-class AtRiskCustomersWidget extends BaseWidget
+class AtRiskCustomersWidget extends Widget
 {
     use HasDashboardSize;
 
     protected static ?int $sort = 10;
 
-    protected static ?string $heading = 'At Risk Customers';
+    protected string $view = 'filament.widgets.at-risk-customers';
 
-    public function table(Table $table): Table
+    /** @return array<int, array<string, mixed>> */
+    public function getRows(): array
     {
-        return $table
-            ->query(
-                AtRiskCustomersQuery::query(
-                    (int) config('analytics.at_risk_threshold_days', 30),
-                )->limit($this->rowLimit()),
-            )
-            ->columns($this->columnSet())
-            ->paginated(false)
-            ->defaultSort('last_order_date', 'asc')
-            ->headerActions([
-                Action::make('viewAll')
-                    ->label('View all')
-                    ->url(route('filament.admin.resources.customers.index'))
-                    ->view('filament.actions.view-all-link'),
-            ]);
+        $threshold = (int) config('analytics.at_risk_threshold_days', 30);
+
+        return AtRiskCustomersQuery::query($threshold)
+            ->orderBy('last_order_date')
+            ->limit($this->rowLimit())
+            ->get()
+            ->map(fn ($customer): array => [
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'last_order' => $customer->last_order_date?->diffForHumans() ?? '—',
+                'days_inactive' => $customer->days_since_last_order,
+                'lifetime_value' => '$' . number_format((float) $customer->lifetime_value, 0),
+            ])
+            ->all();
+    }
+
+    public function getViewAllUrl(): string
+    {
+        return route('filament.admin.resources.customers.index');
+    }
+
+    public function getCustomerEditUrl(int $id): string
+    {
+        return route('filament.admin.resources.customers.edit', $id);
     }
 
     private function rowLimit(): int
@@ -43,36 +49,7 @@ class AtRiskCustomersWidget extends BaseWidget
         return match ($this->size()) {
             WidgetSize::Small => 3,
             WidgetSize::Medium => 5,
-            WidgetSize::Large => 10,
+            default => 10,
         };
-    }
-
-    /** @return array<int, TextColumn> */
-    private function columnSet(): array
-    {
-        // at_risk_customers is constrained to md/lg in WidgetMeta — names + days
-        // inactive are the actionable columns at md; lifetime value adds context
-        // at lg.
-        $columns = [
-            TextColumn::make('name')
-                ->label('Customer')
-                ->url(fn (Customer $record): string => route('filament.admin.resources.customers.edit', $record)),
-
-            TextColumn::make('last_order_date')
-                ->label('Last Order')
-                ->since(),
-
-            TextColumn::make('days_since_last_order')
-                ->label('Days Inactive')
-                ->suffix(' days'),
-        ];
-
-        if ($this->isSize('lg')) {
-            $columns[] = TextColumn::make('lifetime_value')
-                ->label('Lifetime Value')
-                ->money('USD');
-        }
-
-        return $columns;
     }
 }

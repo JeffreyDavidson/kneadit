@@ -5,59 +5,42 @@ namespace App\Filament\Widgets;
 use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\OrderItem;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 
-class BakingSheetWidget extends BaseWidget
+class BakingSheetWidget extends Widget
 {
     use HasDashboardSize;
 
     protected static ?int $sort = 3;
 
-    protected static ?string $heading = 'Daily Baking Sheet';
+    protected string $view = 'filament.widgets.baking-sheet';
 
-    public function getTableRecordKey(Model|array $record): string
+    /** @return array<int, array<string, mixed>> */
+    public function getRows(): array
     {
-        return (string) (is_array($record) ? $record['product_id'] : $record->getAttribute('product_id'));
-    }
-
-    public function table(Table $table): Table
-    {
-        return $table
-            ->query(
-                OrderItem::query()
-                    ->join('products', 'order_items.product_id', '=', 'products.id')
-                    ->selectRaw('order_items.product_id, products.name as product_name, SUM(order_items.quantity) as total_quantity')
-                    ->whereHas('order', function (Builder $query) {
-                        $query->whereIn('status', [OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Baking])
-                            ->where(function (Builder $q) {
-                                $q->whereDate('delivery_date', Date::today())
-                                    ->orWhere(function (Builder $q2) {
-                                        $q2->whereDate('delivery_date', '>', Date::today())
-                                            ->where('status', OrderStatus::Confirmed);
-                                    });
+        return OrderItem::query()
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->selectRaw('order_items.product_id, products.name as product_name, SUM(order_items.quantity) as total_quantity')
+            ->whereHas('order', function (Builder $query): void {
+                $query->whereIn('status', [OrderStatus::Pending, OrderStatus::Confirmed, OrderStatus::Baking])
+                    ->where(function (Builder $q): void {
+                        $q->whereDate('delivery_date', Date::today())
+                            ->orWhere(function (Builder $q2): void {
+                                $q2->whereDate('delivery_date', '>', Date::today())
+                                    ->where('status', OrderStatus::Confirmed);
                             });
-                    })
-                    ->groupBy('order_items.product_id', 'products.name'),
-            )
-            ->columns([
-                TextColumn::make('product_name')
-                    ->label('Product')
-                    ->sortable(),
-                TextColumn::make('total_quantity')
-                    ->label('Qty Needed')
-                    ->sortable()
-                    ->badge()
-                    ->color('primary'),
+                    });
+            })
+            ->groupBy('order_items.product_id', 'products.name')
+            ->orderByDesc('total_quantity')
+            ->get()
+            ->map(fn ($item): array => [
+                'product_id' => $item->product_id,
+                'name' => $item->product_name,
+                'quantity' => (int) $item->total_quantity,
             ])
-            ->defaultSort('total_quantity', 'desc')
-            ->emptyStateHeading('Nothing to bake!')
-            ->emptyStateIcon(Heroicon::OutlinedCake)
-            ->paginated(false);
+            ->all();
     }
 }

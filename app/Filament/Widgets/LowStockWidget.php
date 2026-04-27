@@ -5,81 +5,59 @@ namespace App\Filament\Widgets;
 use App\Enums\Inventory\StockStatus;
 use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Inventory\Ingredient;
-use Filament\Actions\Action;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Widgets\Widget;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
-class LowStockWidget extends BaseWidget
+class LowStockWidget extends Widget
 {
     use HasDashboardSize;
 
     protected static ?int $sort = 11;
 
-    protected static ?string $heading = 'Low Stock Ingredients';
+    protected string $view = 'filament.widgets.low-stock';
 
     public static function canView(): bool
     {
-        return Ingredient::query()->where(function (Builder $q) {
+        return Ingredient::query()->where(function (Builder $q): void {
             $q->where('current_stock', '<=', 0)
                 ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
         })->exists();
     }
 
-    public function table(Table $table): Table
+    /** @return array<int, array<string, mixed>> */
+    public function getRows(): array
     {
-        return $table
-            ->query(
-                Ingredient::query()
-                    ->where(function (\Illuminate\Contracts\Database\Query\Builder $q) {
-                        $q->where('current_stock', '<=', 0)
-                            ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
-                    })
-                    ->orderBy('current_stock'),
-            )
-            ->columns($this->columnSet())
-            ->paginated(false)
-            ->emptyStateHeading('All stocked up!')
-            ->emptyStateIcon(Heroicon::OutlinedCheckCircle)
-            ->headerActions([
-                Action::make('viewAll')
-                    ->label('View all')
-                    ->url(route('filament.admin.resources.ingredients.index'))
-                    ->view('filament.actions.view-all-link'),
-            ]);
+        return Ingredient::query()
+            ->where(function (\Illuminate\Contracts\Database\Query\Builder $q): void {
+                $q->where('current_stock', '<=', 0)
+                    ->orWhereColumn('current_stock', '<=', 'low_stock_threshold');
+            })
+            ->orderBy('current_stock')
+            ->get()
+            ->map(fn (Ingredient $ingredient): array => [
+                'id' => $ingredient->id,
+                'name' => $ingredient->name,
+                'current_stock' => $ingredient->current_stock,
+                'unit' => $ingredient->unit,
+                'reorder_qty' => max(0, $ingredient->low_stock_threshold - $ingredient->current_stock),
+                'threshold' => $ingredient->low_stock_threshold,
+                'supplier' => $ingredient->supplier,
+                'status_color' => $this->statusColor(StockStatus::resolve($ingredient)),
+            ])
+            ->all();
     }
 
-    /** @return array<int, TextColumn> */
-    private function columnSet(): array
+    public function getViewAllUrl(): string
     {
-        // low_stock is constrained to sm/md in WidgetMeta — at sm we show
-        // just the essentials (what to reorder), md adds the threshold +
-        // supplier columns for context.
-        $essentials = [
-            TextColumn::make('name')->label('Ingredient'),
-            TextColumn::make('current_stock')
-                ->label('In Stock')
-                ->formatStateUsing(fn (Ingredient $r) => $r->current_stock . ' ' . $r->unit)
-                ->badge()
-                ->color(fn (Ingredient $r) => StockStatus::resolve($r)->getColor()),
-            TextColumn::make('reorder_qty')
-                ->label('Reorder')
-                ->getStateUsing(fn (Ingredient $r) => max(0, $r->low_stock_threshold - $r->current_stock))
-                ->formatStateUsing(fn (mixed $state, Ingredient $r) => $state . ' ' . $r->unit),
-        ];
+        return route('filament.admin.resources.ingredients.index');
+    }
 
-        if ($this->isSize('sm')) {
-            return $essentials;
-        }
-
-        return [
-            ...$essentials,
-            TextColumn::make('low_stock_threshold')
-                ->label('Threshold')
-                ->formatStateUsing(fn (Ingredient $r) => $r->low_stock_threshold . ' ' . $r->unit),
-            TextColumn::make('supplier')->placeholder('—'),
-        ];
+    private function statusColor(StockStatus $status): string
+    {
+        return match ($status) {
+            StockStatus::Out => '#dc2626',
+            StockStatus::Low => '#e8b04a',
+            StockStatus::Good => '#6b9e3a',
+        };
     }
 }
