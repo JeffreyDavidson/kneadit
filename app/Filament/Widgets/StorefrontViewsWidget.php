@@ -22,31 +22,39 @@ class StorefrontViewsWidget extends BaseWidget
     protected function getStats(): array
     {
         $data = $this->cached('main', [60, 120], function (): array {
-            $today = PageView::query()->whereNull('product_id')
-                ->where('created_at', '>=', today())
-                ->count();
+            $today = today();
+            $chart = [];
 
-            $yesterday = PageView::query()->whereNull('product_id')
-                ->whereBetween('created_at', [now()->subDay()->startOfDay(), today()])
-                ->count();
+            // 7-day series ending today (oldest → newest).
+            for ($i = 6; $i >= 0; $i--) {
+                $day = $today->copy()->subDays($i);
+                $chart[] = PageView::query()->whereNull('product_id')
+                    ->whereBetween('created_at', [$day->copy()->startOfDay(), $day->copy()->endOfDay()])
+                    ->count();
+            }
 
-            $trend = $yesterday > 0
-                ? round((($today - $yesterday) / $yesterday) * 100)
-                : ($today > 0 ? 100 : 0);
+            $todayCount = $chart[6];
+            $yesterdayCount = $chart[5];
 
-            return ['today' => $today, 'trend' => $trend];
+            $trend = $yesterdayCount > 0
+                ? (int) round((($todayCount - $yesterdayCount) / $yesterdayCount) * 100)
+                : ($todayCount > 0 ? 100 : 0);
+
+            return ['today' => $todayCount, 'trend' => $trend, 'chart' => $chart];
         });
 
         $trend = $data['trend'];
-        $description = $trend >= 0 ? "{$trend}% increase vs yesterday" : abs($trend) . '% decrease vs yesterday';
+        $description = $trend >= 0 ? "{$trend}% above yesterday" : abs($trend) . '% below yesterday';
         $icon = $trend >= 0 ? Heroicon::ArrowTrendingUp : Heroicon::ArrowTrendingDown;
-        $color = $trend >= 0 ? 'success' : 'danger';
+        $color = $trend >= 0 ? 'success' : 'warning';
 
         return [
             Stat::make('Storefront Views Today', Number::format($data['today']))
                 ->description($description)
                 ->descriptionIcon($icon)
                 ->color($color)
+                ->chart($data['chart'])
+                ->chartColor($color)
                 ->url('/admin/storefront-analytics'),
         ];
     }

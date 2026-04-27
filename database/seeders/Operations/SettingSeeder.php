@@ -168,6 +168,10 @@ class SettingSeeder extends Seeder
             ],
         ];
 
+        // Mark seeded tenants as fully onboarded so they skip the
+        // /admin/onboarding redirect (EnsureOnboardingComplete middleware).
+        $settings[] = ['key' => 'onboarding_completed_at', 'value' => now()->toISOString()];
+
         // Pricing engine settings
         $settings[] = ['key' => 'hourly_labor_rate', 'value' => '15'];
         $settings[] = ['key' => 'overhead_percentage', 'value' => '20'];

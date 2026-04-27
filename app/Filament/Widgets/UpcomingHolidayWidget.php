@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Operations\Holiday;
 use App\Models\Orders\Order;
 use App\Presenters\HolidayPresenter;
@@ -13,6 +14,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class UpcomingHolidayWidget extends BaseWidget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected ?string $pollingInterval = null;
 

@@ -17,8 +17,8 @@ beforeEach(function () {
 dataset('adminWidgets', [
     'StatsOverview' => [App\Filament\Widgets\StatsOverview::class],
     'RecentOrdersWidget' => [App\Filament\Widgets\RecentOrdersWidget::class],
-    // QuickActionsWidget excluded — references undefined orders.create route
-    // WelcomeBannerWidget excluded — references undefined orders.create route
+    'QuickActionsWidget' => [App\Filament\Widgets\QuickActionsWidget::class],
+    'WelcomeBannerWidget' => [App\Filament\Widgets\WelcomeBannerWidget::class],
     'TodaysOrdersWidget' => [App\Filament\Widgets\TodaysOrdersWidget::class],
     'LowStockWidget' => [App\Filament\Widgets\LowStockWidget::class],
     'PopularProductsWidget' => [App\Filament\Widgets\PopularProductsWidget::class],

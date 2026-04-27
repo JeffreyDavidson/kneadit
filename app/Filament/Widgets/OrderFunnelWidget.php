@@ -4,16 +4,16 @@ namespace App\Filament\Widgets;
 
 use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Orders\Order;
 use Filament\Widgets\Widget;
 
 class OrderFunnelWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 3;
-
-    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.order-funnel';
 
@@ -31,6 +31,19 @@ class OrderFunnelWidget extends Widget
                 OrderStatus::trackableStatuses(),
             );
         });
+    }
+
+    /**
+     * sm shows only the actionable upstream stages (where the bakery
+     * still has work to do); md shows the full funnel.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getVisibleStages(): array
+    {
+        $stages = $this->getStages();
+
+        return $this->isSize('sm') ? array_slice($stages, 0, 3) : $stages;
     }
 
     protected function cachePrefix(): string

@@ -3,7 +3,10 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Central\CentralThemes;
+use App\Filament\Central\Pages\Appearance;
 use App\Filament\Central\Pages\Dashboard;
+use App\Filament\Central\Resources\PlatformSettings\PlatformSettingResource;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -12,6 +15,8 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -64,6 +69,10 @@ class CentralPanelProvider extends PanelProvider
                     document.addEventListener("livewire:navigating", () => {
                         const nav = document.querySelector(".fi-sidebar-nav");
                         if (nav) sessionStorage.setItem("sidebar-scroll", nav.scrollTop);
+
+                        document.querySelectorAll(".fi-dropdown").forEach(el => {
+                            window.Alpine?.$data(el)?.close?.();
+                        });
                     });
                     document.addEventListener("livewire:navigated", () => {
                         const nav = document.querySelector(".fi-sidebar-nav");
@@ -72,6 +81,20 @@ class CentralPanelProvider extends PanelProvider
                     });
                 </script>
             '))
+            ->renderHook(
+                PanelsRenderHook::USER_MENU_PROFILE_BEFORE,
+                fn () => view('filament.central.user-menu-header'),
+            )
+            ->userMenuItems([
+                Action::make('appearance')
+                    ->label('Appearance')
+                    ->url(fn (): string => Appearance::getUrl())
+                    ->icon(Heroicon::Swatch),
+                Action::make('platformSettings')
+                    ->label('Platform Settings')
+                    ->url(fn (): string => PlatformSettingResource::getUrl('index'))
+                    ->icon(Heroicon::Cog6Tooth),
+            ])
             ->discoverResources(in: app_path('Filament/Central/Resources'), for: 'App\Filament\Central\Resources')
             ->discoverPages(in: app_path('Filament/Central/Pages'), for: 'App\Filament\Central\Pages')
             ->pages([

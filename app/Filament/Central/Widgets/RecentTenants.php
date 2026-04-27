@@ -4,6 +4,7 @@ namespace App\Filament\Central\Widgets;
 
 use App\Filament\Central\Resources\TenantResource;
 use App\Models\Platform\Tenant;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -26,14 +27,12 @@ class RecentTenants extends TableWidget
                 TextColumn::make('store_name')
                     ->label('Bakery')
                     ->placeholder('Not set')
-                    ->weight('bold')
-                    ->searchable(),
+                    ->weight('bold'),
 
                 TextColumn::make('name')
                     ->label('Owner'),
 
-                TextColumn::make('email')
-                    ->toggleable(),
+                TextColumn::make('email'),
 
                 TextColumn::make('plan')
                     ->badge(),
@@ -46,6 +45,12 @@ class RecentTenants extends TableWidget
                     ->label('Joined')
                     ->since(),
             ])
-            ->paginated(false);
+            ->paginated(false)
+            ->headerActions([
+                Action::make('viewAll')
+                    ->label('View all')
+                    ->url(TenantResource::getUrl('index'))
+                    ->view('filament.actions.view-all-link'),
+            ]);
     }
 }

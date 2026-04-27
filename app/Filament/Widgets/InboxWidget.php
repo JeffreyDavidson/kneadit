@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Pages\Platform\Messages;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Platform\PlatformMessage;
 use App\Models\Platform\Tenant;
 use Filament\Facades\Filament;
@@ -10,9 +11,9 @@ use Filament\Widgets\Widget;
 
 class InboxWidget extends Widget
 {
-    protected static ?int $sort = -5;
+    use HasDashboardSize;
 
-    protected int|string|array $columnSpan = 'full';
+    protected static ?int $sort = -5;
 
     protected string $view = 'filament.widgets.inbox-widget';
 

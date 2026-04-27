@@ -3,16 +3,16 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Services\Loyalty\LoyaltyAnalytics;
 use Filament\Widgets\Widget;
 
 class LoyaltyLeadersWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 21;
-
-    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.loyalty-leaders-widget';
 

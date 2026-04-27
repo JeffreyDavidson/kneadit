@@ -17,30 +17,36 @@
                 </div>
                 <div class="text-xs text-brand-700">{{ $total }} review{{ $total !== 1 ? 's' : '' }}</div>
             </div>
-            <div class="flex-1">
-                @foreach ($dist as $stars => $data)
-                    <div class="flex items-center gap-1.5 mb-1">
-                        <span class="text-[0.7rem] text-brand-700 w-3 text-right">{{ $stars }}</span>
-                        <div class="flex-1 bg-brand-50 rounded-full h-2 overflow-hidden">
-                            <div class="h-full bg-golden rounded-full" style="width: {{ $data['percentage'] }}%;"></div>
+            {{-- sm: rating only. md: + per-rating distribution bars. --}}
+            @unless ($this->isSize('sm'))
+                <div class="flex-1">
+                    @foreach ($dist as $stars => $data)
+                        <div class="flex items-center gap-1.5 mb-1">
+                            <span class="text-[0.7rem] text-brand-700 w-3 text-right">{{ $stars }}</span>
+                            <div class="flex-1 bg-brand-50 rounded-full h-2 overflow-hidden">
+                                <div class="h-full bg-golden rounded-full" style="width: {{ $data['percentage'] }}%;"></div>
+                            </div>
+                            <span class="text-[0.65rem] text-brand-600 w-6">{{ $data['count'] }}</span>
                         </div>
-                        <span class="text-[0.65rem] text-brand-600 w-6">{{ $data['count'] }}</span>
-                    </div>
-                @endforeach
-            </div>
+                    @endforeach
+                </div>
+            @endunless
         </div>
 
-        @if ($recent)
-            <div class="p-3 bg-brand-50 rounded-lg border-l-[3px] border-brand-300">
-                <div class="text-xs text-brand-700 mb-1">
-                    {{ $recent->customer_name }} — {{ str_repeat('★', $recent->rating) }}
+        {{-- Recent review only at md to keep sm scannable. --}}
+        @unless ($this->isSize('sm'))
+            @if ($recent)
+                <div class="p-3 bg-brand-50 rounded-lg border-l-[3px] border-brand-300">
+                    <div class="text-xs text-brand-700 mb-1">
+                        {{ $recent->customer_name }} — {{ str_repeat('★', $recent->rating) }}
+                    </div>
+                    <div class="text-[0.8rem] text-brand-900 italic">
+                        "{{ \Illuminate\Support\Str::limit($recent->comment, 120) }}"
+                    </div>
                 </div>
-                <div class="text-[0.8rem] text-brand-900 italic">
-                    "{{ \Illuminate\Support\Str::limit($recent->comment, 120) }}"
-                </div>
-            </div>
-        @else
-            <div class="text-brand-600 italic text-[0.8rem]">No reviews yet</div>
-        @endif
+            @else
+                <div class="text-brand-600 italic text-[0.8rem]">No reviews yet</div>
+            @endif
+        @endunless
     </x-filament::section>
 </x-filament-widgets::widget>

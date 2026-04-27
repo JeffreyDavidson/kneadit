@@ -95,11 +95,14 @@ class Dashboard extends BaseDashboard
         $saved = resolve(SettingsManager::class)->get('dashboard_widgets');
         $config = $saved ? json_decode($saved, true) : null;
 
-        // No saved layout yet → render every registered widget in default order.
-        // The DashboardConfig page (Settings → Dashboard Configuration) is where
-        // bakers customize visibility/order/span.
+        // No saved layout yet → render every registered widget in default order
+        // at its widget-meta default size. The DashboardConfig page
+        // (Settings → Dashboard Configuration) is where bakers customize this.
         if (! $config) {
-            return array_values($registry);
+            return collect($registry)
+                ->map(fn (string $class, string $key) => $this->wrapWithSize($class, $key, null))
+                ->values()
+                ->all();
         }
 
         // Sort by saved order, drop hidden widgets, drop unknown keys.
@@ -110,11 +113,37 @@ class Dashboard extends BaseDashboard
             if (! ($settings['visible'] ?? true)) {
                 continue;
             }
-            if (isset($registry[$key])) {
-                $widgets[] = $registry[$key];
+            if (! isset($registry[$key])) {
+                continue;
             }
+            $widgets[] = $this->wrapWithSize($registry[$key], $key, $settings['size'] ?? null);
         }
 
         return $widgets;
+    }
+
+    /**
+     * Wrap a widget class with its dashboardSize property pulled from
+     * saved settings (or the widget meta's default if absent / invalid).
+     * Widgets that don't use the HasDashboardSize trait pass through
+     * untouched.
+     *
+     * @param class-string<\Filament\Widgets\Widget> $class
+     */
+    private function wrapWithSize(string $class, string $key, ?string $savedSize): string|\Filament\Widgets\WidgetConfiguration
+    {
+        if (! in_array(\App\Filament\Widgets\Concerns\HasDashboardSize::class, class_uses_recursive($class), true)) {
+            return $class;
+        }
+
+        $allowed = \App\Filament\Shared\Dashboard\WidgetMeta::allowedSizesFor($key);
+        $resolved = \App\Enums\Filament\WidgetSize::tryFrom((string) $savedSize);
+
+        if ($resolved === null || ! in_array($resolved, $allowed, true)) {
+            $meta = \App\Filament\Shared\Dashboard\WidgetMeta::get($key);
+            $resolved = $meta['defaultSize'] ?? \App\Enums\Filament\WidgetSize::Small;
+        }
+
+        return $class::make(['dashboardSize' => $resolved->value]);
     }
 }
