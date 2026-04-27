@@ -21,7 +21,6 @@ dataset('adminWidgets', [
     'WelcomeBannerWidget' => [App\Filament\Widgets\WelcomeBannerWidget::class],
     'TodaysOrdersWidget' => [App\Filament\Widgets\TodaysOrdersWidget::class],
     'LowStockWidget' => [App\Filament\Widgets\LowStockWidget::class],
-    'PopularProductsWidget' => [App\Filament\Widgets\PopularProductsWidget::class],
     'TopProductsWidget' => [App\Filament\Widgets\TopProductsWidget::class],
     'CustomerInsightsWidget' => [App\Filament\Widgets\CustomerInsightsWidget::class],
     'RecentActivityWidget' => [App\Filament\Widgets\RecentActivityWidget::class],

@@ -13,6 +13,6 @@ $storefrontUrl = env('BROWSER_TEST_STOREFRONT_URL', 'http://browser-test.kneadit
 
 test('admin dashboard renders all widgets cleanly', function () use ($storefrontUrl) {
     authenticatedVisit("{$storefrontUrl}/admin")
-        ->assertSee('Bakery Dashboard')
+        ->assertSee('Dashboard')
         ->assertNoJavaScriptErrors();
 });

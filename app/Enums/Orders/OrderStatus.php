@@ -57,39 +57,15 @@ enum OrderStatus: string implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function funnelTextClass(): string
+    public function funnelDotColor(): string
     {
         return match ($this) {
-            self::Pending => 'text-amber-500',
-            self::Confirmed => 'text-blue-500',
-            self::Baking => 'text-brand-600',
-            self::Ready => 'text-emerald-500',
-            self::Delivered => 'text-gray-500',
-            self::Cancelled => 'text-red-500',
-        };
-    }
-
-    public function funnelBgClass(): string
-    {
-        return match ($this) {
-            self::Pending => 'bg-amber-100',
-            self::Confirmed => 'bg-blue-100',
-            self::Baking => 'bg-brand-100',
-            self::Ready => 'bg-emerald-100',
-            self::Delivered => 'bg-gray-100',
-            self::Cancelled => 'bg-red-100',
-        };
-    }
-
-    public function funnelBorderClass(): string
-    {
-        return match ($this) {
-            self::Pending => 'border-amber-500',
-            self::Confirmed => 'border-blue-500',
-            self::Baking => 'border-brand-600',
-            self::Ready => 'border-emerald-500',
-            self::Delivered => 'border-gray-500',
-            self::Cancelled => 'border-red-500',
+            self::Pending => '#e8b04a',
+            self::Confirmed => '#3a8bd4',
+            self::Baking => '#8b5e3c',
+            self::Ready => '#6b9e3a',
+            self::Delivered => '#a08060',
+            self::Cancelled => '#d4574a',
         };
     }
 
@@ -99,9 +75,7 @@ enum OrderStatus: string implements HasColor, HasIcon, HasLabel
         return [
             'key' => $this->value,
             'label' => $this->getLabel(),
-            'textClass' => $this->funnelTextClass(),
-            'bgClass' => $this->funnelBgClass(),
-            'borderClass' => $this->funnelBorderClass(),
+            'dotColor' => $this->funnelDotColor(),
             'count' => $count,
         ];
     }
