@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Enums\Orders\OrderStatus;
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\Customer;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Date;
@@ -12,10 +13,9 @@ use Illuminate\Support\Facades\DB;
 class ReorderRemindersWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 20;
-
-    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.reorder-reminders-widget';
 

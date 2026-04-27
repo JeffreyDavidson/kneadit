@@ -3,16 +3,16 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\CachesWidgetData;
+use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Customers\CateringInquiry;
 use Filament\Widgets\Widget;
 
 class CateringPipelineWidget extends Widget
 {
     use CachesWidgetData;
+    use HasDashboardSize;
 
     protected static ?int $sort = 18;
-
-    protected int|string|array $columnSpan = 1;
 
     protected string $view = 'filament.widgets.catering-pipeline-widget';
 
