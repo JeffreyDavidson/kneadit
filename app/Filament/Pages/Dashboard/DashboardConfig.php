@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Dashboard;
 
+use App\Enums\Filament\WidgetSize;
 use App\Filament\Concerns\RequiresManagerRole;
 use App\Filament\Shared\Dashboard\WidgetMeta;
 use App\Services\Settings\SettingsManager;
@@ -57,7 +58,7 @@ class DashboardConfig extends Page
             $this->widgets[] = [
                 'key' => $key,
                 'visible' => $settings['visible'] ?? true,
-                'span' => $settings['span'] ?? $widgetMeta[$key]['defaultSpan'] ?? 1,
+                'size' => $this->resolveSize($settings, $widgetMeta[$key]),
                 'name' => $widgetMeta[$key]['name'],
                 'description' => $widgetMeta[$key]['description'],
                 'icon' => $widgetMeta[$key]['icon'],
@@ -70,13 +71,34 @@ class DashboardConfig extends Page
                 $this->widgets[] = [
                     'key' => $key,
                     'visible' => true,
-                    'span' => $meta['defaultSpan'] ?? 1,
+                    'size' => ($meta['defaultSize'] ?? WidgetSize::Small)->value,
                     'name' => $meta['name'],
                     'description' => $meta['description'],
                     'icon' => $meta['icon'],
                 ];
             }
         }
+    }
+
+    /**
+     * Resolve the size for a widget from its saved settings, with a
+     * fall-back chain that handles legacy integer span values from
+     * older saved configs.
+     *
+     * @param array<string, mixed> $settings
+     * @param array<string, mixed> $meta
+     */
+    private function resolveSize(array $settings, array $meta): string
+    {
+        if (isset($settings['size']) && WidgetSize::tryFrom((string) $settings['size'])) {
+            return (string) $settings['size'];
+        }
+
+        if (isset($settings['span'])) {
+            return WidgetSize::fromLegacySpan((int) $settings['span'])->value;
+        }
+
+        return ($meta['defaultSize'] ?? WidgetSize::Small)->value;
     }
 
     public function reorder(int $oldIndex, int $newIndex): void
@@ -92,9 +114,10 @@ class DashboardConfig extends Page
         $this->showPreview = ! $this->showPreview;
     }
 
-    public function setSpan(int $index, int $span): void
+    public function setSize(int $index, string $size): void
     {
-        $this->widgets[$index]['span'] = max(1, min(3, $span));
+        $resolved = WidgetSize::tryFrom($size) ?? WidgetSize::Small;
+        $this->widgets[$index]['size'] = $resolved->value;
     }
 
     public function toggleWidget(int $index): void
@@ -109,7 +132,7 @@ class DashboardConfig extends Page
             $config[$widget['key']] = [
                 'visible' => $widget['visible'],
                 'order' => $i + 1,
-                'span' => $widget['span'] ?? 1,
+                'size' => $widget['size'] ?? WidgetSize::Small->value,
             ];
         }
 

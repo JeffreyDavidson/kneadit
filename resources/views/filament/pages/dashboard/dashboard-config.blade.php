@@ -118,11 +118,11 @@
                             <p class="widget-desc">{{ $widget['description'] }}</p>
                         </div>
                         <div class="span-selector">
-                            @for ($s = 1; $s <= 3; $s++)
-                                <button class="span-btn {{ ($widget['span'] ?? 1) == $s ? 'active' : '' }}"
-                                        wire:click="setSpan({{ $index }}, {{ $s }})" type="button"
-                                        title="{{ $s }}/3 width">{{ $s }}</button>
-                            @endfor
+                            @foreach (\App\Enums\Filament\WidgetSize::cases() as $size)
+                                <button class="span-btn {{ ($widget['size'] ?? 'sm') === $size->value ? 'active' : '' }}"
+                                        wire:click="setSize({{ $index }}, '{{ $size->value }}')" type="button"
+                                        title="{{ $size->label() }} ({{ $size->columns() }}/3 width)">{{ strtoupper($size->value) }}</button>
+                            @endforeach
                         </div>
                         <button class="toggle-mini {{ $widget['visible'] ? 'on' : 'off' }}"
                                 wire:click="toggleWidget({{ $index }})" type="button">
