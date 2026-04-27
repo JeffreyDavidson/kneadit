@@ -1,67 +1,70 @@
-<x-filament-widgets::widget>
-    @php
-        $monthly = $this->monthlyData;
-        $yearly = $this->yearlyData;
+@php
+    $monthly = $this->monthlyData;
+    $yearly = $this->yearlyData;
 
-        $tone = function (float $percentage): array {
-            return match (true) {
-                $percentage >= 100 => ['accent' => 'emerald', 'label' => 'Goal exceeded'],
-                $percentage >= 75 => ['accent' => 'emerald', 'label' => 'On track'],
-                $percentage >= 30 => ['accent' => 'amber', 'label' => 'Building momentum'],
-                default => ['accent' => 'rose', 'label' => 'Falling behind'],
-            };
-        };
-    @endphp
+    // Tone maps progress percentage to a hex color (semantic: green = on track,
+    // amber = building, red = falling behind).
+    $toneColor = fn (float $pct): string => match (true) {
+        $pct >= 75 => '#6b9e3a',
+        $pct >= 30 => '#e8b04a',
+        default => '#d4574a',
+    };
 
-    <div class="flex flex-col gap-3">
+    $toneLabel = fn (float $pct): string => match (true) {
+        $pct >= 100 => 'Goal exceeded',
+        $pct >= 75 => 'On track',
+        $pct >= 30 => 'Building momentum',
+        default => 'Falling behind',
+    };
+@endphp
+
+<div>
+    <x-admin.dashboard.preview-card heading="Goal Tracker" icon="🎯">
         @foreach ([
             ['key' => 'monthly', 'eyebrow' => 'Monthly Revenue Goal', 'data' => $monthly],
             ['key' => 'yearly', 'eyebrow' => 'Yearly Revenue Goal', 'data' => $yearly],
         ] as $goal)
             @php
                 $d = $goal['data'];
-                $t = $tone((float) $d['percentage']);
+                $pct = (float) $d['percentage'];
+                $color = $toneColor($pct);
+                $label = $toneLabel($pct);
                 $remaining = max(0, $d['goal'] - $d['revenue']);
             @endphp
 
-            <div class="rounded-xl border border-brand-100 bg-white px-5 py-4 flex items-center gap-5 flex-wrap">
-                <div class="w-11 h-11 rounded-xl bg-{{ $t['accent'] }}-50 border border-{{ $t['accent'] }}-200 flex items-center justify-center shrink-0">
-                    <x-heroicon-o-flag class="w-5 h-5 text-{{ $t['accent'] }}-600" />
+            <div @class(['mt-3' => ! $loop->first])>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap;">
+                    <div>
+                        <span class="pw-stat-label">{{ $goal['eyebrow'] }}</span>
+                        <div style="font-size: 0.85rem; font-weight: 700; color: var(--pw-card-text); margin-top: 2px;">
+                            @money($d['revenue'])
+                            <span style="font-weight: 400; color: var(--pw-card-text-muted);">of</span>
+                            ${{ number_format($d['goal'], 0) }}
+                        </div>
+                    </div>
+                    <button wire:click="openEditModal('{{ $goal['key'] }}')" type="button"
+                            style="background: var(--pw-card-grad-start); border: 1px solid var(--pw-card-border-subtle); color: var(--pw-card-accent); padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 600; cursor: pointer;">
+                        ✎ Edit
+                    </button>
                 </div>
 
-                <div class="shrink-0 min-w-55">
-                    <div class="text-[0.7rem] uppercase tracking-wider font-semibold text-brand-600">{{ $goal['eyebrow'] }}</div>
-                    <div class="text-brand-900 font-bold text-[1.05rem] leading-tight">
-                        @money($d['revenue'])
-                        <span class="text-brand-500 font-normal">of</span>
-                        ${{ number_format($d['goal'], 0) }}
-                    </div>
-                    <div class="text-[0.8rem] text-brand-500 mt-1">
-                        {{ $d['label'] }} ·
-                        @if ($d['percentage'] >= 100)
-                            Beat goal by <strong class="text-{{ $t['accent'] }}-700">@money($d['revenue'] - $d['goal'])</strong>
+                <div style="margin-top: 8px;">
+                    <div class="pw-bar"><div class="pw-bar-fill" style="width: {{ min(100, $pct) }}%; background: {{ $color }};"></div></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; font-size: 0.65rem; margin-top: 4px;">
+                    <span style="color: {{ $color }}; font-weight: 600;">{{ $label }}</span>
+                    <span style="color: var(--pw-card-text-muted);">
+                        @if ($pct >= 100)
+                            Beat goal by <strong style="color: {{ $color }};">@money($d['revenue'] - $d['goal'])</strong>
                         @else
-                            <strong class="text-{{ $t['accent'] }}-700">@money($remaining)</strong> to go
+                            <strong style="color: {{ $color }};">@money($remaining)</strong> to go · {{ $d['percentage'] }}%
                         @endif
-                    </div>
+                    </span>
                 </div>
-
-                <div class="flex items-center gap-3 flex-1 min-w-65">
-                    <div class="bg-brand-100 rounded-full h-2 overflow-hidden flex-1">
-                        <div class="h-full rounded-full bg-linear-to-r from-{{ $t['accent'] }}-400 to-{{ $t['accent'] }}-600 transition-all"
-                             style="width: {{ $d['percentage'] }}%;"></div>
-                    </div>
-                    <span class="text-{{ $t['accent'] }}-700 text-[0.95rem] font-bold tabular-nums shrink-0">{{ $d['percentage'] }}%</span>
-                </div>
-
-                <button wire:click="openEditModal('{{ $goal['key'] }}')" type="button"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold bg-brand-50 text-brand-700 border border-brand-100 hover:bg-brand-100 transition-colors shrink-0">
-                    <x-heroicon-o-pencil-square class="w-3.5 h-3.5" />
-                    Edit
-                </button>
             </div>
         @endforeach
-    </div>
+    </x-admin.dashboard.preview-card>
 
     {{-- Edit modal --}}
     @if ($showEditModal)
@@ -75,4 +78,4 @@
             </div>
         </x-admin.modal>
     @endif
-</x-filament-widgets::widget>
+</div>
