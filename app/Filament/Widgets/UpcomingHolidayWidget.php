@@ -7,51 +7,45 @@ use App\Filament\Widgets\Concerns\HasDashboardSize;
 use App\Models\Operations\Holiday;
 use App\Models\Orders\Order;
 use App\Presenters\HolidayPresenter;
-use Filament\Support\Icons\Heroicon;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Widget;
 
-class UpcomingHolidayWidget extends BaseWidget
+class UpcomingHolidayWidget extends Widget
 {
     use CachesWidgetData;
     use HasDashboardSize;
 
-    protected ?string $pollingInterval = null;
-
     protected static ?int $sort = 2;
 
-    protected function getStats(): array
+    protected string $view = 'filament.widgets.upcoming-holiday';
+
+    /** @return array<string, mixed>|null */
+    public function getHolidayData(): ?array
     {
-        return $this->cached('stats_' . now()->format('Y-m-d'), [1800, 3600], function (): array {
+        return $this->cached('data_' . now()->format('Y-m-d'), [1800, 3600], function (): ?array {
             try {
                 /** @var Holiday|null $holiday */
                 $holiday = Holiday::query()->active()->upcoming()->first();
-            } catch (\Exception $e) {
-                return [];
+            } catch (\Exception) {
+                return null;
             }
 
             if (! $holiday) {
-                return [];
+                return null;
             }
 
             $orders = Order::query()->whereDate('delivery_date', $holiday->date)->count();
             $presenter = HolidayPresenter::for($holiday);
             $daysUntil = $presenter->daysUntilDeadline();
-            $deadlineLabel = $presenter->isDeadlinePassed()
-                ? 'Deadline passed'
-                : "Deadline in {$daysUntil}d";
-
-            $description = $orders . ' orders';
-            if ($holiday->max_orders) {
-                $description .= " / {$holiday->max_orders} max";
-            }
-            $description .= " — {$deadlineLabel}";
+            $deadlinePassed = $presenter->isDeadlinePassed();
 
             return [
-                Stat::make("Next Holiday: {$holiday->name}", $holiday->date->format('M j'))
-                    ->icon(Heroicon::OutlinedCalendarDays)
-                    ->color($daysUntil <= 3 && ! $presenter->isDeadlinePassed() ? 'warning' : 'primary')
-                    ->description($description),
+                'name' => $holiday->name,
+                'date' => $holiday->date->format('M j'),
+                'orders' => $orders,
+                'max_orders' => $holiday->max_orders,
+                'days_until_deadline' => $daysUntil,
+                'deadline_passed' => $deadlinePassed,
+                'is_urgent' => $daysUntil <= 3 && ! $deadlinePassed,
             ];
         });
     }
